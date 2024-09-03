@@ -1,164 +1,222 @@
-Return-Path: <linux-kernel+bounces-312339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE72969527
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:20:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C1B96952C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EC52836E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C12B1F2229E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5F1D6DD6;
-	Tue,  3 Sep 2024 07:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DEC200113;
+	Tue,  3 Sep 2024 07:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbFpvUtd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n1VIFgZZ"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC5E1D54F2;
-	Tue,  3 Sep 2024 07:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA7220010E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347990; cv=none; b=bL2UMIVD26Hrx+uwCF4P25WCqQN+sYgz6vjzQbo+eiVe+EXPJkXMmY1rjN1SizQThA9krbmUDb4z/B4vQ9q1qfbUZXiSB+wUoe5APaV94CC+F4NVjwk64XDaSK/bG8zg1/qTgGkY++Miiqrn29nUthWv2L/efsb+h+t0J0sf48w=
+	t=1725348010; cv=none; b=FCgotkE9N7GdPkdp2eDdwjeOMJrvAY97IOLKJxgZZmFZ/vB19IsKKELs4MO0niMJSXSWaaM1LolZURqGgbS/v/EAhZkPLYmsfnxEiMd8HnGIMuZwn4gxuXolhOtyCD3DayICJamnBWXEw1x+vPmsF6qtizxA15kBZ2Sn8e4uoVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347990; c=relaxed/simple;
-	bh=XT9DFmMQtuvjSk56FAo4GZEYj7AjxN75qmLUnl3N1X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dKAbpVyBh9BGbqd6vJkRBOd0M3peWkDevUqs04AM68+jGFPyLMDWW9HZikScgdqB+ln9kxRbNpsokTfL2TflVoMAqJB11ctNBkivCotWYfM7HXYiNM34SCXqFA9BJEBEiCmJDr8Sh+jM3K9jgmfW3inV85I0LIQt/QVj+7OCsSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbFpvUtd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0EDC4CEC5;
-	Tue,  3 Sep 2024 07:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725347989;
-	bh=XT9DFmMQtuvjSk56FAo4GZEYj7AjxN75qmLUnl3N1X8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YbFpvUtd0ezj8ykrwoZiKf2gAKYxEt6gErGwwDIXE2ZldKCtVK7sKwYQT+ruHpXZe
-	 ZRdp2qKRgo3QD/X30Kuk6ek9ef02wm2V2Gjqb/SMyjNGthPoCnPAnnSqhpaQ2V3DfD
-	 fsBD01f7k2vCoTpFHcx7UNeOq9M6UXn94cfYx15XjjaO+l69hcCSn3rj9YX4fgJPMO
-	 qpEIa0UTeajtZeNJOdErGrBrPOxU7Yc7yfGqM4plYBft3Odfa3xIiUG8hC/kTdh34e
-	 wprqiTe2/7MY91nt0L1xyZfAuT1oIky1ecWGE2ouvGEkdSE01227PoPduV+gXPXrl+
-	 P7rKV1KHYqU2A==
-Message-ID: <6c846a47-8192-4c6c-927b-8969485d49aa@kernel.org>
-Date: Tue, 3 Sep 2024 09:19:43 +0200
+	s=arc-20240116; t=1725348010; c=relaxed/simple;
+	bh=rtgDhsbqm35GHC11I3GwCh+rR+829viIN/jTvn5fWHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=IfcyrrMVjlBrOekk4DDq98LxsAPIUyvx+y+SQYYvv8zz8OvnRh3kq3Ebumpc9zKNr4pTejD1vf1qeK1IxLLJDx0w2bzZqC5woDeQrBNoBMpbpbTgslyy4T/vnWVErBAWcfUnnenVqYUVTsJMgEDt4sx6Z0J98gU6gg4qeS+EtZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n1VIFgZZ; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240903072006euoutp018d9d2ce6e358a69b091f353342c915c6~xqt7WNkQk2817128171euoutp01b
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:20:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240903072006euoutp018d9d2ce6e358a69b091f353342c915c6~xqt7WNkQk2817128171euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725348006;
+	bh=65/2SJVng6lo7el3hUE88dgFRt6/tL+Cj7xnrVtuP/w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n1VIFgZZP9Gj2KJ/lsKfgSQQl/xgHYasM5NDQwi7MOVYjDyP7frNZEqfy+cofOAyr
+	 t4bfYBt7urH3lXNzwKGxV8VvzB5kXjIBFvOBXV8ei8ZMuunU4s7fvllD1sbTzXGeXJ
+	 PU0cKRGxtwklfzTCQ9hpJywFdqU9UdYQHi8NrKfY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240903072005eucas1p2a9cd2d95d5469422f749dbb64a7cce8f~xqt6yR9TN1361813618eucas1p2Z;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 0C.1B.09875.5A8B6D66; Tue,  3
+	Sep 2024 08:20:05 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e~xqt6TA2tt0454704547eucas1p2S;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240903072005eusmtrp280e043ecaedc2accfd500370f6e10ced~xqt6SI37t1499014990eusmtrp27;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+X-AuditID: cbfec7f4-9acd8a8000002693-6d-66d6b8a5f5b0
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 34.A7.19096.5A8B6D66; Tue,  3
+	Sep 2024 08:20:05 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240903072004eusmtip13cee34ab07b41ab79b033a209c143bf0~xqt5ZmHIj1257912579eusmtip1L;
+	Tue,  3 Sep 2024 07:20:04 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui
+	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring
+	<robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
+	Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v3 3/6] drivers/thermal/exynos: improve
+ sanitize_temp_error
+Date: Tue,  3 Sep 2024 09:19:55 +0200
+Message-ID: <20240903071957.2577486-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <664344db-5a60-46c4-b108-38ca1b4e1a13@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] soc: qcom: llcc: add errata to get bank num
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
- <20240903-qcs8300_llcc_driver-v1-3-228659bdf067@quicinc.com>
- <vtj5liux4hrb7je3ojnfyixor6sk2oy2p4nlvt2rgnzisjj773@ckyl7a2kpa62>
- <407fc8ff-8058-4ab4-a822-7a5e47e5b301@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <407fc8ff-8058-4ab4-a822-7a5e47e5b301@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87pLd1xLMzi1T9HiwbxtbBbft1xn
+	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
+	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
+	HpuX1Hv0bVnF6PF5k1wARxSXTUpqTmZZapG+XQJXRtf+XsaCQ+IVrY/WsDcwThXuYuTkkBAw
+	kfjffoili5GLQ0hgBaNEY/caJpCEkMAXRolzKzwhEp8ZJW5dn84E03Hv6V4miMRyRomrJ3ey
+	QzitTBJTTreAVbEJGEg8eLOMHcQWEdCTaHzfBtbBLHCTRaK78SRYkbBAoMSsz4/AilgEVCXO
+	PLnLCmLzCthJ7OvcywaxTl7i4prnYDYnUPzbvK1sEDWCEidnPmEBsZmBapq3zmYGWSAhMJlT
+	4v2xi+wQzS4S9+dMYoGwhSVeHd8CFZeR+L9zPtQ/+RIzNr8HquEAsisk7h70gjCtJT6eYQYx
+	mQU0Jdbv0ocodpT4e2MTM0QFn8SNt4IQB/BJTNo2HSrMK9HRJgRRrSpxfM8kZghbWuJJy22o
+	lR4SPZdXsk9gVJyF5JVZSF6ZhbB3ASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMAk
+	d/rf8S87GJe/+qh3iJGJg/EQowQHs5IIb+zGq2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT
+	5FOFBNITS1KzU1MLUotgskwcnFINTOHrj/f7h9w2vKefbTJxr5TT57ZUvd49x4wS+BkfPp7R
+	XfK30TuXt8rz2+PDL3emJi30TYnWUGt8sdPc7yobf6itf+OxZ2tyk7ZFuPmsXxhRofVp9+ea
+	jBOvHRbU2oqsSkm4fTfctPhuldTEh0f+2rw/arFcv+yC3utpb1LO7fxiaCwR3nL29YGvShm7
+	U9zEJ0bvUeeZ27R7Vu7JqdbvN20LWndtv8K+b5uMQ11fCJ/6Y2h6ZecE/Tr1xxpLWjbYtehp
+	m7fbVQbPr8ooNfCQsnlu/nljbc7vVSfUD+k2/FKxnf3v79TVJ8Nq/M8oH0o2+tulm9VQxJps
+	tmkH5wmxWWmS63bIB85+6pf4Zbm1uhJLcUaioRZzUXEiAKAbgrbhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsVy+t/xu7pLd1xLM3h4l9XiwbxtbBbft1xn
+	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
+	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
+	HpuX1Hv0bVnF6PF5k1wAR5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
+	TUpqTmZZapG+XYJeRtf+XsaCQ+IVrY/WsDcwThXuYuTkkBAwkbj3dC9TFyMXh5DAUkaJIyv3
+	skEkpCUOf5nCDmELS/y51sUGUdTMJPF0xU+wIjYBA4kHb5aBFYkI6Ek0vm9jArGZBZ6zSFzo
+	tgCxhQX8JeYvmAIWZxFQlTjz5C4riM0rYCexrxNmmbzExTXPwWxOoPi3eVvBbCEBHolXG/Yz
+	QtQLSpyc+YQFYr68RPPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232EivODG3uDQvXS85P3cT
+	IzAmtx37uWUH48pXH/UOMTJxMB5ilOBgVhLhjd14NU2INyWxsiq1KD++qDQntfgQoynQ3ROZ
+	pUST84FJIa8k3tDMwNTQxMzSwNTSzFhJnJftyvk0IYH0xJLU7NTUgtQimD4mDk6pBiYlfoat
+	3/3PsrztuzDx21YO5W3X9nQVzhKXjBEyP7h5YmJx27sdT/TDRZl0Xi3m/7ON0XWVfv3f8tab
+	r9U/yz17+mBtJ2+h7JUvdyq2Fgr/XDnzt/jKtpC5New8auxnFGPuxGzPN5l/Y4P6gsXaK0Pu
+	8ldOqu1fH5p8wC3a9MWEmUufyxebf3qrZz2vt2hOxK6CpiuiEm0ZcVInsu91H3qp73qt8FAM
+	x1t9P5tz+k7/+ufOnvljsf7X3fLCpm6yU2fsU2qzX2dXnMZR0LO/5eMPjWsWq2fe+CN77pjF
+	fWdrg4UHQ0/yO0155OPJW3dV/l/zS6b6uIRa0U0eohxJ9kdCbsnbfQp9PO+q6nnf9/uUWIoz
+	Eg21mIuKEwHPSSp0UgMAAA==
+X-CMS-MailID: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+References: <CGME20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e@eucas1p2.samsung.com>
 
-On 03/09/2024 09:17, Jingyi Wang wrote:
-> 
-> 
-> On 9/3/2024 3:13 PM, Krzysztof Kozlowski wrote:
->> On Tue, Sep 03, 2024 at 02:21:31PM +0800, Jingyi Wang wrote:
->>> Use "num-banks" property to indicate the actual num of banks for
->>> errata.
->>>
->>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->>> ---
->>>  drivers/soc/qcom/llcc-qcom.c | 15 ++++++++++-----
->>>  1 file changed, 10 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
->>> index 8fa4ffd3a9b5..3fb45e625d82 100644
->>> --- a/drivers/soc/qcom/llcc-qcom.c
->>> +++ b/drivers/soc/qcom/llcc-qcom.c
->>> @@ -1275,12 +1275,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
->>>  		goto err;
->>>  	cfg = &cfgs->llcc_config[cfg_index];
->>>  
->>> -	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
->>> -	if (ret)
->>> -		goto err;
->>> +	if (unlikely(!of_property_read_u32(dev->of_node, "num-banks", &num_banks))) {
->>
->> Drop unlikely.
->>
->>> +		/* errata: get num of llcc banks. */
->>
->> Huh? What?
->>
->>> +	} else {
->>> +		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
->>> +		if (ret)
->>> +			goto err;
->>
->> Sorry, but what? You can read it from hardware, but you add DT property?
->> No, that's just wrong. Why commit msg explains nothing about reasons and
->> problem you are solving?
->>
-> we need the property because there is hardware errata on this SoC, regmap_read get wrong num.
+Hello :)
 
-That's what compatible is for.
+> May I suggest to convert this function to a specific soc ops to be put
+> in the struct exynos_tmu_data ?
 
-Anyway, you did not explain the problem but just send some code. All
-your patches in this and all future submissions must explain why you are
-doing this. What you are fixing, why you are introducing something.
+Like this?
 
-Best regards,
-Krzysztof
+static void exynos4210_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
+	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+}
 
+static void exynos5433_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
+
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+				    EXYNOS_TMU_TEMP_MASK;
+		if (!data->temp_error2)
+			data->temp_error2 = (data->efuse_value >>
+					     EXYNOS_TRIMINFO_85_SHIFT) &
+					    EXYNOS_TMU_TEMP_MASK;
+	}
+}
+
+static void exynos7_sanitize_temp_error(struct exynos_tmu_data *data,
+					u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+}
+
+static void exynos850_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> EXYNOS7_TMU_TEMP_SHIFT) &
+				    EXYNOS7_TMU_TEMP_MASK;
+		if (!data->temp_error2)
+			data->temp_error2 = (data->efuse_value >>
+					     EXYNOS7_TMU_TEMP_SHIFT) &
+					    EXYNOS_TMU_TEMP_MASK;
+	}
+}
+
+Or maybe we could put tmu_temp_mask and tmu_85_shift in data instead,
+and have one function like this:
+
+static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+{
+	data->temp_error1 = trim_info & data->tmu_temp_mask;
+	if (!data->temp_error1 || (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & data->tmu_temp_mask;
+
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> data->tmu_85_shift) &
+				    data->tmu_temp_mask;
+		if (!data->temp_error2)
+			data->temp_error2 =
+				(data->efuse_value >> data->tmu_85_shift) &
+				data->tmu_temp_mask;
+	}
+}
+
+Thank you,
+Mateusz
 
