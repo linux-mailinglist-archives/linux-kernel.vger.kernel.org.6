@@ -1,262 +1,222 @@
-Return-Path: <linux-kernel+bounces-313619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD7096A7AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F4496A7AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6B41F250CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563381C241C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FC01DB94B;
-	Tue,  3 Sep 2024 19:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7111DC729;
+	Tue,  3 Sep 2024 19:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elNm8rla"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g+5gdUMF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1DE1D58AA;
-	Tue,  3 Sep 2024 19:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392607; cv=none; b=ogomeFu0ah9VEifdDWu+Xjfu/m9p6j/TKrlhhSFeQ3PBySJ2YmfxRq97NEP90GTb0e1h0gja5N74HPurMq90eBQBLEYtmxp6ETthxKuOvl2X7S2VxbOI1cC3xUFNYLXFSMj7J4fVlKyl0i4LBa7VMTi6gdi48JPkXjjDgKRqTSw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392607; c=relaxed/simple;
-	bh=ak/7Xp3m4pxkz2pP3Zn59wCuaBHPoWVar2RPr0X1K24=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=COJC0iCJ5rwqlph3raFubQn+QclqcipW05UGGThK8GWBKGhcR9MDxVCHfUk0ZAg/HEbYbQkfC2Bxav/FIzabcew04oIagmmxebMOT8SFOwMa8vHnRReVj35R+9l75LoB+GSCp0TNIyngpHIbR8OTXXFF2hGdkHyDoqII5vtbGyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elNm8rla; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-201d5af11a4so50055405ad.3;
-        Tue, 03 Sep 2024 12:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725392605; x=1725997405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2XV8JTTrQ+n17koZUnnvATzf/oJhYK0EfQN8SyVUPyk=;
-        b=elNm8rlaP/sq4ewlh9jBGpchrh4PcTSzTyC61P9/nZ3elvHFl8Hi/3yeDjJPrqp/5z
-         QqvDB1TjvPPuMWFokAYeOi5PR88HE6VWH7E6eYeA0sdruSvmj0Iuc5yIp0ogAHNfXCSw
-         Q2JTpQ4UlrF6AvCVe4MRiSzwui9O8MILRYtpf2yJ622UNQNyY6B3IFw7MD9qeiX/0kWL
-         yqG28xn/ylFQgZf4JNFKFKzSxQq6w0/KJiQaz02eg2omC3+1UXXD1tkkm06Q6oQgE9vE
-         n/9JWDW6mbHB+pLDzDubLezxt31VOGRfq55kkU3ZTpuTlzeqDae++LGf386manK3VSaO
-         YLDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725392605; x=1725997405;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2XV8JTTrQ+n17koZUnnvATzf/oJhYK0EfQN8SyVUPyk=;
-        b=YJjUV1wzZOE+wTm/1rQFMm3euZtRNAgVkIvYKf9Rbmhkib71Wig6Ax1EqopU378QZA
-         dihZgjRG8evegIZaePZBdBdMm4V2jfn7q+DgfR0zvcwYU4xcaCVbBDxEdSVjFo7VpeZm
-         dp2yw+foMnITQ7ln/xN34GQEuvLRCdQfoSK7poQU9TFKIlX6OKIaoKTUD+RSsX02iUG2
-         u0ZbiCcKZOLgFEsm3eWlQGszu6Zn6Of1aBgffbGjwOyX5SlDrY/C0MwD333W5v4MuNDG
-         +gORhlcuEb59MUYBy1+ldC0KS5SjO5QevYYfnWkhSZfgu1XD1jHw+rseW/ITmVbF0PbH
-         CV+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU29XP4DsDIPuqj529UdBtU2ifgwF9xoLVZD6MBCzj1ON5C1OEm+i3SWMWyXFaznbkvm6kbajiCOqql9A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLe9aMixjsfGlH+ZFcvJDzhjgStdLgNSaXUisV7O0AtajBfbO8
-	ZjWml38IMewiyVSAtX4KrXEENfCO6ADKefg0PcHI7AVH9MwcYHigI7I8L5DG
-X-Google-Smtp-Source: AGHT+IEji7zv5bJzaMjoJngvtD/kqPauLyrBVTIfFanCQoj6bha8Dh72TzqSsKeF9y+TMSZyla5IJA==
-X-Received: by 2002:a17:903:2c7:b0:206:aac4:b844 with SMTP id d9443c01a7336-206aac4ba88mr22123545ad.6.1725392605437;
-        Tue, 03 Sep 2024 12:43:25 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea52a8asm1979505ad.182.2024.09.03.12.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 12:43:25 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com,
-	horms@kernel.org,
-	sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: [PATCHv2 net-next 8/8] net: ibm: emac: remove all waiting code
-Date: Tue,  3 Sep 2024 12:42:44 -0700
-Message-ID: <20240903194312.12718-9-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240903194312.12718-1-rosenp@gmail.com>
-References: <20240903194312.12718-1-rosenp@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728F1DC723
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725392621; cv=fail; b=mjavJrSHY8rRXxqvnMMqilnEhm0lqm1Dm7BDNPU5mowdSxwXr+l93bs5qxriqA5FyVLssRygnexuDmev9Bj1SzFmK/bptyij224CA3kLIGYDSvxsjsIsG7MfjDC6j45n4iqk4CtbBA8pF1gKLTn6G8cnpFk+aQbA8AIZd+VVWDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725392621; c=relaxed/simple;
+	bh=P7R7KfrR54iE5nKxro619+l0O7utc2K8NLDXFfQ/WtM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=honfw3NNFeseWJHhS69GmHI/Z67TZGOHiQeG8xwGW9U1biBdioagrhitIZRthv+DNpaGcDWwu6QtKSgPq8UogkMiwwRB2bb+iCkHpyUTbCbwiz8PBF9k6uZ05HEvEs8FU9EhICkywOTNU/gS0vXYkWZs3KnGiTfEj+nhPICQlXA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g+5gdUMF; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725392620; x=1756928620;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=P7R7KfrR54iE5nKxro619+l0O7utc2K8NLDXFfQ/WtM=;
+  b=g+5gdUMF2l18EZTbaXDmFBN18FwahPQRT7cbFKDyNeanV0d9I6yUJOQo
+   cllGKxrb2hcRvblDhsaVyDxKJ0WLBvRWKVccT2B3rsylThgb2C1NVKorg
+   XjX++clwZlN2PGKiWeWGNF55j2G7sycNtXUQtp713hQJzA3sOIf3w21sw
+   pLK+9DjvLCElsHc1Hwy9HrifI8JZ1wOfzVpBmwwc4YOia9tfWX4iOK6uG
+   vDgymdrVWeRl0JP/x3Soc2JsVkYSt4GqGSPd8qcAy4r99kH31teqNqTxi
+   mulvJPWXROKUEtB4uUp/s1qPyrXreCEzggvaCk4xrMRhACWDx7iHf3DDH
+   A==;
+X-CSE-ConnectionGUID: wObS32mZRim2I3N6YRJsvQ==
+X-CSE-MsgGUID: vqcNTCq+R8a2LyhGyJmESQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35408422"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="35408422"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 12:43:39 -0700
+X-CSE-ConnectionGUID: X/RZMPwnTvy+mPwIT8JCQA==
+X-CSE-MsgGUID: KWUxmCxNSpiv6WvMLCM7+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65381286"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Sep 2024 12:43:39 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 12:43:38 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 12:43:38 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 3 Sep 2024 12:43:38 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 12:43:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uzWIwelYBrRmMX0n4SW992foPt54DLNefBIChLGqsS7dmAK53+xshJSNXZW5o89hILRXak3vVs5o7BRRY4EdXvc+7g25XmVl9UsjnCAQV4BSah6RuZkgLwteYCFf3SInrW/T2Jjd4zgKPzBEKlqTOijwaCZ/MYQ9+EjsPfxa6SzKfhyCH0PGoKfW1OZoW4Q1IzW3F/Hv+8NFZvpIefwAKvpgf0phOJmg8ktDnTNO8hLwi6BMbMjB1vO1JEH/2lhyEADvhmG2K7z6H/jZwuwwPp2pIe+BL7DgIKhzsuuu9P9VAsgrDJhRtTiySeQujrF/EiA7kPqAlJ7VqrK8Jg5h6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P7R7KfrR54iE5nKxro619+l0O7utc2K8NLDXFfQ/WtM=;
+ b=mbQFonTyQ3bOnCMz00jWCKme67GYz1bPZUKGwNXH228tMp+ggoCIJ6s/DVuYrhhwxPWJv+OZU8U7Xx5ZOLjLucocW9+n6sbZTZnp8ls9w2vKa+G9UpSC2nwLe7AJ9En61DRzQ3QgUks3H6EZBl8v4mIbfDhK3w5qFkWgNUdAc247GID66PPpXimx6C39Dd/5F9RucQnswl2F0dhlkI5Dq+vpNUCLHMli60EQpiQdSzgYJyzXh6SUdKZcqiqCo7yIBgfmlJgqLQeW/PKZwq+9iTJXOS1kRelwfZh1bUmwreKoQHX9a2Bujku47eJrfstReC6KyG9omLYhwse01lfq4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by DM4PR11MB6189.namprd11.prod.outlook.com (2603:10b6:8:ae::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Tue, 3 Sep
+ 2024 19:43:35 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 19:43:35 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>, Chanwoo Choi <cw00.choi@samsung.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: RE: [PATCH v8 0/3] Final pieces of Intel new families support
+Thread-Topic: [PATCH v8 0/3] Final pieces of Intel new families support
+Thread-Index: AQHa/ievli1MwvGgF0mLTuludertk7JGcimAgAAEHbA=
+Date: Tue, 3 Sep 2024 19:43:35 +0000
+Message-ID: <SJ1PR11MB60832E477464FFA09B248CE4FC932@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240903173443.7962-1-tony.luck@intel.com>
+ <20240903192655.GCZtdi_w9xN6z9hPGV@fat_crate.local>
+In-Reply-To: <20240903192655.GCZtdi_w9xN6z9hPGV@fat_crate.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|DM4PR11MB6189:EE_
+x-ms-office365-filtering-correlation-id: b4f95bec-9f32-46d6-8374-08dccc50b331
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RWY1dU91VWRnaUQ5UUowRG8yYXBtNkNrR2NNdUM3eUNZSjVOT0Z4dW5mUCtZ?=
+ =?utf-8?B?b1gwM2wyUjdyVFRISFFCYTBXb2xnaVNCM2lFN0p5dmk2WHhWb1hiYUdhUXVJ?=
+ =?utf-8?B?ZklIL0VtbkJ2VFE5amJmeFc5Y0VXM1NZMGtRd3VieWV0NE03VHRGc2JXYjVa?=
+ =?utf-8?B?Njd1SHNUOTFBSmJvcXluZHhzanlMbWJRYXh3YkFKSWM5aGI4aERGSzd4VFdt?=
+ =?utf-8?B?R0dBZ3loR21aTEYxQWQxek8wQlVDc0lvZEtrVitlYWJCQ0VOWmg1ckNWd3dy?=
+ =?utf-8?B?L29zMVhyaEdMTWRzS2IwTXZNU0dTWWtWOWlFaEhvaDd6T0xxMk9PR0kzRmww?=
+ =?utf-8?B?S3lZS3hJdzhaZjUwZjNZVXkwYkFnenp3NTJaRGd0U0htaXR6a1A1eDdTM1dm?=
+ =?utf-8?B?SmNlbHozZW1oRVhSbmNhQUswMkFRNWxaNkhMV0NMdk1KOWx4U1Z3TzF2dzdw?=
+ =?utf-8?B?YTREaWUyZ0wwMDF2NUZkN1hiR2t3TVp4TTBualFTUjJhSW5WUmdnTFVqMnVU?=
+ =?utf-8?B?NkY4WEcrWmlmY1VwM3FaN29pMmlrbjhITmVuWWtZQVllbmxWdGc3NnBGcjI4?=
+ =?utf-8?B?WVlDdk9LeHU1aE1kb2pvQk8xWXZ5K0lQU0Z0M2czbzFQSlRKeVZLRnpFVGhT?=
+ =?utf-8?B?THJhUUw0UEtianBVWStNZ1VxWmpBTFJSOWJjanFBcndQTjdHYlB1UEFFeFN1?=
+ =?utf-8?B?aCs5NDJyd1NCODl3S2RBRkRlbFptWGpqY081SkRqbDFwanhncHA3V0QvOEJn?=
+ =?utf-8?B?UkVQUnJCRXVHVnJQK3B0L3lybTRNbnVodVVRVDNveDhBVk43cVVQRGxBM1lt?=
+ =?utf-8?B?N0dkc0Urb09KclRmUlJ5SDRBRUhOcjBlMDlmSGR4b1MyS0gyVzU2Rk42VHk2?=
+ =?utf-8?B?dUt4ZHpWZVN6VldRT0ROK1YwYzQ4ZFhLbmo5V1cxbW5Wb1NEQ05DZTJ3dzF6?=
+ =?utf-8?B?NEoyeU9zeXJtdnVlTGw2ZzJ3Zk83Z0xQNEFFTGk5NWtqUmlZUUFpdmtIeE50?=
+ =?utf-8?B?V08vRGI3bGpWdnhrT3JBTXM3Tm9qb0Qzb1BXUDBFYW85cXZrWVRjVVZVZ3pZ?=
+ =?utf-8?B?Qmh1MXUwWkNRamNjaGpJdlZtYVlLWTVvWTdaS1J4eUNxdDZDd1RkZ2szdVFC?=
+ =?utf-8?B?VmFoRnNKYWJ6M1JTakxwdDExN0tUczd2N21jc0poQnM4UkUzT3RzWGRHZ1dC?=
+ =?utf-8?B?ZnRMd1BPWGtDQnJjS1NDQy9keENGYkpJdFE4a1hCVDJRbWJzT3VFaDJQcWZk?=
+ =?utf-8?B?MnhsTTc5UHk2MTRUMElISkpWUjJsK2tqSXdkMUVMWHJaVkRMVU9rTVhlYXk1?=
+ =?utf-8?B?MHdQekhUVmUvRUU5K05KMCtjTkMwRVpDTFRFVUtya0g3NENEenQrd2RMLy9k?=
+ =?utf-8?B?clVMOGd3NHhxdURkQ3J4ekN0WFdNeFpNVStWU1ZKTTR4dTVic0RTQkxEbko5?=
+ =?utf-8?B?RHNleHFody9aSDBaVld4RmxTZFpkdGdOeWZ1WDl0MCt0b1lMeHVZekZIR1FJ?=
+ =?utf-8?B?WmdVRHNVNllBMHhmckxNZlh6MkhWYitLK2ZDb1VZcHFiczBaTXpYNXlaUWpS?=
+ =?utf-8?B?ck0zTmxSd1BYWkRjbng4VGJUeDBjdXFsaWFqWmFPb09WSEtKRmF4OXZ4MzNu?=
+ =?utf-8?B?Q2JvbzZSY3locUFHQ2ErdkVkdVo4Y2h4UURoeWk5VFd3cTZ5ZTRpS0p1QnFI?=
+ =?utf-8?B?NERmbjJUUlVKZFlhK1B1WERKdTZ0TDJRR0VzZnhJaVMzVGtYN01BdExOMkdU?=
+ =?utf-8?B?UjV4L0pBSXFVd21EcWdhUm9ad1ZkV3k5amRBTE4yZWdGZHBUamxjTlRzZURM?=
+ =?utf-8?B?aVRLTEdYT3dydFNzcDNTb056VDlhcnVpME5xU2dFVHZNT01tcjVDSEhNcU9T?=
+ =?utf-8?B?RGo5cDNiTExCaXh5Qi9Rand2dkNFTm9DWWJ2UHpvekJ1QkE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MFlDYnpEeG9keS9heGg1bXBCSStnVVRwa0NtT09VQnMrUTRpV2tFdmk5SFFo?=
+ =?utf-8?B?V3pFTUF1OFkwemZuMUsxS1luaEVhZFRDZGhWUHBuSlVLdVduSGI5V0QrSEh5?=
+ =?utf-8?B?akxxeDVlNHBnVEdhRDhsYVZ6clhoMlNHcE92MldwRjJNWmVXSVpCMElLd2Vn?=
+ =?utf-8?B?NnpvY3FwQ2NlV0lyREgvZmJyS05GcGFFaGNuSThqSUVUbmgvd1RzRFdrRDlL?=
+ =?utf-8?B?VkppMjAzNllKZEh4c0IrSUluWDBNN1RNOXJDbjBSYWovVi9rTmk3OUd1b21I?=
+ =?utf-8?B?dFN1dGtUUE9oZGl1YUw2TXZDby9nVngrNEtzWmJvRWxTcktBN0ZJMGRGaWUw?=
+ =?utf-8?B?ajNUTkJkU1pQdXRvYkMvdkVBckE0M3FUKzAwTlpwV3lydlZYQjhhUDV5cmZI?=
+ =?utf-8?B?YzhMQWd4QjRhb2U4VVlBbVBmY29ocUFFMmdBMGhLVW80S0pFd1Nyeng1S0Z0?=
+ =?utf-8?B?MnRpd2s2dWdqOGlxOW5IWU5mRHZTMC9oYUFFdjFiMXFHMXJtekxEM2V5V3Z2?=
+ =?utf-8?B?V3pXMUh5WmxPNEd5QUlRbVZkbEQ0eW1CNnQ0cnNvTHJ4eWZVTW9sY0krOUVT?=
+ =?utf-8?B?bFFab3hqcHdYdnE1T3lYcWoxakNrMURNWkZ5UTk3ci9Sd0RMVzQrOVJGdUhM?=
+ =?utf-8?B?MFR3QStkRHlMNk54SG1xenlkVUVia0RETFYrSzhBREZGRkxURmxQelJXREx2?=
+ =?utf-8?B?MVo0WlV1NmpyMUdPZ2FHMFkxLzlKZ3hGSThndkpCVDRXVlpnNXNLM21LaUZZ?=
+ =?utf-8?B?T2FrN25JYnBwQjczL3RsNWd1Y05mamVMZ0VkQmNSSks2K2NjNzF3d3BqNGNv?=
+ =?utf-8?B?ZjN6ck5WRXFOSm5wUVRRMDhvRTdJcE1pYkNlN1FlbUdUUFdrMXhXSXZneVJI?=
+ =?utf-8?B?ZVdWRTNoMG9tQndiUDlRaVQyMXlZU1puTWc0Z2RpaUlrNmhQVEEwU2tHUmRn?=
+ =?utf-8?B?ZVUzSDlrVU5HbkRZNHVJR3RJVlVyTmtIMEgreXRsbXd5NVVXVFBnOUJrdTdk?=
+ =?utf-8?B?OVNvSW9nb3BobVRuSDRRKzQyWTUzdFdxZ1AzN1FqZGFJS3dJeGFtNnRtSDZO?=
+ =?utf-8?B?Vktsc1pSLzJDUnN0ekNrWSt5OGllY0NYZmRqT2xGRVJJeWo5L1V1enNLWFQ2?=
+ =?utf-8?B?d1dOaXNiRjlaQk9IMDNBdVI5MVdudFBYbU8rL1l3d2ZlZ1RkTDM4NThFblRW?=
+ =?utf-8?B?cDJlblNCVE5ReDNZeThaQW5HdWxIRHFoWEd2cGNXcVE3NEtTNDF3VDhYbWRJ?=
+ =?utf-8?B?M0hucWQ1Z01YejVtcGNvZnBmMGNvZWY2Mm1adGJ0ZnN6Uy9iMDAxK2ZsVXFa?=
+ =?utf-8?B?UkVSV05oN3pOUEtJcFB3WUtvSGxFMkM5NkprVkNKQmhIWWh2SEN0ZzZJdFNO?=
+ =?utf-8?B?MFFKUW1WTUVUWTNFL0hwOWxodnAvK1dTMGJmM1U3UnEwSmNhVVRIRVBMNUQ0?=
+ =?utf-8?B?cmdON1AzeE1IL1dMMEhxSEEwZXJpdGRQM1cyaDk4Z05IM1Z3MU5FR05QV2s1?=
+ =?utf-8?B?RjUwUno1N21lYXBjZFp0cnZyTmV2cFIyVUNBZExoeFp1MTJZakhiWVZLM2I4?=
+ =?utf-8?B?NkZ0cjVkaWNLajN4QWUrMkgxYWNHQUxJL2t3RDFHeTVSUUJpVnlCb3VWMzcy?=
+ =?utf-8?B?Q2dJRW80dElVK0dsSXE1OXUwNThKdHQxemNVbjBCZkdxejhuYzFkVnZRK1RT?=
+ =?utf-8?B?RmgwZjNkZUJCNzRvNzNJMGV4OUpMR1N2dFRUc3VxeTh3WFoyZGp0V1hvRjhC?=
+ =?utf-8?B?a0d0Ui8xZXpKSGVKUi9DRXU0R2o5UG1hdFMxaDhYQldsdFNOUFN0bndVdDc4?=
+ =?utf-8?B?T0VBUE1zZWUrZU9aZU9iQ2RFVlYwbkFlWm9VLzhUbk1zREZIVkF1cFIyNG95?=
+ =?utf-8?B?dzYrN2o1L3dra2dyK1ZnN0I4K1E5ZmJ0S2MyMVZrYkJvZWIzSEZGSS8rZ2xC?=
+ =?utf-8?B?ZnNtU2dIQWpnd2lDVkJkWWw4RGxWa3dGalhzZUYxeGJEQWY1Q0h1WExQdzRM?=
+ =?utf-8?B?K1VWanF6eUtsUTBTb3R1NG5HL0pnWW4vQXhpK1ZPOWVGNE1mSisrYkw1UWlq?=
+ =?utf-8?B?eWdETGc5V0diK1hXeWhpVzd0MXBiTW9ybGN6eVNROXFuTkNBU3VDNDZSTGR6?=
+ =?utf-8?Q?RhXzubjbcmY4jEphAUY3p4Sot?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4f95bec-9f32-46d6-8374-08dccc50b331
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 19:43:35.5464
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HqTCJvUcoxKq85Xh1XkkNXjRMQLNvT+N/GtJDyL+dNlPxPJeWHRHtAKKvK+0qXLe27qLK8Di21mPlAQWyAfjsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6189
+X-OriginatorOrg: intel.com
 
-EPROBE_DEFER, which probably wasn't available when this driver was
-written, can be used instead of waiting manually.
-
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/emac/core.c | 77 ++++++++--------------------
- 1 file changed, 20 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
-index 6db76eeb4d9b..21401a8cb32c 100644
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -32,7 +32,6 @@
- #include <linux/ethtool.h>
- #include <linux/mii.h>
- #include <linux/bitops.h>
--#include <linux/workqueue.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-@@ -96,11 +95,6 @@ MODULE_LICENSE("GPL");
- static u32 busy_phy_map;
- static DEFINE_MUTEX(emac_phy_map_lock);
- 
--/* This is the wait queue used to wait on any event related to probe, that
-- * is discovery of MALs, other EMACs, ZMII/RGMIIs, etc...
-- */
--static DECLARE_WAIT_QUEUE_HEAD(emac_probe_wait);
--
- /* Having stable interface names is a doomed idea. However, it would be nice
-  * if we didn't have completely random interface names at boot too :-) It's
-  * just a matter of making everybody's life easier. Since we are doing
-@@ -116,9 +110,6 @@ static DECLARE_WAIT_QUEUE_HEAD(emac_probe_wait);
- #define EMAC_BOOT_LIST_SIZE	4
- static struct device_node *emac_boot_list[EMAC_BOOT_LIST_SIZE];
- 
--/* How long should I wait for dependent devices ? */
--#define EMAC_PROBE_DEP_TIMEOUT	(HZ * 5)
--
- /* I don't want to litter system log with timeout errors
-  * when we have brain-damaged PHY.
-  */
-@@ -973,8 +964,6 @@ static void __emac_set_multicast_list(struct emac_instance *dev)
- 	 * we need is just to stop RX channel. This seems to work on all
- 	 * tested SoCs.                                                --ebs
- 	 *
--	 * If we need the full reset, we might just trigger the workqueue
--	 * and do it async... a bit nasty but should work --BenH
- 	 */
- 	dev->mcast_pending = 0;
- 	emac_rx_disable(dev);
-@@ -2378,7 +2367,9 @@ static int emac_check_deps(struct emac_instance *dev,
- 		if (deps[i].drvdata != NULL)
- 			there++;
- 	}
--	return there == EMAC_DEP_COUNT;
-+	if (there != EMAC_DEP_COUNT)
-+		return -EPROBE_DEFER;
-+	return 0;
- }
- 
- static void emac_put_deps(struct emac_instance *dev)
-@@ -2390,19 +2381,6 @@ static void emac_put_deps(struct emac_instance *dev)
- 	platform_device_put(dev->tah_dev);
- }
- 
--static int emac_of_bus_notify(struct notifier_block *nb, unsigned long action,
--			      void *data)
--{
--	/* We are only intereted in device addition */
--	if (action == BUS_NOTIFY_BOUND_DRIVER)
--		wake_up_all(&emac_probe_wait);
--	return 0;
--}
--
--static struct notifier_block emac_of_bus_notifier = {
--	.notifier_call = emac_of_bus_notify
--};
--
- static int emac_wait_deps(struct emac_instance *dev)
- {
- 	struct emac_depentry deps[EMAC_DEP_COUNT];
-@@ -2419,26 +2397,25 @@ static int emac_wait_deps(struct emac_instance *dev)
- 		deps[EMAC_DEP_MDIO_IDX].phandle = dev->mdio_ph;
- 	if (dev->blist && dev->blist > emac_boot_list)
- 		deps[EMAC_DEP_PREV_IDX].phandle = 0xffffffffu;
--	bus_register_notifier(&platform_bus_type, &emac_of_bus_notifier);
--	wait_event_timeout(emac_probe_wait,
--			   emac_check_deps(dev, deps),
--			   EMAC_PROBE_DEP_TIMEOUT);
--	bus_unregister_notifier(&platform_bus_type, &emac_of_bus_notifier);
--	err = emac_check_deps(dev, deps) ? 0 : -ENODEV;
-+
-+	err = emac_check_deps(dev, deps);
-+	if (err)
-+		return err;
-+
- 	for (i = 0; i < EMAC_DEP_COUNT; i++) {
- 		of_node_put(deps[i].node);
--		if (err)
--			platform_device_put(deps[i].ofdev);
--	}
--	if (err == 0) {
--		dev->mal_dev = deps[EMAC_DEP_MAL_IDX].ofdev;
--		dev->zmii_dev = deps[EMAC_DEP_ZMII_IDX].ofdev;
--		dev->rgmii_dev = deps[EMAC_DEP_RGMII_IDX].ofdev;
--		dev->tah_dev = deps[EMAC_DEP_TAH_IDX].ofdev;
--		dev->mdio_dev = deps[EMAC_DEP_MDIO_IDX].ofdev;
-+		platform_device_put(deps[i].ofdev);
- 	}
-+
-+	dev->mal_dev = deps[EMAC_DEP_MAL_IDX].ofdev;
-+	dev->zmii_dev = deps[EMAC_DEP_ZMII_IDX].ofdev;
-+	dev->rgmii_dev = deps[EMAC_DEP_RGMII_IDX].ofdev;
-+	dev->tah_dev = deps[EMAC_DEP_TAH_IDX].ofdev;
-+	dev->mdio_dev = deps[EMAC_DEP_MDIO_IDX].ofdev;
-+
- 	platform_device_put(deps[EMAC_DEP_PREV_IDX].ofdev);
--	return err;
-+
-+	return 0;
- }
- 
- static int emac_read_uint_prop(struct device_node *np, const char *name,
-@@ -3084,12 +3061,8 @@ static int emac_probe(struct platform_device *ofdev)
- 
- 	/* Wait for dependent devices */
- 	err = emac_wait_deps(dev);
--	if (err) {
--		printk(KERN_ERR
--		       "%pOF: Timeout waiting for dependent devices\n", np);
--		/*  display more info about what's missing ? */
-+	if (err)
- 		goto err_irq_unmap;
--	}
- 	dev->mal = platform_get_drvdata(dev->mal_dev);
- 	if (dev->mdio_dev != NULL)
- 		dev->mdio_instance = platform_get_drvdata(dev->mdio_dev);
-@@ -3189,10 +3162,6 @@ static int emac_probe(struct platform_device *ofdev)
- 	wmb();
- 	platform_set_drvdata(ofdev, dev);
- 
--	/* There's a new kid in town ! Let's tell everybody */
--	wake_up_all(&emac_probe_wait);
--
--
- 	printk(KERN_INFO "%s: EMAC-%d %pOF, MAC %pM\n",
- 	       ndev->name, dev->cell_index, np, ndev->dev_addr);
- 
-@@ -3225,14 +3194,8 @@ static int emac_probe(struct platform_device *ofdev)
- 	if (dev->wol_irq)
- 		irq_dispose_mapping(dev->wol_irq);
-  err_gone:
--	/* if we were on the bootlist, remove us as we won't show up and
--	 * wake up all waiters to notify them in case they were waiting
--	 * on us
--	 */
--	if (blist) {
-+	if (blist)
- 		*blist = NULL;
--		wake_up_all(&emac_probe_wait);
--	}
- 	return err;
- }
- 
--- 
-2.46.0
-
+Pj4gQWxsIGV4Y2VwdCBvbmUgb2YgdGhlIHByZWN1cnNvciBwYXRjaGVzIHdlcmUgbWVyZ2VkIHRv
+IExpbnVzJyB0cmVlDQo+PiBpbiB0aGUgdjYuMTEgbWVyZ2Ugd2luZG93LiBUaGUgZXhjZXB0aW9u
+IGlzIGEgb25lLWxpbmVyIHRoYXQgaXMgaW4NCj4+IHRoZSBtYWludGFpbmVyIHRyZWUgYW5kIGxp
+bnV4LW5leHQsIGJ1dCBkaWRuJ3QgZ2V0IHB1bGxlZCB0aGlzIHRpbWUuDQo+DQo+IFNvIHdoZW4g
+aXMgQ2hhbndvbyBwbGFubmluZyBvbiBzZW5kaW5nIHRoYXQgb25lIHRvIExpbnVzPw0KDQpJIGRv
+bid0IGtub3cgd2h5IGl0IHdhc24ndCBwdWxsZWQuDQoNCj4gT3Igc2hvdWxkIGhlIGRyb3AgaXQg
+YW5kIEkgcGljayB1cCBhbGwgdGhyZWUgYW5kIGZpbmlzaCB0aGlzIGNvbnZlcnNpb24/DQo+DQo+
+IEhtbW0uDQoNClRoYXQgd291bGQgYmUgc2ltcGxlc3QgYXQgdGhpcyBwb2ludC4NCg0KLVRvbnkN
+Cg==
 
