@@ -1,378 +1,228 @@
-Return-Path: <linux-kernel+bounces-313301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D585196A371
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:57:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A736596A373
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED9E28609D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:57:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D3EAB280CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20651891D6;
-	Tue,  3 Sep 2024 15:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79147188A03;
+	Tue,  3 Sep 2024 15:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGsS9EmW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j0snegrh";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tzCN6Ymn"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23763187325;
-	Tue,  3 Sep 2024 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379067; cv=none; b=oJcbCca4yElJXxHE5HuIban8oNbWdejX5371unukgilGN7NXDW5IxwgsSNfgeqrxG8RC1FRk7zS1RKljO8bZPiI8vK5+TSnsr2g7Fv52xYjkTADTi72uydS3TI5dqy1rNPoy3wtzidWCmahTrkN7oYvhL9efTURaMypEZAdRJjA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379067; c=relaxed/simple;
-	bh=wAIftKZHmjENk2OO1vCfl+gwtu85AyNWPBUt1PmdjEY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dEB6BssI6zZyBZO3xFwNxsLHO5XV4v7kPj5TZjNrmsQ24T0a8oufaHHtWPTNWJdD7X7frV3zaagEFv23MaSm5+MTFxLixGKlsYlm8RqKKerwSNVDokaunphW4oKgpnXENmwUSYry2rqwfCQ/sDWm1eLbIyRCG5sfCDTN0Z3Mdk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGsS9EmW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725379065; x=1756915065;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=wAIftKZHmjENk2OO1vCfl+gwtu85AyNWPBUt1PmdjEY=;
-  b=jGsS9EmW0cCoy37YSYy1wPZ/reI9GlOsznyAMA+3RgX+y+ogY+e52qHL
-   kFRj3ZQdl1XxJDoB/NZ0kFGyTd4y2jF09Vghg0cvHUlie6b/nmIGdC/Ar
-   /cbpAWM0pr/6sZcGLrpbo3QYPtgAe5FvUB9Pmkl39W2F4ya5tj47O2NtI
-   uQoQSNfwmlXouw6kodS5fBp+Y0zvi13X8/5P/304uYk1sg0CBrSO99Did
-   EpIdfTsYVN8xYulgtvidphTPcRavIQQApnojR8Nf+Hs4XySmzU2aVWwDN
-   Eu9fcrB8pSKr+B51rfQL4Teaik3N2HqFFxL/2whX3EJ0FeqmDxTayyohT
-   Q==;
-X-CSE-ConnectionGUID: 98fL4YA1TMOYRRcMeyG2nQ==
-X-CSE-MsgGUID: Wd2TEhmQR1q/YXPqs8jQxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41460373"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="41460373"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:57:44 -0700
-X-CSE-ConnectionGUID: xnwzwXpBSwCpdHupcuO0ww==
-X-CSE-MsgGUID: PXWf8KksSVOSWX032IZmCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65016396"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.64])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:57:42 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Florian Kauer <florian.kauer@linutronix.de>, luyun <luyun@kylinos.cn>,
- jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CPU stuck due to the taprio hrtimer
-In-Reply-To: <18cd9ee1-6d12-469c-bf3d-c8fa080b01c1@linutronix.de>
-References: <20240627055338.2186255-1-luyun@kylinos.cn>
- <87sewy55gp.fsf@intel.com>
- <2df10720-1790-48bd-a50c-4816260543b0@kylinos.cn>
- <fcd41a5f-66b5-4ebe-9535-b75e14867444@linutronix.de>
- <87jzftpwo2.fsf@intel.com>
- <18cd9ee1-6d12-469c-bf3d-c8fa080b01c1@linutronix.de>
-Date: Tue, 03 Sep 2024 12:57:39 -0300
-Message-ID: <87bk14pw5o.fsf@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8590187325
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725379148; cv=fail; b=Q+w1OJswUhlB6qiFSb7oYfe28zKrUrHJ1klisx7n5MHWQDDDu9aTb0x9iXW88JGbWkje7Hx8dEBSVGkZBtHu/yyk5SHtGzYlisnzBT8BB4vMMzitDD5+MgsdOP3vMDuv0VHPi/qe1490TIwpo94eifqsSvBMfXCcBDHIZqPzX78=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725379148; c=relaxed/simple;
+	bh=YQrsY0tJ5pWbFApdRYkIc4PDj97O6WOvO9YmiLwdkx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NeLsxO2pSdb31OFM6d78juKcW1v/KSCWh5bvL5G+ZlwGiuY+feqLcZW2B4Xlr8vGaA347B3Tk23vcEVecU2s/V+bcqUtsnKpNfPNr2YpIv+QXnZxJOv+hO3ynTjE1hppY6u6rimtXh4cS9kXoYihRAjzDpfS5VPM9UCBonw+C2o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=j0snegrh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tzCN6Ymn; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483F4Lwh007602;
+	Tue, 3 Sep 2024 15:58:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=BSVZnvyTflsD2nZ
+	PYf9l1qo3gj7ZrXiTWe8qgcUi18w=; b=j0snegrhpJS3zCa21coaScvch3MJpAY
+	UZxRmwCwp3Gs9z6kvkc7qW505chYTc6jcKXp2JnBN3JpeFmisLm4pluUpNBwOhLO
+	jeIX3rYYvAqBfUeTE5jWJ4QSGLbenL4eXcTFB6H+nhZFuBYDZey++2YcJhLHIdPr
+	H5ekV6jbo1kuzbufuwNBXGSR3br4icUru43St4RX6GJFKR1OhP09Ibh2jcKmwzWS
+	MsBmwLlHt4BUmsoPyuZ9l0+xICND1lUhuNzxrmqeYOvJTO1Rwmtfmaq5jG1quNAM
+	ZaYmEoXYloa2afQB8dHjud5TQE+UpudLlk314c83dNNxJHDZg4sUdFw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dw51s7td-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 15:58:48 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483FXpuK039558;
+	Tue, 3 Sep 2024 15:58:47 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2177.outbound.protection.outlook.com [104.47.56.177])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm8wtae-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 15:58:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XSJjpCpgzT430lAPwipZ7e0gZxKiCOPy7kgR6ADVGxqZWj1oJIxTmaFsOt4Dfe4+yLumo8kPSaOtNDZPrNKQHUwGU+fe9OoTYrA+nLdvYNEklNNAhXFicNsJEf4u4Lo/vdVTHXH+McYKmIMWYChkF0FQisPyAgbh0ZrztIbsu3NGK5fEgimaSfIMtUsycEO5mIjR676A+Egad7pvIkPtMHccEfdYHljMuIa8oJoUwfwwVR4XHksnTyxBdB4C/sRPoA8VTqC7fa6lvAMbDCxnfMbG3XIkOI9w2/ylknwyvENIGL5/Zg8PIbNbLXa0B/hmFuBjq7WXwFD1DinHNcOEIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BSVZnvyTflsD2nZPYf9l1qo3gj7ZrXiTWe8qgcUi18w=;
+ b=Zw28yDyXf/swmFEwhLkAu2/nTWs5ccRUAxFqtttrUwDAl1HuMeaxztafRp+q3xJr2Zuev6SAZFN1yC3rXnb/pSUquniSnQZRVtg/T3VrzOg24IZ0xBEF9TbR0Ud533LhZCQjmOIRkt3pbU68KC9ZNuN6fB3mi8c68qzjDFud8TxEMOqxHRalI2R/o4NJWXhjAsOrxXTuiQSZ1yO/VRx2rDP6qfny8tqT3UdOyH+jZd29eXwXUGb7eXEwJ7lot/v0oQcE+y9KZ8YisOhVSRM1xrR7/Bf10nI2RL06FtPs15DdQygJQUiziKbokL0n5jVHeJIHWL6+dphTkHghXfSuwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BSVZnvyTflsD2nZPYf9l1qo3gj7ZrXiTWe8qgcUi18w=;
+ b=tzCN6YmnGP0G7HvDKt/exVEc9yWjycu0G5ndWml0iJBuhxbdTUR2TflxqR53uS+sgTDNtEtJXzoI+maxGOxLLwyW/bXuRUJtZO3sT7tVxoHgxMHWbUhG4TzLsiRTIhDb+18YWB8EcUWB9X2yceObiooQtTehVRUgACt17QYOyCU=
+Received: from CYXPR10MB7924.namprd10.prod.outlook.com (2603:10b6:930:e6::10)
+ by CH0PR10MB5211.namprd10.prod.outlook.com (2603:10b6:610:df::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.14; Tue, 3 Sep
+ 2024 15:58:42 +0000
+Received: from CYXPR10MB7924.namprd10.prod.outlook.com
+ ([fe80::794d:6966:dd4a:f6e5]) by CYXPR10MB7924.namprd10.prod.outlook.com
+ ([fe80::794d:6966:dd4a:f6e5%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 15:58:42 +0000
+Date: Tue, 3 Sep 2024 11:58:26 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Xiao Yang <ice_yangxiao@163.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, ltp@lists.linux.it,
+        andrea.cervesato@suse.com, oliver.sang@intel.com
+Subject: Re: [PATCH] mm/vma: Return the exact errno for
+ vms_gather_munmap_vmas()
+Message-ID: <3zloqsccdzrelzht454tpafo3jseckjtnbyznyn7ve25m62uyf@olxy27mjxn42>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Xiao Yang <ice_yangxiao@163.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	ltp@lists.linux.it, andrea.cervesato@suse.com, oliver.sang@intel.com
+References: <20240901145025.2311-1-ice_yangxiao@163.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901145025.2311-1-ice_yangxiao@163.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4P288CA0052.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d2::7) To CYXPR10MB7924.namprd10.prod.outlook.com
+ (2603:10b6:930:e6::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Florian Kauer <florian.kauer@linutronix.de> writes:
-
-> On 9/2/24 23:34, Vinicius Costa Gomes wrote:
->> Florian Kauer <florian.kauer@linutronix.de> writes:
->>=20
->>> On 9/2/24 11:12, luyun wrote:
->>>>
->>>> =E5=9C=A8 2024/6/28 07:30, Vinicius Costa Gomes =E5=86=99=E9=81=93:
->>>>> Yun Lu <luyun@kylinos.cn> writes:
->>>>>
->>>>>> Hello,
->>>>>>
->>>>>> When I run a taprio test program on the latest kernel(v6.10-rc4), CP=
-U stuck
->>>>>> is detected immediately, and the stack shows that CPU is stuck on ta=
-prio
->>>>>> hrtimer.
->>>>>>
->>>>>> The reproducer program link:
->>>>>> https://github.com/xyyluyun/taprio_test/blob/main/taprio_test.c
->>>>>> gcc taprio_test.c -static -o taprio_test
->>>>>>
->>>>>> In this program, start the taprio hrtimer which clockid is set to RE=
-ALTIME, and
->>>>>> then adjust the system time by a significant value backwards. Thus, =
-CPU will enter
->>>>>> an infinite loop in the__hrtimer_run_queues function, getting stuck =
-and unable to
->>>>>> exit or respond to any interrupts.
->>>>>>
->>>>>> I have tried to avoid this problem by apllying the following patch, =
-and it does work.
->>>>>> But I am not sure if this can be the final solution?
->>>>>>
->>>>>> Thanks.
->>>>>>
->>>>>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->>>>>> ---
->>>>>> =C2=A0 net/sched/sch_taprio.c | 24 ++++++++++++++++++++++++
->>>>>> =C2=A0 1 file changed, 24 insertions(+)
->>>>>>
->>>>>> diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
->>>>>> index a0d54b422186..2ff8d34bdbac 100644
->>>>>> --- a/net/sched/sch_taprio.c
->>>>>> +++ b/net/sched/sch_taprio.c
->>>>>> @@ -104,6 +104,7 @@ struct taprio_sched {
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 max_sdu[TC_MAX_QUEUE]; /* save in=
-fo from the user */
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 fp[TC_QOPT_MAX_QUEUE]; /* only fo=
-r dump and offloading */
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 txtime_delay;
->>>>>> +=C2=A0=C2=A0=C2=A0 ktime_t offset;
->>>>>> =C2=A0 };
->>>>>> =C2=A0 =C2=A0 struct __tc_taprio_qopt_offload {
->>>>>> @@ -170,6 +171,19 @@ static ktime_t sched_base_time(const struct sch=
-ed_gate_list *sched)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ns_to_ktime(sched->base_time);
->>>>>> =C2=A0 }
->>>>>> =C2=A0 +static ktime_t taprio_get_offset(const struct taprio_sched *=
-q)
->>>>>> +{
->>>>>> +=C2=A0=C2=A0=C2=A0 enum tk_offsets tk_offset =3D READ_ONCE(q->tk_of=
-fset);
->>>>>> +=C2=A0=C2=A0=C2=A0 ktime_t time =3D ktime_get();
->>>>>> +
->>>>>> +=C2=A0=C2=A0=C2=A0 switch (tk_offset) {
->>>>>> +=C2=A0=C2=A0=C2=A0 case TK_OFFS_MAX:
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>>>> +=C2=A0=C2=A0=C2=A0 default:
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ktime_sub_ns(ktim=
-e_mono_to_any(time, tk_offset), time);
->>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>>> +}
->>>>>> +
->>>>>> =C2=A0 static ktime_t taprio_mono_to_any(const struct taprio_sched *=
-q, ktime_t mono)
->>>>>> =C2=A0 {
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* This pairs with WRITE_ONCE() in ta=
-prio_parse_clockid() */
->>>>>> @@ -918,6 +932,7 @@ static enum hrtimer_restart advance_sched(struct=
- hrtimer *timer)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int num_tc =3D netdev_get_num_tc(dev);
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct sched_entry *entry, *next;
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct Qdisc *sch =3D q->root;
->>>>>> +=C2=A0=C2=A0=C2=A0 ktime_t now_offset =3D taprio_get_offset(q);
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ktime_t end_time;
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int tc;
->>>>>> =C2=A0 @@ -957,6 +972,14 @@ static enum hrtimer_restart advance_sche=
-d(struct hrtimer *timer)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 end_time =3D ktime_add_ns(entry->end_=
-time, next->interval);
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 end_time =3D min_t(ktime_t, end_time,=
- oper->cycle_end_time);
->>>>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 if (q->offset !=3D now_offset) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ktime_t diff =3D ktime_s=
-ub_ns(now_offset, q->offset);
->>>>>> +
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 end_time =3D ktime_add_n=
-s(end_time, diff);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oper->cycle_end_time =3D=
- ktime_add_ns(oper->cycle_end_time, diff);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 q->offset =3D now_offset;
->>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>>> +
->>>>> I think what we should do here is a bit different. Let me try to expl=
-ain
->>>>> what I have in mind with some context.
->>>>>
->>>>> A bit of context: The idea of taprio is to enforce "TSN" traffic
->>>>> schedules, these schedules require time synchronization, for example =
-via
->>>>> PTP, and in those cases, time jumps are not expected or a sign that
->>>>> something is wrong.
->>>>>
->>>>> In my mind, a time jump, specially a big one, kind of invalidates the
->>>>> schedule, as the schedule is based on an absolute time value (the
->>>>> base_time), and when time jumps that reference in time is lost.
->>>>>
->>>>> BUT making the user's system unresponsive is a bug, a big one, as if
->>>>> this happens in the real world, the user will be unable to investigate
->>>>> what made the system have so big a time correction.
->>>>>
->>>>> So my idea is to warn the user that the time jumped, say that the user
->>>>> needs to reconfigure the schedule, as it is now invalid, and disable =
-the
->>>>> schedule.
->>>>>
->>>>> Does this make sense?
->>>>>
->>>>> Ah, and thanks for the report.
->>>>
->>>> Hello Vinicius,
->>>>
->>>> May I ask is there a fix patch for this issue?
->>>>
->>>> I test it on the latest kernel version,=C2=A0 and it still seems to ca=
-use CPU stuck.
->>>>
->>>> As you mentioned, a better way would be to warn the user that the curr=
-ent time has jumped and cancel the hrtimer,
->>>>
->>>> but I'm not sure how to warn the user, or just through printk?
->>>>
->>>> Thanks and best regards.
->>>
->>> I am not sure if it is really the best solution to force the user to re=
-configure the schedule
->>> "just" because the clock jumped. Yes, time jumps are a big problem for =
-TAPRIO, but stopping might
->>> make it worse.
->>>
->>> Vinicius wrote that the base_time can no longer reference to the correc=
-t point in time,
->>> so the schedule MUST be invalid after the time jump. It is true that th=
-e base_time does not longer
->>> refer to the same point in time it referred to before the jump from the=
- view of the local system (!).
->>> But the base_time usually refers to the EXTERNAL time domain (i.e. the =
-time the system SHOULD have
->>> and not the one the system currently has) and is often configured by an=
- external entity.
->>>
->>> So it is quite likely that the schedule was incorrectly phase-shifted B=
-EFORE the time jump and after
->>> the time jump the base_time refers to the CORRECT point in time viewed =
-from the external time domain.
->>>
->>> If you now stop the schedule (and I assume you mean by this to let ever=
-y queue transmit at any time
->>> as before the schedule was configured) and the user has to reconfigure =
-the schedule again,
->>> it is quite likely that by this you actually increase the interference =
-with the network and in
->>> particular confuse the time synchronization via PTP, so once the schedu=
-le is set up again,
->>> you might get a time jump AGAIN.
->>>
->>> So yes, a warning to the user is definitely appropriate in the case of =
-a time jump, but apart
->>> from that I would prefer the system to adapt itself instead of resignin=
-g.
->>>
->>=20
->> The "warn the user, disable the schedule" is more or less clear in my
->> mind how to implement. But while I was writing this, I was taking
->> another look at the standard, and I think this approach is wrong.
->>=20
->> I think what we should do is something like this:
->>=20
->> 1. Jump into the past:
->>    1.a. before base-time: Keep all queues open until base-time;
->>    1.b. after base-time: "rewind" the schedule to the new current time;
->> 2. Jump into the future: "fast forward" the schedule to the new current
->>    time;
->>=20
->> But I think that for this to fit more neatly, we would need to change
->> how advance_sched() works, right now, it doesn't look at the current
->> time (it considers that the schedule will always advance one-by-one),
->> instead what I am thinking is to consider that every time
->> advance_sched() runs is a pontential "time jump".=20
->>=20
->> Ideas? Too complicated for an uncommon case? (is it really uncommon?)
->
-> I think that would be the correct solution.
-> And I don't think it is that uncommon. Especially when the device joins
-> the network for the first time and has not time synchronized itself prope=
-rly yet.
->
-> Do you know what the i225/i226 do for hardware offloaded Qbv in that case?
->
-
-In offloaded cases, in my understanding, i225/i226 re-uses most of how
-launchtime works for Qbv, so the scheduling is almost per frame, during
-transmission, the hw assigns each frame an offset into the gate open
-event. And that time is used to calculate when the packet should reach
-the wire.
-
-So I would expect to see a few stuck packets (causing transmissions
-timeouts) or early transmissions, depending on the direction of the
-jump, but things should be able to recover eventually.
-
->>=20
->>> Yun Lu, does this only happen for time jumps into the past or also for =
-large jumps into the future?
->>> And does this also happen for small time "jumps"?
->>=20
->> AFAIU this bug will only happen with large jumps into the past. For
->> small jumps into the past, it will spin uselessly for a bit. For jumps
->> into the future, the schedule will be stuck in a particular gate entry
->> until the future becomes now.
->
-> Does "it will spin uselessly for a bit" mean the CPU is stuck for that ti=
-me
-> (even if it is short)? If that is the case, it might lead to very strange=
- effects
-> in RT systems. And these small time jumps into the past (even if just a f=
-ew us)
-> should actually be relatively common.
->
-
-Yes. The hrtimer will expire, advance_sched() will get the next entry
-and its expiration, set the hrtimer expiration to that, this will repeat
-until that expiration is after "current" time. As this is hrtimer
-function, this will block other things from running on that cpu.
-
-My expectation for taprio in software mode was more something that
-people would use to validate new schedules, do some experiments, that
-kind of thing. What I was expecting to have in more serious cases was
-the offloaded mode.
-
-What I am trying to say is all I am hearing is that the software mode is
-being used more seriously than I thought. So this work is a bit more
-important. I will add this to my todo list, but I won't be sad at all if
-someone beats me to it ;-)
-
-> Greetings,
-> Florian
->
->>=20
->>>
->>> Thanks,
->>> Florian
->>>
->>>>
->>>>
->>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (tc =3D 0; tc < num_tc; tc++) {
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (next->gat=
-e_duration[tc] =3D=3D oper->cycle_time)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 next->gate_close_time[tc] =3D KTIME_MAX;
->>>>>> @@ -1210,6 +1233,7 @@ static int taprio_get_start_time(struct Qdisc =
-*sch,
->>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 base =3D sched_base_time(sched=
-);
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 now =3D taprio_get_time(q);
->>>>>> +=C2=A0=C2=A0=C2=A0 q->offset =3D taprio_get_offset(q);
->>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ktime_after(base, now)) {
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *start =3D ba=
-se;
->>>>>> --=C2=A0
->>>>>> 2.34.1
->>>>>>
->>>>>
->>>>> Cheers,
->>>>
->>>
->>=20
->>=20
->> Cheers,
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYXPR10MB7924:EE_|CH0PR10MB5211:EE_
+X-MS-Office365-Filtering-Correlation-Id: d72aaeb8-3f21-4b91-4b0e-08dccc3141e5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DTpvDv54sJ0jK3gZqkIOhMxCLZpxLcm3lyXXL2HfRfAyk3+kgHgWXWd17wUx?=
+ =?us-ascii?Q?z0KQoH0TVyQbpviZgQlJPtwMBH5OU3mJxFOzP5XvZBXYi7vGHfukA5QgHwl2?=
+ =?us-ascii?Q?sg5mABIPAVq4Q0zwxY5CisV0fWR8+DOEE1up7iTH3usp6VHgcQZkWOsujkTx?=
+ =?us-ascii?Q?R6k1XxmG6Zadjnpr8ofiyQZQF6sFhjpw0gddAzEFy2I8kgsieBl5hXU/qri2?=
+ =?us-ascii?Q?xOOIYmQ6RqDxPoqzcvjACPHSrsQVOSJkO1nT59K3NvffodyMfEulIJU/4Vkl?=
+ =?us-ascii?Q?/crQKuj943ngOXKRcviQWJk8heHJ7Hu8ThRrf/10vgc8UFItwLSNm1mgqAyP?=
+ =?us-ascii?Q?sFJBC9MfudBvqCceWn+t0nzAMskExW1Pc6Eg9Vk/pjBp66yP5ztulub5Hk8e?=
+ =?us-ascii?Q?XCzAXp5vN89pPfKRynLqa+Z4effc0uIjUpbpWOu9Nta5JEXKE/eVnYP+CBbj?=
+ =?us-ascii?Q?YOuiHY7Lw/zHAq0+s5imSmIpcLg/aCCq1IpjmyKBGlEP4E7aCGZg8bEG5Wkc?=
+ =?us-ascii?Q?Tx7HSYX82kkvsFGbsxw1YCf24WOGXDG528XZiBYCDc/0KsL/gQOwD8ZRlxkb?=
+ =?us-ascii?Q?ppZjEu4UwG1TBrA7m01YtelT5WqK/h49g422n8xOhdufC3/iQVRps8RWjbkg?=
+ =?us-ascii?Q?AhxTr8zPNd1SVu5UnHuruB8NFJBgGkihk/Q4CX74Nx5Z9ghEjQJketHepYf7?=
+ =?us-ascii?Q?H+MgOaJtKA8Wbv8CSsBX8m/014utQzTbYL2XGUafiuj2nhSAEJyJJiUWA8xs?=
+ =?us-ascii?Q?HQWgX0yEIjrEI/z1/QtZgzU9XhenlY2mHXdYSvDVRMI30qQQw9ckjfXh9VkJ?=
+ =?us-ascii?Q?5BBFOeQUh2MlRzfECh/j87CONaC8j4HofvKVEWHLOWM07Fezu6ARJXW5D8MY?=
+ =?us-ascii?Q?hcJSdliVLYyfeO8XId5Qvt83rHUuY0/1+CuyZKqQLJUmx/LEPAQZgjD9/aoZ?=
+ =?us-ascii?Q?0B5XzQJF/18ybpwFiBc5YmWxHaueX58h04cTVPW7/o0MizXJjbaaIVMNkRAi?=
+ =?us-ascii?Q?e/DSUBykpWzDi87ceRigKZf0A/GE/ARg+7oiVyJ26HY+VW+HcUs8JOmcR6ae?=
+ =?us-ascii?Q?+pblSpLvQrMUcqgaNj54k1h2bs15NnNDCvgYQkzNNwPEkuUPoHMdc7+ZCKVq?=
+ =?us-ascii?Q?u5JqBrc/D5I+NNwvDi7ckoaI0gXegzynL3rbOtJL9wccJLR3GDjihsCKch3a?=
+ =?us-ascii?Q?OSUw6FgPRFmvYS94ZimUBfNypIfmuV5V8j/bnGCIGgD+rFNQqcLZFbLwaRaQ?=
+ =?us-ascii?Q?puxz4xNt9XelfoHbdV/vYryUjlgkGDWyK+w/WGGoZQdjDevYlIxxrCynCKt0?=
+ =?us-ascii?Q?EJZlUCl/rPN2l2igN2rumuOXQ95OHe1SRdgFCPcbq2xH2JoHsiduJwtdiBMG?=
+ =?us-ascii?Q?nN1QGOg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR10MB7924.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ylbxdeg2l+D8/DI01S+SUqfNQLWHSoUzBE8D0NgL5skIDzALwPUqhG5Wbtna?=
+ =?us-ascii?Q?SU/Y98qsRqTruc4mnawY5npDDfjjw6EhYGu0RsxDxPBqHg7PJqS3bbGvUvFI?=
+ =?us-ascii?Q?ZGroW80mRals+RhxYGUgjGwm8DvnMe7QYbLWjU/LCOsv8pilR93SWwXFKxdu?=
+ =?us-ascii?Q?GjNf4NielEAzQZ4M5vQsi7luTiYFw0v7ljgc4gcPz1Suwhi3M5qC12OSvwHq?=
+ =?us-ascii?Q?oSLpqaRGM4u+YmuBa+U8YB28bFcRrXBoHkUV4rxgc3bFqSPqQx25e+nhKKY0?=
+ =?us-ascii?Q?ybe9naFZQ2LMhnW0kzZn04EVvBV06kft9q3/ubjzq9QIydcfWL7s9I4g5ZKW?=
+ =?us-ascii?Q?iRl6vAHSGPrLMEm8/aS5PcGPsWOsT224vleNPWqi04cOSbDHZzNiC352mtXl?=
+ =?us-ascii?Q?zvxXJvTfCM8qpCMKzIyjAleZpIZrOW8KWmbwFNlqooGW9BsNS8YczNRZzhk5?=
+ =?us-ascii?Q?Lgp67XtHDJVlk4vJjJJaLcSp2Y5spnzTV4eYuGF3bckawse7WSkIHAC9sxVd?=
+ =?us-ascii?Q?c9jLmZQgWB6U2LlQkYBf/gnZwrFjFeQcGZBaBzKx+b2FtCBeR/PLXs1c21fT?=
+ =?us-ascii?Q?0Uw00i1O+bBRdtHa7RZ1/Rpf+cYpXR5AqDEfxiQLCe5ugYjVs9ab+6c97amt?=
+ =?us-ascii?Q?8pJIJe5FBOwTRXkseSBWYxK5+WnluTBcSQPyRpVribIHLQv6dxVmiyCBwSfb?=
+ =?us-ascii?Q?xlGPBedPmH4MVDutUNG/mTCx9wF7C04QtGjmGBPreEMMowORln22/0LTPahK?=
+ =?us-ascii?Q?I2GlgNyO+2JtSeCfL3SMAJeFSVhghMYe3nghiFQt83NgLvrqvlNEs/BYs3bW?=
+ =?us-ascii?Q?koKTbOUWxwAdDr7qg0lp689Fa4osuKIcwiq7fFgjRW4rPUXjq2L1T+/IfjnB?=
+ =?us-ascii?Q?bJfupwG+so6JyQslyxGi3gEhZ0KPAuJGqfAch1IO3rt76R+OMLb1lHYqJhJ2?=
+ =?us-ascii?Q?CKgkeS4H4IvPKT6SfaAjWCtIiT/NghT6aC/KxH/ydTzYuKG+O6gl6CsWWkOK?=
+ =?us-ascii?Q?WSVx2mbH5wrhWAYtp60N5DUqnpKbmLfYMsxKQlm+RFWMBRr2WznbXeskO6TE?=
+ =?us-ascii?Q?aTxtwYkgvz9Jjc8JDGFjfiGhBz6qBK5uOeFUp2jDMi/RBdCzoGnSijmB/v9I?=
+ =?us-ascii?Q?zAtxvokBzSdb+o/x1GHLlQDl8h5vh7IBHLxJUKflepl1kCHqW0T+gzswv9EQ?=
+ =?us-ascii?Q?j5hyyng5ItCW24IsvQqUJv0Hs48msF3adKyM7Ff3l+Bc8E+cgl5kaGSpneMO?=
+ =?us-ascii?Q?EcA6tAmlWIcoi+g66XnpUYPPCCE1483bZiLXE7BUmfZGD2fVXv3chZwoKgFq?=
+ =?us-ascii?Q?D6ubzFgWnSlF6+eY2+DzoNlfzvDCVDdkL9ZLqvtoqcJDoAdaiUmv0A9QrY52?=
+ =?us-ascii?Q?Lngk9pwPrlC2OlBI8pzNKjtiipfBCzhXP3EJcB3lA2UH7ohtVeACQnMAFenX?=
+ =?us-ascii?Q?PNLHr771xdwlhv/Q+KZNDy6v4fS93sM3C6vv92GSME1KCk5udIQzhmd7Ubr9?=
+ =?us-ascii?Q?V3OZhxosrghg2CzveJMUBsVhOurtCyWE6mIJSKF8AL21YMNQsVKyps6E8osi?=
+ =?us-ascii?Q?ykhiu7o49pxxMdEdwGlg82RvgvOJ9irOMfEhZtEn?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	mg5TsfaJCzmzQHx+d64IBjPCA51+DRisv8tcdxBoAsK33Ofs1ifvKJoiIZXbVnQQaDOP9cvama+6N8bgAp3JGxM6486glzUhf8nFLsS6bNR9A/kK2ERRlvceo4tpHSwnf1+82gd2bNHJj6j6SGI75mXC9MNjukBdHn0P0FrVwo/bOoFyXhcgTF+vJ68HyLVrzXiWQMPA3c1uhgCfZeekAO2xsT0IHYCqkFe/FAborxXgNPqo299CHY9WxIjm596G/1BvoKATP1JxvzNSK3+dEYDG/VsfxFleycIVJ4LZMXE4jKVXK/c/FwuEVZmFr4uE+jx6/oBoBB9sbxjhdBbDn8hLjCBmNNgMhgNJBVYuLI+VTZ5G8Qp4vl9Cn7AVathB1xisO1A//dYsZLfxQ21/lrtJ/9/tbv2TnOEgwd6or3RekIO5iYLHN8tJZFYCRiShDwNi7Rqu8dB/liTCmz/SCsKJ2p3G8hlXStcjU+WvFiawJ1crCRmDItuBQH5w83c4p1NrAFmtAWmnf8Jd8oPwPnpZP6IKJb3oREAlW2lUBjHhzvkDEASEKdu//Ywxam3xCr8DqpHOk85b2g+t4neAMKAc6yTgC/ZHQBcWm047qL4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d72aaeb8-3f21-4b91-4b0e-08dccc3141e5
+X-MS-Exchange-CrossTenant-AuthSource: CYXPR10MB7924.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 15:58:40.5952
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SKmVenC5IdCxbNSrFmX4UueTkbVmOAWASgIvNGTvplptTJtsusGqpQTv5D/ckLXY2PjTJuc6GBvy1zYRFtb0FA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5211
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_03,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 bulkscore=0 spamscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2409030130
+X-Proofpoint-ORIG-GUID: dCpwgxITVJWegldSrU5KFZBitnCsbhhv
+X-Proofpoint-GUID: dCpwgxITVJWegldSrU5KFZBitnCsbhhv
 
 
-Cheers,
---=20
-Vinicius
+Thanks, but this is already fixed in v8 of my patches.
+
+* Xiao Yang <ice_yangxiao@163.com> [240901 10:51]:
+> can_modify_vma() in vms_gather_munmap_vmas() returns -EPERM if vma is
+> sealed so don't always return the fixed -ENOMEM on failure.
+> 
+> Fixes: c2eb22189bbc ("mm/vma: inline munmap operation in mmap_region()")
+> Fixes: 5887a7ac2383 ("mm/vma: expand mmap_region() munmap call")
+> Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202408312155.fd26a58c-oliver.sang@intel.com
+> ---
+>  mm/mmap.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index c1781f643046..c9a0dc035819 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1386,8 +1386,9 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  		mt_on_stack(mt_detach);
+>  		mas_init(&mas_detach, &mt_detach, /* addr = */ 0);
+>  		/* Prepare to unmap any existing mapping in the area */
+> -		if (vms_gather_munmap_vmas(&vms, &mas_detach))
+> -			return -ENOMEM;
+> +		error = vms_gather_munmap_vmas(&vms, &mas_detach);
+> +		if (error)
+> +			return error;
+>  
+>  		vmg.next = vms.next;
+>  		vmg.prev = vms.prev;
+> -- 
+> 2.44.0
+> 
+> 
 
