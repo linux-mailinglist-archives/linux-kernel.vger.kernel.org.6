@@ -1,176 +1,122 @@
-Return-Path: <linux-kernel+bounces-312565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109E596983F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:05:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E698D96983B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7DC285CC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:05:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49209B27820
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483661AD247;
-	Tue,  3 Sep 2024 09:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC2519CC37;
+	Tue,  3 Sep 2024 09:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GViPcfFE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aDHsfxIb"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653A91C7690;
-	Tue,  3 Sep 2024 09:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8A61C7690
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725354298; cv=none; b=agDtGBWKuKiGlq+qTAJp124W7CZQvEACEU6ghjJnFpy5jvQdodnheNFHKor6bwdvsXi0NW5HK6xxj0iS6mkNp9MJe2ssBnPxhi6H8M6Mp47gOW/jJ9C0ou1ohWksxGexbu4OikFOVS7hF5q8THYmu0b/y9Y7iDSnGTF/Yr0MuHU=
+	t=1725354291; cv=none; b=Qaw8PWEBO65CmZZMsWr3ZV7anz3i/MaB5x17BMuoWbSQQscAPj4dVRboGw1tHXy9RdU2f4to1PDvvkNZADgMDTy97tGzu0ShujzWwRcmlUqPtVw8t12Id3FxeZv4swl5AA13HP2pH0mx7ELndif1REIT4K71dz5MJxc6f6BB1R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725354298; c=relaxed/simple;
-	bh=oM/OCXwKVckSJ/J38gdvPJ0xDHT6FZQv1vgMXA6inMs=;
+	s=arc-20240116; t=1725354291; c=relaxed/simple;
+	bh=HNKnJwweY5e+osURURYraHODvNdW8h+yTvbC3cD9Jq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqzv385hg/L06w1PPvQNuElwePXXGI+OQofhKlXW97gRGRzr1iWhUZAhefG7qoaAieqLhn1YTmTX3Wpb5SV6I+OFg46JiOmT+Ohb9518rp/jS7qaZNspTZYL2iUyddpNT59ZvDBQ+58xkjdg/wJSBzOOi4tsZytlh7XsTI8/5r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GViPcfFE; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725354296; x=1756890296;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=oM/OCXwKVckSJ/J38gdvPJ0xDHT6FZQv1vgMXA6inMs=;
-  b=GViPcfFE4EWyIpCGERIq3kpNpqqbi+9h15x7pZVUUVwxiljq4wtwEYBL
-   W/AZjCms9iBLkp9A0jGkCGjvnEDc79Vog88zRK7qGMvmZAKM+LZUuAD/e
-   mCfKdD8pyeC8Afy0AuD0BsT3rKzKahy1Ukz6l1pruOPZVH5nYUE8nVdou
-   tW37GidLeBXY8XEbW8r0Yfdfv5tBMcpTiQU+TF7L/vAx3wLpUwJhTElh8
-   dtie0GEriYNv73yhGfnWw92uxdg05bFToUiXxE5Ms74ZSdQ/8VHJoyKeB
-   1ZRG3CCcddtpJxfgElK1oAcS1xrZXPxbPKHFU4y4f0bfu/HzUdvragbhh
-   A==;
-X-CSE-ConnectionGUID: 4k7sX39jT7u6LycUlQRJ3Q==
-X-CSE-MsgGUID: H96EvzAyT3KoQZf5Zev/Ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="13341644"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="13341644"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:04:55 -0700
-X-CSE-ConnectionGUID: nmml11t1TgeO0s9+tWdhvQ==
-X-CSE-MsgGUID: lom32QpsSl+yZW3ZvAB3LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="65037783"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 03 Sep 2024 02:04:51 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slPSz-0006Qy-1p;
-	Tue, 03 Sep 2024 09:04:49 +0000
-Date: Tue, 3 Sep 2024 17:04:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v2 6/8] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs
- dirs
-Message-ID: <202409031642.6kP6Ra8c-lkp@intel.com>
-References: <20240902225511.757831-7-andrealmeid@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tE17bO8KL65ERpYIa1WWMn6ttbGbnlUazwQH25RESVPQhHbqM+UnpJISb5nQLmbUSi2V/lAZtCXDDwk+EjvFq+Oai9biAWGNhS8jyBSmXbQgC0uNZcyiUGfOSKlpdFsBX9IKIuoQWYFmAH0+ADkIFYcBSkFPZOjoP1gmxhfOVVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aDHsfxIb; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=ia84
+	vY2WJq5acaDEubWgZY8HT104OC/RMhEmvePGa1c=; b=aDHsfxIbNei7cx4YFoHY
+	l5Uwy91lFLW5VTZ1EUJyS2cpzjSuO+itwhT5p4S7wmsFW78poQoKR+XBlyU07cBD
+	ujpiVIRpxiwM1ARqeFyNCZwAuv5Q3yWDlbyd/joUe1AC7rHdEYGpc2x6OHef2aFh
+	nbV4xnK2xgN7i+EfsbbLX1wn5Tx9Xfv1B0wlu1FxxjCiOTOoFJDADffmZuROZwq0
+	/gTdpH49RvLweFLV9wMJzrMhPQpDHy4OGJnLMFz/zSIQkqtWDJJO+KeGfWZFOTke
+	yeRv1L7uL881V/9zjkkDdKDfu23K84HlsLRMcWDlpGrFilOmC4QM9fAMPHhnuYHP
+	HA==
+Received: (qmail 193007 invoked from network); 3 Sep 2024 11:04:44 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2024 11:04:44 +0200
+X-UD-Smtp-Session: l3s3148p1@2Ws6WTMhes8gAwDPXwdRANgvu6DX4+2c
+Date: Tue, 3 Sep 2024 11:04:44 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] driver core: class: warn if a compatibility class is
+ registered
+Message-ID: <ZtbRLOUO48PzOKmC@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <4660a46b-9128-4407-8baa-f257245784a3@gmail.com>
+ <7bc5fa50-59f6-4455-8f77-1c89f1e17d0b@gmail.com>
+ <2024090242-smother-preview-a1d2@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zT2ZY26Hj8wvXt21"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902225511.757831-7-andrealmeid@igalia.com>
-
-Hi André,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on tytso-ext4/dev brauner-vfs/vfs.all linus/master v6.11-rc6 next-20240903]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/unicode-Fix-utf8_load-error-path/20240903-070149
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240902225511.757831-7-andrealmeid%40igalia.com
-patch subject: [PATCH v2 6/8] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
-config: i386-buildonly-randconfig-002-20240903 (https://download.01.org/0day-ci/archive/20240903/202409031642.6kP6Ra8c-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240903/202409031642.6kP6Ra8c-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409031642.6kP6Ra8c-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/shmem.c: In function 'shmem_set_inode_flags':
->> mm/shmem.c:2771:24: error: 'struct super_block' has no member named 's_encoding'
-    2771 |                 if (!sb->s_encoding)
-         |                        ^~
+In-Reply-To: <2024090242-smother-preview-a1d2@gregkh>
 
 
-vim +2771 mm/shmem.c
+--zT2ZY26Hj8wvXt21
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  2760	
-  2761	/*
-  2762	 * chattr's fsflags are unrelated to extended attributes,
-  2763	 * but tmpfs has chosen to enable them under the same config option.
-  2764	 */
-  2765	static int shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
-  2766	{
-  2767		unsigned int i_flags = 0, old = inode->i_flags;
-  2768		struct super_block *sb = inode->i_sb;
-  2769	
-  2770		if (fsflags & FS_CASEFOLD_FL) {
-> 2771			if (!sb->s_encoding)
-  2772				return -EOPNOTSUPP;
-  2773	
-  2774			if (!S_ISDIR(inode->i_mode))
-  2775				return -ENOTDIR;
-  2776	
-  2777			if (dentry && !simple_empty(dentry))
-  2778				return -ENOTEMPTY;
-  2779	
-  2780			i_flags |= S_CASEFOLD;
-  2781		} else if (old & S_CASEFOLD) {
-  2782			if (dentry && !simple_empty(dentry))
-  2783				return -ENOTEMPTY;
-  2784		}
-  2785	
-  2786		if (fsflags & FS_NOATIME_FL)
-  2787			i_flags |= S_NOATIME;
-  2788		if (fsflags & FS_APPEND_FL)
-  2789			i_flags |= S_APPEND;
-  2790		if (fsflags & FS_IMMUTABLE_FL)
-  2791			i_flags |= S_IMMUTABLE;
-  2792		/*
-  2793		 * But FS_NODUMP_FL does not require any action in i_flags.
-  2794		 */
-  2795		inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_CASEFOLD);
-  2796	
-  2797		return 0;
-  2798	}
-  2799	#else
-  2800	static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
-  2801	{
-  2802	}
-  2803	#define shmem_initxattrs NULL
-  2804	#endif
-  2805	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > +	pr_warn("Compatibility class %s will go away soon, please migrate use=
+rspace tools to use bus devices\n",
+> > +		name);
+>=20
+> That's not going to do anything except annoy users who have no control
+> over this, sorry.  Please just fix up all of the kernel and then delete
+> this function.
+
+So, we deprecated this sysfs-class 15 years ago and hid it with a
+Kconfig symbol. However, we never pursued this further, so e.g. Debian
+has the Kconfig symbol still enabled. Can we really remove this from one
+release to the next without another transition period? I am not afraid
+of tools like lm-sensors which were converted long ago. But custom code
+might rely on sysfs-paths created by this class. It was even advertised
+in IPMI docs until last week (fixed now).
+
+
+--zT2ZY26Hj8wvXt21
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbW0SgACgkQFA3kzBSg
+KbaXHA/+OaFYR3SuuGEMiqSHnAMcj6WrHF7N1FaM/2mcuBm15g3xlnTiKQFrXwHs
+/GCxxFPqiw7hkFPJZgv7PVnRuGVtSRCF74r/MnNe2aUrtf2jOUIDuNyJSrMkKCz3
+vLSU/bNunfuNDPkjD6vvlbW5s+Um+ogUDTDIqjJYVbH/wjceekXZU9FhRx0Bf4pJ
+X5bolJd5GHQNdNePFKy9aPlutc3CHAkDEl1XWHPeGIGj12gkXUVnpS1YYDt38YlE
+uSTeuu4lxv1ZdelQZl2FBsb4yfsSQgj1Vo/oI1xOoPNZ4ZL/bU3i8Rih0W7CrytR
+D5V4rjeQa+AFS3pZWzB/1b32wtRv67f0YdG7ShjEVm2fx8NhONbzP8+nD0ZlD8lp
+wZ/KWq8mZAYQf8t7ehbOGd9csHYJ+zBEq1ng82ZEKXLiRTex/YKIo1N6HExTxxxs
+vD5ZPjhue3TeQh7ZwAl5sXDmdLe2OOxwhd+OeMXQAjGSS8OrLELjpDHTdPG1pmpx
+vALLj+1w4Rh0Q/l7gcqOOccIMaBJCZpASODUdxnpvsGB5Xboy4YmSlSpADRDmF1i
+f/oZb/BWmRdty7AWJA7A2JZ3L8Rb2OycCjBSoI7SXw753ez+vJ1mRmZTFNhWk2/P
+fSSRWVxJVwViob6HBuzUAfahn3u2UdkUc9427TXI+HEO+/+le0c=
+=Z+GB
+-----END PGP SIGNATURE-----
+
+--zT2ZY26Hj8wvXt21--
 
