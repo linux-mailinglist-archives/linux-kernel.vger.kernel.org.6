@@ -1,79 +1,73 @@
-Return-Path: <linux-kernel+bounces-312385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9129695DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 447049695E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51290B25825
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:42:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2456B22DD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3052F1DAC46;
-	Tue,  3 Sep 2024 07:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5349C200103;
+	Tue,  3 Sep 2024 07:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RcwqNB+4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OWd4peMz"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F161D6DD1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B326C1DAC53
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725349314; cv=none; b=WqY4zzCsy+b1b7sUPHSoSypgFXf/SepGBNFRGibHCQF3WWX7gYKDD/yrTIb52+5tulv5sdZzbrUTePz306BPsbSDl2GxIHBBudhi5rTgyyTkSDxmhA0FlGt4UXJCJeZaj5Mo7kOdQXTKlNoDxasSFgC5/5OupcwSTGz7wIOKGwU=
+	t=1725349468; cv=none; b=rxJQmlx6yS3FYNh2OfQK7dzMANDoePd5rTKoLGLMCKo0SX1+wUOXf2UTVO2iJgnruWxXs8IR8/6ZV6VyNcZv2NnoMCcE0iq/ogCCi1UXBSbuOAmVlXu33ZlzXNrWrXbFKjM1Z6YxdQ9z7UxQD8sg+WoLJyk11ZqXG53FzZiQd4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725349314; c=relaxed/simple;
-	bh=U9IVHcG4wbC0yQ7L6qBp/N6iE98USYi+qYB3QHxg1WI=;
+	s=arc-20240116; t=1725349468; c=relaxed/simple;
+	bh=0+M8rMLBTVIxy8yBSrMgR+YiNFowQZOTrYpnPntvXjI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IM65x0teUEW11Mv7dVrrLgkYkmnei2WgO0YDcGt7ILh+7LkNEoED0tLOY4Shhr/WYigSH4GRPeyQ/chxsC6Yi0p1DGd9qi9VgadwlMiUR9BgmwYKSSH8NvnCeUreuLiiGjQIYI2qzp5PNCuKYv3DvmlpAyq1lPsR1Ks0s6qVLmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RcwqNB+4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725349312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izDPO4iZlSSWjFLviOO6wl7Tt97btyPERPQrQfVWFJ4=;
-	b=RcwqNB+41BNMP86veeFo5gHiVTPXsr7j9jG9KkA6iyFq/+Eq/2Mk2rfAByH0BJKzfsiiQV
-	mGj7I6nh7+f5bwQHYtdxjFZ29kr1BS9iltKD04rKLUtJhbnNqrGy++IZn8YWl5eWt9iToi
-	WTvGG8b2gJpyd/Zu7pHoHms4fil0itM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-190-2phIVygdMGmgtysjccC8rA-1; Tue, 03 Sep 2024 03:41:50 -0400
-X-MC-Unique: 2phIVygdMGmgtysjccC8rA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374bb1e931cso1441263f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:41:50 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=f13CndEn0rLK/buqAyF6sZvN+GTraNqT2MVJsiFL3U1tq2HRYmtUQJAGTWNogCJRd7XGJclWSxM/hO51JPE0INPAaVII3Dfp5T6KZs6VA1Ex5mqFURo2IrGkwS1jpy1HYLJRYlwhYEW499icIrmQUhqjbk7RSU5bP+ArPiESa1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OWd4peMz; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8679f534c3so517054066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725349465; x=1725954265; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+jkagtMugvXJYe7HevUiz3D2qokDPx9P2hSleDH86ks=;
+        b=OWd4peMzdJZJHUDtU2k7rvk9Bw8edHgxCO+RIbGIR2ktEavP/vlh7NdB7RmkECvRM4
+         9JbZA1won6j2v/A9IpfLGP/ghdEp1hJB6Sbon+Pb4MMxvSVztx5Eji4vV09Iv3Acq4TJ
+         9oMIs+zHy9EHMDYsmU/MSgCJFjsEoY9cewAGg8CGBYnT/3hUK7w8pXVTT4s7dLz1SqCk
+         tkcf032mmpM/YmZQKR/YuhmvPtAZWJLNaZWthH5cGOcZQbnP0fr1ybEl9CNL3k15iUGW
+         ZO16jVgYjItdDvL+6WfVoXTmZUQzPt0X+WTY+pTDAHpDbVOBpYGaqR7rwnReHoBUS7cu
+         Cs0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725349309; x=1725954109;
+        d=1e100.net; s=20230601; t=1725349465; x=1725954265;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=izDPO4iZlSSWjFLviOO6wl7Tt97btyPERPQrQfVWFJ4=;
-        b=w0RevTQIfYbmYlCo1cA1ioNmkqcb8O1x6ADUpigoWCLQiguluL9Fm8kjvjXZp69RI+
-         7ply0naoROlSoJC2FvI+Roeu1qCo9iC3LV+Km9hTTmf6NlWPOfE+KDc8JgRnjlKIiCyN
-         mnMuu7b+10tAn1D5nt5TY9nVGxcR2GMSykEWb6epnNMiYMnWZ0vi+rbZnmBloWD/BkPK
-         YLQRmV4UvPLYC+TL8MKKMsiCnEygIgdsMr4L6lFt2++TlPmbQP1kIqs/ffxyetcyqumL
-         7YFozmUY/dwjxnSOy66cfVw8XnNXI4FLSTcS3vG5Xe6B46sM1FJ3Ze/BfTgNej7O+sKB
-         P6ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYPVcBaKt5ClGMOyYViJoNHQC/Cxw5SGV26N3nYtD4pfi4ZZULtUcsTIg8qQS1GN6iAjwrqxra1kvLGyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzijynFSGv2nexAKvnUsqaaHA3Pq8SHCKw5xkEVMuztuvdc6s0a
-	nVjOcDCTEbFilFasE9K3uGRiqiwfKsz68ekULFzXtEJBQXpRucJ3CFczfuwED2CpTbB9fvp8MIk
-	aafu1eJkBPbb7YjOD5BzMZPeC9cCmBKhKM0+LFxgukkdS3prJsJmqGqR0eTq/Lg==
-X-Received: by 2002:a5d:4f0a:0:b0:374:c2bb:8387 with SMTP id ffacd0b85a97d-374c2bb848bmr5587815f8f.30.1725349309060;
-        Tue, 03 Sep 2024 00:41:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHkDJRwbp5dgt1hItw/RDoK4tfshSZ4gIZ2gsD0hqTjOt0yRRq00N2XmU+gpLdCtCRS205lA==
-X-Received: by 2002:a5d:4f0a:0:b0:374:c2bb:8387 with SMTP id ffacd0b85a97d-374c2bb848bmr5587808f8f.30.1725349308163;
-        Tue, 03 Sep 2024 00:41:48 -0700 (PDT)
-Received: from [10.43.17.27] (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ca94e002sm5013917f8f.72.2024.09.03.00.41.47
+        bh=+jkagtMugvXJYe7HevUiz3D2qokDPx9P2hSleDH86ks=;
+        b=k3bRk4RZyBdGJIMxqz4JCNyLSpWcM8T8T6km5cb9BnZypeczrHLPv/lTsWCevu7KhS
+         1plvkTkv140EFXdoTKpIxiiUfRO6OgNeEDQ8JLsNHZQMN49PYIfbDCjeniJeYqqJ+eAC
+         PeSNr9lWCJ0YvhXC5bULMlscYirZuaPyHWzx8pnh64Js9eXDLRUEMpkWKKMxYJa4eWlz
+         FzMrkTB7xorOvE+uH3Cr8e5oZGVVyWRHQnIdQ6+AyUpE4Lv81aCCXMSKrM7pIHj1dlWg
+         MEGESRKIltsekwV4qieR2FEM7EfUMayaX6KJaYX99B+4ULaMQYrWwn8tsl8nThUvahzx
+         PUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiTyE7iIPGjeJNVK09x1ofOgL3+yO0yEFuQkdVr8yGnYIahSEzks293vev0YfG+e9kz8cRUrEjbp3CI+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYmuKrr7cFiwqlCgdxI+mWXP+MrZ+ZYPORpGfI/yXyNKVXgjVR
+	ek/xPXGRRH3hWMD8xds0G6agVFiLl46QI+/5OkF5wa7XU0n7fsb6SJSYczrLFxU=
+X-Google-Smtp-Source: AGHT+IGud6QEPL13/BUmwGdFsCxrfaWzL092N//LiNMPSbRgYJA7J25IPj1EOSj1b0wYA1UzsVwdtA==
+X-Received: by 2002:a17:907:3684:b0:a77:b5c2:399 with SMTP id a640c23a62f3a-a89d879c0a9mr661625066b.31.1725349464800;
+        Tue, 03 Sep 2024 00:44:24 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196a86sm648592666b.127.2024.09.03.00.44.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 00:41:47 -0700 (PDT)
-Message-ID: <0f3375e9-59dd-415f-8571-48f346b64d57@redhat.com>
-Date: Tue, 3 Sep 2024 09:41:46 +0200
+        Tue, 03 Sep 2024 00:44:24 -0700 (PDT)
+Message-ID: <a1a665b9-05f1-43a8-88bc-2701cdd0e4ee@tuxon.dev>
+Date: Tue, 3 Sep 2024 10:44:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,110 +75,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Fixes tag needs some work in the perf-current tree
+Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
 Content-Language: en-US
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240902081837.6def2734@canb.auug.org.au> <ZtYHGDaoJrwLgs--@x1>
-From: Veronika Molnarova <vmolnaro@redhat.com>
-In-Reply-To: <ZtYHGDaoJrwLgs--@x1>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346D59E486D88611E8F254F86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <54d60105-ee5b-48da-92f4-2bcb3dff5c92@tuxon.dev>
+ <TY3PR01MB11346F4625C5C7D321490306E86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346F4625C5C7D321490306E86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 9/2/24 20:42, Arnaldo Carvalho de Melo wrote:
-> On Mon, Sep 02, 2024 at 08:18:37AM +1000, Stephen Rothwell wrote:
->> Hi all,
+On 03.09.2024 10:36, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, September 3, 2024 8:28 AM
+>> Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
 >>
->> In commit
 >>
->>   387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
 >>
->> Fixes tag
+>> On 03.09.2024 09:58, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: Friday, August 30, 2024 2:02 PM
+>>>> Subject: [PATCH v3 01/12] dt-bindings: clock:
+>>>> renesas,r9a08g045-vbattb: Document VBATTB
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
+>>>> the tamper detector and a small general usage memory of 128B. Add documentation for it.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v3:
+>>>> - moved the file to clock dt bindings directory as it is the
+>>>>   only functionality supported at the moment; the other functionalities
+>>>>   (tamper detector, SRAM) are offered though register spreaded
+>>>>   though the address space of the VBATTB IP and not actually
+>>>>   individual devices; the other functionalities are not
+>>>>   planned to be supported soon and if they will be I think they
+>>>>   fit better on auxiliary bus than MFD
+>>>> - dropped interrupt names as requested in the review process
+>>>> - dropped the inner node for clock controller
+>>>> - added #clock-cells
+>>>> - added rtx clock
+>>>> - updated description for renesas,vbattb-load-nanofarads
+>>>> - included dt-bindings/interrupt-controller/irq.h in examples section
+>>>>
+>>>> Changes in v2:
+>>>> - changed file name and compatible
+>>>> - updated title, description sections
+>>>> - added clock controller part documentation and drop dedicated file
+>>>>   for it included in v1
+>>>> - used items to describe interrupts, interrupt-names, clocks, clock-names,
+>>>>   resets
+>>>> - dropped node labels and status
+>>>> - updated clock-names for clock controller to cope with the new
+>>>>   logic on detecting the necessity to setup bypass
+>>>>
+>>>>  .../clock/renesas,r9a08g045-vbattb.yaml       | 81 +++++++++++++++++++
+>>>>  1 file changed, 81 insertions(+)
+>>>>  create mode 100644
+>>>> Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.ya
+>>>> ml
+>>>> b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.ya
+>>>> ml
+>>>> new file mode 100644
+>>>> index 000000000000..29df0e01fae5
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbatt
+>>>> +++ b.y
+>>>> +++ aml
+>>>> @@ -0,0 +1,81 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+>>>> +---
+>>>> +$id:
+>>>> +http://devicetree.org/schemas/clock/renesas,r9a08g045-vbattb.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Renesas Battery Backup Function (VBATTB)
+>>>> +
+>>>> +description:
+>>>> +  Renesas VBATTB is an always on powered module (backed by battery)
+>>>> +which
+>>>> +  controls the RTC clock (VBATTCLK), tamper detection logic and a
+>>>> +small
+>>>> +  general usage memory (128B).
+>>>> +
+>>>> +maintainers:
+>>>> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: renesas,r9a08g045-vbattb
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    items:
+>>>> +      - description: tamper detector interrupt
+>>>> +
+>>>> +  clocks:
+>>>> +    items:
+>>>> +      - description: VBATTB module clock
+>>>> +      - description: RTC input clock (crystal oscillator or external
+>>>> + clock device)
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: bclk
+>>>> +      - const: rtx
+>>>> +
+>>>> +  '#clock-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  power-domains:
+>>>> +    maxItems: 1
+>>>
+>>> Not sure, you need to document "PD_VBATT" power domain as per Table
+>>> 41.2, this LSI supports 3 power domains(PD_ISOVCC, PD_VCC, PD_VBATT)
+>>>
+>>> Power Mode PD_ISOVCC PD_VCC PD_VBATT
+>>> ALL_ON      ON          ON    ON
+>>> AWO         OFF         ON    ON
+>>> VBATT       OFF         OFF   ON
+>>> ALL_OFF     OFF         OFF   OFF
+>>>
+>>> PD_VBATT domain is the area where the RTC/backup register is located,
+>>> works on battery power when the power of PD_VCC and PD_ISOVCC domain are turned off.
 >>
->>   Fixes: 3e0bf9 ("perf pmu: Restore full PMU name wildcard support")
+>> In Linux, the CPG is the power domain provider for all the IPs in RZ/G3S SoC (modeled though MSTOP CPG
+>> support). This is how it is currently implemented.
+>>
+>> Then groups of IPs are part of power domains PD_ISOVCC, PD_VCC, PD_VBATT.
+>> These power domains are i2c controlled with the help of firmware (at least at the moment).
+>>
+>> From HW manual:
+>> - PD_VCC domain always powered on area.
+>>
+>> - PD_ISOVCC domain is the area where the power can be turned off.
+>>
+>> - PD_VBATT domain is the area where the RTC/backup register is located,
+>>   works on battery power when the power of .
+>>
+>> The power to these domains are controlled with the help of firmware. Linux cannot do control itself as
+>> the CPU is in the PD_ISOVCC. If you look at picture 41.3 Power mode transition [1] it is mentioned the
+>> relation b/w these power domains (controlled by PMIC though firmware) and the supported power saving
+>> modes: ALL_ON, AWO, VBATT.
+>>
 > 
-> In the perf-tools-next I have it as:
-> 
-> commit 37e2a19c98bf99747ca997be876dfc13f9165e0a
-> Author: Veronika Molnarova <vmolnaro@redhat.com>
-> Date:   Thu Aug 8 12:37:49 2024 +0200
-> 
->     perf test pmu: Set uninitialized PMU alias to null
->     
->     Commit 3e0bf9fde2984469 ("perf pmu: Restore full PMU name wildcard
->     support") adds a test case "PMU cmdline match" that covers PMU name
->     wildcard support provided by function perf_pmu__match().
-> <SNIP>
->     Fixes: 3e0bf9fde2984469 ("perf pmu: Restore full PMU name wildcard support")
->     Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
->     Cc: James Clark <james.clark@linaro.org>
->     Cc: Michael Petlan <mpetlan@redhat.com>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Radostin Stoyanov <rstoyano@redhat.com>
->     Link: https://lore.kernel.org/r/20240808103749.9356-1-vmolnaro@redhat.com
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> As I have:
-> 
-> ⬢[acme@toolbox perf-tools-next]$ git config core.abbrev
-> 16
-> ⬢[acme@toolbox perf-tools-next]$
-> 
-> And scripts to make sure we get enough resolution to avoid such problems
-> 
-> I just checked and yeah, on perf-tools/perf-tools it is:
-> 
->     Fixes: 3e0bf9 ("perf pmu: Restore full PMU name wildcard support")
->     Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
->     Cc: james.clark@arm.com
->     Cc: mpetlan@redhat.com
->     Cc: rstoyano@redhat.com
->     Link: https://lore.kernel.org/r/20240808103749.9356-1-vmolnaro@redhat.com
->     Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> So I suggest Namhyung fixes up the Fixes tag to have a longer prefix for
-> the sha and Veronica to run:
-> 
-> ⬢[acme@toolbox perf-tools]$ git config core.abbrev 16
-> ⬢[acme@toolbox perf-tools]$ git config core.abbrev
-> 16
-> ⬢[acme@toolbox perf-tools]$ 
-> 
-> - Arnaldo
-> 
-Sure, will do.
+> DT describes hardware. So, the question was, from that perspective, do we need to document PD_VBATT domain,
+> as it can be controlled outside linux??
 
-Sorry for the inconvenience.
-Thanks,
-Veronika
+The control to these domains is passed to firmware.
 
->  
->> has these problem(s):
->>
->>   - Target SHA1 does not exist
->>
->> Actually, the quoted SHA1 is too short and is ambiguous in my tree:
->>
->> $ git show 3e0bf9
->> error: short object ID 3e0bf9 is ambiguous
->> hint: The candidates are:
->> hint:   3e0bf9fde298 commit 2024-06-26 - perf pmu: Restore full PMU name wildcard support
->> hint:   3e0bf93e0354 tree
->> fatal: ambiguous argument '3e0bf9': unknown revision or path not in the working tree.
->>
->> so you should use
->>
->> Fixes: 3e0bf9fde298 ("perf pmu: Restore full PMU name wildcard support")
->>
->> -- 
->> Cheers,
->> Stephen Rothwell
-> 
-> 
+From my point of view these will never be used by Linux becuase:
+- the PD_ISOVCC is where the CPU resides and it cannot cut itself its power
+- the PD_VCC is a domain where critical IPs like CPG, SYSC resides
+- the VBATT is where the RTC resides, RTC that should stay on forever
 
+Should we document something that will be never used?
+
+> 
+> Cheers,
+> Biju
 
