@@ -1,302 +1,134 @@
-Return-Path: <linux-kernel+bounces-312541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1529697E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7284E9697E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957232843AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C221F24505
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C286A1C768A;
-	Tue,  3 Sep 2024 08:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23F91C7671;
+	Tue,  3 Sep 2024 08:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey0IEJoR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NZYlOiHW"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5D41C7670;
-	Tue,  3 Sep 2024 08:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72111C7663
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725353600; cv=none; b=F0z2aP0zGD1V36eScm/PFLzJ6ojW1/dH7BT0GQeNkiTRL/ZDUcr249lU8FP0Anw/xJB3tsbOSZ7gzpMDiGHsR8UjfkfZhT60lgkAHtUEd3ncOAPsXLcRCjuGErNAoaWHvwr1ec8OJHBuWkM60R4mYTC2E+4Ym4hBQbkO3UkKZow=
+	t=1725353629; cv=none; b=pFTKMBf2E1F2hjlMYut3BSiztJf/5zg6fdbuSkQBbE7GevwOjgPBiCVAuZj2wG9iwDFysE3EQYaRBdCPEceSn1UcZICMx0xajrudWOJCoDyoFMH+QEtpC+tyiP9wy/jdIe+sfHkPjiybYyVBcEoikEP7PsQ39+NE4yMhKhsOsZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725353600; c=relaxed/simple;
-	bh=pF9CszNYwjJO5JuUq2dHO3LIuUrYYG12W216C7TCrIQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CBkc8Bc8Zd7u/os4jqAE3VTKIKpUDvFV8upHFvxQP1h8AQC1J2v796vVUoxGi0lBr0qBHtb3UuBZCPbRGsR7n3j+dp0+ge/GCI5jeF4kzLvAEKYcjJ6mpdIhfoVUlt/xzqQwKXO4w/oWxoAiL8UlME8J8yJIlRALd9Y6Y2Q5WEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey0IEJoR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C3CC4CEC4;
-	Tue,  3 Sep 2024 08:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725353600;
-	bh=pF9CszNYwjJO5JuUq2dHO3LIuUrYYG12W216C7TCrIQ=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=ey0IEJoR3QjObccfvtl+IVNs3bMkadki8pzTl/HbOgT4SApEZdouS3ArzHkc+WJuK
-	 Bm66TGtj7EvySvcm78AGruWZcEfGR0U8U8C9NORBB6uqtPSL/5ODv5lyzNJ8KuHeU8
-	 PE64NcvpP4nBpdB3U6szU+7jwKRwJ3t1Qa5sVBJMwTxyOLLwT3EaKusSgWAywkv67Q
-	 MnIMOz83UtKz01hHrzpvosTwotiuHcLztTI11jWY2NyAfLB8a2yUw01BgLtLSe+PRt
-	 kDL2e57VE6D5wCyLXC/9v+pKwUJ6gWmKFfrSuO+aX8ZhSIJlzh215dxW3KfyvfQ3Wa
-	 RKPr3mj5OlJWw==
-Date: Tue, 3 Sep 2024 10:53:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
-Message-ID: <20240903-resilient-quiet-oxpecker-d57d7a@houat>
-References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
- <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
- <20240627-paper-vicugna-of-fantasy-c549ed@houat>
- <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
- <20240628-romantic-emerald-snake-7b26ca@houat>
- <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
- <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
- <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
- <20240806-gharial-of-abstract-reverence-aad6ea@houat>
- <ZrJAnbLcj_dU47ZO@phenom.ffwll.local>
+	s=arc-20240116; t=1725353629; c=relaxed/simple;
+	bh=ikeeOYEgrJwJtmNps3HCpuCmvb9ShnQmcvur9LytR74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CEbRaHl9DcEfHEPxIQb2ergrbsBxnfbbEG7iSwwKNk6Mj93Chx8str6zZmq/2/nqraf/mLWCnSO/XGM9A2xlmc3DlWnwkUqaSUG73XkEBReTdr3iJlpIOv+oM6KJ5rjF6TCRHjegcxR/d0X48vtM5EZCVMnvSEI+RWNonObyBco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NZYlOiHW; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725353627; x=1756889627;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ikeeOYEgrJwJtmNps3HCpuCmvb9ShnQmcvur9LytR74=;
+  b=NZYlOiHWe2tzM8u0onuGLdKCl9bZrYKuqC4xe6dkSDdcnd+/hON5sv64
+   PZ9duRgUepqheWwmFRmW741AHdUEux8GeQcMzJDvzF71ZLgqorkc7kaBb
+   ARsrJgGHQOnyk1D8FklogJaiuNyJIFSmaVBEFusmAK8iJwkrnoANZUOBX
+   EICXCYrUJzEiqdgMjZNq/m7/OW7NXfXwiSi+uMC+wlGK+CC2bnfv2BAAe
+   IPw9xE9eYVx5IKb65kV/smUmoP6+XBV31hZnsR9q1GnzJTYWBklQT6xSa
+   dr1REsGPm97YCKHrJ8rQhTNkmVqK8AacX2fiICQdMYv2Hw5vmnn2a0Fyt
+   A==;
+X-CSE-ConnectionGUID: Io7yATkYSoC5QRoM/qiFWw==
+X-CSE-MsgGUID: 5Jek5hSLSdKnORaJHvum1g==
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="31221466"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Sep 2024 01:53:46 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Sep 2024 01:53:27 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 3 Sep 2024 01:53:26 -0700
+Message-ID: <e39fe3df-3110-4f69-af9f-39dbd52d4865@microchip.com>
+Date: Tue, 3 Sep 2024 10:53:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="r7g4aiuocov6uk3k"
-Content-Disposition: inline
-In-Reply-To: <ZrJAnbLcj_dU47ZO@phenom.ffwll.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/12] irqchip/atmel-aic5: Add support for sam9x7 aic
+Content-Language: en-US, fr-FR
+To: Varshini Rajendran <varshini.rajendran@microchip.com>,
+	<tglx@linutronix.de>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Hari Prasath <Hari.PrasathGE@microchip.com>
+References: <20240903063913.48307-1-varshini.rajendran@microchip.com>
+ <20240903064252.49530-1-varshini.rajendran@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240903064252.49530-1-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 03/09/2024 at 08:42, Varshini Rajendran wrote:
+> From: Hari Prasath <Hari.PrasathGE@microchip.com>
+> 
+> Add support for the Advanced interrupt controller(AIC) chip in the sam9x7.
+> 
+> Signed-off-by: Hari Prasath <Hari.PrasathGE@microchip.com>
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 
---r7g4aiuocov6uk3k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After several investigations to make this "smarter" (see on previous 
+versions posts), we figured out this historic way of handling NR_XXX_IRQ 
+is the best/simplest one.
 
-On Tue, Aug 06, 2024 at 05:26:21PM GMT, Daniel Vetter wrote:
-> On Tue, Aug 06, 2024 at 04:09:43PM +0200, Maxime Ripard wrote:
-> > On Tue, Aug 06, 2024 at 03:01:44PM GMT, Daniel Vetter wrote:
-> > > On Mon, Jul 01, 2024 at 06:01:41PM +0100, Tvrtko Ursulin wrote:
-> > > >=20
-> > > > On 01/07/2024 10:25, Maarten Lankhorst wrote:
-> > > > > Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
-> > > > > > Hi,
-> > > > > >=20
-> > > > > > On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
-> > > > > > > Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
-> > > > > > > > Hi,
-> > > > > > > >=20
-> > > > > > > > Thanks for working on this!
-> > > > > > > >=20
-> > > > > > > > On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst w=
-rote:
-> > > > > > > > > The initial version was based roughly on the rdma and mis=
-c cgroup
-> > > > > > > > > controllers, with a lot of the accounting code borrowed f=
-rom rdma.
-> > > > > > > > >=20
-> > > > > > > > > The current version is a complete rewrite with page count=
-er; it uses
-> > > > > > > > > the same min/low/max semantics as the memory cgroup as a =
-result.
-> > > > > > > > >=20
-> > > > > > > > > There's a small mismatch as TTM uses u64, and page_counte=
-r long pages.
-> > > > > > > > > In practice it's not a problem. 32-bits systems don't rea=
-lly come with
-> > > > > > > > > > =3D4GB cards and as long as we're consistently wrong wi=
-th units, it's
-> > > > > > > > > fine. The device page size may not be in the same units a=
-s kernel page
-> > > > > > > > > size, and each region might also have a different page si=
-ze (VRAM vs GART
-> > > > > > > > > for example).
-> > > > > > > > >=20
-> > > > > > > > > The interface is simple:
-> > > > > > > > > - populate drmcgroup_device->regions[..] name and size fo=
-r each active
-> > > > > > > > >     region, set num_regions accordingly.
-> > > > > > > > > - Call drm(m)cg_register_device()
-> > > > > > > > > - Use drmcg_try_charge to check if you can allocate a chu=
-nk of memory,
-> > > > > > > > >     use drmcg_uncharge when freeing it. This may return a=
-n error code,
-> > > > > > > > >     or -EAGAIN when the cgroup limit is reached. In that =
-case a reference
-> > > > > > > > >     to the limiting pool is returned.
-> > > > > > > > > - The limiting cs can be used as compare function for
-> > > > > > > > >     drmcs_evict_valuable.
-> > > > > > > > > - After having evicted enough, drop reference to limiting=
- cs with
-> > > > > > > > >     drmcs_pool_put.
-> > > > > > > > >=20
-> > > > > > > > > This API allows you to limit device resources with cgroup=
-s.
-> > > > > > > > > You can see the supported cards in /sys/fs/cgroup/drm.cap=
-acity
-> > > > > > > > > You need to echo +drm to cgroup.subtree_control, and then=
- you can
-> > > > > > > > > partition memory.
-> > > > > > > > >=20
-> > > > > > > > > Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.=
-intel.com>
-> > > > > > > > > Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
-> > > > > > > > I'm sorry, I should have wrote minutes on the discussion we=
- had with TJ
-> > > > > > > > and Tvrtko the other day.
-> > > > > > > >=20
-> > > > > > > > We're all very interested in making this happen, but doing =
-a "DRM"
-> > > > > > > > cgroup doesn't look like the right path to us.
-> > > > > > > >=20
-> > > > > > > > Indeed, we have a significant number of drivers that won't =
-have a
-> > > > > > > > dedicated memory but will depend on DMA allocations one way=
- or the
-> > > > > > > > other, and those pools are shared between multiple framewor=
-ks (DRM,
-> > > > > > > > V4L2, DMA-Buf Heaps, at least).
-> > > > > > > >=20
-> > > > > > > > This was also pointed out by Sima some time ago here:
-> > > > > > > > https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.f=
-fwll.local/
-> > > > > > > >=20
-> > > > > > > > So we'll want that cgroup subsystem to be cross-framework. =
-We settled on
-> > > > > > > > a "device" cgroup during the discussion, but I'm sure we'll=
- have plenty
-> > > > > > > > of bikeshedding.
-> > > > > > > >=20
-> > > > > > > > The other thing we agreed on, based on the feedback TJ got =
-on the last
-> > > > > > > > iterations of his series was to go for memcg for drivers no=
-t using DMA
-> > > > > > > > allocations.
-> > > > > > > >=20
-> > > > > > > > It's the part where I expect some discussion there too :)
-> > > > > > > >=20
-> > > > > > > > So we went back to a previous version of TJ's work, and I'v=
-e started to
-> > > > > > > > work on:
-> > > > > > > >=20
-> > > > > > > >     - Integration of the cgroup in the GEM DMA and GEM VRAM=
- helpers (this
-> > > > > > > >       works on tidss right now)
-> > > > > > > >=20
-> > > > > > > >     - Integration of all heaps into that cgroup but the sys=
-tem one
-> > > > > > > >       (working on this at the moment)
-> > > > > > >=20
-> > > > > > > Should be similar to what I have then. I think you could use =
-my work to
-> > > > > > > continue it.
-> > > > > > >=20
-> > > > > > > I made nothing DRM specific except the name, if you renamed i=
-t the device
-> > > > > > > resource management cgroup and changed the init function sign=
-ature to take a
-> > > > > > > name instead of a drm pointer, nothing would change. This is =
-exactly what
-> > > > > > > I'm hoping to accomplish, including reserving memory.
-> > > > > >=20
-> > > > > > I've started to work on rebasing my current work onto your seri=
-es today,
-> > > > > > and I'm not entirely sure how what I described would best fit. =
-Let's
-> > > > > > assume we have two KMS device, one using shmem, one using DMA
-> > > > > > allocations, two heaps, one using the page allocator, the other=
- using
-> > > > > > CMA, and one v4l2 device using dma allocations.
-> > > > > >=20
-> > > > > > So we would have one KMS device and one heap using the page all=
-ocator,
-> > > > > > and one KMS device, one heap, and one v4l2 driver using the DMA
-> > > > > > allocator.
-> > > > > >=20
-> > > > > > Would these make different cgroup devices, or different cgroup =
-regions?
-> > > > >=20
-> > > > > Each driver would register a device, whatever feels most logical =
-for that device I suppose.
-> > > > >=20
-> > > > > My guess is that a prefix would also be nice here, so register a =
-device with name of drm/$name or v4l2/$name, heap/$name. I didn't give it m=
-uch thought and we're still experimenting, so just try something. :)
-> > > > >=20
-> > > > > There's no limit to amount of devices, I only fixed amount of poo=
-ls to match TTM, but even that could be increased arbitrarily. I just don't=
- think there is a point in doing so.
-> > > >=20
-> > > > Do we need a plan for top level controls which do not include regio=
-n names?
-> > > > If the latter will be driver specific then I am thinking of ease of
-> > > > configuring it all from the outside. Especially considering that on=
-e cgroup
-> > > > can have multiple devices in it.
-> > > >=20
-> > > > Second question is about double accounting for shmem backed objects=
-=2E I think
-> > > > they will be seen, for drivers which allocate backing store at buff=
-er
-> > > > objects creation time, under the cgroup of process doing the creati=
-on, in
-> > > > the existing memory controller. Right?
-> > >=20
-> > > We currently don't set __GFP_ACCOUNT respectively use GFP_KERNEL_ACCO=
-UNT,
-> > > so no. Unless someone allocates them with GFP_USER ...
-> > >=20
-> > > > Is there a chance to exclude those from there and only have them in=
- this new
-> > > > controller? Or would the opposite be a better choice? That is, not =
-see those
-> > > > in the device memory controller but only in the existing one.
-> > >=20
-> > > I missed this, so jumping in super late. I think guidance from Tejun =
-was
-> > > to go the other way around: Exclude allocations from normal system
-> > > memory from device cgroups and instead make sure it's tracked in the
-> > > existing memcg.
-> > >=20
-> > > Which might mean we need memcg shrinkers and the assorted pain ...
-> > >=20
-> > > Also I don't think we ever reached some agreement on where things lik=
-e cma
-> > > allocations should be accounted for in this case.
-> >=20
-> > Yeah, but that's the thing, memcg probably won't cut it for CMA. Because
-> > if you pull the thread, that means that dma-heaps also have to register
-> > their buffers into memcg too, even if it's backed by something else than
-> > RAM.
->=20
-> For cma I'm kinda leaning towards "both". If you don't have a special cma
-> cgroup and just memcg, you can exhaust the cma easily. But if the cma
-> allocations also aren't tracked in memcg, you have a blind spot there,
-> which isn't great.
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-I think one of earlier comment from Tejun was that we don't want to
-double-account memory, but I guess your point is that we should double
-account if we allocate CMA buffers from the main CMA allocator, and not
-if we're allocating from a secondary one?
+Best regards,
+   Nicolas
 
-Maxime
+> ---
+> Changes in v7:
+> 
+> - Removed the line break in the function.
+> ---
+>   drivers/irqchip/irq-atmel-aic5.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+> index 145535bd7560..f9168efa4160 100644
+> --- a/drivers/irqchip/irq-atmel-aic5.c
+> +++ b/drivers/irqchip/irq-atmel-aic5.c
+> @@ -320,6 +320,7 @@ static const struct of_device_id aic5_irq_fixups[] __initconst = {
+>   	{ .compatible = "atmel,sama5d3", .data = sama5d3_aic_irq_fixup },
+>   	{ .compatible = "atmel,sama5d4", .data = sama5d3_aic_irq_fixup },
+>   	{ .compatible = "microchip,sam9x60", .data = sam9x60_aic_irq_fixup },
+> +	{ .compatible = "microchip,sam9x7", .data = sam9x60_aic_irq_fixup },
+>   	{ /* sentinel */ },
+>   };
+>   
+> @@ -406,3 +407,11 @@ static int __init sam9x60_aic5_of_init(struct device_node *node,
+>   	return aic5_of_init(node, parent, NR_SAM9X60_IRQS);
+>   }
+>   IRQCHIP_DECLARE(sam9x60_aic5, "microchip,sam9x60-aic", sam9x60_aic5_of_init);
+> +
+> +#define NR_SAM9X7_IRQS		70
+> +
+> +static int __init sam9x7_aic5_of_init(struct device_node *node, struct device_node *parent)
+> +{
+> +	return aic5_of_init(node, parent, NR_SAM9X7_IRQS);
+> +}
+> +IRQCHIP_DECLARE(sam9x7_aic5, "microchip,sam9x7-aic", sam9x7_aic5_of_init);
 
---r7g4aiuocov6uk3k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZtbOfQAKCRAnX84Zoj2+
-dnwzAYCEWYkV8bFQQiateI5fA27NPKONLZzvNymw/YlkL6RqCbyy8yQF5/c3OB2y
-FyfBwboBgN6ohy+xL0NP1ul/DCpoJ/yDH0DMRhvYsEGPgvbkGm+8WPbc/KFc/xKt
-alKvNeyYYQ==
-=9H/P
------END PGP SIGNATURE-----
-
---r7g4aiuocov6uk3k--
 
