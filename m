@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-312230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8532B9693D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D04E9693D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30382878F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0905F1F24026
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747A01D1F63;
-	Tue,  3 Sep 2024 06:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179D81D54CD;
+	Tue,  3 Sep 2024 06:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dnZYeUR6"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z1mYGaP8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F9E1CDFDB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0982F2E3EB;
+	Tue,  3 Sep 2024 06:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345456; cv=none; b=eWG52EacT6cT/rzzyhExb+PZ8L2J04V9+NGPdznKoxZZyMTR4MUDHz1ZnvwpURNZfJW3h/VMmVjo3X81pI3ykwExJM1Tut8NvJbbHlaQInZf+8KQ11ieL8sQSzt59asziFaGkuvmPMFJHVPEn1a+JPBUgoYHYtFpN4LBUkWAK74=
+	t=1725345451; cv=none; b=gkE4qrBLC3zOCX6EgOvs6uX4Wp7DuG6lEcvWLkbDtVVsu7I1eTNAaLz0M9NSKHIHzRKfmpc6j1Hh/dHy0fLO2GO8grm9dQ+u8t4limj3Je9id1rffr7m+nk/g3Qpak4FZUVH8/CgNvTyUbu4PrCGkUWpmCTDSttV9Sd1HTAYMUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345456; c=relaxed/simple;
-	bh=E+RwKrTe4PjZCoMNGVs/K27VSdkCabDL006XACcqnjA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RojqAY1xwQJecoqnQI8RKObl21cGNswkxYcDPsWQzPistzUt772qF6yssj8Q8S0cBpnGwnchIwMz7Tln5eXhAROb+Dgqp1VAOCL8BRn9Li1cpa1cL5isFdjC7l3wxSNubJtS2/k99j7mJdS+VjuGgpYfKrwGstHmPNCP06lKVtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dnZYeUR6; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2068acc8a4fso7481605ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 23:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725345455; x=1725950255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbOZ+JVq93xaozZ2F/fRGqtyghYlQ1vNCbGXgo0uGko=;
-        b=dnZYeUR6BDkQNJ//lSDUU1FdSAwLOgiQezn1LokVch18JeWbu/exdXPDSeIuVtq0K4
-         OMxHb5Viq11C9GQkuaCzD+qFR7ZzBKBA+ep2AER5AZ0HRkZistoBdkZ1dWnmIQBTpzOc
-         qEaIUI6Ulbsuo7lmFUUd+J808cmOxAhMCjb3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725345455; x=1725950255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qbOZ+JVq93xaozZ2F/fRGqtyghYlQ1vNCbGXgo0uGko=;
-        b=biOWLnAUXF1CpbSpzvk46ALxzKQKyJ3N2FQBfYSzZh3F8Gg3CiVEynxCV4PBVpEqs7
-         79gAStpTAOmlhUL3URoVN9ktFofw4Tjn1HDzUxp0fh9dzu110iAie9Oyp32YuXvKi4r0
-         v2vty8k2WiXmqS94Y2EsENMJ9/OTmibqP8CAkynARfF3hXXcX1GgCuOC8EckDVKPwdkJ
-         WK/KzOScBDUk/zD0FkZArRADXHioWakdx5iBP0wbyaf70O2fUKjNnPiMS2yn33GLjCVJ
-         AhGF5GwTdzXqIEXN3C7awI1DlVsVH8hKKaWMzEjY9yOOeWtP/eLmSlLsLVszupsKEP/N
-         T0AA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvaqZnh+itufhf8lrV6PtuhXatUAyjsX349PgyvvHcswYAkxoY2xyuNuAOkcY6y/7vOazHhXIYTZG2thQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm0Vy4wMPWw4KXAPFabdR82qMwhIWsHCZ491XufmmXZr4MthQG
-	4c0eyqXkhVTqprxJGLKTqmOV1mvLr7pQ01gXjqOhaASSvYPp5WX9Z9DgdRjNQg==
-X-Google-Smtp-Source: AGHT+IH4B3FchQ3yX4BK53t8Xm+bHdb7x39ti5e3zwoaLlNvJhQCSyfF9VV8Eot/TOGV8pX/mb/zXw==
-X-Received: by 2002:a17:903:1c8:b0:206:9536:9778 with SMTP id d9443c01a7336-2069536a0f5mr13234785ad.19.1725345454827;
-        Mon, 02 Sep 2024 23:37:34 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:51ae:4bbd:c856:6cf0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2058274981dsm21045555ad.82.2024.09.02.23.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 23:37:34 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] Documentation/zram: trivial fixup
-Date: Tue,  3 Sep 2024 15:37:06 +0900
-Message-ID: <20240903063722.1603592-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-In-Reply-To: <20240902105656.1383858-24-senozhatsky@chromium.org>
-References: <20240902105656.1383858-24-senozhatsky@chromium.org>
+	s=arc-20240116; t=1725345451; c=relaxed/simple;
+	bh=Vb2ayZcxVYJI7Oj9Q+AdxHY/5Iq8m3iAdvArdzNkNEo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ujJH4BaAVIaGdPJ6WtNpDnntnYunQKXM9C9N7KKP72T+OMQ0wSUxhT/8HfZJnbrnOIDiAOE7Jb2RBydiU33ElTUPpNf/lgjhg7Y8GgRElMI6nWSYNQ4z88US0k/2VRI3PcgcMHQrY2DKXcZiorFmxi5d0q36YKPkoGYrgNPFalI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z1mYGaP8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4831LiJs001041;
+	Tue, 3 Sep 2024 06:37:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=oiQkwmuVOshle+cB69tX4B8eAUbAPjYvOD/Pld37iA8=; b=Z1
+	mYGaP8QwbPi5x3Tpsx1W6CRz2qSAQCz9uTeRC9KLJZcl+FFqZpREVAr4EZVe7dvE
+	jfZ7fuB1cnqFt0CSAg3rL1uEscPLEQwtFY/y3O7GqmkIpXUf2X6hNpLVjuAth9bJ
+	UETIErKw26rm7CWS5cApZw+v2qQU80qCUgRaSo6kCL9ZjfHFZa9nmFg/kIzQtwQA
+	0gngKO215hgeA7aNMTLE2SAcfjXLzZPYIxhxpXVuVRQXTmXecbpMthyj24xRYbRf
+	0+9XNU6RfYmjSHYbbuduDq24JxQU9fH1wZSDJQg+SH3+ecOR0Gs+OsR48K5NsTcB
+	fYPjQfKCAfMrpb7OmwHQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe0j1f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 06:37:26 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4836bOuj008257
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 06:37:24 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Sep 2024 23:37:20 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_mapa@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH V6] scsi: ufs: qcom: update MODE_MAX cfg_bw value
+Date: Tue, 3 Sep 2024 12:07:09 +0530
+Message-ID: <20240903063709.4335-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OZ4-rYUq8lpixTI0qUy7JQKqfkJI7qzF
+X-Proofpoint-ORIG-GUID: OZ4-rYUq8lpixTI0qUy7JQKqfkJI7qzF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409030051
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Commit 8db8f6ce556a ("scsi: ufs: qcom: Add missing interconnect
+bandwidth values for Gear 5") updated the ufs_qcom_bw_table for
+Gear 5. However, it missed updating the cfg_bw value for the max
+mode.
+
+Hence update the cfg_bw value for the max mode for UFS 4.x devices.
+
+Fixes: 8db8f6ce556a ("scsi: ufs: qcom: Add missing interconnect
+bandwidth values for Gear 5")
+Cc: stable@vger.kernel.org
+Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- Documentation/admin-guide/blockdev/zram.rst | 2 +-
+Changes from v5:
+- Updated commit message.
+- Added Reviewed-by tag.
+
+Changes from v4:
+- Updated commit message.
+
+Changes from v3:
+- Cced stable@vger.kernel.org.
+
+Changes from v2:
+- Addressed Mani comment, added fixes tag.
+
+Changes from v1:
+- Updated commit message.
+---
+ drivers/ufs/host/ufs-qcom.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
-index bbb1b1b8f10e..678d70d6e1c3 100644
---- a/Documentation/admin-guide/blockdev/zram.rst
-+++ b/Documentation/admin-guide/blockdev/zram.rst
-@@ -309,7 +309,7 @@ a single line of text and contains the following stats separated by whitespace:
-  ============== =============================================================
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index c87fdc849c62..ecdfff2456e3 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
+ 	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
+ 	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
+ 	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
+-	[MODE_MAX][0][0]		    = { 7643136,	307200 },
++	[MODE_MAX][0][0]		    = { 7643136,	819200 },
+ };
  
- 10) Deactivate
--=============
-+==============
- 
- ::
- 
+ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
 -- 
-2.46.0.469.g59c65b2a67-goog
+2.17.1
 
 
