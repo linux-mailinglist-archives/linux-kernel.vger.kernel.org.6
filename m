@@ -1,109 +1,79 @@
-Return-Path: <linux-kernel+bounces-312248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C047969400
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65AA969408
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A981A1F23E8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDEC1F22C5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A951D54D2;
-	Tue,  3 Sep 2024 06:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EBA1D61B9;
+	Tue,  3 Sep 2024 06:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zg6TeEyk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LphKs8CF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4111D678A;
-	Tue,  3 Sep 2024 06:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16CD1D54E4;
+	Tue,  3 Sep 2024 06:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345854; cv=none; b=dHFHLoncVC/tt208M57mnQQ3C2thvfAheX6azLqIJfMuIPa+8HZ/9bILvZTKi5cE6MNmLMXhteCepx2UgMFOXDahwSUvGW5U6FkBoWYev1/XW4IOAbUby0WhnDOVQmc1aehPGM2BRWExnWnv6/94614+bj/VPrIuz0IXMQpChmg=
+	t=1725345869; cv=none; b=GSWBmgAf5GLXtxD7mCN34yBlpTQBtxydcwMbcoE7SjLI5tmv/Yv0/h2Z4qBDjbmi09QPqeyAIlgM8TFxWbDnm7GsXTM3r3EWuWMuC9Z+n3gluCkW3WMi9XPaJOYX3P3bE7Gh4DEqKi6V50pWAxmHYX2CoZ4PQGV2v3JM3A80Q8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345854; c=relaxed/simple;
-	bh=QqAT9W596BWLxWh9JNq2l5mZDxFk00w5wfHnzzw4HdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SqzEtNl2GgkHP0HwY+8/N8zgoZLRKTzGKpA5mVIldCf3FyL3b/pA2UDBODomnslcwSlfGvDZpBSMUXLaM2eUg1T76VUwUTq4Hp11qDdVM4DR4leOs3oi1i+VT4DKKGKlzFBbnl8sY8S+fl6JifHTPLyhCyNUsJUw2FQrY3p02Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Zg6TeEyk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725345849;
-	bh=7YUoxfleLcMpn8u1Qa++dwf0VyRwez0K2Q2i6LM4j6M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zg6TeEyke2dUx/XUD5Zj1k37fpmx0XEIUA9m1NOyXf4o56qUl63AFTDjLKC96a+y3
-	 k8yw/1vfDzhRySoSRmKjfr3rKXUIqGFg+aV7wTeVO7+tzFsLBL0YSXk4QVAN5Z/Ide
-	 dDSuArZc+49rUIGj9iu8h9+Uu1sAWgTeukGU06M+kh5XOYdceDgbp/3vHvaeR4WlZP
-	 YMs5A3JGOuzIHL2HCNG9c34bJ/UnNVgKyag/PFq1YJ4mSRldlIILGn/Pe2x6PL25lX
-	 0chg+15Mv2sKbORFdS5qnKuFmpwCs7BYxKmJMwnrmBiv3h//58zQpV0OiBjMhI+VhR
-	 td64962/FZiNw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wybgs1d58z4x8h;
-	Tue,  3 Sep 2024 16:44:09 +1000 (AEST)
-Date: Tue, 3 Sep 2024 16:44:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the ext4 tree
-Message-ID: <20240903164408.749aa16d@canb.auug.org.au>
+	s=arc-20240116; t=1725345869; c=relaxed/simple;
+	bh=L8/JzkSa3jocuq+XpNsY5gjIzY2JH8JzCv/oAmQ491E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYHMIWdiwqN1/zEJPPVHoPkTTOZ4+X7aNDM9YdO1WDueKGyvd7FNb/+/F6SLiUMoXjaFV3fbLT58ZBz4DEtGpFWdIPU6Jg47A6tSNVf0R3mtQHjqY1c9Ord9g4qkaPxwg1+UXOC2XOtUiSs0aW9jolwbHGW7CFrJtS1sG1aGI30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LphKs8CF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A88DC4CEC5;
+	Tue,  3 Sep 2024 06:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725345868;
+	bh=L8/JzkSa3jocuq+XpNsY5gjIzY2JH8JzCv/oAmQ491E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LphKs8CF+JBJPUvK9DmEbTAbuXds+pgPKhChhvnzbphKiSDShoy0LfeSdwARNoI+h
+	 6EKZmTdpoK/HSOT7qLIw/iLssjofQ91+cypmdV01sNIY1ToAjnIyDMx9ceM0VLwQAb
+	 +HSDYADspFAz2dQ82f5Y8/ErNkrvcXt8++dRXtnAbru3IekvrbcTfm8eysk3P1XIsx
+	 6hsqVBym1PGEhqabHPPW/b5SrBwTyg8geCHD3ygD5tQPWCzfFowOm51W0q/AEi6uhs
+	 UEauzo91MOLujuoBAjIrUEH9TLxz0bGaPi/dwYpQZK2JoPsBKE65FZCVW62ENoWrqv
+	 JmeZuWqHV8/7A==
+Date: Tue, 3 Sep 2024 08:44:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	chenhuacai@kernel.org, linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com, 
+	james.morse@arm.com, mchehab@kernel.org, rric@kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] dt-bindings: EDAC for ls3a5000 memory controller
+Message-ID: <rbatux54v2lj34osoee6dyu5nia3ucozjebvob2uxpim3zt4cz@zyzztjdwrv6m>
+References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
+ <20240903015354.9443-2-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IqAioDdBVipJK29ZO2v4zON";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903015354.9443-2-zhaoqunqin@loongson.cn>
 
---Sig_/IqAioDdBVipJK29ZO2v4zON
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 03, 2024 at 09:53:53AM +0800, Zhao Qunqin wrote:
+> add device tree bindings for ls3a5000 EDAC driver.
+> 
+> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+> ---
+>  .../edac/loongson,ls3a5000-mc-edac.yaml       | 44 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 +++
+>  2 files changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
 
-Hi all,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-In commit
+Best regards,
+Krzysztof
 
-  04760bdf975f ("ext4: fix error message when rejecting the default hash")
-
-Fixes tag
-
-  Fixes:985b67cd8639 ("ext4: filesystems without casefold feature cannot
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not wrap Fixes tag lines.  Also, please keep all the commit
-message tag lines together at the end of the commit message. Also,
-there should be a space after the ':'.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IqAioDdBVipJK29ZO2v4zON
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbWsDgACgkQAVBC80lX
-0GyXpQgAix+tMD5XAmia7VIyuTpNhG488rVw5vZk3dCSPMMecsJnv4hA6WJA3ayZ
-Mp0aGvCKNYCDVnAYECxsmSEyi2v7EpPotD2EHtHM9xY0VBn4mYbYJiC3AwYfmaC5
-xvwPSWaAi/alYgLdOZ1RTZqA1MqV7lJPDbVa2z3VxZNbYbHzMhamLfN5DvIs5dTs
-5dQMYkcrJqUNE3yIfGFzgzsxcbfTWGXuwUavsRHIcRyDQ/D45dQbH2sTeTiIVpvG
-atT4A0XTCBDQj9dr5ZbazCfsbkYFzmXBOIv0XJog/fXyr7Wi63HWPrGRRUPJ65MO
-Iq2G7oviD2NChnQkOb1p47mwOo82nQ==
-=10Mx
------END PGP SIGNATURE-----
-
---Sig_/IqAioDdBVipJK29ZO2v4zON--
 
