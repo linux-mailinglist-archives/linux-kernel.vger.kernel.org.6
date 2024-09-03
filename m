@@ -1,206 +1,148 @@
-Return-Path: <linux-kernel+bounces-313821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8921A96AA46
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC0596AA4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE0B281E51
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C61E1C24221
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67206189F2A;
-	Tue,  3 Sep 2024 21:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0991D223A;
+	Tue,  3 Sep 2024 21:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFdQl9rq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoPWRiNw"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A2C126BF9;
-	Tue,  3 Sep 2024 21:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6294A1D2238
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725399392; cv=none; b=K+K9AA3tq53W3Qon8QWPlZIxkEePU3vi31S1lGjH4B5ugtLUid6QjoX7GwiaWDRW5TIkLnbCHLZoFdHJCSqUE4sx82RnHyJMaMC+M0h0BkO56dRSJx0OCsPCvhMdvuEX71Z39rsnhTZMeu2iFvjtph0rMmKp0addK0TR3bCZVEg=
+	t=1725399419; cv=none; b=uek0zT1uRRZ4FbrGmn1a50boiWHtUurgb4u/dSdt5/CXZm4Xb5APN819XxrNyeXjK95apaLNC8Vr8gAsD/uUvoTwl0IrwzN49kIMGBBbqrLW9ePkWmCu9JOm3kHGVKcFOBTGVthxRr7bzFKiZBLkHlFEGj7i4g5LJEGt4eAwGG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725399392; c=relaxed/simple;
-	bh=sNqNWqOObyh0Yd8IjFNXY0gFjc5VMHgPntz99N56vvI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rpi8FNta85PZN7Ydgy4IdvgXJkBf2x5IryGqojOSk144zciLcO91yZg7T0Y9FcbQuZKdczJE4/1yT586WZWqqM57cZAQg0/cNBR/Q0JfVJy6Da2nXKzFvxjXxD5DNcW84MCGywXVssHJY9qltiZXnE4bsXjkvCb1b8CZoZBQnP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFdQl9rq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E725C4CEC4;
-	Tue,  3 Sep 2024 21:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725399392;
-	bh=sNqNWqOObyh0Yd8IjFNXY0gFjc5VMHgPntz99N56vvI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=aFdQl9rqcGVYn5lj+mLlLxKHqkhhK0MQ9UB6a8BGbdHwgk5gIOMF4i5ItkrhFLWP3
-	 +xZX3j0QiCo4SRg7LLK8KO3bTdrck6b8/M3CHUd8njEr3jb2mUaG+rCjBOx+j/y34d
-	 iQl/FA4VNKWFlO7p0EnQbgY+mhs1TRN6RA2C4zh5pGHheu9zfXcjAksRHsQAqaWwWq
-	 HPgVw6kZq+DBKyEPtxM3tdsiFCaNQERIh6MqQp2FtLYf40AaDMwDa5cqspn325HQrS
-	 HFzUDAMqJ5PpJIyeSUunBXoRib4HuS3ACNMaXL0uSmgpcrGc9pCUICr1/OqlmToHoR
-	 gF4tpcBnPjK2A==
-Message-ID: <c9ffecd72199926fc3d8a8e57208818c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725399419; c=relaxed/simple;
+	bh=j8XGislP9U4RtP2ur3FRRkYJU1CRFQ2RpUbKpV3GxoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nDBL59Z7M+uvRdc6NggKTSZoS9xyYw2hNC6kC2muV42Wk3PMDigzyYtNlfc0sdu6W/1swgzsiQajxSPRFdUpcEHapeHYUXNLdmm3r/nBiOfdsJaEMc6zLWHqMw7M0T8AyT4fUuFqo6bPBdrgGSmFLbot0ReXF3YxTbGDH85eBBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoPWRiNw; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-49baa3d3855so34481137.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725399417; x=1726004217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7w1vlARH9zyVfcMgOZVvOysSX5U8D2E5LJv6StNTa30=;
+        b=JoPWRiNw1tzYR0O8xPDZN1ZzarcGtoszLdECseQN2omoy9M1p/UUXQYjM9a0OBuleh
+         mxHdKTkum5o6B6ZstEFEfL7+MuiGNgnKoEx0/AuBsTsicVo+HfleGs10gIPY0kPd+3Pw
+         FYZX2RVESaP1+hKqy3LC5VElKCDb3cGiecNFZ1a5YY9b8eu6Ci18TofHi3DXy0+R5HAd
+         LXHWq6/MWcetXqM4McBpM68gB77yvooetUs5FdUSMmnWbUCb0/xOkjXgodMOcJ9ZsMMG
+         M7Lbonjr4WKULXxi3L4bItoMJzB1/ywvHASH2W5JrU0kKPo+Dgn//Yw75dd5YPUD00CP
+         l4Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725399417; x=1726004217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7w1vlARH9zyVfcMgOZVvOysSX5U8D2E5LJv6StNTa30=;
+        b=c6dyUMdLciqk4oYEAe6ecEGOj4JAFFS5ivi1IYJJUQ0J42kehNV62PMidDdI0+Um8A
+         gHfmIh9br22O+akXT1Jy74hJcw9DW0CLSel888+/R6+B0fZNXKLDHUXnhR2SgznYFnXI
+         XiBmc6STJAhcoxjjYHO0kuxJ6Vbybi8sdjkhcrsbvMwNUMLviBdYIyUMzxiZ9OZ6mWBI
+         C1VWpsJQ3gCTFD/cp1dIn1yy9wLdcmmE7FpEVmR2tiyWZxPUc/tc7CBjswo64qQChu2g
+         geyPXLsW4fdlS4YWMb4ANq+IdWTbfjC3g2HJHz9pvQ/teg69n4j0Ubt7Nj6g/+6pmJA9
+         RXNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9+Ny1P/4Gwks1/J+hX5Ipn4x/Qzxd/LIW0RbPUvltrbUbiEQtm5Uqveakv3tvve/HufT5q88auPAs/M8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxQi4aKcPZE8ZyHDtS7VVAl6xbnsXF5t2xhxBHFbtXSFVpGoj0
+	ttk0xe7A33E4m55xSVRZV5HgqBi7Oh/6QI8Cocog4Y6dkkgoTI93opSB8dub8o+UaHVMbTLi5ar
+	sR65QKUcqUWJ08XBHjV91fBUr88Q=
+X-Google-Smtp-Source: AGHT+IE1VTcc+43kHJF1X7BqHxNRXquZPm4QywfmSshwZ7gDMTOu4VhzyjyjQxzUe+Y4ceY2tC2bRRg8bns6pHslWnc=
+X-Received: by 2002:a05:6102:942:b0:48f:c062:75ae with SMTP id
+ ada2fe7eead31-49a5ae57710mr22471813137.8.1725399417234; Tue, 03 Sep 2024
+ 14:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
+ <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
+ <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com> <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
+In-Reply-To: <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 4 Sep 2024 09:36:45 +1200
+Message-ID: <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, 
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, baolin.wang@linux.alibaba.com, 
+	chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
+	kaleshsingh@google.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	xiang@kernel.org, ying.huang@intel.com, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA8EJpqSFp_cETNE_3iiC1viLhPD5TE+H1F=m8UksybEpAvKHQ@mail.gmail.com>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com> <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com> <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org> <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com> <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com> <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org> <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com> <6sk7sx4pz2gnne2tg3d5lsphmnp6vqjj2tjogqcop7fwn3yk3r@ftevsz77w6pt> <492e3c19-c06d-4faa-8064-e6b73c46b13e@quicinc.com> <CAA8EJpqSFp_cETNE_3iiC1viLhPD5TE+H1F=m8UksybEpAvKHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jie Luo <quic_luoj@quicinc.com>
-Date: Tue, 03 Sep 2024 14:36:30 -0700
-User-Agent: alot/0.10
 
-Quoting Dmitry Baryshkov (2024-09-03 07:08:07)
-> On Tue, 3 Sept 2024 at 17:00, Jie Luo <quic_luoj@quicinc.com> wrote:
-> >
-> >
-> >
-> > On 9/3/2024 2:39 AM, Dmitry Baryshkov wrote:
-> > > On Mon, Sep 02, 2024 at 11:33:57PM GMT, Jie Luo wrote:
-> > >>
-> > >>
-> > >> On 8/31/2024 6:24 AM, Stephen Boyd wrote:
-> > >>> Quoting Jie Luo (2024-08-30 09:14:28)
-> > >>>> Hi Stephen,
-> > >>>> Please find below a minor update to my earlier message on clk_ops =
-usage.
-> > >>>
-> > >>> Ok. Next time you can trim the reply to save me time.
-> > >>
-> > >> OK.
-> > >>
-> > >>>
-> > >>>> On 8/28/2024 1:44 PM, Jie Luo wrote:
-> > >>>>> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
-> > >>>>>> Quoting Luo Jie (2024-08-27 05:46:00)
-> > >>>>>>> +       case 48000000:
-> > >>>>>>> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> > >>>>>>> +               break;
-> > >>>>>>> +       case 50000000:
-> > >>>>>>> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
-> > >>>>>>> +               break;
-> > >>>>>>> +       case 96000000:
-> > >>>>>>> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> > >>>>>>> +               val &=3D ~CMN_PLL_REFCLK_DIV;
-> > >>>>>>> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
-> > >>>>>>> +               break;
-> > >>>>>>> +       default:
-> > >>>>>>> +               return -EINVAL;
-> > >>>>>>> +       }
-> > >>>>>>
-> > >>>>>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::=
-init()?
-> > >>>>>
-> > >>>>> OK, I will move this code into the clk_ops::init().
-> > >>>>
-> > >>>> This code is expected to be executed once for initializing the CMN=
- PLL
-> > >>>> to enable output clocks, and requires the parent clock rate to be
-> > >>>> available. However the parent clock rate is not available in the
-> > >>>> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right o=
-ption
-> > >>>> for this. Please let us know if this approach is fine. Thanks.
-> > >>>
-> > >>> Sure. It actually sounds like the PLL has a mux to select different
-> > >>> reference clks. Is that right? If so, it seems like there should be
-> > >>> multiple 'clocks' for the DT property and many parents possible. If
-> > >>> that's the case then it should be possible to have something like
-> > >>>
-> > >>>     clocks =3D <0>, <&refclk>, <0>;
-> > >>>
-> > >>> in the DT node and then have clk_set_rate() from the consumer actua=
-lly
-> > >>> set the parent index in hardware. If that's all static then it can =
-be
-> > >>> done with assigned-clock-parents or assigned-clock-rates.
-> > >>
-> > >> Thanks Stephen. The CMN PLL block always uses a single input referen=
-ce
-> > >> clock pin on any given IPQ SoC, however its rate may be different on
-> > >> different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96M=
-HZ
-> > >> on IPQ5018.
-
-How many input pins are there on the hardware block? It makes sense that
-only one pin would be used in practice, but I'm wondering if there are
-multiple pins in general. Why is the field called CMN_PLL_REFCLK_INDEX
-if it's not picking the reference clk desired (i.e. the pin that is
-actually connected)?
-
-> > >>
-> > >> Your second suggestion seems more apt for this device. I can define =
-the
-> > >> DT property 'assigned-clock-parents' to configure the clock parent of
-> > >> CMN PLL. The code for reference clock selection will be added in
-> > >> clk_ops::set_parent(). Please let us know if this approach is fine.
+On Wed, Sep 4, 2024 at 8:08=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Tue, 3 Sep 2024 11:38:37 -0700 Yosry Ahmed <yosryahmed@google.com> wro=
+te:
+>
+> > > [   39.157954] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000=
+00000000007
+> > > [   39.158288] R10: 0000000000000000 R11: 0000000000000246 R12: 00000=
+00000000001
+> > > [   39.158634] R13: 0000000000002b9a R14: 0000000000000000 R15: 00007=
+ffd619d5518
+> > > [   39.158998]  </TASK>
+> > > [   39.159226] ---[ end trace 0000000000000000 ]---
 > > >
-> > > What is the source of this clock? Can you call clk_get_rate() on this
-> > > input?
-> > >
+> > > After reverting this or Usama's "mm: store zero pages to be swapped
+> > > out in a bitmap", the problem is gone. I think these two patches may
+> > > have some conflict that needs to be resolved.
 > >
-> > The source (parent clock) for CMN PLL is always from on-board Wi-Fi
-> > block for any given IPQ SoC.
+> > Yup. I saw this conflict coming and specifically asked for this
+> > warning to be added in Usama's patch to catch it [1]. It served its
+> > purpose.
 > >
-> >  From the discussion so far, it seems there are two approaches possible
-> > which I would like to summarize below to be clear. Please let us know
-> > if this understanding or approach needs correction. Thanks.
+> > Usama's patch does not handle large folio swapin, because at the time
+> > it was written we didn't have it. We expected Usama's series to land
+> > sooner than this one, so the warning was to make sure that this series
+> > handles large folio swapin in the zeromap code. Now that they are both
+> > in mm-unstable, we are gonna have to figure this out.
 > >
-> > 1. clk_get_rate() requires the parent clock instance to be acquired by
-> > devm_clk_get(). Per our understanding from Stephen's previous comment,
-> > it is preferred that a clock provider driver (this) does not use the
-> > _get_ APIs on the parent clock to get the rate. Instead the parent rate
-> > should be passed to the clk_ops using parent data.
+> > I suspect Usama's patches are closer to land so it's better to handle
+> > this in this series, but I will leave it up to Usama and
+> > Chuanhua/Barry to figure this out :)
 
-struct clk_parent_data doesn't pass parent rate information to the
-clk_ops. I'd like you to not use any clk consumer APIs (clk.h) if
-possible.
+I believe handling this in swap-in might violate layer separation.
+`swap_read_folio()` should be a reliable API to call, regardless of
+whether `zeromap` is present. Therefore, the fix should likely be
+within `zeromap` but not this `swap-in`. I=E2=80=99ll take a look at this w=
+ith
+Usama :-)
 
-> So the parent clock
-> > should be specified in the DT using assigned-clock-parents property, and
-> > can be accessed from the clk_ops::set_parent(). This seems like a more
-> > reasonable method.
+> >
+> > [1]https://lore.kernel.org/lkml/CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8=
+y2PAh7EkTOug@mail.gmail.com/
+>
+> Thanks.  To unbreak -next I'll drop the two-patch series "mm: Ignite
+> large folios swap-in support" for now.
+>
+> btw, next time can we please call it "enable large folios swap-in
+> support"?  "ignite" doesn't make much sense here.
 
-Yes, this makes sense if the clk actually has multiple possible parents.
-Don't read the rate of the clk in the clk_ops::set_parent() callback
-though. The callback should only program the hardware to select the
-parent based on the index passed to the clk_op.
+sure.
+>
 
-If the clk only has one possible parent then it's different. I'd do it
-through clk_ops::set_rate() and use assigned-clock-rates or just let the
-first child clk of the PLL set the rate and configure the PLL by having
-the PLL's determine_rate() callback figure out if the parent rate is
-valid.
-
-That register field with "index" makes me suspicious that this is a mux
-that we're trying to hide behind the parent rate. Quite possibly that's
-actually a hardware multiplier, i.e. l-val, and we need to set the index
-to pick which multiplier is used to achieve whatever frequency is
-desired for the PLL itself. I assume the 353MHz output clk is actually
-the one that is deciding what the index should be, and the other ones
-all fall out of the PLL somewhere else through a post-divider or
-something.
-
-What frequency does the PLL run at?
-
->=20
-> assigned-clock-parents is necessary if there are multiple possible
-> parents. As you wrote that there is just one possible parent, then
-> there is no need to use it.
-> Stephen, your opinion?
->=20
-> > 2. Alternatively, if it is architecturally acceptable to use
-> > devm_clk_get() and clk_get_rate() in this clock provider driver, we can
-> > save this parent clock rate into a local driver data structure and then
-> > access it from clk_ops::init() for configuring the PLL.
->=20
-
-No, it isn't acceptable.
+Thanks
+Barry
 
