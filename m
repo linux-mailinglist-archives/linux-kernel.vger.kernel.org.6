@@ -1,146 +1,127 @@
-Return-Path: <linux-kernel+bounces-313045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C9F969F77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:54:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA71969F79
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94011F21A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:54:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0304BB24274
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AD029D06;
-	Tue,  3 Sep 2024 13:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QiZgS6Yx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A402383A5;
+	Tue,  3 Sep 2024 13:54:13 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E833F21373
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F391CA6AD;
+	Tue,  3 Sep 2024 13:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371640; cv=none; b=PDOzj1+i6a7mZt3m64LDPTcFh9giMOHhQPIispqH6o/B/FH5juE+yD6vDLTCGcswoMssZrkTYR0w2xr8wjzzL/L5zn1nPZvihj4lGwrhKOAZkpmr4LQ96AKnZ3PlPY/MRMuB2pxAT1gL3xn03fPFvjaI7ICPMmkYrE4vYMpy0DQ=
+	t=1725371653; cv=none; b=gxGlAgQQI8HhPAUJKkoH6V5JZBTkLPA9PAhPj1cZ5MdKkK0q1inb7KFKoBeZay9uwQ22r/7r6xpcy6PSQh0tfu7hD9AwcvQfvCMUuRKHyMHIk36lU/kT5pv8s4wKvNdM/HrXuN1VtyuqOxxgzoWJHKxM3wJe8Q5P1/AdGifxcIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371640; c=relaxed/simple;
-	bh=jsbhdYxUrE8lxh3QgMyMAmd1c/nI7x4iyZVAU8yHiDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=picIztS12xlSIiFhxVI7+Pnmf97TcLxQMzmSiTy5XD7ml6DFhDrT72xdojW+AR8vj1DkLu1IOzFFOcOTKhnO/Gqw0jno7wrmjRjpboSqenPevGZmJW+Q2dhXGP9mT5qMSwTb0oDMdYP7jnYc0OcsUF9vH+L3lkw8SFTzemOJZsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QiZgS6Yx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725371637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TzGiZvAUzaN7cLUP2IZjvPC3yppTfdnWfzQd1HxbtGQ=;
-	b=QiZgS6YxFn1ePrdIz3lcoXSJEVbPy7ZyVRGf3BaJl3Uc/n3XfHE9VUSzDGoaR/z35rz2RM
-	uWydO3kVQWUBMRKEoofngCpP7ltadZc9p36wcRYIbBYz3QWh65LsDKAp5D+zTSLxnWQf4+
-	IxnQDucR4SamZv+QfadAy8omnzx5yS0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-YMAg_PAfPD2P7ub1qgjJAw-1; Tue,
- 03 Sep 2024 09:53:52 -0400
-X-MC-Unique: YMAg_PAfPD2P7ub1qgjJAw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C71251979056;
-	Tue,  3 Sep 2024 13:53:49 +0000 (UTC)
-Received: from [10.2.16.89] (unknown [10.2.16.89])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 163EC19560AA;
-	Tue,  3 Sep 2024 13:53:46 +0000 (UTC)
-Message-ID: <d43165ae-9124-4034-b816-d09c9a48ecec@redhat.com>
-Date: Tue, 3 Sep 2024 09:53:46 -0400
+	s=arc-20240116; t=1725371653; c=relaxed/simple;
+	bh=LW2aFcZJH14Q1kEXlseBIgZHNW2q6kUp7VYzJkVVKs8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZHp3vsDEvsW9yE/TyqX3CYi3LZhhCUQfIPy1UQi7eR+fZKOy30tZUPYxN5uoHCw6JvvYx1eYZrX9/+NvB2KkjMzwtZiJ/5JNo8eQyWjclOnzu7cGl7ALwVchOXxwsJUssmEY5r8SfYaq6Y/KstnuQOGHDZ1MA9z0lEwKeBZyek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-691bb56eb65so47041577b3.0;
+        Tue, 03 Sep 2024 06:54:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725371650; x=1725976450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mqZiEh+o6sfWJuXgzKi0L8anYlIdqwzIKuWOXeuoMnQ=;
+        b=EUj89AIo3DW3yVfoC1jZvW6l1z0QH0q0J5ql+yPr4laTt2+ahkMjmcio+7Flca+7Q9
+         m0McHE+rXk36/KPTJjXc4Fe2rcm2+wTjpuNolJLwN8qo8uInbNQ5ckta5cXZM4HknHPC
+         78bHUtWbliHB/gzGcD7uH7INo1ntfj9i7NPf2k5PmhTkUOaHNe8T+Axi8zuHYsbaFdYK
+         ukny7fx2SwCT2KUUzHyADrg9i8qCPJiJWxhQxk6btb0EIsIqC3NusQGngAHFOhPnTAad
+         0FsdJraLiBLlL2BWm0VOdVjGBkyPMCNJ7VjZS4ZXdeS3Ak4h8MttWHlTHZ0SqPeckFck
+         SZ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUVoTzxxnWDMqSQevl6C2a1YC1bwe7UXd7avk9ogywiRFMmXR7ZbhDnK3mGwXKSCCngxpNa3nUKmWTtXsSA@vger.kernel.org, AJvYcCX5gSUJqLmYYcOlMobb7qGVFoWceb2+gA7XBmGXKlAzgdBW8EG2Yfg6/iIWM8MNUXJiTpjej/vftczJppo6IA==@vger.kernel.org, AJvYcCXDRJ5ffddfrhwu3CC1fh2csk5ZZDpSstzlzDlWqPdtHKBlGhmVBsqtbJ3+7zVV+H696NRwk9g3oCbaEz0D6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCykBD8sZ1+Tr5eXklBq22ghMQFEaO6VloKR6qD3amHKRvy/vY
+	pzqnvoOXqPUpfPll9ct3ZajG9YOSoVOHckvFFJnmiZ3H/5zU3uEnPG/7uEA4
+X-Google-Smtp-Source: AGHT+IH1EEs71yyN4QvmXcCeh/VZvOCftE1Jb6CJ0quGKYOD+39epwfs8DO+4cSDyP+KXqpZU9wazQ==
+X-Received: by 2002:a05:690c:e1b:b0:6d4:4cb:e453 with SMTP id 00721157ae682-6d40df802eemr155752407b3.17.1725371649359;
+        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d57de3e5sm20083137b3.77.2024.09.03.06.54.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6d6891012d5so21436017b3.2;
+        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYoNleSPBCCRaphC+l+3fEkLVS1slTuIEgt8d228oma7Kwpk1OhEhi4iDKtrnYCuBO0pblKvcr47Yp8mcTTg==@vger.kernel.org, AJvYcCV/+D7aQ8mty/7Jxr2yBcv7QfQX15m1lnrcKon48De44yqEtt4lm953NH3Bhbw3l4nlG3kklh7RX/68hSti@vger.kernel.org, AJvYcCV0jYLQW3MDY1l7154RES3Vxno7Jyr/VevgEOrIzSMrw//O61Vx4jzKeTgo0siAX8+NfGdSt7m6a9eDtLRiig==@vger.kernel.org
+X-Received: by 2002:a05:690c:893:b0:6b1:4eb6:345e with SMTP id
+ 00721157ae682-6d40e7824cemr173350047b3.26.1725371648843; Tue, 03 Sep 2024
+ 06:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] sched/fair: Use HK_TYPE_SCHED housekeeping CPUs
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20240818234520.90186-1-longman@redhat.com>
- <20240818234520.90186-3-longman@redhat.com>
- <ZtcLUcJvqSV3vXd2@localhost.localdomain>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZtcLUcJvqSV3vXd2@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
+In-Reply-To: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Sep 2024 15:53:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
+Message-ID: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc6
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Kent,
 
-On 9/3/24 09:12, Frederic Weisbecker wrote:
-> Le Sun, Aug 18, 2024 at 07:45:19PM -0400, Waiman Long a écrit :
->> As the previous commit has enabled the setting of HK_TYPE_SCHED
->> housekeeping CPUs in nohz_full setup, we can now use the more aptly
->> named HK_TYPE_SCHED housekeeping CPUs instead of HK_TYPE_MISC.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Can we instead merge HK_FLAG_TICK, HK_FLAG_WQ, HK_FLAG_TIMER, HK_FLAG_RCU,
-> HK_FLAG_MISC and HK_FLAG_KTHREAD into a single
-> HK_FLAG_KERNEL_NOISE / HK_TYPE_KERNEL_NOISE ?
+Replying here, as there is (again) no patch email to reply to to report iss=
+ues.
 
-Sure. I am open to new name as I am not good on that. 
-HK_FLAG_KERNEL_NOISE does make sense.
+noreply@ellerman.id.au is reporting several build failures[1] in linux-next=
+:
 
-Cheers,
-Longman
+    fs/bcachefs/sb-members.c: In function =E2=80=98bch2_sb_member_alloc=E2=
+=80=99:
+    fs/bcachefs/sb-members.c:503:2: error: a label can only be part of
+a statement and a declaration is not a statement
+      503 |  unsigned nr_devices =3D max_t(unsigned, dev_idx + 1,
+c->sb.nr_devices);
+          |  ^~~~~~~~
+    fs/bcachefs/sb-members.c:505:2: error: expected expression before =E2=
+=80=98struct=E2=80=99
+      505 |  struct bch_sb_field_members_v2 *mi =3D
+bch2_sb_field_get(c->disk_sb.sb, members_v2);
+          |  ^~~~~~
 
->
-> Thanks.
->
->> ---
->>   kernel/sched/fair.c | 7 ++-----
->>   1 file changed, 2 insertions(+), 5 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 6be618110885..0350667f5ce8 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -12128,16 +12128,13 @@ static inline int on_null_domain(struct rq *rq)
->>    * - When one of the busy CPUs notices that there may be an idle rebalancing
->>    *   needed, they will kick the idle load balancer, which then does idle
->>    *   load balancing for all the idle CPUs.
->> - *
->> - * - HK_TYPE_MISC CPUs are used for this task, because HK_TYPE_SCHED is not set
->> - *   anywhere yet.
->>    */
->>   static inline int find_new_ilb(void)
->>   {
->>   	const struct cpumask *hk_mask;
->>   	int ilb_cpu;
->>   
->> -	hk_mask = housekeeping_cpumask(HK_TYPE_MISC);
->> +	hk_mask = housekeeping_cpumask(HK_TYPE_SCHED);
->>   
->>   	for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask) {
->>   
->> @@ -12155,7 +12152,7 @@ static inline int find_new_ilb(void)
->>    * Kick a CPU to do the NOHZ balancing, if it is time for it, via a cross-CPU
->>    * SMP function call (IPI).
->>    *
->> - * We pick the first idle CPU in the HK_TYPE_MISC housekeeping set (if there is one).
->> + * We pick the first idle CPU in the HK_TYPE_SCHED housekeeping set (if there is one).
->>    */
->>   static void kick_ilb(unsigned int flags)
->>   {
->> -- 
->> 2.43.5
->>
+Apparently this fails with gcc-10 and older, but builds with gcc-11
+and gcc-12.
 
+The failure is due to commit 4e7795eda4459bf3 ("bcachefs:
+bch2_sb_member_alloc()"), which is nowhere to be found on
+lore.kernel.org.  Please stop committing private unreviewed patches
+to linux-next, as several people have asked before.
+Thank you!
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linux-next/head/6804f0edbe77=
+47774e6ae60f20cec4ee3ad7c187/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
