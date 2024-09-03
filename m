@@ -1,192 +1,323 @@
-Return-Path: <linux-kernel+bounces-312901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09C5969D71
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B1E969D7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421F51F23D01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26F91F23F05
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6623B1B12F0;
-	Tue,  3 Sep 2024 12:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EF21CDFC5;
+	Tue,  3 Sep 2024 12:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ba6EToGn"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XY3pleoq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3071C7688
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366361; cv=none; b=UqLQRp3siCLRoyNp22ywy8AAEXa5FQN6rJXdD0KbI1Y/yMAhAJQ/auV4H65XO4R93OI0sxsg9i0rrW8WCnsYTSlVvjdN0spaLcIRDSyoSSH45W1vr2Pe26DsCgAGJN2xERlszRAMXhkLeme9QBrqq59YjWMwsYa8RiCDyIVgOVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366361; c=relaxed/simple;
-	bh=a0Dd4JWmM7haDwR0iXBE1kfomv0PSlhhIKArOk1RZzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nImq6Y13jXxcFyhattodTcK35gIrfrqZhoni8ZkCTvB10xQcvnETyWIDGVYcsbLu5oRSSo3OUft3WLEOb5sV7SnjUsi3m+VzS4qGosq+32v0/VspXXfWinG9XMO6Xp7hOsYM2WWmP8VHfrn9hPjIkBt5gH2K25BFaPEAs/6TVdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ba6EToGn; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so5512412a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725366358; x=1725971158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+cdIRXo5VTqWR2KdDzO1DTS+Vt8PiHUf2RGCvnaGFsQ=;
-        b=ba6EToGnZTcjtlxOZnx4KqVxMNNTjMd9eK/EiS3OXuLybDIRe/EAOXmxjOAyakw0qL
-         Y4TUlOKJEv4sKlfLgwyBCBSCoGYrLNIRgYT0R3Zpj39eTIylWHzinbHFa/6hmWuKU6sZ
-         KMaCSCvyFLzagyJKL+yjieGzCBVbu09BMr3FnJtbyAyKh0TTGhTkg/EErV63OnZPli8b
-         TIhWCDyBFFHHc3H0DQALOhttviHm2xd/Fsf4XYgTaP6lPdfr7YZVZPJ2hVBH54xYe/Vt
-         /9XBaakV8wZuG7WtCMeRTrQ8YWgAoDUypyOU2Ye/JIZpkQbnG284zwgT7dm4RFT/JNSv
-         vrPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725366358; x=1725971158;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+cdIRXo5VTqWR2KdDzO1DTS+Vt8PiHUf2RGCvnaGFsQ=;
-        b=h+hQjK4tGuYm76Oit4gd9Am8TkHxtEPeIozarn2w0AfUN0bx9mFeXuzM1bi0O3gOhF
-         Y8n9hBF3n3XtGb7iEr56aCrMADzV2pyP6UUlaMtY8xTRJ6P61gOZRs1f7qRWLZWgCdV9
-         v9CVCEpzI2WEIo3fHcvE7oYyioq7PlfATwQ/wDHUhANgpnJ7NvH9GTaBmlJmJfMD8Ph/
-         GyZ67ilttUa3wr4JfFym+CSs7pyWqveDSFs0IGtTzUW/NfqL3VSzGU+Y6ZJc6kEUl4GY
-         Ep1QQVa5zcMRhOWsSvv08xdrIhlr5bxAgkif+81F4eoOFy1owOKxvitQoChF8FAy4s4k
-         T/kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUEXbYmDF1IdskTQCm0ZEVNVtxa8O7mnwK2gXZrU/CKnSPNWxRMsQwl6u7GL8rlduejrU/yZRDDoAOZkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyu/mxOGpdb42vFXEAm5uJlMtMoG5nVZux1n4OuqMXAIaEUTSp
-	j5WR8e1mhwSwzQ/P0YMbXY4VLC4bXIJ+AjgmnuLT1+olOBLRehZtm/Pmnw6DpGA=
-X-Google-Smtp-Source: AGHT+IGCJSAfsQxh53LJgcY+qGaZ+a7jTX6q5V6OFCLQvyiQ7yrxNllyp0cepO9Zz23djK5zaAK9PQ==
-X-Received: by 2002:a05:6402:4310:b0:5a2:2654:7fc4 with SMTP id 4fb4d7f45d1cf-5c25c3a717amr5389144a12.8.1725366357788;
-        Tue, 03 Sep 2024 05:25:57 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a3cdsm6412278a12.12.2024.09.03.05.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 05:25:57 -0700 (PDT)
-Message-ID: <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
-Date: Tue, 3 Sep 2024 15:25:55 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34A11B12DE;
+	Tue,  3 Sep 2024 12:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725366427; cv=fail; b=EdPlhYOHYyS7HBX8+aEng41yfUBHHFWWtsJPWT3UvtJTdc4WalkqbCBRJ5R9O7XoH8I6s+LPFYvmk0V1akK34FdsHTe9cvKaQoa9INIj15868AcHd055PwnqWPIAmaGtY49WJwqgxGXMS4XcNeQQJrERmSLb4TRgtRjQN4v2yaY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725366427; c=relaxed/simple;
+	bh=CHyXAfsNa9bbrrPXLLY7La91QnfmVYu3XuXVfYF1Bqc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WDOkWx1P6+YDjDq2ORC3qOrLo0D2v3Pt0hwZumUS6OM1xE7zg5rto/0ViecSrkq/eGC7MN0lDJ2VYtUuCqbopVLxz4vWsBr8FPF7a03+QvHAK+IW6mUSUkNGGYurIMZacxF1Vd8ruHY5ne6ynFTx7AqoGabjzG5Fu2HfYeAxoxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XY3pleoq; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725366426; x=1756902426;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=CHyXAfsNa9bbrrPXLLY7La91QnfmVYu3XuXVfYF1Bqc=;
+  b=XY3pleoqrtHVHTFIVD1xfsYCVncLLR2+sEACT+KJ6V1dvUY1UMqBel8n
+   4+6etgGccnX7z+XeNFlrNLeEVDbq+ssJaS+YUP/UvLqovmVe3qjQAY258
+   Z9LhY+pay4Q5C/w+PHZpgACp9kAMsdZP9GFtg8iGJkCd42x9TlWheAY2v
+   NrUNgtWBBVBrETY22nPwo4Esi+1lX3lSBY34u+TtSj7sFR0BrXQFoWoiz
+   jtKYL7rQAVuXtOhXuRT6Fy+4kmbv0HPQzeaqhc2i2zq9YY2/FkW8XKRnO
+   OKcPdqb2h58ATVilGo/G566dWfADLAyEAt0+qdNKOVBeIvMLT/NEFsJMY
+   A==;
+X-CSE-ConnectionGUID: f7vMAqLgSWWS5PzNv4RueA==
+X-CSE-MsgGUID: lj82VZbbTzWGpuJfoUK/Fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="27841022"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="27841022"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 05:27:04 -0700
+X-CSE-ConnectionGUID: 3Ty+CgSPQ6isZ9a7wK1Q7w==
+X-CSE-MsgGUID: fl5ePxqpTh2FgBstlVbIug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="65625329"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Sep 2024 05:27:03 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 05:27:03 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 05:27:02 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 3 Sep 2024 05:27:02 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.42) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 05:27:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=if4mb0NLoHUfq1zUe1EBDa43o8RWJ1ytiKHRN/QrEYUAbKfKFVYidHFZFwtZuPFG6egkI/E2S/15KCfjkzwh1XAxZnowQeDShe5lbF/76P16RXbYVoHxpgC1R1Bsp9w4nA35TAJ5a7aaFs5Kx8MZ++x1WMRqlA/qn+sBHnWk1w025J0Hx2H+ecgFMfNxHufP3OsMEqpiLEhEAK99tNamR6epjB19jhONq0xdylZWfg75jivUmMxeljP2tDRSFq16y2ll7VgMfG64/Eotq2u9BWAf3o2k9k0xYqHnxs25HTQDyFZDOOdUkez9pcX5l0WQpi+QW3yz85r42Ayjg5unuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TqtnNgNtPo7+mbSNAhy2XyxU7S/IgrJBeVmTYHabXf4=;
+ b=iTjc+yVrln+UyHWMV7COoOgap9epbLYaIy5GecbA5kUN/xma0JvN/P4UH9Z4AYI+BWN08bvFDAZqdlwBpz+OkUOcfAaacT/RGW7g+DJ4dW8J1XvO/u1OgqAKKdsE55kv/cY6oSTejsIIgulUSQt6+mufB7B6doMSttcL2HsCBbf8GXKGI7Gjl1HJu31WqnmEBIoED9b0yN+gSpQtQa6G3b1OsvNlBaVl0jUg2HkXByNaUuXlUPgQuQhtQHXpgRaTcJjC0e+pAtXulM7LgJ1ADds+N1m+JsHG5Mt1c4ez4l7XLffco4njGbyp+U9yBSbqrkrtRLCYNJG5NdIaGY2w/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by MN0PR11MB6010.namprd11.prod.outlook.com (2603:10b6:208:371::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 12:27:00 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.7875.019; Tue, 3 Sep 2024
+ 12:27:00 +0000
+Message-ID: <235dcd89-54a6-43ca-bbb3-45dfd6db97e6@intel.com>
+Date: Tue, 3 Sep 2024 14:25:58 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 2/9] kthread: allow vararg
+ kthread_{create,run}_on_cpu()
+To: Stanislav Fomichev <sdf@fomichev.me>
+CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Lorenzo Bianconi
+	<lorenzo@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>, John Fastabend
+	<john.fastabend@gmail.com>, Jesper Dangaard Brouer <hawk@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
+ <20240830162508.1009458-3-aleksander.lobakin@intel.com>
+ <ZtJODFOYkjgRTPCh@mini-arch>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <ZtJODFOYkjgRTPCh@mini-arch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB9PR02CA0014.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9::19) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
- <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
- <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
- <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
- <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <f7c57e76-b890-491f-880d-62d060b7b31e@tuxon.dev>
- <TYCPR01MB11332BE2EDB318950B9C7B54C86932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|MN0PR11MB6010:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58133529-1dba-499b-b7b0-08dccc13b566
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eFZFVmpqcGNKSEhGYXZOZ3dpb3dZR1VyalJSWXdhWkI1ZXByUmpCTzNTbzRh?=
+ =?utf-8?B?N3BrMmJJb3BYZU1Uczc4dlU3WTBFQkNtZ3lpNElCa1FFdVdya2FUa29XZUxU?=
+ =?utf-8?B?RlBad09UZXo4L1ZvdmFTSWR0Q1ZkMU9xMys5MFpwOU4zZ1JZdlR0cjdRVjlJ?=
+ =?utf-8?B?V3dhdEVPWnhpUk5Day9sYVk5QUZNZy9CSzExSVlFR1BGMFJjeldwdmtWbTV3?=
+ =?utf-8?B?OUMzTHd6VkRqWFJleVlIT2svVlRrM3RGcCtFVWJWVDZlSHh4bENmaE5OSWc4?=
+ =?utf-8?B?M2ZRL2R4YWNCb2Z4eTVtS3lpazFjR2tlVWhGZlFSd3ZKV3RldmVWY3IrTFUx?=
+ =?utf-8?B?L1dXa0UzY0JLNTQyZjFtNVVMdG54K3pGcDVqZGpNL25aUHArNG5LaTUwYWtt?=
+ =?utf-8?B?YllWUmhvOEZTVGp5SnJCVWhqQ1ByZkpXcUpkck0vLzFwbWFkWndzRjA3Ymtr?=
+ =?utf-8?B?dGNIOHowVHEwTE5tcFREL3ZRRFZ0NWRvS1QrSVBLcmJWNnlQaU84OWFVM0x0?=
+ =?utf-8?B?M0ptSUxWRzFYWUtSaVY0dm5DL29BaFdyMDdJYmdVM0ZTVkpIQ0pXd2FiUEFF?=
+ =?utf-8?B?SVc0YUNDYlh0R0txbjlpakMvKzllMlpwenVRSnNXS01hRVZKNFhZSlF2VEJl?=
+ =?utf-8?B?ZVQvbEVITXF2MUd4Z2w1WXdIZG5jTlpFc3pTWVplZXF6WlFqTDdFVmNlaTFL?=
+ =?utf-8?B?YWc0YWtrR2xkaWFSRjUvN3ZQREY0V1lZcE9ndXJKY2s2UzdtRi92OS9KSHVE?=
+ =?utf-8?B?YWZkUS8vMU1TOFcybFNxdDJ3b2JjUFkvbjJBWnp4Z1FFRks1Tm4ydGhKb0Jr?=
+ =?utf-8?B?cjU5RnI3QTdPUUJvUE85WXRhUU1SNmprZVEybTc2ZVdzTEpyYjVuZHFpQkRN?=
+ =?utf-8?B?eElrUlppZFE4SVZOK2VYeUhsNGxFZzNmalFjbGJ3UE1zTUZhWW41dTNjMVNG?=
+ =?utf-8?B?SXdMWVVFT0lMZ1JzWW9xemtubURWRmhFNC8rTjVua3p1TDFDUGdMYTBqMlJL?=
+ =?utf-8?B?c0hsdXgyNTlITVVsRndGZ2lacXE0VVdHbXN5ZmVLT2RRMWNvV1oweXpEbzJn?=
+ =?utf-8?B?QWRPdDNmRzBGRzlVSTFqSUpHQ1FRd3NMM09DYjJsKzlFQXJqVjRaeUZER0xQ?=
+ =?utf-8?B?V1ljLzRVck5mclZ3aU9RLzl6MVJGMmN3SndSSk92VVBFcjh4VVdnKzBHQVRN?=
+ =?utf-8?B?dEpEcllLM2dPNXlqMjlTWEZVRVhaRGNZcHJpWGhCbjhCbEkzSlNFa2luTXdv?=
+ =?utf-8?B?Q3grU3YrTXE1d1pSYldzSXBvQS9RTjlNY0VkbXFSK1ZKbEJjNE9OSnB0TE5F?=
+ =?utf-8?B?ZlNXeE9BKzVJTGxuOG9FMW01NnJUaVNtN0FpMWlnV0ZtSWtTbDEyZVV2TWVz?=
+ =?utf-8?B?eGpyU2NkOGNLWGwyZDZIL1J0SGViUUNYazkxWUhBN2cyVzVseTd2R1pzb09q?=
+ =?utf-8?B?ejFvazZsV3JUNWM3VFlGaWVKNVlYQTdmWmZGOXVKRkFwT3NRcGtHcEIrdDJx?=
+ =?utf-8?B?TE9HQktWRVgzSHk3eWIzbEUyVjI3cnU3NVM1SWtSUmtPZDg1WmhuUEFaMzVq?=
+ =?utf-8?B?SnhrS3NRdWx4dDBWVHZUNDNjbklZNnBFeFRhazZQdTVnK3RoY1hhZmhoQmtU?=
+ =?utf-8?B?M0psV1NGNEdlbkpuVi9pNHZva3BydTcyLy9pY1JOTTY5THo4a25PTnBXeVV0?=
+ =?utf-8?B?eHp3K2dZdWlwWEFyVVhUTWhveXRXZExOdWJ3YkxTWE55Z1hIM21FREVjd2Qw?=
+ =?utf-8?B?U0lkNml6SDFSSS9qSUZsbHRNOERtOEg2SlI0Nk1pSkt2MU03MXhFY3lBS3hJ?=
+ =?utf-8?B?elBXZWtJdzczWjd5Tjl6Zz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MGZjcHNpeTB5eHNGbWlSM1BtNkE2RU90ZFBFVHRVallpdUtyeHYwUVFaM095?=
+ =?utf-8?B?OVF2ZzZla1ByWDdCc0FaUzRYMXdXM1pJVnM2OStHdW8xRm9rOVk1RTF0L2Zt?=
+ =?utf-8?B?QVpPNWRiV2pIU2xTenR4UXdjcnUrd0lDK3RBNjAwUkFFaVNKNGpITGRQdkxl?=
+ =?utf-8?B?S0Q3L0xZQlMxVWprMGgxTE5JaUNqQmNCWHRjdWF4dXJ2NkZURlVrZWdOUitF?=
+ =?utf-8?B?RHhxKzNWa3Z0ZnZ3YysyYzY5OXNuc0lSeWNXWDVBbDFCREhEZ0J0TG01dWNI?=
+ =?utf-8?B?NDFRT1BlOStoSk9NM2JXSzhkUWRmaW5oZzdCZ3dUd0J1eFlsM1pDOEh2alFU?=
+ =?utf-8?B?WmYxb0ZqSVBFUUFUVTlsQ1hYc1FKSWRVL1A0RStPYkcvU2o3VXJLKzVrTGNB?=
+ =?utf-8?B?endjYnc2OVhTVGJZdWhnWHFTT1R2cWtiaDIyd01iOW1UMGJqa2w3eFFxZS84?=
+ =?utf-8?B?b3g5bDc5VjEwRXBYMTNWOFNlZ2pHSGhmcWhpbXhoRG5aVUhKWDI2S3B0aUF3?=
+ =?utf-8?B?K1cxdTZoTjlrcVJtMjgxUkVaMVIrMUpHL0lyQ1JSeEJobUNiNjFlaUNUeEp5?=
+ =?utf-8?B?OE1pc1IycW5zMVp0bWZDekdTL1pJY0lzR0VEVU1XM2xZZm04ZXluZmdQVDUr?=
+ =?utf-8?B?YURwbjBQVFlaS3Zpb1h4ZlNUOVdVK3o0UVl4K1llNndJV29ENTcvV2tPRVFP?=
+ =?utf-8?B?TDRwK1RzSGx0U2Y1amQ2bUZNRDAycTJUL1pTV3lpVUtsVy85cE5qVVhmenVx?=
+ =?utf-8?B?dlNtOVRxNGNaa1pENGQ1NVhyY3ludG1VR2hFRlduVzhJL1dTSjBPaW5oUGx2?=
+ =?utf-8?B?eFpoeVBqWUpFMmQwMEJYU0dqem9tVnZuSHNkRjc0eSsyM2svUFJLczRudG1i?=
+ =?utf-8?B?RnlXeUlKaEpJcGp2QTlWMWFRKzhMYmhWR0tvUHRJVHdjclplYWppSlFScVgx?=
+ =?utf-8?B?cE1GY1BMUE0rWUpMbDJhUjNtKyt1eHprek15MmpiNHA4Z0pheFBjTVFXYklh?=
+ =?utf-8?B?dmUrV2FNa2VqZXlxQ3d4dzdLWDRBaU1TYWoxbkIwRTVNZVdYd2MrZng3TVdm?=
+ =?utf-8?B?enZUUzMvanZhcWR1QVlZQUtlTFNuaEhHaXdjWU9yOHZMaGxUMVFibVhhUXc2?=
+ =?utf-8?B?K0Yxbk5OSzNzaDRmRTBBZ0ZJK2I3bFAyTW5JZmFEaXlLMEsrbnhVRnpIMVNJ?=
+ =?utf-8?B?bWFLZUZWcWI0L05WbDN0RFJ2QitYampYSndxSGVSS1JrZDBhcGlZQUtwQXJl?=
+ =?utf-8?B?TmN1Z3ZEdzJuY1J0d09UWWRWVk9NOXRmNnVLTlBLQmc1RHV1MGtaNWxWVTd1?=
+ =?utf-8?B?amRlS1ArS0dWWDJLaC9xQTJSRmtFbTl5NGoxckRGMVBPYzA1akIrZTlrQnkz?=
+ =?utf-8?B?REsxc2xRZk9wN2phRGprbTUzTXNyZEFia1c3MHpOTFF4YWF2c2Y5SzJaaFY1?=
+ =?utf-8?B?U1ZOc1VEN2h0eG9lMEpUaVA0MnlsdHFwTWR6Z3BnNGxkT1VCWFYvQVVuMk9n?=
+ =?utf-8?B?V3I1Mkg1UnJ0Nys0NDgySmY5d0Q4dHlVK3dsUVE0N0RqUmFYdHRxeDI3ZEt5?=
+ =?utf-8?B?ZkZ0SDZzbGhudVk5ZFdGV0d3YUE5REdPWVkxRWE4K2FEanBLL0Zidm5nbUxl?=
+ =?utf-8?B?YUdZQ1RrSXpnUU1QVFg0NzAvNDRRTTQ3OVBBZnZZR1RUMW5kQXJZc3NteDBP?=
+ =?utf-8?B?cHdDZDBwZzY0ZmlqbFFnY1V0cGowS3lFMUFMQStRTkE5OUh3RmpKZmpFa1RK?=
+ =?utf-8?B?aU5lUFNQTHRCVERQWEM2OXlmOFB4bysrbGpuRkF6TFpmTUszWmxQYXlIc29D?=
+ =?utf-8?B?NUJkL1BiMjE4cXREcWdKVFFBamI4NHZzWUpsYVQwRGs2dTFaeEEzdFVUT2pv?=
+ =?utf-8?B?dVJMOU50RHJ6ZGZXbFZ6UVpCSFM3SDB2SkpLYkEyakRBVU90SUVadVBWVFN3?=
+ =?utf-8?B?Nno0cXdyc1lFcDljUVMxYUVyZEZ3ZkVJTmduRHlEL1J5KytRbW16eERLZU5i?=
+ =?utf-8?B?d24zZ21LMllXZHJiQkxZT1NCTHBkTUZPTTRLU2FMZEVsVHVkVGFybkthWlZB?=
+ =?utf-8?B?SVRieDdINGZOekNJeDNLZGJYM1JMUTl5SFdOSExGUlJBSU5uUytXTk9kZ0RJ?=
+ =?utf-8?B?T0hkQjNhaHlpbWJjYk1tZGdLUXlkd3hsWTJDcEpHTTlzQXZTMkVmanRxZ2d5?=
+ =?utf-8?B?RGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58133529-1dba-499b-b7b0-08dccc13b566
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 12:27:00.0729
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mC+QszshJ0oKTzl30fSewkUfA8hZoU8Pif5Pf/XDCyl8eZuA/zYRM8r0reGLl74A3XCCIrtpeua1z/NrfNGP7ur8Vh1dHvdlW/Z/C7XsN3A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6010
+X-OriginatorOrg: intel.com
 
+From: Stanislav Fomichev <sdf@fomichev.me>
+Date: Fri, 30 Aug 2024 15:56:12 -0700
 
-
-On 03.09.2024 15:00, Biju Das wrote:
-> 
-> 
->> -----Original Message-----
->> From: Biju Das <biju.das.jz@bp.renesas.com>
->> Sent: Tuesday, September 3, 2024 12:07 PM
->> To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>; Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
->> p.zabel@pengutronix.de; geert+renesas@glider.be; magnus.damm@gmail.com; gregkh@linuxfoundation.org;
->> mturquette@baylibre.com; sboyd@kernel.org; Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>;
->> linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> renesas-soc@vger.kernel.org; linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+> On 08/30, Alexander Lobakin wrote:
+>> Currently, kthread_{create,run}_on_cpu() doesn't support varargs like
+>> kthread_create{,_on_node}() do, which makes them less convenient to
+>> use.
+>> Convert them to take varargs as the last argument. The only difference
+>> is that they always append the CPU ID at the end and require the format
+>> string to have an excess '%u' at the end due to that. That's still true;
+>> meanwhile, the compiler will correctly point out to that if missing.
+>> One more nice side effect is that you can now use the underscored
+>> __kthread_create_on_cpu() if you want to override that rule and not
+>> have CPU ID at the end of the name.
+>> The current callers are not anyhow affected.
 >>
->> Hi Claudiu,
+>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+>> ---
+>>  include/linux/kthread.h | 51 ++++++++++++++++++++++++++---------------
+>>  kernel/kthread.c        | 22 ++++++++++--------
+>>  2 files changed, 45 insertions(+), 28 deletions(-)
 >>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Tuesday, September 3, 2024 12:00 PM
->>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>> RZ/G3S SoC
->>>
->>>
->>>
->>> On 03.09.2024 13:31, Biju Das wrote:
->>>>>> During boot clr USB PWR READY signal in TF-A.
->>>>>> STR case, suspend set USB PWR READY signal in TF-A.
->>>>>> STR case, resume clr USB PWR READY signal in TF-A.
->>>>> As I said previously, it can be done in different ways. My point
->>>>> was to let Linux set what it needs for all it's devices to work. I
->>>>> think the way to go forward is a
->>> maintainer decision.
->>>>
->>>> I agree, there can be n number of solution for a problem.
->>>>
->>>> Since you modelled system state signal (USB PWRRDY) as reset control
->>>> signal, it is reset/DT maintainer's decision to say the final word
->>>> whether this signal fits in reset
->>> system framework or not?
->>>
->>> I was thinking:
->>> 1/ Geert would be the best to say if he considers it OK to handle this
->>>    in Linux
->>
->> I agree Geert is the right person for taking SYSTEM decisions, since the signal is used only during
->> state transitions (Table 41.6.4 AWO to ALL_ON and 41.6.3 ALL_ON to AWO)
+>> diff --git a/include/linux/kthread.h b/include/linux/kthread.h
+>> index b11f53c1ba2e..27a94e691948 100644
+>> --- a/include/linux/kthread.h
+>> +++ b/include/linux/kthread.h
+>> @@ -27,11 +27,21 @@ struct task_struct *kthread_create_on_node(int (*threadfn)(void *data),
+>>  #define kthread_create(threadfn, data, namefmt, arg...) \
+>>  	kthread_create_on_node(threadfn, data, NUMA_NO_NODE, namefmt, ##arg)
+>>  
+>> -
+>> -struct task_struct *kthread_create_on_cpu(int (*threadfn)(void *data),
+>> -					  void *data,
+>> -					  unsigned int cpu,
+>> -					  const char *namefmt);
+>> +__printf(4, 5)
+>> +struct task_struct *__kthread_create_on_cpu(int (*threadfn)(void *data),
+>> +					    void *data, unsigned int cpu,
+>> +					    const char *namefmt, ...);
+>> +
+>> +#define kthread_create_on_cpu(threadfn, data, cpu, namefmt, ...)	   \
+>> +	_kthread_create_on_cpu(threadfn, data, cpu, __UNIQUE_ID(cpu_),	   \
+>> +			       namefmt, ##__VA_ARGS__)
+>> +
+>> +#define _kthread_create_on_cpu(threadfn, data, cpu, uc, namefmt, ...) ({   \
+>> +	u32 uc = (cpu);							   \
+>> +									   \
+>> +	__kthread_create_on_cpu(threadfn, data, uc, namefmt,		   \
+>> +				##__VA_ARGS__, uc);			   \
+>> +})
+>>  
+>>  void get_kthread_comm(char *buf, size_t buf_size, struct task_struct *tsk);
+>>  bool set_kthread_struct(struct task_struct *p);
+>> @@ -62,25 +72,28 @@ bool kthread_is_per_cpu(struct task_struct *k);
+>>   * @threadfn: the function to run until signal_pending(current).
+>>   * @data: data ptr for @threadfn.
+>>   * @cpu: The cpu on which the thread should be bound,
+>> - * @namefmt: printf-style name for the thread. Format is restricted
+>> - *	     to "name.*%u". Code fills in cpu number.
+>> + * @namefmt: printf-style name for the thread. Must have an excess '%u'
+>> + *	     at the end as kthread_create_on_cpu() fills in CPU number.
+>>   *
+>>   * Description: Convenient wrapper for kthread_create_on_cpu()
+>>   * followed by wake_up_process().  Returns the kthread or
+>>   * ERR_PTR(-ENOMEM).
+>>   */
+>> -static inline struct task_struct *
+>> -kthread_run_on_cpu(int (*threadfn)(void *data), void *data,
+>> -			unsigned int cpu, const char *namefmt)
+>> -{
+>> -	struct task_struct *p;
+>> -
+>> -	p = kthread_create_on_cpu(threadfn, data, cpu, namefmt);
+>> -	if (!IS_ERR(p))
+>> -		wake_up_process(p);
+>> -
+>> -	return p;
+>> -}
+>> +#define kthread_run_on_cpu(threadfn, data, cpu, namefmt, ...)		   \
+>> +	_kthread_run_on_cpu(threadfn, data, cpu, __UNIQUE_ID(task_),	   \
+>> +			    namefmt, ##__VA_ARGS__)
+>> +
+>> +#define _kthread_run_on_cpu(threadfn, data, cpu, ut, namefmt, ...)	   \
+>> +({									   \
+>> +	struct task_struct *ut;						   \
+>> +									   \
+>> +	ut = kthread_create_on_cpu(threadfn, data, cpu, namefmt,	   \
+>> +				   ##__VA_ARGS__);			   \
+>> +	if (!IS_ERR(ut))						   \
+>> +		wake_up_process(ut);					   \
+>> +									   \
+>> +	ut;								   \
+>> +})
 > 
-> One more info, as per [1], this USB PWRRDY signal setting to be before Linux kernel boots.
+> Why do you need to use __UNIQUE_ID here? Presumably ({}) in _kthread_run_on_cpu
 
-The "controlled by" column mentions CA-55 on PWRRDY signal control line and
-it is b/w steps "DDR exits from retention mode" and  "clock start settings
-for system bus and peripheral modules". AFAICT, after DDR exists retention
-mode Linux is ready to run.
+It will still be a -Wshadow warning if the caller has a variable with
+the same name. I know it's enabled only on W=2, but anyway I feel like
+we shouldn't introduce any new warnings when possible.
 
-E.g. on resume Linux doesn't sets the clocks of all peripheral in sequence
-and then runs the rest of settings for each peripheral, in turn it sets the
-clock of one peripheral along with all the other necessary peripheral
-settings and then continues with the rest of peripherals (including their
-clocks).
+> should be enough to avoid the issue of non unique variable in the parent
+> scope. (and similar kthread_run isn't using any __UNIQUE_IDs)
+> 
+> The rest of the patches look good.
 
-> 
-> All clocks/reset happens after setting USB PWRRDY signal
-> 
-> https://pasteboard.co/qbz021q7KPyi.png
-> 
-> Cheers,
-> Biju
+Thanks,
+Olek
 
