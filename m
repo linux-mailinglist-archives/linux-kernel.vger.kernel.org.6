@@ -1,200 +1,98 @@
-Return-Path: <linux-kernel+bounces-313594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7117F96A75E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:28:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 979AA96A978
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E259284D3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FDC2874FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA0A1D7E31;
-	Tue,  3 Sep 2024 19:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F341D58B4;
+	Tue,  3 Sep 2024 20:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKKoRkt7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjVQUoVk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDC91D7E20;
-	Tue,  3 Sep 2024 19:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0782D1E9DF4;
+	Tue,  3 Sep 2024 20:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391713; cv=none; b=hNsrtBsXfWpm8IvIlI3FoTu4aaun2jP3E5zEO90R8m0usZ+7mL053p0jRZEvDpPhSSynE6fTcKlW99Ivq4tYtwtYt4fEFMmbbLlPlVNXIxdKEF7EHXSEH+XNMSC0yoH979Fw62+lrjnNSu1rGat6faBP2eJ+7VfFIjbhzL7C3lg=
+	t=1725396495; cv=none; b=ljyvHSRCDnzpv3uxQRU+2CA+Lq3VCG2V3qH3F4y9rLtXPdumMUnprSeprR8kWWFaPqLCc7dioRcePbJ6hjs4zQ6TwXAUoagvNvPZ1AXEs023jZTGF2EyBWNTr/4wHbt8AcSCXNT2RpLOml6Ua8Z2sZDzRbtUxyZ2mvkYufc12t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391713; c=relaxed/simple;
-	bh=kGWtPEPIJLR0935+d9B8JgXALaeJFuBuVV22oeFjut4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qtyayKtFnT4+xtHEWYOxA5K58w7XMGAXNT8gs/uPQ/ZpN6PTUW21wNTnDi9Oz07GRbvdrKipeghkQxRalH6E8OwAzLVAK3sS1Ec+8xlbRByAo3ezXr1REX+Y9B/tLWVCLqF7gUBdFntRR/BqJgKRfeucc45FRYCcOIzZLOPj1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKKoRkt7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A01C4CEC4;
-	Tue,  3 Sep 2024 19:28:28 +0000 (UTC)
+	s=arc-20240116; t=1725396495; c=relaxed/simple;
+	bh=4n2ee3jD1mw/ubKI5HBOzyv9yeDsJN/kMcQfuaznOHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V5BG5WVT+/4pn80gxvqNg3Bj+wPu2WguSGilREB7sdj0V6XcP9GiwBrDPdQica82aHoNLDKhYKpBHb4R639mGeqiqstNbu2/cTMxC2XHdAdaDmbTFCJGOjV09VDOndnLVaC7B8OA/P0nXES547d5TyZ4c027QKlpNocdOWNJbek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjVQUoVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD60AC4CEC4;
+	Tue,  3 Sep 2024 20:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725391712;
-	bh=kGWtPEPIJLR0935+d9B8JgXALaeJFuBuVV22oeFjut4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VKKoRkt7BpZKkO60WHE/DHEUdvGHiPehiv/5+AqMWz54bR8BZ1ngbFxqHuxuCyG2e
-	 4D+vYvGUGVOWv6OLMa0wqPgkM9oMAVQr+5j8pbBtKNFEsAITMj72nzxuB/NfwFu0zf
-	 rg384Jg/MmokF/+ZOASI3H2xEyrZgbQXilg0VOoP1fZeKDgkXn8U4u/Z2yPi6tVmcA
-	 0BxMuxDJQe5sdXw/mv1EH/seUldMS8JFqraaLm18dfJwqZLEWXiNlJ1cL8JU/XIAb2
-	 m4teLWNzECWGryUb/sikNVN9c4O3dj0RcaQcCRZgouXe4OS12Jc9jQwnlW5JiH7KEZ
-	 WZLs8kmeoHlHw==
-Date: Tue, 3 Sep 2024 20:28:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dlechner@baylibre.com
-Subject: Re: [PATCH RFC 7/8] iio: dac: ad3552r: add axi platform driver
-Message-ID: <20240903202823.786e930c@jic23-huawei>
-In-Reply-To: <421d7967-e9e4-4207-a9de-db309ea482b0@baylibre.com>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
-	<20240829-wip-bl-ad3552r-axi-v0-v1-7-b6da6015327a@baylibre.com>
-	<20240831131322.494119f3@jic23-huawei>
-	<421d7967-e9e4-4207-a9de-db309ea482b0@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1725396494;
+	bh=4n2ee3jD1mw/ubKI5HBOzyv9yeDsJN/kMcQfuaznOHY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KjVQUoVk5GDQYJFecVf7UDCA+kYxghsjs0wYAHnj3idqJOwOQD5SAgE4m2ufmEDvA
+	 PvoFwr4xrMR6AlPzDV0rpuyEsCqlv1vyYCXPDk71xka80c+jwCOVtlI9xQg4FbkWc/
+	 z8fyI+76gzxEx0oiMBUQgT33T5HLJGnBSVZZPcU00uxjr6hIb8Nw0lcPF9m7Hnm06C
+	 pnFJW/ywL/U3GnPgyuX28fHOtP1TzUxZXRdibK1DIzbtFOWe+ZPih9PBPl5C3JIKaw
+	 TzwQGvbKXoOQlV/j5GKprqnBsDRYoGyirfwmUbcxjH2hTm05EHGLk7ZoaiCK36dsbB
+	 UGxQGoOxNnPZA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Hongbo Li <lihongbo22@huawei.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	kuninori.morimoto.gx@renesas.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 1/8] ASoC: allow module autoloading for table db1200_pids
+Date: Tue,  3 Sep 2024 15:28:37 -0400
+Message-ID: <20240903192859.1108979-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.282
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Sep 2024 10:17:35 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+From: Hongbo Li <lihongbo22@huawei.com>
 
-> Hi Jonathan,
->=20
-> On 31/08/24 2:13 PM, Jonathan Cameron wrote:
-> > On Thu, 29 Aug 2024 14:32:05 +0200
-> > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> > =20
-> >> From: Angelo Dureghello <adureghello@baylibre.com>
-> >>
-> >> Add support for ad3552r AXI DAC IP version.
-> >>
-> >> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com> =20
-> > Hi Angelo
-> >
-> > To me this feels like the interface is much closer to SPI + SPI offload
-> > than to a conventional IIO backend on the basis it carries the configur=
-ation
-> > path as well.
-> >
-> > Can we see if it can be fitted into that model?  You will need to define
-> > a new bus type etc for it but should be fairly simple given constrained
-> > setup (at least today!)
-> >
-> > That will resolve a bunch of questions around the binding as well. =20
->=20
-> thanks for all the feedbacks.
->=20
-> I see, spi offload may have more sense but as of now looks like moving to
-> AXI SPI engine instead of AXI DAC would require quite a lot of work from =
-the
-> ADI HDL guys and also then, for me some work reworking all this stuff.
->  From an initial discussion with Nuno and David, we was oriented to use t=
-he
-> iio backend for the current HDL, so at least for this chip at this stage=
-=20
-> would
-> be good, if possible, to stay this way.
+[ Upstream commit 0e9fdab1e8df490354562187cdbb8dec643eae2c ]
 
-Superficially, even with the existing IP it feels to me like it's just
-a qspi controller + an offload that happens not to need much programming.
+Add MODULE_DEVICE_TABLE(), so modules could be properly
+autoloaded based on the alias from platform_device_id table.
 
-You'd pass that offload the spi message structure etc and it would 'notice'
-that it corresponds to what it has in hardware and then use that.
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+Link: https://patch.msgid.link/20240821061955.2273782-2-lihongbo22@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/au1x/db1200.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-For register reads it looks like a simple (Q)SPI bus controller anyway.
+diff --git a/sound/soc/au1x/db1200.c b/sound/soc/au1x/db1200.c
+index d6b692fff29a2..cdde5ba2ec351 100644
+--- a/sound/soc/au1x/db1200.c
++++ b/sound/soc/au1x/db1200.c
+@@ -44,6 +44,7 @@ static const struct platform_device_id db1200_pids[] = {
+ 	},
+ 	{},
+ };
++MODULE_DEVICE_TABLE(platform, db1200_pids);
+ 
+ /*-------------------------  AC97 PART  ---------------------------*/
+ 
+-- 
+2.43.0
 
-So I'm not sure any real changes are needed in the IP to map it
-in a more standard way as as a device on a bus.
-
-Note though that key here may be how we do the dt-binding, rather than
-what the code does (we can change the internals of the driver later
-if we like).
-
-If you built a binding that looked like an spi bus + offload and
-could we bind a backend etc as you do currently?=20
-
-Might require a bit of juggling to make it work.
-
-
->=20
->=20
-> > Jonathan
-> > =20
-> >> diff --git a/drivers/iio/dac/ad3552r-axi.c b/drivers/iio/dac/ad3552r-a=
-xi.c
-> >> new file mode 100644
-> >> index 000000000000..98e5da08c973
-> >> --- /dev/null
-> >> +++ b/drivers/iio/dac/ad3552r-axi.c
-> >> @@ -0,0 +1,572 @@
-> >> +// SPDX-License-Identifier: GPL-2.0-only
-> >> +/*
-> >> + * Analog Devices AD3552R
-> >> + * Digital to Analog converter driver, AXI DAC backend version
-> >> + *
-> >> + * Copyright 2024 Analog Devices Inc.
-> >> + */
-> >> +
-> >> +#include <linux/bitfield.h>
-> >> +#include <linux/delay.h>
-> >> +#include <linux/gpio/consumer.h>
-> >> +#include <linux/iio/buffer.h>
-> >> +#include <linux/iio/backend.h>
-> >> +#include <linux/of.h> =20
-> > Why?  Probably want mod_devicetable.h =20
->=20
->=20
-> with mod_devicetable.h in place of of.h i get
->=20
-> drivers/iio/dac/ad3552r-axi.c:272:9: error: cleanup argument not a functi=
-on
->  =C2=A0 struct fwnode_handle *child __free(fwnode_handle) =3D NULL;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~
-That's not in of.h either
-add linux/property.h as well.
-
->=20
-
-...
-
-> >> +static int ad3552r_axi_setup(struct ad3552r_axi_state *st)
-> >> +{
-
-> > =20
-> >> +	u32 val, range;
-> >> +	int err;
-> >> +
-> >> +	err =3D ad3552r_axi_reset(st);
-> >> +	if (err)
-> >> +		return err;
-> >> +
-> >> +	err =3D iio_backend_ddr_disable(st->back);
-> >> +	if (err)
-> >> +		return err;
-> >> +
-> >> +	val =3D AD3552R_SCRATCH_PAD_TEST_VAL1;
-> >> +	err =3D iio_backend_bus_reg_write(st->back, AD3552R_REG_ADDR_SCRATCH=
-_PAD,
-> >> +					&val, 1); =20
-> > as per earlier review, I'd pass an unsigned int instead of a void *
-> > Then you can avoid the dance with a local variable. =20
-> void * was chosen thinking to future busses, please let me know if
-> it can stay this way.
-I'd not bother future proofing that much.  If you think > 32 bit is
-likely use a u64.
-
-> >> +	if (err)
-> >> +		return err;
 
