@@ -1,173 +1,125 @@
-Return-Path: <linux-kernel+bounces-313971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4F896AD05
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:44:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEDD96AD0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA971F214FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BEC1F22EA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7C1D79AB;
-	Tue,  3 Sep 2024 23:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618D11D79A2;
+	Tue,  3 Sep 2024 23:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fMuINMwE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlGVn1gk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35A6126BE1;
-	Tue,  3 Sep 2024 23:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9951EBFFA;
+	Tue,  3 Sep 2024 23:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725407038; cv=none; b=mA5EhgejDG4pdWRJHkdi7uxPG+A64Ijk3qhJjSvs6FMWIbdYZn+XMYTfU6j5uHcfu4d0HOenR0MKNevBsy5YJQxsOkNO1IduRbA2hTaAaxcBUBrQGiQP8GRgqpfI/QmNqg8qEQP342GEEp17Zv0NHMie2ECFPx56QVXlDJ8pvvE=
+	t=1725407233; cv=none; b=HVKZwr10lFcJ9S+8cBx84XVAS567S5lEgoJM8RedP4wmEvWQSLwtgx04tyxhLIcWy4VG6427jkvPr6Z1bITXasunSYAEDzuCP5QSnqiIA66uvvWQdCM+9ZrOwDsimrdOwHrJ8LZLooFCKJ7+8xaiQgtBoeMn6yqktMOutc12QH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725407038; c=relaxed/simple;
-	bh=6Rwo1ilfPPsZ7gdy1TKXHGJVAO72u7IzQqZ2DNioTu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SDYOaSNtVXBwvXm7kv54+2WPSBEVuRAPkaJ2dbyVmTJ/e8cnisa25oov3kt22xX8GdU7NganWBEySoPjaJzptewKLsl+BJtiSF3lwj/4YI5oy3KQZt0MqwE/TPd3mrtoqYgBNIYxtkpGnfdKGicUv/whJVTGAAQfUFBMWeba0Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fMuINMwE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483M0IhB015973;
-	Tue, 3 Sep 2024 23:43:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+d/0pC5aWWiDnnPCtqbZcR44t6XC0ztg5EHyBnbdrHo=; b=fMuINMwEsOPba3c5
-	y0oZzN7xVAa0MqUD5w6yhGv3EkLodAsV3PJ6Frnq6abx0Ouy50ghZrR+a/6zHPpP
-	9CRaCbLC1Dd+mkTnCZz/CG7NZ2qtHOqYWAoBsOKXvw759kyfTpy1Lsy1FnPvglAt
-	cNZikGnpiO+KuyP1FziH8gyasNdX2scOlTVmr5dafHVuBC90e6P37LqgfzCoyOvQ
-	od2C8lpVcZMxkK1yl9PQLkU0vitySTzC+hb/lgY3wjb8WTMqm183kC3Wi2P/+Zjo
-	ySAJsZVreOz+i+SW+QVqzyrh1o+LWKfe3X5lh6kfFbxSBzzLZ+V6QAXjW2hCzKwX
-	GBjU0Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt4rh2gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 23:43:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483NhcWP013624
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 23:43:38 GMT
-Received: from [10.71.114.155] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 16:43:37 -0700
-Message-ID: <2a64c924-9957-4c53-bf93-a651d19c733f@quicinc.com>
-Date: Tue, 3 Sep 2024 16:43:36 -0700
+	s=arc-20240116; t=1725407233; c=relaxed/simple;
+	bh=syaECrjJE2kWIzyuFy7TOxjEg6HYnVTBHVpPWpttYog=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XZMfdo78Of2wLAzrs9a72/9TosrYOf1pNWdZWK4wF4E/MDFXuh1QAS38EhWRfK7IN8tGL/c3x3RK1nvAmVZctm7IZeMtRbKR9JLkZ9x4yd5iwBdmLcDseojr6aDsJFLtfNjM/lfIDDavnaccA5YFSH0km09as/afo6drds6xQsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlGVn1gk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859A5C4CEC4;
+	Tue,  3 Sep 2024 23:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725407233;
+	bh=syaECrjJE2kWIzyuFy7TOxjEg6HYnVTBHVpPWpttYog=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SlGVn1gk0SxFfz9vigWKHLcKXUV+23WJ7CIDd+c5uNzmpaf/aZYK6uOZS1RQPZ/tN
+	 hQAVvb7MUldFyVb+I8H/aVa0F0p/oXV57TJMzSkPiXPhNsHT0VyDv7Fq2vOzlwo8sv
+	 HgQqYW2QhnGvPTTSKpFWy0CzYUO4QYjBdp7CIlttpKI+eGcmKCH/HzGZl2JFbrvw4/
+	 z6kd40ug/0TAokbkgyjxRGpHmB8AZaQdNHCB9WRH4Pqf+dS8ltl2Nt1Bw0ASUMYh6d
+	 AczG4sJoKR9q/H1wnI3Po2kKgG9E0V/iaqkfydnJsBTHWSdVcfyvOyVeVhqXY6QOwp
+	 vK/zpfWFdlylA==
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>, 
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, 
+ Ondrej Jirman <megi@xff.cz>, Michael Riesch <michael.riesch@wolfvision.net>, 
+ Jimmy Hon <honyuenkwun@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
+ Alexey Charkov <alchark@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
+ Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
+ Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
+ Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, kernel@collabora.com
+In-Reply-To: <20240903152308.13565-1-detlev.casanova@collabora.com>
+References: <20240903152308.13565-1-detlev.casanova@collabora.com>
+Subject: Re: (subset) [PATCH v4 0/9] Add device tree for ArmSoM Sige 5
+ board
+Message-Id: <172540722527.175332.15576202732090473513.b4-ty@kernel.org>
+Date: Wed, 04 Sep 2024 00:47:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v26 29/33] ALSA: usb-audio: qcom: Don't allow USB offload
- path if PCM device is in use
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
-References: <20240829194105.1504814-1-quic_wcheng@quicinc.com>
- <20240829194105.1504814-30-quic_wcheng@quicinc.com>
- <6e4e6e5f-dc55-4311-a658-5e2fcbeefab1@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <6e4e6e5f-dc55-4311-a658-5e2fcbeefab1@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AqwsQLlJac7qYtTmxKUnBNZWHT_wNZ_l
-X-Proofpoint-ORIG-GUID: AqwsQLlJac7qYtTmxKUnBNZWHT_wNZ_l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_11,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030189
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Hi Pierre,
+On Tue, 03 Sep 2024 11:22:30 -0400, Detlev Casanova wrote:
+> Add the rk3576-armsom-sige5 device tree as well as its rk3576.dtsi base
+> and pinctrl information in rk3576-pinctrl.dtsi.
+> 
+> The other commits add DT bindings documentation for the devices that
+> already work with the current corresponding drivers.
+> 
+> Note that as is, the rockchip gpio driver needs the gpio nodes
+> to be children of the pinctrl node, even though this is deprecated.
+> 
+> [...]
 
-On 8/30/2024 2:55 AM, Pierre-Louis Bossart wrote:
->
-> On 8/29/24 21:41, Wesley Cheng wrote:
->> Add proper checks and updates to the USB substream once receiving a USB QMI
->> stream enable request.  If the substream is already in use from the non
->> offload path, reject the stream enable request.  In addition, update the
->> USB substream opened parameter when enabling the offload path, so the
->> non offload path can be blocked.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>  sound/usb/qcom/qc_audio_offload.c | 15 ++++++++++++++-
->>  1 file changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
->> index e9f2fd6bbb41..0bd533f539e4 100644
->> --- a/sound/usb/qcom/qc_audio_offload.c
->> +++ b/sound/usb/qcom/qc_audio_offload.c
->> @@ -1482,12 +1482,17 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		goto response;
->>  	}
->>  
->> +	mutex_lock(&chip->mutex);
->>  	if (req_msg->enable) {
->> -		if (info_idx < 0 || chip->system_suspend) {
->> +		if (info_idx < 0 || chip->system_suspend || subs->opened) {
->>  			ret = -EBUSY;
->> +			mutex_unlock(&chip->mutex);
->> +
->>  			goto response;
->>  		}
->> +		subs->opened = 1;
->>  	}
->> +	mutex_unlock(&chip->mutex);
->>  
->>  	if (req_msg->service_interval_valid) {
->>  		ret = get_data_interval_from_si(subs,
->> @@ -1509,6 +1514,11 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		if (!ret)
->>  			ret = prepare_qmi_response(subs, req_msg, &resp,
->>  						   info_idx);
->> +		if (ret < 0) {
->> +			mutex_lock(&chip->mutex);
->> +			subs->opened = 0;
->> +			mutex_unlock(&chip->mutex);
->> +		}
->>  	} else {
->>  		info = &uadev[pcm_card_num].info[info_idx];
->>  		if (info->data_ep_pipe) {
->> @@ -1532,6 +1542,9 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		}
->>  
->>  		disable_audio_stream(subs);
->> +		mutex_lock(&chip->mutex);
->> +		subs->opened = 0;
->> +		mutex_unlock(&chip->mutex);
->>  	}
->>  
->
-> This sounds ok but I wonder why all this needs to be done in
-> Qualcomm-specific layers instead of soc-usb?
->
-This is to prevent conflicts within the non-offload/legacy USB SND path and the USB SND offload vendor driver.  Don't think we need to involve anything with ASoC in these checks.
+Applied to
 
-Thanks
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Wesley Cheng
+Thanks!
+
+[7/9] spi: dt-bindings: Add rockchip,rk3576-spi compatible
+      commit: b0cdf9cc089525da330919d1bcd3b92655aaa621
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
