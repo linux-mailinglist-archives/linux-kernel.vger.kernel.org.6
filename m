@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-312658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D97969972
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDB4969974
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E76A1C233E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D6AAB20319
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392D619F42D;
-	Tue,  3 Sep 2024 09:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C47819F41B;
+	Tue,  3 Sep 2024 09:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LRqluqFU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cVxfCdX+"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88B1A0BF0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C481A0BF0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725356730; cv=none; b=VCnCntEu1wAfEw5rBJtYsVZrTBrxsG+gTbFueB5l4NrmyZT0clD5R6ci2PjTKk+L3JSy19kIFqnglT03gwd0Byhly31MdF++Jt4T3iMs2zFP3P8BnH3tIPi2Q9SmhkEzav6UScCFBnt6aPnGGP/yLfjK3ov9xRJDdSgWEWDa5uA=
+	t=1725356793; cv=none; b=mHJP0iJveTUoeeZYycNM6GOoMiUv0zptgX210/S6yhufGitHyLjbiyOMTqsWZkUusTSmlcv45fSuhEd2I1SCihFFygNYGR1F3xDQlnxpZRXmMudONkRFTLh/1mrYGnjYAHVFv+ju1FXvoqtrX2jd3KfqL3ukebehUz9GxDsinKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725356730; c=relaxed/simple;
-	bh=6BuxvUMrHrx1Ij8CA8rsytPwpW//ly0JiqY2vNwkwVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y02yluo+NhqayaR8WYBtI4pByKVXXwAvPsM47yj214acXrPr58KWzrk9GZyhNRrLaefuG8kgK72JoXomZjCIOGVUAsJ09v9tjpqMpLIMZ3dPiRgRYoTddy7+R96jKt1Mm+pSccmx/zoIqu9GVYs+la3TmeW/A8Dmx+wKzw2dpcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LRqluqFU; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1725356793; c=relaxed/simple;
+	bh=ibE6VkRF5KFGURbNzkGcxHz/WTilbFlUghoevY67TEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nmmtS5AL2YdZCO1jpy/KfVubb5YUK2O8YqlqGD+Gf5XX8ojJSwrorR5LGzLmI1vGH52ms6MVKIdLbdXQqPdsdk1237gGhGIpzQHItgzna1GzrdPC21eVOsds7snsymY+5KNSZzo6CgsojvXhwc1TswTfHwNtrHSj6PWV2iOE+Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cVxfCdX+; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725356727;
+	s=mimecast20190719; t=1725356789;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=Md4YqyfH6OnnfGUBGnJGP7tmG/KDMn06qYkEJbCOX6E=;
-	b=LRqluqFUL6liJ9jakGGkS0rQNV4A6vr1w+qvSy0OLxvH/h8tC7ck957fOsZ/vHXLx6EVnY
-	zPJyAJKO51KGrp9p5Ezder1yKY69Wwh9Qvi6fivvBfUcRXrrDkh4nbFJLiDs0T38wrv6BJ
-	tfbU+TGBDgDeAE6CiHpIU6FO55AZab4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=hfPqtV/kE0emxjHSqrcPT251LjHCu9jPean4uiHZO7k=;
+	b=cVxfCdX+qQcQH+ocWfm2XYSZGqhZS6l9DXFm99fJnp9qXrPkGGXfmyLc2WUqF5Cm7JAi2e
+	neCwPsDiX7lpBasYd0yMuo3vLfIgkpc+NrIlKsqyftIn12BiYYPNSdHttwg2o8x7+LZ82r
+	0ZZ7P3mQd2Pf97OArd/oOSip2IxEaxc=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-378-uP7NXnQRP1ms9Y_TL2wlJQ-1; Tue, 03 Sep 2024 05:45:26 -0400
-X-MC-Unique: uP7NXnQRP1ms9Y_TL2wlJQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42bbad819d0so38057885e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:45:26 -0700 (PDT)
+ us-mta-260-SiHFH5xtMymXmh8NoWutaw-1; Tue, 03 Sep 2024 05:46:28 -0400
+X-MC-Unique: SiHFH5xtMymXmh8NoWutaw-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a8110f90ffso654492585a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:46:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725356725; x=1725961525;
+        d=1e100.net; s=20230601; t=1725356788; x=1725961588;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Md4YqyfH6OnnfGUBGnJGP7tmG/KDMn06qYkEJbCOX6E=;
-        b=NJtLj4BZyoV7W74An1TxSEU9jMa3t+r0IANO/JwH9DHWhOBm4Kr0UuBSf7+ZdJJUNG
-         IhPAbeHcfCopvYObzhVK5rILOY5Lst7mX59pOrKG+9suKSKrTOIdmLogdKolX7m9L4Dq
-         2y5u+4+0NIsXG6/IUIE3aesMxHsW3DoAbnph4btnVlqKi3ubKUm8KnG/QXRNpJ8XRSwY
-         NCjf76JAJ0MijIEFZk4Re9+FjaPlQrWohrO3ejq5eb9YrHjGNNtcD6igIqxtZvMf2rbF
-         nnFFbsmAoC9fQKClOKQuPfluJKla/d7O7SmMZgFpTN0brZt8YJZyVMOm+A3oD4XAiT6t
-         W1fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmBb7Qkw2co4QdTG+lviauqcvuph1PnWJNVk9RR23nZV3CtWd48qUng1PGq+8qabOoNP3v2zLvLsoyBYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8c4dY9OeRSAHSbGBKzJeGBw9qKLNqg3516wpfJeUn7jhBVkII
-	c0fTxv1/i86t7yaByj31jPXY7ngmFBvDC/xtFfVPw0E+/7FXJbIkJclTzZ7jTKqCZep37E1IhJr
-	48vIq6oLhLy226isH+5Wy304wjusLFBBOLvGGDhv2sj1/ef73acH48Rfr2UONVA==
-X-Received: by 2002:a05:600c:5006:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-42bbb0a909dmr99081125e9.0.1725356725112;
-        Tue, 03 Sep 2024 02:45:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7Ud6fZG99UNyJTjNPp3ey1FIBQb11K+Fj2L2yNLjsGXpWsRIKZUoGIY3LDKfc6dWLuosujg==
-X-Received: by 2002:a05:600c:5006:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-42bbb0a909dmr99080645e9.0.1725356724038;
-        Tue, 03 Sep 2024 02:45:24 -0700 (PDT)
+        bh=hfPqtV/kE0emxjHSqrcPT251LjHCu9jPean4uiHZO7k=;
+        b=ITwLZoTrhvAuj5KGiIP5+ls6/VPa+vQLDtw2T4BUlpxlIyMzXwoaRHcz2+c30ZT7sw
+         FHYsB75rC8ND1KDYigKQPPBttmpRRvis47kErfjiKUTR5RU6FzlMHQuHFv1nBziZ4Kzr
+         y4QJ4tJWS5LUQE4FA/iSVg9c/Nr9aBjCIW7zRFdXP8V0NLmta0NkgxvlYSyecNwRoOfu
+         yYMSE5uyN2VGWXYAtGWQ+rcYt2tXf76mw4iE9sRAzegnyytfkryhBvXwYWHhww0jSpdI
+         ou+SJIMH38GCpTk8hHOXi9Jsl14EyQMg0Oce8PYZPZU32tbhh4hz9xC+GgwSxx4AhaHW
+         6MVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZQAntHaaGK5BxDWsW8CSrtWBTwZwpIhrAcewmdXI4JymBXmXp8RdmBlSdmlrMrgJL9+SdsAG+i17lD7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyORY1ar+FhhvBv001AOu5e7jCOdGHp+uXZBQNglPgNjG96PgC/
+	OCfkZHSXwHhD2IO9yP1TsTFH0gNBoAacyKeMKzbiRbVRG0oJ5gvqgS5D4571biXhq8cYGgrsjOn
+	in5wxa9+ftssjogWNQWNDFRB7PKf56nXHXR7t0dsoA7e0zCdIAdUuHV1ePoePoA==
+X-Received: by 2002:a05:6214:5f0f:b0:6c3:6a89:37e7 with SMTP id 6a1803df08f44-6c3c629bfa5mr26855476d6.22.1725356788144;
+        Tue, 03 Sep 2024 02:46:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwf4goexew3ZEXrz2VkLN/ph9GuyXW2mpOFNkkxoudCwNOm9FKDVrNrmCnDDhWa3/jitQzuw==
+X-Received: by 2002:a05:6214:5f0f:b0:6c3:6a89:37e7 with SMTP id 6a1803df08f44-6c3c629bfa5mr26855366d6.22.1725356787721;
+        Tue, 03 Sep 2024 02:46:27 -0700 (PDT)
 Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c7b628dd4sm100705125e9.11.2024.09.03.02.45.23
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c50f78c649sm5978946d6.130.2024.09.03.02.46.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 02:45:23 -0700 (PDT)
+        Tue, 03 Sep 2024 02:46:27 -0700 (PDT)
 From: Philipp Stanner <pstanner@redhat.com>
 To: Luben Tuikov <ltuikov89@gmail.com>,
 	Matthew Brost <matthew.brost@intel.com>,
@@ -82,9 +82,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Philipp Stanner <pstanner@redhat.com>,
 	Danilo Krummrich <dakr@redhat.com>
-Subject: [RFC PATCH] drm/sched: Fix teardown leaks with waitqueue
-Date: Tue,  3 Sep 2024 11:44:47 +0200
-Message-ID: <20240903094446.29797-2-pstanner@redhat.com>
+Subject: [RFC PATCH] drm/sched: Fix teardown leaks with refcounting
+Date: Tue,  3 Sep 2024 11:45:32 +0200
+Message-ID: <20240903094531.29893-2-pstanner@redhat.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -102,11 +102,17 @@ If there are still jobs in the pending_list, this is problematic because
 after scheduler teardown, no one will call backend_ops.free_job()
 anymore. This would, consequently, result in memory leaks.
 
-One way to solves this is to implement a waitqueue that drm_sched_fini()
-blocks on until the pending_list has become empty.
+One way to solves this is to implement reference counting for struct
+drm_gpu_scheduler itself. Each job added to the pending_list takes a
+reference, each one removed drops a reference.
 
-Add a waitqueue to struct drm_gpu_scheduler. Wake up waiters once the
-pending_list becomes empty. Wait in drm_sched_fini() for that to happen.
+This approach would keep the scheduler running even after users have
+called drm_sched_fini(), and it would ultimately stop after the last job
+has been removed from pending_list.
+
+Add reference counting to struct drm_gpu_scheduler. Move the teardown
+logic to __drm_sched_fini() and have drm_sched_fini() just also drop a
+reference.
 
 Suggested-by: Danilo Krummrich <dakr@redhat.com>
 Signed-off-by: Philipp Stanner <pstanner@redhat.com>
@@ -116,139 +122,128 @@ Hi all,
 since the scheduler has many stake holders, I want this solution
 discussed as an RFC first.
 
-This version here has IMO the advantage (and disadvantage...) that it
-blocks infinitly if the driver messed up the clean up, so problems
-might become more visible than the refcount solution I proposed in
-parallel.
+The advantage of this version would be that it does not block
+drm_sched_fini(), but the price paid for that is that the scheduler
+keeps running until all jobs are gone.
 
 Cheers,
 P.
 ---
- drivers/gpu/drm/scheduler/sched_main.c | 40 ++++++++++++++++++++++++++
- include/drm/gpu_scheduler.h            |  4 +++
- 2 files changed, 44 insertions(+)
+ drivers/gpu/drm/scheduler/sched_main.c | 17 ++++++++++++++++-
+ include/drm/gpu_scheduler.h            |  5 +++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 7e90c9f95611..200fa932f289 100644
+index 7e90c9f95611..62b453c8ed76 100644
 --- a/drivers/gpu/drm/scheduler/sched_main.c
 +++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -564,6 +564,13 @@ static void drm_sched_job_timedout(struct work_struct *work)
+@@ -99,6 +99,8 @@ int drm_sched_policy = DRM_SCHED_POLICY_FIFO;
+ MODULE_PARM_DESC(sched_policy, "Specify the scheduling policy for entities on a run-queue, " __stringify(DRM_SCHED_POLICY_RR) " = Round Robin, " __stringify(DRM_SCHED_POLICY_FIFO) " = FIFO (default).");
+ module_param_named(sched_policy, drm_sched_policy, int, 0444);
+ 
++static void __drm_sched_fini(struct kref *jobs_remaining);
++
+ static u32 drm_sched_available_credits(struct drm_gpu_scheduler *sched)
+ {
+ 	u32 credits;
+@@ -540,6 +542,7 @@ static void drm_sched_job_begin(struct drm_sched_job *s_job)
+ 
+ 	spin_lock(&sched->job_list_lock);
+ 	list_add_tail(&s_job->list, &sched->pending_list);
++	kref_get(&sched->jobs_remaining);
+ 	drm_sched_start_timeout(sched);
+ 	spin_unlock(&sched->job_list_lock);
+ }
+@@ -564,6 +567,7 @@ static void drm_sched_job_timedout(struct work_struct *work)
  		 * is parked at which point it's safe.
  		 */
  		list_del_init(&job->list);
-+
-+		/*
-+		 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-+		 */
-+		if (list_empty(&sched->pending_list))
-+			wake_up(&sched->job_list_waitque);
-+
++		kref_put(&sched->jobs_remaining, __drm_sched_fini);
  		spin_unlock(&sched->job_list_lock);
  
  		status = job->sched->ops->timedout_job(job);
-@@ -584,6 +591,15 @@ static void drm_sched_job_timedout(struct work_struct *work)
- 		drm_sched_start_timeout_unlocked(sched);
- }
+@@ -637,6 +641,7 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
+ 			 */
+ 			spin_lock(&sched->job_list_lock);
+ 			list_del_init(&s_job->list);
++			kref_put(&sched->jobs_remaining, __drm_sched_fini);
+ 			spin_unlock(&sched->job_list_lock);
  
-+static bool drm_sched_no_jobs_pending(struct drm_gpu_scheduler *sched)
-+{
-+	/*
-+	 * For list_empty() to work without a lock.
-+	 */
-+	rmb();
-+	return list_empty(&sched->pending_list);
-+}
-+
- /**
-  * drm_sched_stop - stop the scheduler
-  *
-@@ -659,6 +675,12 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
- 		}
- 	}
- 
-+	/*
-+	 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-+	 */
-+	if (drm_sched_no_jobs_pending(sched))
-+		wake_up(&sched->job_list_waitque);
-+
- 	/*
- 	 * Stop pending timer in flight as we rearm it in  drm_sched_start. This
- 	 * avoids the pending timeout work in progress to fire right away after
-@@ -1085,6 +1107,12 @@ drm_sched_get_finished_job(struct drm_gpu_scheduler *sched)
+ 			/*
+@@ -1084,6 +1089,7 @@ drm_sched_get_finished_job(struct drm_gpu_scheduler *sched)
+ 	if (job && dma_fence_is_signaled(&job->s_fence->finished)) {
  		/* remove job from pending_list */
  		list_del_init(&job->list);
++		kref_put(&sched->jobs_remaining, __drm_sched_fini);
  
-+		/*
-+		 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-+		 */
-+		if (list_empty(&sched->pending_list))
-+			wake_up(&sched->job_list_waitque);
-+
  		/* cancel this job's TO timer */
  		cancel_delayed_work(&sched->work_tdr);
- 		/* make the scheduled timestamp more accurate */
-@@ -1303,6 +1331,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
+@@ -1303,6 +1309,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
  	init_waitqueue_head(&sched->job_scheduled);
  	INIT_LIST_HEAD(&sched->pending_list);
  	spin_lock_init(&sched->job_list_lock);
-+	init_waitqueue_head(&sched->job_list_waitque);
++	kref_init(&sched->jobs_remaining);
  	atomic_set(&sched->credit_count, 0);
  	INIT_DELAYED_WORK(&sched->work_tdr, drm_sched_job_timedout);
  	INIT_WORK(&sched->work_run_job, drm_sched_run_job_work);
-@@ -1333,12 +1362,23 @@ EXPORT_SYMBOL(drm_sched_init);
-  * @sched: scheduler instance
+@@ -1334,11 +1341,14 @@ EXPORT_SYMBOL(drm_sched_init);
   *
   * Tears down and cleans up the scheduler.
-+ *
-+ * Note that this function blocks until the fences returned by
-+ * backend_ops.run_job() have been signalled.
   */
- void drm_sched_fini(struct drm_gpu_scheduler *sched)
+-void drm_sched_fini(struct drm_gpu_scheduler *sched)
++static void __drm_sched_fini(struct kref *jobs_remaining)
  {
++	struct drm_gpu_scheduler *sched;
  	struct drm_sched_entity *s_entity;
  	int i;
  
-+	/*
-+	 * Jobs that have neither been scheduled or which have timed out are
-+	 * gone by now, but jobs that have been submitted through
-+	 * backend_ops.run_job() and have not yet terminated are still pending.
-+	 *
-+	 * Wait for the pending_list to become empty to avoid leaking those jobs.
-+	 */
-+	wait_event(sched->job_list_waitque, drm_sched_no_jobs_pending(sched));
++	sched = container_of(jobs_remaining, struct drm_gpu_scheduler, jobs_remaining);
++
  	drm_sched_wqueue_stop(sched);
  
  	for (i = DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
+@@ -1368,6 +1378,11 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+ 	kfree(sched->sched_rq);
+ 	sched->sched_rq = NULL;
+ }
++
++void drm_sched_fini(struct drm_gpu_scheduler *sched)
++{
++	kref_put(&sched->jobs_remaining, __drm_sched_fini);
++}
+ EXPORT_SYMBOL(drm_sched_fini);
+ 
+ /**
 diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index 5acc64954a88..bff092784405 100644
+index 5acc64954a88..b7fad8294861 100644
 --- a/include/drm/gpu_scheduler.h
 +++ b/include/drm/gpu_scheduler.h
 @@ -29,6 +29,7 @@
  #include <linux/completion.h>
  #include <linux/xarray.h>
  #include <linux/workqueue.h>
-+#include <linux/wait.h>
++#include <linux/kref.h>
  
  #define MAX_WAIT_SCHED_ENTITY_Q_EMPTY msecs_to_jiffies(1000)
  
-@@ -503,6 +504,8 @@ struct drm_sched_backend_ops {
-  *            timeout interval is over.
-  * @pending_list: the list of jobs which are currently in the job queue.
-  * @job_list_lock: lock to protect the pending_list.
-+ * @job_list_waitque: a waitqueue for drm_sched_fini() to block on until all
-+ *		      pending jobs have been finished.
-  * @hang_limit: once the hangs by a job crosses this limit then it is marked
-  *              guilty and it will no longer be considered for scheduling.
-  * @score: score to help loadbalancer pick a idle sched
-@@ -532,6 +535,7 @@ struct drm_gpu_scheduler {
- 	struct delayed_work		work_tdr;
- 	struct list_head		pending_list;
- 	spinlock_t			job_list_lock;
-+	wait_queue_head_t		job_list_waitque;
- 	int				hang_limit;
- 	atomic_t                        *score;
- 	atomic_t                        _score;
+@@ -495,6 +496,9 @@ struct drm_sched_backend_ops {
+  *                 waits on this wait queue until all the scheduled jobs are
+  *                 finished.
+  * @job_id_count: used to assign unique id to the each job.
++ * @jobs_remaining: submitted jobs take a refcount of the scheduler to prevent it
++ *		    from terminating before the last job has been removed from
++ *		    @pending_list.
+  * @submit_wq: workqueue used to queue @work_run_job and @work_free_job
+  * @timeout_wq: workqueue used to queue @work_tdr
+  * @work_run_job: work which calls run_job op of each scheduler.
+@@ -525,6 +529,7 @@ struct drm_gpu_scheduler {
+ 	struct drm_sched_rq             **sched_rq;
+ 	wait_queue_head_t		job_scheduled;
+ 	atomic64_t			job_id_count;
++	struct kref			jobs_remaining;
+ 	struct workqueue_struct		*submit_wq;
+ 	struct workqueue_struct		*timeout_wq;
+ 	struct work_struct		work_run_job;
 -- 
 2.46.0
 
