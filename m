@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-312722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445C2969A52
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A85BF969A57
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D6F1F24097
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529B51F23C14
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD531B9850;
-	Tue,  3 Sep 2024 10:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452711C62AA;
+	Tue,  3 Sep 2024 10:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Tzkqhswi"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFRLK9oV"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63B11AD254
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533861A4E7C;
+	Tue,  3 Sep 2024 10:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359910; cv=none; b=B4MTTCPFb9gNXRNVFE5GsOGbuUgQfAXn4gvysbwjvbwquHnE9w6XWscvmXtAemA+jVSXW6l5XOyGeyAcpny0wHXXBVXsIbUelMl+oeMfOD8oADvtCsDs9RKNixzP4V8T3eCD1DWs35Y2JnEWLSVZK7eQZIoowXIERGYsmW6Y1Zk=
+	t=1725359941; cv=none; b=faudUuy5hEPEbKBmYM6gmf7NpA44W+R4PcjMtazGy0rL5X02W+89ufXIrKvfnO+IBk2BxbxJOmedrNhpus7AsIe4dQXRljJxXDMfopuoWQInbxXNy1XIEiUr2mPmzVXh4wANWklGCX0GQ1sKTwuDZH/mSsLmyohYh9xF1a5ry2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359910; c=relaxed/simple;
-	bh=IpGzSwq01bG+uYW7sy64WUAjjUCeEmCuQYp+d2Un/3g=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mQCe4cgI7w0WmXxDHjWdqhICWzJ51H8XuSRrne5CqlxBBcqXgutT+0d+Qd/Q97aF3ec7ZAp77yV9KLpfoIIusc3gHN26rZ2AeLq0eOpok8E20+YW7POmVwLfk2xJN1Zd9INv6+8y9po2q+CDkcL22PNiyQZk1ecASTTPfhSJbGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Tzkqhswi; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so1679945a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:38:26 -0700 (PDT)
+	s=arc-20240116; t=1725359941; c=relaxed/simple;
+	bh=QsB9ytTgaYVg/jbAlllbbzbJruHNK7+AM8/jWK6QZqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rgne7EcmmpjNkwYvX9ThzVl1Y6fBYRcheJnPAk+Lt08SsugFaRG+3CucqBzLFz3W0Ws9OaAkmCAfJm2J9K3lOgCpPEgZ2+RvwlRbIk6HJVpRJm6BXL9ACDTGp7Gh6B9kiJwKQ/rRFGV06xT1yF/4WlJt+Up+xjassvkjc2iGfr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFRLK9oV; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71446767885so662220b3a.1;
+        Tue, 03 Sep 2024 03:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1725359905; x=1725964705; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=x6Q3eYsITfxnypFGe3Fw8XAGNfc1A4gIAvgZwhL1hhM=;
-        b=TzkqhswiJyPfyWbn17cwB069DGFnsjSBtKg8sadpF9TKTq6Ckj9poG6UTDt3+j0j8p
-         MduwXVv4ChD6/QgIYaZLPuxLmR2qSA4YiwrXWMB7iss7D6Xv9DHXi6moZJbokt6CDvtv
-         wk8C0xNM3U5qMX7Aw6gqAkkKizYwfhJ7VO7fk=
+        d=gmail.com; s=20230601; t=1725359938; x=1725964738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iBup1UfPYH+jBIe3t6bYSH/YuGGit6nmS2KxsQ9yvQE=;
+        b=gFRLK9oV56iUKX1M46fGOJ6aTHj/CdusgmsDfYbD7Ggj2AIqh5Pwk/f0N79P4YsGOQ
+         H+OnwAdhszgZgtn+lvkp1pmR09dh3cDSoTLV5WBwwQddofvEvSSz7c/eIuG0ocMyDQVt
+         QI0bVIMzNBIiJb5AEm81RWVl/7RtPdXr4qumo2USVP8Pe31GuK3zVZNxApsBxVLxujBT
+         vOW7ymW+PC4KOXjIYQfh5ImuJ5UoEJyP1LPyvpq5hAd1P29Fl9UnFecvKEc9Qw0ZSryp
+         PjN5crbyd6DMgchEJK9jODA5ajVP4ixYK9vakWjUJMfOC2DDQRWf6szzBDDSB7plXBFW
+         y1Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359905; x=1725964705;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x6Q3eYsITfxnypFGe3Fw8XAGNfc1A4gIAvgZwhL1hhM=;
-        b=qHLEHkU8WJ/MLnNkoFOaPBRnh2jo2FFJq8ouVSKwH1Jfep6HDDJWR7UuB/LtWjUX/G
-         yTIUZ21RJNGif8rib/O2ulpuHEdAGpryZtoOdF2S8kR1FvGQX0+yHbsrhKC/GgLWV6nV
-         l/oES/WynvqdJEnDmIB54hIp3L4lYeZnd4UOvnURl6nRiOGyhAEmhvgnJV/j5APfljzC
-         1PpesAICWTJFyXxya7q5TnNiJuvTafU9mYcSuURAJ8pNPWNkK3jvKmbed9fV0UIy+nt5
-         bdRATTAJZtCHwUMRYyEd/ZDe61bfNm/SQD0mWB6Ad76VxMlb4beB8cEwr1cUpc3hBxO4
-         IIpQ==
-X-Gm-Message-State: AOJu0YzZx0JGHMnlVkvSISp+69NPcx9fFNfY4fnyibcqRFcNW+7do06F
-	OihY6uUYd2+tSebvzQ5PF+w8GEkIFGjr7p8EL4blXqyUZ7mMNvFeuU52iAyKIBBzYNntSECbMHC
-	hjofLJZ/0NlaL+oq8DG6kJR7Ub6PKzfhjxJIKP4Q2b3meZ/nl
-X-Google-Smtp-Source: AGHT+IFyKzm67wu/yuibz5w2254/bwCWTDvbeXT90It4zB3i/dkPa2pncQBbDsLbh40dWyLfuTt29muGncb2pj61WDo=
-X-Received: by 2002:a17:907:3e0f:b0:a7a:a5ae:11b7 with SMTP id
- a640c23a62f3a-a89faf995b5mr469332766b.49.1725359904279; Tue, 03 Sep 2024
- 03:38:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725359938; x=1725964738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iBup1UfPYH+jBIe3t6bYSH/YuGGit6nmS2KxsQ9yvQE=;
+        b=jcxqnuAyCvAfrM8TPEtkYpG1SjGIcmUxfgHta2NNVnRubv/NwFVKhe9/+kfCOxyLnk
+         C0J608XK4sePjLM+ocmK0yLXU0nq/uth3YZEhdB7LhTCXrblc7EUIyfBX30T9jugQy8s
+         /2w82BPhwUaHsTz08TbtoCJSPpyIRp506bcs0U2EvDerwQ6MzEh4KL+lvTHRYbF8eF1E
+         3AGVfYewsOIfZUMWv5Un+h2mrmLoF0iK0LF32H7KUJhu5H0rwB9vRQ7+KF00KKLbkWn/
+         mFjOq/EmfmErcOEjZq5BjFk61yYSF93dtqGfPesYS/6MTDXtEDjkCjnJDvigXK7g+ozE
+         8Y+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwaCBGwJ9CnR4eJM8fC2gxCIqePw+Zjrxh11q3M5GFPgnZDMKp3nmTfhDyfVvkpUY38m3TnBH5IgXk7nc96C8=@vger.kernel.org, AJvYcCWjVgYb+0RAIONQxdIFMyxDV4SEPPxeSRi9wyb6Xph+2IePSujAKaBYMRSxlMJSgM1+yrNZq1SDT67uhw==@vger.kernel.org, AJvYcCXg2Aa26fKmpjmrrr7Ffii4to4I5QE8iQv6WUF8dpXhR7KWAb5bnfB5QSxbGxkQRyEK9fwuZzS+YHPTeWJ9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyruVfvRHxTg2sZEHiENF9TezV3lCw88eOEdZL2Zz6B78ODk0t
+	8eSkLN+gdRa249tyJ+QuzUfOlqyFe06xnIYoFcirfOu7OMQ0IkYJRhEt31wQlShrcx86s9ctSjx
+	Pidk03KE6TbtvSehKp/319XFJdJU=
+X-Google-Smtp-Source: AGHT+IGJh9PB9LY+D4XML3Q1TRSkEKR3shqWi/yNYLbCnuZNYDMh4hnKUJGX/kIVREqL/OIQ2aA3uUgtgScUrvRnQds=
+X-Received: by 2002:a05:6a20:7f86:b0:1c4:c4cc:fa49 with SMTP id
+ adf61e73a8af0-1ccee5179b7mr8048831637.7.1725359938563; Tue, 03 Sep 2024
+ 03:38:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 3 Sep 2024 12:38:12 +0200
-Message-ID: <CAJfpeguT0XBxBCzBrJqS1LLCLmEahVT3FF0NZ1nkAKMRKWpyfw@mail.gmail.com>
-Subject: [GIT PULL] fuse fixes for 6.11-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20240902211553.103807-1-frazar00@gmail.com>
+In-Reply-To: <20240902211553.103807-1-frazar00@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 3 Sep 2024 12:38:46 +0200
+Message-ID: <CANiq72naAHm81thntNdaEoq8rMVH0gVNAKB_Fd5dy2Eu1pk5mA@mail.gmail.com>
+Subject: Re: [PATCH] docs: rust: fix formatting for kernel::block::mq::Request
+To: Francesco Zardi <frazar00@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Sep 2, 2024 at 11:16=E2=80=AFPM Francesco Zardi <frazar00@gmail.com=
+> wrote:
+>
+> Fix several issues with rustdoc formatting for the
+> `kernel::block::mq::Request` module, in particular:
 
-Please pull from:
+Thanks for the patch, Francesco! These look good (I didn't render it though=
+).
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-fixes-6.11-rc7
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1108
+>
+> Signed-off-by: Francesco Zardi <frazar00@gmail.com>
+> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
 
-- Fix EIO if splice and page stealing are enabled on the fuse device
+If we considered these a fix (I think at least for the first bullet
+point it makes sense to do so), these should probably be (in this
+order, and without blank newlines):
 
-- Disable problematic combination of passthrough and writeback-cache
+    Reported-by:
+    Closes:
+    Signed-off-by:
 
-- Other bug fixes found by code review
+But depending on the maintainer they may do this without a v2 when
+picking it up -- it depends on what Andreas wants to do (it could go
+through Block or Rust).
 
-Thanks,
-Miklos
+Thanks!
 
----
-Bernd Schubert (1):
-      fuse: disable the combination of passthrough and writeback cache
-
-Jann Horn (1):
-      fuse: use unsigned type for getxattr/listxattr size truncation
-
-Joanne Koong (2):
-      fuse: check aborted connection before adding requests to pending
-list for resending
-      fuse: update stats for pages in dropped aux writeback list
-
-Miklos Szeredi (1):
-      fuse: clear PG_uptodate when using a stolen page
-
-yangyun (1):
-      fuse: fix memory leak in fuse_create_open
-
----
- fs/fuse/dev.c   | 14 ++++++++++----
- fs/fuse/dir.c   |  2 +-
- fs/fuse/file.c  |  8 +++++++-
- fs/fuse/inode.c |  7 ++++++-
- fs/fuse/xattr.c |  4 ++--
- 5 files changed, 26 insertions(+), 9 deletions(-)
+Cheers,
+Miguel
 
