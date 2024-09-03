@@ -1,92 +1,70 @@
-Return-Path: <linux-kernel+bounces-312688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC29B9699D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:15:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540109699E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4823AB21917
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:15:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB295B22106
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBCF1AD26B;
-	Tue,  3 Sep 2024 10:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E759A1AD254;
+	Tue,  3 Sep 2024 10:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="G8DkbHzp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H8ejT175"
-Received: from pfhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cw8OPcyk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9766745003
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC14045003;
+	Tue,  3 Sep 2024 10:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725358502; cv=none; b=YWTa+vg6od9CY1I6QHY8xQpdap9YWyDNEVBxidWfoRrhy2hK51hQEw+b+3iAczHYYFWv8KIMhb30XlBs/v6o9/OdPPNvMorLZXeCnkD7T5lbkX31OA7ZTia63Xrn+tpFN97sjRDGCJ1lxM9TTinoYt2oWzQmE82E240TlePtgUo=
+	t=1725358593; cv=none; b=CKJU5opy6sXpZhatCrOiIHim/gWJUcc6czYJQhCiVmp4KwRK/Eg47FlpUFfyFSa3KLItjBxG9defHfObZnDvt1sv/sYSr50pnytKdNVEXJsTlNQmyHmkSrC1YCQkJE9oRI4NMHBGaWEWMHrtl7RD0WjP63EBHUrHvZjriLrpRB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725358502; c=relaxed/simple;
-	bh=KVMOq3+sSI0aDG//k6mpQqkxfoGps7TxFTMp1ubr8Q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nXvm1YdoowBXMwghOMUqw/1jiFwqKeb1mJNQXtKF3Ef3H2O5x6a2v1z1v+O31uYKp7R5aGdg99fRk3SScvTagq8PrFscvw/ft6LatkRT9hvKgo+YqggWb7F4PJdWGfvIijN8UvLhOyn/hi7997rZl8LSwZXVJNddohxUUiLteT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=G8DkbHzp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H8ejT175; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 961811140100;
-	Tue,  3 Sep 2024 06:14:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 03 Sep 2024 06:14:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1725358499; x=1725444899; bh=cQ3Cmnl22p
-	JyvQzeMH+44ginKFaS1ZMnNT2AenBDixc=; b=G8DkbHzpEnATt0/HLcv+Eqf8B/
-	JAtOAzQkCI+wbkXCIYHblnwv09ze9cLfpiTNAdOjMBMWOJSZWGHkU8e47ihEiYqP
-	rG8mPpBYflwF3JdfX68t9ddVcYw/g8SbtAypJPisZfubdfMPpQwzUynh+quOfuFA
-	qTfE3FmzgVUQdcg58C/Sh1oyu6kFiq8QabUU0FHKhXNUs0kvtnYRuFu7ukAq2CRI
-	Uo952jgQiN+xQebqnIcApr/eXlT5Iyh7/HuMVOoZ5bTH15tpSsXRMYaKQaqBBqEW
-	KX8jPjMUwQmKN/CkKB5Dh42s5AYgiBZ6DXR/QrvbtpNDL14t4K2LdI7tH38g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1725358499; x=1725444899; bh=cQ3Cmnl22pJyvQzeMH+44ginKFaS
-	1ZMnNT2AenBDixc=; b=H8ejT175tuxnTA/zEuvxb2q7daPqZTApKJm9L2p5Rx2O
-	F7e8tZbYcGpJTZegJnfMKMwxx3gOBHecsNxBCVaj2l6VHKDzcmv1oiHkO1sGNvSO
-	Kh1GABW0YJIumAiVp2tu90vqfoSmrbFkSh0XxkVQJp8SXO4TqUyP4iLm5kzUONK1
-	vDGsYUje7UKWDY3L882Uxw+OOTMMFsXRC1UANNr7QIMJxb94qgmzWNLJAgLlDXw2
-	9wtTvqqU5x7H2pfELlCXVN4lI4/aEh6Jz+2tLtVEweC7Bs576gFLjP6oakiDFXmF
-	gqpPGxz9h/38w9OBRfJGtZ/GyYZ+XFPL7tYA2SgymQ==
-X-ME-Sender: <xms:o-HWZo054JaJ3lOuPgU8Zo2-XHyBYMJLjiQtBI9ygEaTJNm7TyUChg>
-    <xme:o-HWZjFLH02RWtKnqnOXdefSLO74dvctreUuCOf3XsE8N2OKMRfTyNo94cw2EDac8
-    -zn901fXEsC3Tvbqzw>
-X-ME-Received: <xmr:o-HWZg5ibbplkm1ZxSIJnaLcluKbqqgsODC0FNdbk4HB_QNF4OJ9McZgLa9Gm54PongqhP7QtW7d0xIOBgaicI0AU1vjGlDVQ7v8mwbX3R1PuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehhedgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohht
-    ohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtth
-    gvrhhnpeffvdeuleffveekudfhteejudffgefhtedtgfeutdfgvdfgueefudehveehveek
-    keenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqd
-    htrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlse
-    hlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:o-HWZh3AdnT27DnwCDYexig2V01iRdXitTHh5LawfvrViJAPd9L-Kw>
-    <xmx:o-HWZrGeKcRoeIb59nwQKimJjm3ZDkdnn5FSNJiRFjzaueyroZpbmQ>
-    <xmx:o-HWZq8zXjS14HO7rTnAbTBmN3FhaPbFfzO5ZHMp3bSOQyf37gW1Eg>
-    <xmx:o-HWZgnNfMiw6x1nf6LBS05yHkzxLjQ9sAUaRXDJCBefl_8lUma-Eg>
-    <xmx:o-HWZgRxTb4i0V9DPMWNLx5a8UoWiCC-MvcWmB6qVN_WeucYV5nQdjKw>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Sep 2024 06:14:58 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: ohci: deprecate debug parameter
-Date: Tue,  3 Sep 2024 19:14:55 +0900
-Message-ID: <20240903101455.317067-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725358593; c=relaxed/simple;
+	bh=fl2RERz3XnvxlVkwwdHuXu69WgkZQGwQd65O2iqDXuk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QFSViO5sIxaJT4rfM/AYRVdRlo/BRvMap5+f7Ss6Y11ZypJv7Zw8HhPIb94RrWJdT5wG0zfDHW3fq2OxLZQuJL5h514+ZFtpR4E/5UfRDYNhBHwpFAtfZPaZJk0eF7koIwU/fqU6KLpnp+kHUUqQnZZ4tq+2996yZ0uW6dNqcUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cw8OPcyk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4831LRvo000810;
+	Tue, 3 Sep 2024 10:16:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Rt4e0Wp1JpQKmeXpaLaZ+s
+	Dh0ev21DQIiB3rskjn1lw=; b=Cw8OPcyklQ5SMVY1mbmcj47M9zcvCjuOT2T5uJ
+	Hkzhyx1SDv5RkhviFEi/jhO7OhRU1aY7yQGo4tT10K7KP2YY6ykPaSvBVPVhR0jS
+	Qoe9JIiWNn2tpRg4/zWkbDZRDBU/WFrQxASfRYrjW4BKWSwOsI0j/sEGiRudm/GE
+	SmhuELI63CPdH3RbkQvOnBp15W9jKyQSKQWX/v/tjtwpVphPP6bn9BrRrWPX0sw6
+	eWc6vRytF9yRoUhgfFlhaJOowZgZUkeW+gJcvQNHISEn1dG6fDbWhhjXpPf3XKmw
+	ZZYRM6BB89X6dITFfUc5cCPdpJcUgRjSPeVeJ3sL4+QV3B9g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe14ym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 10:16:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483AGG85022358
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 10:16:16 GMT
+Received: from hu-rjendra-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 3 Sep 2024 03:16:12 -0700
+From: Rajendra Nayak <quic_rjendra@quicinc.com>
+To: <manivannan.sadhasivam@linaro.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+        <mchehab@kernel.org>, <rric@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <quic_sibis@quicinc.com>,
+        <abel.vesa@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: [PATCH v2] EDAC/qcom: Make irq configuration optional
+Date: Tue, 3 Sep 2024 15:45:10 +0530
+Message-ID: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,46 +72,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jHzg5ZI-_ssh7s8y1HKWknH57sppkpVF
+X-Proofpoint-ORIG-GUID: jHzg5ZI-_ssh7s8y1HKWknH57sppkpVF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409030082
 
-Many tracepoints events have been added to 6.10 and 6.11 kernels. They are
-available as an alternative of debug parameter in firewire-ohci module.
+On most modern qualcomm SoCs, the configuration necessary to enable the
+Tag/Data RAM related irqs being propagated to the SoC irq controller is
+already done in firmware (in DSF or 'DDR System Firmware')
 
-The logging messages enabled by the parameter require some cumbersomes in
-a point of maintenance; e.g. the code to decode transaction frame.
+On some like the x1e80100, these registers aren't even accesible to the
+kernel causing a crash when edac device is probed.
 
-This commit adds deprecation text to conduct users to them..
+Hence, make the irq configuration optional in the driver and mark x1e80100
+as the SoC on which this should be avoided.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+Reported-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/firewire/ohci.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+v2: 
+Minor typo fixed in changelog
 
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index a3a37955b174..e662dc30c21f 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -396,7 +396,7 @@ MODULE_PARM_DESC(quirks, "Chip quirks (default = 0"
+ drivers/edac/qcom_edac.c           | 8 +++++---
+ drivers/soc/qcom/llcc-qcom.c       | 3 +++
+ include/linux/soc/qcom/llcc-qcom.h | 2 ++
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+index d3cd4cc54ace..96611ca09ac5 100644
+--- a/drivers/edac/qcom_edac.c
++++ b/drivers/edac/qcom_edac.c
+@@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
+ 	int ecc_irq;
+ 	int rc;
  
- static int param_debug;
- module_param_named(debug, param_debug, int, 0644);
--MODULE_PARM_DESC(debug, "Verbose logging (default = 0"
-+MODULE_PARM_DESC(debug, "Verbose logging, deprecated in v6.11 kernel or later. (default = 0"
- 	", AT/AR events = "	__stringify(OHCI_PARAM_DEBUG_AT_AR)
- 	", self-IDs = "		__stringify(OHCI_PARAM_DEBUG_SELFIDS)
- 	", IRQs = "		__stringify(OHCI_PARAM_DEBUG_IRQS)
-@@ -2197,6 +2197,11 @@ static irqreturn_t irq_handler(int irq, void *data)
- 	if (!event || !~event)
- 		return IRQ_NONE;
- 
-+	if (unlikely(param_debug > 0)) {
-+		dev_notice_ratelimited(ohci->card.device,
-+				       "The debug parameter is superceded by tracepoints events, and deprecated.");
+-	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+-	if (rc)
+-		return rc;
++	if (!llcc_driv_data->ecc_irq_configured) {
++		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
++		if (rc)
++			return rc;
 +	}
-+
- 	/*
- 	 * busReset and postedWriteErr events must not be cleared yet
- 	 * (OHCI 1.1 clauses 7.2.3.2 and 13.2.8.1)
+ 
+ 	/* Allocate edac control info */
+ 	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index 8fa4ffd3a9b5..b1c0ae9991d6 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -139,6 +139,7 @@ struct qcom_llcc_config {
+ 	int size;
+ 	bool need_llcc_cfg;
+ 	bool no_edac;
++	bool irq_configured;
+ };
+ 
+ struct qcom_sct_config {
+@@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+ 		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
++		.irq_configured = true,
+ 	},
+ };
+ 
+@@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+ 	drv_data->cfg = llcc_cfg;
+ 	drv_data->cfg_size = sz;
+ 	drv_data->edac_reg_offset = cfg->edac_reg_offset;
++	drv_data->ecc_irq_configured = cfg->irq_configured;
+ 	mutex_init(&drv_data->lock);
+ 	platform_set_drvdata(pdev, drv_data);
+ 
+diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+index 9e9f528b1370..acad1f4cf854 100644
+--- a/include/linux/soc/qcom/llcc-qcom.h
++++ b/include/linux/soc/qcom/llcc-qcom.h
+@@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
+  * @num_banks: Number of llcc banks
+  * @bitmap: Bit map to track the active slice ids
+  * @ecc_irq: interrupt for llcc cache error detection and reporting
++ * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
+  * @version: Indicates the LLCC version
+  */
+ struct llcc_drv_data {
+@@ -139,6 +140,7 @@ struct llcc_drv_data {
+ 	u32 num_banks;
+ 	unsigned long *bitmap;
+ 	int ecc_irq;
++	bool ecc_irq_configured;
+ 	u32 version;
+ };
+ 
 -- 
-2.43.0
+2.34.1
 
 
