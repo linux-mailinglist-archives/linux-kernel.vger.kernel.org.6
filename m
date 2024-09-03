@@ -1,98 +1,77 @@
-Return-Path: <linux-kernel+bounces-313535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F34296A6C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:44:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E1396A6C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C781C2112C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF82B28A188
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5675F1946C3;
-	Tue,  3 Sep 2024 18:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09E1192583;
+	Tue,  3 Sep 2024 18:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AbGCJCJ5"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWzujukp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26822193064
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 18:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A940191F85;
+	Tue,  3 Sep 2024 18:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725389028; cv=none; b=o9BizvUEoOVIOFFKi24wSmrB7wH3by0PahUHAc9zRNDVk+2NMFrc90PSkckVSgbxpf+Ran1F2zqG418OwqS68TyiFkXW2oQiokqGJXh3bX6ezvPv/LHAYEE1jZwi5HgTk5NdjbfMjjoAY/RgqgafB+VRUu5WJtvTYvYkC2W6LTY=
+	t=1725389056; cv=none; b=NgeXthKfIprbwFRNE328mSvhmGhmaZCTPkAsJT9uLoJsEdR10sth7/y1iQ80+8x07O8jycrnbtvB5fmhPshNJlRQiaPlp8j+gu2F5ZOLJEPbUYpajvCPrRg+D7G6fRBwNyADaMMeEN26i9ry88l/YtDjySJ498v97GJomz4wy4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725389028; c=relaxed/simple;
-	bh=MqvTS19SyIB4yU2UQI1s8+5I5c4iE8RUxXgILxCVx/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cAkhlPR77oGEdf+z+PmDyUV+v3bLo+cJslKuwlR/dDJ8QUJsjAP/AWUfjencrNMQPxAjsc+orsr+lD8LuJ3bRQMmjyZpSqezhIBi6XVva6HRy9ytz2ecYV+NH7rse860nZS9P/uBSQJ5GE9gU12MTsTWvzYWnEDcbH4fWwnw3DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AbGCJCJ5; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725389025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lO6Qw3fND5cpAM7rycrrrnZxNspjCnlupd/fVRDk9Z4=;
-	b=AbGCJCJ508jUBRJ/mh9JRd8STPK8QfLfeMtrJJkPRmvRqVaB3yPQaRjpU6JCPlVk5piNGn
-	+x0IxqW0VX6k/trXotrH09A4gejbumgjDHS9IGzQXVppm1S9t9iLpcSykRvANT7VeDLTSu
-	SpfQTC04ToqwgDMR39W3uxS3JHsvTPw=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 3/3] net: xilinx: axienet: Relax partial rx checksum checks
-Date: Tue,  3 Sep 2024 14:43:34 -0400
-Message-Id: <20240903184334.4150843-4-sean.anderson@linux.dev>
-In-Reply-To: <20240903184334.4150843-1-sean.anderson@linux.dev>
-References: <20240903184334.4150843-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1725389056; c=relaxed/simple;
+	bh=7d6cfc2xZAU6TqVoY4UT3QV2pPdhIlhRcAok+Ugyyh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VL2coKvaTPnmFLtWJr6gsOzbuU51k4AnOqfRAnwHEds63zh8n4/B12GTXHyB4Ta8xFCbOo8b5efbeg4yKhAangMLrXxnQ3Q6tGMBtkBod+wdi0PG+7CiCc063gFESkxDEDV9EwzS2ixbkp+XvNQY0dAaUnK7s3V58E4NQXznC9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWzujukp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01844C4CEC4;
+	Tue,  3 Sep 2024 18:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725389055;
+	bh=7d6cfc2xZAU6TqVoY4UT3QV2pPdhIlhRcAok+Ugyyh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sWzujukpk9YIM2UG/1X2Dfy+W++9qpSSputDo/a2o0KltulVfMjQMLxeCibs4gTyR
+	 G2JRL+pz+bin2DgJJbnaXfRVs5L/sefXigr8jqiCT2dt55gHCaI+fIl5YaaDEL4cub
+	 sluTcgmPOI7PUgTRyo2RZi6607tP30gitQdWQLux2pEq8a0lmRjEly0mq4zC3eZE2P
+	 0YjtkMfzDNr1r81hs5Qrkkg7LsVQEMoAWPalKf8+om+N8VT2XSN+dDZxkWamPSUlfe
+	 MXLcqH2JTgJhOxbJH7M2bphPZX8gfniSvl0HCJV/s68lVR0frKZxe8unmJ0Hv8dtpw
+	 VFgdXIR6gwhVg==
+Date: Tue, 3 Sep 2024 15:44:11 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Yang Jihong <yangjihong@bytedance.com>, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf sched timehist: Skip print non-idle task
+ samples when only show idle events
+Message-ID: <ZtdY-6NuoG8JzBNo@x1>
+References: <20240812132606.3126490-1-yangjihong@bytedance.com>
+ <ZrpcioDOG42dPAll@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrpcioDOG42dPAll@google.com>
 
-The partial rx checksum feature computes a checksum over the entire
-packet, regardless of the L3 protocol. Remove the check for IPv4.
-Additionally, packets under 64 bytes should have been dropped by the
-MAC, so we can remove the length check as well.
+On Mon, Aug 12, 2024 at 12:03:38PM -0700, Namhyung Kim wrote:
+> On Mon, Aug 12, 2024 at 09:26:05PM +0800, Yang Jihong wrote:
+> > Fixes: 07235f84ece6 ("perf sched timehist: Add -I/--idle-hist option")
+> > Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+ 
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Thanks, applied both for perf-tools-next.
 
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 74fade5a95c2..99d08a775520 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1188,9 +1188,7 @@ static int axienet_rx_poll(struct napi_struct *napi, int budget)
- 				    csumstatus == XAE_IP_UDP_CSUM_VALIDATED) {
- 					skb->ip_summed = CHECKSUM_UNNECESSARY;
- 				}
--			} else if ((lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) != 0 &&
--				   skb->protocol == htons(ETH_P_IP) &&
--				   skb->len > 64) {
-+			} else if (lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) {
- 				skb->csum = be32_to_cpu(cur_p->app3 & 0xFFFF);
- 				skb->ip_summed = CHECKSUM_COMPLETE;
- 			}
--- 
-2.35.1.1320.gc452695387.dirty
-
+- Arnaldo
 
