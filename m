@@ -1,151 +1,217 @@
-Return-Path: <linux-kernel+bounces-312616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C639698DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D42A9698E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8DE1F23359
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6444B20F05
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE661B985A;
-	Tue,  3 Sep 2024 09:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PQy87fZj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uf+et/c+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700601C9858;
+	Tue,  3 Sep 2024 09:27:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50081AD262
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCD1A4E88
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355589; cv=none; b=WPUWHYlVmY81cWggUVLPEE9R1iiJCh6QugGhz7XUhB3N3BaXK7oUWlLFarS1p82+EkypmMXxXdcdg4MD+t8NN3jkJwCmhn8ODJqRGHxnOohhQ3bXRykuQ0hx+rjUEGIEDml6VU/fQZKSj1ek57Rxkc1/5VBy/YjehO0RF6WTN0I=
+	t=1725355621; cv=none; b=Ey8wbNAWkt5F1Zq1F1bB9SOPOH5a0rhNcHeuQJnyBkgAogCKFZSmKvO36QeRUGWpeyosR4i6BY3hhaIaFBXZThuEUmYw5mVn242P6X9bB74m+WkRnyPoLBdvi/0F+bw1TQNvq2y9r1jtt5yq5rnYoG9lNphaEjl8TaeFSLs9klw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355589; c=relaxed/simple;
-	bh=qBM0qMzMHJ26PiMVzRrGCiHERAZKkXObNeBOdeT3xwM=;
+	s=arc-20240116; t=1725355621; c=relaxed/simple;
+	bh=mTKMsk6KtNYtaaXoNT863Oq20G+QXAHuFkfPLhE+CX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIRrv9f5n+yHjqT9qMfz/pJdxqZAjQqm2RPrqKIvfoj5ZbUABg2/GYBsqbVDQpUj7xr0jWEkn7ggJqniceWGWmo+gqcaBi/sHui4TLV8+ijfUIh56Yor/gYeKlx3/sMkdOvF7xcwpVgKDWn76isD7qYsFWq4CBoiHqekD9eEfI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PQy87fZj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uf+et/c+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 3 Sep 2024 11:26:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725355583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=32pnX+8iKASsJE5a++zViMDL/zgeEfLuyhfdPbGJ/gg=;
-	b=PQy87fZjVXxq8NRTATvOliSAyZrM542/54okF4rJswi+PQBM1iaFCp0tVjf8/SYcoNWTe4
-	fY0whTmi4+OKo0hMc/DOd5YRJuSjHOztPY3CxPvnCWTyl1ATOB5pviYTVFAOKm4JyePw3a
-	dGNKQdzZkt6UFLN6ikUrphjnoABh3W2q06zTTFz7RemN4ZJ3XFJXfMbwAod36d+6000Tf2
-	UyRP4sV7MyH+UZHhio5RbI7N+fztqzUJ/Ky88FBKDPL1TPOuPQlCRb2dk4BjyfPcf0feDr
-	NQ6I41lUwLJf/0Kv8mC0wnkU1Gn32UHugkB2dIiSYtB8j3/4WnJThI5lv5bhtw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725355583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=32pnX+8iKASsJE5a++zViMDL/zgeEfLuyhfdPbGJ/gg=;
-	b=uf+et/c+keELxwAV/wXo08rvJzoLfnYYJTqoPO9Ohm0Q851PnHJwOMQHU4s8erv9321J+P
-	nbfvBSpLgFZIreBg==
-From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-To: "Brandt, Oliver - Lenze" <oliver.brandt@lenze.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irq_work: Avoid unnecessary "IRQ work" interrupts
-Message-ID: <20240903092622.1Vxa89yN@linutronix.de>
-References: <25833c44051f02ea2fd95309652628e2b1607a1e.camel@lenze.com>
- <20240828093719.3KJWbR6Y@linutronix.de>
- <20240828095415.43iwHYdM@linutronix.de>
- <1dc4fa0a48b05e14a1ae2a751441ba021ecee286.camel@lenze.com>
- <20240828140223.P5vGN54Q@linutronix.de>
- <2f59d15b63bfe1911261af86991820aadaf54b38.camel@lenze.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAM1kRbjXnumtqh/1W1PcUhE770FNFcEMU6yy6xMBeH6cpvny/sTi+4K3RojJbZw0ZapvTo11vXlFpQuW4iJ+jsc5U/vq/CWnWnFColAPcCAdYqA6+QHpseVl2I2hOXR9ZRDTXcE7x/I4zKUM4wpOSlXtQ8q1v1+V7dDJLGxbeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPoD-0003qY-PG; Tue, 03 Sep 2024 11:26:45 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPoD-0059iY-6T; Tue, 03 Sep 2024 11:26:45 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id BC4CB3312BC;
+	Tue, 03 Sep 2024 09:26:44 +0000 (UTC)
+Date: Tue, 3 Sep 2024 11:26:44 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>
+Cc: Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH can-next v4 00/20] can: rockchip_canfd: add support for
+ CAN-FD IP core found on Rockchip RK3568
+Message-ID: <20240903-competent-fervent-cat-43c5ac-mkl@pengutronix.de>
+References: <20240903-rockchip-canfd-v4-0-1dc3f3f32856@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eqyrqjxmrmfjzcdq"
+Content-Disposition: inline
+In-Reply-To: <20240903-rockchip-canfd-v4-0-1dc3f3f32856@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--eqyrqjxmrmfjzcdq
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2f59d15b63bfe1911261af86991820aadaf54b38.camel@lenze.com>
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-28 14:52:17 [+0000], Brandt, Oliver - Lenze wrote:
-> On Wed, 2024-08-28 at 16:02 +0200, bigeasy@linutronix.de wrote:
-> > CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.
-> > 
-> > On 2024-08-28 13:26:42 [+0000], Brandt, Oliver - Lenze wrote:
-> > > Hmm.... I see. What about calling wake_irq_workd() directly; something
-> > > like
-> > > 
-> > >         if (rt_lazy_work)
-> > >                 wake_irq_workd();
-> > >         else if (!lazy_work || tick_nohz_tick_stopped())
-> > >                 irq_work_raise(work);
-> > 
-> > this might work but I'm not too sure about it. This will become a
-> > problem if irq_work_queue() is invoked from a path where scheduling is
-> > not possible due to recursion or acquired locks.
-> > 
-> > How much of a problem is it and how much you gain by doing so?
-> > 
-> 
-> To be honest I haven't made any measurements. But we have a system with
-> *very* tight timing constrains: One thing is a 16kHz irq; the other a
-> 4kHz RT-task; both running on an isolated core. So if we assume ~2us
-> "overhead" for an irq (this should be more or less the time on our
-> system; Cortex-A9 with 800MHz) we would spend ~1% of our 250us grid for
-> the additionally irq. Not really something we would like.
-> 
-> Additionally we may get an (additionally) latency of ~2us before our 16-
-> kHz irq could go to work. Also something we wouldn't like.
+Sorry for the noise, please ignore this series.
 
-This is a local-IRQ. It will be slightly more expensive than doing the
-wakeup directly.
+On 03.09.2024 11:21:42, Marc Kleine-Budde wrote:
+> This series adds support for the CAN-FD IP core found on the Rockchip
+> RK3568.
+>=20
+> The IP core is a bit complicated and has several documented errata.
+> The driver is added in several stages, first the base driver including
+> the RX-path. Then several workarounds for errata and the TX-path, and
+> finally features like hardware time stamping, loop-back mode and
+> bus error reporting.
+>=20
+> regards,
+> Marc
+>=20
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> ---
+> Changes in v4:
+> - dt-bindings: renamed to rockchip,rk3568v2-canfd.yaml to match the
+>   first compatible
 
-> What I didn't understand: The "IRQ work" irqs are needed in order to
-> start the execution of something. Ok. But how was this done before? It
-> seems that "softirqs" were used for this purpose on kernel v4.14 (don't
-> ask why we are using such an old version). But I didn't get the idea of
-> these "softirqs". Are they triggered via "real" irqs (e.g. IPIs)? In
-> this case we would most likely have the same count of irqs on a kernel
-> 4.14 and a kernel 6.1 (our goal for now; I don't lose hope that even a
-> v6.6 may be used the next year).
+I forgot to update the MAINTAINERS entry. I'll send a new series, but
+not today.
 
-You schedule a "work item" via irq_work. This can be compared with
-tasklet or workqueue for instance. In the past a softirq was raised and
-it was handled as part it. Raising a softirq is simply ORing a bit and
-the softirq will be handled on IRQ-exit path or ksoftirqd will be
-scheduled (= task wakeup). This is all CPU-local in general. Cross-CPU
-requires sending an interrupt (IPI) and within that IPI you need to
-raise (OR) the bit for softirq. 
+Marc
 
-It is likely I had some hacks to get it work. However. Some of the
-things require hard-irq context and IRQs-off and it might be triggered
-from an NMI and the former infrastructure was not really fit for it. So
-we went closer to what mainline is doing and this is what we have now.
+> - dt-bindings: fix "$id" in yaml (thanks Rob's bot)
+> - all: add Tested-by: Alibek Omarov <a1ba.omarov@gmail.com>
+> - Link to v3: https://patch.msgid.link/20240830-rockchip-canfd-v3-0-d4262=
+66453fa@pengutronix.de
+>=20
+> Changes in v3:
+> - dt-bindings: renamed file to rockchip,rk3568-canfd.yaml (thanks Rob)
+> - dt-bindings: reworked compatibles (thanks Rob)
+> - Link to v2: https://lore.kernel.org/all/20240731-rockchip-canfd-v2-0-d9=
+604c5b4be8@pengutronix.de
+>=20
+> Changes in v2:
+> - dt-bindings: remove redundant words from subject and patch
+>   description (thanks Rob)
+> - dt-bindings: clean up clock- and reset-names (thanks Rob)
+> - base driver: add missing bitfield.h header
+> - base driver: rkcanfd_handle_rx_int_one(): initialize header to avoid
+>   uninitialzied variable warning on m68k
+> - base driver: rkcanfd_get_berr_counter_raw(): don't add assigned only
+>   variable (bec_raw), move to 14/20 (thanks Simon)
+> - CAN-FD frame equal check + TX-path: squash, to avoid unused
+>   functions (thanks Simon)
+> - TX-path: rkcanfd_handle_tx_done_one(): don't add assigned only
+>   variable (skb), move to 18/20 (thanks Simon)
+> - HW-timetamping: add missing timecounter.h header (thanks Simon)
+> - Link to v1: https://lore.kernel.org/all/20240729-rockchip-canfd-v1-0-fa=
+1250fd6be3@pengutronix.de
+>=20
+> ---
+> David Jander (2):
+>       arm64: dts: rockchip: add CAN-FD controller nodes to rk3568
+>       arm64: dts: rockchip: mecsbc: add CAN0 and CAN1 interfaces
+>=20
+> Marc Kleine-Budde (18):
+>       dt-bindings: can: rockchip_canfd: add rockchip CAN-FD controller
+>       can: rockchip_canfd: add driver for Rockchip CAN-FD controller
+>       can: rockchip_canfd: add quirks for errata workarounds
+>       can: rockchip_canfd: add quirk for broken CAN-FD support
+>       can: rockchip_canfd: add support for rk3568v3
+>       can: rockchip_canfd: add notes about known issues
+>       can: rockchip_canfd: rkcanfd_handle_rx_int_one(): implement workaro=
+und for erratum 5: check for empty FIFO
+>       can: rockchip_canfd: rkcanfd_register_done(): add warning for errat=
+um 5
+>       can: rockchip_canfd: add TX PATH
+>       can: rockchip_canfd: implement workaround for erratum 6
+>       can: rockchip_canfd: implement workaround for erratum 12
+>       can: rockchip_canfd: rkcanfd_get_berr_counter_corrected(): work aro=
+und broken {RX,TX}ERRORCNT register
+>       can: rockchip_canfd: add stats support for errata workarounds
+>       can: rockchip_canfd: prepare to use full TX-FIFO depth
+>       can: rockchip_canfd: enable full TX-FIFO depth of 2
+>       can: rockchip_canfd: add hardware timestamping support
+>       can: rockchip_canfd: add support for CAN_CTRLMODE_LOOPBACK
+>       can: rockchip_canfd: add support for CAN_CTRLMODE_BERR_REPORTING
+>=20
+>  .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  |  74 ++
+>  MAINTAINERS                                        |   8 +
+>  arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dts     |  14 +
+>  arch/arm64/boot/dts/rockchip/rk3568.dtsi           |  39 +
+>  drivers/net/can/Kconfig                            |   1 +
+>  drivers/net/can/Makefile                           |   1 +
+>  drivers/net/can/rockchip/Kconfig                   |   9 +
+>  drivers/net/can/rockchip/Makefile                  |  10 +
+>  drivers/net/can/rockchip/rockchip_canfd-core.c     | 969 +++++++++++++++=
+++++++
+>  drivers/net/can/rockchip/rockchip_canfd-ethtool.c  |  73 ++
+>  drivers/net/can/rockchip/rockchip_canfd-rx.c       | 299 +++++++
+>  .../net/can/rockchip/rockchip_canfd-timestamp.c    | 105 +++
+>  drivers/net/can/rockchip/rockchip_canfd-tx.c       | 167 ++++
+>  drivers/net/can/rockchip/rockchip_canfd.h          | 553 ++++++++++++
+>  14 files changed, 2322 insertions(+)
+> ---
+> base-commit: da4f3b72c8831975a06eca7e1c27392726f54d20
+> change-id: 20240729-rockchip-canfd-4233c71f0cc6
+>=20
+> Best regards,
+> --=20
+> Marc Kleine-Budde <mkl@pengutronix.de>
+>=20
+>=20
+>=20
+>=20
 
-You could look at what is triggering the irq_work requests and maybe
-based on understanding you could disable it (say this is issued by
-driver X and you can disable it because you don't use it).
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-You could, without breaking much (I think), avoid triggering irq-work
-locally for the "only-lazy-work" case and then ensuring the timer-tick
-will do the wake-up of the irq-work thread. This is done in case there
-is no HW support for signaling irq-work. So would have less irqs but the
-work will be delayed to the next jiffy which will it make take a little
-bit longer.
+--eqyrqjxmrmfjzcdq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ideally would be avoiding having to deal with irq-work in the first
-place.
+-----BEGIN PGP SIGNATURE-----
 
-> Any ideas about this assumption?
-> 
-> Oliver
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbW1lAACgkQKDiiPnot
+vG/ZHAf+O51SAV47j7T7YC6df1yEQPVMBhqcN4Z/J61mB5vKb8RadR0V6+H1/ULx
+gjasA2OvFUXnVx27BN7FFwMiiDYh7YHJkc7Fn5mQHQFmRew8AToNj5hxfBJak1PW
+wJ4FtznPhETWfHt2Zb9XwdlOEa1iD5zIo5ib/6LJbxdHUZKrQm5da1DulHChnKcG
+/06FiW1zoLHnO83AsR/RDdccf2XS99hZlm9fuSIpb/mGq6glAJ5lRSWDRS3/VBYC
+EsPPWLLK6G7omsgeAXCPJESWORg4vqeKkeR6x8lY4J49FbO++HlPZTMm+2jUrBAJ
+f9HDXt9wuGu/9UcH+0btqZiHSklQUA==
+=7FIz
+-----END PGP SIGNATURE-----
 
-Sebastian
+--eqyrqjxmrmfjzcdq--
 
