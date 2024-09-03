@@ -1,263 +1,137 @@
-Return-Path: <linux-kernel+bounces-313120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA08896A085
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DCC96A073
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7801C2383B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974D51F26BB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E0F188A21;
-	Tue,  3 Sep 2024 14:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615A51C3E;
+	Tue,  3 Sep 2024 14:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gL8CyPot"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZNl6SxO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAA217D377;
-	Tue,  3 Sep 2024 14:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD4D6F31C;
+	Tue,  3 Sep 2024 14:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373607; cv=none; b=NfOAc4avGyd4YBN+DWqHG4bvPmyZogvCojRiwgEqU0SuhOBGN23TP2r+G6qy9sy0RhHQLNhnys16VPDNADLK+euG55dTBzMKRs5I05GwuBBe38ROCl1Er6TJmrAvnQt6g6nFRWRL4RAOaWtJfcAyRdYWSCnPnH/QQwtOYCcp0Z4=
+	t=1725373601; cv=none; b=OHFKrpaCg0k/J4C3Kle8X0mMPuMSNXszV6kZWhU1lAkF8Bx/3l+EX1ih9gnviQT0QTS9z4/vHSOxr+h5QYuXy47j6963K+DCUbzMulR43Cq/dcu56cloeNriHQWFbxnQLAkRm7h+ftM2qeDgaQxUgHR7VCE6tZGAwo7NFuap6sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373607; c=relaxed/simple;
-	bh=3OW9yKbvIY8C5sR5js5XCVdDweVPBC7mpgMW7jqcDiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSGrAzl+Aklx7+5Boylp0eiPr3AlAkomxXZlm0YXmczgUxkrViOLybxie3vNLbhVq4pphsykvohDqzIYJWLUyX9XtlFaThWrqPm4EUrwLpxwngyYmqWSsR5dvt4dO9RuJw9W0/EdEHBJpofMaBxn11OBdUHylrRyMI9spU4OANE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gL8CyPot; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725373605; x=1756909605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3OW9yKbvIY8C5sR5js5XCVdDweVPBC7mpgMW7jqcDiE=;
-  b=gL8CyPot4Snw1JuTYRwcWC6FXMui3OjJHFmYttrn5Jpf6/+6X+ENar6i
-   SFwTYqQWap4bOe8vVwWTcMrNB8uDrlfBN53DF1JWn+/xT6oMlvxHPYypw
-   N2u9vnuvhd/kXh5U957Hww2I2SHfsnUYMHIusqPu5cIu/AJnIxYkC/1LF
-   eenanZLlTLShWT8ov7eu+rr4FPL9wHqau26GvLTwhSyChvYBfOiCejDq8
-   FP7XWgA/q2YB5gkSbZ67RQ9fgFP9JFr5ulTSnmE/IPja+T+NLLjnOJs8j
-   Als26+LdS6OhktzeGpBEIVgtjnkNzbdeNvgkn5su7o8wwIXwxggeCmjvU
-   Q==;
-X-CSE-ConnectionGUID: 4xgq4R5OSGqwdhl4DAnw8w==
-X-CSE-MsgGUID: S2bsS8ElR9a4iUaZXFUwig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24141969"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="24141969"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:26:45 -0700
-X-CSE-ConnectionGUID: e4AxFbz1QeWi+nLVwwV0NA==
-X-CSE-MsgGUID: qnirlIZASlW37H3RipBi5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="88175236"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:26:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUUQ-00000004jdd-2KZt;
-	Tue, 03 Sep 2024 17:26:38 +0300
-Date: Tue, 3 Sep 2024 17:26:38 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v5 4/7] iio: pressure: bmp280: Use sleep and forced mode
- for oneshot captures
-Message-ID: <ZtccnvhmcxyRQVuf@smile.fi.intel.com>
-References: <20240902184222.24874-1-vassilisamir@gmail.com>
- <20240902184222.24874-5-vassilisamir@gmail.com>
+	s=arc-20240116; t=1725373601; c=relaxed/simple;
+	bh=oepubW5xCjnomthQWrM+V31kgGapv4R6djjQTRdai7g=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=VlvrRgBVyjvCrlyByAMNy6e077qIHHpTO0Lg6lapALgys+xgk0A76XECIMJTz2fi84SBfeX50lVYBBhKz81kJ8peiQIiK1fROJTOtG7WK3HOPZWTACk7Qd3bFJCUxGX98BNkuzSa9qj+Ondc1Y+0F2JuwtHG3Rx3us4vgl1EmEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZNl6SxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664ABC4CEC7;
+	Tue,  3 Sep 2024 14:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725373600;
+	bh=oepubW5xCjnomthQWrM+V31kgGapv4R6djjQTRdai7g=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=RZNl6SxOy3lRIAGl0KBzxJnXKwr/4wIqks5ps/W01gjbCvPlsC2X8eu6OWOutjYhV
+	 a+64ojJLBCLo8FSYCIYdtle3x1ox0YzNE5bE1HWjeWk2lm/hURdSDw1RVjXxbSN5Vf
+	 QgA+YgGZvVlQvdKUk0pkpjbfoDNnapuY/SJxs+VEgw5KjRzniQB+zrrOuuenWd+C9K
+	 wHbx/B1cDFpwoZhymfQNfTn4K8e9PoS9frP+Zqb3ed6UJpDcfusewTF7HKAl5clCUB
+	 Ws9k6f1Hy2NxC60GUF8jmo0a4d6QyUgx150NYL5koZkBI7RRC10lwLWM33MR9cmuXo
+	 CoH4/tk/jeXeg==
+Date: Tue, 03 Sep 2024 09:26:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902184222.24874-5-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Dongjin Kim <tobetter@gmail.com>, 
+ linux-rockchip@lists.infradead.org
+In-Reply-To: <20240901112020.3224704-1-jonas@kwiboo.se>
+References: <20240901112020.3224704-1-jonas@kwiboo.se>
+Message-Id: <172537334390.873091.5239461386156277757.robh@kernel.org>
+Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add Hardkernel ODROID-M2
 
-On Mon, Sep 02, 2024 at 08:42:19PM +0200, Vasileios Amoiridis wrote:
-> Add forced mode support in sensors BMP28x, BME28x, BMP3xx and BMP58x.
-> Sensors BMP18x and BMP085 are old and do not support this feature so
-> their operation is not affected at all.
+
+On Sun, 01 Sep 2024 11:20:13 +0000, Jonas Karlman wrote:
+> This series add initial support for the Hardkernel ODROID-M2 board.
 > 
-> Essentially, up to now, the rest of the sensors were used in normal mode
-> all the time. This means that they are continuously doing measurements
-> even though these measurements are not used. Even though the sensor does
-> provide PM support, to cover all the possible use cases, the sensor needs
-> to go into sleep mode and wake up whenever necessary.
+> The Hardkernel ODROID-M2 is a single-board computer based on Rockchip
+> RK3588S2 SoC. It features e.g. 8/16 GB LPDDR5 RAM, 64 GB eMMC, SD-card,
+> GbE LAN, HDMI 2.0, M.2 NVMe and USB 2.0/3.0/Type-C.
 > 
-> The idea is that the sensor is by default in sleep mode, wakes up in
-> forced mode when a oneshot capture is requested, or in normal mode
-> when the buffer is enabled. The difference lays in the fact that in
-> forced mode, the sensor does only one conversion and goes back to sleep
-> while in normal mode, the sensor does continuous measurements with the
-> frequency that was set in the ODR registers.
+> Schematics for ODROID-M2 can be found at:
+> https://wiki.odroid.com/_media/odroid-m2/hardware/m2_main_rev1.0_240611.pdf
 > 
-> The bmpX_chip_config() functions which are responsible for applying
-> the requested configuration to the sensor, are modified accordingly
-> in order to set the sensor by default in sleep mode.
+> The device tree was created based on the schematics with regulator
+> voltage values adjusted to closer match vendor downstream device tree.
 > 
-> DEEP STANDBY, Low Power NORMAL and CONTINUOUS modes, supported only by
-> the BMP58x version, are not added.
-
-...
-
-> +static int bmp280_wait_conv(struct bmp280_data *data)
-> +{
-> +	unsigned int reg, meas_time_us;
-> +	int ret;
-> +
-> +	/* Check if we are using a BME280 device */
-> +	if (data->oversampling_humid)
-> +		meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
-> +				(BIT(data->oversampling_humid) * BMP280_MEAS_DUR);
-
-The outer parentheses are not needed.
-
-> +	/* Pressure measurement time */
-> +	meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
-> +			(BIT(data->oversampling_press) * BMP280_MEAS_DUR);
-
-Ditto.
-
-> +	/* Temperature measurement time */
-> +	meas_time_us += BIT(data->oversampling_temp) * BMP280_MEAS_DUR;
-> +
-> +	/* Waiting time according to the BM(P/E)2 Sensor API */
-> +	fsleep(meas_time_us);
-> +
-> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to read status register.\n");
-> +		return ret;
-> +	}
-> +
-> +	if (reg & BMP280_REG_STATUS_MEAS_BIT) {
-> +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int bmp380_wait_conv(struct bmp280_data *data)
-> +{
-> +	unsigned int reg;
-> +	int ret, meas_time_us;
-> +
-> +	/* Offset measurement time */
-> +	meas_time_us = BMP380_MEAS_OFFSET;
-> +
-> +	/* Pressure measurement time */
-> +	meas_time_us += BMP380_PRESS_MEAS_OFFSET +
-> +		     (BIT(data->oversampling_press) * BMP380_MEAS_DUR);
-
-Ditto.
-
-> +	/* Temperature measurement time */
-> +	meas_time_us += BMP380_TEMP_MEAS_OFFSET +
-> +		     (BIT(data->oversampling_temp) * BMP380_MEAS_DUR);
-
-Ditto.
-
-> +	/* Measurement time defined in Datasheet Section 3.9.2 */
-> +	fsleep(meas_time_us);
-> +
-> +	ret = regmap_read(data->regmap, BMP380_REG_STATUS, &reg);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to read status register.\n");
-> +		return ret;
-> +	}
-
-> +	if (!(reg & BMP380_STATUS_DRDY_PRESS_MASK) ||
-> +	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
-> +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
-> +		return -EBUSY;
-> +	}
-
-Alternatively
-
-	if (!((reg & BMP380_STATUS_DRDY_PRESS_MASK) &&
-	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
-		dev_err(data->dev, "Measurement cycle didn't complete.\n");
-		return -EBUSY;
-	}
-
-> +	return 0;
-> +}
-
-...
-
-> +static int bmp580_wait_conv(struct bmp280_data *data)
-> +{
-> +	/*
-> +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
-> +	 * characteristics.
-> +	 */
-> +	static const int time_conv_press[] = {
-> +		0, 1050, 1785, 3045, 5670, 10920, 21420, 42420,
-> +		84420,
-> +	};
-> +	static const int time_conv_temp[] = {
-> +		0, 1050, 1105, 1575, 2205, 3465, 6090, 11340,
-> +		21840,
-> +	};
-> +	int meas_time_us;
-
-> +	meas_time_us = 4 * USEC_PER_MSEC + time_conv_temp[data->oversampling_temp]
-> +			 + time_conv_press[data->oversampling_press];
-
-	meas_time_us = 4 * USEC_PER_MSEC + time_conv_temp[data->oversampling_temp] +
-		       time_conv_press[data->oversampling_press];
-
-OR
-
-	meas_time_us = 4 * USEC_PER_MSEC +
-		       time_conv_temp[data->oversampling_temp] +
-		       time_conv_press[data->oversampling_press];
+> Testing was done booting into Linux using mainline U-Boot from [1],
+> a test build of mainline U-Boot for ODROID-M2 can be found at [2].
+> 
+> U-Boot patches will be sent once DT reach the devicetree-rebasing tree.
+> 
+> [1] https://github.com/Kwiboo/u-boot-rockchip/commits/rk3xxx-2024.10/
+> [2] https://github.com/Kwiboo/u-boot-build/actions/runs/10653436524
+> 
+> Jonas Karlman (2):
+>   dt-bindings: arm: rockchip: Add Hardkernel ODROID-M2
+>   arm64: dts: rockchip: Add Hardkernel ODROID-M2
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../boot/dts/rockchip/rk3588s-odroid-m2.dts   | 903 ++++++++++++++++++
+>  3 files changed, 909 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts
+> 
+> --
+> 2.46.0
+> 
+> 
+> 
 
 
-> +	/* Measurement time mentioned in Chapter 2, Table 4 of the datasheet. */
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Since there is a constant in use (4ms) it would be nice to explain it
-separately, the rest kinda obvious from the variable names.
-So it allows roughly understand the timeout value without even looking into
-the datasheet.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-> +	fsleep(meas_time_us);
-> +
-> +	return 0;
-> +}
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-...
+  pip3 install dtschema --upgrade
 
-> +	fsleep(data->start_up_time + 500);
 
-Ditto.
+New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-odroid-m2.dtb' for 20240901112020.3224704-1-jonas@kwiboo.se:
 
-Something like
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: video-codec@fdb50000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-vpu121', 'rockchip,rk3568-vpu'] is too long
+	'rockchip,rk3588-vpu121' is not one of ['rockchip,rk3036-vpu', 'rockchip,rk3066-vpu', 'rockchip,rk3288-vpu', 'rockchip,rk3328-vpu', 'rockchip,rk3399-vpu', 'rockchip,px30-vpu', 'rockchip,rk3568-vpu', 'rockchip,rk3588-av1-vpu']
+	'rockchip,rk3188-vpu' was expected
+	'rockchip,rk3228-vpu' was expected
+	'rockchip,rk3066-vpu' was expected
+	'rockchip,rk3399-vpu' was expected
+	from schema $id: http://devicetree.org/schemas/media/rockchip-vpu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: /video-codec@fdb50000: failed to match any schema with compatible: ['rockchip,rk3588-vpu121', 'rockchip,rk3568-vpu']
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: /video-codec@fdba0000: failed to match any schema with compatible: ['rockchip,rk3588-vepu121']
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: /video-codec@fdba4000: failed to match any schema with compatible: ['rockchip,rk3588-vepu121']
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: /video-codec@fdba8000: failed to match any schema with compatible: ['rockchip,rk3588-vepu121']
+arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dtb: /video-codec@fdbac000: failed to match any schema with compatible: ['rockchip,rk3588-vepu121']
 
-	/* 500us margin for ... */
 
-(but write the real meaning of it).
 
--- 
-With Best Regards,
-Andy Shevchenko
 
 
 
