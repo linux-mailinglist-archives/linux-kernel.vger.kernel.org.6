@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-313294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF096A352
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:51:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BB196A35D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8C5281BEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BE60B214B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEA9188929;
-	Tue,  3 Sep 2024 15:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F24218893F;
+	Tue,  3 Sep 2024 15:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cuoUFfXh"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HmnMCrzN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8643C2A1D3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3897C1DA3D;
+	Tue,  3 Sep 2024 15:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725378707; cv=none; b=C6zIHSNcFJueXOgBRsbUQEmv6/F0sqKrDsS4r1TVp+7oq1TMwemjDsK3afnLEAqkwdl6rpjJh/SvN7PM2F81vP7goQ0cWoLLWcRwLXUOfIhQ8B2FLtUlxIcne3jS15cLIzTaorFiGMmHBmlYjH/SHTebs+nd33bVCIhgnuWY5yg=
+	t=1725378809; cv=none; b=iAEcDCDWcJzkLYR9Co1hXFbnp4VMuSPBKEa/xxvxKpkwNWG1h/dntrCN9jlfUfTaYl+wU8i1UnsJImsbAX7J+cwQNjIoPKxUaxDtj+OViY9f/jFo+Vu00RInJgFXQsD65YNrmBG1mrre5E6DcF9N6eUYMaMb+BQKYB3DC66vKWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725378707; c=relaxed/simple;
-	bh=dsBOFhgSQ20VWG9N7TaQ72g5Xti+njXE2CMMbkMUqhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbmzW7oCYna9NOkWz3f9em9PUrCyqWovacJC3CxetKlROmzvRvlbGNBFekA9UrP8JMcN6HuPVJI7gx/9T5z/djt8VqDB0QgHjA6dOOXUi+Zda4z6S+H4/oT13grUPQQg2APbpGmsJghnaDFn24StdsuP7hXPo5O7Yo+zZZAxgeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cuoUFfXh; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fee6435a34so39260665ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725378705; x=1725983505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/CTJ70oGdDlKxwej4nIFhqzlt6kbdcbSl6hDfUkSTBo=;
-        b=cuoUFfXhzoQiaFGPCDhtSDbuKUF9c3ceGsJjLD1nylbp0aV7iDbQRcgJQ0Tw8r2wSU
-         oZ6bNKMWCimvLIp4Vlga5cday2rkJ9iB5sy7EwTwSnGBN+xH+B760XzzuQCTmmlEGoYv
-         8SUjc59rZ+mJKRKh1nFgXVq4P09945MtbtCUy99yJgbZneblxJOfbhm6QkZi+FdV1l1E
-         2ycXAAj0Yj3+7AwvOeGFOjwfWbhbX4Ccbyj8hc15mKy1mPUEXZYag2Tj/bnRsBTIhrDx
-         awQ9RI7ITLS8kI01Rp04gxg78rgchBBaPwMGSr54KR84vZWRsV5I/1So5B0gCUjyOMsF
-         9p0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725378705; x=1725983505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/CTJ70oGdDlKxwej4nIFhqzlt6kbdcbSl6hDfUkSTBo=;
-        b=hjZ5ORXMFXS699vBJ3CQ43Y9dcL61eFzT1j38r6YgB06n8JwnqctELoUqC5MaL2UG9
-         FUUPQIEf6cvYVXyjo8kuehewPhTGvhBX4QSNscN13pqkzb4+wT73XLXGbJLSs9Zmp+06
-         Mp6+f1YTKMXPYK6AFPFeADbDXnjvH0jFMDd/kBOkevy/Tdb4XVRpxCcAZ50/52DgLtu/
-         DtCv01QzhKtaBXUgKuaBDsmvP4rs3L30AzVUFh1GL0Y0B48hkXvHAWbXZI8Panl1icbT
-         47onCTMQ/j1/K7q7dgBlyZI+RDjNf9YQXsE7EuRNpYx8ExMV7g0I7l4vQxLMOQTawvbF
-         vEOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxbwL4qaJ3R9+YUWISLHIg4nAzRyLn3mwN95UJ4w+TxItsyETcXgdD85umAjCDY86DRcdJ+yZVmoedinY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ZtY2EK2MzmYliXkiKwpnj7/j/d7oZpv+vYZ7QQWnyKX/WDQL
-	eEsqOI5RhbGHqIU0hSi8Je06BNUWA1Q0cW/xJiyU5l+ggkfp8P6lXa+wCud41Qw=
-X-Google-Smtp-Source: AGHT+IHNCkFTZ+tQgNCw5YR4zc40yXygu4dQL7fmOyGsHVTkN9zbIFM4qpX1e8RQjgG7bMszJHZFJg==
-X-Received: by 2002:a17:902:d4cd:b0:205:3e6d:9949 with SMTP id d9443c01a7336-20699b36168mr29065275ad.52.1725378704682;
-        Tue, 03 Sep 2024 08:51:44 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea384e1sm136775ad.145.2024.09.03.08.51.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 08:51:44 -0700 (PDT)
-Message-ID: <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
-Date: Tue, 3 Sep 2024 09:51:42 -0600
+	s=arc-20240116; t=1725378809; c=relaxed/simple;
+	bh=4zLPYlOz3SmkFEgQEXONt+k9D+7ivOmLVWbo2jhWKiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bwl7ZdpNmv3iuSPHLFv1Utq5/yr4OhDxdoi/HfGM+QwOgyQ6ovana5V8WTzYV19535NhHJGToagPpToslar/ff0l0sL5QvnOLG1ZdGoNT5JZudcOGqtCzDdtuJIEZhzkKDlx+Lbar5o49H/WLE0RcsMTg98xnAGwHFvjjYSbsVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HmnMCrzN; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725378808; x=1756914808;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4zLPYlOz3SmkFEgQEXONt+k9D+7ivOmLVWbo2jhWKiA=;
+  b=HmnMCrzNE112x8APFbahWo/ujaCIK9D60o3MaoAKR7IRqnq0OIdj8vWR
+   6EpU5cdFbsdsL1zzcmrtFBItp8skFnrxkSmpdj3KudOck7hnX3hxqgDvt
+   xVtxxXJz3cyCa7D6MKL6M+r0+TodA+Zjv3QdOgky4w7rfwD3MtEdlPCTe
+   veT3V2olNAc3wD8+MDkkgBPVy0SJ1E60jmh2B/DHPYBEml91ZgnGPpRGX
+   b4KnmsrQIfGTDi7U5qyNixaW+S28dm5v0USJVU08Z6e47E/py5bcbgGoF
+   r1hn2cDbQOBCqZ/JTBcz7sX1mAUNLvZD+TcFkSULldyyE/v5rU3x9yYH6
+   w==;
+X-CSE-ConnectionGUID: c3pwrCI0R3qBxKAZSFar+g==
+X-CSE-MsgGUID: vhFVfl6eTYCW9xMd3QLP1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34597550"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="34597550"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:53:27 -0700
+X-CSE-ConnectionGUID: Tky17SirTAi1swVxu6r4cA==
+X-CSE-MsgGUID: 3Sbh+5ppRvi2X3wDrJQbsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69104664"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:53:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slVqL-00000004l8R-2IOs;
+	Tue, 03 Sep 2024 18:53:21 +0300
+Date: Tue, 3 Sep 2024 18:53:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: Re: [PATCH v3 01/12] gpio: rockchip: avoid division by zero
+Message-ID: <Ztcw4wVHsQkYkjhr@smile.fi.intel.com>
+References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+ <20240903073649.237362-2-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
- merging
-To: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, tj@kernel.org,
- josef@toxicpanda.com, paolo.valente@unimore.it, mauro.andreolini@unimore.it,
- avanzini.arianna@gmail.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903073649.237362-2-ye.zhang@rock-chips.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 9/2/24 7:03 AM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Our syzkaller report a UAF problem(details in patch 1), however it can't
-> be reporduced. And this set are some corner cases fix that might be
-> related, and they are found by code review.
-> 
-> Yu Kuai (4):
->   block, bfq: fix possible UAF for bfqq->bic with merge chain
->   block, bfq: choose the last bfqq from merge chain in
->     bfq_setup_cooperator()
->   block, bfq: don't break merge chain in bfq_split_bfqq()
->   block, bfq: use bfq_reassign_last_bfqq() in bfq_bfqq_move()
-> 
->  block/bfq-cgroup.c  |  7 +------
->  block/bfq-iosched.c | 17 +++++++++++------
->  block/bfq-iosched.h |  2 ++
->  3 files changed, 14 insertions(+), 12 deletions(-)
+On Tue, Sep 03, 2024 at 03:36:38PM +0800, Ye Zhang wrote:
+> If the clk_get_rate return '0', it will happen division by zero.
 
-BFQ is effectively unmaintained, and has been for quite a while at
-this point. I'll apply these, thanks for looking into it, but I think we
-should move BFQ to an unmaintained state at this point.
+I don't understand the circumstances when it may happen.
+
+> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+
+Not sure that this actually fixes anything. See below why I think so.
+
+...
+
+>  	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+
+Here you explicitly checked that the clock is provided by DT.
+
+...
+
+>  		freq = clk_get_rate(bank->db_clk);
+
+Here you read the frequency which may be 0 in two cases:
+1) in DT explicitly set to 0;
+2) CCF is disabled.
+
+So, wrong DTs have to be validated / fixed beforehand, correct?
+
+But if the CCF is disabled, the db_clk is NULL. Moreover I don't see
+how the db_clk may contain error pointer as you have it filtered out
+at _get_bank_data(). So, maybe what you need is to have NULL check
+in the conditional and explaining more in the commit message why it
+is currently a problematic code?
+
+> +		if (!freq)
+> +			return -EINVAL;
 
 -- 
-Jens Axboe
+With Best Regards,
+Andy Shevchenko
 
 
 
