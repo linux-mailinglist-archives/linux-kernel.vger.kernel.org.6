@@ -1,446 +1,300 @@
-Return-Path: <linux-kernel+bounces-313472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E49596A5D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:50:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E54096A5E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9162281057
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D4A1C21272
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946E019005A;
-	Tue,  3 Sep 2024 17:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2F318F2C3;
+	Tue,  3 Sep 2024 17:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EX7SY8NT"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ww5JG4qV";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="whkeGU93"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8009D18E047
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385803; cv=none; b=R9SZ2BdKIkAAmzwnaw6e+z2aHoHaI6E9tqiv7HEPm++m2x3OwxSkyK3xRR82knJ8VmxQcohNZV7vz1RxgEQDMkVU7Bu6Pu0ircW581mzsR+hvhxkMY2dUAZFZn/Ehruj9tFCZt1iqSkfQSRTyiwtXCq5e6PDGMChD2+UUHxvnwU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385803; c=relaxed/simple;
-	bh=UKr4xIqUajkJwgniWs5S3/DHPYcDeZQDzVTh6cjQReE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0UpEURfW3UQHU16XX8KTtgbQTShZa5zGOA3WhbzDfUL3PVzTNhA3B5nGH0hMdwd2yd+rhwo11InkKmFlvnup7kXQmY3DASWk5AwFjYWaOpLzXPY7wWYCZXhY4NqVGUkbt6+wY/9ySOUDu1hKFZyDGgfY7G1uL09hPAeH7UOo0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EX7SY8NT; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4567fe32141so29441cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:50:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BBA18DF90;
+	Tue,  3 Sep 2024 17:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725385878; cv=fail; b=fskpnz9d9i1kiQX65bUqULp5iexjdX/VawbIOlgg5LURChol52Z6AdOhgAHMidIMHSTdgyYQL6XQI9TEHFFujBrumpQq+3M3RpGqwMYSkP/+6V7y37dIqlAL7HATLl9wXo3yDIu9hVcU84NPv0QztY5NLOww+xkcHRFWzPb/lTg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725385878; c=relaxed/simple;
+	bh=itW4aWJW7mMuMI4hJgBSag5H85/3soT2Ud71WPx7X9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YgYwv2Bs3HGR5BSY8cXsjrvV+a90UzQO//MLlWW2yoS2I43Ky5sNUPGWlBs429Ai8IdB3rZE01yDnFUJgQlSUMZTYuNRov139QOES1EG7IEc7fbtrkhTwvvPuNYnKqsa4X/O/mMphnYsi6O8KcGsKH88LTNnHTvyOVQ8jiMH6pc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ww5JG4qV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=whkeGU93; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483GtSjC011144;
+	Tue, 3 Sep 2024 17:49:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=/G3qQo89XURoA6d
+	ZzTsMoxlVWTxEEWmX8esaCB/VTaM=; b=Ww5JG4qVPennB8ZhrPlxoRYYl65A3cj
+	/4zka27HQonTfYowN5V07Fw4QqdwBO7t7dPmcfPBfQhqQJDXYKmlULXt3Uo2xQ9N
+	QbtUSKqQeEtt0nh/0NQ0NeopV9+cKc8YWwsHO9QKTbSYPSoKKTOMbb4Do2Qw6QIs
+	o/RozX9fDwXU5fBMIWdoE9g2Zg50udSvroXmv0QGehnS/oIsju1Xm9Hx6k0qGzYO
+	Moxphwc01xiNg3TkdQinRnGMfXBoMhTjeqv4vFzBBV921xSsFkuDc/LbmFAGRrji
+	+ipv/+Zm0FAFDaaV0nU3xHfwkd9RKigkYEYtND4YVobWM5SOeXkJ3kw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dk84j8c0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 17:49:53 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483HbaSO023553;
+	Tue, 3 Sep 2024 17:49:52 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2049.outbound.protection.outlook.com [104.47.51.49])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm8hm95-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 17:49:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tg57jgB7DyVDvR3h9VAkIms+EF/q59zJhQuOAu/k4shSqXdk8n9IZzbnqVa1cbp0VaCV8s6vo9/yUOAcdSarV5oy5NOuCltUWQ1SrZQl6xjH8UNpz5H+F0uNlTUExKaBty7+ASVCh7Kl+i50BcwvnQBvQElyuXSTrtdaEP99tdOSjbIJD7PP3WE/P6vRHGYHI5DNqWFiUNyuwtOZ7pWwQWm5K/NcxNJO/62eM1x63vrj4SK9Wct4QGtoknyBe7dtxQgT4Hkf0v3/06PtimnAHvx/FURVTc2Wjk9LcxOy2cjN1GkwcSvvlVjXJkqm7z4xfxBMcaRNVyaTP9yCvkxi5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/G3qQo89XURoA6dZzTsMoxlVWTxEEWmX8esaCB/VTaM=;
+ b=VR4OE4OpooPz8WmLg+lznWacqbg29uMwD4436X+t34wom99c4crvNyRW6TeDVu7M1oBTCL3irejDFcMrV5wgowVzTNIYqZh8148z4l7m5hEgmuepttRg0I/Ht5Q7caoaVPTOlugLGDHTFlZdMnodWNxsMTmGRshHmLHnBanCks9Psg1+aUfNL0bSdkw1x+7eX/T6hJ64iT4T7FhDqpW2t4AIzSBAfJyj3yIqW1um4VlQhAi8eSysWZW6IZakgX9Ajrm1ycSCretNPgB4KrMjmGssCnCjCCcxQEyrrpOVR0WuTX6+xThZ8SKlT/1OthhurE11cqxZ90v0GBij4gXY5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725385800; x=1725990600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=410dK//Q8gNFJcYha80Zwj2EgZWoXsMUD0QY52+7x5g=;
-        b=EX7SY8NTwVxLyRm3lLl821l/2pdytr3NQ2GU6NX2dgiDbu2yyRvLvegLj0Un/8RV2o
-         tGmNsGDKvz/fn2G7MPKASqcgM0Sa2g9ZFHo0+3wETHZSyVaTP1WsBrq5NRyRljIJn2xl
-         yJSuVZM1THYHODg2Uo+r4D1CgJNbfWCG98m1Uj969/8k6wcHO31hqQ1n133vFgTU/uzU
-         gyKmjqPtssQk4Axuw1D29ctgB6ZDGARrrjiHxJgnlAh3HUhNKy8xT0Sx06v/a9h+yHwL
-         ehoFzWCLmBVulPG0LjkSisTlhSxEJv96bHyq2v1SoDFD5a7ZCL8BYfThTvv6XXx7E+sM
-         YHUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725385800; x=1725990600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=410dK//Q8gNFJcYha80Zwj2EgZWoXsMUD0QY52+7x5g=;
-        b=sVQJlSkwlNM1e3B6xo+offo/Rj/j9Hkuo7pQzyZdHx/RLRAPmgjdalbT7JbPVBElkD
-         4qvRJ7FqRomyp36r8MkIGyOTJG2nqWBvvmxNOQ987KkiLkloIivPIWuonww4jLsuFONT
-         HRO3Cn7sCeUETy/57VCmhAhvqezEWatnO3UC6s538K5lIDDOMlm8ZHu4/UCG++QqZgbC
-         sC3rpxuThUtn1B2Pq4MYP7Z/WH5wjhqXjHdKDIJxNvNshOyUSl0rqTp9SzMGG9CNW874
-         RbKvxCS2bshJMJNqIECbm3h5heBanpO7ZA5s2BAyFPx5JuLDlANYjc4h5jID9VAAAYSo
-         R8wQ==
-X-Gm-Message-State: AOJu0YyEr64gHfHAz/qPtGJh2zaq0HarG1q0wsS+wAb/JeObulq0UFeY
-	3n5UxBp76QyvjlXfMhBOAuQST6xZNZiJnycTbPgIq9eQPh6N/1EtDmKdHGUz2S3Mx1M0znm80or
-	C41EBJWTHExIzq2YppOoUnfYVnSaZVqSP3B8h
-X-Google-Smtp-Source: AGHT+IGLoDHkPBLDX8ZfTm9Z74smEA48QzWbIgbw7Is1VRnj5CYXSnopkAUOG45YOImFSerPd0BuTk2cxqwZI6oJDC4=
-X-Received: by 2002:a05:622a:612:b0:44f:9db1:7fca with SMTP id
- d75a77b69052e-457f63b3527mr45261cf.28.1725385799889; Tue, 03 Sep 2024
- 10:49:59 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/G3qQo89XURoA6dZzTsMoxlVWTxEEWmX8esaCB/VTaM=;
+ b=whkeGU93GFodhe+TW9CnU21TPQogjRIRkjjcNWvrIzNd/lBoFCwlZo3QrwPNSVLjCgH51mFoP3LyoSoNEXoyRLUgogHEsDNFdfVqptgRuHNmQOH390Qb6DtZjBelFI29m63S4ZtPDLr9dzFqVEJQRCnWlHc48c2I/O1Xki7w8fM=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SJ0PR10MB6304.namprd10.prod.outlook.com (2603:10b6:a03:478::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.10; Tue, 3 Sep
+ 2024 17:49:49 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 17:49:48 +0000
+Date: Tue, 3 Sep 2024 18:49:46 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Deepak Gupta <debug@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH 3/3] mm: Care about shadow stack guard gap when getting
+ an unmapped area
+Message-ID: <6d91ca85-def3-422c-8fb2-76337136257d@lucifer.local>
+References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
+ <20240902-mm-generic-shadow-stack-guard-v1-3-9acda38b3dd3@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902-mm-generic-shadow-stack-guard-v1-3-9acda38b3dd3@kernel.org>
+X-ClientProxiedBy: LO4P123CA0495.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1ab::14) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org> <20240830070351.2855919-3-jens.wiklander@linaro.org>
-In-Reply-To: <20240830070351.2855919-3-jens.wiklander@linaro.org>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 3 Sep 2024 10:49:46 -0700
-Message-ID: <CABdmKX02Zd98euuxvKHuV2C5Cng+4P3_8UL3xn2apMP9to+KOA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] tee: new ioctl to a register tee_shm from a
- dmabuf file descriptor
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Etienne Carriere <etienne.carriere@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SJ0PR10MB6304:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1c3b982-33f8-417a-9f6a-08dccc40ce0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3E33SG4yR0FI0JVi0Yd7g+hQiK0shaNSIFUfLFjpqrQSyDbfNuefmZLu+5sj?=
+ =?us-ascii?Q?Ki4U/ktygPZTswMnUASx31U6heMSsxDSsfg983qX1/1UvcIN8uh0G9ueKxf+?=
+ =?us-ascii?Q?cf8ZUevSFJk46qu6mxJR+Kxn07wEi4UkAp8+7oQALr14OcVZIxHR3rcIv0AU?=
+ =?us-ascii?Q?koyYEerqLK531Xg1+rVuqhneBXV80k9K3MbAItsp3RLNEkBfahNux4JDpmpE?=
+ =?us-ascii?Q?SI55EkKBE/G7axHmnW6hDRzgXxLzrRVg8NeMgnztOOxoo1Fvae4fOx0h3bLK?=
+ =?us-ascii?Q?DiHjnu0bXw2UE79qtOYrUy5KJj5Nsm05JRJB5bhvYzyDBuLKl74fwtzGUFJd?=
+ =?us-ascii?Q?iMWdyKUUPrWLD6daDCYFp17B4s2/fIHqWIpFALTavuhZbzI47N/2rBhhC1Mz?=
+ =?us-ascii?Q?Fped3KrOY1ofsMZ2asnMNzUMgR0qVWtJl4vrsCW29D5ZNy0gljZcJnwdJXyc?=
+ =?us-ascii?Q?J/XopkBLvwzcwqIpwgazaEYJWwgHXhA3QbycEefoZv9dXZLQAe2zVOHxJTcs?=
+ =?us-ascii?Q?u9yexRfDvb2xGKM6cXaO5KaSaFgTaEcqXG2qRhRwn2TnQpQ3yCABUdzDv4HW?=
+ =?us-ascii?Q?OU+YYsSAA9i9BclH9Uh0sBuEZv3aNKTUVlZFSktxBP+4mkshxbsMhlMP2YkJ?=
+ =?us-ascii?Q?vtFRy/+z+aEZ7bsRq5KUUrk/QXP1ngfdq8aG5BGtZgO5KG+3oCTkMYfHvxhr?=
+ =?us-ascii?Q?1LS2/rR5xi+fSs6j0dK7pZ2LtbpTsXEquB7Rvq9uAX23SesjGy16jNdE7kP2?=
+ =?us-ascii?Q?EEz5Q6z0VFSIolfTJXbzMIi94GUEIAsou60sAzobFDtml64bwp9wRok8cz60?=
+ =?us-ascii?Q?C4iO2GrXjJbaVK9r2yiQpmowVhK000SJxng//Gfv/SLoItnJYPXjdfks9i/c?=
+ =?us-ascii?Q?boUP0rnYywpIyYUHuNiq6M8Q+bNJPtlgD6ZOIykjB01vbCE1ITAE6Zs5UVdN?=
+ =?us-ascii?Q?TKXBv9cDvPuePksNgkm99Il5VI58ljoJWI6wfloCY2vFmNYM7ccrr3K7GTQ1?=
+ =?us-ascii?Q?I4/kfF+ks2KOl6wGJagcpYTxNpSaAqAk9vIqzHDaRf1P9FafZep8BD42gaNt?=
+ =?us-ascii?Q?emCSAKCRCpKScLJbTgvq69HdY3bAUNsXDN/Hv0e77yN3h4ONYf9gffpjHtg2?=
+ =?us-ascii?Q?PSn6YLqIT7MWCnpflrKmCpra151aLEAfNs4JC7p43nZj47KTGB+nHmS8d+2s?=
+ =?us-ascii?Q?ynRzgOUVBEeNYiUylPshzDOk9TBkwIkQoFFgyzVYeWa1RLWHog2PhhtyAuy+?=
+ =?us-ascii?Q?BeU6Irwh7vnQuznDoPoPJ3xqdDLap0q/ZdzRA08hjAanP/NcIasTFS558Z0o?=
+ =?us-ascii?Q?gobsQW8uFgILDmYG/2p4cK4Vh876Y+OJE7N4rL+yHHwRow=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1CXhup+QKFcYk54iHkqYklXMfUoLg0HLjD2sTcJB/Ki6PDTBHDeaNFGViOst?=
+ =?us-ascii?Q?SfbUvs6EGqmKexFrZcEMX+FZP9kgZ1fJEvA773aqYvhMsMb1OwWpgc7ZdDwW?=
+ =?us-ascii?Q?R6izBBtAMrNwJTLT4IgsUXZ04lv/f149x0/Jvxb5ThUkSlTaLzTWG1tsJJAM?=
+ =?us-ascii?Q?nL4dxCf/YJ/+CuawRPTiP0XQyAdshUfyCtDeez67zBbpLKKUN0dTR8Y8Lg5k?=
+ =?us-ascii?Q?z6OA6jXLOSI1m1r4Wwib37D0HJ+fpZkRLsCilUReEtwibYO1a2nbk9mIjV4Z?=
+ =?us-ascii?Q?mCtWHk0n2tT99aRwF26jSKIUbqbuVyCEOW/jAXcsaZT8YgqtBXH00KezH3nb?=
+ =?us-ascii?Q?N6n72KVOxwEJwFnAqV1hk2qkbPOI4xmKY2sP/JNBExZdq3Aq+s444u5XPDJf?=
+ =?us-ascii?Q?8p3U6wKkKehkMkIDPmD2UbZclUeKjydlysekIVLjtJtcfnmpHc9TqzOxGEok?=
+ =?us-ascii?Q?DlLNe6PqFF7+LzYSEo/GJTlQ0/rjlrVpdoY3k11VFSlIyRqINlObm0j0aGaR?=
+ =?us-ascii?Q?5yCkTmWjltionpUbGbZE5/bds+kO5z/b3o3HMEWxolTF1L+bWGU5MxzBCHwm?=
+ =?us-ascii?Q?WrCbjekXprNy+ODNkr83O0MA6PQzW1OqAagdbqJNQx9NAlZxviSNsVfD1jDL?=
+ =?us-ascii?Q?zH7tXbnmj792pg5CIHdYsWu3Qy/sAgEUTXE5BQkO/h20W7wlAZs90cp9nkHV?=
+ =?us-ascii?Q?2ulVGjlXmZwJxMpmZ9cMmcSG39m18Tq5BY2xPV0p9c9/quzZQAVVGZU/RL+k?=
+ =?us-ascii?Q?E2pXdaLwBycaByLAqldUh0tg/hJ1nKgaUwi2EuL3/o1sGRzMndyvViw/YDvn?=
+ =?us-ascii?Q?Uij+6MN0CR6ttrIEgf9RD38m9nm32zABKU85i1SfU5K95RYu+JfxaapXK+uf?=
+ =?us-ascii?Q?SsvfnWRJzJxkedWTjwxtdxSfVfN9fij3LGBUaeC0mGf/OAP5k1A2CNvXT78i?=
+ =?us-ascii?Q?/AB8wDmskwUnIb20+BGa4WEE+1u3xezRV5+JSN27Y1TIRAsp9NYykf6M1C1z?=
+ =?us-ascii?Q?wH8EIBsG5vQRindovKupskQ6czAMBExLkBvQwoH9+3ta1eOPMKv+tyOnvqBx?=
+ =?us-ascii?Q?YEbRHBqbg257PA/QXCNIIswEKRdjuUmKO9gnIXO+i9G6G73Me75uy1YvmKru?=
+ =?us-ascii?Q?X5CGxdOUSbkKY0Uv65WAbOpfLYYqHo0YaNdA2fxm5qTQHYKNgMvfZoRUOP/5?=
+ =?us-ascii?Q?Ax4VlnGq4ADuDccAxUc8k+Hr+AaUJXSkzG18TQkP6+cH2DgYya4n0mHLry6P?=
+ =?us-ascii?Q?TUMDrwokaprY6LlfIxaBO82dQqMPjMEA4u3/CJlU5AwVfBz1lxJqAZEr1B/f?=
+ =?us-ascii?Q?fhfzq016bGYQPnVdCrCNsqYYURVn8o00fmsy2jTrHp8nPt5wNgcty7Le5uk9?=
+ =?us-ascii?Q?fHXhCZLhXHpj7PwIHkzBmxx3xmF9ib4wZMNJbJNo+6JUacdW/TAAvWf5kMO7?=
+ =?us-ascii?Q?owqV1Wh9gd+qqNsJSWgWN2EDAesowdJu+kaQTiDAodm7w0PrX0LTWYiosWW3?=
+ =?us-ascii?Q?6xRn4fxgh7D1tEr8sNOw2fIPFHbRxsjDo2GRfkZ4VIaKinsdRIUs0VCtrYGE?=
+ =?us-ascii?Q?toYt0b/z6BqsW1oMAoWrus2mERA0emAzK/0O3z2VhrCH+d438uB7Kg0UKTVW?=
+ =?us-ascii?Q?mg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	HjhI6I4wq7G4r6eLK19YodwOHKcEE4I1KRdjQIrVvW5mNdjfc2EjhWriJ1cUVaUaGsINXLiHjG4KC6WvDrr2faROrg3rn2NhMmsvIt1mxlAbCYeq5ZZvdHAa4fTYpMBuldJwGtb4h2dO3y+LrJR/cR7Q0yryhozc6WcGHNWbYn8fbAMtuBy3GFvjluVnuI+zHZ/gbThgLXry7AFzTWVnstpFWy80DgqUPhdzWa4hhdLSMuDynDDRHc23wN5tuGnMFu2DG6Acw4MeFOajStDjTSBAyDKsIy2nZHen1mHHZlO840GYB2XMaR6HFWdilfSd5xNJGnAzexxwXCeWyCeW3r//nHcWb5t2Ayq9pJ/E9jGqjcdzxvx7xuSgf893HRlxZuQanD7WNNqL/75AQshfHzeKxvTGnqVsbOdHz6X42n/gtdDVYY+vh1Vc5G319RjWAZqQdZgdL59wX58X6UJvtVo25GdXsKX9PfuX/akGe6nN3MQ1Vj7finDrKTMEAyNL2Nr7v6w0LHC9th9ouAUsZSzj4HO5kJlrCTn3aHAkLPnC2jDYLS27+6vrhhAVH2zoGxySNAghZ2lw/QIIeiDxki1DrwVylZHsefgv512oJAk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1c3b982-33f8-417a-9f6a-08dccc40ce0a
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 17:49:48.7681
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pcwN08swVQ3LbG3Od1M07atU6JmJQT/bYFbl0A6cFEzoI5l+WwCmPbg+OFKbk8dZI2BiKO/ddUuakz351zDCJbAWaN6CP+hY3JZjDXDFpSk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6304
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_05,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ mlxscore=0 spamscore=0 adultscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2409030143
+X-Proofpoint-GUID: Y2k-nyM35W8kp0SF_PuAUyVg_msongDz
+X-Proofpoint-ORIG-GUID: Y2k-nyM35W8kp0SF_PuAUyVg_msongDz
 
-On Fri, Aug 30, 2024 at 12:04=E2=80=AFAM Jens Wiklander
-<jens.wiklander@linaro.org> wrote:
+On Mon, Sep 02, 2024 at 08:08:15PM GMT, Mark Brown wrote:
+> As covered in the commit log for c44357c2e76b ("x86/mm: care about shadow
+> stack guard gap during placement") our current mmap() implementation does
+> not take care to ensure that a new mapping isn't placed with existing
+> mappings inside it's own guard gaps. This is particularly important for
+> shadow stacks since if two shadow stacks end up getting placed adjacent to
+> each other then they can overflow into each other which weakens the
+> protection offered by the feature.
 >
-> From: Etienne Carriere <etienne.carriere@linaro.org>
+> On x86 there is a custom arch_get_unmapped_area() which was updated by the
+> above commit to cover this case by specifying a start_gap for allocations
+> with VM_SHADOW_STACK. Both arm64 and RISC-V have equivalent features and
+> use the generic implementation of arch_get_unmapped_area() so let's make
+> the equivalent change there so they also don't get shadow stack pages
+> placed without guard pages.
+
+Don't you need to unwind that change in x86 now you're doing it in generic code?
+
 >
-> Enable userspace to create a tee_shm object that refers to a dmabuf
-> reference.
+> Architectures which do not have this feature will define VM_SHADOW_STACK
+> to VM_NONE and hence be unaffected.
+
+Nice.
+
 >
-> Userspace registers the dmabuf file descriptor as in a tee_shm object.
-> The registration is completed with a tee_shm file descriptor returned to
-> userspace.
->
-> Userspace is free to close the dmabuf file descriptor now since all the
-> resources are now held via the tee_shm object.
->
-> Closing the tee_shm file descriptor will release all resources used by th=
-e
-> tee_shm object.
->
-> This change only support dmabuf references that relates to physically
-> contiguous memory buffers.
->
-> New tee_shm flag to identify tee_shm objects built from a registered
-> dmabuf, TEE_SHM_DMA_BUF.
->
-> Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
-> Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  drivers/tee/tee_core.c   |  38 ++++++++++++++
->  drivers/tee/tee_shm.c    | 104 +++++++++++++++++++++++++++++++++++++--
->  include/linux/tee_drv.h  |  11 +++++
->  include/uapi/linux/tee.h |  29 +++++++++++
->  4 files changed, 179 insertions(+), 3 deletions(-)
+>  mm/mmap.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
-> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> index e59c20d74b36..3dfd5428d58c 100644
-> --- a/drivers/tee/tee_core.c
-> +++ b/drivers/tee/tee_core.c
-> @@ -356,6 +356,42 @@ tee_ioctl_shm_register(struct tee_context *ctx,
->         return ret;
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index b06ba847c96e..902c482b6084 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1753,6 +1753,14 @@ static unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
+>  	return gap;
 >  }
 >
-> +static int tee_ioctl_shm_register_fd(struct tee_context *ctx,
-> +                                    struct tee_ioctl_shm_register_fd_dat=
-a __user *udata)
+
+Would be nice to take some of the context in commit message as a short comment
+describing the function. I mean it's kinda trivially self-documenting obviously,
+but it's useful context for somebody wanting to understand _why_ we are doing
+this at a glance.
+
+> +static inline unsigned long stack_guard_placement(vm_flags_t vm_flags)
 > +{
-> +       struct tee_ioctl_shm_register_fd_data data;
-> +       struct tee_shm *shm;
-> +       long ret;
+> +	if (vm_flags & VM_SHADOW_STACK)
+> +		return PAGE_SIZE;
 > +
-> +       if (copy_from_user(&data, udata, sizeof(data)))
-> +               return -EFAULT;
-> +
-> +       /* Currently no input flags are supported */
-> +       if (data.flags)
-> +               return -EINVAL;
-> +
-> +       shm =3D tee_shm_register_fd(ctx, data.fd);
-> +       if (IS_ERR(shm))
-> +               return -EINVAL;
-> +
-> +       data.id =3D shm->id;
-> +       data.flags =3D shm->flags;
-> +       data.size =3D shm->size;
-> +
-> +       if (copy_to_user(udata, &data, sizeof(data)))
-> +               ret =3D -EFAULT;
-> +       else
-> +               ret =3D tee_shm_get_fd(shm);
-> +
-> +       /*
-> +        * When user space closes the file descriptor the shared memory
-> +        * should be freed or if tee_shm_get_fd() failed then it will
-> +        * be freed immediately.
-> +        */
-> +       tee_shm_put(shm);
-> +       return ret;
+> +	return 0;
 > +}
 > +
->  static int params_from_user(struct tee_context *ctx, struct tee_param *p=
-arams,
->                             size_t num_params,
->                             struct tee_ioctl_param __user *uparams)
-> @@ -830,6 +866,8 @@ static long tee_ioctl(struct file *filp, unsigned int=
- cmd, unsigned long arg)
->                 return tee_ioctl_shm_alloc(ctx, uarg);
->         case TEE_IOC_SHM_REGISTER:
->                 return tee_ioctl_shm_register(ctx, uarg);
-> +       case TEE_IOC_SHM_REGISTER_FD:
-> +               return tee_ioctl_shm_register_fd(ctx, uarg);
->         case TEE_IOC_OPEN_SESSION:
->                 return tee_ioctl_open_session(ctx, uarg);
->         case TEE_IOC_INVOKE:
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index 731d9028b67f..a1cb3c8b6423 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -4,6 +4,7 @@
->   */
->  #include <linux/anon_inodes.h>
->  #include <linux/device.h>
-> +#include <linux/dma-buf.h>
->  #include <linux/idr.h>
->  #include <linux/mm.h>
->  #include <linux/sched.h>
-> @@ -14,6 +15,14 @@
->  #include <linux/highmem.h>
->  #include "tee_private.h"
->
-> +/* extra references appended to shm object for registered shared memory =
-*/
-> +struct tee_shm_dmabuf_ref {
-> +       struct tee_shm shm;
-> +       struct dma_buf *dmabuf;
-> +       struct dma_buf_attachment *attach;
-> +       struct sg_table *sgt;
-> +};
-> +
->  static void shm_put_kernel_pages(struct page **pages, size_t page_count)
->  {
->         size_t n;
-> @@ -44,7 +53,16 @@ static void release_registered_pages(struct tee_shm *s=
-hm)
->
->  static void tee_shm_release(struct tee_device *teedev, struct tee_shm *s=
-hm)
->  {
-> -       if (shm->flags & TEE_SHM_POOL) {
-> +       if (shm->flags & TEE_SHM_DMA_BUF) {
-> +               struct tee_shm_dmabuf_ref *ref;
-> +
-> +               ref =3D container_of(shm, struct tee_shm_dmabuf_ref, shm)=
-;
-> +               dma_buf_unmap_attachment(ref->attach, ref->sgt,
-> +               DMA_BIDIRECTIONAL);
-> +
-> +               dma_buf_detach(ref->dmabuf, ref->attach);
-> +               dma_buf_put(ref->dmabuf);
-> +       } else if (shm->flags & TEE_SHM_POOL) {
->                 teedev->pool->ops->free(teedev->pool, shm);
->         } else if (shm->flags & TEE_SHM_DYNAMIC) {
->                 int rc =3D teedev->desc->ops->shm_unregister(shm->ctx, sh=
-m);
-> @@ -56,7 +74,8 @@ static void tee_shm_release(struct tee_device *teedev, =
-struct tee_shm *shm)
->                 release_registered_pages(shm);
->         }
->
-> -       teedev_ctx_put(shm->ctx);
-> +       if (shm->ctx)
-> +               teedev_ctx_put(shm->ctx);
->
->         kfree(shm);
->
-> @@ -168,7 +187,7 @@ struct tee_shm *tee_shm_alloc_user_buf(struct tee_con=
-text *ctx, size_t size)
->   * tee_client_invoke_func(). The memory allocated is later freed with a
->   * call to tee_shm_free().
+>  /*
+>   * Search for an unmapped address range.
 >   *
-> - * @returns a pointer to 'struct tee_shm'
-> + * @returns a pointer to 'struct tee_shm' on success, and ERR_PTR on fai=
-lure
->   */
->  struct tee_shm *tee_shm_alloc_kernel_buf(struct tee_context *ctx, size_t=
- size)
->  {
-> @@ -178,6 +197,85 @@ struct tee_shm *tee_shm_alloc_kernel_buf(struct tee_=
-context *ctx, size_t size)
+> @@ -1814,6 +1822,7 @@ generic_get_unmapped_area(struct file *filp, unsigned long addr,
+>  	info.length = len;
+>  	info.low_limit = mm->mmap_base;
+>  	info.high_limit = mmap_end;
+> +	info.start_gap = stack_guard_placement(vm_flags);
+>  	return vm_unmapped_area(&info);
 >  }
->  EXPORT_SYMBOL_GPL(tee_shm_alloc_kernel_buf);
 >
-> +struct tee_shm *tee_shm_register_fd(struct tee_context *ctx, int fd)
-> +{
-> +       struct tee_shm_dmabuf_ref *ref;
-> +       int rc;
-> +
-> +       if (!tee_device_get(ctx->teedev))
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       teedev_ctx_get(ctx);
-> +
-> +       ref =3D kzalloc(sizeof(*ref), GFP_KERNEL);
-> +       if (!ref) {
-> +               rc =3D -ENOMEM;
-> +               goto err_put_tee;
-> +       }
-> +
-> +       refcount_set(&ref->shm.refcount, 1);
-> +       ref->shm.ctx =3D ctx;
-> +       ref->shm.id =3D -1;
-> +
-> +       ref->dmabuf =3D dma_buf_get(fd);
-> +       if (IS_ERR(ref->dmabuf)) {
-> +               rc =3D PTR_ERR(ref->dmabuf);
-> +               goto err_put_dmabuf;
-> +       }
-
-Hi,
-
-Most of the gotos in the errors paths from here on look offset by one
-to me. Attempting to put a dmabuf after failing to get, detaching
-after failing to attach, unmapping after failing to map, removing an
-IDR after failing to allocate one.
-
-
-> +
-> +       ref->attach =3D dma_buf_attach(ref->dmabuf, &ref->shm.ctx->teedev=
-->dev);
-> +       if (IS_ERR(ref->attach)) {
-> +               rc =3D PTR_ERR(ref->attach);
-> +               goto err_detach;
-> +       }
-> +
-> +       ref->sgt =3D dma_buf_map_attachment(ref->attach, DMA_BIDIRECTIONA=
-L);
-> +       if (IS_ERR(ref->sgt)) {
-> +               rc =3D PTR_ERR(ref->sgt);
-> +               goto err_unmap_attachement;
-> +       }
-> +
-> +       if (sg_nents(ref->sgt->sgl) !=3D 1) {
-> +               rc =3D PTR_ERR(ref->sgt->sgl);
-> +               goto err_unmap_attachement;
-> +       }
-> +
-> +       ref->shm.paddr =3D page_to_phys(sg_page(ref->sgt->sgl));
-> +       ref->shm.size =3D ref->sgt->sgl->length;
-> +       ref->shm.flags =3D TEE_SHM_DMA_BUF;
-> +
-> +       mutex_lock(&ref->shm.ctx->teedev->mutex);
-> +       ref->shm.id =3D idr_alloc(&ref->shm.ctx->teedev->idr, &ref->shm,
-> +                               1, 0, GFP_KERNEL);
-> +       mutex_unlock(&ref->shm.ctx->teedev->mutex);
-> +       if (ref->shm.id < 0) {
-> +               rc =3D ref->shm.id;
-> +               goto err_idr_remove;
-> +       }
-> +
-> +       return &ref->shm;
-> +
-> +err_idr_remove:
-> +       mutex_lock(&ctx->teedev->mutex);
-> +       idr_remove(&ctx->teedev->idr, ref->shm.id);
-> +       mutex_unlock(&ctx->teedev->mutex);
-> +err_unmap_attachement:
-> +       dma_buf_unmap_attachment(ref->attach, ref->sgt, DMA_BIDIRECTIONAL=
-);
-> +err_detach:
-> +       dma_buf_detach(ref->dmabuf, ref->attach);
-> +err_put_dmabuf:
-> +       dma_buf_put(ref->dmabuf);
-> +       kfree(ref);
-> +err_put_tee:
-> +       teedev_ctx_put(ctx);
-> +       tee_device_put(ctx->teedev);
-> +
-> +       return ERR_PTR(rc);
-> +}
-> +EXPORT_SYMBOL_GPL(tee_shm_register_fd);
-> +
-> +
-> +
->  /**
->   * tee_shm_alloc_priv_buf() - Allocate shared memory for a privately sha=
-red
->   *                           kernel buffer
-> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-> index 71632e3c5f18..6a1fee689007 100644
-> --- a/include/linux/tee_drv.h
-> +++ b/include/linux/tee_drv.h
-> @@ -25,6 +25,7 @@
->  #define TEE_SHM_USER_MAPPED    BIT(1)  /* Memory mapped in user space */
->  #define TEE_SHM_POOL           BIT(2)  /* Memory allocated from pool */
->  #define TEE_SHM_PRIV           BIT(3)  /* Memory private to TEE driver *=
-/
-> +#define TEE_SHM_DMA_BUF                BIT(4)  /* Memory with dma-buf ha=
-ndle */
+> @@ -1863,6 +1872,7 @@ generic_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
+>  	info.length = len;
+>  	info.low_limit = PAGE_SIZE;
+>  	info.high_limit = arch_get_mmap_base(addr, mm->mmap_base);
+> +	info.start_gap = stack_guard_placement(vm_flags);
+>  	addr = vm_unmapped_area(&info);
 >
->  struct device;
->  struct tee_device;
-> @@ -275,6 +276,16 @@ void *tee_get_drvdata(struct tee_device *teedev);
->  struct tee_shm *tee_shm_alloc_priv_buf(struct tee_context *ctx, size_t s=
-ize);
->  struct tee_shm *tee_shm_alloc_kernel_buf(struct tee_context *ctx, size_t=
- size);
+>  	/*
 >
-> +/**
-> + * tee_shm_register_fd() - Register shared memory from file descriptor
-> + *
-> + * @ctx:       Context that allocates the shared memory
-> + * @fd:                Shared memory file descriptor reference
-> + *
-> + * @returns a pointer to 'struct tee_shm' on success, and ERR_PTR on fai=
-lure
-> + */
-> +struct tee_shm *tee_shm_register_fd(struct tee_context *ctx, int fd);
-> +
->  struct tee_shm *tee_shm_register_kernel_buf(struct tee_context *ctx,
->                                             void *addr, size_t length);
->
-> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
-> index 23e57164693c..77bc8ef24d3c 100644
-> --- a/include/uapi/linux/tee.h
-> +++ b/include/uapi/linux/tee.h
-> @@ -117,6 +117,35 @@ struct tee_ioctl_shm_alloc_data {
->  #define TEE_IOC_SHM_ALLOC      _IOWR(TEE_IOC_MAGIC, TEE_IOC_BASE + 1, \
->                                      struct tee_ioctl_shm_alloc_data)
->
-> +/**
-> + * struct tee_ioctl_shm_register_fd_data - Shared memory registering arg=
-ument
-> + * @fd:                [in] File descriptor identifying the shared memor=
-y
-> + * @size:      [out] Size of shared memory to allocate
-> + * @flags:     [in] Flags to/from allocation.
-> + * @id:                [out] Identifier of the shared memory
-> + *
-> + * The flags field should currently be zero as input. Updated by the cal=
-l
-> + * with actual flags as defined by TEE_IOCTL_SHM_* above.
-> + * This structure is used as argument for TEE_IOC_SHM_REGISTER_FD below.
-> + */
-> +struct tee_ioctl_shm_register_fd_data {
-> +       __s64 fd;
-> +       __u64 size;
-> +       __u32 flags;
-> +       __s32 id;
-> +} __aligned(8);
-> +
-> +/**
-> + * TEE_IOC_SHM_REGISTER_FD - register a shared memory from a file descri=
-ptor
-> + *
-> + * Returns a file descriptor on success or < 0 on failure
-> + *
-> + * The returned file descriptor refers to the shared memory object in ke=
-rnel
-> + * land. The shared memory is freed when the descriptor is closed.
-> + */
-> +#define TEE_IOC_SHM_REGISTER_FD        _IOWR(TEE_IOC_MAGIC, TEE_IOC_BASE=
- + 8, \
-> +                                    struct tee_ioctl_shm_register_fd_dat=
-a)
-> +
->  /**
->   * struct tee_ioctl_buf_data - Variable sized buffer
->   * @buf_ptr:   [in] A __user pointer to a buffer
 > --
-> 2.34.1
+> 2.39.2
 >
 
