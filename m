@@ -1,112 +1,290 @@
-Return-Path: <linux-kernel+bounces-312899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19E3969D64
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:22:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479C5969D8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDFE1F21D1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:22:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCDC1C23C01
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A101C9851;
-	Tue,  3 Sep 2024 12:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c3ZdmfnJ"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299C11D61B7;
+	Tue,  3 Sep 2024 12:28:06 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1371B12F0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDB31D0952;
+	Tue,  3 Sep 2024 12:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366126; cv=none; b=GyMmtUqEiYnBFSzXZKGKCYeaz8YXd2PgL5QXzvrGwVKQ8uxNKgFprE3nhWUYNkMZxaUaUCRpY3xDN8QJIIGYJ4bOKhLhNqkYPATuwFydGPJte+YYQZNyz9FQrmZCOJAUcUn+618VLaSYGiCri+pZri6X861J5HQB15ItOvRNfVo=
+	t=1725366485; cv=none; b=gHthvCJoYyoMThlcwwejgJ7N+x5RQ+elyNnRaiZ/tRA1RIIFS0qhvh8UOPjTNL2JiFsXrlah7kz5v/NGTvN4MJ5Oe4sk0Uz4ZaG6YlW6QEXK/xGyLwWzfeQBVKElF7zIo7pOFfbftst4n9zIiQ2OTM3bJLYDM08AfA0Lhvj6W8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366126; c=relaxed/simple;
-	bh=iVvw6Hvy8K6woZwjLvsf0Zf/r2JZ/Aun7jO2Q7vtrL4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZCIKQ6rUvk4xzgJkxxrfAVUNpMFaogjnuos0pYQv+nTYYhNlBRA0ZnGK7ekfbahW7M7E8QJPvv2xEmjHTmTIoTR1Mki3ieMFL/SE1Qy82M4WF2ts2oQ9UIYeN2oN8Xgt8hG5DYYyfE6+NU9ToLSUReOfzkLaX87l+KRuFlTgJSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c3ZdmfnJ; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45680350696so5067331cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725366124; x=1725970924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1iNKROeTecbC7NJJEQLnhWG64uAyJxfHsOWVXv+2sIQ=;
-        b=c3ZdmfnJ2cQe6uh/OQUVKSMyAQYw/qORrrueT8hlxNUbASMilHPxer+gA6NNpXxccx
-         kedSr651+aJ/yUAObuh1yZWznd6WFffTPpN6SBA13AGnjdKZA8g5rMHGzYjDrYbsCWt1
-         lwmsHV+P+3u6xJRgLBcvpedSi5V/qwws9sg6KQAhmqVcpLOp3Sc60yYb/eNFekY5cIaH
-         6hMJ2xWcRDx3i30Omq31afcA5alLkIJ9hnUpVJ9/WDNk+j4wltlb2smaLOeZLM+O4Qht
-         ivENUxOPIxoHPEcDwlR7lkDa2cr+7IDni/8/uH2PByUfeP00ktVPuNDqoTjWZmypA7/x
-         omYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725366124; x=1725970924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1iNKROeTecbC7NJJEQLnhWG64uAyJxfHsOWVXv+2sIQ=;
-        b=BewktXHKVbIwY1H4iPeZyDcDqLbJqaJytexXmBAKUuX45BceUjFTC8tKB4TRVIZNpm
-         6t7g9neG4ew79/uBvLj5u4TVpKcRgdEt4mMldjwNrjC21WN8VCdC8q64dhB5vRDRkH7A
-         LXa1on8CxGNfZcsFJoZif0H6s1GQVjT9suFXVlO44F4GPEttEOhqZagPQ6ht9QVj3t5k
-         roxJhwFTsVOonxsRog4E7tB+4b5+tCnZcc0I5elafsZ658il/xVQ9D/ukzsSmN8jVR3E
-         8BqWXD2seP0ryjGlHca+7DCNNvJD4qwsvkQXtIh4PiqIZwr7poI3xxYrl2MubvRkY76A
-         7tWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7I/LsV71dUCpZ+jnbB/cGaaMP7mz04brE9tV4iL7NQKFKA+VyXtsl4kgYCjCB+KRpBcLvELors4PImY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3yrP3FMGSu9a8VU2sWVCovVAoU1NYbI1erJLCyWdW/vWvAZYG
-	1brjFMR3xbitUf88s7OghyJHf4lf+75tX9KhhJbHDX/DQUN/nc627eQZXiR8gaNgXl5ofutnuom
-	ihuND+QD+9/jOVqnXHH0bjt81csdYnrNfiHb9iA==
-X-Google-Smtp-Source: AGHT+IEdISPnvRdSEUjr50GKb9NjFs+AWGhLcxRrWqnXIzc2xeEAJX9J31hXyh5Q095NVa2zLCFGLhEPYKSvu7vnZ0Q=
-X-Received: by 2002:a05:6214:230d:b0:6c3:6da8:8cb1 with SMTP id
- 6a1803df08f44-6c36da88ef1mr25683596d6.5.1725366123844; Tue, 03 Sep 2024
- 05:22:03 -0700 (PDT)
+	s=arc-20240116; t=1725366485; c=relaxed/simple;
+	bh=IQEK2KkWZrhcbgTwyqBPhsr/hApnnXhwOWrHZS79ILc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pVOKAy43ee2zvR1WwEsH8crE1GGbRBoGfFj15jcwaRERsT4Ct13inXc7ICT8etO39fiRMdT6bi2BmGmGrJCJobJJBANuOdIAxAYnW9LS3+lrgs3SJLEJeWGVWix0Gy7b5hSH4qs50HY9/Ybflrp1hO5TiVRmAAUuLwgs+x6zIyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WylJF5x1hz2CpMk;
+	Tue,  3 Sep 2024 20:27:41 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id F346C1A0188;
+	Tue,  3 Sep 2024 20:28:00 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Sep 2024 20:28:00 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, Yunsheng Lin
+	<linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [RFC] page_pool: add debugging to catch concurrent access to pool->alloc
+Date: Tue, 3 Sep 2024 20:22:07 +0800
+Message-ID: <20240903122208.3379182-1-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Tue, 3 Sep 2024 14:21:52 +0200
-Message-ID: <CADYN=9JBw6kq4E9aA=Pr1rFy-6tY-j-XOthQVYVw6ptmj11=HA@mail.gmail.com>
-Subject: Potential Regression in futex Performance from v6.9 to v6.10-rc1 and v6.11-rc4
-To: David Hildenbrand <david@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, dvhart@infradead.org, dave@stgolabs.net, 
-	andrealmeid@igalia.com, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi,
+Currently if there is a warning message almost infinity as
+below when driver is unloaded, it seems there may be three
+reasons as below:
+1. Concurrent accese to the pool->alloc related data causing
+   incorrect inflight stat.
+2. The driver leaks some page.
+3. The network stack holds the skb pointing to some page and
+   does not seem to release it.
 
-I've noticed that the futex01-thread-* tests in will-it-scale-sys-threads
-are running about 2% slower on v6.10-rc1 compared to v6.9, and this
-slowdown continues with v6.11-rc4. I am focused on identifying any
-performance regressions greater than 2% that occur in automated
-testing on arm64 HW.
+"page_pool_release_retry() stalled pool shutdown: id 949, 98
+inflight 1449 sec"
 
-Using git bisect, I traced the issue to commit
-f002882ca369 ("mm: merge folio_is_secretmem() and
-folio_fast_pin_allowed() into gup_fast_folio_allowed()").
+Use the currently unused pool->ring.consumer_lock to catch the
+case of concurrent access to pool->alloc.
 
-My tests were performed on m7g.large and m7g.metal instances:
+The binary size is unchanged after this patch when the debug
+feature is not enabled.
 
-* The slowdown is consistent regardless of the number of threads;
-   futex1-threads-128 performs similarly to futex1-threads-2, indicating
-   there is no scalability issue, just a minor performance overhead.
-* The test doesn=E2=80=99t involve actual futex operations, just dummy wake=
-/wait
-   on a variable that isn=E2=80=99t accessed by other threads, so the resul=
-ts might
-   not be very significant.
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+---
+ net/Kconfig.debug    |  8 +++++
+ net/core/page_pool.c | 70 +++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 74 insertions(+), 4 deletions(-)
 
-Given that this seems to be a minor increase in code path length rather
-than a scalability issue, would this be considered a genuine regression?
+diff --git a/net/Kconfig.debug b/net/Kconfig.debug
+index 5e3fffe707dd..5575d63d7a36 100644
+--- a/net/Kconfig.debug
++++ b/net/Kconfig.debug
+@@ -18,6 +18,14 @@ config NET_NS_REFCNT_TRACKER
+ 	  Enable debugging feature to track netns references.
+ 	  This adds memory and cpu costs.
+ 
++config PAGE_POOL_DEBUG
++	bool "Enable page pool debugging"
++	depends on PAGE_POOL
++	default n
++	help
++	  Enable debugging feature in page pool to catch concurrent
++	  access for pool->alloc cache.
++
+ config DEBUG_NET
+ 	bool "Add generic networking debug"
+ 	depends on DEBUG_KERNEL && NET
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 2abe6e919224..8ef70d4252fb 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -31,6 +31,36 @@
+ 
+ #define BIAS_MAX	(LONG_MAX >> 1)
+ 
++#ifdef CONFIG_PAGE_POOL_DEBUG
++#define __page_pool_debug_alloc_lock(pool, allow_direct, warn_on_destry)		\
++	do {										\
++		if (allow_direct) {							\
++			WARN_ON_ONCE(spin_is_locked(&(pool)->ring.consumer_lock));	\
++			spin_lock(&(pool)->ring.consumer_lock);				\
++			WARN_ON_ONCE(warn_on_destry && (pool)->destroy_cnt);		\
++		}									\
++	} while (0)
++
++#define __page_pool_debug_alloc_unlock(pool, allow_direct, warn_on_destry)		\
++	do {										\
++		if (allow_direct) {							\
++			WARN_ON_ONCE(warn_on_destry && (pool)->destroy_cnt);		\
++			spin_unlock(&(pool)->ring.consumer_lock);			\
++		}									\
++	} while (0)
++
++#define page_pool_debug_alloc_lock(pool, allow_direct)					\
++			__page_pool_debug_alloc_lock(pool, allow_direct, true)
++
++#define page_pool_debug_alloc_unlock(pool, allow_direct)				\
++			__page_pool_debug_alloc_unlock(pool, allow_direct, true)
++#else
++#define __page_pool_debug_alloc_lock(pool, allow_direct, warn_on_destry)
++#define __page_pool_debug_alloc_unlock(pool, allow_direct, warn_on_destry)
++#define page_pool_debug_alloc_lock(pool, allow_direct)
++#define page_pool_debug_alloc_unlock(pool, allow_direct)
++#endif
++
+ #ifdef CONFIG_PAGE_POOL_STATS
+ static DEFINE_PER_CPU(struct page_pool_recycle_stats, pp_system_recycle_stats);
+ 
+@@ -563,7 +593,7 @@ static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool *pool,
+ /* For using page_pool replace: alloc_pages() API calls, but provide
+  * synchronization guarantee for allocation side.
+  */
+-netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
++static netmem_ref __page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
+ {
+ 	netmem_ref netmem;
+ 
+@@ -576,6 +606,17 @@ netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
+ 	netmem = __page_pool_alloc_pages_slow(pool, gfp);
+ 	return netmem;
+ }
++
++netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
++{
++	netmem_ref netmem;
++
++	page_pool_debug_alloc_lock(pool, true);
++	netmem = __page_pool_alloc_netmem(pool, gfp);
++	page_pool_debug_alloc_unlock(pool, true);
++
++	return netmem;
++}
+ EXPORT_SYMBOL(page_pool_alloc_netmem);
+ 
+ struct page *page_pool_alloc_pages(struct page_pool *pool, gfp_t gfp)
+@@ -776,6 +817,8 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
+ 	if (!allow_direct)
+ 		allow_direct = page_pool_napi_local(pool);
+ 
++	page_pool_debug_alloc_lock(pool, allow_direct);
++
+ 	netmem =
+ 		__page_pool_put_page(pool, netmem, dma_sync_size, allow_direct);
+ 	if (netmem && !page_pool_recycle_in_ring(pool, netmem)) {
+@@ -783,6 +826,8 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
+ 		recycle_stat_inc(pool, ring_full);
+ 		page_pool_return_page(pool, netmem);
+ 	}
++
++	page_pool_debug_alloc_unlock(pool, allow_direct);
+ }
+ EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
+ 
+@@ -817,6 +862,7 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
+ 	bool in_softirq;
+ 
+ 	allow_direct = page_pool_napi_local(pool);
++	page_pool_debug_alloc_lock(pool, allow_direct);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
+@@ -831,6 +877,8 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
+ 			data[bulk_len++] = (__force void *)netmem;
+ 	}
+ 
++	page_pool_debug_alloc_unlock(pool, allow_direct);
++
+ 	if (!bulk_len)
+ 		return;
+ 
+@@ -878,10 +926,14 @@ static netmem_ref page_pool_drain_frag(struct page_pool *pool,
+ 
+ static void page_pool_free_frag(struct page_pool *pool)
+ {
+-	long drain_count = BIAS_MAX - pool->frag_users;
+-	netmem_ref netmem = pool->frag_page;
++	netmem_ref netmem;
++	long drain_count;
+ 
++	page_pool_debug_alloc_lock(pool, true);
++	drain_count = BIAS_MAX - pool->frag_users;
++	netmem = pool->frag_page;
+ 	pool->frag_page = 0;
++	page_pool_debug_alloc_unlock(pool, true);
+ 
+ 	if (!netmem || page_pool_unref_netmem(netmem, drain_count))
+ 		return;
+@@ -899,6 +951,7 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
+ 	if (WARN_ON(size > max_size))
+ 		return 0;
+ 
++	page_pool_debug_alloc_lock(pool, true);
+ 	size = ALIGN(size, dma_get_cache_alignment());
+ 	*offset = pool->frag_offset;
+ 
+@@ -911,9 +964,10 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
+ 	}
+ 
+ 	if (!netmem) {
+-		netmem = page_pool_alloc_netmem(pool, gfp);
++		netmem = __page_pool_alloc_netmem(pool, gfp);
+ 		if (unlikely(!netmem)) {
+ 			pool->frag_page = 0;
++			page_pool_debug_alloc_unlock(pool, true);
+ 			return 0;
+ 		}
+ 
+@@ -924,12 +978,14 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
+ 		*offset = 0;
+ 		pool->frag_offset = size;
+ 		page_pool_fragment_netmem(netmem, BIAS_MAX);
++		page_pool_debug_alloc_unlock(pool, true);
+ 		return netmem;
+ 	}
+ 
+ 	pool->frag_users++;
+ 	pool->frag_offset = *offset + size;
+ 	alloc_stat_inc(pool, fast);
++	page_pool_debug_alloc_unlock(pool, true);
+ 	return netmem;
+ }
+ EXPORT_SYMBOL(page_pool_alloc_frag_netmem);
+@@ -986,8 +1042,10 @@ static void page_pool_empty_alloc_cache_once(struct page_pool *pool)
+ 
+ static void page_pool_scrub(struct page_pool *pool)
+ {
++	__page_pool_debug_alloc_lock(pool, true, false);
+ 	page_pool_empty_alloc_cache_once(pool);
+ 	pool->destroy_cnt++;
++	__page_pool_debug_alloc_unlock(pool, true, false);
+ 
+ 	/* No more consumers should exist, but producers could still
+ 	 * be in-flight.
+@@ -1089,6 +1147,8 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
+ {
+ 	netmem_ref netmem;
+ 
++	page_pool_debug_alloc_lock(pool, true);
++
+ 	trace_page_pool_update_nid(pool, new_nid);
+ 	pool->p.nid = new_nid;
+ 
+@@ -1097,5 +1157,7 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
+ 		netmem = pool->alloc.cache[--pool->alloc.count];
+ 		page_pool_return_page(pool, netmem);
+ 	}
++
++	page_pool_debug_alloc_unlock(pool, true);
+ }
+ EXPORT_SYMBOL(page_pool_update_nid);
+-- 
+2.33.0
 
-
-Cheers,
-Anders
 
