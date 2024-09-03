@@ -1,97 +1,75 @@
-Return-Path: <linux-kernel+bounces-312853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA60D969C72
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF2969E80
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77088284A1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39205283F4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BFA1B985C;
-	Tue,  3 Sep 2024 11:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwwYuWKC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD1819F408;
+	Tue,  3 Sep 2024 12:58:10 +0000 (UTC)
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0331A42C2;
-	Tue,  3 Sep 2024 11:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C801CA6A4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364285; cv=none; b=eq+7wC0DszoJo6pBVRXkTrMlgC3ZXBDh+5z2iW4hS7OF73tObGEo2ZhUmeI0W7DXfT+NYwOU1k7fFI3ahAPCqG9xbLU0SPY5UnlyO7MClHC/tW3OxjhRvq8ACiL9Hf/yA0t24nH9jxkT4QTNba5UT1ZMXBHUhgdcZk3u0/mCP3w=
+	t=1725368290; cv=none; b=cyWRx78cZncdlOE4+2zwF3PRgUVJ4EDLy8uKs9fiUfFQSXkPLfFZ0dFX2OQL67vnblkg1HXvfQO8iVMswPFxbscmndbfT7jFYoYpuSnnAeTUxrbwYYqL/wPY77S2X6A8VKYNlKPf2ZjSe1Phr9Dpll7TUIWxrnkqU2SU8LRequ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364285; c=relaxed/simple;
-	bh=RzB6YC4thRbWllGcX/ESUcoHvfzT8kbLenTRs0/mh8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOePFOZ6HlO/PUsbH4yZRiI/CBgspJ7s4rZAX9POtZ7Y10QokWmYBxHB2ZEOqGbQuUTmEs/itKhkhCOtxLI6AYwhJ8OdQgiuLhlmuaa/WuVdQs6466eFULEWU/V+wNEAQTfimHVLbWH6T3D/9EHoPrVcexs873EkC3ZNvQsDriU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwwYuWKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97766C4CEC4;
-	Tue,  3 Sep 2024 11:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725364284;
-	bh=RzB6YC4thRbWllGcX/ESUcoHvfzT8kbLenTRs0/mh8A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nwwYuWKCicwK42VHzZEm0U0j0nq056rRrPh0STwHLbdc7fTd2xbpPbAFarbMXSmsx
-	 HEKwUXVQ/izX2Srosl8iL6GrkKJuu9LtugIlsvQXef9MeCDzICIs6K/UfyHX6VTged
-	 PuqD1DUkzl5fbcmmKrz1svHhtACBER6jJuhwqTRIMXTOVL1t2fUT3p2HWqaFL6i8Sf
-	 XNOyQlFpJ7MPm2RLgSli59T+xeFDAMgyfwXEiP4/F+mecZOQl28+PlPCqsxJPJy8yR
-	 lM+7PzvgKeNSgJGk9za1MIt3YFTqq7+P4jpi5n3JIH9me88Y09PU6DGuIrgF1iZESC
-	 UanpIuzwhRhLg==
-Date: Tue, 3 Sep 2024 12:51:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
-Message-ID: <84ca0eb4-6f09-42c0-a27a-8f1765977a1e@sirena.org.uk>
-References: <20240901160823.230213148@linuxfoundation.org>
+	s=arc-20240116; t=1725368290; c=relaxed/simple;
+	bh=mWdqKxCsLta5p5RspL9O2oKInK6MskbQDynD2yF8FjA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tpTVAIBx87R94Wvml82WuxwLuR5MsAKEa3XJWdi3NwaTqKbGaibEz8H8MxbXBf57C+a/RMA7rr1QSuStxuX6oJuJnEcrMowffcrmoR4rLD8qDO5UcKTgP9cGqDxK1Jp81dRRzzsckiJU6FtdV/hNkMQLqPFdjBc01wx1G0YAKwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
+	by h3cspam02-ex.h3c.com with ESMTP id 483BpikW047855
+	for <linux-kernel@vger.kernel.org>; Tue, 3 Sep 2024 19:51:44 +0800 (GMT-8)
+	(envelope-from zhang.chunA@h3c.com)
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 483BpCLb047159;
+	Tue, 3 Sep 2024 19:51:12 +0800 (GMT-8)
+	(envelope-from zhang.chunA@h3c.com)
+Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
+	by mail.maildlp.com (Postfix) with ESMTP id 5D4C62004721;
+	Tue,  3 Sep 2024 19:56:45 +0800 (CST)
+Received: from localhost.localdomain.com (10.99.206.13) by
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1258.27; Tue, 3 Sep 2024 19:51:15 +0800
+From: zhangchun <zhang.chuna@h3c.com>
+To: <akpm@linux-foundation.org>
+CC: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <shaohaojize@126.com>, <zhang.zhansheng@h3c.com>,
+        <zhang.zhengming@h3c.com>, zhangchun <zhang.chuna@h3c.com>
+Subject: [PATCH v3] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
+Date: Tue, 3 Sep 2024 19:52:52 +0800
+Message-ID: <1725364372-38476-1-git-send-email-zhang.chuna@h3c.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1724083806-21956-1-git-send-email-zhang.chuna@h3c.com>
+References: <1724083806-21956-1-git-send-email-zhang.chuna@h3c.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0b5zt7XZsA0lZcED"
-Content-Disposition: inline
-In-Reply-To: <20240901160823.230213148@linuxfoundation.org>
-X-Cookie: Words must be weighed, not counted.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BJSMTP02-EX.srv.huawei-3com.com (10.63.20.133) To
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 483BpikW047855
 
+Very sorry to disturb! Just a friendly ping!
+-- 
+1.8.3.1
 
---0b5zt7XZsA0lZcED
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Sep 01, 2024 at 06:15:12PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.166 release.
-> There are 215 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---0b5zt7XZsA0lZcED
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbW+DQACgkQJNaLcl1U
-h9D11gf/dsArFwbKy1DHDFQbQIAFBTgM3q5UdOwMJ2WHkaciyZFmRsM2VawoSwcj
-kQv6T1iAsViSZA1Rqd0S4da0/NFvt69ou+Gy6dGOOu/L1lcMyfC72JO6g8RLB9In
-yZAs9rK0kCWIds9tx7447GFdRWEznJoXLjzIMTiZNbha/Q3spZCNYh+2MaNnAF91
-D1bAvM3rf6lnTJ+bq53tGx7fnI3mLqF2Gi1fYf33yIfHGEE4+KlRdOTvpS/pGiQ9
-AL4Mq4r9dsZ6StYWYCqg9VE74M26x91htNtU3kAVLKlR7Wn725pf4KNbAHcsR7Or
-66vR2IlJ591WAHvNrhALRCtP+60oIw==
-=q78k
------END PGP SIGNATURE-----
-
---0b5zt7XZsA0lZcED--
 
