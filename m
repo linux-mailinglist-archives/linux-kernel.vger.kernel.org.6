@@ -1,302 +1,369 @@
-Return-Path: <linux-kernel+bounces-313901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C35D96AC13
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16D196AC17
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18D71C24614
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697002817DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EF11D5888;
-	Tue,  3 Sep 2024 22:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9B11D223F;
+	Tue,  3 Sep 2024 22:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXgy+Atv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=viasat.com header.i=@viasat.com header.b="OnKyoL4O"
+Received: from mx0e-0085b301.gpphosted.com (mx0e-0085b301.gpphosted.com [67.231.147.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F236C3A267;
-	Tue,  3 Sep 2024 22:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533411EBFE4;
+	Tue,  3 Sep 2024 22:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.147.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402050; cv=none; b=txrgtsdwXMEpxrbd484qnVFLmaiz8ipKY1BXXt0XwQrk4QYFIGAKZpjMcV+xio7IPIqzugPl4gCpwku/ZblkONchZA7GboZxZPOQAgI5gKptPrnBLRT2yWwRjUMIkhAZO5RN8d2rsN6dSz72vBG9Ivzv7LyFwDZiWtGB6t+pt+0=
+	t=1725402119; cv=none; b=BNmpV/cJS72BYBT6thwYmXm84RqEnUNwDNQFi7ssKfqd+wJ9UVAXYMFQk1cM6FcD9V3LQtZJ/GZ7WH7WpXPgEmL9QeF+CC5c4/aI2m8/SlY621rRtty4gpk7vv5Zi6MT6KGsMwF6lZMBaJ3vLuQq4TkPR2ZqdWaRqIeqlnUwEn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402050; c=relaxed/simple;
-	bh=mzUhy+4475yWOqUsHqtpPdbEE5/2CgPoULFBP4TrLNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzFcucSJmBfaMDihQ2Bl7zstnPu8v/kTrCNRlQEFHV7lnpyWCB9a8AIpn7QeU31xvst4OZW2lejZ+fKlENev58MBqUJyEmueCzkwsdDbSNHQYpeo2uX2p7qaeTxb3yWl+5CiSqgAQZ5WkhrbI3jdMecrYIZyPWoukyCS/11I8es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXgy+Atv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C064C4CEC4;
-	Tue,  3 Sep 2024 22:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725402049;
-	bh=mzUhy+4475yWOqUsHqtpPdbEE5/2CgPoULFBP4TrLNM=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hXgy+AtvKcJ3vx+K5dWWJNcPYMwuZFJroyPyEBTciSJxQHNF9vkxdAAy0fvDCo11M
-	 K4aJDfvY6zmvW9xlSWVGDtGSr0yzZxxBq+eYfxh08j8E/fdSQnLROCriPwece3nxWs
-	 GIUL/KzDkqGdYEcVvk6sxSLcws1KJsT9wbUjCZ33v9oUqTlnwX7Ba5oT+q4ofBe9jx
-	 k5nSI3w4f4b5zaDjFVzCCHSmU8TtjG9BRRyi85RUPWtBvbS82UOe6ppRIqIH21o2Ni
-	 aYKcvcX0b0yMp1OYP5ES+HFFcknGjGOdRbcPlCHM3UKs1L0ubDKyFffxmdsR6uFW/a
-	 IYoJy3k3929Nw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 35FA8CE1257; Tue,  3 Sep 2024 15:20:49 -0700 (PDT)
-Date: Tue, 3 Sep 2024 15:20:49 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
-Message-ID: <d9366504-d3d7-43e3-96c5-8053129c0794@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
- <CAEf4BzZ5mJH5+4j56zSKkvuRLLfcQMEbkjM-T86onZdAWtsN+g@mail.gmail.com>
+	s=arc-20240116; t=1725402119; c=relaxed/simple;
+	bh=BHgma2UXEJqY6RMz7Q/Zf4EnsQSbL+W7XPdRAmsaYE8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C64UBC6rnzpesWvSrReut9cYn27PztshxTLdG4iAVVYra/V23jr8jtgF6gWyXYLrHKiB+NUJNJTMw+D95hyACVW2vVN/a7OPcElMfBd3SVHIyrXgmevkaJIkx8vvPB2sYyvQBbeusM3a433TIfekFZLLV5pFKI6+RB3PWNyxS6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=viasat.com; spf=pass smtp.mailfrom=viasat.com; dkim=pass (2048-bit key) header.d=viasat.com header.i=@viasat.com header.b=OnKyoL4O; arc=none smtp.client-ip=67.231.147.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=viasat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=viasat.com
+Received: from pps.filterd (m0351329.ppops.net [127.0.0.1])
+	by mx0e-0085b301.gpphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483Htonq018675;
+	Tue, 3 Sep 2024 22:21:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=viasat.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=BHgma2UXEJqY6RMz7Q/Zf4EnsQSbL+W7XPdRAmsaYE8=;
+ b=OnKyoL4OrI74f+fjoB3wX3DRyD0pNIJy3Zcmz+g9guHapCzg9aLyqjH30l1hj7prF6Ky
+ b0j0Xy8TiUVnDkc1A3CVYWxDi9WdmUdONL2/fxS/V3wA6KFDUDsGYpJeX0H6qCgSi5Cd
+ bjLk9dNqZd6iiSpcJYMZge4dHEb+WEuXVyTUngcl8DMrbj2PcHNYJrSqZsUrDFOrKQSd
+ PX887bZ9LvApunpNO7Sojqofq+pcN8ZFW1rj9IShAZVEREpTvXHC3am7Op09LgqobPks
+ 11/f9PbZsImFyOAbQZWGbmhbFs7qWLn1KeTifZ7aWcJA9NiWbCnSbecwa/NCmfbhM5kP zA== 
+Received: from wdc1exchp03.hq.corp.viasat.com ([8.37.104.42])
+	by mx0e-0085b301.gpphosted.com (PPS) with ESMTPS id 41e21wudne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 03 Sep 2024 22:21:48 +0000
+Received: from WDC1EXCHP05.hq.corp.viasat.com (10.228.7.145) by
+ WDC1EXCHP03.hq.corp.viasat.com (10.228.7.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 16:21:47 -0600
+Received: from WDC1EXCHP05.hq.corp.viasat.com ([fe80::e59e:1518:91aa:55e9]) by
+ WDC1EXCHP05.hq.corp.viasat.com ([fe80::e59e:1518:91aa:55e9%23]) with mapi id
+ 15.01.2507.039; Tue, 3 Sep 2024 16:21:47 -0600
+From: "Jones, Morgan" <Morgan.Jones@viasat.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+        Dhananjay Ugwekar
+	<Dhananjay.Ugwekar@amd.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "gautham.shenoy@amd.com"
+	<gautham.shenoy@amd.com>,
+        "perry.yuan@amd.com" <perry.yuan@amd.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "li.meng@amd.com"
+	<li.meng@amd.com>,
+        "ray.huang@amd.com" <ray.huang@amd.com>
+CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Arcari
+	<darcari@redhat.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v2 2/2] cpufreq/amd-pstate: Fix the
+ scaling_max_freq setting on shared memory CPPC systems
+Thread-Topic: [EXTERNAL] Re: [PATCH v2 2/2] cpufreq/amd-pstate: Fix the
+ scaling_max_freq setting on shared memory CPPC systems
+Thread-Index: AQHTmcEn27fAHGT7pNe1jAQ3Ww8GHAMI4eQEAR3OYjGyM+kx8IAAZwsA//+b9MCAAInhgIAAC7yA//+0ZDA=
+Date: Tue, 3 Sep 2024 22:21:47 +0000
+Message-ID: <2671ab58d90d487eb5f9aa3cb12bdb08@viasat.com>
+References: <20240702081413.5688-1-Dhananjay.Ugwekar@amd.com>
+ <20240702081413.5688-3-Dhananjay.Ugwekar@amd.com>
+ <bb09e7e8-5824-4bc1-9697-1929a4cf717e@amd.com>
+ <d6392b1af4ab459195a1954e4e5ad87e@viasat.com>
+ <bb49cd31-a02f-46f9-8757-554bd7783261@amd.com>
+ <66f08ce529d246bd8315c87fe0f880e6@viasat.com>
+ <645f2e77-336b-4a9c-b33e-06043010028b@amd.com>
+ <2e36ee28-d3b8-4cdb-9d64-3d26ef0a9180@amd.com>
+In-Reply-To: <2e36ee28-d3b8-4cdb-9d64-3d26ef0a9180@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZ5mJH5+4j56zSKkvuRLLfcQMEbkjM-T86onZdAWtsN+g@mail.gmail.com>
+X-Proofpoint-ORIG-GUID: rL7Z2osofZclDM1ncXWkaMvrzUu_X1S4
+X-Proofpoint-GUID: rL7Z2osofZclDM1ncXWkaMvrzUu_X1S4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_10,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ adultscore=0 phishscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2409030178
 
-On Tue, Sep 03, 2024 at 03:08:21PM -0700, Andrii Nakryiko wrote:
-> On Tue, Sep 3, 2024 at 9:32 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > Hello!
-> >
-> > This series provides light-weight readers for SRCU.  This lightness
-> > is selected by the caller by using the new srcu_read_lock_lite() and
-> > srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
-> > srcu_read_unlock() flavors.  Although this passes significant rcutorture
-> > testing, this should still be considered to be experimental.
-> >
-> > There are a few restrictions:  (1) If srcu_read_lock_lite() is called
-> > on a given srcu_struct structure, then no other flavor may be used on
-> > that srcu_struct structure, before, during, or after.  (2) The _lite()
-> > readers may only be invoked from regions of code where RCU is watching
-> > (as in those regions in which rcu_is_watching() returns true).  (3)
-> > There is no auto-expediting for srcu_struct structures that have
-> > been passed to _lite() readers.  (4) SRCU grace periods for _lite()
-> > srcu_struct structures invoke synchronize_rcu() at least twice, thus
-> > having longer latencies than their non-_lite() counterparts.  (5) Even
-> > with synchronize_srcu_expedited(), the resulting SRCU grace period
-> > will invoke synchronize_rcu() at least twice, as opposed to invoking
-> > the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
-> > srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
-> > srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
-> > from NMI handlers (that is what the _nmisafe() interface are for).
-> > Although one could imagine readers that were both _lite() and _nmisafe(),
-> > one might also imagine that the read-modify-write atomic operations that
-> > are needed by any NMI-safe SRCU read marker would make this unhelpful
-> > from a performance perspective.
-> >
-> > All that said, the patches in this series are as follows:
-> >
-> > 1.      Rename srcu_might_be_idle() to srcu_should_expedite().
-> >
-> > 2.      Introduce srcu_gp_is_expedited() helper function.
-> >
-> > 3.      Renaming in preparation for additional reader flavor.
-> >
-> > 4.      Bit manipulation changes for additional reader flavor.
-> >
-> > 5.      Standardize srcu_data pointers to "sdp" and similar.
-> >
-> > 6.      Convert srcu_data ->srcu_reader_flavor to bit field.
-> >
-> > 7.      Add srcu_read_lock_lite() and srcu_read_unlock_lite().
-> >
-> > 8.      rcutorture: Expand RCUTORTURE_RDR_MASK_[12] to eight bits.
-> >
-> > 9.      rcutorture: Add reader_flavor parameter for SRCU readers.
-> >
-> > 10.     rcutorture: Add srcu_read_lock_lite() support to
-> >         rcutorture.reader_flavor.
-> >
-> > 11.     refscale: Add srcu_read_lock_lite() support using "srcu-lite".
-> >
-> >                                                 Thanx, Paul
-> >
-> 
-> Thanks Paul for working on this!
-> 
-> I applied your patches on top of all my uprobe changes (including the
-> RFC patches that remove locks, optimize VMA to inode resolution, etc,
-> etc; basically the fastest uprobe/uretprobe state I can get to). And
-> then tested a few changes:
-> 
->   - A) baseline (no SRCU-lite, RCU Tasks Trace for uprobe, normal SRCU
-> for uretprobes)
->   - B) A + SRCU-lite for uretprobes (i.e., SRCU to SRCU-lite conversion)
->   - C) B + RCU Tasks Trace converted to SRCU-lite
->   - D) I also pessimized baseline by reverting RCU Tasks Trace, so
-> both uprobes and uretprobes are SRCU protected. This allowed me to see
-> a pure gain of SRCU-lite over SRCU for uprobes, taking RCU Tasks Trace
-> performance out of the equation.
-> 
-> In uprobes I used basically two benchmarks. One, uprobe-nop, that
-> benchmarks entry uprobes (which are the fastest most optimized case,
-> using RCU Tasks Trace in A and SRCU in D), and another that benchmarks
-> return uprobes (uretprobes), called uretprobe-nop, which is normal
-> SRCU both in A) and D). The latter uretprobe-nop benchmark basically
-> combines entry and return probe overheads, because that's how
-> uretprobes work.
-> 
-> So, below are the most meaningful comparisons. First, SRCU vs
-> SRCU-lite for uretprobes:
-> 
-> BASELINE (A)
-> ============
-> uretprobe-nop         ( 1 cpus):    1.941 ± 0.002M/s  (  1.941M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    3.731 ± 0.001M/s  (  1.866M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    5.492 ± 0.002M/s  (  1.831M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    7.234 ± 0.003M/s  (  1.808M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   13.448 ± 0.098M/s  (  1.681M/s/cpu)
-> uretprobe-nop         (16 cpus):   22.905 ± 0.009M/s  (  1.432M/s/cpu)
-> uretprobe-nop         (32 cpus):   44.760 ± 0.069M/s  (  1.399M/s/cpu)
-> uretprobe-nop         (40 cpus):   52.986 ± 0.104M/s  (  1.325M/s/cpu)
-> uretprobe-nop         (64 cpus):   43.650 ± 0.435M/s  (  0.682M/s/cpu)
-> uretprobe-nop         (80 cpus):   46.831 ± 0.938M/s  (  0.585M/s/cpu)
-> 
-> SRCU-lite for uretprobe (B)
-> ===========================
-> uretprobe-nop         ( 1 cpus):    2.014 ± 0.014M/s  (  2.014M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    3.820 ± 0.002M/s  (  1.910M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    5.640 ± 0.003M/s  (  1.880M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    7.410 ± 0.003M/s  (  1.852M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   13.877 ± 0.009M/s  (  1.735M/s/cpu)
-> uretprobe-nop         (16 cpus):   23.372 ± 0.022M/s  (  1.461M/s/cpu)
-> uretprobe-nop         (32 cpus):   45.748 ± 0.048M/s  (  1.430M/s/cpu)
-> uretprobe-nop         (40 cpus):   54.327 ± 0.093M/s  (  1.358M/s/cpu)
-> uretprobe-nop         (64 cpus):   43.672 ± 0.371M/s  (  0.682M/s/cpu)
-> uretprobe-nop         (80 cpus):   47.470 ± 0.753M/s  (  0.593M/s/cpu)
-> 
-> You can see that across the board (except for noisy 64 CPU case)
-> SRCU-lite is faster.
-> 
-> 
-> Now, comparing A) vs C) on uprobe-nop, so we can see RCU Tasks Trace
-> vs SRCU-lite for uprobes.
-> 
-> BASELINE (A)
-> ============
-> uprobe-nop            ( 1 cpus):    3.574 ± 0.004M/s  (  3.574M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.735 ± 0.006M/s  (  3.368M/s/cpu)
-> uprobe-nop            ( 3 cpus):   10.102 ± 0.005M/s  (  3.367M/s/cpu)
-> uprobe-nop            ( 4 cpus):   13.087 ± 0.008M/s  (  3.272M/s/cpu)
-> uprobe-nop            ( 8 cpus):   24.622 ± 0.031M/s  (  3.078M/s/cpu)
-> uprobe-nop            (16 cpus):   41.752 ± 0.020M/s  (  2.610M/s/cpu)
-> uprobe-nop            (32 cpus):   84.973 ± 0.115M/s  (  2.655M/s/cpu)
-> uprobe-nop            (40 cpus):  102.229 ± 0.030M/s  (  2.556M/s/cpu)
-> uprobe-nop            (64 cpus):  125.537 ± 0.045M/s  (  1.962M/s/cpu)
-> uprobe-nop            (80 cpus):  143.091 ± 0.044M/s  (  1.789M/s/cpu)
-> 
-> SRCU-lite for uprobes (C)
-> =========================
-> uprobe-nop            ( 1 cpus):    3.446 ± 0.010M/s  (  3.446M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.411 ± 0.003M/s  (  3.206M/s/cpu)
-> uprobe-nop            ( 3 cpus):    9.563 ± 0.039M/s  (  3.188M/s/cpu)
-> uprobe-nop            ( 4 cpus):   12.454 ± 0.016M/s  (  3.113M/s/cpu)
-> uprobe-nop            ( 8 cpus):   23.172 ± 0.013M/s  (  2.897M/s/cpu)
-> uprobe-nop            (16 cpus):   39.793 ± 0.005M/s  (  2.487M/s/cpu)
-> uprobe-nop            (32 cpus):   79.616 ± 0.207M/s  (  2.488M/s/cpu)
-> uprobe-nop            (40 cpus):   96.851 ± 0.128M/s  (  2.421M/s/cpu)
-> uprobe-nop            (64 cpus):  119.432 ± 0.146M/s  (  1.866M/s/cpu)
-> uprobe-nop            (80 cpus):  135.162 ± 0.207M/s  (  1.690M/s/cpu)
-> 
-> 
-> Overall, RCU Tasks Trace beats SRCU-lite, which I think is expected,
-> so consider this just a confirmation. I'm not sure I'd like to switch
-> from RCU Tasks Trace to SRCU-lite for uprobes part, but at least we
-> have numbers to make that decision.
-> 
-> Finally, to see SRCU vs SRCU-lite for entry uprobes improvements
-> (i.e., if we never had RCU Tasks Trace). I've included a bit more
-> extensive set of CPU counts for completeness.
-> 
-> BASELINE w/ SRCU for uprobes (D)
-> ================================
-> uprobe-nop            ( 1 cpus):    3.413 ± 0.003M/s  (  3.413M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.305 ± 0.003M/s  (  3.153M/s/cpu)
-> uprobe-nop            ( 3 cpus):    9.442 ± 0.018M/s  (  3.147M/s/cpu)
-> uprobe-nop            ( 4 cpus):   12.253 ± 0.006M/s  (  3.063M/s/cpu)
-> uprobe-nop            ( 5 cpus):   15.316 ± 0.007M/s  (  3.063M/s/cpu)
-> uprobe-nop            ( 6 cpus):   18.287 ± 0.030M/s  (  3.048M/s/cpu)
-> uprobe-nop            ( 7 cpus):   21.378 ± 0.025M/s  (  3.054M/s/cpu)
-> uprobe-nop            ( 8 cpus):   23.044 ± 0.010M/s  (  2.881M/s/cpu)
-> uprobe-nop            (10 cpus):   28.778 ± 0.012M/s  (  2.878M/s/cpu)
-> uprobe-nop            (12 cpus):   31.300 ± 0.016M/s  (  2.608M/s/cpu)
-> uprobe-nop            (14 cpus):   36.580 ± 0.007M/s  (  2.613M/s/cpu)
-> uprobe-nop            (16 cpus):   38.848 ± 0.017M/s  (  2.428M/s/cpu)
-> uprobe-nop            (24 cpus):   60.298 ± 0.080M/s  (  2.512M/s/cpu)
-> uprobe-nop            (32 cpus):   77.137 ± 1.957M/s  (  2.411M/s/cpu)
-> uprobe-nop            (40 cpus):   89.205 ± 1.278M/s  (  2.230M/s/cpu)
-> uprobe-nop            (48 cpus):   99.207 ± 0.444M/s  (  2.067M/s/cpu)
-> uprobe-nop            (56 cpus):  102.399 ± 0.484M/s  (  1.829M/s/cpu)
-> uprobe-nop            (64 cpus):  115.390 ± 0.972M/s  (  1.803M/s/cpu)
-> uprobe-nop            (72 cpus):  127.476 ± 0.050M/s  (  1.770M/s/cpu)
-> uprobe-nop            (80 cpus):  137.304 ± 0.068M/s  (  1.716M/s/cpu)
-> 
-> SRCU-lite for uprobes (C)
-> =========================
-> uprobe-nop            ( 1 cpus):    3.446 ± 0.010M/s  (  3.446M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.411 ± 0.003M/s  (  3.206M/s/cpu)
-> uprobe-nop            ( 3 cpus):    9.563 ± 0.039M/s  (  3.188M/s/cpu)
-> uprobe-nop            ( 4 cpus):   12.454 ± 0.016M/s  (  3.113M/s/cpu)
-> uprobe-nop            ( 5 cpus):   15.634 ± 0.008M/s  (  3.127M/s/cpu)
-> uprobe-nop            ( 6 cpus):   18.443 ± 0.018M/s  (  3.074M/s/cpu)
-> uprobe-nop            ( 7 cpus):   21.793 ± 0.057M/s  (  3.113M/s/cpu)
-> uprobe-nop            ( 8 cpus):   23.172 ± 0.013M/s  (  2.897M/s/cpu)
-> uprobe-nop            (10 cpus):   29.430 ± 0.021M/s  (  2.943M/s/cpu)
-> uprobe-nop            (12 cpus):   32.035 ± 0.008M/s  (  2.670M/s/cpu)
-> uprobe-nop            (14 cpus):   37.174 ± 0.046M/s  (  2.655M/s/cpu)
-> uprobe-nop            (16 cpus):   39.793 ± 0.005M/s  (  2.487M/s/cpu)
-> uprobe-nop            (24 cpus):   61.656 ± 0.187M/s  (  2.569M/s/cpu)
-> uprobe-nop            (32 cpus):   79.616 ± 0.207M/s  (  2.488M/s/cpu)
-> uprobe-nop            (40 cpus):   96.851 ± 0.128M/s  (  2.421M/s/cpu)
-> uprobe-nop            (48 cpus):  104.178 ± 0.033M/s  (  2.170M/s/cpu)
-> uprobe-nop            (56 cpus):  105.689 ± 0.703M/s  (  1.887M/s/cpu)
-> uprobe-nop            (64 cpus):  119.432 ± 0.146M/s  (  1.866M/s/cpu)
-> uprobe-nop            (72 cpus):  127.574 ± 0.033M/s  (  1.772M/s/cpu)
-> uprobe-nop            (80 cpus):  135.162 ± 0.207M/s  (  1.690M/s/cpu)
-> 
-> So, say, at 32 threads, we get 79.6 vs 77.1, which is about 3%
-> throughput win. Which is not negligible!
-> 
-> Note that as we get to 80 cores data is more noisy (hyperthreading,
-> background system noise, etc). But you can still see an improvement
-> across basically the entire range.
-> 
-> Hopefully the above data is useful.
-
-Thank you very much for running this, Andrii!
-
-And I agree that it is no surprise that Tasks Trace RCU is faster than
-SRCU-lite, but I must confess that I never did expect SRCU's array
-accesses to be free.  And the ability to create multiple independent
-instances of SRCU-lite might compensate in at least some cases.
-
-							Thanx, Paul
-
-> > ------------------------------------------------------------------------
-> >
-> >  Documentation/admin-guide/kernel-parameters.txt   |    4
-> >  b/Documentation/admin-guide/kernel-parameters.txt |    8 +
-> >  b/include/linux/srcu.h                            |   21 +-
-> >  b/include/linux/srcutree.h                        |    2
-> >  b/kernel/rcu/rcutorture.c                         |   28 +--
-> >  b/kernel/rcu/refscale.c                           |   54 +++++--
-> >  b/kernel/rcu/srcutree.c                           |   16 +-
-> >  include/linux/srcu.h                              |   86 +++++++++--
-> >  include/linux/srcutree.h                          |    5
-> >  kernel/rcu/rcutorture.c                           |   37 +++-
-> >  kernel/rcu/srcutree.c                             |  168 +++++++++++++++-------
-> >  11 files changed, 308 insertions(+), 121 deletions(-)
+V2l0aCBhbmQgd2l0aG91dCB0aGUgcGF0Y2gsIEkgZ2V0IHRoZSBzYW1lOg0KDQpMaW51eCByZWRh
+Y3QgNi42LjQ4ICMxLU5peE9TIFNNUCBQUkVFTVBUX0RZTkFNSUMgVHVlIEphbiAgMSAwMDowMDow
+MCBVVEMgMTk4MCB4ODZfNjQgR05VL0xpbnV4DQoNCmFuYWx5emluZyBDUFUgMzE6DQogIGRyaXZl
+cjogYW1kLXBzdGF0ZS1lcHANCiAgQ1BVcyB3aGljaCBydW4gYXQgdGhlIHNhbWUgaGFyZHdhcmUg
+ZnJlcXVlbmN5OiAzMQ0KICBDUFVzIHdoaWNoIG5lZWQgdG8gaGF2ZSB0aGVpciBmcmVxdWVuY3kg
+Y29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6IDMxDQogIG1heGltdW0gdHJhbnNpdGlvbiBsYXRlbmN5
+OiAgQ2Fubm90IGRldGVybWluZSBvciBpcyBub3Qgc3VwcG9ydGVkLg0KICBoYXJkd2FyZSBsaW1p
+dHM6IDQwMCBNSHogLSAyLjE4IEdIeg0KICBhdmFpbGFibGUgY3B1ZnJlcSBnb3Zlcm5vcnM6IHBl
+cmZvcm1hbmNlIHBvd2Vyc2F2ZQ0KICBjdXJyZW50IHBvbGljeTogZnJlcXVlbmN5IHNob3VsZCBi
+ZSB3aXRoaW4gNDAwIE1IeiBhbmQgMi4xOCBHSHouDQogICAgICAgICAgICAgICAgICBUaGUgZ292
+ZXJub3IgInBlcmZvcm1hbmNlIiBtYXkgZGVjaWRlIHdoaWNoIHNwZWVkIHRvIHVzZQ0KICAgICAg
+ICAgICAgICAgICAgd2l0aGluIHRoaXMgcmFuZ2UuDQogIGN1cnJlbnQgQ1BVIGZyZXF1ZW5jeTog
+VW5hYmxlIHRvIGNhbGwgaGFyZHdhcmUNCiAgY3VycmVudCBDUFUgZnJlcXVlbmN5OiAyLjE3IEdI
+eiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBrZXJuZWwpDQogIGJvb3N0IHN0YXRlIHN1cHBvcnQ6DQog
+ICAgU3VwcG9ydGVkOiB5ZXMNCiAgICBBY3RpdmU6IHllcw0KICAgIEFNRCBQU1RBVEUgSGlnaGVz
+dCBQZXJmb3JtYW5jZTogMTY2LiBNYXhpbXVtIEZyZXF1ZW5jeTogMi4xOCBHSHouDQogICAgQU1E
+IFBTVEFURSBOb21pbmFsIFBlcmZvcm1hbmNlOiAxNTIuIE5vbWluYWwgRnJlcXVlbmN5OiAyLjAw
+IEdIei4NCiAgICBBTUQgUFNUQVRFIExvd2VzdCBOb24tbGluZWFyIFBlcmZvcm1hbmNlOiAxMTUu
+IExvd2VzdCBOb24tbGluZWFyIEZyZXF1ZW5jeTogMS41MSBHSHouDQogICAgQU1EIFBTVEFURSBM
+b3dlc3QgUGVyZm9ybWFuY2U6IDMxLiBMb3dlc3QgRnJlcXVlbmN5OiA0MDAgTUh6Lg0KDQoNCi0t
+LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBNYXJpbyBMaW1vbmNpZWxsbyA8bWFyaW8u
+bGltb25jaWVsbG9AYW1kLmNvbT4gDQpTZW50OiBUdWVzZGF5LCBTZXB0ZW1iZXIgMywgMjAyNCAx
+OjUyIFBNDQpUbzogSm9uZXMsIE1vcmdhbiA8TW9yZ2FuLkpvbmVzQHZpYXNhdC5jb20+OyBEaGFu
+YW5qYXkgVWd3ZWthciA8RGhhbmFuamF5LlVnd2VrYXJAYW1kLmNvbT47IHJhZmFlbEBrZXJuZWwu
+b3JnOyB2aXJlc2gua3VtYXJAbGluYXJvLm9yZzsgZ2F1dGhhbS5zaGVub3lAYW1kLmNvbTsgcGVy
+cnkueXVhbkBhbWQuY29tOyBza2hhbkBsaW51eGZvdW5kYXRpb24ub3JnOyBsaS5tZW5nQGFtZC5j
+b207IHJheS5odWFuZ0BhbWQuY29tDQpDYzogbGludXgtcG1Admdlci5rZXJuZWwub3JnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBEYXZpZCBBcmNhcmkgPGRhcmNhcmlAcmVkaGF0LmNv
+bT4NClN1YmplY3Q6IFJlOiBbRVhURVJOQUxdIFJlOiBbUEFUQ0ggdjIgMi8yXSBjcHVmcmVxL2Ft
+ZC1wc3RhdGU6IEZpeCB0aGUgc2NhbGluZ19tYXhfZnJlcSBzZXR0aW5nIG9uIHNoYXJlZCBtZW1v
+cnkgQ1BQQyBzeXN0ZW1zDQoNCk1vcmdhbiwNCg0KVGhpcyBkb2VzIHJlbWluZCBtZSBvZiBhIGNs
+YW1waW5nIGlzc3VlIHRoYXQgdG91Y2hlcyBzb21lIG9mIHRoZSBzYW1lIHZhcmlhYmxlcy4gIENh
+biB5b3UgcGxlYXNlIHNlZSBpZiBiYWNrcG9ydGluZw0KDQpjb21taXQgODE2NGY3NDMzMjY0ICgi
+Y3B1ZnJlcTogYW1kLXBzdGF0ZTogYWRqdXN0IG1pbi9tYXggbGltaXQgcGVyZiIpDQoNCnRvIDYu
+Ni55IGhlbHBzIGZvciB5b3U/DQoNClRoYW5rcywNCg0KT24gOS8zLzIwMjQgMTU6MDksIE1hcmlv
+IExpbW9uY2llbGxvIHdyb3RlOg0KPiBNb3JnYW4sDQo+IA0KPiBPSyB0aGF0J3MgZ3JlYXQgbmV3
+cyB0aGF0IGl0J3MganVzdCBhIGJhY2twb3J0IGVmZm9ydC7CoCBUaGF0IHNhbWUgDQo+IGNvbW1p
+dCBhbHNvIGJhY2twb3J0ZWQgdG8gNi4xMC4zLsKgIENhbiB5b3Ugc2VlIGlmIDYuMTAueSBpcyBh
+ZmZlY3RlZD8NCj4gDQo+IFVnd2VrYXIsDQo+IA0KPiBBbnkgdGhvdWdodHMgb24gd2hhdCBlbHNl
+IG5lZWRzIHRvIGNvbWUgYmFjayB0byA2LjYueSBvZmYgaGFuZD8NCj4gDQo+IFRoYW5rcywNCj4g
+DQo+IE9uIDkvMy8yMDI0IDE1OjA3LCBKb25lcywgTW9yZ2FuIHdyb3RlOg0KPj4gSGV5IE1hcmlv
+LA0KPj4NCj4+IFNtb2tpbmcgZ3VuIGhlcmUsIHRoZSBtYXggZnJlcXVlbmN5IGlzIGluY29ycmVj
+dCBvbiA2LjYuNDQrIGJ1dCBpcyANCj4+IGNvcnJlY3Qgb24gNi4xMS4wLXJjNi4NCj4+DQo+PiBM
+aW51eCByZWRhY3QgNi4xMS4wLXJjNiAjMS1OaXhPUyBTTVAgUFJFRU1QVF9EWU5BTUlDIFR1ZSBK
+YW7CoCAxDQo+PiAwMDowMDowMCBVVEMgMTk4MCB4ODZfNjQgR05VL0xpbnV4DQo+Pg0KPj4gYW5h
+bHl6aW5nIENQVSAxMjoNCj4+IMKgwqAgZHJpdmVyOiBhbWQtcHN0YXRlLWVwcA0KPj4gwqDCoCBD
+UFVzIHdoaWNoIHJ1biBhdCB0aGUgc2FtZSBoYXJkd2FyZSBmcmVxdWVuY3k6IDEyDQo+PiDCoMKg
+IENQVXMgd2hpY2ggbmVlZCB0byBoYXZlIHRoZWlyIGZyZXF1ZW5jeSBjb29yZGluYXRlZCBieSBz
+b2Z0d2FyZTogDQo+PiAxMg0KPj4gwqDCoCBtYXhpbXVtIHRyYW5zaXRpb24gbGF0ZW5jeTrCoCBD
+YW5ub3QgZGV0ZXJtaW5lIG9yIGlzIG5vdCBzdXBwb3J0ZWQuDQo+PiDCoMKgIGhhcmR3YXJlIGxp
+bWl0czogNDAwIE1IeiAtIDMuMzUgR0h6DQo+PiDCoMKgIGF2YWlsYWJsZSBjcHVmcmVxIGdvdmVy
+bm9yczogcGVyZm9ybWFuY2UgcG93ZXJzYXZlDQo+PiDCoMKgIGN1cnJlbnQgcG9saWN5OiBmcmVx
+dWVuY3kgc2hvdWxkIGJlIHdpdGhpbiA0MDAgTUh6IGFuZCAzLjM1IEdIei4NCj4+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUaGUgZ292ZXJub3IgInBlcmZvcm1hbmNlIiBt
+YXkgZGVjaWRlIHdoaWNoIHNwZWVkIA0KPj4gdG8gdXNlDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgd2l0aGluIHRoaXMgcmFuZ2UuDQo+PiDCoMKgIGN1cnJlbnQgQ1BV
+IGZyZXF1ZW5jeTogVW5hYmxlIHRvIGNhbGwgaGFyZHdhcmUNCj4+IMKgwqAgY3VycmVudCBDUFUg
+ZnJlcXVlbmN5OiAzLjM0IEdIeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBrZXJuZWwpDQo+PiDCoMKg
+IGJvb3N0IHN0YXRlIHN1cHBvcnQ6DQo+PiDCoMKgwqDCoCBTdXBwb3J0ZWQ6IHllcw0KPj4gwqDC
+oMKgwqAgQWN0aXZlOiB5ZXMNCj4+IMKgwqDCoMKgIEFNRCBQU1RBVEUgSGlnaGVzdCBQZXJmb3Jt
+YW5jZTogMjU1LiBNYXhpbXVtIEZyZXF1ZW5jeTogMy4zNSBHSHouDQo+PiDCoMKgwqDCoCBBTUQg
+UFNUQVRFIE5vbWluYWwgUGVyZm9ybWFuY2U6IDE1Mi4gTm9taW5hbCBGcmVxdWVuY3k6IDIuMDAg
+R0h6Lg0KPj4gwqDCoMKgwqAgQU1EIFBTVEFURSBMb3dlc3QgTm9uLWxpbmVhciBQZXJmb3JtYW5j
+ZTogMTE1LiBMb3dlc3QgTm9uLWxpbmVhcg0KPj4gRnJlcXVlbmN5OiAxLjUxIEdIei4NCj4+IMKg
+wqDCoMKgIEFNRCBQU1RBVEUgTG93ZXN0IFBlcmZvcm1hbmNlOiAzMS4gTG93ZXN0IEZyZXF1ZW5j
+eTogNDAwIE1Iei4NCj4+DQo+PiBXZSdyZSBydW5uaW5nIGFtZF9wc3RhdGU9YWN0aXZlIGFuZCBh
+bWRfcHN0YXRlLnNoYXJlZF9tZW09MSwgYW5kIG91ciANCj4+IHdvcmtsb2FkcyBhcmUgYmFjayB0
+byBub3JtYWwgcGVyZm9ybWFuY2Ugb24gNi4xMS4wLXJjNi4NCj4+DQo+PiBNb3JnYW4NCj4+DQo+
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4gRnJvbTogTWFyaW8gTGltb25jaWVsbG8g
+PG1hcmlvLmxpbW9uY2llbGxvQGFtZC5jb20+DQo+PiBTZW50OiBUdWVzZGF5LCBTZXB0ZW1iZXIg
+MywgMjAyNCAxMDo1NSBBTQ0KPj4gVG86IEpvbmVzLCBNb3JnYW4gPE1vcmdhbi5Kb25lc0B2aWFz
+YXQuY29tPjsgRGhhbmFuamF5IFVnd2VrYXIgDQo+PiA8RGhhbmFuamF5LlVnd2VrYXJAYW1kLmNv
+bT47IHJhZmFlbEBrZXJuZWwub3JnOyANCj4+IHZpcmVzaC5rdW1hckBsaW5hcm8ub3JnOyBnYXV0
+aGFtLnNoZW5veUBhbWQuY29tOyBwZXJyeS55dWFuQGFtZC5jb207IA0KPj4gc2toYW5AbGludXhm
+b3VuZGF0aW9uLm9yZzsgbGkubWVuZ0BhbWQuY29tOyByYXkuaHVhbmdAYW1kLmNvbQ0KPj4gQ2M6
+IGxpbnV4LXBtQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+RGF2aWQgDQo+PiBBcmNhcmkgPGRhcmNhcmlAcmVkaGF0LmNvbT4NCj4+IFN1YmplY3Q6IFtFWFRF
+Uk5BTF0gUmU6IFtQQVRDSCB2MiAyLzJdIGNwdWZyZXEvYW1kLXBzdGF0ZTogRml4IHRoZSANCj4+
+IHNjYWxpbmdfbWF4X2ZyZXEgc2V0dGluZyBvbiBzaGFyZWQgbWVtb3J5IENQUEMgc3lzdGVtcw0K
+Pj4NCj4+IEhpIE1vcmdhbiwNCj4+DQo+PiBDYW4geW91IHBsZWFzZSBjcm9zcyByZWZlcmVuY2Ug
+Ni4xMS1yYzYgdG8gc2VlIGlmIHlvdSdyZSBzdGlsbCBoYXZpbmcgDQo+PiBhIHByb2JsZW0/wqAg
+SSB3b3VsZCBsaWtlIHRvIHVuZGVyc3RhbmQgaWYgd2UncmUgbWlzc2luZyBhIGJhY2twb3J0IHRv
+IA0KPj4gc3RhYmxlIG9yIHRoaXMgaXMgc3RpbGwgYW4gdXBzdHJlYW0gcHJvYmxlbS4NCj4+DQo+
+PiBUaGFua3MsDQo+Pg0KPj4gT24gOS8zLzIwMjQgMTI6NTEsIEpvbmVzLCBNb3JnYW4gd3JvdGU6
+DQo+Pj4gSGkgdGhlcmUsDQo+Pj4NCj4+PiBXZSBhcmUgZXhwZXJpZW5jaW5nIGEgfjM1JSBwZXJm
+b3JtYW5jZSByZWdyZXNzaW9uIG9uIGFuIEFNRCBFUFlDIA0KPj4+IDc3MDINCj4+PiA2NCBjb3Jl
+IG1hY2hpbmUgYWZ0ZXIgYXBwbHlpbmcgdGhpcyBwYXRjaC4gV2Ugb2JzZXJ2ZWQgTGludXggNi42
+LjQ0IA0KPj4+IHN0YXJ0aW5nIHRvIGNhdXNlIHRoZSBpc3N1ZSwgYW5kIHBlcmZvcm1lZCBhIGJp
+c2VjdCBpbnZvbHZpbmcgDQo+Pj4gcmVib290aW5nIHRoZSBtYWNoaW5lIG92ZXIgMTUgdGltZXMu
+IChOb3RlIHRoYXQga2V4ZWMgZGlkbid0IA0KPj4+IHN1Y2Nlc3NmdWxseSBpZGVudGlmeSB0aGUg
+cHJvYmxlbSwgc2luY2UgdGhlIFBNIG1lbW9yeSBtYWlsYm94IGlzIA0KPj4+IG5ldmVyIHJlc2V0
+KS4NCj4+Pg0KPj4+IEl0IGFwcGVhcnMgdGhhdCB3ZSBhcmUgZ2V0dGluZyBhIG1heCBvZiAyLjE4
+IEdIeiB3aGVuIHRoaXMgQ1BVIGNhbiANCj4+PiBib29zdCB0byAzLjM1IEdIeiwgZXhwbGFpbmlu
+ZyB0aGUgc2xvd2Rvd24uIEJsYWNrbGlzdGluZyBhbWQtcHN0YXRlIA0KPj4+IHNvbHZlcyB0aGUg
+aXNzdWUgYXQgdGhlIGV4cGVuc2Ugb2YgdGhlIHBlcmZvcm1hbmNlIGluY3JlYXNlIHdlIHVzZWQg
+DQo+Pj4gdG8gZ2V0IGJ5IHVzaW5nIGl0Lg0KPj4+DQo+Pj4gSXMgaXQgcG9zc2libGUgdGhhdCB0
+aGUgdXBwZXIgbGltaXRzIHdlcmUgaW1wbGljaXRseSBhdCB0aGUgbWF4IENQVSANCj4+PiBwb3dl
+ciBiZWZvcmUsIGFuZCBzZXR0aW5nIHRoZSB1cHBlciBsaW1pdCB0byBzb21ldGhpbmcgb3RoZXIg
+dGhhbiANCj4+PiB0aGUgYm9vc3QgZnJlcXVlbmN5IGNhbiByZWR1Y2UgcGVyZm9ybWFuY2Ugbm93
+Pw0KPj4+DQo+Pj4gIyBiYWQ6IFs3MjEzOTEwNjAwNjY3YzUxYzk3OGU1NzdiZjU0NTRkM2Y3YjMx
+M2I3XSBMaW51eCA2LjYuNDQgIyBnb29kOg0KPj4+IFs1OGIwNDI1ZmY1ZGY2ODBkMGI2N2Y2NGFl
+MWYzZjFlYmRmMWM0ZGU5XSBMaW51eCA2LjYuNDMgZ2l0IGJpc2VjdCANCj4+PiBzdGFydCAnNzIx
+MzkxMDYwMDY2N2M1MWM5NzhlNTc3YmY1NDU0ZDNmN2IzMTNiNycNCj4+PiAnNThiMDQyNWZmNWRm
+NjgwZDBiNjdmNjRhZTFmM2YxZWJkZjFjNGRlOScNCj4+PiAjIGdvb2Q6IFs3MmZmOWQyNjk2NGEz
+YTgwZjc2NTBkZjcxOWRmMTM5ZjVjMWY5NjVkXSBhcm02NDogZHRzOiBxY29tOg0KPj4+IHNtNjM1
+MDogQWRkIG1pc3NpbmcgcWNvbSxub24tc2VjdXJlLWRvbWFpbiBwcm9wZXJ0eSBnaXQgYmlzZWN0
+IGdvb2QgDQo+Pj4gNzJmZjlkMjY5NjRhM2E4MGY3NjUwZGY3MTlkZjEzOWY1YzFmOTY1ZA0KPj4+
+ICMgZ29vZDogWzBmZmZjMmUxYmY0MGEyMjIwZWY1YTM4ZjgzNGVhMDYzZGJhODMyZDNdIEFSTTog
+ZHRzOiBzdW54aToNCj4+PiByZW1vdmUgZHVwbGljYXRlZCBlbnRyaWVzIGluIG1ha2VmaWxlIGdp
+dCBiaXNlY3QgZ29vZA0KPj4+IDBmZmZjMmUxYmY0MGEyMjIwZWY1YTM4ZjgzNGVhMDYzZGJhODMy
+ZDMNCj4+PiAjIGJhZDogWzhjZGJlNmViZmQxNzYzYTVjNDFhMmEzMDU4NDk3YzBhOTE2MzMxMWNd
+IHBpbmN0cmw6IHJlbmVzYXM6DQo+Pj4gcjhhNzc5ZzA6IEZpeCBDQU5GRDUgc3VmZml4IGdpdCBi
+aXNlY3QgYmFkIA0KPj4+IDhjZGJlNmViZmQxNzYzYTVjNDFhMmEzMDU4NDk3YzBhOTE2MzMxMWMN
+Cj4+PiAjIGJhZDogWzVkYmI5OGU3ZmE0MmJlYmMxMzI1ODk5MTkzZDhmMTNmMDcwNWExNDhdIGRy
+bS9tZWRpYXRlazogVHVybiANCj4+PiBvZmYgdGhlIGxheWVycyB3aXRoIHplcm8gd2lkdGggb3Ig
+aGVpZ2h0IGdpdCBiaXNlY3QgYmFkDQo+Pj4gNWRiYjk4ZTdmYTQyYmViYzEzMjU4OTkxOTNkOGYx
+M2YwNzA1YTE0OA0KPj4+ICMgYmFkOiBbNjkxZWM3MDQzMTIyYzljOGM0NmQ4NGY2ZTZjZDg1ZDEz
+ZDUwY2Q5M10gc2VsZnRlc3RzL2JwZjogDQo+Pj4gTnVsbCBjaGVja3MgZm9yIGxpbmtzIGluIGJw
+Zl90Y3BfY2EgZ2l0IGJpc2VjdCBiYWQNCj4+PiA2OTFlYzcwNDMxMjJjOWM4YzQ2ZDg0ZjZlNmNk
+ODVkMTNkNTBjZDkzDQo+Pj4gIyBiYWQ6IFthMTM1OWUwODVkNzVkNzM5M2EyNTAwNTRlNjZjMGE3
+YmM2YzNkYmZhXSBwZXJmL3g4NjogDQo+Pj4gU2VyaWFsaXplDQo+Pj4gc2V0X2F0dHJfcmRwbWMo
+KSBnaXQgYmlzZWN0IGJhZA0KPj4+IGExMzU5ZTA4NWQ3NWQ3MzkzYTI1MDA1NGU2NmMwYTdiYzZj
+M2RiZmENCj4+PiAjIGJhZDogW2U5OWQ5YjE2ZmYxNTNkZTk1NDAwNzMyMzlkMjRhZGMzYjBhM2E5
+OTddIHdpZmk6IGF0aDEyazogDQo+Pj4gY2hhbmdlIERNQSBkaXJlY3Rpb24gd2hpbGUgbWFwcGlu
+ZyByZWluamVjdGVkIHBhY2tldHMgZ2l0IGJpc2VjdCBiYWQNCj4+PiBlOTlkOWIxNmZmMTUzZGU5
+NTQwMDczMjM5ZDI0YWRjM2IwYTNhOTk3DQo+Pj4gIyBiYWQ6IFtkMDI3YWM0YTA4NTQxYmViMmE4
+OTU2M2QzZTAzNGRhNzA4NTA1MGJhXSBmaXJtd2FyZToNCj4+PiB0dXJyaXMtbW94LXJ3dG06IElu
+aXRpYWxpemUgY29tcGxldGlvbiBiZWZvcmUgbWFpbGJveCBnaXQgYmlzZWN0IGJhZCANCj4+PiBk
+MDI3YWM0YTA4NTQxYmViMmE4OTU2M2QzZTAzNGRhNzA4NTA1MGJhDQo+Pj4gIyBiYWQ6IFtlNmM5
+ZWNhMzI3ZTZhNDFhODFlN2ViYTBkMGRkYzEzZGEzN2Y4MmExXSBBUk06IHNwaXR6OiBmaXggDQo+
+Pj4gR1BJTyBhc3NpZ25tZW50IGZvciBiYWNrbGlnaHQgZ2l0IGJpc2VjdCBiYWQNCj4+PiBlNmM5
+ZWNhMzI3ZTZhNDFhODFlN2ViYTBkMGRkYzEzZGEzN2Y4MmExDQo+Pj4gIyBiYWQ6IFtiOGNkZWZk
+YWE1NTViYmZjMjY5YzIxOTg4MDNmODc5MWE4OTIzOTYwXSBtNjhrOiBjbXB4Y2hnOiBGaXggDQo+
+Pj4gcmV0dXJuIHZhbHVlIGZvciBkZWZhdWx0IGNhc2UgaW4gX19hcmNoX3hjaGcoKSBnaXQgYmlz
+ZWN0IGJhZA0KPj4+IGI4Y2RlZmRhYTU1NWJiZmMyNjljMjE5ODgwM2Y4NzkxYTg5MjM5NjANCj4+
+PiAjIGJhZDogWzEzYTcxMzg0YWU2YTg3NzlkYTgwOWIwMGM2ZjM3OGRjZWFkMTA0MjddIGNwdWZy
+ZXEvYW1kLXBzdGF0ZToNCj4+PiBGaXggdGhlIHNjYWxpbmdfbWF4X2ZyZXEgc2V0dGluZyBvbiBz
+aGFyZWQgbWVtb3J5IENQUEMgc3lzdGVtcyBnaXQgDQo+Pj4gYmlzZWN0IGJhZCAxM2E3MTM4NGFl
+NmE4Nzc5ZGE4MDliMDBjNmYzNzhkY2VhZDEwNDI3DQo+Pj4gIyBmaXJzdCBiYWQgY29tbWl0OiBb
+MTNhNzEzODRhZTZhODc3OWRhODA5YjAwYzZmMzc4ZGNlYWQxMDQyN10NCj4+PiBjcHVmcmVxL2Ft
+ZC1wc3RhdGU6IEZpeCB0aGUgc2NhbGluZ19tYXhfZnJlcSBzZXR0aW5nIG9uIHNoYXJlZCANCj4+
+PiBtZW1vcnkgQ1BQQyBzeXN0ZW1zDQo+Pj4NCj4+PiBjcHVwb3dlciBvdXRwdXQ6DQo+Pj4NCj4+
+PiBhbmFseXppbmcgQ1BVIDQ3Og0KPj4+IMKgwqDCoCBkcml2ZXI6IGFtZC1wc3RhdGUtZXBwDQo+
+Pj4gwqDCoMKgIENQVXMgd2hpY2ggcnVuIGF0IHRoZSBzYW1lIGhhcmR3YXJlIGZyZXF1ZW5jeTog
+NDcNCj4+PiDCoMKgwqAgQ1BVcyB3aGljaCBuZWVkIHRvIGhhdmUgdGhlaXIgZnJlcXVlbmN5IGNv
+b3JkaW5hdGVkIGJ5IHNvZnR3YXJlOiANCj4+PiA0Nw0KPj4+IMKgwqDCoCBtYXhpbXVtIHRyYW5z
+aXRpb24gbGF0ZW5jeTrCoCBDYW5ub3QgZGV0ZXJtaW5lIG9yIGlzIG5vdCBzdXBwb3J0ZWQuDQo+
+Pj4gwqDCoMKgIGhhcmR3YXJlIGxpbWl0czogNDAwIE1IeiAtIDIuMTggR0h6DQo+Pj4gwqDCoMKg
+IGF2YWlsYWJsZSBjcHVmcmVxIGdvdmVybm9yczogcGVyZm9ybWFuY2UgcG93ZXJzYXZlDQo+Pj4g
+wqDCoMKgIGN1cnJlbnQgcG9saWN5OiBmcmVxdWVuY3kgc2hvdWxkIGJlIHdpdGhpbiA0MDAgTUh6
+IGFuZCAyLjE4IEdIei4NCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBUaGUgZ292ZXJub3IgInBlcmZvcm1hbmNlIiBtYXkgZGVjaWRlIHdoaWNoIA0KPj4+IHNwZWVk
+IHRvIHVzZQ0KPj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdpdGhp
+biB0aGlzIHJhbmdlLg0KPj4+IMKgwqDCoCBjdXJyZW50IENQVSBmcmVxdWVuY3k6IFVuYWJsZSB0
+byBjYWxsIGhhcmR3YXJlDQo+Pj4gwqDCoMKgIGN1cnJlbnQgQ1BVIGZyZXF1ZW5jeTogMi4xNyBH
+SHogKGFzc2VydGVkIGJ5IGNhbGwgdG8ga2VybmVsKQ0KPj4+IMKgwqDCoCBib29zdCBzdGF0ZSBz
+dXBwb3J0Og0KPj4+IMKgwqDCoMKgwqAgU3VwcG9ydGVkOiB5ZXMNCj4+PiDCoMKgwqDCoMKgIEFj
+dGl2ZTogeWVzDQo+Pj4gwqDCoMKgwqDCoCBBTUQgUFNUQVRFIEhpZ2hlc3QgUGVyZm9ybWFuY2U6
+IDE2Ni4gTWF4aW11bSBGcmVxdWVuY3k6IDIuMTggR0h6Lg0KPj4+IMKgwqDCoMKgwqAgQU1EIFBT
+VEFURSBOb21pbmFsIFBlcmZvcm1hbmNlOiAxNTIuIE5vbWluYWwgRnJlcXVlbmN5OiAyLjAwIEdI
+ei4NCj4+PiDCoMKgwqDCoMKgIEFNRCBQU1RBVEUgTG93ZXN0IE5vbi1saW5lYXIgUGVyZm9ybWFu
+Y2U6IDExNS4gTG93ZXN0IA0KPj4+IE5vbi1saW5lYXIgRnJlcXVlbmN5OiAxLjUxIEdIei4NCj4+
+PiDCoMKgwqDCoMKgIEFNRCBQU1RBVEUgTG93ZXN0IFBlcmZvcm1hbmNlOiAzMS4gTG93ZXN0IEZy
+ZXF1ZW5jeTogNDAwIE1Iei4NCj4+Pg0KPj4+IFRoYW5rcywNCj4+PiBNb3JnYW4NCj4+Pg0KPj4+
+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+Pj4gRnJvbTogTWFyaW8gTGltb25jaWVsbG8g
+PG1hcmlvLmxpbW9uY2llbGxvQGFtZC5jb20+DQo+Pj4gU2VudDogVHVlc2RheSwgSnVseSAyLCAy
+MDI0IDEwOjQ5IEFNDQo+Pj4gVG86IERoYW5hbmpheSBVZ3dla2FyIDxEaGFuYW5qYXkuVWd3ZWth
+ckBhbWQuY29tPjsgDQo+Pj4gcmFmYWVsQGtlcm5lbC5vcmc7IHZpcmVzaC5rdW1hckBsaW5hcm8u
+b3JnOyBnYXV0aGFtLnNoZW5veUBhbWQuY29tOyANCj4+PiBwZXJyeS55dWFuQGFtZC5jb207IHNr
+aGFuQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGxpLm1lbmdAYW1kLmNvbTsgDQo+Pj4gcmF5Lmh1YW5n
+QGFtZC5jb20NCj4+PiBDYzogbGludXgtcG1Admdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnOyBEYXZpZCANCj4+PiBBcmNhcmkgPGRhcmNhcmlAcmVkaGF0LmNvbT4N
+Cj4+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDIvMl0gY3B1ZnJlcS9hbWQtcHN0YXRlOiBGaXgg
+dGhlIA0KPj4+IHNjYWxpbmdfbWF4X2ZyZXEgc2V0dGluZyBvbiBzaGFyZWQgbWVtb3J5IENQUEMg
+c3lzdGVtcw0KPj4+DQo+Pj4gT24gNy8yLzIwMjQgMzoxNCwgRGhhbmFuamF5IFVnd2VrYXIgd3Jv
+dGU6DQo+Pj4+IE9uIHNoYXJlZCBtZW1vcnkgQ1BQQyBzeXN0ZW1zLCB3aXRoIGFtZF9wc3RhdGU9
+YWN0aXZlIG1vZGUsIHRoZSANCj4+Pj4gY2hhbmdlIGluIHNjYWxpbmdfbWF4X2ZyZXEgZG9lc24n
+dCBnZXQgd3JpdHRlbiB0byB0aGUgc2hhcmVkIG1lbW9yeSANCj4+Pj4gcmVnaW9uLg0KPj4+PiBE
+dWUgdG8gdGhpcywgdGhlIHdyaXRlcyB0byB0aGUgc2NhbGluZ19tYXhfZnJlcSBzeXNmcyBmaWxl
+IGRvbid0IA0KPj4+PiB0YWtlIGVmZmVjdC4gRml4IHRoaXMgYnkgcHJvcGFnYXRpbmcgdGhlIHNj
+YWxpbmdfbWF4X2ZyZXEgY2hhbmdlcyANCj4+Pj4gdG8gdGhlIHNoYXJlZCBtZW1vcnkgcmVnaW9u
+Lg0KPj4+Pg0KPj4+PiBGaXhlczogZmZhNTA5NmE3YzMzICgiY3B1ZnJlcTogYW1kLXBzdGF0ZTog
+aW1wbGVtZW50IFBzdGF0ZSBFUFAgDQo+Pj4+IHN1cHBvcnQgZm9yIHRoZSBBTUQgcHJvY2Vzc29y
+cyIpDQo+Pj4+IFJlcG9ydGVkLWJ5OiBEYXZpZCBBcmNhcmkgPGRhcmNhcmlAcmVkaGF0LmNvbT4N
+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogRGhhbmFuamF5IFVnd2VrYXIgPERoYW5hbmpheS5VZ3dla2Fy
+QGFtZC5jb20+DQo+Pj4gUmV2aWV3ZWQtYnk6IE1hcmlvIExpbW9uY2llbGxvIDxtYXJpby5saW1v
+bmNpZWxsb0BhbWQuY29tPg0KPj4+PiAtLS0NCj4+Pj4gwqDCoMKgIGRyaXZlcnMvY3B1ZnJlcS9h
+bWQtcHN0YXRlLmMgfCA0Mw0KPj4+PiArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0NCj4+Pj4gwqDCoMKgIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCAyMCBkZWxl
+dGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9hbWQtcHN0
+YXRlLmMgDQo+Pj4+IGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYyBpbmRleCA5YWQ2MmRi
+ZThiZmIuLmEwOTJiMTNmZmJjMg0KPj4+PiAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9jcHVm
+cmVxL2FtZC1wc3RhdGUuYw0KPj4+PiArKysgYi9kcml2ZXJzL2NwdWZyZXEvYW1kLXBzdGF0ZS5j
+DQo+Pj4+IEBAIC0yNDcsNiArMjQ3LDI2IEBAIHN0YXRpYyBpbnQNCj4+Pj4gYW1kX3BzdGF0ZV9n
+ZXRfZW5lcmd5X3ByZWZfaW5kZXgoc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhKQ0KPj4+PiDC
+oMKgwqDCoMKgwqDCoCByZXR1cm4gaW5kZXg7DQo+Pj4+IMKgwqDCoCB9DQo+Pj4+ICtzdGF0aWMg
+dm9pZCBwc3RhdGVfdXBkYXRlX3BlcmYoc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhLCB1MzIN
+Cj4+Pj4gbWluX3BlcmYsDQo+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgdTMyIGRlc19wZXJmLCB1MzIgbWF4X3BlcmYsIGJvb2wgZmFzdF9zd2l0Y2gpIHsNCj4+Pj4g
+K8KgwqDCoCBpZiAoZmFzdF9zd2l0Y2gpDQo+Pj4+ICvCoMKgwqDCoMKgwqDCoCB3cm1zcmwoTVNS
+X0FNRF9DUFBDX1JFUSwgDQo+Pj4+ICtSRUFEX09OQ0UoY3B1ZGF0YS0+Y3BwY19yZXFfY2FjaGVk
+KSk7DQo+Pj4+ICvCoMKgwqAgZWxzZQ0KPj4+PiArwqDCoMKgwqDCoMKgwqAgd3Jtc3JsX29uX2Nw
+dShjcHVkYXRhLT5jcHUsIE1TUl9BTURfQ1BQQ19SRVEsDQo+Pj4+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIFJFQURfT05DRShjcHVkYXRhLT5jcHBjX3JlcV9jYWNoZWQpKTsN
+Cj4+Pj4gK30NCj4+Pj4gKw0KPj4+PiArREVGSU5FX1NUQVRJQ19DQUxMKGFtZF9wc3RhdGVfdXBk
+YXRlX3BlcmYsIHBzdGF0ZV91cGRhdGVfcGVyZik7DQo+Pj4+ICsNCj4+Pj4gK3N0YXRpYyBpbmxp
+bmUgdm9pZCBhbWRfcHN0YXRlX3VwZGF0ZV9wZXJmKHN0cnVjdCBhbWRfY3B1ZGF0YSANCj4+Pj4g
+KypjcHVkYXRhLA0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHUzMiBtaW5fcGVyZiwgdTMyIGRlc19wZXJmLA0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHUzMiBtYXhfcGVyZiwgYm9vbCBmYXN0X3N3aXRjaCkg
+ew0KPj4+PiArwqDCoMKgIHN0YXRpY19jYWxsKGFtZF9wc3RhdGVfdXBkYXRlX3BlcmYpKGNwdWRh
+dGEsIG1pbl9wZXJmLCANCj4+Pj4gK2Rlc19wZXJmLA0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBtYXhfcGVyZiwgZmFzdF9zd2l0Y2gpOyB9DQo+
+Pj4+ICsNCj4+Pj4gwqDCoMKgIHN0YXRpYyBpbnQgYW1kX3BzdGF0ZV9zZXRfZXBwKHN0cnVjdCBh
+bWRfY3B1ZGF0YSAqY3B1ZGF0YSwgdTMyIA0KPj4+PiBlcHApDQo+Pj4+IMKgwqDCoCB7DQo+Pj4+
+IMKgwqDCoMKgwqDCoMKgIGludCByZXQ7DQo+Pj4+IEBAIC0yNjMsNiArMjgzLDkgQEAgc3RhdGlj
+IGludCBhbWRfcHN0YXRlX3NldF9lcHAoc3RydWN0IA0KPj4+PiBhbWRfY3B1ZGF0YSAqY3B1ZGF0
+YSwgdTMyIGVwcCkNCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoIXJldCkNCj4+Pj4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNwdWRhdGEtPmVwcF9jYWNoZWQgPSBlcHA7
+DQo+Pj4+IMKgwqDCoMKgwqDCoMKgIH0gZWxzZSB7DQo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBhbWRf
+cHN0YXRlX3VwZGF0ZV9wZXJmKGNwdWRhdGEsIGNwdWRhdGEtPm1pbl9saW1pdF9wZXJmLCANCj4+
+Pj4gKzBVLA0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIGNwdWRhdGEtPm1heF9saW1pdF9wZXJmLCBmYWxzZSk7DQo+Pj4+ICsNCj4+Pj4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBwZXJmX2N0cmxzLmVuZXJneV9wZXJmID0gZXBwOw0KPj4+PiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldCA9IGNwcGNfc2V0X2VwcF9wZXJmKGNwdWRhdGEtPmNw
+dSwgJnBlcmZfY3RybHMsIDEpOw0KPj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChyZXQp
+IHsNCj4+Pj4gQEAgLTQ1MiwxNiArNDc1LDYgQEAgc3RhdGljIGlubGluZSBpbnQgYW1kX3BzdGF0
+ZV9pbml0X3BlcmYoc3RydWN0IA0KPj4+PiBhbWRfY3B1ZGF0YSAqY3B1ZGF0YSkNCj4+Pj4gwqDC
+oMKgwqDCoMKgwqAgcmV0dXJuIHN0YXRpY19jYWxsKGFtZF9wc3RhdGVfaW5pdF9wZXJmKShjcHVk
+YXRhKTsNCj4+Pj4gwqDCoMKgIH0NCj4+Pj4gLXN0YXRpYyB2b2lkIHBzdGF0ZV91cGRhdGVfcGVy
+ZihzdHJ1Y3QgYW1kX2NwdWRhdGEgKmNwdWRhdGEsIHUzMiANCj4+Pj4gbWluX3BlcmYsDQo+Pj4+
+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdTMyIGRlc19wZXJmLCB1MzIg
+bWF4X3BlcmYsIGJvb2wgZmFzdF9zd2l0Y2gpIA0KPj4+PiAtew0KPj4+PiAtwqDCoMKgIGlmIChm
+YXN0X3N3aXRjaCkNCj4+Pj4gLcKgwqDCoMKgwqDCoMKgIHdybXNybChNU1JfQU1EX0NQUENfUkVR
+LCANCj4+Pj4gUkVBRF9PTkNFKGNwdWRhdGEtPmNwcGNfcmVxX2NhY2hlZCkpOw0KPj4+PiAtwqDC
+oMKgIGVsc2UNCj4+Pj4gLcKgwqDCoMKgwqDCoMKgIHdybXNybF9vbl9jcHUoY3B1ZGF0YS0+Y3B1
+LCBNU1JfQU1EX0NQUENfUkVRLA0KPj4+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBSRUFEX09OQ0UoY3B1ZGF0YS0+Y3BwY19yZXFfY2FjaGVkKSk7DQo+Pj4+IC19DQo+Pj4+
+IC0NCj4+Pj4gwqDCoMKgIHN0YXRpYyB2b2lkIGNwcGNfdXBkYXRlX3BlcmYoc3RydWN0IGFtZF9j
+cHVkYXRhICpjcHVkYXRhLA0KPj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHUzMiBtaW5fcGVyZiwgdTMyIGRlc19wZXJmLA0KPj4+PiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHUzMiBtYXhfcGVyZiwgYm9vbCBmYXN0X3N3aXRjaCkg
+QEAgLTQ3NSwxNg0KPj4+PiArNDg4LDYgQEANCj4+Pj4gc3RhdGljIHZvaWQgY3BwY191cGRhdGVf
+cGVyZihzdHJ1Y3QgYW1kX2NwdWRhdGEgKmNwdWRhdGEsDQo+Pj4+IMKgwqDCoMKgwqDCoMKgIGNw
+cGNfc2V0X3BlcmYoY3B1ZGF0YS0+Y3B1LCAmcGVyZl9jdHJscyk7DQo+Pj4+IMKgwqDCoCB9DQo+
+Pj4+IC1ERUZJTkVfU1RBVElDX0NBTEwoYW1kX3BzdGF0ZV91cGRhdGVfcGVyZiwgcHN0YXRlX3Vw
+ZGF0ZV9wZXJmKTsNCj4+Pj4gLQ0KPj4+PiAtc3RhdGljIGlubGluZSB2b2lkIGFtZF9wc3RhdGVf
+dXBkYXRlX3BlcmYoc3RydWN0IGFtZF9jcHVkYXRhIA0KPj4+PiAqY3B1ZGF0YSwNCj4+Pj4gLcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgbWluX3BlcmYsIHUz
+MiBkZXNfcGVyZiwNCj4+Pj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB1MzIgbWF4X3BlcmYsIGJvb2wgZmFzdF9zd2l0Y2gpIC17DQo+Pj4+IC3CoMKgwqAgc3Rh
+dGljX2NhbGwoYW1kX3BzdGF0ZV91cGRhdGVfcGVyZikoY3B1ZGF0YSwgbWluX3BlcmYsIA0KPj4+
+PiBkZXNfcGVyZiwNCj4+Pj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgbWF4X3BlcmYsIGZhc3Rfc3dpdGNoKTsgLX0NCj4+Pj4gLQ0KPj4+PiDCoMKgwqAg
+c3RhdGljIGlubGluZSBib29sIGFtZF9wc3RhdGVfc2FtcGxlKHN0cnVjdCBhbWRfY3B1ZGF0YSAN
+Cj4+Pj4gKmNwdWRhdGEpDQo+Pj4+IMKgwqDCoCB7DQo+Pj4+IMKgwqDCoMKgwqDCoMKgIHU2NCBh
+cGVyZiwgbXBlcmYsIHRzYzsNCj4+Pg0KPj4+DQo+Pg0KPiANCg0K
 
