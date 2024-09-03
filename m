@@ -1,90 +1,61 @@
-Return-Path: <linux-kernel+bounces-313408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C82196A512
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3188996A516
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080DD286C45
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD789286C18
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C37618DF8B;
-	Tue,  3 Sep 2024 17:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D669D18DF7F;
+	Tue,  3 Sep 2024 17:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UtG3Hw/j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b25C1xEG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3462B18BC1C;
-	Tue,  3 Sep 2024 17:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD821C14;
+	Tue,  3 Sep 2024 17:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383428; cv=none; b=idTt9v8UEXBOQRrtASXCktPZ5rVx3SLGQ+52+twaCsYHd55N1yBrt0nJkNljocVMV9um4kAfQY900BGEvayNKXkvzoXX9gqE/np5uVT8bRFNS7f7UnCDqKryZWzmsViqA+MWONntqetr6WOFHwpxjZBAhKuf0v7Zqn/GvCkIjMA=
+	t=1725383520; cv=none; b=l40AmRqijWNyEEHylXsjKizcL0vFjnsxSvSzLXNOwAuVsUjLQCUD4nUQ1X+YLACPij/RurRP32efwefJlntkCRE6zPeWRujqAu18IEpaU2LtOrljUtmvV3QtPenbryn0MbEYfp5jxjcsxOQ3+2OH3ISTDJg6SVrEVrhfJgoh2hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383428; c=relaxed/simple;
-	bh=0l4evwdyan87dgGb7txNM2qR7iGQ5qw8nvVrzVmrYsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8SMDPeF+qfT36J1/ljfTMKuzjlVuW/TF01mJktQ9RpubzTImLah3qgBAgxe8MVu6ulcptbnZAgXMMMX276I+RiqMxwe+vNYBnfkmYXkVqkw/T7tQPPdnsSl+ZnM9vY6CoBZbU6Wg5NFzeh+0Yp67a0JewkqT/gfbFFJk8KWct0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UtG3Hw/j; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725383427; x=1756919427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0l4evwdyan87dgGb7txNM2qR7iGQ5qw8nvVrzVmrYsk=;
-  b=UtG3Hw/jA6gYkB7bpJDEV6DJ+SB4FIXfo+D3+xNQ6Vz3JYJzdRjmatoG
-   i9Mqgn/qMap+3r2g4nvnj+q+hp7aceV6ifYv/6aUE8ObZrpWdxC2MYx/d
-   i3kl3SzcATJm6wXrDApJtFpRfulRLlbTuMbsjXA/e5GtFtb1KhB4griwx
-   QW0QdUdJVv4/vLHGSnW3okP0plzfczvUCMJMq10VIPFjlWP2UKAu5CpH7
-   oLdMdg2Ya3UPf4vaq64jXNrt84IxJ3Q4uL67YWT5nJTMVUrE3qiylssIi
-   6crU3Fe68RO9Y3LIQfUiiLjPtGA9POz4kknefL13BR9BXZzqyQJqj9GGs
-   w==;
-X-CSE-ConnectionGUID: +Atj3CcKSdSzYuKHvgv8tg==
-X-CSE-MsgGUID: 8EdiBQCMTcKvflmaLTdfBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34662246"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34662246"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:10:26 -0700
-X-CSE-ConnectionGUID: 8wDNQEu0Qga0yw2/nvqSwg==
-X-CSE-MsgGUID: s/qtCeb5QmWdBmBdcM73FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="95713609"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 03 Sep 2024 10:10:21 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slX2p-0006wY-04;
-	Tue, 03 Sep 2024 17:10:19 +0000
-Date: Wed, 4 Sep 2024 01:09:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, kernel@pengutronix.de,
-	Alibek Omarov <a1ba.omarov@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	David Jander <david.jander@protonic.nl>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: Re: [PATCH can-next v4 01/20] dt-bindings: can: rockchip_canfd: add
- rockchip CAN-FD controller
-Message-ID: <202409040039.TNDhtsSe-lkp@intel.com>
-References: <20240903-rockchip-canfd-v4-1-1dc3f3f32856@pengutronix.de>
+	s=arc-20240116; t=1725383520; c=relaxed/simple;
+	bh=LP56cnU6byzfTTmQxjj+Dqls6VQhgI4J9t5PyD+H3YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=b8yjaLl+htmnurCUqUbCYqq6Po1Veu2raa42ygR+AUqaZc4R+0khlfbV6ML8n3bnscjhWiCUdRvVNREwfM6P+dlbTAUd/2g4UUEPd4BfZxVmzvypvcTjxbTXDmzKqbPCTY6fbmD1vIHyJRE0r2tHy5k+zpcvIZ85K/CKFAMfPEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b25C1xEG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A415C4CEC4;
+	Tue,  3 Sep 2024 17:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725383519;
+	bh=LP56cnU6byzfTTmQxjj+Dqls6VQhgI4J9t5PyD+H3YY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=b25C1xEGEv1Uj0tKdQtpMlZUQlCbOQG1lAj/6pZp6IJYPdWdUw5FtItqPROaFxTo5
+	 pyIgoHvkM55bnumJsoi5cnEkVYau3+w9yv6MzrSLjYagCEW1F0h3GoTvWJVPaPU+r7
+	 b8+0sFG86TN5rDi5J/1fT4QhjsWGaszYRpijDhybFjxrR5N6i03sFoC5M45N+R6cvN
+	 Umyig+BAyUZaiuJj5ibeCiHG8MPpEUXKOyZp5LzZnayzwotqQ+Djw0DsGH7UdBOuJG
+	 MMLMiGyBRhq5KaW7UPZ0w7aVuoa1HBZtMyPMvNtSPiDg2c9mtvVkXqdaylrypJgi2n
+	 xEJaSdyS4426Q==
+Date: Tue, 3 Sep 2024 12:11:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240903171157.GA254033@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,36 +64,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903-rockchip-canfd-v4-1-1dc3f3f32856@pengutronix.de>
+In-Reply-To: <6ac2dfbf-fd9a-4223-8d9e-bb41dbf98b1a@amd.com>
 
-Hi Marc,
+On Tue, Sep 03, 2024 at 11:29:23AM -0500, Mario Limonciello wrote:
+> On 8/29/2024 19:01, Bjorn Helgaas wrote:
+> > On Fri, Aug 23, 2024 at 10:40:20AM -0500, Mario Limonciello wrote:
+> > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > 
+> > > If a dock is plugged in at the same time as autosuspend delay then
+> > > this can cause malfunctions in the USB4 stack. This happens because
+> > > the device is still in D3cold at the time that the PCI core handed
+> > > control back to the USB4 stack.
+> > > 
+> > > A device that has gone through a reset may return a value in
+> > > PCI_COMMAND but that doesn't mean it's finished transitioning to D0.
+> > > For devices that support power management explicitly check
+> > > PCI_PM_CTRL on everything but system resume to ensure the transition
+> > > happened.
+> > 
+> > Still trying to understand what's going on here.
+> > 
+> > I posted a change to pci_dev_wait() to read Vendor ID, look for Config
+> > RRS status, and wait for a successful completion (when RRS Software
+> > Visibility is enabled) [1].
+> > 
+> > You tested that and found that it didn't help with *this* issue [2].
+> > I assume you tested something like v6.11-rc plus the patches from [1],
+> > i.e., without the PCI_PM_CTRL changes in this series.
+> > 
+> >    1) Initially the device is in D0
+> > 
+> >    2) We put it in D3cold (using some ACPI method) because the
+> >    autosuspend delay expired (?)
+> > 
+> >    3) Plugging in the dock wakes up the device, so we power up the
+> >    device (via pci_power_up(), which again uses some ACPI method), and
+> >    it should transition to D0uninitialized
+> > 
+> >    4) The USB4 stack sees the device but thinks it's in D3cold (?)
+> ...
 
-kernel test robot noticed the following build warnings:
+> > If you *did* include both [1] and patch 3/5, the implication would be
+> > that pci_dev_wait() successfully read the Vendor ID, meaning the
+> > device is not in D3cold when pci_power_up() returns.
+> 
+> The testing here was from the LTS 6.6.y kernel with both [1] and
+> patch 3/5 from this series.
+> 
+> > Can you clarify what you see and possibly expand/correct my
+> > timeline above?
+> 
+> The timeline you shared is nearly correct.  The USB4 stack *thinks*
+> the device is in D0 because of the return of pci_power_up().
+> 
+> As by polling PCI_PM_CTRL we can see it's still in D3, so it hasn't
+> made it to D0uninitialized yet.
+> 
+> I guess I reading between the lines you have an assumption that you
+> can't read the vendor ID from D3; which doesn't appear to be the
+> case from our testing.
 
-[auto build test WARNING on da4f3b72c8831975a06eca7e1c27392726f54d20]
+A Vendor ID read of a device in D3hot should definitely work.
+Obviously if the device were in D3cold, we'd get no response at all,
+so the requester should log a UR error and fabricate ~0 data.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marc-Kleine-Budde/dt-bindings-can-rockchip_canfd-add-rockchip-CAN-FD-controller/20240903-173243
-base:   da4f3b72c8831975a06eca7e1c27392726f54d20
-patch link:    https://lore.kernel.org/r/20240903-rockchip-canfd-v4-1-1dc3f3f32856%40pengutronix.de
-patch subject: [PATCH can-next v4 01/20] dt-bindings: can: rockchip_canfd: add rockchip CAN-FD controller
-reproduce: (https://download.01.org/0day-ci/archive/20240904/202409040039.TNDhtsSe-lkp@intel.com/reproduce)
+But if the device starts out in D3cold and we power it up, it should
+not go through D3hot.  The only legal transition from D3cold is to
+D0uninitialized (PCIe r6.0, sec 5.8).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409040039.TNDhtsSe-lkp@intel.com/
+OK, so with [1] and patch 3/5:
 
-All warnings (new ones prefixed by >>):
+  1) Initially the device is in D0
 
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/net/can/rockchip,rk3568-canfd.yaml
-   Using alabaster theme
+  2) We put it in D3cold (using some ACPI method) because the
+  autosuspend delay expired (?)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  3) Plugging in the dock wakes up the device, so we power up the
+  device (via pci_power_up(), which again uses some ACPI method), and
+  it should transition to D0uninitialized
+
+  4) With patch 3/5, pci_power_up() calls pci_dev_wait() because
+  dev->current_state == PCI_D3cold
+
+  5) I *assume* RRS SV is enabled (lspci -vv of Root Port would
+  confirm this; maybe we should add a pci_dbg message about which
+  register we're polling).  If so, patch [1] means we should poll
+  Vendor ID until successful completion.
+
+  6) pci_dbg log should confirm the device is ready with a "ready %dms
+  after D3cold->D0" message, which would mean we got a successful
+  completion when reading Vendor ID
+
+  7) For debugging purposes, it would be interesting to read and log
+  the PCI_PM_CTRL value here.  Per sec 2.3.1, the device is not
+  allowed to return RRS at this point since we already got a
+  successful completion.
+
+  8) The USB4 stack sees the device and assumes it is in D0, but it
+  seems to still be in D3cold.  What is this based on?  Is there a
+  config read that returns ~0 data when it shouldn't?
+
+> > [1] https://lore.kernel.org/linux-pci/20240827234848.4429-1-helgaas@kernel.org/
+> > [2] https://lore.kernel.org/linux-pci/30d9589a-8050-421b-a9a5-ad3422feadad@amd.com/
+> > 
+> > > Devices that don't support power management and system resume will
+> > > continue to use PCI_COMMAND.
+> > > 
+> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > > ---
+> > > v4->v5:
+> > >   * Fix misleading indentation
+> > >   * Amend commit message
+> > > ---
+> > >   drivers/pci/pci.c | 28 ++++++++++++++++++++--------
+> > >   1 file changed, 20 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > > index 1e219057a5069..f032a4aaec268 100644
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -1309,21 +1309,33 @@ static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_type, int
+> > >   	 * the read (except when CRS SV is enabled and the read was for the
+> > >   	 * Vendor ID; in that case it synthesizes 0x0001 data).
+> > >   	 *
+> > > -	 * Wait for the device to return a non-CRS completion.  Read the
+> > > -	 * Command register instead of Vendor ID so we don't have to
+> > > -	 * contend with the CRS SV value.
+> > > +	 * Wait for the device to return a non-CRS completion.  On devices
+> > > +	 * that support PM control and on waits that aren't part of system
+> > > +	 * resume read the PM control register to ensure the device has
+> > > +	 * transitioned to D0.  On devices that don't support PM control,
+> > > +	 * or during system resume read the command register to instead of
+> > > +	 * Vendor ID so we don't have to contend with the CRS SV value.
+> > >   	 */
+> > >   	for (;;) {
+> > > -		u32 id;
+> > > -
+> > >   		if (pci_dev_is_disconnected(dev)) {
+> > >   			pci_dbg(dev, "disconnected; not waiting\n");
+> > >   			return -ENOTTY;
+> > >   		}
+> > > -		pci_read_config_dword(dev, PCI_COMMAND, &id);
+> > > -		if (!PCI_POSSIBLE_ERROR(id))
+> > > -			break;
+> > > +		if (dev->pm_cap && reset_type != PCI_DEV_WAIT_RESUME) {
+> > > +			u16 pmcsr;
+> > > +
+> > > +			pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+> > > +			if (!PCI_POSSIBLE_ERROR(pmcsr) &&
+> > > +			    (pmcsr & PCI_PM_CTRL_STATE_MASK) == PCI_D0)
+> > > +				break;
+> > > +		} else {
+> > > +			u32 id;
+> > > +
+> > > +			pci_read_config_dword(dev, PCI_COMMAND, &id);
+> > > +			if (!PCI_POSSIBLE_ERROR(id))
+> > > +				break;
+> > > +		}
+> > >   		if (delay > timeout) {
+> > >   			pci_warn(dev, "not ready %dms after %s; giving up\n",
+> > > -- 
+> > > 2.43.0
+> > > 
+> 
 
