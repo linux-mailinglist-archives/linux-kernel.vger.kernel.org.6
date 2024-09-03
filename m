@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-313911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082A396AC43
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:35:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D4896AC46
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6682285667
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:35:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC1DEB23829
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCC51D58B3;
-	Tue,  3 Sep 2024 22:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303011D588D;
+	Tue,  3 Sep 2024 22:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lm1jVuAH"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5R+NXJS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A627318732B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8418C186E30;
+	Tue,  3 Sep 2024 22:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402947; cv=none; b=b/mZr4pPE3aaLEdZkifE4ZESKTZfgoqKQ3hZuFdW/9bUZf3IZ4bMULvmb4swMUndjcuDEYclcV3OQ1rBxQv0A0GcaCOjEe+mD/i4arO4Nbv1pTutTm7DbEa3crpCJ5c99JV3lb0BA9ezr+kykh7WOu2k99clkBMsT4ZeSZhJZWo=
+	t=1725402980; cv=none; b=rWIJAAQtNGGakbrFMrEaZZYkS5AAQZBZBtkk3JLWHv7Cuv1KDeGdDTQXRjF/C8yWBod6WSikD8VB0IkUlpwkHb3+j4G8Pdhi6EU1FV1ofk00aCnHWFgM61nbA6ENJf99dMtv21c8ZQ45Bx7xHASjsMVje78NMxmwCE+VCnpaCuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402947; c=relaxed/simple;
-	bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gyd2Fh4n9et1bnYaDx6DMT2c6S6BOrCEuvCbd2DvyYH7nX1IEsqkg3KACP8gc2aDGc/HtdV7JMy33J7EoMnr4VUJvE2E3aKecDxluUKxlBias2EBf2GjF8wL+WtHZJMlsTHXIiVAIby142QmC0tEIJvWs2HrGK06fOD5642HsAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lm1jVuAH; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a81309072dso288730385a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725402944; x=1726007744; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
-        b=lm1jVuAH2pFMPzHxtGzV+WNdlwFrpY5gjA/JLR95yM3WWoKr/HkJvVpdhDMOr2UWUt
-         Cy2dqItUtK2a+DuFQMqvmArShpAQO3aqWp7sbWN7kjm2tCABSIOadrLNsoPb2cHostjR
-         Law3Q1kIib6qsOl/qn5WpjVr+h8IHVgHTxk8k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725402944; x=1726007744;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
-        b=LDak2eA1gCltoJqOkUnOw0PV+NKNzTEL2tAWo55SdzNnksHMW9q/6wVrYATpL0D10v
-         HEAZNNM/rFo4P52lAMllvQ5akky0HqnSq2zh0IOc4G1ITffjDTD90AaJ9teWuRYZlfzJ
-         1eYUSAM9RFSieThm1F3LhnBFDX/0WXIxWj6GGd6PtkNOdU+ZLHd28V6nlbrnRsK/wK0+
-         xq28KRg4w6qK5glT3V0e596ZxDb+TicLmfA73n9xNKPcl8LM1bpWCIJlf6j3STPfKggP
-         e9Y6Ju7vHmGsNkXnew6+qYxfM3kofDHy/6VOLz8P6aCGStrv0ZHpsk6Fjvku6M/dxhv+
-         0X+A==
-X-Forwarded-Encrypted: i=1; AJvYcCViuznUQieJXB8RzQ7GGPNSp8vXirnpbfZvCoXGFdbsLZxRZMBs1fe6+aUiDj7a3TZu7slcWNVZCIyqUGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+F9Efh7I03g9JLKC75LinmLgaop0mFFI5e70AE/5z3AGTovHQ
-	dxdqmCLxSG/LoaUskxRnxA1N7UNHsbky4pU8icLd86rIYUzBZfe4LaunfyLfzRziz/4cocZfKAy
-	3YXWcXcJUHvi855HK22DRwg9P1pvWWfi+rKGG
-X-Google-Smtp-Source: AGHT+IHROkfnEqJwyKjhAgQRGsJgxkFB29+Yc6u1MFfoALprduJBtTl2Q7hk3LAUymLuEO32wO/aAKlH5269r5m9+pM=
-X-Received: by 2002:a05:620a:28c8:b0:7a6:6fd6:9d6a with SMTP id
- af79cd13be357-7a8f6b767cemr1583962985a.5.1725402944498; Tue, 03 Sep 2024
- 15:35:44 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 3 Sep 2024 15:35:44 -0700
+	s=arc-20240116; t=1725402980; c=relaxed/simple;
+	bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CFGrH3IvPadOYdGlQCvSb6AoB85PGBcv50Hkwf/XILmLUz/LMRbn5sG1+FvImHxNDxs1yVh63aubDei6/gqIaRrdQg5viBlIE03kbnL34mSJu6ZvIt/6cLUY1zkPe5iKqmlWXXESnuJ/ve5IPv6nOtKRNbELDXwohfvhruPHkYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5R+NXJS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4352C4CEC8;
+	Tue,  3 Sep 2024 22:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725402980;
+	bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=t5R+NXJS7ceShRs5loYLB1GbvWLXbsTSNwqzcUeDuydzHOh7yXDdEjWCVIk/w6I5C
+	 /gmhl6SklRud24waZ0HbxfJCHGjV88AcA9RhIEMrlA+mbbY92TdWOpwCCXS4mQWXp/
+	 e0YX2AkrQ2HMId9xKxOe1C6gxvod6kDEsfeaLBpemCwWBSrwV6XMO4Wlqs6Sml0wdi
+	 exY1zDRT0KU+Jwjqta8a8eFtmSs9Q+cn1UGua9vxKBnACT8ehM87khBi1rReo6P16U
+	 gkE8OKVzDL0o6iSNCmBZonoH3cm9PufHX7+h34nWTQd5/ZL8rAVeMRk3nydUB6shiK
+	 Dq2eXldJs9bpA==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Sep 2024 23:36:02 +0100
+Subject: [PATCH] docs: submitting-patches: Advertise b4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZtWeuFUEgnF9e2S4@smile.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-11-swboyd@chromium.org>
- <ZtWeuFUEgnF9e2S4@smile.fi.intel.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 3 Sep 2024 15:35:44 -0700
-Message-ID: <CAE-0n51nLCNJxhxMr3EmqoWz=3dLU-ckfSwgEUtrhBRZchLu_w@mail.gmail.com>
-Subject: Re: [PATCH v4 10/18] devcon property: Document devcon_match_fn_t
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240903-documentation-b4-advert-v1-1-fefda9564f6e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFGP12YC/x2MSQqAMAwAvyI5G2ituH1FPFQTNQertFUE8e8Wj
+ wMz80BgLxygyx7wfEmQ3SXQeQbTat3CKJQYClWUqlUGaZ/OjV20MZk4lmjpYh9RN0pX3BiqqYV
+ UH55nuf9zP7zvB0Jgfv1pAAAA
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1308; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm149hGmuOSz86kPMz+k+68HRFxU7pTuCXgJZNW/bF
+ jfGhiMyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtePYQAKCRAk1otyXVSH0EJ3B/
+ wLEanakrcIqqBQ+MCRwUOAboiatcaAx++AoH3bJPKIA7bBUfKIzyLWb9CCi6EdsMJahDPYfoNTLtxt
+ kwQ3VUa4ujOoe+xVz9tngXnuWHABvMhaEbTjImjmYIU20rH3QhkxiVGMCQ8UiLxeEMIK4xiNqeoY0m
+ aI9Ru0VBU/ZKHe8n9xo3BphKw7+WFpSIuZymfv3MEgqByK0O1KCQi0Tl/m9JziIMPrX1C/bs3VWQZi
+ v8cAN+tvrfydUL83MqTn0aYwRVhlUTRHFnL2SyigvCiwSCuTFBgtvpZoNCKfkT2e8oHNz2nOW6huio
+ OGY1r8QpYsc9JMaUn7wH4r/tEfbw0C
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Quoting Andy Shevchenko (2024-09-02 04:17:12)
-> On Sat, Aug 31, 2024 at 09:06:48PM -0700, Stephen Boyd wrote:
-> > The usage of this match function is hard to understand at a glance.
-> > Document the arguments and the return value so it is clear how to
-> > implement the function.
->
-> Thank you for the patch!
->
-> ...
->
-> I believe we still use "device property:" in the subject for this header file changes.
-> $ git log --oneline --no-merges -- include/linux/property.h
->
+b4 is now widely used and is quite helpful for a lot of the things that
+submitting-patches covers, let's advertise it to submitters to try to make
+their lives easier and reduce the number of procedural issues maintainers
+see.
 
-Ok.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/process/submitting-patches.rst | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
->
-> > +/**
-> > + * devcon_match_fn_t - device connection match function
-> > + * @fwnode: Remote connection's device node
-> > + * @con_id: Identifier for the connection
-> > + * @data: Match function caller specific data
-> > + *
-> > + * Implement a callback with this function signature to search a fwnode's
-> > + * connections for a match with a function like device_connection_find_match().
-> > + * This function will be called possibly multiple times, once for each
-> > + * connection. The match function should inspect the @fwnode to look for a
-> > + * match. The @con_id and @data provided are the same as the @con_id and @data
-> > + * arguments passed to the functions that take a devcon_match_fn_t argument.
->
-> > + * Note: This function can be called multiple times.
->
-> As noted in the next patch, this would be nice to elaborate (at least to me
-> this sounds like declaration of idempotency which is unlikely what is
-> meant, or am I mistaken?).
+diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+index f310f2f36666..4b6904184ad1 100644
+--- a/Documentation/process/submitting-patches.rst
++++ b/Documentation/process/submitting-patches.rst
+@@ -842,6 +842,16 @@ Make sure that base commit is in an official maintainer/mainline tree
+ and not in some internal, accessible only to you tree - otherwise it
+ would be worthless.
+ 
++
++Tooling
++-------
++
++Many of the technical aspects of this process can be automated using
++b4, documented at <https://b4.docs.kernel.org/en/latest/>. This can
++help with things like tracking dependencies, running checkpatch and
++with formatting and sending mails.
++
++
+ References
+ ----------
+ 
 
-I based this on something that I've already forgotten! :)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240903-documentation-b4-advert-18016e83d7d9
 
-It's saying that the function you implement shouldn't have side-effects
-because it will be called many times. I actually wrote above that it
-will be called "possibly multiple times, once for each connection". Let
-me try to remove "multiple times".
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
