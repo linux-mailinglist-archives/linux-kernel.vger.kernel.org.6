@@ -1,235 +1,180 @@
-Return-Path: <linux-kernel+bounces-313965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131F996ACEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57AA96ACF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77945B20E90
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE731F258F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692CE1D7996;
-	Tue,  3 Sep 2024 23:37:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93921D7988;
+	Tue,  3 Sep 2024 23:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BVs7gRMu"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201031D5885
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A06126C0B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725406648; cv=none; b=Rj7P6oY38cKTsfNVpbvvg6pTf/vvbC+TqeoKgOgpj1fbfeLBhduojSe970Ma8Z4FM2zRTaW8p6u3Z3Gyv8i+30SG822hbRUVj76d6CxgoOvmG1RkMRaZvdfp1NwvTSLqUhEYJFxeHqFGf8xtVQPkFglNfVlOiblPjLyx1Hi/xxM=
+	t=1725406882; cv=none; b=XRH8PDwypA1lws1ZhGQ67/c+EDHkwiuLJe8oA0xje+U9g9HHi2hDnHfbtBF7ayTI+l6sKecurd/saAkBRXxL5WAVF9mtkizgAZceCFZoXw+CycNxRn1t/OnJ8WLAEJIN1UOTzuV8Rx7+T6lvbMKjK1/beI9f0VbcPmlBNGKVSKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725406648; c=relaxed/simple;
-	bh=WNrDY2fK2vgJ6fUWzO8EWuXPOWbHA8Tk1UBa62dPJWs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YEMy8mLfxcqOdIED0IQhgfZ4SP9qGf6dVwMQwKfZsIkjk6lD2NuyzjLXHz4pXAKv8bHMKepHPVQkImtCm70Vj9ullED87GfXb/pfNchyzSkDIUpBNIGC5a0O62HBoN+zCeeZb/+nKm007mfFL8GVf5fmZ1obtvCWBitwQv/r3/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5328fd5eso40170955ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 16:37:26 -0700 (PDT)
+	s=arc-20240116; t=1725406882; c=relaxed/simple;
+	bh=5iIbSt1aCUfaT7ma92jE9I4MrBY9Tx59H37wbUkPkLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FDPsjKBK6T3o+RX/rZ7IN99EeSurizwBhP6c/lNiKKr7iy74yCzGBcAYzzy9KZJSb2oDytnltJ5kR5O3Jc6I4GwMSmapdag3umk4Z7BYGHZ/5VvVm2CoJnGPPA2q5wfmo3rxUB6kJzEujSn7l/MFnIrgcxdUjnQPn4JmfYSPEhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BVs7gRMu; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a7d43a226so4348656276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 16:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725406880; x=1726011680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V5M0Sum4xgHlTMU2fLROf8XBEuOZsxnLsFF2EblQMHc=;
+        b=BVs7gRMu6QXpsp/trICFc6Sjuqb09w5JLyi8bYWgW63RtG0MQaoDqarHqpJPg6UHb3
+         wGteZ+Dejq2tP9BGZQojQuyhiiHWPsb/w0C0F8TgTPkBZN1y5l7LKrsk772ZtBH3/NlI
+         XA1ukqmb2k1gO1ZXjsTudSS9CMetMzzn98TCr1AeQkuRf4DABBmWm40hxovC8ivbO0Ho
+         QXQHUQoSF0uHDMCg/prDsm0emwMxMgTvzv7hwhP+jDBmgerMWoLzqMVeg8u1mHOrwo9a
+         NbKRt6Ndhxkk16sOIHnYz1h08g66MkdBtmO0UT8GD5zo24dVKqgv+CEC8iNbVK+qC97W
+         /kQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725406646; x=1726011446;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3862slMjoxApvzvkAY3Ev7BhwjDn5qC/kVgySMLD0gE=;
-        b=VZmXeegquqJkmrZXNfXOqi6j0VcOU2nRYe2sQmO2hPvaYjBMJvUGWYFncVmSo8aw2J
-         h7/qqOKAv5Dtn5YxTbAyddjJ25bHNm6FHvd5WRhqH80mHcBZEROcQf+4JcQ/ZCrd2tMV
-         ipsp+0M3mrMwW5K4TXpTcZmcC/CPM1iF3P6wkTGzQNFoAyXd/r2naJo3cpdqjNWsCmlP
-         mxA2l4d1pm2vQcBKJGonEq2TMikEve380ofq4WJ8dbkbdGxpwryYYgNWSjXt5ufpIWt/
-         rMYFhA28oWnyfdbxPAWTVbV1hQBsP9F2eW4h2x5bOKnOY9LkBlwlyP6DQvjcvcHdm5FS
-         c8jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXs7QS+bg//+wyZ0KO2WgjLuTEFPeEFnusLAMUV2klzTRvmVK3YAZzqDlhZ574z9le6P5i34cC9gvUSJKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzoI4MuRf4sFvUB95IRbAllsUN26iWon1W5B5CIVtBN/6RX47C
-	pYtAFak4V+uwGY2YBTPjp2f4drzPOy0uDfcTip3UIlJqASxtYlnH9vgOc9bx6vU6sAYadb328Ni
-	AYvmFew/z2kM7V4V+rCp4pfL3CVdoCuWeCRd+wNvcCC9JvyfXO3NHNx8=
-X-Google-Smtp-Source: AGHT+IFI5m4RaIhbEHsFaezRyVhKy/Gg/BJdLTJcyxZQtdE0ZlCBKfF5pEIiWqWqCx2Ho0LsnLoY2UO4u6RF5GGZvR5gh23DQfB1
+        d=1e100.net; s=20230601; t=1725406880; x=1726011680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V5M0Sum4xgHlTMU2fLROf8XBEuOZsxnLsFF2EblQMHc=;
+        b=xLhcgJ3zyuMYkFW2Z5xEcNppfpCQzdqApGfOpGCvBQC/JTXvZrfNsZFa1bxlJ25O03
+         w8dlzmhfto20oOq4fX7h4bE7nrGhvcSMV9jJ80miZ3aQsqvT5rQskxEG+dHntMEMFqhv
+         PMF9cYBgXfcN/zSJd/Kcbl+jA7rtWMxiSbRJEnAvj20mnw5L4+Qc1rapgnaGYu+Q18tu
+         kyNIOGtEnwFeoKGSBR/IB0rtEKfcO/YmGRQUJi3rZqaUPuTgJDgfhJef1qCbauEjr6vv
+         zbqcnQULRViYGxYz/SYXXpPukpyDhS0JclZC0mU6ChnRXStLCB7g9KHLPZ+mFmVDzprN
+         NWCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhXHomwiwy/qvARubvhdqPfH8cwy+yt3Uwi0I+Q7CjE//0CKRdvVKhGornF03PBC8u+Q1QhBWkdG0uE4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu1D8Hr5qDZ/oTIxqI2IYpX7QGNCNtVTADHNh5uGB71BpkbZE/
+	/Us7lvbiRCG/W9is+lcRrTUdg3DsEbWVX9a8+FDiOK5lpTFFeyIHaIcryvZ3xk9txUXQuEL6aEs
+	SLBa9C305SormPVVv+zPBxypukdq9N/26rfs+
+X-Google-Smtp-Source: AGHT+IFWEFEBxEfnZLDRslHEZBai9WH4P0k103YAF6DmVxrdDw6kLMNpGPXrgYEEvE4DIx2uMMfkeh1c/yvpuejloeI=
+X-Received: by 2002:a05:6902:1405:b0:e1a:7271:b3e6 with SMTP id
+ 3f1490d57ef6-e1a7a3d0fabmr17177041276.53.1725406879370; Tue, 03 Sep 2024
+ 16:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda8:0:b0:39d:300f:e915 with SMTP id
- e9e14a558f8ab-39f410df0a1mr6346205ab.6.1725406645642; Tue, 03 Sep 2024
- 16:37:25 -0700 (PDT)
-Date: Tue, 03 Sep 2024 16:37:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000034fa0d06213f8a86@google.com>
-Subject: [syzbot] [rdma?] INFO: task hung in rdma_dev_change_netns
-From: syzbot <syzbot+73c5eab674c7e1e7012e@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com> <20240903232241.43995-7-anthony.yznaga@oracle.com>
+In-Reply-To: <20240903232241.43995-7-anthony.yznaga@oracle.com>
+From: James Houghton <jthoughton@google.com>
+Date: Tue, 3 Sep 2024 16:40:43 -0700
+Message-ID: <CADrL8HV51t44EBKFwXoT-A48miq2TT7w1yjSUFo6uc5WDN=z9A@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 06/10] mm/mshare: Add vm flag for shared PTEs
+To: Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com, 
+	viro@zeniv.linux.org.uk, david@redhat.com, khalid@kernel.org, 
+	andreyknvl@gmail.com, dave.hansen@intel.com, luto@kernel.org, 
+	brauner@kernel.org, arnd@arndb.de, ebiederm@xmission.com, 
+	catalin.marinas@arm.com, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org, 
+	rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com, 
+	pcc@google.com, neilb@suse.de, maz@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Sep 3, 2024 at 4:23=E2=80=AFPM Anthony Yznaga <anthony.yznaga@oracl=
+e.com> wrote:
+>
+> From: Khalid Aziz <khalid@kernel.org>
+>
+> Add a bit to vm_flags to indicate a vma shares PTEs with others. Add
+> a function to determine if a vma shares PTEs by checking this flag.
+> This is to be used to find the shared page table entries on page fault
+> for vmas sharing PTEs.
+>
+> Signed-off-by: Khalid Aziz <khalid@kernel.org>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> ---
+>  include/linux/mm.h             | 7 +++++++
+>  include/trace/events/mmflags.h | 3 +++
+>  mm/internal.h                  | 5 +++++
+>  3 files changed, 15 insertions(+)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 6549d0979b28..3aa0b3322284 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -413,6 +413,13 @@ extern unsigned int kobjsize(const void *objp);
+>  #define VM_DROPPABLE           VM_NONE
+>  #endif
+>
+> +#ifdef CONFIG_64BIT
+> +#define VM_SHARED_PT_BIT       41
+> +#define VM_SHARED_PT           BIT(VM_SHARED_PT_BIT)
+> +#else
+> +#define VM_SHARED_PT           VM_NONE
+> +#endif
+> +
+>  #ifdef CONFIG_64BIT
+>  /* VM is sealed, in vm_flags */
+>  #define VM_SEALED      _BITUL(63)
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflag=
+s.h
+> index b63d211bd141..e1ae1e60d086 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -167,8 +167,10 @@ IF_HAVE_PG_ARCH_X(arch_3)
+>
+>  #ifdef CONFIG_64BIT
+>  # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+> +# define IF_HAVE_VM_SHARED_PT(flag, name) {flag, name},
+>  #else
+>  # define IF_HAVE_VM_DROPPABLE(flag, name)
+> +# define IF_HAVE_VM_SHARED_PT(flag, name)
+>  #endif
+>
+>  #define __def_vmaflag_names                                            \
+> @@ -204,6 +206,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )=
+               \
+>         {VM_HUGEPAGE,                   "hugepage"      },              \
+>         {VM_NOHUGEPAGE,                 "nohugepage"    },              \
+>  IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,     "droppable"     )               \
+> +IF_HAVE_VM_SHARED_PT(VM_SHARED_PT,     "sharedpt"      )               \
+>         {VM_MERGEABLE,                  "mergeable"     }               \
+>
+>  #define show_vma_flags(flags)                                          \
+> diff --git a/mm/internal.h b/mm/internal.h
+> index b4d86436565b..8005d5956b6e 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1578,4 +1578,9 @@ void unlink_file_vma_batch_init(struct unlink_vma_f=
+ile_batch *);
+>  void unlink_file_vma_batch_add(struct unlink_vma_file_batch *, struct vm=
+_area_struct *);
+>  void unlink_file_vma_batch_final(struct unlink_vma_file_batch *);
+>
 
-syzbot found the following issue on:
+Hi Anthony,
 
-HEAD commit:    5517ae241919 Merge tag 'for-net-2024-08-30' of git://git.k..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=176685b7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=73c5eab674c7e1e7012e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I'm really excited to see this series on the mailing list again! :) I
+won't have time to review this series in too much detail, but I hope
+something like it gets merged eventually.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> +static inline bool vma_is_shared(const struct vm_area_struct *vma)
+> +{
+> +       return VM_SHARED_PT && (vma->vm_flags & VM_SHARED_PT);
+> +}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ddded5c54678/disk-5517ae24.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ce0dfe9dbb55/vmlinux-5517ae24.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ca81d6e3361d/bzImage-5517ae24.xz
+Tiny comment - I find vma_is_shared() to be a bit of a confusing name,
+especially given how vma_is_shared_maywrite() is defined. (Sorry if
+this has already been discussed before.)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+73c5eab674c7e1e7012e@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:3:53 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc5-syzkaller-00178-g5517ae241919 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:3    state:D stack:21008 pid:53    tgid:53    ppid:2      flags:0x00004000
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- rdma_dev_change_netns+0x3a/0x2f0 drivers/infiniband/core/device.c:1640
- rdma_dev_exit_net+0x21e/0x350 drivers/infiniband/core/device.c:1151
- ops_exit_list net/core/net_namespace.c:173 [inline]
- cleanup_net+0x802/0xcc0 net/core/net_namespace.c:640
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz.3.1124:9442 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc5-syzkaller-00178-g5517ae241919 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.1124      state:D stack:21624 pid:9442  tgid:9440  ppid:6033   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- disable_device+0x1c7/0x360 drivers/infiniband/core/device.c:1295
- __ib_unregister_device+0x2ac/0x3c0 drivers/infiniband/core/device.c:1493
- ib_unregister_device_and_put+0xb9/0xf0 drivers/infiniband/core/device.c:1557
- nldev_dellink+0x2d6/0x320 drivers/infiniband/core/nldev.c:1824
- rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
- rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4e3f979eb9
-RSP: 002b:00007f4e3f3de038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f4e3fb16058 RCX: 00007f4e3f979eb9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000006
-RBP: 00007f4e3f9e793e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4e3fb16058 R15: 00007ffefbdc0c38
- </TASK>
-
-Showing all locks held in the system:
-2 locks held by ksoftirqd/1/24:
- #0: ffff8880b893e9d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
- #1: ffff8880b8928948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:989
-1 lock held by khungtaskd/30:
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
-4 locks held by kworker/u8:3/53:
- #0: ffff88801bae5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff88801bae5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90000bd7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90000bd7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8fc7ee90 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
- #3: ffff888023e006b0 (&device->unregistration_lock){+.+.}-{3:3}, at: rdma_dev_change_netns+0x3a/0x2f0 drivers/infiniband/core/device.c:1640
-2 locks held by getty/4989:
- #0: ffff88803098b0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000312b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by syz.3.1124/9442:
- #0: ffffffff9a6e1078 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:164 [inline]
- #0: ffffffff9a6e1078 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
- #0: ffffffff9a6e1078 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rcv+0x32d/0x9e0 drivers/infiniband/core/netlink.c:259
- #1: ffff888023e006b0 (&device->unregistration_lock){+.+.}-{3:3}, at: __ib_unregister_device+0x264/0x3c0 drivers/infiniband/core/device.c:1489
-3 locks held by kworker/u8:28/12113:
-1 lock held by syz-executor/12207:
- #0: ffffffff8e93d5c0 (rcu_state.barrier_mutex){+.+.}-{3:3}, at: rcu_barrier+0x4c/0x530 kernel/rcu/tree.c:4486
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc5-syzkaller-00178-g5517ae241919 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 12587 Comm: syz-executor Not tainted 6.11.0-rc5-syzkaller-00178-g5517ae241919 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0033:0x7f57b85781d6
-Code: ff ff ff c6 44 24 0b 00 45 31 ed 48 8d 1d f2 46 09 00 48 89 04 24 66 0f 1f 44 00 00 4c 89 e9 48 c1 e1 05 49 03 4e 08 83 39 06 <49> 89 cc 0f 87 81 00 00 00 8b 01 48 63 04 83 48 01 d8 ff e0 66 0f
-RSP: 002b:00007f57b928ee80 EFLAGS: 00000297
-RAX: 0000000000000081 RBX: 00007f57b860c8b0 RCX: 00005555578c6d00
-RDX: ffffffffffffffa8 RSI: 0000000000000007 RDI: 0000000000000081
-RBP: 00007ffcf0466140 R08: 00007f57b928ef20 R09: 0000000000000000
-R10: 00007f57b928ee90 R11: 0000000000000203 R12: 00005555578c6ce0
-R13: 0000000000000082 R14: 00007ffcf04660f0 R15: 00007ffcf0465ea0
-FS:  000055555782d500 GS:  0000000000000000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+How about vma_is_shared_pt()?
 
