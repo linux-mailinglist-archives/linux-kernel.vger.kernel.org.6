@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-313426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A29B96A55D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA01D96A55F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F40EB2139B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E762868A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA5418DF7F;
-	Tue,  3 Sep 2024 17:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67F18DF85;
+	Tue,  3 Sep 2024 17:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiXUiXi5"
-Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="dQy7SMxr"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C15F1C14;
-	Tue,  3 Sep 2024 17:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384140; cv=none; b=UwsnyEzzdsZqCjzvAepMju9TLdEHGSJA3FiM22Ihkp69dEHCPJxSOoTC4VsGPk6m74Zhg1BPiZNb7JpbAL9kdQLWi2m5ZtBMlw0N2RUUm7UoeEHEMK9DkPYbKVdQUbXGEGMrDGf1feCXtrNVVASPmU/j7P0wR4hk0OFa6sZ3NX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384140; c=relaxed/simple;
-	bh=JtchMB6ysO7d7aYpaMR9SNpKvbkunLZLXZmiNXb5bfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PI+iS+/YKWEcz+Pr16L5DVE8/j1E/CxTktK3ZJBPn1tLFydeVe69YmBjxbJ0kYBzS6JqYMyQV47uKA6GREVdbAvgQ6ZgBJc8TQp57ijZTf0DsAakCtjFIkNunsRL80QRjO4ikOmGp2gewPGgEGckMOkAyoCbm9Rg/a0q4OlgnlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiXUiXi5; arc=none smtp.client-ip=209.85.167.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3df0c4a65baso3366227b6e.2;
-        Tue, 03 Sep 2024 10:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725384138; x=1725988938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=plRf9YzuYN1gjw1i5Gh/kOX9C6eGORzUHoTA0sJ55PE=;
-        b=jiXUiXi5W9bXSpzjEYUWwsMOuArUfWVrCSl1cJveWJCyMnjkBGLGET33qY1/ybZd3g
-         YFhyolJX6WEh04+L42UP1skx0CPjIc+U3kcBwTFMUzkdl4T/h5UZa2/D5MimgbkN8My+
-         6Z7m5eAEceWcB7PkI2dpPKzoo+p6VL7ITiUSL/z8OO19fM340gKYNMdDfLNc8NJQyoot
-         GshYV9vDENq8Bmb14f/4fFXT0oPkQrVH3X8ggd33WAa/KkuyxgvQZ4XNpRXgL5WvXO6n
-         RdMG2hyyNixXXYPGEab2CjdpF/z715PiqB6jw8L5GQ1BXh88OPsAfOa/2EOlxvXqnbjX
-         Y/Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725384138; x=1725988938;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=plRf9YzuYN1gjw1i5Gh/kOX9C6eGORzUHoTA0sJ55PE=;
-        b=xGVfKXg5kXdsjVsRFSYwGUD3vwS8F7cG/akfKfe1hcq1XRFLxhcppWsKxbsZFsz0BS
-         d4Zyd3TuDNJjC/m7XAfjBsTXHj/pgT4IJVNdtW82CoAIz8ynZ1Tw7JMBycSVetVStyId
-         UkSjzj8/enw9X0Np6ATN/m7szeDssu7oJHW03d9U9aGcX8VPSqZ5JnrpHm+v92GBXx6i
-         1LN5C0g+ppFMIHxf9v0qmPxcG1W43rTxujb1xEsBmWXIusMtY/Og97PqPnw8ch4C2HtF
-         kGkJ8ZM/lVuJpAmj0+WDg0Yjh9qUbkpWyJUOzdKz6L88fHd4OA1++zTYlzozcpllT8FX
-         4kyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWiPEYJQpO3Mm+ShYbu+2+z0AF2BsNmzZlhwfcEc87oCUii18xiJrSyyUOjOYSpUHEwOS6cYcQ6kqr4Fq1@vger.kernel.org, AJvYcCWfVACjFRnw+sjqAv3UVJz08POPYttXKPJFivbMDihG8Fv/eyVKZEgYawT3MxiqjPTdz+vpvvzlacgtvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxACaOSNA0XnBqynDS9qSd3/Qqwm7jeBWBEn/F50xmyLoHH9Hbw
-	281KJaWf064pAmWHL9yyIgAkQA8vvL7bMnNwT/in06Lt57/kLBCI
-X-Google-Smtp-Source: AGHT+IFxGMsvQbGaIYEjb7iI0WRWlXdSuqrfyoTpqQTmc8f2VZKTZ7rIlB/x1qp7MIojafV8hhn7Rw==
-X-Received: by 2002:a05:6808:10d2:b0:3dd:cc7:959a with SMTP id 5614622812f47-3df05e8a24bmr21582020b6e.47.1725384138082;
-        Tue, 03 Sep 2024 10:22:18 -0700 (PDT)
-Received: from localhost.localdomain ([102.38.199.6])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-846be3f60efsm1400886241.18.2024.09.03.10.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 10:22:17 -0700 (PDT)
-From: alparkerdf@gmail.com
-To: axboe@kernel.dk,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alvaro Parker <alparkerdf@gmail.com>
-Subject: [PATCH] block: fix comment to use set_current_state
-Date: Tue,  3 Sep 2024 13:22:14 -0400
-Message-ID: <20240903172214.520086-1-alparkerdf@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771C18BC3A;
+	Tue,  3 Sep 2024 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725384209; cv=pass; b=EOiYF+N8rHu4h85f1i74sFO/DQJF44t74aNAyxGDfGYTK4lbX0R+GMSbPOiELASxQ/v4kpRJsu/HzYfwKt508Y3OzwXKDH5qSMMCwyjo2pjbMo5AZd8msrEbsqLgZxDD4gj2w6QKnAOYiA8jOxh9Fvhtkut5ClZilAhrnL3J+vc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725384209; c=relaxed/simple;
+	bh=sNvkNTkQyaiNPWQjmkuwZf549NqTHwtFvXW9lBIvGX0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VIlOLMrubFXmHXfsvGanC0a37lsGPZqZzMNOhj+C+wfAPAG2Kl3d36gA9sBmDlooXQv6VZ7CaNrN65VNBF/H/K7s0w5zauxf7fx66qKg/P4262DknW4+X4gxUUO0FDLeh3Fn5tFbdw1SyEM/2BdVxrhI5Sq6VCElgbz7uG8PiRg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=dQy7SMxr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725384202; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EehSrZ8ElJ6N0Ljti7bAq92MT3FS6U2zxd7bMpiOcfRMDSkolwHFvLqnKiN0isLmvQJozxZetBOc32yVllwt8sqLukMDIYx0TddOuJw9Lp+szOtL1qquu5+261kGn7+hpg1fOME4Qiz7jOOjA9DF18VrAqMogW0cbhtM1fCthCo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725384202; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=; 
+	b=nmuvfjaKpKHqC/ZwYe1xzhGn5AV5n6IwxTb/EnzTCC2wO7wb6TaAVmPUb4K+sX41bDuh3A1UmybMfLGPUijDdGeJf70hhH9a4lE43k9tR7/pAJvHSI7GiEZmAGoSo44V6WC1g4QzU8v4CdGfgIOA6+JQjISYi983Sxc81rZaaX0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725384202;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=;
+	b=dQy7SMxrw8H4+Nl4FEpPaRRfk7+mbXAEBp2lMiK/5l3D7062zRZKtGgLDwhMi6Uj
+	Vamm1EyBbdZWFaaHilh12PgEIl0zA4h3z4s/hZiOBRNEnFzH9sCTNYru2TpGynQSCHX
+	iTsSIeuYgvYbxHPx4pKY5/aixgqCBZFHHFZSxXQk=
+Received: by mx.zohomail.com with SMTPS id 172538420028422.02274509881522;
+	Tue, 3 Sep 2024 10:23:20 -0700 (PDT)
+Message-ID: <073a43d53e0befcb31adb1410d6dd0363c4911a2.camel@collabora.com>
+Subject: Re: [PATCH 1/2] gpio: mpc8xxx: order headers alphabetically
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	 <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 03 Sep 2024 18:23:17 +0100
+In-Reply-To: <20240903154533.101258-1-brgl@bgdev.pl>
+References: <20240903154533.101258-1-brgl@bgdev.pl>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-From: Alvaro Parker <alparkerdf@gmail.com>
+On Tue, 2024-09-03 at 17:45 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Cleanup the includes by putting them in alphabetical order.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> =C2=A0drivers/gpio/gpio-mpc8xxx.c | 22 +++++++++++-----------
+> =C2=A01 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-
+> mpc8xxx.c
+> index ab30c911c9d50..e084e08f54387 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -7,19 +7,19 @@
+> =C2=A0 */
+> =C2=A0
+> =C2=A0#include <linux/acpi.h>
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/spinlock.h>
+> -#include <linux/io.h>
+> -#include <linux/of.h>
+> -#include <linux/property.h>
+> -#include <linux/mod_devicetable.h>
+> -#include <linux/slab.h>
+> -#include <linux/irq.h>
+> -#include <linux/gpio/driver.h>
+> =C2=A0#include <linux/bitops.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/init.h>
+> =C2=A0#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> =C2=A0
+> =C2=A0#define MPC8XXX_GPIO_PINS	32
+> =C2=A0
 
-The explanatory comment used `set_task_state` instead of
-`set_current_state` which is the function actually used in the code.
-
-Signed-off-by: Alvaro Parker <alparkerdf@gmail.com>
----
- block/blk-rq-qos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index dd7310c94713..2cfb297d9a62 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -263,7 +263,7 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
- 	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
- 						 TASK_UNINTERRUPTIBLE);
- 	do {
--		/* The memory barrier in set_task_state saves us here. */
-+		/* The memory barrier in set_current_state saves us here. */
- 		if (data.got_token)
- 			break;
- 		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
--- 
-2.46.0
-
+Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
 
