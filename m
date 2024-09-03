@@ -1,364 +1,123 @@
-Return-Path: <linux-kernel+bounces-313591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C8596A752
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:26:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0738896A92C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B30B20D2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9090282D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8CE1D7E36;
-	Tue,  3 Sep 2024 19:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CE03DAC05;
+	Tue,  3 Sep 2024 20:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O9ZCCavW"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGqAOZWO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DBB1D222E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD451E4903;
+	Tue,  3 Sep 2024 20:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391541; cv=none; b=sRgS3AExTe5uK6AfcrRy+bUdr2ex15K6j44iQEtCoNF2hGcqfIV1cYlBs7dHbf1UE7VdqZiS+DvEC4csYSfrDdE5tOZVd009c8V9CzbMptxu26PoHlgW1ssRLLutWOXzR1TE+QbU16Go0HMEUbIC9pKACTk6ffwW++X5RIgf2zc=
+	t=1725396347; cv=none; b=VhwTdUwBj4D7QhFsmtit2gbgql3N1FnWfPsIH+kjsEjItEP9kZiFos8CStsvbp9aGVmJs/3P90w8Stin3lQMohX7ABjYAVspCTRmrwYnQjpyRgnDZobG6jz6wvsH7h5YzOqrfUtfCTCq+ikcFPsrY4d5qQzJ3+4oSMRgzPIwwhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391541; c=relaxed/simple;
-	bh=bDnHxdtJ7IHBsfJX9KRLzf2UYblXRT0P2Pp0gX6F8yY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BS4zwW5Ee3xIJGIpw3BXmWlsOiFk0nd+BrJbXAmAIVF2P0McVxIqU7bDHtcWGRyc2R4adwG2qzFh5Xu/gyMKFG+mmp4zdahIFl7QzTKJ2uoqUgg+ErkV3VzOk/h/GrnaqCQ2rjYuNt6CEsaji6C4y+hBUmHDDOmFQjvMG59l2wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O9ZCCavW; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725391536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zNZIT9eYhDrG20hdoMz93yYpa7NEh7zBa3Tl7htarHI=;
-	b=O9ZCCavWSdN/NwUn3JZVAEIq4EEh4Fhr/xbgJPP7MgykeXhI17Olcj0rxCfX6otCdLTydW
-	YWNlc43JQQ3cK80ulQRzYpnvG/YGgexzyc5M4l1RnpIBtjQhxRv+YY3bEvbAu9qDyJoOxJ
-	Nt5ff7waYkco+lW1jO+zzr2aN1liVTI=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Heng Qi <hengqi@linux.alibaba.com>
-Subject: [PATCH net-next 2/2] net: xilinx: axienet: Enable adaptive IRQ coalescing with DIM
-Date: Tue,  3 Sep 2024 15:25:24 -0400
-Message-Id: <20240903192524.4158713-3-sean.anderson@linux.dev>
-In-Reply-To: <20240903192524.4158713-1-sean.anderson@linux.dev>
-References: <20240903192524.4158713-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1725396347; c=relaxed/simple;
+	bh=xTPZ7PYuVdWpNG1mNPzohvAPpXevJQ2JRBXnJW4/ff4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jfRykz/87S0hnaSR6ORiwm9Llx/DYos4Zeo6xspAJXJpestDo/JzOjFx1NnQ9QmgbWKqf20Wbj5cYIabcS30kaYTS74lIYTFc+wKw0PmEgm0tyy3uT8kYUQny95j4GkH3M19/btzQv20vaGJJCUPZ48MD1hnErhVt9upvX0gJkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGqAOZWO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F295DC4CEC5;
+	Tue,  3 Sep 2024 20:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725396347;
+	bh=xTPZ7PYuVdWpNG1mNPzohvAPpXevJQ2JRBXnJW4/ff4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rGqAOZWOnH3jW9KiitfrodEUM+75rmNSveqIVyHvRltAVLuzNZHlCrIumOkIKVTnM
+	 KqYxz2Z3TW/zx6zrqTrREyTpovcUEiyuSLc8KfcTi8Bcj01XZshHwoHibXl+gdc+D8
+	 2UgSr20zoypbKbnF5TifeFocUyqncBqwsfEUBHVs0mfwRe+PpDbrA09m0FBadpf7AC
+	 TdgJJ9FwVkJ/OejIMQdsUL85TojWz0/fRV6GilwqNFVmwa6eXz9fijbjgYRJT9wr7d
+	 7QLfKuOmkLKS0juLJbNwctduranxmAzb4n33BE1YBLVxDtx0mTmqcc/C9/7shsgf8A
+	 gZ0RbC860J1qQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tianyang Zhang <zhangtianyang@loongson.cn>,
+	Sasha Levin <sashal@kernel.org>,
+	chenhuacai@kernel.org,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	maobibo@loongson.cn,
+	yangtiezhu@loongson.cn,
+	loongarch@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.1 11/17] LoongArch: Define ARCH_IRQ_INIT_FLAGS as IRQ_NOPROBE
+Date: Tue,  3 Sep 2024 15:25:25 -0400
+Message-ID: <20240903192600.1108046-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903192600.1108046-1-sashal@kernel.org>
+References: <20240903192600.1108046-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.107
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The default RX IRQ coalescing settings of one IRQ per packet can represent
-a significant CPU load. However, increasing the coalescing unilaterally
-can result in undesirable latency under low load. Adaptive IRQ
-coalescing with DIM offers a way to adjust the coalescing settings based
-on load.
+From: Huacai Chen <chenhuacai@loongson.cn>
 
-This device only supports "CQE" mode [1], where each packet resets the
-timer. Therefore, an interrupt is fired either when we receive
-coalesce_count_rx packets or when the interface is idle for
-coalesce_usec_rx. With this in mind, consider the following scenarios:
+[ Upstream commit 274ea3563e5ab9f468c15bfb9d2492803a66d9be ]
 
-Link saturated
-    Here we want to set coalesce_count_rx to a large value, in order to
-    coalesce more packets and reduce CPU load. coalesce_usec_rx should
-    be set to at least the time for one packet. Otherwise the link will
-    be "idle" and we will get an interrupt for each packet anyway.
+Currently we call irq_set_noprobe() in a loop for all IRQs, but indeed
+it only works for IRQs below NR_IRQS_LEGACY because at init_IRQ() only
+legacy interrupts have been allocated.
 
-Bursts of packets
-    Each burst should be coalesced into a single interrupt, although it
-    may be prudent to reduce coalesce_count_rx for better latency.
-    coalesce_usec_rx should be set to at least the time for one packet
-    so bursts are coalesced. However, additional time beyond the packet
-    time will just increase latency at the end of a burst.
+Instead, we can define ARCH_IRQ_INIT_FLAGS as IRQ_NOPROBE in asm/hwirq.h
+and the core will automatically set the flag for all interrupts.
 
-Sporadic packets
-    Due to low load, we can set coalesce_count_rx to 1 in order to
-    reduce latency to the minimum. coalesce_usec_rx does not matter in
-    this case.
-
-Based on this analysis, I expected the CQE profiles to look something
-like
-
-	usec =  0, pkts = 1   // Low load
-	usec = 16, pkts = 4
-	usec = 16, pkts = 16
-	usec = 16, pkts = 64
-	usec = 16, pkts = 256 // High load
-
-Where usec is set to 16 to be a few us greater than the 12.3 us packet
-time of a 1500 MTU packet at 1 GBit/s. However, the CQE profile is
-instead
-
-	usec =  2, pkts = 256 // Low load
-	usec =  8, pkts = 128
-	usec = 16, pkts =  64
-	usec = 32, pkts =  64
-	usec = 64, pkts =  64 // High load
-
-I found this very surprising. The number of coalesced packets
-*decreases* as load increases. But as load increases we have more
-opportunities to coalesce packets without affecting latency as much.
-Additionally, the profile *increases* the usec as the load increases.
-But as load increases, the gaps between packets will tend to become
-smaller, making it possible to *decrease* usec for better latency at the
-end of a "burst".
-
-I consider the default CQE profile unsuitable for this NIC. Therefore,
-we use the first profile outlined in this commit instead.
-coalesce_usec_rx is set to 16 by default, but the user can customize it.
-This may be necessary if they are using jumbo frames. I think adjusting
-the profile times based on the link speed/mtu would be good improvement
-for generic DIM.
-
-In addition to the above profile problems, I noticed the following
-additional issues with DIM while testing:
-
-- DIM tends to "wander" when at low load, since the performance gradient
-  is pretty flat. If you only have 10p/ms anyway then adjusting the
-  coalescing settings will not affect throughput very much.
-- DIM takes a long time to adjust back to low indices when load is
-  decreased following a period of high load. This is because it only
-  re-evaluates its settings once every 64 interrupts. However, at low
-  load 64 interrupts can be several seconds.
-
-Finally: performance. This patch increases receive throughput with
-iperf3 from 840 Mbits/sec to 938 Mbits/sec, decreases interrupts from
-69920/sec to 316/sec, and decreases CPU utilization (4x Cortex-A53) from
-43% to 9%. I did not notice an increase in latency with this patch
-applied.
-
-[1] Who names this stuff?
-
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Heng, maybe you have some comments on DIM regarding the above?
+ arch/loongarch/include/asm/hw_irq.h | 2 ++
+ arch/loongarch/kernel/irq.c         | 3 ---
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
- drivers/net/ethernet/xilinx/Kconfig           |  1 +
- drivers/net/ethernet/xilinx/xilinx_axienet.h  | 10 ++-
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 71 +++++++++++++++++--
- 3 files changed, 76 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/xilinx/Kconfig
-index 35d96c633a33..7502214cc7d5 100644
---- a/drivers/net/ethernet/xilinx/Kconfig
-+++ b/drivers/net/ethernet/xilinx/Kconfig
-@@ -28,6 +28,7 @@ config XILINX_AXI_EMAC
- 	depends on HAS_IOMEM
- 	depends on XILINX_DMA
- 	select PHYLINK
-+	select DIMLIB
- 	help
- 	  This driver supports the 10/100/1000 Ethernet from Xilinx for the
- 	  AXI bus interface used in Xilinx Virtex FPGAs and Soc's.
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-index 66cb8aa5b716..68303ece8285 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-@@ -9,6 +9,7 @@
- #ifndef XILINX_AXIENET_H
- #define XILINX_AXIENET_H
+diff --git a/arch/loongarch/include/asm/hw_irq.h b/arch/loongarch/include/asm/hw_irq.h
+index af4f4e8fbd858..8156ffb674159 100644
+--- a/arch/loongarch/include/asm/hw_irq.h
++++ b/arch/loongarch/include/asm/hw_irq.h
+@@ -9,6 +9,8 @@
  
-+#include <linux/dim.h>
- #include <linux/netdevice.h>
- #include <linux/spinlock.h>
- #include <linux/interrupt.h>
-@@ -123,8 +124,7 @@
- /* Default TX/RX Threshold and delay timer values for SGDMA mode */
- #define XAXIDMA_DFT_TX_THRESHOLD	24
- #define XAXIDMA_DFT_TX_USEC		50
--#define XAXIDMA_DFT_RX_THRESHOLD	1
--#define XAXIDMA_DFT_RX_USEC		50
-+#define XAXIDMA_DFT_RX_USEC		16
+ extern atomic_t irq_err_count;
  
- #define XAXIDMA_BD_CTRL_TXSOF_MASK	0x08000000 /* First tx packet */
- #define XAXIDMA_BD_CTRL_TXEOF_MASK	0x04000000 /* Last tx packet */
-@@ -484,6 +484,9 @@ struct skbuf_dma_descriptor {
-  * @regs:	Base address for the axienet_local device address space
-  * @dma_regs:	Base address for the axidma device address space
-  * @napi_rx:	NAPI RX control structure
-+ * @rx_dim:     DIM state for the receive queue
-+ * @rx_irqs:    Number of interrupts
-+ * @rx_dim_enabled: Whether DIM is enabled or not
-  * @rx_cr_lock: Lock protecting @rx_dma_cr, its register, and @rx_dma_started
-  * @rx_dma_cr:  Nominal content of RX DMA control register
-  * @rx_dma_started: Set when RX DMA is started
-@@ -570,6 +573,9 @@ struct axienet_local {
- 	void __iomem *dma_regs;
- 
- 	struct napi_struct napi_rx;
-+	struct dim rx_dim;
-+	bool rx_dim_enabled;
-+	u16 rx_irqs;
- 	spinlock_t rx_cr_lock;
- 	u32 rx_dma_cr;
- 	bool rx_dma_started;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 7bd109b77afc..24d434f99bce 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1262,6 +1262,18 @@ static int axienet_rx_poll(struct napi_struct *napi, int budget)
- 	if (packets < budget && napi_complete_done(napi, packets)) {
- 		unsigned long flags;
- 
-+		if (READ_ONCE(lp->rx_dim_enabled)) {
-+			struct dim_sample sample = {
-+				.time = ktime_get(),
-+				/* Safe because we are the only writer */
-+				.pkt_ctr = u64_stats_read(&lp->rx_packets),
-+				.byte_ctr = u64_stats_read(&lp->rx_bytes),
-+				.event_ctr = lp->rx_irqs,
-+			};
++#define ARCH_IRQ_INIT_FLAGS	IRQ_NOPROBE
 +
-+			net_dim(&lp->rx_dim, sample);
-+		}
-+
- 		/* Re-enable RX completion interrupts. This should
- 		 * cause an immediate interrupt if any RX packets are
- 		 * already pending.
-@@ -1364,6 +1376,7 @@ static irqreturn_t axienet_rx_irq(int irq, void *_ndev)
- 		spin_unlock_irqrestore(&lp->rx_cr_lock, flags);
+ /*
+  * interrupt-retrigger: NOP for now. This may not be appropriate for all
+  * machines, we'll see ...
+diff --git a/arch/loongarch/kernel/irq.c b/arch/loongarch/kernel/irq.c
+index 0524bf1169b74..4496649c9e68b 100644
+--- a/arch/loongarch/kernel/irq.c
++++ b/arch/loongarch/kernel/irq.c
+@@ -122,9 +122,6 @@ void __init init_IRQ(void)
+ 		panic("IPI IRQ request failed\n");
+ #endif
  
- 		napi_schedule(&lp->napi_rx);
-+		lp->rx_irqs++;
- 	}
+-	for (i = 0; i < NR_IRQS; i++)
+-		irq_set_noprobe(i);
+-
+ 	for_each_possible_cpu(i) {
+ 		page = alloc_pages_node(cpu_to_node(i), GFP_KERNEL, order);
  
- 	return IRQ_HANDLED;
-@@ -1588,6 +1601,7 @@ static int axienet_init_legacy_dma(struct net_device *ndev)
- 	napi_disable(&lp->napi_tx);
- 	napi_disable(&lp->napi_rx);
- 	cancel_work_sync(&lp->dma_err_task);
-+	cancel_work_sync(&lp->rx_dim.work);
- 	dev_err(lp->dev, "request_irq() failed\n");
- 	return ret;
- }
-@@ -1679,6 +1693,7 @@ static int axienet_stop(struct net_device *ndev)
- 		napi_disable(&lp->napi_rx);
- 	}
- 
-+	cancel_work_sync(&lp->rx_dim.work);
- 	cancel_delayed_work_sync(&lp->stats_work);
- 
- 	phylink_stop(lp->phylink);
-@@ -2051,6 +2066,32 @@ static void axienet_update_coalesce_rx(struct axienet_local *lp)
- 	spin_unlock_irq(&lp->rx_cr_lock);
- }
- 
-+/**
-+ * axienet_dim_coalesce_rx() - Update RX coalesce settings from DIM
-+ * @lp: Device private data
-+ */
-+static void axienet_dim_coalesce_rx(struct axienet_local *lp)
-+{
-+	lp->coalesce_count_rx = 1 << (lp->rx_dim.profile_ix << 1);
-+}
-+
-+/**
-+ * axienet_rx_dim_work() - Adjust RX DIM settings
-+ * @work: The work struct
-+ */
-+static void axienet_rx_dim_work(struct work_struct *work)
-+{
-+	struct axienet_local *lp =
-+		container_of(work, struct axienet_local, rx_dim.work);
-+
-+	rtnl_lock();
-+	axienet_dim_coalesce_rx(lp);
-+	axienet_update_coalesce_rx(lp);
-+	rtnl_unlock();
-+
-+	lp->rx_dim.state = DIM_START_MEASURE;
-+}
-+
- /**
-  * axienet_update_coalesce_tx() - Update TX coalesce settings
-  * @lp: Device private data
-@@ -2100,6 +2141,7 @@ axienet_ethtools_get_coalesce(struct net_device *ndev,
- {
- 	struct axienet_local *lp = netdev_priv(ndev);
- 
-+	ecoalesce->use_adaptive_rx_coalesce = lp->rx_dim_enabled;
- 	ecoalesce->rx_max_coalesced_frames = lp->coalesce_count_rx;
- 	ecoalesce->rx_coalesce_usecs = lp->coalesce_usec_rx;
- 	ecoalesce->tx_max_coalesced_frames = lp->coalesce_count_tx;
-@@ -2127,9 +2169,21 @@ axienet_ethtools_set_coalesce(struct net_device *ndev,
- 			      struct netlink_ext_ack *extack)
- {
- 	struct axienet_local *lp = netdev_priv(ndev);
-+	bool new_dim = ecoalesce->use_adaptive_rx_coalesce;
-+	bool old_dim = lp->rx_dim_enabled;
-+
-+	if (!new_dim) {
-+		if (old_dim) {
-+			WRITE_ONCE(lp->rx_dim_enabled, false);
-+			napi_synchronize(&lp->napi_rx);
-+			flush_work(&lp->rx_dim.work);
-+		}
-+
-+		if (ecoalesce->rx_max_coalesced_frames)
-+			lp->coalesce_count_rx =
-+				ecoalesce->rx_max_coalesced_frames;
-+	}
- 
--	if (ecoalesce->rx_max_coalesced_frames)
--		lp->coalesce_count_rx = ecoalesce->rx_max_coalesced_frames;
- 	if (ecoalesce->rx_coalesce_usecs)
- 		lp->coalesce_usec_rx = ecoalesce->rx_coalesce_usecs;
- 	if (ecoalesce->tx_max_coalesced_frames)
-@@ -2137,6 +2191,11 @@ axienet_ethtools_set_coalesce(struct net_device *ndev,
- 	if (ecoalesce->tx_coalesce_usecs)
- 		lp->coalesce_usec_tx = ecoalesce->tx_coalesce_usecs;
- 
-+	if (new_dim && !old_dim) {
-+		axienet_dim_coalesce_rx(lp);
-+		WRITE_ONCE(lp->rx_dim_enabled, true);
-+	}
-+
- 	axienet_update_coalesce_rx(lp);
- 	axienet_update_coalesce_tx(lp);
- 	return 0;
-@@ -2376,7 +2435,8 @@ axienet_ethtool_get_rmon_stats(struct net_device *dev,
- 
- static const struct ethtool_ops axienet_ethtool_ops = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_MAX_FRAMES |
--				     ETHTOOL_COALESCE_USECS,
-+				     ETHTOOL_COALESCE_USECS |
-+				     ETHTOOL_COALESCE_USE_ADAPTIVE_RX,
- 	.get_drvinfo    = axienet_ethtools_get_drvinfo,
- 	.get_regs_len   = axienet_ethtools_get_regs_len,
- 	.get_regs       = axienet_ethtools_get_regs,
-@@ -2925,7 +2985,10 @@ static int axienet_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&lp->rx_cr_lock);
- 	spin_lock_init(&lp->tx_cr_lock);
--	lp->coalesce_count_rx = XAXIDMA_DFT_RX_THRESHOLD;
-+	INIT_WORK(&lp->rx_dim.work, axienet_rx_dim_work);
-+	lp->rx_dim_enabled = true;
-+	lp->rx_dim.profile_ix = 1;
-+	axienet_dim_coalesce_rx(lp);
- 	lp->coalesce_count_tx = XAXIDMA_DFT_TX_THRESHOLD;
- 	lp->coalesce_usec_rx = XAXIDMA_DFT_RX_USEC;
- 	lp->coalesce_usec_tx = XAXIDMA_DFT_TX_USEC;
 -- 
-2.35.1.1320.gc452695387.dirty
+2.43.0
 
 
