@@ -1,461 +1,116 @@
-Return-Path: <linux-kernel+bounces-313179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAC496A17D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E13196A196
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53701C24309
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033C5286871
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8552AE66;
-	Tue,  3 Sep 2024 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="kAoCGPzV"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F6E187550;
+	Tue,  3 Sep 2024 15:06:03 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC212B94
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A933186E51;
+	Tue,  3 Sep 2024 15:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375658; cv=none; b=JoT49Udt/XXHwEN/MJC5XMu7BdD0qU1d9K3cTQ2MtPY8JoE8TxjBPDpVW0nHY/EU8VDK2xsVJno4fwUpqGFKkxWD7eI6zMJJTCRGFjxBE/MxOOhvzgj9gtzbIylzDVKwNjnc3653aNgJetnnSRkNQ/ALGNuVkYr1HCfBnY+6950=
+	t=1725375963; cv=none; b=FBnSgP2j0qkpDQzyY2WZ2x7Bd/NtpouYOiOz9rSacQpyV+AvFH2XhdLu4kKZITT/CIfYZ5jeIjaBft9v1RnXAZWMuso/DF2XHZjhlQkc9xv3/SSqks7oA598CazZ21cecMDi5WozoFFhQ4HrOIK0/gQsbLQVJLpB180DquNUWEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375658; c=relaxed/simple;
-	bh=9NZf6r19SXSR1f8T56UguvEHsLMsWYSmNBiLHUiUJP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HpbMJUF8c6evU1kjEhpYQyTiiOeE0dfD8MXKAgYU6MSYvN0VXCtNwSK33QKW742PMRHDs5ShW3BIW+c8f4XZ3hCyBfHOOiP2Jt6GdLlkXioijvqyej0u1hfspsnb/fFMokqNcCyI19GyO0QeX2GtyjPqKF3WO7OZGy999vJFAHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=kAoCGPzV; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c23f0a9699so3427364a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1725375654; x=1725980454; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+njFo7EVESa7CXOGlHhoswjsRjKBHov7OFHjW76uHs=;
-        b=kAoCGPzVWUR9dG6v5fA4KBYj2izH9PFDfbAN6BOXP9cXkpKdKqa24Px9fFxczP7GyD
-         S9vpV9UGJyOJ/1KvZ5fk8ftFJC5UjT1lVhhFiA4QdSrfzIWnTHQWt+Deia8Ik8t1s6io
-         Q4xFIr/X7+eriKwB8l/IVK1hD4wzGNq60TBQJwHlWF2Ty3QgYUcg2emej9L2yOTHengY
-         D5vs2RUAcaly4rn9XfADVwXMoWLA9xdcC+UJcHiZq5CCW1e2R72VrKpTk/BCu7NKzTeZ
-         6jEG07k6UEYsA6HPYaNOXQ3AaEJe00czg4T74yiCQurnv6WU56iWzqcJDeTsCw3ODxlo
-         2BMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725375654; x=1725980454;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p+njFo7EVESa7CXOGlHhoswjsRjKBHov7OFHjW76uHs=;
-        b=se8YDJVrex9GCtQNUKETFOq0YqRqm/w4zib8LyAbI3cK009vO2p+Q1ufSXBTR3P4Ci
-         m3hhQfn2ERY9M08zG2n+g4KD+75SNJPfd3NzopJ0QEc9LZB62h+jn3u3UhbKHyWHBtLt
-         RmGUYrGGzaAOrcYf6DSRs7BRYOJnZNMHFpUXRzigLAZw6ygKZbhTbC9dVJ9vC4vxW11Z
-         cDhIMziqZD5vsFi1XYR2C7hl/PV2TlMZGCnWvK4P3x4S5Ow/uD77GHRutiwuqi2qZbRx
-         pKd+wzTuhJqQwkUlVIUj4+eMdWLeF5UxjrojiiDvsNXYf1hq9gH3YzLhQh4f25xKCVCu
-         RfeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy8akqR1ukC2uEmMn07CAYp/fPqRcUwvuWXcasNPQ+vcyWcoD2lEOVZamvgrrZS6ytoKPSxMC5QLGrqPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPaP3y+v/m1n8GsXHMkLKUofyOMQdp44wiL6dajLZiJeMsEX/n
-	rAUw6pCNro8i7eHBxz1vg3UuugStfnr34VpgGSBhlNgS+OSp3CNSN3gKltbn2/I=
-X-Google-Smtp-Source: AGHT+IFrlrPpJBGY6j9ctDdtg1tx1gdIOpoYhhMMVIDy16Yi99PcuwGIXG+tuDLcWCpp87lQkWpwIg==
-X-Received: by 2002:a05:6402:360b:b0:5c2:6090:4047 with SMTP id 4fb4d7f45d1cf-5c2609041c7mr4103380a12.8.1725375653570;
-        Tue, 03 Sep 2024 08:00:53 -0700 (PDT)
-Received: from localhost (78-80-104-44.customers.tmcz.cz. [78.80.104.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccff4bsm6611726a12.70.2024.09.03.08.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:00:52 -0700 (PDT)
-Date: Tue, 3 Sep 2024 17:00:51 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH 4/4] octeontx2-pf: Export common APIs
-Message-ID: <Ztcko0xVsTwSJBVw@nanopsycho.orion>
-References: <20240903124048.14235-1-gakula@marvell.com>
- <20240903124048.14235-5-gakula@marvell.com>
+	s=arc-20240116; t=1725375963; c=relaxed/simple;
+	bh=Za5OvjXDVHbXWWe2B5O1GEiRe7xMQzAUlxeC123sewU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BRcRn6PQEsk3Q0GOQlVdC+wQfkzZcFsB2qYnEYeqkOiC69ZvaYILc5DwjdX1yK5Ycng+v3hZ3wl00Fg5Z4WIV8/sX3aF0AOLwzJqAHo8c8SQ/Sl3F1/0C2fzATp12cWcm7U7n+y3aCNW9Uf9x3QtogxJf62/pRmHenwdcNQJ5Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (51b687c4.unconfigured.pool.telekom.hu [::ffff:81.182.135.196])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000076028.0000000066D724A4.001E8EC5; Tue, 03 Sep 2024 17:00:52 +0200
+Message-ID: <cf8c73dd91dbbb11b562a5e0d9ac6b4035c32d28.camel@irl.hu>
+Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
+ scope_guard() clear of its scope
+From: Gergo Koteles <soyer@irl.hu>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+  Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+  Hans de Goede <hdegoede@redhat.com>,
+  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ike Panhc <ike.pan@canonical.com>,
+  Peter Zijlstra <peterz@infradead.org>,
+  Josh Poimboeuf <jpoimboe@kernel.org>,
+  Nathan Chancellor <nathan@kernel.org>,
+  kernel test robot <lkp@intel.com>
+Date: Tue, 03 Sep 2024 17:00:51 +0200
+In-Reply-To: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
+References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903124048.14235-5-gakula@marvell.com>
 
-Tue, Sep 03, 2024 at 02:40:48PM CEST, gakula@marvell.com wrote:
->Export mbox, hw resources and interrupt configuration functions.
->So, that they can be used later by the RVU representor driver.
->  
->Signed-off-by: Geetha sowjanya <gakula@marvell.com>
->---
-> .../marvell/octeontx2/nic/otx2_common.c       |  2 +
-> .../marvell/octeontx2/nic/otx2_common.h       | 11 +++++
-> .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 40 +++++++++++++------
-> .../marvell/octeontx2/nic/otx2_txrx.c         | 17 +++++---
-> .../marvell/octeontx2/nic/otx2_txrx.h         |  3 +-
-> .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  6 +--
-> 6 files changed, 56 insertions(+), 23 deletions(-)
->
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
->index 34e76cfd941b..e38b3eea11f3 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
->@@ -246,6 +246,7 @@ int otx2_hw_set_mtu(struct otx2_nic *pfvf, int mtu)
-> 	mutex_unlock(&pfvf->mbox.lock);
-> 	return err;
-> }
->+EXPORT_SYMBOL(otx2_hw_set_mtu);
-> 
-> int otx2_config_pause_frm(struct otx2_nic *pfvf)
-> {
->@@ -1782,6 +1783,7 @@ void otx2_free_cints(struct otx2_nic *pfvf, int n)
-> 		free_irq(vector, &qset->napi[qidx]);
-> 	}
-> }
->+EXPORT_SYMBOL(otx2_free_cints);
-> 
-> void otx2_set_cints_affinity(struct otx2_nic *pfvf)
-> {
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
->index b36b87dae2cb..327254e578d5 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
->@@ -1000,6 +1000,17 @@ int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
-> int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
-> void otx2_free_queue_mem(struct otx2_qset *qset);
-> int otx2_alloc_queue_mem(struct otx2_nic *pf);
->+int otx2_init_hw_resources(struct otx2_nic *pfvf);
->+void otx2_free_hw_resources(struct otx2_nic *pf);
->+int otx2_wq_init(struct otx2_nic *pf);
->+int otx2_check_pf_usable(struct otx2_nic *pf);
->+int otx2_pfaf_mbox_init(struct otx2_nic *pf);
->+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af);
->+int otx2_realloc_msix_vectors(struct otx2_nic *pf);
->+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf);
->+void otx2_disable_mbox_intr(struct otx2_nic *pf);
->+void otx2_disable_napi(struct otx2_nic *pf);
->+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq);
-> 
-> /* RSS configuration APIs*/
-> int otx2_rss_init(struct otx2_nic *pfvf);
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
->index 5bb6db5a3a73..b4fa2c12721d 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
->@@ -1008,7 +1008,7 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
-> 	return IRQ_HANDLED;
-> }
-> 
->-static void otx2_disable_mbox_intr(struct otx2_nic *pf)
->+void otx2_disable_mbox_intr(struct otx2_nic *pf)
-> {
-> 	int vector = pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_MBOX);
-> 
->@@ -1016,8 +1016,9 @@ static void otx2_disable_mbox_intr(struct otx2_nic *pf)
-> 	otx2_write64(pf, RVU_PF_INT_ENA_W1C, BIT_ULL(0));
-> 	free_irq(vector, pf);
-> }
->+EXPORT_SYMBOL(otx2_disable_mbox_intr);
-> 
->-static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
->+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
-> {
-> 	struct otx2_hw *hw = &pf->hw;
-> 	struct msg_req *req;
->@@ -1060,8 +1061,9 @@ static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
-> 
-> 	return 0;
-> }
->+EXPORT_SYMBOL(otx2_register_mbox_intr);
-> 
->-static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
->+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
-> {
-> 	struct mbox *mbox = &pf->mbox;
-> 
->@@ -1076,8 +1078,9 @@ static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
-> 	otx2_mbox_destroy(&mbox->mbox);
-> 	otx2_mbox_destroy(&mbox->mbox_up);
-> }
->+EXPORT_SYMBOL(otx2_pfaf_mbox_destroy);
-> 
->-static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
->+int otx2_pfaf_mbox_init(struct otx2_nic *pf)
-> {
-> 	struct mbox *mbox = &pf->mbox;
-> 	void __iomem *hwbase;
->@@ -1124,6 +1127,7 @@ static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
-> 	otx2_pfaf_mbox_destroy(pf);
-> 	return err;
-> }
->+EXPORT_SYMBOL(otx2_pfaf_mbox_init);
-> 
-> static int otx2_cgx_config_linkevents(struct otx2_nic *pf, bool enable)
-> {
->@@ -1379,7 +1383,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
-> 	return IRQ_HANDLED;
-> }
-> 
->-static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
->+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
-> {
-> 	struct otx2_cq_poll *cq_poll = (struct otx2_cq_poll *)cq_irq;
-> 	struct otx2_nic *pf = (struct otx2_nic *)cq_poll->dev;
->@@ -1398,20 +1402,25 @@ static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
-> 
-> 	return IRQ_HANDLED;
-> }
->+EXPORT_SYMBOL(otx2_cq_intr_handler);
-> 
->-static void otx2_disable_napi(struct otx2_nic *pf)
->+void otx2_disable_napi(struct otx2_nic *pf)
-> {
-> 	struct otx2_qset *qset = &pf->qset;
-> 	struct otx2_cq_poll *cq_poll;
->+	struct work_struct *work;
-> 	int qidx;
-> 
-> 	for (qidx = 0; qidx < pf->hw.cint_cnt; qidx++) {
-> 		cq_poll = &qset->napi[qidx];
->-		cancel_work_sync(&cq_poll->dim.work);
->+		work = &cq_poll->dim.work;
->+		if (work->func)
->+			cancel_work_sync(work);
-> 		napi_disable(&cq_poll->napi);
-> 		netif_napi_del(&cq_poll->napi);
-> 	}
-> }
->+EXPORT_SYMBOL(otx2_disable_napi);
-> 
-> static void otx2_free_cq_res(struct otx2_nic *pf)
-> {
->@@ -1477,7 +1486,7 @@ static int otx2_get_rbuf_size(struct otx2_nic *pf, int mtu)
-> 	return ALIGN(rbuf_size, 2048);
-> }
-> 
->-static int otx2_init_hw_resources(struct otx2_nic *pf)
->+int otx2_init_hw_resources(struct otx2_nic *pf)
-> {
-> 	struct nix_lf_free_req *free_req;
-> 	struct mbox *mbox = &pf->mbox;
->@@ -1601,8 +1610,9 @@ static int otx2_init_hw_resources(struct otx2_nic *pf)
-> 	mutex_unlock(&mbox->lock);
-> 	return err;
-> }
->+EXPORT_SYMBOL(otx2_init_hw_resources);
-> 
->-static void otx2_free_hw_resources(struct otx2_nic *pf)
->+void otx2_free_hw_resources(struct otx2_nic *pf)
-> {
-> 	struct otx2_qset *qset = &pf->qset;
-> 	struct nix_lf_free_req *free_req;
->@@ -1688,6 +1698,7 @@ static void otx2_free_hw_resources(struct otx2_nic *pf)
-> 	}
-> 	mutex_unlock(&mbox->lock);
-> }
->+EXPORT_SYMBOL(otx2_free_hw_resources);
-> 
-> static bool otx2_promisc_use_mce_list(struct otx2_nic *pfvf)
-> {
->@@ -1781,6 +1792,7 @@ void otx2_free_queue_mem(struct otx2_qset *qset)
-> 	kfree(qset->napi);
-> }
-> EXPORT_SYMBOL(otx2_free_queue_mem);
->+
-> int otx2_alloc_queue_mem(struct otx2_nic *pf)
-> {
-> 	struct otx2_qset *qset = &pf->qset;
->@@ -2103,7 +2115,7 @@ static netdev_tx_t otx2_xmit(struct sk_buff *skb, struct net_device *netdev)
-> 	sq = &pf->qset.sq[sq_idx];
-> 	txq = netdev_get_tx_queue(netdev, qidx);
-> 
->-	if (!otx2_sq_append_skb(netdev, sq, skb, qidx)) {
->+	if (!otx2_sq_append_skb(pf, txq, sq, skb, qidx)) {
-> 		netif_tx_stop_queue(txq);
-> 
-> 		/* Check again, incase SQBs got freed up */
->@@ -2808,7 +2820,7 @@ static const struct net_device_ops otx2_netdev_ops = {
-> 	.ndo_set_vf_trust	= otx2_ndo_set_vf_trust,
-> };
-> 
->-static int otx2_wq_init(struct otx2_nic *pf)
->+int otx2_wq_init(struct otx2_nic *pf)
-> {
-> 	pf->otx2_wq = create_singlethread_workqueue("otx2_wq");
-> 	if (!pf->otx2_wq)
->@@ -2819,7 +2831,7 @@ static int otx2_wq_init(struct otx2_nic *pf)
-> 	return 0;
-> }
-> 
->-static int otx2_check_pf_usable(struct otx2_nic *nic)
->+int otx2_check_pf_usable(struct otx2_nic *nic)
-> {
-> 	u64 rev;
-> 
->@@ -2836,8 +2848,9 @@ static int otx2_check_pf_usable(struct otx2_nic *nic)
-> 	}
-> 	return 0;
-> }
->+EXPORT_SYMBOL(otx2_check_pf_usable);
-> 
->-static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
->+int otx2_realloc_msix_vectors(struct otx2_nic *pf)
-> {
-> 	struct otx2_hw *hw = &pf->hw;
-> 	int num_vec, err;
->@@ -2859,6 +2872,7 @@ static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
-> 
-> 	return otx2_register_mbox_intr(pf, false);
-> }
->+EXPORT_SYMBOL(otx2_realloc_msix_vectors);
-> 
-> static int otx2_sriov_vfcfg_init(struct otx2_nic *pf)
-> {
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
->index 3eb85949677a..fbd9fe98259f 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
->@@ -131,6 +131,7 @@ static void otx2_xdp_snd_pkt_handler(struct otx2_nic *pfvf,
-> }
-> 
-> static void otx2_snd_pkt_handler(struct otx2_nic *pfvf,
->+				 struct net_device *ndev,
-> 				 struct otx2_cq_queue *cq,
-> 				 struct otx2_snd_queue *sq,
-> 				 struct nix_cqe_tx_s *cqe,
->@@ -145,7 +146,7 @@ static void otx2_snd_pkt_handler(struct otx2_nic *pfvf,
-> 
-> 	if (unlikely(snd_comp->status) && netif_msg_tx_err(pfvf))
-> 		net_err_ratelimited("%s: TX%d: Error in send CQ status:%x\n",
->-				    pfvf->netdev->name, cq->cint_idx,
->+				    ndev->name, cq->cint_idx,
-> 				    snd_comp->status);
-> 
-> 	sg = &sq->sg[snd_comp->sqe_id];
->@@ -453,6 +454,7 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
-> 	int tx_pkts = 0, tx_bytes = 0, qidx;
-> 	struct otx2_snd_queue *sq;
-> 	struct nix_cqe_tx_s *cqe;
->+	struct net_device *ndev;
-> 	int processed_cqe = 0;
-> 
-> 	if (cq->pend_cqe >= budget)
->@@ -464,6 +466,7 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
-> process_cqe:
-> 	qidx = cq->cq_idx - pfvf->hw.rx_queues;
-> 	sq = &pfvf->qset.sq[qidx];
->+	ndev = pfvf->netdev;
-> 
-> 	while (likely(processed_cqe < budget) && cq->pend_cqe) {
-> 		cqe = (struct nix_cqe_tx_s *)otx2_get_next_cqe(cq);
->@@ -478,7 +481,8 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
-> 		if (cq->cq_type == CQ_XDP)
-> 			otx2_xdp_snd_pkt_handler(pfvf, sq, cqe);
-> 		else
->-			otx2_snd_pkt_handler(pfvf, cq, &pfvf->qset.sq[qidx],
->+			otx2_snd_pkt_handler(pfvf, ndev, cq,
->+					     &pfvf->qset.sq[qidx],
-> 					     cqe, budget, &tx_pkts, &tx_bytes);
-> 
-> 		cqe->hdr.cqe_type = NIX_XQE_TYPE_INVALID;
->@@ -505,7 +509,7 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
-> 		/* Check if queue was stopped earlier due to ring full */
-> 		smp_mb();
-> 		if (netif_tx_queue_stopped(txq) &&
->-		    netif_carrier_ok(pfvf->netdev))
->+		    netif_carrier_ok(ndev))
-> 			netif_tx_wake_queue(txq);
+Hi Andy,
 
+Thank you for addressing this.
 
-I don't understand the this change you do in otx2_tx_napi_handler() and
-otx2_snd_pkt_handler(). What are you trying to achieve?
-Also, it is unrelated to the rest of the patch (export functions)
-
-
-> 	}
-> 	return 0;
->@@ -594,6 +598,7 @@ int otx2_napi_handler(struct napi_struct *napi, int budget)
-> 	}
-> 	return workdone;
-> }
->+EXPORT_SYMBOL(otx2_napi_handler);
-> 
-> void otx2_sqe_flush(void *dev, struct otx2_snd_queue *sq,
-> 		    int size, int qidx)
->@@ -1141,13 +1146,13 @@ static void otx2_set_txtstamp(struct otx2_nic *pfvf, struct sk_buff *skb,
-> 	}
-> }
-> 
->-bool otx2_sq_append_skb(struct net_device *netdev, struct otx2_snd_queue *sq,
->+bool otx2_sq_append_skb(void *dev, struct netdev_queue *txq,
-
-1) This looks like unrelated to the rest of the patch (export functions)
-2) Why void *? Avoid that please. Just have arg
-struct otx2_nic *pfvf
-no?
-
-
-
->+			struct otx2_snd_queue *sq,
-> 			struct sk_buff *skb, u16 qidx)
-> {
->-	struct netdev_queue *txq = netdev_get_tx_queue(netdev, qidx);
->-	struct otx2_nic *pfvf = netdev_priv(netdev);
-> 	int offset, num_segs, free_desc;
-> 	struct nix_sqe_hdr_s *sqe_hdr;
->+	struct otx2_nic *pfvf = dev;
-> 
-> 	/* Check if there is enough room between producer
-> 	 * and consumer index.
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.h
->index 3f1d2655ff77..e1db5f961877 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.h
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.h
->@@ -167,7 +167,8 @@ static inline u64 otx2_iova_to_phys(void *iommu_domain, dma_addr_t dma_addr)
-> }
-> 
-> int otx2_napi_handler(struct napi_struct *napi, int budget);
->-bool otx2_sq_append_skb(struct net_device *netdev, struct otx2_snd_queue *sq,
->+bool otx2_sq_append_skb(void *dev, struct netdev_queue *txq,
->+			struct otx2_snd_queue *sq,
-> 			struct sk_buff *skb, u16 qidx);
-> void cn10k_sqe_flush(void *dev, struct otx2_snd_queue *sq,
-> 		     int size, int qidx);
->diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
->index 79a8acac6283..0486fca8b573 100644
->--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
->+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
->@@ -395,7 +395,7 @@ static netdev_tx_t otx2vf_xmit(struct sk_buff *skb, struct net_device *netdev)
-> 	sq = &vf->qset.sq[qidx];
-> 	txq = netdev_get_tx_queue(netdev, qidx);
-> 
->-	if (!otx2_sq_append_skb(netdev, sq, skb, qidx)) {
->+	if (!otx2_sq_append_skb(vf, txq, sq, skb, qidx)) {
-> 		netif_tx_stop_queue(txq);
-> 
-> 		/* Check again, incase SQBs got freed up */
->@@ -500,7 +500,7 @@ static const struct net_device_ops otx2vf_netdev_ops = {
-> 	.ndo_setup_tc = otx2_setup_tc,
-> };
-> 
->-static int otx2_wq_init(struct otx2_nic *vf)
->+static int otx2_vf_wq_init(struct otx2_nic *vf)
-> {
-> 	vf->otx2_wq = create_singlethread_workqueue("otx2vf_wq");
-> 	if (!vf->otx2_wq)
->@@ -689,7 +689,7 @@ static int otx2vf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> 		goto err_ptp_destroy;
-> 	}
-> 
->-	err = otx2_wq_init(vf);
->+	err = otx2_vf_wq_init(vf);
+On Thu, 2024-08-29 at 19:50 +0300, Andy Shevchenko wrote:
+> First of all, it's a bit counterintuitive to have something like
+>=20
+> 	int err;
+> 	...
+> 	scoped_guard(...)
+> 		err =3D foo(...);
 > 	if (err)
-> 		goto err_unreg_netdev;
-> 
->-- 
->2.25.1
->
+> 		return err;
+>=20
+> Second, with a particular kernel configuration and compiler version in
+> one of such cases the objtool is not happy:
+>=20
+>   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end=
+ of section
+>=20
+> I'm not an expert on all this, but the theory is that compiler and
+> linker in this case can't understand that 'result' variable will be
+> always initialized as long as no error has been returned. Assigning
+> 'result' to a dummy value helps with this. Note, that fixing the
+> scoped_guard() scope (as per above) does not make issue gone.
+>=20
+> That said, assign dummy value and make the scope_guard() clear of its sco=
+pe.
+> For the sake of consistency do it in the entire file.
+>=20
+
+Interestingly, if I open a scope manually and use the plain guard, the
+warning disappears.
+
+	...
+	unsigned long result;
+	int err;
+
+	{
+		guard(mutex)(&priv->vpc_mutex);
+		err =3D read_ec_data(priv->adev->handle, VPCCMD_R_FAN,
+&result);
+		if (err)
+			return err;
+	}
+	...
+
+This looks a bit strange, but is probably easier for the compiler than
+the for loop of scoped_guard.
+
+But I don't know how well this style fits into the kernel.
+
+Best regards,
+Gergo Koteles
+
 
