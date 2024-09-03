@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-312762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DAE969AE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830DE969AE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DABB1C23A4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D571C23398
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4B41DA10C;
-	Tue,  3 Sep 2024 10:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C2D1DAC47;
+	Tue,  3 Sep 2024 10:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="EAkRSFQe"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="d+LxL8/v"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D9E1D095C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473161D0978
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360788; cv=none; b=kwa03Cgtz4bKMVKw5hEdeupTGNkiiHYymCbviP8CT5Gsic1jj9R28GVVLeu7rRW+kKN5+CrCLgoy61gQ0Al8qDXqox1525r+dFc7kBIzaiqHsaI0CkogumGMwtAedZ1Vu2CjCoiazlReTilVIv7uwfYyFrRLv9T+KWnvTn2V5gc=
+	t=1725360789; cv=none; b=CQ7BIWCdqLMUjuGxGAAafoRz+sw4Vn7Hg9kz6GoC+Kdf0sCYzt80JcNNZxosmLUayQTA0ZlgWDytLVDKTSKipEMKTHH43B7LhtsxLWc5ecXvwW339RnqgFq8394HFlqhbhCu7ERVwHTdT6GwTji/k/WBbe7dmFEsyq3Uug3ePgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360788; c=relaxed/simple;
-	bh=kjSSUho6FNpKD6d9oWqK/49eyjhobQf3ir+naWpXI2k=;
+	s=arc-20240116; t=1725360789; c=relaxed/simple;
+	bh=JsLm1CC7c3POeqyEgAGdmiJ1LKBcyDw4jNynQKaJWco=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J+KcUgxYux7hXOuYQlQvXoSAskNURz89w3SnM0w/oStA1l0/9ChtZ+dPvp9cYEwJZQ95jZUw0vhkkITCp4D/oX8fYNwfW07InRsKWHd+qY7hBghEBqvSPPpzbacayrHQxQPd/iRx/w7LXxf+5e+04PgkFivaWK7taFAGMC4za8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=EAkRSFQe; arc=none smtp.client-ip=35.89.44.35
+	 MIME-Version; b=h8DJ7gNAet27Xz/4wl8NZerIbtNkVXnB5sNqrEjxhr3i3ZZD/Y1Rp/hGHH+3a80+GFF5r3qhkRfoLVI0qm4LtTPV+jh85J0iYPDv2u6Jjp8werhOq0e8MKJYSOJi79ZDb3ANsTW6vEVDtNqCSV4JEKVp+qDUhLKAXfWjhs3dvbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=d+LxL8/v; arc=none smtp.client-ip=44.202.169.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
 	by cmsmtp with ESMTPS
-	id l7Mgss606qvuolR9lsFU5z; Tue, 03 Sep 2024 10:53:05 +0000
+	id lGmAsRrDu1zuHlR9nsd6g0; Tue, 03 Sep 2024 10:53:07 +0000
 Received: from md-in-79.webhostbox.net ([43.225.55.182])
 	by cmsmtp with ESMTPS
-	id lR9jsDTKEeieBlR9ksTWea; Tue, 03 Sep 2024 10:53:05 +0000
-X-Authority-Analysis: v=2.4 cv=BoBWwpX5 c=1 sm=1 tr=0 ts=66d6ea91
+	id lR9ks3iCGO7CrlR9ms4w2c; Tue, 03 Sep 2024 10:53:06 +0000
+X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66d6ea92
  a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=3KY-2xoZkWm1R9MF42IA:9
- a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+ a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=jOwBCQwwsqbqoLW4yoUA:9
+ a=HjVMtnDHQlM7PJrv9UYS:22 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
 	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=BB7BCR3IrZVjn5A7a28pahM3Ou0lCzEKg+FXu9n6lXo=; b=EAkRSFQe8p1cZevQko3KUfpKRs
-	oluuzlUXUx7GuXbrDOarfc2rFCAZKLTp/ujyQ8YUL3HmhJLOt/YK524RKQOdBoafo3yfojYenn59F
-	fB8ihYrJ7Y2opaw5sU1eGc+YqyZhLHb45Nz15kSzcAAi0J6zyj+W7utybz3MubbPc1FiE+wN0qyOk
-	FAq1sbHlDE3VIrMozx2n0ZFKD8dQG7Ig6NSXrtWXh965e7bnmtUgL9t6sjEjUa+tF1tKaW7mSnz5w
-	R78kyNfI9kJNjMe0DyjPX4Tw7rNssUYH08tOEgImjlI0AiavCr5d4tMoWgFsGNrYr+/00FE+JXvuk
-	06dXCVgA==;
+	bh=LI6rWAJozlYK2YSfUr+lCWS6YZ0aqIMdjWAwWkl2+FQ=; b=d+LxL8/v+ZrQg7L53jovPW5YOF
+	zoo0oaevWBkcNko5hgtnN+xwtmhhhgmld9sSHrGjIGZ6vNP24TL0YERlKA6y8FrbIM/U/gtCsjej0
+	6pwEod+/T1pDyzs5nSfHb5+iSbS92itRS6AehcVhY9LCsuL92FTzQQZiUGKfVJuEF1lXdlszVLmSk
+	BRKC06XDjiaqavp9X+I1VKnK9t08XfqF0hrS+2fXHUiUoIlDFWcwmEb2ar4OCB6yDvjDv13MwFGwA
+	Ay85U6K0eitmUq8+MTiJRL8tpkv1Om8dRjigoTUnMygFTBj/ad+z7GbmQlCXN8uuHS6FXhfBiQ+7H
+	JMLsqlxQ==;
 Received: from [122.165.245.213] (port=41440 helo=localhost.localdomain)
 	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <karthikeyan@linumiz.com>)
-	id 1slR9h-000Elu-24;
-	Tue, 03 Sep 2024 16:23:01 +0530
+	id 1slR9j-000Elu-1Z;
+	Tue, 03 Sep 2024 16:23:03 +0530
 From: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -70,9 +70,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-rtc@vger.kernel.org,
 	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-Subject: [PATCH v2 3/8] ARM: dts: rockchip: Add pwm node for RV1126
-Date: Tue,  3 Sep 2024 16:22:40 +0530
-Message-Id: <20240903105245.715899-4-karthikeyan@linumiz.com>
+Subject: [PATCH v2 4/8] ARM: dts: rockchip: Add watchdog node for RV1126
+Date: Tue,  3 Sep 2024 16:22:41 +0530
+Message-Id: <20240903105245.715899-5-karthikeyan@linumiz.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240903105245.715899-1-karthikeyan@linumiz.com>
 References: <20240903105245.715899-1-karthikeyan@linumiz.com>
@@ -91,20 +91,20 @@ X-AntiAbuse: Sender Address Domain - linumiz.com
 X-BWhitelist: no
 X-Source-IP: 122.165.245.213
 X-Source-L: No
-X-Exim-ID: 1slR9h-000Elu-24
+X-Exim-ID: 1slR9j-000Elu-1Z
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: (localhost.localdomain) [122.165.245.213]:41440
 X-Source-Auth: karthikeyan@linumiz.com
-X-Email-Count: 33
+X-Email-Count: 43
 X-Org: HG=dishared_whb_net_legacy;ORG=directi;
 X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFRr/hvz2erqnp6oa43sUSSQPvVOoQgC97wHgUhpNf1ISdaL7TmonCmgeQ91zKaFWwguRGbhAo8Ny0gJeq+xFVV3A1XQAqT0UhnlEtr6n3QPiyqKBfQm
- EmNBMMgQN3H+cOBQu9uj7NpGJHYx5CBvi1TEefo/HpeJ+4q9pGxzLOwaxYNQsc70ke/AKyDTmJflwnXPQi4dyGBCk+gUCYxd1ik8FN7WMtkzuf48PTG+8JGc
+X-CMAE-Envelope: MS4xfAQloau2Rb+Klz8rQ8bTiB91cHjfPCTwZdDU7MZ6LNHgepAdBpO8Ph0s9wHDhXWTXCIb7bazGrFSE1qu2Xla0hXPZakCiQcI2/GO9oQ0eLIBJUgmwz+C
+ we2z66F+7NE44+2s+dNcsLicsT5tcIGYSn/D0s+8IvHd3Wfza/WfY1aBblbJSDsnWHxANhhbP3QJb1sZWGOuFhBXpPvQ79YDiRAJe0H1We1sPzM5PD/pdzL7
 
-Add missing pwm node and possible pinctrl for Rockchip RV1126
+Add watchdog node for Rockchip RV1126
 
 Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 ---
@@ -113,298 +113,28 @@ Notes:
     v2:
     - No change
 
- .../arm/boot/dts/rockchip/rv1126-pinctrl.dtsi | 128 ++++++++++++++++++
- arch/arm/boot/dts/rockchip/rv1126.dtsi        | 110 +++++++++++++++
- 2 files changed, 238 insertions(+)
+ arch/arm/boot/dts/rockchip/rv1126.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi b/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
-index a3714ab0af32..9db93b495448 100644
---- a/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
-@@ -225,6 +225,28 @@ i2s0m1_sdo3_sdi1: i2s0m1-sdo3-sdi1 {
- 			<3 RK_PB5 3 &pcfg_pull_none>;
- 		};
- 	};
-+	pwm0 {
-+		/omit-if-no-ref/
-+		pwm0m0_pins: pwm0m0-pins {
-+			rockchip,pins =
-+				/* pwm0_pin_m0 */
-+				<0 RK_PB6 3 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm0m1_pins: pwm0m1-pins {
-+			rockchip,pins =
-+				/* pwm0_pin_m1 */
-+				<2 RK_PB3 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm1 {
-+		/omit-if-no-ref/
-+		pwm1m0_pins: pwm1m0-pins {
-+			rockchip,pins =
-+				/* pwm1_pin_m0 */
-+				<0 RK_PB7 3 &pcfg_pull_none>;
-+		};
-+	};
- 	pwm2 {
- 		/omit-if-no-ref/
- 		pwm2m0_pins: pwm2m0-pins {
-@@ -232,6 +254,106 @@ pwm2m0_pins: pwm2m0-pins {
- 				/* pwm2_pin_m0 */
- 				<0 RK_PC0 3 &pcfg_pull_none>;
- 		};
-+		/omit-if-no-ref/
-+		pwm2m1_pins: pwm2m1-pins {
-+			rockchip,pins =
-+				/* pwm2_pin_m1 */
-+				<2 RK_PB1 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm3 {
-+		/omit-if-no-ref/
-+		pwm3m0_pins: pwm3m0-pins {
-+			rockchip,pins =
-+				/* pwm3_pin_m0 */
-+				<0 RK_PC1 3 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm4 {
-+		/omit-if-no-ref/
-+		pwm4m0_pins: pwm4m0-pins {
-+			rockchip,pins =
-+				/* pwm4_pin_m0 */
-+				<0 RK_PC2 3 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm5 {
-+		/omit-if-no-ref/
-+		pwm5m0_pins: pwm5m0-pins {
-+			rockchip,pins =
-+				/* pwm5_pin_m0 */
-+				<0 RK_PC3 3 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm6 {
-+		/omit-if-no-ref/
-+		pwm6m0_pins: pwm6m0-pins {
-+			rockchip,pins =
-+				/* pwm6_pin_m0 */
-+				<0 RK_PB2 3 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm6m1_pins: pwm6m1-pins {
-+			rockchip,pins =
-+				/* pwm6_pin_m1 */
-+				<2 RK_PD4 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm7 {
-+		/omit-if-no-ref/
-+		pwm7m0_pins: pwm7m0-pins {
-+			rockchip,pins =
-+				/* pwm7_pin_m0 */
-+				<0 RK_PB1 3 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm7m1_pins: pwm7m1-pins {
-+			rockchip,pins =
-+				/* pwm7_pin_m1 */
-+				<3 RK_PA0 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm8 {
-+		/omit-if-no-ref/
-+		pwm8m0_pins: pwm8m0-pins {
-+			rockchip,pins =
-+				/* pwm8_pin_m0 */
-+				<3 RK_PA4 6 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm8m1_pins: pwm8m1-pins {
-+			rockchip,pins =
-+				/* pwm8_pin_m1 */
-+				<2 RK_PD7 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm9 {
-+		/omit-if-no-ref/
-+		pwm9m0_pins: pwm9m0-pins {
-+			rockchip,pins =
-+				/* pwm9_pin_m0 */
-+				<3 RK_PA5 6 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm9m1_pins: pwm9m1-pins {
-+			rockchip,pins =
-+				/* pwm9_pin_m1 */
-+				<2 RK_PD6 5 &pcfg_pull_none>;
-+		};
-+	};
-+	pwm10 {
-+		/omit-if-no-ref/
-+		pwm10m0_pins: pwm10m0-pins {
-+			rockchip,pins =
-+				/* pwm10_pin_m0 */
-+				<3 RK_PA6 6 &pcfg_pull_none>;
-+		};
-+		/omit-if-no-ref/
-+		pwm10m1_pins: pwm10m1-pins {
-+			rockchip,pins =
-+				/* pwm10_pin_m1 */
-+				<2 RK_PD5 5 &pcfg_pull_none>;
-+		};
- 	};
- 	pwm11 {
- 		/omit-if-no-ref/
-@@ -240,6 +362,12 @@ pwm11m0_pins: pwm11m0-pins {
- 				/* pwm11_pin_m0 */
- 				<3 RK_PA7 6 &pcfg_pull_none>;
- 		};
-+		/omit-if-no-ref/
-+		pwm11m1_pins: pwm11m1-pins {
-+			rockchip,pins =
-+				/* pwm11_pin_m1 */
-+				<3 RK_PA1 5 &pcfg_pull_none>;
-+		};
- 	};
- 	rgmii {
- 		/omit-if-no-ref/
 diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/rockchip/rv1126.dtsi
-index 09ecde58c553..abf442804d27 100644
+index abf442804d27..283985608428 100644
 --- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
-@@ -269,6 +269,28 @@ uart1: serial@ff410000 {
- 		status = "disabled";
+@@ -544,6 +544,14 @@ timer0: timer@ff660000 {
+ 		clock-names = "pclk", "timer";
  	};
  
-+	pwm0: pwm@ff430000 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff430000 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM0>, <&pmucru PCLK_PWM0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm0m0_pins>;
-+		#pwm-cells = <3>;
++	wdt: watchdog@ff680000 {
++		compatible = "snps,dw-wdt";
++		reg = <0xff680000 0x100>;
++		clocks = <&cru PCLK_WDT>;
++		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
 +		status = "disabled";
 +	};
 +
-+	pwm1: pwm@ff430010 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff430010 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM0>, <&pmucru PCLK_PWM0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm1m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
- 	pwm2: pwm@ff430020 {
- 		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
- 		reg = <0xff430020 0x10>;
-@@ -280,6 +302,61 @@ pwm2: pwm@ff430020 {
- 		status = "disabled";
- 	};
- 
-+	pwm3: pwm@ff430030 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff430030 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM0>, <&pmucru PCLK_PWM0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm3m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm4: pwm@ff440000 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff440000 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM1>, <&pmucru PCLK_PWM1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm4m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm5: pwm@ff440010 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff440010 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM1>, <&pmucru PCLK_PWM1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm5m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm6: pwm@ff440020 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff440020 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM1>, <&pmucru PCLK_PWM1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm6m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm7: pwm@ff440030 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff440030 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&pmucru CLK_PWM1>, <&pmucru PCLK_PWM1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm7m0_pins>;
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
- 	pmucru: clock-controller@ff480000 {
- 		compatible = "rockchip,rv1126-pmucru";
- 		reg = <0xff480000 0x1000>;
-@@ -323,6 +400,39 @@ i2c3: i2c@ff520000 {
- 		rockchip,grf = <&pmugrf>;
- 	};
- 
-+	pwm8: pwm@ff550000 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff550000 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>;
-+		pinctrl-0 = <&pwm8m0_pins>;
-+		pinctrl-names = "default";
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm9: pwm@ff550010 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff550010 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>;
-+		pinctrl-0 = <&pwm9m0_pins>;
-+		pinctrl-names = "default";
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
-+	pwm10: pwm@ff550020 {
-+		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
-+		reg = <0xff550020 0x10>;
-+		clock-names = "pwm", "pclk";
-+		clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>;
-+		pinctrl-0 = <&pwm10m0_pins>;
-+		pinctrl-names = "default";
-+		#pwm-cells = <3>;
-+		status = "disabled";
-+	};
-+
- 	pwm11: pwm@ff550030 {
- 		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
- 		reg = <0xff550030 0x10>;
+ 	i2s0: i2s@ff800000 {
+ 		compatible = "rockchip,rv1126-i2s-tdm";
+ 		reg = <0xff800000 0x1000>;
 -- 
 2.39.2
 
