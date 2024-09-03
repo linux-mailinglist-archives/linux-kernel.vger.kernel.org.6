@@ -1,140 +1,111 @@
-Return-Path: <linux-kernel+bounces-313333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EDD96A412
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:18:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A8C96A414
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D451C23D7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D97287760
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF09D18B486;
-	Tue,  3 Sep 2024 16:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F65F18B46A;
+	Tue,  3 Sep 2024 16:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ELxiChKw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bchnjGj7"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8632118858C;
-	Tue,  3 Sep 2024 16:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CCA405C9;
+	Tue,  3 Sep 2024 16:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380317; cv=none; b=qFcrXIO5V5tSXwFOQzuxbxVKcLkDXfHpPuRhOogzsgbAzCm/6nidDJggdV3R0pneb5JaCseQeRD8aGno3Wco/ul1xH4SJdNTrGF7eDcd2e5w/9dojDouZfiZNtjE0P9RxtuaFuP/0vWAfCpHWRKOLKZDvj26OqJMcudQS42gYC4=
+	t=1725380353; cv=none; b=tLEjPndOH7eM56NW7rE53YgaZwW1LYb24+4d/mrkkX32GyibpjTch0FAbv9EVTqtAEVzXxHrLITT7ziWpXEOjnyDVDSNf+ZZ7lBxN8TACkUrg6TFtvPcw05pF8zPmB8YQLzpgGVuWXM6NHreE8e8cdoWK4k1t4MFxjGMYuGavFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380317; c=relaxed/simple;
-	bh=e+ztJAswj0zgxwfKO74jE9paujDwSwvONdxkFHmYZtQ=;
+	s=arc-20240116; t=1725380353; c=relaxed/simple;
+	bh=7PP+0mnwl58stNlb1VVDx5bSn5dAYK88Hlv7Mydk/j0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naA9Azucd2g/SqEQFdVZ108kO9U942mZGK5qSspoSb/Zt2/KpiY5mNnHHFSAYgki2sdHf4OjbaIYEQrgS81+g0IAojYCgOEfaBSjTrY5bs8He8f9IRjDXRnHguiRsxe0MO/H69j4jKAEu/+eE2YV4LvCEtbjtm5v7GwL2B6QEFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ELxiChKw; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4oew2Kx9QsZerTxtmWrGtDOoh6ZRAFtlR7hV7HtTatFGo7Oi3bftUTzZG1f+whLYKOXZ8vrN9ji22EQ+ZbswwT7YH8tXIfj+5kJuwn3ASroIcBDpdNVfItTC1XTsTLa0JzdZ65qQ/oOkDcan2LLAP/LXkNN+CVR7jhl2lKULDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bchnjGj7; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725380315; x=1756916315;
+  t=1725380352; x=1756916352;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e+ztJAswj0zgxwfKO74jE9paujDwSwvONdxkFHmYZtQ=;
-  b=ELxiChKwc4dF49dhSp8SJgCvijuaQLbRpCeWDypeH5xfYPyKrBSMAY99
-   oG2TdpEnA1Vx6IG7H4qyYhckxkNytMwzY7eC9gl2jyvLzD2RPXtoxpBLF
-   2IGmup6uKGZZCWP0gIy1WQAWMCws+31VrTZdN0H9VUP4msXx2qWfsxvjw
-   A12d+775sYxt7ddB479PQAhXWGGyg34QF4NmPrR+7lWPXHChhLvSnePxw
-   UhZyiCZp8euY6dXVmO0D1Zr58b2ftZQTKcVqwHkTo2eJGftmVhbb7yaHe
-   CTkzHGWKAaLUOwEfWA10OyNrAk8s8o2v/2PaN+uln4JkMsx0QxfdVHbxa
-   w==;
-X-CSE-ConnectionGUID: Z11yb9mcSximYVxaEofeGg==
-X-CSE-MsgGUID: HLLeWEr2TtShi7vdmljLWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="13350043"
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7PP+0mnwl58stNlb1VVDx5bSn5dAYK88Hlv7Mydk/j0=;
+  b=bchnjGj7Y+nM75tWlz7l1aI9qAFYkWPq/q2QWcNP5tfxjs8QXgkdz4pX
+   VX4vUVh6VUTXjny11HSXyeWpkM6434R2mNkb6STz3AiXD0qyUlQ2t0wO4
+   76g4+Dr931DsGdvIEd+E8a1z3DJ5+SUWVcFhI3LyQh329CMnyJ2p6fdXV
+   JNdOwFfc4Lz3MMAw9nUVMeqoMDTJFEDqKJuV8WGbQYzlR8ldVss5/qcwS
+   yjbtF8aWGfP+bKdpL3vY507cqiEmoX24Ux0otgNnzzWfjstvDd5VlyMX9
+   YomrlZZehE/jFTnUw7ois8QzxTAnp1XPIChCzQNVZnM0QfBv3RnmO8P3H
+   Q==;
+X-CSE-ConnectionGUID: 6872LyU+QOWFFL8MyxAOUQ==
+X-CSE-MsgGUID: S/yt/xHSTQe87tSYZUTCCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="13350169"
 X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="13350043"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:18:27 -0700
-X-CSE-ConnectionGUID: WLEjygFwQ62mC3ud2PgMXA==
-X-CSE-MsgGUID: zETu7SKwTqORrT/a8qb2dw==
+   d="scan'208";a="13350169"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:19:11 -0700
+X-CSE-ConnectionGUID: MuLc0WaHS0CsYw5dJZPt8A==
+X-CSE-MsgGUID: cudFreshTlCFr9WA3XMQaA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69753081"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 03 Sep 2024 09:18:21 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slWER-0006t0-2e;
-	Tue, 03 Sep 2024 16:18:15 +0000
-Date: Wed, 4 Sep 2024 00:17:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, acelan.kao@canonical.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Message-ID: <202409040016.XGnUy9HW-lkp@intel.com>
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+   d="scan'208";a="95700617"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:19:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slWFF-00000004laX-0mjJ;
+	Tue, 03 Sep 2024 19:19:05 +0300
+Date: Tue, 3 Sep 2024 19:19:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Liao Chen <liaochen4@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	andi.shyti@linux.intel.com, florian.fainelli@broadcom.com,
+	tglx@linutronix.de
+Subject: Re: [PATCH -next] serial: 8250_aspeed_vuart: Enable module
+ autoloading
+Message-ID: <Ztc2-OuaL2IJI6QW@smile.fi.intel.com>
+References: <20240903131503.961178-1-liaochen4@huawei.com>
+ <4nyenalsjnerwjwcuk5zwm52rptnc5jhjhz3yhsmo7qt3gffhs@qadnsjic7p24>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4nyenalsjnerwjwcuk5zwm52rptnc5jhjhz3yhsmo7qt3gffhs@qadnsjic7p24>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Kai-Heng,
+On Tue, Sep 03, 2024 at 05:49:54PM +0200, Uwe Kleine-König wrote:
+> On Tue, Sep 03, 2024 at 01:15:03PM +0000, Liao Chen wrote:
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.11-rc6 next-20240903]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> I wonder if you found this entry missing by code review, or if you have
+> a machine with that UART and so you actually benefit.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kai-Heng-Feng/PCI-vmd-Delay-interrupt-handling-on-MTL-VMD-controller/20240903-110553
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240903025544.286223-1-kai.heng.feng%40canonical.com
-patch subject: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20240904/202409040016.XGnUy9HW-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409040016.XGnUy9HW-lkp@intel.com/reproduce)
+Using arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts in QEMU
+I never experienced an issue. Seems due to defconfig having it =y.
+(used arch/arm/configs/aspeed_g5_defconfig)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409040016.XGnUy9HW-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pci/controller/vmd.c:115: warning: Function parameter or struct member 'delay_irq' not described in 'vmd_irq'
-
-
-vim +115 drivers/pci/controller/vmd.c
-
-7cdbc4e9cd808b5 drivers/pci/controller/vmd.c Kai-Heng Feng 2024-09-03   98  
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12   99  /**
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  100   * struct vmd_irq - private data to map driver IRQ to the VMD shared vector
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  101   * @node:	list item for parent traversal.
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  102   * @irq:	back pointer to parent.
-21c80c9fefc3db1 arch/x86/pci/vmd.c           Keith Busch   2016-08-23  103   * @enabled:	true if driver enabled IRQ
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  104   * @virq:	the virtual IRQ value provided to the requesting driver.
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  105   *
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  106   * Every MSI/MSI-X IRQ requested for a device in a VMD domain will be mapped to
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  107   * a VMD IRQ using this structure.
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  108   */
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  109  struct vmd_irq {
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  110  	struct list_head	node;
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  111  	struct vmd_irq_list	*irq;
-21c80c9fefc3db1 arch/x86/pci/vmd.c           Keith Busch   2016-08-23  112  	bool			enabled;
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  113  	unsigned int		virq;
-7cdbc4e9cd808b5 drivers/pci/controller/vmd.c Kai-Heng Feng 2024-09-03  114  	bool			delay_irq;
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12 @115  };
-185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  116  
+> Otherwise looks right to me.
+> 
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
