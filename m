@@ -1,140 +1,236 @@
-Return-Path: <linux-kernel+bounces-312049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9381096914C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20570969152
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386411F231B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940F01F22D9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAED1CCEF6;
-	Tue,  3 Sep 2024 02:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMM+Wt7n"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82991CCEF4;
+	Tue,  3 Sep 2024 02:09:53 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2441581E5;
-	Tue,  3 Sep 2024 02:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725329281; cv=none; b=Ro8qQGdmHFToRoW6YhZ9aqllEA3+AyN88+e9MxKfS8udWexm7jFoOab3yQUqQF8bAwINZXCeakfEFqmZNHwygO6HcMKwLTSvuurAelFeCZCuRVtq9D/MM3+pvXCTeaIZnzWNHBShfL+yr6G8FR1+ocvJtdCap1vntq22vfLZ1CQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725329281; c=relaxed/simple;
-	bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jPgRTiqHB8IBAcK3FbKtLxZikqnlfpk0eeXFIFKfBme32qkmHyBN7aQUng4FXpAKmdYYiASvRemppfRESSDG8lTAfRVtOOr3Hxh+9kF/X4nJmGQH0LDvv0ErpObU9nIb3/wz1QKMCZzg8mZfU0TdOoFJ1X3xuWT2HPJPSgTQGZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMM+Wt7n; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c218866849so4974908a12.0;
-        Mon, 02 Sep 2024 19:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725329278; x=1725934078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
-        b=cMM+Wt7nOaWGnoagI23gYg4hrOmDt1bYGReoHQ2LexoHbL65kHnmcgAztQdMLwr0Is
-         uQa6S08nWGebZU8m9t8Pn2QTtbiOhoNj9xcZ2/T97oYiEJ0Na71V1Cbfd7kiAHOzlA3n
-         UzVXXaHb+ymsz4lip72iKe2YOpPil1S1aKdloZo3PYUjcwvXiRq9982mGY2wtpNmxpdV
-         b0cjcQPloD05C+gn+zani+3wufWqmiBAQPelNpwKmYrEtZplWt9l2kiXStVh/TcyJlWN
-         sbQ7Q2H2CZ9lg3RKahnA1hORT9XvRsTQ3weAG9niKbHsggle30EzzBh4VqkTzvmNk0/0
-         h7Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725329278; x=1725934078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
-        b=vHekfznAeg0fuTs/pQ4U1U2yp5+DVqfnqLzlLbOXGmgcB2lH1igsUqm6AAsrqSC+Cc
-         DXg2E5JQoLS+kqUS3wnFBgzutnwjOTFUNpklCOzsP4O+aqJSZAfGr2N1vAJw3kuWOJ6r
-         tnzE6sFqAnTeZTznSPk9jjEN6/zUAQlVGlfjniEyutabn1SpSync3P53ieiw9cPFUvsI
-         PdchwZTtIypgvuORy3wIaI47YqjVLmQUh8mjTEsTmnNDqrWEiH40ca0uUPXQQ8pIgNby
-         0DzEetm0+u/2upBDFDMorXeY93H0I+tCICo2bv0pXx2JwaCHim0lxxD/OC9/7mucsiU6
-         acUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2QV9IdUvfyyFcd98TSGyX6nUbSGCEepMssL0DoX2Nx18JajlRTDEIjqZItoqtV+QGyJD2508Qqi0=@vger.kernel.org, AJvYcCX7GoHwiDZtavQpKCJYngLxE2dzib0qjmliP1Zg01T5jCcdqsmbGfbVA4swKvs9nVJqkHStkKOcWhqj7OVx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhjXmYHDff+qPW4GkuZdvTZOFjqCw2IaWs+hXRbBXi7iZSL0B4
-	w4Kno0byEJ1QEqWH5gsAzmWGUG/aIwBq+nD0AMDgK8M5WQFuSlVMykZcQltv5cOral77Ixs2lHb
-	u5sJwjYQJtWsQ08RDFtcu8X/+pA==
-X-Google-Smtp-Source: AGHT+IGrC74Ctz0HzdIiD7tPawwv+UqDvOFvoUGHiH77vBFIYeFjLsTp/nj7HnVFDEBLZ4qvEkvOCGuZe0mvz2lIzBk=
-X-Received: by 2002:a17:906:f586:b0:a86:8917:fcd6 with SMTP id
- a640c23a62f3a-a89b9733607mr529621766b.60.1725329277088; Mon, 02 Sep 2024
- 19:07:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F224EAD39
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725329393; cv=fail; b=fhk/qK/dlNPutqUPvnOCL5ayN/s4MZYGqsRwdu9nd1YFY6pAmpeaLUHlrX/0CmYtYp5Nj8qBnYsZOR2QBide0cElHRPOOMIYeP/q7R2y/ynViYn0VW0rbY7H39GUpThd3y4+JpgeqpT6LJptqBI/k1bzhg/fZRExcc/yZmTY42c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725329393; c=relaxed/simple;
+	bh=872/XIvzM3Xb87huToqScdynjdL9t0tbAtY7CzgIiI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=amoFhWePxGzfL++fEzd7yldhgcowPHHwgk//tl7zaq4m0ZGWxiEVoXl1N1cxIeKxFOuC3U0Rz6i6V+PNixMN6VVTRxyQsJ5wxZK9pUX9JD7kM+1JNvoacQECpVQ2Lew7hpOqZKWcSzmaacHRuoNog5bQqYQq50ntF1Ng4wKQSJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4830rVMt020082;
+	Mon, 2 Sep 2024 19:09:24 -0700
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2177.outbound.protection.outlook.com [104.47.55.177])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41bxf4a9ur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 19:09:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zQVHTTFFAM0TvgcX8yi4raUH+TWM39WbIwBCQNgwHTTm2RntLEXRCRE60wF9NQX2veksjZcz91n7jg3G4sUqKoRRvWcleVv24Qct0rLb/+mTeFR0cKYcusUo/SSSBZReincA7J1dJqM0S7vqgYdwOTpRpXlLP1ID+yeFvwERDF/LI2H3Fb5FZ5ZM7zMawkwkUgRpcxhZ4hmUVg201j0bVncRSA70VZTr0vjrxXxabbfP4Za0xrhnATKv6jWxBwSa1Su0ExjLXV+REA20Dsygz7vbna3xa39hY2Q07bAqsxDu6AzsBkShWJ/PN7bVFSZGkf5l9GI9UFtzX7P++Msekg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NH0w2Ds76bXwhC2vODpKMfmR7gxclfT3mo0LVIGSTmo=;
+ b=MdJpPkJLOgTHjrbRhBg5m5eBZI5NqVHB2POgNPtVwhA76dlu5pi8nGOvkf8gZqm4yTyWgdgA84eRVlxPo1zl4dN0WMcGpi2YbKK9cnq/taX87pwCGIe0T/JXRzGvYyljmLJ32VtA2ljGRSZBF94Tuth8uca8OmUGKPkl79c2fUVlq1O2ubnivfLaEE3DPiJhcSR3EdQAklw5j9NNVnktgAw3u0AAC7RC/TEjkDliqVghL/aOCM1YzKyjp4et7Bu6ZtWGWs+LefEH43VuTzOkunE4ehks/yv286TUAG0eVLpweaxQrZwBuaBS1QmhLgaaSBF5EZQW1vvU6g8+czpLww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by PH0PR11MB5141.namprd11.prod.outlook.com (2603:10b6:510:3c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Tue, 3 Sep
+ 2024 02:09:21 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%6]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 02:09:20 +0000
+From: Xiaolei Wang <xiaolei.wang@windriver.com>
+To: sui.jingfeng@linux.dev, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        airlied@gmail.com, daniel@ffwll.ch
+Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] drm/etnaviv: Request pages from DMA32 zone on addressing_limited
+Date: Tue,  3 Sep 2024 10:08:57 +0800
+Message-Id: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0060.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b5::15) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-6-kfting@nuvoton.com>
- <ZtIaofiTqyFwNXrO@smile.fi.intel.com> <CACD3sJbZ-Yy3PfPWisMSiPYCbztbi1+Q+=udMG8EjNvE+xA1mg@mail.gmail.com>
- <ZtWnd8bmiu-M4fQg@smile.fi.intel.com>
-In-Reply-To: <ZtWnd8bmiu-M4fQg@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Tue, 3 Sep 2024 10:07:45 +0800
-Message-ID: <CACD3sJass-6gu6MQxrYwLGi6OMgWnntO+N7Ob9nV6o3siFHNVg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] i2c: npcm: Modify the client address assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, avifishman70@gmail.com, 
-	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, 
-	yuenn@google.com, benjaminfair@google.com, andi.shyti@kernel.org, 
-	wsa@kernel.org, rand.sec96@gmail.com, wsa+renesas@sang-engineering.com, 
-	kwliu@nuvoton.com, jjliu0@nuvoton.com, avi.fishman@nuvoton.com, 
-	tali.perry@nuvoton.com, tomer.maimon@nuvoton.com, kfting@nuvoton.com
-Cc: openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|PH0PR11MB5141:EE_
+X-MS-Office365-Filtering-Correlation-Id: 176c1221-94ff-443e-e95e-08dccbbd6c20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XHIDB7zd/Z1/fAO+te00gC8RUqCHxZPgM9mcQAgst2LNF2DBqxsxkMz/TamG?=
+ =?us-ascii?Q?yS1iW3o51JaoKA7+3ylLb4D6S88mceAx6BTB40HGHK7SKMx3sVMqJBWkF2oD?=
+ =?us-ascii?Q?qvZNsq74uw5ryiNvlXX5tXgfwK/5wEyNicQVpUtMtu2j7CruxwzBJSTVhsXY?=
+ =?us-ascii?Q?zi2laOlYSpyhyQO8FUysjPBgLHF2caED8k8MNK93tLSD7oAmQ5dgpdEzDKCg?=
+ =?us-ascii?Q?O/VWVqQsrL6Ocza2SjjmLTXxKwbR6v5/0Ehsxpv9QY40hfDTjYhXH0YCoMS8?=
+ =?us-ascii?Q?a73LLAhx6VvLYH7bPvhTdyLW+El2YyzkyakNRupoiATJ1V3aFGqUzRnM3bxQ?=
+ =?us-ascii?Q?5u3nSknnHgAkcD3yr8xoWA67SQMEg7SXDkJhyrJ5O6Fb0Z204b/rc/lIoG1X?=
+ =?us-ascii?Q?taP2ImyEa3jyngyMXrw4wX1Dyxw7RpjdZQ7mfiPmdEoX3OcXUftcYAB5l2UM?=
+ =?us-ascii?Q?Sn5i3RY11Qnw9c6navXQdBbye779GXMtLTVzZLJXBV4Dx7fV+NKBJWcgNUUc?=
+ =?us-ascii?Q?VFIXtACMIXsTQcch5uAZgSam2fSEWlk/kZBJmzHXgmGK4gV8HRWzmskEoNnV?=
+ =?us-ascii?Q?VWJeu4sw5Bqbj00yLdsI/UTNMvo5n4wWGWP42sHVnQC8e4hCtI50A+RcXZRO?=
+ =?us-ascii?Q?QlnE4i/fdlG/k3f1jCiAsRcpx38rDcKOdzAvANiYr08lx76SkKnJccGGsVw/?=
+ =?us-ascii?Q?RsMUs7vNxkro2Vh7+QydWV0vADv0ObXKVHwMbtoVTGDFuA5CAt3IsLwkgfep?=
+ =?us-ascii?Q?79IBsCy89NZELHlsAvkqlg6Yzk3GBzjmZZXwtaZspVNeDc9xjoz7P4Ypxvq7?=
+ =?us-ascii?Q?V5KrBUVD6o5/93ZQF6wvNv6o2Cte1EXEzQ2FJR9VJzpq4WW/TGznRhVr3n9/?=
+ =?us-ascii?Q?ujjkiqo7SyJDIsvLk+VzPxiYuLDfIFvIyzw6rnvK1G5bF27XaLxNcXYsFt92?=
+ =?us-ascii?Q?XqQNDUCtvKh+DyE0NJEGuYclIt6nsb2u+2TPMw2KaSB895XkOQRvfuRTHX8B?=
+ =?us-ascii?Q?F6RtXCAGTg/i0EsLY04KSxpOv+6jNrjitsXfB5wiGU+S4IVb7OOEtvK2Yy6S?=
+ =?us-ascii?Q?6PHUad5luZq04DVEARRcbX0jgUvb2NJv1tUyAnTC4KSZHc0VWx9J5mZ29YQh?=
+ =?us-ascii?Q?pDjAiVGvvg9261o7sULxaE6SIhuI5reogTvDCdMZXr2FBwSyUzwHj4d4OEgK?=
+ =?us-ascii?Q?8VXkvmgGKXMLsL7A8V5q3PQD4FSZ82xXK+W4FVOy6H2xdy7hqaIkxUowKAI2?=
+ =?us-ascii?Q?nA4OjTRzs0f/YpguBH2KTm935HSIkPKktio2aaSfGhb7BiNFPcMMNlc39OLf?=
+ =?us-ascii?Q?PrMmSeBAM/494vgG8FYtUJAKht0W4svXj0Q8bQxL0omgHTjLg8Dr1+P1zQSN?=
+ =?us-ascii?Q?eB2hLF4EQ/VbT06rn4EA5c4M0S9opGJ1Z6yB4Y1cT5kBMSwZKg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?D6O/D8A8dXe3vTTK7Fr9rkt8WSfI+Q7mz0pPYXHFVxHFEcqsNWwcTUBd3t4Z?=
+ =?us-ascii?Q?mLTrIf5TkqhxvnOo6Q+wk4xRAbgON0LpZ4GijNuNmUgQ/e2lN6Qi9TflMD5k?=
+ =?us-ascii?Q?jQi23573FRZQW5sXo+7QTnHeNU5MaVgvjrpDW51txJ9VG9yKJTQZkQoabMeW?=
+ =?us-ascii?Q?TODCMmFby+cep0Js+NGZ7N9wYOWRV1aiupFCckAFII5AnPezyn1pMaC8ZMll?=
+ =?us-ascii?Q?K3vS03/qh+SzfmS19GcqclVbYB48qyxhDmZElnAsviUOywg4ppj+ljh386rI?=
+ =?us-ascii?Q?vidYVZNqBpkP3uqlxVU6jKZy+6DQSFANMcLh/TbW+lENgbwJuR5ZU5rcLNm/?=
+ =?us-ascii?Q?LEEh8GsatUVY43mRsEg5sOJL9N6qxq4Y3KLEIBBSPI2aWRQSKMQ5q1VwP4Bq?=
+ =?us-ascii?Q?k4GVbI9jWzA0hlP2gpZI/pvqvv2OvAx7+MJdhDLjyxiHTBzxZi+u40qL7n0S?=
+ =?us-ascii?Q?uTve3dZvgN0gzuVvH+x0spi7NMC6cMFCGfUsM+ap2B6cB8A4btWOJsKcmWbs?=
+ =?us-ascii?Q?O0sI4kkaxpDLEE6gIs1EHDba1AYivbKWMvWU4VOAcrnCE+s1rGyPRC9+3Boi?=
+ =?us-ascii?Q?52h0/pow9aSongUJlI8yHM88tgs3zSO4hXCUSpgmn6MZDDufOUXNmuyJXNur?=
+ =?us-ascii?Q?fqWbPoHTpVyg+g8eM4im46ng9SJYUVB8hhuf493Pc8gOs798jvCi3OwHdR0g?=
+ =?us-ascii?Q?YSAaiUlhFxjIVp73fx9rJTz++8hZRlE907M8OSaMHeV7+7mS7rAvHoUwOL4v?=
+ =?us-ascii?Q?XSQKQvdkAK29HzWIuLrX6SC1Fbyu+7Ct4KoFQHwR48sn9KBepSc4EUgcnYZi?=
+ =?us-ascii?Q?qGi7pV3yJxXdiSX48p8Aw7CU0NHPNICmhs/OO8PeivYxwqX3Vfss5/sfwmln?=
+ =?us-ascii?Q?Ft5T7GbuUhXB5hrJ6B8qtT/loQNLn6HlM8wDIuz/+QqI30FbQpfu0bPZOfrJ?=
+ =?us-ascii?Q?LzjVGdz3Mxfk8Vyadn/LYyiiA58phd9IBSFPTpmO83s8HygfKDQQjziUyfiU?=
+ =?us-ascii?Q?Rw1u89ClzpES08BYd4CIMpO9On/amIJrV0Ts82o0XT1GmdrASdgAgCYKMd8N?=
+ =?us-ascii?Q?X04IWRr6EF8WLRSe2SQbh7K6Q7WGfQAPpjdaGe5BCutvkAVbdr1YVdlAMz7V?=
+ =?us-ascii?Q?RbEJq6nSd5Zdb3WM5Kj4ERW3fVspqPCSuh0LFxcbtMf6aQhzi7CJYHAsvlmE?=
+ =?us-ascii?Q?c7o7+R9ErvYFZL+GNuN5AqGpuj+QV0ROArnslkZAEn8GWus4bWACWgvrXNpc?=
+ =?us-ascii?Q?EgTsxDZm+TsR41XlnOUTe515pYF1+4/xg/kx0wvBm0ICbYNl+vi3BcB258Vo?=
+ =?us-ascii?Q?bKwQOscClMXj0V6muingab2o5QwzP5way6u8h0f+0qRYA41nLwCBWkK0wohc?=
+ =?us-ascii?Q?ZAfeOadFX2s1zjgapFtT/vWSE4xaniAMx3JCHwoJEmlG2UijdmtV8Kp8E9tA?=
+ =?us-ascii?Q?DgDbYGyRRDdqNG9tACZaLfJeLs674DL1/o7Odi9m4CKSt8m7o5pwxnfPfdG0?=
+ =?us-ascii?Q?FJwU/kuHWnic5AYO81/OLm1rGJtLWx9C0whJGfblNuznPRJq13zYGRUNSTZx?=
+ =?us-ascii?Q?GNuO4OzW0SxcnndGhuyCbv6fGfIjQgpuegjAK42qJ+iGC2fGXYdN9ghTJkLN?=
+ =?us-ascii?Q?UQ=3D=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 176c1221-94ff-443e-e95e-08dccbbd6c20
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 02:09:20.5059
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JMHK/WjKf1/9IjZE+QWDr4wWDWlfCBZx5xUUW+wZE/lheDyUrjezNHZ/+mkzj7GLGrYlLc2jJ5QAFKQceAfLBuLbyIRdRsxVFOEbxCwcLbI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5141
+X-Proofpoint-ORIG-GUID: 6T1pm8cvV73Td-1G3Xz4_H6PTdwpNcsX
+X-Authority-Analysis: v=2.4 cv=X8QAK3Te c=1 sm=1 tr=0 ts=66d66fd3 cx=c_pps a=Odf1NfffwWNqZHMsEJ1rEg==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=EaEq8P2WXUwA:10 a=bRTqI5nwn0kA:10 a=t7CeM3EgAAAA:8 a=VwQbUJbxAAAA:8 a=4Lk9SkUsuccqyY5IzNwA:9
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: 6T1pm8cvV73Td-1G3Xz4_H6PTdwpNcsX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 clxscore=1015 adultscore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2407110000
+ definitions=main-2409030015
 
-Hi Andy:
+Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
+and since all vivante GPUs in the system will share the same
+DMA constraints, move the check of whether to get a page from
+DMA32 to etnaviv_bind().
 
-Thank you for your feedback.
+Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
+Suggested-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+---
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-9=E6=9C=882=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:54=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Mon, Sep 02, 2024 at 09:40:09AM +0800, Tyrone Ting wrote:
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=
-=B9=B48=E6=9C=8831=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=883:16=E5=AF=
-=AB=E9=81=93=EF=BC=9A
-> > > On Fri, Aug 30, 2024 at 11:46:38AM +0800, Tyrone Ting wrote:
-> > > > Store the client address earlier since it's used in the i2c_recover=
-_bus
-> > > > logic flow.
-> > >
-> > > Here no explanation why it's now left-shifted by one bit.
-> >
-> > The address is stored from bit 1 to bit 7 in the register for sending
-> > the i2c address later.
->
-> Yes, but previously it was stored w/o that shift.
->
+change log
 
-Previously, the address was stored w/o that shift and with that shift
-in the following call to npcm_i2c_master_start_xmit,
-just like what https://github.com/torvalds/linux/blob/master/drivers/i2c/bu=
-sses/i2c-npcm7xx.c#L2043
-shows.
+v1:
+  https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.2018783-1-xiaolei.wang@windriver.com/
 
-Since there are cases that the i2c_recover_bus gets called at the
-early stage of the function npcm_i2c_master_xfer,
-the address is stored with the shift and used in the i2c_recover_bus call.
+v2:
+  Modify the issue of not retaining GFP_USER in v1 and update the commit log.
 
-> > I'll write some comments about the left-shifted by one bit behavior
-> > above this modification in next patch set.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+v3:
+  Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+instead of
+  "priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+and move the check of whether to get a page from DMA32 to etnaviv_bind().
 
-Thank you.
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++++-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Regards,
-Tyrone
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index 6500f3999c5f..8cb2c3ec8e5d 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -536,7 +536,15 @@ static int etnaviv_bind(struct device *dev)
+ 	mutex_init(&priv->gem_lock);
+ 	INIT_LIST_HEAD(&priv->gem_list);
+ 	priv->num_gpus = 0;
+-	priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
++	priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
++
++	/*
++	 * If the GPU is part of a system with DMA addressing limitations,
++	 * request pages for our SHM backend buffers from the DMA32 zone to
++	 * hopefully avoid performance killing SWIOTLB bounce buffering.
++	 */
++	if (dma_addressing_limited(dev))
++		priv->shm_gfp_mask |= GFP_DMA32;
+ 
+ 	priv->cmdbuf_suballoc = etnaviv_cmdbuf_suballoc_new(drm->dev);
+ 	if (IS_ERR(priv->cmdbuf_suballoc)) {
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+index 7c7f97793ddd..5e753dd42f72 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+@@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+ 	if (ret)
+ 		goto fail;
+ 
+-	/*
+-	 * If the GPU is part of a system with DMA addressing limitations,
+-	 * request pages for our SHM backend buffers from the DMA32 zone to
+-	 * hopefully avoid performance killing SWIOTLB bounce buffering.
+-	 */
+-	if (dma_addressing_limited(gpu->dev))
+-		priv->shm_gfp_mask |= GFP_DMA32;
+-
+ 	/* Create buffer: */
+ 	ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
+ 				  PAGE_SIZE);
+-- 
+2.25.1
+
 
