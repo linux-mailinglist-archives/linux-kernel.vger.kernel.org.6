@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-313014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535D7969F0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A4A969F07
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A81B2116F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012291C23720
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C020A1C2437;
-	Tue,  3 Sep 2024 13:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7A41AD26A;
+	Tue,  3 Sep 2024 13:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P+cwsVOJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="OpBi4fYX"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2851C242F;
-	Tue,  3 Sep 2024 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C71A42A4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370190; cv=none; b=p9qZiIapNb+7/44RCjZBxbmW1pcD65BsoJUbUc2/Xw5CeF2wUaLyxFjoaLEshsLZDmfEM7XJszWAhv3LZym2IZgNZ2vdg135G9xU4emLdCpF/TX2FJj9VeOpJTMKtvCa85uWjSHTS4OoInHvb4aOWVT4/NWQ0Y92Ity/KD8p6XE=
+	t=1725370181; cv=none; b=FlDXaXTbVSQZCVlhBY6hGw5jLVs1b9IurbUjlRzIKls/ftBlupg7eaOWshR5TxqM3BUyn2jHzKBr7PoNu+oekF6PfADJV2Kep6St5yz7nn6DLXYb8q9c5YV90I204e/FujPcfDikx0YUAErOYUAN0dib1GAEfg+K4YDj/w1W4wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370190; c=relaxed/simple;
-	bh=m6PdLgnTXOez5AhkrL0LnfNQVFKTYIvo5+OBwmv4Wkw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kB81K4o3q1oOfR2fSIlqjUZFtjGMOhZQSGxM+jjW+vgscLzb37Ovv9ql2YUY1U8ZBwMjsMi+qk/B+fQtofHhCW9zqB5R7xeuWyB31vrf2mZRkeqw/hyveGbV1kFFvYxrYdmIzm4nG6liVy4mJ4wbsRyiI7m4yjSU3ueNyAhOzas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P+cwsVOJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483Agugb014913;
-	Tue, 3 Sep 2024 13:29:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=4NQycEyc125xNTS3TYtmmc
-	NjWV6AcYdZJ+XMDcN/R+g=; b=P+cwsVOJ/VT3JyXMf8pFW/Dcb1G+iBItWXWUHs
-	tO9a7IE2suIhELGQqEf6csTTqSdJNgakEzBVNsBuNBEavNhxhzS6nx8xi7sYFtfD
-	sK4wDQf/CLnQTEYByKoQrpASEDOS31rBdBrVdhsrYolMH6znrBtwLTW4NwPwnbp5
-	XtGB5TKiS5aiCO5CiZoPERWzmGFl3QzkuFCdSjtDAfKLIgiFBnmnZR4OKWMnWdkD
-	qRvNSa+hD7HVLNZIa0at9E7HncmrhWZOhmdTJz23t5RfDO3BmN7DHrwpXSJtN618
-	8CkFPcWqL1SKdXD2QZHuCQ5Tc+Cuk5zL0A4q6WirXPxsEhfQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt66yfkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 13:29:41 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483DTdgB021168
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 13:29:39 GMT
-Received: from hu-akakum-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 3 Sep 2024 06:29:33 -0700
-From: Akash Kumar <quic_akakum@quicinc.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Jing Leng <jleng@ambarella.com>, Felipe Balbi
-	<balbi@kernel.org>,
-        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>
-CC: Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
-        Krishna Kurapati
-	<quic_kriskura@quicinc.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Akash Kumar <quic_akakum@quicinc.com>
-Subject: [PATCH v2] usb: dwc3: gadget: Refine the logic for resizing Tx FIFOs
-Date: Tue, 3 Sep 2024 18:59:17 +0530
-Message-ID: <20240903132917.603-1-quic_akakum@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1725370181; c=relaxed/simple;
+	bh=sUFoHKHsNtlpiEkAg1QiZApjgXML3bAHfXiEy3+lhsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BMjmjMnND4YnNzFcM7qZZ1Tat71KRHczJNDY2yubG242u9ZfePAOf0eovoDogRJ5R5O7IsbWn6Ybdm50UB0aJePgFAl7fLhoHkrEFzfGU3SXf9XsCh++Z0XSQy5JTWlBlvFdMKCFVhFTJ6r2kEh2AZ55kthKyVFd9ZZ5mpE65DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=OpBi4fYX; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id lPOVsZxDTvH7llTbHscM5e; Tue, 03 Sep 2024 13:29:39 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id lTbDszxI8ks1PlTbFsizni; Tue, 03 Sep 2024 13:29:38 +0000
+X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=66d70f42
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
+ a=P-IC7800AAAA:8 a=HSDmG33uGC2uzMr5-wEA:9 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=d3PnA9EDa4IxuAV0gXij:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EjfaqFqF+XmogTpsGQkFuU8JUSJBnI7pUXSKmfynpwM=; b=OpBi4fYXDVLm0dvEsGWGdc3T6p
+	hRQh5liMUUNo5hOBsz/2Cj7JJMDgYTsRrMRkgSOUP+w3K6p3iedTqLQ38rHqyUbEfsy96WGpNsiYr
+	jrXPATJ+oOwe45v6GvbdC5pu8f/Fik3npp3nXw0CsZ4iqt7vl4LCtVxcWLxhHfnatvls21gIjV77h
+	qju6o2emyvn5z6lULd9qvk1G5liL3Ogu/9Hu47fWCzltVpQAmdPGqu6dC+uLPfSMfOecTnydLOUjn
+	OvrcUnSbO6VYA04LwEvN8zlFEqi9/xkd+HFocDdu2B3uOtsJY4Q5VO/6MWuH9eW/HjuJTA6zBxA0X
+	37ZE9kjg==;
+Received: from [122.165.245.213] (port=37192 helo=[192.168.1.106])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1slTbC-00282Z-1y;
+	Tue, 03 Sep 2024 18:59:34 +0530
+Message-ID: <2374e41a-0ba2-4a99-906d-8c165baa6344@linumiz.com>
+Date: Tue, 3 Sep 2024 18:59:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KeKLWNqf6DWwYKR1d9WuTfoYBoOiqQpb
-X-Proofpoint-GUID: KeKLWNqf6DWwYKR1d9WuTfoYBoOiqQpb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_01,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030109
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] dt-bindings: rtc: microcrystal,rv3028: add
+ clock-cells property
+To: Krzysztof Kozlowski <krzk@kernel.org>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ alexandre.belloni@bootlin.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <20240903105245.715899-1-karthikeyan@linumiz.com>
+ <20240903105245.715899-6-karthikeyan@linumiz.com>
+ <e1513eb7-4ac5-4703-b4ff-2791908f1ec8@kernel.org>
+Content-Language: en-US
+From: karthikeyan <karthikeyan@linumiz.com>
+In-Reply-To: <e1513eb7-4ac5-4703-b4ff-2791908f1ec8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1slTbC-00282Z-1y
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:37192
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 2
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDawUYlDAtrPJr+cmLC5IkGUTkH6K7cz5T5eSOClg5wrxYXo5hgkQ9VC/9JOiKDVleCtGeR+KCCModNFTixdzuzYT/J1BdS0bCTNBqR8TbEJLGRSdvU8
+ qwCh44i4hz3OifPnwExTIAYEG+Hvc9hw/aHoySeub27QPtj4clANWNcqpUGQw4WOGB0b6dwAlGoXh2WeumhFSOfazZwMnLdroBAFVxJYFIej58isS3/eYWtv
 
-The current logic is rigid, setting num_fifos to fixed values:
 
-3 for any maxburst greater than 1.
-tx_fifo_resize_max_num for maxburst greater than 6.
-Additionally, it did not differentiate much between bulk and
-isochronous transfers, applying similar logic to both.
 
-The new logic is more dynamic and tailored to the specific needs of
-bulk and isochronous transfers:
+On 9/3/24 18:21, Krzysztof Kozlowski wrote:
+> On 03/09/2024 12:52, Karthikeyan Krishnasamy wrote:
+>> consume clkout from rv3028 rtc which is able to provide
+>> different clock frequency upon configuration
+>>
+>> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+>> ---
+>>
+>> Notes:
+>>      v2:
+>>      - fix commit message subject
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions, under or above your Signed-off-by tag. Tag is "received", when
+> provided in a message replied to you on the mailing list. Tools like b4
+> can help here. However, there's no need to repost patches *only* to add
+> the tags. The upstream maintainer will do that for tags received on the
+> version they apply.
+> 
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Bulk Transfers: Ensures that num_fifos is optimized by considering
-both the maxburst value and the maximum allowed number of FIFOs.
+Apologies. I'm new to the process, somewhat i'm missing this 
+information. I will change it in the future patches.
 
-Isochronous Transfers: Ensures that num_fifos is sufficient by
-considering the maxburst value and the maximum packet multiplier.
+Thanks for suggesting b4, i will look into it.
 
-This change aims to optimize the allocation of Tx FIFOs for both bulk
-and isochronous endpoints, potentially improving data transfer
-efficiency and overall performance.
-It also enhances support for all use cases, which can be tweaked
-with DT parameters and the endpoint’s maxburst and maxpacket.
-
-Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
----
-Changes for v2:
-Redefine logic for resizing tx fifos.
-
-Changes for v1:
-Added additional condition to allocate tx fifo for hs isoc eps,
-keeping the other resize logic same.
----
- drivers/usb/dwc3/gadget.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..49809a931104 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -778,15 +778,12 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
- 
- 	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
- 
--	if ((dep->endpoint.maxburst > 1 &&
--	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
--	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
--		num_fifos = 3;
--
--	if (dep->endpoint.maxburst > 6 &&
--	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
--	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
--		num_fifos = dwc->tx_fifo_resize_max_num;
-+	if (usb_endpoint_xfer_bulk(dep->endpoint.desc))
-+		num_fifos = min_t(unsigned int, dep->endpoint.maxburst + 1,
-+				  dwc->tx_fifo_resize_max_num);
-+	if (usb_endpoint_xfer_isoc(dep->endpoint.desc))
-+		num_fifos = max_t(unsigned int, dep->endpoint.maxburst,
-+				  usb_endpoint_maxp_mult(dep->endpoint.desc));
- 
- 	/* FIFO size for a single buffer */
- 	fifo = dwc3_gadget_calc_tx_fifo_size(dwc, 1);
--- 
-2.17.1
-
+Best regards,
+Karthikeyan
 
