@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-313621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9567D96A7B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3021696A7B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52851281C89
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D735B1F221A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3CC191477;
-	Tue,  3 Sep 2024 19:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A238D1DC743;
+	Tue,  3 Sep 2024 19:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdIasmSe"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHdZ9whQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040661DC741;
-	Tue,  3 Sep 2024 19:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023151DC720;
+	Tue,  3 Sep 2024 19:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392738; cv=none; b=SK4hU5FnlKali1CjTVpWmkWFdTAROpyqpcU6RQy1vO9VkLLwXQ5CUNCC0no/Ew6BIiZ99FlO/f2nZjdlHj20lmnzL+/S5IvWxWOR3uKdtijpU19FcJaaU+7UWBO9OC60ANJ+r1cAeKK6DRzTnlW+4vRNowtpOhRc1h0xeBlz8ko=
+	t=1725392867; cv=none; b=B2zYb8GdbUyv8M/9RPX1cz1/n4bTBBSwG4tz18lve3Vq4960tj6PDPF5JrVq0/kq0YVx7Aaml7sXJ6txUwRB69r8LkAtD2asVWor4fhcP+D2drlVlxiBcETX0J0lbYKWmT4OOFb0bJevXmJ4tnD0paHPsMJaV65ICPGom+wSJIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392738; c=relaxed/simple;
-	bh=rvHjuYOEV1CINRkoyoSlcK07YHioQTEhKdC1rpNv7Gk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bsVdriqz+nP+mw6R/S4ZaLfFjtBqkMkqo/jLkRf9ZwGLUVxWGNca4IzSPqMhuJM7guf1tesdjdavevGyko4QdkLx+gK7R1PkhocAzW1VUQXQAE49Cb3ZMyW255uoDqcUo8OjiE1Tsy4eBVHoGmRLDrw49X/xSeAr6wecuLF5fgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdIasmSe; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c3400367so2337603f8f.2;
-        Tue, 03 Sep 2024 12:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725392735; x=1725997535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPkNgkLdOPg5qYoIVaAIoztYKuro5zmWaepDFvWuEFo=;
-        b=hdIasmSeepU4ukwC0RVkp73/JwFz5txJPqRJy8QFU6233VIMdl+vcyqgkMVMw02UwO
-         6H7+9k7QsqXQU9VKbCnOTKwTEQzTYGapXYgskKnhGwHQjy8E8MQcmxYCwUO7iElDjc82
-         Oye1ufSThITnwbawZh1maVB64Mih/0ZvWrvUSQHNM57jAt/suDGT6F28x57WOa+ldEf3
-         8mUHYAvicNmZh/lG6SC1egY12m5tevCVYwjzbrG/82DYBcAOl2bvOGFE3X+4kaEcig2h
-         S5MySO6MgbFHZ0tSk/Yc8GM/wsvwECg4nMYFTllW+k33kqjUVfIzRab97TQe7mZRSMgT
-         ltrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725392735; x=1725997535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPkNgkLdOPg5qYoIVaAIoztYKuro5zmWaepDFvWuEFo=;
-        b=uItmuUqWlbamqfjenzfrhY8MZ+2QyvllcSTU+ybIaRMQpFRgYZBRQylBUpw563SSdU
-         DNVGQrSyNb88GYLABEcs/HofrvFNLnSyUBu2NRsniNO0zrX5fsMfAZuq4WpL9ARn/Kbd
-         D2JM/sDNOpv0PwwlcgtvkZ8MBwd8/aJ02f5d1a3N7nBAB54Cxd4GpUDK6WFW/OZh81rl
-         p7QtFBhgXsxqEj/cfatphVXJqIE3GMyPJ9wYvKjohKeD+bXm4RJY8KimhNeI5QDEy5ys
-         Y2DGvMxvbFjJk0qVpBLuTiDwWS3Ele+90tNrvIxd2XuAXQJEGPTtJ0V7o+K1leXR9Cl2
-         QhYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qxEE6Nq4wmW7uxhBI4FyqzJu5g9ueHBzYws/v7JtUuSk8ZeMhVLNt4KRM0z/uPLXfI8=@vger.kernel.org, AJvYcCVHb11qXNE7aihOAMe6ZyKdeNO1G1+8JuiFXEyY61+GpNq2Myyi6FZJmfTwGxS0HRKM5h3NANob4BK8JB9m@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZa/TaFibGCY6kS2jNqKx4COspE0MEI5NkBUxuSayFXpjrkX8C
-	NnlkBoyB48tbbhre0RBA7M7cTkJdM/Wnd/Jb0xPUp5ugfOVcPqLwo5tPWVhIDBz44ZdcIw+rPba
-	zcIZBJ5X3oVUvloBbynwbzHANR7c=
-X-Google-Smtp-Source: AGHT+IFcGducwhXW6NaIYICoNN32Z4VWbi6fF/OnzddCSZfTmpnrJbs4ahiRHR+0RsEBEjIC8WjOoXqKZUCe0AXIT6Q=
-X-Received: by 2002:a05:6000:889:b0:371:8dd3:27c8 with SMTP id
- ffacd0b85a97d-3749b544d81mr15041811f8f.23.1725392734966; Tue, 03 Sep 2024
- 12:45:34 -0700 (PDT)
+	s=arc-20240116; t=1725392867; c=relaxed/simple;
+	bh=U4A3pCwQ8/EbM4aeqrIb3zzmf5B948+U++dXeaD+0fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m0/qca92SaegFFCbOz5Hw2LNkqsDtClLN0ahUEusq9z1q9oYDD19At+yfXAz0k9tuVXHQ6mjB6am8dnYF0XxcnrukxQUmy/UgHrfWSxwq9te1VTyLuFuThKUV0XPl8mkNMgKAPzhAkdOHTFxFBHDD3TitiaGuvZr9B3Qngh1XNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHdZ9whQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E49C4CEC4;
+	Tue,  3 Sep 2024 19:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725392866;
+	bh=U4A3pCwQ8/EbM4aeqrIb3zzmf5B948+U++dXeaD+0fw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vHdZ9whQz0I8ZtZX+b5pM9uapfWQ3scd83hcOx1cfd3dtzT88FYDiQ156i7hspdVn
+	 j7oT28rCz/kUAJGswxxcP3/Ggff6k9cksqEUxEEDprkLyrINe4rpWE1rLI+YmE2ULZ
+	 zTlnh9h67IBwtfo4wo4D+3behY4F8S8oQF4OSI1wjmCVL7wZIyf4RRJ6qqXh/6FKWn
+	 y8rLOIYk1FwvQ8aglJoHyhkHprTG7LvEocRordvMwFtKEIy5gDh+2mv1NYcW4Uvq4l
+	 GDoRiYfAzCt6UUOjlD8Ld3qgQol0uylZFlumh4CSJDl+MIw6EFzreHFRbL5/r9O+jp
+	 fi0m74R6vPLeg==
+Date: Tue, 3 Sep 2024 20:47:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Lechner
+ <dlechner@baylibre.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Michael Hennerich
+ <michael.hennerich@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Jinjie Ruan <ruanjinjie@huawei.com>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Srinivas Pandruvada
+ <srinivas.pandruvada@linux.intel.com>, Basavaraj Natikar
+ <Basavaraj.Natikar@amd.com>, linux-input@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina
+ <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 10/22] iio: dac: max517: Get platform data via
+ dev_get_platdata()
+Message-ID: <20240903204737.710e49dd@jic23-huawei>
+In-Reply-To: <20240902222824.1145571-11-andy.shevchenko@gmail.com>
+References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
+	<20240902222824.1145571-11-andy.shevchenko@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop> <20240903163318.480678-7-paulmck@kernel.org>
-In-Reply-To: <20240903163318.480678-7-paulmck@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 3 Sep 2024 12:45:23 -0700
-Message-ID: <CAADnVQJCRksMjpKzpNFNXR4ZggnuLN4yTmBbFCr5YW33bbwSwQ@mail.gmail.com>
-Subject: Re: [PATCH rcu 07/11] srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 3, 2024 at 9:33=E2=80=AFAM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
->
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index 84daaa33ea0ab..4ba96e2cfa405 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-...
+On Tue,  3 Sep 2024 01:16:55 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-> +static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquire=
-s(ssp)
-> +{
-> +       int retval;
-> +
-> +       srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
-> +       retval =3D __srcu_read_lock_lite(ssp);
-> +       rcu_try_lock_acquire(&ssp->dep_map);
-> +       return retval;
-> +}
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Access to platform data via dev_get_platdata() getter to make code cleaner.
+> 
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> ---
+>  drivers/iio/dac/max517.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/max517.c b/drivers/iio/dac/max517.c
+> index 685980184d3c..96781ae04f9d 100644
+> --- a/drivers/iio/dac/max517.c
+> +++ b/drivers/iio/dac/max517.c
+> @@ -143,10 +143,10 @@ static const struct iio_chan_spec max517_channels[] = {
+>  
+>  static int max517_probe(struct i2c_client *client)
+>  {
+> +	const struct max517_platform_data *platform_data = dev_get_platdata(&client->dev);
+>  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+>  	struct max517_data *data;
+>  	struct iio_dev *indio_dev;
+> -	struct max517_platform_data *platform_data = client->dev.platform_data;
+>  	int chan;
+>  
+>  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> @@ -176,7 +176,7 @@ static int max517_probe(struct i2c_client *client)
+>  
+>  	/*
+>  	 * Reference voltage on MAX518 and default is 5V, else take vref_mv
+> -	 * from platform_data
+> +	 * from platform_data.
 
-...
+I guess this is accidental?  
 
-> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> index 602b4b8c4b891..bab888e86b9bb 100644
-> --- a/kernel/rcu/srcutree.c
-> +++ b/kernel/rcu/srcutree.c
-> +int __srcu_read_lock_lite(struct srcu_struct *ssp)
-> +{
-> +       int idx;
-> +
-> +       RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_r=
-ead_lock_lite().");
-> +       idx =3D READ_ONCE(ssp->srcu_idx) & 0x1;
-> +       this_cpu_inc(ssp->sda->srcu_lock_count[idx].counter); /* Y */
-> +       barrier(); /* Avoid leaking the critical section. */
-> +       return idx;
-> +}
-> +EXPORT_SYMBOL_GPL(__srcu_read_lock_lite);
+J
 
-The use cases where smp_mb() penalty is noticeable probably will notice
-the cost of extra call too.
-Can the main part be in srcu.h as well to make it truly "lite" ?
-Otherwise we'd have to rely on compilers doing LTO which may or may not hap=
-pen.
+>  	 */
+>  	for (chan = 0; chan < indio_dev->num_channels; chan++) {
+>  		if (id->driver_data == ID_MAX518 || !platform_data)
+
 
