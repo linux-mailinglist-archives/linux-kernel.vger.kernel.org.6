@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-312640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A1F969934
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:37:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE3B969936
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787B51F24B1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5BD1F24295
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BF61A0BD5;
-	Tue,  3 Sep 2024 09:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QED1hweB"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C8F1A0BC0;
-	Tue,  3 Sep 2024 09:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213181AD244;
+	Tue,  3 Sep 2024 09:36:33 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BEA1A0BC0;
+	Tue,  3 Sep 2024 09:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725356127; cv=none; b=j9EZeQu6WvIpPeY29EHkACPpFbI+J1/160e5zyYaS28R04AdGsxatZRsQBpoBI2p8XwkGdfkQK/508JfJGWg5uWKLT+L6K10Hf2VBjf5o3yN5OS3GHKNcTH5AGnNjl3iAnrGIc7fM8+FNJ/KpFwrRdCP+FxFe1JeNmeMkMjZhho=
+	t=1725356192; cv=none; b=I1i0lH825WkJ1xC8DPsp486Bgu9PxOOTa6EpwU4+mJobhDVu7u6aFVLStEL1oILdJI0UDjLttuPZNDLlyY6pT3Td6csODEJUAbHc5fASvf7AE75kNRutC0wr9zsEdRrdjsz5/Qz8nGhIo/nUBrow17hdzoGn/RrPPzjrUEoHv7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725356127; c=relaxed/simple;
-	bh=NlJ0ok5/WTY0rjvSQ6ryf27KtWkA3GAi9vyHrt6i/uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NFVcxINGg/3mBMIhRfD4709LvbvlYcf9FRxXdrssxStdu9RggEXos/apvx5mCRDqGlRc4byHZgZXbMmMcMtFnOACSbvfKaTO22vSpZs8OVnV9uGPah0RGJ+wry2w8d6jaGzhu4UZ+TSA/8W9hSh3Gv71BtcZa0OsGAZrTQPaCXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QED1hweB; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4839Z43Y033472;
-	Tue, 3 Sep 2024 04:35:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725356104;
-	bh=vSpGKNFSCjxGWWfQk+ywct1ygSfy18oACBNzhjz25kQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=QED1hweBsvC7OpvGw7NZC7GArMRWqVvZKfxO7vQmpXqbIw+R3ZC0d22Pb6HOqreK6
-	 9SBNkSMheVeN1fBm6+Jbi5uaqY9s3Ns15MmDkMqlbUIQTqaKhASc9zg0j2FVWW8DbH
-	 RoX3uuFgUQFK3GZMwId0uyPCiyzGGVetvihWMO9Y=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4839Z4wA032322
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 3 Sep 2024 04:35:04 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Sep 2024 04:35:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Sep 2024 04:35:03 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4839Yw6c067459;
-	Tue, 3 Sep 2024 04:34:58 -0500
-Message-ID: <5a2d24d6-ebfb-4633-8548-8e9bffbbfb48@ti.com>
-Date: Tue, 3 Sep 2024 15:04:57 +0530
+	s=arc-20240116; t=1725356192; c=relaxed/simple;
+	bh=fOBTd6vK4Wl3rRRMzFrMhBEU+PiOZ3K1qzb18PIshVI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JkGC+EfYy3/O+QJV+BQKMclcldckrTNK5D4BzZEe0juWZnTwIC6T1W7aks6eaM0N3finizU7YWVdgW5D276OnRNVd7IkgMO9xfOOJKXoLu7rovPTbxTxSfguZy9jY8Ik+XkynzVZywWHYasgaPZeuiwEM223ErzC65NmOBniFZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee866d6d89aced-16d21;
+	Tue, 03 Sep 2024 17:36:26 +0800 (CST)
+X-RM-TRANSID:2ee866d6d89aced-16d21
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee666d6d89826f-e0132;
+	Tue, 03 Sep 2024 17:36:26 +0800 (CST)
+X-RM-TRANSID:2ee666d6d89826f-e0132
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: lgirdwood@gmail.com
+Cc: broonie@kernel.org,
+	perex@perex.cz,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linus.walleij@linaro.org,
+	bartosz.golaszewski@linaro.org,
+	kuninori.morimoto.gx@renesas.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: mediatek: mt2701-cs42448: Optimize redundant code in mt2701_cs42448_machine_probe
+Date: Tue,  3 Sep 2024 17:36:23 +0800
+Message-Id: <20240903093623.7120-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/6] net: ti: icssg-prueth: Add support for
- HSR frame forward offload
-To: Andrew Lunn <andrew@lunn.ch>, "Anwar, Md Danish" <a0501179@ti.com>,
-        Roger
- Quadros <rogerq@kernel.org>
-CC: Roger Quadros <rogerq@kernel.org>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Javier
- Carrasco <javier.carrasco.cruz@gmail.com>,
-        Jacob Keller
-	<jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
-	<horms@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240828091901.3120935-1-danishanwar@ti.com>
- <20240828091901.3120935-4-danishanwar@ti.com>
- <22f5442b-62e6-42d0-8bf8-163d2c4ea4bd@kernel.org>
- <177dd95f-8577-4096-a3e8-061d29b88e9c@lunn.ch>
- <040b3b26-a7ef-47c7-845d-068a0c734e61@ti.com>
- <f2598368-745f-4a83-abfc-b9609ebff6b0@lunn.ch>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <f2598368-745f-4a83-abfc-b9609ebff6b0@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+Utilize the defined parameter 'dev' to make the code cleaner.
 
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ sound/soc/mediatek/mt2701/mt2701-cs42448.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-On 02/09/24 6:32 pm, Andrew Lunn wrote:
->> Yes, and I have already added this in this series based on your feedback
->> on v2.
->>
->> I have one question though, in emac_ndo_set_features() should I change
->> these HSR related features irrespective of the current mode?
->>
->> AFAIK, if NETIF_F_HW_HSR_FWD is set, the forwarding is offloaded to HW.
->> If NETIF_F_HW_HSR_FWD is not set the forwarding is not offloaded to HW
->> and is done in SW.
->>
->> So, I don't see any need to enable this features if we are currently in
->> switch mode. Let me know what do you think. Should I still enable this
->> feature irrespective of current mode and later handle this in
->> prueth_hsr_port_link / unlink()?
-> 
-> The user should not need to know about the different firmwares. So i
-> would allow NETIF_F_HW_HSR_FWD at any time.
-> 
-> The exception would be, if you look at all the other drivers which
-> implement HSR offload, if they all return an error if the offloading
-> cannot be enabled, then you should do the same.
-> 
-
-Andrew, I looked at xrs700x dsa and microchip ksz dsa driver as an
-example. The drivers return -EOPNOTSUPP whenever offloading is not
-possible in the xrs700x_hsr_join / ksz_hsr_join api. I think the same
-should be okay for ICSSG driver as well. ICSSG drivers equivalent API is
-prueth_hsr_port_link() where I will return -EOPNOTSUPP whenever
-offloading is not possible.
-
-So in the .ndo_set_features() I will not add any check so that the user
-wouldn't know about the current firmware and whether offloading is
-supported or not. In the prueth_hsr_port_link() based on firmware
-limitation we will error out.
-
-Andrew, Roger, Let me know if this sounds good.
-
-> 	Andrew
-
+diff --git a/sound/soc/mediatek/mt2701/mt2701-cs42448.c b/sound/soc/mediatek/mt2701/mt2701-cs42448.c
+index 1262e8a1bc9a..4974b0536b7b 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-cs42448.c
++++ b/sound/soc/mediatek/mt2701/mt2701-cs42448.c
+@@ -329,10 +329,10 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 	struct device_node *platform_node, *codec_node, *codec_node_bt_mrg;
++	struct device *dev = &pdev->dev;
+ 	struct mt2701_cs42448_private *priv =
+-		devm_kzalloc(&pdev->dev, sizeof(struct mt2701_cs42448_private),
++		devm_kzalloc(dev, sizeof(struct mt2701_cs42448_private),
+ 			     GFP_KERNEL);
+-	struct device *dev = &pdev->dev;
+ 	struct snd_soc_dai_link *dai_link;
+ 
+ 	if (!priv)
+@@ -341,7 +341,7 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 	platform_node = of_parse_phandle(pdev->dev.of_node,
+ 					 "mediatek,platform", 0);
+ 	if (!platform_node) {
+-		dev_err(&pdev->dev, "Property 'platform' missing or invalid\n");
++		dev_err(dev, "Property 'platform' missing or invalid\n");
+ 		return -EINVAL;
+ 	}
+ 	for_each_card_prelinks(card, i, dai_link) {
+@@ -355,7 +355,7 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 	codec_node = of_parse_phandle(pdev->dev.of_node,
+ 				      "mediatek,audio-codec", 0);
+ 	if (!codec_node) {
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"Property 'audio-codec' missing or invalid\n");
+ 		return -EINVAL;
+ 	}
+@@ -368,7 +368,7 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 	codec_node_bt_mrg = of_parse_phandle(pdev->dev.of_node,
+ 					     "mediatek,audio-codec-bt-mrg", 0);
+ 	if (!codec_node_bt_mrg) {
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"Property 'audio-codec-bt-mrg' missing or invalid\n");
+ 		return -EINVAL;
+ 	}
+@@ -377,7 +377,7 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_of_parse_audio_routing(card, "audio-routing");
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to parse audio-routing: %d\n", ret);
++		dev_err(dev, "failed to parse audio-routing: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -395,10 +395,10 @@ static int mt2701_cs42448_machine_probe(struct platform_device *pdev)
+ 
+ 	snd_soc_card_set_drvdata(card, priv);
+ 
+-	ret = devm_snd_soc_register_card(&pdev->dev, card);
++	ret = devm_snd_soc_register_card(dev, card);
+ 
+ 	if (ret)
+-		dev_err(&pdev->dev, "%s snd_soc_register_card fail %d\n",
++		dev_err(dev, "%s snd_soc_register_card fail %d\n",
+ 			__func__, ret);
+ 	return ret;
+ }
 -- 
-Thanks and Regards,
-Danish
+2.33.0
+
+
+
 
