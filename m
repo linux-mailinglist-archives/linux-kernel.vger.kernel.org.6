@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-312765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E7D969AF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:55:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C897969AF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106CC285DE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F4BB25249
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6B21C199;
-	Tue,  3 Sep 2024 10:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E1D3DAC16;
+	Tue,  3 Sep 2024 10:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="lbo7s2Ws"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="F0GckXGj"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB85205E3B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F1121C165
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360792; cv=none; b=HjqFiDEQX1Z34xAUrYbG/OHEfANe5x7yc/oqEhZQqtOG/WKxBkp7pbjmLt+JReNPYdpW0tJky6Gr3Msilp1L4zc71riV21VJN4/96VdoqrxjFHpcXZE0SXNd1OhlbsqH8z/Q6hgqFJcrVFMjLV7RU1s4HVWrSkKzRxaYwzEUJgE=
+	t=1725360793; cv=none; b=K0LVRIwxcuQyI+40bR1m+oxn6b53F6ooxtGPMtYGRDpGQbPrecHjW9lptir4M3lWtsRmIDym5epamgAWrFNmkDTy4KM0ECBZNDkmJezCm95y/eZ1xMa18RS2c/eP8tWCi+HNIq6UlvYhkDpiXVt0hEtJcxjogZDNx33uIV4nQa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360792; c=relaxed/simple;
-	bh=1IROLD/XbSPdXfs/2xrGX0yxpF04V/zqweAflEeC/OY=;
+	s=arc-20240116; t=1725360793; c=relaxed/simple;
+	bh=SgPga/d86Gm2VyyGjtz7WzQyqiIRR5zs43Xg3j1NRqQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EJN10XhNqLwR9R2FQWSIuw0cH+/B8in86R5/npuYlqf/sCE23K0WfGcCkKZ4LYS23WiEKxw6hHN1qzknATRjQn/HpOKqSouUcpL0qNf5U0d7iqxMmriZkVq3ZQaN4dPWko5sb2oVLwqx1o7j3ux/Tseo+GVvDVtTeWOB18kmNLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=lbo7s2Ws; arc=none smtp.client-ip=44.202.169.33
+	 MIME-Version; b=En2+XUv69lYnI3j1+T8HCJH367VifKxXy/W5jO878PU3CU2KP1Mr7WINRSldqzpppeJpBBVjiUX/sKQZlCJPlbi25eVcSKLl3FzhwSCWc/kuXy4/Xi3kWTxQqHZ0c2x5Fk8ZdB6hzvsNv8cylsczb/ah/scEAJoXRDnvG7t87GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=F0GckXGj; arc=none smtp.client-ip=35.89.44.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
 	by cmsmtp with ESMTPS
-	id l9TJsQT0U1zuHlR9qsd6hQ; Tue, 03 Sep 2024 10:53:10 +0000
+	id l6J5srqVkqvuolR9rsFU86; Tue, 03 Sep 2024 10:53:11 +0000
 Received: from md-in-79.webhostbox.net ([43.225.55.182])
 	by cmsmtp with ESMTPS
-	id lR9nsgUJtX56wlR9psZMZ8; Tue, 03 Sep 2024 10:53:10 +0000
-X-Authority-Analysis: v=2.4 cv=MY6nuI/f c=1 sm=1 tr=0 ts=66d6ea96
+	id lR9psGAuHr1JulR9qslc24; Tue, 03 Sep 2024 10:53:11 +0000
+X-Authority-Analysis: v=2.4 cv=VPjbncPX c=1 sm=1 tr=0 ts=66d6ea97
  a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=ARcrkP6DAAAA:8 a=vU9dKmh3AAAA:8
- a=L4MHaItcyTsGJ2lxC4sA:9 a=HWcd8CIpyGgXnveeQW_Z:22 a=rsP06fVo5MYu2ilr0aT5:22
- a=ZCPYImcxYIQFgLOT52_G:22
+ a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=7OYjvGxe6aps89qF7tkA:9
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
 	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=BwUrh3OEJTRjFnN467OIIFRLN9Mzt3dNQvLn8JSBJpI=; b=lbo7s2WslKLYXiYgL2f8BxCRqi
-	GWmGdzOJbLzKUHjlBZ/UHlSfaP6l17LSoJIAxhU/0OPj8NJS1opKDBHSqZLyG/l0C+6peasbWEuko
-	2Nwzs70RDMXEJQZ/Su99J5NItlALuVetlAGEdEdJ+V9TmE3ucYU1Qp9z9hqqs6oPRJISkRWhct0pZ
-	EM/im0bYbDNgbtCuchM1UKNTL53hi5E57zj1vrLCeo5klTCiLWvezyFqbuSXmZl76Q2apne7x3khw
-	LFnyc1xEWHUuay5hBq0QcdVTGc3as9nMCUZRzZ9WYNIf3qP73/uojyBtJyF6DuQWeMnfC0SAev/OB
-	7P/Z+ETA==;
+	bh=PAMyEJR5pOPxI5Asmm0hE30XD1Dj2/A0rZvF2cKurUY=; b=F0GckXGjjqs2/oWFghEYepfzkb
+	G9xaeaUxss6pXFoWtHEgBX31j/rE+RhsfgxlSP8a6SXmzfom2WHkKuTGP9BAXoxKxDzc50Ffb/rI2
+	mpCe72cXud+OFetv2eWMSHgw7ghNTkRtTg5Myyo4sj/TU7vgYmFdwfIUbgKG0sUkf4Mpzx0l2sM4X
+	oCUt8fLEldkTHCfe8C+8CxFVcRq5VV9/baq6q9fh581D5nMkdL13Jz85QFImIJQ+PQrknEDWYNgPK
+	pJ1eOWzfZNVObUMWtTK8GW9NSR5QHdlOAJv2PkzoFAODYzgg6iQdx7qi/NVY2DG81ggQiYPuT4YiD
+	73XwK52w==;
 Received: from [122.165.245.213] (port=41440 helo=localhost.localdomain)
 	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <karthikeyan@linumiz.com>)
-	id 1slR9m-000Elu-17;
-	Tue, 03 Sep 2024 16:23:06 +0530
+	id 1slR9n-000Elu-2Z;
+	Tue, 03 Sep 2024 16:23:07 +0530
 From: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -71,9 +70,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-rtc@vger.kernel.org,
 	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-Subject: [PATCH v2 6/8] dt-bindings: vendor-prefixes: Add Relfor labs
-Date: Tue,  3 Sep 2024 16:22:43 +0530
-Message-Id: <20240903105245.715899-7-karthikeyan@linumiz.com>
+Subject: [PATCH v2 7/8] dt-bindings: arm: rockchip: Add Relfor Saib
+Date: Tue,  3 Sep 2024 16:22:44 +0530
+Message-Id: <20240903105245.715899-8-karthikeyan@linumiz.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240903105245.715899-1-karthikeyan@linumiz.com>
 References: <20240903105245.715899-1-karthikeyan@linumiz.com>
@@ -92,45 +91,48 @@ X-AntiAbuse: Sender Address Domain - linumiz.com
 X-BWhitelist: no
 X-Source-IP: 122.165.245.213
 X-Source-L: No
-X-Exim-ID: 1slR9m-000Elu-17
+X-Exim-ID: 1slR9n-000Elu-2Z
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: (localhost.localdomain) [122.165.245.213]:41440
 X-Source-Auth: karthikeyan@linumiz.com
-X-Email-Count: 63
+X-Email-Count: 73
 X-Org: HG=dishared_whb_net_legacy;ORG=directi;
 X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfDJYauc0PX8ATD73m5kpTZyEbrmvGg/FOfelCV+EwTvODj8g8zb/Dn7sKUqBnSEYiErQhRvx8nCGsqlEMspO5dB1B4Su8J0DQlt7kOw3T04NVLdBZJ5H
- JHH7p+2v+x45evQPz0Ct0GxAxVRcqhPuN35TD1b3M7bTUD5RDWqp0NetQ8xIHIyBZqmQoRIrn93FOkJeFqcbnxKrVk4/Ntaw1/sxpCJ/CZow58MpoKV3czcx
+X-CMAE-Envelope: MS4xfGreBmA9jv1mAEB0fgktuyMfFqLTNNvPRozZEG8EhjYrJlcPbtACERW0HCZEnOrjRUYm9SGa8ShtNb9aLyoKECu/q5uh9st8RspsvxnrHbwSM0aUfoAA
+ O8cnvlrMGQjFmZUc1t6a7C5RMX+i2/t8mE2LloO22gGBCxUvTdjeci2/UowgGOt0k5IzAKz/pxk6vHetiygY6AwxVCmFkjkQuyHMpmbwhOZ3ywGHZGSU4bhI
 
-Add Relfor Labs Pvt. Ltd. vendor prefixes
-https://www.relfor.com/
+Add devicetree binding for the Relfor saib board which
+is based on Rockchip RV1109
 
 Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 ---
 
 Notes:
     v2:
-    - No change
+    - fix wrong usage of SoC enum
 
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index a70ce43b3dc0..7d10ac7d6800 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1220,6 +1220,8 @@ patternProperties:
-     description: Unisoc Communications, Inc.
-   "^realtek,.*":
-     description: Realtek Semiconductor Corp.
-+  "^relfor,.*":
-+    description: Relfor Labs Pvt. Ltd.
-   "^remarkable,.*":
-     description: reMarkable AS
-   "^renesas,.*":
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 1ef09fbfdfaf..ae5e0104612e 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -848,6 +848,11 @@ properties:
+               - radxa,zero-3w
+           - const: rockchip,rk3566
+ 
++      - description: Relfor SAIB board
++        items:
++          - const: relfor,saib
++          - const: rockchip,rv1109
++
+       - description: Rikomagic MK808 v1
+         items:
+           - const: rikomagic,mk808
 -- 
 2.39.2
 
