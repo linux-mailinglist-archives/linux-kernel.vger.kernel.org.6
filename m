@@ -1,59 +1,77 @@
-Return-Path: <linux-kernel+bounces-313052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2D0969F98
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0175C969F9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA41B23EC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B1A1F250FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508C13A267;
-	Tue,  3 Sep 2024 13:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6C92A1DC;
+	Tue,  3 Sep 2024 13:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBUFHDXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="N5KGZ5jt"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A351D374CC;
-	Tue,  3 Sep 2024 13:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C101CA6A1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371864; cv=none; b=ZgzefwKr2G6ZhmDCQh5E34uM2SNy4rlD1UvkP0q7Jx54RXpoh1sEx41AxL4Lgi6Tb8S6IcPX/COpbSgn5T+lrreloZ7hx3T1yQZTf/kNjAnr5rW7Zyp7iR1sIK1uZAgsZaAZ3Eb/hXAHiBIeefx/n7RWVNGVdpJM5PPyxkQjVto=
+	t=1725371949; cv=none; b=CW8oc30w7m4vbG4Wn4gKDfLN7R+VK06xo4AN5/KDeIyI6M+9Zlj31WifRarX3w0kbqYDaidin0Qtvcw5mnkBuYTy6PPRtMWxXBT2X0aO/nzU9VR8av/8YKjmABOOSNnd4PwaP1KmXYIBf3UH35mzEz7OSaFtgoyLWSdM68dbNHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371864; c=relaxed/simple;
-	bh=Us9Uk6RlZQinvj57+eMv2v4WiPDtV/T9XZgyR9VSvIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D+qFjxOOp/RmVNbTa3I5uEVlEk/prIkv/PL4Eskvt/FDV3zpHRKlyAgQwG5uQAmaCfMbJc3YrhAzOzHYasm/DGA0rIsdqYRRWHixYdY4N+2oIu7tJ7kkLGW66DX5OSP2/QW7yeLLLgFTKjKc+wUQ080l2w6aW3NZl+u3rRwqm0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBUFHDXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B11C4CEC4;
-	Tue,  3 Sep 2024 13:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725371864;
-	bh=Us9Uk6RlZQinvj57+eMv2v4WiPDtV/T9XZgyR9VSvIY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DBUFHDXgolOljMXTTc2EL6+PKXOAJcDvOhqLdh9kkNFpzIaDy8B19YH+7Nt/0vi6c
-	 /vdkJdhRvCbBU63N770+cYGrEpUfDFriaswV6+AnTgcoxoZuhpnRYV99cIBp4B9We1
-	 1yLmaGdncJ2DqmrFgnHAZlCTfvqAjcyWr1SaX6kEomwTUTfRAIavJ5DWqivpvZCjRD
-	 Ek+NzTEv1hlicuopE8V9ixWI7iy0JGixxoyrstdpbNm/uq0IziKan+WBIhfqEIXxxQ
-	 xEzF5felvpQ3OztZdy78JRauyt2G3KXLMb87Tlie4DJqyGy5eyL2zkF36j1czHYJ3n
-	 0i8D+NpVb3tPg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Simon Horman <horms@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: can: cc770: Simplify parsing DT properties
-Date: Tue,  3 Sep 2024 08:57:30 -0500
-Message-ID: <20240903135731.405635-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725371949; c=relaxed/simple;
+	bh=A3qTCpkD1tY/o7kPq9Ivj2Iymq37hYiFD3zZCTon5mw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QlVxDbk91wnlzsf00+WlL9XRWLvTTrOQKmbzIlzMelnqK1SRyfvm/OJpqqufvAjtUuQFJW+q7HdVyaQyht/4YaGb/fIzNq9VbDpCXjIlfvA5nByQqgJC7mREafO9U7mj22gBSoUOrzJKh1fN+ob0IOsoFbGdZSoqsxp1RfU2vaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=N5KGZ5jt; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2054feabfc3so23149975ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google; t=1725371947; x=1725976747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9MboPUXsg/Px+LwZ6+8JIU+4J0WsFaBGBEODEMGVas=;
+        b=N5KGZ5jtpkCEhMg2vAWmDTdAwL+H0glOIwtlmoG4ycRkf/b4oQIRj7M5isVgiLeJx9
+         zlEoOjtWP6/nLKbxTINWE06T+KOHYw3xGLIztZBPCM0Il0yqoMFaBuJfe/K7bJtpHwOk
+         Wb8AFFKu/ZD/AyJNf0qnhbFDQ/ppWjzqv8V7I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725371947; x=1725976747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W9MboPUXsg/Px+LwZ6+8JIU+4J0WsFaBGBEODEMGVas=;
+        b=e6FmwovHkp12qRqXvAjyNvw0lvXQfvDVSAlan8736le1RupMzk2ajy21Zn7WpOzyIh
+         a2Hl4YL55NqN+pNvE+kd+UodT9dylyoFovkYavVfFw1PWtukkrUNGJcIiTvrxTIWMkgv
+         c6Lqv+aMo7aI3Q7dOeqawYd78V1JnaXGZRFyqqrboGSJoEoBxcPinR/47PAaD08+I/u0
+         G2+y7jmgwd/XkgxW/PUmcPXKlpIkNGK6xDD3N11M1GTbqX8lXllrJQe5G0ERIo9ahAjT
+         +lxh92JrFKg0tmr4iBfHIHKdoWuk5eRrxTnYyQbLADXFiEFzdw9ub2bUiJCBXKasJbrZ
+         /+fg==
+X-Gm-Message-State: AOJu0Ywxbd1iUjSh4b2Hi2K/LAIqFwKIksd5czDNOm81XaMlP9SdgI6N
+	qOf4tki3Jnt5CmU4RUvZZDnAM6B/c3E2SKxcao3InVJNWOl+IfAvL5igjl6dcWE=
+X-Google-Smtp-Source: AGHT+IGbCBnBMPU2eZxrUfWrnlWj/Kh07Gptupnf3wm+gluWsdFBgP4m5pVsoREBAqxXGnFp06T0OQ==
+X-Received: by 2002:a17:902:ccce:b0:205:56e8:4a4b with SMTP id d9443c01a7336-20556e84f14mr101632425ad.2.1725371946592;
+        Tue, 03 Sep 2024 06:59:06 -0700 (PDT)
+Received: from shiro.work.home.arpa (p1980092-ipxg00g01sizuokaden.shizuoka.ocn.ne.jp. [153.201.32.92])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20535e8aa0fsm62688305ad.286.2024.09.03.06.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 06:59:06 -0700 (PDT)
+From: Daniel Palmer <daniel@0x0f.com>
+To: linux-m68k@lists.linux-m68k.org,
+	linux-scsi@vger.kernel.org,
+	geert@linux-m68k.org,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH 1/2] m68k/mvme147: Fix SCSI IRQ numbers
+Date: Tue,  3 Sep 2024 22:58:56 +0900
+Message-ID: <20240903135857.455818-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,88 +80,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use of the typed property accessors is preferred over of_get_property().
-The existing code doesn't work on little endian systems either. Replace
-the of_get_property() calls with of_property_read_bool() and
-of_property_read_u32().
+Sometime in the long long ago the m68k IRQ code was refactored
+and the interrupt numbers for SCSI on this board ended up being
+wrong and SCSI hasn't worked for a few decades...
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
-- Use reverse xmas tree order
-- Fix slew unsigned comparison
----
- drivers/net/can/cc770/cc770_platform.c | 32 +++++++++-----------------
- 1 file changed, 11 insertions(+), 21 deletions(-)
+The PCC adds 0x40 to the vector for its interrupts so they
+end up in the user interrupts naturally, the kernel number
+should be the kernel offset for user interrupt numbers +
+the PCC interrupt number. Basically they are 0x40 off right now.
 
-diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/cc770/cc770_platform.c
-index 13bcfba05f18..f2424fe58612 100644
---- a/drivers/net/can/cc770/cc770_platform.c
-+++ b/drivers/net/can/cc770/cc770_platform.c
-@@ -70,17 +70,10 @@ static void cc770_platform_write_reg(const struct cc770_priv *priv, int reg,
- static int cc770_get_of_node_data(struct platform_device *pdev,
- 				  struct cc770_priv *priv)
- {
-+	u32 clkext = CC770_PLATFORM_CAN_CLOCK, clkout = 0;
- 	struct device_node *np = pdev->dev.of_node;
--	const u32 *prop;
--	int prop_size;
--	u32 clkext;
--
--	prop = of_get_property(np, "bosch,external-clock-frequency",
--			       &prop_size);
--	if (prop && (prop_size ==  sizeof(u32)))
--		clkext = *prop;
--	else
--		clkext = CC770_PLATFORM_CAN_CLOCK; /* default */
-+
-+	of_property_read_u32(np, "bosch,external-clock-frequency", &clkext);
- 	priv->can.clock.freq = clkext;
+Fixes: 200a3d352cd5 ("[PATCH] m68k: convert VME irq code")
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+---
+ arch/m68k/include/asm/mvme147hw.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/m68k/include/asm/mvme147hw.h b/arch/m68k/include/asm/mvme147hw.h
+index e28eb1c0e0bf..aa9bb31d1c27 100644
+--- a/arch/m68k/include/asm/mvme147hw.h
++++ b/arch/m68k/include/asm/mvme147hw.h
+@@ -93,8 +93,8 @@ struct pcc_regs {
+ #define M147_SCC_B_ADDR		0xfffe3000
+ #define M147_SCC_PCLK		5000000
  
- 	/* The system clock may not exceed 10 MHz */
-@@ -98,7 +91,7 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
- 	if (of_property_read_bool(np, "bosch,iso-low-speed-mux"))
- 		priv->cpu_interface |= CPUIF_MUX;
+-#define MVME147_IRQ_SCSI_PORT	(IRQ_USER+0x45)
+-#define MVME147_IRQ_SCSI_DMA	(IRQ_USER+0x46)
++#define MVME147_IRQ_SCSI_PORT	(IRQ_USER+0x5)
++#define MVME147_IRQ_SCSI_DMA	(IRQ_USER+0x6)
  
--	if (!of_get_property(np, "bosch,no-comperator-bypass", NULL))
-+	if (!of_property_read_bool(np, "bosch,no-comperator-bypass"))
- 		priv->bus_config |= BUSCFG_CBY;
- 	if (of_property_read_bool(np, "bosch,disconnect-rx0-input"))
- 		priv->bus_config |= BUSCFG_DR0;
-@@ -109,25 +102,22 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
- 	if (of_property_read_bool(np, "bosch,polarity-dominant"))
- 		priv->bus_config |= BUSCFG_POL;
+ /* SCC interrupts, for MVME147 */
  
--	prop = of_get_property(np, "bosch,clock-out-frequency", &prop_size);
--	if (prop && (prop_size == sizeof(u32)) && *prop > 0) {
--		u32 cdv = clkext / *prop;
--		int slew;
-+	of_property_read_u32(np, "bosch,clock-out-frequency", &clkout);
-+	if (clkout > 0) {
-+		u32 cdv = clkext / clkout;
- 
- 		if (cdv > 0 && cdv < 16) {
-+			u32 slew;
-+
- 			priv->cpu_interface |= CPUIF_CEN;
- 			priv->clkout |= (cdv - 1) & CLKOUT_CD_MASK;
- 
--			prop = of_get_property(np, "bosch,slew-rate",
--					       &prop_size);
--			if (prop && (prop_size == sizeof(u32))) {
--				slew = *prop;
--			} else {
-+			if (of_property_read_u32(np, "bosch,slew-rate", &slew)) {
- 				/* Determine default slew rate */
- 				slew = (CLKOUT_SL_MASK >>
- 					CLKOUT_SL_SHIFT) -
- 					((cdv * clkext - 1) / 8000000);
--				if (slew < 0)
-+				if (slew > (CLKOUT_SL_MASK >> CLKOUT_SL_SHIFT))
- 					slew = 0;
- 			}
- 			priv->clkout |= (slew << CLKOUT_SL_SHIFT) &
 -- 
-2.45.2
+2.43.0
 
 
