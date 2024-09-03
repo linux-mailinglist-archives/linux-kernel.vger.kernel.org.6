@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-312990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AC8969EC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929BC969EC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5BB1F223CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5BFE1C238C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB6B1A725A;
-	Tue,  3 Sep 2024 13:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B11A7250;
+	Tue,  3 Sep 2024 13:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R5kT24XS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjJ59o++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D953B1CA6B5;
-	Tue,  3 Sep 2024 13:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756441A42CB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369150; cv=none; b=A3wj7zikJ/n1xgPO6WSOo4FPL6pBUzwsM8LCcPZ0mwp9sLd/WrlJfI7e7eLrCjtj6CfPLVr/IbCnCLh1gVs8T1zT0m3Sr+wG09SXRgjLZCuNYtnt1dPMAQPUoMA2YVwcJS4oQ829Ue2uMo49wGYSLATAqq/0Ky/xs3UUUpI4smk=
+	t=1725369172; cv=none; b=jtTcw3aix+jp4e/IOE1fVMtbH2ywE4gePMXaYiDKtF1xAfZjcOXp8TUO+B8httnfO1NpNeZNb01uus85RYPjnhvsYYwuDPKSsMAQatkOHWW4fr6PIXjUHQZ8V7ALlTxoEH03/ZEMtE3wfIuae4v9Z0zT4YPPPqVM1p1vNR4GaN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369150; c=relaxed/simple;
-	bh=cEUEgUfK2VJKwSdXTwN56m3l5tttmANwIWAPrH3n0F8=;
+	s=arc-20240116; t=1725369172; c=relaxed/simple;
+	bh=ybzFF6PxoqiWbZh0xD1WsVz/GY9X1ufOVyY4BYpYfzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3LXeQG0G8QnbfoD1wt6uWLEHjvO5j3dKWDWlD/ptvEXhw0KqcXg4AXZLmDBsJ9hnZOJI43oOyCTeUGPPxPiyGiK20xTJ8DYrghA58lu9IVjYuOhFecVtPxjvOT7G1ViAyn7mnMD5dQh/OSLYmmbZ0cg7vjZHanSQivhjoZcDPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R5kT24XS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iuEYWyd+FkBmHpEwRM4wRGxRSybUGjHcHitebzsyO4Y=; b=R5kT24XS1hNQLKAnN8rrJQxjJy
-	2uus18smDr03HNh29fOC7YfQp/VduL8+SvxY8BzMcCxuu4sMw8piNjpUGdi5+BsfLHApa1Nwm/On9
-	ujW2y4jJui+KsWTmw+PF3rhw/PR/eUM/otRlTFEqRpBLP3F/wOwG5DFrChlLb0IVXSLg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1slTKS-006QdE-2o; Tue, 03 Sep 2024 15:12:16 +0200
-Date: Tue, 3 Sep 2024 15:12:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH net] dt-bindings: net: tja11xx: fix the broken binding
-Message-ID: <bc68a8c5-b3d7-4b87-a192-ba825bfafb50@lunn.ch>
-References: <20240902063352.400251-1-wei.fang@nxp.com>
- <8bd356c9-1cf4-4e79-81ba-582c270982e8@lunn.ch>
- <PAXPR04MB85100D0AEC1F73214B2087CB88932@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7xxj/82awz3mFAfTItBrPuqVzdVfThHxp3oGrpPalf6xoCwqQHj13UFBi4HxsrKHqWi//Q0Tlb5Z8+rR+TTqpMoxADWQY+u1rcTlNECz7TrbbiXTxfrd9o7TlBLz8ar8/GiFwTuvy+/IhTwbS8aN6Z36za1muM+P3MisF+6HjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjJ59o++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF2F0C4CEC4;
+	Tue,  3 Sep 2024 13:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725369172;
+	bh=ybzFF6PxoqiWbZh0xD1WsVz/GY9X1ufOVyY4BYpYfzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YjJ59o++BdycaIA6UPN3d4GUeysULsw7e73v0Ytsc16OZ64fbpHLSqULyA34qc5cl
+	 /8usqFwtzBL7PO1zKnGLb6wAqGElBQATA/A9HLpoWJAwm9BVQQgk9zsbhegJdK5TFt
+	 L86LCc8N5LL5438+COfUp4w+lZasJnOIVeMAOKyj1NOXzWSGssej7E2yLoo9iElGLn
+	 zn9FDwnuEJY1FutbVIkpoYr9ybR2Ajfd01SOpfv857pORngve7UrbdCMP1XFS/L0lY
+	 qEDJJmGrFgJEU38SAK5o7VsYHVd+wBVyiwYEryZIVXaOzcFGGEhTpdfe4TbNHIJQ+U
+	 xLFaKUfHb9dhg==
+Date: Tue, 3 Sep 2024 15:12:49 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] sched/fair: Use HK_TYPE_SCHED housekeeping CPUs
+Message-ID: <ZtcLUcJvqSV3vXd2@localhost.localdomain>
+References: <20240818234520.90186-1-longman@redhat.com>
+ <20240818234520.90186-3-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB85100D0AEC1F73214B2087CB88932@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240818234520.90186-3-longman@redhat.com>
 
-On Tue, Sep 03, 2024 at 02:17:04AM +0000, Wei Fang wrote:
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - ethernet-phy-id0180.dc40
-> > > +      - ethernet-phy-id0180.dd00
-> > > +      - ethernet-phy-id0180.dc80
-> > > +      - ethernet-phy-id001b.b010
-> > > +      - ethernet-phy-id001b.b031
-> > 
-> > This shows the issues with using a compatible. The driver has:
-> > 
-> > #define PHY_ID_TJA_1120                 0x001BB031
-> > 
-> >                 PHY_ID_MATCH_MODEL(PHY_ID_TJA_1120),
-> > 
-> > which means the lowest nibble is ignored. The driver will quite happy also probe
-> > for hardware using 001b.b030, 001b.b032, 001b.b033, ... 001b.b03f
-> > 
-> > Given you are inside NXP, do any of these exist? Was 001b.b030 too broken it
-> > never left the QA lab? Are there any hardware issues which might result in a
-> > new silicon stepping?
+Le Sun, Aug 18, 2024 at 07:45:19PM -0400, Waiman Long a écrit :
+> As the previous commit has enabled the setting of HK_TYPE_SCHED
+> housekeeping CPUs in nohz_full setup, we can now use the more aptly
+> named HK_TYPE_SCHED housekeeping CPUs instead of HK_TYPE_MISC.
 > 
-> Yes, some of the revisions do exist, but the driver should be compatible with
-> these different revisions.
+> Signed-off-by: Waiman Long <longman@redhat.com>
+
+Can we instead merge HK_FLAG_TICK, HK_FLAG_WQ, HK_FLAG_TIMER, HK_FLAG_RCU,
+HK_FLAG_MISC and HK_FLAG_KTHREAD into a single
+HK_FLAG_KERNEL_NOISE / HK_TYPE_KERNEL_NOISE ?
+
+Thanks.
+
+> ---
+>  kernel/sched/fair.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> For 001b.b030, I don't think it is broken, based on the latest data sheet of
-> TJA1120 (Rev 0.6 26 January 2023), the PHY ID is 001b.b030. I don't know
-> why it is defined as 001b.b031 in the driver, it may be a typo.
-
-More likely, the board Radu Pirea has does have a device with this ID.
-
-> > 
-> > Does ethernet-phy-id0180.dc41 exist? etc.
-> I think other TJA PHYs should also have different revisions.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 6be618110885..0350667f5ce8 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12128,16 +12128,13 @@ static inline int on_null_domain(struct rq *rq)
+>   * - When one of the busy CPUs notices that there may be an idle rebalancing
+>   *   needed, they will kick the idle load balancer, which then does idle
+>   *   load balancing for all the idle CPUs.
+> - *
+> - * - HK_TYPE_MISC CPUs are used for this task, because HK_TYPE_SCHED is not set
+> - *   anywhere yet.
+>   */
+>  static inline int find_new_ilb(void)
+>  {
+>  	const struct cpumask *hk_mask;
+>  	int ilb_cpu;
+>  
+> -	hk_mask = housekeeping_cpumask(HK_TYPE_MISC);
+> +	hk_mask = housekeeping_cpumask(HK_TYPE_SCHED);
+>  
+>  	for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask) {
+>  
+> @@ -12155,7 +12152,7 @@ static inline int find_new_ilb(void)
+>   * Kick a CPU to do the NOHZ balancing, if it is time for it, via a cross-CPU
+>   * SMP function call (IPI).
+>   *
+> - * We pick the first idle CPU in the HK_TYPE_MISC housekeeping set (if there is one).
+> + * We pick the first idle CPU in the HK_TYPE_SCHED housekeeping set (if there is one).
+>   */
+>  static void kick_ilb(unsigned int flags)
+>  {
+> -- 
+> 2.43.5
 > 
-> Because the driver ignores the lowest nibble of the PHY ID, I think it is fine to
-> define the lowest nibble of the PHY ID in these compatible strings as 0, and
-> there is no need to list all revisions. And I don't know which revisions exist,
-> because I haven't found or have no permission to download some PHY data
-> sheets. I think what I can do is to modify "ethernet-phy-id001b.b031" to
-> "ethernet-phy-id001b.b030".
-
-You have to be careful here. Stating a compatible forces the PHY
-ID. So if the compatible is "ethernet-phy-id001b.b031", but the board
-actually has a "ethernet-phy-id001b.b030". phydev->phy_id is going to
-be set to 0x001bb031. Any behaviour in the driver which look at that
-revision nibble is then going to be wrong.
-
-Maybe, now, today, that does not matter, because the driver never
-looks at the revision. But it does mean developers might put the wrong
-compatible in DT. And then when you do need to add code looking at the
-revision, it does not always work, because there are some boards with
-the wrong compatible in DT.
-
-Listing all possible compatibles suggests to developers they need to
-be careful and use the correct value. Or add a comment in the DT
-bindings that not using a compatible is probably safer.
-
-	Andrew
-
 
