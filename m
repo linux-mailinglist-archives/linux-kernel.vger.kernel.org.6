@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-312982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD929969EA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C563969EA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F4D2B20BFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1E21F24DD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14EA1A0BF1;
-	Tue,  3 Sep 2024 13:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BE61A0BD5;
+	Tue,  3 Sep 2024 13:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z27KjD8w"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GCgfR5Gp"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30301CA68B;
-	Tue,  3 Sep 2024 13:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E75E1CA6A7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368694; cv=none; b=TqfKEmrONlu0OFj2LEi2dS5R6aOC2B2y28xcTd5zmgP0Wm+6GFmHVdNa0wuY6fQ2hZijM8JCXAfiLpnAY7c/+rYKiB2WjreIgYJmb+ih2uUBypOCdmXfX+AFYPDg/z5uMbYU5MyqlyY+DlqJ0KEGn/uQlXDXZR65U8v7XHQdhsg=
+	t=1725368713; cv=none; b=bYEpKQ1LDT7MDKbHeYaYuColD34S+A95qkWFWMb2Vaea6FJShKQak/oyaojnhcON+dghHZsHK/iiqqIKK9ccLgnziz1Vp/ePpKrmnRPSShqTA3v3U+MOJCRtiDLjudP+9Rp48C5ZixjqKYrq1AEpzZ7oGI7QBOKX+/Hr2Lc1LtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368694; c=relaxed/simple;
-	bh=Ik37MIX3JtSayzPcnS6IuQ6b7KSyYreX15oHtrUJPv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cM3s3M/7AEscnnRQgGdx8x2E0RC0xVHpmqEW86a1Hib0p0h0/UGLiwyM5pofsmpyaR/eeSJ0OrJaGZNkuddbPEvDO2f6kBhLHw8PbQbO0yxVZAKKidkX+R2BglCcJ/UhGgq4Bja7HnbofAJyNutygVJMtphGG8HMcw20C198Tkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Z27KjD8w; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483C3Mkh015535;
-	Tue, 3 Sep 2024 15:04:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	gHAAOnW72eF4I0bZ4a1e+VIu302RRXRUBvZ5sMfDHr4=; b=Z27KjD8w1Q+k+rQX
-	MLoWvoBKeWNItC72n4SUJglPnlSjVPWlf4r+uVTF71qRe3lJdoCduvla6/154EMG
-	crMSl3p3KvvROOj5USBwfEnfGkdmRf2lvdjcksYUpiBMPMZSZybZsR7WeS07r26E
-	0H9DSNxcFF/BlKPsJ3OE3JMFkwTR5uKCvpAPLpxDsTduAd2yq0iXF7ZlNAfNmO3Q
-	otIzSKyjOT9VFcTOLFgmPTwgLF0YlG4nsU/EpTQ5dsiyWaqSEjL8Sqoml0qqtZPh
-	vMRU574mIzdKy6Y5bAyaOuy5eNeY0ARdTC5a0g+0fw4Y20PhXUp0xcaadr7NLyYO
-	pGpkpg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41btgxvwk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 15:04:30 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 76C6D4002D;
-	Tue,  3 Sep 2024 15:04:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A02D9253317;
-	Tue,  3 Sep 2024 15:03:37 +0200 (CEST)
-Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 3 Sep
- 2024 15:03:36 +0200
-Message-ID: <eff25350-be52-4d3e-91d2-422314c190c8@foss.st.com>
-Date: Tue, 3 Sep 2024 15:02:02 +0200
+	s=arc-20240116; t=1725368713; c=relaxed/simple;
+	bh=vououo9bZj8zhRKMf0hyrFGqIDE3+bQDKW0GisuiQIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxT74MVsBDdgspL0CXiwm1/uaLTGjNt3JdgD8FZgpldnd4p7s1K53TNbs/KBvvTa7/xrBvLhxEbapXN5R8bQrcB1UZ6cqeotU5faPWep7Lzpa4L/6qlui045ZdfkXMIHz5zXnFBtLf7SYH0ODbB39bnujzWl+8N36u9LKzVejZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GCgfR5Gp; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1624A16A;
+	Tue,  3 Sep 2024 15:03:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725368637;
+	bh=vououo9bZj8zhRKMf0hyrFGqIDE3+bQDKW0GisuiQIk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GCgfR5GptbW6dr1p8AYs4xehes/jbsAjYY8DskKKDldDGkWY+NtkcgJNIDVEcxEjD
+	 m0uz/5C/onQTRN71Vsueej8xWx83reFhMiD9Ip4JTmzOSt1kz2/tB6LIXihlbdwrF3
+	 cI4ZviKL8Icc/Gp312CxdAeWUUntYxf97/fCndmU=
+Message-ID: <5bfead5b-a9d5-4a1c-a773-9a2bf8233ba5@ideasonboard.com>
+Date: Tue, 3 Sep 2024 16:05:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,479 +49,321 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] phy: stm32: Add support for STM32MP25 COMBOPHY.
-To: Vinod Koul <vkoul@kernel.org>
-CC: <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <p.zabel@pengutronix.de>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <fabrice.gasnier@foss.st.com>
-References: <20240828143452.1407532-1-christian.bruel@foss.st.com>
- <20240828143452.1407532-3-christian.bruel@foss.st.com>
- <ZtCyb7AzLmuUoBGT@vaman>
-From: Christian Bruel <christian.bruel@foss.st.com>
+Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
+To: Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
+ <20240626-warping-nondescript-mustang-bfce27@houat>
+ <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
+ <20240702-bold-exotic-mamba-fdbba4@houat>
+ <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
+ <20240725-natural-giga-crane-d54067@houat>
+ <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
+ <20240902-refined-smooth-mammoth-fbee81@houat>
+ <ZtWYWuqhqvdWd0Q7@phenom.ffwll.local>
+ <d411e79f-a22e-48e9-b135-5d7a0afa3cf3@ideasonboard.com>
+ <20240903-encouraging-guillemot-of-warranty-aac44c@houat>
 Content-Language: en-US
-In-Reply-To: <ZtCyb7AzLmuUoBGT@vaman>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240903-encouraging-guillemot-of-warranty-aac44c@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
 
+Hi,
 
-
-On 8/29/24 19:39, Vinod Koul wrote:
-> On 28-08-24, 16:34, Christian Bruel wrote:
->> Addition of the COMBOPHY driver found on STM32MP25 platforms
+On 03/09/2024 14:56, Maxime Ripard wrote:
+> On Mon, Sep 02, 2024 at 03:31:28PM GMT, Tomi Valkeinen wrote:
+>> Hi,
 >>
->> This single lane PHY is shared (exclusive) between the USB3 and PCIE
->> controllers.
->> Supports 5Gbit/s for PCIE gen2 or 2.5Gbit/s for PCIE gen1.
+>> On 02/09/2024 13:50, Daniel Vetter wrote:
+>>> On Mon, Sep 02, 2024 at 11:26:11AM +0200, Maxime Ripard wrote:
+>>>> Hi,
+>>>>
+>>>> On Wed, Aug 07, 2024 at 03:19:23PM GMT, Tomi Valkeinen wrote:
+>>>>> On 25/07/2024 14:28, Maxime Ripard wrote:
+>>>>>> On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
+>>>>>>> On 02/07/2024 14:43, Maxime Ripard wrote:
+>>>>>>>> Hi Tomi,
+>>>>>>>>
+>>>>>>>> On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
+>>>>>>>>> On 26/06/2024 18:07, Maxime Ripard wrote:
+>>>>>>>>>> On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
+>>>>>>>>>>> On 26/06/2024 11:49, Maxime Ripard wrote:
+>>>>>>>>>>>> Hi,
+>>>>>>>>>>>>
+>>>>>>>>>>>> On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrote:
+>>>>>>>>>>>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> When a bridge driver uses devm_mipi_dsi_device_register_full() or
+>>>>>>>>>>>>> devm_mipi_dsi_attach(), the resource management is moved to devres,
+>>>>>>>>>>>>> which releases the resource automatically when the bridge driver is
+>>>>>>>>>>>>> unbound.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> However, if the DSI host goes away first, the host unregistration code
+>>>>>>>>>>>>> will automatically detach and unregister any DSI peripherals, without
+>>>>>>>>>>>>> notifying the devres about it. So when the bridge driver later is
+>>>>>>>>>>>>> unbound, the resources are released a second time, leading to crash.
+>>>>>>>>>>>>
+>>>>>>>>>>>> That's super surprising. mipi_dsi_device_unregister calls
+>>>>>>>>>>>> device_unregister, which calls device_del, which in turn calls
+>>>>>>>>>>>> devres_release_all.
+>>>>>>>>>>>
+>>>>>>>>>>> Hmm, right.
+>>>>>>>>>>>
+>>>>>>>>>>>> If that doesn't work like that, then it's what needs to be fixed, and
+>>>>>>>>>>>> not worked around in the MIPI-DSI bus.
+>>>>>>>>>>>
+>>>>>>>>>>> Well, something causes a crash for both the device register/unregister case
+>>>>>>>>>>> and the attach/detach case, and the call stacks and debug prints showed a
+>>>>>>>>>>> double unregister/detach...
+>>>>>>>>>>>
+>>>>>>>>>>> I need to dig up the board and check again why the devres_release_all() in
+>>>>>>>>>>> device_del() doesn't solve this. But I can probably only get back to this in
+>>>>>>>>>>> August, so it's perhaps best to ignore this patch for now.
+>>>>>>>>>>>
+>>>>>>>>>>> However, the attach/detach case is still valid? I see no devres calls in the
+>>>>>>>>>>> detach paths.
+>>>>>>>>>>
+>>>>>>>>>> I'm not sure what you mean by the attach/detach case. Do you expect
+>>>>>>>>>> device resources allocated in attach to be freed when detach run?
+>>>>>>>>>
+>>>>>>>>> Ah, never mind, the devres_release_all() would of course deal with that too.
+>>>>>>>>>
+>>>>>>>>> However, I just realized/remembered why it crashes.
+>>>>>>>>>
+>>>>>>>>> devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() are given a
+>>>>>>>>> device which is used for the devres. This device is probably always the
+>>>>>>>>> bridge device. So when the bridge device goes away, so do those resources.
+>>>>>>>>>
+>>>>>>>>> The mipi_dsi_device_unregister() call deals with a DSI device, which was
+>>>>>>>>> created in devm_mipi_dsi_device_register_full(). Unregistering that DSI
+>>>>>>>>> device, which does happen when the DSI host is removed, does not affect the
+>>>>>>>>> devres of the bridge.
+>>>>>>>>>
+>>>>>>>>> So, unloading the DSI host driver causes mipi_dsi_device_unregister() and
+>>>>>>>>> mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregister()), and
+>>>>>>>>> unloading the bridge driver causes them to be called again via devres.
+>>>>>>>>
+>>>>>>>> Sorry, that's one of the things I don't quite get. Both functions are
+>>>>>>>> exclusively(?) called from I2C bridges, so the device passed there
+>>>>>>>> should be a i2c_client instance, and thus the MIPI-DSI host going away
+>>>>>>>> will not remove those i2c devices, only the MIPI-DSI ones, right?
+>>>>>>>
+>>>>>>> Yes.
+>>>>>>>
+>>>>>>>> So if we remove the host, the MIPI-DSI device will be detached and
+>>>>>>>> removed through the path you were explaing with the i2c client lingering
+>>>>>>>> around. And if we remove the I2C device, then devm will kick in and will
+>>>>>>>> detach and remove the MIPI-DSI device.
+>>>>>>>
+>>>>>>> Right.
+>>>>>>>
+>>>>>>>> Or is it the other way around? That if you remove the host, the device
+>>>>>>>> is properly detached and removed, but there's still the devm actions
+>>>>>>>> lingering around in the i2c device with pointers to the mipi_dsi_device
+>>>>>>>> that was first created, but since destroyed?
+>>>>>>>>
+>>>>>>>> And thus, if the i2c device ever goes away, we get a use-after-free?
+>>>>>>>
+>>>>>>> Hmm, I'm not sure I understand what you mean here... Aren't you describing
+>>>>>>> the same thing in both of these cases?
+>>>>>>>
+>>>>>>> In any case, to expand the description a bit, module unloading is quite
+>>>>>>> fragile. I do get a crash if I first unload the i2c bridge module, and only
+>>>>>>> then go and unload the other ones in the DRM pipeline. But I think module
+>>>>>>> unloading will very easily crash, whatever the DRM drivers being used are,
+>>>>>>> so it's not related to this particular issue.
+>>>>>>>
+>>>>>>> In my view, the unload sequence that should be supported (for development
+>>>>>>> purposes, not for production) is to start the unload from the display
+>>>>>>> controller module, which tears down the DRM pipeline, and going from there
+>>>>>>> towards the panels/connectors.
+>>>>>>>
+>>>>>>> Of course, it would be very nice if the module unloading worked perfectly,
+>>>>>>> but afaics fixing all that's related to module unloading would be a
+>>>>>>> multi-year project... So, I just want to keep the sequence I described above
+>>>>>>> working, which allows using modules while doing driver development.
+>>>>>>
+>>>>>> FTR, I'm all for supporting module unloading. The discussion above was
+>>>>>> about what is broken exactly, so we can come up with a good solution.
+>>>>>
+>>>>> Does that mean that you're ok with the patch, or that something should be
+>>>>> improved?
+>>>>
+>>>> No, I meant that at the very least the commit log needs to be updated to
+>>>> reflect what is actually going on, because at least my understanding of
+>>>> it doesn't match what actually happens.
+>>>>
+>>>> We want a solution to the problem you're facing, but it's not clear to
+>>>> me what the problem is exactly at this point, so it's hard to review a
+>>>> solution.
+>>>
+>>> So I haven't looked at the full thing, but I think the proper fix is to
+>>> make both detach and unregister cope with being called multiple times. I
+>>> think devm_ here is a red herring, the underlying issues is that we can
+>>> unregister/detach from two sides:
+>>>
+>>> - when the host dsi goes away
+>>> - when individual dsi devices on a given host go away
+>>>
+>>> So there needs to be book-keeping and locking to make sure no matter which
+>>> order things disappear, we don't try to unregister/detach a dsi device
+>>> twice.
 >>
->> Supports wakeup-source capability to wakeup system using remote-wakeup
->> capable USB device
+>> I think that is what my patch does (for devm_).
 >>
->> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
->> ---
->>   drivers/phy/st/Kconfig              |  11 +
->>   drivers/phy/st/Makefile             |   1 +
->>   drivers/phy/st/phy-stm32-combophy.c | 607 ++++++++++++++++++++++++++++
->>   3 files changed, 619 insertions(+)
->>   create mode 100644 drivers/phy/st/phy-stm32-combophy.c
+>> Some vocabulary first:
 >>
->> diff --git a/drivers/phy/st/Kconfig b/drivers/phy/st/Kconfig
->> index 3fc3d0781fb8..304614b6dabf 100644
->> --- a/drivers/phy/st/Kconfig
->> +++ b/drivers/phy/st/Kconfig
->> @@ -33,6 +33,17 @@ config PHY_STIH407_USB
->>   	  Enable this support to enable the picoPHY device used by USB2
->>   	  and USB3 controllers on STMicroelectronics STiH407 SoC families.
->>   
->> +config PHY_STM32_COMBOPHY
->> +	tristate "STMicroelectronics COMBOPHY driver for STM32MP25"
->> +	depends on ARCH_STM32 || COMPILE_TEST
->> +	select GENERIC_PHY
->> +	help
->> +	  Enable this to support the COMBOPHY device used by USB3 or PCIe
->> +	  controllers on STMicroelectronics STM32MP25 SoC.
->> +	  This driver controls the COMBOPHY block to generate the PCIe 100Mhz
->> +	  reference clock from either the external clock generator or HSE
->> +	  internal SoC clock source.
->> +
->>   config PHY_STM32_USBPHYC
->>   	tristate "STMicroelectronics STM32 USB HS PHY Controller driver"
->>   	depends on ARCH_STM32 || COMPILE_TEST
->> diff --git a/drivers/phy/st/Makefile b/drivers/phy/st/Makefile
->> index c862dd937b64..cb80e954ea9f 100644
->> --- a/drivers/phy/st/Makefile
->> +++ b/drivers/phy/st/Makefile
->> @@ -3,4 +3,5 @@ obj-$(CONFIG_PHY_MIPHY28LP) 		+= phy-miphy28lp.o
->>   obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)	+= phy-spear1310-miphy.o
->>   obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)	+= phy-spear1340-miphy.o
->>   obj-$(CONFIG_PHY_STIH407_USB)		+= phy-stih407-usb.o
->> +obj-$(CONFIG_PHY_STM32_COMBOPHY)	+= phy-stm32-combophy.o
->>   obj-$(CONFIG_PHY_STM32_USBPHYC) 	+= phy-stm32-usbphyc.o
->> diff --git a/drivers/phy/st/phy-stm32-combophy.c b/drivers/phy/st/phy-stm32-combophy.c
->> new file mode 100644
->> index 000000000000..7cd4193b0277
->> --- /dev/null
->> +++ b/drivers/phy/st/phy-stm32-combophy.c
->> @@ -0,0 +1,607 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * STMicroelectronics COMBOPHY STM32MP25 Controller driver.
->> + *
->> + * Copyright (C) 2024 STMicroelectronics
->> + * Author: Christian Bruel <christian.bruel@foss.st.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset.h>
->> +#include <dt-bindings/phy/phy.h>
->> +
->> +#define SYSCFG_COMBOPHY_CR1 0x4C00
->> +#define SYSCFG_COMBOPHY_CR2 0x4C04
->> +#define SYSCFG_COMBOPHY_CR4 0x4C0C
->> +#define SYSCFG_COMBOPHY_CR5 0x4C10
->> +#define SYSCFG_COMBOPHY_SR  0x4C14
+>> dsi peripheral device - The device that represents the DSI peripheral. It is
+>> a bridge or a panel, and (usually) an i2c or platform device.
+>>
+>> dsi peripheral driver - The driver handling the dsi peripheral device.
+>>
+>> dsi device - Runtime created device instance that represents the DSI
+>> peripheral. So in my case we have the i2c bridge device, and a dsi device is
+>> created for it in the setup code.
+>>
+>> dsi controller device - A device that has a DSI bus (usually a platform or
+>> i2c device, I would guess).
+>>
+>> dsi controller driver - A driver for the dsi controller device. Creates the
+>> dsi host.
+>>
+>> dsi host - represents the DSI host side, owned by the dsi controller driver.
+>>
+>> When a dsi peripheral driver uses devm_mipi_dsi_device_register_full() or
+>> devm_mipi_dsi_attach(), the dsi device is created and attached to the dsi
+>> host. When the dsi peripheral device-driver is unbound, devres will call
+>> unregister and detach are called automatically. This works fine.
+>>
+>> But when the device-driver for the dsi controller is unbound, the dsi
+>> controller driver will unregister the dsi host,
 > 
-> Lowercase hex values please
-> 
->> +#define SYSCFG_PCIEPRGCR    0x6080
->> +
->> +/* SYSCFG PCIEPRGCR */
->> +#define STM32MP25_PCIEPRGCR_EN	  BIT(0)
->> +#define STM32MP25_PCIEPRG_IMPCTRL_OHM     GENMASK(3, 1)
->> +#define STM32MP25_PCIEPRG_IMPCTRL_VSWING  GENMASK(5, 4)
->> +
->> +/* SYSCFG SYSCFG_COMBOPHY_SR */
->> +#define STM32MP25_PIPE0_PHYSTATUS BIT(1)
->> +
->> +/* SYSCFG CR1 */
->> +#define SYSCFG_COMBOPHY_CR1_REFUSEPAD BIT(0)
->> +#define SYSCFG_COMBOPHY_CR1_MPLLMULT GENMASK(7, 1)
->> +#define SYSCFG_COMBOPHY_CR1_REFCLKSEL GENMASK(16, 8)
->> +#define SYSCFG_COMBOPHY_CR1_REFCLKDIV2 BIT(17)
->> +#define SYSCFG_COMBOPHY_CR1_REFSSPEN BIT(18)
->> +#define SYSCFG_COMBOPHY_CR1_SSCEN BIT(19)
->> +
->> +/* SYSCFG CR4 */
->> +#define SYSCFG_COMBOPHY_CR4_RX0_EQ GENMASK(2, 0)
->> +
->> +#define MPLLMULT_19_2 (0x02u << 1)
->> +#define MPLLMULT_20   (0x7Du << 1)
->> +#define MPLLMULT_24   (0x68u << 1)
->> +#define MPLLMULT_25   (0x64u << 1)
->> +#define MPLLMULT_26   (0x60u << 1)
->> +#define MPLLMULT_38_4 (0x41u << 1)
->> +#define MPLLMULT_48   (0x6Cu << 1)
->> +#define MPLLMULT_50   (0x32u << 1)
->> +#define MPLLMULT_52   (0x30u << 1)
->> +#define MPLLMULT_100  (0x19u << 1)
->> +
->> +#define REFCLKSEL_0   0
->> +#define REFCLKSEL_1   (0x108u << 8)
->> +
->> +#define REFCLDIV_0    0
->> +
->> +/* SYSCFG CR2 */
->> +#define SYSCFG_COMBOPHY_CR2_MODESEL GENMASK(1, 0)
->> +#define SYSCFG_COMBOPHY_CR2_ISO_DIS BIT(15)
->> +
->> +#define COMBOPHY_MODESEL_PCIE 0
->> +#define COMBOPHY_MODESEL_USB  3
->> +
->> +/* SYSCFG CR5 */
->> +#define SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS BIT(12)
->> +
->> +#define COMBOPHY_SUP_ANA_MPLL_LOOP_CTL 0xC0
->> +#define COMBOPHY_PROP_CNTRL GENMASK(7, 4)
->> +
->> +struct stm32_combophy {
->> +	struct phy *phy;
->> +	struct regmap *regmap;
->> +	struct device *dev;
->> +	void __iomem *base;
->> +	struct reset_control *phy_reset;
->> +	struct clk *phy_clk;
->> +	struct clk *pad_clk;
->> +	struct clk *ker_clk;
->> +	unsigned int type;
->> +	bool is_init;
->> +	int irq_wakeup;
->> +};
->> +
->> +struct clk_impedance  {
->> +	u32 microohm;
->> +	u32 vswing[4];
->> +};
->> +
->> +/*
->> + * lookup table to hold the settings needed for a ref clock frequency
->> + * impedance, the offset is used to set the IMP_CTL and DE_EMP bit of the
->> + * PRG_IMP_CTRL register
->> + */
->> +static const struct clk_impedance imp_lookup[] = {
->> +	{ 6090000, { 442000, 564000, 684000, 802000 } },
->> +	{ 5662000, { 528000, 621000, 712000, 803000 } },
->> +	{ 5292000, { 491000, 596000, 700000, 802000 } },
->> +	{ 4968000, { 558000, 640000, 722000, 803000 } },
->> +	{ 4684000, { 468000, 581000, 692000, 802000 } },
->> +	{ 4429000, { 554000, 613000, 717000, 803000 } },
->> +	{ 4204000, { 511000, 609000, 706000, 802000 } },
->> +	{ 3999000, { 571000, 648000, 726000, 803000 } }
->> +};
->> +
->> +static int stm32_impedance_tune(struct stm32_combophy *combophy)
->> +{
->> +	u8 imp_size = ARRAY_SIZE(imp_lookup);
->> +	u8 vswing_size = ARRAY_SIZE(imp_lookup[0].vswing);
->> +	u8 imp_of, vswing_of;
->> +	u32 max_imp = imp_lookup[0].microohm;
->> +	u32 min_imp = imp_lookup[imp_size - 1].microohm;
-> 
-> table is ordered, pls mention that in comments somewhere
-> 
->> +	u32 max_vswing = imp_lookup[imp_size - 1].vswing[vswing_size - 1];
->> +	u32 min_vswing = imp_lookup[0].vswing[0];
->> +	u32 val;
->> +
->> +	if (!of_property_read_u32(combophy->dev->of_node, "st,output-micro-ohms", &val)) {
->> +		if (val < min_imp || val > max_imp) {
->> +			dev_err(combophy->dev, "Invalid value %u for output ohm\n", val);
->> +			return -EINVAL;
->> +		}
->> +
->> +		for (imp_of = 0 ; imp_of < ARRAY_SIZE(imp_lookup); imp_of++)
->> +			if (imp_lookup[imp_of].microohm <= val)
->> +				break;
->> +
->> +		dev_dbg(combophy->dev, "Set %u micro-ohms output impedance\n",
->> +			imp_lookup[imp_of].microohm);
->> +
->> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
->> +				   STM32MP25_PCIEPRG_IMPCTRL_OHM,
->> +				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_OHM, imp_of));
->> +	} else {
->> +		regmap_read(combophy->regmap, SYSCFG_PCIEPRGCR, &val);
->> +		imp_of = FIELD_GET(STM32MP25_PCIEPRG_IMPCTRL_OHM, val);
->> +	}
->> +
->> +	if (!of_property_read_u32(combophy->dev->of_node, "st,output-vswing-microvolt", &val)) {
->> +		if (val < min_vswing || val > max_vswing) {
->> +			dev_err(combophy->dev, "Invalid value %u for output vswing\n", val);
->> +			return -EINVAL;
->> +		}
->> +
->> +		for (vswing_of = 0 ; vswing_of < ARRAY_SIZE(imp_lookup[imp_of].vswing); vswing_of++)
->> +			if (imp_lookup[imp_of].vswing[vswing_of] >= val)
->> +				break;
->> +
->> +		dev_dbg(combophy->dev, "Set %u microvolt swing\n",
->> +			 imp_lookup[imp_of].vswing[vswing_of]);
->> +
->> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
->> +				   STM32MP25_PCIEPRG_IMPCTRL_VSWING,
->> +				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_VSWING, vswing_of));
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int stm32_combophy_pll_init(struct stm32_combophy *combophy)
->> +{
->> +	int ret;
->> +	u32 refclksel, pllmult, propcntrl, val;
->> +	u32 clk_rate;
->> +
->> +	if (combophy->pad_clk)
->> +		clk_rate = clk_get_rate(combophy->pad_clk);
->> +	else
->> +		clk_rate = clk_get_rate(combophy->ker_clk);
->> +
->> +	reset_control_assert(combophy->phy_reset);
->> +
->> +	dev_dbg(combophy->dev, "%s pll init rate %d\n",
->> +		combophy->pad_clk ? "External" : "Ker", clk_rate);
->> +
->> +	/*
->> +	 * vddcombophy is interconnected with vddcore. Isolation bit should be unset
->> +	 * before using the ComboPHY.
->> +	 */
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
->> +			   SYSCFG_COMBOPHY_CR2_ISO_DIS, SYSCFG_COMBOPHY_CR2_ISO_DIS);
->> +
->> +	if (combophy->type != PHY_TYPE_PCIE)
->> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +				   SYSCFG_COMBOPHY_CR1_REFSSPEN, SYSCFG_COMBOPHY_CR1_REFSSPEN);
->> +
->> +	if (combophy->type == PHY_TYPE_PCIE && !combophy->pad_clk)
->> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
->> +				   STM32MP25_PCIEPRGCR_EN, STM32MP25_PCIEPRGCR_EN);
->> +
->> +	if (of_property_read_bool(combophy->dev->of_node, "st,ssc-on")) {
->> +		dev_dbg(combophy->dev, "Enabling clock with SSC\n");
->> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +				   SYSCFG_COMBOPHY_CR1_SSCEN, SYSCFG_COMBOPHY_CR1_SSCEN);
->> +	}
->> +
->> +	if (!of_property_read_u32(combophy->dev->of_node, "st,rx-equalizer", &val)) {
->> +		dev_dbg(combophy->dev, "Set RX equalizer %u\n", val);
->> +		if (val > SYSCFG_COMBOPHY_CR4_RX0_EQ) {
->> +			dev_err(combophy->dev, "Invalid value %u for rx0 equalizer\n", val);
->> +			return -EINVAL;
->> +		}
->> +
->> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR4,
->> +			   SYSCFG_COMBOPHY_CR4_RX0_EQ, val);
->> +	}
->> +
->> +	if (combophy->type == PHY_TYPE_PCIE) {
->> +		ret = stm32_impedance_tune(combophy);
->> +		if (ret) {
->> +			reset_control_deassert(combophy->phy_reset);
->> +			goto out;
->> +		}
->> +
->> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +				   SYSCFG_COMBOPHY_CR1_REFUSEPAD,
->> +				   combophy->pad_clk ? SYSCFG_COMBOPHY_CR1_REFUSEPAD : 0);
->> +	}
->> +
->> +	switch (clk_rate) {
->> +	case 100000000:
->> +		pllmult = MPLLMULT_100;
->> +		refclksel = REFCLKSEL_0;
->> +		propcntrl = 0x8u << 4;
->> +		break;
->> +	case 19200000:
->> +		pllmult = MPLLMULT_19_2;
->> +		refclksel = REFCLKSEL_1;
->> +		propcntrl = 0x8u << 4;
->> +		break;
->> +	case 25000000:
->> +		pllmult = MPLLMULT_25;
->> +		refclksel = REFCLKSEL_0;
->> +		propcntrl = 0xEu << 4;
->> +		break;
->> +	case 24000000:
->> +		pllmult = MPLLMULT_24;
->> +		refclksel = REFCLKSEL_1;
->> +		propcntrl = 0xEu << 4;
->> +		break;
->> +	case 20000000:
->> +		pllmult = MPLLMULT_20;
->> +		refclksel = REFCLKSEL_0;
->> +		propcntrl = 0xEu << 4;
->> +		break;
->> +	default:
->> +		dev_err(combophy->dev, "Invalid rate 0x%x\n", clk_rate);
->> +		reset_control_deassert(combophy->phy_reset);
->> +		ret = -EINVAL;
->> +		goto out;
->> +	};
->> +
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +			   SYSCFG_COMBOPHY_CR1_REFCLKDIV2, REFCLDIV_0);
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +			   SYSCFG_COMBOPHY_CR1_REFCLKSEL, refclksel);
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +			   SYSCFG_COMBOPHY_CR1_MPLLMULT, pllmult);
->> +
->> +	/*
->> +	 * Force elasticity buffer to be tuned for the reference clock as
->> +	 * the separated clock model is not supported
->> +	 */
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR5,
->> +			   SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS, SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS);
->> +
->> +	reset_control_deassert(combophy->phy_reset);
->> +
->> +	ret = regmap_read_poll_timeout(combophy->regmap, SYSCFG_COMBOPHY_SR, val,
->> +				       !(val & STM32MP25_PIPE0_PHYSTATUS),
->> +				       10, 1000);
->> +	if (ret) {
->> +		dev_err(combophy->dev, "timeout, cannot lock PLL\n");
->> +		goto out;
->> +	}
->> +
->> +	if (combophy->type == PHY_TYPE_PCIE) {
->> +		val = readl_relaxed(combophy->base + COMBOPHY_SUP_ANA_MPLL_LOOP_CTL);
->> +		val &= ~COMBOPHY_PROP_CNTRL;
->> +		val |= propcntrl;
->> +		writel_relaxed(val, combophy->base + COMBOPHY_SUP_ANA_MPLL_LOOP_CTL);
->> +	}
->> +
->> +	return 0;
->> +
->> +out:
->> +	if (combophy->type == PHY_TYPE_PCIE && !combophy->pad_clk)
->> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
->> +				   STM32MP25_PCIEPRGCR_EN, 0);
->> +
->> +	if (combophy->type != PHY_TYPE_PCIE)
->> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
->> +				   SYSCFG_COMBOPHY_CR1_REFSSPEN, 0);
->> +
->> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
->> +			   SYSCFG_COMBOPHY_CR2_ISO_DIS, 0);
->> +
->> +	return ret;
->> +}
->> +
->> +static struct phy *stm32_combophy_xlate(struct device *dev,
->> +					const struct of_phandle_args *args)
->> +{
->> +	struct stm32_combophy *combophy = dev_get_drvdata(dev);
->> +	unsigned int type;
->> +
->> +	if (args->args_count != 1) {
->> +		dev_err(dev, "invalid number of cells in 'phy' property\n");
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	type = args->args[0];
->> +	if (type != PHY_TYPE_USB3 && type != PHY_TYPE_PCIE) {
->> +		dev_err(dev, "unsupported device type: %d\n", type);
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	if (combophy->pad_clk && type != PHY_TYPE_PCIE) {
->> +		dev_err(dev, "Invalid use of clk_pad for USB3 mode\n");
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	combophy->type = type;
->> +
->> +	return combophy->phy;
->> +}
->> +
->> +static int stm32_combophy_set_mode(struct stm32_combophy *combophy)
->> +{
->> +	int type = combophy->type;
->> +	u32 val;
->> +
->> +	switch (type) {
->> +	case PHY_TYPE_PCIE:
->> +		dev_dbg(combophy->dev, "setting PCIe ComboPHY\n");
->> +		val = COMBOPHY_MODESEL_PCIE;
->> +		break;
->> +	case PHY_TYPE_USB3:
->> +		dev_dbg(combophy->dev, "setting USB3 ComboPHY\n");
->> +		val = COMBOPHY_MODESEL_USB;
->> +		break;
->> +	default:
->> +		dev_err(combophy->dev, "Invalid PHY mode %d\n", type);
->> +		return -EINVAL;
->> +	}
->> +
->> +	return regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
->> +				  SYSCFG_COMBOPHY_CR2_MODESEL, val);
->> +}
->> +
->> +static int stm32_combophy_enable_clocks(struct stm32_combophy *combophy)
->> +{
->> +	int ret;
->> +
->> +	ret = clk_prepare_enable(combophy->phy_clk);
->> +	if (ret) {
->> +		dev_err(combophy->dev, "Core clock enable failed %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = clk_prepare_enable(combophy->ker_clk);
->> +	if (ret) {
->> +		dev_err(combophy->dev, "ker_usb3pcie clock enable failed %d\n", ret);
->> +		clk_disable_unprepare(combophy->phy_clk);
->> +		return ret;
->> +	}
->> +
->> +	if (combophy->pad_clk) {
->> +		ret = clk_prepare_enable(combophy->pad_clk);
->> +		if (ret) {
->> +			dev_err(combophy->dev, "External clock enable failed %d\n", ret);
->> +			clk_disable_unprepare(combophy->ker_clk);
->> +			clk_disable_unprepare(combophy->phy_clk);
->> +			return ret;
->> +		}
->> +	}
-> 
-> Can you use bulk_prepare for this?
+> I assume that you're talking about:
+> https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mipi_dsi.c#L357 ?
 
-Yes, need a twist a little bit to handle optional and required clocks 
-together but that's better.
+Yes.
 
-thanks,
-
-Christian
+>> and the unregistration will also unregister and detach the dsi device.
 > 
+> And https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mipi_dsi.c#L346 ?
+
+And yes.
+
+>> But the devres is not told about that.
+> 
+> If my assumptions are correct, device_unregister() will definitely clean
+> up the devres resources on that device:
+
+Yes, and not. Devres cleans up the resources on "that" device, where 
+that device is the dsi_device. But that is _not_ the one where we 
+registered the resources.
+
+> https://elixir.bootlin.com/linux/v6.10.7/source/drivers/base/core.c#L3886
+> 
+>> So when the dsi peripheral is later unbound, its devres will again
+>> unregister and detach.
+> 
+> I guess in this case, only the device resource tied to the i2c client
+> device (so dsi device? in your nomenclature) will run.
+
+No, the i2c client device is the "dsi peripheral device". Say, a DSI 
+video mode panel that is controlled via i2c. Or ti-sn65dsi86.c bridge 
+(that one actually uses a auxiliary_device so it's a bit more complex).
+
+> Or is it that:
+> https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mipi_dsi.c#L250
+> 
+> Gets tied to the i2c client device, but the host being removed has
+> free'd that device already?
+
+Yes. The devm_mipi_dsi_* functions register the resources (in this case, 
+the dsi_device itself and the dsi attach) to the i2c client device's devres.
+
+>> To fix that this patch uses devm_remove_action() to remove the devres
+>> action when the host side goes away first.
+>>
+>> Now, after writing the above, I realized that all this won't help with the
+>> non-devm versions: the host side has unregistered and detached the dsi
+>> device, but if the dsi peripheral driver calls mipi_dsi_detach() or
+>> mipi_dsi_device_unregister(), it will again crash.
+>>
+>> Handling the attach/detach should be quite easy, and in fact the code
+>> already handles it, but it uses WARN_ON() there so that has to go. But
+>> attach/detach will crash anyway if the dsi device has already been freed,
+>> which happens when the dsi controller driver calls
+>> mipi_dsi_device_unregister().
+>>
+>> So... The dsi peripheral driver should keep a reference to the dsi device,
+>> with get_device()? And then do a put_device() after calling
+>> mipi_dsi_device_unregister()?
+>>
+>> But we don't free the dsi device, it has essentially been disabled without
+>> telling the dsi peripheral driver about it, which might cause problems.
+> 
+> Yeah, and the host pointer would be lingering as well.
+> 
+>> I don't know... This doesn't sound correct to me. Probably my patch is just
+>> new wrong on top of old wrong. Or maybe I don't quite grasp how this works.
+> 
+> I think we can fix some of them by storing the "parent" device of
+> mipi_dsi_device (ie, the i2c client device) that the devm action is
+> registered against, and removing the action in
+> mipi_dsi_remove_device_fn.
+
+That is what my patch does.
+
+But, as Sima replied, there's much more to this. I'll try to look at 
+this at some point, but, unfortunately, no customer so far (as far as my 
+memory serves) has ever been interested in module unloading or unbinding 
+the devices, so... not very high in the todo list =).
+
+  Tomi
+
 
