@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-312970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F47D969E7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:57:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3AC969E7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0472830A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD0E2830FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958481A724E;
-	Tue,  3 Sep 2024 12:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="P+LbduX/"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE4A1A7246;
+	Tue,  3 Sep 2024 12:57:41 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CA01CA6BE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164F31CA6B6;
+	Tue,  3 Sep 2024 12:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368239; cv=none; b=pDe4psq9Pj9dGQBMm8k6DK5Qxq2eRG0Xtcce+nxGxAjj3qDGuDRD4UJmT8gtH/aOoZ9icqiZcLVAU7k6yaa98dIhL82PWSoWxn74oCB8oKeu9zlfps0H0GX4XNea5rE6m/UUW3R3K2XA8Uw/SYtzYJxmkmj6oB2o0fHN8NuQGlE=
+	t=1725368260; cv=none; b=t/V+wsLA7FuOEZRrzzhwYQSk8wWZeuRGonZ4lHbdOnocShezabsI3U6SggNZPHzyBG6nHgvz+zrOKDEGxZGJGflORIXnOYh+fT5lPZJR1auAiNvrnF7m5imXJAj5kdc4hGVPKog7IkTqB1ciOwmMa4+Zrjg991oCrFcTUm1vuLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368239; c=relaxed/simple;
-	bh=Cso/wpl/yeMkWTb7DkdYbxAtmVl36+WAAEZqRrLLhr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HgotT//X6fCQMPtiksxGC6InJVGt7/n3VAnbaZB6dcT1U2v49eSRAz4LvGTRJ5IuHFIL84IofFvXkL3ZUw8lFqw52Xy0VrP+3HXEzzO7q7W41uZ/FT1jYx84MtGpnikI2RF44/4I22hucusHc/gAOcC98A3KVdFOtKGWG+pqtKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=P+LbduX/; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a869332c2c2so996620866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725368236; x=1725973036; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8p5yg7eSpfkF7KfEUeaswPPeaoWpvFoniZltR7IGrLo=;
-        b=P+LbduX/4blADViUq5pJ3RS8Fo7Vwkw4jhVHAN+nQsSJqwPxv5HdaIGaHl/zIj3WVR
-         NdfeNLSXiyFFsLzJHdomGi1zKjdwJkdTu1fy6qJ88EaBId7FURsM0m7cFIdgWRnkznFM
-         jqtLNuWI9rYRzzg3PxltYxF4QFTV3eZrwtVh8n4QEJ56G1o+ZpgwxkeQOEaGGmlBGLxQ
-         gtqKi4913YBUbpVj1h/YDjZ3R1zAKUuECWG59+N8e1EK28PNx1NNxCQjysKZ1o1z7uR2
-         6nOzjkS/IRa3pGXlRpXun+YCSRWJxXLzfeuaiI5VRCYpbY8sfyNELG4Ti0BdlyjfQvt7
-         fIIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725368236; x=1725973036;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8p5yg7eSpfkF7KfEUeaswPPeaoWpvFoniZltR7IGrLo=;
-        b=hL+Ez95seSjXn+uD8scPyNCOYwcbFLP2q+QAEDcuuWpKNuhZD/1eYzaIWRyQQBfpbf
-         jLkxjUvTOMQwHIBlzTG8O4nSKn37C4v1+UERfxaZjExN0MdSvEH+3C9ymAQRkCNqy6W9
-         C5ljzAQZoVNKMdNZUWoDYeICJUHo0tC0lWSudo5vJRzyAxTxReKH5nYZu6tdnWDhWwbO
-         xVeeH3LHgOgNZz9kahw9sjNDW2keQZagvcT5Y20FSiRY/cpoMkWvVVRZ6hqfkHQyv3Xd
-         ZzF618MCT/DEv8yeSoGxtrzpwWqXInEKkFs0o9durTC3oNMhW0PrHnlo+LQvSyNytJ+U
-         VD/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9LDj7DAg0Y5DJPdVG5HJHcRno2G1XSpbkx138k7qW32yhQ3s7+TfjyngxNfd52Q6ibY5GjVYiKJaeCWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx51lwKIfrqwpKrUK+ZLdSTM0+8+PBgPF3Xye5GR8bYTpGAGapp
-	XaUqDgMqfo/GgxDusgp+JP09nMH/LBp5TDVQJmXDxLjxaW0qmxoeijN+Y39hlDk=
-X-Google-Smtp-Source: AGHT+IHZXUf4gCvoTnaido/Qhn8cqkw+YBP7i7FYjIQcDtkx87EhKcdM6qoGHvRSR0AuY4uEo+anoQ==
-X-Received: by 2002:a17:907:7248:b0:a77:ca3b:996c with SMTP id a640c23a62f3a-a89a267a567mr1608923766b.16.1725368235772;
-        Tue, 03 Sep 2024 05:57:15 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb31fsm690077166b.17.2024.09.03.05.57.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 05:57:15 -0700 (PDT)
-Message-ID: <5bcdc677-e61e-4312-a19b-57b4600685d3@tuxon.dev>
-Date: Tue, 3 Sep 2024 15:57:13 +0300
+	s=arc-20240116; t=1725368260; c=relaxed/simple;
+	bh=jv6J61g2w8yMD5DyTARyh8FoK7mw7X6oBJlGAIlZwWc=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N6rpdWNLqfLwbJ3loTF8WLHvBXrN8VLhFcdRlUQQ5K7kKySb3vlIa4kEQk50VqBsjSrDadwpBmwv7g2WqROBetfQyWVNflRe6424nJw/Sk4tjYH83q4fMpu98kDJA9z6OZdFztKnmozbVzcAnYFhzqMTKj5gpFKGAhEVRLfU7oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WylwJ6TNmzgYd3;
+	Tue,  3 Sep 2024 20:55:28 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD71E140258;
+	Tue,  3 Sep 2024 20:57:35 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 20:57:34 +0800
+Message-ID: <8e25187c-ce88-4415-91ee-4c636964b674@huawei.com>
+Date: Tue, 3 Sep 2024 20:57:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,161 +47,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
- <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
- <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
- <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <f7c57e76-b890-491f-880d-62d060b7b31e@tuxon.dev>
- <TYCPR01MB11332BE2EDB318950B9C7B54C86932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
- <TY3PR01MB1134689573A785E91A9041E1886932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB1134689573A785E91A9041E1886932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V6 net-next 07/11] net: hibmcge: Implement rx_poll
+ function to receive packets
+To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>
+References: <20240830121604.2250904-1-shaojijie@huawei.com>
+ <20240830121604.2250904-8-shaojijie@huawei.com>
+ <0f3cf321-3c23-43df-b6eb-55dd0a1fec64@redhat.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <0f3cf321-3c23-43df-b6eb-55dd0a1fec64@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
 
+on 2024/9/3 20:08, Paolo Abeni wrote:
+> On 8/30/24 14:16, Jijie Shao wrote:
+>> @@ -119,6 +122,20 @@ static void hbg_buffer_free_skb(struct 
+>> hbg_buffer *buffer)
+>>       buffer->skb = NULL;
+>>   }
+>>   +static int hbg_buffer_alloc_skb(struct hbg_buffer *buffer)
+>> +{
+>> +    u32 len = hbg_spec_max_frame_len(buffer->priv, buffer->dir);
+>> +    struct hbg_priv *priv = buffer->priv;
+>> +
+>> +    buffer->skb = netdev_alloc_skb(priv->netdev, len);
+>> +    if (unlikely(!buffer->skb))
+>> +        return -ENOMEM;
+>
+> It's preferable to allocate the skbuff at packet reception time, 
+> inside the poll() function, just before passing the skb to the upper 
+> stack, so that the header contents are fresh in the cache. 
+> Additionally that increases the change for the allocator could hit its 
+> fastpath.
 
-On 03.09.2024 15:37, Biju Das wrote:
-> 
-> 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Tuesday, September 3, 2024 1:26 PM
->> To: Biju Das <biju.das.jz@bp.renesas.com>; Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
->> p.zabel@pengutronix.de; geert+renesas@glider.be; magnus.damm@gmail.com; gregkh@linuxfoundation.org;
->> mturquette@baylibre.com; sboyd@kernel.org; Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>;
->> linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> renesas-soc@vger.kernel.org; linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
->>
->>
->>
->> On 03.09.2024 15:00, Biju Das wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Biju Das <biju.das.jz@bp.renesas.com>
->>>> Sent: Tuesday, September 3, 2024 12:07 PM
->>>> To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>; Ulf Hansson
->>>> <ulf.hansson@linaro.org>
->>>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
->>>> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de;
->>>> geert+renesas@glider.be; magnus.damm@gmail.com;
->>>> gregkh@linuxfoundation.org; mturquette@baylibre.com;
->>>> sboyd@kernel.org; Yoshihiro Shimoda
->>>> <yoshihiro.shimoda.uh@renesas.com>;
->>>> linux-phy@lists.infradead.org; devicetree@vger.kernel.org;
->>>> linux-kernel@vger.kernel.org; linux- renesas-soc@vger.kernel.org;
->>>> linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->>>> linux- clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea
->>>> <claudiu.beznea.uj@bp.renesas.com>
->>>> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas
->>>> RZ/G3S SoC
->>>>
->>>> Hi Claudiu,
->>>>
->>>>> -----Original Message-----
->>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>>> Sent: Tuesday, September 3, 2024 12:00 PM
->>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>>>> RZ/G3S SoC
->>>>>
->>>>>
->>>>>
->>>>> On 03.09.2024 13:31, Biju Das wrote:
->>>>>>>> During boot clr USB PWR READY signal in TF-A.
->>>>>>>> STR case, suspend set USB PWR READY signal in TF-A.
->>>>>>>> STR case, resume clr USB PWR READY signal in TF-A.
->>>>>>> As I said previously, it can be done in different ways. My point
->>>>>>> was to let Linux set what it needs for all it's devices to work. I
->>>>>>> think the way to go forward is a
->>>>> maintainer decision.
->>>>>>
->>>>>> I agree, there can be n number of solution for a problem.
->>>>>>
->>>>>> Since you modelled system state signal (USB PWRRDY) as reset
->>>>>> control signal, it is reset/DT maintainer's decision to say the
->>>>>> final word whether this signal fits in reset
->>>>> system framework or not?
->>>>>
->>>>> I was thinking:
->>>>> 1/ Geert would be the best to say if he considers it OK to handle this
->>>>>    in Linux
->>>>
->>>> I agree Geert is the right person for taking SYSTEM decisions, since
->>>> the signal is used only during state transitions (Table 41.6.4 AWO to
->>>> ALL_ON and 41.6.3 ALL_ON to AWO)
->>>
->>> One more info, as per [1], this USB PWRRDY signal setting to be before Linux kernel boots.
->>
->> The "controlled by" column mentions CA-55 on PWRRDY signal control line and it is b/w steps "DDR exits
->> from retention mode" and  "clock start settings for system bus and peripheral modules". AFAICT, after
->> DDR exists retention mode Linux is ready to run.
-> 
-> DDR retention exit happens in TF-A and it jumps into reset code where it executes BL2 in TF_A. Bl2 checks for warm or cold reset.
-> If it is warm reset, it sets required minimal clocks/resets and pass the control to linux by calling the
-> SMC callback handler. Which in turn calls resume(step 11-->14) path.
+In hibmcge driver, we alloc the skb memory first, after dma, and then set the dam address to the MAC for receiving packets.
+After receiving a packet, MAC fills the hw rx descriptor and packet content to skb->data, and then reports an RX interrupt to trigger the driver to receive the packet.
+In poll(), we use skb_reserve() to adjust the size of the SKB headroom. The skb->data is moved backward by the descriptor length(HBG_PACKET_HEAD_SIZE) to ensure
+the skb->data is at the start position of the packet.
 
-Is this from HW manual or some specific documentation? I'm referring at
-"resume" == "steps 11-->14"
+    ┌─────────────────┬────────────────────────────────────┐
+    │hw rx descriptor │                packet              │
+    │                 │                                    │
+    └─────────────────┴────────────────────────────────────┘
+    ^
+   skb->data
 
-> 
-> Step 8, Cortex-A55 Exit from DDR retention mode (when using) Setting for exiting form DDR retention mode
-> Step 9, Cortex-A55 USB PHY PWRRDY signal control (if use USB) SYS_USB_PWRRDY
-> Step 10, Cortex-A55 PCIe RST_RSM_B signal control (if use PCIe) SYS_PCIE_RST_RSM_B
+>
+>> +
+>> +    buffer->skb_len = len;
+>> +    memset(buffer->skb->data, 0, HBG_PACKET_HEAD_SIZE);
+>
+> Out of sheer ignorace, why do you need to clear the packet data?
+>
+>
+The length of HBG_PACKET_HEAD_SIZE is exactly the size of the rx descriptor. Therefore, we want to clear before receiving packets to ensure that the descriptor is correct.
 
-Note *if use*: how does the TF-A know if USB/PCIe is used by Linux? The
-documentation mention to set it *if use*. Same note is on ALL_ON to VBATT
-transition documentation (namely "if using USB", "if using PCIe"). If TF-A
-will do this it should set this signals unconditionally. It will not be
-something wrong though. We don't know at the moment what this involves in
-terms of power consumption, if it means something...
+	Thanks
+	Jijie Shao
 
-> Step 11, Cortex-A55 Clock start setting for system bus and desired peripheral modules in PD_ISOVCC CPG_CLKON_***ep 
-> (***: GIC600, MHU, SDHI, USB, ETH, DDR, PCI,AXI_COM_BUS, PERI_COM, AXI_TZCDDR,
-> OTFDE_DDR)
-> Step 12, Cortex-A55 Release reset setting for system bus and desired peripheral modules in PD_ISOVCC CPG_RST_***
-> (***: GIC600, MHU, SDHI, USB, ETH, DDR, PCI, AXI_COM_BUS, PERI_COM, AXI_TZCDDR,OTFDE_DDR)
-> Step 13, Cortex-A55 Release MSTOP bit for system bus and desired peripheral modules in PD_ISOVCC CPG_BUS_***_MSTOP
-> (***: ACPU, PERI_COM, PERI_DDR, TZCDDR),
-> CPG_MHU_MSTOP.
-> Step14) Cortex-A55 Clock start setting and reset release setting for Cortex-M33_FPU (if use Cortex-M33_FPU)
-> CPG_CLKON_CM33, CPG_RST_CM33
-> 
-> Cheers,
-> Biju
 
