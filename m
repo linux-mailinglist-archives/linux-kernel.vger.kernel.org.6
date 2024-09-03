@@ -1,167 +1,213 @@
-Return-Path: <linux-kernel+bounces-313527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D1F96A6B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:39:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18C796A6B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B25B20D9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA031F24954
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2D4191F62;
-	Tue,  3 Sep 2024 18:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8E5191F80;
+	Tue,  3 Sep 2024 18:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2/msGapL"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OQdSi3T2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB62175D45
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 18:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E415574F;
+	Tue,  3 Sep 2024 18:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725388757; cv=none; b=WUyy4WkzbVmT0zWoUClycV+uNKVCw+iDupGHbeKVbOw0OtY8MFcr+QJmvoOHnRjXrqzz3BPiFvX23ZrReQMMS8vJBhFvzU8QbeGNM7Ui5zVzZwi5bx9o6a4nx9LINPpKLJK3e8jApVG/ehRPVmsAAlxPfe277hHxCcFW8YqzFuk=
+	t=1725388805; cv=none; b=gI7WgpUjR1ObbSk+AB1mjkuaq5iReylEgtvoxZMR7l9rtIiVe17pnkVEDitPO69REZvKZ9vTSxLKolzB+1QHxVIkOajhn5+ADQQrWFhzRhpTRgP6B+MGQipRNDYvDbmpr6Fk4YFw5KTqqAlr9Zg0beh+GlLOeTdhJm6PmB5Mqy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725388757; c=relaxed/simple;
-	bh=7S6y7vZbqbEkFSElUCkqajh4xoR7NqYWU+0JoeqQEGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QhTk/oEcq23BytZMKhkZ/wVmBFlIEyB2HEhJXOqvQRAjUtJ2ZKpH+cuq2zO4UL8Tf4XgqFd+se5/OuDeKQ+Zs1Uq0+dgaI06mwY8wyyPGlb7bzx+9VVBySd5wLodnPw6XGtbihpuSnotmfj/SD2p03iabluSCdZ8YSoBtKgQ4BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2/msGapL; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86984e035aso691680966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 11:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725388754; x=1725993554; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7ZyRd+YkYe9/+6vmRhnsrYoSz+GnkaG4/Tw8IFdilo=;
-        b=2/msGapLxmXHTqcKCOVLuiBEvurFrw9okxo5g1HEhwO30SU9KTBXt74HF9Sz6dv8Cs
-         Mq9fWgyBXfoxqbsryorN3BIcD6JujzmT/R9gJp8/9JHB3W4dr8u33q6LibsUT/XbqrJv
-         Df8AK44zAaYwgHBWSLoHHzgWJSDxqM+TFs5TbzbCR1PFi12cdTOmDKYUvj28cMT/y/9M
-         mEV6LSYc8ySoMEk7Zf/7yIpd9c7uQD0TxTX/pmb+rQ5bqlOAVfZR9JlblIup+tqJDwvr
-         NlhiMj0e7vcJ5pVZYjgmiLbrfl1PKErkkVhSbdjFXfh1b+TWX/e7Gcf3LPIQQMEYZmjq
-         Q/tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725388754; x=1725993554;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o7ZyRd+YkYe9/+6vmRhnsrYoSz+GnkaG4/Tw8IFdilo=;
-        b=sZeGRApjNkoWRWGz4vAOEI0JPrz2dV03c76XFXcYaeIzuzPT/K2MbQzZkWu5N+oAhS
-         9+d4lhQEJDhObsRLBtrjrlLsbECeiJWEG0El2Zrox7R42lzn0Bi/t+Qk40H60h3HHMbC
-         A28XBgwSr6pCf3tNBSD/x3h86JaDEV4zL9jyifIaXxrQRmm75RxksInDLYtiLI3bEvgJ
-         KA9EHKjK0JYOn1hyZ3xDYPGSneHaKDLos9uaIWah3OC0PKiJQhaDlJJaJINgfa1PsC2O
-         suZlasf/HvIeQzY48vm6D2+GboNmnW+OKvtBOgxpjweVkMeENevjzsXbiRVB6/QsOa1+
-         wJ7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJZFJvXncz43OOdqCQwTKKY8TVzKFussqlopJdzeJ4cUo/lefQc1eN8ZvnVCB+7L+tyGSM8YJDFIn7jsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0L9NiiqmutKQFDyj6FemEUAJYIGBFm0sh7Ijvr/mfqVzTAL5
-	JZpX1QNuN/pzQNlKB7rxIzI+ZNNSrHFRf5EIUk3knlE0k6REKFEJztG2AiBcWzejC5b8+jXNOA1
-	5L/dgqtwOtAJEGV59P7fQywVz38QpVUz0RJud
-X-Google-Smtp-Source: AGHT+IGj0mWyRsR47LHFVEGQKRqzSzE70fQIG2IcbCUZGxyhvIEZ6EH02JjyFrfCwcAVlEcOsMlNJNgo86eeIPK4uC8=
-X-Received: by 2002:a17:907:846:b0:a7a:b73f:7582 with SMTP id
- a640c23a62f3a-a89a350eefemr994272266b.2.1725388753105; Tue, 03 Sep 2024
- 11:39:13 -0700 (PDT)
+	s=arc-20240116; t=1725388805; c=relaxed/simple;
+	bh=DzmqlxFkbW8l5hee1Qs9zw4hXO9ms1lr7KFAAbhwKtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VUtqOishYS2FwSl8ZcjGyA+GM7lTuPZ/dM/ErzGNjFEL9gaMiAY+t7OXyweuyOcNs2Co2oIfwmjWS8PKKMF44UGHwvqa+HMQBc0bUlI18ZMIu32dmOEKEGLGNe+89cf0Hl8TyQI96ME41f6pWtlKxi6L2sKZe5p+OyLHJBksQ/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OQdSi3T2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725388804; x=1756924804;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=DzmqlxFkbW8l5hee1Qs9zw4hXO9ms1lr7KFAAbhwKtk=;
+  b=OQdSi3T2MJlHLVurLNrR94FOv+FibwrPysMcOScn5y3HEUTm0+mX5ZhT
+   iBEAAH5rgWymtkgtV0WMlc4mdk+i3kNUrcHn6iYvsGol9YyCPdyu/9vQq
+   UbXAA8vW2BxCaX9XfuNief2HUzb6vdJL/iU18u1LqAwskUuIq4dSor0yP
+   u05r8WUoyXreQivkotRP4oCcH+X+KTbDoLxTYIC7lXcv3cnek1RKSSA6S
+   viwOsW0KPCXtxDPpELwhzL6oWNs/hyd/I5NBKWiY4IYMbpW0ybYImkHyz
+   4e18YtFvtIKfG2pjAi4yCwST7rZya8hbHG81+dYy3OOMANBR6eVVSKpp/
+   A==;
+X-CSE-ConnectionGUID: +si+VclSSmOdD9yNnv+ACQ==
+X-CSE-MsgGUID: R7sP72MHQ2WvklzG2Rlogg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23525669"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="23525669"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:40:03 -0700
+X-CSE-ConnectionGUID: drdrmKCAR4yEXkdLsALm5A==
+X-CSE-MsgGUID: 00LTrQ9DRyugXGYv3JuTeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="102419383"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:39:57 -0700
+Message-ID: <45a41368-8986-491f-a6cc-20800b857f27@intel.com>
+Date: Tue, 3 Sep 2024 21:39:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
- <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
-In-Reply-To: <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 3 Sep 2024 11:38:37 -0700
-Message-ID: <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Kairui Song <ryncsn@gmail.com>
-Cc: hanchuanhua@oppo.com, Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
-	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
-	kaleshsingh@google.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
-	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
-	xiang@kernel.org, ying.huang@intel.com, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/8] perf auxtrace: Refactor evlist__enable_event_idx()
+To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-6-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240823113306.2310957-6-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[..]
->
-> With latest mm-unstable, I'm seeing following WARN followed by user
-> space segfaults (multiple mTHP enabled):
->
-> [   39.145686] ------------[ cut here ]------------
-> [   39.145969] WARNING: CPU: 24 PID: 11159 at mm/page_io.c:535
-> swap_read_folio+0x4db/0x520
-> [   39.146307] Modules linked in:
-> [   39.146507] CPU: 24 UID: 1000 PID: 11159 Comm: sh Kdump: loaded Not
-> tainted 6.11.0-rc6.orig+ #131
-> [   39.146887] Hardware name: Tencent Cloud CVM, BIOS
-> seabios-1.9.1-qemu-project.org 04/01/2014
-> [   39.147206] RIP: 0010:swap_read_folio+0x4db/0x520
-> [   39.147430] Code: 00 e0 ff ff 09 c1 83 f8 08 0f 42 d1 e9 c4 fe ff
-> ff 48 63 85 34 02 00 00 48 03 45 08 49 39 c4 0f 85 63 fe ff ff e9 db
-> fe ff ff <0f> 0b e9 91 fd ff ff 31 d2 e9 9d fe ff ff 48 c7 c6 38 b6 4e
-> 82 48
-> [   39.148079] RSP: 0000:ffffc900045c3ce0 EFLAGS: 00010202
-> [   39.148390] RAX: 0017ffffd0020061 RBX: ffffea00064d4c00 RCX: 03ffffffffffffff
-> [   39.148737] RDX: ffffea00064d4c00 RSI: 0000000000000000 RDI: ffffea00064d4c00
-> [   39.149102] RBP: 0000000000000001 R08: ffffea00064d4c00 R09: 0000000000000078
-> [   39.149482] R10: 00000000000000f0 R11: 0000000000000004 R12: 0000000000001000
-> [   39.149832] R13: ffff888102df5c00 R14: ffff888102df5c00 R15: 0000000000000003
-> [   39.150177] FS:  00007f51a56c9540(0000) GS:ffff888fffc00000(0000)
-> knlGS:0000000000000000
-> [   39.150623] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   39.150950] CR2: 000055627b13fda0 CR3: 00000001083e2000 CR4: 00000000003506b0
-> [   39.151317] Call Trace:
-> [   39.151565]  <TASK>
-> [   39.151778]  ? __warn+0x84/0x130
-> [   39.152044]  ? swap_read_folio+0x4db/0x520
-> [   39.152345]  ? report_bug+0xfc/0x1e0
-> [   39.152614]  ? handle_bug+0x3f/0x70
-> [   39.152891]  ? exc_invalid_op+0x17/0x70
-> [   39.153178]  ? asm_exc_invalid_op+0x1a/0x20
-> [   39.153467]  ? swap_read_folio+0x4db/0x520
-> [   39.153753]  do_swap_page+0xc6d/0x14f0
-> [   39.154054]  ? srso_return_thunk+0x5/0x5f
-> [   39.154361]  __handle_mm_fault+0x758/0x850
-> [   39.154645]  handle_mm_fault+0x134/0x340
-> [   39.154945]  do_user_addr_fault+0x2e5/0x760
-> [   39.155245]  exc_page_fault+0x6a/0x140
-> [   39.155546]  asm_exc_page_fault+0x26/0x30
-> [   39.155847] RIP: 0033:0x55627b071446
-> [   39.156124] Code: f6 7e 19 83 e3 01 74 14 41 83 ee 01 44 89 35 25
-> 72 0c 00 45 85 ed 0f 88 73 02 00 00 8b 05 ea 74 0c 00 85 c0 0f 85 da
-> 03 00 00 <44> 8b 15 53 e9 0c 00 45 85 d2 74 2e 44 8b 0d 37 e3 0c 00 45
-> 85 c9
-> [   39.156944] RSP: 002b:00007ffd619d54f0 EFLAGS: 00010246
-> [   39.157237] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f51a44f968b
-> [   39.157594] RDX: 0000000000000000 RSI: 00007ffd619d5518 RDI: 00000000ffffffff
-> [   39.157954] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000007
-> [   39.158288] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> [   39.158634] R13: 0000000000002b9a R14: 0000000000000000 R15: 00007ffd619d5518
-> [   39.158998]  </TASK>
-> [   39.159226] ---[ end trace 0000000000000000 ]---
->
-> After reverting this or Usama's "mm: store zero pages to be swapped
-> out in a bitmap", the problem is gone. I think these two patches may
-> have some conflict that needs to be resolved.
+On 23/08/24 14:33, Leo Yan wrote:
+> This commit splits the evlist__enable_event_idx() function into two
+> steps. The first step uses a new function evlist__find_cpu_map_idx() to
+> find the CPU map index, based on the found CPU map index or a thread map
+> index, it continues to call evlist__enable_event_idx() for enabling the
+> corresponding event.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/auxtrace.c | 42 +++++++++++++++++++++++++++++---------
+>  1 file changed, 32 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index 87e4f21b6edf..e7b582d92811 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -651,20 +651,30 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
+>  	return -EINVAL;
+>  }
+>  
+> -static int evlist__enable_event_idx(struct evlist *evlist, struct evsel *evsel, int idx)
+> +static int evlist__find_cpu_map_idx(struct evlist *evlist, struct evsel *evsel,
+> +				    int idx)
+>  {
+>  	bool per_cpu_mmaps = !perf_cpu_map__has_any_cpu(evlist->core.user_requested_cpus);
+> +	struct perf_cpu evlist_cpu;
+> +	int cpu_map_idx;
+>  
+> -	if (per_cpu_mmaps) {
+> -		struct perf_cpu evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
+> -		int cpu_map_idx = perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
+> +	if (!per_cpu_mmaps)
+> +		return -EINVAL;
+>  
+> -		if (cpu_map_idx == -1)
+> -			return -EINVAL;
+> -		return perf_evsel__enable_cpu(&evsel->core, cpu_map_idx);
+> -	}
+> +	evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
+> +	cpu_map_idx = perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
+> +	if (cpu_map_idx == -1)
+> +		return -ENOENT;
+> +
+> +	return cpu_map_idx;
+> +}
+>  
+> -	return perf_evsel__enable_thread(&evsel->core, idx);
+> +static int evlist__enable_event_idx(struct evsel *evsel, int cpu_mode, int idx)
+> +{
+> +	if (cpu_mode)
+> +		return perf_evsel__enable_cpu(&evsel->core, idx);
+> +	else
+> +		return perf_evsel__enable_thread(&evsel->core, idx);
+>  }
+>  
+>  int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+> @@ -676,9 +686,21 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+>  
+>  	evlist__for_each_entry(itr->evlist, evsel) {
+>  		if (evsel__is_aux_event(evsel)) {
+> +			int cpu_map_idx;
+> +
+>  			if (evsel->disabled)
+>  				return 0;
+> -			return evlist__enable_event_idx(itr->evlist, evsel, idx);
+> +
+> +			cpu_map_idx = evlist__find_cpu_map_idx(itr->evlist,
+> +							       evsel, idx);
+> +			/* No map is found in per CPU mmap */
+> +			if (cpu_map_idx == -ENOENT)
+> +				return cpu_map_idx;
+> +
+> +			if (cpu_map_idx >= 0)
+> +				return evlist__enable_event_idx(evsel, 1, cpu_map_idx);
+> +			else
+> +				return evlist__enable_event_idx(evsel, 0, idx);
+>  		}
+>  	}
+>  	return -EINVAL;
 
-Yup. I saw this conflict coming and specifically asked for this
-warning to be added in Usama's patch to catch it [1]. It served its
-purpose.
+What about keeping per_cpu_mmaps in auxtrace_record__read_finish()
+e.g.
 
-Usama's patch does not handle large folio swapin, because at the time
-it was written we didn't have it. We expected Usama's series to land
-sooner than this one, so the warning was to make sure that this series
-handles large folio swapin in the zeromap code. Now that they are both
-in mm-unstable, we are gonna have to figure this out.
+static int evlist__find_evsel_cpu_idx(struct evlist *evlist, struct evsel *evsel, int idx)
+{
+	struct perf_cpu evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
 
-I suspect Usama's patches are closer to land so it's better to handle
-this in this series, but I will leave it up to Usama and
-Chuanhua/Barry to figure this out :)
+	return perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
+}
 
-[1]https://lore.kernel.org/lkml/CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com/
+int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+{
+	bool per_cpu_mmaps = !perf_cpu_map__has_any_cpu(evlist->core.user_requested_cpus);
+	struct evsel *evsel;
+	int evsel_cpu_idx;
+
+	if (!itr->evlist)
+		return -EINVAL;
+
+	evlist__for_each_entry(itr->evlist, evsel) {
+		if (!evsel__is_aux_event(evsel))
+			continue;
+
+		if (per_cpu_mmaps) {
+			evsel_cpu_idx = evlist__find_evsel_cpu_idx(itr->evlist, evsel, idx);
+			/* No map is found in per CPU mmap */
+			if (evsel_cpu_idx < 0)
+				return -EINVAL;
+		}
+
+		if (evsel->disabled)
+			return 0;
+
+		if (per_cpu_mmaps)
+			return perf_evsel__enable_cpu(&evsel->core, evsel_cpu_idx);
+
+		return perf_evsel__enable_thread(&evsel->core, idx);
+	}
+	return -EINVAL;
+}
+
 
