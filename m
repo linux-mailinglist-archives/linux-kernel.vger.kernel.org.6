@@ -1,99 +1,182 @@
-Return-Path: <linux-kernel+bounces-312315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27FF9694E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:12:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE3D9694E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0AF284E55
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F26FB2350B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8FA1D67A5;
-	Tue,  3 Sep 2024 07:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28F200121;
+	Tue,  3 Sep 2024 07:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkDAMP1N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVNhGfIe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A914D1CCEEC;
-	Tue,  3 Sep 2024 07:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204A1D67A8;
+	Tue,  3 Sep 2024 07:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347453; cv=none; b=OQiRsFbNnGwKiK2LM5Z6+yUtP52WCVubBjew0jiQCn3UNhdgGNNu4CBHJdp/JSNV4HU6CJ43QZmHH+ipjW7YYZfCNHFGI+HsVnR/IYIX+8DQ/J0E8sYgTwBjXF3QtPwyLNx7gaXXpiKca1cHnT7w+HPCo4F/DqQalZhp3MCPa+s=
+	t=1725347461; cv=none; b=q4rfBHsQ+jEObJaccG198/r6rvVOUQ2KzyJJihvkKCzb5J9EQbGxqkHMPUo7ELxE0BkkUFYZ7xEWtapKNgNtqRzNJwkx3LGvld0g1eX5/kqfqfTe+leMWPF9JuQifn2pNq4eGOCRXx1xhRDl02fzDJE3qkCwB8vqUe6k80XQQiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347453; c=relaxed/simple;
-	bh=T4H+4ElO/PwnBQCNIGbmM+SHoxH07n02T/pQCzCLhPs=;
+	s=arc-20240116; t=1725347461; c=relaxed/simple;
+	bh=yp7QPjDqSp8ibLntSHK2Vl+iJPwEo+sNDOYISBqzaJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2hYv/SbQjmegAwmsyTHCyz7bXr/9BF7FOprtaUljZ2teFr06KwnUElTGc3B0JpxN6q2IrBjuLTt5lKGoIxShqt9u19Kcvy/vkp114P4tV6l6HMrdeezyKQZbGkjsoSm2C5qf31YBD6Nh4ekHpl+1pqvJYYDRZqp/0vJspaSlIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkDAMP1N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45816C4CEC6;
-	Tue,  3 Sep 2024 07:10:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3c1Lk6hmXmPBlE7wHqHZs+FCqzSMCiy2XcRmtEpcf9166b93quJuX3hRzKCO7qMGksLKcV7LdHdhbqvVDh8lX3PxmGLhC4jDQmn1DjfE37oXOKMCBIyolTsuikKElsJFFe4yy/JThKUkaDen2rgpVrQXD6REMA16xGITErvjx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVNhGfIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BD8C4CEC5;
+	Tue,  3 Sep 2024 07:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725347453;
-	bh=T4H+4ElO/PwnBQCNIGbmM+SHoxH07n02T/pQCzCLhPs=;
+	s=k20201202; t=1725347461;
+	bh=yp7QPjDqSp8ibLntSHK2Vl+iJPwEo+sNDOYISBqzaJ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hkDAMP1NsoY2wXAXdzoz2K4xJLRUr7NHz6EKTWqFrdn0t9sV6eWWs/zeKlzij5rPl
-	 mPKJ/GNaZDUarxmw1FWzy0zO85uGz0tmmqf0BgBBK8FgqcSwRn9v58t9UmFOK3Kt9L
-	 AAxopvM0m8Ky7Y/LxLTW/E/5Cp6rIzP+3vyPPQsfptw0rsp3mAFeKdhGp8UmSp7GfN
-	 AHjS/Gyb4jMBUUlsenqhfttnvdRq5NDWX4GejeosNkd+w03WZRBBZAhemvIZOuIcj2
-	 oyIrmGdBmsxNBKBkFZcN/+2UIukaTBWedTQdhkubZ0n79JS/MJ8dkCZqqZbJaKdGi4
-	 l5WncypdvKe5Q==
-Date: Tue, 3 Sep 2024 09:10:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: cache: qcom,llcc: add num-banks property
-Message-ID: <g7fyt57kzynzpux5nea2v22gcuu24asbr54axzms7mhdh4jq5a@xdyqifloofbk>
-References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
- <20240903-qcs8300_llcc_driver-v1-1-228659bdf067@quicinc.com>
+	b=cVNhGfIeG2Dd7I+YNwCLMkte9sxNLGwap9hB/6Q8hmYGMNyBPOmcTmw/tKAmJpx+Q
+	 qh81qimgaSINA+M3jj+luTzjeJOuD4+xuMayjgcCVZF/Wq3kitGKdeaHQe0KB4L1RS
+	 Z7tg25hJQPoLHSa1+aPJbqwhGd/8N9oOzMMs0i6+aMPgJxNVvrP5tkegCUOYeY9zoR
+	 qsrmmcwb9fxe90GfWn8l51lJn7n3b+FKOYL6W+7v+/nDGRvaYQlMd5tW9kbo7CCoaE
+	 Gof2RUmhaAUI0SxQb19TiH2NVH3L3jhjTQyTxMV8o7N/gVwNcg5iDcoLtoPRgMDVg8
+	 5he0KCoEQC7fQ==
+Date: Tue, 3 Sep 2024 09:10:57 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 14/22] iio: imu: st_lsm6dsx: Get platform data via
+ dev_get_platdata()
+Message-ID: <Zta2gaV_8qintFts@lore-rh-laptop>
+References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
+ <20240902222824.1145571-15-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b3D8ckyOT+sNuJnX"
 Content-Disposition: inline
-In-Reply-To: <20240903-qcs8300_llcc_driver-v1-1-228659bdf067@quicinc.com>
+In-Reply-To: <20240902222824.1145571-15-andy.shevchenko@gmail.com>
 
-On Tue, Sep 03, 2024 at 02:21:29PM +0800, Jingyi Wang wrote:
-> Add a property "num-banks" for errata.
 
-This you said in commit subject and we see in the diff. You *MUST*
-explain why.
+--b3D8ckyOT+sNuJnX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>=20
+> Access to platform data via dev_get_platdata() getter to make code cleane=
+r.
+>=20
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 > ---
->  Documentation/devicetree/bindings/cache/qcom,llcc.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
-> index 68ea5f70b75f..03241b719c98 100644
-> --- a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
-> +++ b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
-> @@ -56,6 +56,11 @@ properties:
->      items:
->        - const: multi-chan-ddr
->  
-> +  num-banks:
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/i=
+mu/st_lsm6dsx/st_lsm6dsx_core.c
+> index ed0267929725..3958b5e1a3f6 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+> @@ -2132,14 +2132,11 @@ st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+>  			const struct st_lsm6dsx_reg **drdy_reg)
+>  {
+>  	struct device *dev =3D hw->dev;
+> +	const struct st_sensors_platform_data *pdata =3D dev_get_platdata(dev);
 
-No vendor prefix? So this is generic property? Then add to some common
-schema with proper explanation WHY.
+nit: I guess you can move pdata pointer in the 'if' block, since it is just
+used there.
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      The num of llcc banks
+Regards,
+Lorenzo
 
-And what are llcc (or LLCC?) banks?
+>  	int err =3D 0, drdy_pin;
+> =20
+> -	if (device_property_read_u32(dev, "st,drdy-int-pin", &drdy_pin) < 0) {
+> -		struct st_sensors_platform_data *pdata;
+> -
+> -		pdata =3D (struct st_sensors_platform_data *)dev->platform_data;
+> +	if (device_property_read_u32(dev, "st,drdy-int-pin", &drdy_pin) < 0)
+>  		drdy_pin =3D pdata ? pdata->drdy_int_pin : 1;
+> -	}
+> =20
+>  	switch (drdy_pin) {
+>  	case 1:
+> @@ -2162,14 +2159,13 @@ st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+>  static int st_lsm6dsx_init_shub(struct st_lsm6dsx_hw *hw)
+>  {
+>  	const struct st_lsm6dsx_shub_settings *hub_settings;
+> -	struct st_sensors_platform_data *pdata;
+>  	struct device *dev =3D hw->dev;
+> +	const struct st_sensors_platform_data *pdata =3D dev_get_platdata(dev);
+>  	unsigned int data;
+>  	int err =3D 0;
+> =20
+>  	hub_settings =3D &hw->settings->shub_settings;
+> =20
+> -	pdata =3D (struct st_sensors_platform_data *)dev->platform_data;
+>  	if (device_property_read_bool(dev, "st,pullups") ||
+>  	    (pdata && pdata->pullups)) {
+>  		if (hub_settings->pullup_en.sec_page) {
+> @@ -2524,9 +2520,9 @@ static irqreturn_t st_lsm6dsx_sw_trigger_handler_th=
+read(int irq,
+> =20
+>  static int st_lsm6dsx_irq_setup(struct st_lsm6dsx_hw *hw)
+>  {
+> -	struct st_sensors_platform_data *pdata;
+>  	const struct st_lsm6dsx_reg *reg;
+>  	struct device *dev =3D hw->dev;
+> +	const struct st_sensors_platform_data *pdata =3D dev_get_platdata(dev);
+>  	unsigned long irq_type;
+>  	bool irq_active_low;
+>  	int err;
+> @@ -2554,7 +2550,6 @@ static int st_lsm6dsx_irq_setup(struct st_lsm6dsx_h=
+w *hw)
+>  	if (err < 0)
+>  		return err;
+> =20
+> -	pdata =3D (struct st_sensors_platform_data *)dev->platform_data;
+>  	if (device_property_read_bool(dev, "drive-open-drain") ||
+>  	    (pdata && pdata->open_drain)) {
+>  		reg =3D &hw->settings->irq_config.od;
+> @@ -2639,7 +2634,7 @@ static int st_lsm6dsx_init_regulators(struct device=
+ *dev)
+>  int st_lsm6dsx_probe(struct device *dev, int irq, int hw_id,
+>  		     struct regmap *regmap)
+>  {
+> -	struct st_sensors_platform_data *pdata =3D dev->platform_data;
+> +	const struct st_sensors_platform_data *pdata =3D dev_get_platdata(dev);
+>  	const struct st_lsm6dsx_shub_settings *hub_settings;
+>  	struct st_lsm6dsx_hw *hw;
+>  	const char *name =3D NULL;
+> --=20
+> 2.46.0
+>=20
 
+--b3D8ckyOT+sNuJnX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Krzysztof
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZta2fwAKCRA6cBh0uS2t
+rLPyAQCvquLs7JDnDvHnO/jvP81iVTbPM3O1eg0j63jsywclQwD7BBi5FVTic6H6
+L0gvyU9T0IGcdw1vF12cst9yKOtEwAI=
+=bFZX
+-----END PGP SIGNATURE-----
+
+--b3D8ckyOT+sNuJnX--
 
