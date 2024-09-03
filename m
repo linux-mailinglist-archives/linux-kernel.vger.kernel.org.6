@@ -1,138 +1,237 @@
-Return-Path: <linux-kernel+bounces-313579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB89A96A736
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007CF96A738
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05B21F25206
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21AB21C21428
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6090F187561;
-	Tue,  3 Sep 2024 19:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1335818FDDB;
+	Tue,  3 Sep 2024 19:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoVaSlnn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt2/n5c1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C333B1D5CC8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445F439ADD;
+	Tue,  3 Sep 2024 19:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391092; cv=none; b=FB9ZVZCx7lLm3S72vlIcqrFm6AfuFgivbU6L1N7cktZKq/MN/igHG52OZi6C+2pVNqsD95LqdO7kxwdK9bR8RjV+x2KF5sZGH6nvKIVRVz8YSt5Z4tgjlhnSTg9b1061jfa7ijiuYpsBuuTVGSEbNvdqoudjzWP8pNJMhUz6Ong=
+	t=1725391114; cv=none; b=h25jteEskSk5pqf9QE0M5qx3xop12KdATqzplh0SsT/RC4m2kC5u5Cd7mma2z0I++4BOlhJSVs306e284Mqls0SD0VAd/wb80vcXThEnzrEvhWsYexq4rRSpbnVaw1gqUaHfBDAn1q2ck2y8cZAauM88KjZDQdFAHKZtybhXyjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391092; c=relaxed/simple;
-	bh=H0STF5gGVbpHjJxcaZi15e59qY13oqe6Zquwi5vKee0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YsRv+RU3b2rm4FvTeWY/nCbMuxCWi3YyytFgK7DYJ1FWRx3QvFyEzBwONxVu4ZKJaQIIlm/mu+jCb0t1I4Qb3Zx0wFVfZ1UlZkBeGnajTe9p2pViWyNr8Wf0IapTXj+cLkr16dL6dYFcs+t45lCU3LD73/tNUIHGZ3EBI2khayM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoVaSlnn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48770C4CEC5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:18:12 +0000 (UTC)
+	s=arc-20240116; t=1725391114; c=relaxed/simple;
+	bh=qt4EOPW/lqip3xdDfje7Z4y7q0ilGDkEl6R8V2x0rIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FhaX6OH4Rn5oGbCuUNmRHg1gn4mrgQcxB1qJHtrpcrz27PR0ZGcOUlEfAnQMBOyw8ll+fWAOCT7Dg0THFIc5PWsCWW/v1bSlIhEpHTy5Z6fJVnxMFAlkfEssR4+V/Jt5CY+68CvGUN5suoVDzTm+CgfwXQywXIwRFjaXDoExJic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt2/n5c1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307D5C4CEC4;
+	Tue,  3 Sep 2024 19:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725391092;
-	bh=H0STF5gGVbpHjJxcaZi15e59qY13oqe6Zquwi5vKee0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WoVaSlnngdYuggzOwSXxyrzpNEL2Uos4kDJj0ZlHlykKNVAVHKu1f3KH02S2AEejQ
-	 IaMpIuVv3hcean8MF/eXFEj3tonkE3mt5wA+TqZsG70/PyowSU1SoNHVkPoTCd1TNO
-	 rZD2Q2bGM10JbSIKHv0x/WAHaWgjuArMnqTgaiXVFUGZObCMx0C/VU50jeX6/88VIi
-	 AmAzsX7k/OF8nB04H23BoIruXXouhq8vrF8wrHomypLjW9b2ooqiN5jJ8U/JUboKLR
-	 Jchc/D1E9foEteXegqdl7qJTJhM44r/8Ao/6Mh9KlSEcvNS/KgU2COpN66r4rPXqJF
-	 DQJLFxJQeGinQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533488ffaddso7086610e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 12:18:12 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwuyYasMtxpSi73+Q0zW80Ty1xhWNT6J/yUrnQRL/HHxh5avfwo
-	k5PIKpAngm5xO4HrH38tG1BaC44R6Siw5TSpAvyIJiKV1gncXwme+0zlxO0EEMZ/TMTl2R7sLof
-	A86ViAx0mFxmW1iBdQvPxG9M5tA==
-X-Google-Smtp-Source: AGHT+IEZQxL0WSRJ7yKHwE3ewZv68EXUMRQsPoX/N7CFhrbBXxS3I/480Ilgja95RNHhKrK7RONJARhK47j+PRh6icc=
-X-Received: by 2002:a05:6512:398c:b0:530:9d86:6322 with SMTP id
- 2adb3069b0e04-53546b8d897mr10488763e87.41.1725391090632; Tue, 03 Sep 2024
- 12:18:10 -0700 (PDT)
+	s=k20201202; t=1725391114;
+	bh=qt4EOPW/lqip3xdDfje7Z4y7q0ilGDkEl6R8V2x0rIQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gt2/n5c17LRJlvVNRzEsiBy6eaTgTKKgocqtzMaQViNSaw6c0gFV5Up0MqYCXu6iK
+	 ErT9+ENetaZZEd8dh4F66AIWgGln5RsMkuCUGPrVEz/lAjo0RGp3hd1X3c4R0krm9Z
+	 +MQYZJ/jA/nTAZB10oTxnJ85CqLieObxKMptn5f3Gzg3BqHcPUBTrg0fadNdAxwGEx
+	 KhiunGPY2TV2iaYtGlZgwt50Bq4J3dvMMs6cfIT84VH4QVQ8Z+foC1u7e4LD9DOyZ2
+	 /J8gDvvSk9SOjvEuC22FsVxBDxyPYvU1WUqbKTpd1sas5/K1cSrTonrOCmRQPzy7eT
+	 GtAKM3egmNkJw==
+Date: Tue, 3 Sep 2024 20:18:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Conor Dooley <conor@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
+ property
+Message-ID: <20240903201825.442502bb@jic23-huawei>
+In-Reply-To: <9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	<20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+	<20240829-stopwatch-morality-a933abb4d688@spud>
+	<d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+	<20240830-quilt-appointee-4a7947e84988@spud>
+	<9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731201608.1840977-1-robh@kernel.org>
-In-Reply-To: <20240731201608.1840977-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 3 Sep 2024 14:17:58 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLzpDC42G35TDjgQpDCJhmy6_oQxG97uut9VKdYCHi_NQ@mail.gmail.com>
-Message-ID: <CAL_JsqLzpDC42G35TDjgQpDCJhmy6_oQxG97uut9VKdYCHi_NQ@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: Use of_property_match_string() instead of open-coding
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 3:16=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> Use of_property_match_string() instead of open-coding the search. With
-> this, of_get_property() can be removed as there is no need to check for
-> "mbox-names" presence first.
->
-> This is part of a larger effort to remove callers of of_get_property()
-> and similar functions. of_get_property() leaks the DT property data
-> pointer which is a problem for dynamically allocated nodes which may
-> be freed.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/mailbox/mailbox.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
+On Mon, 2 Sep 2024 11:32:37 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-Ping!
+> Hi Conor,
+>=20
+>=20
+> On 30/08/24 5:33 PM, Conor Dooley wrote:
+> > On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote: =20
+> >> Hi Conor,
+> >>
+> >> On 29/08/24 5:46 PM, Conor Dooley wrote: =20
+> >>> On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote: =20
+> >>>> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>>>
+> >>>> Add bus property. =20
+> >>> RFC it may be, but you do need to explain what this bus-type actually
+> >>> describes for commenting on the suitability of the method to be
+> >>> meaningful. =20
+> >> thanks for the feedbacks,
+> >>
+> >> a "bus" is intended as a generic interface connected to the target,
+> >> may be used from a custom IP (fpga) to communicate with the target
+> >> device (by read/write(reg and value)) using a special custom interface.
+> >>
+> >> The bus could also be physically the same of some well-known existing
+> >> interfaces (as parallel, lvds or other uncommon interfaces), but using
+> >> an uncommon/custom protocol over it.
+> >>
+> >> In concrete, actually bus-type is added to the backend since the
+> >> ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
+> >> parallel bus (interface that i named QSPI, but it's not exactly a QSPI
+> >> as a protocol), so it's a device-specific interface.
+> >>
+> >> With additions in this patchset, other frontends, of course not only
+> >> DACs, will be able to add specific busses and read/wrtie to the bus
+> >> as needed.
+> >> =20
+> >>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> >>>> ---
+> >>>>    Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 ++=
++++++++
+> >>>>    1 file changed, 9 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.y=
+aml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> >>>> index a55e9bfc66d7..a7ce72e1cd81 100644
+> >>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> >>>> @@ -38,6 +38,15 @@ properties:
+> >>>>      clocks:
+> >>>>        maxItems: 1 =20
+> >>> You mentioned about new compatible strings, does the one currently
+> >>> listed in this binding support both bus types? =20
+> > You didn't answer this, and there's insufficient explanation of the
+> > "hardware" in this RFC, but I found this which is supposedly the
+> > backend:
+> > https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
+> > adi,axi-dac.yaml has a single compatible, and that compatible has
+> > nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
+> > expect either justification for reuse of the compatible, or a brand new
+> > compatible for this backend, even if the driver can mostly be reused.
+> >
+> > Could you please link to whatever ADI wiki has detailed information on
+> > how this stuff works so that I can look at it to better understand the
+> > axes of configuration here? =20
+>=20
+> https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+>=20
+> that has same structure and register set of the generic ADI AXI-DAC IP:
+> https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+>=20
+>=20
+> >>> Making the bus type decision based on compatible only really makes se=
+nse
+> >>> if they're different versions of the IP, but not if they're different
+> >>> configuration options for a given version.
+> >>> =20
+> >>>> +  bus-type: =20
+> >> DAC IP on fpga actually respects same structure and register set, exce=
+pt
+> >> for a named "custom" register that may use specific bitfields depending
+> >> on the application of the IP. =20
+> > To paraphrase:
+> > "The register map is the same, except for the bit that is different".
+> > If ADI is shipping several different configurations of this IP for
+> > different DACs, I'd be expecting different compatibles for each backend
+> > to be honest =20
+>=20
+> i am still quite new to this fpga-based implementations, at least for how
+> such IPs are actually interfacing to the linux subsystem, so i may miss
+> some point.
+>=20
+> About the "adi,axi-dac-9.1.b" compatible, the generic DAC IP register set
+> is mostly the same structure of this ad3552r IP (links above), except for
+> bitfields in the=C2=A0DAC_CUSTOM_CTRL register.
+>=20
+> My choice for now was to add a bus-type property.
+>=20
+> Not an HDL expert, but i think a different bus means, from an hardware=20
+> point of
+> view, a different IP in terms of internal fpga circuitry, even if not as a
+> register-set.
 
->
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index ebff3baf3045..d3d26a2c9895 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -450,30 +450,20 @@ struct mbox_chan *mbox_request_channel_byname(struc=
-t mbox_client *cl,
->                                               const char *name)
->  {
->         struct device_node *np =3D cl->dev->of_node;
-> -       struct property *prop;
-> -       const char *mbox_name;
-> -       int index =3D 0;
-> +       int index;
->
->         if (!np) {
->                 dev_err(cl->dev, "%s() currently only supports DT\n", __f=
-unc__);
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       if (!of_get_property(np, "mbox-names", NULL)) {
-> -               dev_err(cl->dev,
-> -                       "%s() requires an \"mbox-names\" property\n", __f=
-unc__);
-> +       index =3D of_property_match_string(np, "mbox-names", name);
-> +       if (index < 0) {
-> +               dev_err(cl->dev, "%s() could not locate channel named \"%=
-s\"\n",
-> +                       __func__, name);
->                 return ERR_PTR(-EINVAL);
->         }
-> -
-> -       of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
-> -               if (!strncmp(name, mbox_name, strlen(name)))
-> -                       return mbox_request_channel(cl, index);
-> -               index++;
-> -       }
-> -
-> -       dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
-> -               __func__, name);
-> -       return ERR_PTR(-EINVAL);
-> +       return mbox_request_channel(cl, index);
->  }
->  EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
->
-> --
-> 2.43.0
->
+Whilst I'm not sure we should be hiding the bus element away (rather than
+doing something closer to an spi bus + offloads) if we do end up like this
+maybe encode the bus type in the compatible. It's definitely the
+adi,axi-dac-qspi* specific variant if there isn't an explicit register to
+program to tell it not use a parallel bus or similar.
+
+Jonathan
+
+
+>=20
+>=20
+> > .
+> > If each DAC specific backend was to have a unique compatible, would the
+> > type of bus used be determinable from it? Doesn't have to work for all
+> > devices from now until the heath death of the universe, but at least for
+> > the devices that you're currently aware of?
+> > =20
+> >>> If, as you mentioned, there are multiple bus types, a non-flag proper=
+ty
+> >>> does make sense. However, I am really not keen on these "forced" nume=
+rical
+> >>> properties at all, I'd much rather see strings used here. =20
+> >>>> +    maxItems: 1
+> >>>> +    description: |
+> >>>> +      Configure bus type:
+> >>>> +        - 0: none
+> >>>> +        - 1: qspi =20
+> > Also, re-reading the cover letter, it says "this platform driver uses a=
+ 4
+> > lanes parallel bus, plus a clock line, similar to a qspi."
+> > I don't think we should call this "qspi" if it is not actually qspi,
+> > that's just confusing. =20
+>=20
+> Agree, name should be something different.
+>=20
+>=20
+> > Cheers,
+> > Conor. =20
+>=20
+> Thanks,
+> regards,
+>=20
+> Angelo
+>=20
+>=20
+> >>>> +    enum: [0, 1]
+> >>>> +    default: 0
+> >>>> +
+> >>>>      '#io-backend-cells':
+> >>>>        const: 0
+> >>>>
+> >>>> --=20
+> >>>> 2.45.0.rc1
+> >>>> =20
+> >> --=20
+> >>   ,,,      Angelo Dureghello
+> >> :: :.     BayLibre -runtime team- Developer
+> >> :`___:
+> >>   `____:
+> >> =20
+
 
