@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-312683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A3D9699C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:10:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207FA9699C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8AA281A04
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541E81C22909
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED621AD26B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB561B9830;
 	Tue,  3 Sep 2024 10:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ac/w9/e3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qWzN5Nqt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSdQ+8hu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAC51A4E9D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C5A1AD27F;
+	Tue,  3 Sep 2024 10:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725358191; cv=none; b=a7DF1XzbCI+mGCj3J/j3vBC1yJJP0SfIYBuooFlgykO9271HKbGGuNwFNILGVuupBCyzNZBhQmoYEv3fDl8b7lJku1qaWobt84Xu3U2T5b03X75AerB6CzDA88ON2pz5pBpCVnqjrQDo1xgpcfEMNf9jkVz0+IFgSDv3wnyc0ew=
+	t=1725358191; cv=none; b=FDWTp9yZRoGI4meL4NZ2jHIfJgPfxbtsJcRAt7PCC9g6GGE4p6UxnbH4lttEfyJyuHhqf9Xfw57P5p6zSFWMN4jBAF7RBQbNb2h6ktW4Jfk5m49ECMvcPYTizIXZmhWpywDTsEQJ9d9VXvbtjx3v5V1tOL89poLcqWxHe3Jy76w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725358191; c=relaxed/simple;
-	bh=zcbAF1LeQY3Z4mzr9aFhGjfAtuXkITEdtBy0lyTz3YU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Awt1ugpeEUc3L9NIcJ1Wc31Tlv1vauLaqk2huxa+PnPLbH5prM5/w9MtMbANs6WPpx0fz6kcj6ELTjqv5HQjKzu9ZvOLMd5Uo5tQ4/sKA03+WMnMpYl7z+jXnQ8nQXLJL0hZeainK+oMrGBider6BGiTHPDUpnOzGbyGO6r3rZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ac/w9/e3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qWzN5Nqt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725358187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qtK3fQoj7dHmNLo9cTwXxZhqau9QaTWDDMonT7Mq39o=;
-	b=Ac/w9/e3Cs4Bgz+s7ZRij+jfL7wJB5p+d2/ui9ufFT9LaVdOJM4caq/S2jLxoAq+8NkpTs
-	4PTqn1IeuP7VcA1hZa5dAlF5qMPATOvrnU+ulfvrqLbW5BUBMwFAXTBtA/rZKX0Bat2QgJ
-	10qBCNxO8XlTllK3iM0kOARL8oJOhgSv9wtnP/LxZmhs477R39Di1XzCjia0Mkjp4i89oG
-	cKQG/SeJKOE3l1aPEjSQGoyGO7GC7V5Gh/gHBKvImPpmUUYEoChZk/7EaGyCST7/AYGbUO
-	T7FUQ0CTKreGlVF+fR9rmf9h/EODrCe/21rW7QzLDBFJZ5Qomo9Kc7HOVJrlVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725358187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qtK3fQoj7dHmNLo9cTwXxZhqau9QaTWDDMonT7Mq39o=;
-	b=qWzN5NqtSgjZCfBd51yXxkfu6Am0A4BarquD8KMxu8MUUwTWG++ON/Ncjq9GBg+qNAqXxN
-	qqg1Zh+xH6vmleBg==
-To: Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Cc: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH 4/5] debugobjects: Use hlist_splice_init() to reduce
- lock conflicts
-In-Reply-To: <20240902140532.2028-5-thunder.leizhen@huawei.com>
-References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
- <20240902140532.2028-5-thunder.leizhen@huawei.com>
-Date: Tue, 03 Sep 2024 12:09:47 +0200
-Message-ID: <87le0982vo.ffs@tglx>
+	bh=hJhnW1J0MnYQwBnhBo37+19gPvvBs+Mh3HX/l9vRD9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faDner0a90s0cZsJHH9IKIP8fdUoZX5ATbchZNUKCRdPzCGibGQIC6vFZrpVmTljYtWmvBfuvDpwYLoGzVgO83LxWWJPXqtAgGfy2xSYtxxS2xfp9FClbM5Ek8Ppgsz4BQ0L1+S9XznUp+vUCV9STRO1goXPuAOJ+RIZurRNHpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSdQ+8hu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEC0C4CEC5;
+	Tue,  3 Sep 2024 10:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725358191;
+	bh=hJhnW1J0MnYQwBnhBo37+19gPvvBs+Mh3HX/l9vRD9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YSdQ+8hu9Xi3EolQSfosP84baYa81R7/LGrCIpmdbjmWdd2L5iSeo6nChyA/6I3bO
+	 vKhcAxWSPLxyNUV3R0GDX5bBEMyYsgKYWJi5EYJmTdooiPAJyhHBD4t1s5PZoDE+y9
+	 fH0jbo7GuXc5zDkFEWZFetpi7imN+0mx8ioHAcz8vgS8333n2LHEdZXhp+ANYoodTE
+	 URZilUMDr1jCcFtqLPmtmoBThLNU9MCIpbZsd6blOTs7x4/jtSF5L2jGnDp2zW6N1L
+	 vBhKBg7BUJP43BW+GlQpBDxA8uXdIGVZPckvpyBw5V96pU1ME5Khmt9OEMidRftrdq
+	 BnUB7+fl7nJdw==
+Date: Tue, 3 Sep 2024 07:09:47 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
+Message-ID: <Ztbga0xLyt1eaehi@x1>
+References: <20240719150051.520317-1-sesse@google.com>
+ <ZqlCIJ4khe2_xyp9@x1>
+ <ZqlDuIj_nMVXhYou@x1>
+ <ZtRIla5pCqlMIKvN@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtRIla5pCqlMIKvN@google.com>
 
-On Mon, Sep 02 2024 at 22:05, Zhen Lei wrote:
+On Sun, Sep 01, 2024 at 12:57:25PM +0200, Steinar H. Gunderson wrote:
+> On Tue, Jul 30, 2024 at 04:49:12PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Unfortunately it clashed with recent patches in the capstone related
+> > codebase, IIRC Athira's for powerpc data-type profiling.
+> > 
+> > […]
+> > 
+> > I'll continue processing other patched and eventually try to fix this if
+> > you're busy,
+> 
+> Hi,
+> 
+> Is there any movement in getting v10 merged? :-) I haven't heard back
+> since I sent out the rebase
 
-> The sub list can be prepared in advance outside the lock, so that the
-> operation time inside the lock can be reduced and the possibility of
-> lock conflict can be reduced.
->
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  lib/debugobjects.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index fc8224f9f0eda8f..998724e9dee526b 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -167,23 +167,25 @@ static void fill_pool(void)
->  		return;
->  
->  	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
-> -		struct debug_obj *new[ODEBUG_BATCH_SIZE];
-> +		HLIST_HEAD(batch_list);
-> +		struct debug_obj *new, *last;
+Test building is detecting some problems, I'll try to address them:
 
-Variable ordering please.
-
->  		int cnt;
->  
->  		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
-> -			new[cnt] = kmem_cache_zalloc(obj_cache, gfp);
-> -			if (!new[cnt])
-> +			new = kmem_cache_zalloc(obj_cache, gfp);
-> +			if (!new)
->  				break;
-> +			hlist_add_head(&new->node, &batch_list);
-> +			if (cnt == 0)
-                        
-                        if (!cnt)
-
-but it would be more self explaining if you have:
-
-		struct debug_obj *new, *last = NULL;
-
-and then
-                if (!last)
-
-> +				last = new;
->  		}
-
-Thanks,
-
-        tglx
+perfbuilder@number:~$ time dm
+   1    13.50 almalinux:8                   : FAIL gcc version 8.5.0 20210514 (Red Hat 8.5.0-22) (GCC) 
+    util/srcline.c: In function 'dso__free_a2l':
+    util/srcline.c:184:20: error: parameter name omitted
+     void dso__free_a2l(struct dso *)
+                        ^~~~~~~~~~~~
+    make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
+   2    68.46 almalinux:9                   : FAIL clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9)
+    util/srcline.c:184:32: error: omitting the parameter name in a function definition is a C2x extension [-Werror,-Wc2x-extensions]
+      184 | void dso__free_a2l(struct dso *)
+          |                                ^
+    1 error generated.
+    make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
+   3: almalinux:9-i386WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
+WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
+    17.58 almalinux:9-i386              : FAIL gcc version 11.4.1 20231218 (Red Hat 11.4.1-3) (GCC) 
+    util/llvm-c-helpers.cpp: In function ‘char* make_symbol_relative_string(dso*, const char*, u64, u64)’:
+    util/llvm-c-helpers.cpp:150:52: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘u64’ {aka ‘long long unsigned int’} [-Werror=format=]
+      150 |                 snprintf(buf, sizeof(buf), "%s+0x%lx",
+          |                                                  ~~^
+          |                                                    |
+          |                                                    long unsigned int
+          |                                                  %llx
+      151 |                          demangled ? demangled : sym_name, addr - base_addr);
+          |                                                            ~~~~~~~~~~~~~~~~
+          |                                                                 |
+          |                                                                 u64 {aka long long unsigned int}
+    cc1plus: all warnings being treated as errors
+    make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
+   4    18.08 alpine:3.15                   : FAIL gcc version 10.3.1 20211027 (Alpine 10.3.1_git20211027) 
+    util/srcline.c: In function 'dso__free_a2l':
+    util/srcline.c:184:20: error: parameter name omitted
+      184 | void dso__free_a2l(struct dso *)
+          |                    ^~~~~~~~~~~~
+    make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
 
