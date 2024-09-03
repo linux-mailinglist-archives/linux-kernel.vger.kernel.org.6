@@ -1,80 +1,98 @@
-Return-Path: <linux-kernel+bounces-313400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65ECA96A4FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B7C96A506
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994341C2399E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7906E1C23530
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F1818CC1C;
-	Tue,  3 Sep 2024 17:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7636D18DF6C;
+	Tue,  3 Sep 2024 17:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuGHg7wn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJ0edGhN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F031E492;
-	Tue,  3 Sep 2024 17:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E050188912;
+	Tue,  3 Sep 2024 17:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383064; cv=none; b=RBSJB8eNJRMupenLWg03owgFrmEdCIcPQ/2Td10JuADpul3ivRfr9Q17LtkiEwUv/XkE8PT1kYJ5RkaezMhH8c3jSGIadk7+K6NB7Gwf8vksSufGsUFt6xfj0CY1lTUIHJnWUy/2Dxw3rlfhB2K2H8/hpht15Ftgeyf4pROOTi4=
+	t=1725383280; cv=none; b=SDl2KshUPeA0FwokLTJWW4fUjtReq59qakUGVbzJLkQKVEEvUTn4Od290UXbuXs/FldtIvgiyH+9LbWcUyeYdytdBn//ZuZNl56KMpNAR6qQ5iY22otK2k/Ezw7Ts1++SOL/O3shlo2jx5x9rr4hobt2oO6LahYqZRh+hxIdHT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383064; c=relaxed/simple;
-	bh=pGn21AlLH83VAFP2QcI0XeFnk7qfUU2mFm+gHJVxwCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/J0S68K0cZ16sykg3+rn45mIkHAEGAiGcB9Ku7wSDsu4001rj5jU5esvUhrXM5kvCkCFvnHN/v1cQNS3lwSTTF820CzjtybCMGc9y3wnDNP8CQk7e7Qvas6dayPwu4N25RCVHgVEGZhAEVgjglHButidZI7cbDUAUN3zy1lF5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuGHg7wn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1605BC4CEC4;
-	Tue,  3 Sep 2024 17:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725383064;
-	bh=pGn21AlLH83VAFP2QcI0XeFnk7qfUU2mFm+gHJVxwCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XuGHg7wnn9LiqRtBbmPjR0u4R1XdFvPWCD/MKYSYxjHRhUnU1mpFGjmmYY3AWwhwM
-	 hF2rbIfplNsjk9BG0g33pYQwyRNpbkgGR4KC+HaCAExf8FGbu8TTRp8rAu+v2v+tob
-	 FKsQs/qYeTngHA3qhfJs0u02FtRmJYTpLaWIn7gWTbAi5ssJRo0fGGomlyOPJYjKnz
-	 cgQ0PMlfhJeV+3UJoaBPbtld0KqwIKp3Nkehrk9uQVTSSpU4gfRRQ52TBLpnh1Jo0i
-	 9bNOfTz84tUvp3qCjdygHwFV8q5dO847io4/z81gQMAbDQBD9S/oT/vf5inWvwbc5d
-	 cntu11qerEyeA==
-Date: Tue, 3 Sep 2024 18:04:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: Martyn Welch <martyn.welch@collabora.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@collabora.com, netdev@vger.kernel.org,
+	s=arc-20240116; t=1725383280; c=relaxed/simple;
+	bh=jn+ZGZj9OTTyN9aeM7XsY04s8XZr+/xkqeb5ywpI5oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XaWZsDtmTavCQwxYVrFuNz1APq7T97THSSmigXjbF+jtF54S1SOQKt5cW8gmfWPRCuswOCIiKaXR+kBA54YtL2ZtOxdjscbnkpGuSOvDhV0JY5S9fmvWkDnJH5yuD00g8Kmyh4paB8taLep8cL/2YP8giuPNL1JpH0cymyz2qbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJ0edGhN; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725383279; x=1756919279;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jn+ZGZj9OTTyN9aeM7XsY04s8XZr+/xkqeb5ywpI5oo=;
+  b=nJ0edGhNp6mt5zkhLFyE15PPvBV3AWuKsWEe3F4Jf+ckV9+6TkhIrN/o
+   rLaL/k1ZF3CkX9HP5FSVKJgJxT4vrtz1da62lJY1BVzdL9WQJ1MDk3/qU
+   WhGxW3tmilh5NPlEHg/MkhCw1WScPrpNoGIWttddxLrnzPCUxjCJWhYdM
+   plAU7M+90iwkAkE+YIaTZ0LifZTnhOgAW/xydftOSKiildsNKgcZ4Jg4n
+   7sJVmQ4KHRKxKkTxqsCNvwCyDyczb0SBO0pTmzuIcJGaNbuvQ3g/eSe7h
+   /ynVfNuWR+Ldwmd74F0bYwDS77AzsSpt417Sc0NKYpV1ulsQHraswp1yx
+   A==;
+X-CSE-ConnectionGUID: yCpFqHoOSfK1aT6jSuCHaA==
+X-CSE-MsgGUID: pi2eDj6pSWy85+NZl4J8fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34661655"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="34661655"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:07:58 -0700
+X-CSE-ConnectionGUID: I8SWgXe/TwCDQhZl7rj6kQ==
+X-CSE-MsgGUID: ITAQYvMQSiKZ6j50aH0+UA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69837932"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 10:07:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 752673C1; Tue, 03 Sep 2024 20:07:55 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: enetc: Replace ifdef with IS_ENABLED
-Message-ID: <20240903170419.GH4792@kernel.org>
-References: <20240830175052.1463711-1-martyn.welch@collabora.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 0/3] pinctrl: intel: Get rid of ifdeffery leftovers
+Date: Tue,  3 Sep 2024 20:04:48 +0300
+Message-ID: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830175052.1463711-1-martyn.welch@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 06:50:50PM +0100, Martyn Welch wrote:
-> The enetc driver uses ifdefs when checking whether
-> CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This works
-> if the driver is compiled in but fails if the driver is available as a
+There are two benefits of this series:
+1) no more ugly ifdeffery in the code;
+2) the PM callbacks are all being synchronised via using the same macro,
+i.e. pm_sleep_ptr() everywhere.
 
-maybe: compiled -> built-in
+Andy Shevchenko (3):
+  pinctrl: intel: Replace ifdeffery by pm_sleep_ptr() macro
+  pinctrl: baytrail: Replace ifdeffery by pm_sleep_ptr() macro
+  pinctrl: cherryview: Replace ifdeffery by pm_sleep_ptr() macro
 
-> kernel module. Replace the instances of ifdef with use of the IS_ENABLED
-> macro, that will evaluate as true when this feature is built as a kernel
-> module.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 21 ++++++++++++++-------
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 20 +++++++++++++-------
+ drivers/pinctrl/intel/pinctrl-intel.c      |  5 +----
+ 3 files changed, 28 insertions(+), 18 deletions(-)
 
-...
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
