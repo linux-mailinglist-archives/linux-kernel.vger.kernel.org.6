@@ -1,154 +1,116 @@
-Return-Path: <linux-kernel+bounces-313487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758C196A604
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FE196A617
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3451C2341C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74231C20AE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191219146E;
-	Tue,  3 Sep 2024 17:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6F91917E9;
+	Tue,  3 Sep 2024 18:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QaRTZn2Q"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUXp0Bu5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D82219006A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5718E03B;
+	Tue,  3 Sep 2024 18:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725386293; cv=none; b=n3nimBRw0EraM+fY9M6d2xNo8DwnM99Gl15bj29gTd7Ye7bqXMwPDlz8ayvcHEjzYPepmatM0QUhLXfAMH3NOJolITF+H8H2yqD0TQV5p5r+U3QUunMJ3CLKUyYjrMwrY0TO9r2ODacBlolN+8y3zjhXsPpnhw1cWv97gjAVhpk=
+	t=1725386550; cv=none; b=i66Yf6qclT+3+0qqx/uyRTp+CmxBh8+v4o70mO3oA2n3H3TCfyApeVdvmVJV568BNwQiCl9mPx/JLTKbUzn3ama+Wa+0znDXDVBmu+EhLlCE8kOrOI60PQCkoTNsmEuZt5P0nwOaxouM9PIsp8G4Qh+ceJmK2luXmXIEVKhjvJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725386293; c=relaxed/simple;
-	bh=stHicUucsegKO71SAj1/KL9WPLmA8VTgZfhUoLPukRg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sjuBvIC+PEiM7f45GjB4C4l7GICJ6kS6qycyc809Jcp8HRLztx02YgF4USDOkJOEquKC4CcGa7sEtJOL9to5gcREwGde4VimCbmddmxFLgSu9CRaEPYR6iuLAROe50GE0Xv+IbNUxGdYPnyDNIwAMJnqiRVPJ3Hu52BASEGFbfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QaRTZn2Q; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bb8cf8abeso45331115e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:58:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725386291; x=1725991091; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGOuW5YwL2FIu5pmIeJzfRaokSatabRSgmpdBuikasM=;
-        b=QaRTZn2QZ/JYdG0GfKobdwzKmccHr0wK8mrATdE0bUMs45dDxle31qZAHQaLhI75YT
-         qu1HyKWO1XEDyfebZsZJywOBn6BVpH+UxZdx/OIfdX2HjlttoupboYbPd5v2CyTwAV9D
-         BH+QMt1gN/7ZClAhR24Tw90dTQ4cUgJUI/r8c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725386291; x=1725991091;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGOuW5YwL2FIu5pmIeJzfRaokSatabRSgmpdBuikasM=;
-        b=Ry17fT52tKIUgYv2pRzQcWnxdxz3YxnNXtbZiDMSVKgNS11lY2ViuM97vuGAO/gpWO
-         tMotI6b8xFfiXfd1XqUQyNs2f3qgJrMxJ7/E6Mt4hy0cmtLnJNIpadzajjD2rOGA+NnP
-         jdzkyPZgsWB+PHn+RHgNn0P1ma3h+6hNlC69uWCo1IPvvP3xa+uUb8yqrP74GHgWJrex
-         2aDVM76+aw/lKOy/tLwvVT+VDOC1gey1RYCz1mtP7hO6VBiZrDEwD3ueKDer4sX+rD/7
-         OISLK2HOWeOZKvn6mvaZCMkx1DLRAqQFqptkb/+IAg4C9+jvW8ga5t8WdxVUUlWuGGt6
-         06/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrLzBI6lFs7gmvQZm0DLR7kOT1tU9Gu0JNkhFoqCjzpEqjHdvtQjz73bCVJNapKNDA/ScbiUiPKjEmYFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgF6GBRJoJKygJBNOcKPKu5pOiy0+6+HimkcmZ8vDzHlXzfoNB
-	vNTOJf1bXLV8eO0HAn6yqUNGO+dVOIVw+VFDfkuZS68v68aIFWbAXGcZVCWy4g==
-X-Google-Smtp-Source: AGHT+IHPl3b+URUQd3W36EU7ONol/0MH2gm2E/V+FoZlsccSAjjwphnkP3leQEP9pl1QtFJ1qwU2Bw==
-X-Received: by 2002:a05:600c:1d19:b0:427:ab29:30cf with SMTP id 5b1f17b1804b1-42c8de5f599mr13734265e9.4.1725386290410;
-        Tue, 03 Sep 2024 10:58:10 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb43esm179450195e9.7.2024.09.03.10.58.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 10:58:09 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-X-Google-Original-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <4ae307e4-5d01-49fc-97e4-dfbab222c22b@gmail.com>
-Date: Tue, 3 Sep 2024 10:58:04 -0700
+	s=arc-20240116; t=1725386550; c=relaxed/simple;
+	bh=sxUw7sTT1Ze0YVA00KOQGbPUOTeTK2TesmW6TEx4mIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uraU/lKcQN+PvqRmzf70aeO8XN/3JgB8rEFuYLKnPstn2kjioNKxitG9IIsHSSFfTeQPgWgk3nhea6b2GGfpsytjJREEK4LYyWHypORuDhcJdLtXXSYZ0b+qBu35mE3wnZZ8onREgW6EO7dGaYLsh1p14SzCXqkI7ljAUQ7SYn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUXp0Bu5; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725386548; x=1756922548;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sxUw7sTT1Ze0YVA00KOQGbPUOTeTK2TesmW6TEx4mIc=;
+  b=DUXp0Bu5mhIZm8skVEVzGlIU0cc++/gzYFNHYyoD5E9DvoecQurGDPGg
+   lXPuh9yHLs2HY1L34xvCybe36Eg2d46P1bkP1yYu5qUd5vnztguMT8Vme
+   5T5rlakROg1flcSyixoi0Ykbox6xNH4yqtf1K9QbiPnpWxJfaiymJxMcx
+   IkQCV0o0z7HzjVoMkp4mDvmdd8u5++48RmFaC04/AW/q6LWAcOXdINsBp
+   utwVSCMlrHGXQJHr150FisduiXlqA1uVs5vrZPrZH9HFjd54qno0LUQRP
+   zZyX/w1eSNINrlmF7+DcbErNDQnbHSGCC1KyfISgm+hJDyuc30nMpToiV
+   Q==;
+X-CSE-ConnectionGUID: TW5LFDJhSvygIAiBuMrv5A==
+X-CSE-MsgGUID: qGH1wHhOQiCsUlQPb5Fqqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24194284"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="24194284"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:02:26 -0700
+X-CSE-ConnectionGUID: RtawkUaKSvauPLVCnK/EHQ==
+X-CSE-MsgGUID: THljokd+RdCN81b0+sYaAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69151344"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2024 11:02:23 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9BA3D3C1; Tue, 03 Sep 2024 21:02:21 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: [PATCH v2 0/3] iio: Introduce and use aligned_s64 type
+Date: Tue,  3 Sep 2024 20:59:03 +0300
+Message-ID: <20240903180218.3640501-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/149] 6.10.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240901160817.461957599@linuxfoundation.org>
-Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Instead of having open coded idea of aligned member, use
+a newly defined type like it's done in, e.g., u64 case.
+Update a few IIO drivers to show how to use it.
 
+v2 (took only one year from v1, not bad!):
+- avoided touching unrelated comments, code lines, etc. (Jonathan)
+- used kernel internal type for the in-kernel code (Jonathan)
 
-On 9/1/2024 9:15 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.8 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Andy Shevchenko (3):
+  types: Complement the aligned types with signed 64-bit one
+  iio: imu: st_lsm6dsx: Use aligned data type for timestamp
+  iio: hid-sensor: Use aligned data type for timestamp
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+ drivers/iio/accel/hid-sensor-accel-3d.c              | 2 +-
+ drivers/iio/gyro/hid-sensor-gyro-3d.c                | 2 +-
+ drivers/iio/humidity/hid-sensor-humidity.c           | 2 +-
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h              | 3 +--
+ drivers/iio/light/hid-sensor-als.c                   | 2 +-
+ drivers/iio/orientation/hid-sensor-incl-3d.c         | 2 +-
+ drivers/iio/orientation/hid-sensor-rotation.c        | 2 +-
+ drivers/iio/position/hid-sensor-custom-intel-hinge.c | 2 +-
+ drivers/iio/pressure/hid-sensor-press.c              | 2 +-
+ drivers/iio/temperature/hid-sensor-temperature.c     | 2 +-
+ include/linux/types.h                                | 3 ++-
+ include/uapi/linux/types.h                           | 1 +
+ 12 files changed, 13 insertions(+), 12 deletions(-)
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Florian
-
-
+2.43.0.rc1.1336.g36b5255a03ac
 
 
