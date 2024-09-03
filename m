@@ -1,121 +1,256 @@
-Return-Path: <linux-kernel+bounces-313066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468BD969FC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:04:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAA0969FCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C42D8B24AAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B961C23098
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEDA364BC;
-	Tue,  3 Sep 2024 14:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D9E47A73;
+	Tue,  3 Sep 2024 14:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HhZAkg4I"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nUvqVBXw"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9945A1CA69B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD8B3A267;
+	Tue,  3 Sep 2024 14:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372241; cv=none; b=EA/rYJiYng8CyDV61AmsFQLKykchwqViE6C8ML7o4Tlwz/7KltqFxuMVCnWMPzvg0zKEw4ILibDb3T6P4sQTOIs3mFzwYkopxRUGQbni6b6cvRbjO0VdlhVmyTEgbPzWVLyRb6oUnOA9VDaAknZz6UuJKwM74egXaPfwa0taKxU=
+	t=1725372273; cv=none; b=JnJ1aArchxvrQvsLVNaLRq8dks7sGdNpXAy/27HcAiTiUedh83jTN8xJu56m2AVKIHxJ8sQLT5YZ8vZ6KGxO4n3cAD6gULkUhh8ZjtqRkcW5kWw6TKrbvvUvdjLxqIcTeU2KkbRsdaM4NRaBvPOkZzBBWcKtD16OdCwuSkzsKf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372241; c=relaxed/simple;
-	bh=FX0cPWOEoOR5wj58khecoQrWHJsP+Hji0B0qfFTe4nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SuZ2gz3TQAWe4tPAwi5XqHYOv8S8sDA3a9YMSRptfTkm8IMwERj3i29JbadpCVKw6sSOj0I/EmH5VPOluVDLIjw+vwtKFhZ8iu9ADc7FIoGDjyeemgIztMF1+e6cUa8p8jt632m1AYM49xuqOUrPop+BUfjRFZLCJpZnFNF7l6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HhZAkg4I; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f4f5dbd93bso51751341fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725372238; x=1725977038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4kZV7sylO482dTZcl3SB+t2bxHcHNDfXt4kPi8kfl8=;
-        b=HhZAkg4Ixicf6xDueEUAavfW028+/6tIUPPZuhS2dgtprFF3oqqWktsOiGg/IN8/NN
-         xgwt+4u4CVDde4sI8GeSDO2AcN2U3JMGs3Cu2fNw87RNS5Lvt8of8UUD1Jp1tHxzykVO
-         P7bTZoKATqdCc3WD2KRld5LNKYotkY6G7DKUxWimY/S5ZeftnHbPpYXbZJxYpEaKDXZg
-         hdQJNVZbzXln2b4Ulov7uKNhqwpv5Tmfh3MlzHr9lvVmYIkwb40ttVpvrSaGIDVk2pzp
-         qJ47qoFfDlu1MhplAEzxszxN9d/X7Jkh7iuiiNww6y+v+gCH6oZMwsWs8xUde68HOdQ1
-         4skg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725372238; x=1725977038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f4kZV7sylO482dTZcl3SB+t2bxHcHNDfXt4kPi8kfl8=;
-        b=DN79ZOMPePwswvY7Jsy+RlHz1wQb7WT6BVpVjUJIF0vwKJXMdcw3xVO6RZkoNO9atv
-         YuBGhfDRvmG6ETGWT3e5aM4ZovSXHCgSXb4h5gU/Q9m4Wqlu67OM8SICpR2Z/b6YyH/6
-         T1xkk+xYbIkNpVGKm48puzQVB4nUrJFBIRP9eGt9dH/KQxGQdTJFlw8fMAmP4YfljHQy
-         Qm/ql+edRjLFrkhGcz3v46GD4OovsBaKArKa8fOAd6ibHLHR+kpYUfsOK2FFOuaIYR/r
-         HV93mNp4bfZnf311aK0RwbEIRKQ5kAjhzfQfMTzTQ3WqzmUk0E8EklT0ffjIrBsSmZ+1
-         BnFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEF5zRabgUhF3zZUs6DTdK+ebEDP6o07FUZfJVipP6s/bv1juoDDMWtImEKNaZkuR3mIrf8Fz7SpkKlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlNeKVzgxuAYAOGCFoRMlQiOr/TbSnybeD/Grxf4WL4SuuNrci
-	bzQMwqaO0vneAACHuKFKKZa4sITKClQvnDW7V8oKUrnM8gcwGiH0c5AcSDEBMGc=
-X-Google-Smtp-Source: AGHT+IFzD+eY4sNRW/2ZIQH2AIKlAmIhsXltUfopKsrNXJ8WlkE/Cqluh7S5xLrhLL6tkfBv7gk8+A==
-X-Received: by 2002:a05:651c:1a0c:b0:2ef:2ef5:ae98 with SMTP id 38308e7fff4ca-2f636a7fec3mr40816641fa.34.1725372236951;
-        Tue, 03 Sep 2024 07:03:56 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c24372d393sm4407310a12.23.2024.09.03.07.03.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 07:03:56 -0700 (PDT)
-Date: Tue, 3 Sep 2024 16:03:56 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <ZtcXTAs2t0tM4qaA@tiehlicka>
-References: <ZtCFP5w6yv/aykui@dread.disaster.area>
- <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
- <ZtPhAdqZgq6s4zmk@dread.disaster.area>
- <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
- <ZtVzP2wfQoJrBXjF@tiehlicka>
- <CALOAHbAbzJL31jeGfXnbXmbXMpPv-Ak3o3t0tusjs-N-NHisiQ@mail.gmail.com>
- <ZtWArlHgX8JnZjFm@tiehlicka>
- <CALOAHbD=mzSBoNqCVf5TTOge4oTZq7Foxdv4H2U1zfBwjNoVKA@mail.gmail.com>
- <20240903124416.GE424729@mit.edu>
- <CALOAHbCAN8KwgxoSw4Rg2Uuwp0=LcGY8WRMqLbpEP5MkW4H_XQ@mail.gmail.com>
+	s=arc-20240116; t=1725372273; c=relaxed/simple;
+	bh=8pE0BwCHOCAkAcsyNe0irerqGkO/4TqYM8/fwq3F82I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EACFzJdZUa7L6rC4ZPjXpxwT8FJPeCetdWcOvWAvo9Fdu6XDr8+jlpTafhFmAQ2uVlgQbV4lWzzA1I0oOLNz/k0OjTETq2HQH18RqfW4QaSLyzZvyRJtNj9sCrukMsxo2ByVepSKTzY4eB+D9UPEQNfhekxQS7JPLoevZ3vUMSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nUvqVBXw; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725372269;
+	bh=8pE0BwCHOCAkAcsyNe0irerqGkO/4TqYM8/fwq3F82I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nUvqVBXwUQdToqJbR/6tZM7N04qfY35fiflKcJO/vGvLvzrm6ak0YIydGewPIeah6
+	 a1aYGrAWzkOKQ4lXrieLtNgZC+7lUIabtnwknuF2BEncvn9q+AZmIKIrlbZZIOj3f4
+	 wuIdPwdBTSQu92CuVACxZk28d8G9Ks+MNHeJbsrxh2RHzyYmC9yZJyBZYZnZdQQqIY
+	 y05S9t9QjKNDmC+bWcDpI27lZKOtvK+Fv6r+r05ZovcgQTTNLxdxf1LMYzEb0t+2Jt
+	 4aD189nPojk0ow7ao6LHf4uftnCVuRjL95bQOFNfXFl6ld66Z2DdDJS+DloluKANtz
+	 fAhFHryJhg3wA==
+Received: from pan.lan (unknown [IPv6:2a00:23c6:c32f:9100::16d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: martyn)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DF35317E10A9;
+	Tue,  3 Sep 2024 16:04:28 +0200 (CEST)
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@collabora.com,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] net: enetc: Replace ifdef with IS_ENABLED
+Date: Tue,  3 Sep 2024 15:04:18 +0100
+Message-ID: <20240903140420.2150707-1-martyn.welch@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALOAHbCAN8KwgxoSw4Rg2Uuwp0=LcGY8WRMqLbpEP5MkW4H_XQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue 03-09-24 21:15:59, Yafang Shao wrote:
-[...]
-> I completely agree with your point. However, in the real world, things
-> don't always work as expected, which is why it's crucial to ensure the
-> OOM killer is effective during system thrashing. Unfortunately, the
-> kernel's OOM killer doesn't always perform as expected, particularly
-> under heavy thrashing. This is one reason why user-space OOM killers
-> like oomd exist.
+The enetc driver uses ifdefs when checking whether
+CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This works
+if the driver is compiled in but fails if the driver is available as a
+kernel module. Replace the instances of ifdef with use of the IS_ENABLED
+macro, that will evaluate as true when this feature is built as a kernel
+module and follows the kernel's coding style.
 
-I do undestand your point. On the other hand over a long time seeing all
-different usecases we have concluded that the OOM killer should be
-really conservative last resort. More agressive OOM policies should be
-implemented by userspace to prevent from regressions in other usecases.
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+---
 
-That doesn't really mean improvements to the kernel oom killer are not
-welcome or impossible. The bar is just quite hard as the wide variety of
-workloads is really hard to support. Heavy trashing is one example.
-Different workloads will have a different understanding what that means
-actually.
+Changes since v1:
+  - Switched from preprocessor conditionals to normal C conditionals.
+
+ drivers/net/ethernet/freescale/enetc/enetc.c  | 34 ++++++++---------
+ drivers/net/ethernet/freescale/enetc/enetc.h  |  9 ++---
+ .../ethernet/freescale/enetc/enetc_ethtool.c  | 37 ++++++++++---------
+ 3 files changed, 38 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index 5c45f42232d3..361464a5b6c4 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -977,10 +977,9 @@ static int enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
+ 	return j;
+ }
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-static void enetc_get_rx_tstamp(struct net_device *ndev,
+-				union enetc_rx_bd *rxbd,
+-				struct sk_buff *skb)
++static void __maybe_unused enetc_get_rx_tstamp(struct net_device *ndev,
++					       union enetc_rx_bd *rxbd,
++					       struct sk_buff *skb)
+ {
+ 	struct skb_shared_hwtstamps *shhwtstamps = skb_hwtstamps(skb);
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+@@ -1001,7 +1000,6 @@ static void enetc_get_rx_tstamp(struct net_device *ndev,
+ 		shhwtstamps->hwtstamp = ns_to_ktime(tstamp);
+ 	}
+ }
+-#endif
+ 
+ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 			       union enetc_rx_bd *rxbd, struct sk_buff *skb)
+@@ -1041,10 +1039,9 @@ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 		__vlan_hwaccel_put_tag(skb, tpid, le16_to_cpu(rxbd->r.vlan_opt));
+ 	}
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (priv->active_offloads & ENETC_F_RX_TSTAMP)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) &&
++	    (priv->active_offloads & ENETC_F_RX_TSTAMP))
+ 		enetc_get_rx_tstamp(rx_ring->ndev, rxbd, skb);
+-#endif
+ }
+ 
+ /* This gets called during the non-XDP NAPI poll cycle as well as on XDP_PASS,
+@@ -2882,8 +2879,8 @@ void enetc_set_features(struct net_device *ndev, netdev_features_t features)
+ }
+ EXPORT_SYMBOL_GPL(enetc_set_features);
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-static int enetc_hwtstamp_set(struct net_device *ndev, struct ifreq *ifr)
++static int __maybe_unused enetc_hwtstamp_set(struct net_device *ndev,
++					     struct ifreq *ifr)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+ 	int err, new_offloads = priv->active_offloads;
+@@ -2931,7 +2928,8 @@ static int enetc_hwtstamp_set(struct net_device *ndev, struct ifreq *ifr)
+ 	       -EFAULT : 0;
+ }
+ 
+-static int enetc_hwtstamp_get(struct net_device *ndev, struct ifreq *ifr)
++static int __maybe_unused enetc_hwtstamp_get(struct net_device *ndev,
++					     struct ifreq *ifr)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+ 	struct hwtstamp_config config;
+@@ -2951,17 +2949,17 @@ static int enetc_hwtstamp_get(struct net_device *ndev, struct ifreq *ifr)
+ 	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
+ 	       -EFAULT : 0;
+ }
+-#endif
+ 
+ int enetc_ioctl(struct net_device *ndev, struct ifreq *rq, int cmd)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (cmd == SIOCSHWTSTAMP)
+-		return enetc_hwtstamp_set(ndev, rq);
+-	if (cmd == SIOCGHWTSTAMP)
+-		return enetc_hwtstamp_get(ndev, rq);
+-#endif
++
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)) {
++		if (cmd == SIOCSHWTSTAMP)
++			return enetc_hwtstamp_set(ndev, rq);
++		if (cmd == SIOCGHWTSTAMP)
++			return enetc_hwtstamp_get(ndev, rq);
++	}
+ 
+ 	if (!priv->phylink)
+ 		return -EOPNOTSUPP;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+index a9c2ff22431c..97524dfa234c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+@@ -184,10 +184,9 @@ static inline union enetc_rx_bd *enetc_rxbd(struct enetc_bdr *rx_ring, int i)
+ {
+ 	int hw_idx = i;
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (rx_ring->ext_en)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) && rx_ring->ext_en)
+ 		hw_idx = 2 * i;
+-#endif
++
+ 	return &(((union enetc_rx_bd *)rx_ring->bd_base)[hw_idx]);
+ }
+ 
+@@ -199,10 +198,8 @@ static inline void enetc_rxbd_next(struct enetc_bdr *rx_ring,
+ 
+ 	new_rxbd++;
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (rx_ring->ext_en)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) && rx_ring->ext_en)
+ 		new_rxbd++;
+-#endif
+ 
+ 	if (unlikely(++new_index == rx_ring->bd_count)) {
+ 		new_rxbd = rx_ring->bd_base;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+index 5e684b23c5f5..a9402c1907bf 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+@@ -853,24 +853,25 @@ static int enetc_get_ts_info(struct net_device *ndev,
+ 		info->phc_index = -1;
+ 	}
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
+-				SOF_TIMESTAMPING_RX_HARDWARE |
+-				SOF_TIMESTAMPING_RAW_HARDWARE |
+-				SOF_TIMESTAMPING_TX_SOFTWARE |
+-				SOF_TIMESTAMPING_RX_SOFTWARE |
+-				SOF_TIMESTAMPING_SOFTWARE;
+-
+-	info->tx_types = (1 << HWTSTAMP_TX_OFF) |
+-			 (1 << HWTSTAMP_TX_ON) |
+-			 (1 << HWTSTAMP_TX_ONESTEP_SYNC);
+-	info->rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
+-			   (1 << HWTSTAMP_FILTER_ALL);
+-#else
+-	info->so_timestamping = SOF_TIMESTAMPING_RX_SOFTWARE |
+-				SOF_TIMESTAMPING_TX_SOFTWARE |
+-				SOF_TIMESTAMPING_SOFTWARE;
+-#endif
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)) {
++		info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
++					SOF_TIMESTAMPING_RX_HARDWARE |
++					SOF_TIMESTAMPING_RAW_HARDWARE |
++					SOF_TIMESTAMPING_TX_SOFTWARE |
++					SOF_TIMESTAMPING_RX_SOFTWARE |
++					SOF_TIMESTAMPING_SOFTWARE;
++
++		info->tx_types = (1 << HWTSTAMP_TX_OFF) |
++				 (1 << HWTSTAMP_TX_ON) |
++				 (1 << HWTSTAMP_TX_ONESTEP_SYNC);
++		info->rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
++				   (1 << HWTSTAMP_FILTER_ALL);
++	} else {
++		info->so_timestamping = SOF_TIMESTAMPING_RX_SOFTWARE |
++					SOF_TIMESTAMPING_TX_SOFTWARE |
++					SOF_TIMESTAMPING_SOFTWARE;
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.45.2
 
