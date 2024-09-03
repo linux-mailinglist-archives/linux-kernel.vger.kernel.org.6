@@ -1,219 +1,146 @@
-Return-Path: <linux-kernel+bounces-312671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFBA969999
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:56:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D06096999D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3564B288ABA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8411C22D8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64261AD24D;
-	Tue,  3 Sep 2024 09:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33571AD245;
+	Tue,  3 Sep 2024 09:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sxlLfJbL"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K/tyJwrp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F86519F41D;
-	Tue,  3 Sep 2024 09:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357399; cv=fail; b=FXMTutdu06Stoe7pAC/QpjhkHEithk2R0VUrIEvQF84qTrKuuhJ99bTv3wzE9syWflRJ3d2xwm5nYXEK2Dud8WUEEVK6yYXaCmfD1wV/1wI9ni/pHr5CzOEVXnRUcU+JV5HlRyxlzOnf5n33ydS6FwtwoRgDBjhceboILn+q270=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357399; c=relaxed/simple;
-	bh=W3zwuradsJ8Yl4KesW/t9Ivz3KjpTnKjhluCmoEcZYw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mfDGmY5nkRc3XxLp2ehTXtupUKdcCxrCx6XUyYfFsoVLYE4vw7OqsVZit7XtJt6RcX9jeX3/8q3MMstk2C3JxPF6sk/GUMJs8U7u0ZunIwB8VHbf8ZSz6ldG7XIhQZfIp9SOeRqTivNVQhHyoaLaf4tl7h7PnT4/6WWNBJA/W9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sxlLfJbL; arc=fail smtp.client-ip=40.107.220.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OoG6V7lac8nX+qDR3N2aMKIqH3nC5Vqb+L3aZ4gjNzgVVPWI2e9CdjAzjecy/0rYWfR0fD0SyJrUaWj7S8G12Cz6u+L3WJOZ5U7cFSfTtrbo8TsQenqUM1Kjo/u5ViHmwJDjZFGpcWUN1esP8HAAUeDMrEMkOwE0Onlm4e9TpCOfv9dx9KWV/RVXFUVD9dQfzsJDElFdVFJCYj34CZ2eTOIm8DrCDV4zKoaZwV7pv8wOB0+VJiYZuNHcrPVfgeI1ahtNyoTMLywxvh4MidPIjJ+qPxwEEGzYmqghTvpw0g2TSVDgu9EClj8LmuRQTlq35XpgFJ89g8mSew6nJOQNhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tc5jtxpEpkMC60FRxGqIpDuWHi9Rl+g2GHjiZEoNrzQ=;
- b=lNRLxOby0Jc7s3uziZTy6n2/IKYjQqS0eDnY26U8gTnb3jX3VVPOYUspj7sW2kiqNNAZ01BZ5m+xRFSMAxZNUvn77jNQ2Vp1UiSorDuLxlcXJMJNefS09il5LPEF/Z5cBgEKXTmOtf6WglGtU0xRfiNoaQK6c/gQPLToa41OaaDdJJRk0oy9TP19coTSkuvdmcLAZ8Aq12wm0DTpTIotb7l9XoWBFaM8sgbEtGqNbVDFGfwxCntrSdPLjIu32SvXBwScy8K0td0xfG8Gt5FncYs18vLZ+lORNzAhLvFw9jR67Os2QDTYQHNI5wqg5po+CanSEzHBp4Qh8w+9tZnnoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tc5jtxpEpkMC60FRxGqIpDuWHi9Rl+g2GHjiZEoNrzQ=;
- b=sxlLfJbLs9eajk4oq70+PIHfhuNrWEIPRtRkVS12ILJKo97kjb96qaHxu6sZDO0BApIUpjGxRIL+306T5Ohek0IWz9rARSu9nwgTbiL55mvox270zNJ9hEzM5/ydogLZkbt2Vys0Gg/MDsh4ATbQvBzFHJZwNeb9KKZM1Wg3UHI=
-Received: from DM4PR12MB5086.namprd12.prod.outlook.com (2603:10b6:5:389::9) by
- DS0PR12MB9038.namprd12.prod.outlook.com (2603:10b6:8:f2::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.25; Tue, 3 Sep 2024 09:56:34 +0000
-Received: from DM4PR12MB5086.namprd12.prod.outlook.com
- ([fe80::70cd:b5c2:596c:5744]) by DM4PR12MB5086.namprd12.prod.outlook.com
- ([fe80::70cd:b5c2:596c:5744%7]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 09:56:34 +0000
-From: "V, Narasimhan" <Narasimhan.V@amd.com>
-To: Helge Deller <deller@gmx.de>
-CC: Linux Next Mailing List <linux-next@vger.kernel.org>, Daniel Vetter
-	<daniel@ffwll.ch>, "linux-fbdev@vger.kernel.org"
-	<linux-fbdev@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>,
-	"linux@weissschuh.net" <linux@weissschuh.net>, Borislav Petkov
-	<bp@alien8.de>, Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467
- unregister_framebuffer+0x45/0x160
-Thread-Topic: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467
- unregister_framebuffer+0x45/0x160
-Thread-Index: AQHa/S0UVvhkZ/Wo30mAWgWYLmKdfbJE1b2dgAAalICAAOPRUQ==
-Date: Tue, 3 Sep 2024 09:56:34 +0000
-Message-ID:
- <DM4PR12MB50864B3F2396760358F2955589932@DM4PR12MB5086.namprd12.prod.outlook.com>
-References:
- <DM4PR12MB5086C89FD0EAF070D167733389912@DM4PR12MB5086.namprd12.prod.outlook.com>
- <20240902084546.GAZtV7Ot58w7D90fwQ@fat_crate.local>
- <7cf68133-e6f5-4fef-92ae-7a8c30631fb5@suse.de>
- <DM4PR12MB50863789A621575F937E240F89922@DM4PR12MB5086.namprd12.prod.outlook.com>
- <d5ed77c9-89ad-4de6-b46b-5865378e029a@gmx.de>
-In-Reply-To: <d5ed77c9-89ad-4de6-b46b-5865378e029a@gmx.de>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-09-03T09:56:34.210Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB5086:EE_|DS0PR12MB9038:EE_
-x-ms-office365-filtering-correlation-id: cb36f6f0-c421-4e99-5bd5-08dccbfeb1da
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?IS4n4xm/FK01XbbUGizEpgdKTPOeV1nQyTe7CKHBdngabr9szGVekE4ywt?=
- =?iso-8859-1?Q?7PavmA89rrNyTiBHYHXEi0jmsltRhohJINjjH/5vH+E+BvHGf7kc8urDd0?=
- =?iso-8859-1?Q?QNyJo/Jz8x154SOc4aLqpOoxn9+g5jgjJA/PgPVYz5yUeFaUR3Z2oaYRAn?=
- =?iso-8859-1?Q?rYaAWIRgl0X/SSgd5GBPiH8WJPIg1m8QUPh4AvS/SuiBudSi+37kmgxOGq?=
- =?iso-8859-1?Q?zyi/8hTGUdfrwE/OXRpMstJz85BJ+HopDpovWmIFrNrU+7QbnCc0N7TKDu?=
- =?iso-8859-1?Q?J1CMUJEYjcqf0VX9HVObk2Y9lNu2Yglw6IaedWDy+x51bhVb36t8KpZCtW?=
- =?iso-8859-1?Q?/JJhxTEw8EhLJLOm12MF/q8IvEIZ5HvqZLn0YxFuNQSvGwAkdjXA8E4zRI?=
- =?iso-8859-1?Q?9Uoc7NZL33PUIICtzmJg+6ttZWmIcQA6A6SBWY+iKwMOugZHe1EkqCi5CA?=
- =?iso-8859-1?Q?a7wRXf+I0RWtHhDeJyMf4nK5mTNXI2ORqXATJlUsNq2ozoWhzZY6Lo4+8c?=
- =?iso-8859-1?Q?MoiyK0SNxh1sBIOUQr7fnsY6kikZotJxmsY/Kq0Jsl/4DlDsA3KTpM/YdZ?=
- =?iso-8859-1?Q?an3PPUdqZFHSrVYq9rdzY1ebhfLYn1Hwn4GFZpNiWQT1Q9xVlbiaEg1XXe?=
- =?iso-8859-1?Q?55kMCoU6thud+AH/N38KYXJv7CVpIJy1XuNfYNdz7qrtRBrptUHTnrn8ud?=
- =?iso-8859-1?Q?Gon9UCr8oK0Wkn82kzOtcON0TV+7w6emu2ZYBKA2w8CufrHOzK8gSNwBLR?=
- =?iso-8859-1?Q?lX4J0ys1YoJR8LC5+4NxQ9/XcVAQD/4260xAcJfyoT1MdOZI6mpsi7F43z?=
- =?iso-8859-1?Q?KMdvodiGZ84RWaBB7wyPi4MrSB9aFc8SaYdGwB4LPuy4T8bMJvVxU4EgNg?=
- =?iso-8859-1?Q?AF6WkMkuIcwvmiG1rP25sbhG5JCyfB6KVwABCT+dRoFcwyzasFQUZgbmhq?=
- =?iso-8859-1?Q?UailVmqiqgYSj6SqqXTMzg1jNtmCtz84LFj79Dpkuss+VBLUkZT0IveoAU?=
- =?iso-8859-1?Q?EPYt5ku64fGX5O5t2uAIaSF1UReFQwuE49TQ7EIBXJ7n6mFlxdcWaqeXCs?=
- =?iso-8859-1?Q?BmvLiIPwR5S15nqd1qNl83fmDfTQEjzE5TC04qwRu788CrfWM1rDfJjEkP?=
- =?iso-8859-1?Q?vJlUYlYQZ8sEQgO3OCS7YbqidwPtBu0iJUdXhePGtaOoq3srTMCkX5pYzk?=
- =?iso-8859-1?Q?vYNQcqRkPoq3eaQpWdYPuWN6nPVVKFfH7mFUJxLYQmloMiolcN/3M6i4eb?=
- =?iso-8859-1?Q?DTRfm4VI6mL9aIf38ZFLSOhbQ9HOIh+PNaEpqu3P57IEFzTlASIpGIzhx+?=
- =?iso-8859-1?Q?Az10/+fvie9jMu2nzxC9AoAANCFMrUNfNm/+Rebcm8+CD5cZSIDQ9nefi/?=
- =?iso-8859-1?Q?9Jqbdkfo1wRVqgBd0+zn+bwNIBkPAYmgjaO/mIkO3dfD3N1UuWQ6Y=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5086.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?IoJwk01CpQqMfNzT6nWxtr27d1W+wE8AarTkhfw9gdW6IBnGvJcwyD2s0x?=
- =?iso-8859-1?Q?QLljOib5nrqLNrByBaz+QWQhW3JnCexsNq6Xv6WyA6eCeeNzSNczE6xi4K?=
- =?iso-8859-1?Q?DS/WBAJatTc/mc4n4tI4+lwPu+cBlJBXeokhJggNGGMy94iTlbCOQSY6mz?=
- =?iso-8859-1?Q?9wnjqmn+TW10SNUP0Q8sLA4vt5/g14rZ8pNN/oiGHgBDdhsK0IBSPH8LyH?=
- =?iso-8859-1?Q?AkeDfQuld4W/v3+bjoufZ6+j5KUnXYitwjbfATbNyWXTeF7zJTWSaOmkGk?=
- =?iso-8859-1?Q?fDWZbQstg8QVDVbpyLpmyxT64Iu9z/jCZjlBbY1QIVOXIh4iByJi/rO43S?=
- =?iso-8859-1?Q?lLE4C6n7sOA9nffdbl+O/H4gFu5PrPv5YDof727yJXMT6A28ATyoAcTKOp?=
- =?iso-8859-1?Q?7Ryc9UVB06zY954K6L0pQeDwaJnElootPuR7zmpGi8m/nA0dsHxNYSpSuY?=
- =?iso-8859-1?Q?mqqwM0L9YxxbwO+0GGnuKqZvRTiB1+n5iQFov+YyHZ0gu022TmbHNF1DRt?=
- =?iso-8859-1?Q?Bu1xOV1anCELbO8+6aQSnFDdJbfGUsZFr7DRvFdFdjN77quNdwSJVgJ6Gx?=
- =?iso-8859-1?Q?c4AmUjY2IeWAaTDf8VoWQHDEkHqKzxx2fYtRD78Gor4O7MvXjtHv5EbeYP?=
- =?iso-8859-1?Q?6CVV3dh6zq3WUFmczUXn6+OSqEEidxy1HASrBHbbFSzz/L0HHr9LgqoVRw?=
- =?iso-8859-1?Q?kb/STTKPYcfrafg0YNqrGOMyA2DKmho8yzaXMUbZIMF1owj9t7gSpzno9F?=
- =?iso-8859-1?Q?VFmyQgCWAqy2RTZjJuSbju56xa6WufZUjhIJecoDAqEF/DwlePh9wSVxYx?=
- =?iso-8859-1?Q?800w90pGGi/pyNE4p7Oi8SeQTveT3CgDmFjImKxHc1BtAd0B9mC/fKh4h9?=
- =?iso-8859-1?Q?pabaw91wIs9NKWR4ciXLpdgNOG+9PNtknCc1NpA8rpaIbuCJY6cGnktpH+?=
- =?iso-8859-1?Q?M0/lRrumzalKcuoGErVJFt3hzEMsMYGfoWonu/pjesfvR+GvYZUp9iAfhG?=
- =?iso-8859-1?Q?me7Zw3hVCYKgBl3ra1LqQytw+CCVsY7qpLe12VYxFvc8JpUYIUPkHAKqIZ?=
- =?iso-8859-1?Q?xqx9Tyln4yb3QaPdfm0VjbTqZmRqN8i4NxIHAFKMJUEjSlP0mlTVsbZfTA?=
- =?iso-8859-1?Q?GAFb/JIzCZ3tQ61//gx98VKJqSv85iJQTpsuldTjMaLGkHTtfXsnILfG3p?=
- =?iso-8859-1?Q?tu8UUcRSGLuItrH2XGlJD0pDdt9UR+04I+JY5d504HzubIgapNXdtvbzpz?=
- =?iso-8859-1?Q?IEyKxGgczKdO012lkTdDCfknzS8d6eEqIUaYfIePIeOXtmcVFH5sYmSQ4P?=
- =?iso-8859-1?Q?gOqKYjdYWm4kaZXfne269oLNmXGYoyOcEe9MQ4hXuwVPlyNuU5AGOvsNLJ?=
- =?iso-8859-1?Q?8rVJco+28anCv84lfC4Zf8K/csY+0+4nKSA9ERR0evzHZQP5nOTXqWuqPD?=
- =?iso-8859-1?Q?ynbHOM9vOLNjqshH4b1E+/FOfyOsUyAnxI0Eenoz9o2Tib+gIuvRBcqO6e?=
- =?iso-8859-1?Q?ittP5wniMG5R31Z+9WcQHCGtbPSvHLhk9Az5WQ+4hiAcl1QLHN1QwNqDW8?=
- =?iso-8859-1?Q?0/I2rtemMDNHCAK/iA45BwvIWrdPKDu0bXcEwAqHJNs5lsK/mW4DsrDrA2?=
- =?iso-8859-1?Q?e5Khtj55NSbKo=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A680819F41D;
+	Tue,  3 Sep 2024 09:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725357437; cv=none; b=G6GwThVWCxXFaFa0XzQz0YevrsJGThPOigmaMQ1vyHNZvBCTWH8s8bhzp3mn+8XckC+RGAfX7ta0wZBg7B08Yr5jNonQvRidSI9xanKRGXsEAQoXj1JlneG6uy++nHPmrIBXQYNV4oUhbkQdFlPbwz4TYxXQuH9haYQ2xXhTf9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725357437; c=relaxed/simple;
+	bh=cqubLfVw5UF9H8tDMBrJ76paRmwHooWjgakm0+GPp+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ic17SDXQV1Pfl81OrkkbLIuL4zfTOBcRgNofkBZOOH7Z7jBVXmUWUDsKb6a4ZGbUBPlleTKsIUmpeXjM3Ma5NSxipvIidfxm60h/KniOAYlEbZWY4kOA4Sy1egqsvQto+VoceSCVTl2iKYIgbn1kDTFEWux2PIAK4kAnsK5GFAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K/tyJwrp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482Kc3pX010165;
+	Tue, 3 Sep 2024 09:57:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UtMY7o5mMRRxzHSIdYCWRT7xTQgNbrg7biRIrNK54Qs=; b=K/tyJwrpxvHfsLkX
+	3TqhsThlyKw6QKR6jbyjHBLOusq6f0KmI3DIMdRkKKY4SAuHcd3MBKKCRlfqcacU
+	QY5YdUXf9EZIM1Kh/anL4PbIkSHH2Gc65SWzZgsznMZwW58NY/cM7ERyIco5/y0A
+	HV1cQSm7L5lt8Bpc7vVfl8KrKRR9ZTQn/B6lZSJ1e2Cx9TbHRneT+jPENHCud2Jq
+	pWEAtCqXmqRbXLOHFOQ/2ISgDJKb9s0dwLYzzXHxmUElDJoxpwCxNkf42GY7Ou9D
+	vHBKm2uL3i46gWYdvU72qCyBQ4rdGQ6svHvvvyHunHYwKggLkv+Hln+ZvsTaw9n5
+	KF22vQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buj6xwx1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 09:57:10 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4839v9qv023866
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 09:57:09 GMT
+Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 02:57:05 -0700
+Message-ID: <a9425927-c9d8-4988-8bdb-2def8d9668ca@quicinc.com>
+Date: Tue, 3 Sep 2024 15:27:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5086.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb36f6f0-c421-4e99-5bd5-08dccbfeb1da
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 09:56:34.5327
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sMCw2vNKfC9kn5s7Vs4yjfBEE8uXpqgzpHC6o6UFXT4SDDOBPwJYLBSFdKLI9IA+2ZgaKR8SMiQVVscjZe004w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9038
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] interconnect: qcom: icc-rpmh: probe defer incase of
+ missing QoS clock dependency
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Georgi Djakov <djakov@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>, <quic_mdtipton@quicinc.com>,
+        <quic_okukatla@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+References: <20240827172524.89-1-quic_rlaggysh@quicinc.com>
+ <xny4v2twbt5sjjtc5yoffpnymryfd6da6pirlmiii5txyz7rl5@xy7wdrzi5auc>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <xny4v2twbt5sjjtc5yoffpnymryfd6da6pirlmiii5txyz7rl5@xy7wdrzi5auc>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: L4yRlhVVoIAB9FGOgQgChBMjTWJ4RazC
+X-Proofpoint-GUID: L4yRlhVVoIAB9FGOgQgChBMjTWJ4RazC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 impostorscore=0 suspectscore=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409030080
 
-[AMD Official Use Only - AMD Internal Distribution Only]
 
-Hi,
+On 8/29/2024 3:09 PM, Dmitry Baryshkov wrote:
+> On Tue, Aug 27, 2024 at 05:25:24PM GMT, Raviteja Laggyshetty wrote:
+>> Return -EPROBE_DEFER from interconnect provider incase probe defer is
+>> received from devm_clk_bulk_get_all(). This would help in reattempting
+>> the inteconnect driver probe, once the required QoS clocks are
+>> available.
+>> Rename qos_clks_required flag to qos_requires_clocks in qcom_icc_desc
+>> structure. This flag indicates that interconnect provider requires
+>> clocks for programming QoS.
+> Two separate commits, please.
 
+Thanks for the review, I will address the comment in next patch revision.  I will post a new patch for renaming "qos_clks_required" flag.
 
-________________________________________
-From: Helge Deller <deller@gmx.de>
-Sent: Tuesday, September 3, 2024 01:48 AM
-To: V, Narasimhan; Thomas Zimmermann
-Cc: Linux Next Mailing List; Daniel Vetter; linux-fbdev@vger.kernel.org; dr=
-i-devel@lists.freedesktop.org; open list; linux@weissschuh.net; Borislav Pe=
-tkov
-Subject: Re: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467=
- unregister_framebuffer+0x45/0x160
-
->On 9/2/24 20:56, V, Narasimhan wrote:
->> From: Thomas Zimmermann <tzimmermann@suse.de>
->>>>> Seeing the following warning and bug on boot with linux-next-20240829
->>>>>
->>>>> WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unregi=
-ster_framebuffer+0x45/0x160
->>>>> BUG: kernel NULL pointer dereference, address: 0000000000000000
+>
+>> Suggested-by: Bjorn Andersson <andersson@kernel.org>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  drivers/interconnect/qcom/icc-rpmh.c | 10 +++++++---
+>>  drivers/interconnect/qcom/icc-rpmh.h |  2 +-
+>>  drivers/interconnect/qcom/sc7280.c   |  4 ++--
+>>  3 files changed, 10 insertions(+), 6 deletions(-)
 >>
->>> Does it work if you revert one of these commits?
->>
->>>    c2fe0480cd77 ("fbdev/efifb: Use devm_register_framebuffer()")
->>
->>
->> Reverting this commit fixes the issue.
-
-> Good.
-
->>> For the latter, there might be a fix at
->>
->>> https://patchwork.freedesktop.org/patch/611902/?series=3D138008&rev=3D1
-
-> Current fbdev git tree and for-next series have this newer patch already.
-> I expect that the issue is already resolved with there, but it would
-> be good if you could test.
-
-> Helge
-
-The patch seems to be already into linux-next tree and the issue is no more=
- seen with today's linux-next build.
-
---
-Regards
-Narasimhan V
+>> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+>> index f49a8e0cb03c..5417abf59e28 100644
+>> --- a/drivers/interconnect/qcom/icc-rpmh.c
+>> +++ b/drivers/interconnect/qcom/icc-rpmh.c
+>> @@ -311,9 +311,13 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>>  		}
+>>  
+>>  		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
+>> -		if (qp->num_clks < 0 || (!qp->num_clks && desc->qos_clks_required)) {
+>> -			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
+>> -			goto skip_qos_config;
+>> +		if (qp->num_clks < 0 || (!qp->num_clks && desc->qos_requires_clocks)) {
+>> +			if (qp->num_clks != -EPROBE_DEFER) {
+> if (qp->num_clks == -EPROBE_DEFER)
+>     return dev_err_probe(....)
+Will address this comment in next patch revision.
+> if (qp->num_clks < 0 || ....)
+>     ....
+>
+>> +				dev_info(dev, "Skipping QoS, failed to get clk: %d\n",
+>> +						qp->num_clks);
+>> +				goto skip_qos_config;
+>> +			}
+>> +			return qp->num_clks;
+>
 
