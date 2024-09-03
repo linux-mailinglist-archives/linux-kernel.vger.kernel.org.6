@@ -1,97 +1,86 @@
-Return-Path: <linux-kernel+bounces-313341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D5696A428
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:21:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2591296A42D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EFB2844BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D560B283DCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6190418BC26;
-	Tue,  3 Sep 2024 16:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D49gqtMh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4D18BB9A;
+	Tue,  3 Sep 2024 16:23:35 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572618B499;
-	Tue,  3 Sep 2024 16:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB602186E46;
+	Tue,  3 Sep 2024 16:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380467; cv=none; b=i2cWl8GiKzeDYSY7N5QsEf4MLrX9lxgXXNIJDsX5d+6D5xx5cJewEqLTGmMjPArOfW3dnohL5PWso4R1tk6cxcNmmB2NLEv142gC9fAS5HjcKAFOH06Nz3u1t3CBgJJplLB8p2VgX54/JmgWrulp47ocJhBiaKR77exST92tGyc=
+	t=1725380614; cv=none; b=RT4M2EkIsfGTabExQykqRLgD8lYpynjy9yrYM9J3g6csxfmf4pTcBme8exMQaPjrznQPYR3cu+Avje+LRNhlYFgU8rswgG4+CjOg35rwZRUhPN28ylshbwfOnDfS29jcLl6ImMFwV4fcOlsVh+eIM4Yq7r/4WzUn9VUylKegkt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380467; c=relaxed/simple;
-	bh=ob6EmkUy93WfbYLEB5n+UNyuqj290xfoUL8zt6t2aEg=;
+	s=arc-20240116; t=1725380614; c=relaxed/simple;
+	bh=Jj2KFdSWfJ6ancHgzp2FNPCwzSow8QxGTPkncQGn5YI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QRgOc5UZ7H2R+e1OFRZUO0wy94yoJp/Go9iQ3OQI58rTa22MDfi8bSc2b6iJBbpRAVkDMMRP6crgIf6TtfSBGqVgHJqvWjXJYH4h48efKq+ZwEPMGx+Fo+84xi7tGThSSTPruWe2w8O8T4xwHJJNdrJL6xVWysFySGw8e+dMSa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D49gqtMh; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725380462; x=1756916462;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ob6EmkUy93WfbYLEB5n+UNyuqj290xfoUL8zt6t2aEg=;
-  b=D49gqtMhKv0UzeB4SL/zhQp9LLEuBGIrJC4wkYHPZFe+g4q4rilXzTEj
-   lCMWRqGrW/itVUCyST0MGyWwm3k4WDcdkJ5eioAm77rYHelz8bQKzfk/O
-   7YHAmgiH0FwBuFJhzMlDO8gH1SxizYtIye8RpOHAZFR6CTk8pF1gOnqU4
-   CPBy4IgSqR1bL1JYox1aHIgmmYD/pmdTmxzmJb7tnpi6MDA/SvAXBjjbB
-   bxldhuTqs+1N+DOc6pUoaKINbPmirH5PRZHmMewTd8LuScyGpYu1oFCNO
-   VYrh8F4N1cPg7y1RXvG0+hXhRRadh5wUUzekVhrbjaeMpZmByxWYlVwei
-   Q==;
-X-CSE-ConnectionGUID: fYo6O+GWSFWGhxHhydqpNg==
-X-CSE-MsgGUID: +tiGiNzOSbKtULhrjCqE0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="46519769"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="46519769"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:21:02 -0700
-X-CSE-ConnectionGUID: iSa+5TsdQ9+lYnm1DGEugw==
-X-CSE-MsgGUID: kBdBgZ4/Roi+MPXQFWVGEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="64953734"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:21:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slWH3-00000004lci-10lA;
-	Tue, 03 Sep 2024 19:20:57 +0300
-Date: Tue, 3 Sep 2024 19:20:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Martyn Welch <martyn.welch@collabora.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: mpc8xxx: order headers alphabetically
-Message-ID: <Ztc3aV2HM8eS3hC7@smile.fi.intel.com>
-References: <20240903154533.101258-1-brgl@bgdev.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/rWIVCVLjx+sshrxEFgdpib6FTKnu8XYNY2rKxbmEeTtsS5VoAKc2OMcJuZeX0wXN/fwI3q8o5wVJ1Uuc5yqdx4myTNbrp0AbiWOGbXyR0cIvaIYqAy9chUWGsDOYGjdhOKENwM4m04Y0dNR9CFv3G2lJ88KemPEXdUppH1yD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=49490 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1slWJS-00AjDi-Ea; Tue, 03 Sep 2024 18:23:28 +0200
+Date: Tue, 3 Sep 2024 18:23:25 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v2 0/2] netfilter: nf_tables: Fix percpu address space
+ issues in nf_tables_api.c
+Message-ID: <Ztc3_dZwFoR7s2c3@calendula>
+References: <20240829154739.16691-1-ubizjak@gmail.com>
+ <Ztc16pw4r3Tf_U7h@calendula>
+ <CAFULd4amgCH=h02SSEdxrdazq0A+5wOZgvPmRmn19eb7orSV_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240903154533.101258-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFULd4amgCH=h02SSEdxrdazq0A+5wOZgvPmRmn19eb7orSV_g@mail.gmail.com>
+X-Spam-Score: -1.8 (-)
 
-On Tue, Sep 03, 2024 at 05:45:32PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Sep 03, 2024 at 06:19:57PM +0200, Uros Bizjak wrote:
+> On Tue, Sep 3, 2024 at 6:14 PM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> >
+> > Hi,
+> >
+> > On Thu, Aug 29, 2024 at 05:29:30PM +0200, Uros Bizjak wrote:
+> > > Use {ERR_PTR,IS_ERR,PTR_ERR}_PCPU() macros when crossing between generic
+> > > and percpu address spaces and add __percpu annotation to *stats pointer
+> > > to fix percpu address space issues.
+> >
+> > IIRC, you submitted patch 1/2 in this series to the mm tree.
 > 
-> Cleanup the includes by putting them in alphabetical order.
+> Yes, patch 1/2 is in this series just for convenience.
+> 
+> > Let us know if this patch gets upstreamed via MM tree (if mm
+> > maintainers are fine with it) or maybe MM maintainers prefer an
+> > alternative path for this.
+> 
+> The patch is accepted into the MM tree [1].
+> 
+> [1] https://lore.kernel.org/mm-commits/20240820052852.CB380C4AF0B@smtp.kernel.org/
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks, I will wait for it to propagate to the netdev tree.
 
