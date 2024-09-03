@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-312881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDDF969D06
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB23969D0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB861C236A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890B51F261C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBAC1B9859;
-	Tue,  3 Sep 2024 12:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216E1C9841;
+	Tue,  3 Sep 2024 12:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9fJCH2U"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6f+8c2B"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D4A19F42F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225A91C986A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725365396; cv=none; b=MvaumzmJLmonJQx3pyGp8FUiLht5BjvJP8nukh6i5a4LNQdmepJhbp6zeAc5Zxq0Fb3IN0AF1fU4Vms5ZcDGHQtnPB7Oqzfo0oYIGDyRj/kX8lagTGAzl30rXaDXytIpyY8wD55ilw5UE1ISErgHAbxvZAoAvpdBRwq8mV6DjCU=
+	t=1725365400; cv=none; b=e/gCjsHyRbrocOo2b55h3yGsdOK0iMk3g7kEugD2CNza+aYhragCNQID2RPuSe/Es6sUqWiq8+e0EMr6wMJIM+2TaWloueUuGk7d0Z7aOJKl6zUT2YDGl7KwRm1mUHdI0qdYxk2EhEgp2mJUwe+Hz3/p9TEq7DZo1SmQgnBJO3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725365396; c=relaxed/simple;
-	bh=N1qqn7vYKBlbeXYmAR1aaSBjOkAuuoIsPmVXjG1IKa0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=YPNt7XOGAr4vJxTnX+cAu7MMWm+1qgKwAveEqvkyzDSe1we1SiK9JxSzpMp2joAHu+tRGxvKO5VpoCV4zTAxGQP93p6rsMaHdE+eLHPKAbu0O3r5jrIltMhMx5iuX43YLFML0RHNT1XjjVe7YmjS3HNDfombMpo4nb7L4yef37I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9fJCH2U; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1725365400; c=relaxed/simple;
+	bh=44yzxRSTqwlOROlkCwEXzmTbMUBKaeO1+N1E/oREDTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=m2SIAhY9W2s8HZi/TfzMFkA4zU5xOJIFI8kHC4cRf4GqhV+QMuUKNdaRCHrmktGEqRTxqzEWHR9k6hhpWxFJ/qugjACmQbKeylkhpcu0eBd4NcmQ3Uzs8zezt8oLifpoVC1Ze8YFZefUvvNLhR80EW6igoomwX6hYCZMdbs9XnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A6f+8c2B; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367990aaef3so3127361f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:09:54 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so31070775e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725365393; x=1725970193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JLYlLLGKbB0TvMjhCmijODtjVYZ8RqD6X4SH5pHru3k=;
-        b=S9fJCH2UgJkF2l+UauktRfkH4nq6TM7EIxAYnstUodWneXJ/guUWV3jxiexAaIpX4P
-         cOq8nLDzfXxC24xhhrjvz8eoi7ZCHnuoeIc9i5DH2nwzRDOdkBbkMElRrv5Dx5N8rVH0
-         daBP0biULvTTipG6uBkctB9INyCkes3hes1btVssSexWAWLn9xBLIUnBQYOpgVKLNU3I
-         RmQVAeQuXl+Z1Ew8SF0UsboblwrwBQioUMVgi3C8lf1Xu3gc0XDkEQeX3+dzbKYdjQjt
-         tB2SGlEpDmfrbfc0mEyAoZ40Cj+dHGrp4/SxzdaspfziCz5RqhBjWQmsWgv+wodJCxeR
-         faOA==
+        d=linaro.org; s=google; t=1725365396; x=1725970196; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DUDom//tRZnCzR0TPrW7dnmFkZZ6kQdXEFrODb12u4=;
+        b=A6f+8c2BdG8o+Y7O5uRJFBHkFlH0wNBzQPPcmb2rLp1n6O2+pj2PIans7wSwV3ZtJz
+         cF2m//6pNZJxbUx/iwdJetrS0IXrbo610bm8ip8ChOsoji50g6laURTZ5n3qutnn7KY4
+         Bo8tFVLSIXVCGoFAPYbZieLD+iOW3LfI6U/73nNEGgBEp4p5l0z6eQ+m8XYvWfL0ve+L
+         cvnoyAcuylsbtoERPhCH0VHyJ+h6TvrIZaw+zzFkES36/2LisAtEq8yXRqJ63be8Ci5l
+         IUfQ8EX+YjpPoDvAAVJvi4fxMFGWtGT8qmvDgohmXuxBHwNM6QQZSj2QNtTuGr0zi1q4
+         npsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725365393; x=1725970193;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JLYlLLGKbB0TvMjhCmijODtjVYZ8RqD6X4SH5pHru3k=;
-        b=v3h/x3tECWG57tzWL+sTFM5SEVpS3OeJSM9iNRLVPpGKb0mFYas02qF7d4hLNnD5pt
-         h1nRB5ivpCH91DWyvhCQImVRtki3dwoB6g27AiDjuMqtHZpkN93r5HWlahmo9+3tbcUV
-         Wlb5kcWQiw+xyyfsCWFx01MOOvNzVsZKYFPAvwUYLRCGpaFaCTuBuO03ZSZ3uUgld9Qd
-         /lwoakdIQUKh5IeG03gMjUkP18+tiCt/jf1vsc4mhx1CRLLsOMfHC3nsD/RxqcE3uazp
-         HzH5DbrMCdd/PM91lIysB2zIOi3FULB85U5oVQBOwddSCrIDLatiCdQv6J7lisOXbDKx
-         5lYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQOrDNvuL3RfMA7+iMzt/Ji317G5dTgxvk9HYxIRFe3Ae9ymOxD5B4T7qXmgzwOTCB+cwTTXX2m/mCsAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAdXCMcVI73m9LuEhKdKfh8smGRP63Kti2Fi88/Z7+WxR/xWws
-	+ZITjDF0/QSoCFFFB5+3k1cR+phGLjt/dBFbr6vUofgTMNZvfWZLBjJOBnMcuus=
-X-Google-Smtp-Source: AGHT+IEyoZ4C1GIHdc4etZJ5y8/7i4ZOxLROM5omYazPOI3P6CpupmD7KGheFpP2J3CHj/uHt2FC5g==
-X-Received: by 2002:a5d:440b:0:b0:374:c847:852 with SMTP id ffacd0b85a97d-376dd71aa2bmr403119f8f.29.1725365393138;
-        Tue, 03 Sep 2024 05:09:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725365396; x=1725970196;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/DUDom//tRZnCzR0TPrW7dnmFkZZ6kQdXEFrODb12u4=;
+        b=GaTrO9tsMqIAnS3c9XhA/tH6dP6y56w1/fAinMsvwggpIoYnecEordqeNa7VMvZ9e3
+         CRyuhNNhsVqWHOMPvz511afUurYcPC24hD4WY+2o34Y9InTmWePHkn/n8ftlxGfnZJQG
+         zIqrQqPL9DZOaVPBw7HHPOcTUbZlvLLRByrpAbSAcYPT2QzSossteG43E3IMDyDS1Oib
+         sOgsjDSt0oAclIIIvVMJFLT2zyZLoijQGQ+cYi5VoPEFtX0rWFDyDdJE8+m93LVikQ+o
+         pvRtQ3Ba9WyIPaiGHP7AJ7+u4MIUage9m5Kx2iJ7yOWDv7JUcccriUBEEN9XbwwtRSAf
+         V09w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOXYAmRM0FiQMs7OUtQTRXalZhG45s7HfZGmcDlaYw+TUjkI6XT3OJRi3lfRarsdafNjdJ8MyWexHaUho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHx5v387SgGItZyzt5Qu+gA3/biHxoxIKyWbwm3Qml3eZ3cPhG
+	RiWwz4iWKtzd2HZ7/lHz2LAaVpPnKEKzt6h7hBJYuJ96nmaeIr1eru797YM4aZg=
+X-Google-Smtp-Source: AGHT+IFcoK0ATItLWWMNoYyO3QSsujmu7MhadnpNmBdao6RwrBFoO5Fsa1nhUpv/GrvTkZFRm38cOA==
+X-Received: by 2002:a05:600c:3c9f:b0:426:5b44:2be7 with SMTP id 5b1f17b1804b1-42bb01b5f50mr137762745e9.10.1725365396400;
+        Tue, 03 Sep 2024 05:09:56 -0700 (PDT)
 Received: from ubuntu-vm.. (51-148-40-55.dsl.zen.co.uk. [51.148.40.55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4a55fsm14069238f8f.10.2024.09.03.05.09.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4a55fsm14069238f8f.10.2024.09.03.05.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 05:09:51 -0700 (PDT)
+        Tue, 03 Sep 2024 05:09:55 -0700 (PDT)
 From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
 To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
 	Theodore Ts'o <tytso@mit.edu>,
@@ -75,10 +78,13 @@ To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Eric Biggers <ebiggers@kernel.org>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: [PATCH v5 0/2] arm64: Implement getrandom() in vDSO
-Date: Tue,  3 Sep 2024 12:09:15 +0000
-Message-ID: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v5 1/2] arm64: alternative: make alternative_has_cap_likely() VDSO compatible
+Date: Tue,  3 Sep 2024 12:09:16 +0000
+Message-ID: <20240903120948.13743-2-adhemerval.zanella@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
+References: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,57 +93,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement stack-less ChaCha20 and wire it with the generic vDSO
-getrandom code.  The first patch is Mark's fix to the alternatives
-system in the vDSO, while the the second is the actual vDSO work.
+From: Mark Rutland <mark.rutland@arm.com>
 
-Changes from v4:
-- Improve BE handling.
+Currently alternative_has_cap_unlikely() can be used in VDSO code, but
+alternative_has_cap_likely() cannot as it references alt_cb_patch_nops,
+which is not available when linking the VDSO. This is unfortunate as it
+would be useful to have alternative_has_cap_likely() available in VDSO
+code.
 
-Changes from v3:
-- Use alternative_has_cap_likely instead of ALTERNATIVE.
-- Header/include and comment fixups.
+The use of alt_cb_patch_nops was added in commit:
 
-Changes from v2:
-- Refactor Makefile to use same flags for vgettimeofday and
-  vgetrandom.
-- Removed rodata usage and fixed BE on vgetrandom-chacha.S.
+  d926079f17bf8aa4 ("arm64: alternatives: add shared NOP callback")
 
-Changes from v1:
-- Fixed style issues and typos.
-- Added fallback for systems without NEON support.
-- Avoid use of non-volatile vector registers in neon chacha20.
-- Use c-getrandom-y for vgetrandom.c.
-- Fixed TIMENS vdso_rnd_data access.
+... as removing duplicate NOPs within the kernel Image saved areasonable
+amount of space.
 
-Adhemerval Zanella (1):
-  arm64: vdso: wire up getrandom() vDSO implementation
+Given the VDSO code will have nowhere near as many alternative branches
+as the main kernel image, this isn't much of a concern, and a few extra
+nops isn't a massive problem.
 
-Mark Rutland (1):
-  arm64: alternative: make alternative_has_cap_likely() VDSO compatible
+Change alternative_has_cap_likely() to only use alt_cb_patch_nops for
+the main kernel image, and allow duplicate NOPs in VDSO code.
 
- arch/arm64/Kconfig                          |   1 +
- arch/arm64/include/asm/alternative-macros.h |   4 +
- arch/arm64/include/asm/mman.h               |   6 +-
- arch/arm64/include/asm/vdso.h               |   6 +
- arch/arm64/include/asm/vdso/getrandom.h     |  50 ++++++
- arch/arm64/include/asm/vdso/vsyscall.h      |  10 ++
- arch/arm64/kernel/vdso.c                    |   6 -
- arch/arm64/kernel/vdso/Makefile             |  25 ++-
- arch/arm64/kernel/vdso/vdso                 |   1 +
- arch/arm64/kernel/vdso/vdso.lds.S           |   4 +
- arch/arm64/kernel/vdso/vgetrandom-chacha.S  | 172 ++++++++++++++++++++
- arch/arm64/kernel/vdso/vgetrandom.c         |  15 ++
- tools/arch/arm64/vdso                       |   1 +
- tools/include/linux/compiler.h              |   4 +
- tools/testing/selftests/vDSO/Makefile       |   3 +-
- 15 files changed, 292 insertions(+), 16 deletions(-)
- create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
- create mode 120000 arch/arm64/kernel/vdso/vdso
- create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
- create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
- create mode 120000 tools/arch/arm64/vdso
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+---
+ arch/arm64/include/asm/alternative-macros.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/arch/arm64/include/asm/alternative-macros.h b/arch/arm64/include/asm/alternative-macros.h
+index d328f549b1a6..c8c77f9e36d6 100644
+--- a/arch/arm64/include/asm/alternative-macros.h
++++ b/arch/arm64/include/asm/alternative-macros.h
+@@ -230,7 +230,11 @@ alternative_has_cap_likely(const unsigned long cpucap)
+ 		return false;
+ 
+ 	asm goto(
++#ifdef BUILD_VDSO
++	ALTERNATIVE("b	%l[l_no]", "nop", %[cpucap])
++#else
+ 	ALTERNATIVE_CB("b	%l[l_no]", %[cpucap], alt_cb_patch_nops)
++#endif
+ 	:
+ 	: [cpucap] "i" (cpucap)
+ 	:
 -- 
 2.43.0
 
