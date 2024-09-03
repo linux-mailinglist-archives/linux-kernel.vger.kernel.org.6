@@ -1,245 +1,104 @@
-Return-Path: <linux-kernel+bounces-313177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A619796A179
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:00:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA5D96A17B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32B991F263BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:00:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86817B2680D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D098417837A;
-	Tue,  3 Sep 2024 15:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A101850AF;
+	Tue,  3 Sep 2024 15:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Qav+SkTg"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKrhiWFf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F02D2AE66;
-	Tue,  3 Sep 2024 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AAD13D245;
+	Tue,  3 Sep 2024 15:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375616; cv=none; b=BhAs5aJhuMd7xHpKmuzNhxIXhxYCZZhB9NzDHeJJqEYJpRTRsa4X2Kv/PPisB0N3+hhjG2PwhiA7x4jdMPhqWtD+cHBRtuyeZNg3NSiWvtjaRdMdNhH3PaMDqXyau7yBpUcGeoUx6zoVywiZMxRg+u+MNTnleu36Mii7ZrAg05M=
+	t=1725375619; cv=none; b=XcNlEdQ/exNeuA2WNxv/0dvYyCtO+KkK+LHRZhAVkNQaH3k0bQw3ghvToLE92zHF1+M/432lA+vNX7T+AKcfkIs9F6F8x6TQRpKrEjwo8sQ2uTziLy6LHl1asZQbux5QeZVJkD3GS1CCEZ0uuLQ9UDg+YpTUKvqwRrA8FtLcqFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375616; c=relaxed/simple;
-	bh=QueXMqwJNObdj9zptFdqEQjTxnv+XogcLKwP2BGl2NE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBdR4C5AFVQ28RNQMiIJ4KCXAKu7WWP3/zNhK9xSQ6ykXwg8Gd550cNabZcejy43u7QyhaR/l3vhX3MZ/Cvle15frRs5MBaUGqDZ8HllQ5PTn8940CpuOrYYFQCd6/fsIAoDyl466fW2Bp2yQetcj8VcPQA5Zv8VdCguILKrvBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Qav+SkTg; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E4FAE120002;
-	Tue,  3 Sep 2024 17:59:56 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E4FAE120002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1725375596;
-	bh=SzM3sQPASkUPd9ScTJ/rDSUm2KWQEJGFicMbaAjIBh8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=Qav+SkTgIk1OfnQqlj6KZDG/oiTEbSucIdj4JymdCaaILGGLkgzryg9Bxn7m2fDBw
-	 PXxscHMcAPeGikF6/Zi+ugDKYqUirhyvM0e9uE4x3eJUUW94mB9XEjneBSkCLKBqBu
-	 8trznOJNBHZIMPd1rAgAa8g/vlBcvWep1ZHLfmjasekmKAvhG3jWDtOW14vbb5xmKF
-	 mNg4al+oHhaKs8W1NeuPzvaV7ngKYhPO3bLqjuWKz2rgScvOuYO/zfczkYmuY4xKbO
-	 waxYmUpI57KsEyxSbIEvfkJNYWn+aOjICin4bsWUszIur6LYryNunKc81uEHV+OHYD
-	 kfSmfWG5Qovng==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue,  3 Sep 2024 17:59:51 +0300 (MSK)
-Date: Tue, 3 Sep 2024 17:59:50 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Lee Jones <lee@kernel.org>
-CC: <pavel@ucw.cz>, <linux-kernel@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, <kernel@salutedevices.com>,
-	<rockosov@gmail.com>, Alexey Romanov <avromanov@salutedevices.com>
-Subject: Re: [PATCH v1] leds: introduce ordered workqueue for leds events
- instead of system_wq
-Message-ID: <20240903145828.kk46axjkv22xmkf5@CAB-WSD-L081021>
-References: <20240820155407.32729-1-ddrokosov@salutedevices.com>
- <20240903140119.GW6858@google.com>
+	s=arc-20240116; t=1725375619; c=relaxed/simple;
+	bh=dT6FsbNahWTNg13pHyUnWbWbCQMcM2rJdjoIX0ZxlJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwDECDUesSovYRiO6Gnnf3nl3WO5MScVDDIBFSC3gPEb2droR0nBAtyc2BmUdqpKZ07wqCBENcsktsRq944FeBpPZ8eWw8l9BCsZ0aQs/W9tKDmiEfAe4L45qTXvcuOfDRMXKvz8ziY3EaT3c5YFXO2mXA+Li6li3GKG+WJkK2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKrhiWFf; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725375618; x=1756911618;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dT6FsbNahWTNg13pHyUnWbWbCQMcM2rJdjoIX0ZxlJY=;
+  b=fKrhiWFfHhy46FZqfmGZsHX9Bj21neqCZPEn7hhSKq29DOEwZHuvJcep
+   TBJhzyMy0+I2sbw2w7TdKlh1eY/aeMkzh+GiKF2ZDbdmTI9lWKfgvBD2b
+   Kpp1KViKQT+qw1W65QLNh82ed9pzMMYfjcTdh63D/5NYEzbuO2mlw+LR2
+   0D4hTaADz4XWmRVKgJs7QxspvboLrRhkgnAdzipGfguFyGHF1G9opF5Zy
+   DsI3ovaCN6iDY0M8nfzA2SitmwxxfjCej6K0uWRmtwgbY5oUm0rqxW3NN
+   gZGi80rM/oEdk+HQevwyO6Swscjkb3dKosSFHz0pikQUVaKim2fAnlDOG
+   Q==;
+X-CSE-ConnectionGUID: nrtnBex6QKGDMdmYwwqxCQ==
+X-CSE-MsgGUID: QyPVUskCS2WayUCpk9N7bw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34587974"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="34587974"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:00:11 -0700
+X-CSE-ConnectionGUID: QZGN/+SaR/S8gjU/RiXZOg==
+X-CSE-MsgGUID: OsnCa0GPRnGkt4ALQIPqZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65146663"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:00:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slV0n-00000004kE4-3a2y;
+	Tue, 03 Sep 2024 18:00:05 +0300
+Date: Tue, 3 Sep 2024 18:00:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
+	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>
+Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
+Message-ID: <ZtckdcI3mSRhe2Su@smile.fi.intel.com>
+References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
+ <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903140119.GW6858@google.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187504 [Sep 03 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 32 0.3.32 766319f57b3d5e49f2c79a76e7d7087b621090df, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Track_Chinese_Simplified, text}, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/03 13:56:00 #26514497
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 03, 2024 at 03:01:19PM +0100, Lee Jones wrote:
-> On Tue, 20 Aug 2024, Dmitry Rokosov wrote:
+On Tue, Sep 03, 2024 at 04:30:00PM +0200, Andi Shyti wrote:
+> Hi Andy,
 > 
-> > This allows to setup ordered workqueue for leds events. This may be
-> > useful, because default 'system_wq' does not guarantee execution order
-> > of each work_struct, thus for several brightness update requests (for
-> > multiple leds), real brightness switch could be in random order.
-> > 
-> > Yes, for sysfs-based leds we have flush_work() call inside
-> > brightness_store() operation, but it's blocking call, so userspace
-> > caller can be blocked at a long time, which means leds animation stream
-> > can be broken.
-> > 
-> > Ordered workqueue has the same behaviour as system_wq + flush_work(),
-> > but all scheduled works are async and userspace caller is not blocked,
-> > which it better for userspace animation scheduling.
-> > 
-> > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > ---
-> >  drivers/leds/led-class.c | 12 +++++++++++-
-> >  drivers/leds/led-core.c  |  6 +++---
-> >  include/linux/leds.h     |  1 +
-> >  3 files changed, 15 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index ba1be15cfd8e..fba12471cf1f 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -25,6 +25,8 @@
-> >  static DEFINE_MUTEX(leds_lookup_lock);
-> >  static LIST_HEAD(leds_lookup_list);
-> >  
-> > +static struct workqueue_struct *leds_wq;
+> On Tue, Aug 27, 2024 at 06:00:37PM GMT, Andy Shevchenko wrote:
+> > We have the same (*) PM ops in the PCI and plaform drivers.
 > 
-> Does this _have_ to be global?
+> /plaform/platform/
 > 
+> with this change I pushed it to i2c/i2c-host.
 
-Unfortunately, yes, it has. Each LED described in the DTS, for example,
-is represented as led_cdev. We do not have a led_device or a similar
-structure to represent the entire LED device (the controller that
-integrates all LEDs and manages them).
-
-One option is to move leds_wq to the driver’s private data. However,
-from my perspective, this is a more complicated solution, especially
-considering that we have the ability to create a global leds_wq variable
-in the core implementation, which can resolve the described issue
-entirely.
-
-> Isn't there a suitable data structure that we can store it in?
-> 
-
-> >  static ssize_t brightness_show(struct device *dev,
-> >  		struct device_attribute *attr, char *buf)
-> >  {
-> > @@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
-> >  	if (state == LED_OFF)
-> >  		led_trigger_remove(led_cdev);
-> >  	led_set_brightness(led_cdev, state);
-> > -	flush_work(&led_cdev->set_brightness_work);
-> >  
-> >  	ret = size;
-> >  unlock:
-> > @@ -549,6 +550,8 @@ int led_classdev_register_ext(struct device *parent,
-> >  
-> >  	led_update_brightness(led_cdev);
-> >  
-> > +	led_cdev->wq = leds_wq;
-> > +
-> >  	led_init_core(led_cdev);
-> >  
-> >  #ifdef CONFIG_LEDS_TRIGGERS
-> > @@ -667,12 +670,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
-> >  
-> >  static int __init leds_init(void)
-> >  {
-> > +	leds_wq = alloc_ordered_workqueue("leds", 0);
-> > +	if (!leds_wq) {
-> > +		pr_err("failed to create leds ordered workqueue\n");
-> 
-> Nit: "LEDs"
-> 
-
-Okay, I will send v2 patch today with fixed this line.
-
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> >  	return class_register(&leds_class);
-> >  }
-> >  
-> >  static void __exit leds_exit(void)
-> >  {
-> >  	class_unregister(&leds_class);
-> > +	destroy_workqueue(leds_wq);
-> >  }
-> >  
-> >  subsys_initcall(leds_init);
-> > diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> > index 89c9806cc97f..9769ac49be20 100644
-> > --- a/drivers/leds/led-core.c
-> > +++ b/drivers/leds/led-core.c
-> > @@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
-> >  		led_cdev->delayed_delay_on = delay_on;
-> >  		led_cdev->delayed_delay_off = delay_off;
-> >  		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
-> > -		schedule_work(&led_cdev->set_brightness_work);
-> > +		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> >  		return;
-> >  	}
-> >  
-> > @@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
-> >  		 */
-> >  		if (!brightness) {
-> >  			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
-> > -			schedule_work(&led_cdev->set_brightness_work);
-> > +			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> >  		} else {
-> >  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-> >  				&led_cdev->work_flags);
-> > @@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
-> >  		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
-> >  	}
-> >  
-> > -	schedule_work(&led_cdev->set_brightness_work);
-> > +	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> >  }
-> >  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
-> >  
-> > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> > index 6300313c46b7..7c9f1cb12ab9 100644
-> > --- a/include/linux/leds.h
-> > +++ b/include/linux/leds.h
-> > @@ -169,6 +169,7 @@ struct led_classdev {
-> >  	int			 new_blink_brightness;
-> >  	void			(*flash_resume)(struct led_classdev *led_cdev);
-> >  
-> > +	struct workqueue_struct *wq; /* LED workqueue */
-> >  	struct work_struct	set_brightness_work;
-> >  	int			delayed_set_value;
-> >  	unsigned long		delayed_delay_on;
-> > -- 
-> > 2.43.0
-> > 
-> > 
-> 
-> -- 
-> Lee Jones [李琼斯]
+Ah, thanks!
 
 -- 
-Thank you,
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
