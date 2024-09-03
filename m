@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-313631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B200E96A7DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:55:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E724696A7DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E4B1F24EFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:55:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 828ECB214D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EA618C33F;
-	Tue,  3 Sep 2024 19:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D391DC72B;
+	Tue,  3 Sep 2024 19:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="i+OQCvT4"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nICfBoUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB2F1DC72B;
-	Tue,  3 Sep 2024 19:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311A61DC73C;
+	Tue,  3 Sep 2024 19:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725393295; cv=none; b=ukFWw8jxvl/vdTQ2alsnbKb5W7nkYzZp47dEU8arsizOAEUQQxZwcvBDN2XfphGFqk1PxjrdP4dKXp/TRgOty6WV0gOTbJukQ414hSonSk0a2PAqV0CclRmMaH2JQIBM0o16caOiwfas5lJRCWPur6kTT31ub8Sm1D/VE7IsgIs=
+	t=1725393311; cv=none; b=D80gaufIlK5MFvZtiCroi2koaherJMqNC9BtJch8ZYy2kV11lfqfbn4gsBvaOdl5goYBXTG9u6Aq5xTx3EWSL0os1ewdGJelfqzhsvpywKql7wR77esCy85MFj4y38cLyegJJFxsj2+yGXPM3Nuo33J2uXMvsH2BWv9rvd58uz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725393295; c=relaxed/simple;
-	bh=o/GJaAVkSA8f3QuX5wMU9hS1tu9wfBuKuqb6nYVaorQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Axq1dOO1I+fXciSmbTpRk+Ut4Bho3zKGK/Li42WVM5Uxgqa9TB1rffbPl439vuXmbuCkTY6GOSf1wKv5P7V8PRrIwq4hXOXfyXcDiTHmzFMg0AbkCOvhl2B44OBWM4uBHXZNjE6tUiTgBjk8eCFNOPOGiEwd9hdhemr3IvW38LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=i+OQCvT4; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NVOmpJl/gZismI+LmmkZDr9Gv4PayKu29ypL/jEIbfw=; b=i+OQCvT4DpnvJsihUVd1DDDMUd
-	Lv8HEJIc7oJ7p6aAKQFUcpqE/3H9jSGcGE5liRjWnG8QaGKLILHL3dwEzhUJZT1UrIBE1SAfp6mdg
-	n/4psBKHymnj3Snet9RkDbzRRrkNErFJRVT9vH0+wTQ+iMzEte5ez3RPt0QQCF0XfGvA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1slZbl-006T0I-8g; Tue, 03 Sep 2024 21:54:33 +0200
-Date: Tue, 3 Sep 2024 21:54:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, corbet@lwn.net,
-	linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, horatiu.vultur@microchip.com,
-	ruanjinjie@huawei.com, steen.hegelund@microchip.com,
-	vladimir.oltean@nxp.com, masahiroy@kernel.org,
-	alexanderduyck@fb.com, krzk+dt@kernel.org, robh@kernel.org,
-	rdunlap@infradead.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
-	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
-	linux@bigler.io, markku.vorne@kempower.com
-Subject: Re: [PATCH net-next v7 13/14] microchip: lan865x: add driver support
- for Microchip's LAN865X MAC-PHY
-Message-ID: <00607dcd-fabc-45f5-b199-5c880c94b65b@lunn.ch>
-References: <20240903104705.378684-1-Parthiban.Veerasooran@microchip.com>
- <20240903104705.378684-14-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1725393311; c=relaxed/simple;
+	bh=LmjZ5WVu9+gaNJJ9kk1RITONyd5+Jfpn3l706IYYomc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=su0xs0XhrIi55Vk6YqUq2uMcFHgpv1PnKqV1dhu9iEyw0wT3J6tBP70yg6LBGOBPRmu2C2feKScrjpcjawCdc99iPZa8PdfkEqtQDTcqBArL1oKFKbqySl3SF2wF6ARTAJkp9CzDLe8XdxBeklvvXRT0uZF3T8WHZmLjrvcBxx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nICfBoUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8D2C4CEC4;
+	Tue,  3 Sep 2024 19:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725393309;
+	bh=LmjZ5WVu9+gaNJJ9kk1RITONyd5+Jfpn3l706IYYomc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nICfBoUwhj1gTPS0bR4mOpR/rlmg7s+sLyJiKGgQlLYWy+KFvby5uRK+QFuzYZiZz
+	 W9Oqu8142ENn3iQjdLH/atJzAcEvSOHfmZpYcB1xurir0inDOleoTzdeW/H1oA0jTe
+	 gvxjZ9tYljgvFKic+1lzTWbieBS8pjhz2+WNGqvToTEjKVG6sMkn35McbE7K/T9796
+	 vKd+Hr77VF2baztVvEWa8HP61MUnXVTdN1t99Qd+18FbSq1HgeNQ9lT4tuLBiJn9Qy
+	 Tke+a62gVkHqLHRFZTJQI13JR7YSSTmwcTx4mr1q6skYxwlYfs+RmPVL43/SFlAMdb
+	 JG+65j0geFPwg==
+Message-ID: <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903104705.378684-14-Parthiban.Veerasooran@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+References: <20240828171722.1251587-1-swboyd@chromium.org> <20240828171722.1251587-2-swboyd@chromium.org> <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org> <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com> <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com> <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks at init
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, patches@lists.linux.dev, linux-clk@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+To: Johan Hovold <johan@kernel.org>
+Date: Tue, 03 Sep 2024 12:55:07 -0700
+User-Agent: alot/0.10
 
-On Tue, Sep 03, 2024 at 04:17:04PM +0530, Parthiban Veerasooran wrote:
-> The LAN8650/1 is designed to conform to the OPEN Alliance 10BASE-T1x
-> MAC-PHY Serial Interface specification, Version 1.1. The IEEE Clause 4
-> MAC integration provides the low pin count standard SPI interface to any
-> microcontroller therefore providing Ethernet functionality without
-> requiring MAC integration within the microcontroller. The LAN8650/1
-> operates as an SPI client supporting SCLK clock rates up to a maximum of
-> 25 MHz. This SPI interface supports the transfer of both data (Ethernet
-> frames) and control (register access).
-> 
-> By default, the chunk data payload is 64 bytes in size. The Ethernet
-> Media Access Controller (MAC) module implements a 10 Mbps half duplex
-> Ethernet MAC, compatible with the IEEE 802.3 standard. 10BASE-T1S
-> physical layer transceiver integrated is into the LAN8650/1. The PHY and
-> MAC are connected via an internal Media Independent Interface (MII).
-> 
-> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Quoting Johan Hovold (2024-09-02 00:15:53)
+> On Fri, Aug 30, 2024 at 03:29:22PM -0700, Stephen Boyd wrote:
+> > Quoting Stephen Boyd (2024-08-29 09:34:05)
+>=20
+> > > It sounds like it's better to make the default always park at
+> > > registration time and special case the one or two places where that
+> > > isn't possible, i.e. USB because it has special rate requirements. So=
+ I
+> > > should just go back to v1 then and pile on the QUP patches.
+> >=20
+> > I've done this now and I'll push out clk-fixes with the QUP patches.
+>=20
+> I assumed you'd fix up all the other SoCs affected by this, but I only
+> saw fixes for sm8550, sm8650 and x1e80100 in your fixes branch.
+>=20
+> Just sent a corresponding fix for sc8280xp, which I've confirmed also
+> needs this for QUP:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Thanks!
 
-    Andrew
+>=20
+>         https://lore.kernel.org/lkml/20240902070830.8535-1-johan+linaro@k=
+ernel.org/
+>=20
+> But what about the sm8550 USB issue? Don't the other platforms also need
+> a corresponding fix (e.g. for when booting from USB)?
+
+I don't know. Are you seeing USB host issues on other platforms with
+shared RCG clk_ops for the USB clk? It looks inconsistent that sometimes
+there's a USB GDSC but the shared clk ops aren't used. If nothing is
+broken then let's work on the proper fix, which is parking RCGs when the
+GDSC is turned off so that turning on the GDSC always works. If USB is
+broken for you then send another patch.
 
