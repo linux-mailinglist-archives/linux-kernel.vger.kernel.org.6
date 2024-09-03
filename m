@@ -1,212 +1,129 @@
-Return-Path: <linux-kernel+bounces-313660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74E596A84D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:27:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5258D96A84E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957352858AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DA21F23E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720C1D048C;
-	Tue,  3 Sep 2024 20:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766901D54ED;
+	Tue,  3 Sep 2024 20:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="ZCSHzAWj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a62e+wYH"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3220D1D58BF;
-	Tue,  3 Sep 2024 20:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725395184; cv=pass; b=QcWXT3TeRjr3MB34EY0d+FP5ptagIX9QUv7WQ93+NCc20MMMjCMtvNyGHEKzu1si+I4Ppwy5sWpub17UG6R1g0fQUloMCPPzHg06q0evtrScfAP/0NAVv+PTJQzPr0ybXdwP5TJw30QiMqjjFrhuBBzCSkEJQr2ZQOiiMFxdbIM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725395184; c=relaxed/simple;
-	bh=YdZ2DdOrTJDFkr8c/oJaKgykzTFrzwcLpFaAYmSUZzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AbQWpLzOr1ByqPf3HXz19IhCw9geR6EfMtTmpzLwpNxzQN8zLea/Sqt3lFdLJc4akiHbdmUNdOAg/KASYSLHursxD3GIq88FJM4X2uYCf5nITckKRcv8mPHopdoYyIEYVHWt0dkK7sbjTxtEUgQEqCAUjYcDITLRVCftKwu6ea8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=ZCSHzAWj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: boris.brezillon@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725395166; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=m1K9UV8esZGKz0vKWVafBmGl2luqEoWELrJEGlqEudisxAfCH4vOvdtheEy58ruAmfhQ9t4qIv4LV+r4qV/3cjlXoz7ZHcaE8Gk/wlnu0sdALgjnyy+IpVSVNT3y7f792h36eUvL5tBJ1CfbCGb/3di4rByLqJ2IA8FEMyNqGBM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725395166; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=S4H1TvHBmLqicNFvkbMgMBC/nubwCjLcKnTiqllabKQ=; 
-	b=cLTr9OeDdr6uhrQkIHj3hoyJ5JtuwJkQsJZGDekRPEGA5t3HTDGMtRcUdNLCuExCfMaDL58NC/03Ry7hA0aqsxm86O7wuWKdwos+Eh15hr6QN1wBYItnBOqLVc/sxSrlX3QlUQPbLcJeXWIZYznwEXNgSMRDHFJxvWNoVSwEHsk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725395166;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=S4H1TvHBmLqicNFvkbMgMBC/nubwCjLcKnTiqllabKQ=;
-	b=ZCSHzAWjzS1zMDIDhRxAxElB6sd+6LtjInAURASYoWEvzgyjqXmYm32dFq+47zy0
-	KJyORlmIxNCxzcHrW5ODBjmr1vmNrKy7TL2gtiep/GrY9aoycwadfDqitoLHXE/9+4E
-	UdJStkweJy9MO6mJBXlcMpETdrl+GzecaBNoGCY8=
-Received: by mx.zohomail.com with SMTPS id 1725395165743108.55172235697557;
-	Tue, 3 Sep 2024 13:26:05 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: [PATCH v5 4/4] drm/panthor: add sysfs knob for enabling job profiling
-Date: Tue,  3 Sep 2024 21:25:38 +0100
-Message-ID: <20240903202541.430225-5-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240903202541.430225-1-adrian.larumbe@collabora.com>
-References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888841C62CF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725395212; cv=none; b=W34VJ/HZTcgyK16NG3ZE2dEQgZXZl6GZoixY3xmpSDxbzeBg4IVR7/2eZmO8Z5/99mhdkuaab4lxPLY4Jvjn6vNUyEwIsek72k2H82xEmd1Mr8o5HZJD+Cq0A6qpNS9lgvJ4v1rmaeyQfAsFBJpzvKXZ9c7kAsgSwxnl27wfHLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725395212; c=relaxed/simple;
+	bh=FAbvctyXmBfHcAZGqMzzReeqED9AEbWCcpVs4u2wjrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oq1dQyZ0X75WUVZSZwza9napGrq39qJ3U7O2gvoKJrzYh9RSWptywpApGJQS0MjHSBEUtXKjk0a63pSICdw9yWa4YCy30zIHWkO0O3xjvNZ9WsCAO6d2cf9r6L4tQLqwsQjXKoIjvAfTCAK12Fn2VbWdCEvP0BB20In7MMqv71A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a62e+wYH; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20546b8e754so9615ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 13:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725395211; x=1726000011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hn9q192qt3f9I/JNUW5WfgcLIfdvUW9LVehziz5b0yI=;
+        b=a62e+wYHHrgbetdlnD/7wcsgbHrAmjjQSMRluX0BY0ZmoRl+vLLyTlKt1eUbrvNNVq
+         LO/pmTI5ntjW90XNJwr3u6Zk5xqOeGEFIpLxO35AwgnG5FcDM56VJcNSNRA4h9J/Kaj7
+         7P2C8pOTQM6PZZvlSV70JGBYlI5vxIhOYj4O8BciyrG/16uTdcizfmlEKcnbpxFXAoOh
+         j2BzRlQTqinQIDi/8HSdvyCCuzDkcwPBrG+XhbXbdoBub2FARaJ6HMzpx31ILAIzuPME
+         NuxdgY7QmNmq1n3et0mQ92YA8TTx9HTpa/l14vJrDG1Nm2fD+FGCZUlfCFH6ToqHX5FJ
+         QGBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725395211; x=1726000011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hn9q192qt3f9I/JNUW5WfgcLIfdvUW9LVehziz5b0yI=;
+        b=c58xcqAaUWJ7ZCTeJyTq5uuxwALhKYdN+rPQwnRvHVVcNHMxZQTeA7Ra8r4MqU+EMY
+         FvhPpvu4ENYkilGW1ENMyTM+ilK04JmTvtzzTwSDYqyKePTEVgTTexrrbZIMbAbFrEEm
+         lzOP05yqoynx8uKVIKugLvX0MDqu4XDENNuNG2of924fLR40m/tbKkmDY9WHt4KQkfkr
+         6UL5XkB2OI5kTjmwe0PI4J/B14T2asdD9vRg1uBxSMTV1XygyZ5JwymqvjAFbuOpX//D
+         2gT2dD3WivHWedntKW8yBvPT/fUMUOKQn3cr44XaUOffD7PnQmA7S41YvkWkLR3SxHxy
+         kgWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9uoy2XOvJoK08JryhZ5rMIP9/SIdHAL55eUBPlcdqg6xbIyiYWeVC70EGDKkY2DqUnG6ENZuaNxbpKv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3rGkA/N71ExX4EerTMdII6dAGiYXuFDwe04B+Ikcy5zvopR6b
+	QSKd8afYICo3vgDyjrxkncL/4jkT/y0zzV5AzE1NRcUyyPIgEkHbhYFcIoq40hdk9rz2oTbPoaF
+	7Ew==
+X-Google-Smtp-Source: AGHT+IGEpC7n9bw1anipjHhk+pckubl7cjfnvUTvpjr8Gnqnk6n6BjEyH86EvPY7d1h/Za0isVPpxQ==
+X-Received: by 2002:a17:902:e88e:b0:206:9b0f:48f3 with SMTP id d9443c01a7336-206b58bf5cemr35535ad.19.1725395210553;
+        Tue, 03 Sep 2024 13:26:50 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd92473sm295280a12.48.2024.09.03.13.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 13:26:49 -0700 (PDT)
+Date: Tue, 3 Sep 2024 13:26:46 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] KVM: x86/mmu: Track TDP MMU NX huge pages
+ separately
+Message-ID: <20240903202646.GA423248.vipinsh@google.com>
+References: <20240829191135.2041489-1-vipinsh@google.com>
+ <20240829191135.2041489-2-vipinsh@google.com>
+ <ZtDXQ6oeQrb8LxkX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtDXQ6oeQrb8LxkX@google.com>
 
-This commit introduces a DRM device sysfs attribute that lets UM control
-the job accounting status in the device. The knob variable had been brought
-in as part of a previous commit, but now we're able to fix it manually.
-
-As sysfs files are part of a driver's uAPI, describe its legitimate input
-values and output format in a documentation file.
-
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- Documentation/gpu/panthor.rst         | 46 +++++++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_drv.c | 39 +++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
- create mode 100644 Documentation/gpu/panthor.rst
-
-diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
-new file mode 100644
-index 000000000000..cbf5c4429a2d
---- /dev/null
-+++ b/Documentation/gpu/panthor.rst
-@@ -0,0 +1,46 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+
-+=========================
-+ drm/Panthor CSF driver
-+=========================
-+
-+.. _panfrost-usage-stats:
-+
-+Panthor DRM client usage stats implementation
-+==============================================
-+
-+The drm/Panthor driver implements the DRM client usage stats specification as
-+documented in :ref:`drm-client-usage-stats`.
-+
-+Example of the output showing the implemented key value pairs and entirety of
-+the currently possible format options:
-+
-+::
-+     pos:    0
-+     flags:  02400002
-+     mnt_id: 29
-+     ino:    491
-+     drm-driver:     panthor
-+     drm-client-id:  10
-+     drm-engine-panthor:     111110952750 ns
-+     drm-cycles-panthor:     94439687187
-+     drm-maxfreq-panthor:    1000000000 Hz
-+     drm-curfreq-panthor:    1000000000 Hz
-+     drm-total-memory:       16480 KiB
-+     drm-shared-memory:      0
-+     drm-active-memory:      16200 KiB
-+     drm-resident-memory:    16480 KiB
-+     drm-purgeable-memory:   0
-+
-+Possible `drm-engine-` key names are: `panthor`.
-+`drm-curfreq-` values convey the current operating frequency for that engine.
-+
-+Users must bear in mind that engine and cycle sampling are disabled by default,
-+because of power saving concerns. `fdinfo` users and benchmark applications which
-+query the fdinfo file must make sure to toggle the job profiling status of the
-+driver by writing into the appropriate sysfs node::
-+
-+    echo <N> > /sys/bus/platform/drivers/panthor/[a-f0-9]*.gpu/profiling
-+
-+Where `N` is a bit mask where cycle and timestamp sampling are respectively
-+enabled by the first and second bits.
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index e18838754963..26475db96c41 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1450,6 +1450,44 @@ static void panthor_remove(struct platform_device *pdev)
- 	panthor_device_unplug(ptdev);
- }
- 
-+static ssize_t profiling_show(struct device *dev,
-+			      struct device_attribute *attr,
-+			      char *buf)
-+{
-+	struct panthor_device *ptdev = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%d\n", ptdev->profile_mask);
-+}
-+
-+static ssize_t profiling_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t len)
-+{
-+	struct panthor_device *ptdev = dev_get_drvdata(dev);
-+	u32 value;
-+	int err;
-+
-+	err = kstrtou32(buf, 0, &value);
-+	if (err)
-+		return err;
-+
-+	if ((value & ~PANTHOR_DEVICE_PROFILING_ALL) != 0)
-+		return -EINVAL;
-+
-+	ptdev->profile_mask = value;
-+
-+	return len;
-+}
-+
-+static DEVICE_ATTR_RW(profiling);
-+
-+static struct attribute *panthor_attrs[] = {
-+	&dev_attr_profiling.attr,
-+	NULL,
-+};
-+
-+ATTRIBUTE_GROUPS(panthor);
-+
- static const struct of_device_id dt_match[] = {
- 	{ .compatible = "rockchip,rk3588-mali" },
- 	{ .compatible = "arm,mali-valhall-csf" },
-@@ -1469,6 +1507,7 @@ static struct platform_driver panthor_driver = {
- 		.name = "panthor",
- 		.pm = pm_ptr(&panthor_pm_ops),
- 		.of_match_table = dt_match,
-+		.dev_groups = panthor_groups,
- 	},
- };
- 
--- 
-2.46.0
-
+On 2024-08-29 13:18:27, Sean Christopherson wrote:
+> On Thu, Aug 29, 2024, Vipin Sharma wrote:
+> > @@ -871,8 +871,17 @@ void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp)
+> >  		return;
+> >  
+> >  	++kvm->stat.nx_lpage_splits;
+> > -	list_add_tail(&sp->possible_nx_huge_page_link,
+> > -		      &kvm->arch.possible_nx_huge_pages);
+> > +	if (is_tdp_mmu_page(sp)) {
+> > +#ifdef CONFIG_X86_64
+> > +		++kvm->arch.tdp_mmu_possible_nx_huge_pages_count;
+> > +		list_add_tail(&sp->possible_nx_huge_page_link,
+> > +			      &kvm->arch.tdp_mmu_possible_nx_huge_pages);
+> > +#endif
+> 
+> Pass in the count+list, that way there's no #ifdef and no weird questions for
+> what happens if the impossible happens (is_tdp_mmu_page() on 32-bit KVM).
+> 
+> void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp,
+> 				 u64 *nr_pages, struct list_head *pages)
+> {
+> 	/*
+> 	 * If it's possible to replace the shadow page with an NX huge page,
+> 	 * i.e. if the shadow page is the only thing currently preventing KVM
+> 	 * from using a huge page, add the shadow page to the list of "to be
+> 	 * zapped for NX recovery" pages.  Note, the shadow page can already be
+> 	 * on the list if KVM is reusing an existing shadow page, i.e. if KVM
+> 	 * links a shadow page at multiple points.
+> 	 */
+> 	if (!list_empty(&sp->possible_nx_huge_page_link))
+> 		return;
+> 
+> 	++kvm->stat.nx_lpage_splits;
+> 	++(*nr_pages);
+> 	list_add_tail(&sp->possible_nx_huge_page_link, pages);
+> }
+> 
+Sounds good, I was not sure if passing pointers and incrementing count
+via pointer will be accepted.
 
