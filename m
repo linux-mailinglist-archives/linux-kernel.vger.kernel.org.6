@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-313776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56B96A99B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2876F96A764
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D9691C2463F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28DC1F24129
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA881EC00A;
-	Tue,  3 Sep 2024 20:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488641422A2;
+	Tue,  3 Sep 2024 19:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uB3e1+81"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NQyi+wO+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84AF1EBFEF;
-	Tue,  3 Sep 2024 20:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74A01D7E2B;
+	Tue,  3 Sep 2024 19:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725396548; cv=none; b=UQyx9Yt2aggJs/tS92Q7rmJ3c3yQ0Nw7S9l0y7zI10cDsSlW9nvcdKnDTy7xuK7TAYk9o3d2E3LjAOgObFfl0pGw6o0VKdIBX7JkWrS5iRG1O9VXDIGBgTl2Qw11WYRQ40VaSHmX2wO0oOnJBAO7AuRxOH4sKWh4NN44GJuvR90=
+	t=1725391906; cv=none; b=Pg7cnrKpmb2P+FY/jpJjFQb8hhvkBWipoxeQEt1hhrFpUXFlxTxuHTkPCqIcmGUFgx6zYqUBI6jaZ5f5LCfXjIpOvGzggdzb9334JlHQpOgIA0+hBXPuJWwd1PWtSwASwODzYRNiks0BDRUke0uuoCh2xqkxCDBL66nVR1m/UWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725396548; c=relaxed/simple;
-	bh=koPg4FsuJLXLOj/LyBsLg9vfenIvI4R3R2Piew6V4Cw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D9UdlYSC7zZiqO3/ANfCzVBG4/w1Fi0wdrSCKX86F8EtNwB51epfF/ZEibsIxBZ1h69JWohu7q/TVvmPEXZ8FztVrOSURUlNnqnKPSg3bF6hKZLmz56CMUKUjqFl6QS1bPk/R1qUoQMMMpcHcnTNY8v125pDDN8TGEmiluNbEYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uB3e1+81; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB3CC4CEC5;
-	Tue,  3 Sep 2024 20:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725396547;
-	bh=koPg4FsuJLXLOj/LyBsLg9vfenIvI4R3R2Piew6V4Cw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uB3e1+81Yb1alysHIbSSBoPf50Q4dXGhJ3dWYHdItn/Z0IAw+TtoIPavfMWfnyro8
-	 4xfWq9IulpIAkNqIx4C3k/6klkuNT5jqolRDAwiWWKeVJF3fnPtRMCAF8P4M+K0wbD
-	 yfb6lwloBW3o8rjpuYn5dRtWhcj1Xzs1MA244YuV1CE957+X2q1PSYNbpvOlvYw4xO
-	 dOXtUexNzwHMXkyuBUJg+gPB6MQP+Er1nmh8e3lIBoNvz51bqyipBZLDmJ7qH2DK/V
-	 gKDGd3iDwfWdljyvyq9V5JCHitVDWhpl91w6sq4PaRHy7m8uJ3lHNi9iWWJVp5xVAf
-	 QdKvt26nI0ZKA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kvalo@kernel.org,
-	gregory.greenman@intel.com,
-	ilan.peer@intel.com,
-	shaul.triebitz@intel.com,
-	benjamin.berg@intel.com,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 6/6] wifi: iwlwifi: mvm: don't wait for tx queues if firmware is dead
-Date: Tue,  3 Sep 2024 15:29:26 -0400
-Message-ID: <20240903192937.1109185-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903192937.1109185-1-sashal@kernel.org>
-References: <20240903192937.1109185-1-sashal@kernel.org>
+	s=arc-20240116; t=1725391906; c=relaxed/simple;
+	bh=8NVlSAhPbLS9tVw+K1ap2578F27xZpLzZhH4qSnlQE8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=tRha/xIznGX+WSHC48Bb05TN9WwZOtY/fPoDXCa06qSbsSoizoqX7FpyEx+LzhH62CwtZemliHLBSJRi4VRdl4PO8kbiGSplZKHhdZg28Lt2fX+dprpZEgA4jhkcYO2viUeR3WdxnDBYIm1Ut9S7dxQi8LK+gDcMWl9vIMAkX5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NQyi+wO+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483JN5wP030261;
+	Tue, 3 Sep 2024 19:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:content-type:mime-version; s=pp1; bh=hjwvO+rPhIvu2QQRDyOzFD6wT+
+	0RGvlT2tXAAMKBb2I=; b=NQyi+wO+UJdpi9+i+wdL5qcZ3bj3KaoAUuDgPjAt4+
+	m1qm63S0spLBmOhqLXWmpkEmlXG/WKSlXqJ74/ELNKoCpNitZL099Eo/q01k0aCy
+	1qSKLJWqgW+6AxBAnD1fhDGDKiTgM15WXC0PsTEWiMlRXNxh0ieB/6PoUXLEY7l+
+	Ub1V4Nkp7gFchmB640KOaXIAfI1oOHCYdMXxF+KwJGqMNoP0A3YCrw+wXSaYpDcH
+	dYBabQ2czIgWhR2wpmhCk3KRCmfoDqMEhUH2/nv/ZVVPOszAjqjPQYGExytjZJCY
+	1tlwLDPplrTB9kAAVuxSbTIQUsfLJ2QJ4y70ZuTAi+aQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btuwygkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 19:31:19 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 483JVJ3n015116;
+	Tue, 3 Sep 2024 19:31:19 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btuwygkp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 19:31:19 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 483H4nbC009151;
+	Tue, 3 Sep 2024 19:31:18 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41cg73kyk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 19:31:17 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 483JVGWK59441558
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Sep 2024 19:31:16 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FDCA20043;
+	Tue,  3 Sep 2024 19:31:16 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 198C020040;
+	Tue,  3 Sep 2024 19:31:16 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  3 Sep 2024 19:31:16 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho
+ de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
+In-Reply-To: <CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
+	(Linus Torvalds's message of "Tue, 3 Sep 2024 12:12:34 -0700")
+References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
+	<20240903073629.2442754-1-svens@linux.ibm.com>
+	<20240903090843.GA17936@redhat.com>
+	<CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
+Date: Tue, 03 Sep 2024 21:31:15 +0200
+Message-ID: <yt9d7cbso7p8.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: oHyLFMB79jshGnAwcS6io3lm6FwAGjP5
+X-Proofpoint-ORIG-GUID: uEDhFTZ9rOsVYy_LgtFzxa7rv1kNgqfA
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.320
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ mlxlogscore=651 mlxscore=0 priorityscore=1501 adultscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030149
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Hi Linus,
 
-[ Upstream commit 3a84454f5204718ca5b4ad2c1f0bf2031e2403d1 ]
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-There is a WARNING in iwl_trans_wait_tx_queues_empty() (that was
-recently converted from just a message), that can be hit if we
-wait for TX queues to become empty after firmware died. Clearly,
-we can't expect anything from the firmware after it's declared dead.
+> On Tue, 3 Sept 2024 at 02:09, Oleg Nesterov <oleg@redhat.com> wrote:
+>>
+>> but with or without this fix __create_xol_area() also needs
+>>
+>>         area->xol_mapping.mremap = NULL;
+>
+> I think the whole thing needs to be zeroed out.
+>
+> It was always horribly buggy. The close thing just made it more
+> *obviously* buggy, because closing a vma is a lot more common than
+> mremap'ing it.
+>
+> Either use kzalloc(), or do a proper initializer something like this:
 
-Don't call iwl_trans_wait_tx_queues_empty() in this case. While it could
-be a good idea to stop the flow earlier, the flush functions do some
-maintenance work that is not related to the firmware, so keep that part
-of the code running even when the firmware is not running.
+I sent a patch which does this today:
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Link: https://patch.msgid.link/20240825191257.a7cbd794cee9.I44a739fbd4ffcc46b83844dd1c7b2eb0c7b270f6@changeid
-[edit commit message]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index 3f37fb64e71c2..3c00a737c4b34 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -4326,6 +4326,10 @@ static void iwl_mvm_flush_no_vif(struct iwl_mvm *mvm, u32 queues, bool drop)
- 	int i;
- 
- 	if (!iwl_mvm_has_new_tx_api(mvm)) {
-+		/* we can't ask the firmware anything if it is dead */
-+		if (test_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
-+			     &mvm->status))
-+			return;
- 		if (drop) {
- 			mutex_lock(&mvm->mutex);
- 			iwl_mvm_flush_tx_path(mvm,
-@@ -4407,8 +4411,11 @@ static void iwl_mvm_mac_flush(struct ieee80211_hw *hw,
- 
- 	/* this can take a while, and we may need/want other operations
- 	 * to succeed while doing this, so do it without the mutex held
-+	 * If the firmware is dead, this can't work...
- 	 */
--	if (!drop && !iwl_mvm_has_new_tx_api(mvm))
-+	if (!drop && !iwl_mvm_has_new_tx_api(mvm) &&
-+	    !test_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
-+		      &mvm->status))
- 		iwl_trans_wait_tx_queues_empty(mvm->trans, msk);
- }
- 
--- 
-2.43.0
-
+https://lore.kernel.org/all/20240903102313.3402529-1-svens@linux.ibm.com/
 
