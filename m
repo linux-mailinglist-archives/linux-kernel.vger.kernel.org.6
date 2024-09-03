@@ -1,192 +1,197 @@
-Return-Path: <linux-kernel+bounces-312673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A35796999E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741489699A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3D7EB22BFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980CB1C22B51
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717F01AD252;
-	Tue,  3 Sep 2024 09:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB31AD244;
+	Tue,  3 Sep 2024 09:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B+1bPYE1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="lE3D3Zny"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8719F42D;
-	Tue,  3 Sep 2024 09:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D651A2656;
+	Tue,  3 Sep 2024 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357437; cv=none; b=EsP46DEzbAfRMYExtq7tqCWKE1yABEo7duskpoaNyg34QjU0yHCL/n3z99PlyyAwj5x/EjrLnJWxii1Y4U36uKXMIUW2+FT1EMKLN+dJSn1kHFitDp6ALB+8ULhFjmNdgX6U8NvsTxVg9xHOuuZ9KAwypFb+r8zq/clKwEdK8dM=
+	t=1725357469; cv=none; b=M1ZUDOjuL1Qc8es1CQY6bUi3spQQ1EvGfz5l0HNxZ5sPYdnPhYs1DJR8ZXc3040C/foscfBy52O7EoW+VgimD3BGsqUJmctUwEKXqiy7EoVym8qYPs5K7pRBkehJwehR9rdxDXibDflPgIU+93RfwTX6eqluHOMbF8/fKG0TOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357437; c=relaxed/simple;
-	bh=Dhc0Rno5dkN4+bMHEdlsFwHGveAX8+TOxrWJYyeLK5Q=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HyQuuPOAoLwlbCTp7gGoz7LqfivK/600OlW5YQydRh3coPT85cdJTqwzi4XDRwvxkQnOdrLwaBIbpQJmC0aGy37nPrtQpCDELlFJD8HUu+XB4+WeH24nFyTuTDDBm8akcc52d+JVlbOjbVtyYk6yjXyCyofyM8jckJDyH7VJdWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B+1bPYE1; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725357437; x=1756893437;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Dhc0Rno5dkN4+bMHEdlsFwHGveAX8+TOxrWJYyeLK5Q=;
-  b=B+1bPYE1qFd8EENOUvNB0XsKP1quSZJA+mU/XrJr7A1HAdKwU8Xf5fsg
-   FXaB1XTkNObW8KLzTWaThCWKcFU5Yr/yPUQTBBvYMjzu2x0saumzvjK+G
-   Tc5fxuwduwFh2DaVqEGrCQc0/rN9mWFfb0Cjdfw+BIfJpu1XLyP9EA6Yd
-   2bC6jyx20ZUYfOhUFy6/AbwjoFnAquJb+qh88nvT4FCcLg/2yUqUckBBX
-   8fITMoY8sz6nhaSm7zhGO1ud5duUilaXih4b5jt6mlwtcrSPHzpUpStQx
-   mkh9iOdMSm9aIjFjQTcGXO4bzFdn28VU4GsocyJ+coLMSNccSuIclu393
-   A==;
-X-CSE-ConnectionGUID: B96ikU3wQLy0O58A5EZtOQ==
-X-CSE-MsgGUID: tKSi+rQfRASL2YOBqEO4Eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="24061258"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="24061258"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:57:16 -0700
-X-CSE-ConnectionGUID: 30JnPS4CQx6Kp89jb109Bg==
-X-CSE-MsgGUID: pkzHifvrR1WlwrR3jl2OLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="95654556"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.241])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:57:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 3 Sep 2024 12:57:08 +0300 (EEST)
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-    Shuah Khan <shuah@kernel.org>
-cc: Reinette Chatre <reinette.chatre@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
-    Fenghua Yu <fenghua.yu@intel.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>
-Subject: Re: [PATCH v3 3/3] kselftest: Provide __cpuid_count() stub on non-x86
- archs
-In-Reply-To: <20240829131657.1917-4-ilpo.jarvinen@linux.intel.com>
-Message-ID: <474fb657-15a8-3fb1-c769-2269f772d8cd@linux.intel.com>
-References: <20240829131657.1917-1-ilpo.jarvinen@linux.intel.com> <20240829131657.1917-4-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1725357469; c=relaxed/simple;
+	bh=/F7ZtRGQ7aQziFFLLSgkjOVx94HbB2NOrdDHff2T+Ec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUJWiHzMc4OM2Ysua9AUJZtlzBi+YuHCsjre6mUpvybvVFrEU2j4xohIkE74XSHleKZhWnAP/rcQshR0MRTOs8hPxQj2Z99npAwLtshSbH+eaC9dffxb2y7zkadaPyOtB03nW02g2M6ngzf9l+59VdPm0dSuZbf86b8dHzCwycc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=lE3D3Zny; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725357452; x=1725962252; i=deller@gmx.de;
+	bh=aujOPfqOvJP4XD7O7dHM6ip3495Qr35+Y41I+OZ55b8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=lE3D3ZnypOCw67ZX0H5V4LTZm7MBLQlPQKU7Vb+qe7Z5YSNDdnJ4+cV5fGWv0MO3
+	 pBm58XyTvCU1VmOL3wQnwMhf1mXUWCiixtB9JWeGR2w0bpvf3bDsIZc0D6IzTwCd5
+	 UJjLQMYGNWiIHXo9nd+5KRkEKC1BIFG2jKG3nOJxMP7BFNWfqgYJwEas2a6kJ/6/y
+	 VKcvzTQREgz5Q2AhC/KI6/Uc3dThoV2VxfKlKcQsvfZuUP/a0Ajjl3FGZ8VWX8So9
+	 uJPuqRnwJMntt+AzpJYhnspDw6D9ViCy0tOVZKqf6jX0XJ6m88+6lNuCrYT1xmZN9
+	 B96lOKV+NCU2lB6P7Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKbkM-1sUqJ635ga-00RmUN; Tue, 03
+ Sep 2024 11:57:32 +0200
+Message-ID: <daa67bb0-96a4-4319-8c39-7b43f2135e27@gmx.de>
+Date: Tue, 3 Sep 2024 11:57:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1248195342-1725357428=:1019"
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467
+ unregister_framebuffer+0x45/0x160
+To: "V, Narasimhan" <Narasimhan.V@amd.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "linux@weissschuh.net" <linux@weissschuh.net>, Borislav Petkov
+ <bp@alien8.de>, Thomas Zimmermann <tzimmermann@suse.de>
+References: <DM4PR12MB5086C89FD0EAF070D167733389912@DM4PR12MB5086.namprd12.prod.outlook.com>
+ <20240902084546.GAZtV7Ot58w7D90fwQ@fat_crate.local>
+ <7cf68133-e6f5-4fef-92ae-7a8c30631fb5@suse.de>
+ <DM4PR12MB50863789A621575F937E240F89922@DM4PR12MB5086.namprd12.prod.outlook.com>
+ <d5ed77c9-89ad-4de6-b46b-5865378e029a@gmx.de>
+ <DM4PR12MB50864B3F2396760358F2955589932@DM4PR12MB5086.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
+ HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
+ r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
+ CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
+ 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
+ dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
+ Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
+ GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
+ aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
+ 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
+ ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
+ FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
+ uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
+ uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
+ REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
+ qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
+ iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
+ gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
+ Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
+ qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
+ 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
+ dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
+ rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
+ UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
+ eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
+ ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
+ dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
+ lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
+ 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
+ xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
+ wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
+ fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
+ Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
+ l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
+ RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
+ BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
+ Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
+ XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
+ MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
+ FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
+ 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
+ ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
+In-Reply-To: <DM4PR12MB50864B3F2396760358F2955589932@DM4PR12MB5086.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:389BbgrKUHP4R8kCESjZBLV0SV3qAK4VuvT+82dgQcZxWfk1DrU
+ x9G1T22rxcIU13IUCWRpSaYqns2rnkakU8tn/vQvXWieOOY8smH3ypt31oVU2uDa4h8PkFg
+ ncBNt02YfYTWO1ZOPUnkuO7ZZol4E43u513WHlQsHqw1wp/+vz5eyISObsJKJHZoEKSlkVU
+ CIL6S+ZIBGcLzo4Y6BI2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Nm9md8xaj2U=;A5u45uJZ+crzFCaZF8i0RekU4xl
+ VYJgZVONjAYNnA60nIGOFSDOfKIUjAvAIXhA/DBFjTeejdVJg4ryKi7MHUfk4kaVTvC0Sb+1m
+ P3lQ3Kca6FsfJshcAba+oIcid3bVym7211Im90GeO7tRXYhAYyZAtd/jYwu9RejKSWIbtk7bE
+ pz9t9kb3+IUytS++cz403gedTdQm68WrlzM/FisDMj+Z4ee9KeyUuGg1ypP7xyndvTz/1dOAO
+ 2B0/QnUjXborVQVw72nrQxLtaNpTOgpgYftcirkOt7QOjfKVkadCcb449+KSv1tlO9W5QxwBD
+ rZbhrdKIa1yYDsPhm4goO1IwwrKJseO1XZSl+X6pey+uxfoMly+1CKMoEctxBWqxNfZ5ijK9o
+ 2N8V+fTAaVLW3R89hFtw2AbeYrnVKO/ja/UtUaw3H8YeC7Kn4FnGGVkxKz8RIOSmnagmabfMt
+ v/7T+BWIOpkFIXHMyog9zVSUGCxp1Lgv5sh/AQrs1BfVkh1ZRXSYKRvnPncj5/CYknphuglPh
+ OIg0RqXIGqbcgPEhA+WBCj0eF3Ashr1KhAjP6o52uOGbr+Uom3bpicRmjWdJ+Fp6IWeiWPfD0
+ mI32gyyX/h6hk4bWoNeeVWE6p6GFHG1RFiuCRGWaM1+MGqT6PCcCZLDdz6LV3BBcTmJ2FuD9J
+ J6tAEVmUuIonjroSaPq9RtN0cWnbqrrgkrLFGhYNmqIwwVODn4A0swDGurCKjMtJ4+ZxIItVV
+ ljmUWWMAdr/CSVKdgKFgDaOjgY/G8Lpssho5MqgxpjvCyPU9xkAMz2K48kV802Uw3Sy2hie7+
+ piQtySmZlHxGVsWIqZG0U20g==
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 9/3/24 11:56, V, Narasimhan wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+>
+> Hi,
+>
+>
+> ________________________________________
+> From: Helge Deller <deller@gmx.de>
+> Sent: Tuesday, September 3, 2024 01:48 AM
+> To: V, Narasimhan; Thomas Zimmermann
+> Cc: Linux Next Mailing List; Daniel Vetter; linux-fbdev@vger.kernel.org;=
+ dri-devel@lists.freedesktop.org; open list; linux@weissschuh.net; Borisla=
+v Petkov
+> Subject: Re: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:=
+467 unregister_framebuffer+0x45/0x160
+>
+>> On 9/2/24 20:56, V, Narasimhan wrote:
+>>> From: Thomas Zimmermann <tzimmermann@suse.de>
+>>>>>> Seeing the following warning and bug on boot with linux-next-202408=
+29
+>>>>>>
+>>>>>> WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unre=
+gister_framebuffer+0x45/0x160
+>>>>>> BUG: kernel NULL pointer dereference, address: 0000000000000000
+>>>
+>>>> Does it work if you revert one of these commits?
+>>>
+>>>>     c2fe0480cd77 ("fbdev/efifb: Use devm_register_framebuffer()")
+>>>
+>>>
+>>> Reverting this commit fixes the issue.
+>
+>> Good.
+>
+>>>> For the latter, there might be a fix at
+>>>
+>>>> https://patchwork.freedesktop.org/patch/611902/?series=3D138008&rev=
+=3D1
+>
+>> Current fbdev git tree and for-next series have this newer patch alread=
+y.
+>> I expect that the issue is already resolved with there, but it would
+>> be good if you could test.
+>
+>> Helge
+>
+> The patch seems to be already into linux-next tree and the issue is no m=
+ore seen with today's linux-next build.
 
---8323328-1248195342-1725357428=:1019
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Great.
+Thanks for testing!
 
-On Thu, 29 Aug 2024, Ilpo J=C3=A4rvinen wrote:
+Helge
 
-> Building resctrl selftest fails on ARM because it uses __cpuid_count()
-> that fails the build with error:
->=20
->   CC       resctrl_tests
-> In file included from resctrl.h:24,
->                  from cat_test.c:11:
-> In function 'arch_supports_noncont_cat',
->     inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
-> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->    74 |         __asm__ __volatile__ ("cpuid\n\t"       \
->       |         ^~~~~~~
-> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
->   301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
->       |                 ^~~~~~~~~~~~~
-> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->    74 |         __asm__ __volatile__ ("cpuid\n\t"       \
->       |         ^~~~~~~
-> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
->   303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
->       |                 ^~~~~~~~~~~~~
->=20
-> The resctrl selftest would run that code only on Intel CPUs but as is,
-> the code cannot be build at all.
->=20
-> Define HAVE_CPUID in lib.mk based on ARCH (x86 or x86_64). If ARCH is
-> not set, acquire it using uname -m.
->=20
-> Provide a stub for __cpuid_count() if HAVE_CPUID is not present to
-> allow build to succeed. The stub casts its arguments to void to avoid
-> causing "unused variable" or "set but not used" warnings.
->=20
-> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test=
-")
-> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> ---
-> v3:
-> - Remove "empty" wording
-> - Also cast input parameters to void
-> - Initialize ARCH from uname -m if not set (this might allow cleaning
->   up some other makefiles but that is left as future work)
-> v2:
-> - Removed RFC & added Fixes and Tested-by
-> - Fixed the error message's line splits
-> - Noted down the reason for void casts in the stub
-> ---
->  tools/testing/selftests/kselftest.h | 6 ++++++
->  tools/testing/selftests/lib.mk      | 6 ++++++
->  2 files changed, 12 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftest=
-s/kselftest.h
-> index b8967b6e29d5..9c4bfbf107f1 100644
-> --- a/tools/testing/selftests/kselftest.h
-> +++ b/tools/testing/selftests/kselftest.h
-> @@ -70,10 +70,16 @@
->   * have __cpuid_count().
->   */
->  #ifndef __cpuid_count
-> +#ifdef HAVE_CPUID
->  #define __cpuid_count(level, count, a, b, c, d)=09=09=09=09\
->  =09__asm__ __volatile__ ("cpuid\n\t"=09=09=09=09\
->  =09=09=09      : "=3Da" (a), "=3Db" (b), "=3Dc" (c), "=3Dd" (d)=09\
->  =09=09=09      : "0" (level), "2" (count))
-> +#else
-> +#define __cpuid_count(level, count, a, b, c, d)=09do {=09=09=09\
-> +=09(void)level; (void)count; (void)a; (void)b; (void)c; (void)d;=09\
-> +} while (0)
-> +#endif
->  #endif
-> =20
->  /* define kselftest exit codes */
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib=
-=2Emk
-> index d6edcfcb5be8..8e3069926153 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -23,6 +23,8 @@ CLANG_TARGET_FLAGS_x86_64       :=3D x86_64-linux-gnu
-> =20
->  # Default to host architecture if ARCH is not explicitly given.
->  ifeq ($(ARCH),)
-> +ARCH :=3D $(shell uname -m 2>/dev/null || echo not)
-> +ARCH :=3D $(shell echo $(ARCH) | sed -e s/i.86/x86/)
->  CLANG_TARGET_FLAGS :=3D $(shell $(CLANG) -print-target-triple)
->  else
->  CLANG_TARGET_FLAGS :=3D $(CLANG_TARGET_FLAGS_$(ARCH))
-> @@ -199,6 +201,10 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
->  # Build with _GNU_SOURCE by default
->  CFLAGS +=3D -D_GNU_SOURCE=3D
-> =20
-> +ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> +CFLAGS +=3D -DHAVE_CPUID=3D
-> +endif
-
-Hpmf, scratch this. CFLAGS are overwritten by x86 selftest makefile so I=20
-need to reorder things there before making this change.
-
---=20
- i.
-
---8323328-1248195342-1725357428=:1019--
 
