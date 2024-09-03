@@ -1,281 +1,207 @@
-Return-Path: <linux-kernel+bounces-312926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E9C969DCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:39:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FC3969DB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6B8281046
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7723AB20C68
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACF01D6DC2;
-	Tue,  3 Sep 2024 12:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB8B1C9875;
+	Tue,  3 Sep 2024 12:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="szQ9idGl"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XLPOZLf2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626991DA115
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6B41A0BCB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367087; cv=none; b=CbdA9FPlcxKofG/yTqSU0jyubwHkAOhc1J1fHl3nZHDmmQCO04yG4wO3kbLOFW6oz4JjaLnl9DVrkxpQKbAcaKVWIZ9d7r1+u72YSo2EAHYHlYn9uV9qSYLri474Y/Sk5ihJDqlvh6UzP19sIT7PXxd7nsOdY+qd+d6X4Veepig=
+	t=1725367060; cv=none; b=aIWXuR3t42sGkdDVub1qYbzt3tBM/Np6Is1ZUOzuxiWFFTMod0lUvJJ7qyHeSFQMiNWApteucf7fkKO73LmlXfYHEVy5kIqbU1pIpXdufaazatvUsY8Sg44zOqDHbe6mgJA6IGLalDtgknOQdSI4iZ0mLTUrZ/HXnRMcFmNB9P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367087; c=relaxed/simple;
-	bh=FZbJd1tZJzW9XzhGrtdmKRdbrVG5J6WlHQL95vMvdbY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXs8LzjjwAKVj9a7evNfNR4q22iIONTbsliJ5tXnHhiE1tdL8eqcaLZbx8XD+wjFZYh21vtIK23ey2qJxzY3udkKuNtESu9K82OIe15gWo2eRNCJh2sGnd2BDV5zqfqmFNoVqf1JKDnFY1rAnnSyhzv7xEHCSyFClyC8o+ypG48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=szQ9idGl; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a9dc3efc1so2951503276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725367084; x=1725971884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMKmnjbDpsQIapo5HuPs4+45d9/Y2i87xJa3a9ExiQU=;
-        b=szQ9idGlwxL8K1QdeBo4T62bs7WNdIRII5l2BkMvPO0FtsFMY6g1kZYe1Qku/LQyeQ
-         IV7dTYDeNn58B7WTgmWzZweluw4aQ1avEaZtLKnynEz2BzamPKh9m6XdthDjAAEc0gxe
-         8ZevTNoO8B8RIJPSBPl4y8mC313TSEb4giRScE9EzpbSCn8HyOe5Jy57a1iUQCv4eJ6Y
-         sdFXYkSPIRx9LfhVcCasc94F1YZPewB8w4kpk8EN1L2Xtj20W3OtpTFoP6Rsa1M2rnGX
-         nglIHxgHLU/6Z2EzpENJ3MpIjmgpP6TvNaGTo68EBpOFUIJ0RQpUlSrzjaHPJloRyv5y
-         9r9w==
+	s=arc-20240116; t=1725367060; c=relaxed/simple;
+	bh=tmv03h92ijIwyRhoiFtKQXiRllr1tIv4quj94CTJpfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sNdisZZYkczR/5m0mJmu2FuOk6tP3cIFHB/bcVN2WLq9bomnn7bQrILekxSf49VcL1ZsjKfOKdGxO4FFvPsKjsRlXtGakQcqvsy8mDZtej0sBdPygvRA8Zm8dJB9PzZrUu1VJC0HZGe596fIJMj5NOFmZfZLxhnQeSmSX0xpt/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XLPOZLf2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725367057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lUAYXkxnOQXG3S0lZgSKk2z1/MrhZFXha6f6lbot9Jk=;
+	b=XLPOZLf2uBhcqtlViq7Jeqk68OSTBVdI+ZgJiokCAzsKmfKkPaQH2XJGpc8XCm5lXQU3ZG
+	2Sz7X1K9Fax/4W2linPmXfBCsHFJJ7xq46IgoET/665c5ZYhRewXubdJccllZgoGgs3WLc
+	2EmU+kXDXKer9zmlvDrVm7EJCb6G5gI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351-D3z7vbumN1yxRBz7cZO2tQ-1; Tue, 03 Sep 2024 08:37:34 -0400
+X-MC-Unique: D3z7vbumN1yxRBz7cZO2tQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c82d3c7e5so20274005e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:37:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725367084; x=1725971884;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GMKmnjbDpsQIapo5HuPs4+45d9/Y2i87xJa3a9ExiQU=;
-        b=LvNmqaxK59KvpgKwhHVPMjrXoMUd+d2wyETu4v4zAKIx2AHxRLW1PLHaQHozJchmLW
-         DiTD1pCOiA2Y4suG/TdhWuYs610ZhgzM9BmhrxeJzb3L1eRZicv8lMdIuYHbGuEMlAMc
-         fpzP8f7eSXAMOSZzJmFVNDqdYp6OAZWwItPcaW9LyaKcDqZ++FgF3TZUQwD+7mjjlp29
-         fB6/dOTqzVjp14FEWwM2SEHdjTryxOX4Icu/rXYpzH55ClKlfBW+gkSHBFbFOZnvVrmc
-         Z5W11R25uzeB321PllePn7gsZRatW7pDewRbw7OCow0QRr/hXvy8XBboKyVbTTtklb3P
-         KCcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9XAujQ+uW2ukg09A0WvR9wRqRn4QCqwSwJLoEDOTVshcgmkR+ZqpBcuMzMaU8GoXX5IKK+GonCLE8WNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZYvQIwav2N9TzfLgflb7rhLnV0xSRs5Yy7mF2XA1wzSWu3M/q
-	jFmdixB+5GdWumnfHm9A9+7ojH/QEFzCPkuuYuwHEdteuVXqyGY+K8tsg3nTkjF9xjR809Gl2sm
-	GmC2ucgrmCV3Xy8hBDxJs6eJBNC2RVP4jrmq8fQ==
-X-Google-Smtp-Source: AGHT+IFoBiimtQty+ZFFbQefHWfDZl6LnzYy8OvfxnVeQ1irgttQ6ADNaC03ffHR60k5ULdX0MxqCJX0+8Vdu8/hM3c=
-X-Received: by 2002:a05:6902:2309:b0:e1a:b361:4d94 with SMTP id
- 3f1490d57ef6-e1ab361540emr6397661276.24.1725367084353; Tue, 03 Sep 2024
- 05:38:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725367053; x=1725971853;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lUAYXkxnOQXG3S0lZgSKk2z1/MrhZFXha6f6lbot9Jk=;
+        b=gV9a6CWH5P2uZ00Ub4Azi7m8pC6Z0rZ/6V86gTkvAd4Z5026GVD344rZQX8/0yM0zY
+         TjMdPPx2YuwykYp5lXJbiWBgNl49vha0VHy3a1oXlqsvqL5jWeQS7akrnrcwRQSgDp5G
+         W4EeUg+meI64mnYvgprQ2BykaQkdt8K3cji2KGl5xY+keq3zjPa1JkRRgyW83vj7fFa8
+         MS80FgDIG6ftHsgVkWj8+vs41RgHsp5rVv4rbJd5vU939Kzp2KAk8oFFMzpP0rvt4jHi
+         y56NYrWG8L7kw3JOPxcBzJJaLGLSu0WW3N5t593VoXFTHiMUVao690D5d/l/smMykEv9
+         MLOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpqjqaHFt+Tr8YglMRP/I8dJMQtWg88aU9w5dWiC2srT16ki6cF2aJr4xwM8vMWBoY5qDT5AclV63ArsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhcvAoPjq+nuhT8LQBN9CZjFxXOa4JOuzWAhC1mQcI6h3aU6Ot
+	MpQu0ohyXn/9JSdlbSP4oTJ5TbTO1FfsfHx+owxv6uJbvNay86B76pGLf0tTcPt0gQY6LvLIKqs
+	J+EDJwAWtLYCkH9wQzY1tZx4hr9gKP+am7Y70Txl3nr8QSlDbRI4aUtdFEwceOQ==
+X-Received: by 2002:a5d:4109:0:b0:374:bad2:6a5e with SMTP id ffacd0b85a97d-374bf168f0emr6440608f8f.28.1725367052685;
+        Tue, 03 Sep 2024 05:37:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHuRJ+1yqABJ5FrHa3p+lGeJ1p45MR/DdKqV6ngyOOFhN2OzNIXX5ayxl/sPEgLoWsBoMxwg==
+X-Received: by 2002:a5d:4109:0:b0:374:bad2:6a5e with SMTP id ffacd0b85a97d-374bf168f0emr6440568f8f.28.1725367051754;
+        Tue, 03 Sep 2024 05:37:31 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:7f00:8a04:4c6f:a761:af60? (p200300cbc7097f008a044c6fa761af60.dip0.t-ipconnect.de. [2003:cb:c709:7f00:8a04:4c6f:a761:af60])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c07eed5dsm8960138f8f.116.2024.09.03.05.37.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 05:37:31 -0700 (PDT)
+Message-ID: <f3fe6be4-723e-45b8-baa6-5c285cc5c150@redhat.com>
+Date: Tue, 3 Sep 2024 14:37:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-atmel-sdhci-v4-1-96912fab6b2d@microchip.com>
-In-Reply-To: <20240902-atmel-sdhci-v4-1-96912fab6b2d@microchip.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 14:37:28 +0200
-Message-ID: <CAPDyKFroWmE+P8S5XD5b2BgnnPjNO3B1XpOHsZAGU8rUOsEarQ@mail.gmail.com>
-Subject: Re: [PATCH v4] dt-bindings: mmc: sdhci-atmel: Convert to json schema
-To: Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Aubin Constans <aubin.constans@microchip.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Potential Regression in futex Performance from v6.9 to v6.10-rc1
+ and v6.11-rc4
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux-MM <linux-mm@kvack.org>
+References: <CADYN=9JBw6kq4E9aA=Pr1rFy-6tY-j-XOthQVYVw6ptmj11=HA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CADYN=9JBw6kq4E9aA=Pr1rFy-6tY-j-XOthQVYVw6ptmj11=HA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2 Sept 2024 at 12:57, Dharma Balasubiramani
-<dharma.b@microchip.com> wrote:
->
-> Convert sdhci-atmel documentation to yaml format. The new file will inherit
-> from sdhci-common.yaml.
->
-> Note: Add microchip,sama7g5-sdhci to compatible list as we already use it
-> in the DT.
->
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+On 03.09.24 14:21, Anders Roxell wrote:
+> Hi,
+> 
+> I've noticed that the futex01-thread-* tests in will-it-scale-sys-threads
+> are running about 2% slower on v6.10-rc1 compared to v6.9, and this
+> slowdown continues with v6.11-rc4. I am focused on identifying any
+> performance regressions greater than 2% that occur in automated
+> testing on arm64 HW.
+> 
+> Using git bisect, I traced the issue to commit
+> f002882ca369 ("mm: merge folio_is_secretmem() and
+> folio_fast_pin_allowed() into gup_fast_folio_allowed()").
 
-Applied for next, thanks!
+Thanks for analyzing the (slight) regression!
 
-Kind regards
-Uffe
+> 
+> My tests were performed on m7g.large and m7g.metal instances:
+> 
+> * The slowdown is consistent regardless of the number of threads;
+>     futex1-threads-128 performs similarly to futex1-threads-2, indicating
+>     there is no scalability issue, just a minor performance overhead.
+> * The test doesn’t involve actual futex operations, just dummy wake/wait
+>     on a variable that isn’t accessed by other threads, so the results might
+>     not be very significant.
+> 
+> Given that this seems to be a minor increase in code path length rather
+> than a scalability issue, would this be considered a genuine regression?
+
+Likely not, I've seen these kinds of regressions (for example in my fork
+micro-benchmarks) simply because the compiler slightly changes the code
+layout, or suddenly decides to not inline a functions.
+
+Still it is rather unexpected, so let's find out what's happening.
+
+My first intuition would have been that the compiler now decides to not
+inline gup_fast_folio_allowed() anymore, adding a function call.
+
+LLVM seems to inline it for me. GCC not.
+
+Would this return the original behavior for you?
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 69c483e2cc32d..6642f09c95881 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2726,7 +2726,8 @@ EXPORT_SYMBOL(get_user_pages_unlocked);
+   * in the fast path, so instead we whitelist known good cases and if in doubt,
+   * fall back to the slow path.
+   */
+-static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
++static __always_inline bool gup_fast_folio_allowed(struct folio *folio,
++               unsigned int flags)
+  {
+         bool reject_file_backed = false;
+         struct address_space *mapping;
 
 
-> ---
-> This patch series converts the sdhci-atmel dt-binding to yaml format and adds
-> the sama7d65,sama7g5 compatibles to the list.
-> ---
-> Changes in v4:
-> - remove the "atmel,sama5d3-sdhci" and "atmel,sama5d4-sdhci" compatibles and
->   add back the "microchip,sam9x7-sdhci" compatible from old binding which was missed.
-> - drop the addition of sama7d65 in binding, will be sent along with the dts patch series.
-> - Add the entire description of "microchip,sdcal-inverted" from old txt binding.
-> - The microchip,sam9x7-sdhci is yet to be merged in DTS
-> https://lore.kernel.org/lkml/20240729070934.1991467-1-varshini.rajendran@microchip.com/
-> - Link to v3: https://lore.kernel.org/r/20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com
->
-> Changes in v3:
-> - update the items in clocks instead of plain description.
-> - move the items list to clock-names.
-> - since baseclk is must, change maxitems to minitems: 3, and modify the
->   conditional bits accordingly.
-> - Link to v2: https://lore.kernel.org/r/20240830-atmel-sdhci-v2-0-b7f58973f3fc@microchip.com
->
-> Changes in v2:
-> - Add missing deleted file to the patch
-> "Documentation/devicetree/bindings/mmc/sdhci-atmel.txt"
-> - Link to v1: https://lore.kernel.org/r/20240830-atmel-sdhci-v1-0-01e3ec8c9804@microchip.com
-> ---
->  .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 92 ++++++++++++++++++++++
->  .../devicetree/bindings/mmc/sdhci-atmel.txt        | 35 --------
->  2 files changed, 92 insertions(+), 35 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-> new file mode 100644
-> index 000000000000..8c8ade88e8fe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Atmel SDHCI controller
-> +
-> +maintainers:
-> +  - Aubin Constans <aubin.constans@microchip.com>
-> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
-> +
-> +description:
-> +  Bindings for the SDHCI controller found in Atmel/Microchip SoCs.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - atmel,sama5d2-sdhci
-> +          - microchip,sam9x60-sdhci
-> +      - items:
-> +          - enum:
-> +              - microchip,sam9x7-sdhci
-> +              - microchip,sama7g5-sdhci
-> +          - const: microchip,sam9x60-sdhci
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: hclock
-> +      - description: multclk
-> +      - description: baseclk
-> +    minItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: hclock
-> +      - const: multclk
-> +      - const: baseclk
-> +    minItems: 2
-> +
-> +  microchip,sdcal-inverted:
-> +    type: boolean
-> +    description:
-> +      When present, polarity on the SDCAL SoC pin is inverted. The default
-> +      polarity for this signal is described in the datasheet. For instance on
-> +      SAMA5D2, the pin is usually tied to the GND with a resistor and a
-> +      capacitor (see "SDMMC I/O Calibration" chapter).
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - $ref: sdhci-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,sama5d2-sdhci
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +        clock-names:
-> +          minItems: 3
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/clock/at91.h>
-> +    mmc@a0000000 {
-> +        compatible = "atmel,sama5d2-sdhci";
-> +        reg = <0xa0000000 0x300>;
-> +        interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
-> +        clock-names = "hclock", "multclk", "baseclk";
-> +        assigned-clocks = <&sdmmc0_gclk>;
-> +        assigned-clock-rates = <480000000>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
-> deleted file mode 100644
-> index a9fb0a91245f..000000000000
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
-> +++ /dev/null
-> @@ -1,35 +0,0 @@
-> -* Atmel SDHCI controller
-> -
-> -This file documents the differences between the core properties in
-> -Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
-> -sdhci-of-at91 driver.
-> -
-> -Required properties:
-> -- compatible:          Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci"
-> -                       or "microchip,sam9x7-sdhci", "microchip,sam9x60-sdhci".
-> -- clocks:              Phandlers to the clocks.
-> -- clock-names:         Must be "hclock", "multclk", "baseclk" for
-> -                       "atmel,sama5d2-sdhci".
-> -                       Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
-> -                       Must be "hclock", "multclk" for "microchip,sam9x7-sdhci".
-> -
-> -Optional properties:
-> -- assigned-clocks:     The same with "multclk".
-> -- assigned-clock-rates The rate of "multclk" in order to not rely on the
-> -                       gck configuration set by previous components.
-> -- microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
-> -  inverted. The default polarity for this signal is described in the datasheet.
-> -  For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
-> -  and a capacitor (see "SDMMC I/O Calibration" chapter).
-> -
-> -Example:
-> -
-> -mmc0: sdio-host@a0000000 {
-> -       compatible = "atmel,sama5d2-sdhci";
-> -       reg = <0xa0000000 0x300>;
-> -       interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
-> -       clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
-> -       clock-names = "hclock", "multclk", "baseclk";
-> -       assigned-clocks = <&sdmmc0_gclk>;
-> -       assigned-clock-rates = <480000000>;
-> -};
->
-> ---
-> base-commit: 4b7d983dd85a5cdf4938f4a0a93adedf697ac04d
-> change-id: 20240830-atmel-sdhci-c9a92b710624
->
-> Best regards,
-> --
-> Dharma Balasubiramani <dharma.b@microchip.com>
->
+-- 
+Cheers,
+
+David / dhildenb
+
 
