@@ -1,170 +1,245 @@
-Return-Path: <linux-kernel+bounces-313273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85A996A2E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF52E96A2D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F9AB24A1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC72BB21542
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601A5188929;
-	Tue,  3 Sep 2024 15:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6416718453F;
+	Tue,  3 Sep 2024 15:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwCJbWvl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C1MzK8p8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qgXfca63";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C1MzK8p8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qgXfca63"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C741AACA;
-	Tue,  3 Sep 2024 15:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725377694; cv=none; b=cia2+ErG+TxgLJ4KaPkun1N6Yh9OFR04cqDyKUB6Wb44eW31e+GXxKRaLBk6IuiVFI3NJiPu/YWPHkq+o6brHTG4dEFWrTrYVh+FCeQo2dZqcTVgfxBHEfmJ5IVY64aIJlr+ps0Jx7j5D2I0Jkckqsaat1HqLQT4yjEykDGM38o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725377694; c=relaxed/simple;
-	bh=g6ObcrgDOboADgb9kxpvqEpUpqwiJLyBdTwwo5QBF3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t5xNanDfzptdr+FT6tSvl8qMSI91y1LisrvdoB50VrjsnG3gQRt8H2GXxXM70m251qx4mwlomygzmgECedwSyD7jgxssdZnZDz9HZR5Jl5NDrzYCs5T0Jt3Bx6AZG+ci1CcSvuear27coNXCIAHv8M9eVN4XSSe7Xupl1AUihM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwCJbWvl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED45C4CEC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE0412B94;
 	Tue,  3 Sep 2024 15:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725377694;
-	bh=g6ObcrgDOboADgb9kxpvqEpUpqwiJLyBdTwwo5QBF3w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lwCJbWvlDhTrMoiODgJrGz4VH5T1ut2MZIAiJShiRwGLg2wCHJ3m4zQQQ6gND5PiB
-	 4/Uw1jWtHtWecvL+0nAE2Hah+5FEu+5A2n203Xd/s5JVvkn+ANobATSuCFjKf/nZMG
-	 xrrrdfhPHCned2wjT1yeGRZzzbVk7AjnLdbm35wK/fhBfqoYSo+6r/J4UfBVxxExnk
-	 fdj7cdu9QegUxWGZsAJWo91zXIpYkBtP6G1+Rf/jdugGhjjcvgE9qTVjV3qX+sQknt
-	 P8H0L9UPyT1AAwMXxcHMnzXxs3PG0Z4SWPFq5L7LPCszBq2zAQUzvq1o8xaFXn9dSR
-	 mlZbFJ9P2SOnw==
-Message-ID: <19902a34-e02d-4ffc-a2f7-64ccdf06ded6@kernel.org>
-Date: Tue, 3 Sep 2024 17:34:31 +0200
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725377679; cv=none; b=HUT9hiCRbX84dWyNl/HLkqA5LxdiK44oZIuu0fRs3Utr/Y7rn4iPDPSH5p2Ve0eyOM4vI4gNCrzHl0Z/3B2ORvhCqIFYjAUtHghrHMPmvXLKkpmgFtFOhjq6kcG4fy3FWioN+QgIQQYSF6fPn1KrPYprBKRN8oqgNaXdjfa7kU0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725377679; c=relaxed/simple;
+	bh=CX6hlROLZ6Dn8+zXI9cvISHl8JPsSH5HsPbTaV7hlNU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ejdt0amSQEU39caE5z0/71JwjAfo0peH9FwwEnfpyU3S8SaQEQxOR6Mn/c/3Y1XWuIy2w0+zVV9xczxyaRyGb1Zv3qW8uLZS5t8q3T6WM9/VlXetLNyktCu9XXTF7gGvS81FpdprNdFejduh+KIo8LY5ZrsjodSgWQZwUWywOdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C1MzK8p8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qgXfca63; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C1MzK8p8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qgXfca63; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 160B51F394;
+	Tue,  3 Sep 2024 15:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725377676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+G1IaZ6ST+Ogx2tNLBxW/wP/RnUtilr7tfLezU2LOA=;
+	b=C1MzK8p8TybH6W5pmXwLvfwdOQ+toBgGXM6BG7PajFQm6UclSRvkq9MQJwwq2HhQ+7GrmX
+	8O58Wa/RxSt+4M7gPkaQjDLJRAlTYyzuYNtZUXmT4z/erdtQGczw/m7NXNn6moRuDrVKZF
+	MaYBfFGd708/VO56QK8848oRyy5S8Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725377676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+G1IaZ6ST+Ogx2tNLBxW/wP/RnUtilr7tfLezU2LOA=;
+	b=qgXfca63PcJBhsS6pa1+scP610t/aTNMEKhlC2mOndwLcffBh5F6tIYF7oBhmawxvK5ir6
+	EZanTVjL5AR7XkCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725377676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+G1IaZ6ST+Ogx2tNLBxW/wP/RnUtilr7tfLezU2LOA=;
+	b=C1MzK8p8TybH6W5pmXwLvfwdOQ+toBgGXM6BG7PajFQm6UclSRvkq9MQJwwq2HhQ+7GrmX
+	8O58Wa/RxSt+4M7gPkaQjDLJRAlTYyzuYNtZUXmT4z/erdtQGczw/m7NXNn6moRuDrVKZF
+	MaYBfFGd708/VO56QK8848oRyy5S8Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725377676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+G1IaZ6ST+Ogx2tNLBxW/wP/RnUtilr7tfLezU2LOA=;
+	b=qgXfca63PcJBhsS6pa1+scP610t/aTNMEKhlC2mOndwLcffBh5F6tIYF7oBhmawxvK5ir6
+	EZanTVjL5AR7XkCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEAD413A52;
+	Tue,  3 Sep 2024 15:34:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3/WjKIss12aGcAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 03 Sep 2024 15:34:35 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
+ <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
+  Gabriel Krisman Bertazi <gabriel@krisman.be>
+Subject: Re: [PATCH v2 2/8] unicode: Create utf8_check_strict_name
+In-Reply-To: <20240902225511.757831-3-andrealmeid@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Mon, 2 Sep 2024 19:55:04 -0300")
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+	<20240902225511.757831-3-andrealmeid@igalia.com>
+Date: Tue, 03 Sep 2024 11:34:34 -0400
+Message-ID: <87y148hhth.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/22] pinctrl: qcom: sa8775p: Add support for SA8255p SoC
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com, lee@kernel.org,
- linus.walleij@linaro.org, amitk@kernel.org, thara.gopinath@gmail.com,
- broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
- robin.murphy@arm.com, cristian.marussi@arm.com, rui.zhang@intel.com,
- lukasz.luba@arm.com, vkoul@kernel.org, quic_gurus@quicinc.com,
- agross@kernel.org, bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com,
- robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com, quic_tsoni@quicinc.com,
- quic_shazhuss@quicinc.com
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-12-quic_nkela@quicinc.com>
- <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
- <d15927f9-bd00-4e32-9c25-535c69fe56f6@quicinc.com>
- <f227c799-cf9a-481a-b359-21828d6e8bca@kernel.org>
- <b855f1a9-35c2-4c53-9485-0989b3eb5a6b@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b855f1a9-35c2-4c53-9485-0989b3eb5a6b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On 03/09/2024 17:24, Nikunj Kela wrote:
-> 
-> On 8/30/2024 2:52 AM, Krzysztof Kozlowski wrote:
->> On 29/08/2024 16:17, Nikunj Kela wrote:
->>> On 8/29/2024 12:29 AM, Krzysztof Kozlowski wrote:
->>>> On Wed, Aug 28, 2024 at 01:37:10PM -0700, Nikunj Kela wrote:
->>>>> SA8255p platform uses the same TLMM block as used in SA8775p,
->>>>> though the pins are split between Firmware VM and Linux VM.
->>>>> let's add SA8255p specific compatible.
->>>> The change suggests devices are fully compatible, but above description
->>>> does not.
->>>>
->>>> This looks conflicting.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>> Hi Krzysztof,
->>>
->>> Thanks for reviewing patches. TLMM HW block is exactly same as used in
->>> SA8775p however ownership of pins can be split between firmware VM and
->>> Linux VM. It is upto devices to decide what pins they want to use in
->>> what VM. I will extend the subject with same description as used in DT
->>> binding.
->> So there is no difference? Then devices should be made compatible with
->> fallback.
->>
->> Best regards,
->> Krzysztof
-> 
-> Yes, I get your point now. I will discuss internally. I am leaning
-> towards using sa8775p-tlmm compatible in SA8255p TLMM node so there is
-> no need for adding new compatible. Will drop the two pincontrol related
-> patches from the series in next version if agreed internally.
-> 
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-You need compatible followed by fallback (and therefore drop driver
-change). That's how compatibility is expressed.
+> Create a helper function for filesystems do the checks required for
+> casefold directories and strict enconding.
+>
+> Suggested-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+>  fs/unicode/utf8-core.c  | 26 ++++++++++++++++++++++++++
+>  include/linux/unicode.h |  2 ++
+>  2 files changed, 28 insertions(+)
+>
+> diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+> index 0400824ef493..4966e175ed71 100644
+> --- a/fs/unicode/utf8-core.c
+> +++ b/fs/unicode/utf8-core.c
 
+I don't think this belongs in fs/unicode. it is filesystem semantics whether
+they don't allow invalid utf8 names and, while fs/unicode provides
+utf8_validate to verify if a string is valid, it has no business looking
+into superblock and inode flags.
 
-Best regards,
-Krzysztof
+It would be better placed as a libfs helper.
 
+> @@ -214,3 +214,29 @@ void utf8_unload(struct unicode_map *um)
+>  }
+>  EXPORT_SYMBOL(utf8_unload);
+>=20=20
+> +/**
+> + * utf8_check_strict_name - Check if a given name is suitable for a dire=
+ctory
+
+To follow the namespace in libfs, we could call it
+
+generic_ci_validate_strict_name
+
+> + *
+> + * This functions checks if the proposed filename is suitable for the pa=
+rent
+
+suitable =3D> valid
+
+> + * directory. That means that only valid UTF-8 filenames will be accepte=
+d for
+> + * casefold directories from filesystems created with the strict encondi=
+ng flags.
+
+enconding flags =3D> encoding flag
+
+> + * That also means that any name will be accepted for directories that d=
+oesn't
+> + * have casefold enabled, or aren't being strict with the enconding.
+
+encoding
+
+> + *
+> + * @inode: inode of the directory where the new file will be created
+> + * @d_name: name of the new file
+
+d_name means 'dentry name'. just 'name' is enough here since it doesn't
+matter if the qstr is coming from the dentry.
+
+> + *
+> + * Returns:
+> + *  * True if the filename is suitable for this directory. It can be tru=
+e if a
+> + *  given name is not suitable for a strict enconding directory, but the
+> + *  directory being used isn't strict
+> + *  * False if the filename isn't suitable for this directory. This only=
+ happens
+> + *  when a directory is casefolded and is strict about its encoding.
+> + */
+> +bool utf8_check_strict_name(struct inode *dir, struct qstr *d_name)
+> +{
+> +	return !(IS_CASEFOLDED(dir) && dir->i_sb->s_encoding &&
+> +	       sb_has_strict_encoding(dir->i_sb) &&
+> +	       utf8_validate(dir->i_sb->s_encoding, d_name));
+> +}
+
+Now that it is a helper, it could now be unfolded to something more
+readable:
+
+if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb)))
+   return true;
+
+/* Should never happen.  Unless the filesystem is corrupt. */
+if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
+   return true;
+
+return utf8_validate(...)
+
+> +EXPORT_SYMBOL(utf8_check_strict_name);
+> diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+> index 4d39e6e11a95..fb56fb5e686c 100644
+> --- a/include/linux/unicode.h
+> +++ b/include/linux/unicode.h
+> @@ -76,4 +76,6 @@ int utf8_casefold_hash(const struct unicode_map *um, co=
+nst void *salt,
+>  struct unicode_map *utf8_load(unsigned int version);
+>  void utf8_unload(struct unicode_map *um);
+>=20=20
+> +bool utf8_check_strict_name(struct inode *dir, struct qstr *d_name);
+> +
+>  #endif /* _LINUX_UNICODE_H */
+
+--=20
+Gabriel Krisman Bertazi
 
