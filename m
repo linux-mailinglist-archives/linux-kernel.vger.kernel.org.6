@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-313609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7818596A793
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24EC96A79B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02045B21690
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:42:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F0E1C23E1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D541922E0;
-	Tue,  3 Sep 2024 19:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CE41D017C;
+	Tue,  3 Sep 2024 19:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Pl7wJjOy"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aD0adjyl"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1818E77D;
-	Tue,  3 Sep 2024 19:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7946F19146E;
+	Tue,  3 Sep 2024 19:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392565; cv=none; b=D3x8P2fz/499RSNbjXvjTx6ZagLB/6mwOrHYipSkeMOtBUm9v3ZvuCT+aUaplZe45aqCEtp0yLO+AUIMmATwzNUhdR/4QxTxxSXgazGE/6kbCSH3/2Anav2Xn8g51J97QThakyyahWwKgI3C7BN/9R7CziPMn8B07hMFnjoyjgs=
+	t=1725392596; cv=none; b=cM5EJsu49KWUGZRBPoWDmFZKJu7CBK8HYZaF2JDXSQRMKUiG79LGFRrpHQRgjuGYBmMAbd76J+7pE5bCQvvuJcyVkGCohGljfjn41KGcpLaren90PF4x8VwKNH2ZTzIC+/ybwSrYy02ULG9eBP5PtZojIT+Ru5pbkAflusecz2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392565; c=relaxed/simple;
-	bh=zmMDKLJ+pb/N6z6OdKFlaVSX9l23YNKVttSAfF1rbKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Gize3HO+YB8c1ZwqHJzAJs6+entNDBz0OxNkFzgYZzCVYxCRajv+uzoTa7hCMvpOvvyfNvoyqgvvno7tF6qZlz9p+JUlXSeCLJy5GWw4FTdnlLU+8gxOphO2fHBPMeweYvMF02J9F5YeRzYLGYD6/fy2DqZO1CfjvQ8stJjpBX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Pl7wJjOy; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WywyC0TZ5z6ClY96;
-	Tue,  3 Sep 2024 19:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725392557; x=1727984558; bh=zmMDKLJ+pb/N6z6OdKFlaVSX
-	9l23YNKVttSAfF1rbKc=; b=Pl7wJjOyBf2C6NwwwRmYCiWPUbT0wcfOv3r4nkMw
-	Kl24j1Bg21mx1xUae1XF/jmCoPLJPu/upwVjXLJZhsfiP6udCHlqJW9mqINffSFo
-	J/IJElTjRBeKeQZffmyzC5igkwYZ+oZ2PRLto/3Bkjxk4Jk/+SXrjt7MIzuNMuAR
-	bakLHIMDoiFOCX6bVlBXRpgMBsbu+UoU4Bf3u6zhqFCr6YsevJloFIEFVt6WR9+W
-	42/sJ+j/03293urPdouOzKY1ZiOyZ1vhHGT2jRTHqfA2gYGeQokTAyQ+1E6PrGBk
-	1N+kWCb+UFbaqg76RrGfITvViWJMI449w93Jy8Sbq9ZLtQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id uDglJ5ZjXDBW; Tue,  3 Sep 2024 19:42:37 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Wywy30rTqz6ClY95;
-	Tue,  3 Sep 2024 19:42:34 +0000 (UTC)
-Message-ID: <7734408c-82e0-4b4a-930b-401bfa26161f@acm.org>
-Date: Tue, 3 Sep 2024 12:42:34 -0700
+	s=arc-20240116; t=1725392596; c=relaxed/simple;
+	bh=RsP93kskt6TyMEgKFgfCYUSQ87hA2luB+3DOv4k7XZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=okwkfLEmyCJuUW1K7y5eoIctenHSd3+bo0LmTKcxzZb//7fQ4kUSjYqA11ZK33cf/I0uBQsN4WDZ/OUFL7wRMcUzOVdDndfH5UiKMyxFFbwxtfse8l0Y0OYKDFePEr4bhVEa9weJTtuHRBtM1fzxsTcs0X5GnkD1qQxheno7HBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aD0adjyl; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-205909afad3so18532255ad.2;
+        Tue, 03 Sep 2024 12:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725392594; x=1725997394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7AumO84Tge/7o7E2V2XX+3e+tIAEGTAxhK3TwI2PLc=;
+        b=aD0adjylhDHruqe47sakOUniRvI8WXmXoJPI/b8M4Arw0093zeXTKmLBalrs9X8HLt
+         ZDfTqKUBV/Xpd2Ky2NOYdBE4ssBThZ4C+0pw7sruJ+QbyJdakdtozjiu78kuMloTpzu/
+         gFKZ/WpngdzVmasW/rTwa9CBsKVlNmQiYcRN42y5bpyLoDX52ggt2plXEUGotZYEDlw6
+         jqTOdQAF89A49FG2triC8S10SxAUG0d4arxICviBrCzFUlWODnKr9wYfM6FscFO0ku32
+         NS1B+WePRfaZVMtGinFYmiG+WHpNQzMh0aUBn1Z3DkAQb2rnbtZvS3lM+Srp8IxTwBHc
+         8q6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725392594; x=1725997394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z7AumO84Tge/7o7E2V2XX+3e+tIAEGTAxhK3TwI2PLc=;
+        b=RJohUkqBEX240yAIN3tWAMISBB++OnsgXGHkOuUQPxRQVN/5zk3zjfdL7ep8uebKdF
+         Q+u8RVyK/8fQpYBCOmF4FL57zziEiS12elSfJR1kNTpIo2HFao1zFeAeBQrMR6A3Pfku
+         mbIu9/dI91pmJ0bd0R0EmZnI7IB0DKgmELU486DwmdHFo58cSSsSsDQCj+IsCduERWW9
+         8J21Iv2cXDk7nPXtIGR8QjSPIxuagkqlmUOzvY93HtBc2H84eYU8J8Ls0Dq3nZWMzxMA
+         5RyI88QqegQanmNQXI6dDR9mIr7m0yXWOaLVUxF3fNfjATywGFDj1L4k5EBfmsyBne2L
+         Akjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAGCyVjIHoeDfff8xPzO8TfSXfrr/YTawk3y7C2uv86o+/YG9pMm39gIm/TyEiOnRMTKD0BCzhFf7Xnf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW9xqrhnfpPu105P+h0uVzHvV/g3GPSksBgeejWjZkBu5XjAMQ
+	bCbkJhbIrwTNIB9PrMN75PU/7A62dR6JJxoqSA2HQCAmn1BA18tbHBBQscAi
+X-Google-Smtp-Source: AGHT+IFLIgQs/nyFpUrhKAJyJKwztqci7AiWQpNaMRSBhDAAu/Mudzn3SHTltxZgpKMmmc96MeY6KA==
+X-Received: by 2002:a17:903:244e:b0:205:5548:9a28 with SMTP id d9443c01a7336-20555489bacmr125702135ad.49.1725392594488;
+        Tue, 03 Sep 2024 12:43:14 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea52a8asm1979505ad.182.2024.09.03.12.43.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 12:43:14 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCHv2 net-next 0/8]
+Date: Tue,  3 Sep 2024 12:42:36 -0700
+Message-ID: <20240903194312.12718-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2 2/2] scsi: ufs: ufs-exynos: implement
- override_cqe_ocs
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, huobean@gmail.com, alim.akhtar@samsung.com,
- avri.altman@wdc.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
- beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com,
- hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com,
- junwoo80.lee@samsung.com, wkon.kim@samsung.com
-References: <cover.1725251103.git.kwmad.kim@samsung.com>
- <CGME20240902041755epcas2p316730258dc0c2ed2b3f9744722dcde9c@epcas2p3.samsung.com>
- <041c7204703ed2ee7563344e935921dffa34ccfb.1725251103.git.kwmad.kim@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <041c7204703ed2ee7563344e935921dffa34ccfb.1725251103.git.kwmad.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/1/24 9:26 PM, Kiwoong Kim wrote:
-> Exynos host reports OCS_ABORT when a command is nullifed
-> or cleaned up with MCQ enabled.
+It's a very old driver with a lot of potential for cleaning up code to
+modern standards. This was a simple one dealing with mostly the probe
+function and adding some devm to it.
 
-That is the behavior that is required by the UFSHCI 4.0 standard. Hence,
-handling the OCS_ABORTED response should be the same for all host
-controllers and no new callback function should be introduced to handle
-nullified commands.
+v2: removed the waiting code in favor of EPROBE_DEFER.
 
-> I think the command in those
-> situations should be issued again, rather than fail, because
-> when some conditions that caused the nullification or cleaning up
-> disppears after recovery, the command could be processed.
+Rosen Penev (8):
+  net: ibm: emac: use devm for alloc_etherdev
+  net: ibm: emac: manage emac_irq with devm
+  net: ibm: emac: use devm for of_iomap
+  net: ibm: emac: remove mii_bus with devm
+  net: ibm: emac: use devm for register_netdev
+  net: ibm: emac: use netdev's phydev directly
+  net: ibm: emac: replace of_get_property
+  net: ibm: emac: remove all waiting code
 
-ufshcd_mcq_nullify_sqe() is called by ufshcd_mcq_sqe_search() and the
-latter function is called by ufshcd_mcq_abort(). It is up to the SCSI
-core to decide whether or not commands aborted by ufshcd_mcq_abort()
-should be resubmitted. This is not something the host driver should
-decide about.
+ drivers/net/ethernet/ibm/emac/core.c | 227 ++++++++++-----------------
+ drivers/net/ethernet/ibm/emac/core.h |   4 -
+ 2 files changed, 79 insertions(+), 152 deletions(-)
 
-Thanks,
+-- 
+2.46.0
 
-Bart.
 
