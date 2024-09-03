@@ -1,316 +1,238 @@
-Return-Path: <linux-kernel+bounces-312796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A11969B86
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:23:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB13969B89
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F76A285052
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:23:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2826B21912
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BAB1A42B5;
-	Tue,  3 Sep 2024 11:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54D1A42B9;
+	Tue,  3 Sep 2024 11:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PFT6Aiyp"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOVQ/R8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792D61A0BF4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBCF1B12E9;
+	Tue,  3 Sep 2024 11:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725362583; cv=none; b=MSJKQKie+LKTnmqxJG0RwlzonjpbRTqkA2b+NjyJ4GPX72AeJmF9cSvyGgdgBywIczvd94mKZv35nrjxqHTnE8S4+2m+ojdBGXGgv5ZCQMKfTKPdogxHD1rQ5T30OT/TLBw99rZed0CuEbaqltWFvtrkAZk724t18dEPlhf+1iQ=
+	t=1725362601; cv=none; b=NtY4MUgrj/sVsuiCRCIv6T4K1zLUNQcdBrHH9RfdbXaN592Y3Tj/GyiqPnuOeMD+51QAHOkRXtfUUrq3/L9gttfOmKHrUqOkh/5LYMGzpQncns+pMWgBlCQ2oXW6QRoICs0PQxz27M/vzkBa5sCNx6LceeQWAnNTBm+VnomrJjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725362583; c=relaxed/simple;
-	bh=bJZp7v9VF/zV4FIdUkvtoSwQVPiQZ4CIEegB9jZ1ems=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zw4LlDfLa4UZrh6D39gK8cfXf0TIrW+rWz8SPO7vn57a63YmA/J7pqMf9EPqbQaDdz/mfeoOzhEs8y61PjFyt7A8eNVNbd0hW1WcIgRy2ecCco85N2nxlpzP5nWQIGg7Z82fUNdctllPAwJ8DxJShN5Vu2oEMwSaYLEsKKU13nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PFT6Aiyp; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so572528266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 04:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725362580; x=1725967380; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w4IcuQeuiymqaS/a1RhzzDSLXJUOsYIq0tu0n3fb8ks=;
-        b=PFT6Aiyphmh4O3azCZhqdkp3AU/wdEZCCJYVuMRA1izQyj7ADd3DmFtUUdKvvL7WzB
-         WgoHOM1iQok10Sd0K0GWUEfiDW7E7m1H2P9sUIv8vZnGtsalgP86/SBobP1XK1Uc2M3G
-         BRoS7QnatYgs9b+BnayTw/vgfK9i2OAxYpRkrIWT3v99o5o1bmYLSEVZLkD2aDuafOML
-         sEkyc8tiHYluymJAQtU/USkD18czTSwOAfB1l6cLU7FQitHu3opFpegNYaWPNe8SOMFI
-         r8u7NEx6QyRM0etVutufaFnsXGVpfJoeGxoYZXQl6p0DLYP0B2p3O6hP7As+rQtXY02m
-         XC5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725362580; x=1725967380;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w4IcuQeuiymqaS/a1RhzzDSLXJUOsYIq0tu0n3fb8ks=;
-        b=V26Oj8tUmcEc3hBlRWg1Q8CsZfFpXscv8angjBt9nrdJqAo6tQ4+rlWoZo/FK4gxpX
-         zzFn42pNicpWElDFb1d9awvneHt1zwZGfuu87m7fypcUZlw1ICu3HPe4AHNd2/ep1riw
-         uCy29QrvSjKFZ+CLddmOt0yV/HAK9Ewi2u89kJutv9MwW0nMkYVR0YSie1p5+8TT3qpU
-         01U75oBh0UR0DS0raw8bRZZFPcevoBoGyT3O8yUDsHfOGIiBzj5egx9TV+1GU/EMuNAp
-         PNTPIvQ4QGZG3MwUXXK/OFZmijJ7uDWKbQDQvP1VmG9sJPHJBjs/VEc2rcaRceABiH2j
-         Htjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSJStliq+TmeCZRn6HhOGiz6ijI0wUmPUuRKvxDL390DsHFlQ5ipBbaUzo6FApqUU5UBMcplVK5yVyu/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTwgWqOccetAmBqEsVKaqXxWD08ksPale0K9dNGweBXfToq8sM
-	dM8HnRjCW1SD3m9rblq6r5rCNC7EbaTwCPw5HgqgO/OYSoiA5lH66YJ+9KpaW8w=
-X-Google-Smtp-Source: AGHT+IHuKeLghdg/ls1i2JFJtmfoByQgn6d7Wd00RW7FnQCnrsmyQ9cHM02wmJzDXMutnkx6CANOYw==
-X-Received: by 2002:a17:906:9c84:b0:a86:77ac:7e4e with SMTP id a640c23a62f3a-a89fae1b87emr516226866b.34.1725362579557;
-        Tue, 03 Sep 2024 04:22:59 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feae4dsm673991766b.31.2024.09.03.04.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 04:22:59 -0700 (PDT)
-Message-ID: <c50f5364-ca94-4d5b-be99-3a3ffcf79648@suse.com>
-Date: Tue, 3 Sep 2024 13:22:58 +0200
+	s=arc-20240116; t=1725362601; c=relaxed/simple;
+	bh=afv8Na5Xk19UbiuC+/LbwB2wVpQn9xUhcbJ7lfeC3oI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZM5PEWnaq8u8aedKq+Ob1QWCMpzJsQs5aCHbUbe1yDoWJqdMU0zIcn1VTnG916ROjYWy1uxBmBSVb/TFbx19ri+SFNbLLoMrrkf7+g8PhaRgYLBrUsSTWpGhhuaMdQRezdmCqd/urUo8SrDgCdJDqI4raofajA6C57l2nCMmU3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOVQ/R8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBD9C4CEC4;
+	Tue,  3 Sep 2024 11:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725362601;
+	bh=afv8Na5Xk19UbiuC+/LbwB2wVpQn9xUhcbJ7lfeC3oI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=HOVQ/R8VQEEPcHd0bA+x78XHwUa/cvflcW8TSM7hiPEBWzJSsc0oU6Yt47Nn7ol6v
+	 vA61BOdY3uSCB+DnYGNfIXjXjHXANXEGTekb4XKuKYudIbxGkQwBVQ3Lf3O0wS5svW
+	 aABhcIaro51o1sOlYaVcW/PIa+deOaQ95hU2GECbUMgAgU6Hg772dhSLsW0KgK+BMC
+	 it5f0NsVp8kfvhB8+9u45FMAOxdxOc37Dy6ZwyTGFCpFcXAeJkTdZ75JZJubcD1kAy
+	 2hQxE3ZVJTwqd8RXRGxGyW80A4Jn5nb//juQlsAbTUjMRIG8XMhqJXUtuT4VbpcdBj
+	 6mT2LV3mx9YGw==
+Message-ID: <73d25d586d1306cd5820058f9062a79ca657d362.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: return -EINVAL when namelen is 0
+From: Jeff Layton <jlayton@kernel.org>
+To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com,
+ neilb@suse.de,  okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Date: Tue, 03 Sep 2024 07:23:18 -0400
+In-Reply-To: <20240903111446.659884-1-lilingfeng3@huawei.com>
+References: <20240903111446.659884-1-lilingfeng3@huawei.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] module: abort module loading when sysfs setup suffer
- errors
-To: Chunhui Li <chunhui.li@mediatek.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- wsd_upstream@mediatek.com, Xion Wang <xion.wang@mediatek.com>
-References: <20240830054400.26622-1-chunhui.li@mediatek.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240830054400.26622-1-chunhui.li@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 8/30/24 07:43, Chunhui Li wrote:
-> When insmod a kernel module, if fails in add_notes_attrs or
-> add_sysfs_attrs such as memory allocation fail, mod_sysfs_setup
-> will still return success, but we can't access user interface
-> on android device.
-> 
-> Patch for make mod_sysfs_setup can check the error of
-> add_notes_attrs and add_sysfs_attrs
-
-s/add_sysfs_attrs/add_sect_attrs/
-
-I think it makes sense to propagate errors from these functions upward,
-although I wonder if the authors of this code didn't intentionally make
-the errors silent, possibly because the interface was mostly intended
-for debugging only?
-
-The original commits which added add_sect_attrs() and add_notes_attrs()
-don't mention anything explicitly in this regard:
-https://github.com/mpe/linux-fullhistory/commit/db939b519bea9b88ae1c95c3b479c0b07145f2a0
-https://github.com/torvalds/linux/commit/6d76013381ed28979cd122eb4b249a88b5e384fa
-
-> 
-> Signed-off-by: Xion Wang <xion.wang@mediatek.com>
-> Signed-off-by: Chunhui Li <chunhui.li@mediatek.com>
+On Tue, 2024-09-03 at 19:14 +0800, Li Lingfeng wrote:
+> When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
+> result in namelen being 0, which will cause memdup_user() to return
+> ZERO_SIZE_PTR.
+> When we access the name.data that has been assigned the value of
+> ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
+> triggered.
+>=20
+> [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x260
+> [ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
+> [ T1205]
+> [ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c1423=
+731b8d #406
+> [ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20=
+190727_073836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+> [ T1205] Call Trace:
+> [ T1205]  dump_stack+0x9a/0xd0
+> [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> [ T1205]  __kasan_report.cold+0x34/0x84
+> [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> [ T1205]  kasan_report+0x3a/0x50
+> [ T1205]  nfs4_client_to_reclaim+0xe9/0x260
+> [ T1205]  ? nfsd4_release_lockowner+0x410/0x410
+> [ T1205]  cld_pipe_downcall+0x5ca/0x760
+> [ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
+> [ T1205]  ? down_write_killable_nested+0x170/0x170
+> [ T1205]  ? avc_policy_seqno+0x28/0x40
+> [ T1205]  ? selinux_file_permission+0x1b4/0x1e0
+> [ T1205]  rpc_pipe_write+0x84/0xb0
+> [ T1205]  vfs_write+0x143/0x520
+> [ T1205]  ksys_write+0xc9/0x170
+> [ T1205]  ? __ia32_sys_read+0x50/0x50
+> [ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
+> [ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
+> [ T1205]  do_syscall_64+0x33/0x40
+> [ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> [ T1205] RIP: 0033:0x7fdbdb761bc7
+> [ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f=
+3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d=
+ 00 f0 ff ff 77 514
+> [ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 0000000000=
+000001
+> [ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761bc=
+7
+> [ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 000000000000000=
+8
+> [ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 000000000000000=
+1
+> [ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000042=
+b
+> [ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 000000000000000=
+0
+> [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Fix it by checking namelen.
+>=20
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 > ---
->  kernel/module/sysfs.c | 49 ++++++++++++++++++++++++++++++-------------
->  1 file changed, 35 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
-> index 26efe1305c12..a9ee650d995d 100644
-> --- a/kernel/module/sysfs.c
-> +++ b/kernel/module/sysfs.c
-> @@ -69,12 +69,13 @@ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
->  	kfree(sect_attrs);
->  }
->  
-> -static void add_sect_attrs(struct module *mod, const struct load_info *info)
-> +static int add_sect_attrs(struct module *mod, const struct load_info *info)
->  {
->  	unsigned int nloaded = 0, i, size[2];
->  	struct module_sect_attrs *sect_attrs;
->  	struct module_sect_attr *sattr;
->  	struct bin_attribute **gattr;
-> +	int ret = 0;
+>  fs/nfsd/nfs4recover.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index 67d8673a9391..69a3a84e159e 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_=
+v2 __user *cmsg,
+>  			ci =3D &cmsg->cm_u.cm_clntinfo;
+>  			if (get_user(namelen, &ci->cc_name.cn_len))
+>  				return -EFAULT;
+> +			if (!namelen) {
+> +				dprintk("%s: namelen should not be zero", __func__);
+> +				return -EINVAL;
+> +			}
+>  			name.data =3D memdup_user(&ci->cc_name.cn_id, namelen);
+>  			if (IS_ERR(name.data))
+>  				return PTR_ERR(name.data);
+> @@ -831,6 +835,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_=
+v2 __user *cmsg,
+>  			cnm =3D &cmsg->cm_u.cm_name;
+>  			if (get_user(namelen, &cnm->cn_len))
+>  				return -EFAULT;
+> +			if (!namelen) {
+> +				dprintk("%s: namelen should not be zero", __func__);
+> +				return -EINVAL;
+> +			}
+>  			name.data =3D memdup_user(&cnm->cn_id, namelen);
+>  			if (IS_ERR(name.data))
+>  				return PTR_ERR(name.data);
 
-Nit: It isn't necessary to initialize this variable to 0 because the
-code explicitly does "return 0;" on success. While on the error path,
-the variable is always assigned.
+This error will come back to nfsdcld in its downcall write(). -EINVAL
+is a bit generic. It might be better to go with a more distinct error,
+but I don't think it matters too much.
 
->  
->  	/* Count loaded sections and allocate structures */
->  	for (i = 0; i < info->hdr->e_shnum; i++)
-> @@ -85,7 +86,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
->  	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.bin_attrs[0]);
->  	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
->  	if (!sect_attrs)
-> -		return;
-> +		return -ENOMEM;
->  
->  	/* Setup section attributes. */
->  	sect_attrs->grp.name = "sections";
-> @@ -103,8 +104,10 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
->  		sattr->address = sec->sh_addr;
->  		sattr->battr.attr.name =
->  			kstrdup(info->secstrings + sec->sh_name, GFP_KERNEL);
-> -		if (!sattr->battr.attr.name)
-> +		if (!sattr->battr.attr.name) {
-> +			ret = -ENOMEM;
->  			goto out;
-> +		}
->  		sect_attrs->nsections++;
->  		sattr->battr.read = module_sect_read;
->  		sattr->battr.size = MODULE_SECT_READ_SIZE;
-> @@ -113,13 +116,16 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
->  	}
->  	*gattr = NULL;
->  
-> -	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp))
-> +	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp)) {
-> +		ret = -EIO;
->  		goto out;
-> +	}
-
-Why does the logic return -EIO instead of propagating the error code
-from sysfs_create_group()?
-
->  
->  	mod->sect_attrs = sect_attrs;
-> -	return;
-> +	return 0;
->  out:
->  	free_sect_attrs(sect_attrs);
-> +	return ret;
->  }
->  
->  static void remove_sect_attrs(struct module *mod)
-> @@ -158,15 +164,16 @@ static void free_notes_attrs(struct module_notes_attrs *notes_attrs,
->  	kfree(notes_attrs);
->  }
->  
-> -static void add_notes_attrs(struct module *mod, const struct load_info *info)
-> +static int add_notes_attrs(struct module *mod, const struct load_info *info)
->  {
->  	unsigned int notes, loaded, i;
->  	struct module_notes_attrs *notes_attrs;
->  	struct bin_attribute *nattr;
-> +	int ret = 0;
-
-Similarly here, the initialization is not necessary.
-
->  
->  	/* failed to create section attributes, so can't create notes */
->  	if (!mod->sect_attrs)
-> -		return;
-> +		return -EINVAL;
-
-Since the patch modifies mod_sysfs_setup() to bail out when registering
-section attributes fails, this condition can no longer be true and the
-check can be removed.
-
->  
->  	/* Count notes sections and allocate structures.  */
->  	notes = 0;
-> @@ -176,12 +183,12 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
->  			++notes;
->  
->  	if (notes == 0)
-> -		return;
-> +		return 0;
->  
->  	notes_attrs = kzalloc(struct_size(notes_attrs, attrs, notes),
->  			      GFP_KERNEL);
->  	if (!notes_attrs)
-> -		return;
-> +		return -ENOMEM;
->  
->  	notes_attrs->notes = notes;
->  	nattr = &notes_attrs->attrs[0];
-> @@ -201,19 +208,24 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
->  	}
->  
->  	notes_attrs->dir = kobject_create_and_add("notes", &mod->mkobj.kobj);
-> -	if (!notes_attrs->dir)
-> +	if (!notes_attrs->dir) {
-> +		ret = -ENOMEM;
->  		goto out;
-> +	}
->  
->  	for (i = 0; i < notes; ++i)
->  		if (sysfs_create_bin_file(notes_attrs->dir,
-> -					  &notes_attrs->attrs[i]))
-> +					  &notes_attrs->attrs[i])) {
-> +			ret = -EIO;
->  			goto out;
-> +	}
-
-Similarly here, the actual error from sysfs_create_bin_file() can be
-returned.
-
->  
->  	mod->notes_attrs = notes_attrs;
-> -	return;
-> +	return 0;
->  
->  out:
->  	free_notes_attrs(notes_attrs, i);
-> +	return ret;
->  }
->  
->  static void remove_notes_attrs(struct module *mod)
-> @@ -385,11 +397,20 @@ int mod_sysfs_setup(struct module *mod,
->  	if (err)
->  		goto out_unreg_modinfo_attrs;
->  
-> -	add_sect_attrs(mod, info);
-> -	add_notes_attrs(mod, info);
-> +	err = add_sect_attrs(mod, info);
-> +	if (err)
-> +		goto out_unreg_sect_attrs;
-> +
-> +	err = add_notes_attrs(mod, info);
-> +	if (err)
-> +		goto out_unreg_notes_attrs;
->  
->  	return 0;
->  
-> +out_unreg_notes_attrs:
-> +	remove_notes_attrs(mod);
-> +out_unreg_sect_attrs:
-> +	remove_sect_attrs(mod);
-
-Upon a failure from add_sect_attrs(), the caller doesn't need to unwind
-its operation. It is the responsibility of add_sect_attrs() to clean up
-after itself on error. Instead, the code in mod_sysfs_setup() needs to
-unwind all previous successful operations leading up to this point,
-which means here additionally to invoke del_usage_links().
-
-I think you want something as follows:
-
-err = add_sect_attrs(mod, info);
-if (err)
-	goto out_unreg_usage_links;
-
-err = add_notes_attrs(mod, info);
-if (err)
-	goto out_unreg_sect_attrs;
-
-return 0;
-
-out_unreg_sect_attrs:
-	remove_sect_attrs(mod);
-out_unreg_usage_links:
-	del_usage_links(mod);
-[...]
-
->  out_unreg_modinfo_attrs:
->  	module_remove_modinfo_attrs(mod, -1);
->  out_unreg_param:
-
--- 
-Cheers,
-Petr
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
