@@ -1,308 +1,250 @@
-Return-Path: <linux-kernel+bounces-312393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3505D9695FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19689695F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E320F2851B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506771F24B2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963B1200124;
-	Tue,  3 Sep 2024 07:48:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62C01DAC7D;
+	Tue,  3 Sep 2024 07:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QkZ5rlsJ"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE1C1D54ED
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725349691; cv=none; b=NfsF8JqUahFrBBTHDPjwuwJu9xdAdutaeqy46j92gyzvtwB0CHuxPk/2zttChSf/wtZ134LN79bcWI2QfL833aCGw33AyuB69JjsgVMV74+A9JxOwHgjkYJfQUnIH2kSS9l499jnr3+Y7wTmXrZRU5sFSIqbVBCaDy78cvu+obo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725349691; c=relaxed/simple;
-	bh=2XJhSUsgfvK9XDLFPvu+1PH7EB/QR5kW5wlebm1nU4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBLO3Hgi1vcewW/AIGuZk/cWpYTcsVU4fV9icxkQuBEK/w+5ZzMAxp2aHyYAzI82yecpgIAaqedVlxDvaPrZT5GiO7LnHWCcjsz0GZUKUAUyXnbyixKYtEUg/C0pmD8xXqKweStoJ70qErDAvnF2DTLiFLMNyX7gQ+N7EICnOOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1slOGX-0004RF-CO; Tue, 03 Sep 2024 09:47:53 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1slOGV-0058BE-NY; Tue, 03 Sep 2024 09:47:51 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1slOGV-004N9C-1x;
-	Tue, 03 Sep 2024 09:47:51 +0200
-Date: Tue, 3 Sep 2024 09:47:51 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Adam Ford <aford173@gmail.com>
-Cc: linux-phy@lists.infradead.org, dominique.martinet@atmark-techno.com,
-	linux-imx@nxp.com, festevam@gmail.com, frieder.schrempf@kontron.de,
-	aford@beaconembedded.com, Sandor.yu@nxp.com,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 1/5] phy: freescale: fsl-samsung-hdmi: Replace
- register defines with macro
-Message-ID: <20240903074751.nacchml6trk6si6s@pengutronix.de>
-References: <20240903013113.139698-1-aford173@gmail.com>
- <20240903013113.139698-2-aford173@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5181865F0;
+	Tue,  3 Sep 2024 07:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725349688; cv=fail; b=ackXev8AktkR0mw2898+j0NSdJoOcuwvCgg6KJjGQlR3nPkf6juVO5QnttgSQIfLr+oNgFlS6yyO3uDBkn8fhgcZAZlB6h9HaWLvcZtStAnMH8RIxpmhIXanj2fpmnc48HDlFb4Idr0tEuuheKNVCl3VTS4ybz9+EH3vGodNbjo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725349688; c=relaxed/simple;
+	bh=sMjBQEc6DeSYfD9zLhTKnF0j+j/XIV0PfbrYxe+aksc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UttfyM347ol8q0yO4E2E3btPsCpmsVP9ya2SUazFePmopT70muh8jRImJPjvOk661ypSCb6NhqLHs/Z+lxPItj9jZ79szqUklIfHP2fcAOBdBbnEnWdmOCJBoTE8JjMtlHREktB4EgdBp3SDaFPNbuMCodf/TYGBsA/Q2pOrGWU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QkZ5rlsJ; arc=fail smtp.client-ip=40.107.94.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CxQogdeNHeeElX706sgxM1f7GfP1Ke6gbyAMYD0t7sTsKgJn3pPJCJVnkNGDui0rIw9A7O2+gxRCsT713xf9TQzD2d033Xbdo39Bl4laVIEaKZhgX6fMaIrunhm2k/S1A9rXBGtv2UlxQTcvp4DHvXNAr5nHbZCkceB+wsYiUkENv+BaB9MehBLqpXvGdZNFZWDpuoZG1Pz9KFPBkM2O2vZ1RyAPowVtIuk6HvHw/owNVC4V3KC2PR1O72OXvJ3WruAYnC0xw2l0hI9BCTJojaA579mnzf0fqaCeJdCcg2Tv6VL3kRMoheNLwkUwB2rAsih1TXhFw5KNffxRykmvyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d5W54XZ1VOEfnHzpDbqEGkQQmlAEUGhfInypOztnGNg=;
+ b=FJu/sEHAVDjzPKsz7LP0yuk927bWOPqhcXQ1kRPulG//IFxh3eccRfaXAhmyNbyywHT3cZNDAoyaUd5IC+Tgp8e0An7tLrZ+5zjdEjtT9Sf/RS8Jedu78FhuOtidtDO8KM3WKFXMtPle1QPPjWK/F2X/KjeIpqwuZFYGpzDI9geF8zyn+D1vj9HqnA6tphr396ZbBvrHhHvOH4w4Y23Eg0cJxl5OTEv+zP96cwt778AhFSH++vQp+fJkGy8hi7qXpus3ocVH8ctN/nLu2vP/5qLeVYEGOMSdJeazHyqWO9gG0q5ZusUtnzcKBijnZnfx7JvwQBSjRj2BQ4o31jHYmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d5W54XZ1VOEfnHzpDbqEGkQQmlAEUGhfInypOztnGNg=;
+ b=QkZ5rlsJepAxmz4poPzfm8hoYOg8r77X4h1wnXYJGGo0dcxw4lYHwkfyPBealCFocGy6PM/dJ/uTLNu171o6Kib9jrQLDwdVYZm0hhZiSsloAu9j3GtQfL9fPT5mwrm7H+/N0+BHiUKBSsr9aPJeaCQTNmmlJkNrB0yFUhP5g48tGU0phffbIEpTJ2s9ye1OJ8esVorfL4dlXOcMUe6sQrhFDmKADyBsX0/oJZxkEVGnXgaRNAlmn5ZCsGobu+IAJ2W+LSe+RDwDWW/PGzyIwHuRHlbWYKXeizlTsAKRsTc9qNsLUOAHE4SkPZ+f2ayuzXxwinjWWZxwciDTuoU17Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB8295.namprd12.prod.outlook.com (2603:10b6:8:f6::21) by
+ PH0PR12MB8008.namprd12.prod.outlook.com (2603:10b6:510:26f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Tue, 3 Sep
+ 2024 07:48:03 +0000
+Received: from DS0PR12MB8295.namprd12.prod.outlook.com
+ ([fe80::c1ec:bd68:b1e9:8549]) by DS0PR12MB8295.namprd12.prod.outlook.com
+ ([fe80::c1ec:bd68:b1e9:8549%5]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 07:48:03 +0000
+Message-ID: <e08c5cc6-27e7-43b7-8337-095a42ed9698@nvidia.com>
+Date: Tue, 3 Sep 2024 09:47:58 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH vhost v2 00/10] vdpa/mlx5: Parallelize device
+ suspend/resume
+To: Lei Yang <leiyang@redhat.com>
+Cc: Eugenio Perez Martin <eperezma@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Michael Tsirkin <mst@redhat.com>,
+ Si-Wei Liu <si-wei.liu@oracle.com>,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+ Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ kvm@vger.kernel.org, Parav Pandit <parav@nvidia.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>
+References: <20240816090159.1967650-1-dtatulea@nvidia.com>
+ <CAJaqyWfwkNUYcMWwG4LthhYEquUYDJPRvHeyh9C_R-ioeFYuXw@mail.gmail.com>
+ <CAPpAL=xGQvpKwe8WcfHX8e59EdpZbOiohRS1qgeR4axFBDQ_+w@mail.gmail.com>
+ <ea127c85-7080-4679-bff1-3a3a253f9046@nvidia.com>
+ <CAPpAL=wDKacuWu-wgbwSN3MORSMapU8=RAdzp3ePgPo=6EMFbg@mail.gmail.com>
+Content-Language: en-US
+From: Dragos Tatulea <dtatulea@nvidia.com>
+In-Reply-To: <CAPpAL=wDKacuWu-wgbwSN3MORSMapU8=RAdzp3ePgPo=6EMFbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0192.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ab::11) To DS0PR12MB8295.namprd12.prod.outlook.com
+ (2603:10b6:8:f6::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903013113.139698-2-aford173@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB8295:EE_|PH0PR12MB8008:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5fb57294-b255-4615-686a-08dccbecbd76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWJqSlJjK2xVRUNRRnVscXd3MTFmaVA2d0NnbWphQXVORE5jZk93VnpocHNG?=
+ =?utf-8?B?RGJ0YUc0dVpyNGF2bDJGdWRaZzhqU3lNNFZBNThDYVd6NUsrUFgvWDZVR3VQ?=
+ =?utf-8?B?OUdMSmhuUlBxOUFBU1lsNHIzYzFnSy83alJaTzJ3SnAzMXJMY0NwT2g4WUIx?=
+ =?utf-8?B?UmQ1d3h2TFo0N0RaeDdhUTd2VGZ6YzZKKzFOVzFTVllIMWh1WWRPUzJWZUE3?=
+ =?utf-8?B?YkZRZkZTbTNDWE9LUlh4ZnNPZEJCbFo4Wml5ajc3T3k4dmRBS01TM2t0VTQ3?=
+ =?utf-8?B?RnhTVmlSaUVxNm1MZ1NENEFDMGtLWFl4aWpISzlmZi8xYk5GT1pTU2psd3Ay?=
+ =?utf-8?B?bmx0U1IyYkxvV2hXYzh6ZXBsalArSGxSUjFOZkplN2RxRnFZQklVVXNzb1pa?=
+ =?utf-8?B?KzdnV3luOG5ybktURWJoTzRmVWRXdjlkRVN2TDBqRHo4ekhSR3kzbVJ4QXhN?=
+ =?utf-8?B?YnNkSUVUTi9jbFlHTDFrK0o2alh3MldrbTVxSVZXNjJVYU9hYjMxcWdTQmMy?=
+ =?utf-8?B?ZG1jK3l6OTdhN2FWTEk5ZWM2ZzZxSjVRamRhaHpqNHVJRUN2MW9aSzZRU3hN?=
+ =?utf-8?B?R2F2bkdPdFJ4QjN0SXRWSzVhNjF2YTlSQjNaQ1AwWVhNNUxMZFJ0djNJR0Qz?=
+ =?utf-8?B?MHB0dS81OHRudERaZmgwS1BVNE13d3RWM2M4SU9tdnFXZUEyOFY5ME9JNGta?=
+ =?utf-8?B?eVQySnYrUEtqUG82M0VzczRSS3RYUzNUQTZxVWM2UHFsNkU2MGI4RXVHajU5?=
+ =?utf-8?B?U0YySTFDNjhiMDBleEdCTmhmbEpqNmg1R3JKY1NFbklSWDFhTEh6MEFlQ1pX?=
+ =?utf-8?B?aE1ZWTFtem5mdDFTNTU2N3BPKzJwRFdKNGpyU1dvZHIzU3dIK3pma1NrM1Bm?=
+ =?utf-8?B?eWhhbmdSWGlyTDZVNFA0WWNEaXNlcGFPMDd4KzdvU0ZYamsxTWFPb1Y1WWNn?=
+ =?utf-8?B?NlZ3c0tCakhNVERRSnZTeER1dW1xVmMwQldBalk4TkJ4VjV2VkFSL3NXS3dN?=
+ =?utf-8?B?OUo1dXc0WXRLdGRNVzhnY1RjcmdUdDc3ZnhXM29aOW9oc2l3dTRJaE5VdnR0?=
+ =?utf-8?B?UGc0RFQvT1NoaVBsRE9YSmIrZzhMR0NCSjhQQ2laZlR3b2xOLzEwTUxiOFBM?=
+ =?utf-8?B?WTBzNEhLVTFVRUw3N2tkeXkzdVNFZWJ5NTlKNkJ0K2kvbFgzVmhyMVk5SFV1?=
+ =?utf-8?B?a2VtWDh5eCs1SzFMbDRrMy9RNk1Pd000Ui94QWVtTklBVEZIZTkva1NrRmt4?=
+ =?utf-8?B?N1A2cWxJZGdlV21sWEVYUnQyNk1ZK2p6amI0d3NQcVdsd2JYanNjNkhtcmJW?=
+ =?utf-8?B?dC9PeldsbEJnOE5CV2tqNmJZbG9SdGtueW9TbHVIcWlVV3JXSEMzaGpSdkpG?=
+ =?utf-8?B?VUh5QUxocWhIckhEOTlNRnhCVWV6Nyt6eWxiUSt4cmZTWWlWTHRPTVJleERj?=
+ =?utf-8?B?MW4yb2wzYTVYazcycENoRFNTMUpKMUptUTlEMmFCdklqdDUzN3grWE1NaG94?=
+ =?utf-8?B?cEhpc0p6eERFWERLYlQzWWtDQ2pHQUM1NnYvMk5mbVhnVUVOZlhPejlXdlo5?=
+ =?utf-8?B?MmRsT0NBSFZSSDR0QjhnY3ZFTVhRSzFLNjRpRUxvV2Nudm96SEZ1KzljNFJ3?=
+ =?utf-8?B?a2dCS0l3TndtRmpsbjFQZlpGZ1k4UTJiYTFFRUVkOWpUZFlBSDdUZVdES0s1?=
+ =?utf-8?B?YS8xSGtqYXMvbldKbWZHMDBBOHlkVjRhR2JQaEk1TE1oaDJVNldOYTdnVWtW?=
+ =?utf-8?B?dnRoekVKYlA1NUNQcHh4aUxJY2U5elF4alA2WExZQWFGanZveStqTERLdmp2?=
+ =?utf-8?B?T1p3SnlQWHdNek9aMkxtdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8295.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eTZDTkgxcStmK3cxM2JvTTNIUHV4UEs3cC84WGNaaUFLVlQyb0FRMS9pYTkv?=
+ =?utf-8?B?RWJpYVFSK2tjeWJiL3o1anlHWEhhQ3hUaG9RY3ZqKzg2T09jZm01SmdCQTJj?=
+ =?utf-8?B?cGhTOW9YMXFBa1ozUTMzVnFMajJad1RXOFpBOFpGSWl6dW1DcERhNURaNGcr?=
+ =?utf-8?B?OGh2RmMxeFVvQ1ZzVnZVZVlaS095RW9OSDRiM1lUY0Y5UkdCSzBUY09DN2cz?=
+ =?utf-8?B?OFM1NTZkWkdYTjVtMFByYis2c3Y4QzMyS1FJbmhyRnpKcVN5VVFtNDZwZGdF?=
+ =?utf-8?B?Q25GRUJWOHpiT1hGTGdobDM0RE53a0FXMUpuU0FMZ1pFK2s0ajZ1YmxYQXFD?=
+ =?utf-8?B?Y2duc0FKb3dPeENHVkN1WXpXajhxbDJjMjJSOUwwOHU0cm5haU9NZlRUN2VX?=
+ =?utf-8?B?TkcxU2hrTGdEWGlORlBNYy9wYlQrZGZpR1VPdmYxYTg3dWVNUWZZY25lMFla?=
+ =?utf-8?B?dzU5MXVwWUgzTDM2Uzd2VmVQUEZWOUtRV2ZNYkVFbytVU3lVOVN4N0p1N2N3?=
+ =?utf-8?B?M1BsbFlyM1RVc1d4bjN6b3BvWkRzaXkvRWhhanRpaTBFQTFKZXZzUEJBMU1M?=
+ =?utf-8?B?cmRMVDRaZ2VQNnFFNEplM2VySVFMeklISWhwTFAxZEZUVCtBVjN3NFRyQ09P?=
+ =?utf-8?B?YXBsN1VEMjlrR0tiV3E2bkNmV0RLN0V0R0Y1Q1pmK2hYZGdlWkpDZkZyZVlo?=
+ =?utf-8?B?aG91TUdhM2ZkdkhLNW12MUorQnJ0ckREMUI2ODQrbWdLM3pySlQwOHhwS2cy?=
+ =?utf-8?B?d1NJS21Ra3l2ZWI5dzJsY3htNmFYVXptRTVZSEdYcmp2R1d5ZXFpZ2tpa0JQ?=
+ =?utf-8?B?eUpqOHVKSnE3WnZJK0dMQVp4NUR0UkRUckRlOEs1RWVJZko4WnREcVhOSzlC?=
+ =?utf-8?B?cy84eXBJYVJ3UGdCaFYrWXhyVXN1UW05d09MVGpPTDRuelVIeU5PZWNxcUR3?=
+ =?utf-8?B?Qmw5dFVjOURyS0Z3UVVkejQ0eW9GNkhjUVJmcU5KN3FyY2lLeFN2eExxTHd0?=
+ =?utf-8?B?ZFBiUms0dFlxRkdJTG5KYVRsTlBZbHprMWpTZm95Y1c0bkhQRHR6bDc2dllT?=
+ =?utf-8?B?Yit4WGhQUCt2K2VweUR6VVdmZ2RvdjNkbDArOHJ0cjZrN3FxalJrYjNBUWlL?=
+ =?utf-8?B?Ni8xVnowcUlHd25JYlVib3FkR3ZJamk5Tmt4bU03VlJNRVpidk1FdUlpeFBm?=
+ =?utf-8?B?eWNBWU5maElNSHYwVk9GSy9RRXRYTkcvbUYrMzdUOG9vcGtrN1BRdXpnL2V1?=
+ =?utf-8?B?ZTNiVFhYRDNYbWVRbkQxSzZmTmVITEN3OFRsb3ZlNVBra2VxT0h6MzZscVhv?=
+ =?utf-8?B?Z3I5ZEI1N0QxSE1mdlhnZmpLTWQ0SXJWL3o5RnZwd1IxQjJJQzBHZmYvWnJz?=
+ =?utf-8?B?WGNkRmR0VHBrSDd0R25Rd1pmRDQrM2tXb1BMQ0FMWnNYenhjZjZ0cG5tS05I?=
+ =?utf-8?B?SHVmR3I5RitFbjRqenBUVXJXNGlQdGNBb2hHeEFLZ0ZMcGdzd1prc3h6azhx?=
+ =?utf-8?B?ZFptQWJDV2xzd3BOZTlvWXdONkl1V1N5ZmdwUklaRDFZdVBYVHdCalJJNEt4?=
+ =?utf-8?B?eWlZeVdNMm04bUFrWC8rQytsN0ZtdDZlcyswbGJDVUNpNnJlYXZiRzNTQUtS?=
+ =?utf-8?B?Ti9zNUFHZm54dGZoTWhrMjVYYTk2ZDhKMUJiQU41a2YrZEtzUG9UNVJBZ1Ux?=
+ =?utf-8?B?MCsvVXJ4ZWp0NnR0TDJjU281cmdxMkdGcjliQXJQQVJZZVBMY1VBRDZPYk5v?=
+ =?utf-8?B?Y0ZUbStyNE04ZXg1MnpMRzVXYWRJUWJIV2oycDlNR0dwV2ZJVVBlZ0FwQjM1?=
+ =?utf-8?B?WEd4V1RNQnZXZHRwb0VpOGFSWE1PbHFYTXhMTlNPOFMyeHRWQzBJbi9JL0hp?=
+ =?utf-8?B?b29YUDBUdFk0NUpaUjVURFlvR2tRbzJhMXVNaUY0RElpNGlnd1U0Y2VvbHNz?=
+ =?utf-8?B?R1k0R0F1aEpUYTFleWZpcjBJTmhMdk1EQ3Z5Q2dpVHF4OUsrZDdFa0d2YUZj?=
+ =?utf-8?B?eEFoSGtnUzZWZFlXMER6OHViUEtwd3FVbXgyN08zdDY5ajlPeitCK1N1UVlJ?=
+ =?utf-8?B?Q0RxL3BXTzIvUXhheEo5d1FodFhjZzdhN2F5eG5sbzIzK1hnYzFXVm1UU3Vo?=
+ =?utf-8?Q?899z8tVU/XRIQ6fEtR3H4YwzV?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fb57294-b255-4615-686a-08dccbecbd76
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8295.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 07:48:03.3708
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fr1SDpf3PlUy4+PJwn9bVJ7hu2lM8t019QIt36B3QvSiSe0bX/7swEw9aYrhMJ8bTh1wMXW3k86J3VkTdPAaTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8008
 
-Hi Adam,
 
-thanks for the patch.
 
-On 24-09-02, Adam Ford wrote:
-> There are 47 registers defined as PHY_REG_xx were xx goes from 00 to
-> 47.  Simplify this by replacing them all with a macro which is passed
-> the register number to return the proper register offset.
+On 03.09.24 09:40, Lei Yang wrote:
+> On Mon, Sep 2, 2024 at 7:05 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>>
+>> Hi Lei,
+>>
+>> On 02.09.24 12:03, Lei Yang wrote:
+>>> Hi Dragos
+>>>
+>>> QE tested this series with mellanox nic, it failed with [1] when
+>>> booting guest, and host dmesg also will print messages [2]. This bug
+>>> can be reproduced boot guest with vhost-vdpa device.
+>>>
+>>> [1] qemu) qemu-kvm: vhost VQ 1 ring restore failed: -1: Operation not
+>>> permitted (1)
+>>> qemu-kvm: vhost VQ 0 ring restore failed: -1: Operation not permitted (1)
+>>> qemu-kvm: unable to start vhost net: 5: falling back on userspace virtio
+>>> qemu-kvm: vhost_set_features failed: Device or resource busy (16)
+>>> qemu-kvm: unable to start vhost net: 16: falling back on userspace virtio
+>>>
+>>> [2] Host dmesg:
+>>> [ 1406.187977] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_compat_reset:3267:(pid 8506): performing device reset
+>>> [ 1406.189221] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_compat_reset:3267:(pid 8506): performing device reset
+>>> [ 1406.190354] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_show_mr_leaks:573:(pid 8506) warning: mkey still alive after
+>>> resource delete: mr: 000000000c5ccca2, mkey: 0x40000000, refcount: 2
+>>> [ 1471.538487] mlx5_core 0000:0d:00.2: cb_timeout_handler:938:(pid
+>>> 428): cmd[13]: MODIFY_GENERAL_OBJECT(0xa01) Async, timeout. Will cause
+>>> a leak of a command resource
+>>> [ 1471.539486] mlx5_core 0000:0d:00.2: cb_timeout_handler:938:(pid
+>>> 428): cmd[12]: MODIFY_GENERAL_OBJECT(0xa01) Async, timeout. Will cause
+>>> a leak of a command resource
+>>> [ 1471.540351] mlx5_core 0000:0d:00.2: modify_virtqueues:1617:(pid
+>>> 8511) error: modify vq 0 failed, state: 0 -> 0, err: 0
+>>> [ 1471.541433] mlx5_core 0000:0d:00.2: modify_virtqueues:1617:(pid
+>>> 8511) error: modify vq 1 failed, state: 0 -> 0, err: -110
+>>> [ 1471.542388] mlx5_core 0000:0d:00.2: mlx5_vdpa_set_status:3203:(pid
+>>> 8511) warning: failed to resume VQs
+>>> [ 1471.549778] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_show_mr_leaks:573:(pid 8511) warning: mkey still alive after
+>>> resource delete: mr: 000000000c5ccca2, mkey: 0x40000000, refcount: 2
+>>> [ 1512.929854] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_compat_reset:3267:(pid 8565): performing device reset
+>>> [ 1513.100290] mlx5_core 0000:0d:00.2:
+>>> mlx5_vdpa_show_mr_leaks:573:(pid 8565) warning: mkey still alive after
+>>> resource delete: mr: 000000000c5ccca2, mkey: 0x40000000, refcount: 2
+>>>
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
->  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 138 ++++++-------------
->  1 file changed, 41 insertions(+), 97 deletions(-)
+> Hi Dragos
 > 
-> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> index 9048cdc760c2..bc5d3625ece6 100644
-> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> @@ -14,76 +14,20 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  
-> -#define PHY_REG_00		0x00
-> -#define PHY_REG_01		0x04
-> -#define PHY_REG_02		0x08
-> -#define PHY_REG_08		0x20
-> -#define PHY_REG_09		0x24
-> -#define PHY_REG_10		0x28
-> -#define PHY_REG_11		0x2c
-> -
-> -#define PHY_REG_12		0x30
-> -#define  REG12_CK_DIV_MASK	GENMASK(5, 4)
-> -
-> -#define PHY_REG_13		0x34
-> -#define  REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
-> -
-> -#define PHY_REG_14		0x38
-> -#define  REG14_TOL_MASK		GENMASK(7, 4)
-> -#define  REG14_RP_CODE_MASK	GENMASK(3, 1)
-> -#define  REG14_TG_CODE_HIGH_MASK	GENMASK(0, 0)
-> -
-> -#define PHY_REG_15		0x3c
-> -#define PHY_REG_16		0x40
-> -#define PHY_REG_17		0x44
-> -#define PHY_REG_18		0x48
-> -#define PHY_REG_19		0x4c
-> -#define PHY_REG_20		0x50
-> -
-> -#define PHY_REG_21		0x54
-> -#define  REG21_SEL_TX_CK_INV	BIT(7)
-> -#define  REG21_PMS_S_MASK	GENMASK(3, 0)
-> -
-> -#define PHY_REG_22		0x58
-> -#define PHY_REG_23		0x5c
-> -#define PHY_REG_24		0x60
-> -#define PHY_REG_25		0x64
-> -#define PHY_REG_26		0x68
-> -#define PHY_REG_27		0x6c
-> -#define PHY_REG_28		0x70
-> -#define PHY_REG_29		0x74
-> -#define PHY_REG_30		0x78
-> -#define PHY_REG_31		0x7c
-> -#define PHY_REG_32		0x80
-> -
-> -/*
-> - * REG33 does not match the ref manual. According to Sandor Yu from NXP,
-> - * "There is a doc issue on the i.MX8MP latest RM"
-> - * REG33 is being used per guidance from Sandor
-> - */
-
-Can we keep this comment please.
-
-> -#define PHY_REG_33		0x84
-> -#define  REG33_MODE_SET_DONE	BIT(7)
-> -#define  REG33_FIX_DA		BIT(1)
-> -
-> -#define PHY_REG_34		0x88
-> -#define  REG34_PHY_READY	BIT(7)
-> -#define  REG34_PLL_LOCK		BIT(6)
-> -#define  REG34_PHY_CLK_READY	BIT(5)
-> -
-> -#define PHY_REG_35		0x8c
-> -#define PHY_REG_36		0x90
-> -#define PHY_REG_37		0x94
-> -#define PHY_REG_38		0x98
-> -#define PHY_REG_39		0x9c
-> -#define PHY_REG_40		0xa0
-> -#define PHY_REG_41		0xa4
-> -#define PHY_REG_42		0xa8
-> -#define PHY_REG_43		0xac
-> -#define PHY_REG_44		0xb0
-> -#define PHY_REG_45		0xb4
-> -#define PHY_REG_46		0xb8
-> -#define PHY_REG_47		0xbc
-> +#define PHY_REG(reg)		(reg * 4)
-> +
-> +#define REG12_CK_DIV_MASK	GENMASK(5, 4)
-
-> +#define REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
-
-> +#define REG14_TOL_MASK		GENMASK(7, 4)
-> +#define REG14_RP_CODE_MASK	GENMASK(3, 1)
-> +#define REG14_TG_CODE_HIGH_MASK	GENMASK(0, 0)
-
-> +#define REG21_SEL_TX_CK_INV	BIT(7)
-> +#define REG21_PMS_S_MASK	GENMASK(3, 0)
-
-> +#define REG33_MODE_SET_DONE	BIT(7)
-> +#define REG33_FIX_DA		BIT(1)
-
-> +#define REG34_PHY_READY	BIT(7)
-> +#define REG34_PLL_LOCK		BIT(6)
-> +#define REG34_PHY_CLK_READY	BIT(5)
-
-Also please add newlines in between different reg defines like I did
-above. The comment which we should keep should be put above
-REG_33_MODE_SET_DONE. The rest LGTM.
-
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-
->  #define PHY_PLL_DIV_REGS_NUM 6
->  
-> @@ -369,29 +313,29 @@ struct reg_settings {
->  };
->  
->  static const struct reg_settings common_phy_cfg[] = {
-> -	{ PHY_REG_00, 0x00 }, { PHY_REG_01, 0xd1 },
-> -	{ PHY_REG_08, 0x4f }, { PHY_REG_09, 0x30 },
-> -	{ PHY_REG_10, 0x33 }, { PHY_REG_11, 0x65 },
-> +	{ PHY_REG(0), 0x00 }, { PHY_REG(1), 0xd1 },
-> +	{ PHY_REG(8), 0x4f }, { PHY_REG(9), 0x30 },
-> +	{ PHY_REG(10), 0x33 }, { PHY_REG(11), 0x65 },
->  	/* REG12 pixclk specific */
->  	/* REG13 pixclk specific */
->  	/* REG14 pixclk specific */
-> -	{ PHY_REG_15, 0x80 }, { PHY_REG_16, 0x6c },
-> -	{ PHY_REG_17, 0xf2 }, { PHY_REG_18, 0x67 },
-> -	{ PHY_REG_19, 0x00 }, { PHY_REG_20, 0x10 },
-> +	{ PHY_REG(15), 0x80 }, { PHY_REG(16), 0x6c },
-> +	{ PHY_REG(17), 0xf2 }, { PHY_REG(18), 0x67 },
-> +	{ PHY_REG(19), 0x00 }, { PHY_REG(20), 0x10 },
->  	/* REG21 pixclk specific */
-> -	{ PHY_REG_22, 0x30 }, { PHY_REG_23, 0x32 },
-> -	{ PHY_REG_24, 0x60 }, { PHY_REG_25, 0x8f },
-> -	{ PHY_REG_26, 0x00 }, { PHY_REG_27, 0x00 },
-> -	{ PHY_REG_28, 0x08 }, { PHY_REG_29, 0x00 },
-> -	{ PHY_REG_30, 0x00 }, { PHY_REG_31, 0x00 },
-> -	{ PHY_REG_32, 0x00 }, { PHY_REG_33, 0x80 },
-> -	{ PHY_REG_34, 0x00 }, { PHY_REG_35, 0x00 },
-> -	{ PHY_REG_36, 0x00 }, { PHY_REG_37, 0x00 },
-> -	{ PHY_REG_38, 0x00 }, { PHY_REG_39, 0x00 },
-> -	{ PHY_REG_40, 0x00 }, { PHY_REG_41, 0xe0 },
-> -	{ PHY_REG_42, 0x83 }, { PHY_REG_43, 0x0f },
-> -	{ PHY_REG_44, 0x3E }, { PHY_REG_45, 0xf8 },
-> -	{ PHY_REG_46, 0x00 }, { PHY_REG_47, 0x00 }
-> +	{ PHY_REG(22), 0x30 }, { PHY_REG(23), 0x32 },
-> +	{ PHY_REG(24), 0x60 }, { PHY_REG(25), 0x8f },
-> +	{ PHY_REG(26), 0x00 }, { PHY_REG(27), 0x00 },
-> +	{ PHY_REG(28), 0x08 }, { PHY_REG(29), 0x00 },
-> +	{ PHY_REG(30), 0x00 }, { PHY_REG(31), 0x00 },
-> +	{ PHY_REG(32), 0x00 }, { PHY_REG(33), 0x80 },
-> +	{ PHY_REG(34), 0x00 }, { PHY_REG(35), 0x00 },
-> +	{ PHY_REG(36), 0x00 }, { PHY_REG(37), 0x00 },
-> +	{ PHY_REG(38), 0x00 }, { PHY_REG(39), 0x00 },
-> +	{ PHY_REG(40), 0x00 }, { PHY_REG(41), 0xe0 },
-> +	{ PHY_REG(42), 0x83 }, { PHY_REG(43), 0x0f },
-> +	{ PHY_REG(44), 0x3E }, { PHY_REG(45), 0xf8 },
-> +	{ PHY_REG(46), 0x00 }, { PHY_REG(47), 0x00 }
->  };
->  
->  struct fsl_samsung_hdmi_phy {
-> @@ -442,7 +386,7 @@ fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_samsung_hdmi_phy *phy,
->  	}
->  
->  	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
-> -	       phy->regs + PHY_REG_21);
-> +	       phy->regs + PHY_REG(21));
->  }
->  
->  static void
-> @@ -469,7 +413,7 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
->  		break;
->  	}
->  
-> -	writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY_REG_12);
-> +	writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY_REG(12));
->  
->  	/*
->  	 * Calculation for the frequency lock detector target code (fld_tg_code)
-> @@ -489,11 +433,11 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
->  
->  	/* FLD_TOL and FLD_RP_CODE taken from downstream driver */
->  	writeb(FIELD_PREP(REG13_TG_CODE_LOW_MASK, fld_tg_code),
-> -	       phy->regs + PHY_REG_13);
-> +	       phy->regs + PHY_REG(13));
->  	writeb(FIELD_PREP(REG14_TOL_MASK, 2) |
->  	       FIELD_PREP(REG14_RP_CODE_MASK, 2) |
->  	       FIELD_PREP(REG14_TG_CODE_HIGH_MASK, fld_tg_code >> 8),
-> -	       phy->regs + PHY_REG_14);
-> +	       phy->regs + PHY_REG(14));
->  }
->  
->  static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
-> @@ -503,7 +447,7 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
->  	u8 val;
->  
->  	/* HDMI PHY init */
-> -	writeb(REG33_FIX_DA, phy->regs + PHY_REG_33);
-> +	writeb(REG33_FIX_DA, phy->regs + PHY_REG(33));
->  
->  	/* common PHY registers */
->  	for (i = 0; i < ARRAY_SIZE(common_phy_cfg); i++)
-> @@ -511,14 +455,14 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
->  
->  	/* set individual PLL registers PHY_REG2 ... PHY_REG7 */
->  	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
-> -		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG_02 + i * 4);
-> +		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
->  
->  	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
->  	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
->  
-> -	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG_33);
-> +	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
->  
-> -	ret = readb_poll_timeout(phy->regs + PHY_REG_34, val,
-> +	ret = readb_poll_timeout(phy->regs + PHY_REG(34), val,
->  				 val & REG34_PLL_LOCK, 50, 20000);
->  	if (ret)
->  		dev_err(phy->dev, "PLL failed to lock\n");
-> -- 
-> 2.43.0
+>> Can you provide more details about the qemu version and the vdpa device
+>> options used?
+>>
+>> Also, which FW version are you using? There is a relevant bug in FW
+>> 22.41.1000 which was fixed in the latest FW (22.42.1000). Did you
+>> encounter any FW syndromes in the host dmesg log?
 > 
+> This problem has gone when I updated the firmware version to
+> 22.42.1000, and I tested it with regression tests using mellanox nic,
+> everything works well.
 > 
+> Tested-by: Lei Yang <leiyang@redhat.com>
+Good to hear. Thanks for the quick reaction.
+
+Thanks,
+Dragos
 
