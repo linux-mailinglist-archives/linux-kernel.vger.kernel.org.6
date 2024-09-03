@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-314242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526A096B063
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF11B96ABF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B8F2853EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789F51F25615
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B47612C478;
-	Wed,  4 Sep 2024 05:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF1D0DDC;
+	Tue,  3 Sep 2024 22:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vjjo8xqP"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="Xc+MNUPx"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E92F84A32;
-	Wed,  4 Sep 2024 05:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AA5126C16
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426885; cv=none; b=ey6vLWyY6PPulnBnSAYHR/TGZiNi32qHLjmm83Mv+co+TDboPkWCiPSdwjlLkwrKrTcd8bwJeOejZHC8cNeKwNWbN1iM6dq5kdJ944zSaQaTE2taODmypVIW683KuS67b+VwWcfjvI5mtd90pkmPpHug7DosnjNWC74iy+dMHKA=
+	t=1725401844; cv=none; b=UK11XG4HXOH+J9fdRdM+aU6Lq4qZQf5YmiiPIbDTlaatP4/Fp5eM9DkDhDCQ5jd3rLl0MGKEg16rX3Rby2NLbolpnLSNu8q6bre+Jhv6VqcdNjSCAUUZe6JhhgGvsf3mH22yYI1ueFrkVftUaBYOiVXcJI6wJvZmpnlewuUxvYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426885; c=relaxed/simple;
-	bh=JlZSM40ifyeZNoN07U6vpgyOTY7VOt2WsqMUA0RUAzQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=knAWIzTrOfMPpZUntjioJZS0b0Ev1+mzPuNZ3Y+ruZllQyQAaOCGPJoQXj229nHd3IBoTivDEAyx0M+a3bcLk8ZSMI98OVE/8MFd3pexu1OLYoT5D0++9gtjf3tKo3d3mryFFyEtKanSXd1RS0mvwrYjOuiNxD1EHfAAg3CB2XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vjjo8xqP; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725426884; x=1756962884;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JlZSM40ifyeZNoN07U6vpgyOTY7VOt2WsqMUA0RUAzQ=;
-  b=vjjo8xqPp7IBde3Bj/NCJN7W0goDpviVEK30WojDmTPdAjoFVEUmBG1S
-   XO85J6yNlePf7apamrzKi0Di6rkzCs5xFyws+vzAuPIca9FPFFkDqeWHp
-   CwbxxXwIjSAQvH1uHiUicGWImBqT9LXuQKCiyykvSZxk/7uYuq8srfHS6
-   Jvx2NRTBH9c9Saf7qQ48p7MyfvfjNK1GoAMYS+I4CW6J1G6AH0zZCv6n8
-   UdXh07lCaWcyruFa1pCMLhc9jAvqy9piaIgFWwNyUwAFzM4BCxrRoeO6z
-   5we+aBqGBG62wfvmRHEmC+50vkMnEZpSjtDLHFQawLZecUz7/no6KxpGB
-   g==;
-X-CSE-ConnectionGUID: tj+/ggMhS4S42i0wyHIlFg==
-X-CSE-MsgGUID: S0xlivOhTbSTLcOJjjSDLw==
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="31271673"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Sep 2024 22:14:40 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 3 Sep 2024 22:14:35 -0700
-Received: from nisar-OptiPlex-9020.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 3 Sep 2024 22:14:31 -0700
-From: Mohan Prasad J <mohan.prasad@microchip.com>
-To: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>
-CC: <shuah@kernel.org>, <bryan.whitehead@microchip.com>,
-	<mohan.prasad@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <horms@kernel.org>,
-	<brett.creeley@amd.com>, <rosenp@gmail.com>
-Subject: [PATCH net-next 3/3] selftests: lan743x: Add testcase to check throughput of lan743x
-Date: Wed, 4 Sep 2024 03:45:49 +0530
-Message-ID: <20240903221549.1215842-4-mohan.prasad@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903221549.1215842-1-mohan.prasad@microchip.com>
-References: <20240903221549.1215842-1-mohan.prasad@microchip.com>
+	s=arc-20240116; t=1725401844; c=relaxed/simple;
+	bh=ixiIN7Un+lKbuuqP82YDNbIrIqTLTw6W6vi/Xln3G3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4NybQMZg2UlmQAvPIH3darm9fGdqSwvLfemfBv+i6gDKTZ/Umro5iG1/Pcnd+ggOij4W6Mnq+y0NyAod6yEKPO4R+vzwf3+VXRutgB1xxsiPXkUu1snmnrMwbIxe5SNJtHKAuwRsRyNOnpEuNKYVaFACJCho64qLrmfJrnpm0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=Xc+MNUPx; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82a1af43502so296751339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxtx.org; s=google; t=1725401840; x=1726006640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s38PvxZbBMTVGvQ0kbtSdyWDBrmSjvOO/03Z8xfaLco=;
+        b=Xc+MNUPxpf3lC2zmYHaHEjHCDZ3jhq7yZ9iFYSWPZ2Hxqifg4jVtxbaC1rGPR6P5FN
+         6ApZ9zu7JQOt8W5DtDPiFYyvvDZtrzirMRAwAXnQvsqY5mb0NPVpf2INrScDJ2S1EY8h
+         OYb3SlmTsgJu5NHcEb7sOSrLA9K+z2yNB18Ys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725401840; x=1726006640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s38PvxZbBMTVGvQ0kbtSdyWDBrmSjvOO/03Z8xfaLco=;
+        b=Bcq5izTOEpM4abF7ptY1uywsgGFrxwFbPC5hdd6T62shYQdzVEczBBr1K222TfxKgK
+         ri+gQKKqa9zhB0CWPrNEQg8fVGId5bEXExXT2dYueEBfnF9z7P+ES8vLkulo/CkekvM9
+         UQV/E/K+Gsq4qoLXCVpnnmJFi/QH6OkJay9fdfwDDJChEB70gJZ8HdTx2kSK0NaByw4y
+         KjUkbyU054+H9BXFwXSWyvlZfC1UZ4EtYtjog+SG8cFeRCySQb+FmzidM0lLSGsbkKTd
+         Th8gQOpo0lHGPEPVut7wTZYDBTkEAMWujIjqcBXWDjR+77rcQJE5fZ8JKL3fm+i26U6W
+         OIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWA/n3FIMS9NffBOnXB8ddXzrT/GfH4203DMfAbt2COGZ22410C+ocz6qacafOX9l9GMx2MQ1oM6KbWV7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhYp4Qdcn+j4N/wIp/MMl9BGhIq5s4xZYxxFKfEN7aU3ATz9Xt
+	0P3j+u0UQXI7Rk6jiYhLUBFxDbL2D0yOEcF/gIPf1gY/DO2KvEgdTNsTFMFk0Q==
+X-Google-Smtp-Source: AGHT+IHSG24Jh26pxj6oDOdaXB3yvTtI5BWzt2ZuQfpSpL2rvr53tFFIUcwfaMJpX+ZdObf03WdX1w==
+X-Received: by 2002:a05:6602:6b07:b0:82a:23b4:4c90 with SMTP id ca18e2360f4ac-82a23b44d62mr1661524439f.1.1725401840339;
+        Tue, 03 Sep 2024 15:17:20 -0700 (PDT)
+Received: from fedora64.linuxtx.org ([72.42.103.70])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2de5cf8sm2805547173.37.2024.09.03.15.17.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 15:17:19 -0700 (PDT)
+Sender: Justin Forbes <jmforbes@linuxtx.org>
+Date: Tue, 3 Sep 2024 16:17:17 -0600
+From: Justin Forbes <jforbes@fedoraproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.6 000/166] 6.6.8-rc1 review
+Message-ID: <ZteK7TVPmK09RSz4@fedora64.linuxtx.org>
+References: <20231218135104.927894164@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231218135104.927894164@linuxfoundation.org>
 
-Add testcase to check TCP throughput of lan743x network driver.
-Test uses iperf3 to do performance testing of the driver.
-TCP data at different speeds is sent, received and verified.
+On Mon, Dec 18, 2023 at 02:49:26PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.8 release.
+> There are 166 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 20 Dec 2023 13:50:31 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Mohan Prasad J <mohan.prasad@microchip.com>
----
- .../net/hw/microchip/lan743x/lan743x.py       | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
+x86_64), and boot tested x86_64. No regressions noted.
 
-diff --git a/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
-index 59f0be2a7..a3dcf7896 100755
---- a/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
-+++ b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
-@@ -3,6 +3,7 @@
- 
- import time
- import re
-+import json
- from lib.py import ksft_run, ksft_exit, ksft_pr, ksft_eq
- from lib.py import KsftFailEx, KsftSkipEx
- from lib.py import NetDrvEpEnv
-@@ -75,6 +76,38 @@ def test_network_speed(cfg) -> None:
-             time.sleep(5)
-             verify_speed_and_duplex(cfg.ifname, speed, duplex)
- 
-+def test_tcp_throughput(cfg) -> None:
-+    speeds = ["10", "100", "1000"]
-+    """Test duration in seconds"""
-+    test_duration = 5
-+    target_ip = cfg.remote_addr
-+
-+    for speed in speeds:
-+        set_speed_and_duplex(cfg.ifname, speed, 'full')
-+        time.sleep(5)
-+        verify_link_up(cfg.ifname)
-+        send_command=f"iperf3 -c {target_ip} -t {test_duration} --json"
-+        receive_command=f"iperf3 -c {target_ip} -t {test_duration} --reverse --json"
-+        send_result = cmd(send_command)
-+        receive_result = cmd(receive_command)
-+        if send_result.ret != 0 or receive_result.ret != 0:
-+            raise KsftSkipEx("No server is running")
-+
-+        send_output = send_result.stdout
-+        receive_output = receive_result.stdout
-+
-+        send_data = json.loads(send_output)
-+        receive_data = json.loads(receive_output)
-+        """Convert throughput to Mbps"""
-+        send_throughput = round(send_data['end']['sum_sent']['bits_per_second'] / 1e6, 2)
-+        receive_throughput = round(receive_data['end']['sum_received']['bits_per_second'] / 1e6, 2)
-+
-+        ksft_pr(f"Send throughput: {send_throughput} Mbps, Receive throughput: {receive_throughput} Mbps")
-+        """Check whether throughput is not below 0.9 times the set speed"""
-+        threshold = float(speed) * 0.9
-+        if send_throughput < threshold or receive_throughput < threshold:
-+            raise KsftFailEx("Throughput is below threshold")
-+
- def main() -> None:
-     with NetDrvEpEnv(__file__) as cfg:
-         ksft_run(globs=globals(), case_pfx={"test_"}, args=(cfg,))
--- 
-2.43.0
-
+Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
 
