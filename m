@@ -1,194 +1,110 @@
-Return-Path: <linux-kernel+bounces-313425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F52196A559
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:20:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A29B96A55D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3BB8B2486E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F40EB2139B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F189318BC30;
-	Tue,  3 Sep 2024 17:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA5418DF7F;
+	Tue,  3 Sep 2024 17:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="apQxwB9I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiXUiXi5"
+Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CF01422A2;
-	Tue,  3 Sep 2024 17:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C15F1C14;
+	Tue,  3 Sep 2024 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384026; cv=none; b=SxvPiXtz17bmvxxVNcObPQ4XjDmJ41WsfFmHkQpICY515PSNQeeH2VfW0eCntnmBkOaCZMB8zHmGvvwAJWw1jylyGyT/0eRUsCEWDPdpjuGqRxeg0Pk0btp3naKuK/+N/MHAIt50ZsWBM64c/ydguhoKuYmeXGziGRpJ7iQtdIc=
+	t=1725384140; cv=none; b=UwsnyEzzdsZqCjzvAepMju9TLdEHGSJA3FiM22Ihkp69dEHCPJxSOoTC4VsGPk6m74Zhg1BPiZNb7JpbAL9kdQLWi2m5ZtBMlw0N2RUUm7UoeEHEMK9DkPYbKVdQUbXGEGMrDGf1feCXtrNVVASPmU/j7P0wR4hk0OFa6sZ3NX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384026; c=relaxed/simple;
-	bh=WbRROM7UwGBfTKCQYfar9UwHMh72zbO5Xvhf5N3xTzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rs7Cdri2c9E2BdnpRZtXz4+wQ/Ah7d2wvSaHCl77QOTjv7XHSsvcWmhd5tv4nI5ah1CweX4hGqHpCjnBSy/43zeJUB1Tg/mZW49/cyjPP+dPg2V3j8oiTlE4v/pYTnpQe9zU7xs6vE2zp/tgaXZ2roFhD9ljIFKHzPgUZKJ+cMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=apQxwB9I; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725384025; x=1756920025;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WbRROM7UwGBfTKCQYfar9UwHMh72zbO5Xvhf5N3xTzw=;
-  b=apQxwB9I51HvK3EYHi8nQQEFHbO4ZeUW54Vo4Yp1kEqEvKpitIC6ue2W
-   9vKavw6HbWH1NiCNuB8WdPQONGktoQ+QDgANfHDeC6nTiG1QHRPQhkRwO
-   qeKK+YTTO41HaWStF41Tgr6wRTxneAOTTzsY9iqptNPoJ8RKE2eXctTtp
-   Au2sUzOGiy0sztLcL5Glo2LtWc2bcGEq6na8ixoywvoKjUvWMa2fhNFXN
-   g3NJGVo7yh3ZV6n2foslHrYqUA9RYEtkD39mM/ctZMiuvtwFm54hE3aF+
-   FC0+0E5i6dia8SC84BdDMZpQxpMYlV3stMxru7GkAQIlLl6KKM61Nx9Ru
-   g==;
-X-CSE-ConnectionGUID: 3MBwXEWMTECoyCwxVw7/3w==
-X-CSE-MsgGUID: nwWSJ3ylSTimIizLK1yDzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34664150"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34664150"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:20:24 -0700
-X-CSE-ConnectionGUID: fOehwVKsRD2vXyhgnamsWg==
-X-CSE-MsgGUID: w8ygrZ56THOVa7gBzoek1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69840874"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 10:20:22 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slXCV-0006xI-1M;
-	Tue, 03 Sep 2024 17:20:19 +0000
-Date: Wed, 4 Sep 2024 01:19:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yang Jihong <yangjihong@bytedance.com>, irogers@google.com,
-	acme@redhat.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, yangjihong@bytedance.com
-Subject: Re: [PATCH] tools lib subcmd: Use array data to save built usage
- string
-Message-ID: <202409040112.BKj8VlQT-lkp@intel.com>
-References: <20240903084048.766892-1-yangjihong@bytedance.com>
+	s=arc-20240116; t=1725384140; c=relaxed/simple;
+	bh=JtchMB6ysO7d7aYpaMR9SNpKvbkunLZLXZmiNXb5bfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PI+iS+/YKWEcz+Pr16L5DVE8/j1E/CxTktK3ZJBPn1tLFydeVe69YmBjxbJ0kYBzS6JqYMyQV47uKA6GREVdbAvgQ6ZgBJc8TQp57ijZTf0DsAakCtjFIkNunsRL80QRjO4ikOmGp2gewPGgEGckMOkAyoCbm9Rg/a0q4OlgnlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiXUiXi5; arc=none smtp.client-ip=209.85.167.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3df0c4a65baso3366227b6e.2;
+        Tue, 03 Sep 2024 10:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725384138; x=1725988938; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=plRf9YzuYN1gjw1i5Gh/kOX9C6eGORzUHoTA0sJ55PE=;
+        b=jiXUiXi5W9bXSpzjEYUWwsMOuArUfWVrCSl1cJveWJCyMnjkBGLGET33qY1/ybZd3g
+         YFhyolJX6WEh04+L42UP1skx0CPjIc+U3kcBwTFMUzkdl4T/h5UZa2/D5MimgbkN8My+
+         6Z7m5eAEceWcB7PkI2dpPKzoo+p6VL7ITiUSL/z8OO19fM340gKYNMdDfLNc8NJQyoot
+         GshYV9vDENq8Bmb14f/4fFXT0oPkQrVH3X8ggd33WAa/KkuyxgvQZ4XNpRXgL5WvXO6n
+         RdMG2hyyNixXXYPGEab2CjdpF/z715PiqB6jw8L5GQ1BXh88OPsAfOa/2EOlxvXqnbjX
+         Y/Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725384138; x=1725988938;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=plRf9YzuYN1gjw1i5Gh/kOX9C6eGORzUHoTA0sJ55PE=;
+        b=xGVfKXg5kXdsjVsRFSYwGUD3vwS8F7cG/akfKfe1hcq1XRFLxhcppWsKxbsZFsz0BS
+         d4Zyd3TuDNJjC/m7XAfjBsTXHj/pgT4IJVNdtW82CoAIz8ynZ1Tw7JMBycSVetVStyId
+         UkSjzj8/enw9X0Np6ATN/m7szeDssu7oJHW03d9U9aGcX8VPSqZ5JnrpHm+v92GBXx6i
+         1LN5C0g+ppFMIHxf9v0qmPxcG1W43rTxujb1xEsBmWXIusMtY/Og97PqPnw8ch4C2HtF
+         kGkJ8ZM/lVuJpAmj0+WDg0Yjh9qUbkpWyJUOzdKz6L88fHd4OA1++zTYlzozcpllT8FX
+         4kyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWiPEYJQpO3Mm+ShYbu+2+z0AF2BsNmzZlhwfcEc87oCUii18xiJrSyyUOjOYSpUHEwOS6cYcQ6kqr4Fq1@vger.kernel.org, AJvYcCWfVACjFRnw+sjqAv3UVJz08POPYttXKPJFivbMDihG8Fv/eyVKZEgYawT3MxiqjPTdz+vpvvzlacgtvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxACaOSNA0XnBqynDS9qSd3/Qqwm7jeBWBEn/F50xmyLoHH9Hbw
+	281KJaWf064pAmWHL9yyIgAkQA8vvL7bMnNwT/in06Lt57/kLBCI
+X-Google-Smtp-Source: AGHT+IFxGMsvQbGaIYEjb7iI0WRWlXdSuqrfyoTpqQTmc8f2VZKTZ7rIlB/x1qp7MIojafV8hhn7Rw==
+X-Received: by 2002:a05:6808:10d2:b0:3dd:cc7:959a with SMTP id 5614622812f47-3df05e8a24bmr21582020b6e.47.1725384138082;
+        Tue, 03 Sep 2024 10:22:18 -0700 (PDT)
+Received: from localhost.localdomain ([102.38.199.6])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-846be3f60efsm1400886241.18.2024.09.03.10.22.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 10:22:17 -0700 (PDT)
+From: alparkerdf@gmail.com
+To: axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alvaro Parker <alparkerdf@gmail.com>
+Subject: [PATCH] block: fix comment to use set_current_state
+Date: Tue,  3 Sep 2024 13:22:14 -0400
+Message-ID: <20240903172214.520086-1-alparkerdf@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903084048.766892-1-yangjihong@bytedance.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Yang,
+From: Alvaro Parker <alparkerdf@gmail.com>
 
-kernel test robot noticed the following build errors:
+The explanatory comment used `set_task_state` instead of
+`set_current_state` which is the function actually used in the code.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.11-rc6 next-20240903]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Alvaro Parker <alparkerdf@gmail.com>
+---
+ block/blk-rq-qos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yang-Jihong/tools-lib-subcmd-Use-array-data-to-save-built-usage-string/20240903-164426
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240903084048.766892-1-yangjihong%40bytedance.com
-patch subject: [PATCH] tools lib subcmd: Use array data to save built usage string
-config: x86_64-randconfig-101-20240903 (https://download.01.org/0day-ci/archive/20240904/202409040112.BKj8VlQT-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409040112.BKj8VlQT-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409040112.BKj8VlQT-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   scripts/genksyms/parse.y: warning: 9 shift/reduce conflicts [-Wconflicts-sr]
-   scripts/genksyms/parse.y: warning: 5 reduce/reduce conflicts [-Wconflicts-rr]
-   scripts/genksyms/parse.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
-   /usr/bin/ld: tools/objtool/libsubcmd/libsubcmd.a(libsubcmd-in.o): in function `parse_options_subcommand':
->> tools/lib/subcmd/parse-options.c:643: undefined reference to `scnprintf'
->> /usr/bin/ld: tools/lib/subcmd/parse-options.c:647: undefined reference to `scnprintf'
->> /usr/bin/ld: tools/lib/subcmd/parse-options.c:647: undefined reference to `scnprintf'
-   /usr/bin/ld: tools/lib/subcmd/parse-options.c:651: undefined reference to `scnprintf'
-   clang: error: linker command failed with exit code 1 (use -v to see invocation)
-   make[4]: *** [Makefile:75: tools/objtool/objtool] Error 1
-   make[3]: *** [Makefile:72: objtool] Error 2
-   make[2]: *** [Makefile:1360: tools/objtool] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +643 tools/lib/subcmd/parse-options.c
-
-   631	
-   632	int parse_options_subcommand(int argc, const char **argv, const struct option *options,
-   633				const char *const subcommands[], const char *usagestr[], int flags)
-   634	{
-   635		struct parse_opt_ctx_t ctx;
-   636	
-   637		/* build usage string if it's not provided */
-   638		if (subcommands && !usagestr[0]) {
-   639			int n;
-   640			static char buf[USAGESTR_BUF_SIZE];
-   641			int buf_size = sizeof(buf);
-   642	
- > 643			n = scnprintf(buf, buf_size, "%s %s [<options>] {",
-   644				      subcmd_config.exec_name, argv[0]);
-   645	
-   646			for (int i = 0; subcommands[i] && n < buf_size - 1; i++) {
- > 647				n += scnprintf(buf + n, buf_size - n, "%s%s",
-   648					       i ? "|" : "", subcommands[i]);
-   649			}
-   650			if (n < buf_size - 1)
-   651				n += scnprintf(buf + n, buf_size - n, "}");
-   652	
-   653			/* only provided if a complete string is built */
-   654			if (n < buf_size - 1)
-   655				usagestr[0] = buf;
-   656		}
-   657	
-   658		parse_options_start(&ctx, argc, argv, flags);
-   659		switch (parse_options_step(&ctx, options, usagestr)) {
-   660		case PARSE_OPT_HELP:
-   661			exit(129);
-   662		case PARSE_OPT_DONE:
-   663			break;
-   664		case PARSE_OPT_LIST_OPTS:
-   665			while (options->type != OPTION_END) {
-   666				if (options->long_name)
-   667					printf("--%s ", options->long_name);
-   668				options++;
-   669			}
-   670			putchar('\n');
-   671			exit(130);
-   672		case PARSE_OPT_LIST_SUBCMDS:
-   673			if (subcommands) {
-   674				for (int i = 0; subcommands[i]; i++)
-   675					printf("%s ", subcommands[i]);
-   676			}
-   677			putchar('\n');
-   678			exit(130);
-   679		default: /* PARSE_OPT_UNKNOWN */
-   680			if (ctx.argv[0][1] == '-')
-   681				astrcatf(&error_buf, "unknown option `%s'",
-   682					 ctx.argv[0] + 2);
-   683			else
-   684				astrcatf(&error_buf, "unknown switch `%c'", *ctx.opt);
-   685			usage_with_options(usagestr, options);
-   686		}
-   687	
-   688		return parse_options_end(&ctx);
-   689	}
-   690	
-
+diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+index dd7310c94713..2cfb297d9a62 100644
+--- a/block/blk-rq-qos.c
++++ b/block/blk-rq-qos.c
+@@ -263,7 +263,7 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+ 	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
+ 						 TASK_UNINTERRUPTIBLE);
+ 	do {
+-		/* The memory barrier in set_task_state saves us here. */
++		/* The memory barrier in set_current_state saves us here. */
+ 		if (data.got_token)
+ 			break;
+ 		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
