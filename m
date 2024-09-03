@@ -1,133 +1,195 @@
-Return-Path: <linux-kernel+bounces-313306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402F896A388
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5510096A38A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651A61C244B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884D2B261EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6564518953E;
-	Tue,  3 Sep 2024 16:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD36189526;
+	Tue,  3 Sep 2024 16:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c+Fmen+1"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="Ninv5cqG"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB3F188903;
-	Tue,  3 Sep 2024 16:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B428188A22
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379290; cv=none; b=Yn5Yq+NwPeIZRy1Bw3T0gasA3VH+1LsXF7qSjJU4eCnRmLq4CRD7+SYar2NBDb2VVTUQVW6b9HUI2ZZnDAMGWKPi2Nsy1tYH7Hv3PwfagPE7gJI6dUdy2Ejny0izUBd9IWgTaV4w8raR7SV6C67V/4Nd5ABhuRc/85Iy51NnVz0=
+	t=1725379312; cv=none; b=ppFWXtsQZh4v2asHCDMUArw0uxUBZE2CatgSuVr92U6iBNJMtR8D7GIjcD3TTdANA2c763jQ9DajxB52ej+RrbF0hVkEGgAceNPR/c/jjK9U7tmJOxMXdfhrrQKd3fFa6PqA3gzvic/Sgm+WPf/YrN/4DgQ5ZsPWhhNrSOa3HIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379290; c=relaxed/simple;
-	bh=JHkZaHTyZr8FrXiNtLB8ONHDQXBeymJgLt3plAsYQ9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GcFl7jV40vwN7D2LHgHnufBSk8/V3u3WVHBSeENDWPGWPIq8ul+4EYB6q97otQDgjAPGVhWoV2UA2LDWfsT4dE9VcgBEFuout2utDhn463YVO45AyAIoON4KDNf0UKv2BL2W5jhGPGo2AS4xUoH5IsyqOpgGSxRzNY4usmdjRyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c+Fmen+1; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1695160003;
-	Tue,  3 Sep 2024 16:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725379280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TOEHRL0jTkqVJGqC1aF4rVCGmks2TS1OH/JK8xFsn/A=;
-	b=c+Fmen+107aZTxRPesX1RF0jOVv9G1jUVeZALqhujtGQggZXA7w9Up9m2Q8ybdjodWqpK/
-	WM+uKhy6OpKV6HrweUA8FA5wjh1QA4ljeH5VoAYJufX0f/z2nnBTXwYrToXqs1C6F+bImD
-	5sTuQ+ub2E9GLdELHmZb3HsAWADILFlGNR7iAqLPdUT8Op+8sURREaOQMQUB+pVoRnomcC
-	9AFaVAkqVi6FG/bVN/dETRKnJQslq7jw3IMydXJa50GsULYLzKRSh2TZ+KTyDH+JPYbZ+X
-	O8MRC1YafAcQsnU92sLa/Cw2YKVTqNXq6U/J/ePSLIaPIRFXW8NdkjdTCbAoFg==
-Date: Tue, 3 Sep 2024 18:01:16 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
- <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, Steen
- Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
- <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <clement.leger@bootlin.com>
-Subject: Re: [PATCH v5 3/8] mfd: syscon: Add reference counting and device
- managed support
-Message-ID: <20240903180116.717a499b@bootlin.com>
-In-Reply-To: <20240903153839.GB6858@google.com>
-References: <20240808154658.247873-1-herve.codina@bootlin.com>
-	<20240808154658.247873-4-herve.codina@bootlin.com>
-	<20240903153839.GB6858@google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725379312; c=relaxed/simple;
+	bh=NRZT8abCFdh85/3FHugcXrZh7c00Mi9fTSZoCHvP0hI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p12Nc+Fo+OYBY0uhYfuop9wqcogaqOea9bM+UiSegH4hYvcmPQVQs3GM+bP0QxJdIP4GuucoB7yfFE8q0ENxzZ/ZA7h3KMxiCo2cRyJfejn8PR5NYUAtRVsXc1TYX54bOjBGNAvA0gtbEurqCCcgjfe4RZmpJzVluSlnzefYwFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=Ninv5cqG; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so36727855e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google; t=1725379307; x=1725984107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NdVAZ1Lff6N0nukYJ/rHVQx42BffOFWzvcbVrT7bSPQ=;
+        b=Ninv5cqGEvljUTmd/ZOBP4WMwK4ZHjGGIJKQNMJSfrzti+6s+Us/5yj2WGDMCqkFuG
+         EVrCW8kPaY4Ic6M+/6AshpzPEQW7zfPzenqkcDNtmgJxHkwArTB79NX+Rx4o3pmdqHU/
+         cwuc6oCrjFvEvgtONEG2AKSedLKpjvq2UnW44=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725379307; x=1725984107;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NdVAZ1Lff6N0nukYJ/rHVQx42BffOFWzvcbVrT7bSPQ=;
+        b=H4rr0ZfEHm/cbaaglpASV24FLI80p4MSnGhkt78nxbSQk0g92rFfmaFXMOXkVjQRnr
+         lA250CsPlCVCFOYD64sF8MgCIZ7+3xkEdT48N08qXkXJxPMF6gG1rV7uV932uYrWDLTU
+         ILvcHHh+vF0n+o/dfo+yhdo8Vji5piD3GyfxFbjYUtYXbYRW1LfNtqck2vYR+XUbyKI3
+         jYWRuqEM5Ab8ZNP86uDF1AxM2jVqy5RKg1jUC60wmljEF1ficdM2I5eu6jI079XeWhdr
+         uP2jWD1Wm0Xls9QUDUtcot2Vy+ywvN1iqJNtBIVXgtCe7NIOkw5BUFQeKcazpmYrxOQl
+         TtpA==
+X-Forwarded-Encrypted: i=1; AJvYcCURF0yJRDI27Md9b+qnDrzsVmMB8L5GgUe+yMzoamslLbUjNW52MLFMjBg7CKX2XoOBx8TQM1belZKb64o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc1jEwsY4DERvq9bE831P3EjwGdXPYjXt9X9yfLkTkxMaxOxTh
+	vXO8sWajMF9OHvauRAWBUTv3zgj8+WbP3VL7jKSzZ7R3fkZQxLFNauBw+0mkRVg=
+X-Google-Smtp-Source: AGHT+IHIL/6aYNZW1Hx3t8q1OA7oE/XZn0XaW2g6YYk2G/Tqz2Q4bQue8JZweBesdA9BWRRKLdOFfA==
+X-Received: by 2002:adf:e544:0:b0:374:be28:d808 with SMTP id ffacd0b85a97d-376dd15b11emr891434f8f.20.1725379307085;
+        Tue, 03 Sep 2024 09:01:47 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:9198:79cc:8e64:e479? ([2603:8080:7400:36da:9198:79cc:8e64:e479])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c08e07b6sm9403391f8f.63.2024.09.03.09.01.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 09:01:46 -0700 (PDT)
+Message-ID: <c383c897-79ce-43fc-966a-06a4d609390a@digitalocean.com>
+Date: Tue, 3 Sep 2024 11:01:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] vdpa: Add support to update speed/duplex in
+ vDPA/mlx5_vnet
+To: Jason Wang <jasowang@redhat.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>,
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
+ bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
+ <20240829161620.38679-3-carlos.bilbao.osdev@gmail.com>
+ <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
+ <CACGkMEtDSDTS_SVvsf7nwMdabGCN85P-r5WpjgZdVDV5PMdc0g@mail.gmail.com>
+ <f5e3768d-bb16-48eb-96df-ce5f9593b843@digitalocean.com>
+ <CACGkMEtsNeL+o6Rgb=ehj8OJpfkoojasPK1ZMp4S5bMKBjwcng@mail.gmail.com>
+Content-Language: en-US
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+In-Reply-To: <CACGkMEtsNeL+o6Rgb=ehj8OJpfkoojasPK1ZMp4S5bMKBjwcng@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Lee,
+Hello,
 
-On Tue, 3 Sep 2024 16:38:39 +0100
-Lee Jones <lee@kernel.org> wrote:
+On 9/1/24 11:27 PM, Jason Wang wrote:
+> On Fri, Aug 30, 2024 at 9:15 PM Carlos Bilbao <cbilbao@digitalocean.com> wrote:
+>> Hello,
+>>
+>> On 8/29/24 9:31 PM, Jason Wang wrote:
+>>> On Fri, Aug 30, 2024 at 5:08 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>>>> (resending as I accidentally replied only to Carlos)
+>>>>
+>>>> On 29.08.24 18:16, Carlos Bilbao wrote:
+>>>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
+>>>>>
+>>>>> Include support to update the vDPA configuration fields of speed and
+>>>>> duplex (as needed by VHOST_VDPA_SET_CONFIG). This includes function
+>>>>> mlx5_vdpa_set_config() as well as changes in vdpa.c to fill the initial
+>>>>> values to UNKNOWN. Also add a warning message for when
+>>>>> mlx5_vdpa_get_config() receives offset and length out of bounds.
+>>>>>
+>>>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+>>>>> ---
+>>>>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 34 ++++++++++++++++++++++++++++++-
+>>>>>  drivers/vdpa/vdpa.c               | 27 ++++++++++++++++++++++++
+>>>>>  include/uapi/linux/vdpa.h         |  2 ++
+>>>>>  3 files changed, 62 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>>> index c47009a8b472..a44bb2072eec 100644
+>>>>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>>> @@ -3221,12 +3221,44 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+>>>>>
+>>>>>       if (offset + len <= sizeof(struct virtio_net_config))
+>>>>>               memcpy(buf, (u8 *)&ndev->config + offset, len);
+>>>>> +     else
+>>>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>>>>>  }
+>>>>>
+>>>>>  static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+>>>>>                                unsigned int len)
+>>>>>  {
+>>>>> -     /* not supported */
+>>>>> +     struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
+>>>>> +     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
+>>>>> +
+>>>>> +     if (offset + len > sizeof(struct virtio_net_config)) {
+>>>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>>>>> +             return;
+>>>>> +     }
+>>>>> +
+>>>>> +     /*
+>>>>> +      * Note that this will update the speed/duplex configuration fields
+>>>>> +      * but the hardware support to actually perform this change does
+>>>>> +      * not exist yet.
+>>>>> +      */
+>>>>> +     switch (offset) {
+>>>>> +     case offsetof(struct virtio_net_config, speed):
+>>>>> +             if (len == sizeof(((struct virtio_net_config *) 0)->speed))
+>>>>> +                     memcpy(&ndev->config.speed, buf, len);
+>>>>> +             else
+>>>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for speed.\n");
+>>>>> +             break;
+>>>>> +
+>>>>> +     case offsetof(struct virtio_net_config, duplex):
+>>>>> +             if (len == sizeof(((struct virtio_net_config *)0)->duplex))
+>>>>> +                     memcpy(&ndev->config.duplex, buf, len);
+>>>>> +             else
+>>>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for duplex.\n");
+>>>>> +             break;
+>>>>> +
+>>>>> +     default:
+>>>>> +             mlx5_vdpa_warn(mvdev, "Configuration field not supported.\n");
+>>>> This will trigger noise in dmesg because there is a MAC configuration here.
+>>>>> +     }
+>>>> I would prefer that the .set_config remains a stub TBH. Setting the fields here is
+>>>> misleading: the user might deduce that the configuration worked when they read the
+>>>> values and see that they were updated.
+>>> Yes, and actually, those fields are read-only according to the spec:
+>>>
+>>> """
+>>> The network device has the following device configuration layout. All
+>>> of the device configuration fields are read-only for the driver.
+>>> """
+>>>
+>>> Thanks
+>>
+>> Should I go ahead and remove the ioctl then?
+> If you meant mlx5_vdpa_set_config, I think yes.
 
-> On Thu, 08 Aug 2024, Herve Codina wrote:
-> 
-> > From: Clément Léger <clement.leger@bootlin.com>
-> > 
-> > Syscon releasing is not supported.
-> > Without release function, unbinding a driver that uses syscon whether
-> > explicitly or due to a module removal left the used syscon in a in-use
-> > state.
-> > 
-> > For instance a syscon_node_to_regmap() call from a consumer retrieves a
-> > syscon regmap instance. Internally, syscon_node_to_regmap() can create
-> > syscon instance and add it to the existing syscon list. No API is
-> > available to release this syscon instance, remove it from the list and
-> > free it when it is not used anymore.
-> > 
-> > Introduce reference counting in syscon in order to keep track of syscon
-> > usage using syscon_{get,put}() and add a device managed version of
-> > syscon_regmap_lookup_by_phandle(), to automatically release the syscon
-> > instance on the consumer removal.
-> > 
-> > Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  drivers/mfd/syscon.c       | 138 ++++++++++++++++++++++++++++++++++---
-> >  include/linux/mfd/syscon.h |  16 +++++
-> >  2 files changed, 144 insertions(+), 10 deletions(-)  
-> 
-> This doesn't look very popular.
-> 
-> What are the potential ramifications for existing users?
-> 
 
-Existing user don't use devm_syscon_regmap_lookup_by_phandle() nor
-syscon_put_regmap().
+Ack, I will send a new patch set in which the second commit gets rid of the
+ioctl -- but not only for mlx5 but for all vDPA implementations.
 
-So refcount is incremented but never decremented. syscon is never
-released. Exactly the same as current implementation.
-Nothing change for existing users.
 
-Best regards,
-Hervé
+>
+> Thanks
+>
+
+Thanks, Carlos
+
 
