@@ -1,166 +1,226 @@
-Return-Path: <linux-kernel+bounces-313195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D5696A1C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C6996A1C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9CF2874D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1851F23AA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943DE185939;
-	Tue,  3 Sep 2024 15:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C962D17C7C3;
+	Tue,  3 Sep 2024 15:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IXOBeDS4"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DXbWoswO"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A41C16F8EF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822AC1D6AA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376322; cv=none; b=JtuX6VkActFay0OjJ7HOKfznJ5eLvt1+98RMZelynYNrGE+qK2xmjZIAN1OYAEaeQN45oYjKJZdXi7hawiqB5CnhbxotUYNE3Ta4i6921Lgr65c1cHOlFgnUj9QKwBkASK29WYXgj41W8hUIvteNf1OB8cdIeOM5x/wgd8/kT90=
+	t=1725376348; cv=none; b=XNZkbBXyNh9cmMmADitUC5IKq5Bwq8+M3T3VRKQed/oWhgb3+GvatN/hCxa2YPUSYDhtPY/ooQUp/csiVCZLaiWu7OT5N5Cgf8yT1mtdJrbThhYGJlzrDmO1Af2tLKc/LFakmHPz2moizWX9UTA6/hHE2j3Cam8koRExGiJlVas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376322; c=relaxed/simple;
-	bh=HaQoSOeNV+l72P3AJuWZoCj9lxSZl2+1ZxYqkRtwfCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcKiLTaDKcGbtT2G20y7PsnuIWxoAGUYBw/6RNQXMnWTVR7ydmtzB+iibBRFcsj9wQMXNEIoqN2inC5PdZIgZH7Iwk0dZHTAQgzuTV0ihrHY0qBCiqgUHk5mF5sOx8160ZrWdcngw5a0eiq+Er9KbR0zrvNJq3UHRvBE74W1Icw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IXOBeDS4; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so1810451a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:11:59 -0700 (PDT)
+	s=arc-20240116; t=1725376348; c=relaxed/simple;
+	bh=peoAuxq7chHJ+B0kk0cQ4vl4bNvemAMOe3PVFY1SA9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2Dd2b2lqAQCfJZm3VmtMX6tvwk8txskYFYWuBOC0c7uaKyBk7r48jtxoYQyzNzj0+KY9uTxgLGVqwOhp+uJFjnVbKlrjOmLtVsbcTagyzTk24IwapnsnkyOyj6yFiSS7ihzUPttcFtk7JheHXwFnRoLWVh0ZfGtGhOI5KauzRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DXbWoswO; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d8b68bddeaso1895929a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725376318; x=1725981118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8WDyM7wA+4uXBEwvEfZ6K89F1ujUbboR8QatKwOx+kg=;
-        b=IXOBeDS4oCGAf/Gz3mqX9hKKukL0qrRfs9tZPRq2GoV2182iaU/hC81nSQ8PtlLBmK
-         sSy+rLMTANh6Z5+T9hJBZJSbFnU6cxwbCMuMN5eYJc/0ZI4ZPhX0662K/t4cpqIna708
-         dPYLtqEvXgiAs8A8KXdS6ZVBNs4aH/Dx7Hmd+oHi29n+fFq2M2p2IrzTB0lINVY1mKKR
-         lhHyUcGNwIBk9AsNXfnLo0cJXnYpPBo74M9qxrIiOKzL92ChsWBS7whKEx4mEcmsU/mt
-         ipRkJ1oqW9XWEwyrqoUb5iKaQECVjUtvw1y522pnfHK/a5qHxCkzvQZMOVUUWLJHK5g8
-         r6Ag==
+        d=broadcom.com; s=google; t=1725376346; x=1725981146; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsrgmEE8vNYmYgwSjm7Ffo2aZ3cw1KThqmzE/9gOhyA=;
+        b=DXbWoswOdSam8r+ZeUzAqw1wXZEQ9p/8NwM2zMeqhgxRpco3tO7BQZDczfY8AlyJJM
+         8PF7SMdR1o+qBxKGNdSI8UipSrQSnMA0ezBzseQ5fTMSx2rsjjMRuOh6xkgH9LWnDT/N
+         ksbVf/N9BrryZNkOIyeTdxoptkPF+U1Tpojmc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376318; x=1725981118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8WDyM7wA+4uXBEwvEfZ6K89F1ujUbboR8QatKwOx+kg=;
-        b=oIDbixHokW44AxB1ztBHlXW3SGUH2KPrrCjicP42JQIlpCzxZwgNQ43p/Q/lS5Lk+b
-         mwq/tjwJ1e4uUPYduL+HOtkiqEJhSwytEDYO2X2grV92nevUnkEJiBm8tyaarw7B+G0w
-         ZaF3pf/dUhdFK1uPolgo5d2p4AJT92GwyyZOeLfwomC0VhwWc4QYan32r/pb/izY23Nk
-         QYlw90r6G23UmM0mamm+2VL+s3ddqqA1lBMzqrqn1CE8NQLZdnn07uLvlw6a8gM4jxAa
-         uqhg6JDIQoOQ6AmBtxigf/k7HzLHA0aYp8R+Ii2+noNLyZrvVVr87dL22frXI9vnTt0y
-         1DUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNG0JP4dp0VMIj6P38v5/j8g1cZFhj1gZLda3bxPePBp2z5ACVN+e4cQQji/fLyRka5Bd5j7TjqdqRln4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx56ZfQpN4//iNet9qROQTLa1a8Y9sHFYS7BpbJC5ol8nEjSbE2
-	V+MnAIOjfRPFLe27sqt9Ul7r5Kc+vBaa7ojTpsnnzj8F4SPPBysjX5l98bhQSyA=
-X-Google-Smtp-Source: AGHT+IFoUUFxcVhHxWppSsUC1TKbkdYIP8izH9TlTs0zzWQ7ixgWt0bHVTTPOJbkicRNtP6gPNtD2A==
-X-Received: by 2002:a17:906:ef0d:b0:a80:f7db:3e7 with SMTP id a640c23a62f3a-a89d87216d1mr821251966b.5.1725376318249;
-        Tue, 03 Sep 2024 08:11:58 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196500sm695054466b.138.2024.09.03.08.11.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 08:11:57 -0700 (PDT)
-Message-ID: <9978884e-87c8-4c20-b9ff-b4571bce01ce@suse.com>
-Date: Tue, 3 Sep 2024 17:11:57 +0200
+        d=1e100.net; s=20230601; t=1725376346; x=1725981146;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PsrgmEE8vNYmYgwSjm7Ffo2aZ3cw1KThqmzE/9gOhyA=;
+        b=Oj/Tp1N0vKahwmrDT4BVu//tCCaD1Em/qInR3yBigZRiU6bWoVnUDeAujr0KUmSRAe
+         58VHudm22jXCDms4zQBonZhl/s58hhdAuZ1iathmEpIuYiRfBKB2fkrdse0ijZK+7P+E
+         8Ab5MCscBzWofO+ABYFKIPqaySF0tdX11HzBIIXt0iyLqxX2CdqDecm2EYFVq5kRqTgG
+         j6fhxwLl2/lz17zYiimasja7dI+ztky++vsNs+Rd40AeFeEOop/tOzCILPsIoadbYia7
+         CPcKr1Xfj8aI2oYlDLBx3DR/ZTEWpvT8dsmEcb5aUiKm0vNP1v3bCj2VWTQVBULaTOmw
+         D5Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcrJvUBGu3khnAlj3vbO4gpZxGgFB8eo5/8/d+SyUlAYqEQazzjFwCzozzC8M4ODvE/ton04PeAylZtZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpLgDoWAmOFM+1vGFOLK4759rMOBt0C0FUnSFUL65Phvy3O+Mh
+	yoVNoOnhkdAg5KvCT1F9QsD/4gaP6S9KwzHO1OWe2xGZVGS4XO1StJhjjfGf6R7jq9wd5fnQDIL
+	9NHzRXmuhHwhLZTEYDPf3WQMejD37jCLae/Tc
+X-Google-Smtp-Source: AGHT+IEVsh4Pz5U7yMVuSUtZ0SnK6Hcnq19Cu/S6EpXeRxqn2b5zL7kKjXJjso2OLo6ePSHAZ7K+Vr4lKZX4GTYxkPk=
+X-Received: by 2002:a17:90a:8d0f:b0:2c9:7611:e15d with SMTP id
+ 98e67ed59e1d1-2d88d6db509mr12699331a91.20.1725376345593; Tue, 03 Sep 2024
+ 08:12:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/19] gendwarfksyms: Expand subroutine_type
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-29-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240815173903.4172139-29-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240903124048.14235-1-gakula@marvell.com> <20240903124048.14235-3-gakula@marvell.com>
+In-Reply-To: <20240903124048.14235-3-gakula@marvell.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Tue, 3 Sep 2024 20:42:10 +0530
+Message-ID: <CALs4sv3KVxTFex3FHWSFjx37FahOTiMN0DJyZ0Zn9qxQZQpZow@mail.gmail.com>
+Subject: Re: [net-next PATCH 2/4] octeontx2-pf: Add new APIs for queue memory alloc/free.
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org, 
+	davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us, edumazet@google.com, 
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000003794da0621387cfc"
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> Add support for expanding DW_TAG_subroutine_type and the parameters
-> in DW_TAG_formal_parameter. Use this to also expand subprograms.
-> 
-> Example output with --debug:
-> 
->   subprogram(
->     formal_parameter base_type usize byte_size(8),
->     formal_parameter base_type usize byte_size(8),
->   )
->   -> base_type void;
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+--0000000000003794da0621387cfc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 3, 2024 at 6:12=E2=80=AFPM Geetha sowjanya <gakula@marvell.com>=
+ wrote:
+>
+> Group the queue(RX/TX/CQ) memory allocation and free code to single APIs.
+>
+> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 > ---
->  scripts/gendwarfksyms/dwarf.c         | 57 ++++++++++++++++++++++++++-
->  scripts/gendwarfksyms/gendwarfksyms.h |  1 +
->  2 files changed, 57 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-> index 82185737fa2a..c81652426be8 100644
-> --- a/scripts/gendwarfksyms/dwarf.c
-> +++ b/scripts/gendwarfksyms/dwarf.c
-> [...]
->  
-> +static int __process_subroutine_type(struct state *state, struct die *cache,
-> +				     Dwarf_Die *die, const char *type)
+>  .../marvell/octeontx2/nic/otx2_common.h       |  2 +
+>  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 56 +++++++++++++------
+>  2 files changed, 41 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/d=
+rivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> index a47001a2b93f..df548aeffecf 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+> @@ -997,6 +997,8 @@ int otx2_pool_init(struct otx2_nic *pfvf, u16 pool_id=
+,
+>  int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
+>                    int pool_id, int numptrs);
+>  int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
+> +void otx2_free_queue_mem(struct otx2_qset *qset);
+> +int otx2_alloc_queue_mem(struct otx2_nic *pf);
+>
+>  /* RSS configuration APIs*/
+>  int otx2_rss_init(struct otx2_nic *pfvf);
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drive=
+rs/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> index 4cfeca5ca626..68addc975113 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> @@ -1770,15 +1770,23 @@ static void otx2_dim_work(struct work_struct *w)
+>         dim->state =3D DIM_START_MEASURE;
+>  }
+>
+> -int otx2_open(struct net_device *netdev)
+> +void otx2_free_queue_mem(struct otx2_qset *qset)
 > +{
-> +	check(process(state, cache, type));
-> +	check(process(state, cache, "("));
-> +	check(process_linebreak(cache, 1));
-> +	/* Parameters */
-> +	check(process_die_container(state, cache, die, process_type,
-> +				    match_formal_parameter_type));
-> +	check(process_linebreak(cache, -1));
-> +	check(process(state, cache, ")"));
-> +	process_linebreak(cache, 0);
-> +	/* Return type */
-> +	check(process(state, cache, "-> "));
-> +	return check(process_type_attr(state, cache, die));
+> +       kfree(qset->sq);
+> +       qset->sq =3D NULL;
+> +       kfree(qset->cq);
+> +       qset->cq =3D NULL;
+> +       kfree(qset->rq);
+> +       qset->rq =3D NULL;
+> +       kfree(qset->napi);
 > +}
+> +EXPORT_SYMBOL(otx2_free_queue_mem);
+> +int otx2_alloc_queue_mem(struct otx2_nic *pf)
+>  {
+> -       struct otx2_nic *pf =3D netdev_priv(netdev);
+> -       struct otx2_cq_poll *cq_poll =3D NULL;
+>         struct otx2_qset *qset =3D &pf->qset;
+> -       int err =3D 0, qidx, vec;
+> -       char *irq_name;
+> +       struct otx2_cq_poll *cq_poll;
+> +       int err =3D -ENOMEM;
+I don't see 'err' getting set to anything else. Can avoid the variable
+and directly return -ENOMEM everywhere?
 
-If I understand correctly, this formatting logic also affects the
-symtypes output. Looking at its format, I would like to propose a few
-minor changes.
+--0000000000003794da0621387cfc
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Example of the current symtypes output:
-kprobe_event_cmd_init subprogram( formal_parameter pointer_type <unnamed> { s#dynevent_cmd } byte_size(8), formal_parameter pointer_type <unnamed> { base_type char byte_size(1) encoding(8) } byte_size(8), formal_parameter base_type int byte_size(4) encoding(5),  ) -> base_type void
-
-Proposed changes:
-kprobe_event_cmd_init subprogram ( formal_parameter pointer_type <unnamed> { s#dynevent_cmd } byte_size(8) , formal_parameter pointer_type <unnamed> { base_type char byte_size(1) encoding(8) } byte_size(8) , formal_parameter base_type int byte_size(4) encoding(5) ) -> base_type void
-                                ^- (1)                                                                    ^- (2)                                                                                                                                                       ^- (3)
-
-(1) "subprogram(" is split to "subprogram (".
-(2) A space is added prior to ",".
-(3) String ", " is removed after the last parameter.
-
-Separating each token with a whitespace matches the current genksyms
-format, makes the data trivially parsable and easy to pretty-print by
-additional tools. If some tokens are merged, as in "subprogram(", then
-such a tool needs to have extra logic to parse each word and split it
-into tokens.
-
-For attributes with one value, such as "byte_size(4)", I think the
-current format is probably ok.
-
--- 
-Thanks,
-Petr
+MIIQbQYJKoZIhvcNAQcCoIIQXjCCEFoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3EMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBUwwggQ0oAMCAQICDBX9eQgKNWxyfhI1kzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODE3NDZaFw0yNTA5MTAwODE3NDZaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFTATBgNVBAMTDFBhdmFuIENoZWJiaTEoMCYGCSqGSIb3DQEJ
+ARYZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBAK3X+BRR67FR5+Spki/E25HnHoYhm/cC6VA6qHwC3QqBNhCT13zsi1FLLERdKXPRrtVBM6d0
+mfg/0rQJJ8Ez4C3CcKiO1XHcmESeW6lBKxOo83ZwWhVhyhNbGSwcrytDCKUVYBwwxR3PAyXtIlWn
+kDqifgqn3R9r2vJM7ckge8dtVPS0j9t3CNfDBjGw1DhK91fnoH1s7tLdj3vx9ZnKTmSl7F1psK2P
+OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
+dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
+fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
+9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
+pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
+25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
+Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMw8k44Tqc3GIkC5poBBkcb7bIkJVgar
+WZEE24MUCx/kMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
+MzE1MTIyNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQBhHAZ4zRAVvxy1Q2jtf5lVJzeIOaSjznKai9Jk5HaFt8KwOsiV
+BZBZuc6ARvc+TgFjWuMpnFMnTMczI3HWmW1QWf5MlqAL++Zf6XmrKxSFOGJ5HSD6Yom4Ml9sDlW/
+OIM8EfgxCAX6ONZiKVfb1+oDus7qXp0QnU9H02ykZcyuBV2EHY4XRffvs0tjU4qCHKQQ+bEuuLJ2
+ZP2uwmtSElZAhKD3DDdK6HeVGIUe1y/q9vK/0Em5+zNGUN0EEmWRzlJaQJ5WIimIAsE27D+cQ+qC
+4NN7VLtLA2oIRlJlJ2m4WbRw9igcQ/+Blz/yR5Vsq6/nqNVd4l9G834MTEYduKAM
+--0000000000003794da0621387cfc--
 
