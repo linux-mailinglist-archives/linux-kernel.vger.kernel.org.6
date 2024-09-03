@@ -1,83 +1,291 @@
-Return-Path: <linux-kernel+bounces-312454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08FC9696D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947D49696D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D612280A74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1868A1F26E2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C42719C562;
-	Tue,  3 Sep 2024 08:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704EE205E28;
+	Tue,  3 Sep 2024 08:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p26g8Pfz"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LU13z+lT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B262200128;
-	Tue,  3 Sep 2024 08:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1421A19C562;
+	Tue,  3 Sep 2024 08:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725351502; cv=none; b=rpnqmPAf8bUThQ9FwxRsby+sZIvLssJ1p3HNrZVep2To7f1LcaFXJPN1IxXRUmAeDQdSut4wrZ7I3fD7cSnM7UpOiKtduKnaeHdPcKymB/Q+6mWBbhVnWVZ9avP4qHIfxHUFAutn+6INwXh/c1VmrdtBSs21SNoJLa5ss7aqxkI=
+	t=1725351480; cv=none; b=qxYYwWlBhTBW/u+R0A9/Le7ddjnxvgojTFENxReIXCMGnHFs87S6shda5iy2Aa7a2iwmHFwymlzwXhytbInMK+aLt9ocS9SAkw9Kfy9x0l1a2M0TNwLg911+7mUCW1g8wUN2b4hNp7MQD47/FKAfAubHeja++ctCqewAHcz1rsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725351502; c=relaxed/simple;
-	bh=VOTzLM+uak74pGtUm9YaUPZNZXthdWLwHpP4AI8Zne8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNxZ53/BlCWtdShrFMbGT9BI3BYss6DfgQzjKnXmZFQt+BCtYXUAZqXDhzWEgZrAjD8eTCqzQxAaBv25IxXdflc1q8guCGl5gtZ6fyDeKd5At66rqxnGIandbt+GXMadv3hsCQTqWGBWpm+UgheK/3lTL9v/kQZ0fDjStdRogP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p26g8Pfz; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4838IBoA050994;
-	Tue, 3 Sep 2024 03:18:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725351491;
-	bh=VOTzLM+uak74pGtUm9YaUPZNZXthdWLwHpP4AI8Zne8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=p26g8PfzJyE/nsqtOJZoMdrAIRnmSq8xuqOK5djXwvVOtLDag1LL7A6R+t1t2PXox
-	 Bg7g0m2PuyuwT+wcFq/zJboSfq+RtwUwoXR4VnpN+vQ1QecFC23JIkC5WlwxG9bBhV
-	 bzUlVSAeay+7E2B0/JkKNqyTjYgqwHcZ+JMNi7UQ=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4838IB3f062684
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 3 Sep 2024 03:18:11 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Sep 2024 03:18:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Sep 2024 03:18:11 -0500
-Received: from localhost (nightbug.dhcp.ti.com [10.24.72.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4838IANu101599;
-	Tue, 3 Sep 2024 03:18:10 -0500
-From: Amneesh Singh <a-singh21@ti.com>
-To: <vaishnav.a@ti.com>
-CC: <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <kristo@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <nm@ti.com>, <robh@kernel.org>,
-        <u-kumar1@ti.com>, <vigneshr@ti.com>, Amneesh Singh <a-singh21@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-*: Add GPIO INTR region in ranges
-Date: Tue, 3 Sep 2024 13:47:41 +0530
-Message-ID: <20240903081740.533342-1-a-singh21@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240903055733.3483840-1-vaishnav.a@ti.com>
-References: <20240903055733.3483840-1-vaishnav.a@ti.com>
+	s=arc-20240116; t=1725351480; c=relaxed/simple;
+	bh=AQhppktbbZw8K7eRyW+h9veW+56yTVjAbjapNw99muc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRqCeuYJ7SNNBWgl5WBh+8IgOaFhpDowqp00xpxBB23kBqkQ+HQ+IMVcRcg+2zp4HxF1pDtR5Cu8dq/25H1UIIs+JSE02PaPNFQ9yCRGR+Sy9bMy7S7YeH2M1hqoBWRK5GVwSWnF/IaqHgEZVpjzJhRqGEVw24yxsG4krPmcTWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LU13z+lT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tnmA712TBvDVDuU0YzHSaAeX23CstHAex5aTrADPY3Y=; b=LU13z+lTvJYmpLSYT4ZXlyeXUy
+	iFywzKCqTAAEIK5xyYLk31rdZaqUk4nVzQ0y/vtEs96ECm/DaqFhv0QXeLMsg5tDW0my/3IoVcH2U
+	4BK1eGuT0OaAJFrLYzmn5YddWuPdvruBF9+66sbd5wiHA05c8ONDfIsbnl08rVaxhZQVsyW30qvm5
+	/cw4HSoe+PwN0gPWSahqyJu7AjDGJTp6iqeP52gh24ThrB99fGdb4ARMCseViXw1Nx2HUyx92Gope
+	e/4eC8keNa814tz40SdBU+zRRYaSsTgUA2GqI0D8jXp8sWAy6A1jMD8MNfiQP2HjqYsjnMkI33aXj
+	f73h/H+Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1slOjV-00000007wHd-3eyD;
+	Tue, 03 Sep 2024 08:17:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E92D8300390; Tue,  3 Sep 2024 10:17:48 +0200 (CEST)
+Date: Tue, 3 Sep 2024 10:17:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 20/31] objtool: Add UD1 detection
+Message-ID: <20240903081748.GN4723@noisy.programming.kicks-ass.net>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <20e0e2662239a042a10196e8f240ce596b250ae8.1725334260.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20e0e2662239a042a10196e8f240ce596b250ae8.1725334260.git.jpoimboe@kernel.org>
 
-Faced the same thing under Xen. This fixes it.
+On Mon, Sep 02, 2024 at 09:00:03PM -0700, Josh Poimboeuf wrote:
+> A UD1 isn't a BUG and shouldn't be treated like one.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  tools/objtool/arch/x86/decode.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+> index 6b34b058a821..72d55dcd3d7f 100644
+> --- a/tools/objtool/arch/x86/decode.c
+> +++ b/tools/objtool/arch/x86/decode.c
+> @@ -528,11 +528,19 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>  			/* sysenter, sysret */
+>  			insn->type = INSN_CONTEXT_SWITCH;
+>  
+> -		} else if (op2 == 0x0b || op2 == 0xb9) {
+> +		} else if (op2 == 0x0b) {
+>  
+>  			/* ud2 */
+>  			insn->type = INSN_BUG;
+>  
+> +		} else if (op2 == 0xb9) {
+> +
+> +			/*
+> +			 * ud1 - only used for the static call trampoline to
+> +			 * stop speculation.  Basically used like an int3.
+> +			 */
+> +			insn->type = INSN_TRAP;
+> +
+>  		} else if (op2 == 0x0d || op2 == 0x1f) {
+>  
+>  			/* nopl/nopw */
 
-Acked-by: Amneesh Singh <a-singh21@ti.com>
+We recently grew more UD1 usage...
+
+---
+commit 7424fc6b86c8980a87169e005f5cd4438d18efe6
+Author: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+Date:   Wed Jul 24 00:01:55 2024 +0000
+
+    x86/traps: Enable UBSAN traps on x86
+    
+    Currently ARM64 extracts which specific sanitizer has caused a trap via
+    encoded data in the trap instruction. Clang on x86 currently encodes the
+    same data in the UD1 instruction but x86 handle_bug() and
+    is_valid_bugaddr() currently only look at UD2.
+    
+    Bring x86 to parity with ARM64, similar to commit 25b84002afb9 ("arm64:
+    Support Clang UBSAN trap codes for better reporting"). See the llvm
+    links for information about the code generation.
+    
+    Enable the reporting of UBSAN sanitizer details on x86 compiled with clang
+    when CONFIG_UBSAN_TRAP=y by analysing UD1 and retrieving the type immediate
+    which is encoded by the compiler after the UD1.
+    
+    [ tglx: Simplified it by moving the printk() into handle_bug() ]
+    
+    Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+    Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+    Cc: Kees Cook <keescook@chromium.org>
+    Link: https://lore.kernel.org/all/20240724000206.451425-1-gatlin.newhouse@gmail.com
+    Link: https://github.com/llvm/llvm-project/commit/c5978f42ec8e9#diff-bb68d7cd885f41cfc35843998b0f9f534adb60b415f647109e597ce448e92d9f
+    Link: https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/X86/X86InstrSystem.td#L27
+
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index a3ec87d198ac..806649c7f23d 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -13,6 +13,18 @@
+ #define INSN_UD2	0x0b0f
+ #define LEN_UD2		2
+ 
++/*
++ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
++ */
++#define INSN_ASOP		0x67
++#define OPCODE_ESCAPE		0x0f
++#define SECOND_BYTE_OPCODE_UD1	0xb9
++#define SECOND_BYTE_OPCODE_UD2	0x0b
++
++#define BUG_NONE		0xffff
++#define BUG_UD1			0xfffe
++#define BUG_UD2			0xfffd
++
+ #ifdef CONFIG_GENERIC_BUG
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 4fa0b17e5043..415881607c5d 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -42,6 +42,7 @@
+ #include <linux/hardirq.h>
+ #include <linux/atomic.h>
+ #include <linux/iommu.h>
++#include <linux/ubsan.h>
+ 
+ #include <asm/stacktrace.h>
+ #include <asm/processor.h>
+@@ -91,6 +92,47 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+ 	return *(unsigned short *)addr == INSN_UD2;
+ }
+ 
++/*
++ * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
++ * If it's a UD1, get the ModRM byte to pass along to UBSan.
++ */
++__always_inline int decode_bug(unsigned long addr, u32 *imm)
++{
++	u8 v;
++
++	if (addr < TASK_SIZE_MAX)
++		return BUG_NONE;
++
++	v = *(u8 *)(addr++);
++	if (v == INSN_ASOP)
++		v = *(u8 *)(addr++);
++	if (v != OPCODE_ESCAPE)
++		return BUG_NONE;
++
++	v = *(u8 *)(addr++);
++	if (v == SECOND_BYTE_OPCODE_UD2)
++		return BUG_UD2;
++
++	if (!IS_ENABLED(CONFIG_UBSAN_TRAP) || v != SECOND_BYTE_OPCODE_UD1)
++		return BUG_NONE;
++
++	/* Retrieve the immediate (type value) for the UBSAN UD1 */
++	v = *(u8 *)(addr++);
++	if (X86_MODRM_RM(v) == 4)
++		addr++;
++
++	*imm = 0;
++	if (X86_MODRM_MOD(v) == 1)
++		*imm = *(u8 *)addr;
++	else if (X86_MODRM_MOD(v) == 2)
++		*imm = *(u32 *)addr;
++	else
++		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
++
++	return BUG_UD1;
++}
++
++
+ static nokprobe_inline int
+ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+ 		  struct pt_regs *regs,	long error_code)
+@@ -216,6 +258,8 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	bool handled = false;
++	int ud_type;
++	u32 imm;
+ 
+ 	/*
+ 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+@@ -223,7 +267,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 * irqentry_enter().
+ 	 */
+ 	kmsan_unpoison_entry_regs(regs);
+-	if (!is_valid_bugaddr(regs->ip))
++	ud_type = decode_bug(regs->ip, &imm);
++	if (ud_type == BUG_NONE)
+ 		return handled;
+ 
+ 	/*
+@@ -236,10 +281,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 */
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_enable();
+-	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+-	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-		regs->ip += LEN_UD2;
+-		handled = true;
++	if (ud_type == BUG_UD2) {
++		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
++		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
++			regs->ip += LEN_UD2;
++			handled = true;
++		}
++	} else if (IS_ENABLED(CONFIG_UBSAN_TRAP)) {
++		pr_crit("%s at %pS\n", report_ubsan_failure(regs, imm), (void *)regs->ip);
+ 	}
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_disable();
+diff --git a/include/linux/ubsan.h b/include/linux/ubsan.h
+index bff7445498de..d8219cbe09ff 100644
+--- a/include/linux/ubsan.h
++++ b/include/linux/ubsan.h
+@@ -4,6 +4,11 @@
+ 
+ #ifdef CONFIG_UBSAN_TRAP
+ const char *report_ubsan_failure(struct pt_regs *regs, u32 check_type);
++#else
++static inline const char *report_ubsan_failure(struct pt_regs *regs, u32 check_type)
++{
++	return NULL;
++}
+ #endif
+ 
+ #endif
+diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
+index bdda600f8dfb..1d4aa7a83b3a 100644
+--- a/lib/Kconfig.ubsan
++++ b/lib/Kconfig.ubsan
+@@ -29,8 +29,8 @@ config UBSAN_TRAP
+ 
+ 	  Also note that selecting Y will cause your kernel to Oops
+ 	  with an "illegal instruction" error with no further details
+-	  when a UBSAN violation occurs. (Except on arm64, which will
+-	  report which Sanitizer failed.) This may make it hard to
++	  when a UBSAN violation occurs. (Except on arm64 and x86, which
++	  will report which Sanitizer failed.) This may make it hard to
+ 	  determine whether an Oops was caused by UBSAN or to figure
+ 	  out the details of a UBSAN violation. It makes the kernel log
+ 	  output less useful for bug reports.
 
