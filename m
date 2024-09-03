@@ -1,50 +1,56 @@
-Return-Path: <linux-kernel+bounces-312872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9467969CC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A03969CA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7624D286170
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B531C239EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A221C984C;
-	Tue,  3 Sep 2024 12:02:56 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960511C9840;
+	Tue,  3 Sep 2024 11:59:51 +0000 (UTC)
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CF81A42D6;
-	Tue,  3 Sep 2024 12:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A221B9857;
+	Tue,  3 Sep 2024 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364976; cv=none; b=pLMdLTh0cWIShK2r2cXbKCi1l41jIjC5gMyJ7yvfqNKQBbt1OnyohfhP6+OYZryijhcM6zQ5E8PyFm642g5BVSiN6j4TEqSIZSYm/stWRyBQygZfK0lAEvZeWZ1LXDzCTeus+8zSwIkz0XDyp0W6f9UbSvMnn0wzRNivNW9LklY=
+	t=1725364791; cv=none; b=RufxE1klrKPTFCjXA87XP3J0CObVi/UM4wMvjVpiSmNHNmUqN8REKzjNldy0+EXKtXUCDzc/RlLxvQsM6nsNh8BqK1V9MH4PDL1sSOpNrzWKj+PWmJp09JCPw4I2GrCRGDk4sYtHLPW1fHm+ifywNyJ2PipGXGaqJQI1Z5iwlcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364976; c=relaxed/simple;
-	bh=CdkPZCW7AZCqwheqnCFrVjTPRPnUge6Ii1ZRfWJZeX0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gmeOgpOgA+zOC9UVa2rPJFjwPzEsP411IocHnbjoqvthxuJMjwRcrGgCrDxG5R8eWP9xjXxG5yZ5wKsz9Z+2FupvtJRtNsCdurT9WBkPbqyUwhh206Hrx47O/Giz5o+ACfGY98TaPAbHLLwZDAODKm9aO1tfeNdPAJCjElmzI8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WykkV2vGQzyR09;
-	Tue,  3 Sep 2024 20:01:54 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id D06C01800A7;
-	Tue,  3 Sep 2024 20:02:50 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 20:02:50 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <kvalo@kernel.org>, <yuehaibing@huawei.com>
-CC: <libertas-dev@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] wifi: libertas: Cleanup unused declarations
-Date: Tue, 3 Sep 2024 19:58:11 +0800
-Message-ID: <20240903115811.958692-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725364791; c=relaxed/simple;
+	bh=xf2QLNEGk3C8YaPvgoNlwPEsT3P0u0JnOpkvDjsuewU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YaPGrkQ9Ww2Z/Im5CHvdmO12g8vXCl5cR/h9u8rfviJgQyr0/C/eGWYbp9nk25blTH7MDqggqwHx225sjZ/MWreNxNZH+5ThOhoaM0ce+UZ3tmdxYZ9hOFlX2P65vdtX+XuiLoTkPDtYXMcJeHtAzPnSpG90VPKR0JBj88M7qc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <adiupina@astralinux.ru>)
+	id 1slSAo-009UzG-Fd; Tue, 03 Sep 2024 14:58:14 +0300
+Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.37.72])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4WykgS5X0Cz1gwn1;
+	Tue,  3 Sep 2024 14:59:16 +0300 (MSK)
+From: Alexandra Diupina <adiupina@astralinux.ru>
+To: Xiaowei Song <songxiaowei@hisilicon.com>
+Cc: Alexandra Diupina <adiupina@astralinux.ru>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] PCI: kirin: Fix buffer overflow
+Date: Tue,  3 Sep 2024 14:58:23 +0300
+Message-Id: <20240903115823.30647-1-adiupina@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,52 +58,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeduleetfeehffekueeuffektefgudfgffeutdefudfghedvieffheehleeuieehteenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrfeejrdejvdenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdqfedtvdeiledtrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrdefjedrjedvmeefieekgeeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehsohhnghigihgrohifvghisehhihhsihhlihgtohhnrdgtohhmpdhrtghpthhtoheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhrtghpthhtohepfigrnhhgsghinhhghhhuiheshhhishhilhhitghonhdrtghomhdprhgtphhtthhopehlphhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkh
+ ifsehlihhnuhigrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgdohhhurgifvghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhptghisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1725361318#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12156703, Updated: 2024-Sep-03 10:08:53 UTC]
 
-There is no caller and implementation in tree.
+In kirin_pcie_parse_port() pcie->num_slots is compared to
+pcie->gpio_id_reset size (MAX_PCI_SLOTS). Need to fix
+condition to pcie->num_slots + 1 >= MAX_PCI_SLOTS and move
+pcie->num_slots increment lower to avoid out-of-bounds
+array access.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: b22dbbb24571 ("PCI: kirin: Support PERST# GPIOs for HiKey970 external PEX 8606 bridge")
+Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas/cmd.h            | 5 -----
- drivers/net/wireless/marvell/libertas_tf/libertas_tf.h | 3 ---
- 2 files changed, 8 deletions(-)
+ drivers/pci/controller/dwc/pcie-kirin.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/cmd.h b/drivers/net/wireless/marvell/libertas/cmd.h
-index 3c193074662b..d7be232f5739 100644
---- a/drivers/net/wireless/marvell/libertas/cmd.h
-+++ b/drivers/net/wireless/marvell/libertas/cmd.h
-@@ -116,11 +116,6 @@ int lbs_set_power_adapt_cfg(struct lbs_private *priv, int enable, int8_t p0,
- int lbs_set_tpc_cfg(struct lbs_private *priv, int enable, int8_t p0, int8_t p1,
- 		int8_t p2, int usesnr);
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index d5523f302102..deab1e653b9a 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -412,12 +412,12 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+ 			if (pcie->gpio_id_reset[i] < 0)
+ 				continue;
  
--int lbs_set_data_rate(struct lbs_private *priv, u8 rate);
--
--int lbs_cmd_802_11_rate_adapt_rateset(struct lbs_private *priv,
--				      uint16_t cmd_action);
--
- int lbs_set_tx_power(struct lbs_private *priv, s16 dbm);
+-			pcie->num_slots++;
+-			if (pcie->num_slots > MAX_PCI_SLOTS) {
++			if (pcie->num_slots + 1 >= MAX_PCI_SLOTS) {
+ 				dev_err(dev, "Too many PCI slots!\n");
+ 				ret = -EINVAL;
+ 				goto put_node;
+ 			}
++			pcie->num_slots++;
  
- int lbs_set_deep_sleep(struct lbs_private *priv, int deep_sleep);
-diff --git a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-index 631b5da09f86..a5d4c09fb918 100644
---- a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-+++ b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-@@ -484,12 +484,9 @@ void lbtf_complete_command(struct lbtf_private *priv, struct cmd_ctrl_node *cmd,
- void lbtf_cmd_response_rx(struct lbtf_private *priv);
- 
- /* main.c */
--struct chan_freq_power *lbtf_get_region_cfp_table(u8 region,
--	int *cfp_no);
- struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
- 				   const struct lbtf_ops *ops);
- int lbtf_remove_card(struct lbtf_private *priv);
--int lbtf_start_card(struct lbtf_private *priv);
- int lbtf_rx(struct lbtf_private *priv, struct sk_buff *skb);
- void lbtf_send_tx_feedback(struct lbtf_private *priv, u8 retrycnt, u8 fail);
- void lbtf_bcn_sent(struct lbtf_private *priv);
+ 			ret = of_pci_get_devfn(child);
+ 			if (ret < 0) {
 -- 
-2.34.1
+2.30.2
 
 
