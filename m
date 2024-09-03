@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-312029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DA4969105
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304DA969102
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84388284121
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CBB28416D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A401CCEF9;
-	Tue,  3 Sep 2024 01:39:36 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFA31CCEDD;
+	Tue,  3 Sep 2024 01:39:35 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE241A4E9F;
-	Tue,  3 Sep 2024 01:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7234A4685
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725327576; cv=none; b=Nfe5hUeaxEmoT7uUSMW9VcKzrhl44R2PtLBuSTx5r1q1oBt/4C3JY5uA8pO5fIrRStEGFev2HtO/zjpNDTSkYs1sTyE8mje4lRZBY3BgXj8a79dNcK9YaMjTbCBufKHcpS6ghQwMAmDfofGbdSePeiegDjxyXwIZSZnriF8t7ts=
+	t=1725327575; cv=none; b=OwO0pQusZVYsQqi84Oi/yCLwYRz03ohHg7P/0jaxXCFOcg9sg0qhuFFXt969nk9AbPmNjd49eggB6Ai6zzowp4WcRe17k4u8/YxtjhJM7B5ewoecsYvcKA8Gg04YMLjpNPmbOn+hI/vwlzyhXUqowyxD7h/pSIeApoXbeq60hAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725327576; c=relaxed/simple;
-	bh=BZ+tG3sPqkdp1r8WVl3AmA1qeUmicg7w7NSIoJ6H0IM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=coXIDD9oh/QaqmsCNwAF3Wnzf5fPB6MBZ9mrq6MyUc60B+0K4+xrC4ig6x8L8XoJ2ynE7pzlyEhM4xS3sXXIy10oaDqHCCZii030u4Io+v1wg6jZL/8GLh17h5Uu+vP1gwyWBscoIzJzjR+XRkCAc6CqMSJoqBpY0qoeDC0pJX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABnGanCaNZmM6+yAA--.35268S2;
-	Tue, 03 Sep 2024 09:39:22 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	chui-hao.chiu@mediatek.com,
-	howard-yh.hsu@mediatek.com,
-	StanleyYP.Wang@mediatek.com,
-	benjamin-jw.lin@mediatek.com,
-	allen.ye@mediatek.com,
-	chank.chen@mediatek.com,
-	meichia.chiu@mediatek.com,
-	Money.Wang@mediatek.com,
-	Bo.Jiao@mediatek.com,
-	akpm@linux-foundation.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] wifi: mt76: mt7996: fix NULL pointer dereference in mt7996_mcu_sta_bfer_he
-Date: Tue,  3 Sep 2024 09:39:13 +0800
-Message-Id: <20240903013913.4143602-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725327575; c=relaxed/simple;
+	bh=LL6M0VGps9bxHr0h0YDPbvCH572z7TJmICMta0V0Rcw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NGkay4EePCqL0BT8o6HbakqIoinOifBxTval9zmoVfN9IbXz9ZNKW/2EKDZyLPMW+oPGmRI/bf+Gi/94+vKi39XsPeHoCnwx0KmjqRBrxHD4vJvcw1EExtQI91OP80HZ6X8vq+aWGX4JqtE1eIiAT8HI327TcTLG2nb1WHmJ/mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WySvv17xsz1j7wn;
+	Tue,  3 Sep 2024 09:39:07 +0800 (CST)
+Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id 82E511A0188;
+	Tue,  3 Sep 2024 09:39:25 +0800 (CST)
+Received: from [10.67.146.137] (10.67.146.137) by
+ kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 3 Sep 2024 09:39:24 +0800
+Subject: Re: Question on get random long worse in VM than on host
+To: Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>
+CC: Will Deacon <will@kernel.org>, <oliver.upton@linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>, "guoyang (C)" <guoyang2@huawei.com>
+References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+ <86zfotuoio.wl-maz@kernel.org>
+ <CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
+ <86y14dun1f.wl-maz@kernel.org>
+ <CAMj1kXF3JrDs=xvRmvTxS9du1F-gjSVe5qVZrPO5JLT5ho0riA@mail.gmail.com>
+From: Tangnianyao <tangnianyao@huawei.com>
+Message-ID: <f39ccb21-cc28-b878-bf5e-e81e378a299e@huawei.com>
+Date: Tue, 3 Sep 2024 09:39:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnGanCaNZmM6+yAA--.35268S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZw1UtrWxKF1xJr13Jwb_yoWDXrXE9r
-	n29FnIqw48Kw48Kr429wnxuryay3ykZF97Gay5tayfta97J3yUZF1IvFn3Ar13uFn7ZF1U
-	J3ZrJFy0y395WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28Icx
-	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRRH7K3UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+In-Reply-To: <CAMj1kXF3JrDs=xvRmvTxS9du1F-gjSVe5qVZrPO5JLT5ho0riA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd500014.china.huawei.com (7.221.188.63)
 
-Fix the NULL pointer dereference in mt7996_mcu_sta_bfer_he
-routine adding an sta interface to the mt7996 driver.
 
-Found by code review.
 
-Cc: stable@vger.kernel.org
-Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 9/3/2024 5:26, Ard Biesheuvel wrote:
+> On Sat, 31 Aug 2024 at 10:14, Marc Zyngier <maz@kernel.org> wrote:
+>> On Sat, 31 Aug 2024 08:56:23 +0100,
+>> Ard Biesheuvel <ardb@kernel.org> wrote:
+>>> As for RNDR/RNDRRS vs TRNG: the former is not a raw entropy source, it
+>>> is a DRBG (or CSPRNG) which provides cryptographically secure random
+>>> numbers whose security strength is limited by the size of the seed.
+>>> TRNG does not have this limitation in principle, although non-p KVM
+>>> happily seeds it from the kernel's entropy pool, which has the same
+>>> limitation in practice.
+>> Is that something we should address? I assume that this has an impact
+>> on the quality of the provided random numbers?
+>>
+> To be honest, I personally find the distinction rather theoretical - I
+> think it will be mostly the FIPS fetishists who may object to the
+> seeding of a DRBG of security strength 'n' from the kernel entropy
+> pool without proving that the sample has 'n' bits of entropy.
+>
+> For pKVM, the concern was that the untrusted host could observe and
+> manipulate the entropy and therefore the protected guest's entropy
+> source, which is why the hypervisor relays TRNG SMCCC calls directly
+> to the secure firmware in that case. The quality of the entropy was
+> never a concern here.
+>
+> .
+>
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-index 2e4fa9f48dfb..cba28d8d5562 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-@@ -1544,6 +1544,9 @@ mt7996_mcu_sta_bfer_he(struct ieee80211_sta *sta, struct ieee80211_vif *vif,
- 	u8 nss_mcs = mt7996_mcu_get_sta_nss(mcs_map);
- 	u8 snd_dim, sts;
- 
-+	if (!vc)
-+		return;
-+
- 	bf->tx_mode = MT_PHY_TYPE_HE_SU;
- 
- 	mt7996_mcu_sta_sounding_rate(bf);
--- 
-2.25.1
+Thank you for reply.
 
+In case that EL3 firmware not support SMCCC TRNG, host and guest can only
+get randomness from DRBG-based RNDRRS, right?
+
+In this case, guest get DRBG-based randomness via HVC and host, but the
+randomness returned by host kvm is not really backed by EL3 SMCCC TRNG,
+and actually get from DRBG-based RNDRRS.
+Is this hvc process is redundancy?
+
+Thanks.
 
