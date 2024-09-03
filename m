@@ -1,215 +1,103 @@
-Return-Path: <linux-kernel+bounces-312038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3647A96911C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:53:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0576596911F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7081C2155D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:53:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 982C1B22825
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684D51CCEE8;
-	Tue,  3 Sep 2024 01:53:36 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4FC17E46E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4D1CCEFD;
+	Tue,  3 Sep 2024 01:53:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E191CCEDD;
+	Tue,  3 Sep 2024 01:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725328416; cv=none; b=DndLWy8X6/avO1i0HFZuZS7CQckhGAJkwAi7B3mEmyE3uAKiRvRYIf5v80ljFk3nO+47bjdAdZcr0H7ZPabM5AMQyuYMUDdUjO1OSnc5NsQLXn6erHeEfLqFnLz/2IZpB30jZw+TgJnlLu+2Kd9qnrBG3a24mAviWYvzSgy97uM=
+	t=1725328427; cv=none; b=AiAgCsOCI9lTchoTAiAkgG7OWZHdv3U9ElidgzMhR+HovsyZf4apiIDUTn9k7wfswPnarSMVSWedFB1O40n2dahJZ+Ds+QFJ09gpFWJzQUU58bRiSQrIbe3L0YwfqTaWg/v4M+XCJBKaNw+9rbno0GVNOm0Bnzx9nFFQdmQe4kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725328416; c=relaxed/simple;
-	bh=poYTvClN2Qsjc8Mb5ZqhqUYUigb3GcTo6OUdYKyFjus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QMMcYwZE20HdjcYSRyPVRwRQhCOiq0WKjHQ69iCU9XxPpwECa3FLolWf/tshw1onqxSjNd3BDhvh3dBqj64QEzTkWx9mN0PyaF6x06R7ztyQxxgD8qZgXzMHD8vmCS+ZamwAhD196vRZ+BboeqPrVTeKx0pRdk2JKQ2zbrhJlCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4fd01340753so1331383e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 18:53:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725328413; x=1725933213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ea+bFyqFSX+YxQSwCO+mp9wllj7zkTS/6Y/bdTrmbnE=;
-        b=WhOIjmM0FOndG2NJWxDV5gN2lRuWxIqFhh+4BNv6dR3haWyvLbaR4cdIlNP4juaC6r
-         WRgZeHsLYCzw70RI531q7jMVg1bZYxo/L7C78u5xoexwq54L4XtFsGhFYVvJvyLW21uA
-         1SczMS/zZUuxB6881GjGLIvRxVQTg7UmIKwc1X+j5FEHGYSBYDLi+9kVqASZGv8Hst6p
-         t0r8Cv9Q1PXTZPWZaWclyr4B8RnoSfdUGjwcsAnyfJ3hFpKcOppAPG2red0tXNs2lw7l
-         jErO7QWEQ9emhCEo7Nro6FFw7+o69C0RM+DtcANcCAMKcGGsRss3BECDumgexJOHDKHu
-         W/pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZcMolOto0JvSwgBlaSo8TfVAlWRBlrPUxtOODCCLshTT1puu4USeg8+onN1n7qZm5By4R2CLAX2HBi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3CXtUTx5StnaB0+eJg8FCIhqtTBi/egSlvsPIcliJG9zoKVuk
-	RL95/7oBXUGw423/H4KsHJaBeHLv9I2OCtQ/d3ePxbTtFRS+1iJeuNUMsPi2YqINIQ1rgZKfCbB
-	6/yHkHae/9Qr8nfaY6j9/weruIbQ=
-X-Google-Smtp-Source: AGHT+IEgKdUnhNq1npQpz3q2eThJQZa2L0vd6jhGuNeLVLkRSpCbCraK+pLcXhqC1+Ah1Ay9wP0CS0ob0E+kovlrdbc=
-X-Received: by 2002:a05:6122:20a1:b0:4f5:2276:1366 with SMTP id
- 71dfb90a1353d-4ffe4a58f0dmr14431497e0c.3.1725328413013; Mon, 02 Sep 2024
- 18:53:33 -0700 (PDT)
+	s=arc-20240116; t=1725328427; c=relaxed/simple;
+	bh=B5l1hCo3L8RsrFKWtMuR8cEUXTuA9Rv/yNP8X5gM8MY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rs4K/JBWn99qK9NOD8Bl9KTmN6uy4hGrjC1fhpCFAwg7hJf9WUqCqUg31FoQ3WTwPdXmWDvvXpax2Kb1gV+EAc7fsF+0zx0+7Q2sJ0pMTdwaZsQtG/WOollr+JzcxN8GImjxfu7A0cHAhX6d9685vUBDfAk+z7B+dX0BQ1odxHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8AxHusfbNZmmL4oAA--.14281S3;
+	Tue, 03 Sep 2024 09:53:35 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front2 (Coremail) with SMTP id qciowMDxvscdbNZmRXYEAA--.13550S2;
+	Tue, 03 Sep 2024 09:53:33 +0800 (CST)
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chenhuacai@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@xen0n.name,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	loongarch@lists.linux.dev,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: [PATCH v2 0/2] Add EDAC driver for ls3a5000 memory controller
+Date: Tue,  3 Sep 2024 09:53:52 +0800
+Message-Id: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808111849.651867-1-ryan.roberts@arm.com> <20240808111849.651867-3-ryan.roberts@arm.com>
- <747d1319-f746-4379-bf88-a0f6c3f558b4@linux.alibaba.com> <14823123-79e3-4c7d-8501-8c46c6ec13c7@arm.com>
- <b8ba33c7-3fe7-4b0d-a43d-8a796818bc34@linux.alibaba.com>
-In-Reply-To: <b8ba33c7-3fe7-4b0d-a43d-8a796818bc34@linux.alibaba.com>
-From: Barry Song <baohua@kernel.org>
-Date: Tue, 3 Sep 2024 13:53:21 +1200
-Message-ID: <CAGsJ_4z+yERPLwzm-8Mkx8MsNZAz0zZWycZfuGRjOc4kxS=HwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mm: Tidy up shmem mTHP controls and stats
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qciowMDxvscdbNZmRXYEAA--.13550S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7JFyDuFWUurWDZryUAryktFc_yoWxtwb_Cw
+	17Aay8Jr4vkFyDCFW2vF18ZFWjyF48tF95CF1Dtw45Xr43Zry3Xas7WasrA34UJw1DuFy3
+	ArZ5KF97Aw1UtosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+	JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUceOJUUUUU
 
-On Tue, Sep 3, 2024 at 1:15=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2024/9/2 17:58, Ryan Roberts wrote:
-> > Hi Baolin,
-> >
-> > Thanks for the review - I've been out on Paternity leave so only gettin=
-g around
-> > to replying now...
->
-> No worries :)
->
-> > On 09/08/2024 09:31, Baolin Wang wrote:
-> >>
-> >>
-> >> On 2024/8/8 19:18, Ryan Roberts wrote:
-> >>> Previously we had a situation where shmem mTHP controls and stats wer=
-e
-> >>> not exposed for some supported sizes and were exposed for some
-> >>> unsupported sizes. So let's clean that up.
-> >>>
-> >>> Anon mTHP can support all large orders [2, PMD_ORDER]. But shmem can
-> >>> support all large orders [1, MAX_PAGECACHE_ORDER]. However, per-size
-> >>> shmem controls and stats were previously being exposed for all the an=
-on
-> >>> mTHP orders, meaning order-1 was not present, and for arm64 64K base
-> >>> pages, orders 12 and 13 were exposed but were not supported internall=
-y.
-> >>>
-> >>> Tidy this all up by defining ctrl and stats attribute groups for anon
-> >>> and file separately. Anon ctrl and stats groups are populated for all
-> >>> orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
-> >>> populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
-> >>>
-> >>> Additionally, create "any" ctrl and stats attribute groups which are
-> >>> populated for all orders in (THP_ORDERS_ALL_ANON |
-> >>> THP_ORDERS_ALL_FILE_DEFAULT). swpout stats use this since they apply =
-to
-> >>> anon and shmem.
-> >>>
-> >>> The side-effect of all this is that different hugepage-*kB directorie=
-s
-> >>> contain different sets of controls and stats, depending on which memo=
-ry
-> >>> types support that size. This approach is preferred over the
-> >>> alternative, which is to populate dummy controls and stats for memory
-> >>> types that do not support a given size.
-> >>>
-> >>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> >>> ---
-> >>>    mm/huge_memory.c | 144 +++++++++++++++++++++++++++++++++++++------=
-----
-> >>>    1 file changed, 114 insertions(+), 30 deletions(-)
-> >>>
-> >>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >>> index 0c3075ee00012..082d86b7c6c2f 100644
-> >>> --- a/mm/huge_memory.c
-> >>> +++ b/mm/huge_memory.c
-> >>> @@ -482,8 +482,8 @@ static void thpsize_release(struct kobject *kobj)=
-;
-> >>>    static DEFINE_SPINLOCK(huge_anon_orders_lock);
-> >>>    static LIST_HEAD(thpsize_list);
-> >>>    -static ssize_t thpsize_enabled_show(struct kobject *kobj,
-> >>> -                    struct kobj_attribute *attr, char *buf)
-> >>> +static ssize_t anon_enabled_show(struct kobject *kobj,
-> >>> +                 struct kobj_attribute *attr, char *buf)
-> >>>    {
-> >>>        int order =3D to_thpsize(kobj)->order;
-> >>>        const char *output;
-> >>> @@ -500,9 +500,9 @@ static ssize_t thpsize_enabled_show(struct kobjec=
-t *kobj,
-> >>>        return sysfs_emit(buf, "%s\n", output);
-> >>>    }
-> >>>    -static ssize_t thpsize_enabled_store(struct kobject *kobj,
-> >>> -                     struct kobj_attribute *attr,
-> >>> -                     const char *buf, size_t count)
-> >>> +static ssize_t anon_enabled_store(struct kobject *kobj,
-> >>> +                  struct kobj_attribute *attr,
-> >>> +                  const char *buf, size_t count)
-> >>>    {
-> >>>        int order =3D to_thpsize(kobj)->order;
-> >>>        ssize_t ret =3D count;
-> >>> @@ -544,19 +544,35 @@ static ssize_t thpsize_enabled_store(struct kob=
-ject *kobj,
-> >>>        return ret;
-> >>>    }
-> >>>    -static struct kobj_attribute thpsize_enabled_attr =3D
-> >>> -    __ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_stor=
-e);
-> >>> +static struct kobj_attribute anon_enabled_attr =3D
-> >>> +    __ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
-> >>>    -static struct attribute *thpsize_attrs[] =3D {
-> >>> -    &thpsize_enabled_attr.attr,
-> >>> +static struct attribute *anon_ctrl_attrs[] =3D {
-> >>> +    &anon_enabled_attr.attr,
-> >>> +    NULL,
-> >>> +};
-> >>> +
-> >>> +static const struct attribute_group anon_ctrl_attr_grp =3D {
-> >>> +    .attrs =3D anon_ctrl_attrs,
-> >>> +};
-> >>> +
-> >>> +static struct attribute *file_ctrl_attrs[] =3D {
-> >>>    #ifdef CONFIG_SHMEM
-> >>>        &thpsize_shmem_enabled_attr.attr,
-> >>>    #endif
-> >>>        NULL,
-> >>>    };
-> >>>    -static const struct attribute_group thpsize_attr_group =3D {
-> >>> -    .attrs =3D thpsize_attrs,
-> >>> +static const struct attribute_group file_ctrl_attr_grp =3D {
-> >>> +    .attrs =3D file_ctrl_attrs,
-> >>> +};
-> >>> +
-> >>> +static struct attribute *any_ctrl_attrs[] =3D {
-> >>> +    NULL,
-> >>> +};
-> >>> +
-> >>> +static const struct attribute_group any_ctrl_attr_grp =3D {
-> >>> +    .attrs =3D any_ctrl_attrs,
-> >>>    };
-> >>
-> >> I wonder why adding a NULL group?
-> >
-> > It made everything a bit more generic and therefore extensible. Its my
-> > preference to leave it as is, but will remove it if you insist.
->
-> My preference is we should add it when necessary, but but I don't have a
-> strong opinion. Let's see what other guys prefer, David, Barry?
+Add a simple EDAC driver which report single bit errors (CE) only on
+ls3a5000 platform.
 
-I'm fine with either option. Adding a NULL control group makes it
-easier for lazy
-people like me to understand the current status, as it clearly
-indicates that there
-isn't a shared control group for file, shmem, and anon at the moment. :-)
+Zhao Qunqin (2):
+  dt-bindings: EDAC for ls3a5000 memory controller
+  Loongarch: EDAC driver for loongson memory controller
 
-Thanks
-Barry
+ .../edac/loongson,ls3a5000-mc-edac.yaml       |  44 +++++
+ MAINTAINERS                                   |   7 +
+ arch/loongarch/Kconfig                        |   1 +
+ drivers/edac/Kconfig                          |   8 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/ls3a5000_edac.c                  | 187 ++++++++++++++++++
+ 6 files changed, 248 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
+ create mode 100644 drivers/edac/ls3a5000_edac.c
+
+
+base-commit: 090786479325d85cf9f8565ef802cd6dc62c5321
+-- 
+2.43.0
+
 
