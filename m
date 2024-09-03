@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-313182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E13196A196
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C7C96A18D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033C5286871
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD056B22D3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F6E187550;
-	Tue,  3 Sep 2024 15:06:03 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E811714C8;
+	Tue,  3 Sep 2024 15:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTnH/X/x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A933186E51;
-	Tue,  3 Sep 2024 15:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862CC1684AC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375963; cv=none; b=FBnSgP2j0qkpDQzyY2WZ2x7Bd/NtpouYOiOz9rSacQpyV+AvFH2XhdLu4kKZITT/CIfYZ5jeIjaBft9v1RnXAZWMuso/DF2XHZjhlQkc9xv3/SSqks7oA598CazZ21cecMDi5WozoFFhQ4HrOIK0/gQsbLQVJLpB180DquNUWEI=
+	t=1725375883; cv=none; b=pz+ALvtCAjl9HIHMzCjrAmFlOrmmFsiYoKr4HcZi6KEaaCqZP1pnqBKDMxAJmqmaOHJnYbocCiPf8W6/P77TVUvWnmgWdtm9rIIMjfdVkk5N2Ty+gld6Y7CWGlc/utftoWiTZ1GnBb9UlZyfCnF/r0MCbMaCkqDeYouo/TcyULU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375963; c=relaxed/simple;
-	bh=Za5OvjXDVHbXWWe2B5O1GEiRe7xMQzAUlxeC123sewU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BRcRn6PQEsk3Q0GOQlVdC+wQfkzZcFsB2qYnEYeqkOiC69ZvaYILc5DwjdX1yK5Ycng+v3hZ3wl00Fg5Z4WIV8/sX3aF0AOLwzJqAHo8c8SQ/Sl3F1/0C2fzATp12cWcm7U7n+y3aCNW9Uf9x3QtogxJf62/pRmHenwdcNQJ5Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.lan (51b687c4.unconfigured.pool.telekom.hu [::ffff:81.182.135.196])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000076028.0000000066D724A4.001E8EC5; Tue, 03 Sep 2024 17:00:52 +0200
-Message-ID: <cf8c73dd91dbbb11b562a5e0d9ac6b4035c32d28.camel@irl.hu>
-Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
- scope_guard() clear of its scope
-From: Gergo Koteles <soyer@irl.hu>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-  Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-  Hans de Goede <hdegoede@redhat.com>,
-  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ike Panhc <ike.pan@canonical.com>,
-  Peter Zijlstra <peterz@infradead.org>,
-  Josh Poimboeuf <jpoimboe@kernel.org>,
-  Nathan Chancellor <nathan@kernel.org>,
-  kernel test robot <lkp@intel.com>
-Date: Tue, 03 Sep 2024 17:00:51 +0200
-In-Reply-To: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
-References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725375883; c=relaxed/simple;
+	bh=lmrSBif61BRlFHCzXpca5MPMB56saeOdUQqUjYlg/Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G/9D9eqHV4429sgJEayF0k5VDgaOJo+xTuXzxVq5/OuBwJpQFxkqmlaOABBFoy82GA5wQ2OJ6TtMbLPkSgnOyKa3bFQCqVMVH1O20sgChg4rgOk38vLESmoHnRVUOys35BjSNH8deVtiaqInQCXGHXRo8nMQt0bzMQ9vKEE7UzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTnH/X/x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 410BEC4CEC9
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725375883;
+	bh=lmrSBif61BRlFHCzXpca5MPMB56saeOdUQqUjYlg/Co=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gTnH/X/xuNM8lzLUAsnru8hikmU7qWVYGdgIAlO8LjzIH2ETPBQtoK9FizzjV9je7
+	 tB/LEb3g3kR6FDxGe2P4+QsOpnPvoSjtMuff6x743LBwJdysWltQXh+1zz3GNSVaIa
+	 zBEALopTX/yOlUMfkKvSUgpsx0RZtcp7+gOzUGoMNOf5ZfjKnYGGfGc1FTMqMDfZgG
+	 dcU7p8kiINQfuMkAgexSpJ0omfnpVXn2mV1sTc+c+rbIHTlwJ+ZsnuXamWvfMb9/tA
+	 rWOwVNj4uf/U3nh3OXvq4E1ZNTB9rSfdazTpucNilBH9IQhrkAgV9oJ315nbjW/++D
+	 g1YIWR9NPaEHg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334879ba28so7594004e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:04:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjzfvoqP3N3gratS9XKU2445mHMZYoCRcUN3pS0wTclY5wFOQhsq8VrY6BTi/R4DsHljx11QgVW/3VK9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZDNeWx32pwc22oJne4jzMUurDnoS0sgPIGhaxdeJDEPOxoaZO
+	BGCou/aZYgU4jLsnpPvaFqmGGTbNFLUQ05u9SbZd2ojpnvjWJO+CkSqvIl+8jCr+kvaQsgvI+Zz
+	A7fP9yruWGzFhiUuAkXlbXOkjhv4=
+X-Google-Smtp-Source: AGHT+IG7gus73VBjLSHysH1wwSV9ysu4ymNNtJXZol3arJRV6nMVPo8fAFNviB0AK2N5lnISmpZGdtR5+wtX5w0Po4Y=
+X-Received: by 2002:a05:6512:3d28:b0:52c:e670:7a12 with SMTP id
+ 2adb3069b0e04-53546bc2c75mr8928117e87.60.1725375881495; Tue, 03 Sep 2024
+ 08:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+ <86zfotuoio.wl-maz@kernel.org> <CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
+ <86y14dun1f.wl-maz@kernel.org> <CAMj1kXF3JrDs=xvRmvTxS9du1F-gjSVe5qVZrPO5JLT5ho0riA@mail.gmail.com>
+ <f39ccb21-cc28-b878-bf5e-e81e378a299e@huawei.com>
+In-Reply-To: <f39ccb21-cc28-b878-bf5e-e81e378a299e@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 3 Sep 2024 17:04:30 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGyJSwD=ok=Ag11mMh3d6onQkN0b_-iVwVDdyrwk5rj6Q@mail.gmail.com>
+Message-ID: <CAMj1kXGyJSwD=ok=Ag11mMh3d6onQkN0b_-iVwVDdyrwk5rj6Q@mail.gmail.com>
+Subject: Re: Question on get random long worse in VM than on host
+To: Tangnianyao <tangnianyao@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, oliver.upton@linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, "guoyang (C)" <guoyang2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andy,
+On Tue, 3 Sept 2024 at 03:39, Tangnianyao <tangnianyao@huawei.com> wrote:
+>
+>
+>
+> On 9/3/2024 5:26, Ard Biesheuvel wrote:
+> > On Sat, 31 Aug 2024 at 10:14, Marc Zyngier <maz@kernel.org> wrote:
+> >> On Sat, 31 Aug 2024 08:56:23 +0100,
+> >> Ard Biesheuvel <ardb@kernel.org> wrote:
+> >>> As for RNDR/RNDRRS vs TRNG: the former is not a raw entropy source, it
+> >>> is a DRBG (or CSPRNG) which provides cryptographically secure random
+> >>> numbers whose security strength is limited by the size of the seed.
+> >>> TRNG does not have this limitation in principle, although non-p KVM
+> >>> happily seeds it from the kernel's entropy pool, which has the same
+> >>> limitation in practice.
+> >> Is that something we should address? I assume that this has an impact
+> >> on the quality of the provided random numbers?
+> >>
+> > To be honest, I personally find the distinction rather theoretical - I
+> > think it will be mostly the FIPS fetishists who may object to the
+> > seeding of a DRBG of security strength 'n' from the kernel entropy
+> > pool without proving that the sample has 'n' bits of entropy.
+> >
+> > For pKVM, the concern was that the untrusted host could observe and
+> > manipulate the entropy and therefore the protected guest's entropy
+> > source, which is why the hypervisor relays TRNG SMCCC calls directly
+> > to the secure firmware in that case. The quality of the entropy was
+> > never a concern here.
+> >
+> > .
+> >
+>
+> Thank you for reply.
+>
+> In case that EL3 firmware not support SMCCC TRNG, host and guest can only
+> get randomness from DRBG-based RNDRRS, right?
+>
 
-Thank you for addressing this.
+There are other, non-architected ways too to get entropy and/or
+randomness. There are many hardware random number generator
+peripherals that the OS can drive directly, and there are vendor
+specific EL3 services too that a system might use.
 
-On Thu, 2024-08-29 at 19:50 +0300, Andy Shevchenko wrote:
-> First of all, it's a bit counterintuitive to have something like
->=20
-> 	int err;
-> 	...
-> 	scoped_guard(...)
-> 		err =3D foo(...);
-> 	if (err)
-> 		return err;
->=20
-> Second, with a particular kernel configuration and compiler version in
-> one of such cases the objtool is not happy:
->=20
->   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end=
- of section
->=20
-> I'm not an expert on all this, but the theory is that compiler and
-> linker in this case can't understand that 'result' variable will be
-> always initialized as long as no error has been returned. Assigning
-> 'result' to a dummy value helps with this. Note, that fixing the
-> scoped_guard() scope (as per above) does not make issue gone.
->=20
-> That said, assign dummy value and make the scope_guard() clear of its sco=
-pe.
-> For the sake of consistency do it in the entire file.
->=20
+RNDR/RNDRRS does not exist yet in practical terms - there are very few
+SOCs that actually implement that used in the field.
 
-Interestingly, if I open a scope manually and use the plain guard, the
-warning disappears.
+> In this case, guest get DRBG-based randomness via HVC and host, but the
+> randomness returned by host kvm is not really backed by EL3 SMCCC TRNG,
+> and actually get from DRBG-based RNDRRS.
+> Is this hvc process is redundancy?
+>
 
-	...
-	unsigned long result;
-	int err;
-
-	{
-		guard(mutex)(&priv->vpc_mutex);
-		err =3D read_ec_data(priv->adev->handle, VPCCMD_R_FAN,
-&result);
-		if (err)
-			return err;
-	}
-	...
-
-This looks a bit strange, but is probably easier for the compiler than
-the for loop of scoped_guard.
-
-But I don't know how well this style fits into the kernel.
-
-Best regards,
-Gergo Koteles
-
+I don't understand this question. How the host obtains its entropy
+and/or randomness and how the guest does it are completely separate
+concerns.
 
