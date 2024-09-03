@@ -1,221 +1,117 @@
-Return-Path: <linux-kernel+bounces-313943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2896396ACAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3E896ACAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24011F25467
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBA028673E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871F41AD26F;
-	Tue,  3 Sep 2024 23:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CD01B9827;
+	Tue,  3 Sep 2024 23:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wkU249GA"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YCUdzmvs"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0F2207A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725405334; cv=fail; b=QDR0MGaTLCycJwWJjOm4zSc7y2R5niQ1e768HNacZzxEigmWkGVMBJlD96/ooPFBmBBO6Gm9OHjtMLZOy7FBF8DP9s3aZe6cdkdFILwmksq5SyJCQbCYTOYopXWrdUuyXh3cYde42FqMVaqxmm6H2YaJTit2hYMlYzA1DDKvdRU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725405334; c=relaxed/simple;
-	bh=xEK8nem/QeAyUWlqeaQAHpN3x5+pT0d+ckS0uOumsjk=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QOkokKvKq66tEpdNEkYurx3cxjzeWiHD4VqfTtv+6lcTTps0qv6aYoUDwQY1q58GzpYYgteWkRgzvOdwB1UOtcfL5gpK+/YkElrWbZR33tEjtfXjSjISZsrXUl3c4pBBgePRwRSFqxAcXG9BZ0qLo8rcvXKksEw64UU9bylxTiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wkU249GA; arc=fail smtp.client-ip=40.107.94.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UyqfA0WOtRzwUZLukDYrQ2V4ZVUw9gOMb31TulGYP3M1y1Kq6ocTyZsb75kKokhnNpD5hpnQDGbIOmZu2rhM+c2xEOMdRuJ7wFmE49LsIA1vRMbwaRUiOzNXMLRTCwuuuyC0c55vQu186K+TiWnHSCVF+z+7APJI3VHmo2CX1TiA73kcK68TpH9QYvAEAsXJ8wPWZf3lPABN86FxeJfnBS4OgwuieaMAotkIT0ipqXm4f3qGa77DaHeIjXDzk2e8O+r83OkWij8ePZRN2LTc/ajblOumo+dvAdoOaIevP2YWc323froZRGa0kHKk4bVkLUvCH9YAhIxG/U6XCGfuQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+qrJUJVkIJKV6C1Ebp+MTAiBBfiwzvDBoyH2atPuYws=;
- b=JzRpZWgDSYh/qIC6srXsRjp8/gwpPC2MdSgsw5lQ+I2QTTMAC0z+lActsPtfwYLTnH9DZPE2aFKxEX7EhhgIgtJ/6C5k4AMb0BAXTiblekqD5jOSwX8Cj6K8MO4/KfFWSww43R3eAG9QwqgAbNrJpgHUi4nk7GkVklhNzLuqadsKKNpiXwdIQtb5KOiY/mWKpELRfJsDRo6SdOdrMM+lnTPSS6rMqA8gRPBt+msR/xZEwfqsQFeaW0UZcTa8aLPRWNwVNwcg5uS2333ZmNSg/nidmSgbRiTK8ear82mLiWS8ROjjIf7882nq/JYz1unfSIsLKa/fbF4TXaF5mT1McQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+qrJUJVkIJKV6C1Ebp+MTAiBBfiwzvDBoyH2atPuYws=;
- b=wkU249GAiKTbWuvkVvTG0jc4aP4c5WwucnccpbV7q9gBci7najJSrsKY3P56aVEF27yVTVOeHFwPuaS94mVttB1ijQpbT1k/PCtjpxW9WqzsG9OXEGpM01lnNl3yh25wdc/AMV1Fzzly7kY81BXzLeAcMDZ/D6VmQrYx4VovzL8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5311.namprd12.prod.outlook.com (2603:10b6:5:39f::7) by
- SA1PR12MB7246.namprd12.prod.outlook.com (2603:10b6:806:2bc::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
- 2024 23:15:30 +0000
-Received: from DM4PR12MB5311.namprd12.prod.outlook.com
- ([fe80::a846:49eb:e660:1b5b]) by DM4PR12MB5311.namprd12.prod.outlook.com
- ([fe80::a846:49eb:e660:1b5b%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 23:15:30 +0000
-Message-ID: <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com>
-Date: Tue, 3 Sep 2024 19:15:27 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
- Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com,
- pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>,
- "Deucher, Alexander" <alexander.deucher@amd.com>,
- amd-gfx list <amd-gfx@lists.freedesktop.org>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
- <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
- <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
-Content-Language: en-US
-From: Leo Li <sunpeng.li@amd.com>
-In-Reply-To: <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YQBPR0101CA0054.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:1::31) To DM4PR12MB5311.namprd12.prod.outlook.com
- (2603:10b6:5:39f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7E4126C07;
+	Tue,  3 Sep 2024 23:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725405346; cv=none; b=idf3T2+IWzMF5jB1uK9V7HUJmAZubHq/JOaMtJjnWcffebTEmkYSxxbCP4BBVmnWf34kq+SVglU9RUi+z/f8A/npPUkCn1/hGqVru+T1V+5gdxhNf2bm0I9UQ9hmKACEDfmdVZ6idpT/9SCMHOHgBAQ0NN9fCoG5V5a2Zkjh/sg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725405346; c=relaxed/simple;
+	bh=nlzGJwG6MEtf4Ehj/7YU/hrNJR25e2bBN2UyHJLyqkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ASMc5hZsewNu6YDBdL7DofVvnevUchjvKOvkKKQ8oAadN7PeMwywyF/AAEU6oG2KeZX4hKC5Jlo7+A58RRq4zXB99Y6kspVXN6dsc5D+TxR0XQWB0msB+EV6mvoXqLd1joAu3rWECJGPpA1XNW1vc1MUKKqch7pgsXlOQbXXJYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YCUdzmvs; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725405333;
+	bh=1uIJ8L2JeFJsHNtUykzZeS4hanrKMKNkZJ11cMEne/I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YCUdzmvshtxxQZn97lATxYrWoqfsyyUpmqVpL3zeIZrUC1Z4r7kC+vz8kj1BdtfqP
+	 SigfYndtS8pRkmBNwL9Mjg6L7YvMQ3y7U3yCB/pxOW9IEchQ/7Lwulv/gb8bNdkjIe
+	 vbWPqoQATW4MfNk8/rfR9tWhE2pSx2HrLJWmAQWiFmyI18ltIbRYwRwjjSOdwiWpC1
+	 WdXmZ2V26gvzYGr/KlGRKjK/+NqMmJNNuI57MWfHVS4L0nl4agFrehWKNMRulJhzGD
+	 B/03H06wW37wqGLM6y5sAeGPUYE1MgL1IjEuHQnTqPyIfdabX7ZanGurbUxWI8/Dvb
+	 FTDstBRo6Z9gw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz1gm6Bnfz4x1V;
+	Wed,  4 Sep 2024 09:15:32 +1000 (AEST)
+Date: Wed, 4 Sep 2024 09:15:32 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Shida Zhang <zhangshida@kylinos.cn>
+Subject: linux-next: manual merge of the vfs-brauner tree with the ext4 tree
+Message-ID: <20240904091532.4b0dee26@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5311:EE_|SA1PR12MB7246:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08fc01da-32a4-4167-a751-08dccc6e4d70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEs3NTRZSU9nNHhYc0JXd3ZpOENuYnVJRGdwZUZaa2tBY0xSUHAwK2ptUTdO?=
- =?utf-8?B?WGRSVnpGemJ3cXZTT3J4cUVGVzF3RjdHbHRjNGx3dTYrMGYvOWJRWTFMN0xn?=
- =?utf-8?B?dGc5c0J3dUJjNzZaOEVjRVVYUVFyMG91WFI1NWRsRkRyL3lkWWhycGtCbU1z?=
- =?utf-8?B?RDlwN01zaThEckVBRFlsQVc0ZjJWUGQ2TkcydWVWMVFVaFlZakYyUitqdTJK?=
- =?utf-8?B?aDBRMVhva1JPTG91MytxaForMXh1ZU84b3BzUUdIOUZ2TnRROWk0Y2QyeXh3?=
- =?utf-8?B?eCtHVTJqOGs0YTdlbTB1Tmw3L0VYaitZMTBSNEdRTGoxMzhLRUZzZFJFOCs5?=
- =?utf-8?B?VE5Oc1J2ZDdTTGhyQktaWUgxV3dDdzNZd3pwZVY3ZGtoZkJyTHU2YllhdXZv?=
- =?utf-8?B?TWlPWUQyUElIN2x6Y2YyUUJydVBVV1lhazYrSEdwd25OS0NpWFJJZUpyNExP?=
- =?utf-8?B?WHFTRm9DT29MWXUrOUFJRStnSVpIbEV4WnBlL240VnB3ZXZiaHRnNVkxR2ls?=
- =?utf-8?B?VTFjb1gyWTVTUktWRzBUZnRlSnYvKytqbTZiM0sxbEhOQzNBdEorL25XSkJa?=
- =?utf-8?B?VTR5bkE5ektjanhtdUFtSWMvNjR0MlNWUlBVTEx5bk1BT2ZyWkd2clBYZEJ6?=
- =?utf-8?B?UmhFbHowWXROdUhVMzZuRzIrZjE4VEo3U3JmalRRRjBub2xTQnUvbmp1bG5E?=
- =?utf-8?B?WWxnK01oYndTQzJiT09FZWJCOUlBVlhZWHloak05Tm90VldqM3hlU3ozMjMz?=
- =?utf-8?B?Q3lyUDJ5WmRyV2RIcE16dElkeVZxK2xPNWN4U0RONFk1cEZhVy9udmZQNnRT?=
- =?utf-8?B?dnJORFdTY1F0OEZ3WVluRFZnNVgwekc5Y0lzb3VGZG5YbTVBNUxQU0wvVFpz?=
- =?utf-8?B?V2RLaG01R2RTWHRLcHlWS3AvVkJDODdFQnFoNEE5dHhNUVBxR0VKYkJIaytI?=
- =?utf-8?B?VnR3U2NGUE81SGNRQlRCTk9TYmtrSUlKTnp1MUdLUTZlWWw4a0JhL2V0aVRC?=
- =?utf-8?B?UG1mZmgxQ0cyTjd6OERSNGdKLy9hcHFFTDU0Skc1OVhhczQ2LytQN3VscE9Q?=
- =?utf-8?B?K1g3VlE0MnlEZmhSWmFQNzJ3a3dnUlB6MXIwZmFuWVVYSHRqQ1l2QUZsZi9T?=
- =?utf-8?B?OGFHN2ZoVXNkcWNjOFhSODV1ZkhSNitRS0tCZiszemJQTXpTcDhybjU0UU8r?=
- =?utf-8?B?UDVFTDZNUHpvaTdCY25CemNZR0MwNlN0Qk5neDFMR1hkS0FxU1U4TjdQaW9M?=
- =?utf-8?B?d2taNnRhK1M2QlMvckc3dDZPUVRRQmtsdzFwRS8wdTk5eDkyQTUyTWJnM2Vj?=
- =?utf-8?B?b21FMkJWaHFPNzlsSUw2OVJFQU9STEM2ajJKUFpWMU5yUTcybUhQRmxHN0Jm?=
- =?utf-8?B?TGRCQUc0ODFjaTJwQWFjWkdOTVBDbnVQZ0s2bGRDNzJkdEZFOGpQeGlyV1BO?=
- =?utf-8?B?QXE0cVFIaTV5RFc3cmpxbVJTMmU1YnllR0E3NG1KekdDNG94QTlKamg2b0th?=
- =?utf-8?B?c25la2lVTTZVcUVCWlcva2h6Vm5TMCtjWDJveDRrNXB4NE9tVFNxVjdWSnFh?=
- =?utf-8?B?dEUzVU9NOVA1bDJRZkxVMnlYR3hkV3BnWEFyc0JERlFrQjhWZkt0Tld4ZWR4?=
- =?utf-8?B?d1E5VCs1MGxDTE9CdHpYWjdQbmZ3ZXZPQUJqb25ZSXVNRXdVUlZBOU5FZ0hR?=
- =?utf-8?B?TzhHNkgyTEV0aExuRkYwK1gzVktGUVZPOFZRVm9DSTRDR05zbmlKeXY5K3VF?=
- =?utf-8?B?RTd4d0d0eVhBL1dZNU4vcmJkbjh1eVJjd1N0RDRneXB1bi9CWTF4cEdnUWxl?=
- =?utf-8?Q?/1nL3Y50ksVVME8H4tL6ahesDCH1M69CzMq84=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5311.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VjdrVHoxV3hFK3NEemExU0QzRDBGWGk1Qm96RkVCMnRpQkJsZDVBWFBFc0Zr?=
- =?utf-8?B?dmJsU3R4WEVsdWpqYTFJb0l3azMzS2JNT1hQQnBlRm9NaWtQaXFLS1VBb1Fm?=
- =?utf-8?B?OHlLWmYvUnJUV2hFZFNoZHJRalJoMXhZVEdwMlBtKzRRSU5DU0hxQXgzS1Mv?=
- =?utf-8?B?YWRNK0RkcmxMMkRTY2M0OUdONjFOSVNOVXFQZTg1WUFEd2w1cTdId0dNa05n?=
- =?utf-8?B?L2hOeHJ5K0UyeTJac1FhMFNhVXdvN1JoTTlhVGhKRkEzK0pmWDUrWTcwYmpy?=
- =?utf-8?B?VHlTWG5TT3d6dkpzWE13S3o3VytmZkoxVkpZT3F1dDJCOVR4S01IYXdxZHhG?=
- =?utf-8?B?eUF0dU1ma1NSM2xiSy9ZT1Y5NngrNFFxcHBVT3VPb3ljSXc1WFBjeE1RNkJs?=
- =?utf-8?B?ZTJaR0VmZ2dicmZtbzg3V0NOcUF0YXdKcUxFdENybWtydDkvOG94MUFkY1cw?=
- =?utf-8?B?eFlhSnoxcWNUNnExU0dnSjlDVFBIYnRWRDU4R0k1OEpLcVBFeHo0MlF1WDhp?=
- =?utf-8?B?VFdJR0FrZmF5N3l2UEhyd0paVFhueGJHN0VwNDRrV0NQbHV3YVI0UWpXODVp?=
- =?utf-8?B?dVZxMitCUjBPMXg0cVFqM3E3MmhZNVlvcjJhOHJLVTE4U3R4VzFiMDdwb1A4?=
- =?utf-8?B?Q2wzTXdLcW01aVlzQU50ekJYR0Jva3JpM2lSMy9tdzZOWFAvc0krTWV4YVJn?=
- =?utf-8?B?SE8rZk9mNHZXajZHOEp0NjNmUnpPZXUrSmZGWHp5d2IvTkNtR1RDbWsvNms0?=
- =?utf-8?B?bElvTElwRnBENkNqR1M1UmYwaFl1M3B2d2NFQS8wRHEwOEU3MVBlMzV5Nmg0?=
- =?utf-8?B?TDhjdHZQOE5zaktadWI5eFF4T1BEQUIyRGc0aUhheWYyTUFKWHhyOVYxZGN4?=
- =?utf-8?B?ZWZlMGIxQ0hFM3FFeHVQZkdBZU5wZTBiUFB5K3RNeCsrOERJWEE1b3NpcjdU?=
- =?utf-8?B?ZTRKTnJWejVLRG93VWtkQ1NiM2VaR1RoWStmTnhORTUycDhrNHVkV0xISDND?=
- =?utf-8?B?RlZkekZlK1dHVGRDZXpNczZJYWVydEF2eHNIS3o5VDZFODJ2ZjM0Vk5WdnBN?=
- =?utf-8?B?d0E2dTk5MTNwUDd5U2lLc0hhZGlHNkJITTQ5eko2K1FYcEZta0JvQXhRdGg1?=
- =?utf-8?B?OGs1Q3kwVHpWd0JENUNNSVRQeFpoMlFRM2ZSZGV6L2NCQXVpSFNmTnNjSmhS?=
- =?utf-8?B?OTNiY0lSWWtId2g2UVljdjFzT1RYS2hiazJ4V1piRndBRHlseGVTZHNKSXp1?=
- =?utf-8?B?azlxdGZCT3o0YWdsbVc4Y1VmNUdTZ1FkOFpqSkV5cSs2Wm1pOUU3VGF4U0dp?=
- =?utf-8?B?Qkw2cHRsLzQvcm1vTUM1eEZzdGhyRjFXczJyUy9zWGY0S0VLYklsMmp6aW1N?=
- =?utf-8?B?bWJEdVBLWGJBQW1yRC9EU0pYQVk2bDVkeFlEWUE5cTRwMmZWYUZaR2F5QUlk?=
- =?utf-8?B?WTcrR21PMnFxVzJFNWNoSGFZbnV6OE52dm5jd21iVUJ1T2FydmxVLzNMU05W?=
- =?utf-8?B?ZDkwcFl1YzVaUlA2WEphVGVvQStqUUdDZ2VrTTlGTmJCVFpxTVpTdHRRcUJG?=
- =?utf-8?B?V2pNcFNlN0U1ZXcxTGltajlZV0FTZ0hLQmZEaUdIbUZEWjBZWWlxamo1WjNE?=
- =?utf-8?B?eTdqN2xUNldJbzVmdnIraXhCSnNjS3VFVzloTXlJa0M1TFZGZlZJVG5rOHcr?=
- =?utf-8?B?SXMybk1qZzkyZ3BaQzhwb1NxMjIwVng3d0tvRHVlYWhBaUQzeGpma2wvNThJ?=
- =?utf-8?B?RFNXeHRLR25CZ2FUUTlzNCt4Q0NuSWJVQ3padXpqWG1aSnRnbUUra2xiUmsz?=
- =?utf-8?B?R2diOEZVYnpRMWpFSmU5N0E3endOTjJudlV4LzduZm1yVUlPU2R1bFcyMmZD?=
- =?utf-8?B?Nnp3U21yUEh2V2toMWlVZVFvRjdqVVgzVW13ck5zZ1ZZODM2VmlqOVJLZlR6?=
- =?utf-8?B?UVVUOGoxVkZDU2lCK3ZhNHVKblF0bnpMVVZMazljajkxU2FLSllLMEp6ZkNm?=
- =?utf-8?B?T0dvQ1o0Y2lnaG40M3lkeWVobWFuOFNRak5xSWVtOUJ4UUhGK0dvc2c0MFpY?=
- =?utf-8?B?NU54cWVMcitwb3F5NjF2bWdlNHloWUVFNTJRd0crek1MTjdzTTI4UWdRMTNZ?=
- =?utf-8?Q?Rt1pl8OADhSvKvsVB7iiKTtHU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08fc01da-32a4-4167-a751-08dccc6e4d70
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5311.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 23:15:30.1316
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2KrM29wbzqoxyw/7sWTcTkRzgne/uB8PvHMNxebZgOPKtpCzmXK7GX4CJtue5862
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7246
+Content-Type: multipart/signed; boundary="Sig_/LHhksKkETJrzjm369uiu.R8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/LHhksKkETJrzjm369uiu.R8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
+Today's linux-next merge of the vfs-brauner tree got conflicts in:
 
-On 2024-09-03 02:35, Mikhail Gavrilov wrote:
-> On Sun, Aug 25, 2024 at 2:12 AM Mikhail Gavrilov
-> <mikhail.v.gavrilov@gmail.com> wrote:
->>
->> Hi,
->> Is anyone trying to look into it?
->> I continue to reproduce this issue on fresh kernel builds 6.11-rc4+.
->> In addition to the RenPy engine, the problem also reproduces on games
->> from Ubisoft, such as Far Cry 4.
->> A very important note that I missed in the first message.
->> To reproduce the problem, you need to enable scaling in Gnome for
->> HiDPI monitors.
->> I am using 4K resolution with 200% of fractional scaling.
-> 
-> Sorry for persistence, but I'm afraid there's no time left to fix this
-> regression.
-> There's a week left until the release.
-> A month later, no one has looked at what the problem is.
-> 
+  fs/ext4/inline.c
+  fs/ext4/inode.c
 
-Hi Mike,
+between commits:
 
-Super sorry for the ridiculous wait. Your first two emails slipped by my inbox,
-which is really silly, given I'm first in the to field...
+  a256c25ef1b1 ("ext4: hoist ext4_block_write_begin and replace the __block=
+_write_begin")
+  64f2355d7f8a ("ext4: fix a potential assertion failure due to improperly =
+dirtied buffer")
 
-Thanks for bisecting and finding a free game to reproduce it on. I did not have
-luck reproducing this today, but I am on sway and not gnome. While I get gnome
-set up, will you be able to test which one of these reverts fixes the hang for
-you? Whether just 1/2 is enough, or both 1/2 and 2/2 is required?
+from the ext4 tree and commit:
 
-I applied them on top of Linus's v6.11-rc6 tag, so hopefully they'll git am
-cleanly for you:
+  9f04609f74ec ("buffer: Convert __block_write_begin() to take a folio")
 
-1/2:
-https://gist.github.com/leeonadoh/69147b5fa8d815b39c5f4c3e005cca28#file-0001-revert-drm-amd-display-move-primary-plane-zpos-highe-patch
-2/2:
-https://gist.github.com/leeonadoh/69147b5fa8d815b39c5f4c3e005cca28#file-0002-revert-drm-amd-display-introduce-overlay-cursor-mode-patch
+from the vfs-brauner tree.
 
-Thanks,
-Leo
+I fixed it up (I used the former) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LHhksKkETJrzjm369uiu.R8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbXmJQACgkQAVBC80lX
+0GzB2wf8D0BjloPQhNvVH0gQK0VqS056gDYv3rHbuaOgnY3UlUuX3aBrLHSZby+K
+zkN9JGpYRTBmstB2F4nnevWEYqEgFD+5iPZ/EmP35iqz5XFmS3QZgktZ/EmdrW0P
+5IVFHpnYm+oXf1qkA54b7w37W6KiQndN53Bt04MVITcQ0CxypEO+xk5yK9LZzjjm
+CrI+KYNCuhB940njxT3TF7WyD2aYYvry9/ldVSyDxWdaGsYpNBarm6fmEGr4EDC5
+WSCZIudwYr5Q5F6frqqnA5FUKCnuyE2LMuRXYULHQYiRuY6cnAeQUkw3PETuQ1sP
+0w7nAzYFHL/7sOlX5qfrodtCcffZKA==
+=7Wzj
+-----END PGP SIGNATURE-----
+
+--Sig_/LHhksKkETJrzjm369uiu.R8--
 
