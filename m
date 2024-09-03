@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-313191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EAC96A1B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:10:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E497896A1B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3DF2886EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5711F2242B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3ACD186E3A;
-	Tue,  3 Sep 2024 15:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC11187FFA;
+	Tue,  3 Sep 2024 15:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOEKiEJj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HqLTVqY5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEF517E00C;
-	Tue,  3 Sep 2024 15:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA0816F8EF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376145; cv=none; b=cCV0qD4+JgpMhgSAnhCqnQWyxcMhXR1jrnwYPgA+ItJtxGTBDhblMPDkk5DrtXCGzDfkENiiWflmeuvFaFld+segk6dAGrPXjGip/KvIWKZyhO/dQAl0YJwvL1pkppHTCwFvSOw/IEKw3pOWvcPugYB4FjnmVt68JRUw2EtuFNY=
+	t=1725376183; cv=none; b=PIadzAuIDwHBYjvIJn7/rAYeQBX+l8q9IM/ehMOqYWF41VwpTWtgURuLwl3UFukDgGMTg9ZnmuBcIuDbmL5AkPWy8V4S9JEZGeFVwJlM7pTFE+qkA0OtJpGKcx/xK0O267XHaJ0we+uUeJ75K7EMa5Or842DzGh++yfxgOqTAU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376145; c=relaxed/simple;
-	bh=zm4/QGk9CS+/IIoe1jxwGscR7TcTiBk2vzixJgadSOY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K0SjZCn+YnB3Xm715hKoh+Bl9w+uQDJCA3lwxIzad7rzXlNF/cSkXFd+HwZALIFD4h3i/XARwHqXQXeJYWaAVCjIRJhMqv1gK/fO988IG8YnFdLEEH4mD57hdVYjotmZA76gA6lytyDMOGIlPgRyYOYqWXcr6mrFJrAlfVARtgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOEKiEJj; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725376143; x=1756912143;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=zm4/QGk9CS+/IIoe1jxwGscR7TcTiBk2vzixJgadSOY=;
-  b=kOEKiEJj39cq0MGh1Jb4rRtgh9LTcM5rI+PRy/+V8xiXad7F19tFejvj
-   rZ/j8jJHl5d8iHw+3XpnBoFhQjW4DNJCQnbeIzCZp92zOD3nIYmxHwVM3
-   au26Fa4BBpFtf922XKTYbyyOey2b1dIZY0nBYPo5h8F6uVhwKfRmUKYb4
-   IaWYkQud3i3lvEImtGhPnJb+qA66Mr3shD9upgpjQ7DpyjAcAfB3UobBr
-   J57epqD+tzAc7s0bphYTrpKK95l3Sg/b6vtbHu1pF4MhN9J4GGQGnX9hq
-   +QmeWworUvO2vM2Orqnh+lpMdsHrAQETlz8MyJaDItrrpa/6q+Pi9r1aN
-   w==;
-X-CSE-ConnectionGUID: dENiJ4N4SqO6NzOk/moixg==
-X-CSE-MsgGUID: F8x+JcXISlCVn6FAhwprOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34646765"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34646765"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:08:59 -0700
-X-CSE-ConnectionGUID: ExhaOXuoR/m2Wujb7/2knQ==
-X-CSE-MsgGUID: tn+oqKbTQ1GEW2v07FGHmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="95671930"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.241])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:08:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: platform-driver-x86@vger.kernel.org, "Luke D. Jones" <luke@ljones.dev>
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com, 
- Shyam-sundar.S-k@amd.com
-In-Reply-To: <20240831003905.1060977-1-luke@ljones.dev>
-References: <20240831003905.1060977-1-luke@ljones.dev>
-Subject: Re: [PATCH] platform/x86/amd: pmf: Make ASUS GA403 quirk generic
-Message-Id: <172537613010.2288.8288166885849253035.b4-ty@linux.intel.com>
-Date: Tue, 03 Sep 2024 18:08:50 +0300
+	s=arc-20240116; t=1725376183; c=relaxed/simple;
+	bh=hkihc/6WA9/QhPK1a/f1doLwTM/grTsynAcwgS7nw/8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CLRRio2kN7rTlnqtJeA5/io0suHJZXD2hv16KDHPZKB4yhhju2PyShKLALV5rPS75DrMD3bbNMfSwzGEI5heL4aUkZ8l6bHUmENMMI/J0DMSjslYW69pNxVP4oc9Vd5iEF3IAwNGY10hQ0xUjnsIsMLVt5CTMp0Bx7dLbngMkws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HqLTVqY5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20537e42b7aso43701925ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725376182; x=1725980982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gfCufivpzBm6oAcRdCpegQIb7KEtzf8TXvjWVp3MAlg=;
+        b=HqLTVqY52kE7mUwfcS4lD5rF99E2nbBFwyQ606yEaNijZMen8Jx0SEO/4T5tKFytt8
+         PRqBpgZIytsma9yk6qZ96PROhA+q/B+R2yN8Q+7qpXtXHaLKgh4ykV30LXJa6JoMtUhf
+         3NJWh6bbQxVeE7gJBJqyvXPv2sxyAk3wJwzZK/HUxKqRdGgPaa8+1dtbZLug3Ano/iVT
+         69bMyuFvISKsqSpCnmv8CyJVFUBkm++R8xXaSwyJTnoEbxE9Dv/PGFxhe9W6MbYUS3iB
+         VHEl6CBrpHqRuRQiC7yLfWiq10zdva7b1Pk/rZ0wz1NGox7BShyL2aL/IPs/vkpLR3sM
+         Wk8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725376182; x=1725980982;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gfCufivpzBm6oAcRdCpegQIb7KEtzf8TXvjWVp3MAlg=;
+        b=eqXWGv7oBS8SarY2ByQFiRBnT7hwHTeeJ+e6xcUzKdetTbAVIilvlNUXShO4aCq7nL
+         Ak5MMXgwcxq7UdxN2vMEqQaFtkuy1YnSxKAHav4AJGmHYUBmDA0MwOSxtGuEiCO/mqsL
+         NgaIm/Ca46iyAzanp5gyzJgV1IxS2KdcctcXjP+G7WiJNWn6LfpNriu9x8KebGE5uv6j
+         I8N/5oaeRayGQO5BsMISJGVeaupxI7JkyUX0m51H+8BgKVH0m+fJtAgnqKKtSuJAqQTn
+         wfDoweqcZ82zSFrvBsX012AIKaeXJdwhqiCbxahLPTSv8voGH4txUwnr3c5gamQsRM7T
+         jfpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6EpQD3C9g7wQcGkL9wkpe7ymRpgrVLsJ2HLjvfy8v11CmPvYj1NQolmFMRnD9lIOPvQzwSjezq5cs80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzBC7CegEJeCZt/h1R96ZXYg11WvCSZIaVYRaHbC82wTJcMwTF
+	vOMVYCTmNJAef8uFz6Azin36zybypPCIrW72QSzZ0rTLXnhBMFWCh6JV+pyUML5adQcuEqiwJV6
+	Diw==
+X-Google-Smtp-Source: AGHT+IGFfMtNWVn2Os9mP28kanvnTDWaSYvo+LMgHGVIxjM+2irTaxwzoo4qnseusX5LrbYip8qiQXwrCMg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:183:b0:206:8a7c:9197 with SMTP id
+ d9443c01a7336-2068a7c9354mr3683845ad.1.1725376181611; Tue, 03 Sep 2024
+ 08:09:41 -0700 (PDT)
+Date: Tue, 3 Sep 2024 08:09:40 -0700
+In-Reply-To: <CABgObfYT_X3-Qjb_ouNAGX1OOL2ULT2aEA6SDKessSbJxGZEOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240802195120.325560-1-seanjc@google.com> <20240802195120.325560-2-seanjc@google.com>
+ <CABgObfYT_X3-Qjb_ouNAGX1OOL2ULT2aEA6SDKessSbJxGZEOQ@mail.gmail.com>
+Message-ID: <ZtcmtFlX83g7C8Vd@google.com>
+Subject: Re: [PATCH 1/5] KVM: x86: Re-enter guest if WRMSR(X2APIC_ICR)
+ fastpath is successful
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 31 Aug 2024 12:39:05 +1200, Luke D. Jones wrote:
+On Mon, Sep 02, 2024, Paolo Bonzini wrote:
+> On Fri, Aug 2, 2024 at 9:51=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> > Re-enter the guest in the fastpath if WRMSR emulation for x2APIC's ICR =
+is
+> > successful, as no additional work is needed, i.e. there is no code uniq=
+ue
+> > for WRMSR exits between the fastpath and the "!=3D EXIT_FASTPATH_NONE" =
+check
+> > in __vmx_handle_exit().
+>=20
+> What about if you send an IPI to yourself?  Doesn't that return true
+> for kvm_vcpu_exit_request() if posted interrupts are disabled?
 
-> The original quirk should match to GA403U so that the full
-> range of GA403U models can benefit.
-> 
-> 
+Yes, but that doesn't have anything to do with WRMSR itself, as KVM needs t=
+o morph
+EXIT_FASTPATH_EXIT_HANDLED =3D> EXIT_FASTPATH_REENTER_GUEST if there's a pe=
+nding
+event that needs requires injection.
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86/amd: pmf: Make ASUS GA403 quirk generic
-      commit: d34af755a533271f39cc7d86e49c0e74fde63a37
-
---
- i.
-
+Given that kvm_x86_ops.sync_pir_to_irr is likely NULL if virtual interrupt =
+delivery
+is enabled, the overhead of the trying to re-enter the guest it essentially=
+ a few
+cycles, e.g. check vcpu->mode and kvm_request_pending().
 
