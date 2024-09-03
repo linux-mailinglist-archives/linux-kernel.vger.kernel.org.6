@@ -1,119 +1,80 @@
-Return-Path: <linux-kernel+bounces-312968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D09969E73
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53316969E74
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F4E4282307
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867571C23BE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E827C1A42B0;
-	Tue,  3 Sep 2024 12:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9021A0BEA;
+	Tue,  3 Sep 2024 12:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNEO6m8K"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XQF+W/WV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF131CA6B3;
-	Tue,  3 Sep 2024 12:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692301CA6B3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368151; cv=none; b=tb/uaWG+O+3GwtSqTd4OfECksynz7AQkxQZaX70WaSgESrNeimD4iaIeBPYOvHcsr9SkNd2aeZ46RluejAlzcIqQ5oaHoyCB9u0FbLwoOqrhupjx+ohsjZFm5y299Xot2eQhe7mkaB8wtD0h7wsAeWZiWi2lqD/o/qQLMkoGxmg=
+	t=1725368167; cv=none; b=o/BkT0C4SS30IwtKvrexhRJrE6c2ixd6PJTTWnIj1lDCiPRxIpzEnz4v20myL6C8FSQRuoc464NmJlTFngX3+KQxOGqrSEzfJiA2D6QI7dNTvd/Z8esNNM2lt7/8i8tjMWxiE5wFbb4ymKCtKoyIIeov9ZKC9ka2tbLxTPP8yto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368151; c=relaxed/simple;
-	bh=FR4eP3hFCVHV4yot3NIpLRkrKDFwbr7wCO+ZPZ9IT6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BMu9lxjYJaTw5wwVWE/OA1srMqq/dx1LZdTu6Dn350gaCiQltpQviCRLJcQqYO7vbvELqEMxh6B6u2LOaGGlextlHAVH+B+P76rysfDBf7giSEqERY8A/knBraDqbYZ7WyLthJcuGBDxPVxEBS/NO364d95UveAayhDwWHH/rS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNEO6m8K; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-714187df604so3641952b3a.1;
-        Tue, 03 Sep 2024 05:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725368149; x=1725972949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+IsWpqVgt+KJ6WzMhEvW26KeomE/4ZiUXtss83zz0RY=;
-        b=XNEO6m8KMIHM+cMEE6mUA/QBQqxIZzCk0osRjcW2cNOiWhziseXCsN67I54bloa545
-         j/Ml3ez3xhOBpe0BB9MPzlYrsPg5QPRRZ6kTkRW9xL6gg582MwzZwwFHcIsJFg5HYubl
-         BANEb4PWmuh0NwwMQaVF/yv8tKpztCR3wqKsHIDLdFRdtYfICT1frlVe/4hXYD2d6idE
-         ozCfIrmVrnR9A/2NexCB+W7BbqsIg5JYfwmjvVze/61mhFJ7Ebb2Gs71cRBd+96A7jYp
-         yQmr00ZOCv7OEkEg36Iu6wJhr6PUpBrcGlON0oDey6lGWEkLlAypRtRSaa6GH3hTLeIQ
-         Y9og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725368149; x=1725972949;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+IsWpqVgt+KJ6WzMhEvW26KeomE/4ZiUXtss83zz0RY=;
-        b=BCkjwi9Ms3HHapDO6XAJfYiT8kCUoojgv+Gj+qXpoQ/+VH/E75yysxTu1xUWgmJnpo
-         MmmQCf+AbrKpI/DS3wOvBphXoJvNZfADn6XHOLwfXj4STi43qgl+z3RXwT102Qd5aXtO
-         zjmgx0XcB3w0qhVfwM8LThF0MN1kP8G9ipt+CSrqmqz8r9MNNGIJnkc5k5JuELkhJsrY
-         aXZYQsTSBxQESbUslfFjmnTnXk58qCjGhlyOOXp41igQCmHAnfYAc3XTQMZmmdMn1ZOF
-         xku6RtyWKc7+ewLeSqAsKcqbwWTCW78TJmQ70Rvu2FA1aovE7I7c9yVCKeTEJdSjmWfk
-         5MmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfM1G94KUR6qq8sZiiArXYNxmmjB4WsjuFu7GBGaXgoYqB5/fwR6AsHELY6ZhbK+2+kw2Sudw7DleUw8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaINPs3HuwLBvJhEIL0J9Zwoq+s+AE/yf8f6u9kRTCmhq8YlxQ
-	rPP7LdQ1pphMS4pvxH46C2eGnY+J5kLXBiTiNFhpE5DAQEpgTLOnlNiTj0X4lkU=
-X-Google-Smtp-Source: AGHT+IHUkTkxp4HLChhYmhajoCXVva33bPyWUMJt+1RyfTslmygXSbqtzhhnUBYWX5olbvVaOTb2wg==
-X-Received: by 2002:a05:6a20:2594:b0:1c4:8694:6be8 with SMTP id adf61e73a8af0-1cce15f7ea3mr26840193637.3.1725368148746;
-        Tue, 03 Sep 2024 05:55:48 -0700 (PDT)
-Received: from fedora.. ([106.219.162.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569f4bcsm8438250b3a.115.2024.09.03.05.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 05:55:48 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] crypto: aegis128: Fix indentation issue in crypto_aegis128_process_crypt()
-Date: Tue,  3 Sep 2024 18:25:39 +0530
-Message-ID: <20240903125539.12679-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725368167; c=relaxed/simple;
+	bh=rSE0//7WUDjNzarzSUPUHI+6/w6UsFMjAQQNrVRsonw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nICDN87sspc6VjhSTF4antzIz6Iph6Y1tHwTkPSQYHuW7Hksa0ihC4479O3U8v7ni+MkuEDIkJGYtWSHHveDfJXjnfR7JrCLuXseYyW6jG5giDtilXYHUk5VgYsQge10N7HO2gp6LaeiD/yCaFmQzwC6adNc9WlN9CcH2EtxDkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XQF+W/WV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71035C4CEC4;
+	Tue,  3 Sep 2024 12:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725368166;
+	bh=rSE0//7WUDjNzarzSUPUHI+6/w6UsFMjAQQNrVRsonw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQF+W/WVFN3jnhojAme/KFv6r4PyuyPQg5xpiWTiGSkkKxy72UoFt6I3bRSXBBKr/
+	 mXWZq6wtTkQAPetsQuvf5+shRd41Rg6X2zDq+057sn+I9GwiM0H89NrgTAxT6wOChR
+	 xSREXkOQK/6UlqacA9ndI3n0ZioqjWzx/sSVl5+8=
+Date: Tue, 3 Sep 2024 14:56:03 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
+	theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com,
+	u-kumar1@ti.com, Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 0/2] Add resume support for the mux mmio driver
+Message-ID: <2024090346-hug-handyman-13e2@gregkh>
+References: <20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com>
+ <32351be6-d08c-4b4d-a4a6-a75066689ccb@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32351be6-d08c-4b4d-a4a6-a75066689ccb@bootlin.com>
 
-The code in crypto_aegis128_process_crypt() had an indentation
-issue where spaces were used instead of tabs. This commit
-corrects the indentation to use tabs, adhering to the
-Linux kernel coding style guidelines.
+On Tue, Sep 03, 2024 at 02:39:03PM +0200, Thomas Richard wrote:
+> On 6/13/24 15:07, Thomas Richard wrote:
+> > The patches of this series were originally in the series "Add suspend to
+> > ram support for PCIe on J7200" [1].
+> > There is no changes compared to the patches in the series [1].
+> > 
+> > These patches add resume support for the mmio driver.
+> > The first patch adds a new function mux_chip_resume() in the mux subsystem.
+> > The second patch adds the resume support for the mmio driver using this new
+> > function.
+> > 
+> > [1] https://lore.kernel.org/all/20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com/
+> 
+> Hello maintainers!
+> 
+> There is no remaining comments to address since a log time for this series.
+> Is there any chance to get this series merged ?
 
-Issue reported by checkpatch:
-- ERROR: code indent should use tabs where possible
-
-No functional changes are intended.
-
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- crypto/aegis128-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/crypto/aegis128-core.c b/crypto/aegis128-core.c
-index c4f1bfa1d04f..4fdb53435827 100644
---- a/crypto/aegis128-core.c
-+++ b/crypto/aegis128-core.c
-@@ -323,8 +323,9 @@ static __always_inline
- int crypto_aegis128_process_crypt(struct aegis_state *state,
- 				  struct skcipher_walk *walk,
- 				  void (*crypt)(struct aegis_state *state,
--					        u8 *dst, const u8 *src,
--					        unsigned int size))
-+						u8 *dst,
-+						const u8 *src,
-+						unsigned int size))
- {
- 	int err = 0;
- 
--- 
-2.46.0
+I'm not the maintainer, not much I can do here, sorry...
 
 
