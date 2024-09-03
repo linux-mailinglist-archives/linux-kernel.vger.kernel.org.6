@@ -1,291 +1,88 @@
-Return-Path: <linux-kernel+bounces-312578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACAC969866
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:12:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EFE969B1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF541C230F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:12:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C671F23ED7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DDB19F431;
-	Tue,  3 Sep 2024 09:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hkRypRFg"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D512C19F421
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0240F1A0BFE;
+	Tue,  3 Sep 2024 11:05:34 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873E11B12CE;
+	Tue,  3 Sep 2024 11:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725354732; cv=none; b=OxHMni711ROSILkz4u5QFH9fIG67pIk8FQ75G0sTimTB5Dzd/FnoN/0vx50H23+QRNRze9O87A2Cnn1L4jzLeBP94KgBB6oA0v8qwjXSip0qt4pQdatbvJbn9ZsLNzhrUf1mzt24oOzOqEsrfc61TSF74SD4OWjH3IgvePO7bjU=
+	t=1725361533; cv=none; b=bAdm0BpyXIoMCotWb2WxeNWZSk+ASJRI3E672/m3abbr7EXjncHE93X8Z5mTHpKC2AnmSY8UI5n2eT/4hY+RXm7xeK80xbNwXYd6Ywp9mWlSyLnhNSynBE/duGLFqmYjZzGEnKvYjZUF7A4UmIic0TPkYLg2bK5k01+ef3h2N18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725354732; c=relaxed/simple;
-	bh=c9SWNMOdI4wz5Bxpr8d8dPvOcivg8ND1GRCeKkchZOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdPQLwYOsNDGoUcQ1pNUGVwc2de0hY6I9UcaRqb5LnTB2KeJ1VG6QWEicN8Kexey3zK41+3nfpZEGAxSKKgnibtmm3Rp4eTyd26ZrI0i2Pvg/bo0GN8Gdo8QBCCYbhSvD3RiyEYtKOF6/i2TD+sHtd7HmgcvILPedykPn+jdRgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hkRypRFg; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c91f9fb0d7so47270957b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725354730; x=1725959530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V/ta3uuFBPiaBh9lCEDL9Di51UHek4DoFtVES2+06H0=;
-        b=hkRypRFg2j3ZygN1EPjHGW741QpqZTJYewE9A5HPZDN256gvZc8OLxjWtR90HZLzgV
-         lBIfsREcP2iXnXEfncHyvUhToeY2jCY62AB0APVJIpWr4B68uG27TVLl5E9VvckxzMsY
-         L+iEUEhq04bCd+C1P/WZ+OUh+EGKmJuabHTS2hAYJZ2Utktze7IyKtlc0acQX+dA63L/
-         jD4QK+lPJ+WSDHDWew29K+VAWJgVMUmXbdhLlxIuVNYk+xDSLiiLlAMVVLgX/NxmSVcN
-         OXZJ5vNG66AnVspwSlgobpyUt3coJTv2GEmeQyQDU2G9MvoCn3+eqEAumRzqZwND6ZgK
-         IltA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725354730; x=1725959530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V/ta3uuFBPiaBh9lCEDL9Di51UHek4DoFtVES2+06H0=;
-        b=RxMLsW4FSWAVY08bnV/k8IXVKnqSJwDKMuGWQ3ZiM5NGygnaVulOuMd5zGluCXlwGM
-         IPmeoVG75recB5ZirZ06/ZOEZXw0CWJ+m6qnIkt9phvvB5P6wrLPpw2RMiAgLs8pxTTc
-         9NQPlIQrSFE8ur1/ZYNUAye2fD3M1Z760REkqRGcIJCNqzX7I0vz5U55S9aSGpbqlf6u
-         k7K5KOTl3NgqMYxnsYrJadhKnl8/23zVTu8dldhSrYK9EBzBPMeaFuIvoriVCEEJibnq
-         d5PYoS4ZLmR8lZEZJXQdMbF5VtpOSugreJ9hOz5o6VkhscoSZ6yVuuuJ90yZyCKohCxB
-         5quA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj4Cmeqmtr3aiUwn0P2hzLOB/nM3d24Uz6ubU6bUV9Vwjl/+Y1Z6SVNdLjO9+0r0WAEwdYhyVtNd4hRUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3c8zgrD36El0x0HiX2HtS6df7mkLjYPeb37FRlZc2fWhGEEow
-	3LnJennLYEAIYsD043n6SDegGj4htx1kFEFrA78Rf/dWZToVhDTKLCHqytYgiGvORbIR2vD1TQR
-	pUYzhEwr2WYnh9mYlyZD1b6toY2Iy225WBhig3g==
-X-Google-Smtp-Source: AGHT+IEb9jQ5qw60pC+3SsofsZgMNd8KJnoJD/AFd0pFQMqyVKD5minDKNeHUibGRXpas1sBxOmrGY3L1DJDYOVo5lc=
-X-Received: by 2002:a05:690c:6703:b0:6ae:528f:be36 with SMTP id
- 00721157ae682-6d40dc7b873mr165283987b3.12.1725354729654; Tue, 03 Sep 2024
- 02:12:09 -0700 (PDT)
+	s=arc-20240116; t=1725361533; c=relaxed/simple;
+	bh=/HrgOADb6OiA/YGSfLWC8PnWAlpI6HRsaA7qw7t5ywI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HoigeIyHcrxN2RnugP1LaIhmbcAQMut41WT0TofrJKDVOzXzALXTeWX6gLWDv7fJSCnCg+PSr42ON5/oG0YBbyKXHD+HrjR+sib7ofFHeOwdJSRXr5+5WXy5U720T36gxRDrCKbq6GanUgcPLP0Lmn4RA/I5Ia93o6KoWuVh7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766d6ed70d63-dcd69;
+	Tue, 03 Sep 2024 19:05:21 +0800 (CST)
+X-RM-TRANSID:2ee766d6ed70d63-dcd69
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d6ed70bf5-e10df;
+	Tue, 03 Sep 2024 19:05:20 +0800 (CST)
+X-RM-TRANSID:2eea66d6ed70bf5-e10df
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] perf namespaces: check newns before free
+Date: Tue,  3 Sep 2024 17:12:08 +0800
+Message-Id: <20240903091208.7152-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-18-bdb05b4b5a2e@linaro.org>
- <CAA8EJpoj6vs1JsDWgqof9Ogt-0Zq6hUpuaK42YwByDGrpUopnw@mail.gmail.com> <CABymUCOOWSSUnk3wdh4bKiOJb8k44_F2-ik9MeKuB1kF66576A@mail.gmail.com>
-In-Reply-To: <CABymUCOOWSSUnk3wdh4bKiOJb8k44_F2-ik9MeKuB1kF66576A@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 12:11:58 +0300
-Message-ID: <CAA8EJppd36417E2vprowz9UJZ5C+WgPPacbY91PFoa2fjSvkXg@mail.gmail.com>
-Subject: Re: [PATCH 18/21] drm/msm/dpu: blend pipes by left and right
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Sept 2024 at 10:53, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B48=E6=
-=9C=8829=E6=97=A5=E5=91=A8=E5=9B=9B 19:51=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, 29 Aug 2024 at 13:21, Jun Nie <jun.nie@linaro.org> wrote:
-> > >
-> > > Blend pipes by left and right. The first 2 pipes are for
-> > > left half screen and the later 2 pipes are for right in quad
-> > > pipe case.
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++--
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 10 +++++++---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c  | 19 +++++++++++++++++--
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h  |  4 +++-
-> > >  4 files changed, 38 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/d=
-rm/msm/disp/dpu1/dpu_crtc.c
-> > > index 3b3cd17976082..8fd56f8f2851f 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > @@ -574,8 +574,17 @@ static void _dpu_crtc_blend_setup(struct drm_crt=
-c *crtc)
-> > >                         mixer[i].mixer_op_mode,
-> > >                         ctl->idx - CTL_0);
-> > >
-> > > -               ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
-> > > -                       &stage_cfg);
-> > > +               /*
-> > > +                * call dpu_hw_ctl_setup_blendstage() to blend layers=
- per stage cfg.
-> > > +                * There is 4 mixers at most. The first 2 are for the=
- left half, and
-> > > +                * the later 2 are for the right half.
-> > > +                */
-> > > +               if (cstate->num_mixers =3D=3D 4 && i >=3D 2)
-> > > +                       ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm=
-->idx,
-> > > +                               &stage_cfg, true);
-> > > +               else
-> > > +                       ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm=
-->idx,
-> > > +                               &stage_cfg, false);
-> > >         }
-> > >  }
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_encoder.c
-> > > index 76793201b984e..5d927f23e35b2 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > @@ -2049,9 +2049,13 @@ static void dpu_encoder_helper_reset_mixers(st=
-ruct dpu_encoder_phys *phys_enc)
-> > >                 if (phys_enc->hw_ctl->ops.update_pending_flush_mixer)
-> > >                         phys_enc->hw_ctl->ops.update_pending_flush_mi=
-xer(ctl, hw_mixer[i]->idx);
-> > >
-> > > -               /* clear all blendstages */
-> > > -               if (phys_enc->hw_ctl->ops.setup_blendstage)
-> > > -                       phys_enc->hw_ctl->ops.setup_blendstage(ctl, h=
-w_mixer[i]->idx, NULL);
-> > > +               /* clear all blendstages in both left and right */
-> > > +               if (phys_enc->hw_ctl->ops.setup_blendstage) {
-> > > +                       phys_enc->hw_ctl->ops.setup_blendstage(ctl,
-> > > +                               hw_mixer[i]->idx, NULL, false);
-> > > +                       phys_enc->hw_ctl->ops.setup_blendstage(ctl,
-> > > +                               hw_mixer[i]->idx, NULL, true);
-> > > +               }
-> > >         }
-> > >  }
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu=
-/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> > > index 602dfad127c2a..2072d18520326 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> > > @@ -478,12 +478,13 @@ static const struct ctl_blend_config ctl_blend_=
-config[][2] =3D {
-> > >  };
-> > >
-> > >  static void dpu_hw_ctl_setup_blendstage(struct dpu_hw_ctl *ctx,
-> > > -       enum dpu_lm lm, struct dpu_hw_stage_cfg *stage_cfg)
-> > > +       enum dpu_lm lm, struct dpu_hw_stage_cfg *stage_cfg, bool righ=
-t)
-> > >  {
-> > >         struct dpu_hw_blk_reg_map *c =3D &ctx->hw;
-> > >         u32 mix, ext, mix_ext;
-> > >         u32 mixercfg[5] =3D { 0 };
-> > >         int i, j;
-> > > +       int pipe_start, pipe_end;
-> > >         int stages;
-> > >         int pipes_per_stage;
-> > >
-> > > @@ -502,13 +503,27 @@ static void dpu_hw_ctl_setup_blendstage(struct =
-dpu_hw_ctl *ctx,
-> > >         if (!stage_cfg)
-> > >                 goto exit;
-> > >
-> > > +       /*
-> > > +        * For quad pipe case, blend pipes in right side separately. =
-Otherwise,
-> > > +        * all content is on the left half by defaut (no splitting ca=
-se).
-> > > +        */
-> > > +       if (!right) {
-> >
-> > I think the approach to set PIPES_PER_STAGE to 4 is incorrect. It
-> > complicates the code too much. Instead please use two separate
-> > instances, each one representing a single LM pair and corresponding
-> > set of SW pipes. Yes, you'd have to iterate over them manually.
-> > However I think it's also going to make code simpler.
->
-> OK. I can explore this method.
-> >
-> > > +               pipe_start =3D 0;
-> > > +               pipe_end =3D pipes_per_stage =3D=3D PIPES_PER_STAGE ?=
- 2 : 1;
-> >
-> > pipe_end =3D pipes_per_stage
-> >
-> > > +       } else {
-> > > +               pipe_start =3D 2;
-> > > +               pipe_end =3D PIPES_PER_STAGE;
-> >
-> > So, the right part always has 2 pipes? What if the
-> > DPU_MIXER_SOURCESPLIT isn't supported?
->
-> Yeah, the case is missed. It should be like this for the right half:
-> pipe_start =3D pipes_per_stage =3D=3D PIPES_PER_STAGE ? 2 : 1;
-> pipe_end =3D pipes_per_stage =3D=3D PIPES_PER_STAGE ? PIPES_PER_STAGE : 2=
-;
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Well, we can be better than that and use
-pipe_start =3D left ? 0 : 2
-pipe_end =3D pipe_start + pipes_per_stage;
+Since newns can be NULL, check it before free
 
->
->
-> >
-> >
-> > > +       }
-> > > +
-> > > +       DRM_DEBUG_ATOMIC("blend lm %d on the %s side\n", lm - LM_0,
-> > > +                        right ? "right" : "left");
-> > >         for (i =3D 0; i <=3D stages; i++) {
-> > >                 /* overflow to ext register if 'i + 1 > 7' */
-> > >                 mix =3D (i + 1) & 0x7;
-> > >                 ext =3D i >=3D 7;
-> > >                 mix_ext =3D (i + 1) & 0xf;
-> > >
-> > > -               for (j =3D 0 ; j < pipes_per_stage; j++) {
-> > > +               for (j =3D pipe_start; j < pipe_end; j++) {
-> > >                         enum dpu_sspp_multirect_index rect_index =3D
-> > >                                 stage_cfg->multirect_index[i][j];
-> > >                         enum dpu_sspp pipe =3D stage_cfg->stage[i][j]=
-;
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h b/drivers/gpu=
-/drm/msm/disp/dpu1/dpu_hw_ctl.h
-> > > index 557ec9a924f81..2dac7885fc5e7 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
-> > > @@ -25,6 +25,8 @@ struct dpu_hw_ctl;
-> > >  /**
-> > >   * struct dpu_hw_stage_cfg - blending stage cfg
-> > >   * @stage : SSPP_ID at each stage
-> > > + *          The first 2 in PIPES_PER_STAGE(4) are for the first SSPP=
-.
-> > > + *          The 3rd/4th in PIPES_PER_STAGE(4) are for the 2nd SSPP.
-> > >   * @multirect_index: index of the rectangle of SSPP.
-> > >   */
-> > >  struct dpu_hw_stage_cfg {
-> > > @@ -243,7 +245,7 @@ struct dpu_hw_ctl_ops {
-> > >          * @cfg       : blend stage configuration
-> > >          */
-> > >         void (*setup_blendstage)(struct dpu_hw_ctl *ctx,
-> > > -               enum dpu_lm lm, struct dpu_hw_stage_cfg *cfg);
-> > > +               enum dpu_lm lm, struct dpu_hw_stage_cfg *cfg, bool ri=
-ght);
-> > >
-> > >         void (*set_active_pipes)(struct dpu_hw_ctl *ctx,
-> > >                 unsigned long *fetch_active);
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ tools/perf/util/namespaces.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index cb185c5659d6..49e20e0a567a 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -135,7 +135,8 @@ int nsinfo__init(struct nsinfo *nsi)
+ 			       &RC_CHK_ACCESS(nsi)->in_pidns, spath);
+ 
+ out:
+-	free(newns);
++	if (newns)
++		free(newns);
+ 	return rv;
+ }
+ 
+-- 
+2.33.0
 
 
 
---=20
-With best wishes
-Dmitry
 
