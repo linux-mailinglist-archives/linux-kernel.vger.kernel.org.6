@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-312320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177499694EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:14:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08509694F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 632E2B238DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35CA1C231E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AFE1D6DBE;
-	Tue,  3 Sep 2024 07:12:43 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0086D1D6C46;
+	Tue,  3 Sep 2024 07:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gs1AGCOE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C561D6C46;
-	Tue,  3 Sep 2024 07:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2C31D6786;
+	Tue,  3 Sep 2024 07:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347563; cv=none; b=KX2DvRnq3TLveVJKmHR5eyKhL56oPIsiTYu94e5ZYvlDQliox4RbvjZAl7WoYY0lnlSl+KVFaBUG7vUhuILr6QDxVKHIMPydEPHgwg69jBtxKjgY38WE+vIItmowHzz1B9ZMgESDRQT1xr+iQ+9YOjE5OIhNvdJeZ1FLPuJpHlI=
+	t=1725347607; cv=none; b=L+yYqmkaclZM7Kvc8cOXyaJq67VDzUyWbhnrSqot0dYDr9PnlHkOJlRozwJMaxPmweEgSO1Fp2EWDTCqWP2SYPXvqicVKCA3IE45lNjLGCPX/BDVW5ECv8tlzw8d3IAlQdDHJYFSezNx1RHHbTfEAyeUwxHIfTk2a63mcuKRdCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347563; c=relaxed/simple;
-	bh=p8keF76HnoLatDd++DRUWwYtqSTOQjohxUhzI5FUvHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g036KXMKUfq3Xb2YM8di5ZxBaLiKC8Aq3tuX8s0cH/RtO0kc08lgztS36CfYHgERQltwznIfHea4FIJ6MmN9BdB5OdsI72FQNWnvr4NJCdHSbOlyEQuKfl0ckgL4ftGt1rYfbCndd13tJ9Lh0tbSCILNgbct9WpTmMCYzup+748=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-690aabe2600so39888767b3.0;
-        Tue, 03 Sep 2024 00:12:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725347559; x=1725952359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0JjNkxlDWbpJw1TND51fYvDcf8fDb1yawSBroXVLtQY=;
-        b=ORw05h/VUFPXgUxL811nmR5+NNCeGkYCy16hGAWWa6w/8YaEMsnyqilIbjUnYJCYbS
-         nzkz3pYli8vr492IxrmLV7RrwM5iHR6hK92RKUbgoGEYFCmqRNRHRacD9UU+28sGLNx8
-         NssnZL0biFkLWfJot1E7FSNUJ3dR+oZ40J9LgXYddkUs7OdxRbhaGeArQvk9bgwi7vH8
-         3ZRfFZ2EKGfyV2FZ0kTzMEwg2pK3yXLxmPzhx7I4A4PCi6OTdZ7rJIxXV1zn0rQTovAK
-         ZXhyHTtTh6ZqQbswSK+Y1WjYMG6VmHjBat7jZjWJTx2JW/1oqUVQ5E+yA2rCv8ePVCMY
-         zgIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4KgUAdSeLoJ8a4SH27Bf79t2osm+IouOttVSrJQFhn+E9mvFsM89CJXQHJzI3EtHh8/PS1EEcG11Wbw==@vger.kernel.org, AJvYcCVp85rttDhaUqQS94Eb4tEAC4eZMNpFrfjarlzNSX/zqIYbsbFmIIul6cXFZN2CexGbl0kjtunEHGcw1Fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB4+OpwgKXCD3tqYB2lrQjA1TRO0hiMTQ9Ccm1N4IDwgUW5Ml4
-	4uAXGG2u7erxtdF7o+58cNwj3w8AHEoeZvi54q/HGvzRCRU9zpXCp6NjJ9oX
-X-Google-Smtp-Source: AGHT+IGBU7gMwQqs+0aFj7dkIv2b8ftIfHkX1jgIHrtwHMovUeEzWF0iE4QX6W0YecpK1e4myjZrQA==
-X-Received: by 2002:a05:690c:82:b0:6d3:98b1:e3bc with SMTP id 00721157ae682-6d410cb367amr169139767b3.32.1725347559174;
-        Tue, 03 Sep 2024 00:12:39 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d728c40e45sm6913447b3.0.2024.09.03.00.12.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 00:12:38 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b47ff8a59aso44453867b3.2;
-        Tue, 03 Sep 2024 00:12:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvk0cMYRqtTcOTOt+0rSQK7GWlKGiLGQj1A8AjxkKAnW9f9xBehTEVt9wNQLfEPKuQKoCcwscxwgDP4AI=@vger.kernel.org, AJvYcCWVIjrMP7j3EMdgLIEApj415/pQmNOcAeMX8f1L23DHsgTqRHvbam5dqffQ8Ce8fm8oritgC92u5SAmlA==@vger.kernel.org
-X-Received: by 2002:a05:690c:82:b0:6d3:98b1:e3bc with SMTP id
- 00721157ae682-6d410cb367amr169139387b3.32.1725347558405; Tue, 03 Sep 2024
- 00:12:38 -0700 (PDT)
+	s=arc-20240116; t=1725347607; c=relaxed/simple;
+	bh=gdQzZXQlNJ2WddxY58vtzSE+Tx9smuEhfiUdnMoqg7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWLxgZlfmNr8O/W2e0lCuzBQJfJFd/ZIIkZ3ToK3FcCXsgsuTU5JhYXTQKQOVv+jNBEHRlgBmV7+cpbCcMmtPY64cuqgdPsjobC1FL4z/xsFLA03hBq71PIFBCBKJEKexG1k5DU5Ojdq0C5GSW1G3NakeqLk6lB5L6QjfXn0xtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gs1AGCOE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC72BC4CEC5;
+	Tue,  3 Sep 2024 07:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725347606;
+	bh=gdQzZXQlNJ2WddxY58vtzSE+Tx9smuEhfiUdnMoqg7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gs1AGCOE0G9fqfFMaSn6iVu8Mq8LATc6F2Zfv81WpvPE9dRr3nnBEfcFkPCe+F4oi
+	 RxyaYqcDIUmPlyIbiiIAHo0f8PaJepNHUlB+EXBtkRAPZXakwUGiyutUpmAG1urLl6
+	 90esgVCbA8qZJCGUeirSeGWISfaU4n7bFJUd3LFJazKHKn01VeWFKO4+m7kwqUyHMp
+	 mCpt73XfigcFJUqP9YPo50jpw4r77A1f+Xuhoi7EfSFTmHo/ICV0paScvwr21F7sCg
+	 YZ4ioGQh0SdO4b4zMI7us8SmiY1G0zC5S0nk/n2QGjfIAYD4CI/u1zG/N/IpX24GkK
+	 fiZmzoPriFhng==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slNjS-000000000zP-0Wm6;
+	Tue, 03 Sep 2024 09:13:42 +0200
+Date: Tue, 3 Sep 2024 09:13:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] dt-bindings: usb: Add Parade PS8830 Type-C
+ retimer bindings
+Message-ID: <Zta3Jr7rCDzxe_mE@hovoldconsulting.com>
+References: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
+ <20240829-x1e80100-ps8830-v1-1-bcc4790b1d45@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903112703.5e9e68b3@canb.auug.org.au>
-In-Reply-To: <20240903112703.5e9e68b3@canb.auug.org.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Sep 2024 09:12:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXmBeUwhiaLkwV4z2xb67PHBjyJnp3VEMfHv52KAmaQpA@mail.gmail.com>
-Message-ID: <CAMuHMdXmBeUwhiaLkwV4z2xb67PHBjyJnp3VEMfHv52KAmaQpA@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the clk tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-x1e80100-ps8830-v1-1-bcc4790b1d45@linaro.org>
 
-Hi Stephen,
+On Thu, Aug 29, 2024 at 09:44:25PM +0300, Abel Vesa wrote:
+> Document bindings for the Parade PS8830 Type-C retimer. This retimer is
+> currently found on all boards featuring Qualcomm Snapdragon X Elite SoCs
+> and it is needed to provide altmode muxing between DP and USB.
 
-On Tue, Sep 3, 2024 at 3:27=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> The following commit is also in the renesas tree as a different commit
-> (but the same patch):
->
->   042859e80d4b ("dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG"=
-)
->
-> This is commit
->
->   afec1aba0860 ("dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG"=
-)
->
-> in the renesas tree.
+> +  vdd15-supply:
+> +    description: power supply (1.5V)
 
-Thanks, I am aware of this issue.  Due to an oversight on my side
-when queuing the RZ/V2H clock driver one month ago, I forgot to put
-the RZ/V2H DT binding definitions on its own branch.  As these binding
-definitions are needed for the DTS part, too, I had the choice between
-merging in lots of unrelated clock commits, or just duplicating the
-aforementioned commit.  Hence I picked the latter.
+As Konrad already pointed out, this appears to be a 1.15 V supply, in
+which case the name and description needs an update.
 
-Sorry for the troubles.
+> +
+> +  vdd18-supply:
+> +    description: power supply (1.8V)
+> +
+> +  vdd33-supply:
+> +    description: power supply (3.3V)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Johan
 
