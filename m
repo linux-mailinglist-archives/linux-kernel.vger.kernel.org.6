@@ -1,211 +1,250 @@
-Return-Path: <linux-kernel+bounces-312408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBF1969637
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A92D96963D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869E32826DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E9E1F23CD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1140020011A;
-	Tue,  3 Sep 2024 07:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CA41DAC78;
+	Tue,  3 Sep 2024 07:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hP4JbxC5"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FS9g3634"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94441CCEF9;
-	Tue,  3 Sep 2024 07:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BCA1D54D3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725350076; cv=none; b=ujysdYb+kZqlqGWg+wQz2h5fMwS9aUVUkxCtM59s0uyJ6ZL6vHOgizCPIdxY5aJ24u2v+5z+U6a82ptVTCcPR8T4MwA6hE8/7cyNM8BAi7S77j+4DyS5ZC3Vohrcrb1ZN1NB2+R+e5cfehP/yuqOO1PHlxEh5xcdldYqUO1uRA0=
+	t=1725350125; cv=none; b=qDeTm89IpwzHfRbCvN+8TbzGz32BPr1i5g0fwNHAZLwwmxlNoDEmpDxXeKGdYoGzvP9Zgbp6WyL0D76oysejCVP7zUSwXHm0U0GUTioPzvQVkH2vp5YmFnwv3jnwwmGbhI7KZQHDWlHbrybr7FGbs5loxOdIxM9NsU4dO8oSWYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725350076; c=relaxed/simple;
-	bh=8d5alI3TLhOYwnx2NrP9LQS/Df3yxkjn+fz4hxc7LrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R/7opzf6ntf6mKBp1Sem8B0e2wPFZ1gerZ6HXREOSv71EW8t25SxOuFuNnLACqWL2wnFCf7YGb04JIlBmJieMcUxMNkq7EyPip0R5IVGzwF6+HFXhE9tnrKYwkBV4szocWwcavUmgE6y12YyCn6CrOQ1gaNQ3W/RmZXKqErQrwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hP4JbxC5; arc=none smtp.client-ip=209.85.219.46
+	s=arc-20240116; t=1725350125; c=relaxed/simple;
+	bh=lHEjtxV41KqvLn7BW25CS1r3sTnWoMNIxb0wXuXSs+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqoWHUzHsWkhpTkkB9D9mkb8CUQY3Fu7tNkzgcGm97oC1EJv0zPli1QyEOL2ThkHzWj8m5dDhewSyT0WcqOj2+/bdMVhXkCPBS/3A5ezJcjNIe0y3tTwVOSJAgpBndaC09jB5x54innkeQhxBv/Jh6xG5jb0DiDPnOcIVXd28GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FS9g3634; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c35b545b41so18137166d6.1;
-        Tue, 03 Sep 2024 00:54:32 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7d4f0181be2so272457a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725350072; x=1725954872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fomXVmXiFKhcu/vzfVM0LdMGqu50I/F26QA2OqSH32Y=;
-        b=hP4JbxC5Ycq1GVbDjVrWoXIx6z/HIdIH3T8XX3OZ+jDGivCfVE/vm3miUz0Hi6S9WC
-         M79M4wAmb4E9ZDOKMs9hR/hqhhd3Xd91HfhcEfX2mSx0Y9l5E/TucXcxLnVwsfP0WMxz
-         CAZxmVGfmt3IezhnURkR2nH4zGp+wvC2AOgUnBmtbQb2qjnVgpCxVPdknFIiUc6GGhqd
-         S4vpwLTh1/wJHke+dL8dSxwA7iQUsZidUZbNc8q9gn3Pzoq7tvGD9+k9Y1lDF1uAsEQd
-         6NCGD9WNRwHTdbI5KHky31eAdKROfv6pE70NX95mcbIS8UQX6ATGDnxJpz5GmRZzgllR
-         M7aQ==
+        d=gmail.com; s=20230601; t=1725350123; x=1725954923; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=igBgchUo2vyXbADov+gENWjdwyJXCwLlZ3FYaV7kMJs=;
+        b=FS9g3634v6/ZxzEq6YzPP0l87ePx1u48v98X7pGaW/oYdBEMEECCZfCbEYVB03QAr0
+         fhABYz5VXAf+xAzNzCB51cldhra2CRJRDH/bPseviLGnaf9xun+pBdrwRZpb/KjfP1Ag
+         cJsXOz7f8eFyHF76bIHu/dkwg+uGGgKDekRlM8xBPhY/SnkLWKyq4icQcanD9e47Ts4F
+         tDEKL3zrH7IQGxDmVSLEGmd2qjiee7bX6U0quq+p3AvQPLzkThIibtskEt7Ii8yanLVi
+         3ZmD/fVRqCTaV4d5b9E0hD2wTfZRHTfLzqxpZu80urjr1xt85ShYnvMgCj5Es/E8xmm3
+         WG/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725350072; x=1725954872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fomXVmXiFKhcu/vzfVM0LdMGqu50I/F26QA2OqSH32Y=;
-        b=HDnntTG/yWYpjTSC7hlqsiiupF+CZnDSY+oz+d+Ih3SWmw/4CPhiviDk6Wyru+SHOg
-         JeEOH77UNVIqZYxFQ79i0riWiCWqNkmlCXw4njxkrF08yOFtO/j5BiUVGqHQ5bHDcdD4
-         tK+hmrkpVbLYFNznZEiXNSNk0wNZ7eFDFk9sDZyyH0Avz6lK+7L6+8sW+068E/IgY4L8
-         wWoJ0xjv//TTOQxNVB4zoC617VBGEPc7wEMWagS6g8H90Z60AHB0fY5VE8O0mm7aUMAF
-         E8k6NKfcA/aphbMsmjoEgxjnXff8gq44lNnG6zdqKz1SB6py0IIh3FurtyXrEVal2Se4
-         JprA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5/HXY9px2xuBMniqB8Pfm5SKV3VHUt6lm97aZrG45obrrik+Nqyh5tfwqFxynWbJecTZ81SqLBNfsraPgMA==@vger.kernel.org, AJvYcCVc+6fo1TOu++Forq8dtgeKTgNeMMOSQ/+jX6+VGkaLaVD5kDsSyuX3+yVJCSWqU8V1ya3bhZU1hYk=@vger.kernel.org, AJvYcCWJJ1VRZVJK0EO3Ohq/hDTjHbQ/xqSMZjhe6pAOSESQ61L45Tj8aA9R4oJcFgdVDpMXwxuWJigUbKm/@vger.kernel.org, AJvYcCWR5G/TtVtp6yXZjgp+Tv4RZxxkOsM+qMezAlqrPxDEpOzEdXnVHrPHjh6z1rnK6fc4Eg8xuV8aWTb0uZDmV4FnOg==@vger.kernel.org, AJvYcCWhT6mf63TYwxuNe9Uf7sskPJQzoMOnAkZ8wb5Goh67d2Zrouvf1eJa2nzcVIM7rylv02vwGdw/zCQR8qhZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhG6nfVwp6EjlifJX0gmN8Nm8VICRogGI3LF5pxO2ooOCjEsNs
-	nxSjzwHA3RxrJKJPAlTqhwDwk9h7GS4s5Fylv0Okq3f5fsSJLM+3MOgWcBg8LmkP3jFyFV6GkEs
-	5jXs81FvZU2od7HlcdZYETkesHyYWYIfYqQOiLw==
-X-Google-Smtp-Source: AGHT+IGzXLsIEHDbgMyGT+A08yC4JUWzWxGh88B25wAb1Ou+JNdpZ2wR9VfJec6imJMUOtwHITpi+KkYncaNWiMSjmY=
-X-Received: by 2002:a05:6214:4a81:b0:6c3:6b35:ac73 with SMTP id
- 6a1803df08f44-6c36b35ad26mr91108986d6.11.1725350071854; Tue, 03 Sep 2024
- 00:54:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725350123; x=1725954923;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=igBgchUo2vyXbADov+gENWjdwyJXCwLlZ3FYaV7kMJs=;
+        b=jNC4UBTkcENQs+damVnk4jXtSuSDSs8lkN7rjk2W5h1kBoFDFzHIStpTp1B2w7JdZd
+         el1dap0jAgNsRMNGMfEHMnAOQ2dgRQ4OoGE0VW0sycsfWszp/v3ucLiieJe7CdEuN2UU
+         g2AEfjLUQpJ/EtM/K4SRrpt9bSnO/xkC7reiq1+Bc/aE/um+aQRL48fy87mZHqCu+Plu
+         KbiSXtkvPzJbaUmtiRz4CFoFvd322nO0O8mcU5Ti/zqY4OFK6nlENY2xXdYkH3GdmVPk
+         vy+QQuZKRK0DcboURNcpW45/3+kxfpfPO7T0HS1G8LVjBG4tROG49qk2f0yKJf2Tg2Tw
+         97GQ==
+X-Gm-Message-State: AOJu0YxTEVwAgEIsNKLZnkADSVpZIzjNzb7Dp0sNkpq7ATM3xA/hMVVm
+	H2oo1I/CKPMjhOB5dScA2VxUJIg8VhAo5AGnHpaJj5JhEnvc3bfV
+X-Google-Smtp-Source: AGHT+IEOODZ2+fsB4siQlM6mhBxUnPAFrTjs9gHzR6Bwmi8h/FnHCIbdSvuRzIJSel2zF1VVfGnE8A==
+X-Received: by 2002:a17:90b:3e83:b0:2d3:bd5c:4ac8 with SMTP id 98e67ed59e1d1-2d856383ff8mr18663084a91.27.1725350122463;
+        Tue, 03 Sep 2024 00:55:22 -0700 (PDT)
+Received: from den-build ([116.228.68.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8f5ec4bc6sm2591066a91.57.2024.09.03.00.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 00:55:21 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:55:16 +0800
+From: Richard Clark <richard.xnu.clark@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH] irq: fix the interrupt trigger type override issue
+Message-ID: <ZtbA5Adh2acTExYq@den-build>
+References: <ZtUuYXSq8g2Mphuq@den-build>
+ <87r0a27blv.ffs@tglx>
+ <CAJNi4rPm2N=_H7LjT3X3_b2-UVZP+EEOw-ztwBwWBs=vMtfYQQ@mail.gmail.com>
+ <877cbu7596.ffs@tglx>
+ <CAJNi4rPooS82fB+6FditywXTga00JbGoFM6MR8P7U3s7mdbJCg@mail.gmail.com>
+ <87y14a5dcq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
- <20240902164554.928371-1-cyphar@cyphar.com> <20240902164554.928371-2-cyphar@cyphar.com>
-In-Reply-To: <20240902164554.928371-2-cyphar@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 3 Sep 2024 09:54:20 +0200
-Message-ID: <CAOQ4uxi291jBJ5ycZgiicVebjkcRQjhXJRgOgvSPBV4-TOcQvA@mail.gmail.com>
-Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount ID
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Christoph Hellwig <hch@infradead.org>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y14a5dcq.ffs@tglx>
 
-On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> wro=
-te:
+Hi Thomas,
+
+On Mon, Sep 02, 2024 at 04:39:33PM +0200, Thomas Gleixner wrote:
+> Richard!
+> 
+> On Mon, Sep 02 2024 at 20:50, richard clark wrote:
+> > On Mon, Sep 2, 2024 at 5:51 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >> >> 2) rmmod()
+> >> >>      tears down mapping
+> >> >>
+> >> > This just tears down the action allocated and installed by
+> >> > request_irq(...), but does not teardown the irq's node inserted in the
+> >> > revmap_tree.
+> >>
+> >> So what creates the mapping? If the driver creates it then why doesn't
+> >> it unmap it when it exits?
+> >>
+> > Kernel allocates an irq and creates the mapping during its
+> > initialization when parsing the device's interrupt firmware, not the
+> > driver does that.
+> 
+> So the mapping and the interrupt allocation persist even if nothing uses
+> them. What a waste.
 >
-> Now that open_by_handle_at(2) can return u64 mount IDs, do some tests to
-> make sure they match properly as part of the regular open_by_handle
-> tests.
+I checked the code and found that it's not the kernel to create the mapping,
+it's by the driver calling platform_get_irq(...)/of_irq_get(...) to create. 
+> 
+> >> > The logic is if the trigger type specified by request_irq(...) is not
+> >> > consistent with the firmware one, the request_irq will override the
+> >> > FW. We need to keep this logic the same as when we insmod the same
+> >> > kmod next time -- override the FW's too instead of returning a
+> >> > mismatch type error.
+> >>
+> >> I can see how that can happen, but what's missing is the information why
+> >> this mapping persists and why it's tried to be set up again.
+> >>
+> > As I mentioned, it doesn't try to set up again. It will just lookup
+> > the mapping from the tree for the persistent reason when driver try to
+> > request the irq...
+> 
+> Fair enough. Though the logic in that map code is convoluted as hell and
+> making it more convoluted does not really make it better.
+> 
+> So let's look at how this works (or not):
+> 
+> 1)
+>    map()
+>    allocate_irq();
+>    set_trigger_type(FW);
+> 
+> 2)
+>    request_irq(type = DRV);
+>    set_trigger_type(DRV);
+> 
+> 3)
+>    free_irq();
+>    // type is not reset to FW
+> 
+> 4)
+>    map()
+>      irq_trigger_type() != NONE && != FW
+>         -> fail
+> 
+> This results in a pile of questions:
+> 
+>   Why does #2 override the firmware, if the firmware defines a trigger
+>   type != NONE?
+> 
+>   Isn't the whole point of firmware defining the type that the driver
+>   does not need to care?
+> 
+>   If the firmware cannot does not know what the right thing is then it
+>   should say so by using type NONE and the type is using the hardware
+>   or interrupt driver default.
+> 
+> That aside. What you are trying to do only works when #2 and #4 are
+> coming from the exactly same context.
+> 
+> What it does not catch is when the interrupt line is shared and there
+> are two drivers where the first one fiddles with type on request_irq()
+> and the second one relies on the firmware to do the right thing.
+> 
+> Same problem if you unload the driver and remove the type from
+> request_irq() flags because you figured out that this was bogus. Then
+> you end up with the old setting when you load the recompiled driver
+> again.
+> 
+> That's all inconsistent. The proper solution would be to restore the
+> firmware setting in free_irq() when the last action goes away.
+> 
+> The question is whether it's worth the trouble. If not then we can just
+> make all of this simple, trivial and incomplete instead of making it
+> more complex and differently incomplete.
 >
-> Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-v3-0-10c=
-2c4c16708@cyphar.com/
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+
+Ah, the mapping is created from of_irq_get(...) by driver, the kernel also
+provides the mapping teardown interface - irq_dispose_mapping.
+IMO, the right way for the driver is:
+	1) driver calls of_irq_get() to get the irq and create the mapping
+	2) driver *should* call irq_dispose_mapping() as the teardown of step 1.
+	3) free_irq is the teardown of the request_irq to free the irq and
+	   its action.
+So the original issue should be the bug of the driver not calling the
+irq_dispose_mapping to release the mapping(and being persistent there). 
+The error message will not show if irq_dispose_mapping(...) called by
+the driver.
+Looks like the current implementation is correct, but I don't know if it's true
+for the shared irq...
+
+Thanks!
+
+> 
+> Thanks,
+> 
+>         tglx
 > ---
-> v2:
-> - Remove -M argument and always do the mount ID tests. [Amir Goldstein]
-> - Do not error out if the kernel doesn't support STATX_MNT_ID_UNIQUE
->   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
-> - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cyphar@cyphar=
-.com/>
->
->  src/open_by_handle.c | 128 +++++++++++++++++++++++++++++++++----------
->  1 file changed, 99 insertions(+), 29 deletions(-)
->
-> diff --git a/src/open_by_handle.c b/src/open_by_handle.c
-> index d9c802ca9bd1..0ad591da632e 100644
-> --- a/src/open_by_handle.c
-> +++ b/src/open_by_handle.c
-> @@ -86,10 +86,16 @@ Examples:
->  #include <errno.h>
->  #include <linux/limits.h>
->  #include <libgen.h>
-> +#include <stdint.h>
-> +#include <stdbool.h>
->
->  #include <sys/stat.h>
->  #include "statx.h"
->
-> +#ifndef AT_HANDLE_MNT_ID_UNIQUE
-> +#      define AT_HANDLE_MNT_ID_UNIQUE 0x001
-> +#endif
-> +
->  #define MAXFILES 1024
->
->  struct handle {
-> @@ -120,6 +126,94 @@ void usage(void)
->         exit(EXIT_FAILURE);
->  }
->
-> +int do_name_to_handle_at(const char *fname, struct file_handle *fh, int =
-bufsz)
-> +{
-> +       int ret;
-> +       int mntid_short;
-> +
-> +       static bool skip_mntid_unique;
-> +
-> +       uint64_t statx_mntid_short =3D 0, statx_mntid_unique =3D 0;
-> +       struct statx statxbuf;
-> +
-> +       /* Get both the short and unique mount id. */
-> +       if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID, &statxbuf) < 0) {
-
-This fails build on top of latest for-next branch with commit
-873e36c9 - statx.h: update to latest kernel UAPI
-
-It can be fixed by changing to use the private xfstests_statx()
-implementation, same as in stat_test.c.
-
-I am not sure how elegant this is, but that's the easy fix.
-
-> +               fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n", fname);
-> +               return EXIT_FAILURE;
-> +       }
-> +       if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
-> +               fprintf(stderr, "%s: no STATX_MNT_ID in stx_mask\n", fnam=
-e);
-> +               return EXIT_FAILURE;
-> +       }
-> +       statx_mntid_short =3D statxbuf.stx_mnt_id;
-> +
-> +       if (!skip_mntid_unique) {
-> +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID_UNIQUE, &statx=
-buf) < 0) {
-> +                       fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE): =
-%m\n", fname);
-> +                       return EXIT_FAILURE;
-> +               }
-> +               /*
-> +                * STATX_MNT_ID_UNIQUE was added fairly recently in Linux=
- 6.8, so if the
-> +                * kernel doesn't give us a unique mount ID just skip it.
-> +                */
-> +               if ((skip_mntid_unique |=3D !(statxbuf.stx_mask & STATX_M=
-NT_ID_UNIQUE)))
-> +                       printf("statx(STATX_MNT_ID_UNIQUE) not supported =
-by running kernel -- skipping unique mount ID test\n");
-
-This verbose print breaks all existing "exportfs" tests which do not
-expect it in the golden output.
-
-I understand that silently ignoring the failure is not good, but I also
-would like to add this test coverage to all the existing tests.
-
-One solution is to resurrect the command line option -M from v1,
-but instead of meaning "test unique mount id" let it mean
-"do not allow to skip unique mount id" test.
-
-Then you can add a new test that runs open_by_handle -M, but also
-implement a helper _require_unique_mntid similar to _require_btime
-which is needed for the new test to run only on new kernels.
-
-I'm sorry for this complication, but fstest is a testsuite that runs on
-disto and stable kernels as well and we need to allow test coverage
-of new features along with stability of the test env.
-
-Thanks,
-Amir.
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -895,32 +895,14 @@ unsigned int irq_create_fwspec_mapping(s
+>  	 */
+>  	virq = irq_find_mapping(domain, hwirq);
+>  	if (virq) {
+> -		/*
+> -		 * If the trigger type is not specified or matches the
+> -		 * current trigger type then we are done so return the
+> -		 * interrupt number.
+> -		 */
+> -		if (type == IRQ_TYPE_NONE || type == irq_get_trigger_type(virq))
+> -			goto out;
+> -
+> -		/*
+> -		 * If the trigger type has not been set yet, then set
+> -		 * it now and return the interrupt number.
+> -		 */
+> -		if (irq_get_trigger_type(virq) == IRQ_TYPE_NONE) {
+> +		/* Preserve the trigger type set by request_irq() */
+> +		if (type != IRQ_TYPE_NONE && irq_get_trigger_type(virq) == IRQ_TYPE_NONE) {
+>  			irq_data = irq_get_irq_data(virq);
+> -			if (!irq_data) {
+> +			if (irq_data)
+> +				irqd_set_trigger_type(irq_data, type);
+> +			else
+>  				virq = 0;
+> -				goto out;
+> -			}
+> -
+> -			irqd_set_trigger_type(irq_data, type);
+> -			goto out;
+>  		}
+> -
+> -		pr_warn("type mismatch, failed to map hwirq-%lu for %s!\n",
+> -			hwirq, of_node_full_name(to_of_node(fwspec->fwnode)));
+> -		virq = 0;
+>  		goto out;
+>  	}
+>  
+> 
+>    
 
