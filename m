@@ -1,77 +1,103 @@
-Return-Path: <linux-kernel+bounces-313555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F6D96A6FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:58:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0314596A702
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731E01C22C49
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAECC283DB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28E81922DA;
-	Tue,  3 Sep 2024 18:57:57 +0000 (UTC)
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D201C7B6E;
+	Tue,  3 Sep 2024 18:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1F7Uwdp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A304A3E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 18:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC50B1C6F7B;
+	Tue,  3 Sep 2024 18:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725389877; cv=none; b=osDEvlkicepqoIDi6YkMcZWxN+ThWtheudVRx2lUBU3gAzX7QC3HD3JClu5Fg945V7474//trqGYHdPxHaHmgIBKqbmFb1Bft2FVH3nQ29VcfrNBautRJ3v8suq3iQ3Mk1177sDzJGgc8KBOqGdsQXylGAn8ewZCl+ssMIALzdc=
+	t=1725389966; cv=none; b=a8vTxcTNbsX4g+0XTizP7P8Oa4eBcFD3CmG20lsjxHyJLg/i98s2k6I1He0TgQxjqCbDGazp3rCqH10scf/ebq1+wc7E/nzYTf6jlCOmj5oNqW4sdClLk2xmhqZh3YdAP3vQzjQblpN2yP4WwQ1dCPuySOoTAJ3vO682ZxsfHLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725389877; c=relaxed/simple;
-	bh=LtSe41g4xMT3I6xsCi6Abnp6KgGqZSsfBXDPXJAFdFQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jnkopmbciqyRgLUEPNMB7y34xrbNVYVzC0nQKlhTjl2+CgDuR59Y/WosgQAXr/erxcvj6tx8IaaHOxp4063iYsJP3Y16buQvGV6UZN7x1FMHZqlEIKvx/AXj1Afz48E8gRgzKu6LG82xtSku9MUtrV0/3fnL7NM3PgY0XKmoQvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 0C72366A44;
-	Tue,  3 Sep 2024 14:57:53 -0400 (EDT)
-Message-ID: <e01dcb5fc34b4686c7fb32d1644802c164910ecb.camel@xry111.site>
-Subject: Re: [PATCH] longsoon/percpu: Simplify _percpu_read() and
- _percpu_write()
-From: Xi Ruoyao <xry111@xry111.site>
-To: Uros Bizjak <ubizjak@gmail.com>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Gleixner <tglx@linutronix.de>
-Date: Wed, 04 Sep 2024 02:57:52 +0800
-In-Reply-To: <20240903102342.36957-1-ubizjak@gmail.com>
-References: <20240903102342.36957-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1725389966; c=relaxed/simple;
+	bh=9TTFd2hhLualP7P0anivRWZJQY9eJQxI1ngy05lrXxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HpDmymoLsrdL7wdhCHTs44IoYUHYW01aY4hFI1moC98MLbAXV3p41w/K9e6Gqb/gBeLJNoQlL4e6HzpNyH+XrX8gx0CBGJOC97PjlBjepQAXLdQNVwFePOusKouBlUYWuC6F5An0XxczORXJ9PpACgMQSyUTNG9ak44AycGfimg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1F7Uwdp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1ACC4CECD;
+	Tue,  3 Sep 2024 18:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725389966;
+	bh=9TTFd2hhLualP7P0anivRWZJQY9eJQxI1ngy05lrXxo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J1F7UwdpA/pPZEwuZ0/4B+dyQecUZs4ue4kj+s2CJEyPYfHPZ0IqIEJOgD3Ifhorx
+	 5qMQc8p2qsGAGR9PPwxY9F2GjEfx2J9/X8wMagcmlpMy0GAGaBedOOiO/PT/oyqrlB
+	 C8HqFblUQ905PsjMgdgNV5ftgrRJJRB8r4+njGopFECEoSKrtgJe7QtYL76ssT3E0G
+	 kW2RBzcGNjIUnx4QxV6/rgUR1A+sbfP67u4Hx3nU7DmTxE7ijdJOpaJLhzHiP9g3Yd
+	 gCT0r06mtKL3lS7yikFsz7UR2Wf12g+lGZcRwizQ2K/b56Oq4UdTYc1jUQIAfPzQc2
+	 KBcc6yWpODipw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5343d2af735so5630239e87.1;
+        Tue, 03 Sep 2024 11:59:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUe2hfD/BMdqCHn0fVZCLVzo9p6SmTBWxQnBo+IbzeHCtfRnfTdFULvQDZUqhzhApVrPtozdmKRmYRxeFHtAaE=@vger.kernel.org, AJvYcCV5wGXPampX2hK6/vsEbNlbnXjKpgRhfuFYlV/Xe3mn//saIXU/3Ppxp/nNg057jm5Q9R5eqmQbX3B68mmj@vger.kernel.org, AJvYcCWzvkCJBOwuIfhdHD+sDYyjfnWGwZSQtjrhTckZEUnUyk+VLEl6+1jnyUi4NKP4cFX8wLc40n7b@vger.kernel.org, AJvYcCXZxC87KyH4g79omGOdHlAwMvyDC4e8klMo/QTpd6XQNYMSstYERHMymD6YesOXOEqbAai9AHPR9ycp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKmWtvaZEFW8fm250Gjap1jTkJzUzlW2wQNKEgk3vkGZkGRNlc
+	NB2s1SzZFMbKIUBR6wiWq0CSaOaIEPymr5IDeJpzM+nBVRYnB+Xd6zwuhk51LjMf7+0ehJwxjSy
+	kYA7sXLBvfpi+xXojBCDXngL79g==
+X-Google-Smtp-Source: AGHT+IFpL/WAwaJEUddqnN23QW8H5LGR9Grih1m7MNNFfq750+qLMqm2X5GBNRTbFyO1BzABy+6jr6rWs+y4p6UfciU=
+X-Received: by 2002:a05:6512:3d8d:b0:52e:7f18:176b with SMTP id
+ 2adb3069b0e04-53546afd8famr11677026e87.11.1725389964567; Tue, 03 Sep 2024
+ 11:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240902225534.130383-1-vassilisamir@gmail.com>
+ <20240902225534.130383-8-vassilisamir@gmail.com> <172537438003.978249.2559307502514402788.robh@kernel.org>
+ <ZtckM-uRzxAnS15o@smile.fi.intel.com>
+In-Reply-To: <ZtckM-uRzxAnS15o@smile.fi.intel.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 3 Sep 2024 13:59:09 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ+bQx-0KsN3ZWsZbQuAs0rV9DDTAjT_jJy2OBfH1WXeA@mail.gmail.com>
+Message-ID: <CAL_JsqJ+bQx-0KsN3ZWsZbQuAs0rV9DDTAjT_jJy2OBfH1WXeA@mail.gmail.com>
+Subject: Re: [PATCH v1 7/7] of/irq: Make use of irq_get_trigger_type()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, nico@fluxnic.net, pabeni@redhat.com, 
+	daniel@ffwll.ch, davem@davemloft.net, kuba@kernel.org, olteanv@gmail.com, 
+	saravanak@google.com, linux-kernel@vger.kernel.org, mripard@kernel.org, 
+	edumazet@google.com, netdev@vger.kernel.org, 
+	brcm80211-dev-list.pdl@broadcom.com, f.fainelli@gmail.com, 
+	linux-wireless@vger.kernel.org, airlied@gmail.com, linus.walleij@linaro.org, 
+	brcm80211@lists.linux.dev, andrew@lunn.ch, devicetree@vger.kernel.org, 
+	linux@armlinux.org.uk, alsi@bang-olufsen.dk, tzimmermann@suse.de, 
+	kvalo@kernel.org, arend.vanspriel@broadcom.com, 
+	maarten.lankhorst@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-09-03 at 12:23 +0200, Uros Bizjak wrote:
-> +#define _percpu_write(size, _pcp, _val)					\
-> +do {									\
-> +	unsigned long __pcp_val =3D __pcpu_cast_##size(_val);		\
-> +									\
-> +	__asm__ __volatile__ (__pcpu_op_##size("stx") "%[val] $r21, %[ptr]	\n" =
-\
+On Tue, Sep 3, 2024 at 9:59=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Sep 03, 2024 at 09:39:43AM -0500, Rob Herring (Arm) wrote:
+> > On Tue, 03 Sep 2024 00:55:34 +0200, Vasileios Amoiridis wrote:
+>
+> ...
+>
+> > Applied, thanks!
+>
+> It was fast :-)
 
-Missing a comma before $r21 (as the bot already pointed out).
+You're right. I didn't really look at that and was catching up from holiday=
+s.
 
-> +		:							\
-> +		: [val] "r"(__pcp_val), [ptr] "r"(&(_pcp))		\
-> +		: "memory");						\
-> +} while (0)
+> Vasileios, consider my previous comment as a material for followup,
+> if Rob likes the idea.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Yes. I've dropped the patch for now.
+
+Rob
 
