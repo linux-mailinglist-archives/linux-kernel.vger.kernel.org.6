@@ -1,86 +1,72 @@
-Return-Path: <linux-kernel+bounces-313963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A6E96ACE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2A296ACE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2591C241AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA6B285377
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C641D5CF0;
-	Tue,  3 Sep 2024 23:28:30 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD4C1D61BA;
+	Tue,  3 Sep 2024 23:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7868TaG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680712AEFD
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896A9126BFD;
+	Tue,  3 Sep 2024 23:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725406110; cv=none; b=ZDnIw/LCweUbSaht8SDjcE01ts/0UKtD7QindIOOR1vvC6pXCdzPQqFThMjLh50g2xmid0jV4nqvwFgU2ZwEQL3hQ8Air2QFgW/CcDMbJtylf/ScSDmlknHm+ahciilXTXgNlcHbxqsADVrLYz69CEDh2POFBejFSzvJ+rjYJBQ=
+	t=1725406237; cv=none; b=fDN0BWlE7YkuO7V153BVZqFWGZxiZCBz4j9225kG2PeYVW4Aq74BjWxNMmc7RoognVHG9v3II3s4xQPigLvpmVALw2+mw8dQDSOl3VBPMZzoYaErNxGZ8SGnWUIq2SDzAzcdWiZxA5o/AJChR4oIYTZ17sSk45i5YsO02LICxCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725406110; c=relaxed/simple;
-	bh=4aZLyiaXjXzyZDXWBCeDhL4IvZTYCLWT7OnTnVf+N4o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FP18cPgVUlxeB5nSvyit5aHqeRmAAVTukrcW1qwLu1X+3FBGJitjLMqenz4cDqLFK6s1y4nh0bWWTcvLJ76hCy0YZZqJ2Ql5iYqeV8vGwn8vlcyyf+7wyRsFJBvXhrBJ5j1CNFoYdwj75KqgCwReDxRCBia8GPGo5rfEKuZIf5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 3266ba95-6a4c-11ef-8ecf-005056bdf889;
-	Wed, 04 Sep 2024 02:28:16 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Sep 2024 02:28:16 +0300
-To: Gyeyoung Baek <gye976@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, jean-baptiste.maneyrol@tdk.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: imu: inv_mpu6050: Remove duplicate code between
- labels
-Message-ID: <ZtebkIvceS5x9_ib@surfacebook.localdomain>
-References: <20240901120839.9274-1-gye976@gmail.com>
+	s=arc-20240116; t=1725406237; c=relaxed/simple;
+	bh=FrqTil4fBuG9VhW7S6egVUGfJDEoHu0+jMNoBN6alS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CCocZGSC4dn4G1kw8W21cuMI54A4/O4Nmb2aemk2hhvDezbCHBuZ04uVzYfH/UZlhFHuh9bQO3v89ZB/GIabveDoTwXWgQSh6N/q9z0gGr8kGQQksowrGLLQRTnxb8qlUJIw8hlCUBwnDg+n18syejyWu57L/m1QZyk9wYqwDe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7868TaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FABBC4CEC4;
+	Tue,  3 Sep 2024 23:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725406237;
+	bh=FrqTil4fBuG9VhW7S6egVUGfJDEoHu0+jMNoBN6alS8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=d7868TaGpZq0QiELnEM8y4j4JGyYHdE1dUi0FWItnXGJHGUJGhMSZGcaFQHK8e5x8
+	 k1J/wyQdt8Ftp3EKmPTFW8qk7lzhqn0S8jM/eChDyQdLcAskaQnvxz5/FsVK3sBHN6
+	 hz+rwBIRWxrp5NhkY3/6/emEEUoL25fqT+GCzOHbuwsQLLkvz9YeFgef9DiLOnBNhA
+	 Zn++t1fKSY8rTV5i5VaaMVKE5o0K8MMTSbIVQ4pnYzMCCSZPsmzla1Oa6bQ5bNflPQ
+	 L5sfaW26ZTDp1EqQAw3nePdXMsX1uCwsKSn3HXf08Y0WulE5RInvJA2LnWPq1MZlJq
+	 +4NUdcGMI5elA==
+Date: Tue, 3 Sep 2024 16:30:35 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] selftests: mptcp: add time per subtests in
+ TAP output
+Message-ID: <20240903163035.30639d62@kernel.org>
+In-Reply-To: <20240903162217.07c366c9@kernel.org>
+References: <20240902-net-next-mptcp-ksft-subtest-time-v1-0-f1ed499a11b1@kernel.org>
+	<20240903162217.07c366c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901120839.9274-1-gye976@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Sun, Sep 01, 2024 at 09:08:39PM +0900, Gyeyoung Baek kirjoitti:
-> 'flush_fifo' label performs same task as 'endsession' label
-> immediately after calling 'env_reset_fifo' function.
-> So i remove that duplication.
+On Tue, 3 Sep 2024 16:22:17 -0700 Jakub Kicinski wrote:
+> (None, '4', ' -', 'mptcp[...] MPTCP', ' # ', 'time=6173ms')
+> (None, '4', ' -', 'mptcp[...] TC', None, 'P   # time=6173ms')
 
-...
-
-> -end_session:
-> -	mutex_unlock(&st->lock);
-> -	iio_trigger_notify_done(indio_dev->trig);
-> -
-> -	return IRQ_HANDLED;
-
-You missed
-
-	goto end_session;
-
-here.
-
->  flush_fifo:
->  	/* Flush HW and SW FIFOs. */
->  	inv_reset_fifo(indio_dev);
-> +
-> +end_session:
->  	mutex_unlock(&st->lock);
->  	iio_trigger_notify_done(indio_dev->trig);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Sorry I fumbled copy/pasting the results, ignore the exact time values
+in the last group, but the mis-parsing stands.
 
