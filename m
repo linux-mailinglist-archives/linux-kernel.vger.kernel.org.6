@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-312916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034F8969DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82396969DB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65743B21EC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383B21F230E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3499A1B12E1;
-	Tue,  3 Sep 2024 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SF6a7kUi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050C91C9877;
+	Tue,  3 Sep 2024 12:35:35 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919151A0BE0;
-	Tue,  3 Sep 2024 12:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36E41B12F0;
+	Tue,  3 Sep 2024 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366746; cv=none; b=I+7cdR4g3oOFapNbF2Kvw5W1Unf9Dj2Ea1LMh5NirkyESn1R5RT2fGOWZdMeLc3zJK1279H3WhXFcPeA25qHxY198H/5X3mRPbM8uJuqHIMPxS5m8o+WKSgEFOdA9RHNr4l1cLyeJgNHEALFXIlGR3s2bs2XUkKWNJ7z0/vhQeo=
+	t=1725366934; cv=none; b=d0Ra6rMb1fhQ76k0kTlGTpZWAznNxPzyGx5QGC2kP9L/IQXDIE28zEGMAPtKGSEGu1EYM5PHfnRWHs3i6Ye3DiFJ6CmLUwSmRMq9ajfnHTedee47nw0qt3O+zqG4ZF8p5/PcAbusfr00aLJhvwt1Y65/Cu6zbKr3J5UOvq895YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366746; c=relaxed/simple;
-	bh=exDz0uG5y9CDYwIOlflGF/NQ6rDmCyP1kVsrGdRztkA=;
+	s=arc-20240116; t=1725366934; c=relaxed/simple;
+	bh=pukqGh/nMdQYmxb7CPZWFPfGwfpTJMXvd81j+CMTfxs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qM/9Oc7o79SSt57NYE6Gz3Sjk5vzWUdWOTj6R0+Hsg3mE4eJ1hYRoRvbcDpE1cfFxoRIhgwvXCL6GA0lS6DVg7y9AriNnxZ7Upe4V4TFap9FtN79jHhTMlDVIsXK+MvE2p/krV6sVEqoflCODsU0jfAT/taF0+tzjFjFACxuu3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SF6a7kUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B5CC4CEC4;
-	Tue,  3 Sep 2024 12:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725366746;
-	bh=exDz0uG5y9CDYwIOlflGF/NQ6rDmCyP1kVsrGdRztkA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SF6a7kUicW2eNwrYnz7FyYW3NPl+UGU3MnV+HTz2DSgoyp+u6iavyacTghcXnqhH0
-	 bWudThlIBIx5uWPfObG5rcQYtqAGiksmJqms2uJh2eCaiHf7uIh0awHjkHLr2EbWc/
-	 nH4Ta76XcwWGy230q7ZWAmQZZOyAZIOkw06bxgiYcpeQYAu0+/MY5jryR0OMI5nbFO
-	 BeE5P/f1tQCvaE2mvv7J9xJ+xh9MmjoC/8aKoc99VkHStvfbVpNHJVE1oY/Nz43NYO
-	 X4fcl2DM2n69M6GtKNcoecyCZiD9dNRlYJxXwwkq2RRrVbjpKi99HJt4TaLrniBrA5
-	 O8zeACN1x0gCA==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-277fa3de06fso939623fac.0;
-        Tue, 03 Sep 2024 05:32:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+8k9T+G3uVKoY3aoDvRtHmDjGbqQ/lVzA+UvwOktxMtma3hKOeMuGeiZzjfC1hoWrien9bSMhepYqfTU=@vger.kernel.org, AJvYcCVMapfln7afdCJ9lT/QRQvD99qdz/5WJS60+vDa9OYpeYAPC3F5hcT0OEUkG6+JSAHVsEBQDvMpTVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbn5JcW5XLe0HOw6cTu8SUr0+6xxucUm4Cq6pgHgiABa1Mrb7N
-	HzErBR3UiC6vVTkktjQ7H+RTKP65uF9F1bX8ko7RgA1EX66Mf1gfbGRsGi+iANYU2n7/uPkbCYg
-	euWN40GqMATp1vhCgV+AmQ9R64LQ=
-X-Google-Smtp-Source: AGHT+IGdLE8YHyP6Qknn6MthooqA/9Y69zZ9Erc/NDSfI5VLEkIveGhPnqvOfeaFQtwHJrtbzxlN4IiRo0N4FN/VvRM=
-X-Received: by 2002:a05:6870:164a:b0:25e:940:e934 with SMTP id
- 586e51a60fabf-27810da7581mr2792857fac.47.1725366745587; Tue, 03 Sep 2024
- 05:32:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=FrKkkrLWfBRpRw8cLh3Wt4ITG08AgAsRGqmHm4pHTENpRdcjewnzi3uXbuoPcY5pJ8oiSMhEKp3iExikmFjjSxR7+Ao9a5F/8diHhc2uFG/l3gBJuBnT/cJpU/84Cky5jCBglTCtemw5k8CHWyATJXl74ZRtxOWetDx9d0M4SlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e116d2f5f7fso4621725276.1;
+        Tue, 03 Sep 2024 05:35:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725366928; x=1725971728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bgoCHMHFNIt/XhiUpMbOZHv3vnXPL+Zu29fZEZr3HEE=;
+        b=lMv24B6nw5GA7m/lHAtH7difgpAhuxaC304vkYr2w9iSCcSzFPtte0F+NVl8INrfkF
+         ZIecd/3oedOYr/PmZCQKbx9cfIglD4wG/zswPkAB9plnp+XfXM/t3MEghzJijc8UIF88
+         l2inJ8L56J9fqE8DD98m0592DdNbqhOJ1I+UIi5a6weHgQG3VX7bz60dkC89A7Tsdrvc
+         RtSC19nMD+lpRndfqLlqN1MDpzhKu8R9U1Aga8xEH5XChv5r87aO3dD/dWv1jeFN1RhF
+         Mp/JpiFmvDQ4JnUMVrM0T5n8iTeo50CE/i9PbxbSUdGv8TbPox23X/0btdoydL/MmcgX
+         U1/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBpOOeFqgNfelrMKGIjZnrae5DkiUJSkvvpIml5JxEkX9wqsfo4isWl7xDdnBuFCtrygaYKUmVRCjK@vger.kernel.org, AJvYcCWyBLHVim3qdMn80fgsWZbgKn0NjtpG9VBrC+3ZjnkXVwixnInzbkFc6LbtZbWYfjs5gggD9VtXox0mFA0Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/8zVJ11/zSWHuWkhWtobTk99AA9IyCtlCvfH5+CH3sQZ2VsTV
+	lUL7PO5GXeEdvnamHJIRCDKjtBQgyZ1pFD+shgTXvRvz3rZhPymJaw5t9k1M
+X-Google-Smtp-Source: AGHT+IFqdO4qT6pAN7x3MNZI1r6KD88CJa4+82jbSISdXKPKCouoa+dB5M30qmWLoByklNRMll8YRA==
+X-Received: by 2002:a05:690c:ec6:b0:6d5:ccc5:e2f4 with SMTP id 00721157ae682-6d5ccc5eademr80201437b3.2.1725366928473;
+        Tue, 03 Sep 2024 05:35:28 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d4988bdbbcsm14650077b3.12.2024.09.03.05.35.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 05:35:28 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e116d2f5f7fso4621661276.1;
+        Tue, 03 Sep 2024 05:35:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVd2vjor8pjXacJQGeOw3Au8SS3jnmRutdpAkc2wZTIt/rY+i+4CnyWqE/PpsoMuqdwqMlStA8ujH6n@vger.kernel.org, AJvYcCXfKkFoliviKZUvVQly/EJCCT+mk35sdqg7KI84I0mpDQMJaIe9aQMCzgMF/24mTH3fRyMfiC+lB1Vwf2EA@vger.kernel.org
+X-Received: by 2002:a05:690c:668e:b0:6d8:a9a1:7cac with SMTP id
+ 00721157ae682-6d8a9a17ef4mr49319937b3.12.1725366927206; Tue, 03 Sep 2024
+ 05:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902125933.5742-1-00107082@163.com> <2024090347-latter-collide-772a@gregkh>
-In-Reply-To: <2024090347-latter-collide-772a@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 3 Sep 2024 14:32:14 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ifKFXk=odx-dZZZg4G-2+O_8rXRb7++TzPMfN4fFuGVg@mail.gmail.com>
-Message-ID: <CAJZ5v0ifKFXk=odx-dZZZg4G-2+O_8rXRb7++TzPMfN4fFuGVg@mail.gmail.com>
-Subject: Re: [PATCH] pm: sleep: do not set is_prepared when no_pm_callbacks is set
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: David Wang <00107082@163.com>, rafael@kernel.org, pavel@ucw.cz, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240903104608.184988-1-d.dolenko@metrotek.ru>
+In-Reply-To: <20240903104608.184988-1-d.dolenko@metrotek.ru>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Sep 2024 14:35:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVuJFRrHAR8Q+HkXbaf29TaUFgvxYY4Ua9xQ7mGZoBsnQ@mail.gmail.com>
+Message-ID: <CAMuHMdVuJFRrHAR8Q+HkXbaf29TaUFgvxYY4Ua9xQ7mGZoBsnQ@mail.gmail.com>
+Subject: Re: of: Status of DT-Overlay configfs patch
+To: Dmitry Dolenko <d.dolenko@metrotek.ru>
+Cc: pantelis.antoniou@gmail.com, nava.manne@xilinx.com, 
+	radhey.shyam.pandey@xilinx.com, austin.zhang@intel.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, system@metrotek.ru
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 12:42=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Mon, Sep 02, 2024 at 08:59:33PM +0800, David Wang wrote:
-> > When resume, a parent device with no pm callbacks
-> > would have "is_prepared" and "direct_complete" bit
-> > set, and skip the "fib" chance to unset "is_prepared"
-> > in device_resume because of the direct_complete bit.
-> > This will trigger a kernel warning when resume its child
-> > For example, when suspend system with an USB webcam
-> > opened, following warning would show up during resume:
-> >
-> >  >usb 3-1.1: reset high-speed USB device number 4 using xhci_hcd
-> >  >..
-> >  >ep_81: PM: parent 3-1.1:1.1 should not be sleeping
-> >
-> > The device parenting relationships are:
-> > [usb 3-1.1] << [uvcvideo 3-1.1:1.1] << [ep_81].
-> > When resume, since the virtual [uvcvideo 3-1.1:1.1] device
-> > has no pm callbacks, it would not clear "is_prepared"
-> > once set.  Then, when resume [ep_81], pm module would
-> > yield a warn seeing [ep_81]'s parent [uvcvideo 3-1.1:1.1]
-> > having "is_prepared".
-> >
-> > Do not set "is_prepared" for virtual devices having
-> > no pm callbacks can clear those kernel warnings.
-> >
-> > Signed-off-by: David Wang <00107082@163.com>
-> > ---
-> >  drivers/base/power/main.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> What commit id does this fix?
+Hi Dmitry,
 
-It doesn't fix anything, it is introducing a potential issue.
+On Tue, Sep 3, 2024 at 12:46=E2=80=AFPM Dmitry Dolenko <d.dolenko@metrotek.=
+ru> wrote:
+> Is there any place where the status of patch "OF: DT-Overlay configfs
+> interface" could be found?
+
+I try to keep it up-to-date in [1].  In fact I have just pushed a
+rebase to v6.11-rc5, to fix a merge conflict with a recent upstream
+change.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.g=
+it/commit/?h=3Dtopic/renesas-overlays
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
