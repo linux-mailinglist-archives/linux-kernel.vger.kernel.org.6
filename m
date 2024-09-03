@@ -1,74 +1,184 @@
-Return-Path: <linux-kernel+bounces-313368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B3296A49B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C938E96A48E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52396B265E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:36:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 270D3B27CBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7785218C033;
-	Tue,  3 Sep 2024 16:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD03B192B82;
+	Tue,  3 Sep 2024 16:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX4tknn3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1Vx1tiL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF0918BC21;
-	Tue,  3 Sep 2024 16:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5895818E03F;
+	Tue,  3 Sep 2024 16:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725381229; cv=none; b=e6ycqXXxIf9RoiraUkYxc92fGjuE5F8z3gAwZUnMdLboTClb0JN5eL0pgvIxDsOBDk8zoaeT+5QJlYx0NJAuK5aJ1vutlCdIfZRXSmN2eB8FOoihl6AxK+In92XfAn8DixjLBRAPfZFu8Zuj1CBrk1z8vUWpOLfl41mEGC66h9c=
+	t=1725381200; cv=none; b=JF+3OVTbeDyMrlZmuWoYtwhCsQB8f593xpnO/dqss7zZXE6Usr7RjquVXSYT7kq3QvA8rsoLwlABHXyJR4KAAMYBQFgj6fQxj5eUHu1LFaxwOu7GTHpQSFFpdKQLITo1PWuf2TKT8JMdCafzLElrrD11XDE3UGL0KbvrMqwR/cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725381229; c=relaxed/simple;
-	bh=6Yg57+zQA+RKWmFz3J/bXMbmOzlooEBeuFJW8RKYpCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8zKTWkOCjbM3vdeWh3et/dD+Jyt+6CLuwcE71wFsWJ5OoJ+6tYmOgIWTonafiUIRTMDWZEGFkh4+abx0Om0lAaUr6qPy8gl3c+/tk+vcXnAKXN/iotdfbn2yY8RQxGo+Zk+UJe1isY34BPZCN1ZnIUjWApipJ7IOC+nT0Gnk8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX4tknn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809BDC4CEC4;
-	Tue,  3 Sep 2024 16:33:47 +0000 (UTC)
+	s=arc-20240116; t=1725381200; c=relaxed/simple;
+	bh=MhS/oq03SSj2QvqQptvoFaLxq+uZXfCftTTcDAD6ccg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EioiYwFh4I1Gu5DnDpH7mcFeuLlzNRdfIn8thFWSw45FCT3vGouBOkGBwKkAmSyUoiPQM0gL+WZbRPYh9UpjQPa27jug2nirAeg5mDopjvEH9x2ErmNSCGMxricwuDjHwWk07rq1NhN7gkzbzw3IiPZ5NgFEiaLl6RglQXBKSXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1Vx1tiL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE847C4CEC9;
+	Tue,  3 Sep 2024 16:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725381229;
-	bh=6Yg57+zQA+RKWmFz3J/bXMbmOzlooEBeuFJW8RKYpCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UX4tknn3dB/a1xd6T5HNUHWdMy2VHWAQDmQeJsHVDNf5LnlZXpEDciUwHj5UQPVlP
-	 2I1w92GLzS4nbVeCFC4iLlLWcSs7WCBZ+1jkKXhHlfo0/WgPXv+MTUS72S0w3czXFy
-	 21MNpyGzD9VFdzw00Ex8dQGBD1mrnc1FywAC0dTOboxPHSGmxbOpzAtd7OipDHR6aF
-	 8CxUKe5MAyCLeioc2neMf4ZE1B913TXSeH0rDNXK4tJgFVgZcnvgW5UnDzUVjtRCjW
-	 hI9KURcXhSpNSxX8XwYRiplKY99S7x73tMLBpZM73p4XK71brrMCYYj+VLLflczQH+
-	 IMbc4ryW96syg==
-Date: Tue, 3 Sep 2024 17:33:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/net: do_setcpu function not need to have a
- return value
-Message-ID: <20240903163315.GE4792@kernel.org>
-References: <20240903095111.7204-1-liujing@cmss.chinamobile.com>
+	s=k20201202; t=1725381200;
+	bh=MhS/oq03SSj2QvqQptvoFaLxq+uZXfCftTTcDAD6ccg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Z1Vx1tiLbI0CrfAXXVK5SpvMHQcdHDZ3GoiBjMxB5WDjVzV/MOr8zjDgVvJ9C/IIJ
+	 eW0fYTV80rauFWOwgslRWUOohhntsX3SCJwVUwiYHCXMz3ryEyAHuh+1bBc2mK6OUO
+	 yglq7MaK7AzWRbRFwY4gJSYz1OTBvqMtJtxlhhDHTFWOCexDFJw/RSSQ8YnICWKVas
+	 trdhdOYhlEkVAwxtJKGvD2Xas/pwFrgJ2elsis+3upsbvCUcdJW2OxJ8mT2Xu3AGPr
+	 NNsWXfZ4vBRl93VTaf9OW+F0cV+MYVholBUGA03p3MbEvGrc87PAQnY9nwOF7AsPQu
+	 J2FtqbQoyhx5g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4FFD0CE2610; Tue,  3 Sep 2024 09:33:19 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	bpf@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 08/11] rcutorture: Expand RCUTORTURE_RDR_MASK_[12] to eight bits
+Date: Tue,  3 Sep 2024 09:33:15 -0700
+Message-Id: <20240903163318.480678-8-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
+References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903095111.7204-1-liujing@cmss.chinamobile.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 05:51:11PM +0800, Liu Jing wrote:
-> in the do_setcpu, this function does not need to have a return value,
-> which is meaningless
-> 
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+This commit prepares for testing of multiple SRCU reader flavors by
+expanding RCUTORTURE_RDR_MASK_1 and RCUTORTURE_RDR_MASK_2 from a single
+bit to eight bits, allowing them to accommodate the return values from
+multiple calls to srcu_read_lock*().  This will in turn permit better
+testing coverage for these SRCU reader flavors, including testing of
+the diagnostics for inproper use of mixed reader flavors.
 
-Thanks,
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: <bpf@vger.kernel.org>
+---
+ kernel/rcu/rcutorture.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-I also see that the caller does not check the return value.
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index b4cb7623a8bfc..d883f01407178 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -57,9 +57,9 @@ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com> and Josh Triplett <josh@
+ 
+ /* Bits for ->extendables field, extendables param, and related definitions. */
+ #define RCUTORTURE_RDR_SHIFT_1	 8	/* Put SRCU index in upper bits. */
+-#define RCUTORTURE_RDR_MASK_1	 (1 << RCUTORTURE_RDR_SHIFT_1)
+-#define RCUTORTURE_RDR_SHIFT_2	 9	/* Put SRCU index in upper bits. */
+-#define RCUTORTURE_RDR_MASK_2	 (1 << RCUTORTURE_RDR_SHIFT_2)
++#define RCUTORTURE_RDR_MASK_1	 (0xff << RCUTORTURE_RDR_SHIFT_1)
++#define RCUTORTURE_RDR_SHIFT_2	 16	/* Put SRCU index in upper bits. */
++#define RCUTORTURE_RDR_MASK_2	 (0xff << RCUTORTURE_RDR_SHIFT_2)
+ #define RCUTORTURE_RDR_BH	 0x01	/* Extend readers by disabling bh. */
+ #define RCUTORTURE_RDR_IRQ	 0x02	/*  ... disabling interrupts. */
+ #define RCUTORTURE_RDR_PREEMPT	 0x04	/*  ... disabling preemption. */
+@@ -71,6 +71,9 @@ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com> and Josh Triplett <josh@
+ #define RCUTORTURE_MAX_EXTEND	 \
+ 	(RCUTORTURE_RDR_BH | RCUTORTURE_RDR_IRQ | RCUTORTURE_RDR_PREEMPT | \
+ 	 RCUTORTURE_RDR_RBH | RCUTORTURE_RDR_SCHED)
++#define RCUTORTURE_RDR_ALLBITS	\
++	(RCUTORTURE_MAX_EXTEND | RCUTORTURE_RDR_RCU_1 | RCUTORTURE_RDR_RCU_2 | \
++	 RCUTORTURE_RDR_MASK_1 | RCUTORTURE_RDR_MASK_2)
+ #define RCUTORTURE_RDR_MAX_LOOPS 0x7	/* Maximum reader extensions. */
+ 					/* Must be power of two minus one. */
+ #define RCUTORTURE_RDR_MAX_SEGS (RCUTORTURE_RDR_MAX_LOOPS + 3)
+@@ -1830,7 +1833,7 @@ static void rcutorture_one_extend(int *readstate, int newstate,
+ 	int statesold = *readstate & ~newstate;
+ 
+ 	WARN_ON_ONCE(idxold2 < 0);
+-	WARN_ON_ONCE((idxold2 >> RCUTORTURE_RDR_SHIFT_2) > 1);
++	WARN_ON_ONCE(idxold2 & ~RCUTORTURE_RDR_ALLBITS);
+ 	rtrsp->rt_readstate = newstate;
+ 
+ 	/* First, put new protection in place to avoid critical-section gap. */
+@@ -1845,9 +1848,9 @@ static void rcutorture_one_extend(int *readstate, int newstate,
+ 	if (statesnew & RCUTORTURE_RDR_SCHED)
+ 		rcu_read_lock_sched();
+ 	if (statesnew & RCUTORTURE_RDR_RCU_1)
+-		idxnew1 = (cur_ops->readlock() & 0x1) << RCUTORTURE_RDR_SHIFT_1;
++		idxnew1 = (cur_ops->readlock() << RCUTORTURE_RDR_SHIFT_1) & RCUTORTURE_RDR_MASK_1;
+ 	if (statesnew & RCUTORTURE_RDR_RCU_2)
+-		idxnew2 = (cur_ops->readlock() & 0x1) << RCUTORTURE_RDR_SHIFT_2;
++		idxnew2 = (cur_ops->readlock() << RCUTORTURE_RDR_SHIFT_2) & RCUTORTURE_RDR_MASK_2;
+ 
+ 	/*
+ 	 * Next, remove old protection, in decreasing order of strength
+@@ -1867,7 +1870,7 @@ static void rcutorture_one_extend(int *readstate, int newstate,
+ 	if (statesold & RCUTORTURE_RDR_RBH)
+ 		rcu_read_unlock_bh();
+ 	if (statesold & RCUTORTURE_RDR_RCU_2) {
+-		cur_ops->readunlock((idxold2 >> RCUTORTURE_RDR_SHIFT_2) & 0x1);
++		cur_ops->readunlock((idxold2 & RCUTORTURE_RDR_MASK_2) >> RCUTORTURE_RDR_SHIFT_2);
+ 		WARN_ON_ONCE(idxnew2 != -1);
+ 		idxold2 = 0;
+ 	}
+@@ -1877,7 +1880,7 @@ static void rcutorture_one_extend(int *readstate, int newstate,
+ 		lockit = !cur_ops->no_pi_lock && !statesnew && !(torture_random(trsp) & 0xffff);
+ 		if (lockit)
+ 			raw_spin_lock_irqsave(&current->pi_lock, flags);
+-		cur_ops->readunlock((idxold1 >> RCUTORTURE_RDR_SHIFT_1) & 0x1);
++		cur_ops->readunlock((idxold1 & RCUTORTURE_RDR_MASK_1) >> RCUTORTURE_RDR_SHIFT_1);
+ 		WARN_ON_ONCE(idxnew1 != -1);
+ 		idxold1 = 0;
+ 		if (lockit)
+@@ -1892,16 +1895,13 @@ static void rcutorture_one_extend(int *readstate, int newstate,
+ 	if (idxnew1 == -1)
+ 		idxnew1 = idxold1 & RCUTORTURE_RDR_MASK_1;
+ 	WARN_ON_ONCE(idxnew1 < 0);
+-	if (WARN_ON_ONCE((idxnew1 >> RCUTORTURE_RDR_SHIFT_1) > 1))
+-		pr_info("Unexpected idxnew1 value of %#x\n", idxnew1);
+ 	if (idxnew2 == -1)
+ 		idxnew2 = idxold2 & RCUTORTURE_RDR_MASK_2;
+ 	WARN_ON_ONCE(idxnew2 < 0);
+-	WARN_ON_ONCE((idxnew2 >> RCUTORTURE_RDR_SHIFT_2) > 1);
+ 	*readstate = idxnew1 | idxnew2 | newstate;
+ 	WARN_ON_ONCE(*readstate < 0);
+-	if (WARN_ON_ONCE((*readstate >> RCUTORTURE_RDR_SHIFT_2) > 1))
+-		pr_info("Unexpected idxnew2 value of %#x\n", idxnew2);
++	if (WARN_ON_ONCE(*readstate & ~RCUTORTURE_RDR_ALLBITS))
++		pr_info("Unexpected readstate value of %#x\n", *readstate);
+ }
+ 
+ /* Return the biggest extendables mask given current RCU and boot parameters. */
+@@ -1926,7 +1926,7 @@ rcutorture_extend_mask(int oldmask, struct torture_random_state *trsp)
+ 	unsigned long preempts_irq = preempts | RCUTORTURE_RDR_IRQ;
+ 	unsigned long bhs = RCUTORTURE_RDR_BH | RCUTORTURE_RDR_RBH;
+ 
+-	WARN_ON_ONCE(mask >> RCUTORTURE_RDR_SHIFT_1);
++	WARN_ON_ONCE(mask >> RCUTORTURE_RDR_SHIFT_1);  // Can't have reader idx bits.
+ 	/* Mostly only one bit (need preemption!), sometimes lots of bits. */
+ 	if (!(randmask1 & 0x7))
+ 		mask = mask & randmask2;
+-- 
+2.40.1
 
-Reviewed-by: Simon Horman <horms@kernel.org>
 
