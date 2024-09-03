@@ -1,235 +1,219 @@
-Return-Path: <linux-kernel+bounces-313961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AB096ACDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EC596ACDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56353B2300A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E634A1F25A83
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80AB1D9D94;
-	Tue,  3 Sep 2024 23:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFD51D7980;
+	Tue,  3 Sep 2024 23:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EejzamMD"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2zL97vN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B5E126C07;
-	Tue,  3 Sep 2024 23:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4E52AEFD;
+	Tue,  3 Sep 2024 23:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725405860; cv=none; b=V8VVwqO87YPeYnSsI9E42b/B4E+I0jxXZFZOF8b4r/2S2of6Voobw1kBEDm12eJWOPmmpAPFgy4sq5RgByaDdPRYH4zjpxuTRofK/y+ANAdbIuceyckcjDptNHRJmR+VmhwiDhmg8xMu/QSAZQLi0ImoYNs/QSWpOKHNaQSfdig=
+	t=1725405921; cv=none; b=Eof5K9n7vaT4MzPZbjE2rkyDIZpP5PF2zBOwHDwLoblPqsj8BIoKtqFxhT778o5oQGiPazl1noqfZ3Ru1MH8asaqIJsjuqWB8o9/yVnwqD74r0lXwVZeGktmGT7lIHhzq3ewdRKsqx4osShAoyay3qBsta9sdRR61ZGgsEr1JAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725405860; c=relaxed/simple;
-	bh=uxUP/pNkMUv55TyRlpx3+NMZ38gYu44VEuKodr0xvtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PNq5k3d3mbhRs2T8HXXFHsHl0FL1PhffqPAi5RmuEeFYw1gTxonn9Et82QnFWsf8+VdXw3tO5I/8clVsQUFV4d+3LEpwOsB7ds1QFoXVfTGW2PYcBWse7Llxv584Qi7AxOQnZELnmhheRekLaJWo5xJksdNTskcDz6FJgGUGwak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EejzamMD; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LBTND022739;
-	Tue, 3 Sep 2024 23:23:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=V
-	K2/rT5IIEmxprXEAU2yy+HHJnHBBZfWU/+zXLoCJkA=; b=EejzamMDBK7bPK5bb
-	0qt0mQjn5qkF+bv+ii/+f+UA/hfcsO4FDUSATiJLfN5sAhb7njBr6XKEg26G43N/
-	Un0lt+S0CoRg1U2RIXQEp2EBtenc6w8MFGkXGalrrGGgX+F6rBhwPpmnzH1Z5DYr
-	V8mNpL9sRagOGCX1auCuiIUgINwjowoouwBVLdEAAKjCXCelimkJHpMK/Z5SQDTQ
-	TyJViwri2XDZLuPG2Fdm15FlIXv2tB/d/mu3VV4Gd2UIeLec5OK9m409R1dId+Nt
-	iN6SRiC/qf/BhY5+gFW4u/jdhJJw6ekLNzFbxSu0DGBJSoD86IlNKtM/wexRBsJl
-	r0XFQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dk84jug1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 23:23:50 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483KsE5R001736;
-	Tue, 3 Sep 2024 23:23:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41bsmfmnn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 23:23:49 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 483NMkfQ040456;
-	Tue, 3 Sep 2024 23:23:48 GMT
-Received: from localhost.us.oracle.com (dhcp-10-159-133-114.vpn.oracle.com [10.159.133.114])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 41bsmfmmwr-11;
-	Tue, 03 Sep 2024 23:23:48 +0000
-From: Anthony Yznaga <anthony.yznaga@oracle.com>
-To: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com,
-        viro@zeniv.linux.org.uk, david@redhat.com, khalid@kernel.org
-Cc: anthony.yznaga@oracle.com, andreyknvl@gmail.com, dave.hansen@intel.com,
-        luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
-        ebiederm@xmission.com, catalin.marinas@arm.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhiramat@kernel.org, rostedt@goodmis.org,
-        vasily.averin@linux.dev, xhao@linux.alibaba.com, pcc@google.com,
-        neilb@suse.de, maz@kernel.org
-Subject: [RFC PATCH v3 10/10] mshare: add MSHAREFS_CREATE_MAPPING
-Date: Tue,  3 Sep 2024 16:22:41 -0700
-Message-ID: <20240903232241.43995-11-anthony.yznaga@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240903232241.43995-1-anthony.yznaga@oracle.com>
-References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+	s=arc-20240116; t=1725405921; c=relaxed/simple;
+	bh=sC8/ns/8sGJ+aohpSH7TbnP6UXd84O6n98pLOsq51zM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m/cBKNOCcnjYYSgB4MCj7dF9Ue03aBT+4KASq5peE1Wb7oJVkN0O0VtuJz5Q7BnMFDzvOshGdc3NjsrJjMoFMf8ZmH1b1UvnZ7SZTgPos8jar+ilocmVOxnsB9fVHo0szUtV14RfhqzXopahmJMFEJOFUDTrYSFJhjKvjRov/Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2zL97vN; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725405920; x=1756941920;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=sC8/ns/8sGJ+aohpSH7TbnP6UXd84O6n98pLOsq51zM=;
+  b=d2zL97vNgoH18OA70ezx1bsPDdjz5D41EN9KLPM3bmF9dOLlyMnCycz4
+   31sipmbjOWlntl3dDgewcUO8SwfEjJRwgK67DJgNjOWh4ZYgjaMUlH7W7
+   TJcJh0PA1hNfwG6eFDukB+XfKM3vNp3jGlBDm1F1eqRUz9WcuVsosbn44
+   +r3c3yVkdut99C29VxlgwJWhtQFNwn6l1/TgQaw5IEZ7Z7SWwas4NQCL1
+   z8qNcS3+3jiuves53idq5+UuikgEJI/fu5R6HaEqMW7yM3UykNxZInkzz
+   60aRT3ZHVpTAG/E2JV2MeUAZ8npaB587Vg35ueIPHTmQb7utQGUCJYPaY
+   A==;
+X-CSE-ConnectionGUID: 9kLIKtzJTz6oUXkMk2p8TA==
+X-CSE-MsgGUID: OLCamxkHRQ+jUN/2Y2q+Ng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24175710"
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="24175710"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 16:25:19 -0700
+X-CSE-ConnectionGUID: aSFd0emMTQOcDeAj1kf8nw==
+X-CSE-MsgGUID: 00E4BWA/RSy9RvQTWM2+Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="88315235"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 16:25:18 -0700
+Date: Tue, 3 Sep 2024 16:25:17 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/4] Create source symlink in perf object dir
+Message-ID: <Ztea3dUZ-XSG2gfB@tassilo>
+References: <20240813213651.1057362-1-ak@linux.intel.com>
+ <Zstiry-K_v51oDC4@tassilo>
+ <ZsyR4eQr8X-q2X28@x1>
+ <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
+ <Zs0RE60KpHyZlj8g@x1>
+ <CAP-5=fUZwoDrGaEh7Us1aDM+W3aj1zb3D5VEH39qDfCjQGvePQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_11,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- mlxlogscore=792 suspectscore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2409030187
-X-Proofpoint-GUID: o4IuCMD6qVU1RpEdvToueyKdV1ZsTS0a
-X-Proofpoint-ORIG-GUID: o4IuCMD6qVU1RpEdvToueyKdV1ZsTS0a
+In-Reply-To: <CAP-5=fUZwoDrGaEh7Us1aDM+W3aj1zb3D5VEH39qDfCjQGvePQ@mail.gmail.com>
 
-Add an ioctl for mapping objects within an mshare region. The
-arguments are the same as mmap() although only shared anonymous
-memory with some restrictions is supported initially.
+On Mon, Aug 26, 2024 at 04:53:01PM -0700, Ian Rogers wrote:
+> On Mon, Aug 26, 2024, 4:34 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> >
+> > On Mon, Aug 26, 2024 at 08:27:43AM -0700, Ian Rogers wrote:
+> > > On Mon, Aug 26, 2024 at 7:32 AM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > >
+> > > > On Sun, Aug 25, 2024 at 09:58:23AM -0700, Andi Kleen wrote:
+> > > > > Arnaldo,
+> > > >
+> > > > > can you please apply the patchkit? This fixes a regression.
+> > > >
+> > > > First one was applied, was letting the others to be out there for a
+> > > > while, I thought there were concerns about it, but I see Namhyung's Ack,
+> > > > so applied.
+> > >
+> > > Can we not apply this? See comments on the thread. Basically we're
+> >
+> > And what about the reported segfault?
+> 
+> It is better addressed by:
+> https://lore.kernel.org/lkml/20240720074552.1915993-1-irogers@google.com/
 
-Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
- include/uapi/linux/msharefs.h |  9 +++++
- mm/mshare.c                   | 71 +++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+I finally got around to test this other patch.
 
-diff --git a/include/uapi/linux/msharefs.h b/include/uapi/linux/msharefs.h
-index c7b509c7e093..fea0afdf000d 100644
---- a/include/uapi/linux/msharefs.h
-+++ b/include/uapi/linux/msharefs.h
-@@ -20,10 +20,19 @@
-  */
- #define MSHAREFS_GET_SIZE	_IOR('x', 0,  struct mshare_info)
- #define MSHAREFS_SET_SIZE	_IOW('x', 1,  struct mshare_info)
-+#define MSHAREFS_CREATE_MAPPING	_IOW('x', 2,  struct mshare_create)
- 
- struct mshare_info {
- 	__u64 start;
- 	__u64 size;
- };
- 
-+struct mshare_create {
-+	__u64 addr;
-+	__u64 size;
-+	__u64 offset;
-+	__u32 prot;
-+	__u32 flags;
-+	__u32 fd;
-+};
- #endif
-diff --git a/mm/mshare.c b/mm/mshare.c
-index 8f47c8d6e6a4..7b89bf7f5ffc 100644
---- a/mm/mshare.c
-+++ b/mm/mshare.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/mman.h>
- #include <linux/spinlock_types.h>
- #include <uapi/linux/magic.h>
- #include <uapi/linux/msharefs.h>
-@@ -154,12 +155,65 @@ msharefs_set_size(struct mm_struct *mm, struct mshare_data *m_data,
- 	return 0;
- }
- 
-+static long
-+msharefs_create_mapping(struct mm_struct *mm, struct mshare_data *m_data,
-+		        struct mshare_create *mcreate)
-+{
-+	unsigned long mshare_start, mshare_end;
-+	unsigned long mapped_addr;
-+	unsigned long populate = 0;
-+	unsigned long addr = mcreate->addr;
-+	unsigned long size = mcreate->size;
-+	unsigned int fd = mcreate->fd;
-+	int prot = mcreate->prot;
-+	int flags = mcreate->flags;
-+	vm_flags_t vm_flags;
-+	int err = -EINVAL;
-+
-+	mshare_start = m_data->minfo.start;
-+	mshare_end = mshare_start + m_data->minfo.size;
-+
-+	if ((addr < mshare_start) || (addr >= mshare_end) ||
-+	    (addr + size > mshare_end))
-+		goto out;
-+
-+	/*
-+	 * XXX Keep things simple initially and only allow the mapping of
-+	 * anonymous shared memory at fixed addresses without unmapping.
-+	 */
-+	if ((flags & (MAP_SHARED | MAP_FIXED)) != (MAP_SHARED | MAP_FIXED))
-+		goto out;
-+
-+	if (fd != -1)
-+		goto out;
-+
-+	flags |= MAP_FIXED_NOREPLACE;
-+	vm_flags = VM_NOHUGEPAGE;
-+
-+	if (mmap_write_lock_killable(mm)) {
-+		err = -EINTR;
-+		goto out;
-+	}
-+
-+	err = 0;
-+	mapped_addr = __do_mmap(NULL, addr, size, prot, flags, vm_flags,
-+				0, &populate, NULL, mm);
-+
-+	if (IS_ERR_VALUE(mapped_addr))
-+		err = (long)mapped_addr;
-+
-+	mmap_write_unlock(mm);
-+out:
-+	return err;
-+}
-+
- static long
- msharefs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct mshare_data *m_data = filp->private_data;
- 	struct mm_struct *mm = m_data->mm;
- 	struct mshare_info minfo;
-+	struct mshare_create mcreate;
- 
- 	switch (cmd) {
- 	case MSHAREFS_GET_SIZE:
-@@ -188,6 +242,23 @@ msharefs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 
- 		return msharefs_set_size(mm, m_data, &minfo);
- 
-+	case MSHAREFS_CREATE_MAPPING:
-+		if (copy_from_user(&mcreate, (struct mshare_create __user *)arg,
-+			sizeof(mcreate)))
-+			return -EFAULT;
-+
-+		/*
-+		 * validate mshare region
-+		 */
-+		spin_lock(&m_data->m_lock);
-+		if (m_data->minfo.start == 0) {
-+			spin_unlock(&m_data->m_lock);
-+			return -EINVAL;
-+		}
-+		spin_unlock(&m_data->m_lock);
-+
-+		return msharefs_create_mapping(mm, m_data, &mcreate);
-+
- 	default:
- 		return -ENOTTY;
- 	}
--- 
-2.43.5
+The reason for the feature is to get the metric for every individual
+sampling interval as the most fine grained unit, as it was explained in the
+original commit message:
+
+
+    perf script: Allow computing 'perf stat' style metrics
+
+    Add support for computing 'perf stat' style metrics in 'perf script'.
+
+    When using leader sampling we can get metrics ____for each sampling period___
+    by computing formulas over the values of the different group members.
+
+    This allows things like fine grained IPC tracking through sampling, much
+    more fine grained than with 'perf stat'.
+
+    The metric is still averaged over the sampling period, it is not just
+    for the sampling point.
+
+...
+
+
+Note the "for each sampling period" which is the key aspect.
+
+With my version I get:
+
+perf record -e '{cycles,instructions}:S' -a tcall
+perf script -F +metric
+
+            perf 2061404 [000] 6395040.804752:       2687       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [000] 6395040.804752:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [000] 6395040.804752:  metric:    0.15  insn per cycle
+            perf 2061404 [001] 6395040.804879:       2411       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [001] 6395040.804879:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [001] 6395040.804879:  metric:    0.16  insn per cycle
+            perf 2061404 [002] 6395040.805000:       2245       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [002] 6395040.805000:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [002] 6395040.805000:  metric:    0.18  insn per cycle
+            perf 2061404 [003] 6395040.805122:       2442       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [003] 6395040.805122:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [003] 6395040.805122:  metric:    0.16  insn per cycle
+            perf 2061404 [004] 6395040.805241:       2208       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [004] 6395040.805241:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [004] 6395040.805241:  metric:    0.18  insn per cycle
+            perf 2061404 [005] 6395040.805359:       2199       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [005] 6395040.805359:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [005] 6395040.805359:  metric:    0.18  insn per cycle
+            perf 2061404 [006] 6395040.805479:       2269       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [006] 6395040.805479:        382 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [006] 6395040.805479:  metric:    0.17  insn per cycle
+            perf 2061404 [007] 6395040.805596:       2215       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [007] 6395040.805596:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [007] 6395040.805596:  metric:    0.18  insn per cycle
+            perf 2061404 [008] 6395040.805715:       2258       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [008] 6395040.805715:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [008] 6395040.805715:  metric:    0.18  insn per cycle
+            perf 2061404 [009] 6395040.805835:       2293       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [009] 6395040.805835:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+
+
+
+You see there is one metric for every sampling period
+
+            
+But Ian's version generates this:
+
+            perf 2061404 [000] 6395040.804752:       2687       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [000] 6395040.804752:  metric:    0.15  insn per cycle
+            perf 2061404 [000] 6395040.804752:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [000] 6395040.804752:  metric:    0.07  insn per cycle
+
+This is the only metric for "perf"
+
+            perf 2061404 [001] 6395040.804879:       2411       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [001] 6395040.804879:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [002] 6395040.805000:       2245       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [002] 6395040.805000:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [003] 6395040.805122:       2442       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [003] 6395040.805122:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [004] 6395040.805241:       2208       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [004] 6395040.805241:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [005] 6395040.805359:       2199       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [005] 6395040.805359:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [006] 6395040.805479:       2269       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [006] 6395040.805479:        382 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [007] 6395040.805596:       2215       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [007] 6395040.805596:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [008] 6395040.805715:       2258       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [008] 6395040.805715:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [009] 6395040.805835:       2293       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [009] 6395040.805835:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [010] 6395040.806013:       2159       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [010] 6395040.806013:        396 instructions:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+            perf 2061404 [011] 6395040.806121:       3058       cycles:  ffffffff990a579a native_write_msr+0xa ([kernel.kallsyms])
+
+
+.... <lots more samples but no metrics for "perf" anymore"> 
+
+There are some metrics for other processes, but I don't even know what logic it follows here
+(as in what intervals actually get aggregated)
+
+So yes maybe his implementation may be cleaner, but it simply doesn't solve the problem,
+it implements something else.
+
+
+-Andi
+
+
 
 
