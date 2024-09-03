@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-313217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A282196A1FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:19:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622C896A208
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A7A1C240DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:19:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F226BB27A17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7ED18BBA6;
-	Tue,  3 Sep 2024 15:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09531917E3;
+	Tue,  3 Sep 2024 15:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+N5rgEL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pvyz9wGF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7306D18A94E;
-	Tue,  3 Sep 2024 15:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F016618F2D4;
+	Tue,  3 Sep 2024 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376620; cv=none; b=qpZvB+GeU7TEY7IKf5fylIVSII1lXYsA5cle4h0lptsSVUTMZmBOyrzopbMRaQubYOD+5hNYKVEJbuhKgVOYqO4IrJ5CuMjUCiEEAY0Rn/OPDFVRvMdtcelSb0eD0xJQeS5CJzM9gHcKb2KAEyh/KNC94J0np9eTblXZTV+B9y4=
+	t=1725376629; cv=none; b=V1FWtOR8PhzYPFuq3xApLIzo7mk6rx6Jm4ZSvjI3SfSRSEOtcH1+NkEowoU1774mWewBm13aVAZXZP9U0QvB9SVzBdOc9D7r70nvxEABJt/CTjsKC9X8LnJ87/HP1NQreVCx6HKhQzbJi+zGjsp/5S1fqnJQHy3+J4yImd04wlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376620; c=relaxed/simple;
-	bh=a2aJG7kNfc3M9GmIcbjyTQ4daTisOt3vcWyid0C0BYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=agsNn6BSySRmr7TOdafM3OkPZlT61wc3w36hoSJg0Sa5Zvei6lKFKyoTnxgV1lJ5rrImO3u+ZJb6HH1WBU0RQwDADqaNBVcVEwooczqMBAsgONSBgFBe/PDYSw7082mI7HgcYpQypIBR0ytp5HG/JE2YcgZkcfGLYPyUXtDZzgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+N5rgEL; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725376619; x=1756912619;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a2aJG7kNfc3M9GmIcbjyTQ4daTisOt3vcWyid0C0BYI=;
-  b=j+N5rgEL6grLWLEzCuZrxvPYJ1TklmffWCOJ6p9LFknOAlB33+Im7Z0H
-   rUSGOpo7Y6VLOdHE0pHIsz11uxcu6VOoojVRmGWDesnscqdxqabb5gba2
-   ZZzR+er4uXWomWsjyNdFSGiy8YImGA7A+1N3qJ7iQ2phn3ICfKtS9FYc+
-   uEYFYV32g/gPU4/ePCrpcWMOpPQQrF9YryYrVc8JVJJ0La0aJDrLebe9K
-   yv8HLH+mjunrWKRWqmHb1s1km6c7ZKvYyWJR04FLscWd2n8CHociYuqVl
-   ihevNs8BK+YqUl3bC3CC8IQ7Wz7yZQ2sGwRBoHvj9bGUWuqtr2CZ0n9yl
-   g==;
-X-CSE-ConnectionGUID: XVnNrEJHRhGUEq6Nvsw1sQ==
-X-CSE-MsgGUID: rzW5ieS+T6+viQDpqE8f9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34592070"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34592070"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:16:58 -0700
-X-CSE-ConnectionGUID: U2cA0KwhRxCQYYrzjUpXwQ==
-X-CSE-MsgGUID: SxWbA5kQTuaOBa46KsPm/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="64617527"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:16:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slVGy-00000004kYV-35dJ;
-	Tue, 03 Sep 2024 18:16:48 +0300
-Date: Tue, 3 Sep 2024 18:16:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Liam Beguin <liambeguin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <ZtcoYNAir5fJdeai@smile.fi.intel.com>
-References: <20240724155517.12470-1-ramona.nechita@analog.com>
- <20240724155517.12470-5-ramona.nechita@analog.com>
- <20240727164113.02a95b79@jic23-huawei>
- <SN6PR03MB432025ED9C0CB4CDD1CE243FF3932@SN6PR03MB4320.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1725376629; c=relaxed/simple;
+	bh=yzP8ylj32txOclG8CPUkimzLIphAVlXEwtZnuZ0KRLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bm9IgEqpIBBdm22KWpRlcFixQ535yGyCJme1HrIS6Mvz5bwPa6twTq1TQKelLNwTmlKrrDggbBQPFfreQGXxdVnpeGS+c59ohgFEJ66rEfOEUUBZlgMqwfz7FlWHjC84H8lUHu5eiSj4MA23/texDQuNogT7f12TAIn5Zc+aNws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=pvyz9wGF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE9EC4CEC6;
+	Tue,  3 Sep 2024 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pvyz9wGF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725376624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yzP8ylj32txOclG8CPUkimzLIphAVlXEwtZnuZ0KRLc=;
+	b=pvyz9wGFU+S+i5B07Sgu0AZyeZ4ZWXMGxNfoNUXKjoRcWBJGinXU5i5bEb7GRjbnG2GSVt
+	1X60hGbxXIGWGtkXFlbUGICiFDUFpD8mlfhmtHigoG4Wd6Vfbk36cCkAFNvt/btHUA9yIt
+	8i3FXAyPV1WVwEKub2azFEQhJt5HWkA=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0e2f6d1b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 3 Sep 2024 15:17:04 +0000 (UTC)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5df9542f3d8so4581559eaf.0;
+        Tue, 03 Sep 2024 08:17:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWmnGg4WJycLdoUWyXK9X2YE+jY5vl4aLosJcGo6YWyeVYBHmOuJSJWGrieWFh+h2M41fFgHVx8zXqL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsINhF+n0q7w3k1OMHDoIppGw1jMuI80xmHnxt5yBs/pnxOa/S
+	S8wiPteProxqjr4IPZ80hiFyIdPZp36iQ1J6I73EwAhzVvKAxp37On01zuZ9AOmMANnp/UpZGdD
+	cGXlI/s7UQ8dird9T4PctdAHneIA=
+X-Google-Smtp-Source: AGHT+IEd3qZMU72H68mDlASWWXA/KuAd+aTzSL3vfI4ouWwWx0VqtJNxLrT9XS+PGGV87nsfiomYJRY8ZT/w+XHbahE=
+X-Received: by 2002:a05:6871:29e:b0:25e:24b:e65b with SMTP id
+ 586e51a60fabf-2781a9ae348mr3001621fac.42.1725376622017; Tue, 03 Sep 2024
+ 08:17:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR03MB432025ED9C0CB4CDD1CE243FF3932@SN6PR03MB4320.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com> <20240903151437.1002990-2-vincenzo.frascino@arm.com>
+In-Reply-To: <20240903151437.1002990-2-vincenzo.frascino@arm.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Tue, 3 Sep 2024 17:16:49 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qvj9r71G3QOvQm8dqAsFROWGT0BDU=89MWyEUdAQbBZQ@mail.gmail.com>
+Message-ID: <CAHmME9qvj9r71G3QOvQm8dqAsFROWGT0BDU=89MWyEUdAQbBZQ@mail.gmail.com>
+Subject: Re: [PATCH 1/9] x86: vdso: Introduce asm/vdso/mman.h
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 03, 2024 at 02:26:41PM +0000, Nechita, Ramona wrote:
-> From: Jonathan Cameron <jic23@kernel.org> 
-> Sent: Saturday, July 27, 2024 6:41 PM
-> To: Nechita, Ramona <Ramona.Nechita@analog.com>
-
-...
-
-> >> +	for_each_set_bit(bit, indio_dev->active_scan_mask, AD7779_NUM_CHANNELS - 1)
-> >> +		tmp[k++] = st->spidata_rx[bit];
-> >
-> >Update this to use Nuno's new macros for iterating over the scan mask.
-> 
-> Does this refer to iio_for_each_active_channel ? I checked and noticed that
-> the patch containing this macro is not upstream yet, should I wait for it to
-> be merged before sending out a new patch?
-
-It's in the maintainer's tree, which your patch should be based on.
-So I don't see any issues here. Do you?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Christophe explained the issue with this in
+https://lore.kernel.org/all/85efc7c5-40c8-4c89-b65f-dd13536fb8c7@cs-soprasteria.com/
 
