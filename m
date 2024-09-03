@@ -1,255 +1,126 @@
-Return-Path: <linux-kernel+bounces-312218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5F59693B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC489693BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D9B2840DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0221C22EEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671071D416F;
-	Tue,  3 Sep 2024 06:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9291D54CA;
+	Tue,  3 Sep 2024 06:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF4mSJLz"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="nZtG8mW5"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71E91CF28D;
-	Tue,  3 Sep 2024 06:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEF1D1748;
+	Tue,  3 Sep 2024 06:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345216; cv=none; b=IGm20OTWznVrhw54sDzdjRlGNejiFgmZkxHOAna3NA3Nr+9//GHhY6KbLVORISTz+XuIEflKTi83mVrWet+l/AbUJqFCMJiqX+myzsimRjGEGChar9QFTUcf5XFRJwkXr+ilODnOE139uKZZ42SBpGA0GytoKpi8cjyQEjSZYv8=
+	t=1725345243; cv=none; b=brd2bfE3zZdTZfIS4kXwuzNNt9iAagaHdE6z4/JC1KGAZyZatPhTtLj0z47ciw+WMtcW/guou8de2yrnwAzB4qaJ61fy29HyR0eEjh+V+U8N1oIWVngWiFiyDKvxZ237q7UB/K1gSewmgCkyIo+tVQYq9gl9akDHidnQbavwyOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345216; c=relaxed/simple;
-	bh=/ETU4Zg+gZbDCijJZh+v1f83eNoEuhOTttHyhGA5MI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgPsGPG8y6htRaysziXVjyPMkzAUIAaICszRdk0e+/DxzVBx85vY5n9QwVBTtX6cXHM/Et1h0tJKrXUkMExru4nbwUJC68g7WHRr6qdTxzZtkR1nX7eIwrUMAtZxOuzqq0WOZsocX94Khj4A/E8a09mFzadn8egVnf50KsfiuAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kF4mSJLz; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso42364555e9.1;
-        Mon, 02 Sep 2024 23:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725345213; x=1725950013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Jkw8wh5XcYHCUVel8oCflwMwuY/DKbg13rPtqVXJAM=;
-        b=kF4mSJLzE80eg3sHEiRfo5vjydzDDPoOZtaI8fKNZK7hg3k3p34gVm/y5u9ZX4BmQe
-         +JpfmqsX9250F2XzHLmJZMFvnqmRvVlygGg9/BmFj14meD2uJpW170SGnLEXTbXiG7CB
-         11DqhiIQuCTuWF/T9HapKrAuyrqmjtzFG6J39IlRiOvUCAbrvNY3wkLq5SihuUMBX7I6
-         TvAfopGCvjn2LlyOwIwota3+3OWby8Z/HWIHMGabsRCnfxQahCDT7sO9e33FbNNkx3y1
-         iR1gz54y9La4HT+g9wySH6qReM7qa65QYk6NsLh7uQInrvCEOvy4aU6qbl0KD5uWrtwB
-         U3jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725345213; x=1725950013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Jkw8wh5XcYHCUVel8oCflwMwuY/DKbg13rPtqVXJAM=;
-        b=o7+81WF5VMufXso4PexAXHlOOiP722M/mdnFJB+fPA9VBVl4/ZXwH2+vqx35AiBp63
-         /sZsPFbfBasA2jiyEgnX8S5DpsyiSXk481UTezvLzfNNO+Hg3gEUDIbi6lnPOeFfb04P
-         fB2fArMojF/QV8xZgQzzhOK+8hXbdDVsqjoj1FkfYHyZhGKo78z8682Al9NO5EqHZ6t6
-         38O7YGjiD1VVZrF1MTU2hTVn6zT6O/Rya06KkJW81Jo6+xWH44/wlWcNH2fgz0e4cTB7
-         sENAE4o1XSR94jeX35STYxJyAEvegzRDccNMFr/+GHmg/m5FbuXrlIga2yqrrxLdO7d1
-         mQSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8n4ShW+dkbcJ9ooJAlcNdAxNW0sv1n1dV2rd51t4oq25Kd9fxdqgrabi81vuC8g1gTE2hoPhcc1cmMYM=@vger.kernel.org, AJvYcCWqOn5AwjMAAU2wOXom+bLojLg9OnHgFuP9hjvtnBR7eNyNQjpOw9mP9ACGPWA/HjwkL5U5nfU9UGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIqvtbmsLf3/92ejuIHSZ68tbkl7wu5DVEGHJIMhUGAB++TCtE
-	sy/grBunPrTplja6z5ECjkVrAT0pOPN814/1wf9Ikq9k1E4oMaTtfVC0Tg==
-X-Google-Smtp-Source: AGHT+IEkCFuBfPSKgwsHbasQVM89OhrDkrPZn/oya7O3TwEC75nr81BWBc7/oAXhGnZajgDC873NWQ==
-X-Received: by 2002:a05:600c:3b97:b0:426:59aa:e2fe with SMTP id 5b1f17b1804b1-42bb01c2071mr110788775e9.19.1725345212412;
-        Mon, 02 Sep 2024 23:33:32 -0700 (PDT)
-Received: from debian ([2a00:79c0:634:9a00:303:6c5b:4b07:6715])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb2dcsm160157605e9.1.2024.09.02.23.33.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 23:33:31 -0700 (PDT)
-Date: Tue, 3 Sep 2024 08:33:29 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] power: supply: max1720x: add read support for nvmem
-Message-ID: <20240903063329.GA222264@debian>
-References: <20240831182145.11589-1-dima.fedrau@gmail.com>
- <01020191b4bc8ff0-e7e8d909-4802-4076-9caf-cee0296fd10d-000000@eu-west-1.amazonses.com>
+	s=arc-20240116; t=1725345243; c=relaxed/simple;
+	bh=IwoHeQks9yfQVFO+ivuyBZLp/aRuXZoPALr0BeIAjeU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EUCUuvJFQ7cGi7dbLYNwZCSIN+HCx/mEVgKBzTBvrqcec/4X4Snz6FYkzXf5YXs6cXj+8eKfjVgdSGxcOIWUpuO5iefSmN/RpW38M9IdmU9B+e3gXD6idWrN9BZwCu2Dxvr8EGg8hqNBZKy8/s39p1Vt/gbYhL49LATlOw58qEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=nZtG8mW5; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4836XjyM6860748, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1725345225; bh=IwoHeQks9yfQVFO+ivuyBZLp/aRuXZoPALr0BeIAjeU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=nZtG8mW5UvPgLjPCAH/r/ksnBVqYM0QGH55ikNhTgmEueAy/7XqY/QOu5VO9Dza1k
+	 2a0wDu0WM8eHTTAEpmfhXrnCNyRoIkLR5I5+y98pu6B2hGdoWksBz3F5D5rYebxHhR
+	 mZWJV4t88AqjDt+9rL20kBOwq/OzgxYn1TPQH9v1zuBjAtGOP7Dpmpe8qyExvfYm+V
+	 j2H+t1JhqEMjycnqvyLHa8SFM6thIbaU3337dvGXdghCEHXNUrXjhcesfPZVsqLJPq
+	 tJ0xmLnp1IG8pF8TOjYX+VuYjtCDcKVZgQRnOQrJ2IgjIBYpdH9zLxwqLu0fpGRBsh
+	 0qfVTcPfjX1Lg==
+Received: from RSEXH36502.realsil.com.cn (doc.realsil.com.cn[172.29.17.3])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4836XjyM6860748
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+	Tue, 3 Sep 2024 14:33:45 +0800
+Received: from RSEXDAG02.realsil.com.cn (172.29.17.196) by
+ RSEXH36502.realsil.com.cn (172.29.17.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Sep 2024 14:33:45 +0800
+Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
+ RSEXDAG02.realsil.com.cn (172.29.17.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Sep 2024 14:33:45 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
+ (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 3 Sep 2024 14:33:45 +0800
+From: Hayes Wang <hayeswang@realtek.com>
+To: <kuba@kernel.org>, <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, Hayes Wang <hayeswang@realtek.com>
+Subject: [PATCH net] r8152: fix the firmware doesn't work
+Date: Tue, 3 Sep 2024 14:33:33 +0800
+Message-ID: <20240903063333.4502-1-hayeswang@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01020191b4bc8ff0-e7e8d909-4802-4076-9caf-cee0296fd10d-000000@eu-west-1.amazonses.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Am Mon, Sep 02, 2024 at 09:55:42PM +0000 schrieb Sebastian Reichel:
-> Hi,
-> 
-> On Sat, Aug 31, 2024 at 08:21:45PM GMT, Dimitri Fedrau wrote:
-> > ModelGauge m5 and device configuration values are stored in nonvolatile
-> > memory to prevent data loss if the IC loses power. Add read support for
-> > the nonvolatile memory on MAX1720X devices.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> > ---
-> > 
-> > Based on:
-> > 479b6d04964b "power: supply: add support for MAX1720x standalone fuel gauge"
-> > in branch for-next
-> > 
-> > Changes in V2:
-> >   - remove function max1720x_remove and use devm_add_action_or_reset() to
-> >     unregister info->ancillary to avoid race condition during module remove
-> 
-> Thanks, but the transformation is quite incomplete. You probably
-> should have a look what device managed resource actually means :)
->
+generic_ocp_write() asks the parameter "size" must be 4 bytes align.
+Therefore, write the bp would fail, if the mac->bp_num is odd. Align the
+size to 4 for fixing it. The way may write an extra bp, but the
+rtl8152_is_fw_mac_ok() makes sure the value must be 0 for the bp whose
+index is more than mac->bp_num. That is, there is no influence for the
+firmware.
 
-Yes, I noticed shortly after sending V2, that I missed to remove all
-i2c_unregister_device calls in the error path. Already prepared V3
-handling this and also the missing header "linux/nvmem-provider.h".
-Thanks for reviewing so quickly, I just hoped to get away with this by
-sending V3 before you notice. :)
+Besides, I check the return value of generic_ocp_write() to make sure
+everything is correct.
 
-> > ---
-> >  drivers/power/supply/max1720x_battery.c | 220 ++++++++++++++++++++++--
-> >  1 file changed, 205 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-> > index edc262f0a62f..d27c94bdb835 100644
-> > --- a/drivers/power/supply/max1720x_battery.c
-> > +++ b/drivers/power/supply/max1720x_battery.c
-> 
-> [...]
-> 
-> > +static int max1720x_probe_nvmem(struct i2c_client *client,
-> > +				struct max1720x_device_info *info)
-> >  {
-> >  	struct device *dev = &client->dev;
-> > -	struct i2c_client *ancillary;
-> > +	struct nvmem_config nvmem_config = {
-> 
-> As noticed by the build bot: you need to add this include for the
-> struct:
-> 
-> #include <linux/nvmem-provider.h>
->
-Will fix it.
+Fixes: e5c266a61186 ("r8152: set bp in bulk")
+Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+---
+ drivers/net/usb/r8152.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-> > +		.dev = dev,
-> > +		.name = "max1720x_nvmem",
-> > +		.cells = max1720x_nvmem_cells,
-> > +		.ncells = ARRAY_SIZE(max1720x_nvmem_cells),
-> > +		.read_only = true,
-> > +		.root_only = true,
-> > +		.reg_read = max1720x_nvmem_reg_read,
-> > +		.size = ARRAY_SIZE(max1720x_nvmem_cells) * 2,
-> > +		.word_size = 2,
-> > +		.stride = 2,
-> > +		.priv = info,
-> > +	};
-> > +	struct nvmem_device *nvmem;
-> > +	unsigned int val;
-> >  	int ret;
-> >  
-> > -	ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
-> > -	if (IS_ERR(ancillary)) {
-> > +	info->ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
-> > +	if (IS_ERR(info->ancillary)) {
-> >  		dev_err(dev, "Failed to initialize ancillary i2c device\n");
-> > -		return PTR_ERR(ancillary);
-> > +		return PTR_ERR(info->ancillary);
-> >  	}
-> >  
-> > -	ret = i2c_smbus_read_word_data(ancillary, MAX1720X_NRSENSE);
-> > -	i2c_unregister_device(ancillary);
-> > -	if (ret < 0)
-> > -		return ret;
-> > +	ret = devm_add_action_or_reset(dev, max1720x_unregister_ancillary, info);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to add unregister callback\n");
-> > +		goto err;
-> > +	}
-> >  
-> > -	info->rsense = ret;
-> > +	info->regmap_nv = devm_regmap_init_i2c(info->ancillary,
-> > +					       &max1720x_nvmem_regmap_cfg);
-> > +	if (IS_ERR(info->regmap_nv)) {
-> > +		dev_err(dev, "regmap initialization of nvmem failed\n");
-> > +		ret = PTR_ERR(info->regmap_nv);
-> > +		goto err;
-> > +	}
-> > +
-> > +	ret = regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Failed to read sense resistor value\n");
-> > +		goto err;
-> > +	}
-> > +
-> > +	info->rsense = val;
-> >  	if (!info->rsense) {
-> >  		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
-> >  		info->rsense = 1000; /* in regs in 10^-5 */
-> >  	}
-> >  
-> > +	nvmem = devm_nvmem_register(dev, &nvmem_config);
-> > +	if (IS_ERR(nvmem)) {
-> > +		dev_err(dev, "Could not register nvmem!");
-> > +		ret = PTR_ERR(nvmem);
-> > +		goto err;
-> > +	}
-> > +
-> >  	return 0;
-> > +err:
-> > +	i2c_unregister_device(info->ancillary);
-> 
-> devm_add_action_or_reset() already unregisters on failure, so this
-> results in a double unregister. Please also simplify 'goto err'
-> with 'return ret;'.
->
-Will fix it.
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 15e12f46d0ea..a5612c799f5e 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -5178,14 +5178,23 @@ static void rtl8152_fw_mac_apply(struct r8152 *tp, struct fw_mac *mac)
+ 	data = (u8 *)mac;
+ 	data += __le16_to_cpu(mac->fw_offset);
+ 
+-	generic_ocp_write(tp, __le16_to_cpu(mac->fw_reg), 0xff, length, data,
+-			  type);
++	if (generic_ocp_write(tp, __le16_to_cpu(mac->fw_reg), 0xff, length,
++			      data, type) < 0) {
++		dev_err(&tp->intf->dev, "Write %s fw fail\n",
++			type ? "PLA" : "USB");
++		return;
++	}
+ 
+ 	ocp_write_word(tp, type, __le16_to_cpu(mac->bp_ba_addr),
+ 		       __le16_to_cpu(mac->bp_ba_value));
+ 
+-	generic_ocp_write(tp, __le16_to_cpu(mac->bp_start), BYTE_EN_DWORD,
+-			  __le16_to_cpu(mac->bp_num) << 1, mac->bp, type);
++	if (generic_ocp_write(tp, __le16_to_cpu(mac->bp_start), BYTE_EN_DWORD,
++			      ALIGN(__le16_to_cpu(mac->bp_num) << 1, 4),
++			      mac->bp, type) < 0) {
++		dev_err(&tp->intf->dev, "Write %s bp fail\n",
++			type ? "PLA" : "USB");
++		return;
++	}
+ 
+ 	bp_en_addr = __le16_to_cpu(mac->bp_en_addr);
+ 	if (bp_en_addr)
+-- 
+2.45.2
 
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  static const struct power_supply_desc max1720x_bat_desc = {
-> > @@ -299,20 +487,22 @@ static int max1720x_probe(struct i2c_client *client)
-> >  
-> >  	psy_cfg.drv_data = info;
-> >  	psy_cfg.fwnode = dev_fwnode(dev);
-> > +	i2c_set_clientdata(client, info);
-> >  	info->regmap = devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
-> >  	if (IS_ERR(info->regmap))
-> >  		return dev_err_probe(dev, PTR_ERR(info->regmap),
-> >  				     "regmap initialization failed\n");
-> >  
-> > -	ret = max1720x_probe_sense_resistor(client, info);
-> > +	ret = max1720x_probe_nvmem(client, info);
-> >  	if (ret)
-> > -		return dev_err_probe(dev, ret,
-> > -				     "Failed to read sense resistor value\n");
-> > +		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
-> >  
-> >  	bat = devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
-> > -	if (IS_ERR(bat))
-> > +	if (IS_ERR(bat)) {
-> > +		i2c_unregister_device(info->ancillary);
-> 
-> This is also already handled by devm and must be removed.
->
-Will fix it.
-> >  		return dev_err_probe(dev, PTR_ERR(bat),
-> >  				     "Failed to register power supply\n");
-> > +	}
-> >  
-> >  	return 0;
-> >  }
-> 
-> -- Sebastian
-
-Best regards
-Dimitri Fedrau
 
