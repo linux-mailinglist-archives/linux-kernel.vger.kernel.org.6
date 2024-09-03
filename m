@@ -1,144 +1,359 @@
-Return-Path: <linux-kernel+bounces-312236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E679693E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF06B9693E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EAD1F23D42
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:40:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E3A7B20A04
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5821D54CC;
-	Tue,  3 Sep 2024 06:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A211D54FB;
+	Tue,  3 Sep 2024 06:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FdT4n9Im"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="vUrE0kaZ"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E191CDFBE;
-	Tue,  3 Sep 2024 06:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCAE1CB527;
+	Tue,  3 Sep 2024 06:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345633; cv=none; b=c4RqUGwN0ts8t94wxnsrMz7CQkowvMex6jA4wCziKt8l3b1xXKhHPFBIz6gN7ZumHdxj3A4v1tmk5ptfsSGxZD7qtupmUtDzpQlUGlJnwkQjAWaNcR1XXJTxzpTB428NP2frVCIhbC5EMBe0SsyqxiicpqtJXOPMQMEXzEchyN4=
+	t=1725345693; cv=none; b=tqqSuK428WmOIKe0APkuY1wjADbI9oojG02jOlFfeGVwcgrhr4zikBEmebpG3Ty46Fd+AHhp0t7KPSVh5uulSorEl6Xx//SFsrcboU5DBAY1NxlxkXrIKoibRMoT/x8GfT7nB5dtNIr9FGdNEJ4sJhhc8pNCBFJLvWYcmyUwMoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345633; c=relaxed/simple;
-	bh=b4WA8ZXIW9OBTO0FeutoKz7fM9YZQnuDj/mEmVfaXPs=;
+	s=arc-20240116; t=1725345693; c=relaxed/simple;
+	bh=10uLDIUCBY4fIvQsKOq30PPSUayb76NqE8dmAGfNE9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnJ++x+HKgX5FI6kJGCl5ro9e0gAgpio7IQCbQtL/+UdBNc2PCHjdqRYvMBUagDhMuNFlQYrawYHvKK5E2Zy9Zv4hs8q1igfw0blxjggOtzE5qHDjEHGRIzVjpKILBTEX4YtTVOOi1a2MsxADd3VX9hWgqc7RxliF4BuD8gkT48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FdT4n9Im; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62C0C4CEC5;
-	Tue,  3 Sep 2024 06:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725345631;
-	bh=b4WA8ZXIW9OBTO0FeutoKz7fM9YZQnuDj/mEmVfaXPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FdT4n9ImKvxSD0jI6VQSUJ4qoedxpt+qJK77IWsfQNJJ3HSbufKRNO+O00dEKL+5J
-	 SDFtQD2FadTIC42reKjNgXv/xFkHVf8iLZo0Zce+rPb8c0vJdgPceTjBettVJMSwuZ
-	 DO3Ej/DSG66DVPddc0GhwbmFibAdxy7AVc5KjI/k=
-Date: Tue, 3 Sep 2024 08:40:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: mka@chromium.org, sakari.ailus@linux.intel.com, wentong.wu@intel.com,
-	javier.carrasco@wolfvision.net, stefan.eichenberger@toradex.com,
-	francesco.dolcini@toradex.com, jbrunet@baylibre.com,
-	macpaul.lin@mediatek.com, frieder.schrempf@kontron.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744
- SMBus programming support
-Message-ID: <2024090312-stool-ergonomic-f2fe@gregkh>
-References: <1725192519-3867920-1-git-send-email-radhey.shyam.pandey@amd.com>
- <1725192519-3867920-3-git-send-email-radhey.shyam.pandey@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QRH8FFSCqR/BLPoxrDyYWI44LDj8LoKX7+v2D1zmdFdGuanD9sz1F9zF5UWiMIF3agMQQLHnM2RNF/6IvYha3+3NFFawW+f8TajCqbbVpf7OFLD3YSc3XEs8SN0g0dMIrJUMQhLLN/zWe/1OtTlq8xIAJv9T6vuhY45Cq/nI7w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=vUrE0kaZ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wybck5KDpz9sWv;
+	Tue,  3 Sep 2024 08:41:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1725345686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0iV/a/l2V2hPvNhsAZ5+2KTyT/o+KSN/NrQZZQqanbw=;
+	b=vUrE0kaZkd3MoQKoPWXQltRS6ijYNAluYWfYABJL/5eaLhgOCWO8vLIXwwqgqieh/+GBHF
+	LNPPn68NbCmDf+PFt1HTDYPsubBWX5LOTDbPaiP8s0xCIdVeiB4GPgH9+693Dzfp5CEkBq
+	v4maHHp2rm4gDhyPRq8BpO971gUVM2aVUYJQiV7bsVquK7xATXqJCR13MWhTWTDfpbNKBt
+	XKE8rpqetJOpmKXZ1XwZphKdlSw7QFrUmX4otyvJq+2V8R8nDCanPNes5Z0vcgvVWU5rFF
+	ARQSkl4SVa5d58EbwYVmpt2MB1yEbwrs6xwKfTc5hg+nhS01RRQhgF3GyO5spw==
+Date: Tue, 3 Sep 2024 16:41:08 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Christoph Hellwig <hch@infradead.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount
+ ID
+Message-ID: <20240903.044647-some.sprint.silent.snacks-jdKnAVp7XuBZ@cyphar.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240902164554.928371-1-cyphar@cyphar.com>
+ <20240902164554.928371-2-cyphar@cyphar.com>
+ <CAOQ4uxgS6DvsbUsEoM1Vr2wcd_7Bj=xFXMAy4z9PphTu+G6RaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xkptxxxh47nfrloo"
 Content-Disposition: inline
-In-Reply-To: <1725192519-3867920-3-git-send-email-radhey.shyam.pandey@amd.com>
+In-Reply-To: <CAOQ4uxgS6DvsbUsEoM1Vr2wcd_7Bj=xFXMAy4z9PphTu+G6RaQ@mail.gmail.com>
 
-On Sun, Sep 01, 2024 at 05:38:39PM +0530, Radhey Shyam Pandey wrote:
-> usb5744 supports SMBus Configuration and it may be configured via the
-> SMBus slave interface during the hub start-up configuration stage.
-> 
-> To program it driver uses i2c-bus phandle (added in commit '02be19e914b8
-> dt-bindings: usb: Add support for Microchip usb5744 hub controller') to
-> get i2c client device and then based on usb5744 compatible check calls
-> usb5744 i2c default initialization sequence.
-> 
-> Apart from the USB command attach, prevent the hub from suspend.
-> when the USB Attach with SMBus (0xAA56) command is issued to the hub,
-> the hub is getting enumerated and then it puts in a suspend mode.
-> This causes the hub to NAK any SMBus access made by the SMBus Master
-> during this period and not able to see the hub's slave address while
-> running the "i2c probe" command.
-> 
-> Prevent the MCU from putting the HUB in suspend mode through register
-> write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the RuntimeFlags2
-> register at address 0x411D controls this aspect of the hub. The
-> BYPASS_UDC_SUSPEND bit in register 0x411Dh must be set to ensure that the
-> MCU is always enabled and ready to respond to SMBus runtime commands.
-> This register needs to be written before the USB attach command is issued.
-> 
-> The byte sequence is as follows:
-> Slave addr: 0x2d           00 00 05 00 01 41 1D 08
-> Slave addr: 0x2d           99 37 00
-> Slave addr: 0x2d           AA 56 00
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
-> Changes for v4:
-> - Fix error: implicit declaration of function 'i2c_smbus_*' APIs by
->   introducing a dependency on I2C_CONFIG. This error is reported
->   by kernel test on v3 series and usb:usb-testing 20/25 branch.
->   https://lore.kernel.org/all/2024082503-uncoated-chaperone-7f70@gregkh
-> 
-> Changes for v3:
-> - Add comment for UDC suspend sequence.
-> - Drop USB5744_CREG_MEM_NBYTES and USB5744_CREG_NBYTES and replace
->   it with literal + comment.
-> - Move microchip defines to source file.
-> 
-> Changes for v2:
-> - Move power on reset delay to separate patch.
-> - Switch to compatible based check for calling usb5755
->   onboard_dev_5744_i2c_init(). This is done to make
->   onboard_dev_5744_i2c_init() as static.
-> - Fix subsystem "usb: misc: onboard_usb_dev:..."
-> - Use #define for different register bits instead of magic values.
-> - Use err_power_off label name.
-> - Modified commit description to be in sync with v2 changes.
-> ---
->  drivers/usb/misc/Kconfig           |  2 +-
->  drivers/usb/misc/onboard_usb_dev.c | 73 ++++++++++++++++++++++++++++++
->  2 files changed, 74 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-> index 50b86d531701..cb5e47d439ab 100644
-> --- a/drivers/usb/misc/Kconfig
-> +++ b/drivers/usb/misc/Kconfig
-> @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
->  
->  config USB_ONBOARD_DEV
->  	tristate "Onboard USB device support"
-> -	depends on OF
-> +	depends on OF && I2C
 
-This feels wrong.
+--xkptxxxh47nfrloo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While a single device that this driver supports might need i2c, not all
-of the devices do, so you have the potential to drag in a bunch of code
-here for devices that do not have/need i2c at all, right?
+On 2024-09-02, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> w=
+rote:
+> >
+> > Now that open_by_handle_at(2) can return u64 mount IDs, do some tests to
+> > make sure they match properly as part of the regular open_by_handle
+> > tests.
+> >
+> > Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-v3-0-1=
+0c2c4c16708@cyphar.com/
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> > v2:
+> > - Remove -M argument and always do the mount ID tests. [Amir Goldstein]
+> > - Do not error out if the kernel doesn't support STATX_MNT_ID_UNIQUE
+> >   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
+> > - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cyphar@cyph=
+ar.com/>
+>=20
+> Looks good.
+>=20
+> You may add:
+>=20
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>=20
+> It'd be nice to get a verification that this is indeed tested on the late=
+st
+> upstream and does not regress the tests that run the open_by_handle progr=
+am.
 
-Any way to "split this out" into a smaller chunk?  Or better yet, just
-detect at runtime if you need/want to call those i2c functions (and they
-should have no-ops for when i2c is not enabled, right?)
+I've tested that the fallback works on mainline and correctly does the
+test on patched kernels (by running open_by_handle directly) but I
+haven't run the suite yet (still getting my mkosi testing setup working
+to run fstests...).
 
-thanks,
+> Thanks,
+> Amir.
+>=20
+> >
+> >  src/open_by_handle.c | 128 +++++++++++++++++++++++++++++++++----------
+> >  1 file changed, 99 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/src/open_by_handle.c b/src/open_by_handle.c
+> > index d9c802ca9bd1..0ad591da632e 100644
+> > --- a/src/open_by_handle.c
+> > +++ b/src/open_by_handle.c
+> > @@ -86,10 +86,16 @@ Examples:
+> >  #include <errno.h>
+> >  #include <linux/limits.h>
+> >  #include <libgen.h>
+> > +#include <stdint.h>
+> > +#include <stdbool.h>
+> >
+> >  #include <sys/stat.h>
+> >  #include "statx.h"
+> >
+> > +#ifndef AT_HANDLE_MNT_ID_UNIQUE
+> > +#      define AT_HANDLE_MNT_ID_UNIQUE 0x001
+> > +#endif
+> > +
+> >  #define MAXFILES 1024
+> >
+> >  struct handle {
+> > @@ -120,6 +126,94 @@ void usage(void)
+> >         exit(EXIT_FAILURE);
+> >  }
+> >
+> > +int do_name_to_handle_at(const char *fname, struct file_handle *fh, in=
+t bufsz)
+> > +{
+> > +       int ret;
+> > +       int mntid_short;
+> > +
+> > +       static bool skip_mntid_unique;
+> > +
+> > +       uint64_t statx_mntid_short =3D 0, statx_mntid_unique =3D 0;
+> > +       struct statx statxbuf;
+> > +
+> > +       /* Get both the short and unique mount id. */
+> > +       if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID, &statxbuf) < 0) {
+> > +               fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n", fname);
+> > +               return EXIT_FAILURE;
+> > +       }
+> > +       if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
+> > +               fprintf(stderr, "%s: no STATX_MNT_ID in stx_mask\n", fn=
+ame);
+> > +               return EXIT_FAILURE;
+> > +       }
+> > +       statx_mntid_short =3D statxbuf.stx_mnt_id;
+> > +
+> > +       if (!skip_mntid_unique) {
+> > +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID_UNIQUE, &sta=
+txbuf) < 0) {
+> > +                       fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE)=
+: %m\n", fname);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               /*
+> > +                * STATX_MNT_ID_UNIQUE was added fairly recently in Lin=
+ux 6.8, so if the
+> > +                * kernel doesn't give us a unique mount ID just skip i=
+t.
+> > +                */
+> > +               if ((skip_mntid_unique |=3D !(statxbuf.stx_mask & STATX=
+_MNT_ID_UNIQUE)))
+> > +                       printf("statx(STATX_MNT_ID_UNIQUE) not supporte=
+d by running kernel -- skipping unique mount ID test\n");
+> > +               else
+> > +                       statx_mntid_unique =3D statxbuf.stx_mnt_id;
+> > +       }
+> > +
+> > +       fh->handle_bytes =3D bufsz;
+> > +       ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_short, 0);
+> > +       if (bufsz < fh->handle_bytes) {
+> > +               /* Query the filesystem required bufsz and the file han=
+dle */
+> > +               if (ret !=3D -1 || errno !=3D EOVERFLOW) {
+> > +                       fprintf(stderr, "%s: unexpected result from nam=
+e_to_handle_at: %d (%m)\n", fname, ret);
+> > +                       return EXIT_FAILURE;
+> > +               }
+> > +               ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_s=
+hort, 0);
+> > +       }
+> > +       if (ret < 0) {
+> > +               fprintf(stderr, "%s: name_to_handle: %m\n", fname);
+> > +               return EXIT_FAILURE;
+> > +       }
+> > +
+> > +       if (mntid_short !=3D (int) statx_mntid_short) {
+> > +               fprintf(stderr, "%s: name_to_handle_at returned a diffe=
+rent mount ID to STATX_MNT_ID: %u !=3D %lu\n", fname, mntid_short, statx_mn=
+tid_short);
+> > +               return EXIT_FAILURE;
+> > +       }
+> > +
+> > +       if (!skip_mntid_unique && statx_mntid_unique !=3D 0) {
+> > +               struct handle dummy_fh;
+> > +               uint64_t mntid_unique =3D 0;
+> > +
+> > +               /*
+> > +                * Get the unique mount ID. We don't need to get anothe=
+r copy of the
+> > +                * handle so store it in a dummy struct.
+> > +                */
+> > +               dummy_fh.fh.handle_bytes =3D fh->handle_bytes;
+> > +               ret =3D name_to_handle_at(AT_FDCWD, fname, &dummy_fh.fh=
+, (int *) &mntid_unique, AT_HANDLE_MNT_ID_UNIQUE);
+> > +               if (ret < 0) {
+> > +                       if (errno !=3D EINVAL) {
+> > +                               fprintf(stderr, "%s: name_to_handle_at(=
+AT_HANDLE_MNT_ID_UNIQUE): %m\n", fname);
+> > +                               return EXIT_FAILURE;
+> > +                       }
+> > +                       /*
+> > +                        * EINVAL means AT_HANDLE_MNT_ID_UNIQUE is not =
+supported, so skip
+> > +                        * the check in that case.
+> > +                        */
+> > +                       printf("name_to_handle_at(AT_HANDLE_MNT_ID_UNIQ=
+UE) not supported by running kernel -- skipping unique mount ID test\n");
+> > +                       skip_mntid_unique =3D true;
+> > +               } else {
+> > +                       if (mntid_unique !=3D statx_mntid_unique) {
+> > +                               fprintf(stderr, "%s: name_to_handle_at(=
+AT_HANDLE_MNT_ID_UNIQUE) returned a different mount ID to STATX_MNT_ID_UNIQ=
+UE: %lu !=3D %lu\n", fname, mntid_unique, statx_mntid_unique);
+> > +                               return EXIT_FAILURE;
+> > +                       }
+> > +               }
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  int main(int argc, char **argv)
+> >  {
+> >         int     i, c;
+> > @@ -132,7 +226,7 @@ int main(int argc, char **argv)
+> >         char    fname2[PATH_MAX];
+> >         char    *test_dir;
+> >         char    *mount_dir;
+> > -       int     mount_fd, mount_id;
+> > +       int     mount_fd;
+> >         char    *infile =3D NULL, *outfile =3D NULL;
+> >         int     in_fd =3D 0, out_fd =3D 0;
+> >         int     numfiles =3D 1;
+> > @@ -307,21 +401,9 @@ int main(int argc, char **argv)
+> >                                 return EXIT_FAILURE;
+> >                         }
+> >                 } else {
+> > -                       handle[i].fh.handle_bytes =3D bufsz;
+> > -                       ret =3D name_to_handle_at(AT_FDCWD, fname, &han=
+dle[i].fh, &mount_id, 0);
+> > -                       if (bufsz < handle[i].fh.handle_bytes) {
+> > -                               /* Query the filesystem required bufsz =
+and the file handle */
+> > -                               if (ret !=3D -1 || errno !=3D EOVERFLOW=
+) {
+> > -                                       fprintf(stderr, "Unexpected res=
+ult from name_to_handle_at(%s)\n", fname);
+> > -                                       return EXIT_FAILURE;
+> > -                               }
+> > -                               ret =3D name_to_handle_at(AT_FDCWD, fna=
+me, &handle[i].fh, &mount_id, 0);
+> > -                       }
+> > -                       if (ret < 0) {
+> > -                               strcat(fname, ": name_to_handle");
+> > -                               perror(fname);
+> > +                       ret =3D do_name_to_handle_at(fname, &handle[i].=
+fh, bufsz);
+> > +                       if (ret < 0)
+> >                                 return EXIT_FAILURE;
+> > -                       }
+> >                 }
+> >                 if (keepopen) {
+> >                         /* Open without close to keep unlinked files ar=
+ound */
+> > @@ -349,21 +431,9 @@ int main(int argc, char **argv)
+> >                                 return EXIT_FAILURE;
+> >                         }
+> >                 } else {
+> > -                       dir_handle.fh.handle_bytes =3D bufsz;
+> > -                       ret =3D name_to_handle_at(AT_FDCWD, test_dir, &=
+dir_handle.fh, &mount_id, 0);
+> > -                       if (bufsz < dir_handle.fh.handle_bytes) {
+> > -                               /* Query the filesystem required bufsz =
+and the file handle */
+> > -                               if (ret !=3D -1 || errno !=3D EOVERFLOW=
+) {
+> > -                                       fprintf(stderr, "Unexpected res=
+ult from name_to_handle_at(%s)\n", dname);
+> > -                                       return EXIT_FAILURE;
+> > -                               }
+> > -                               ret =3D name_to_handle_at(AT_FDCWD, tes=
+t_dir, &dir_handle.fh, &mount_id, 0);
+> > -                       }
+> > -                       if (ret < 0) {
+> > -                               strcat(dname, ": name_to_handle");
+> > -                               perror(dname);
+> > +                       ret =3D do_name_to_handle_at(test_dir, &dir_han=
+dle.fh, bufsz);
+> > +                       if (ret < 0)
+> >                                 return EXIT_FAILURE;
+> > -                       }
+> >                 }
+> >                 if (out_fd) {
+> >                         ret =3D write(out_fd, (char *)&dir_handle, size=
+of(*handle));
+> > --
+> > 2.46.0
+> >
 
-greg k-h
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--xkptxxxh47nfrloo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtavhAAKCRAol/rSt+lE
+b1cGAP93SA9vWj5fkqzxNGBM90T1ufd/cRop3nq+mwExBswd7QEA8/SH0WeREpjx
+Yqs+yCk/fqYD0/J7MXo9Z7cc96dWeA8=
+=RoQr
+-----END PGP SIGNATURE-----
+
+--xkptxxxh47nfrloo--
 
