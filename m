@@ -1,147 +1,187 @@
-Return-Path: <linux-kernel+bounces-313198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FCD96A1CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:14:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA8196A1DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA91F25775
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629EB288E1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A8D185B7D;
-	Tue,  3 Sep 2024 15:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afdix5gu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C294183CB7;
-	Tue,  3 Sep 2024 15:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF7118A6CB;
+	Tue,  3 Sep 2024 15:15:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1298E188592;
+	Tue,  3 Sep 2024 15:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376482; cv=none; b=MlXc7RKVnyn/KWtqqOVRhwIfw7CgDST2i6xH3H7DLt2D+MCJOT0FtI5ePJj8wvun+Fia1oU+P8VMkcF4e52gEj9AfEtg1hNyBf/r43kpM2TxkWecWuQ5T/mUIYCFwQwQMhAeULqYbbxCe0RI9Z+Cw6dYGmVugIus2J3VXpqg2gY=
+	t=1725376512; cv=none; b=jBQjw61dNDWfn/7mdQ/pawgVy032R4wUMX+eU6mpwg9Ssm9h0PcbV5VYj4usgVP60PAUsj3Tb6tdEsqOYCNR+yoxnjrYbEb2ku9M+ZhGkfEPRl7Mo2A8YEHt+gSYh6uQgw/xcJOwLJl9inPY5Lq07TQyQDNXSSsL9dg4Cd9rado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376482; c=relaxed/simple;
-	bh=VE5Ytzp4eJgJGQ5VNZPfsM42CWX0haJpfTqJ3Nm6X2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXKZCOeUcA3PwgHxiIOvYeCCpsB18ZKQtRTBFrnmggHMANL+PrPBOOPYzwahMpOkAvUguS0nX5cCJJY08zqhCQhmqAzIVwOMqemqLJvuXL8Bo85q/dw4pVkek0wmfMUdCVx9VuVxsumVvkLTYS2EoYgnz1v0m+VtWMqpCZl78/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afdix5gu; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725376480; x=1756912480;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VE5Ytzp4eJgJGQ5VNZPfsM42CWX0haJpfTqJ3Nm6X2k=;
-  b=afdix5gugoeQ6p+ChyUJaQI8XjcpgBdQu1l3ycHe29weLM4I+v05lgAc
-   sw5NeoS+uQHTZbsbjQyvLjM+8kktZrhVffws52y2WqBlHMYUmdXyUU+sO
-   811OgafUBLMFUAD+owmXkjcT5kp5ahcBrhnHBaUFMKsSwhO7qVfH3nZ0v
-   rqY3Lrv9K7Nn5zrnsH/KhviHrzAKmE6LHfUoVmlI4FTvhxX77rPMF6dWl
-   8lrDJYTXhSv16uAFQ24yq4+eMa6HcvQuugBM7U0m7FB+hkBXH1TEC+vQ+
-   FQ0/6K/eUKvgylOa1DxwJUBVenCQ7cC2w1qICBDbVlC9po4jFfFH/itpG
-   w==;
-X-CSE-ConnectionGUID: 1S506a/wTlK353S6eVADsg==
-X-CSE-MsgGUID: WPF8+UyWSWWW+8TZbXQrGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27867598"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="27867598"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:14:39 -0700
-X-CSE-ConnectionGUID: 9gos7tFFT9Woy+s26KxsAw==
-X-CSE-MsgGUID: wt0yJ3GTSiuTsWUHphEqew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="64938947"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:14:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slVEn-00000004kWF-1ROJ;
-	Tue, 03 Sep 2024 18:14:33 +0300
-Date: Tue, 3 Sep 2024 18:14:33 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gergo Koteles <soyer@irl.hu>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ike Panhc <ike.pan@canonical.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
- scope_guard() clear of its scope
-Message-ID: <Ztcn2Yu2TNSOYbhP@smile.fi.intel.com>
-References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
- <cf8c73dd91dbbb11b562a5e0d9ac6b4035c32d28.camel@irl.hu>
+	s=arc-20240116; t=1725376512; c=relaxed/simple;
+	bh=Xxvmw4fx2BextUfcqa7AgtyaDEXu6xgVDZiwpuwkJBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MgPwl7GhHO1jBmNnxiP/wHj8+ra9/Srh85Nxuc1Jo72CoeDF/VfRijsQ9xN8MyYkFz38Lxv7R0q3IAadKKBe2GhTz4EMKqo8ftA02TvI8oe39lSjv2m1wBV9/iCeds+H73SN0By7FcBYPDnz9QbfJMuTt8lU3GtZWJcEJQeebU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D484B1063;
+	Tue,  3 Sep 2024 08:15:36 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E6113F66E;
+	Tue,  3 Sep 2024 08:15:07 -0700 (PDT)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH 5/9] vdso: Split linux/minmax.h
+Date: Tue,  3 Sep 2024 16:14:33 +0100
+Message-Id: <20240903151437.1002990-6-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf8c73dd91dbbb11b562a5e0d9ac6b4035c32d28.camel@irl.hu>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 05:00:51PM +0200, Gergo Koteles wrote:
-> On Thu, 2024-08-29 at 19:50 +0300, Andy Shevchenko wrote:
-> > First of all, it's a bit counterintuitive to have something like
-> > 
-> > 	int err;
-> > 	...
-> > 	scoped_guard(...)
-> > 		err = foo(...);
-> > 	if (err)
-> > 		return err;
-> > 
-> > Second, with a particular kernel configuration and compiler version in
-> > one of such cases the objtool is not happy:
-> > 
-> >   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end of section
-> > 
-> > I'm not an expert on all this, but the theory is that compiler and
-> > linker in this case can't understand that 'result' variable will be
-> > always initialized as long as no error has been returned. Assigning
-> > 'result' to a dummy value helps with this. Note, that fixing the
-> > scoped_guard() scope (as per above) does not make issue gone.
-> > 
-> > That said, assign dummy value and make the scope_guard() clear of its scope.
-> > For the sake of consistency do it in the entire file.
-> > 
-> 
-> Interestingly, if I open a scope manually and use the plain guard, the
-> warning disappears.
+The VDSO implementation includes headers from outside of the
+vdso/ namespace.
 
-Yes, that's what I also have, but I avoid that approach because in that case
-the printing will be done inside the lock, widening the critical section for
-no benefits.
+Split linux/minmax.h to make sure that the generic library
+uses only the allowed namespace.
 
-> 	...
-> 	unsigned long result;
-> 	int err;
-> 
-> 	{
-> 		guard(mutex)(&priv->vpc_mutex);
-> 		err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN,
-> &result);
-> 		if (err)
-> 			return err;
-> 	}
-> 	...
-> 
-> This looks a bit strange, but is probably easier for the compiler than
-> the for loop of scoped_guard.
-> 
-> But I don't know how well this style fits into the kernel.
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ include/linux/minmax.h | 28 +---------------------------
+ include/vdso/minmax.h  | 38 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+), 27 deletions(-)
+ create mode 100644 include/vdso/minmax.h
 
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index 98008dd92153..846e3fa65c96 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -6,6 +6,7 @@
+ #include <linux/compiler.h>
+ #include <linux/const.h>
+ #include <linux/types.h>
++#include <vdso/minmax.h>
+ 
+ /*
+  * min()/max()/clamp() macros must accomplish three things:
+@@ -84,17 +85,6 @@
+ #define __types_ok3(x,y,z,ux,uy,uz) \
+ 	(__sign_use(x,ux) & __sign_use(y,uy) & __sign_use(z,uz))
+ 
+-#define __cmp_op_min <
+-#define __cmp_op_max >
+-
+-#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
+-
+-#define __cmp_once_unique(op, type, x, y, ux, uy) \
+-	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+-
+-#define __cmp_once(op, type, x, y) \
+-	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+-
+ #define __careful_cmp_once(op, x, y, ux, uy) ({		\
+ 	__auto_type ux = (x); __auto_type uy = (y);	\
+ 	BUILD_BUG_ON_MSG(!__types_ok(x,y,ux,uy),	\
+@@ -204,22 +194,6 @@
+  * Or not use min/max/clamp at all, of course.
+  */
+ 
+-/**
+- * min_t - return minimum of two values, using the specified type
+- * @type: data type to use
+- * @x: first value
+- * @y: second value
+- */
+-#define min_t(type, x, y) __cmp_once(min, type, x, y)
+-
+-/**
+- * max_t - return maximum of two values, using the specified type
+- * @type: data type to use
+- * @x: first value
+- * @y: second value
+- */
+-#define max_t(type, x, y) __cmp_once(max, type, x, y)
+-
+ /*
+  * Do not check the array parameter using __must_be_array().
+  * In the following legit use-case where the "array" passed is a simple pointer,
+diff --git a/include/vdso/minmax.h b/include/vdso/minmax.h
+new file mode 100644
+index 000000000000..26724f34c513
+--- /dev/null
++++ b/include/vdso/minmax.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __VDSO_MINMAX_H
++#define __VDSO_MINMAX_H
++
++#ifndef __ASSEMBLY__
++
++#include <linux/compiler.h>
++
++#define __cmp_op_min <
++#define __cmp_op_max >
++
++#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
++
++#define __cmp_once_unique(op, type, x, y, ux, uy) \
++	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
++
++#define __cmp_once(op, type, x, y) \
++	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
++
++/**
++ * min_t - return minimum of two values, using the specified type
++ * @type: data type to use
++ * @x: first value
++ * @y: second value
++ */
++#define min_t(type, x, y) __cmp_once(min, type, x, y)
++
++/**
++ * max_t - return maximum of two values, using the specified type
++ * @type: data type to use
++ * @x: first value
++ * @y: second value
++ */
++#define max_t(type, x, y) __cmp_once(max, type, x, y)
++
++#endif /* !__ASSEMBLY__ */
++
++#endif /* __VDSO_MINMAX_H */
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
