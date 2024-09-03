@@ -1,51 +1,59 @@
-Return-Path: <linux-kernel+bounces-312048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F45969149
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6D896910C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDFF1F22EB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF652841E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25BC1CCEDD;
-	Tue,  3 Sep 2024 02:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Zqj48fbM"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5990B1581E5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB711CCEE2;
+	Tue,  3 Sep 2024 01:45:20 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB37B1A4E6B;
+	Tue,  3 Sep 2024 01:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725329147; cv=none; b=aW/afUyf5t371qOahOlyU/NRHJQCPhYbowAJCAYBqtGzKk+/lbbMfYsZ+gckl2qVrUv/FJR0B7k5SoYWqTcBl9k9b9LvDYpqh+ceYHfw8LzteHgUQoCB+T+fL/kdmSPfYpMddsPITLfVjKRARpCojp+8GNKOEhAmRqPNWjwty2U=
+	t=1725327920; cv=none; b=ktP+tKntbP7Bhvx/CTffmaj73+SvTNiqOQGlLBSHYhd0NMfE30Nz4FlVrSYwSjrhn2dyZLR/pfjzsPRYs2HSk23Et2jJ8DZE5oYeZaqE2xBpFzRZpaapgNSE/j2ivOOa/8Tb6S5yTSH5t2eRtaSd7EwQVIMYcr1/WMQZ8wPKe3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725329147; c=relaxed/simple;
-	bh=Ns+E8hrjd/ghEa5DY5olrRcrI4vwyq4CJUUyyiR/4Vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H2cMTA9bdil/aztXYoh6Tm2+v3qark6VrcwOuAr5/ssyqHLwe2HSUiB+cC/0oYSwjmd5pCi2kX0WF0YlamlG0KCc93bVc3NSptrXQV3ZiQ+xnbJn5zOcQpkCThfRzI1B/BaZ4v+ISDjCtcYSb+LAqdShNHB30c131Q5bsDZPbn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Zqj48fbM; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZyFV9
-	yQfBbszpp7tI1HamkYKcyO0B0xhk9UbvaXQsOU=; b=Zqj48fbMs5WiskT7LadhY
-	qqKDC+gUtS/beWq7TqFYl8+FwPq73vsbonwk4ggaPl0eCRUAT06XuJx3o/Mdkr/v
-	tMp6SSjz3PbR8LrbUJlfZFTlJ+ZGTHp/OIyaltJqwZDjNqog6Do6LhMZL6Jql6VB
-	FjPuGwOtLeiNp8zZQsUSgw=
-Received: from debian.lan (unknown [36.33.36.240])
-	by gzsmtp1 (Coremail) with SMTP id sCgvCgAX3z3NbtZmpC5_Ag--.62293S2;
-	Tue, 03 Sep 2024 10:05:02 +0800 (CST)
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: gregkh@linuxfoundation.org
-Cc: philipp.g.hortmann@gmail.com,
-	linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1725327920; c=relaxed/simple;
+	bh=wsAv2DCs81Krot2H6B+GkuNI1BslfDtsdnmozEw5rcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nBs/wuoov/drxvbvyie9doFHzoXkOKqftNnhmALy9jVK++7VoBtXAM+rfXQnwsHX4/9MIJZg1USBzVW6J8xtQ7IHuz5AWA+uZ4Ol+qdqVDUG/24yCze1cNrdwqcCCPsnJHehNLG651nYTfABifUT2UEBK2jkiV0HMza8bhxZSJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAC3aKgaatZmIuKyAA--.34549S2;
+	Tue, 03 Sep 2024 09:45:05 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	mingyen.hsieh@mediatek.com,
+	deren.wu@mediatek.com,
+	make24@iscas.ac.cn,
+	ruanjinjie@huawei.com,
+	greearb@candelatech.com,
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Qianqiang Liu <qianqiang.liu@163.com>
-Subject: [PATCH] staging: rtl8723bs: Remove an unused struct in rtw_cmd.h
-Date: Tue,  3 Sep 2024 09:44:02 +0800
-Message-Id: <20240903014402.170750-1-qianqiang.liu@163.com>
-X-Mailer: git-send-email 2.39.2
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] wifi: mt76: mt7921: Check devm_kasprintf() returned value
+Date: Tue,  3 Sep 2024 09:44:55 +0800
+Message-Id: <20240903014455.4144536-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,36 +61,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sCgvCgAX3z3NbtZmpC5_Ag--.62293S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr47uFykZF4rCF1fuw13XFb_yoW3Wwb_Ca
-	y7tFn3Wr1DArn7Zr4UGF18AryvqF1xJw40qrn5KFZ8ZFsI9F15Jw1vqr47uFW5Wa17tr9x
-	Z3WFqrySkr1rWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbLSdDUUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYA5PamV4I+SUPgAAs7
+X-CM-TRANSID:qwCowAC3aKgaatZmIuKyAA--.34549S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW7ZFW5Ww13Zw4xXFWxCrg_yoWDAFbEgr
+	409rn7XryrGFn8Kr42yry3CrW2kaykZr18XFsxtrWrJrWxGrWUur93Zrn8J392k397uryU
+	urn0kFy8uws8ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbh8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRMzuWDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-struct getcountjudge_rsp is not used, just remove it.
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked. Fix this lack and check the returned value.
 
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: 6ae39b7c7ed4 ("wifi: mt76: mt7921: Support temp sensor")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/staging/rtl8723bs/include/rtw_cmd.h | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7921/init.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-index fe1b03101203..cb44119ce9a9 100644
---- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-@@ -516,10 +516,6 @@ struct drvextra_cmd_parm {
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/init.c b/drivers/net/wireless/mediatek/mt76/mt7921/init.c
+index ef0c721d26e3..5ab395d9d93e 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/init.c
+@@ -52,6 +52,8 @@ static int mt7921_thermal_init(struct mt792x_phy *phy)
  
- /*------------------- Below are used for RF/BB tuning ---------------------*/
+ 	name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7921_%s",
+ 			      wiphy_name(wiphy));
++	if (!name)
++		return -ENOMEM;
  
--struct	getcountjudge_rsp {
--	u8 count_judge[MAX_RATES_LENGTH];
--};
--
- struct addBaReq_parm {
- 	unsigned int tid;
- 	u8 addr[ETH_ALEN];
+ 	hwmon = devm_hwmon_device_register_with_groups(&wiphy->dev, name, phy,
+ 						       mt7921_hwmon_groups);
 -- 
-2.39.2
+2.25.1
 
 
