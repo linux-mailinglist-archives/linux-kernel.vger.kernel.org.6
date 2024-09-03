@@ -1,82 +1,103 @@
-Return-Path: <linux-kernel+bounces-312717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1C4969A44
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:34:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A89699B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85305B22948
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488FF28750B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838A51B983B;
-	Tue,  3 Sep 2024 10:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B7919CC25;
+	Tue,  3 Sep 2024 10:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PXroNNRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dcFLintO"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C31A0BEC
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B606917C9B3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359666; cv=none; b=j/vI0L1r3TdnCfm/Nn0AB8p7DlyXKfb73bqJK0PSZdA9ht8xqGiEThWkgo2U+Et33Qxg8jiAIxWxzIbMjLAwtgAltFxtHasOnr6/jyzHgRzEcaH8DtNXHZ4oijKL7mMSmfjUHpXyQSXxsAJPH6JBvOl/UXOgtRCJsQfX2O+2YF4=
+	t=1725357814; cv=none; b=ZzJtLKFlQsjtPqxFtoyoHnwQXvewnWIn4oN2I0v5ge3Zi/XH22ctZM33OipD3COBTpt8+Q1zJHZqkcwgSdgI7npr6yAywz2EIyDrSYSZJDtkYXPBfTNMY0XhdWujnTdWY+fDrUNAAXufUseYTWjHEDRVofZHMWhrogHxRKc/hd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359666; c=relaxed/simple;
-	bh=UfnS01Q7flgZRu55Fz0q4m6eu4eoSwOkx1BtOnTXySw=;
+	s=arc-20240116; t=1725357814; c=relaxed/simple;
+	bh=bEjo5dr+wds5EUEW0FFUxDxhXD9qETwURck3LtJXIO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m83O0d9oCCoRd6T83kB4nvhrz1QR7Q4NxVEdPaSWUiEC1OSwyZY4UgupEdN//5kJYQukyvCIPCEV3/uGg7VkGVQYLcpvMHqibfbfgAyIks/ScwPKdLBlWc3dfN9viPtRPPRW0yoTYxoar+ZRTzg+wBrjecN7VBCn6TSivVYc9mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PXroNNRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2222C4CEC4;
-	Tue,  3 Sep 2024 10:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725359665;
-	bh=UfnS01Q7flgZRu55Fz0q4m6eu4eoSwOkx1BtOnTXySw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PXroNNRGDfuSyumfhtDVZKh3TNm0bm/069G6sE0/dem+uJuR1p6PNsSb3Foqb4JKY
-	 UAtvBtfAlrBQQV85/eRhe4BmGGvgg+eQCmk22Phg6UyC4QN35dLL5gtT5kc+cHv9VM
-	 0MeySPr2+e3/QTF0VHnDJy2UkQY/ogL1BwyGbKWg=
-Date: Tue, 3 Sep 2024 12:02:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ba Jing <bajing@cmss.chinamobile.com>
-Cc: arve@android.com, tkjos@android.com, maco@android.com,
-	joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com,
-	surenb@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] binder: modify the comment for binder_proc_unlock
-Message-ID: <2024090338-crimp-mountable-54d7@gregkh>
-References: <20240902033754.2708-1-bajing@cmss.chinamobile.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyBI8I0cetRRf3VMWUl4bwg99sb6jRxbLdX5y3NMnG15XV9t9VJidWc1tnBx/mw8MZ4SepQCylLpq4h7iuRXRf9o+NGRZVoptbtrpk0Va15YhmBIDyF7gPRcFyxIvArY1Sykn3lKhG0anifr6M/51MnxWspgLF49EhlUi00rgZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dcFLintO; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bEjo
+	5dr+wds5EUEW0FFUxDxhXD9qETwURck3LtJXIO8=; b=dcFLintOsQ7fwzigQkR3
+	eWMN8zC5FZKJEeFFBjPStw2b35e4SRzYbNKYrrz/ZxJaMa4j51AbfgUd9Vi/lJDj
+	zoi2b9GNptmgg+Kvh+W32xaAR1/8ZUK+HDhFO4X3QDTIqDDkKI7wfR0Qh19dIUMz
+	pjt+8GDhPrkCm0lNe+XI0fEhA/F+M2dXKJAc3doXPjY3QWsQeXU0P3Nl8vGD3rlr
+	bzQrBbmcLea55jDKFoBgWOfT6SQlxGKlh/vIQLpYRKMU/C8L8pYTML+6k9dq44Nv
+	hnvFryWJCbtpIb8spTAMhYonOBPL1ukbmZBqCIgjY/0uBWCdQQqnFc0ipwIqw2gj
+	Tw==
+Received: (qmail 209907 invoked from network); 3 Sep 2024 12:03:23 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2024 12:03:23 +0200
+X-UD-Smtp-Session: l3s3148p1@pi/7KjQhBo0gAwDPXwdRANgvu6DX4+2c
+Date: Tue, 3 Sep 2024 12:03:23 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: simplify with scoped for each OF child loop
+Message-ID: <Ztbe61hW2dNMujce@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816151340.154939-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dAVcFfMdPf4jMhsZ"
+Content-Disposition: inline
+In-Reply-To: <20240816151340.154939-1-krzysztof.kozlowski@linaro.org>
+
+
+--dAVcFfMdPf4jMhsZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902033754.2708-1-bajing@cmss.chinamobile.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 11:37:54AM +0800, Ba Jing wrote:
-> Modify the comment for binder_proc_unlock() to clearly indicate which spinlock it releases and to better match the acquire comment block in binder_proc_lock().
-> 
-> Notes:
-> v1: https://lore.kernel.org/all/20240830073743.2052-1-bajing@cmss.chinamobile.com/
-> 
-> v2: Reword commit log per suggestions from cmllamas@
-> https://lore.kernel.org/all/20240902013636.1739-1-bajing@cmss.chinamobile.com/
-> 
-> v3: Wrap commit message. Add version history.
-> https://lore.kernel.org/all/20240902025720.2334-1-bajing@cmss.chinamobile.com/
-> 
-> v4: Modify the commit information.
+On Fri, Aug 16, 2024 at 05:13:40PM +0200, Krzysztof Kozlowski wrote:
+> Use scoped for_each_child_of_node_scoped() when iterating over device
+> nodes to make code a bit simpler.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Again, all of these "what changed in what version" needs to go below the
---- line.
+Applied to for-next, thanks!
 
-Also, please wrap your changelog text at 72 columns, like your editor
-asked you to :)
 
-thanks,
+--dAVcFfMdPf4jMhsZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbW3usACgkQFA3kzBSg
+KbZ+eA//XFM8HLyX/AfuMJEht96Vz7RgqXsrMxxIAH1ez9s8+LdsKEQOQZL1y7q9
+/JmMog+yNXWCIJOW58rclfNNK3QbnuP8lHlK+Llld5GXpIJXcnclZLtCSvheMTpJ
+rcxahx+fK+RrFthVyAA+Fe/9eQUlwaLI1QJl26AFbxEl7KalLCJjuBwX2h2OwcA9
+ppTKfAnvj/L5aziTNLhrkOKPaLzzXoPw7wamD1Dgi96DYM+wZq210Urv7Z0RRtAV
+MifUMAOrxqY8W4pjjb9oeA8PsJn2nQLlDuIaF5cE7BSCLtvsX/gXiFCTPrZgVaKK
+TMblnQws+enLRx5q6O/6lauhZI4ty2PAOZO3iO2JLj1WGwfsh2kU2pHEX+9/xjf5
+EZlpwneQ8L7J6qs96WCIN2l0eBULfp0pBO3y2sFLYETtEvU9/q3OM0hfHIW0EUZo
+CdLU32zAwaw5YNiFuoS/vSleNHkv1D+xxKZ3s8zyOL1AlbaXEpKljzfgJau/IyNv
+kVmSDMzDfOfgbX2mBLHYMtIAKCKopN+YnJEiDWpLYzsp2zlc9kBcPqhWMRoqkK83
+pLC/SPM5SAQWY3NYXQbH6Z9SaDyR6kplrzwO5BcOZjcBLK7cRa5Jpq0E3Uio0rrw
+R9ODbJZjDw4VCX4hK7wDRUWV2+d+phcYBW8Z1mKX3mO/1YXwBL4=
+=tACZ
+-----END PGP SIGNATURE-----
+
+--dAVcFfMdPf4jMhsZ--
 
