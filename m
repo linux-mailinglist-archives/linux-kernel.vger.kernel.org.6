@@ -1,217 +1,121 @@
-Return-Path: <linux-kernel+bounces-312617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D42A9698E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB5C96990C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6444B20F05
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDE5286C80
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700601C9858;
-	Tue,  3 Sep 2024 09:27:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9178819F43F;
+	Tue,  3 Sep 2024 09:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2+DIvPM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCD1A4E88
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2171A0BC9;
+	Tue,  3 Sep 2024 09:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355621; cv=none; b=Ey8wbNAWkt5F1Zq1F1bB9SOPOH5a0rhNcHeuQJnyBkgAogCKFZSmKvO36QeRUGWpeyosR4i6BY3hhaIaFBXZThuEUmYw5mVn242P6X9bB74m+WkRnyPoLBdvi/0F+bw1TQNvq2y9r1jtt5yq5rnYoG9lNphaEjl8TaeFSLs9klw=
+	t=1725355776; cv=none; b=YmMrn3B89npQS3P6ZylJ0v6ufzgxucSaiffm7R7BjFIadOOX27cKn8on/F6gm97nWgymLQvsUyP1kvdsfPAwkPwEHYn2QX+GCisEN6gcDA5+VxQfrD0CalyjTzDLlkl1RhY/Iw5gSNhMZGzWkxqlbfssE4TDfStGZkO7tfpZ5lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355621; c=relaxed/simple;
-	bh=mTKMsk6KtNYtaaXoNT863Oq20G+QXAHuFkfPLhE+CX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAM1kRbjXnumtqh/1W1PcUhE770FNFcEMU6yy6xMBeH6cpvny/sTi+4K3RojJbZw0ZapvTo11vXlFpQuW4iJ+jsc5U/vq/CWnWnFColAPcCAdYqA6+QHpseVl2I2hOXR9ZRDTXcE7x/I4zKUM4wpOSlXtQ8q1v1+V7dDJLGxbeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slPoD-0003qY-PG; Tue, 03 Sep 2024 11:26:45 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slPoD-0059iY-6T; Tue, 03 Sep 2024 11:26:45 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BC4CB3312BC;
-	Tue, 03 Sep 2024 09:26:44 +0000 (UTC)
-Date: Tue, 3 Sep 2024 11:26:44 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>
-Cc: Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
-Subject: Re: [PATCH can-next v4 00/20] can: rockchip_canfd: add support for
- CAN-FD IP core found on Rockchip RK3568
-Message-ID: <20240903-competent-fervent-cat-43c5ac-mkl@pengutronix.de>
-References: <20240903-rockchip-canfd-v4-0-1dc3f3f32856@pengutronix.de>
+	s=arc-20240116; t=1725355776; c=relaxed/simple;
+	bh=V6Ts8UeyZzyhtsfr4GKAWGTzPe6MoHhPae1lOHa7ehM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wd3MxDaD5NUEtZDyWZ/5ZVuX+ly24+1oYAlSbhyKjJOx1OFU2SwrjjljBS3M8vCfCbzaliXvOaq00xOy+Yz7S5iNHIiiesN5EKK2c11+OHo4tDJ+A/ZcLrDa16KKZ4e5BnvyRIy1OqIfIng0hnpb+x6YP2Et/2Rcj+a3ahCVzSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2+DIvPM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78215C4CECA;
+	Tue,  3 Sep 2024 09:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725355775;
+	bh=V6Ts8UeyZzyhtsfr4GKAWGTzPe6MoHhPae1lOHa7ehM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B2+DIvPMxoKjhFD7wiF+7h0l/cf/7MYT3BR0Zhx9vp7HBRO4mfIxwB9KqYB/sTeeC
+	 1G81qhU92qnFCiE/jliReBCBu6b2qHvBBHBVRrSMDGFA+JwuXas7widUz6aFtvxdkF
+	 4tjHzOkHd6/ex/78UYqR6cDfYnFj/Pq5XqY4K3a0iXYisf626Hp7/acc1DOSY/a6cg
+	 a2POT1sITjmIyfszLS/XUbkntiO3MqghfOGuiOpgHz9jatyaXxIOGO9cYBAqqbwA/B
+	 15wIL94JzUdR+NZ65E3bnzn2/+w0/WyZpdfxs3YRDoguIILWF4YT/rse1cCgfc4OyQ
+	 fg09k/DSfw2nw==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533521cd1c3so5884505e87.1;
+        Tue, 03 Sep 2024 02:29:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURPe1GiCI1KlAHjuWacnN2AggN9fD1gyk1bD+ZwUYG64AxnGRywNGWag5Cn9StVlXS9OnTwbyRVOZAm4jm@vger.kernel.org, AJvYcCUe+kbF+z39BXoQTd00/AVIRb0G9WWgtpHnW+pYMXSePI7rTTfxGkh2z4JVLEKF5AXFYbA=@vger.kernel.org, AJvYcCVJtQsPA9bxFAJhxs7Wqu97RRR1Jd3NMzZhyeH2aMYTYXKFQQSrChZsfPIg0X+2myz/O95kimIAIDVhKrBU@vger.kernel.org, AJvYcCWm8dH+2mGgU1m28iGBHLiPuEDNIMKFLrowQBrxLQDyZpXS89eNlJr39QfhHIua/3u9tXIsOnbovCOfpQ==@vger.kernel.org, AJvYcCXoGibKNA6WBO2Uwc1lWZn0mYCDzk4JoZ/Mq7SW5TZJXyTrJkJq+/jhE3YWkQfhL6WSLXZB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs1XRcEroX/5U8GXO/VojN2TXwmV2w5zlTNAnY+4OzOIRMtVHJ
+	nKotLfvTGm9eLVMTAI+hKwNk0vRQ1SlzpXwAK5klZc51/krXyQqiEtKPF6iYICPoNLPyeZwFdwM
+	swD73640W5AAvul2H5uC7GILBnM0=
+X-Google-Smtp-Source: AGHT+IHCtdlG38E/0l7FYyhNp/Eh+agXUP/x4m9X1sDISAuGOfE6COrF1RVXR4n+XrSU6Tf+eKwYmtlidm1SXvGzdlM=
+X-Received: by 2002:a05:6512:108f:b0:533:4785:82ab with SMTP id
+ 2adb3069b0e04-53546b223d3mr10683476e87.1.1725355774159; Tue, 03 Sep 2024
+ 02:29:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eqyrqjxmrmfjzcdq"
-Content-Disposition: inline
-In-Reply-To: <20240903-rockchip-canfd-v4-0-1dc3f3f32856@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---eqyrqjxmrmfjzcdq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240828083605.3093701-1-vegard.nossum@oracle.com>
+ <875xrd7h88.fsf@mail.lhotse> <d1bb2638-2e0e-44ef-b8da-9746ed532ed1@oracle.com>
+In-Reply-To: <d1bb2638-2e0e-44ef-b8da-9746ed532ed1@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 3 Sep 2024 18:28:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT84K0RgDfLoOOLjtyCqsS19bASXRv43HF8P=C9obJPVA@mail.gmail.com>
+Message-ID: <CAK7LNAT84K0RgDfLoOOLjtyCqsS19bASXRv43HF8P=C9obJPVA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: use objcopy to generate asm-offsets
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-omap@vger.kernel.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-um@lists.infradead.org, bpf@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Sorry for the noise, please ignore this series.
+On Tue, Sep 3, 2024 at 4:21=E2=80=AFPM Vegard Nossum <vegard.nossum@oracle.=
+com> wrote:
+>
+>
+> On 03/09/2024 01:45, Michael Ellerman wrote:
+> > Vegard Nossum <vegard.nossum@oracle.com> writes:
+> >> Remove the sed script and compile the C source listing structs and
+> >> offsets to an object file (instead of assembly code) that embeds C sou=
+rce
+> >> directly. Then extract the C source using objcopy.
+> >>
+> >
+> > I threw some builders at this and hit a few errors:
+>
+> Thanks, I also got the ones from kernel test robot and figured something
+> was going a bit wrong.
+>
+> There are several issues: clang wants - instead of /dev/stdout as an
+> argument to objcopy, and then gcc has some bugs that prevent the numbers
+> from appearing correctly on some architectures, also I had an extra # in
+> the COMMENT() macro which only resulted in an error on some
+> architectures. I've attached a tentative v2 that fixes these issues, but
+> I'm still trying to figure out why m68k is giving me slightly different
+> output for include/generated/asm-offsets.h and why the arc assembler
+> fails.
+>
+> In the end I'm wondering if this patch is really worth it, given all the
+> failures and little workarounds :-| If I can sort out the last few
+> failures I'll submit it as an RFC.
 
-On 03.09.2024 11:21:42, Marc Kleine-Budde wrote:
-> This series adds support for the CAN-FD IP core found on the Rockchip
-> RK3568.
->=20
-> The IP core is a bit complicated and has several documented errata.
-> The driver is added in several stages, first the base driver including
-> the RX-path. Then several workarounds for errata and the TX-path, and
-> finally features like hardware time stamping, loop-back mode and
-> bus error reporting.
->=20
-> regards,
-> Marc
->=20
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
-> Changes in v4:
-> - dt-bindings: renamed to rockchip,rk3568v2-canfd.yaml to match the
->   first compatible
+This patch has zero benefit.
 
-I forgot to update the MAINTAINERS entry. I'll send a new series, but
-not today.
+The current way (preprocess + sed) is faster than
+your way (preprocess + compile + objcopy) and works
+independently of tool quirks.
 
-Marc
 
-> - dt-bindings: fix "$id" in yaml (thanks Rob's bot)
-> - all: add Tested-by: Alibek Omarov <a1ba.omarov@gmail.com>
-> - Link to v3: https://patch.msgid.link/20240830-rockchip-canfd-v3-0-d4262=
-66453fa@pengutronix.de
->=20
-> Changes in v3:
-> - dt-bindings: renamed file to rockchip,rk3568-canfd.yaml (thanks Rob)
-> - dt-bindings: reworked compatibles (thanks Rob)
-> - Link to v2: https://lore.kernel.org/all/20240731-rockchip-canfd-v2-0-d9=
-604c5b4be8@pengutronix.de
->=20
-> Changes in v2:
-> - dt-bindings: remove redundant words from subject and patch
->   description (thanks Rob)
-> - dt-bindings: clean up clock- and reset-names (thanks Rob)
-> - base driver: add missing bitfield.h header
-> - base driver: rkcanfd_handle_rx_int_one(): initialize header to avoid
->   uninitialzied variable warning on m68k
-> - base driver: rkcanfd_get_berr_counter_raw(): don't add assigned only
->   variable (bec_raw), move to 14/20 (thanks Simon)
-> - CAN-FD frame equal check + TX-path: squash, to avoid unused
->   functions (thanks Simon)
-> - TX-path: rkcanfd_handle_tx_done_one(): don't add assigned only
->   variable (skb), move to 18/20 (thanks Simon)
-> - HW-timetamping: add missing timecounter.h header (thanks Simon)
-> - Link to v1: https://lore.kernel.org/all/20240729-rockchip-canfd-v1-0-fa=
-1250fd6be3@pengutronix.de
->=20
-> ---
-> David Jander (2):
->       arm64: dts: rockchip: add CAN-FD controller nodes to rk3568
->       arm64: dts: rockchip: mecsbc: add CAN0 and CAN1 interfaces
->=20
-> Marc Kleine-Budde (18):
->       dt-bindings: can: rockchip_canfd: add rockchip CAN-FD controller
->       can: rockchip_canfd: add driver for Rockchip CAN-FD controller
->       can: rockchip_canfd: add quirks for errata workarounds
->       can: rockchip_canfd: add quirk for broken CAN-FD support
->       can: rockchip_canfd: add support for rk3568v3
->       can: rockchip_canfd: add notes about known issues
->       can: rockchip_canfd: rkcanfd_handle_rx_int_one(): implement workaro=
-und for erratum 5: check for empty FIFO
->       can: rockchip_canfd: rkcanfd_register_done(): add warning for errat=
-um 5
->       can: rockchip_canfd: add TX PATH
->       can: rockchip_canfd: implement workaround for erratum 6
->       can: rockchip_canfd: implement workaround for erratum 12
->       can: rockchip_canfd: rkcanfd_get_berr_counter_corrected(): work aro=
-und broken {RX,TX}ERRORCNT register
->       can: rockchip_canfd: add stats support for errata workarounds
->       can: rockchip_canfd: prepare to use full TX-FIFO depth
->       can: rockchip_canfd: enable full TX-FIFO depth of 2
->       can: rockchip_canfd: add hardware timestamping support
->       can: rockchip_canfd: add support for CAN_CTRLMODE_LOOPBACK
->       can: rockchip_canfd: add support for CAN_CTRLMODE_BERR_REPORTING
->=20
->  .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  |  74 ++
->  MAINTAINERS                                        |   8 +
->  arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dts     |  14 +
->  arch/arm64/boot/dts/rockchip/rk3568.dtsi           |  39 +
->  drivers/net/can/Kconfig                            |   1 +
->  drivers/net/can/Makefile                           |   1 +
->  drivers/net/can/rockchip/Kconfig                   |   9 +
->  drivers/net/can/rockchip/Makefile                  |  10 +
->  drivers/net/can/rockchip/rockchip_canfd-core.c     | 969 +++++++++++++++=
-++++++
->  drivers/net/can/rockchip/rockchip_canfd-ethtool.c  |  73 ++
->  drivers/net/can/rockchip/rockchip_canfd-rx.c       | 299 +++++++
->  .../net/can/rockchip/rockchip_canfd-timestamp.c    | 105 +++
->  drivers/net/can/rockchip/rockchip_canfd-tx.c       | 167 ++++
->  drivers/net/can/rockchip/rockchip_canfd.h          | 553 ++++++++++++
->  14 files changed, 2322 insertions(+)
-> ---
-> base-commit: da4f3b72c8831975a06eca7e1c27392726f54d20
-> change-id: 20240729-rockchip-canfd-4233c71f0cc6
->=20
-> Best regards,
-> --=20
-> Marc Kleine-Budde <mkl@pengutronix.de>
->=20
->=20
->=20
->=20
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
---eqyrqjxmrmfjzcdq
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbW1lAACgkQKDiiPnot
-vG/ZHAf+O51SAV47j7T7YC6df1yEQPVMBhqcN4Z/J61mB5vKb8RadR0V6+H1/ULx
-gjasA2OvFUXnVx27BN7FFwMiiDYh7YHJkc7Fn5mQHQFmRew8AToNj5hxfBJak1PW
-wJ4FtznPhETWfHt2Zb9XwdlOEa1iD5zIo5ib/6LJbxdHUZKrQm5da1DulHChnKcG
-/06FiW1zoLHnO83AsR/RDdccf2XS99hZlm9fuSIpb/mGq6glAJ5lRSWDRS3/VBYC
-EsPPWLLK6G7omsgeAXCPJESWORg4vqeKkeR6x8lY4J49FbO++HlPZTMm+2jUrBAJ
-f9HDXt9wuGu/9UcH+0btqZiHSklQUA==
-=7FIz
------END PGP SIGNATURE-----
 
---eqyrqjxmrmfjzcdq--
+
+--
+Best Regards
+Masahiro Yamada
 
