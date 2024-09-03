@@ -1,101 +1,196 @@
-Return-Path: <linux-kernel+bounces-313139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CBF96A0CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:37:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A3796A0CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241C71C23BF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899C71F21E74
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96E13D531;
-	Tue,  3 Sep 2024 14:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B40153BD9;
+	Tue,  3 Sep 2024 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lFHDrx6s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fb9vqPz3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74CE1CA69B;
-	Tue,  3 Sep 2024 14:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260ED1537A4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374240; cv=none; b=rG8FsRCFYdK/DztFfqCyD+KvhUfyz5WoCLWRQIjLBQAxojZF7iZ55bLI1Na04+nx75jKRDWlATeYoNf1k9moVVQrku9zx3nBpW44lW/nZOS5vdR15V8PVeKjNQ6w+u9SDY4WqHXGKqqwFKPWxAwY7hUiy92xQsId7H7Y6GX6PTk=
+	t=1725374243; cv=none; b=YShgrP9eqGAgLIe35jjUFD+IkKBeJQZCpBam/7SL/cgOXQuEsJeRJSnDzyrg8Lf84DIdD2O+7sjl0TAf81maKiqhj/UTyByXz95Jl5NI4edjYmnciSDoWhOmUPXNj64wstNf2jaWto0VjkYyppOZu1/VvMNI553E7uiqZOudd+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374240; c=relaxed/simple;
-	bh=mc5whrycKE1zZyd4VrCEjvI4WG+qhy2PVteQgWMSXtw=;
+	s=arc-20240116; t=1725374243; c=relaxed/simple;
+	bh=Ky1kfxpqkYZU9W4lnttu7s9ET1ebaacJPEO9AEO3ltM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtpyZkvt8rb9JYPNtk/rzy7AF30jsRlgNR8cRK7TQ+JYev9IDgq4Vy1segS55cAOZnrcJJvclzkYxhS66AJTK/x3LBgBmBcbqLTHsbi9AuDpJdUftC2Twj5tyy+B4rZyDJ4AJ86oqlHPa0gt5fBZYzvhQRv9eq4HYHlT0CI2yPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lFHDrx6s; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725374238; x=1756910238;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mc5whrycKE1zZyd4VrCEjvI4WG+qhy2PVteQgWMSXtw=;
-  b=lFHDrx6sQpQOA31y3Solv/y8Jd4ZtioPIZ35mvjL7N2ZHzUx5ixTO0VB
-   B0mCfYTqKnnNh3ICSzQmx2RCRCWNlAyy9kNEkUcNkbYp4tW/j66OjsXdn
-   ZVk0WcrPj+4GUA/gmvjRuhU+/vuENQZR8v6cwWd+ScH3Hmzm0aR132v7I
-   tu0oFC8okBRSKVr3YEWvXoK83xeO+eYQDOAPEJwxfaQmZxeljbUpbQZfZ
-   OHD2W2y2Vwtwk674V2Yvpmwu8YJnIKMvg97ifOPHS+hEb1wu3TDwrV739
-   569PGBDUIkJ/xKEd01adD5gt19ae/lFt9QT6QmE+iguZ1gt/AvQfBoE0t
-   Q==;
-X-CSE-ConnectionGUID: WlEhgYZZQNCd0f4mrrv2Lw==
-X-CSE-MsgGUID: ZEUxrHXXQkq3/nKJ7yD/Aw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41448282"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="41448282"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:37:18 -0700
-X-CSE-ConnectionGUID: Yx364v7fQOiVDbEliVDe2g==
-X-CSE-MsgGUID: 3zheBD5OSe6COrbaFU7NIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="64933040"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:37:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUeP-00000004job-1DuJ;
-	Tue, 03 Sep 2024 17:36:57 +0300
-Date: Tue, 3 Sep 2024 17:36:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v5 0/7] pressure: bmp280: Minor cleanup and interrupt
- support
-Message-ID: <ZtcfCVcV_1hCVp7N@smile.fi.intel.com>
-References: <20240902184222.24874-1-vassilisamir@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KllrUMOCgfKWIQviY+Nr5syaDsZnqzODVQKxqm/FFksN6XWqkYOnQUC83krN8VwxmHg2CTP2DqDp0X9DXz6mMXk6PZrzZpafYekFxCgY/sRyNwJCPisAWzo1AbqewMNmttw2CrNcG4AaDQLxDPUQH+YIKdvyQq80M3SwstMRRjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fb9vqPz3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08DAC4AF09;
+	Tue,  3 Sep 2024 14:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725374242;
+	bh=Ky1kfxpqkYZU9W4lnttu7s9ET1ebaacJPEO9AEO3ltM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fb9vqPz3y+tVC6zu+tPXvEU9dHd3ZyaCdbEEcT923JGZd/Nwx8hJuWlmhBmcatPxb
+	 Uq7WCVo0NDZ9w3cMQUVhzkNhsPXcViov7hufvV8x9uyPCPYT0EWgBf7uxtmKbONFbE
+	 Yk+JUgpJnPbxUaIpDiOCG0yGuQEh7yQ0OuYKY+WkNdUU9SRKDpaT6fxTD0Nc84QPk0
+	 kWwLs8P0HjO+cjwKEtSNMOs3Pp2WHDKtDzPSqUEkyqD3ImAspEtf6OUR35FHjjUB6z
+	 0B93IPkcoKskgTj/QtPtvmo8UZStK4j6cnHbHVZzCqgLUOGSa35dEyuVN1g1XScIM1
+	 JuBu0HezZIMtw==
+Date: Tue, 3 Sep 2024 15:37:18 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mfd: bd96801: Add ERRB IRQ
+Message-ID: <20240903143718.GX6858@google.com>
+References: <cover.1724655894.git.mazziesaccount@gmail.com>
+ <05b576f3eef81a21cb9b4bcebee4873b7aafb4af.1724655894.git.mazziesaccount@gmail.com>
+ <20240830072822.GS6858@google.com>
+ <dbdfbcd1-3f18-4ca5-9d4c-3c35bb3dee48@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240902184222.24874-1-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbdfbcd1-3f18-4ca5-9d4c-3c35bb3dee48@gmail.com>
 
-On Mon, Sep 02, 2024 at 08:42:15PM +0200, Vasileios Amoiridis wrote:
-> Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
+On Fri, 30 Aug 2024, Matti Vaittinen wrote:
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> On 8/30/24 10:28, Lee Jones wrote:
+> > On Mon, 26 Aug 2024, Matti Vaittinen wrote:
+> > 
+> > > The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
+> > > handling can in many cases be omitted because it is used to inform fatal
+> > > IRQs, which usually kill the power from the SOC.
+> > > 
+> > > There may however be use-cases where the SOC has a 'back-up' emergency
+> > > power source which allows some very short time of operation to try to
+> > > gracefully shut down sensitive hardware. Furthermore, it is possible the
+> > > processor controlling the PMIC is not powered by the PMIC. In such cases
+> > > handling the ERRB IRQs may be beneficial.
+> > > 
+> > > Add support for ERRB IRQs.
+> 
+> Thanks for the review Lee! :)
+> 
+> > > 
+> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > > ---
+> > > Revision history:
+> > > New series (only ERRB addition)
+> > > v1:
+> > > 	- use devm allocation for regulator_res
+> > > 	- use goto skip_errb instead of an if (errb)
+> > > 	- constify immutable structs
+> > > 
+> > > Old series (All BD96801 functionality + irqdomain and regmap changes)
+> > > v2 => v3:
+> > > 	- No changes
+> > > v1 => v2:
+> > > 	- New patch
+> > > 
+> > > mfd: constify structs
+> > > ---
+> > >   static int bd96801_i2c_probe(struct i2c_client *i2c)
+> > >   {
+> > > -	struct regmap_irq_chip_data *intb_irq_data;
+> > > +	int i, ret, intb_irq, errb_irq, num_regu_irqs, num_intb, num_errb = 0;
+> > > +	int wdg_irq_no;
+> > 
+> > Nit: Not sure why the smaller data elements have been placed at the top.
+> 
+> Because some people have told me it's easier for them to read the local
+> variable declarations when the code is formatted to "reverse xmas-tree"
+> -style. I suppose I've tried to follow that here.
+> 
+> > They were better down where they were.
+> 
+> My old personal preference has just been to have 'simple' integer types
+> first, then structs, and the pointers last. I don't think having xmas-tree
+> (reversed or not) plays a role in my code-reading ability...
+> 
+> I won't re-spin the series just for this, if this is just a 'nit'. I will
+> try to remember the comment if I need to rebase / respin this later though
+> :)
 
-for the patches 1,2, and 3.
+Please leave them were they are.
+
+> > > +	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+> > > +	struct irq_domain *intb_domain, *errb_domain;
+> > > +	struct resource wdg_irq;
+> > >   	const struct fwnode_handle *fwnode;
+> > > -	struct irq_domain *intb_domain;
+> > > +	struct resource *regulator_res;
+> > >   	struct regmap *regmap;
+> > > -	int ret, intb_irq;
+> > >   	fwnode = dev_fwnode(&i2c->dev);
+> > >   	if (!fwnode)
+> > > @@ -213,6 +364,23 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+> > >   	if (intb_irq < 0)
+> > >   		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
+> > > +	num_intb =  ARRAY_SIZE(regulator_intb_irqs);
+> > > +
+> > > +	/* ERRB may be omitted if processor is powered by the PMIC */
+> > > +	errb_irq = fwnode_irq_get_byname(fwnode, "errb");
+> > > +	if (errb_irq < 0)
+> > > +		errb_irq = 0;
+> > > +
+> > > +	if (errb_irq)
+> > > +		num_errb = ARRAY_SIZE(regulator_errb_irqs);
+> > > +
+> > > +	num_regu_irqs = num_intb + num_errb;
+> > > +
+> > > +	regulator_res = devm_kcalloc(&i2c->dev, num_regu_irqs,
+> > > +				     sizeof(*regulator_res), GFP_KERNEL);
+> > > +	if (!regulator_res)
+> > > +		return -ENOMEM;
+> > > +
+> > >   	regmap = devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
+> > >   	if (IS_ERR(regmap))
+> > >   		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+> > > @@ -226,16 +394,54 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+> > >   				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
+> > >   				       &intb_irq_data);
+> > >   	if (ret)
+> > > -		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
+> > > +		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB irq_chip\n");
+
+Kernel logs are user facing.  The previous message was better.
+
+Please drop this change.
+
+> > >   	intb_domain = regmap_irq_get_domain(intb_irq_data);
+> > > -	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> > > -				   bd96801_cells,
+> > > -				   ARRAY_SIZE(bd96801_cells), NULL, 0,
+> > > -				   intb_domain);
+> > > +	/*
+> > > +	 * MFD core code is built to handle only one IRQ domain. BD96801
+> > > +	 * has two domains so we do IRQ mapping here and provide the
+> > > +	 * already mapped IRQ numbers to sub-devices.
+> > > +	 */
+> > 
+> > Do one or more of the subdevices consume both domains?
+> 
+> I believe the regulators consume both.
+> 
+> > If not, why not call devm_mfd_add_devices() twice?
+> 
+> Thanks for this suggestion :) It didn't occur to me I could do that. Well,
+> here I need both domains for regulators so it probably wouldn't work - but
+> maybe I will remember this is a viable option for future designs! Thanks!
+
+That's a shame.  This all looks quite messy.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Lee Jones [李琼斯]
 
