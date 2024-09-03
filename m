@@ -1,303 +1,107 @@
-Return-Path: <linux-kernel+bounces-312551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C04969813
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26393969812
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68BA0285FF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C2D1F21FB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F51C7697;
-	Tue,  3 Sep 2024 08:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAEB1C7689;
+	Tue,  3 Sep 2024 08:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oKT2Zdst"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x6kNvhZX"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160EB1C7676
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807F01C766B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725353967; cv=none; b=QR8p+vYk3Y9mrS3/z7xWxDuOGxXlKJb9rWIf7etv4+vAggqF3eV/jPyqiZ/Z3HJk68C9RAZvbG0QqO+ssDu7ybBPQaDVRqvNHmjTirm6NVM24hW8hAI3yuI6JF2/vBz2npoOP/OZ1WLjMYJhVxsMj12chhY9UCZPgDATo3ev3OY=
+	t=1725353966; cv=none; b=Z+qs6kvHJsfZu1/7XlVZa6BA8H4o9JH6qXvpMNcKCVc4134Fnbzx8UAfAdipvaYfQ4w9jUOX4cTdKxwkgW6hdtQvy047lIh7XzSSK+LUUChwq894j0tUFmBEk/i21shsjsWSEanY20K/pPOKvzGUKTpEwnUsH7G8Z63TyLv3As0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725353967; c=relaxed/simple;
-	bh=43dvIqYq1aTUBVKac9ylC5fQvUAh+5J8rOpcgHY4avI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MuIGhAqjehb9PquSlOOYKttE7nOzcO5ECOIqi8ab5vCLIZin1JsuHaBtCi0yN01op6D40kb4ikGLiqM+i5DG6Pm6VE2A0bWtxv/m4J0/3OKeRfjzSX39uuS95igk5V4F+AGNoOGbM2ER9pQCodu3ocypy9z25yuY5SfAgS7/YEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oKT2Zdst; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1725353966; c=relaxed/simple;
+	bh=udGQV/GmfFfAjfO2sEZziU//Qi8dyLILtEc/1cuEovQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIcfSzEsFM1Td3t/NniXfrsooZgdE/Jx+/4V26KZAHicAt7UpQrQ0DZ/vP89WO9RAb4FSYOT09n6V4xeGFHWwub+R65QwMsMt2sVtEX5d72pk206dFnePdZfb8DpVgurTv7ruHmooyMa/9IDbvT8oa3OSgMiP+WAIN59lNpIfRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x6kNvhZX; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso4877162276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:59:23 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3df0e0e5577so2609251b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:59:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1725353963; x=1725958763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zjMrP6ByPwO+xl7QUgd6pIme65ZPvQHEPoRMFWbC26U=;
-        b=oKT2Zdstkl5mlXFgHGqiwbeLNBIQ3JTFn81R6V3f2GwI5U+3mf7r1ITCHpkkPkRvj6
-         Uo4lub6JZPDSFju7EXgtc3FzJtHVlC2lt2aiiVwrW7ntSFjn9DTYxYMHK7cgeOmVJIP3
-         zVq9ouRwK96jgo14DdIQnMq8kphnNQqd2u1BTNx6fmWqUXq4/a6b/QrqgHN2Jnl03oNo
-         BIJmLzKErrHS5C1vrYXwGDJqMRGylFy2JsOsL3UbhbvYH/855psxanKcbhkA+oNxf3Cf
-         a1vzMPlH22uIdqcry4MLkR5YgZQvLHCwx8VMbEssWzatgL6wxB0fbD2774M1scu4QFIu
-         FsKw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ymoJtuBQv5UzRRerIW81ssFX4/DtJS7COa0FqHOhZgU=;
+        b=x6kNvhZXb0rnHQbr5qzEZGQr7jq0691qqA6UvLjpWDd+x/uP3uDeubVkQk1iLhWvo0
+         T9ON5GH1pZSXjTViYAGrxzBNc9YBftB47paLkSnhkdg/DlK2KA2LtAA46wNtcJt1M2/P
+         dKPUTVdGQ9pJ+BtTM/ZwLcnQNK5hgSm9TH7d75OvWXSVrzSVnNNq9c0V6nO3IjowHxFd
+         S0GXvohW9+1h3m+HbxXYDk6Mh6c9WYQi/tAGcFmn9Y7ZwRCd04LycBtfI2K3HjrxclfM
+         VxCsgSYMM2puyazWYnounV4ehRdVsxsVn3zWP9J4YkxV0dJ1oPqxpCPZcKDlsHxiQ/gl
+         qM9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1725353963; x=1725958763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zjMrP6ByPwO+xl7QUgd6pIme65ZPvQHEPoRMFWbC26U=;
-        b=Owb+JECgfA16I3YQuj/mba1mY1Ao7JBk8NfsTFBzvLx3ZFwSUg5ukhCOOWykcGOmhY
-         HLOlscrKnyQeTB0sbiHpb5tolyZq1bA1VbvZM8zBkyCa48xrIHeCjP6MAgPKbyxHxayU
-         xYsFPnUCSi0qnfFIptcueYVUOJGx2CFrZyYkUYy4KGhg2s9D4QKbk732hl1M7i8Ecpff
-         0tVxQ5UNjja+IBENrog+4yU2erMDDTOMLMuivrW/zxaMFfYkQO8xWSQ5kUF3xy0eZuT8
-         twEvjCz4LWdkwKPKkNLsC6Yc5sZHfTdqc8XCA+SQN/87byN/oc1FKJYOdRH2G3sk5FfY
-         9t1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXcVgYYjIyTqQdFyDyfQlC0pd5763iT/tUfbzYdU6HSnjTksjL/vHOPzAElmcH3be8FKOgeyUTTrD/wsLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXAOqKpyCR1pMKm9bbA8po6jTSNUEFuMLx3aLsmjg+B49OBo6y
-	RhXT1Ic4WKCuRBydQM7h5nkhNz4XcNNDuFaB2zgk5FyPauF+Kh8KwiS4df12bazFI+XF9e4Lxu0
-	uiMRKx2iMve7OP8ws/pathyBbPc7eBYXfQOXgdA==
-X-Google-Smtp-Source: AGHT+IHS0GzsmdR0si/TrTMH3ZQl3LYKdLuzZSFZv49wDd4H/iof6WJG/gETGwxahkV73EWWQ97UX7TrN4rJsUmUCi4=
-X-Received: by 2002:a05:690c:dca:b0:65f:93c1:fee9 with SMTP id
- 00721157ae682-6d40ee5716cmr147698137b3.9.1725353962947; Tue, 03 Sep 2024
- 01:59:22 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymoJtuBQv5UzRRerIW81ssFX4/DtJS7COa0FqHOhZgU=;
+        b=M19LQw1roqiir/KDylhq7vJDuxZUIKtvawE+f6ivKPu59zJyENbj7uK2yQl48G85Z0
+         yUi1H19Eu5Ft4zju8qx5vSjs4KECX+XPCQmP3/bYjhsZ7rAphiJP/VIT35Wh7L/XZOB1
+         bdUA75ggCv1MZ+ywtKdkamUCFfEcnFX9GnEtniKWz9l5f45rTm4hJLmXSoS8BiMGunUk
+         YlS+T77sg5tCfi66r8fycv4Xv+YhnaNpBE+2/I3WO85wPV1b/4ZwgDHF/pSHhE0i6nHq
+         5QZjOugqAtYmZ+VQM4JDH+nn2EwsPgjzp9WBIDXYEpG6C9uH506Qlaf2nO6dHN23AjKf
+         uRPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSySEW09B9PRdiYSlEsBAvi6fj5ZPqmAaoC4uRxFoiXJ73XLjkmPf69uhupVDYdu/OpA7Q6wcy2to/JNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbJAzRHydT1jHn314o8hktpAW9MQcbIcnp6xfVJPceMRoaAoAv
+	kjBZVp6fUh1bJwO+N7L7R0Qkz9HahEFOEGdNlNlfEQ4c2Weu0B7lUB5x7JcgjiU=
+X-Google-Smtp-Source: AGHT+IFuS2L60v1NP7nVOUMwHsCSPHEXJ6vWOJHGecvF7IyXMJ+9BQCfiVc8MW107Tnk61AoYNyV7g==
+X-Received: by 2002:a05:6808:152b:b0:3e0:916:f7bf with SMTP id 5614622812f47-3e00cbd01bamr1305179b6e.47.1725353963674;
+        Tue, 03 Sep 2024 01:59:23 -0700 (PDT)
+Received: from localhost ([122.172.83.237])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e7759bdsm8759318a12.22.2024.09.03.01.59.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 01:59:23 -0700 (PDT)
+Date: Tue, 3 Sep 2024 14:29:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Huang Rui <ray.huang@amd.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] cpufreq: amd-pstate: add check for cpufreq_cpu_get's
+ return value
+Message-ID: <20240903085920.rk4bx5qqdbmj3aom@vireshk-i7>
+References: <20240826133842.5519-1-abelova@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-13-bdb05b4b5a2e@linaro.org>
- <CAA8EJpoRiF5uYUeeVog6QU+5f64eBzVDwafopXLnRkW5EiW6Eg@mail.gmail.com> <CABymUCPPXk3Nc-GUCy63V9HcCUyywx7tMCjbHzrTz3joA5=8ng@mail.gmail.com>
-In-Reply-To: <CABymUCPPXk3Nc-GUCy63V9HcCUyywx7tMCjbHzrTz3joA5=8ng@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 11:59:11 +0300
-Message-ID: <CAA8EJpqDWZiGawPtMXgY9evOWOZ6bTqmgBgks7rXxr4VC5tCXw@mail.gmail.com>
-Subject: Re: [PATCH 13/21] drm/msm/dpu: Support quad pipe in header files
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826133842.5519-1-abelova@astralinux.ru>
 
-On Tue, 3 Sept 2024 at 10:51, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B48=E6=
-=9C=8829=E6=97=A5=E5=91=A8=E5=9B=9B 19:30=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, 29 Aug 2024 at 13:20, Jun Nie <jun.nie@linaro.org> wrote:
-> > >
-> > > Support 4 pipes and their configs at most. They are for 2 SSPP
-> > > and their multi-rect mode. Because one SSPP can co-work with
-> > > 2 mixer at most, 2 pair of mixer are needed for 2 SSPP in quad-
-> > > pipe case. So 2 mixer configs are needed in quad-pipe case.
-> >
-> > As you wrote this is based (depends?) on the virtual planes, then you
-> > know that the code already uses either one or two SSPP blocks to drive
-> > one sw_pipe. I'm not sure what do you mean by "2 mixer configs". There
-> > are 4 LMs and 4 mixer configurations in the quad-pipe case. The commit
-> > message is thus misleading.
->
-> This patch set depends on the virtual plane patch set. The mixer config i=
-s
-> not a proper term per your response. It is from DPU2 branch. Maybe
-> clip_config is a better term for this. The config is used to split the pl=
-ane
-> into 2 mixers pairs and 2 DSI interface with 2 halves of full screen.
+On 26-08-24, 16:38, Anastasia Belova wrote:
+> cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
+> and return in case of error.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+> v2: remove mixing code and declarations
+>  drivers/cpufreq/amd-pstate.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 
-Let's understand why you need it at all. The sw_pipe should be
-agnostic of the "left-or-right-half" part of the story.
+Applied. Thanks.
 
->
-> >
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  2 +-
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h | 11 ++++++++++-
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h   | 30 +++++++++++++++++++=
-++--------
-> > >  3 files changed, 33 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> > > index a2eff36a2224c..424725303ccad 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> > > @@ -32,7 +32,7 @@
-> > >  #define DPU_MAX_PLANES                 4
-> > >  #endif
-> > >
-> > > -#define PIPES_PER_STAGE                        2
-> > > +#define PIPES_PER_STAGE                        4
-> > >  #ifndef DPU_MAX_DE_CURVES
-> > >  #define DPU_MAX_DE_CURVES              3
-> > >  #endif
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > > index fc54625ae5d4f..ae6beff2c294b 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > > @@ -143,11 +143,20 @@ struct dpu_hw_pixel_ext {
-> > >   *             such as decimation, flip etc to program this field
-> > >   * @dest_rect: destination ROI.
-> > >   * @rotation: simplified drm rotation hint
-> > > + * @visible: mark this cfg is valid
-> >
-> > So is it valid or visible?
-> Yeah, valid is better than visible.
-> >
-> > > + * @mxcfg_id: mixer config ID for left or right half screen.
-> > > + *             We have single SSPP, dual SSPP, single SSPP+multi_rec=
-t or dual
-> > > + *             SSPP+multi_rect case. mxcfg_id mark current pipe will=
- use
-> > > + *             which mixer cfg. The first mxcfg is for the left half=
- of screen,
-> > > + *             the 2nd mxcfg is for the right half screen. The headi=
-ng cfg may
-> > > + *             be skipped by pipe with the first mxcfg_id =3D 1 if t=
-he plane is
-> > > + *             only displayed in the right side, thus SSPP goes to l=
-ater mixers.
-> >
-> > too long description for an unreadable name.
->
-> Maybe the clip_id is better per above discussion?
-
-No. Please use clip when something gets clipped (e.g. because the
-plane displays just a part of the framebuffer).
-
-> >
-> > >   */
-> > >  struct dpu_sw_pipe_cfg {
-> > >         struct drm_rect src_rect;
-> > >         struct drm_rect dst_rect;
-> > > -       unsigned int rotation;
-> > > +       unsigned int rotation, mxcfg_id;
-> > > +       bool visible;
-> > >  };
-> > >
-> > >  /**
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h b/drivers/gpu/=
-drm/msm/disp/dpu1/dpu_plane.h
-> > > index e225d5baceb09..9e79cf9eba264 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h
-> > > @@ -14,14 +14,30 @@
-> > >  #include "dpu_hw_mdss.h"
-> > >  #include "dpu_hw_sspp.h"
-> > >
-> > > +/**
-> > > + * Max number of mixer configs. Because we support 4 pipes at most,
-> > > + * the 4 pipes are with 2 SSPP and their multi-rect mode. While one
-> >
-> > Or 4 SSPPs. Or 3 SSPPs. Or even a single SSPP if it doesn't cover the
-> > whole screen.
-> >
-> > I'm really sorry to say, but I can not understand this text.
->
-> Yeah, lots of usage cases are not mentioned here. It just describe how th=
-e
-> config number come from. It should be the number for screen clip rectangl=
-e
-> in a full screen.
->
-> >
-> > > + * SSPP can co-work with 2 mixer at most, then 2 pair of mixer are
-> > > + * needed for 2 SSPP in quad-pipe case. Thus 2 mixer configs are
-> > > + * needed in quad-pipe case.
-> > > + */
-> > > +#define MIX_CFGS_IN_CRTC 2
-> > > +
-> > >  /**
-> > >   * struct dpu_plane_state: Define dpu extension of drm plane state o=
-bject
-> > >   * @base:      base drm plane state object
-> > >   * @aspace:    pointer to address space for input/output buffers
-> > > - * @pipe:      software pipe description
-> > > - * @r_pipe:    software pipe description of the second pipe
-> > > - * @pipe_cfg:  software pipe configuration
-> > > - * @r_pipe_cfg:        software pipe configuration for the second pi=
-pe
-> > > + * @pipe:      software pipe description. Some or all of fields in a=
-rray can
-> >
-> > array has elements, not fields.
-> >
-> > > + *             be in use per topology. The heading fields are used f=
-irst,
-> > > + *             and the later fields is invalid if visible field of p=
-ipe_cfg
-> > > + *             is not set. For example, the visible fields of pipe_c=
-fg are set
-> > > + *             in the first 2 pipe_cfg fields, and the mxcfg_id for =
-them are
-> > > + *             0 and 1. That means the first pipe is for left half s=
-creen and
-> > > + *             the 2nd pipe is for right half. The visible field of =
-the 3rd
-> > > + *             pipe_cfg is not set, which means the 3rd and 4th pipe=
- are not
-> > > + *             in use.
-> >
-> > NAK. A single LM pair might already need two sw pipes.
-> > After reading the comment I have doubts that you understand what the
-> > code is currently doing.
->
-> This describes that  a right half only plane will only use the first
-> pipe/pipe_cfg with
-> valid flag and clip_id flag. So the later 2 elements of
-> sw_pipe/pipe_cfg arrary are not
-> used.
-
-I'd suggest doing it in the opposite way: always use 0/1 for the left
-part, 2/3 for the right part. It should save you from all the
-"visible" and "mxcfg_id" story.
-
->
-> >
-> > > + * @pipe_cfg:  software pipe configuration. The 4 fields are for SSP=
-P and their
-> > > +               parallel rect as above pipes.
-> > >   * @stage:     assigned by crtc blender
-> > >   * @needs_qos_remap: qos remap settings need to be updated
-> > >   * @multirect_index: index of the rectangle of SSPP
-> > > @@ -34,10 +50,8 @@
-> > >  struct dpu_plane_state {
-> > >         struct drm_plane_state base;
-> > >         struct msm_gem_address_space *aspace;
-> > > -       struct dpu_sw_pipe pipe;
-> > > -       struct dpu_sw_pipe r_pipe;
-> > > -       struct dpu_sw_pipe_cfg pipe_cfg;
-> > > -       struct dpu_sw_pipe_cfg r_pipe_cfg;
-> > > +       struct dpu_sw_pipe pipe[PIPES_PER_STAGE];
-> > > +       struct dpu_sw_pipe_cfg pipe_cfg[PIPES_PER_STAGE];
-> > >         enum dpu_stage stage;
-> > >         bool needs_qos_remap;
-> > >         bool pending;
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
-
-
---
-With best wishes
-Dmitry
+-- 
+viresh
 
