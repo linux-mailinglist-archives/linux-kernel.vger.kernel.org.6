@@ -1,249 +1,198 @@
-Return-Path: <linux-kernel+bounces-312635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0773B969924
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009DF969931
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACEF1F241C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245DA1C23BE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F30F1D095E;
-	Tue,  3 Sep 2024 09:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0531B9853;
+	Tue,  3 Sep 2024 09:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ID+2qPcP"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o5t/zlcD"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3249B1CE6F5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3031B1AD272;
+	Tue,  3 Sep 2024 09:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355989; cv=none; b=G4KpBeczMQMbPIiwA3M5yzliQGBDWq0At0oXnc1/d/FFS2wwxnEoxojwAVR5jKBfhW/uADjxcwwcyie3qvIkKg8+DSyRjkeneu5zLnGuAB+SsXJCF2//AZQDLTRZ04a0BzdfTtflI583mlTM7DsQdyz+rTTOqGMFntN4knFJPpU=
+	t=1725356055; cv=none; b=QM7x6S7nfBvLizSZdLVlYq5/rS9dpPF+4ubaVDRYPnR9asiLMqBdO/RPZrn6X2yevoZCYnxe8QBsZanD+1EoGRpIBCJAzjWkEn44ooVrKjfb4DRmCKnC/gnDyo9EcdC0LwsqSCltJPw38Pm4CLIuEkjlnFYhUfPFqS8zj7/W87o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355989; c=relaxed/simple;
-	bh=9bwQymfzf4ndqd3FHXuhSQAaB8hV+38lgAKZNuAsONE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nB+5bGF4uMg5U2ichV4YjCcEz9n6efzNtDkBP+83RrnoqFZLHgdnQY+z/BTc4pAWSp4OGKgNL01eTYHqyB1nh+sZ7Ql49hXswg47eUFBIS+qCSjUrfZOO66Fmg/IDr++NZW7JlwDaioRLLnX7LfZQ23auj5Z1k4RDPkSRse+aC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ID+2qPcP; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a80eab3945eso460515466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725355985; x=1725960785; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
-        b=ID+2qPcPviliUAh87/JIQZz+GwIz0+ikXhuwcYGZa9KU6XMlIU8hFqVZRSbEdsPIqr
-         MZ78jllU9dwC2lQ7yQsdVW9FRGjchQFvttzbA8u9FExn48Ek0g8SwUcTUp6kABIsboFJ
-         p4N4aWiEW0akaDfCUe+a/XbTz0mC65VUvR6UxL93A7ImF5ivD7UTiuPVUm1cGNzWM514
-         xPQfTF0sp6IBRDO/nNmPZd3k8qjC1RGxuwvbITv5tPpgzgva7ucgxfmgn98mN7dhFPnC
-         AOkbFRyJv6vQJSMupMAO1d7rVN2dxZAPCccFCd6xrJi3fMINK4Xy6po0g50gS0w3rNZT
-         0yig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355985; x=1725960785;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
-        b=RdRGw3BPHOLrOSGH6OP9unBCUOm2eZD+zJvSbz4AcjXdu7STLxDMP2g81a2bgdwrO/
-         VdtWwsMpxegtTGESw8Bf7XaZ44CFhJCQ0jdTGcJShQGZeuWYeJ2f2h2eQCviyTBkQpgy
-         3Vv2tHy/VJT0/8suPeqydDUivUkYrix/zLLAxn4kCkRoNu6qKjgU57L0G9F6w/dCY9fz
-         LZScScZRKZrYK0ilW4mDK0+K+VvMsFkfZJAgfx1D+/ZkYa53hU20FW3//fRggGSkYQMP
-         v03TqDUYFfYnaQRxMg1UQCmxMjJ2D+l21a5fV3YKhyeYkcj1ue19be3kRLG8bel7SVV/
-         3kew==
-X-Forwarded-Encrypted: i=1; AJvYcCVYNk0Zsw0wjcKgJgZzv/FqyJESoCXJLRgbErKpE6wkbiFzK5C6IEAH3gs2CgF1dEN58SIm3Ei0FmP9Yoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi6I/ikBV5mIGSCHHroHXiApmh8/Sl0eDa58gaWooKFGAeBsP3
-	NW7TwKXef5LpuzZqIknGRstE/Yx2JKgUgZRZDEO9Nx6uPxX+0Iicy9H1/jl+suY=
-X-Google-Smtp-Source: AGHT+IF1reVINALdSgJc0RMsY6rt9TxEJ4rR+Xojf3y9r57wj6wnX0V9PBsi2NJ940berEZ0OfsA7Q==
-X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr901597466b.22.1725355985011;
-        Tue, 03 Sep 2024 02:33:05 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988bdcf57sm659603066b.0.2024.09.03.02.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 02:33:04 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 11:33:12 +0200
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZtbX2NZ6A6ATqQLh@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
- <ZtChPt4cD8PzfEkF@apocalypse>
- <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
- <20240903110953.2b1f55b6@bootlin.com>
+	s=arc-20240116; t=1725356055; c=relaxed/simple;
+	bh=7jJBly8Y6bE9sPKCf9EEsc7epwehNU1txM4jSXiORyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PI4dPKP9OgTv0dWOk8aaiDjehRBp7HSsu01vlZlSjCzq0aXJJtYlW6G8Nsza8lzkwfOhsy+N5lbSFQTuM6dAxPflwVGyt0kqfhRy56mSk2Z5WWb1m35psVqZZXMnM9YLKJnOUdKZu3guvg1N2HrdNn0giabNiTDmON3ahdHgI98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o5t/zlcD; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725356045; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Eb+P3ApRDSOdltbSEo0YbmmjQpT9J2C1awOD4TBbcTc=;
+	b=o5t/zlcDDQiluvCQpsgwrWnl05SGXVPXxITmWO3hiCL5O1GWmn2mzHyOmGbV0pPujhjqGtPl0YUum01UnoV+VT6EjBM4xiZDr3PzlvoW+ngalvMz8SsKKmzKi4CSsnttPBFSYBWUEYw6mtqoyLPj7ZFdi7lq+vXqa9J673jxQHM=
+Received: from 30.221.113.157(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WECwpGA_1725356043)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Sep 2024 17:34:04 +0800
+Message-ID: <5769af42-e4dd-4535-9432-f149b8c17af5@linux.alibaba.com>
+Date: Tue, 3 Sep 2024 17:34:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903110953.2b1f55b6@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] virtiofs: use GFP_NOFS when enqueuing request
+ through kworker
+To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ houtao1@huawei.com
+References: <20240831093750.1593871-1-houtao@huaweicloud.com>
+ <20240831093750.1593871-3-houtao@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240831093750.1593871-3-houtao@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Herve,
 
-On 11:09 Tue 03 Sep     , Herve Codina wrote:
-> Hi,
-> 
-> On Fri, 30 Aug 2024 14:37:54 -0500
-> Rob Herring <robh@kernel.org> wrote:
-> 
-> ...
-> 
-> > > this view is much like Bootlin's approach, also my pci-ep-bus node now would look
-> > > like this:
-> > >  ...
-> > >  pci-ep-bus@0 {
-> > >         ranges = <0xc0 0x40000000
-> > >                   0x01 0x00 0x00000000
-> > >                   0x00 0x00400000>;
-> > >         ...
-> > >  };
-> > >
-> > > and also the correct unit address here is 0 again, since the parent address in
-> > > ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
-> > > BAR1, I assume that for the unit address I should use only the address part that
-> > > is 0, right?).  
-> > 
-> > No, it should be 1 for BAR1. It's 1 node per BAR.
-> 
-> It should be 1 node per BAR but in some cases it is not.
-> 
-> Indeed, in the LAN966x case, the pci-ep-bus need to have access to several
-> BARs and we have:
 
-I second this, on RP1 there are multiple BARs too, but for this minimal
-implementation we need only one. Splitting them in one bus per BAR or
-merging them with multiple ranges entries depend on whether the peripherals
-can access different BARs simultaneously. Besides this contraint, I would
-say both approach are viable.
+On 8/31/24 5:37 PM, Hou Tao wrote:
+> From: Hou Tao <houtao1@huawei.com>
+> 
+> When invoking virtio_fs_enqueue_req() through kworker, both the
+> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
+> Considering the size of the sg array may be greater than PAGE_SIZE, use
+> GFP_NOFS instead of GFP_ATOMIC to lower the possibility of memory
+> allocation failure and to avoid unnecessarily depleting the atomic
+> reserves. GFP_NOFS is not passed to virtio_fs_enqueue_req() directly,
+> GFP_KERNEL and memalloc_nofs_{save|restore} helpers are used instead.
+> 
+> It may seem OK to pass GFP_NOFS to virtio_fs_enqueue_req() as well when
+> queuing the request for the first time, but this is not the case. The
+> reason is that fuse_request_queue_background() may call
+> ->queue_request_and_unlock() while holding fc->bg_lock, which is a
+> spin-lock. Therefore, still use GFP_ATOMIC for it.
 
-> 	...
-> 	pci-ep-bus@0 {
-> 		compatible = "simple-bus";
-> 		#address-cells = <1>;
-> 		#size-cells = <1>;
-> 
-> 		/*
-> 		 * map @0xe2000000 (32MB) to BAR0 (CPU)
-> 		 * map @0xe0000000 (16MB) to BAR1 (AMBA)
-> 		 */
-> 		ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
-> 		          0xe0000000 0x01 0x00 0x00 0x1000000>;
-> 	...
-> 
-> Some devices under this bus need to use both BARs and use two regs values
-> in their reg properties to access BAR0 and BAR1.
-> 
-> 
-> > > > > > The assumption so far with all of this is that you have some specific
-> > > > > > PCI device (and therefore a driver). The simple-buses under it are
-> > > > > > defined per BAR. Not really certain if that makes sense in all cases,
-> > > > > > but since the address assignment is dynamic, it may have to. I'm also
-> > > > > > not completely convinced we should reuse 'simple-bus' here or define
-> > > > > > something specific like 'pci-bar-bus' or something.  
-> > > > >
-> > > > > Good point. Labeling a new bus for this kind of 'appliance' could be
-> > > > > beneficial to unify the dt overlay approach, and I guess it could be
-> > > > > adopted by the aforementioned Bootlin's Microchip patchset too.
-> > > > > However, since the difference with simple-bus would be basically non
-> > > > > existent, I believe that this could be done in a future patch due to
-> > > > > the fact that the dtbo is contained into the driver itself, so we do
-> > > > > not suffer from the proliferation that happens when dtb are managed
-> > > > > outside.  
-> > > >
-> > > > It's an ABI, so we really need to decide first.  
-> > >
-> > > Okay. How should we proceed?  
-> > 
-> > I think simple-bus where you have it is fine. It is really 1 level up
-> > that needs to be specified. Basically something that's referenced from
-> > the specific PCI device's schema (e.g. the RP1 schema (which you are
-> > missing)).
-> > 
-> > That schema needs to roughly look like this:
-> > 
-> > properties:
-> >   "#address-cells":
-> >     const: 3
-> >   "#size-cells":
-> >     const: 2
-> >   ranges:
-> >     minItems: 1
-> >     maxItems: 6
-> >     items:
-> >       additionalItems: true
-> >       items:
-> >         - maximum: 5  # The BAR number
-> >         - const: 0
-> >         - const: 0
-> >         - # TODO: valid PCI memory flags
-> > 
-> > patternProperties:
-> >   "^bar-bus@[0-5]$":
-> >     type: object
-> >     additionalProperties: true
-> >     properties:
-> >       compatible:
-> >         const: simple-bus
-> >       ranges: true
-> > 
-> 
-> IMHO, the node should not have 'bar' in the name.
-> In the LAN966x PCI use case, multiple BARs have to be accessed by devices
-> under this simple-bus. That's why I choose pci-ep-bus for this node name.
->
+Actually, .wake_pending_and_unlock() is called under fiq->lock and
+GFP_ATOMIC is requisite.
 
-Agreed for your scenario. Anyway, since the dtbo and driver are shipped together,
-we are free to change the name anytime without impacting anything.
 
-Many thanks,
-Andrea
- 
-> Best regards,
-> Hervé
+> 
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
+> ---
+>  fs/fuse/virtio_fs.c | 24 +++++++++++++++---------
+>  1 file changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 43d66ab5e891..9bc48b3ca384 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -95,7 +95,8 @@ struct virtio_fs_req_work {
+>  };
+>  
+>  static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+> -				 struct fuse_req *req, bool in_flight);
+> +				 struct fuse_req *req, bool in_flight,
+> +				 gfp_t gfp);
+>  
+>  static const struct constant_table dax_param_enums[] = {
+>  	{"always",	FUSE_DAX_ALWAYS },
+> @@ -439,6 +440,8 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
+>  
+>  	/* Dispatch pending requests */
+>  	while (1) {
+> +		unsigned int flags;
+> +
+>  		spin_lock(&fsvq->lock);
+>  		req = list_first_entry_or_null(&fsvq->queued_reqs,
+>  					       struct fuse_req, list);
+> @@ -449,7 +452,9 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
+>  		list_del_init(&req->list);
+>  		spin_unlock(&fsvq->lock);
+>  
+> -		ret = virtio_fs_enqueue_req(fsvq, req, true);
+> +		flags = memalloc_nofs_save();
+> +		ret = virtio_fs_enqueue_req(fsvq, req, true, GFP_KERNEL);
+> +		memalloc_nofs_restore(flags);
+>  		if (ret < 0) {
+>  			if (ret == -ENOSPC) {
+>  				spin_lock(&fsvq->lock);
+> @@ -550,7 +555,7 @@ static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
+>  }
+>  
+>  /* Allocate and copy args into req->argbuf */
+> -static int copy_args_to_argbuf(struct fuse_req *req)
+> +static int copy_args_to_argbuf(struct fuse_req *req, gfp_t gfp)
+>  {
+>  	struct fuse_args *args = req->args;
+>  	unsigned int offset = 0;
+> @@ -564,7 +569,7 @@ static int copy_args_to_argbuf(struct fuse_req *req)
+>  	len = fuse_len_args(num_in, (struct fuse_arg *) args->in_args) +
+>  	      fuse_len_args(num_out, args->out_args);
+>  
+> -	req->argbuf = kmalloc(len, GFP_ATOMIC);
+> +	req->argbuf = kmalloc(len, gfp);
+>  	if (!req->argbuf)
+>  		return -ENOMEM;
+>  
+> @@ -1239,7 +1244,8 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
+>  
+>  /* Add a request to a virtqueue and kick the device */
+>  static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+> -				 struct fuse_req *req, bool in_flight)
+> +				 struct fuse_req *req, bool in_flight,
+> +				 gfp_t gfp)
+>  {
+>  	/* requests need at least 4 elements */
+>  	struct scatterlist *stack_sgs[6];
+> @@ -1260,8 +1266,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+>  	/* Does the sglist fit on the stack? */
+>  	total_sgs = sg_count_fuse_req(req);
+>  	if (total_sgs > ARRAY_SIZE(stack_sgs)) {
+> -		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), GFP_ATOMIC);
+> -		sg = kmalloc_array(total_sgs, sizeof(sg[0]), GFP_ATOMIC);
+> +		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), gfp);
+> +		sg = kmalloc_array(total_sgs, sizeof(sg[0]), gfp);
+>  		if (!sgs || !sg) {
+>  			ret = -ENOMEM;
+>  			goto out;
+> @@ -1269,7 +1275,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+>  	}
+>  
+>  	/* Use a bounce buffer since stack args cannot be mapped */
+> -	ret = copy_args_to_argbuf(req);
+> +	ret = copy_args_to_argbuf(req, gfp);
+>  	if (ret < 0)
+>  		goto out;
+>  
+> @@ -1367,7 +1373,7 @@ __releases(fiq->lock)
+>  		 queue_id);
+>  
+>  	fsvq = &fs->vqs[queue_id];
+> -	ret = virtio_fs_enqueue_req(fsvq, req, false);
+> +	ret = virtio_fs_enqueue_req(fsvq, req, false, GFP_ATOMIC);
+>  	if (ret < 0) {
+>  		if (ret == -ENOSPC) {
+>  			/*
+
+LGTM.
+
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+
+
+
+-- 
+Thanks,
+Jingbo
 
