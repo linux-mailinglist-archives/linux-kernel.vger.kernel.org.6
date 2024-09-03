@@ -1,150 +1,218 @@
-Return-Path: <linux-kernel+bounces-313136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5057196A0B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:32:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C749C96A0C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8300B1C23366
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486621F26A53
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1712680C02;
-	Tue,  3 Sep 2024 14:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB91B13D296;
+	Tue,  3 Sep 2024 14:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dc89M94v"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="as3ak4Ua"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232D78C60
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8CA1CA69B;
+	Tue,  3 Sep 2024 14:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373972; cv=none; b=aVh/JoRggYykHWe27a7kNYQ4bIGDNMqbQyWn52KFrbl3j31dthbvxbcL72qPOuq8FT4OqhnmmsGGgw5CrrFMdo9ZkJSCo0Gxi0daei35GecE6ohdi0AQX9eVaCzkEQtxHysju0Hc4DlGp6ttsb8suSDVWc8SwOa/8o43ULAZrAc=
+	t=1725374183; cv=none; b=CErmFC4NOGzfUjfawEWPXEIqS6foxIf4S8jjRE/2awBfmGIKsil1Tefocaqv1Lzs0RCKUdMJc6ttkryet4YK4alIyAgE02PxnFFmaX2MVS5VlFfBJA+Y/FCFwaUP5T/I7oBcD41o3CDYmydxz7QD3QsaxIG1T1ahlPJuOrTYb5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373972; c=relaxed/simple;
-	bh=3NYB37O3R9YiG6QSPIMVcXeGErTw9KUagPZ6nHR8UiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEBt9DaYAyAbOehp5XHODFYdQNcRyu3xioW+X11PJ70SEklq8LDcHytD1sReXsllTiRWObfG7L+e5fB7OSsaTk0ZAtQRUwYqKn+/Z67sBZLHyC/Mbcom+8WpSEtENTz71PeEzwX2VYjCZwSD8mlaquffhjzvs8SndWy2ttVEpbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dc89M94v; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c0aa376e15so3022109a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725373969; x=1725978769; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=55Opw2LoBYgIb7dsZXRiPDb5CcbeKPiDbF6ZSpw6/ho=;
-        b=dc89M94vzwsU3xOJdCrICzdBF8yL/39GkHOjCnbPGh4nXeYuouTMC66AHLtVTwz0Fd
-         q97qEzDdKDFEamgw/oDI8GAeSVbQ/Vu4KJt/pyarimblDusNrXTnwY9uYBSc3o0Ypd88
-         h5wE4989lU+UXFG/XYrMKIuJLTToSJ3QH9P9NuL8k0/02jVb7s3oMmoUuqVxVbrBwUJS
-         kXeeYGms66CPYs7o8srYLCdhZcqrA5LvwErl5p0cSemBHybCBrOcTncSD4GTwldScsLr
-         go8WUD7QKW1l2th69B9NiIU3+Jt9CEvoV984mHGVyuR2pjH/VMjb4qHQRuDSOd0IQuvq
-         glHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725373969; x=1725978769;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=55Opw2LoBYgIb7dsZXRiPDb5CcbeKPiDbF6ZSpw6/ho=;
-        b=csYrWVm5PMrat/ap7uoYnNkkhMgyz0ImxNlqIwdmNippYd7mscJQkQBwKi8W3WmHBH
-         VF1c8cIaDVqDo3TSq42AyprYLMYzVYbbjVSJXxgCJzZwbI4h19RMcsbDWu4MApH/abBi
-         iHIuWvu1vQ/RBTCvcAVUQ9TId0ATczqDSYvIgs+xLh5lDeA5P7w+ZOiZWlmQjT9VmEmY
-         bjY6DKRhO/t9eSsJL1ldb16gxqZamvKdjVAn9wVr2LIy20cbEyoxFluoWjBMJhwEIuNo
-         38kItEv8H4jseZFbHl1/9HGkuzMrrp3h+K1eLl8soXnSme/qF4nQu5tj8u4n1VRHBOYM
-         0Ljg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCmncxY0clpF0VbEVj2zhMTy31rPfhpwGMHDz+7ytuKSP8QiUTrjfdE5w578l+27DX5d3fm8u7gG6Yq/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFlUCnddHPNb/cbuskOPxpQq6h74wIDhcjuHyLykxqDWekRvt0
-	PxwQyJUp49JMWG800vlkG3vepLvfzERyVWvXJJQmfqs23RE6/LjSy4dyI+FubkXVXIsgdWHIhIk
-	rReYZUR7yv6RwYjFvfWydP33fkK2HJgkMlq63Tg==
-X-Google-Smtp-Source: AGHT+IGedt9kw2KGALBV+62OSvR+nilmJxqwNYVWOjk8DXOtccnyl0Je1vILxyNdMm+W++xzApGTs5bdjpJmA/nBUgA=
-X-Received: by 2002:a05:6402:27c7:b0:5c2:5620:f72 with SMTP id
- 4fb4d7f45d1cf-5c2562011e0mr5909505a12.0.1725373968445; Tue, 03 Sep 2024
- 07:32:48 -0700 (PDT)
+	s=arc-20240116; t=1725374183; c=relaxed/simple;
+	bh=L3d++NF7GGQmjzBQ/nJ21+8BA6gNGXIquAP/O/uoey4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pD2X1zGfmifo4rmZcg0GEB6z08qXqyxUbvTb3Lz07/gecB6ZPj8JVLylajNFPcVwroH4tZnsblABcAUQKiH+TZn3v0UTn/417cgZbBVzSL+ozga1WLTkKTkeRVTdK2Y/qFZqLIZ8m1Co1vy2rJSURHo5WUR7z7tI2afoNqgY7DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=as3ak4Ua; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725374183; x=1756910183;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L3d++NF7GGQmjzBQ/nJ21+8BA6gNGXIquAP/O/uoey4=;
+  b=as3ak4UatUU0Sw1hMCF3dDXOHo7bMJrQBMF4Kjg+WUANv3pOVnXc41GZ
+   ozb039GVHNL8VYUhny4NX6etOaT0PxPixH437nD4CGgevCEGisSbJfEmV
+   AYm3/DKIDMQOmBYwrPMotzYqVAVFrymmC/2c6xygPqRVGwGaadyQsEfV2
+   MYPlGI1zwqMkZzPfvjKsRO3eugqs91thK37P7nIasV6M5JfsaIXz6gS8q
+   T96oshs+gkbloxah88pe7dVNwgAGm6VfBVj/EPSbcy84exCSN88O70bz7
+   XcvuyGm1wHRd9z9rzQxk64YfPLgMu3ASLKCmtxbY8d9b1Sr1Buzjc5GwJ
+   w==;
+X-CSE-ConnectionGUID: XoY1pK66TNSHUAVtE+Ijsg==
+X-CSE-MsgGUID: e7Ftzcq7TgqeLXOehMcRvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="46503276"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="46503276"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:36:22 -0700
+X-CSE-ConnectionGUID: C6pkwfu/Rsa8jOseirDcmA==
+X-CSE-MsgGUID: /x162Ds3SfKmtavCPRkXgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69791485"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:36:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slUdi-00000004jnj-0SQs;
+	Tue, 03 Sep 2024 17:36:14 +0300
+Date: Tue, 3 Sep 2024 17:36:13 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v5 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <Ztce3XuXZ-hxwU8h@smile.fi.intel.com>
+References: <20240902184222.24874-1-vassilisamir@gmail.com>
+ <20240902184222.24874-7-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820105004.2788327-1-b-padhi@ti.com> <522affaa-47ad-4834-be3c-acdd04902821@ti.com>
-In-Reply-To: <522affaa-47ad-4834-be3c-acdd04902821@ti.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 3 Sep 2024 08:32:37 -0600
-Message-ID: <CANLsYkzfpO4dcF=xkfZRo8ekCOzyNwvjHkwu8t5T58B2hV8-AQ@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: k3-r5: Delay notification of wakeup event
-To: Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902184222.24874-7-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 3 Sept 2024 at 04:15, Beleswar Prasad Padhi <b-padhi@ti.com> wrote:
->
-> Hi Mathieu,
->
-> On 20-08-2024 16:20, Beleswar Padhi wrote:
-> > From: Udit Kumar <u-kumar1@ti.com>
-> >
-> > Few times, core1 was scheduled to boot first before core0, which leads
-> > to error:
-> >
-> > 'k3_r5_rproc_start: can not start core 1 before core 0'.
-> >
-> > This was happening due to some scheduling between prepare and start
-> > callback. The probe function waits for event, which is getting
-> > triggered by prepare callback. To avoid above condition move event
-> > trigger to start instead of prepare callback.
-> >
-> > Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
->
->
-> Please put this patch on hold. I have some additional changelog that
-> should go in v3.
->
+On Mon, Sep 02, 2024 at 08:42:21PM +0200, Vasileios Amoiridis wrote:
+> The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> a trigger for when there are data ready in the sensor for pick up.
+> 
+> This use case is used along with NORMAL_MODE in the sensor, which allows
+> the sensor to do consecutive measurements depending on the ODR rate value.
+> 
+> The trigger pin can be configured to be open-drain or push-pull and either
+> rising or falling edge.
+> 
+> No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> values.
 
-I applied this patch a couple of weeks ago - are those changes to the
-code?  If so please send another patch on top of rproc-next.
+...
 
-> Thanks,
-> Beleswar
->
-> > Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-> > [ Applied wakeup event trigger only for Split-Mode booted rprocs ]
-> > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> > ---
-> > v2: Changelog:
-> > * Mathieu
-> > 1) Rebased changes on top of -next-20240820 tag.
-> >
-> > Link to v1:
-> > https://lore.kernel.org/all/20240809060132.308642-1-b-padhi@ti.com/
-> >
-> >   drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > index 8a63a9360c0f..e61e53381abc 100644
-> > --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > @@ -469,8 +469,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
-> >                       ret);
-> >               return ret;
-> >       }
-> > -     core->released_from_reset = true;
-> > -     wake_up_interruptible(&cluster->core_transition);
-> >
-> >       /*
-> >        * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
-> > @@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> >               ret = k3_r5_core_run(core);
-> >               if (ret)
-> >                       return ret;
-> > +
-> > +             core->released_from_reset = true;
-> > +             wake_up_interruptible(&cluster->core_transition);
-> >       }
-> >
-> >       return 0;
+> +static int __bmp280_trigger_probe(struct iio_dev *indio_dev,
+> +				  const struct iio_trigger_ops *trigger_ops,
+> +				  int (*int_config)(struct bmp280_data *data),
+> +				  irq_handler_t irq_thread_handler)
+
+Would it make sense (note, I do *not* know the correct answer!) to have
+something like
+
+struct foo {
+	const struct iio_trigger_ops *trigger_ops;
+	int (*int_config)(struct bmp280_data *data);
+	irq_handler_t irq_thread_handler;
+};
+
+and pass it around?
+
+Also int_config sounds non-related to interrupt, however it's about interrupt
+pin, right? perhaps name it differently here?
+
+E.g.,
+
+	interrupt_pin_config
+
+?
+
+> +{
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	struct device *dev = data->dev;
+> +	struct fwnode_handle *fwnode;
+> +	u32 irq_type;
+> +	int ret, irq;
+> +
+> +	irq = fwnode_irq_get(dev_fwnode(dev), 0);
+> +	if (irq < 0)
+> +		return dev_err_probe(dev, irq, "No interrupt found.\n");
+> +
+> +	irq_type = irq_get_trigger_type(irq);
+> +	switch (irq_type) {
+> +	case IRQF_TRIGGER_RISING:
+> +		data->trig_active_high = true;
+> +		break;
+> +	case IRQF_TRIGGER_FALLING:
+> +		data->trig_active_high = false;
+> +		break;
+> +	default:
+> +		return dev_err_probe(dev, -EINVAL, "Invalid interrupt type specified.\n");
+> +	}
+> +
+> +	data->trig_open_drain =
+> +		fwnode_property_read_bool(fwnode, "int-open-drain");
+
+
+Where do you initialise fwnode?
+
+> +	ret = int_config(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> +					    indio_dev->name,
+> +					    iio_device_id(indio_dev));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, data);
+> +
+> +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> +					irq_thread_handler, IRQF_ONESHOT,
+> +					indio_dev->name, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "request irq failed.\n");
+
+IRQ
+
+> +	ret = devm_iio_trigger_register(data->dev, data->trig);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "iio trigger register failed.\n");
+> +
+> +	indio_dev->trig = iio_trigger_get(data->trig);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int bmp580_data_rdy_trigger_set_state(struct iio_trigger *trig,
+> +					     bool state)
+> +{
+> +	struct bmp280_data *data = iio_trigger_get_drvdata(trig);
+> +	int ret;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	ret = regmap_update_bits(data->regmap, BMP580_REG_INT_CONFIG,
+> +				 BMP580_INT_CONFIG_INT_EN,
+> +				 FIELD_PREP(BMP580_INT_CONFIG_INT_EN, !!state));
+> +	if (ret)
+> +		dev_err(data->dev,
+> +			"Could not %s interrupt.\n", str_enable_disable(state));
+> +	return ret;
+
+Somewhere above (or in another patch) you used the style with 'return 0;' at
+the end. Please, check the resulting code for the consistency and choose one
+style for all.
+
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
