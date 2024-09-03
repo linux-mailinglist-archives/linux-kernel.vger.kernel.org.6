@@ -1,186 +1,150 @@
-Return-Path: <linux-kernel+bounces-312716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D20969A41
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:33:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DBF969A4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF482838EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3729AB23ABE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9101A1B9844;
-	Tue,  3 Sep 2024 10:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130501B985C;
+	Tue,  3 Sep 2024 10:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kd4rJjBk"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sovQNizJ"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CF31A0BEC;
-	Tue,  3 Sep 2024 10:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE1B1B9837
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359602; cv=none; b=PV8aDuuxifqVOvq/V6YKCSm9P4DiIA2B4+VDRrF5u0LLCklSsT4yt5+r8aT3sMdTl4f5B1GcXZHAH8zZ2n/HCOmGFFJWnuY2b8k+SCrEONGoW1SiXqwufXcNmh9hphwKziC0/CdrKNrU6eAo5m9N/v0CyAS2wnbNK+y6h1d5dBE=
+	t=1725359752; cv=none; b=hbeebsigTn4cH9M+eX/hLPTainC156WfDzsbo+xRusQkx0N4cTx8Kx52CpycmnPxyLZScM7DADZScG/puIH/+4GYTXxFZ9h0EYqTIp8wRCgsy/uNQYQRi/17Bo4sFUmlmUuiyZRN3YOZC3eqeMn2leEH8ORHUVPa546st+tfI24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359602; c=relaxed/simple;
-	bh=ym+4wwvyQj3hCdU0IvLIVTgauKzQvNnj/eQp5QdHg+s=;
+	s=arc-20240116; t=1725359752; c=relaxed/simple;
+	bh=YmkObPnyVEltJM+bKrCa4h0N/EDBel+3Kr+3oHWQ2A4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uGpR11OeS8DcAOxSyMWaVWFZjdXEzHDy7+ICU0yEwoYgO9Et9YM/h9syt71+abFL1tEcpSefMljcqfB44ylbdDT3XCtGOhJkbcpgHZom81cLqbTbZKfHB70Qgk3yPMo4vKnG9S2aPJec8o9k6IR8cKNQZnXgSVAU9ctY4VlfGLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kd4rJjBk; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6c91f9fb0d7so47977777b3.3;
-        Tue, 03 Sep 2024 03:33:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=u57zmOZcEpPL33s6XbrWWYChjySfJOH/7IGUqA2P6zpJ7CMo7oIWmVWEBUde5h6fSRdZwU0HKm2jSsbd5MLilTS+U3XSw1wA5huqizkl8bnlVo4Xhn9/mdu1igIo+eo82OIdtQZxn7clf5WycsNxkfbIxxjV2ZWmXTyRj9zhb3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sovQNizJ; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a819488e3so3740318276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725359599; x=1725964399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bCAdgvZx69R+Inx1xIn1qv1QpEbNVZIKK3gneUW2eRA=;
-        b=kd4rJjBknsAIb7ZVD1/faJN+GEUXx0HWLdeboWWvjnVIrVAds/18p9rNdxqTemRMWH
-         mBpTfPIS80Ui28YhoQ6QwpTWstDP58nTRWxfgoyUMhPZ4VJuhVOGnHERP3ZOTk7hWlAZ
-         Oe1rXcCB7zkrSFyjm2vaoqIqaLkIPuxjmi5uAcpNM5ZoZBRx/CZdmwsOlrzT5a8oWtAt
-         QCFoqiAIKEWtdmRvMAs5JnSh7ymDZweY3bUuNzM7rmBf9mK2tfxQERJEcrldt6MutXL/
-         Dvk9kyfq6IE1BJnRkjT0KT5FPRwxygG6iPjFkghzIyf6mNPDoPxAusOvCcI2ooB3ygMk
-         qOKA==
+        d=linaro.org; s=google; t=1725359749; x=1725964549; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
+        b=sovQNizJxr+0yvKgumskp0xKen9pTaJ8GptymK4oIeq42YTMxsgeCYcG7575+Wb6dZ
+         UGtifC4UVeFVq4PFMrcDhsPyqPcsj9miMflt60nthF/GkXBRZYUh1AMUOpdcx7sS5D/q
+         ow1NJ1nGolKafoGzEHAEou4VfOJOyRcGXZmL1HYsSefkDf+fYYH3MT6aPh1crSZ6y+sV
+         S2kuldHCGyJ70u3sz54wPvNFrTeWKFt/k4PxF7Lt5i+OLJSIa24WR2eExCoRbYnaJ58r
+         mS3xkcKpz9v4YbNDRQgea9yxhkEvUyOHZPlwRWjDtUXN/+8tj54bFeXz8eNRp/x13Kv3
+         4yxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359599; x=1725964399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bCAdgvZx69R+Inx1xIn1qv1QpEbNVZIKK3gneUW2eRA=;
-        b=kU0tQ2dYQx0nIlBefXXc8hQmUUdUNkBO1iMmcM4puaSh/I/wBwSM1uCkKcKP9yBKfO
-         LN7IRviAj3RAQebCfSL/+AhjCO+p7ATdI5+eaqfwlbqrR9QsfHdfH1EqgHT+Z5MtMypm
-         tWIE0vhXq3Au4coMfbIttrHzLLvZfgx7fMhwl1QzZcrg/dX6UwKaBBUG22pGLzmEHHgC
-         9wq6EfgLv/G4ZgV/GrkgplQgbKzGDrb080hWGO/nwAcMwPKYaQdeySyubEXQCTaow3KJ
-         GZqHSY4db6XZEfH+ddKhE4tX1hAG2rT/wDeQOKEDaU6Un6WA6ulDE4x8yQwMymqYkbfn
-         1TeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV77zAZcl1XYGrvpjL/xmWh4jUQNl56cq/nrcDZ7BtSHkVFCf0deQvjXOoJOsUp1EZ3e+GaFfwo@vger.kernel.org, AJvYcCVdg6I7Y/un4LdNkaKQVrqiFXnAsxxvbeegPBaZzbPBETR6FBAl3cPF6RYn6kFmsJHckzYOtZWyXCSsPtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypYruPrnbzpPLVA7vpbPo4uemolMgn8+8HVkRQrKvA1c3M6v9O
-	tK1UW6ZmtVNIKvtdQ88IdgtteVy8deQShLGimk7qMAn81sHL2FZ2DOJeJY7foq2HEkeRuD71hQq
-	DMqLeu46SKZGchvGMx+kjMm1/mGw=
-X-Google-Smtp-Source: AGHT+IGA9aek/qyQ3u3BrYjoPk2A6zcGsd3cA67Uo4udmJ/qkSUbGkJyeqlv6kamjRM2gF9vAF3t7+tx75oN9zP3Q9E=
-X-Received: by 2002:a05:690c:2a92:b0:6d1:f545:4ae6 with SMTP id
- 00721157ae682-6d40dd71718mr102102167b3.16.1725359599390; Tue, 03 Sep 2024
- 03:33:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725359749; x=1725964549;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
+        b=okhCJAQkqPnePs8JGgLlVvIEdQ3CjWUqRvXl8mJzxb609QIL9UVVkqTIzRpbCG8vKo
+         CY2o4P3sscw/CBoTnD2QRWBiM4rn8A3fm+q6fW3kB1B4+aydNrNHltLe2LRc5e/yzRY4
+         H0XIDv6HhNrQktZdLJc+ucesU4qTvxiOS0Ktl67/GztnbwWdydZOq5vuXfjWNc+POHr0
+         NpwW31iClci7a3BUxnDqAnMa1Yens3ka6oLkUNwjlxDpIiZVJZYdoCwflF8CmyW/SixO
+         pwdHcqGegagGAQEyeeHCKJwCzpNoyD2J4fi/03vqGrmWnO32hBqFsZK4iLeLYMDzKZCo
+         xxsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVp63q37azCH+im+TeEI0HvIGAIV8OIuuIoos/bljLyV+8v985N10oduSY0QP3VMgVXnAKe5p/d6uhrkFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWyQm9BjjgiC0gvw/HdNVtaztb4Nugl/fx/hKdGZf6MxLYtuR3
+	NRdM7FSGcPWVf4K8mE4uAfeJFkIrzl1+tgGszEIrwoX+puZibYuE7bwB4QtPmOFBTxTbAhvx85z
+	M2e/Jl/D7za3mtfWwRwhSpQKHEouOMvwlG+kdEg==
+X-Google-Smtp-Source: AGHT+IEptjQ9HnzO7IsNO1D9S4qr5WM4xYdZM3VIT60UnRxgn+glo0EzcUHzkrVnacRkJvKM+kyKu9xW5IsYaduxCjQ=
+X-Received: by 2002:a05:6902:120d:b0:e16:55cc:215c with SMTP id
+ 3f1490d57ef6-e1a79fe3948mr17521678276.6.1725359748806; Tue, 03 Sep 2024
+ 03:35:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903045937.1759543-1-bbhushan2@marvell.com>
- <20240903045937.1759543-6-bbhushan2@marvell.com> <ZtbY9AF1fjUCcBOH@hog>
-In-Reply-To: <ZtbY9AF1fjUCcBOH@hog>
-From: Bharat Bhushan <bharatb.linux@gmail.com>
-Date: Tue, 3 Sep 2024 16:03:06 +0530
-Message-ID: <CAAeCc_=Uox_JkD2WMs1ZqC-XFHfBnHWALEZC6iWhb0BNWB9Uow@mail.gmail.com>
-Subject: Re: [net-next PATCH v8 5/8] cn10k-ipsec: Add SA add/del support for
- outb ipsec crypto offload
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com, 
-	sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com, 
-	lcherian@marvell.com, richardcochran@gmail.com
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
+ <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev> <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
+In-Reply-To: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 3 Sep 2024 12:35:12 +0200
+Message-ID: <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
+	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 3:08=E2=80=AFPM Sabrina Dubroca <sd@queasysnail.net>=
- wrote:
->
-> 2024-09-03, 10:29:34 +0530, Bharat Bhushan wrote:
-> > +static int cn10k_ipsec_validate_state(struct xfrm_state *x)
-> > +{
-> > +     struct net_device *netdev =3D x->xso.dev;
-> > +
-> > +     if (x->props.aalgo !=3D SADB_AALG_NONE) {
-> > +             netdev_err(netdev, "Cannot offload authenticated xfrm sta=
-tes\n");
->
-> This should use extack, to return this information directly to the
-> application that's creating the invalid config. You can propagate it
-> from cn10k_ipsec_add_state down to this function, and then:
->
->     NL_SET_ERR_MSG_MOD(extack, "Cannot offload authenticated xfrm states"=
-);
-
-ack, this and other places
->
->
-> > +static int cn10k_ipsec_inb_add_state(struct xfrm_state *x)
-> > +{
-> > +     struct net_device *netdev =3D x->xso.dev;
-> > +
-> > +     netdev_err(netdev, "xfrm inbound offload not supported\n");
->
-> Here too, extack.
->
-> > +     return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static int cn10k_ipsec_outb_add_state(struct xfrm_state *x)
-> > +{
-> > +     struct net_device *netdev =3D x->xso.dev;
-> > +     struct cn10k_tx_sa_s *sa_entry;
-> > +     struct cpt_ctx_info_s *sa_info;
-> > +     struct otx2_nic *pf;
-> > +     int err;
-> > +
-> > +     err =3D cn10k_ipsec_validate_state(x);
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     pf =3D netdev_priv(netdev);
-> > +     if (!mutex_trylock(&pf->ipsec.lock)) {
->
-> Why not wait until we can take the lock? Failing to offload the state
-> because this lock is temporarily busy isn't nice to users.
->
-> > +             netdev_err(netdev, "IPSEC device is busy\n");
-> > +             return -EBUSY;
-> > +     }
-> > +
-> > +     if (!(pf->flags & OTX2_FLAG_IPSEC_OFFLOAD_ENABLED)) {
-> > +             netdev_err(netdev, "IPSEC not enabled/supported on device=
-\n");
->
-> You should also use extack in this function.
->
+On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
 > [...]
-> > +static void cn10k_ipsec_del_state(struct xfrm_state *x)
-> > +{
-> > +     struct net_device *netdev =3D x->xso.dev;
-> > +     struct cn10k_tx_sa_s *sa_entry;
-> > +     struct cpt_ctx_info_s *sa_info;
-> > +     struct otx2_nic *pf;
-> > +     int sa_index;
+>
+> > >
+> > > If not, there are two other options that can be considered I think.
+> > > *) Using the genpd on/off notifiers, to really allow the consumer
+> > > driver of the reset-control to know when the PM domain gets turned
+> > > on/off.
+> > > **) Move the entire reset handling into the PM domain provider, as it
+> > > obviously knows when the domain is getting turned on/off.
+> >
+> > This option is what I've explored, tested on my side.
+> >
+> > I explored it in 2 ways:
+> >
+> > 1/ SYSC modeled as an individual PM domain provider (this is more
+> >    appropriate to how HW manual described the hardware) with this the PHY
+> >    reset DT node would have to get 2 PM domains handlers (one for the
+> >    current PM domain provider and the other one for SYSC):
+> >
+> > +               phyrst: usbphy-ctrl@11e00000 {
+> > +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
+> > +                       reg = <0 0x11e00000 0 0x10000>;
+> > +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
+> > +                       resets = <&cpg R9A08G045_USB_PRESETN>;
+> > +                       power-domain-names = "cpg", "sysc";
+> > +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
+> > R9A08G045_SYSC_PD_USB>;
+> > +                       #reset-cells = <1>;
+> > +                       status = "disabled";
 > > +
-> > +     if (x->xso.dir =3D=3D XFRM_DEV_OFFLOAD_IN)
-> > +             return;
+> > +                       usb0_vbus_otg: regulator-vbus {
+> > +                               regulator-name = "vbus";
+> > +                       };
+> > +               };
 > > +
-> > +     pf =3D netdev_priv(netdev);
-> > +     if (!mutex_trylock(&pf->ipsec.lock)) {
-> > +             netdev_err(netdev, "IPSEC device is busy\n");
-> > +             return;
 >
-> If we can't take the lock, we leave the state installed on the device
-> and leak some memory? That's not good. I assume we're going to reach
-> HW limits if this happens a bunch of times, and then we can't offload
-> ipsec at all anymore?
->
-> I think it would be better to wait until we can take the lock.
+> According to what you have described earlier/above, modelling the SYSC
+> as a PM domain provider seems like a better description of the HW to
+> me. Although, as I said earlier, if you prefer the reset approach, I
+> would not object to that.
 
-This is atomic context (in_atomic() is true). So we need to call the
-trylock variant.
+Following the discussion I believe I should take this back. If I
+understand correctly, SYSC signal seems best to be modelled as a
+reset.
 
-Thanks
--Bharat
+ Although, it looks like the USB PM domain provider should rather be
+the consumer of that reset, instead of having the reset being consumed
+by the consumers of the USB PM domain.
 
->
-> --
-> Sabrina
->
+Did that make sense?
+
+[...]
+
+Kind regards
+Uffe
 
