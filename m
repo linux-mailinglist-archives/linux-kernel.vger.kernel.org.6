@@ -1,83 +1,47 @@
-Return-Path: <linux-kernel+bounces-312379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CC19695CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26879695CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB2AB22901
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:40:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A641F24487
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57A1D6DDB;
-	Tue,  3 Sep 2024 07:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAd9WzEj"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFC419CC2F;
+	Tue,  3 Sep 2024 07:40:13 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08A81A265F;
-	Tue,  3 Sep 2024 07:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94C1C62B1;
+	Tue,  3 Sep 2024 07:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725349194; cv=none; b=FrmB68oSxxHDgwsOMTs+S+tEJB19GMfYP7l4fHHB0877a0+PvpjZpByf38r90QG1yUOAZMU5MKywq8YD0mtSRylQ3Hgf+MN0AlleK+IRlGWHimZK4ff0jHQt+v/1RvtfAEWCS97M145utn6CNxKt4h0keNQnWs/gMf95NQ2DTc8=
+	t=1725349213; cv=none; b=iv/WVW4eh1mGudkO4DbR4Vqf6sirKjvabRnJpvS1N94eOo1844xvvnOPLI7jZ47pke9TMyxlAZX8bflsxYttM+lQt4TAQsjxNncKjcOn8cjbPdi6U1dGzRqnMEUWRqba4sIjwbrbe27XcbDkhIMjUYzelTz3VDrpn08h3psX0y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725349194; c=relaxed/simple;
-	bh=EiDLNxwKKnkMZFwsHE4Bymy8MpvE+0z9hJ7RekH0o/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vEfTKCtueBVd3FRPpYzHtsgTMqH1zO7/oIeRAgf/PxAq3SIXTra/302g/cdHNws3MGnzOYLiuBJ2NDeA+f58ZODSv1FBDCUU1i+lJwx/DxUafTadW7Tz7GLnVUHxvREplwOXCvOnYFOeWJqZ28Y6cOm1lN+LAZPSKY2GS8Q4oDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lAd9WzEj; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c1963cb6so1593769f8f.3;
-        Tue, 03 Sep 2024 00:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725349191; x=1725953991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRm0/Vzd+IBZOxPnWEkylbsM0RpYW4Qu1xiihj16RO4=;
-        b=lAd9WzEjDVxBMoO67b4U5EvD/OJBs/e9Ji38vPY9NM5oFyLDPDI36Le4eMo54M3nCD
-         WZzz7ce1j+UtSozZ0q54zjTJxHGEMeFXkfE+wb//6vOVNbAsWMd5eurfhVhwxn6q6VMs
-         JihTfhdUrX0jNbGeXFm3KXMzyCwzxUcEo/DrZnlCZHL/f6pHsAIB3DgkyUISjbaF0wjc
-         OQZNIl89kT4ElsnILE9up813UPriKNyV6DmzsigWzvod0gS7Yk0bQVs2JB/vRk6yaFVS
-         xkPyEnWbZtwEDclrm1Y6yaX+tPFg92S9JhsB/ffkBs7iSi+ssxmfVpOQHuJjmqBlbbB6
-         f97Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725349191; x=1725953991;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PRm0/Vzd+IBZOxPnWEkylbsM0RpYW4Qu1xiihj16RO4=;
-        b=HyW2iGSQkWtAPWHvhz3oftUVrpkOQj6/Y45Bbwve+z74UqNwTeJTzxYqwnjxlFS7ls
-         2XW4KgB5oRgieckT2IB954bIuHkZrvguiKaBMmBdOpNZ5TMb9YnpOSp9VKxLJzdmRymQ
-         agT2RWR1f4P7PiZSNuiykc+vXBtrizyxNsK8om1JxQZL8F1H18RBJQqtDYOcvEq1HDTJ
-         HsOlIe0D199K/vzTFb8Z6Clma2mA551ApOn6yuyBlnW6lIHW/nqx+zGH78UX9KyeLsdC
-         K/2RgsZhEi30vkHwaiYv2uqnk5TbHZBNiBi3KoX1i1Ch/k16yoiXHisQ9nsUShNdVFsK
-         5VvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKobXTWSpZ63OEWQnkXQm3XsqGKjKdfaGCXwlk+7LvoixiH0OIiYIkkOmqY6B2fCRWMHjD3ukZBfZVyQ==@vger.kernel.org, AJvYcCVsOdEvR0o5ZRkJtR7nI6y/t2dXSJH7M6GEbg7MzjidMp2eOG2d7RdbI5L7rEewZkW4sn/CfbumTbcSyV2A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+NZa9yG+pDT0WDKM5hLfSiNwScAvFfI3RdRjZHn3KJPJLzGu
-	ZL/b+BRMt7pQrqzhjF5V8UwfF43qGxQqJVNFDWfDB6Aimca2Kgy5f9a1owKB
-X-Google-Smtp-Source: AGHT+IEkhJxHZslU7i3GPmf9dlYG+9TiaVCh1DfIEYsncTTtGxTEAlnbV8hwvqFkwhaiIRKz3azZQA==
-X-Received: by 2002:a5d:42d0:0:b0:374:c080:ee94 with SMTP id ffacd0b85a97d-374c080f085mr5372487f8f.27.1725349190766;
-        Tue, 03 Sep 2024 00:39:50 -0700 (PDT)
-Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374c03595fcsm8342356f8f.98.2024.09.03.00.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 00:39:50 -0700 (PDT)
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-To: 
-Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] block: Export blk_alloc_discard_bio
-Date: Tue,  3 Sep 2024 09:39:14 +0200
-Message-ID: <20240903073915.989741-1-luca.stefani.ge1@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <Zta6RR1gXPi7cRH3@infradead.org>
-References: <Zta6RR1gXPi7cRH3@infradead.org>
+	s=arc-20240116; t=1725349213; c=relaxed/simple;
+	bh=8cidSUX7dYCBHzErI7ec7JRJK9m47LPdDqDX0W1QFWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kPqeq3f+a19QdZvQSeN/79ukn/qfyUP4qGX+HgUcWr5TawzeDtDx7Z/Xb7ZhdZUuYz/LiLJYbJ0f0JkWVFUaUpn7Qk8xDYIxm3524HRqbFoshliqlBXlHbL3ScsAFhDzv3o7KhqNum4BLw4wCJXvxWx5ebAD4HytVa/QD+OTQT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowADHz39QvdZmWjvAAA--.34400S2;
+	Tue, 03 Sep 2024 15:40:00 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: chandan.babu@oracle.com,
+	djwong@kernel.org,
+	aalbersh@redhat.com,
+	willy@infradead.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] xfs: convert comma to semicolon
+Date: Tue,  3 Sep 2024 15:39:31 +0800
+Message-Id: <20240903073931.781113-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,47 +49,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADHz39QvdZmWjvAAA--.34400S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47GrWDAr18Xwb_yoW3uwc_Ja
+	1Ik3yxG3yUtFnrA3ZrtrsYvF45XFyIyrs3ua4SqFyYy34UJF1UXF1kXr1jgFn8WFy5W343
+	CryjqF1akFyFyjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbskFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjfUnrWFUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-The fs trim loops over ranges and sends discard requests, some ranges
-can be large so it's all transparently handled by blkdev_issue_discard()
-and processed in smaller chunks.
+Replace a comma between expression statements by a semicolon.
 
-To support cancellation (or suspend) requests we need to insert checks
-into the the loop, exporting the symbol allows to reimplement
-such loop with the desired behavior.
-
-Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- block/blk-lib.c        | 1 +
- include/linux/blkdev.h | 2 ++
- 2 files changed, 3 insertions(+)
+ fs/xfs/libxfs/xfs_attr_remote.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 4c9f20a689f7..ebaef47d8ce7 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -59,6 +59,7 @@ struct bio *blk_alloc_discard_bio(struct block_device *bdev,
- 	cond_resched();
- 	return bio;
- }
-+EXPORT_SYMBOL_GPL(blk_alloc_discard_bio);
+diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+index 4c44ce1c8a64..5a55819f50f3 100644
+--- a/fs/xfs/libxfs/xfs_attr_remote.c
++++ b/fs/xfs/libxfs/xfs_attr_remote.c
+@@ -525,7 +525,7 @@ xfs_attr_rmtval_set_value(
+ 		ASSERT((map.br_startblock != DELAYSTARTBLOCK) &&
+ 		       (map.br_startblock != HOLESTARTBLOCK));
  
- int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index b7664d593486..f3631044d905 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1088,6 +1088,8 @@ static inline long nr_blockdev_pages(void)
+-		dblkno = XFS_FSB_TO_DADDR(mp, map.br_startblock),
++		dblkno = XFS_FSB_TO_DADDR(mp, map.br_startblock);
+ 		dblkcnt = XFS_FSB_TO_BB(mp, map.br_blockcount);
  
- extern void blk_io_schedule(void);
- 
-+struct bio *blk_alloc_discard_bio(struct block_device *bdev,
-+		sector_t *sector, sector_t *nr_sects, gfp_t gfp_mask);
- int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask);
- int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		error = xfs_buf_get(mp->m_ddev_targp, dblkno, dblkcnt, &bp);
 -- 
-2.46.0
+2.25.1
 
 
