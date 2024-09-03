@@ -1,175 +1,321 @@
-Return-Path: <linux-kernel+bounces-312228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5349693CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:36:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768859693D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC701B22841
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98F61F23C86
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1321D319D;
-	Tue,  3 Sep 2024 06:36:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9112B1D61B5;
+	Tue,  3 Sep 2024 06:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JC+rwG6P"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D182E3EB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8A1D619C;
+	Tue,  3 Sep 2024 06:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345405; cv=none; b=U6OZN6spka2c/Zd38l/aE4JxwRvHUvKQCcRB+wo9QtXg4A6r5gLBhkWuWJtbkrfePuUAalVJn4YdlCZ9b4sXD/vQzjYzj7otOzNNLVNJomKtLkyGeMYDPCFEX7WmEilxBVlYSvAg+kCO+VhsUqjuWAGax+jdeM7YdUQAXN9UeGg=
+	t=1725345460; cv=none; b=eTdnMGRYM+X17OXTZFR8nqP21xiTev0rF+fuVxvEnJwJfh8LgQ9DefBygDj3Q7LyU1IW2FHBIntTM11MfLNxz9GGjuoWIk+Tdh477HWQVhkDqPDb7Bm9nBjLcOCzM4WKvYBZlDN5ZpNHDzbXh3rN+PjnqmAK20BOHtz8tgycLjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345405; c=relaxed/simple;
-	bh=yg24vRONR2mLZ0z7yDQa4hEfXzegR5chkg8PG+m4V7E=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=L93qamBWMdKK4VSkV3B2MaJ/wABDeD/DCQccvcQWlGmorJqiGzmeNd1aAnjnNnKKvBpZjr6RjhLs/DyGjHh+s6gXipLhtgygV4KtSQwN/7+FHlflL2KXnLyy34DBsmHdvCntAGqLfObv1dMuDz5b9DFNumJWV6Vs+VZPza1DCW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WybWF5HjZz9sSH;
-	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 2PdnbsYL7xth; Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WybWF4Jw0z9sSC;
-	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 822B98B76E;
-	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 8n4_MCluhO-u; Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EAAC8B768;
-	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
-Message-ID: <326d9a7d-7674-4c28-aa40-dd2c190244dd@csgroup.eu>
-Date: Tue, 3 Sep 2024 08:36:41 +0200
+	s=arc-20240116; t=1725345460; c=relaxed/simple;
+	bh=S4atvWqLAQvZs8e2kcnC1rdFR8nZBE0ZWDNhw70JrWU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwhIwrmx2J2QhLLmo/qbj2utgsoTM/IN41zammjb0aNTDN+4WzVqPYvP2eKv2L6UnIGKlx2w+VwpD92RKlU1gZxTgB9dGqBl7jBRnZq264GRlUoW9mUrCiviCauFFvbMpR+LbMrfyguPvuvVZC3A9VlnvHrIcOvEFyYfNxsp/24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JC+rwG6P; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725345458; x=1756881458;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S4atvWqLAQvZs8e2kcnC1rdFR8nZBE0ZWDNhw70JrWU=;
+  b=JC+rwG6PrgMS+1CQng3ddNsnsuu5DdH8Sud2YfL/2lJXzCwBTVWDm97Q
+   cgPQy+p3V2RylANdrwul3t3t9h4MkPTh/QGwz+Q68gm0mk8ie4MABDYx0
+   YQ8oH7C+zq34InpJQ93Kms5vHrP8IcL7KHDAnW0Ww5VK2X5BEr9qjhiFU
+   nVrIFuuTAvm4o/od5vvMs4s7zkWCQZGHdQ3uq1PjZNYlEg2AJ/mCzfAnQ
+   Nd03FP4C4LlGvsjLjLRXfkxa6HaPWfBpVKnp76YuEBTTMv+oahNVrH+Qk
+   hxK+PiSY2AlfUVsXcH6yLaNnIRC8NI7OboNDeSFKmeazT0p3dxKRI7dhT
+   Q==;
+X-CSE-ConnectionGUID: 2N2rybFSRXS4T94TkA6agg==
+X-CSE-MsgGUID: cfFv51RmRo6ihqy5Ciz1pQ==
+X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
+   d="scan'208";a="31149815"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 23:37:37 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 2 Sep 2024 23:37:15 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 2 Sep 2024 23:37:15 -0700
+Date: Tue, 3 Sep 2024 08:36:55 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>
+Subject: Re: [PATCH net-next v2 3/7] net: phy: microchip_t1s: add support for
+ Microchip's LAN865X Rev.B1
+Message-ID: <20240903063655.ofziio2fwa2bqa53@DEN-DL-M31836.microchip.com>
+References: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
+ <20240902143458.601578-4-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: [GIT PULL] SOC FSL for 6.12 (retry)
-To: soc@kernel.org, Arnd Bergmann <arnd@arndb.de>
-Cc: Herve Codina <herve.codina@bootlin.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Language: fr-FR
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20240902143458.601578-4-Parthiban.Veerasooran@microchip.com>
 
-Hi Arnd,
+The 09/02/2024 20:04, Parthiban Veerasooran wrote:
 
-Please pull the following Freescale Soc Drivers changes for 6.12
+Hi Parthiban,
 
-There are no conflicts with latest linux-next tree.
+> This patch adds support for LAN8650/1 Rev.B1. As per the latest
+> configuration note AN1760 released (Revision F (DS60001760G - June 2024))
+> for Rev.B0 is also applicable for Rev.B1. Refer hardware revisions list
+> in the latest AN1760 Revision F (DS60001760G - June 2024).
+> https://www.microchip.com/en-us/application-notes/an1760
 
-Thanks
-Christophe
+Are all the changes here needed?
+Is it not easier to just to update the comments that REV.B0 is
+applicable also to REV.B1 and then you are done.
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+> 
+> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+> ---
+>  drivers/net/phy/Kconfig         |  4 +--
+>  drivers/net/phy/microchip_t1s.c | 62 ++++++++++++++++-----------------
+>  2 files changed, 33 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+> index 01b235b3bb7e..f18defab70cf 100644
+> --- a/drivers/net/phy/Kconfig
+> +++ b/drivers/net/phy/Kconfig
+> @@ -292,8 +292,8 @@ config MICREL_PHY
+>  config MICROCHIP_T1S_PHY
+>  	tristate "Microchip 10BASE-T1S Ethernet PHYs"
+>  	help
+> -	  Currently supports the LAN8670/1/2 Rev.B1 and LAN8650/1 Rev.B0 Internal
+> -	  PHYs.
+> +	  Currently supports the LAN8670/1/2 Rev.B1 and LAN8650/1 Rev.B0/B1
+> +	  Internal PHYs.
+>  
+>  config MICROCHIP_PHY
+>  	tristate "Microchip PHYs"
+> diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
+> index fb651cfa3ee0..58483a0fa324 100644
+> --- a/drivers/net/phy/microchip_t1s.c
+> +++ b/drivers/net/phy/microchip_t1s.c
+> @@ -4,7 +4,7 @@
+>   *
+>   * Support: Microchip Phys:
+>   *  lan8670/1/2 Rev.B1
+> - *  lan8650/1 Rev.B0 Internal PHYs
+> + *  lan8650/1 Rev.B0/B1 Internal PHYs
+>   */
+>  
+>  #include <linux/kernel.h>
+> @@ -12,7 +12,8 @@
+>  #include <linux/phy.h>
+>  
+>  #define PHY_ID_LAN867X_REVB1 0x0007C162
+> -#define PHY_ID_LAN865X_REVB0 0x0007C1B3
+> +/* Both Rev.B0 and B1 clause 22 PHYID's are same due to B1 chip limitation */
+> +#define PHY_ID_LAN865X_REVB 0x0007C1B3
+>  
+>  #define LAN867X_REG_STS2 0x0019
+>  
+> @@ -59,12 +60,12 @@ static const u16 lan867x_revb1_fixup_masks[12] = {
+>  	0x0600, 0x7F00, 0x2000, 0xFFFF,
+>  };
+>  
+> -/* LAN865x Rev.B0 configuration parameters from AN1760
+> +/* LAN865x Rev.B0/B1 configuration parameters from AN1760
+>   * As per the Configuration Application Note AN1760 published in the below link,
+>   * https://www.microchip.com/en-us/application-notes/an1760
+>   * Revision F (DS60001760G - June 2024)
+>   */
+> -static const u32 lan865x_revb0_fixup_registers[17] = {
+> +static const u32 lan865x_revb_fixup_registers[17] = {
+>  	0x00D0, 0x00E0, 0x00E9, 0x00F5,
+>  	0x00F4, 0x00F8, 0x00F9, 0x0081,
+>  	0x0091, 0x0043, 0x0044, 0x0045,
+> @@ -72,7 +73,7 @@ static const u32 lan865x_revb0_fixup_registers[17] = {
+>  	0x0050,
+>  };
+>  
+> -static const u16 lan865x_revb0_fixup_values[17] = {
+> +static const u16 lan865x_revb_fixup_values[17] = {
+>  	0x3F31, 0xC000, 0x9E50, 0x1CF8,
+>  	0xC020, 0xB900, 0x4E53, 0x0080,
+>  	0x9660, 0x00FF, 0xFFFF, 0x0000,
+> @@ -80,23 +81,23 @@ static const u16 lan865x_revb0_fixup_values[17] = {
+>  	0x0002,
+>  };
+>  
+> -static const u16 lan865x_revb0_fixup_cfg_regs[2] = {
+> +static const u16 lan865x_revb_fixup_cfg_regs[2] = {
+>  	0x0084, 0x008A,
+>  };
+>  
+> -static const u32 lan865x_revb0_sqi_fixup_regs[12] = {
+> +static const u32 lan865x_revb_sqi_fixup_regs[12] = {
+>  	0x00B0, 0x00B1, 0x00B2, 0x00B3,
+>  	0x00B4, 0x00B5, 0x00B6, 0x00B7,
+>  	0x00B8, 0x00B9, 0x00BA, 0x00BB,
+>  };
+>  
+> -static const u16 lan865x_revb0_sqi_fixup_values[12] = {
+> +static const u16 lan865x_revb_sqi_fixup_values[12] = {
+>  	0x0103, 0x0910, 0x1D26, 0x002A,
+>  	0x0103, 0x070D, 0x1720, 0x0027,
+>  	0x0509, 0x0E13, 0x1C25, 0x002B,
+>  };
+>  
+> -static const u16 lan865x_revb0_sqi_fixup_cfg_regs[3] = {
+> +static const u16 lan865x_revb_sqi_fixup_cfg_regs[3] = {
+>  	0x00AD, 0x00AE, 0x00AF,
+>  };
+>  
+> @@ -108,7 +109,7 @@ static const u16 lan865x_revb0_sqi_fixup_cfg_regs[3] = {
+>   *
+>   * 0x4 refers to memory map selector 4, which maps to MDIO_MMD_VEND2
+>   */
+> -static int lan865x_revb0_indirect_read(struct phy_device *phydev, u16 addr)
+> +static int lan865x_revb_indirect_read(struct phy_device *phydev, u16 addr)
+>  {
+>  	int ret;
+>  
+> @@ -134,7 +135,7 @@ static int lan865x_generate_cfg_offsets(struct phy_device *phydev, s8 offsets[])
+>  	int ret;
+>  
+>  	for (int i = 0; i < ARRAY_SIZE(fixup_regs); i++) {
+> -		ret = lan865x_revb0_indirect_read(phydev, fixup_regs[i]);
+> +		ret = lan865x_revb_indirect_read(phydev, fixup_regs[i]);
+>  		if (ret < 0)
+>  			return ret;
+>  
+> @@ -183,11 +184,11 @@ static int lan865x_write_cfg_params(struct phy_device *phydev,
+>  
+>  static int lan865x_setup_cfgparam(struct phy_device *phydev, s8 offsets[])
+>  {
+> -	u16 cfg_results[ARRAY_SIZE(lan865x_revb0_fixup_cfg_regs)];
+> -	u16 cfg_params[ARRAY_SIZE(lan865x_revb0_fixup_cfg_regs)];
+> +	u16 cfg_results[ARRAY_SIZE(lan865x_revb_fixup_cfg_regs)];
+> +	u16 cfg_params[ARRAY_SIZE(lan865x_revb_fixup_cfg_regs)];
+>  	int ret;
+>  
+> -	ret = lan865x_read_cfg_params(phydev, lan865x_revb0_fixup_cfg_regs,
+> +	ret = lan865x_read_cfg_params(phydev, lan865x_revb_fixup_cfg_regs,
+>  				      cfg_params, ARRAY_SIZE(cfg_params));
+>  	if (ret)
+>  		return ret;
+> @@ -197,17 +198,17 @@ static int lan865x_setup_cfgparam(struct phy_device *phydev, s8 offsets[])
+>  			 0x03;
+>  	cfg_results[1] = FIELD_PREP(GENMASK(15, 10), (40 + offsets[1]) & 0x3F);
+>  
+> -	return lan865x_write_cfg_params(phydev, lan865x_revb0_fixup_cfg_regs,
+> +	return lan865x_write_cfg_params(phydev, lan865x_revb_fixup_cfg_regs,
+>  					cfg_results, ARRAY_SIZE(cfg_results));
+>  }
+>  
+>  static int lan865x_setup_sqi_cfgparam(struct phy_device *phydev, s8 offsets[])
+>  {
+> -	u16 cfg_results[ARRAY_SIZE(lan865x_revb0_sqi_fixup_cfg_regs)];
+> -	u16 cfg_params[ARRAY_SIZE(lan865x_revb0_sqi_fixup_cfg_regs)];
+> +	u16 cfg_results[ARRAY_SIZE(lan865x_revb_sqi_fixup_cfg_regs)];
+> +	u16 cfg_params[ARRAY_SIZE(lan865x_revb_sqi_fixup_cfg_regs)];
+>  	int ret;
+>  
+> -	ret = lan865x_read_cfg_params(phydev, lan865x_revb0_sqi_fixup_cfg_regs,
+> +	ret = lan865x_read_cfg_params(phydev, lan865x_revb_sqi_fixup_cfg_regs,
+>  				      cfg_params, ARRAY_SIZE(cfg_params));
+>  	if (ret)
+>  		return ret;
+> @@ -219,12 +220,11 @@ static int lan865x_setup_sqi_cfgparam(struct phy_device *phydev, s8 offsets[])
+>  	cfg_results[2] = FIELD_PREP(GENMASK(15, 8), (17 + offsets[0]) & 0x3F) |
+>  			 ((22 + offsets[0]) & 0x3F);
+>  
+> -	return lan865x_write_cfg_params(phydev,
+> -					lan865x_revb0_sqi_fixup_cfg_regs,
+> +	return lan865x_write_cfg_params(phydev, lan865x_revb_sqi_fixup_cfg_regs,
+>  					cfg_results, ARRAY_SIZE(cfg_results));
+>  }
+>  
+> -static int lan865x_revb0_config_init(struct phy_device *phydev)
+> +static int lan865x_revb_config_init(struct phy_device *phydev)
+>  {
+>  	s8 offsets[2];
+>  	int ret;
+> @@ -236,10 +236,10 @@ static int lan865x_revb0_config_init(struct phy_device *phydev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	for (int i = 0; i < ARRAY_SIZE(lan865x_revb0_fixup_registers); i++) {
+> +	for (int i = 0; i < ARRAY_SIZE(lan865x_revb_fixup_registers); i++) {
+>  		ret = phy_write_mmd(phydev, MDIO_MMD_VEND2,
+> -				    lan865x_revb0_fixup_registers[i],
+> -				    lan865x_revb0_fixup_values[i]);
+> +				    lan865x_revb_fixup_registers[i],
+> +				    lan865x_revb_fixup_values[i]);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -254,10 +254,10 @@ static int lan865x_revb0_config_init(struct phy_device *phydev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	for (int i = 0; i < ARRAY_SIZE(lan865x_revb0_sqi_fixup_regs); i++) {
+> +	for (int i = 0; i < ARRAY_SIZE(lan865x_revb_sqi_fixup_regs); i++) {
+>  		ret = phy_write_mmd(phydev, MDIO_MMD_VEND2,
+> -				    lan865x_revb0_sqi_fixup_regs[i],
+> -				    lan865x_revb0_sqi_fixup_values[i]);
+> +				    lan865x_revb_sqi_fixup_regs[i],
+> +				    lan865x_revb_sqi_fixup_values[i]);
+>  		if (ret)
+>  			return ret;
+>  	}
+> @@ -332,10 +332,10 @@ static struct phy_driver microchip_t1s_driver[] = {
+>  		.get_plca_status    = genphy_c45_plca_get_status,
+>  	},
+>  	{
+> -		PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB0),
+> -		.name               = "LAN865X Rev.B0 Internal Phy",
+> +		PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB),
+> +		.name               = "LAN865X Rev.B0/B1 Internal Phy",
+>  		.features           = PHY_BASIC_T1S_P2MP_FEATURES,
+> -		.config_init        = lan865x_revb0_config_init,
+> +		.config_init        = lan865x_revb_config_init,
+>  		.read_status        = lan86xx_read_status,
+>  		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
+>  		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
+> @@ -347,7 +347,7 @@ module_phy_driver(microchip_t1s_driver);
+>  
+>  static struct mdio_device_id __maybe_unused tbl[] = {
+>  	{ PHY_ID_MATCH_EXACT(PHY_ID_LAN867X_REVB1) },
+> -	{ PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB0) },
+> +	{ PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB) },
+>  	{ }
+>  };
+>  
+> -- 
+> 2.34.1
+> 
 
-   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-   https://github.com/chleroy/linux.git tags/soc_fsl-6.12-2
-
-for you to fetch changes up to 7a99b1c0bce5cf8c554ceecd29ad1e8085557fd3:
-
-   Merge branch 'support-for-quicc-engine-tsa-and-qmc' (2024-09-03 
-07:51:34 +0200)
-
-----------------------------------------------------------------
-- A series from HervÃ© Codina that bring support for the newer version
-of QMC (QUICC Multi-channel Controller) and TSA (Time Slots Assigner)
-found on MPC 83xx micro-controllers.
-
-- Misc changes for qbman freescale drivers for removing a redundant
-warning and using iommu_paging_domain_alloc()
-
-----------------------------------------------------------------
-Christophe Leroy (1):
-       Merge branch 'support-for-quicc-engine-tsa-and-qmc'
-
-Herve Codina (36):
-       soc: fsl: cpm1: qmc: Update TRNSYNC only in transparent mode
-       soc: fsl: cpm1: qmc: Enable TRNSYNC only when needed
-       soc: fsl: cpm1: tsa: Fix tsa_write8()
-       soc: fsl: cpm1: tsa: Use BIT(), GENMASK() and FIELD_PREP() macros
-       soc: fsl: cpm1: tsa: Fix blank line and spaces
-       soc: fsl: cpm1: tsa: Add missing spinlock comment
-       dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine (QE) TSA controller
-       soc: fsl: cpm1: tsa: Remove unused registers offset definition
-       soc: fsl: cpm1: tsa: Use ARRAY_SIZE() instead of hardcoded 
-integer values
-       soc: fsl: cpm1: tsa: Make SIRAM entries specific to CPM1
-       soc: fsl: cpm1: tsa: Introduce tsa_setup() and its CPM1 
-compatible version
-       soc: fsl: cpm1: tsa: Isolate specific CPM1 part from 
-tsa_serial_{dis}connect()
-       soc: fsl: cpm1: tsa: Introduce tsa_version
-       soc: fsl: cpm1: tsa: Add support for QUICC Engine (QE) implementation
-       MAINTAINERS: Add QE files related to the Freescale TSA controller
-       soc: fsl: cpm1: tsa: Introduce tsa_serial_get_num()
-       soc: fsl: cpm1: qmc: Rename QMC_TSA_MASK
-       soc: fsl: cpm1: qmc: Use BIT(), GENMASK() and FIELD_PREP() macros
-       soc: fsl: cpm1: qmc: Fix blank line and spaces
-       soc: fsl: cpm1: qmc: Remove unneeded parenthesis
-       soc: fsl: cpm1: qmc: Fix 'transmiter' typo
-       soc: fsl: cpm1: qmc: Add missing spinlock comment
-       dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine (QE) QMC controller
-       soc: fsl: cpm1: qmc: Introduce qmc_data structure
-       soc: fsl: cpm1: qmc: Re-order probe() operations
-       soc: fsl: cpm1: qmc: Introduce qmc_init_resource() and its CPM1 
-version
-       soc: fsl: cpm1: qmc: Introduce qmc_{init,exit}_xcc() and their 
-CPM1 version
-       soc: fsl: cpm1: qmc: Rename qmc_chan_command()
-       soc: fsl: cpm1: qmc: Handle RPACK initialization
-       soc: fsl: cpm1: qmc: Rename SCC_GSMRL_MODE_QMC
-       soc: fsl: cpm1: qmc: Introduce qmc_version
-       soc: fsl: qe: Add resource-managed muram allocators
-       soc: fsl: qe: Add missing PUSHSCHED command
-       soc: fsl: cpm1: qmc: Add support for QUICC Engine (QE) implementation
-       soc: fsl: cpm1: qmc: Handle QUICC Engine (QE) soft-qmc firmware
-       MAINTAINERS: Add QE files related to the Freescale QMC controller
-
-Lu Baolu (1):
-       soc: fsl: qbman: Use iommu_paging_domain_alloc()
-
-Xiaolei Wang (1):
-       soc: fsl: qbman: Remove redundant warnings
-
-  .../bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml        | 210 +++++++
-  .../bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml    | 197 ++++++
-  MAINTAINERS                                        |   3 +
-  drivers/soc/fsl/qbman/qman_ccsr.c                  |   2 -
-  drivers/soc/fsl/qbman/qman_portal.c                |   5 +-
-  drivers/soc/fsl/qe/Kconfig                         |  18 +-
-  drivers/soc/fsl/qe/qe_common.c                     |  80 +++
-  drivers/soc/fsl/qe/qmc.c                           | 667 
-++++++++++++++++-----
-  drivers/soc/fsl/qe/tsa.c                           | 659 
-+++++++++++++++-----
-  drivers/soc/fsl/qe/tsa.h                           |   3 +
-  include/dt-bindings/soc/qe-fsl,tsa.h               |  13 +
-  include/soc/fsl/qe/qe.h                            |  23 +-
-  12 files changed, 1552 insertions(+), 328 deletions(-)
-  create mode 100644 
-Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
-  create mode 100644 
-Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
-  create mode 100644 include/dt-bindings/soc/qe-fsl,tsa.h
+-- 
+/Horatiu
 
