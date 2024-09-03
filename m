@@ -1,321 +1,200 @@
-Return-Path: <linux-kernel+bounces-313905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B626096AC23
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C45096AC25
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B031C21142
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F213C1F21C2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F391D54E4;
-	Tue,  3 Sep 2024 22:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741AB1D2230;
+	Tue,  3 Sep 2024 22:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="biYG7Ee5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NePF8YJa"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2E91865F0;
-	Tue,  3 Sep 2024 22:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B1D1EBFE4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402167; cv=none; b=d49GMiDr+3omz8zh4b7F6yj8mb2Jh6lSaSu3gdEBjhtyWarSKrFgyOoKccaEnb/oQcF8YkGwbfwoibNDtAso5OwH6e3f7xzpoPQL3yAYUiDoNZmHuPONi7Ehmqx42i9feFxJDHSCmkD4O/PkGWnBp67TbfISlRBSQfkV3PWnIAY=
+	t=1725402220; cv=none; b=ImfAL7gIXck5LW2zUAQDBvoQg2Az4RJyzfX0J4ZV5A/GuhbIL9AygyZht8QLeas5/4n7hogHGTDBrC85C+htx3zQS8bxLJK6VtUxyrDam8pvE1OaBp99SUJMLf7QZvphb+zQcBxyXK1aQ3gL7yRnfOJD9eWRsyG0H5Wgf9+Xdjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402167; c=relaxed/simple;
-	bh=n7AUgfmSa7jTD/Uc5zeJ2BD2RwfJXOlKgYQ0aahHB2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XcL19xV6JlXam8YLx+joes3xAB/AaFYI/OwBjB+KU1tdoBRrBwA30AIRWM/D6ZJ8GD/2jMRx6AaXSfG0V7A9d6HxRjL0+4jsGlTrpxtvkq6+bTNWZaU9boKCVoJGTUCpDWDs37E3HYwjOqlKDRNC2FTaMM1E6TnRoefVgDmM0Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=biYG7Ee5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483CvEaV014384;
-	Tue, 3 Sep 2024 22:22:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/ySobt06d03p2Xm2eVh5jE8nc1WdYv3H6QiumBVNUAg=; b=biYG7Ee5qWPRAU5n
-	MD47HzOIJ1T8pgAS7i9AoDFfBMlPAR+zBfsK/hHgN12EGRj2JlcZCpMfRWyybQR9
-	Hc41gyfdm/mH7InnvIJ+highiQr0Hq122l/tGhO6T2oLN+tfeUnwoiAA/XcbsbeC
-	KTx2GiWWOz5jaK3Gi4iEIZ9IDoApz4lIqxoRJfXL7Ba1X/37Rsv/CRtg40Cc0Mzt
-	I1xg0A082c56PC1NLt2WLIjD+fDnTn7hSVHAz9U5tHCnDlPRggfmfK3X20r972Rn
-	KY7ZNKwZcG3589/fIm/CpQptavlteLjMp9/PBOm6doOanQhuYpDlBXcTgQA6twsh
-	9cL5og==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt69b0tr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 22:22:33 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483MMWAm007959
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 22:22:32 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 15:22:31 -0700
-Message-ID: <42000976-9cba-436c-8cde-38bf521340d7@quicinc.com>
-Date: Tue, 3 Sep 2024 15:22:31 -0700
+	s=arc-20240116; t=1725402220; c=relaxed/simple;
+	bh=g9uVYzq1UsU2PbcrqmQGTnSNLBXbtYLselYEvmUKEqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oe9ZElw9jKnKnnL7myCl7JtcePEtImkBDn/QgjKtoZGZ4pTXEMY1YQAHJ5qOzN2P+r7kFhZo7ub+w7w6mPm7qJLRIHEluc422/HxuIp8JwHhhVdZGOXbrKT67eeKu6OqzIaVsNSvz+TYxPzsUKnphatSy0FC+qWozzbbhvT1fS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NePF8YJa; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2056aa5cefcso33565ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725402219; x=1726007019; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NroSIqwal6C0TPK35/SdmH0JtLPdZfaKT8kFABhfjM0=;
+        b=NePF8YJaMg9iAaRfot9sKAF5nfZhHb5IA4e2zr2/19GwmFGbQpt11P7odzl0wb2nVR
+         7zL/muuPhwkMrscERFr4tO79SfIUssAuM7g14CW5UoMk62M3/e50JX4GYuXlAhTf+6tA
+         MeE8I1vNENnHFa3bG/GUBOskb3JEdjCZrE6AHEmBXQyBXzD+yvWbH69acF2thwHkleHo
+         BXlZOeM+pJvpo+fL07lz9mbj2vGShUf8Sx/7DYF/82K1MGeFF4LMhtBfXLuty1gggvvQ
+         ELYfSJnhGYwicGkCLhABBYLTq/dTXTNjgnLCRVIODd8PElOq9T5ZftjbHqNiumWjCLla
+         arNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725402219; x=1726007019;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NroSIqwal6C0TPK35/SdmH0JtLPdZfaKT8kFABhfjM0=;
+        b=PRlISxzhRIo9ndHTxqsMg0h2E2UXomS8JAOA3zL+aru/mx4cZ2vrusGAOHQXJ7O0IL
+         plXm8oLL445zYdiOEz6JqO17QMbgwtZ96ezTH5xNLqiNbruZQZ0L1+Vi86vijhYyL+Op
+         UeOpmlFwLedgblnD2zo+rZClkr9rwpBD6oMD2lEDoKqHHnMIdpypdxtjwOKOdm+E1R8l
+         tKPS7WLimqXl76Os5Rfv3LpAa6HDJgA4j54aHnVtonurG3QGomzUXLZrX6P2t7UdLBL/
+         ugLpbKCNGDCvQwX2RhDJ0R3cPNJ1JFnfUx/OZOT9DF8CRhcR4e47q2Lm2svq8oX3CsLM
+         xwaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURrazGU6YdYUW60sWWvEkQrqQ6gQsSgXElz2eE8FVyoDXau4nt3ffPB/HFsommpOTr8cLeGmZrVdOzjME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG7VFClM8Nz5WD7jaRNiFdKtY1cAUzhDyF6J+77sOJWrRnIYpn
+	zXGkiDYwjDwMaVD1AHWeLrRplV47pu3L9dD8PRYE6Uz80qFMDV8/+TaxB5cN7Q==
+X-Google-Smtp-Source: AGHT+IGPK+Sty2egGVVQYW1P+X2yQYVnvIv8jHjlO6wDgkw0UaUcxded/EZRq+TQYfvI+DIfmARohw==
+X-Received: by 2002:a17:902:f546:b0:206:ae39:9f9 with SMTP id d9443c01a7336-206b58bdcf2mr424035ad.21.1725402218366;
+        Tue, 03 Sep 2024 15:23:38 -0700 (PDT)
+Received: from google.com (55.212.185.35.bc.googleusercontent.com. [35.185.212.55])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8d38ffff9sm5300801a91.39.2024.09.03.15.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 15:23:37 -0700 (PDT)
+Date: Tue, 3 Sep 2024 22:23:32 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Hillf Danton <hdanton@sina.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>
+Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
+ reduce the lock duration
+Message-ID: <ZteMZEsMCMig8zOQ@google.com>
+References: <20240902225009.34576-1-21cnbao@gmail.com>
+ <20240903110109.1696-1-hdanton@sina.com>
+ <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com>
+ <ZtcVYBUNWGow40pX@google.com>
+ <CAGsJ_4y-s25N94b2GnxypFhb-5bv53wOcJBt14Dx83M6AJD=7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] drm/msm/dpu: add CWB support to dpu_hw_wb
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@chromium.org>
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-10-502b16ae2ebb@quicinc.com>
- <2iyrj4bzvvjapn2p6kef2jub2ivsjszrqwaq3zj33hsbdtzuid@q7s6dqlerebu>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <2iyrj4bzvvjapn2p6kef2jub2ivsjszrqwaq3zj33hsbdtzuid@q7s6dqlerebu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t2nqRG0gwXW4pl7y0kfqrFBKWrNe2PRo
-X-Proofpoint-ORIG-GUID: t2nqRG0gwXW4pl7y0kfqrFBKWrNe2PRo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_10,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030179
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4y-s25N94b2GnxypFhb-5bv53wOcJBt14Dx83M6AJD=7Q@mail.gmail.com>
 
+On Wed, Sep 04, 2024 at 09:10:20AM +1200, Barry Song wrote:
+> However, I'm not entirely convinced that this is a problem :-) Concurrent
+> allocations like this can occur in many places, especially in PFs. Reclamation
+> is not useless because it helps free up memory for others; it's not
+> without value.
 
+Yeah, for binder though there is a high chance of multiple callers
+trying to allocate the _same_ page concurrently. What I observed is that
+pages being reclaimed "in vain" are often in the same vma and this means
+subsequent callers will need to allocate these pages.
 
-On 8/30/2024 10:41 AM, Dmitry Baryshkov wrote:
-> On Thu, Aug 29, 2024 at 01:48:31PM GMT, Jessica Zhang wrote:
->> From: Esha Bharadwaj <quic_ebharadw@quicinc.com>
->>
->> Add function ops to allow hw_wb to configure CWB registers and adjust
->> the WB_MUX configuration to account for using dedicated CWB pingpong
->> blocks.
->>
->> Signed-off-by: Esha Bharadwaj <quic_ebharadw@quicinc.com>
->> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c | 69 ++++++++++++++++++++++++++++++-
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h | 34 +++++++++++++++
->>   2 files changed, 102 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c
->> index 93ff01c889b5..998c9fbd22a6 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c
->> @@ -51,6 +51,12 @@
->>   #define WB_CDP_CNTL                           0x2B4
->>   #define WB_OUT_IMAGE_SIZE                     0x2C0
->>   #define WB_OUT_XY                             0x2C4
+But even if this wasn't an issue, the correct solution would still be to
+support concurrent faults. So, in reality it doesn't matter and we still
+need to refactor the call to be non-exclusive.
+
+> I also don't believe binder is one of the largest users executing concurrent
+> allocations.
+
+Oh, I have no statistics on this.
+
+> Awesome! I’m eager to see your patch, and we’re ready to help with testing.
+> I strongly recommend dropping the write lock entirely. Using
+> `mmap_write_lock()` isn’t just a binder-specific concern; it has the
+> potential to affect the entire Android system.
 > 
-> Empty line
-> 
->> +#define CWB_MUX                               0x000
->> +#define CWB_MODE                              0x004
->> +
->> +/* CWB mux block bit definitions */
->> +#define CWB_MUX_MASK                          GENMASK(3, 0)
->> +#define CWB_MODE_MASK                         GENMASK(2, 0)
->>   
->>   static void dpu_hw_wb_setup_outaddress(struct dpu_hw_wb *ctx,
->>   		struct dpu_hw_wb_cfg *data)
->> @@ -173,7 +179,9 @@ static void dpu_hw_wb_bind_pingpong_blk(
->>   	mux_cfg = DPU_REG_READ(c, WB_MUX);
->>   	mux_cfg &= ~0xf;
->>   
->> -	if (pp)
->> +	if (pp >= PINGPONG_CWB_0)
->> +		mux_cfg |= (pp < PINGPONG_CWB_2) ? 0xd : 0xb;
->> +	else if (pp)
->>   		mux_cfg |= (pp - PINGPONG_0) & 0x7;
->>   	else
->>   		mux_cfg |= 0xf;
->> @@ -237,3 +245,62 @@ struct dpu_hw_wb *dpu_hw_wb_init(struct drm_device *dev,
->>   
->>   	return c;
->>   }
->> +
->> +static void dpu_hw_cwb_setup_input_ctrl(struct dpu_hw_wb *ctx,
->> +				enum dpu_cwb cwb_idx,
->> +				const enum dpu_pingpong pp)
-> 
-> Align to opening bracket, please.
+> In patch 3, I experimented with using `per_vma_lock` as well. I’m _not_
+> proposing it for merging since you’re already working on it, but I wanted
+> to share the idea. (just like patch2, it has only passed build-test)
 
-Hi Dmitry,
-
-Acked for all comments here -- I'll squash the 2 cwb ops together.
-
-Thanks,
-
-Jessica Zhang
+Yeap, I'm using the per-vma-lock too per Suren's suggestion.
 
 > 
->> +{
->> +	struct dpu_hw_blk_reg_map *c;
->> +	int cwb_mux_cfg = 0xF;
->> +
->> +	if (cwb_idx < CWB_0 || cwb_idx >= CWB_MAX)
->> +		return;
->> +
->> +	c = &ctx->cwb_hw[cwb_idx - CWB_0];
->> +
->> +	/*
->> +	 * The CWB_MUX register takes the pingpong index relative to
->> +	 * PINGPONG_CWB_0 and not PINGPONG_0
->> +	 */
->> +	if ((pp != PINGPONG_NONE) && (pp < PINGPONG_MAX))
->> +		cwb_mux_cfg = FIELD_PREP(CWB_MUX_MASK, pp - PINGPONG_CWB_0);
->> +
->> +	DPU_REG_WRITE(c, CWB_MUX, cwb_mux_cfg);
->> +}
->> +
->> +static void dpu_hw_cwb_setup_input_mode(struct dpu_hw_wb *ctx,
->> +				enum dpu_cwb cwb_idx,
->> +				const enum cwb_mode_input input)
->> +{
->> +	struct dpu_hw_blk_reg_map *c;
->> +	int cwb_mux_cfg;
->> +
->> +	if (cwb_idx < CWB_0 || cwb_idx >= CWB_MAX || input >= INPUT_MODE_MAX)
->> +		return;
->> +
->> +	c = &ctx->cwb_hw[cwb_idx - CWB_0];
->> +	cwb_mux_cfg = FIELD_PREP(CWB_MODE_MASK, input);
->> +
->> +	DPU_REG_WRITE(c, CWB_MODE, cwb_mux_cfg);
->> +}
->> +
->> +static void _setup_cwb_ops(struct dpu_hw_wb_ops *ops)
->> +{
->> +	ops->setup_input_ctrl = dpu_hw_cwb_setup_input_ctrl;
->> +	ops->setup_input_mode = dpu_hw_cwb_setup_input_mode;
->> +}
->> +
->> +struct dpu_hw_wb *dpu_hw_wb_init_with_cwb(struct drm_device *dev,
->> +				 const struct dpu_wb_cfg *cfg,
->> +				 void __iomem *addr,
->> +				 const struct dpu_mdss_version *mdss_rev,
->> +				 struct dpu_hw_blk_reg_map *cwb_hw)
->> +{
->> +	struct dpu_hw_wb *c = dpu_hw_wb_init(dev, cfg, addr, mdss_rev);
->> +
->> +	c->cwb_hw = cwb_hw;
->> +
->> +	_setup_cwb_ops(&c->ops);
->> +
->> +	return c;
->> +}
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h
->> index 37497473e16c..1ff40f8325e5 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h
->> @@ -21,6 +21,12 @@ struct dpu_hw_wb_cfg {
->>   	struct drm_rect crop;
->>   };
->>   
->> +enum cwb_mode_input {
->> +	INPUT_MODE_LM_OUT,
->> +	INPUT_MODE_DSPP_OUT,
->> +	INPUT_MODE_MAX
->> +};
->> +
->>   /**
->>    *
->>    * struct dpu_hw_wb_ops : Interface to the wb hw driver functions
->> @@ -31,6 +37,8 @@ struct dpu_hw_wb_cfg {
->>    *  @setup_cdp:       setup chroma down prefetch block for writeback block
->>    *  @setup_clk_force_ctrl: setup clock force control
->>    *  @bind_pingpong_blk: enable/disable the connection with ping-pong block
->> + *  @setup_ctrl: setup ctrl register for cwb
->> + *  @setup_mode: setup mode register for cwb
->>    */
->>   struct dpu_hw_wb_ops {
->>   	void (*setup_outaddress)(struct dpu_hw_wb *ctx,
->> @@ -54,11 +62,20 @@ struct dpu_hw_wb_ops {
->>   
->>   	void (*bind_pingpong_blk)(struct dpu_hw_wb *ctx,
->>   				  const enum dpu_pingpong pp);
->> +
->> +	void (*setup_input_ctrl)(struct dpu_hw_wb *ctx,
->> +				 enum dpu_cwb cwb_idx,
->> +				 const enum dpu_pingpong pp);
->> +
->> +	void (*setup_input_mode)(struct dpu_hw_wb *ctx,
->> +				 enum dpu_cwb cwb_idx,
->> +				 const enum cwb_mode_input input);
+> [PATCH] binder_alloc: Further move to per_vma_lock from mmap_read_lock
 > 
-> Judging by the usage, could you please add single setup_cwb() callback
-> and let WB code call corresponding functions internally.
+> To further reduce the read lock duration, let's try using per_vma_lock
+> first. If that fails, we can take the read lock, similar to how page
+> fault handlers operate.
 > 
->>   };
->>   
->>   /**
->>    * struct dpu_hw_wb : WB driver object
->>    * @hw: block hardware details
->> + * @cwb_hw: block hardware details of cwb_muxes
->>    * @idx: hardware index number within type
->>    * @wb_hw_caps: hardware capabilities
->>    * @ops: function pointers
->> @@ -66,6 +83,9 @@ struct dpu_hw_wb_ops {
->>   struct dpu_hw_wb {
->>   	struct dpu_hw_blk_reg_map hw;
->>   
->> +	/* cwb data */
->> +	struct dpu_hw_blk_reg_map *cwb_hw;
->> +
->>   	/* wb path */
->>   	int idx;
->>   	const struct dpu_wb_cfg *caps;
->> @@ -87,4 +107,18 @@ struct dpu_hw_wb *dpu_hw_wb_init(struct drm_device *dev,
->>   				 void __iomem *addr,
->>   				 const struct dpu_mdss_version *mdss_rev);
->>   
->> +/**
->> + * dpu_hw_wb_init_with_cwb() - Initializes the writeback hw driver object with cwb.
->> + * @dev:  Corresponding device for devres management
->> + * @cfg:  wb_path catalog entry for which driver object is required
->> + * @addr: mapped register io address of MDP
->> + * @hw: array of cwb muxes
->> + * Return: Error code or allocated dpu_hw_wb context
->> + */
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  drivers/android/binder_alloc.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
 > 
-> Please move the comment to the function body. This way make W=1 will
-> check that it is valid.
+> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> index a2281dfacbbc..b40a5dd650c8 100644
+> --- a/drivers/android/binder_alloc.c
+> +++ b/drivers/android/binder_alloc.c
+> @@ -221,6 +221,8 @@ static int binder_install_single_page(struct
+> binder_alloc *alloc,
+>                                       struct binder_lru_page *lru_page,
+>                                       unsigned long addr)
+>  {
+> +       struct vm_area_struct *vma;
+> +       bool per_vma_lock = true;
+>         struct page *page;
+>         int ret = 0;
 > 
->> +struct dpu_hw_wb *dpu_hw_wb_init_with_cwb(struct drm_device *dev,
->> +					const struct dpu_wb_cfg *cfg,
->> +					void __iomem *addr,
->> +					const struct dpu_mdss_version *mdss_rev,
->> +					struct dpu_hw_blk_reg_map *hw);
->> +
->>   #endif /*_DPU_HW_WB_H */
->>
->> -- 
->> 2.34.1
->>
+> @@ -235,10 +237,15 @@ static int binder_install_single_page(struct
+> binder_alloc *alloc,
+>          */
+>         page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
 > 
+> -       mmap_read_lock(alloc->mm);
+> +       vma = lock_vma_under_rcu(alloc->mm, addr);
+> +       if (!vma) {
+> +               per_vma_lock = false;
+> +               mmap_read_lock(alloc->mm);
+> +               vma = find_vma(alloc->mm, addr);
+> +       }
+> 
+> -       /* vma might have been dropped or deattached */
+> -       if (!alloc->vma || !find_vma(alloc->mm, addr)) {
+> +       /* vma might have been dropped, deattached or changed to new one */
+> +       if (!alloc->vma || !vma || vma != alloc->vma) {
+>                 pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+>                 ret = -ESRCH;
+>                 goto out;
+> @@ -270,7 +277,10 @@ static int binder_install_single_page(struct
+> binder_alloc *alloc,
+>         binder_set_installed_page(lru_page, page);
+>         spin_unlock(&alloc->lock);
+>  out:
+> -       mmap_read_unlock(alloc->mm);
+> +       if (per_vma_lock)
+> +               vma_end_read(vma);
+> +       else
+> +               mmap_read_unlock(alloc->mm);
+>         mmput_async(alloc->mm);
+>         if (ret && page)
+>                 __free_page(page);
 > -- 
-> With best wishes
-> Dmitry
+> 2.39.3 (Apple Git-146)
+
+This looks fairly similar to my patch. However, you would need to handle
+the case were vm_insert_page() returns -EBUSY (success that raced) and
+also sync with the shrinker callbacks in binder_alloc_free_page() which
+is the biggest concern.
+
+Let's not duplicate efforts though. Can we please wait for my patch?
+I'll add you as Co-Developed-by, since you've posted this already?
+
+Regards,
+Carlos Llamas
 
