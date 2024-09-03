@@ -1,88 +1,100 @@
-Return-Path: <linux-kernel+bounces-313846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BFE96AAAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D26A296AAAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B82284A4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918432858F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F8E1C86F1;
-	Tue,  3 Sep 2024 21:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009AA1D0DED;
+	Tue,  3 Sep 2024 21:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APSFz9Qq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkmpREx8"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3125F1D5CF2;
-	Tue,  3 Sep 2024 21:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EFA1A265F;
+	Tue,  3 Sep 2024 21:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725400350; cv=none; b=JWlBsyT/8kb3W2nICcVy6+2dWAp9QohM3uVi+7qFFGx1hfRiBW0fTlkoV2nqBCr/HWaqhde8QLMQX2Sj5C0yOjA8pXbaRXSWEcMpJsEWBZIhpK7pRgBfb+9oy7SfAirCEmsHM+t/1v9XdMrgeuvMwrYycfrfvP5OaLxVww9XRv8=
+	t=1725400398; cv=none; b=n9umDn7BjGJVG9rd0bO5SEoThxfgvm7Z+Ul3EaAnoS/T/0nxIlCuHvC3pTbt+ZGJxPm75nsSwaZ4qJpdcuxr31K461RVe2Y+lzkUTXt4JGp9p3mWOa2/GsFbBqgqgdxiY9YBTRcRrwYJ2e7FLxai9fjb79ELFwn0dv1XgmE1OK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725400350; c=relaxed/simple;
-	bh=5AXHSlD483lkKrn6IcQa8Qtd1HVutTf1fVZ/+vQW7nQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ullKKoa/Hq5bsSzUt4pcfnNOUDJRc6qWm4W6UQzGtqgpNNVvyYTwXtfnyKly+VdiCIs2PUKYtcxVrKXQe33wLVLop5W1Y4zVZgf0IbVvTh7lkiyxFCccUEd1mKfVao+BHovgEdxpH7uumJTm4n62+bKkHFY7ibW1OOIDuMQb8NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APSFz9Qq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6CF1C4CEC5;
-	Tue,  3 Sep 2024 21:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725400350;
-	bh=5AXHSlD483lkKrn6IcQa8Qtd1HVutTf1fVZ/+vQW7nQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=APSFz9Qq4cUhUzEOyFvHArCpAHi3s64PcN5so395igC9kMlsfmJ9ahhfhsMq4K0cw
-	 Yl1gBaL44QZpR9WJC28aI6shxWvmv/zIeuiNGFdZqxHojJfPSuH5V5umYVDVa2rdKl
-	 /TL5jgI6N6nmqVafDP/SWBZgdMoJU/TYNW3H5hqAHjwDxxl4RmZoNBUjzmi+10GvV0
-	 PEfmaSpncM8lXHqRvfCl+tg3N1Aap6f78NsyBdItI2T6D2OOmPycE//40pjCbQkdSH
-	 udI2ybqwn3vRZE7kZRVIOhZi/LD9Bg/zXo5C2+BXVM+pxn2+DPR60u0feG5Ao/e2+E
-	 KUMSuVTOjTIEA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Tue, 03 Sep 2024 16:52:08 -0500
-Subject: [PATCH 4/4] dt-bindings: trivial-devices: Drop duplicate
- "maxim,max1237"
+	s=arc-20240116; t=1725400398; c=relaxed/simple;
+	bh=FrRK8niBF91VUDCobQBFSLRy3tmazlR9yYqElnXTmbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jhlCnQIMVDsn5WhNQWhUz4VUG/AXjisvX80PujDR72q3+3UB/nHSJjx10RnsZQdspnML5Cro54fuuHXtrWjH3KKUurCn08gViyZyj2U7LvilH7EQIRKLlypKaFR3xtdKWLUPnP7T010E46eVJ42K4ruaMbU3+L7lTvaH8/61wW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkmpREx8; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71428f16b09so409576b3a.0;
+        Tue, 03 Sep 2024 14:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725400396; x=1726005196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kuW8ixJYbgv1qbPGNDxkO182aNeF7uYIBZvxbF3D7o=;
+        b=YkmpREx8lI6MiEcxhbi15h5qZSoAN94ViO/dzPqJMfZHKxYVcGqcNu5XlZ7VieZ8I0
+         RkfHVLXDxoIBFP8tNkVOqbfKxIjBhNd0K0FbVFagJq6kvnmz9pHNIkbVTq1yIZZzB9kX
+         QXNOmkxaAmeiPNS7WsmN0KLuN44S+dQ+pRPhSEKM6Gtn4vXCxirwjci6/cyBflELJSOS
+         zccNACCyFId0XsiWFabeinm0tJya+RcNBmBqY1STtaB6wMuJrnRzt2UZ/sTLgObekNkU
+         46TO3qIix2VPVHCdu3eIRO2gsP/2TJ0PCeDmT/fPuZ73feDFub0zngElmW6j+GCmVa7p
+         0RIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725400396; x=1726005196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9kuW8ixJYbgv1qbPGNDxkO182aNeF7uYIBZvxbF3D7o=;
+        b=mmYLvrq81GThT7p7FwzyU5btzImFm/43yZySy2HgTtV+mfR5IB6uyF/GYtgmIb/uHX
+         QUhQs2xETe9UMl0c6lqyPc9B3s0aWLCp/w+IqCM3o4G0jvSXbC2uvTjpggO4J5QvqCVH
+         6b4dAaC6Qf/DGznMbrNig4m0CmQ/pWZ8Lb3qxrM/fGR9gABvz6tY1nRoVbpyof3t4F8n
+         Wo1PRm9oYg6ZvZDPgZxefzMHQwuciRa/ovajPUdJUZ0l2Fd2c1Rw4ygKjA39HkHoB6V1
+         GQgtpSUOf4jF4jP5BBgyae/JQI64O+qq6zVR1XpBF9b/hOSwfpcM65VQaMvXM1KzxqYl
+         7s8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZWCxieN9ykUR4M4xnwAr6KWw+vbG1imQAQxnPSHn0NKT4gsKvn8fsemJ8E8IQzU1Ofq3DymKr1RxCHg==@vger.kernel.org, AJvYcCUcdaSvgYTYmaGuLRPq0zkqLBvBj4OEdEvTdbMZPijtep5TI6xg7vJP2N8BFK48s2fgwgKsjpGRI246Kc6d@vger.kernel.org, AJvYcCXFwEPbzmQ6quHzo1Muo70IkKr0CdVWMUhHUX03ppNDZbyxBhf9o5Q2vcgi+xGe2aRdXGzQklKhw3b55OxsQx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSm0vS8QPwyCJoBIS0bGL8XoeqNI3nicXEumexHa0rtMzsnMxO
+	ZZuCzT6L/8z/NUp9X7+xEsJmJ5AkgJVQ7+SYMAWnHcRnuHVnFOgmRGB9KAItQyC8t/4ShUi/UHJ
+	gtlOaQCNElkbdq/N8lO4Tr6CeqUo=
+X-Google-Smtp-Source: AGHT+IGbogrYJMR3ncTVQ7aVTJIioULm6HG53lnWgMJIZ8pPc9keVi+XoFBlQSVG2OFGIYGRYIHbaowMBcmbeFqAPYI=
+X-Received: by 2002:a05:6a20:a125:b0:1be:c3fc:1ccf with SMTP id
+ adf61e73a8af0-1ccee3aa41emr9530103637.2.1725400396307; Tue, 03 Sep 2024
+ 14:53:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-dt-trivial-devices-v1-4-ad684c754b9c@kernel.org>
-References: <20240903-dt-trivial-devices-v1-0-ad684c754b9c@kernel.org>
-In-Reply-To: <20240903-dt-trivial-devices-v1-0-ad684c754b9c@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15-dev
+References: <20240903200956.68231-1-a.hindborg@kernel.org>
+In-Reply-To: <20240903200956.68231-1-a.hindborg@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 3 Sep 2024 23:53:00 +0200
+Message-ID: <CANiq72=NhbfKiMG2iUOsNT8acZAadRNeTAPEJKRPkmYq9w2J-Q@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: mailmap: Update Andreas Hindborg's email address
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"maxim,max1237" is already documented in iio/adc/maxim,max1238.yaml, so
-drop it from trivial-devices.yaml.
+On Tue, Sep 3, 2024 at 10:10=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> Move away from corporate infrastructure for upstream work. Also update
+> mailmap.
+>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 --
- 1 file changed, 2 deletions(-)
+Applied to `rust-fixes`. Welcome to kernel.org! :)
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 2c01d8d2a6d3..7cd9d55de8e2 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -179,8 +179,6 @@ properties:
-           - maxim,ds1803-100
-             # 10 kOhm digital potentiometer with I2C interface
-           - maxim,ds3502
--            # Low-Power, 4-/12-Channel, 2-Wire Serial, 12-Bit ADCs
--          - maxim,max1237
-             # Temperature Sensor, I2C interface
-           - maxim,max1619
-             # 3-Channel Remote Temperature Sensor
+    [ Reworded title slightly. - Miguel ]
 
--- 
-2.45.2
-
+Cheers,
+Miguel
 
