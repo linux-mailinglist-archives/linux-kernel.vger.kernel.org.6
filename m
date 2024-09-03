@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-312059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE9969175
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7965A969179
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB744283F5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7531C228C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B336A19F130;
-	Tue,  3 Sep 2024 02:34:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93A21CCEE8;
+	Tue,  3 Sep 2024 02:39:26 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99EA27448
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E52AF10;
+	Tue,  3 Sep 2024 02:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725330847; cv=none; b=USSJQZkkuMfzY7DS+1zkMN+Pkzj8jm+uQW+BbthVjJFW3/WSOE6ZNN+ob95Td0M3Dodpxuqth8u4oHvocOdiZMBT00Aqe5cyWFilq1jnOqKIZpiYwg4PGmKlcE9f2f+/ByfDaC1oIUxfrVUb68jIqk+keey1Y7MOlMQtxCHdJDw=
+	t=1725331166; cv=none; b=SQonFGGTk6VQpHj96h6bzk7w9TVdm2o7m8oiIEPY6Agt1JOmVAraCYvyhi5rEM3LQu9V4zQU/Zh7maDy5u8Q4v5UMQ2JBV23lcoDGxqihpwkYqUqslbQu9PHkxGEu1g0uJCtAcH4Ld+joHtGpeHa1IJxVSzloweWNjpPBwI8HIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725330847; c=relaxed/simple;
-	bh=UOHCw+cF8tvj2KpTUAWgY9p9yXNgf8o6wkUC9wx1Xk4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k6HiEaF5SsNkNhyALDepzh8JNBeRnu+Pqiv7IVSYuzcNWNTVJO6nYfuQS/zhx4bxhdDUht1k6E3IUs9D+idpw65WN3fPCjbpK/9rDkaDNu8ViSwwJNrDNW3aJYxWW4fUZrs+iBEcs49ctHErc4arBTMu9GYtdA6dxiwb1uutfiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a330ab764so328872739f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 19:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725330845; x=1725935645;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4drJsG4cIDr3I5NkQbnYT/k0mpZe+PZ2n49CNlnX0w=;
-        b=Jc1JD4JqFc4g0wqX55YGhTJkr1t0EvSw0Yum+btmEaQ/68EGzGHCpIqRXpvRABoT46
-         +xryxJ04ZEe+IQpk5cb4UobMXahcTdcO9M2aVwgOBsIGwxmYMpvfFGrIEZdwEo3c0TSt
-         8KTrodkJ95xFR2G2zQwYrcPk23j64cBY5Ake2LVXgMvMdCJBg/oFpIKetY9D7NGh/PYc
-         qJOqvb1qKVyCah+lO6GEzvIUx1gJHUkKC+G9p++LjIYASSifZRwzpNfv/hpkolWR1Lm5
-         VJXzEb3lSDQ5HBxFy5fqqx2tArDjMk1Z+Pr7/qHpqsTt2b8sv5lvZHYTr8Ur7Chlu7I6
-         4uPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVREaOgesPl/NffRIqgBdH8m7aw5qWQD7oO1lX9fuz0/eMmKP7N7lMKKsg4AQb2st2VHW6gy6BXMX5ApCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSsDRC+fwR/1FOIUgLmulmED3ioY06l1Uop021e9GBS1MELzeI
-	TZFZQWn3BO4w68lT/o5VBW3MGC1Amo1i1WoIPNiv0LUHnSy7nZxoXZyxTLDV87wrTnehsQgIOlK
-	vPJVJhMvP19shzuCefIZz5Arx+Z4bU/jsIaYrCi1mHOOA64zgcwEu5FE=
-X-Google-Smtp-Source: AGHT+IF6HRzmy3uAMKL6AxsBzVXEuNxaW8HWHTEdIl0EaLq704Fu+i3tq1TMG6e307FJmdpipFE/HFCiLkBYLYV5Y5unhue/5r53
+	s=arc-20240116; t=1725331166; c=relaxed/simple;
+	bh=9msTVneaFggEOnc0HgRFAawmBb/KlQYldhtAtEmevK0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cAWSU1Brr1qI2NdI2CMTsmeG6i5dnN7jOMD8ZgSSvqTMP1NkMDCFv/yPfpLeWJZjdPHvLxsMjVJpP/HXRAtABzdXEZNoMPU4oN0j/duEEoGVfNoR8lsqaqay9c2C7RtEWwQmZOR2GPIBj1Po5RpEaSGYAd5PCQ0on5z8lFvbxHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowABH+ajRdtZm+a60AA--.35457S2;
+	Tue, 03 Sep 2024 10:39:14 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: jirislaby@kernel.org,
+	gregkh@linuxfoundation.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] mxser: convert comma to semicolon
+Date: Tue,  3 Sep 2024 10:37:54 +0800
+Message-Id: <20240903023754.493568-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4be8:b0:4d0:51aa:f250 with SMTP id
- 8926c6da1cb9f-4d051ab4928mr14181173.3.1725330844993; Mon, 02 Sep 2024
- 19:34:04 -0700 (PDT)
-Date: Mon, 02 Sep 2024 19:34:04 -0700
-In-Reply-To: <tencent_6ECC3C5D37B696EC36DE4A4C759B770B6709@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000022db4706212de4ac@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in member_to_text
-From: syzbot <syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com>
-To: eadavis@qq.com, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABH+ajRdtZm+a60AA--.35457S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47GrykKF4xtFb_yoWxuFg_C3
+	4kGws2vF10kr1v9wn8J34rurySv34ruF4kX3Wv9FZ0kay7Aws5WrWkXrsrJr98urySkF9x
+	Jr4DCryxXF47WjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUovtCDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hello,
+Replace a comma between expression statements by a semicolon.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/tty/mxser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com
-Tested-by: syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com
+diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
+index 6cfef88a18e3..4d45eca4929a 100644
+--- a/drivers/tty/mxser.c
++++ b/drivers/tty/mxser.c
+@@ -983,7 +983,7 @@ static int mxser_get_serial_info(struct tty_struct *tty,
+ 	ss->baud_base = MXSER_BAUD_BASE;
+ 	ss->close_delay = close_delay;
+ 	ss->closing_wait = closing_wait;
+-	ss->custom_divisor = MXSER_CUSTOM_DIVISOR,
++	ss->custom_divisor = MXSER_CUSTOM_DIVISOR;
+ 	mutex_unlock(&port->mutex);
+ 	return 0;
+ }
+-- 
+2.25.1
 
-Tested on:
-
-commit:         67784a74 Merge tag 'ata-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135f0f33980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=064ce437a1ad63d3f6ef
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=140dcb1f980000
-
-Note: testing is done by a robot and is best-effort only.
 
