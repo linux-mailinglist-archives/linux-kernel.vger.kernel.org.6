@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-312205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2588296938A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:21:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFAF96939D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5DA2844CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6142D1C22D23
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150AA1CF2A7;
-	Tue,  3 Sep 2024 06:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672E21CFEA0;
+	Tue,  3 Sep 2024 06:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KcvodTCp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DUKQxRok"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05771CDFDB;
-	Tue,  3 Sep 2024 06:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809351CCEF5;
+	Tue,  3 Sep 2024 06:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725344504; cv=none; b=OzAUEzz59/0Xvcnfjiq6YZ9ilQuWUoPk4V6zMc+ACW2Ocw+Awt/8mxddIy732pVJD7c8lCiYxnSCa2azeGvDKUEQBgO7/G5iE/LQ/oUyTCD2yEstYwO4yaqiea5DmOxtuIHNReqq/NAv77aHd2qt0lBg86njcEAMmLJvwH1GONE=
+	t=1725344735; cv=none; b=u0enkgg6N5xiDuXh2uwuRW9dUQogBwM6FTHzJv0KfVpQCTH6sWRVYaEKP6OlwYK7KGlH3cAdI65phPC+QTnyf56RuyzgC9xhJhLsDDikhnSAva99V8mnV/uU6ptwDueyXwT1jFjC/H/0l0E9FZE/fIFcQ7WAZW2XQEYoyCKxlxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725344504; c=relaxed/simple;
-	bh=TUm6Md9hq8i6W7VSECV3QMlNtJ365HsBvg9qlZ4dujQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SzgnP3hVt+JMbIZozYMSuNrYCNaM/NlRV/vbXsf2sqYWxL1+8jvy/pR/h/igc96BIu7nlmgNYkYYCh/G9VmviW9yPhIjJ+5cVkY5/FzyJzriWpzwupN1KmFRiG/rtTI9TeOOUUIyB+bY6EVkoVJQvaeMY6Pl53/2vdBLdsi7ZV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KcvodTCp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1725344735; c=relaxed/simple;
+	bh=L0BzdpBTag84LeEkQ/b0SYi8kwEwBszZzTIL8k4dgjs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ma5SmWvDhhkimVgNtbC+wfBTP2roLkUEK4LhmVu3VDvLWBjjshCredv7aknxQbm+duIBPUaorg6/edfDD1WIVDwtlumEf/4OB1QDP0lfm5Zogv50XRyAA/E/fKOHbd82nkn4XixCETECbhekFcqCqJ/zcdF3Ht+ZG8KN97Ipldk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DUKQxRok; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725344503; x=1756880503;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725344734; x=1756880734;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=TUm6Md9hq8i6W7VSECV3QMlNtJ365HsBvg9qlZ4dujQ=;
-  b=KcvodTCpS+RMBWSC+Epwr1OlkDFlRASCRD6Qkq177rrq6WiSe0y+MoSf
-   TFEqsL1S6V8hsc8EIB8cOSgQ3VYLSCueAl5onvpoo/udYmQBhMZd0mouB
-   WP/oggG/AGOgvnP0vLW2vnoZAEew8tyH8af9LU5m6ltHfGMr15/aVvMjb
-   gWEsavnILUiPkhCv4WoZISc9iuZVMgAw6OtujSp2qgrRZBzdC+G4JRcgX
-   UGYKJ6Gvn4zMQfzgZEMsTp1mpaafARPmOzDNXiKp26xcpQawiz8dyhCpL
-   MCvIEGnT8h5UhlZvyjBkrmCfhWD+zwBHCa1jsJ3kXPdwZIlN3cJf89Vu+
-   A==;
-X-CSE-ConnectionGUID: A9E8YRofTUybNsyoVonG0Q==
-X-CSE-MsgGUID: 8uLFDh2NQnS4w2FLcpN4CQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="24102253"
+  bh=L0BzdpBTag84LeEkQ/b0SYi8kwEwBszZzTIL8k4dgjs=;
+  b=DUKQxRokhL/xVESdGkv3WNHkOqBsn1tXlMa3moUHBnZKu2sAo4uOapdg
+   ATbX2Pf38OrHeWwti+m1iGorfgt/rGhW6DCUA9cuolacU/A4jpHa/sT0m
+   7M3XicAn9BoJgVLSyyjW2ZmKKrqXaO3495teoQjJtoKMUorKHOSHnsLKj
+   B59SM5shwb4znqk/eUx4zFcQE71S68f/EHI8Gd33B/UwZJbHWzOP/MLEV
+   torBDInBKNTAUNxB/z0p8MbrLkxYYZRNTI57gXl2XfEoEgLbvDbVYkC6+
+   /7IgydUdLnuM6d+tfTBMlYupI9+lc3tk7J8Lm/Rg79g772TjzX4D2+qDj
+   Q==;
+X-CSE-ConnectionGUID: 8oTXQlsbTn2KC0ti4Inaeg==
+X-CSE-MsgGUID: LbwKEOMAQXeOVxAiwi1iog==
 X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
-   d="scan'208";a="24102253"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 23:21:42 -0700
-X-CSE-ConnectionGUID: bcP4FGLFRT2Ioo80e4k+Ng==
-X-CSE-MsgGUID: MHiwQC3ISdytBCZAcQw6yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
-   d="scan'208";a="64426811"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.115])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 23:21:38 -0700
-Date: Tue, 3 Sep 2024 09:21:33 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Tao Su <tao1.su@linux.intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/25] KVM: x86: Introduce KVM_TDX_GET_CPUID
-Message-ID: <Ztaq7YKVHSwfAzvJ@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-22-rick.p.edgecombe@intel.com>
- <ZsK1JRf1amTEAW6q@linux.bj.intel.com>
+   d="scan'208";a="31215250"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 23:25:33 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 2 Sep 2024 23:25:01 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 2 Sep 2024 23:25:01 -0700
+Date: Tue, 3 Sep 2024 08:24:41 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>
+Subject: Re: [PATCH net-next v2 0/7] microchip_t1s: Update on Microchip
+ 10BASE-T1S PHY driver
+Message-ID: <20240903062441.otbn6qcrhjisovhy@DEN-DL-M31836.microchip.com>
+References: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <ZsK1JRf1amTEAW6q@linux.bj.intel.com>
+In-Reply-To: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
 
-On Mon, Aug 19, 2024 at 10:59:49AM +0800, Tao Su wrote:
-> On Mon, Aug 12, 2024 at 03:48:16PM -0700, Rick Edgecombe wrote:
-> > From: Xiaoyao Li <xiaoyao.li@intel.com>
-> > +		/*
-> > +		 * Work around missing support on old TDX modules, fetch
-> > +		 * guest maxpa from gfn_direct_bits.
-> > +		 */
-> > +		if (output_e->function == 0x80000008) {
-> > +			gpa_t gpa_bits = gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kvm));
-> > +			unsigned int g_maxpa = __ffs(gpa_bits) + 1;
-> > +
-> > +			output_e->eax &= ~0x00ff0000;
-> > +			output_e->eax |= g_maxpa << 16;
-> > +		}
+The 09/02/2024 20:04, Parthiban Veerasooran wrote:
+
+Hi Parthiban,
+
+> This patch series contain the below updates,
 > 
-> I suggest putting all guest_phys_bits related WA in a WA-only patch, which will
-> be clearer.
+> v1:
 
-The 80000008 workaround needs to be tidied up for sure, it's hard to follow.
+You usually use v1, v2, v3 to say what is the difference between series.
+But in your case you already had v1 already in first patch series which
+it is strange to be used. I think you wanted to just describe the
+features of this patch series.
+So, my suggestion is to drop v1 because those are the features not
+changes between version, and put ':' instead of ',' after updates.
 
-> > --- a/arch/x86/kvm/vmx/tdx.h
-> > +++ b/arch/x86/kvm/vmx/tdx.h
-> > @@ -25,6 +25,11 @@ struct kvm_tdx {
-> >  	bool finalized;
-> >  
-> >  	u64 tsc_offset;
-> > +
-> > +	/* For KVM_MAP_MEMORY and KVM_TDX_INIT_MEM_REGION. */
-> > +	atomic64_t nr_premapped;
+Also almost all your patches in this series start with 'This patch',
+please change this to imperative mode:
+https://www.kernel.org/doc/html/v4.10/process/submitting-patches.html
+
+> - Restructured lan865x_write_cfg_params() and lan865x_read_cfg_params()
+>   functions arguments to more generic.
+> - Updated new/improved initial settings of LAN865X Rev.B0 from latest
+>   AN1760.
+> - Added support for LAN865X Rev.B1 from latest AN1760.
+> - Moved LAN867X reset handling to a new function for flexibility.
+> - Added support for LAN867X Rev.C1/C2 from latest AN1699.
+> - Disabled/enabled collision detection based on PLCA setting.
 > 
-> I don't see it is used in this patch set.
+> v2:
+> - Fixed indexing issue in the configuration parameter setup.
+> 
+> Parthiban Veerasooran (7):
+>   net: phy: microchip_t1s: restructure cfg read/write functions
+>     arguments
+>   net: phy: microchip_t1s: update new initial settings for LAN865X
+>     Rev.B0
+>   net: phy: microchip_t1s: add support for Microchip's LAN865X Rev.B1
+>   net: phy: microchip_t1s: move LAN867X reset handling to a new function
+>   net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C1
+>   net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C2
+>   net: phy: microchip_t1s: configure collision detection based on PLCA
+>     mode
+> 
+>  drivers/net/phy/Kconfig         |   4 +-
+>  drivers/net/phy/microchip_t1s.c | 299 +++++++++++++++++++++++++-------
+>  2 files changed, 239 insertions(+), 64 deletions(-)
+> 
+> 
+> base-commit: 221f9cce949ac8042f65b71ed1fde13b99073256
+> -- 
+> 2.34.1
+> 
 
-Yes that should have been in a later patch.
-
-Regards,
-
-Tony
+-- 
+/Horatiu
 
