@@ -1,87 +1,102 @@
-Return-Path: <linux-kernel+bounces-313083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCA9969FFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F158969FFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593451F25FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:12:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 423D61C232D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CD9189526;
-	Tue,  3 Sep 2024 14:09:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25D6F2E8;
+	Tue,  3 Sep 2024 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YNtvufxs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C9188A38
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359003612D;
+	Tue,  3 Sep 2024 14:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372545; cv=none; b=cJqX7dN9LJA4o8XUdy0ijmyb6sQ7wbzGEDdSYSNC2dUmFUTYVuPP51okLA/1PGwBYOd59VcE8348sKQKSwJFaqLKmQLBs3jMOOWknq6JQVWOe107QW4bdPpKobjuLE6eOc2+kJUvC5WzLG3KLwTNvmwDI9GpwPiBAPFc7wr7s+w=
+	t=1725372587; cv=none; b=ELbUE38uw+9m/N09fFBnr44zNGJY3CCz5PIEC1Z2hlzC0GSK2QeE2ZVGBzHbWyfaVUYIwCqHtdU79bMI6Q7o4VokhtCbHgsIxjSVrSe/Pb9rTncKuOHB5fHM5mIFNGsiSCl2nDlSN0TIBHNwMMw8K724fK+Qgw7iTSypqg6O7xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372545; c=relaxed/simple;
-	bh=+nM8vzoBpqyqjULtHojqOpGPjML6LI9IHdK+S2NGZA0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XWAN/J4KiJw6ScMV8NeLJajIXpk7xiE37P9yb7KlHjBQGX2TOjO23Acgc0XbWqFyFvi6pD3tKWeYajKYyEyE+kM2kxP71ZXo4fCjftXKCi7g21b3vYthVSz1vn6zdm1v+ZsLAgdN7WVc2vaZNjq4Mhkw8YyeujS294PtCqx8eWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4c0fc036so60652465ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725372542; x=1725977342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDE8s3sgzOfRmA5IQMPyBRiE4zNtZrkgSCwxEOEBBCU=;
-        b=cbtcFEdYRuWoTrIAp8epsKUx43p7GRBIlwNJAJWQ4utEWWRMNOIc/rY8LxNZRby7A/
-         +IbjK3UB/rGp51pSyg4+nfe3B9EPHQerp3fZ/CoM+Ofbvz3fbQjJblrxf5CAEdNpVgXQ
-         hZLxfwwVuXK1ghELguiUvHBjTw1Ryf0ry6onEgh4Rw+vXHXFnTkxXXfGVyFzvoY4tS1z
-         f3m0Rl+0mo/v7krUs1/EThJSfg6AqXDlsKq6Byqyxqf1qTYryQm6WYDTtmMuE8qFTboO
-         yp+kjWgUKgMZC29cS7t9P7mDtCskkUuO/tdAngSuf/EbWY+ZCSp4niJw7J/nlykaKxFc
-         TFfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPhV1NZ8TtYwAQmIy0G2Uv2+rNKINOVch8xhsdW1XY0wi/X8FR3xxkKmS8Ievqvw5wpVVmCXjVTYsC7S4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcsbPARn5al35y4VVjojBnI0D2o4cMoemChtuu4YZdHVyDUoxV
-	RctrNLc5xXWyDEYh6LYCx4Rr/NtolfT5lfb7r6VR06pdfJnyNjouHP+MvCL2Q1QpxpiGlePSk4K
-	Zci8+/UvAq/r/oetm5l1ztJtocNPrE/WSAhRvIM0P+EHMicm82T3QrVc=
-X-Google-Smtp-Source: AGHT+IFVmdwfmNhKTBG3smg4iwmVd9uxiV1gnfyI/mRrCyIi9nMfdgl9elif3YCoummMaT42vmbMD0y7Gldmf/JLBLBOrDro14eN
+	s=arc-20240116; t=1725372587; c=relaxed/simple;
+	bh=Iw2rgePYRDy4YBtyAyf1f9zbxTadJot1mk68x/JI+TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/qn1cpjAd44d/jZO2mZzVEnjVnpxyTTbSj3Cx7CZH2gYZ0jH9fptW2+iSPCM3qNhD1pDD6JiRcpU7R0S6rfnDCsqaFw6PscF1G001kOIKnFtCxGm6hYGMNHhzvNofcnGdlVZjVxWoqBpqTyrjwrFrMEpXPIXj6ul1oDqY0mJsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YNtvufxs; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725372586; x=1756908586;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Iw2rgePYRDy4YBtyAyf1f9zbxTadJot1mk68x/JI+TY=;
+  b=YNtvufxsBnyVl6rZ1S5Ng1adJ9scHJadqKWElpLCa2/IRYe84c8E01rG
+   frlyXmJL5SbZ8WS3wBda3FTNYdt17oJqKvilHi1X3WS4ZN9+/ZfhEsGwT
+   ZHjEVlNg/pN1B4GT66zpGLG7b5bfGDtIJHmHJQRlQPE/dKr7XEUAzamwj
+   q4U/iFOrjAxZor+xFsTjpsMepTbrzfpx1md1077AwFFiD/esxPefhJBhR
+   lGMJQ3pBQPqIjQGcn8N06t7wTIqJ075nGxq+QeXmeIa8RVzCnsXdJ6w8a
+   LKFoXZT6KpbTs0aJarZq/MKwBFWjkkP6NO1kQba0tWpDDZ7IoRN52LN5J
+   A==;
+X-CSE-ConnectionGUID: biOIzXnXTQOhe2Xnkz5vTQ==
+X-CSE-MsgGUID: 62l2gzg8QTy1fKPk4doPDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27764768"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="27764768"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:09:22 -0700
+X-CSE-ConnectionGUID: yjq5AXFSSOup/jIPLhTPHA==
+X-CSE-MsgGUID: FuWGoJ8HRxOgvDqTVCPhCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="69067334"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:09:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slUDf-00000004jIN-0b4M;
+	Tue, 03 Sep 2024 17:09:19 +0300
+Date: Tue, 3 Sep 2024 17:09:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Inline
+ intel_gpio_community_irq_handler()
+Message-ID: <ZtcYjsy5vu81eQPu@smile.fi.intel.com>
+References: <20240902141441.2683122-1-andriy.shevchenko@linux.intel.com>
+ <20240903045457.GX1532424@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cd:b0:39f:677b:225b with SMTP id
- e9e14a558f8ab-39f677b22e8mr1599545ab.0.1725372542443; Tue, 03 Sep 2024
- 07:09:02 -0700 (PDT)
-Date: Tue, 03 Sep 2024 07:09:02 -0700
-In-Reply-To: <tencent_91E82C456D9496A8EADAEDE6CEC479926D0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f730b06213799ec@google.com>
-Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
-From: syzbot <syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903045457.GX1532424@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Tue, Sep 03, 2024 at 07:54:57AM +0300, Mika Westerberg wrote:
+> On Mon, Sep 02, 2024 at 05:14:41PM +0300, Andy Shevchenko wrote:
+> > Since we have for_each_intel_pad_group() helper, there is
+> > no advantage of having intel_gpio_community_irq_handler().
+> > Inline it into intel_gpio_irq().
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Pushed to my review and testing queue, thanks!
 
-Reported-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Tested on:
 
-commit:         67784a74 Merge tag 'ata-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b2cd43980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1512f0fb980000
-
-Note: testing is done by a robot and is best-effort only.
 
