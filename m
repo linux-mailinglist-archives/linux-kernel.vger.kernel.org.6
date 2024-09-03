@@ -1,213 +1,185 @@
-Return-Path: <linux-kernel+bounces-312415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E15969655
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:59:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6596969656
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339E9285C2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:59:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F15D280C34
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67E200128;
-	Tue,  3 Sep 2024 07:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F96D200124;
+	Tue,  3 Sep 2024 07:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV7tkW9H"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SpFixkDZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3AF1AB6C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D40A1CE6E9;
 	Tue,  3 Sep 2024 07:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725350338; cv=none; b=f0iUgmBYO82X3bz8S2E4k2bCg2wmZFUqAeY0FPydxPmqFR4nkWB6FNIDx8t+ClbxV5hjM+Pr9M8MtwXGJLcwXuPm4AFUtLUOk4BLDoH4b2b4PyqUmZ/fwvM7dFg4vT6hbdBtg3QgAfLW8qiIzgvb5Osrj7I4J6HJ57wDTsEauCQ=
+	t=1725350338; cv=none; b=tWTOka9rEhNucOuc8wxsMLx7v3zamnZeHnPOQGQfvULPO6r/LqCDX9KAOsmZDVu4+QYVp3Bkwu1KTOnO2ZRqPpxHmJI9umHTdo/5qk4w0DK7erciHNO1EVQbBfKvefki22xSYim5jb18Wx4+F2uV0AlBv0hskeaTeseV/IjX4Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725350338; c=relaxed/simple;
-	bh=jMBF1eJfkRU7cRnclh+rfEYRcO0cRqD85aPEPxx1qoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tPYJXzTb/Jn8BuO6bZGad6WEw2i34dO8oIwzgBvfhkRpB29cZqlh7iLQRM7Y4c9z+LYqZkd5UG46E87eR0+tkLM2Uw5LSwLi5/F6EnaEL82DkKFcTgFyJwbZzgbWUvNZrWaN7YBXzmiRxYcXWy8UIXxdsqXXUx2oheYYi58osyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV7tkW9H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D07C4CEC6;
-	Tue,  3 Sep 2024 07:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725350337;
-	bh=jMBF1eJfkRU7cRnclh+rfEYRcO0cRqD85aPEPxx1qoA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RV7tkW9HQoE1wYSK7zusNyEsAnvWl17yJ76l6NbfdP26mFWaR2gClX4GLjHROoxdL
-	 osFLbvwjYR1WtVHn+Gha22gqzpEHZO+fZ3beNWuP17qhk+UPUPCm8bZBvKFALO2qy6
-	 lR/eHr8OBIiK+dtiUY4vc0z589h5HpcUoWfpP+0sDh7685EKu22xdAQzZYPacLs/+P
-	 sChQyHKRXAfrSY9BEmDYUyOaS+pFfBmi0HlXFe0ZFjK0Ru4tQsUBtWiDJWnsxTeAIf
-	 ux42pjZXBiHxspK/M7v3T1DnSIkLjIp10A8HnXt4x4LkmsrXJrfh9MYMQFe8P3W2j6
-	 04C7QMX6nT8eQ==
-Message-ID: <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
-Date: Tue, 3 Sep 2024 09:58:48 +0200
+	bh=6LkGfDukTeDvJyN9XbH2ffD60Em9IOaawF323/6dw84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uK/tYCTzYYyli79pGnMKwt/164V6VPn2LSaun5kH2WN1TU8x4BkJ/MaOw/eigAUuDqD/zF6aKuuymW+BMoyb1bnEsudVuWlb75GpfZN8Qf+NoAXogznjsy1KWDhObzuc4RWeot1E4R5+9cHhj7BQag3ggtx9r7KcA8u0sizLOOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SpFixkDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA02C4CEC5;
+	Tue,  3 Sep 2024 07:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725350337;
+	bh=6LkGfDukTeDvJyN9XbH2ffD60Em9IOaawF323/6dw84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SpFixkDZxdJRAdBVupoPVU/fTgXmTqbobfDcPQwDivoS0WWeWPovDxQUaV056XWQc
+	 +rNV00OspwNiNgrDJFeDZPnPd9ZbYSNuxQ8rmmlN3zoj1wBHSBWfqTVvHkzhxaWh/+
+	 +rBlPj/O9o01j7dvxdDBK75wBVTqyI/fuxnHqDqE=
+Date: Tue, 3 Sep 2024 09:58:49 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+Cc: "mka@chromium.org" <mka@chromium.org>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"wentong.wu@intel.com" <wentong.wu@intel.com>,
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
+	"stefan.eichenberger@toradex.com" <stefan.eichenberger@toradex.com>,
+	"francesco.dolcini@toradex.com" <francesco.dolcini@toradex.com>,
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+	"macpaul.lin@mediatek.com" <macpaul.lin@mediatek.com>,
+	"frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>
+Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744
+ SMBus programming support
+Message-ID: <2024090324-phonics-angler-64c2@gregkh>
+References: <1725192519-3867920-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <1725192519-3867920-3-git-send-email-radhey.shyam.pandey@amd.com>
+ <2024090312-stool-ergonomic-f2fe@gregkh>
+ <MN0PR12MB5953AD101E185462A6CC61BBB7932@MN0PR12MB5953.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
- controller
-To: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
- <20240903015354.9443-3-zhaoqunqin@loongson.cn>
- <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
- <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MN0PR12MB5953AD101E185462A6CC61BBB7932@MN0PR12MB5953.namprd12.prod.outlook.com>
 
-On 03/09/2024 09:24, Zhao Qunqin wrote:
+On Tue, Sep 03, 2024 at 07:19:09AM +0000, Pandey, Radhey Shyam wrote:
+> > -----Original Message-----
+> > From: Greg KH <gregkh@linuxfoundation.org>
+> > Sent: Tuesday, September 3, 2024 12:10 PM
+> > To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
+> > Cc: mka@chromium.org; sakari.ailus@linux.intel.com;
+> > wentong.wu@intel.com; javier.carrasco@wolfvision.net;
+> > stefan.eichenberger@toradex.com; francesco.dolcini@toradex.com;
+> > jbrunet@baylibre.com; macpaul.lin@mediatek.com;
+> > frieder.schrempf@kontron.de; linux-usb@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>
+> > Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add Microchip
+> > usb5744 SMBus programming support
+> > 
+> > On Sun, Sep 01, 2024 at 05:38:39PM +0530, Radhey Shyam Pandey wrote:
+> > > usb5744 supports SMBus Configuration and it may be configured via the
+> > > SMBus slave interface during the hub start-up configuration stage.
+> > >
+> > > To program it driver uses i2c-bus phandle (added in commit '02be19e914b8
+> > > dt-bindings: usb: Add support for Microchip usb5744 hub controller') to
+> > > get i2c client device and then based on usb5744 compatible check calls
+> > > usb5744 i2c default initialization sequence.
+> > >
+> > > Apart from the USB command attach, prevent the hub from suspend.
+> > > when the USB Attach with SMBus (0xAA56) command is issued to the hub,
+> > > the hub is getting enumerated and then it puts in a suspend mode.
+> > > This causes the hub to NAK any SMBus access made by the SMBus Master
+> > > during this period and not able to see the hub's slave address while
+> > > running the "i2c probe" command.
+> > >
+> > > Prevent the MCU from putting the HUB in suspend mode through register
+> > > write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the RuntimeFlags2
+> > > register at address 0x411D controls this aspect of the hub. The
+> > > BYPASS_UDC_SUSPEND bit in register 0x411Dh must be set to ensure that
+> > the
+> > > MCU is always enabled and ready to respond to SMBus runtime
+> > commands.
+> > > This register needs to be written before the USB attach command is issued.
+> > >
+> > > The byte sequence is as follows:
+> > > Slave addr: 0x2d           00 00 05 00 01 41 1D 08
+> > > Slave addr: 0x2d           99 37 00
+> > > Slave addr: 0x2d           AA 56 00
+> > >
+> > > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> > > ---
+> > > Changes for v4:
+> > > - Fix error: implicit declaration of function 'i2c_smbus_*' APIs by
+> > >   introducing a dependency on I2C_CONFIG. This error is reported
+> > >   by kernel test on v3 series and usb:usb-testing 20/25 branch.
+> > >   https://lore.kernel.org/all/2024082503-uncoated-chaperone-
+> > 7f70@gregkh
+> > >
+> > > Changes for v3:
+> > > - Add comment for UDC suspend sequence.
+> > > - Drop USB5744_CREG_MEM_NBYTES and USB5744_CREG_NBYTES and
+> > replace
+> > >   it with literal + comment.
+> > > - Move microchip defines to source file.
+> > >
+> > > Changes for v2:
+> > > - Move power on reset delay to separate patch.
+> > > - Switch to compatible based check for calling usb5755
+> > >   onboard_dev_5744_i2c_init(). This is done to make
+> > >   onboard_dev_5744_i2c_init() as static.
+> > > - Fix subsystem "usb: misc: onboard_usb_dev:..."
+> > > - Use #define for different register bits instead of magic values.
+> > > - Use err_power_off label name.
+> > > - Modified commit description to be in sync with v2 changes.
+> > > ---
+> > >  drivers/usb/misc/Kconfig           |  2 +-
+> > >  drivers/usb/misc/onboard_usb_dev.c | 73
+> > ++++++++++++++++++++++++++++++
+> > >  2 files changed, 74 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+> > > index 50b86d531701..cb5e47d439ab 100644
+> > > --- a/drivers/usb/misc/Kconfig
+> > > +++ b/drivers/usb/misc/Kconfig
+> > > @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
+> > >
+> > >  config USB_ONBOARD_DEV
+> > >  	tristate "Onboard USB device support"
+> > > -	depends on OF
+> > > +	depends on OF && I2C
+> > 
+> > This feels wrong.
+> > 
+> > While a single device that this driver supports might need i2c, not all
+> > of the devices do, so you have the potential to drag in a bunch of code
+> > here for devices that do not have/need i2c at all, right?
+> > 
+> > Any way to "split this out" into a smaller chunk?  Or better yet, just
+> > detect at runtime if you need/want to call those i2c functions (and they
+> > should have no-ops for when i2c is not enabled, right?)
 > 
-> 在 2024/9/3 下午2:47, Krzysztof Kozlowski 写道:
->> On Tue, Sep 03, 2024 at 09:53:54AM +0800, Zhao Qunqin wrote:
->>> Report single bit errors (CE) only.
->>>
->>> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
->>> ---
->>>   MAINTAINERS                  |   1 +
->>>   arch/loongarch/Kconfig       |   1 +
->>>   drivers/edac/Kconfig         |   8 ++
->>>   drivers/edac/Makefile        |   1 +
->>>   drivers/edac/ls3a5000_edac.c | 187 +++++++++++++++++++++++++++++++++++
->>>   5 files changed, 198 insertions(+)
->>>   create mode 100644 drivers/edac/ls3a5000_edac.c
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 6cc8cfc8f..b43f82279 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -13242,6 +13242,7 @@ M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
->>>   L:	linux-edac@vger.kernel.org
->>>   S:	Maintained
->>>   F:	Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
->>> +F:	drivers/edac/ls3a5000_edac.c
->>>   
->>>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
->>>   M:	Sathya Prakash <sathya.prakash@broadcom.com>
->>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->>> index 70f169210..348030c24 100644
->>> --- a/arch/loongarch/Kconfig
->>> +++ b/arch/loongarch/Kconfig
->>> @@ -182,6 +182,7 @@ config LOONGARCH
->>>   	select PCI_QUIRKS
->>>   	select PERF_USE_VMALLOC
->>>   	select RTC_LIB
->>> +	select EDAC_SUPPORT
->> I think you got here comment before. How did you address it?
-> I just randomly found a spot, and I will put it at the end(next version 
-> patch).
-
-No, the comment was different. You must not select user-visible symbols.
-
->>
->>>   	select SPARSE_IRQ
->>>   	select SYSCTL_ARCH_UNALIGN_ALLOW
->>>   	select SYSCTL_ARCH_UNALIGN_NO_WARN
->>> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->>> index 16c8de505..2d10256f0 100644
->>> --- a/drivers/edac/Kconfig
->>> +++ b/drivers/edac/Kconfig
->>> @@ -573,5 +573,13 @@ config EDAC_VERSAL
->>>   	  Support injecting both correctable and uncorrectable errors
->>>   	  for debugging purposes.
->>>   
->> ...
->>
->>   +
->>> +static int loongson_edac_probe(struct platform_device *pdev)
->>> +{
->>> +	struct resource *rs;
->>> +	struct mem_ctl_info *mci;
->>> +	struct edac_mc_layer layers[2];
->>> +	struct loongson_edac_pvt *pvt;
->>> +	u64 *vbase = NULL;
->>> +
->>> +	rs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +	/* not return if can not find resource or resource start equals NULL */
->> Why?
+> In onboard driver I am calling onboard_dev_5744_i2c_init() by
+> detecting at runtime if "i2c-bus" phandle is present. But the 
+> problem is i2c_smbus_* APIs are declared and defined only for 
+> #if IS_ENABLED(CONFIG_I2C).
 > 
-> Because there are multiple memory controllers in the ls3x soc,
-> 
-> but the ECC function of some memory controllers cannot be used.
+> Do you think we should implement no-ops for I2C smbus APIs
+> (in linux/i2c.h)? OR a simpler alternative would be to
+> add #if IS_ENABLED(CONFIG_I2C) check in the onboard_*_i2c_init()
+> and return error code if CONFIG_I2C is not defined ? 
+> Did a grep on #if IS_ENABLED(CONFIG_I2C) and find couple of 
+> drivers using this approach.
 
-Then what does the driver do for such memory controllers? Your binding
-is quite clear here that above code is just bogus. It is not possible to
-have node without reg.
+Yes, try doing this with simpler way first and see what that looks like.
 
-Please point us to your DTS and results of dtbs_check.
+thanks,
 
-> 
-> But in any case, a node must be created in /sys/devices/system/edac/mc/  
-> through edac_mc_add_mc(mci).
-> 
-> Then if the ECC function of the memory controller cannot be used, set 
-> start to NULL or do not pass mem resource,
-> 
-> which is equivalent to enumeration of memory controller, and the CE 
-> count will always be zero.
-> 
->>> +	if (rs && rs->start) {
->>> +		vbase = devm_ioremap_resource(&pdev->dev, rs);
->>> +		if (IS_ERR(vbase))
->>> +			return PTR_ERR(vbase);
->>> +	}
-
-
-Best regards,
-Krzysztof
-
+greg k-h
 
