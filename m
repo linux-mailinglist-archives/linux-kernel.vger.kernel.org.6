@@ -1,169 +1,193 @@
-Return-Path: <linux-kernel+bounces-312599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B1096989C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:21:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FF69698AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109C71F243F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DAA91C2374E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2F71A3040;
-	Tue,  3 Sep 2024 09:21:09 +0000 (UTC)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3239C1B982F;
+	Tue,  3 Sep 2024 09:22:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B934819F429;
-	Tue,  3 Sep 2024 09:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4EF1A3040
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355269; cv=none; b=Y/qrrHq/UH0HmuLsJq2IwkBKIdqW21gmm8MrA+dSywMJBayG16mXVxhZ6FXkxhi20bQTi/Lj3o1Blt5sd9Zl3t+0i/6m1iQAx0P1kkr001pj4c7J39gocT1O2EPgRP8D+wJ+e3+iNvjXojf7RHq4ZNnNoFfeDVuugd1oYwb3Uu4=
+	t=1725355358; cv=none; b=AK2rIg3IfIfW+MaYGJSDe28dhCf/9dPmhha6gSd0linvwd7su9JSIpBk5oHEE5pLs62Y+rXsIwBLxS7UzngtIVkoW/iv9dmMIbr3Ajt/L9jwOSZJKdfwYP0s/Mm3as/Cgjt5LK46pJfJUI7Li+/AKTsGFAFS1BGXKr+5l6LKnM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355269; c=relaxed/simple;
-	bh=95OJRdgGkxpG/kpI8H1rBLLHQYLxy8lN4jR3bauFAms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hI/OgW+wzCY5RUXWanhXD6Fa5gsCy0hPGBuuK0/HERL829odeT/KuB8eLQYNLbssewTyij8t2o86SqZYCQsYyRQYKOGPWHV+HAIvGu0sc9WqnUsFlPOPoBhn0A0q6WUhGyyXF0VP17Q0XL34ReYcxsGFUHcPprODNowe5mbpbeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e1a74ee4c0cso4088896276.2;
-        Tue, 03 Sep 2024 02:21:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355265; x=1725960065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J1o4UVL51KWMPLYRjAmBfM1iKAm27OF/YUdxHeM19pY=;
-        b=jM4pVZqh10LtCSv6ZgqFUBP53Y+TkIhF9fOxh8n+ZNMxDxI/UdKNAe5fif3nlmASja
-         CG7ao5FK5Ysc1gm4SniQYc83q48oGDYf4aVBXxAcNPYXBTxltAyMXo3p/EAY+1zzd+9b
-         ZgrukaPKliW0mj69rCBf7fMVRrZbY77V+yMXGalDvZZbxnBS2BQsEN28NCJa6jhnes2J
-         N5qP93fs3Y08kj6rZ9GBWOJA89z9sLWcu314IOxsvyDhLaAJUQXNuM9GLcaBimFhkZob
-         PZZchP+o9R1eqrLYlNoXcv33IbOfCY7g4FhvUrBKC4qIkIvNPXMXs7TxIUN+YX3BTOXt
-         jyOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVu9dCD6W/y1cRb6OqVSdbcfHSQgI3evr341Javm4S9FspEp1n718oDpQ4MOjE3GJtCdwc5Sfxf3Y=@vger.kernel.org, AJvYcCUw820BUZBWy7NlEzDdD+Z3KHYm8GJfwmUZ5sixLxRXymgcb5qbhqub33OHYjVhHR/1jzhmMbiitGHzUnCO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIPLrL1NxUgGWvoDF/z668DgwxhD94mnlopn2PRD6zrIMT0qPn
-	PUgINxxCYcxHQq3Rb31mQLmpHa2Gci9Kz54fD5gE9lFdD+R2HVUaVsYUXTKx
-X-Google-Smtp-Source: AGHT+IH9ok+Bd0tIxy3bG3fRrNqF7USnA/rcCpSt9SOT0k9qdiIcCRTUfb+Bf1buZ5FCf3g+8N18QQ==
-X-Received: by 2002:a05:690c:6382:b0:6af:fd49:67e0 with SMTP id 00721157ae682-6d4102f89f0mr137997637b3.46.1725355265370;
-        Tue, 03 Sep 2024 02:21:05 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d57a426c19sm11308347b3.83.2024.09.03.02.21.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 02:21:05 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6c130ffa0adso48265577b3.3;
-        Tue, 03 Sep 2024 02:21:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVD1UmU/2gqFpRzDPLKYB8AH4u5WWmGi+j/b8Oh1XmKb1b5isJ9MVGysLAUuiscDQciB8/SyfwJ53w=@vger.kernel.org, AJvYcCXzsE98MIU2GDvHkgzR07JYzR7cPkxQhL/3dQ99S1NOuXsQznwhnggedrHRbHhXkTjJcGOsE8Jm+p76qkDj@vger.kernel.org
-X-Received: by 2002:a05:690c:3386:b0:6ad:91df:8fad with SMTP id
- 00721157ae682-6d40e689319mr155308177b3.26.1725355264992; Tue, 03 Sep 2024
- 02:21:04 -0700 (PDT)
+	s=arc-20240116; t=1725355358; c=relaxed/simple;
+	bh=kCuY8MmnnW/PQL7ZyUIX6fk5iss9vki4yIQzIHMYVkU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Lg2KOk8iXIzo21nTlY/fE5TMlMUublqEGCSo4LretwEQoB22pdfrT1wU2fTSX17V/i178R3bNj5cSZiUT8lY/AKQXlIvMLPE7kpUrWR2ZoN1fn40YZlJ8WH3uKydd6+FyRTq2HMcRLaZHQ2s/sGgb1oQVVzhn96sOjS67wVgUgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPkA-0000gy-E3
+	for linux-kernel@vger.kernel.org; Tue, 03 Sep 2024 11:22:34 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPk8-0059Nc-At
+	for linux-kernel@vger.kernel.org; Tue, 03 Sep 2024 11:22:32 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id F2573331095
+	for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:22:31 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id B402B33101E;
+	Tue, 03 Sep 2024 09:22:26 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id ccd612d9;
+	Tue, 3 Sep 2024 09:22:26 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH can-next v4 00/20] can: rockchip_canfd: add support for
+ CAN-FD IP core found on Rockchip RK3568
+Date: Tue, 03 Sep 2024 11:21:42 +0200
+Message-Id: <20240903-rockchip-canfd-v4-0-1dc3f3f32856@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1713462643-11781-1-git-send-email-lizhi.hou@amd.com> <1713462643-11781-2-git-send-email-lizhi.hou@amd.com>
-In-Reply-To: <1713462643-11781-2-git-send-email-lizhi.hou@amd.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Sep 2024 11:20:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXVoTx8K+Vppt07s06OE6R=4BxoBbgtp1WWkCi8DwqgSA@mail.gmail.com>
-Message-ID: <CAMuHMdXVoTx8K+Vppt07s06OE6R=4BxoBbgtp1WWkCi8DwqgSA@mail.gmail.com>
-Subject: Re: [PATCH V12 1/1] dmaengine: amd: qdma: Add AMD QDMA driver
-To: Lizhi Hou <lizhi.hou@amd.com>, nishad.saraf@amd.com
-Cc: vkoul@kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishad Saraf <nishads@amd.com>, sonal.santan@amd.com, max.zhen@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACfV1mYC/3XNQQ6CMBAF0KuYrq1pp6WAK+9hXEA7hcakkBYbD
+ OHuVjaaoMufP//NQiIGh5GcDwsJmFx0g89BHg9E943vkDqTMwEGkpVQ0zDou+7dSHXjraEShNA
+ lt0xrRfJoDGjdvIFXkk+ox3kit9z0Lk5DeG6fEt/6f2jilFHbcCiYNapFcRnRd48pDN7NJ4Obl
+ +DLEHxnQDZMrZjURStbrH4a4mNUgu0M8TYkKFBKFsI2O2Nd1xenqoohQwEAAA==
+To: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, 
+ David Jander <david.jander@protonic.nl>
+Cc: Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
+ netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+ David Jander <david@protonic.nl>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4377; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=kCuY8MmnnW/PQL7ZyUIX6fk5iss9vki4yIQzIHMYVkU=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm1tUzxqM199Jmoc5+mT7otuf8c+jG/+jRDYIdQ
+ prxAiNc/AyJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZtbVMwAKCRAoOKI+ei28
+ bxxKB/9NlP5geWnExhqi7KHf7xoEZmXOewmnlDhsfH1sWlDoVPOBJwtk9iQwDcRmGIAstFT/IAT
+ rIA+IDVLUh4J6RA2jc1fEvHbyk7YDnNIADZH+57uU/cksBBumdQos0yhG3+c60oSPNLW/WZBN5V
+ hKyb+sdPZ2PnZUDp74qEaxWs4LaYv+ETO7L/ivQpaoqEi1+Kq3qhp015RGSqi0mBUi6ye69ZUtD
+ o4Jo+vil4cBOJr2Y+xq5g22XWf5lEchrx+jGBIYTZ9CdhgYjlFy1n0pJVJmSRZf+aJmMlPQ1xsB
+ yiN4NAH7AH4Pls+FCmY6UMc8bqD53K6XxXbYcqTZuHO7G6hP
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Lizhi, Nishad,
+This series adds support for the CAN-FD IP core found on the Rockchip
+RK3568.
 
-On Thu, Apr 18, 2024 at 7:51=E2=80=AFPM Lizhi Hou <lizhi.hou@amd.com> wrote=
-:
-> From: Nishad Saraf <nishads@amd.com>
->
-> Adds driver to enable PCIe board which uses AMD QDMA (the Queue-based
-> Direct Memory Access) subsystem. For example, Xilinx Alveo V70 AI
-> Accelerator devices.
->     https://www.xilinx.com/applications/data-center/v70.html
->
-> The QDMA subsystem is used in conjunction with the PCI Express IP block
-> to provide high performance data transfer between host memory and the
-> card's DMA subsystem.
->
->             +-------+       +-------+       +-----------+
->    PCIe     |       |       |       |       |           |
->    Tx/Rx    |       |       |       |  AXI  |           |
->  <=3D=3D=3D=3D=3D=3D=3D>  | PCIE  | <=3D=3D=3D> | QDMA  | <=3D=3D=3D=3D>|=
- User Logic|
->             |       |       |       |       |           |
->             +-------+       +-------+       +-----------+
->
-> The primary mechanism to transfer data using the QDMA is for the QDMA
-> engine to operate on instructions (descriptors) provided by the host
-> operating system. Using the descriptors, the QDMA can move data in both
-> the Host to Card (H2C) direction, or the Card to Host (C2H) direction.
-> The QDMA provides a per-queue basis option whether DMA traffic goes
-> to an AXI4 memory map (MM) interface or to an AXI4-Stream interface.
->
-> The hardware detail is provided by
->     https://docs.xilinx.com/r/en-US/pg302-qdma
->
-> Implements dmaengine APIs to support MM DMA transfers.
-> - probe the available DMA channels
-> - use dma_slave_map for channel lookup
-> - use virtual channel to manage dmaengine tx descriptors
-> - implement device_prep_slave_sg callback to handle host scatter gather
->   list
->
-> Signed-off-by: Nishad Saraf <nishads@amd.com>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+The IP core is a bit complicated and has several documented errata.
+The driver is added in several stages, first the base driver including
+the RX-path. Then several workarounds for errata and the TX-path, and
+finally features like hardware time stamping, loop-back mode and
+bus error reporting.
 
-Thanks for your patch, which is now commit 73d5fc92a11cacb7
-("dmaengine: amd: qdma: Add AMD QDMA driver") in dmaengine/next.
+regards,
+Marc
 
-> --- /dev/null
-> +++ b/drivers/dma/amd/Kconfig
-> @@ -0,0 +1,14 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config AMD_QDMA
-> +       tristate "AMD Queue-based DMA"
-> +       depends on HAS_IOMEM
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Changes in v4:
+- dt-bindings: renamed to rockchip,rk3568v2-canfd.yaml to match the
+  first compatible
+- dt-bindings: fix "$id" in yaml (thanks Rob's bot)
+- all: add Tested-by: Alibek Omarov <a1ba.omarov@gmail.com>
+- Link to v3: https://patch.msgid.link/20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de
 
-Any other subsystem or platform dependencies, to prevent asking the
-user about this driver when configuring a kernel for a system which
-cannot possibly have this hardware?
-E.g. depends on PCI, or can this be used with other transports than PCIe?
+Changes in v3:
+- dt-bindings: renamed file to rockchip,rk3568-canfd.yaml (thanks Rob)
+- dt-bindings: reworked compatibles (thanks Rob)
+- Link to v2: https://lore.kernel.org/all/20240731-rockchip-canfd-v2-0-d9604c5b4be8@pengutronix.de
 
-> --- /dev/null
-> +++ b/drivers/dma/amd/qdma/qdma-comm-regs.c
+Changes in v2:
+- dt-bindings: remove redundant words from subject and patch
+  description (thanks Rob)
+- dt-bindings: clean up clock- and reset-names (thanks Rob)
+- base driver: add missing bitfield.h header
+- base driver: rkcanfd_handle_rx_int_one(): initialize header to avoid
+  uninitialzied variable warning on m68k
+- base driver: rkcanfd_get_berr_counter_raw(): don't add assigned only
+  variable (bec_raw), move to 14/20 (thanks Simon)
+- CAN-FD frame equal check + TX-path: squash, to avoid unused
+  functions (thanks Simon)
+- TX-path: rkcanfd_handle_tx_done_one(): don't add assigned only
+  variable (skb), move to 18/20 (thanks Simon)
+- HW-timetamping: add missing timecounter.h header (thanks Simon)
+- Link to v1: https://lore.kernel.org/all/20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de
 
-> +static struct platform_driver amd_qdma_driver =3D {
-> +       .driver         =3D {
-> +               .name =3D "amd-qdma",
+---
+David Jander (2):
+      arm64: dts: rockchip: add CAN-FD controller nodes to rk3568
+      arm64: dts: rockchip: mecsbc: add CAN0 and CAN1 interfaces
 
-Which code is responsible for creating "amd-qdma" platform devices?
+Marc Kleine-Budde (18):
+      dt-bindings: can: rockchip_canfd: add rockchip CAN-FD controller
+      can: rockchip_canfd: add driver for Rockchip CAN-FD controller
+      can: rockchip_canfd: add quirks for errata workarounds
+      can: rockchip_canfd: add quirk for broken CAN-FD support
+      can: rockchip_canfd: add support for rk3568v3
+      can: rockchip_canfd: add notes about known issues
+      can: rockchip_canfd: rkcanfd_handle_rx_int_one(): implement workaround for erratum 5: check for empty FIFO
+      can: rockchip_canfd: rkcanfd_register_done(): add warning for erratum 5
+      can: rockchip_canfd: add TX PATH
+      can: rockchip_canfd: implement workaround for erratum 6
+      can: rockchip_canfd: implement workaround for erratum 12
+      can: rockchip_canfd: rkcanfd_get_berr_counter_corrected(): work around broken {RX,TX}ERRORCNT register
+      can: rockchip_canfd: add stats support for errata workarounds
+      can: rockchip_canfd: prepare to use full TX-FIFO depth
+      can: rockchip_canfd: enable full TX-FIFO depth of 2
+      can: rockchip_canfd: add hardware timestamping support
+      can: rockchip_canfd: add support for CAN_CTRLMODE_LOOPBACK
+      can: rockchip_canfd: add support for CAN_CTRLMODE_BERR_REPORTING
 
-> +       },
-> +       .probe          =3D amd_qdma_probe,
-> +       .remove_new     =3D amd_qdma_remove,
-> +};
-> +
-> +module_platform_driver(amd_qdma_driver);
+ .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  |  74 ++
+ MAINTAINERS                                        |   8 +
+ arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dts     |  14 +
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi           |  39 +
+ drivers/net/can/Kconfig                            |   1 +
+ drivers/net/can/Makefile                           |   1 +
+ drivers/net/can/rockchip/Kconfig                   |   9 +
+ drivers/net/can/rockchip/Makefile                  |  10 +
+ drivers/net/can/rockchip/rockchip_canfd-core.c     | 969 +++++++++++++++++++++
+ drivers/net/can/rockchip/rockchip_canfd-ethtool.c  |  73 ++
+ drivers/net/can/rockchip/rockchip_canfd-rx.c       | 299 +++++++
+ .../net/can/rockchip/rockchip_canfd-timestamp.c    | 105 +++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c       | 167 ++++
+ drivers/net/can/rockchip/rockchip_canfd.h          | 553 ++++++++++++
+ 14 files changed, 2322 insertions(+)
+---
+base-commit: da4f3b72c8831975a06eca7e1c27392726f54d20
+change-id: 20240729-rockchip-canfd-4233c71f0cc6
 
-Gr{oetje,eeting}s,
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
