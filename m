@@ -1,103 +1,75 @@
-Return-Path: <linux-kernel+bounces-312012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586A99690E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8487F9690E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D1B9284068
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4185F28403F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22831CCECD;
-	Tue,  3 Sep 2024 01:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20701CCED4;
+	Tue,  3 Sep 2024 01:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VuwAbUFQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukfW9kKi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFC119E989;
-	Tue,  3 Sep 2024 01:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0A19E989;
+	Tue,  3 Sep 2024 01:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725326831; cv=none; b=GM4O+MOxEpmpfWhuBs/C36/K54ItWeqJjObvK/3olKWT5ww4JrkReZt4suopLNQdC8sw1cU94b+E6y02gIMffKFvdcVV5MMY0dESQBGVGgmSBKOMNSiUpYI/z4aL+Qlj0Mt6OSMgJ+wJMRYiytFTLOp0hguSkEzDCFN6HQsTa0k=
+	t=1725326930; cv=none; b=A4Iq6JAuyLarVDaCvL5uobN3JyNzaKbxlTQPJl/1TmXQA/G3kS/5oMt+yyBPTxfAg1e6EL/hej7V5f+mT3rCKHAFTiiXw9DO713dAVdVTW290nxkFzYr3VyWHLbINGOjdtlv/XIaFOq8H3oZ1Uw6ql9gvcL8JKCzb9e85bHsVvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725326831; c=relaxed/simple;
-	bh=Mr46UhT4hkd2HOTt+yzG6o+WAooFRbQ0Pa5ltlxHd8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=scfSWkmqoSI4Wsv96oTv1yjUDOOjQP6cKyXXm9sKSlCgn9RJ0weJo5mlJBL8Q6TN+BBehTicOfJ4YLe1/uGTNjlp0DY5q1KRAiVy1txKG3zggewqPKKJ82+JlDbdiqKBDJAjKWdqsU9LVY1dzrawFAfo53ZxZaM/jkfQwIxePFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VuwAbUFQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725326825;
-	bh=TT8J1Ll0n0QIgEmFuVx7GxH6V1fn6yLaq1Tev9GRUlU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VuwAbUFQFPiFezJtanC+flNOHR6xB0+InPkYAB0aH8e7hFtDegx+lHu5xO4wdgYz/
-	 xqeBgANYfDOhOGYtW4SsEhpYB6RjrlmpyVy60ghK1m4Ak6NqEg3I5xl3F6FTKoGIrE
-	 tcJAFTmnu2IIwNO73TyUmJ0jHrb4wvTtbs0gcHL93vtW/WBYpuqE0Y3MQwpQtFUq+R
-	 WTM3FmTs8GkW/4RobmhV1bVSf0si/LJ4UcxkyY2RQuSc7Rx3CLu6mGWXFxYdak51hP
-	 QWZnIZUSAuabDwmnPmeG3z6MXPRlUEvt7TAVwaS/zrsv5Gj6n7OyrAcNfmIXqOwfxV
-	 KBIPoy4RuVxaA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WySf04hGRz4x1V;
-	Tue,  3 Sep 2024 11:27:04 +1000 (AEST)
-Date: Tue, 3 Sep 2024 11:27:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the clk tree
-Message-ID: <20240903112703.5e9e68b3@canb.auug.org.au>
+	s=arc-20240116; t=1725326930; c=relaxed/simple;
+	bh=B89yEqw5haecuJM/TsGjQ/Q5j0AmnwbH4PTo9ttXBG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S8G+R0phyo4Pu3b4ZZdMI4mZzraXFM7CHRQTg/VakJHFCi560F2vMosJV4Dor0JTpM7hP3iLHTfI3qxLw7wRr0MrYw9j08eRhDcNFrdS0CebYThy38w474PuHZj40BBvoBs/X0yDqMK4jzd/YKdQwsBc1UAMoe5zu+nbNStdblU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukfW9kKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225A5C4CEC4;
+	Tue,  3 Sep 2024 01:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725326929;
+	bh=B89yEqw5haecuJM/TsGjQ/Q5j0AmnwbH4PTo9ttXBG0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ukfW9kKiZ+y4GoLXqKIz04O0UZEtRRwhaRLU5U6QpAXz9SxsGR+nZPs4U34MF+Kt8
+	 GnjLU4FRU0k7OYLdA8OFF/Kji5Gga/B9wyRDdvWn6nFdmTYSyIPqk67MlCH3pDFDPJ
+	 L435HjSi+7vA3U8xYi4zvY0WZnZVP0k/gMXpJOUkVnrJsYBWhFnLwiAUYEpM2MimKW
+	 Q+Oc6nA91cBu9qrTzq9P1Ci4kXCs/4W1+nc7ta8zesOvzFEErx72By8lz5nWKxgAZH
+	 R1bC1RKpRESYxUJy3uFHtQ7Wjf3Ji1ipU0qbRSbK9QuP67kCCq8TxQYayvW/mDYOE3
+	 xirJC34/ym1Pw==
+Date: Mon, 2 Sep 2024 18:28:48 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, Amritha Nambiar
+ <amritha.nambiar@intel.com>, stable@kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Daniel Jurgens <danielj@nvidia.com>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] netdev-genl: Set extack and fix error on napi-get
+Message-ID: <20240902182848.4e1ea70f@kernel.org>
+In-Reply-To: <ZtYJX2HTeiglkxUU@LQ3V64L9R2.station>
+References: <20240831121707.17562-1-jdamato@fastly.com>
+	<ZtYJX2HTeiglkxUU@LQ3V64L9R2.station>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rU0nHq6XpQM7s_ZpbKCkjEj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/rU0nHq6XpQM7s_ZpbKCkjEj
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Mon, 2 Sep 2024 20:52:15 +0200 Joe Damato wrote:
+> Based on Eric's comment regarding my other patch [1], I should
+> probably re-submit this against net-next instead of net.
+> 
+> It's been over 48 hours, but I'll wait a bit longer before
+> resubmitting.
 
-The following commit is also in the renesas tree as a different commit
-(but the same patch):
-
-  042859e80d4b ("dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG")
-
-This is commit
-
-  afec1aba0860 ("dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG")
-
-in the renesas tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rU0nHq6XpQM7s_ZpbKCkjEj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbWZecACgkQAVBC80lX
-0Gw3wwf8CJo/QlqXTXFiUGaRNAy2Sgg5Y5IIj+HhJavTknn9qpycQWGrOKSUznJi
-TcGqy0a2sgzFfUtlxu8PVKUtYiEq6zLRZEKFvCo5k65u17j/Z4v3Q2paGwK3TtfI
-YU0MvrhuIrkMmxxrE9aAi5mTNQsHJHUX/iMRMiJ6WWozYSrQQ0lpZIbSPRfHqViP
-U9hXp0PAGdb/YqHaW/hJ/RBj0sTXA/jtCbQt+eveBsrbN+CG58zDIkoakzmhbFqw
-hE4/ogspm4aIFdsAQS6rvkqzXpff8X9j9VCaN9FyRlIy31Ks1uqpBQ4fbRsTvGRW
-Q522ByAfKihEisM7N+s8PLyBKPGVGg==
-=/B4u
------END PGP SIGNATURE-----
-
---Sig_/rU0nHq6XpQM7s_ZpbKCkjEj--
+Change is simple enough, I'll strip the tags and apply to net-next.
+Thanks!
 
