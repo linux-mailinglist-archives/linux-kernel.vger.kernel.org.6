@@ -1,163 +1,177 @@
-Return-Path: <linux-kernel+bounces-313375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AAF96A4AF
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F3D96A4B0
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3715284DD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A731C1C233CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993D018BC39;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9262918BC37;
 	Tue,  3 Sep 2024 16:42:29 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E518BC12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCBF1E492
 	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725381749; cv=none; b=IK+cy8NBXdjMfx5wD7RxK+ExfJecXBRt9y1jg5ajie3+ReUuQaO3JDXlaRnF0MQFn7WG2qsDZv8MoE7a8NGoYu4mFoEEnamBUkruMt54WtjyBuNpqyMposlG8pmEpqjlLMOQxfU0ZNFg6mnhFD4+oP5stHs9Wle9jntUNjzweyI=
+	t=1725381749; cv=none; b=eIGJM+Pq8bLSy+IfR+MoApERWe6Tu+A1MQ51mHIyj1slKoXQCrlpow50CSCrYtIxRmmWkXi/+dmDth2Y7AICmOAt5LUgS2rhA4jjVjR5WFY+sLYkqc/88UyLJUC0bQaR/EDRF9aRcOQJKR61vEeWBCRN5aAQdhJxect9UMNVVz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725381749; c=relaxed/simple;
-	bh=succtZnmFgEiG27MfMyppGZ0dUL7MSPBoc6Jz59uogU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pdH7ZmWMgTqDUxIZ3CoOeoYrk8C7/SlUN8dH+PwpTYeFHdxAlPOQDV+U6g0RCFzoRCQR7/vEWnDqdgKbeO/Pdvjv0Ecz57E0VezRFQWCL7CX09tCQStQRO0a4vf2z1OgMuVWDEAaKz1Z4zgM2vbdKXe6HHw8TZK4wQrMzx/plx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	bh=T+hxNDjjWwRCZ4d+SWr9x2bgF8PDTpQjDBuji2be/oM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KqunLpUxr0eHJuNibyF2fTy6baxFYf2xD2XviG53MwBAgEz1BEivFke6+R32iPSTmnr0LPOkqrqyTdWrrg99uym6C2f7/ywm9fNweZqj8ZiiIZhBgaYnfx34EDX7Hx07pb4Yy6vAFRsGujiUoeQLEx8TINRFoVpj5LN9nk5wKlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4cef7aa7so55968675ab.0
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a22983440so535426039f.1
         for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:42:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725381747; x=1725986547;
+        d=1e100.net; s=20230601; t=1725381746; x=1725986546;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=d+b/Aq/Hn2smUxUjq9y3DTYsF2A0ukafPUUwQ55d1uk=;
-        b=LdqAdrfTG79YSlWvUbFn1uznC7pOKjAFR1b2cwTsX28A7S7i2dOB8bLeuDoWWyYPEb
-         FDdJcOm21wN+86pgtuk981KxVB2IAnXMe3+UVXGQ1fP0io63VU7GjISVTdB5PydAHQ1B
-         W55gZEfmHXX1KOW+VBSUFuo27fhb4KBUcrhn4YiudJCvX0SfjZDWXgfmPsITM5e0ZthF
-         ay0B16l0zqlNaq9wae1K0twMDFeKc+3LqSg/dOQ8/eb6KvRpF2YCMlpRSFP+B4V82MT/
-         TZCAqHFr/fW7W3MorWKAFE97VHGBmULsxDNLNyOpfmzTfZ65TXs4UdVEv6j4rqSbUvoJ
-         72EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2cBo1YTZWpuDriHmFfOxZ/2gXyf0SDOf2USQpaRVQcc/2DbGRwLuGBzth3ulFX97f/5Clil5ZVlDdUnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF2KKcWXPVDvrlwDxzbPh+JvtQLBOg7i4WYmcZxYNm/M8E/9NS
-	3Jptbc7kWA+WGzWW/83vsBxp8I/xeDZWyItGhvPjTmjuUtsaTr+eTA43J6Tb0qdBLW5zC6lzE7L
-	48BBsBhk0f5VCifK885m628HXVHiXLBiK7Lasoh3gqRVuVRsgCKIEl58=
-X-Google-Smtp-Source: AGHT+IGk7hopY3usx07mrJ95n3oFmoEkwAzp8ur2+76gqxWJOTvyEziZWEkBK7PiInl7zHZjwPQyrcxr+7PFYO2YCOcwK6i3HEm4
+        bh=Od3Fg/J+auF2dT/V8kiIX6aTrRBNDcmt6+YUb4C/pcE=;
+        b=jnC3ej75RQVt4JN1IrfV4Os256EZm+lnRiRZDR0WXga7O5UEx6trrnAOv6WxHyBW/p
+         xn5jqpfWjlQJqTIpkSVdggcjzVrEMfM4PSZS9WMJjKsD6fYwm+sdPWKqwCUClhHM4Z9n
+         kTi+QyDHO35aHCJq4//9Dtf84R2nZ6Eo1MiD43aQEJxNlXvPDiG2gL3mKAqCReVIeo9r
+         d44srRtMkeOK1mSt7APvRwRkptFJtgFS0ICwIKYgoHB7w41vh9nNVXS3qReZn1FWuEhm
+         u2BJd5HzEF3Stik+xHX0vQgmcvtBGLbDppQS5epEeHEA5baS5S3V40zKmWtdpMLptkRk
+         eNAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfcKN0uWEDF17p3Ad2ZnU/qOtYD/yGLoU3u+ZNE6Q81pFbdhDVuKy8sUAneX4e8bu+24cx0SfR4RjXhDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Vw/+oTxOoT1t70w4CF3U3FUTLfFI/sP21kLFBfKU7uxnU5Jw
+	BMXIfD1b4ckPbA58quiV1wmfWWawKqck+3Byrn+sOShqhHAi/ZEBh8Vw8DHkPCVXZOMWj+cLct0
+	894Y4QqwDeJGEEbZrVue/pzDNnEvO31MLltbNNl5sMMSQ7YzUAZoPdWo=
+X-Google-Smtp-Source: AGHT+IFEW74CvGS49DVdlBBwU0X61h5ahASOjkE+vHc3S9GKBA8FN2UARl3OcPybeF7q3Olj4OHDeEW0yUIGtdL2LHI6KX9liSCw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8904:b0:4c2:7179:ce03 with SMTP id
- 8926c6da1cb9f-4d017dc2862mr600899173.2.1725381746866; Tue, 03 Sep 2024
+X-Received: by 2002:a05:6602:14c2:b0:822:45d1:5d82 with SMTP id
+ ca18e2360f4ac-82a26118194mr112406939f.0.1725381746575; Tue, 03 Sep 2024
  09:42:26 -0700 (PDT)
 Date: Tue, 03 Sep 2024 09:42:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001fcd17062139be6d@google.com>
-Subject: [syzbot] [kernel?] upstream-arm64 test error: kernel panic: VFS:
- Unable to mount root fs on unknown-block(NUM,NUM)
-From: syzbot <syzbot+3d91bb43ea9bd71b490e@syzkaller.appspotmail.com>
-To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	will@kernel.org
+Message-ID: <0000000000001b6052062139be1c@google.com>
+Subject: [syzbot] [btrfs?] general protection fault in btrfs_root_node
+From: syzbot <syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    8efd4bbd16de Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=17016cfb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8ce0989a72ac4ae
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d91bb43ea9bd71b490e
+HEAD commit:    20371ba12063 Merge tag 'drm-fixes-2024-08-30' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16206c53980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16778a63980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14924339980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/915e34fff8d7/disk-8efd4bbd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/630f1f097016/vmlinux-8efd4bbd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1f1385be55d6/Image-8efd4bbd.gz.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-20371ba1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/35987fde8063/vmlinux-20371ba1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1012e3751087/bzImage-20371ba1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/892f30044c3a/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d91bb43ea9bd71b490e@syzkaller.appspotmail.com
+Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
 
- (driver?)
-  103:00001     262144 nvme0n1p1 fb1dbdda-6850-4ddd-ad86-b1774de646a7
-
-  103:00002    1048576 nvme0n1p2 d730f21b-d9a9-4cec-9f43-3402be542af1
-
-1f00             128 mtdblock0 
- (driver?)
-List of all bdev filesystems:
- reiserfs
- ext3
- ext2
- ext4
- cramfs
- squashfs
- minix
- vfat
- msdos
- exfat
- bfs
- iso9660
- hfsplus
- hfs
- vxfs
- sysv
- v7
- hpfs
- ntfs3
- ufs
- efs
- affs
- romfs
- qnx4
- qnx6
- adfs
- fuseblk
- udf
- omfs
- jfs
- xfs
- nilfs2
- befs
- ocfs2
- gfs2
- gfs2meta
- f2fs
- bcachefs
- erofs
- zonefs
- btrfs
-
-Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5-syzkaller-g8efd4bbd16de #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- panic+0x300/0x884 kernel/panic.c:354
- mount_root_generic+0x4c4/0x5b8 init/do_mounts.c:236
- mount_block_root+0x6c/0x7c init/do_mounts.c:380
- mount_root+0xb4/0xe4 init/do_mounts.c:407
- prepare_namespace+0xdc/0x11c init/do_mounts.c:491
- kernel_init_freeable+0x360/0x478 init/main.c:1591
- kernel_init+0x24/0x2a0 init/main.c:1467
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-SMP: stopping secondary CPUs
-Kernel Offset: disabled
-CPU features: 0x08,00000103,80100128,42017203
-Memory Limit: none
-Rebooting in 86400 seconds..
+BTRFS info (device loop0): using crc32c (crc32c-intel) checksum algorithm
+BTRFS info (device loop0): using free-space-tree
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 0 UID: 0 PID: 5105 Comm: syz-executor368 Not tainted 6.11.0-rc5-syzkaller-00176-g20371ba12063 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_root_node+0x86/0x3b0 fs/btrfs/ctree.c:260
+Code: a0 aa c8 fd 48 83 c4 08 e8 47 80 12 08 89 c3 31 ff 89 c6 e8 4c 6f ec fd 85 db 74 17 e8 33 a1 d2 fd 84 c0 74 1c e8 fa 6a ec fd <43> 80 3c 3c 00 75 4b eb 51 e8 ec 6a ec fd 43 80 3c 3c 00 75 3d eb
+RSP: 0018:ffffc90000e376c0 EFLAGS: 00010293
+RAX: ffffffff83a72136 RBX: 0000000000000001 RCX: ffff888000784880
+RDX: 0000000000000000 RSI: ffffffff8c608d20 RDI: ffffffff8c608ce0
+RBP: ffffc90000e378b0 R08: ffffffff83a72124 R09: 1ffffffff283c908
+R10: dffffc0000000000 R11: fffffbfff283c909 R12: 0000000000000003
+R13: dffffc0000000000 R14: 0000000000000018 R15: dffffc0000000000
+FS:  0000555578f7a380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f674dc59068 CR3: 0000000034fa8000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_read_lock_root_node+0x27/0xd0 fs/btrfs/locking.c:279
+ btrfs_build_ref_tree+0x112/0x16f0 fs/btrfs/ref-verify.c:1005
+ open_ctree+0x1fea/0x2a10 fs/btrfs/disk-io.c:3533
+ btrfs_fill_super fs/btrfs/super.c:965 [inline]
+ btrfs_get_tree_super fs/btrfs/super.c:1888 [inline]
+ btrfs_get_tree+0xe7a/0x1920 fs/btrfs/super.c:2114
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ fc_mount+0x1b/0xb0 fs/namespace.c:1231
+ btrfs_get_tree_subvol fs/btrfs/super.c:2077 [inline]
+ btrfs_get_tree+0x652/0x1920 fs/btrfs/super.c:2115
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3e4d3e7eea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc9f71558 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffcc9f71560 RCX: 00007f3e4d3e7eea
+RDX: 0000000020005100 RSI: 0000000020000040 RDI: 00007ffcc9f71560
+RBP: 0000000000000004 R08: 00007ffcc9f715a0 R09: 0000000000005110
+R10: 0000000000a08811 R11: 0000000000000282 R12: 00007ffcc9f715a0
+R13: 0000000000000003 R14: 0000000001000000 R15: 00007f3e4d42f03b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_root_node+0x86/0x3b0 fs/btrfs/ctree.c:260
+Code: a0 aa c8 fd 48 83 c4 08 e8 47 80 12 08 89 c3 31 ff 89 c6 e8 4c 6f ec fd 85 db 74 17 e8 33 a1 d2 fd 84 c0 74 1c e8 fa 6a ec fd <43> 80 3c 3c 00 75 4b eb 51 e8 ec 6a ec fd 43 80 3c 3c 00 75 3d eb
+RSP: 0018:ffffc90000e376c0 EFLAGS: 00010293
+RAX: ffffffff83a72136 RBX: 0000000000000001 RCX: ffff888000784880
+RDX: 0000000000000000 RSI: ffffffff8c608d20 RDI: ffffffff8c608ce0
+RBP: ffffc90000e378b0 R08: ffffffff83a72124 R09: 1ffffffff283c908
+R10: dffffc0000000000 R11: fffffbfff283c909 R12: 0000000000000003
+R13: dffffc0000000000 R14: 0000000000000018 R15: dffffc0000000000
+FS:  0000555578f7a380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005610c6449d38 CR3: 0000000034fa8000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	a0 aa c8 fd 48 83 c4 	movabs 0xe808c48348fdc8aa,%al
+   7:	08 e8
+   9:	47 80 12 08          	rex.RXB adcb $0x8,(%r10)
+   d:	89 c3                	mov    %eax,%ebx
+   f:	31 ff                	xor    %edi,%edi
+  11:	89 c6                	mov    %eax,%esi
+  13:	e8 4c 6f ec fd       	call   0xfdec6f64
+  18:	85 db                	test   %ebx,%ebx
+  1a:	74 17                	je     0x33
+  1c:	e8 33 a1 d2 fd       	call   0xfdd2a154
+  21:	84 c0                	test   %al,%al
+  23:	74 1c                	je     0x41
+  25:	e8 fa 6a ec fd       	call   0xfdec6b24
+* 2a:	43 80 3c 3c 00       	cmpb   $0x0,(%r12,%r15,1) <-- trapping instruction
+  2f:	75 4b                	jne    0x7c
+  31:	eb 51                	jmp    0x84
+  33:	e8 ec 6a ec fd       	call   0xfdec6b24
+  38:	43 80 3c 3c 00       	cmpb   $0x0,(%r12,%r15,1)
+  3d:	75 3d                	jne    0x7c
+  3f:	eb                   	.byte 0xeb
 
 
 ---
@@ -170,6 +184,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
