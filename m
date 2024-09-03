@@ -1,186 +1,171 @@
-Return-Path: <linux-kernel+bounces-312632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1390F969918
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CD696991B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C17B1F26616
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52831F25606
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B191C986D;
-	Tue,  3 Sep 2024 09:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0E41A0BE8;
+	Tue,  3 Sep 2024 09:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YIo0gOXA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="WoL3+8Wk"
+Received: from mail-ot1-f67.google.com (mail-ot1-f67.google.com [209.85.210.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DD11C984F;
-	Tue,  3 Sep 2024 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E2C1A0BC3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355948; cv=none; b=DhmW8PF6mY1plkH0Uy68AiNNlZvzWDt1eIeIVrcHj7iMdD031PEWiBy1EK+Uvbd1i710MQqTQS61RsEVeYQSCkAiaCy71VF3Stef5/iO0CrZF2qT4GD7JWCPuKlPEs8iWSsiJTe8daWb77asqQUhN/NN9h6joZdaRIrUcV7hv4I=
+	t=1725355983; cv=none; b=K4YMKBFToYeN3IELuJpO+grkFVHBj/qOeE+g8XPheiApYaE+xgkxoMGBCYwitjrUY1CMKptogoAs47KOypPTpcWK5da6HQWxVu8PFc3kLApNZCziKVFP702vtGrJeJ+bOX/wkafk355xfOPVGGr1bjbMoBNQfepK+avHadLB43s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355948; c=relaxed/simple;
-	bh=9vKpXNDJSa5XEMHjQtFePtkf4UhKKVqLGwUVgyeDXJA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=Jy8dYP72/BTdp1albtxO6kj7ygIk2Xc2cvE7l2dwzmJK94LdpgTXOTT8x1OuZvkXy7aEb6515MKOyE0oajE6trJgwS5dbBPJMzEefkk2q07MUhlScjHASQ5xpgUMjxfSJTV6Ch1KfDlkBky09zz59Hfjv3qOu+L5V75btj+gOgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YIo0gOXA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4832q46b002730;
-	Tue, 3 Sep 2024 09:32:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=pp1; bh=qSifLb6x1zwIny2PFCWIyHyUmI
-	krG0SN/fg0te/rcRw=; b=YIo0gOXA4F1FJJfoMsk5v/aJJl33JJIYQDkfNhmezS
-	oFKGApbYTIi30DJsEDWgbqgvNyC0nAd5TMrCSQrveQ9a66AEukcg19u2St1zVmsL
-	9xKg3HJQY8s7OS1QEg+dWyhBloe7mwROZVjawbFwUQ1dT1DXLwOVHI8Sfkc4olq5
-	HZkVyHrh2YvB1i8MEJARmmSiJxaAhR2XaqLsLZu4/qNj9T1qEVl9nbnZCsQ7JI88
-	0z5JGRdnNhfKBwTY2o0tUdEBmbG4bVg1Hc05d5TNcgxi7Ri6ffqLZb8OJQkkeMUF
-	ljaSE9ETtiAa/stZOfzfXpkckrZ06OevldwVHiUJ2h5g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btp9cx4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 09:32:09 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4839W8F2027853;
-	Tue, 3 Sep 2024 09:32:08 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btp9cx4c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 09:32:08 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4838Yghs007930;
-	Tue, 3 Sep 2024 09:32:07 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41cfqmsv7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 09:32:07 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4839W5NT54067458
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Sep 2024 09:32:06 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3C642004D;
-	Tue,  3 Sep 2024 09:32:05 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9D65420043;
-	Tue,  3 Sep 2024 09:32:05 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  3 Sep 2024 09:32:05 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Masami Hiramatsu
- <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo
- Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter
- <adrian.hunter@intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
-In-Reply-To: <20240903090843.GA17936@redhat.com> (Oleg Nesterov's message of
-	"Tue, 3 Sep 2024 11:08:43 +0200")
-References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
-	<20240903073629.2442754-1-svens@linux.ibm.com>
-	<20240903090843.GA17936@redhat.com>
-Date: Tue, 03 Sep 2024 11:32:05 +0200
-Message-ID: <yt9d8qw99j6y.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Sr4tz1I6d4hAYZVDJsJkGLaE5aGfXyis
-X-Proofpoint-ORIG-GUID: xHkIv-4FlDgm8pLYfOijK6JpAp0X464w
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725355983; c=relaxed/simple;
+	bh=RkS5AVf/vdM06VdBh/pNZ142u7DJAZMa3GzPOEWQgE8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kEgELW3l+zYasmicsyiInif1VcZvCI0hktCFgfXjbHg2wRDNjea2HQp3kzZXEQ96cKQxtpEcYI1/FyrGc/pYy+0Ls/r2IM6fY1x312KcII4namXXzfLbFHe9pxVqzjSnyG9NAhnxhovukH2eRUWqGoAwTMjrAj2SzGZCKIdGjyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=WoL3+8Wk; arc=none smtp.client-ip=209.85.210.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-ot1-f67.google.com with SMTP id 46e09a7af769-7094641d4e6so1813226a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1725355981; x=1725960781; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GX275WkLtFvp4P0H3VEJOqlKsL5ASXMh+yrpYY3jjm8=;
+        b=WoL3+8WkrkVep/WWWynfC7XLrlThzEvGGLALfzK4YK2XrQfKcIwTM7sJ3ybRsR39t3
+         ZADwivT4rFz96C1cPLSv4eAztnvzrslZPlqOu5PiJrzco8Wz4W6xzzYYjpUKMh3c9cjq
+         LGtTL2HeKbKfvnGy70dHWq0et/pi6Fj8st0ad47QajqF3fUkn5JIFImpaT1hctF8Wogu
+         /nP8i7XZ6W9d5NtdpYSMV0ZMBrxCLt5MdIdPntqACcIqsQpb7TKNkmpAaFTZCFEv8Ldj
+         NPXPA2gX3Dwi7GETC80iFO430sB2y1NTPJ4UsLBz/lAUkwmijD/BEnWpfzYdREg0tlws
+         isAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725355981; x=1725960781;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GX275WkLtFvp4P0H3VEJOqlKsL5ASXMh+yrpYY3jjm8=;
+        b=hnPp5GP2CeiR9PCjCn2QOz/UCsB8eYckCTvMjx9FIWFDqGjzHYcSXlUEA9tIB5zXU4
+         HlvgETT2QNUtfOebP0cWAll8qC9F0pVkHeEl3RhrgqipgRqZ+9zlWofgGV8YSWpjtetP
+         rtzmbEjcYt8ySFBv3nlzGoM+U1g4ZlkL91N5bLW1sGJskYnEBSaLEm7AJrOnaEHjQG1Q
+         3bUAa16dRQGwqELrwLiXjxf28b1e4z3IYAp2l98/60mxFSF3YG95YnHMeGl1Q+tjjVx9
+         nDh9U3EWk/PywUv+I0qSAX9qXbynGk+gwwxA+oIgauhjFHZaj58+iZCbbrXRevCPemWu
+         wbHA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/2BnfU1Pz0EgtHS2S0DKvBk4AF5TtUnZFrzuoJ96bj5dDZcCMBU1Lx/PU5s5a98KP1pW/0OQX2ioriMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4kunZhxEmp7f6XjBca0S0i05sIaqf1zaWQ4+7jJbovNOnVbcZ
+	mraK2vdb8hTIYPl0XtgeisHy9XPCIxblRKHJYJChqPp2edFr9IFbgwtwmlzpbg==
+X-Google-Smtp-Source: AGHT+IHNAlXlP35WDQ/hjPG0ZhGzmWv5PTEpbHeyt1YwNX8aCYlzjyVLC0Eo1ipif9Q1+hnKTpuh+g==
+X-Received: by 2002:a05:6358:7e90:b0:1b5:c544:23a8 with SMTP id e5c5f4694b2df-1b7edb4ae07mr1390862855d.11.1725355980994;
+        Tue, 03 Sep 2024 02:33:00 -0700 (PDT)
+Received: from [172.22.57.189] ([117.250.76.240])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56d72d1sm8365868b3a.170.2024.09.03.02.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 02:33:00 -0700 (PDT)
+From: Ayush Singh <ayush@beagleboard.org>
+Subject: [PATCH v4 0/3] Add Firmware Upload support for beagleplay cc1352
+Date: Tue, 03 Sep 2024 15:02:17 +0530
+Message-Id: <20240903-beagleplay_fw_upgrade-v4-0-526fc62204a7@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 spamscore=0
- malwarescore=0 mlxlogscore=800 adultscore=0 mlxscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030072
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKHX1mYC/3XOTQ6DIBAF4KsY1qVBoP501Xs0jQEZkMSIgZbWG
+ O9e1E2TxuWbzPtmZhTAWwjoms3IQ7TBuiEFfspQ24nBALYqZUQJ5aTML1iCMD2MvZga/W5eo/F
+ CAeYMirYFSRRTKHVHD9p+Nvf+SLmz4en8tJ2JdJ3uYkXyAzFSTDCwoqaVLGuq5G3fk054dXbeo
+ NWN7MeiR99FlqxKc8pFraDWxb+1LMsXuxdpzwwBAAA=
+To: d-gole@ti.com, lorforlinux@beagleboard.org, jkridner@beagleboard.org, 
+ robertcnelson@beagleboard.org, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Ayush Singh <ayush@beagleboard.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2448; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=RkS5AVf/vdM06VdBh/pNZ142u7DJAZMa3GzPOEWQgE8=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm1tfD/vBXyGsCpKZy+AgleCzE/caFt0oMppSdH
+ xhZlfoywt6JAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZtbXwwAKCRAFzvXHieVa
+ dFpJEACfw8pLANXVXWW4dt1Ioldn8TmvpqvIqaKqWvzfuNi+tKll5YvE1o1H/kSTEqsiZrjM0MT
+ 3iuxrSqyBGTHWsP/8R5B/YMEJcT/Jhf01wr9fswejixbCA+Lyh+OlA4xdRGmWb3fUZ0UAgvp06o
+ 5SNgvSyA5dUJpKQKuH3ZYImu2DEZhA4UGxZLUtn9H9MomDcENGl8C+lO5E3LL1RhVR79Y0m8Ibe
+ u1h32l56kGTc0axW020mJ5Qc9R+8Daau61UOALhI+ntLf9n/8EfG8/T/3t2HcQTVamHSog3A/1P
+ lWmU6L4QQjVRJx+eNxcmqUnR+AcBlrigd+/7NPmqyuOAsfKnroLxeed6ShLAWGG8FMZNXCKBMqr
+ 0o9IuC+pzLXfk4LrEStfk43oIlqd1Trl9KQbuWPPNcArFDhU+aYoOHrsd35Oc5MYyJE6r/qGZRL
+ 1o5f3QiRFFoqJSN+v7JaxD4zcK+iVkrqokP5C23F3n6qdXKeGpVdUieg7KzGn8K79QIC17Gwd9j
+ R9vlKuUoz1pC2npEXsr0hDr2sKjiTkvP9kXAUEdFAg9GyKR/LuxkkOCrzWAYy3LcW7jiBZ7Or9a
+ uybSiQ4Swgj3strtRmsoET3zm3oZyRfewEvgYoyZfTyA1a+AYq61lzNJtv7ZXiyXiSS7S0OAE0z
+ snjvKIoWaGJ9DLg==
+X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
+ fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Adds support for beagleplay cc1352 co-processor firmware upgrade using
+kernel Firmware Upload API. Uses ROM based bootloader present in
+cc13x2x7 and cc26x2x7 platforms for flashing over UART.
 
-> On 09/03, Sven Schnelle wrote:
->>
->> [   44.505448] ==================================================================                                                                      20:37:27 [3421/145075]
->> [   44.505455] BUG: KASAN: slab-use-after-free in special_mapping_close+0x9c/0xc8
->> [   44.505471] Read of size 8 at addr 00000000868dac48 by task sh/1384
->> [   44.505479]
->> [   44.505486] CPU: 51 UID: 0 PID: 1384 Comm: sh Not tainted 6.11.0-rc6-next-20240902-dirty #1496
->> [   44.505503] Hardware name: IBM 3931 A01 704 (z/VM 7.3.0)
->> [   44.505508] Call Trace:
->> [   44.505511]  [<000b0324d2f78080>] dump_stack_lvl+0xd0/0x108
->> [   44.505521]  [<000b0324d2f5435c>] print_address_description.constprop.0+0x34/0x2e0
->> [   44.505529]  [<000b0324d2f5464c>] print_report+0x44/0x138
->> [   44.505536]  [<000b0324d1383192>] kasan_report+0xc2/0x140
->> [   44.505543]  [<000b0324d2f52904>] special_mapping_close+0x9c/0xc8
->                                        ^^^^^^^^^^^^^^^^^^^^^
-> Caused by
->
-> 	[PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
-> 	https://lore.kernel.org/all/20240812082605.743814-1-mpe@ellerman.id.au/
->
-> ?
->
->> +static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_area_struct *vma)
->> +{
->> +	struct xol_area *area = container_of(vma->vm_private_data, struct xol_area, xol_mapping);
->> +
->> +	mutex_lock(&delayed_uprobe_lock);
->> +	delayed_uprobe_remove(NULL, vma->vm_mm);
->> +	mutex_unlock(&delayed_uprobe_lock);
->> +
->> +	if (!area)
->> +		return;
->> +
->> +	put_page(area->pages[0]);
->> +	kfree(area->bitmap);
->> +	kfree(area);
->> +}
->> +
->>  static struct xol_area *__create_xol_area(unsigned long vaddr)
->>  {
->>  	struct mm_struct *mm = current->mm;
->> @@ -1481,6 +1500,7 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
->>
->>  	area->xol_mapping.name = "[uprobes]";
->>  	area->xol_mapping.fault = NULL;
->> +	area->xol_mapping.close = uprobe_clear_state;
->
-> LGTM.
->
-> but with or without this fix __create_xol_area() also needs
->
-> 	area->xol_mapping.mremap = NULL;
->
-> ?
+Communication with the bootloader can be moved out of gb-beagleplay
+driver if required, but I am keeping it here since there are no
+immediate plans to use the on-board cc1352p7 for anything other than
+greybus (BeagleConnect Technology). Additionally, there do not seem to
+any other devices using cc1352p7 or its cousins as a co-processor.
 
-I think the code should just use kzalloc() instead of kmalloc() so all
-members are cleared. I noticed that when looking into the issue because
-the new close member of xol_mapping wasn't initialized. My plan was to
-send that change as a separate patch - because it's not related to this
-issue.
+Bootloader backdoor and reset GPIOs are used to enable cc1352p7 bootloader
+backdoor for flashing. Flashing is skipped in case we are trying to flash
+the same image as the one that is currently present. This is determined by
+CRC32 calculation of the supplied firmware and flash data.
+
+We also do a CRC32 check after flashing to ensure that the firmware was
+flashed properly.
+
+Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352P7 Technical Specification
+
+Changes in v4:
+- Add acks properly
+- Fix Kconfig warning by adding select FW_LOADER
+- Link to v3: https://lore.kernel.org/r/20240825-beagleplay_fw_upgrade-v3-0-8f424a9de9f6@beagleboard.org
+
+Changes in v3:
+- Spelling fixes in cover letter
+- Add Ack by Rob Herring on Patch 1
+- Link to v2: https://lore.kernel.org/r/20240801-beagleplay_fw_upgrade-v2-0-e36928b792db@beagleboard.org
+
+Changes in v2:
+- Spelling fixes
+- Rename boot-gpios to bootloader-backdoor-gpios
+- Add doc comments
+- Add check to ensure firmware size is 704 KB
+- Link to v1: https://lore.kernel.org/all/20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org
+
+Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+---
+Ayush Singh (3):
+      dt-bindings: net: ti,cc1352p7: Add bootloader-backdoor-gpios
+      arm64: dts: ti: k3-am625-beagleplay: Add bootloader-backdoor-gpios to cc1352p7
+      greybus: gb-beagleplay: Add firmware upload API
+
+ .../devicetree/bindings/net/ti,cc1352p7.yaml       |   7 +
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts     |   3 +-
+ drivers/greybus/Kconfig                            |   2 +
+ drivers/greybus/gb-beagleplay.c                    | 658 ++++++++++++++++++++-
+ 4 files changed, 656 insertions(+), 14 deletions(-)
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240715-beagleplay_fw_upgrade-43e6cceb0d3d
+
+Best regards,
+-- 
+Ayush Singh <ayush@beagleboard.org>
+
 
