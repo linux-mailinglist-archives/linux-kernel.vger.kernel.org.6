@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-313216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9DA96A1FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A396A200
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952371C240DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E3B1C217A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C5518B49C;
-	Tue,  3 Sep 2024 15:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF5D18DF90;
+	Tue,  3 Sep 2024 15:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="e4Gt2ohf"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="g+ofcIm+"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C84189526
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1549418BB8B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376618; cv=none; b=KttpB0h4uPvdEYFRPcn4Gdqw/WYvDn27D7uP86RQ7NhaFxoYox2H9TsZh+Laq+dHryTAQZ6IV/iKQZmm57UkGn3Go7dVMtXaRPjF/6o0uj8pxHYgyktFnIBcUv2jPZblo7leb0nadhmxqOXAEJfJ0aKKrCGOP0Pkk7/OiQfdi4c=
+	t=1725376621; cv=none; b=BiRxEI53s2+zmc/MBmVJwhHPZLyZC4nBGISirb+qFW8xBsQbMcZRxH1BwujVFQoY2kXi2TzwXd8OrqoIM6nQSxTHZN7DyorMGG+awOKQ29qYA912jS6v8sM8lmASgb/jMGSu+OVn61DbdDDpdZ5OrWxL8LbW66cMj1XZpuH5gJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376618; c=relaxed/simple;
-	bh=f/gJKyVl4ADm/yoP4N8bpvEgSEtHH1kP5oeqKqZ4Tds=;
+	s=arc-20240116; t=1725376621; c=relaxed/simple;
+	bh=+0zwTUGo6+RzPqyLPLoGhao9V7bGVcfHhuOQ58510LE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Dh0HSlQ/78gJ9qSAVt2YJlc13jmUw2TkCkYwsnXD7MjaOSDAr9BQ7hYJT63K9Jnv5ffMCD+PY0yzHhWYIc9jsToHHenVFWWNlBOwrArfagqIvVtHpDCd93ObGkTU5uSyY4wpRxylMBwpUMqwIDLfohC5Jfx3Kw5elGkBPllTXAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=e4Gt2ohf; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=er858B00057PCf+9Q8T1BAU4DIoVDjvBx3LqWfZGK9N/8UXYkN1k4OJ48HQU5TaxJaHy6PrsIfq+PIG6HnzdpAkFphhEoiH6jRot+oOaY8izlGOpdD+ZBg2Ek9Y+0B6Yp4c95Us9j4C5lRWTIpTX9Lg2jU+ku81W/YDQle5FKfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=g+ofcIm+; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2A1203F339
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:54 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 031853F327
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725376614;
-	bh=UdafeJegpZAV0BY3M2qbl16uDJIFaN2Zpg+hXMszRa4=;
+	s=20210705; t=1725376616;
+	bh=JC0kbEJjIhY7PwaINGFTAAblNYwex3Ap6OFdo5D4DqU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=e4Gt2ohfyKEL+chtBg45zJgoMfyP5AwCGwHYWnI1HBoXQHKj7tupOvOwZVSutttek
-	 xxKxPkpRfT0kXhlNe1G2Gxw87JDC5wuObx7H2igP3IKNqckhV8xqgD1N21cuTLm34L
-	 Pqkj7m57oWwHCmoJot5nKzppM+GH4BW4jCevaYbnVpj0ARllBkyAYyNKpyYGcPeVS8
-	 X+A52dGZfPiZROqFyDlMn7p9KJ4LlJyuuklCc2zUpG9FPp7cF1Lyr9Fj+6Cs+tDkhS
-	 pnlbmKSAor8PZxI6FDGk29CaWh3VpCx0ciBw2P8PyTu5WA8/s8ZpgEztVomlSywT7u
-	 8932cxFCs7uYQ==
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2f3f6a6e3e8so62507821fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:16:54 -0700 (PDT)
+	b=g+ofcIm+rqDR6dWLcimaW9z0m2Ifg9eK0bJtFN2JHnGERtxRkruqxNfejY80PyShu
+	 oxseGvVNdE530qtdnGTlWe/oD4bR9w32Dxw3ftgptwWYrJyfYB6ILOuSdEqOPmudsM
+	 WCvd1t7M0Nv/niZXSLwUJ/2CKKffWVSE31HB86MniORNWIfp8ZCd8lyQRYLjTCDLS+
+	 sUSIZeWl1zTeElmaGkgDkE0JUz/MWleR2NVuaUAs9JARzTz2UHfli2LyJwkXXpzwlJ
+	 B0XWtF/P1U4p59sLgA8e/16rD5Gkzj5d+qE1GAz1Va1GUH5naG+cDiN7AMwvwXUhZu
+	 o6DDCK0ssBVNg==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a7d2d414949so456741166b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:16:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376613; x=1725981413;
+        d=1e100.net; s=20230601; t=1725376615; x=1725981415;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UdafeJegpZAV0BY3M2qbl16uDJIFaN2Zpg+hXMszRa4=;
-        b=qU/igEte7tIEANHt5LMPQPkLPsmeCaiDWBZjlEjVIYQSa5CbIBpuLoGi6phv/C4efy
-         cQslJxK+IDLw1/naJHIwWSWomjt/yv942ZiAQPCbIKbZxacZrhkVnOVrA+3A5IHSDiC8
-         /UJcA71f5Uz7SVL8KEu0BCavmYmJ96xKTebkPvfo4PCERPKraQoCJfBhhed7WwHTQLd4
-         CAjHklezjlEW5CGZDPjTIS9s0MRyjZoCgXv5Si+YE3G4kCEdn0DqjwxeZOl39+8PK9Zs
-         2xx906TH7ZV1dPK9w2i5lHgyeL/pYszfVyenGLhzXtvHzOOcGMR8MCsSeDdTVEC9RDvT
-         beNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpfvcYXE+Jrdt7GIP+u3OXKy94HeZyBFTseZUCD/JXp4LRZhxWGVkHNdkuH+N020REZDkaB95rHXQExp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS5odlpPc17n6j6UEBhjc79glMn5T1rLfBo/IrQnEZbshrhglU
-	UEGp5c5AvBdcxCqK61YzHcd4o+OTokg7/F2LO4YDWZtQFTedrMhAm7QrmBSqyCWPuS5XAvE8PU5
-	V4Fh5RDOaKuhEhkDsiTCJujPholEPA+GpR9PoSx6sObIreUe9RbQtM3LOyACBhnJ8ydhcMfGhAh
-	a3OQ==
-X-Received: by 2002:a2e:612:0:b0:2ef:2677:7b74 with SMTP id 38308e7fff4ca-2f6108ae26dmr113933401fa.41.1725376613107;
-        Tue, 03 Sep 2024 08:16:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhC2jwLdKr/I93Lw0mhZQlHq3y/Gq9QIm9cGGG1aK6M+8ZSCFhfX7x8b8W1hP24WyaaimLhA==
-X-Received: by 2002:a2e:612:0:b0:2ef:2677:7b74 with SMTP id 38308e7fff4ca-2f6108ae26dmr113933141fa.41.1725376612477;
-        Tue, 03 Sep 2024 08:16:52 -0700 (PDT)
+        bh=JC0kbEJjIhY7PwaINGFTAAblNYwex3Ap6OFdo5D4DqU=;
+        b=ACRcdYoiegoPULIfZ4//1WcwJyp1ZeSl1FlEOUIK9eOoPpnnYWIbCznzJ/szCoG3Kd
+         7UZRzfuKWugddZesXIsbeE6ir5syO+6STY+2qELxIi8ywIQvbicEkeK3KuDobPHzKjvs
+         EcUQ36g6pzpLHt7SjobhJr8p2BglDEjuzlEi32WUE/wQAqgeewRAjIIisuCNlqjBR4Of
+         e12VV/zEClV31g2+ZP1LwpmN5TTkWnii+5ILUOznldNz4dKNlRVBGNhHgaiAlHvCHVmR
+         ONgYhfjEYEppnuMlBq/iCFF7TnelqKb8+CbE2GmSkXvgZx1RPXmLTiaZFIGNZDg7NCRs
+         UGdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlvOeFUxvYT63KA4yEEjHXEP60FqVJeFi2DHofrMhaia6A3CLhzLUZfKZAXfMTzYVQUKPdbLY/yUPx5A8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzRwO/r1YKEGM8/1jiZLjZvZem8f7YQ6COhYvGbs0BAmzCb43s
+	zsZCT1xfa30o+CMG9fGXkSg6M0Azx3ikruVJCw1pNjqk6g9Tts+W0OTvZj3tmCyMb79xPRS6Z1z
+	KLpbUUprYQus777Zc6Z0MVxi6eGoFx61OOXtJZpCPZSrr2W8mmD1FLxABBGdD/jSlDj83GyXX8l
+	VGcg==
+X-Received: by 2002:a17:907:7f22:b0:a7a:8586:d36b with SMTP id a640c23a62f3a-a8a32df201amr77098166b.3.1725376615501;
+        Tue, 03 Sep 2024 08:16:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6yFu1Bsw3W/nZaOc47kv/qKH1mcQ+bQ3WmyZBHT/KsKGUKlObSlloDjZT275IsdiJSzRa3A==
+X-Received: by 2002:a17:907:7f22:b0:a7a:8586:d36b with SMTP id a640c23a62f3a-a8a32df201amr77095866b.3.1725376614995;
+        Tue, 03 Sep 2024 08:16:54 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.16.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a19afb108sm156377166b.223.2024.09.03.08.16.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:16:51 -0700 (PDT)
+        Tue, 03 Sep 2024 08:16:54 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -86,9 +86,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/15] fs/fuse: add an idmap argument to fuse_simple_request
-Date: Tue,  3 Sep 2024 17:16:14 +0200
-Message-Id: <20240903151626.264609-4-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v4 04/15] fs/fuse: support idmapped FUSE_EXT_GROUPS
+Date: Tue,  3 Sep 2024 17:16:15 +0200
+Message-Id: <20240903151626.264609-5-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
@@ -100,10 +100,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If idmap == NULL *and* filesystem daemon declared idmapped mounts
-support, then uid/gid values in a fuse header will be -1.
-
-No functional changes intended.
+We don't need to remap parent_gid, but have to adjust
+group membership checks and take idmapping into account.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -116,452 +114,75 @@ Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 v4:
 	- this commit added
 ---
- fs/fuse/dax.c     |  4 ++--
- fs/fuse/dev.c     |  6 ++++--
- fs/fuse/dir.c     | 26 +++++++++++++-------------
- fs/fuse/file.c    | 32 ++++++++++++++++----------------
- fs/fuse/fuse_i.h  |  3 ++-
- fs/fuse/inode.c   |  6 +++---
- fs/fuse/ioctl.c   |  2 +-
- fs/fuse/readdir.c |  4 ++--
- fs/fuse/xattr.c   |  8 ++++----
- 9 files changed, 47 insertions(+), 44 deletions(-)
+ fs/fuse/dir.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 12ef91d170bb..6d8368d66dd4 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -207,7 +207,7 @@ static int fuse_setup_one_mapping(struct inode *inode, unsigned long start_idx,
- 	args.in_numargs = 1;
- 	args.in_args[0].size = sizeof(inarg);
- 	args.in_args[0].value = &inarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err < 0)
- 		return err;
- 	dmap->writable = writable;
-@@ -245,7 +245,7 @@ static int fuse_send_removemapping(struct inode *inode,
- 	args.in_args[0].value = inargp;
- 	args.in_args[1].size = inargp->count * sizeof(*remove_one);
- 	args.in_args[1].value = remove_one;
--	return fuse_simple_request(fm, &args);
-+	return fuse_simple_request(NULL, fm, &args);
- }
- 
- static int dmap_removemapping_list(struct inode *inode, unsigned int num,
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index d3f3c3557c04..349fc84897a5 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -508,7 +508,9 @@ static void fuse_args_to_req(struct fuse_req *req, struct fuse_args *args)
- 		__set_bit(FR_ASYNC, &req->flags);
- }
- 
--ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args)
-+ssize_t fuse_simple_request(struct mnt_idmap *idmap,
-+			    struct fuse_mount *fm,
-+			    struct fuse_args *args)
- {
- 	struct fuse_conn *fc = fm->fc;
- 	struct fuse_req *req;
-@@ -525,7 +527,7 @@ ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args)
- 		__set_bit(FR_FORCE, &req->flags);
- 	} else {
- 		WARN_ON(args->nocreds);
--		req = fuse_get_req(NULL, fm, false);
-+		req = fuse_get_req(idmap, fm, false);
- 		if (IS_ERR(req))
- 			return PTR_ERR(req);
- 	}
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 2b0d4781f394..2a8344776350 100644
+index 2a8344776350..b0b57f383889 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -230,7 +230,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 		parent = dget_parent(entry);
- 		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
- 				 &entry->d_name, &outarg);
--		ret = fuse_simple_request(fm, &args);
-+		ret = fuse_simple_request(NULL, fm, &args);
- 		dput(parent);
- 		/* Zero nodeid is same as -ENOENT */
- 		if (!ret && !outarg.nodeid)
-@@ -383,7 +383,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 	attr_version = fuse_get_attr_version(fm->fc);
+@@ -545,17 +545,21 @@ static u32 fuse_ext_size(size_t size)
+ /*
+  * This adds just a single supplementary group that matches the parent's group.
+  */
+-static int get_create_supp_group(struct inode *dir, struct fuse_in_arg *ext)
++static int get_create_supp_group(struct mnt_idmap *idmap,
++				 struct inode *dir,
++				 struct fuse_in_arg *ext)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+ 	struct fuse_ext_header *xh;
+ 	struct fuse_supp_groups *sg;
+ 	kgid_t kgid = dir->i_gid;
++	vfsgid_t vfsgid = make_vfsgid(idmap, fc->user_ns, kgid);
+ 	gid_t parent_gid = from_kgid(fc->user_ns, kgid);
++
+ 	u32 sg_len = fuse_ext_size(sizeof(*sg) + sizeof(sg->groups[0]));
  
- 	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	/* Zero nodeid is same as -ENOENT, but with valid timeout */
- 	if (err || !outarg->nodeid)
- 		goto out_put_forget;
-@@ -672,7 +672,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+-	if (parent_gid == (gid_t) -1 || gid_eq(kgid, current_fsgid()) ||
+-	    !in_group_p(kgid))
++	if (parent_gid == (gid_t) -1 || vfsgid_eq_kgid(vfsgid, current_fsgid()) ||
++	    !vfsgid_in_group_p(vfsgid))
+ 		return 0;
+ 
+ 	xh = extend_arg(ext, sg_len);
+@@ -572,7 +576,8 @@ static int get_create_supp_group(struct inode *dir, struct fuse_in_arg *ext)
+ 	return 0;
+ }
+ 
+-static int get_create_ext(struct fuse_args *args,
++static int get_create_ext(struct mnt_idmap *idmap,
++			  struct fuse_args *args,
+ 			  struct inode *dir, struct dentry *dentry,
+ 			  umode_t mode)
+ {
+@@ -583,7 +588,7 @@ static int get_create_ext(struct fuse_args *args,
+ 	if (fc->init_security)
+ 		err = get_security_context(dentry, mode, &ext);
+ 	if (!err && fc->create_supp_group)
+-		err = get_create_supp_group(dir, &ext);
++		err = get_create_supp_group(idmap, dir, &ext);
+ 
+ 	if (!err && ext.size) {
+ 		WARN_ON(args->in_numargs >= ARRAY_SIZE(args->in_args));
+@@ -668,7 +673,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	args.out_args[1].size = sizeof(*outopenp);
+ 	args.out_args[1].value = outopenp;
+ 
+-	err = get_create_ext(&args, dir, entry, mode);
++	err = get_create_ext(&nop_mnt_idmap, &args, dir, entry, mode);
  	if (err)
  		goto out_put_forget_req;
  
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	free_ext_value(&args);
- 	if (err)
- 		goto out_free_ff;
-@@ -803,7 +803,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+@@ -798,7 +803,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+ 	args->out_args[0].value = &outarg;
+ 
+ 	if (args->opcode != FUSE_LINK) {
+-		err = get_create_ext(args, dir, entry, mode);
++		err = get_create_ext(&nop_mnt_idmap, args, dir, entry, mode);
+ 		if (err)
  			goto out_put_forget_req;
  	}
- 
--	err = fuse_simple_request(fm, args);
-+	err = fuse_simple_request(NULL, fm, args);
- 	free_ext_value(args);
- 	if (err)
- 		goto out_put_forget_req;
-@@ -987,7 +987,7 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
- 	args.in_numargs = 1;
- 	args.in_args[0].size = entry->d_name.len + 1;
- 	args.in_args[0].value = entry->d_name.name;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err) {
- 		fuse_dir_changed(dir);
- 		fuse_entry_unlinked(entry);
-@@ -1010,7 +1010,7 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
- 	args.in_numargs = 1;
- 	args.in_args[0].size = entry->d_name.len + 1;
- 	args.in_args[0].value = entry->d_name.name;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err) {
- 		fuse_dir_changed(dir);
- 		fuse_entry_unlinked(entry);
-@@ -1040,7 +1040,7 @@ static int fuse_rename_common(struct inode *olddir, struct dentry *oldent,
- 	args.in_args[1].value = oldent->d_name.name;
- 	args.in_args[2].size = newent->d_name.len + 1;
- 	args.in_args[2].value = newent->d_name.name;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err) {
- 		/* ctime changes */
- 		fuse_update_ctime(d_inode(oldent));
-@@ -1210,7 +1210,7 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err)
- 		return err;
- 
-@@ -1268,7 +1268,7 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err) {
- 		if (fuse_invalid_attr(&outarg.attr) ||
- 		    inode_wrong_type(inode, outarg.attr.mode)) {
-@@ -1472,7 +1472,7 @@ static int fuse_access(struct inode *inode, int mask)
- 	args.in_numargs = 1;
- 	args.in_args[0].size = sizeof(inarg);
- 	args.in_args[0].value = &inarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fm->fc->no_access = 1;
- 		err = 0;
-@@ -1584,7 +1584,7 @@ static int fuse_readlink_page(struct inode *inode, struct page *page)
- 	ap.args.page_zeroing = true;
- 	ap.args.out_numargs = 1;
- 	ap.args.out_args[0].size = desc.length;
--	res = fuse_simple_request(fm, &ap.args);
-+	res = fuse_simple_request(NULL, fm, &ap.args);
- 
- 	fuse_invalidate_atime(inode);
- 
-@@ -1857,7 +1857,7 @@ int fuse_flush_times(struct inode *inode, struct fuse_file *ff)
- 	}
- 	fuse_setattr_fill(fm->fc, &args, inode, &inarg, &outarg);
- 
--	return fuse_simple_request(fm, &args);
-+	return fuse_simple_request(NULL, fm, &args);
- }
- 
- /*
-@@ -1970,7 +1970,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 			inarg.valid |= FATTR_KILL_SUIDGID;
- 	}
- 	fuse_setattr_fill(fc, &args, inode, &inarg, &outarg);
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err) {
- 		if (err == -EINTR)
- 			fuse_invalidate_attr(inode);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f39456c65ed7..7d14d533dad1 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -48,7 +48,7 @@ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
- 	args.out_args[0].size = sizeof(*outargp);
- 	args.out_args[0].value = outargp;
- 
--	return fuse_simple_request(fm, &args);
-+	return fuse_simple_request(NULL, fm, &args);
- }
- 
- struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release)
-@@ -111,7 +111,7 @@ static void fuse_file_put(struct fuse_file *ff, bool sync)
- 		if (!args) {
- 			/* Do nothing when server does not implement 'open' */
- 		} else if (sync) {
--			fuse_simple_request(ff->fm, args);
-+			fuse_simple_request(NULL, ff->fm, args);
- 			fuse_release_end(ff->fm, args, 0);
- 		} else {
- 			args->end = fuse_release_end;
-@@ -539,7 +539,7 @@ static int fuse_flush(struct file *file, fl_owner_t id)
- 	args.in_args[0].value = &inarg;
- 	args.force = true;
- 
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fm->fc->no_flush = 1;
- 		err = 0;
-@@ -572,7 +572,7 @@ int fuse_fsync_common(struct file *file, loff_t start, loff_t end,
- 	args.in_numargs = 1;
- 	args.in_args[0].size = sizeof(inarg);
- 	args.in_args[0].value = &inarg;
--	return fuse_simple_request(fm, &args);
-+	return fuse_simple_request(NULL, fm, &args);
- }
- 
- static int fuse_fsync(struct file *file, loff_t start, loff_t end,
-@@ -814,7 +814,7 @@ static ssize_t fuse_send_read(struct fuse_io_args *ia, loff_t pos, size_t count,
- 	if (ia->io->async)
- 		return fuse_async_req_send(fm, ia, count);
- 
--	return fuse_simple_request(fm, &ia->ap.args);
-+	return fuse_simple_request(NULL, fm, &ia->ap.args);
- }
- 
- static void fuse_read_update_size(struct inode *inode, loff_t size,
-@@ -878,7 +878,7 @@ static int fuse_do_readpage(struct file *file, struct page *page)
- 		desc.length--;
- 
- 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
--	res = fuse_simple_request(fm, &ia.ap.args);
-+	res = fuse_simple_request(NULL, fm, &ia.ap.args);
- 	if (res < 0)
- 		return res;
- 	/*
-@@ -976,7 +976,7 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 		if (!err)
- 			return;
- 	} else {
--		res = fuse_simple_request(fm, &ap->args);
-+		res = fuse_simple_request(NULL, fm, &ap->args);
- 		err = res < 0 ? res : 0;
- 	}
- 	fuse_readpages_end(fm, &ap->args, err);
-@@ -1101,7 +1101,7 @@ static ssize_t fuse_send_write(struct fuse_io_args *ia, loff_t pos,
- 	if (ia->io->async)
- 		return fuse_async_req_send(fm, ia, count);
- 
--	err = fuse_simple_request(fm, &ia->ap.args);
-+	err = fuse_simple_request(NULL, fm, &ia->ap.args);
- 	if (!err && ia->write.out.size > count)
- 		err = -EIO;
- 
-@@ -1147,7 +1147,7 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	if (fm->fc->handle_killpriv_v2 && !capable(CAP_FSETID))
- 		ia->write.in.write_flags |= FUSE_WRITE_KILL_SUIDGID;
- 
--	err = fuse_simple_request(fm, &ap->args);
-+	err = fuse_simple_request(NULL, fm, &ap->args);
- 	if (!err && ia->write.out.size > count)
- 		err = -EIO;
- 
-@@ -2656,7 +2656,7 @@ static int fuse_getlk(struct file *file, struct file_lock *fl)
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err)
- 		err = convert_fuse_file_lock(fm->fc, &outarg.lk, fl);
- 
-@@ -2680,7 +2680,7 @@ static int fuse_setlk(struct file *file, struct file_lock *fl, int flock)
- 	}
- 
- 	fuse_lk_fill(&args, file, fl, opcode, pid_nr, flock, &inarg);
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 
- 	/* locking is restartable */
- 	if (err == -EINTR)
-@@ -2754,7 +2754,7 @@ static sector_t fuse_bmap(struct address_space *mapping, sector_t block)
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS)
- 		fm->fc->no_bmap = 1;
- 
-@@ -2786,7 +2786,7 @@ static loff_t fuse_lseek(struct file *file, loff_t offset, int whence)
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err) {
- 		if (err == -ENOSYS) {
- 			fm->fc->no_lseek = 1;
-@@ -2919,7 +2919,7 @@ __poll_t fuse_file_poll(struct file *file, poll_table *wait)
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 
- 	if (!err)
- 		return demangle_poll(outarg.revents);
-@@ -3141,7 +3141,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	args.in_numargs = 1;
- 	args.in_args[0].size = sizeof(inarg);
- 	args.in_args[0].value = &inarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fm->fc->no_fallocate = 1;
- 		err = -EOPNOTSUPP;
-@@ -3253,7 +3253,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fc->no_copy_file_range = 1;
- 		err = -EOPNOTSUPP;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index f23919610313..656575e3e4cf 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1154,7 +1154,8 @@ void __exit fuse_ctl_cleanup(void);
- /**
-  * Simple request sending that does request allocation and freeing
-  */
--ssize_t fuse_simple_request(struct fuse_mount *fm, struct fuse_args *args);
-+ssize_t fuse_simple_request(struct mnt_idmap *idmap, struct fuse_mount *fm,
-+			    struct fuse_args *args);
- int fuse_simple_background(struct fuse_mount *fm, struct fuse_args *args,
- 			   gfp_t gfp_flags);
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 115538f6f283..2e26810066e8 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -586,7 +586,7 @@ static void fuse_send_destroy(struct fuse_mount *fm)
- 		args.opcode = FUSE_DESTROY;
- 		args.force = true;
- 		args.nocreds = true;
--		fuse_simple_request(fm, &args);
-+		fuse_simple_request(NULL, fm, &args);
- 	}
- }
- 
-@@ -624,7 +624,7 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	args.out_numargs = 1;
- 	args.out_args[0].size = sizeof(outarg);
- 	args.out_args[0].value = &outarg;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (!err)
- 		convert_fuse_statfs(buf, &outarg.st);
- 	return err;
-@@ -713,7 +713,7 @@ static int fuse_sync_fs(struct super_block *sb, int wait)
- 	args.nodeid = get_node_id(sb->s_root->d_inode);
- 	args.out_numargs = 0;
- 
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fc->sync_fs = 0;
- 		err = 0;
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index 572ce8a82ceb..b40dd931167d 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -18,7 +18,7 @@ static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *args,
- 	args->out_args[0].size = sizeof(*outarg);
- 	args->out_args[0].value = outarg;
- 
--	ret = fuse_simple_request(fm, args);
-+	ret = fuse_simple_request(NULL, fm, args);
- 
- 	/* Translate ENOSYS, which shouldn't be returned from fs */
- 	if (ret == -ENOSYS)
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 0377b6dc24c8..e8a093289421 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -279,7 +279,7 @@ static void fuse_force_forget(struct file *file, u64 nodeid)
- 	args.force = true;
- 	args.noreply = true;
- 
--	fuse_simple_request(fm, &args);
-+	fuse_simple_request(NULL, fm, &args);
- 	/* ignore errors */
- }
- 
-@@ -358,7 +358,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 				    FUSE_READDIR);
- 	}
- 	locked = fuse_lock_inode(inode);
--	res = fuse_simple_request(fm, &ap->args);
-+	res = fuse_simple_request(NULL, fm, &ap->args);
- 	fuse_unlock_inode(inode, locked);
- 	if (res >= 0) {
- 		if (!res) {
-diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-index 5b423fdbb13f..6f8f1453b550 100644
---- a/fs/fuse/xattr.c
-+++ b/fs/fuse/xattr.c
-@@ -37,7 +37,7 @@ int fuse_setxattr(struct inode *inode, const char *name, const void *value,
- 	args.in_args[1].value = name;
- 	args.in_args[2].size = size;
- 	args.in_args[2].value = value;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fm->fc->no_setxattr = 1;
- 		err = -EOPNOTSUPP;
-@@ -79,7 +79,7 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
- 		args.out_args[0].size = sizeof(outarg);
- 		args.out_args[0].value = &outarg;
- 	}
--	ret = fuse_simple_request(fm, &args);
-+	ret = fuse_simple_request(NULL, fm, &args);
- 	if (!ret && !size)
- 		ret = min_t(ssize_t, outarg.size, XATTR_SIZE_MAX);
- 	if (ret == -ENOSYS) {
-@@ -141,7 +141,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
- 		args.out_args[0].size = sizeof(outarg);
- 		args.out_args[0].value = &outarg;
- 	}
--	ret = fuse_simple_request(fm, &args);
-+	ret = fuse_simple_request(NULL, fm, &args);
- 	if (!ret && !size)
- 		ret = min_t(ssize_t, outarg.size, XATTR_LIST_MAX);
- 	if (ret > 0 && size)
-@@ -167,7 +167,7 @@ int fuse_removexattr(struct inode *inode, const char *name)
- 	args.in_numargs = 1;
- 	args.in_args[0].size = strlen(name) + 1;
- 	args.in_args[0].value = name;
--	err = fuse_simple_request(fm, &args);
-+	err = fuse_simple_request(NULL, fm, &args);
- 	if (err == -ENOSYS) {
- 		fm->fc->no_removexattr = 1;
- 		err = -EOPNOTSUPP;
 -- 
 2.34.1
 
