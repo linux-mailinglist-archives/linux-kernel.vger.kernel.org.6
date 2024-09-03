@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-312852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFF8969C71
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:51:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785C9969C86
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE9DB23BD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241551F25B0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDD91B984D;
-	Tue,  3 Sep 2024 11:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QFfm+qGp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4foM/D8q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68F51B985D;
+	Tue,  3 Sep 2024 11:56:22 +0000 (UTC)
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EDE1A42D8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8F019F41F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364258; cv=none; b=WzEX9wPD/MYklSZ3zHbPfE0KtnCf2NRpkO4H5c+gFV764c6A4WLIu2cwJrWzSMQHU55oZVR+pYlUQSAKkl9VNAcDq6tvlaf7BaFk5CtvmKq1WQgwoq93ruymXWK8CHUG/sUOteTiq1ukWgD+SLiIYMmyX9iIXmF4Gy+b1qP5zKs=
+	t=1725364582; cv=none; b=ow6UrtXVzCU/RNho33U7DDxigkp/n8PuEYkybgy655MdPBBhMGmtJHG7F7Y/Fxso22e/Xjy1J0ssM9Ue7k8170fQob0gFxH0FJZSZtKth9vMO4RG1eEBSnnySF+gZXUh/EL8uZVhtG6tVZo+RbAjLFTOpZF01/9P0Lk0DGY+KeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364258; c=relaxed/simple;
-	bh=CZBsmTZIVXelg9yBz+T49guuUX5vDPDlpK5hF0wRiMg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LZQPebnruloWgYS0SRT0I+5bvPVnWkzucwayn/yatWzcN4K6O8sLUbHR9GBaJArQqb8gjObKeEskGN9iYILLRoGVlCN8qTzMS/zWCkkDDGxaQsHOIDDaqOyo8pqf1THNM+XXUlwtfXIaQauI7Ez+KzteVrWdHUCzAQL/adbCO6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QFfm+qGp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4foM/D8q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725364249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1dwO7EL6YycvwVYVv5JRFzng2Q1LL9OESDppVBBsWQ=;
-	b=QFfm+qGptQ2DptZLy9xzzL7Td1rhv4U0Mn7i9rZ8TjBhyF4+INlgb8TUgTz6rg+WyDwzeH
-	b7QStz8qFBrF76zAM6us2zfdliUUr69InFhNgd9p7nRbxNv8KH1sIAjW7SXN9zjWwBelCG
-	RlFO5JW+JwBI33tp/fE6QFus15jJIYecnkRb/stlFppL+vGJbtkM/Vz1KwISV/GkV6qqo5
-	NlsNchzorkQACQrfohQoDdVLc7QjJl0uAgg/Zsf/aK88kKi7o++pW41AZbH3GI11o3lYHa
-	usrQzXhwX59EmWAM7qcoeSCxgc3B0iAdbt/59RmmvnUN4knWxswdQRqNm60LsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725364249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1dwO7EL6YycvwVYVv5JRFzng2Q1LL9OESDppVBBsWQ=;
-	b=4foM/D8qtngFSwciSjaLcOIYs77rgcTQEdCjnAVz4/j+e/HMTK9tRHZTcmKtsaTtFJ6RrO
-	tgSyok4GNWlA9ICg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v5 09/17] printk: nbcon: Rely on kthreads for
- normal operation
-In-Reply-To: <Ztbgi4-gDvxMYMXw@pathway.suse.cz>
-References: <20240830152916.10136-1-john.ogness@linutronix.de>
- <20240830152916.10136-10-john.ogness@linutronix.de>
- <Ztbgi4-gDvxMYMXw@pathway.suse.cz>
-Date: Tue, 03 Sep 2024 13:56:48 +0206
-Message-ID: <877cbtj6qv.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1725364582; c=relaxed/simple;
+	bh=tzr0tMSvLofHsivK4RyE1rSmjxQf2TavoJx1LBG6zIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Proi+d68YGD2ZFAas3k+zqVYQp/3URntxG+HtOu22zL39NlJOcLDLExf2tjhmjE4/arg6XgXceDHM71J85bnk1RwzWz4peVe+Va1R+YPREQc2sYFr3XoQdluhxhq8S/s/UGbJJ9mjGuBOIk07lhZOHXIeWx1HXrLzsxwjAp6hec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id DE3F61F965;
+	Tue,  3 Sep 2024 13:51:01 +0200 (CEST)
+Date: Tue, 3 Sep 2024 13:51:00 +0200
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Subject: Re: [PATCH 02/21] drm/msm/dsi: fix DSC width for the bonded DSI case
+Message-ID: <p6xw4newsbrpog5ftclvgi2mpg3hn3ujfukmtilqewz7kbjhqh@6geosjawh3ul>
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-2-bdb05b4b5a2e@linaro.org>
+ <rspuwp3zpnzwfe26hv2yezy5ad5o7wliq7ucpobyaheytvcs3j@qtshf6cewb2f>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rspuwp3zpnzwfe26hv2yezy5ad5o7wliq7ucpobyaheytvcs3j@qtshf6cewb2f>
 
-On 2024-09-03, Petr Mladek <pmladek@suse.com> wrote:
->> @@ -3071,12 +3080,21 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
->>  	do {
->>  		any_progress = false;
->>  
->> +		printk_get_console_flush_type(&ft);
->> +
->>  		cookie = console_srcu_read_lock();
->>  		for_each_console_srcu(con) {
->>  			short flags = console_srcu_read_flags(con);
->>  			u64 printk_seq;
->>  			bool progress;
->>  
->> +			/*
->> +			 * console_flush_all() is only for legacy consoles when
->> +			 * the nbcon consoles have their printer threads.
->> +			 */
->> +			if ((flags & CON_NBCON) && ft.nbcon_offload)
->> +				continue;
->
-> I mean that we really
-> should handle nbcon consoles in the legacy loop only when there
-> is a boot console (both ft.nbcon_* == false).
+On 2024-09-03 11:50:36, Marijn Suijten wrote:
+> On 2024-08-29 18:17:31, Jun Nie wrote:
+> > From: Jonathan Marek <jonathan@marek.ca>
+> > 
+> > For the bonded DSI case, DSC pic_width and timing calculations should use
+> > the width of a single panel instead of the total combined width.
+> 
+> When this patch was originally proposed we already discussed [1] that this is
+> **not** universally true.  On my hardware a single bonded panel always receives
+> the full width, at least on downstream kernels, and it works [2].
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/eanx45rnasj7lu3r2tfhtg4qkqkcidd6zctsz6ci6jlklu4fgi@3nf73w2ka4li/T/#u
+> [2]: https://gitlab.freedesktop.org/drm/msm/-/issues/41
+> 
+> Can we please figure this out before landing this patch?
 
-Agreed. I will change it to:
+For completeness I've picked this patch, together with the following
+mis-squashed change from patch 03/21:
 
-			/*
-			 * console_flush_all() is only responsible for nbcon
-			 * consoles when the nbcon consoles cannot print via
-			 * their atomic or threaded flushing.
-			 */
-			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
-				continue;
+	diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+	index 7a4d9c071be5a..5abade8f26b88 100644
+	--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+	+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+	@@ -953,7 +953,7 @@ static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
+	 			return;
+	 		}
+ 
+	-		dsc->pic_width = mode->hdisplay;
+	+		dsc->pic_width = hdisplay;
+	 		dsc->pic_height = mode->vdisplay;
+	 		DBG("Mode %dx%d\n", dsc->pic_width, dsc->pic_height);
 
+And this is what it looks like on a bonded DSI CMD-mode display:
+https://gitlab.freedesktop.org/drm/msm/-/issues/41#note_2553207
+https://gitlab.freedesktop.org/-/project/2206/uploads/dc5c53d09ecb635fdc9f190fbc9b37ac/1000027079.jpg
 
-Also note that patch 15/17 ("printk: Implement legacy printer kthread
-for PREEMPT_RT") has the same check in legacy_kthread_should_wakeup(),
-which I will also update.
+That's a clear regression :)
 
-John
+- Marijn
 
