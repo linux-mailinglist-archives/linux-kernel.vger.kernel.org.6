@@ -1,86 +1,94 @@
-Return-Path: <linux-kernel+bounces-312532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043089697D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C959B9697D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35EDF1C22AAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:51:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7229028A1FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2D1C7667;
-	Tue,  3 Sep 2024 08:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA73C1C7691;
+	Tue,  3 Sep 2024 08:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Fkadgr2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMBoGxK6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861271C7662;
-	Tue,  3 Sep 2024 08:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFB31C7662;
+	Tue,  3 Sep 2024 08:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725353385; cv=none; b=FoM3/kdeXLlr6DkVpSmTC2O+0N220h8m70iw+RJ7gbZZDC0vnKKFLQnkxfwyV/TpAsXGbHIySihPT8VjE4gfP/VE83ioQ4JQcUrqIUdVIqcpJ0AcZz4+0NGWYqJmH3TCYkGmF3IVv0dFZWs8O7P0x3meSsoVt8PUdrphT6+kGNA=
+	t=1725353430; cv=none; b=ImAhtJX83LOOT1jEabuHmps1zeE9/KGfHPD67oVISup05a1oe5/qQN0aR0lDdeZcycezc5DURKcvZuiPxOQAr1INZlb65ZGIx4iO+SGXs7kVDOoS3syVZTt2/awVbfFL3EyL85KtH1DuNk686Etw9644uUcQS8mzdg6HzhUTOCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725353385; c=relaxed/simple;
-	bh=XX9z8YCDy27CoDZtJF/sIR8V50PVNzRI4OMkqgjKb8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHRFE15Iz/SwjNlxHJgOEjguo99swHeHWgS0W6V9S6bA3iNSNZcIcL7MUtUwzCGChIh8bGgwNwZCUG1A6lY1B5EZG/5Jan8aMgHJAoEI9wO2uzgPvbZ12yjYZK6iwlC4H5AWk82K8GtEjlbuTD/wB/IzvBV4PsoxbfUzH+m5XKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Fkadgr2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 960F1C4CEC4;
-	Tue,  3 Sep 2024 08:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725353385;
-	bh=XX9z8YCDy27CoDZtJF/sIR8V50PVNzRI4OMkqgjKb8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fkadgr2zXJn6wfmFpEQneqHH+x4JJBcVPgAY0VFviigUYFNIoNejwMAzZrhMusPKW
-	 JJFDkb5EbxCosyUieY2TQpR7B2upbrkU+7cRpM5+vhK6vMar/MHrNpDOgx/gN8y9us
-	 8EK8K7dl4aBwEaClo/EJAR0yBCXD7yEAS8jEA/v8=
-Date: Tue, 3 Sep 2024 10:49:42 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] i2c: core: Switch I2C_COMPAT to default n
-Message-ID: <2024090319-subsystem-quack-27a1@gregkh>
-References: <4660a46b-9128-4407-8baa-f257245784a3@gmail.com>
- <8e618f52-413c-41c1-9ac2-0260a1904792@gmail.com>
+	s=arc-20240116; t=1725353430; c=relaxed/simple;
+	bh=4mHd+JzrSWsn4wEgnwlHfHRfgWpiCwtBiy0CiLviTPk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=SHJ3fllW8avIoGv7VoEkjnvd0Y0ErQwda2YnJrhBSSEGJRiuK1/7BkSvPNrjl/u/wQxzAVZc1jluaFe5s7ceBhfcMMdm9dSBCcFWeThHe1lkxlwb5cZb5tVP0IzWsTlLvvgwlbEANvaFEjh7xdka5helryyrESh9VTh1wW8I0FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMBoGxK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C814AC4CEC4;
+	Tue,  3 Sep 2024 08:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725353429;
+	bh=4mHd+JzrSWsn4wEgnwlHfHRfgWpiCwtBiy0CiLviTPk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=vMBoGxK6j0nkdX9OOM//zNsGdDak1KCLeU/I695WRXHz8zcuvDBlFkoN+stS1/9/+
+	 E/8P8BAF8TtjRHOhAnUC+hxyTV4CiN7+GakZRVVUOTv40bYUtbQOOqzNaenrOipvAq
+	 3z81aOj2tygq3G3kgyhkFcc40/MZp9K6nsjPTn2YihgwEakuC7lJIppIiayEuk5UBS
+	 YaFiYi1Cutg2t7EsNx11ELYrr5FnAB90U3UHRQ5pL+/gxS5u7RPtXSR9VZaA09Bmda
+	 r+zdvbDSPP4sgcamOICrtcsXLRp1S8dt6i0UYFmC8u3k7kmrTzyfuu6noinrHXByP3
+	 /txQKl5/iV+2w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE363805D82;
+	Tue,  3 Sep 2024 08:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e618f52-413c-41c1-9ac2-0260a1904792@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] net: dsa: vsc73xx: implement FDB operations
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172535343050.216623.17080034162332629200.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Sep 2024 08:50:30 +0000
+References: <20240827123938.582789-1-paweldembicki@gmail.com>
+In-Reply-To: <20240827123938.582789-1-paweldembicki@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, linux@armlinux.org.uk, linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2024 at 09:01:18PM +0200, Heiner Kallweit wrote:
-> I2C_COMPAT has been considered deprecated for 15 years now.
-> Therefore make it default n, before we remove support for it
-> in the near future.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue, 27 Aug 2024 14:39:38 +0200 you wrote:
+> This commit introduces implementations of three functions:
+> .port_fdb_dump
+> .port_fdb_add
+> .port_fdb_del
 > 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
->  drivers/i2c/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> The FDB database organization is the same as in other old Vitesse chips:
+> It has 2048 rows and 4 columns (buckets). The row index is calculated by
+> the hash function 'vsc73xx_calc_hash' and the FDB entry must be placed
+> exactly into row[hash]. The chip selects the bucket number by itself.
 > 
-> diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
-> index 44710267d..e5721cebb 100644
-> --- a/drivers/i2c/Kconfig
-> +++ b/drivers/i2c/Kconfig
-> @@ -42,11 +42,11 @@ config I2C_BOARDINFO
->  
->  config I2C_COMPAT
->  	bool "Enable compatibility bits for old user-space"
-> -	default y
-> +	default n
+> [...]
 
-Just remove the default line, that way it will default to 'n'.
+Here is the summary with links:
+  - [net-next,v3] net: dsa: vsc73xx: implement FDB operations
+    https://git.kernel.org/netdev/net-next/c/075e3d30e4a3
 
-thanks,
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-greg k-h
+
 
