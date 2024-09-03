@@ -1,122 +1,132 @@
-Return-Path: <linux-kernel+bounces-312015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D8D9690EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:31:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A709690F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFF31C225A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DAA28364F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107AA1CCED7;
-	Tue,  3 Sep 2024 01:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C9C13D51C;
+	Tue,  3 Sep 2024 01:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mzxQT8rt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxPxVE3/"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD89915D1;
-	Tue,  3 Sep 2024 01:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8F83209
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725327055; cv=none; b=plw99SYmEjlTQwsrSUp56piw/1sbdkqCjhPkffuBra4zBfI5hdyJn0bl0L/U7rpOTCn9P+Y0FOtYK+QPBFVoVP47mKSpJmJ6f418Uwsd8RN216VJxHMdMohaXhD3gBgo4xufcOcVST8WWnPoPTNOjLH5K3b0vFTQrh9G2/50/HM=
+	t=1725327087; cv=none; b=HwybPdsnHL45ceJrq9G5x+WONEAcxSvP1/8TX+S3TQHhIyN5ZEgcJ6b7C1qM8W59NUAdvZfUE/zMexpW1lTkudcGDn2bZgOaMtdB+ic+CRbX+q3m9CSYtUbN1URZM//wkzJRbrr1xvaRfHxhVkrj5orWMif6fv0QLsesVk0636U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725327055; c=relaxed/simple;
-	bh=fo7tlYkk9jPrt8TCHcHcAOeb3lNp4WaAVXtPx2TeG44=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dH31ZTOYYvgsvCNQoOASkqXay67VPjWvBIMA4ourxjL/h4xC9wPLQIy0oBntz3B2RUe160F6vfTG+W0pvhxs+wAPazJ23OVFfb68SbD5MVpoohjdVe1HhT3ZWEZ8bh9Hx8lApR724Uwq+S/NRFodQpIBqeLwL87GTReSAZX3WfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mzxQT8rt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482NxE8T018430;
-	Tue, 3 Sep 2024 01:30:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=FVtv6Yv3URoaXC2cEmRj1Trd
-	fRNj2NGxOvBSfbiEjBo=; b=mzxQT8rt03QoCje6Gqosjg8fgZLCeEF+wXcCzkv2
-	gHyxMqUKrb/ml6wHB0M+SxNh+YIhnzDLlOEPZFDrKUmye+qaqj1JlScwQj+MX6lm
-	RoKbQCTr7mTFPIeZCQ3HaReiMgNbZXpz1O2QdFPaqW24vv9fUpDnqbo+i6MO9IU2
-	bcSWLOyTQHDW1+XxIuWg2u9aZHyQUCH3z4csl+ac/HNHI9IK69nabGwwGtCy9wJY
-	134p37d9ltbvZhDGoNfNDxnmfFpwEN7/gnCfhN/2kp3071KBJhZZURMfbevjTFm/
-	bp2S2dK5gk/kRW7sYjJ8BTqJ/eMfOXd6KZ1XHmyKpVBC5Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bud2nt1r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 01:30:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4831Uonw007441
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 01:30:50 GMT
-Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 2 Sep 2024 18:30:45 -0700
-Date: Tue, 3 Sep 2024 09:30:41 +0800
-From: JieGan <quic_jiegan@quicinc.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        Yushan Li <quic_yushli@quicinc.com>
-Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
- x1e80100
-Message-ID: <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
-References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
- <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
+	s=arc-20240116; t=1725327087; c=relaxed/simple;
+	bh=6N9IMqONhc8ovVa/I+bRuEjxo0eqJD/jmXxi89rGuF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJH0A8tpAXmr9PQIXiPKSRrFWQX26PZApMoJjDGGCw/OhIXFG/m0eUO0Vv3O/ruSxYAck4PD/m//eAg57KJCj82+FgV8MkWMqnxfmKml/HDwZL6nHlGpvtXtmhmbTC5222LKRkJ/DYbRcXiDuWXeCgRA+6olnKwblKBoqPlN9B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxPxVE3/; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39f539a83e0so7104835ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 18:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725327085; x=1725931885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ri20ZOYkB6yhJ6cFc5B/D/pVjfJR6mNPKrohtebri3s=;
+        b=CxPxVE3/tJOWlxD5UrBTki2TagT1CptUPGBFTvIp2CedBt4qR+3xOOABHjv1C8IKf9
+         oR352Kt+rZMHXuES7j/G8IAxz5uf18pg7wAZODOJbca765FYcU/30n9gEoS8YymhaK8X
+         d4mblwdNLANV2ldDQIUmx1OZcX9YWqq1TeB594ANbYEH/nQBWVPtFBduR3CBSZsEzk/6
+         hCuNjswvxYuwPqevwW+yw+O0En8sb0oOEN2mJlwIwwx6Rf14IOVbZ3kRO0kzLtcinQs+
+         xIw2flEeYDw7fQJSm5aJB0oPYUiO6uDiV0MZcj2BQDcFNHsTggR7kaP4nxnM903R/6Mm
+         24UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725327085; x=1725931885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ri20ZOYkB6yhJ6cFc5B/D/pVjfJR6mNPKrohtebri3s=;
+        b=qUgivoYBYgXMzE0YmvdCC4XD8WuyV9LP/R4WS5bIUgqIVNARJR5FCESXQczX201Wo5
+         Y2lNDhCxXT8kuiOq2jKm26PqcBOVJHNocACpVZAEBbSfQZkhJxocg1fbE/N3sV2vAw4Y
+         xWip6Tyt5IsfIO7nNbiK8jZF7iMx6hLtuJL7nu7+g/qGmaVoDUKDsE+NKeAED+drLP0p
+         MoxKwRW9DnXfpt+OTk4BcFrroOtliqvAl1OrnUbs29lOHUx8ndjXnHj10iefC3dE4E7N
+         GVr0XiA4IlosJo8/wZPlcfSPwa8AflOt4Nn8MwVXNJnEqzVF9PvFdAWtcCaqOSV7GP5R
+         2kmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnT4y2DO9TdyIc3IrXjqoxLBE7PlGWdlG3rwewUkhC8xi9R/+R1H+k6DCl7aVbmINP9EqyvVzozsLC7b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyx+K6g3bukfr5VkJLTz0ZLTJ7o7hGyk/9qtoKuQ4JOk40kDvD
+	NWj1/HRoyecfcViMIgzXYrVRPC3qzLrqrAXZLSannulM8LtQHNzV
+X-Google-Smtp-Source: AGHT+IFIfhrL+8F5pUB/1ZWQVwcOphee+yoon27dy0Y1M3N/0zhMlC9OjINpNwWzDme7omhpCnFoXA==
+X-Received: by 2002:a05:6e02:18c5:b0:39d:41e7:e093 with SMTP id e9e14a558f8ab-39f4e1293c4mr100508905ab.25.1725327084965;
+        Mon, 02 Sep 2024 18:31:24 -0700 (PDT)
+Received: from aford-System-Version.lan (c-75-72-166-104.hsd1.mn.comcast.net. [75.72.166.104])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3b059c32sm28466715ab.75.2024.09.02.18.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 18:31:24 -0700 (PDT)
+From: Adam Ford <aford173@gmail.com>
+To: linux-phy@lists.infradead.org
+Cc: dominique.martinet@atmark-techno.com,
+	linux-imx@nxp.com,
+	festevam@gmail.com,
+	frieder.schrempf@kontron.de,
+	aford@beaconembedded.com,
+	Sandor.yu@nxp.com,
+	Adam Ford <aford173@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V4 0/5] phy: freescale: fsl-samsung-hdmi: Expand phy clock options
+Date: Mon,  2 Sep 2024 20:30:42 -0500
+Message-ID: <20240903013113.139698-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JLfugollkkDNoaYPF8vxTlDZppvg3GJ9
-X-Proofpoint-ORIG-GUID: JLfugollkkDNoaYPF8vxTlDZppvg3GJ9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- clxscore=1015 spamscore=0 mlxlogscore=637 malwarescore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030010
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
-> On 27.08.2024 9:27 AM, Jie Gan wrote:
-> > Add coresight components for x1e80100. This change includes CTI,
-> > dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
-> > 
-> > Change in V1:
-> > Check the dtb with dtbs_check W=1, and fix the warnings for
-> > the change.
-> > 
-> 
-> Applying this series and enabling CORESIGHT=m (along with all the options
-> in menuconfig) breaks booting on my X1E Surface Laptop 7
-> 
-> Konrad
+Currently, there is a look-up-table to describe all the clock options the HDMI PHY
+can use.  Some of these entries in the LUT are using a fractional divider which does
+not have a well documented algorithm for determinging values, but the the integer
+divider can use an algorithm to calculate the integer divder values dynamically
+beyond those listed in the LUT and also duplicates some of the entries.
 
-Did not observe any booting issues with our devices. Any relevant log to share?
-This patch also tested by my colleague.
+The first two patches do not do anything functionally other than simplify
+some of the register accesses and de-duplicates some of the register look-ups.
 
-Can you successfully boot without the patch?
+The third patch adds support for the integer divider and uses it whenever the
+clock request is an exact match.  Otherwise, it will use the LUT as before.
+The rouding is still based on the LUT if the integer clock isn't an exact match.
 
-Thanks,
-Jie
+The forth patch updates thes set_rate and round_rate functions to use either
+the fractional clock LUT or the the integer divder mechanism to determine
+which ever clock rate might be closest match.
+
+The last patch removes the integer divider entries from the LUT since by then
+it'll be comparing both the integer divider calculator and the closest value
+in the LUT.
+
+In my testing with a AOC 4K monitor, I was able to add 4 entries in my modetest
+table.  I do not have an HDMI analyzer, so I just used my monitor to determine
+if this series worked.
+
+Adam Ford (5):
+  phy: freescale: fsl-samsung-hdmi: Replace register defines with macro
+  phy: freescale: fsl-samsung-hdmi: Simplify REG21_PMS_S_MASK lookup
+  phy: freescale: fsl-samsung-hdmi: Support dynamic integer
+  phy: freescale: fsl-samsung-hdmi:  Use closest divider
+  phy: freescale: fsl-samsung-hdmi:  Remove unnecessary LUT entries
+
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 575 ++++++++++---------
+ 1 file changed, 291 insertions(+), 284 deletions(-)
+
+-- 
+2.43.0
+
 
