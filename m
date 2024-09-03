@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-313733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129C696A925
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:54:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E2B96A74D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2391F22717
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E671C23035
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B281E4134;
-	Tue,  3 Sep 2024 20:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C6B1922C7;
+	Tue,  3 Sep 2024 19:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cm8+P0uU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TkH6RSzB"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04191E4125;
-	Tue,  3 Sep 2024 20:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346AB1D5CEE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725396336; cv=none; b=M12H9CzUCB0lYWqT5DnI6AszdRzSovMv4YzzaTToGF/znYthqwy06dXA6JmKT+LIragd0ftmd8rZLU6wuMwSUnxxJ5Hh8/7rHzzCAcnaXhUcOO9JU2SNN0TGS1MHtXUDAfRRgGlIgA2a6tnWQM391XvlrPC8WuUN111jlU3dmY4=
+	t=1725391536; cv=none; b=PbvSZBaYufWZr1zZX4WEeRmQEGS/5PNg0/jwww75HGIwNUFgmTIAXaA9D5NVIqe01hvQGOLQ5d2KGWwHPpwfskR/nw8vxQrNrpQYnno4vvpBju9oHdgLkP1N1As/7t13LtFCHUgPdMO3StpgA8HOGwCGBDTSgtrenc7z69SeiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725396336; c=relaxed/simple;
-	bh=NakiwtTYinhxeOjkF47hrXF4IPqcNM1LMougrhOEANk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KOsBi8TvzIodfAgB3AjhfjZu3F6oXVY9txCw79U5Fxtlsu0kql748Gm/U+blQX+H+EEcRFKQP85Rf8lOMmeM3yeUBwHAzMFS7vw/CkjvvLOxUmSU9bUgOhGUCZqV26DW9tr0AjD5W9xvDWnyNZu9OPkf+frenEW4YF+8RYWex1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cm8+P0uU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A98F1C4CEC5;
-	Tue,  3 Sep 2024 20:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725396336;
-	bh=NakiwtTYinhxeOjkF47hrXF4IPqcNM1LMougrhOEANk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cm8+P0uUbw93dCMUrsCtG8i0Tg/V8XT7CL2sn8PUOUJG/I9kkENqHOjtMC0DmBsR9
-	 2UdtYouYNd1DA8VfayRiiYA9WpXlliaL5xY2EZ9IOIQf0Gl8urAs32xb9QwJ9xb58d
-	 mU95amSLL7jTN7wihPiAKk7Hz/wEa8c3T0wB0Z7x90fJCB9Wt10asq1KkZ0oXW1y16
-	 r6vRAucCY4Khaw4ytt9DdsLoOBlPedGBPPjIrjEmB1LpzG1TYrnqY1+KSOEz/VBTmU
-	 AhJpQfjAJNDaD+Z8ukMf+zR2Z2hlggOuULrlDKGT8lUx2bLVAZj89MkzQGbVDpv/wa
-	 MMUoDwOcOQIQQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ross Brown <true.robot.ross@gmail.com>,
-	Eugene Shalygin <eugene.shalygin@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Sasha Levin <sashal@kernel.org>,
-	jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 08/17] hwmon: (asus-ec-sensors) remove VRM temp X570-E GAMING
+	s=arc-20240116; t=1725391536; c=relaxed/simple;
+	bh=ykCWykWpqVTMRvC3YPz6AH99OxBvDavSRS0ceXi2Zrg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DEUornYA4l/k9qPKgh8pptn+Y+qYoUYaBr5AkIq0M1o1YBA/wfj26OMX33pUDyXNxI1XJ+8LsKq8CAk2z3YTWXnBmeVw3KGly7cyJ0rtRdVPO/TtybdhM43xsXGPc+NNuouUSr4uLOcJJqpta3RehBRy64fi4Phs27r66tNvUIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TkH6RSzB; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725391531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QF360K14VcVg7z2XyE8+/3/eZAXYC2hLsD6VFynELLc=;
+	b=TkH6RSzBANNSz9eMRL4aH1xDpt+94KF6D3b99fh83OcYt65v9F58AnMqcnx1zqkdQhMdGD
+	6qdScVDA1xOw5SUsCacyH4LihW5/0G8vWk8vdOhhvSZLup6kaNQODxPYQQx9AWF3LsMvbC
+	f2a0rTOpUvfhwqYvCV9C61uIV+4mpmA=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	Heng Qi <hengqi@linux.alibaba.com>
+Subject: [PATCH net-next 0/2] net: xilinx: axienet: Enable adaptive IRQ coalescing with DIM
 Date: Tue,  3 Sep 2024 15:25:22 -0400
-Message-ID: <20240903192600.1108046-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903192600.1108046-1-sashal@kernel.org>
-References: <20240903192600.1108046-1-sashal@kernel.org>
+Message-Id: <20240903192524.4158713-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.107
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Ross Brown <true.robot.ross@gmail.com>
+To improve performance without sacrificing latency under low load,
+enable DIM. While I appreciate not having to write the library myself, I
+do think there are many unusual aspects to DIM, as detailed in the last
+patch.
 
-[ Upstream commit 9efaebc0072b8e95505544bf385c20ee8a29d799 ]
+This series depends on [1].
 
-X570-E GAMING does not have VRM temperature sensor.
+[1] https://lore.kernel.org/netdev/20240903180059.4134461-1-sean.anderson@linux.dev/
 
-Signed-off-by: Ross Brown <true.robot.ross@gmail.com>
-Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
-Link: https://lore.kernel.org/r/20240730062320.5188-2-eugene.shalygin@gmail.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hwmon/asus-ec-sensors.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index b4d65916b3c00..d893cfd1cb829 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -369,7 +369,7 @@ static const struct ec_board_info board_info_strix_b550_i_gaming = {
- 
- static const struct ec_board_info board_info_strix_x570_e_gaming = {
- 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
--		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
-+		SENSOR_TEMP_T_SENSOR |
- 		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU |
- 		SENSOR_IN_CPU_CORE,
- 	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
+Sean Anderson (2):
+  net: xilinx: axienet: Support adjusting coalesce settings while
+    running
+  net: xilinx: axienet: Enable adaptive IRQ coalescing with DIM
+
+ drivers/net/ethernet/xilinx/Kconfig           |   1 +
+ drivers/net/ethernet/xilinx/xilinx_axienet.h  |  18 +-
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 254 ++++++++++++++----
+ 3 files changed, 220 insertions(+), 53 deletions(-)
+
 -- 
-2.43.0
+2.35.1.1320.gc452695387.dirty
 
 
