@@ -1,135 +1,257 @@
-Return-Path: <linux-kernel+bounces-313312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5580696A395
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB8D96A398
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1098C282229
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8A11F24A0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01074189533;
-	Tue,  3 Sep 2024 16:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39954189530;
+	Tue,  3 Sep 2024 16:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYVHZ9XT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avChr2Ms"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8047462;
-	Tue,  3 Sep 2024 16:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3587462
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379534; cv=none; b=fCyxY8Vgj5rYwQf6vRxHutAqpeSKloOF1vr9HvsUJG2qyZIIbGIEx1pF0uq1xeCPs5TgeeeYhGrt+j3nqAmuPBmXND/JbLNZUjjpr6S2Db0/zMlloNG0kgInLEmL2Bw6DJNG1ywHTRki2sS+if7LMm9LWgKu7Q66zkC7jbn+Y8U=
+	t=1725379542; cv=none; b=t0UyoZUuMYFgl9NtYQ74kOrSaUNWmqnXcoH1mnrk4bl/1Y+6TvzEmZZzjT0wYddEaMEK000J58KWCO4ajToTsG7F0ggTy5GggM+jwJCP4RfCYEbA/1s4WB/7LrKAadnEThPo0APGLsmZjbZp0v7O26tHqZhmCQFOZz9UqXAVVMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379534; c=relaxed/simple;
-	bh=JHv20sPeSrhPSLL+jYVyMfFLG+chzXIHdmnI9Hk2T/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fM5mHiRDjxcYPGJ008KQWfBg0qGTw65A8G5bUiPKSp9XPTzPAzrsEUH9ls0gEI5OUl33xtOQWBQXCuhhxoYHP7dU11kLq6FqlsGd2nV9ERiXmOjohcJZdAFYm0nNe/Iu2/u6NhDHF1hyEqMVsjhduMVodxfPsWTeTxNjQavbKEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYVHZ9XT; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725379533; x=1756915533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JHv20sPeSrhPSLL+jYVyMfFLG+chzXIHdmnI9Hk2T/M=;
-  b=iYVHZ9XTYB8lltDBlUeLB0D6NnG4GCxyFBSNTuR288pCdtrcsaI8XsRk
-   K6qsPuzFW1k6mhhKkCh98r4ZxRiuS2qndLgzrAeH6pFOjUr0xeplF6LMG
-   y4VjL5oApJHdh6ame7m0IH1FgspyPddlOZB3j/xBATJSZGmcvPrfMl6fl
-   szfI90XyF8gQsrIW3sE5Gf/UPJyCClRMm820/QV+Zy9ioteQpcSOkNxS2
-   Cx2w1tSttFdZtzo/irtkA8o5E8mAFljUq4rrMIrta2M0nXkX+TfjlHMHH
-   /IWzlLbzermWJJPjnUDA0BOXrIsl9Kt7p+mSiPYEEKnQt02SiSN2X4fL2
-   g==;
-X-CSE-ConnectionGUID: 5Sf6DstHSR+rFb1tTrHT5A==
-X-CSE-MsgGUID: Uh9RCvVaSByPFsVpdYF1zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34558996"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34558996"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:05:33 -0700
-X-CSE-ConnectionGUID: /Wyly19aRm2ltpGETJZ8Lg==
-X-CSE-MsgGUID: wCSx5JsJRMSA7hJYjnnoKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69110624"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:05:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slW22-00000004lMM-3zj4;
-	Tue, 03 Sep 2024 19:05:26 +0300
-Date: Tue, 3 Sep 2024 19:05:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v3 09/12] gpio: rockchip: change the GPIO version
- judgment logic
-Message-ID: <ZtczxlCJLD3lkrkE@smile.fi.intel.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
- <20240903073649.237362-10-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1725379542; c=relaxed/simple;
+	bh=2wQB06Ioy56Jp4yrDEUkgoleTrLVnxBL9fMf8S5OGvI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A+M8O8anBE2oDcJ1dfRKd5lhLruIHXr1VxJZntn1nHldePFxTF/LwSSw3wkDitdoY7PK4ZI0/dV6iCUQ8oYiFCuWPf9+ap06fGsBXrkMLz9LbbiRzyyijJSaDId43qksPHA0fDmam1VCqwD3U3awGPQ3bCi/66+RCQymEfmQul0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avChr2Ms; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8605C4CEC4;
+	Tue,  3 Sep 2024 16:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725379542;
+	bh=2wQB06Ioy56Jp4yrDEUkgoleTrLVnxBL9fMf8S5OGvI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=avChr2MsAIGfNuJzgWRsfivkfHVS8fPzjeV0R5R5OcUB44Dwz+v0Eyg7EVtT1bMza
+	 K/scvAyygsVoSlXuVMLVDmTfLcrFwKoV6jovrvvsb8/KgA7iHIg2xgYa6KGOxxbczn
+	 2O4IAS6kuZqvMujtxLx/JMQ08mWc15bRpPvZxbx7H3DlpGx5eT4KBNUjyEEpBnmA3l
+	 mtOZxVishLdwxwj2VXpT8mIq4hYP7eb1K3eS/Y++n3V3pROQFDrnh5D884OOgfhsqR
+	 IfbBVzadiQkjKPLqKW6hAeaGVrB7Rjha/yHqCVY3eLxKXvJuRGHJr7+qdhk3yZYpHP
+	 mOWiON/GAQNdg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1slW2F-009IVG-T3;
+	Tue, 03 Sep 2024 17:05:39 +0100
+Date: Tue, 03 Sep 2024 17:05:38 +0100
+Message-ID: <86seugvi25.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: samuel.holland@sifive.com,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Aleksandr Nogikh <nogikh@google.com>,
+	kasan-dev <kasan-dev@googlegroups.com>,
+	Will Deacon <will@kernel.org>,
+	syzbot <syzbot+908886656a02769af987@syzkaller.appspotmail.com>,
+	catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [arm?] upstream test error: KASAN: invalid-access Write in setup_arch
+In-Reply-To: <CAG_fn=UbWvN=FiXjU_QZKm_qDhxU8dZQ4fgELXsRsPCj4YHp9A@mail.gmail.com>
+References: <000000000000f362e80620e27859@google.com>
+	<20240830095254.GA7769@willie-the-truck>
+	<86wmjwvatn.wl-maz@kernel.org>
+	<CANp29Y6EJXFTOy6Pd466r+RwzaGHe7JQMTaqMPSO2s7ubm-PKw@mail.gmail.com>
+	<CAG_fn=UbWvN=FiXjU_QZKm_qDhxU8dZQ4fgELXsRsPCj4YHp9A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903073649.237362-10-ye.zhang@rock-chips.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: glider@google.com, samuel.holland@sifive.com, andreyknvl@gmail.com, nogikh@google.com, kasan-dev@googlegroups.com, will@kernel.org, syzbot+908886656a02769af987@syzkaller.appspotmail.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Sep 03, 2024 at 03:36:46PM +0800, Ye Zhang wrote:
-> Have a list of valid V1 IDs and default to -ENODEV.
+On Tue, 03 Sep 2024 16:39:28 +0100,
+Alexander Potapenko <glider@google.com> wrote:
+>=20
+> On Mon, Sep 2, 2024 at 12:03=E2=80=AFPM 'Aleksandr Nogikh' via kasan-dev
+> <kasan-dev@googlegroups.com> wrote:
+> >
+> > +kasan-dev
+> >
+> > On Sat, Aug 31, 2024 at 7:53=E2=80=AFPM 'Marc Zyngier' via syzkaller-bu=
+gs
+> > <syzkaller-bugs@googlegroups.com> wrote:
+> > >
+> > > On Fri, 30 Aug 2024 10:52:54 +0100,
+> > > Will Deacon <will@kernel.org> wrote:
+> > > >
+> > > > On Fri, Aug 30, 2024 at 01:35:24AM -0700, syzbot wrote:
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following issue on:
+> > > > >
+> > > > > HEAD commit:    33faa93bc856 Merge branch kvmarm-master/next into=
+ kvmarm-m..
+> > > > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvm=
+arm/kvmarm.git fuzzme
+> > > >
+> > > > +Marc, as this is his branch.
+> > > >
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D13984=
+20b980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2b7b3=
+1c9aa1397ca
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9088866=
+56a02769af987
+> > > > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binuti=
+ls for Debian) 2.40
+> > > > > userspace arch: arm64
+> > >
+> > > As it turns out, this isn't specific to this branch. I can reproduce
+> > > it with this config on a vanilla 6.10 as a KVM guest. Even worse,
+> > > compiling with clang results in an unbootable kernel (without any
+> > > output at all).
+> > >
+> > > Mind you, the binary is absolutely massive (130MB with gcc, 156MB with
+> > > clang), and I wouldn't be surprised if we were hitting some kind of
+> > > odd limit.
+> > >
+> > > > >
+> > > > > Downloadable assets:
+> > > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-=
+assets/384ffdcca292/non_bootable_disk-33faa93b.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/9093742fcee=
+9/vmlinux-33faa93b.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/b1f599=
+907931/Image-33faa93b.gz.xz
+> > > > >
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to =
+the commit:
+> > > > > Reported-by: syzbot+908886656a02769af987@syzkaller.appspotmail.com
+> > > > >
+> > > > > Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+> > > > > Linux version 6.11.0-rc5-syzkaller-g33faa93bc856 (syzkaller@syzka=
+ller) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40=
+) #0 SMP PREEMPT now
+> > > > > random: crng init done
+> > > > > Machine model: linux,dummy-virt
+> > > > > efi: UEFI not found.
+> > > > > NUMA: No NUMA configuration found
+> > > > > NUMA: Faking a node at [mem 0x0000000040000000-0x00000000bfffffff]
+> > > > > NUMA: NODE_DATA [mem 0xbfc1d340-0xbfc20fff]
+> > > > > Zone ranges:
+> > > > >   DMA      [mem 0x0000000040000000-0x00000000bfffffff]
+> > > > >   DMA32    empty
+> > > > >   Normal   empty
+> > > > >   Device   empty
+> > > > > Movable zone start for each node
+> > > > > Early memory node ranges
+> > > > >   node   0: [mem 0x0000000040000000-0x00000000bfffffff]
+> > > > > Initmem setup node 0 [mem 0x0000000040000000-0x00000000bfffffff]
+> > > > > cma: Reserved 32 MiB at 0x00000000bba00000 on node -1
+> > > > > psci: probing for conduit method from DT.
+> > > > > psci: PSCIv1.1 detected in firmware.
+> > > > > psci: Using standard PSCI v0.2 function IDs
+> > > > > psci: Trusted OS migration not required
+> > > > > psci: SMC Calling Convention v1.0
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > BUG: KASAN: invalid-access in smp_build_mpidr_hash arch/arm64/ker=
+nel/setup.c:133 [inline]
+> > > > > BUG: KASAN: invalid-access in setup_arch+0x984/0xd60 arch/arm64/k=
+ernel/setup.c:356
+> > > > > Write of size 4 at addr 03ff800086867e00 by task swapper/0
+> > > > > Pointer tag: [03], memory tag: [fe]
+> > > > >
+> > > > > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc5-syzkall=
+er-g33faa93bc856 #0
+> > > > > Hardware name: linux,dummy-virt (DT)
+> > > > > Call trace:
+> > > > >  dump_backtrace+0x204/0x3b8 arch/arm64/kernel/stacktrace.c:317
+> > > > >  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+> > > > >  __dump_stack lib/dump_stack.c:93 [inline]
+> > > > >  dump_stack_lvl+0x260/0x3b4 lib/dump_stack.c:119
+> > > > >  print_address_description mm/kasan/report.c:377 [inline]
+> > > > >  print_report+0x118/0x5ac mm/kasan/report.c:488
+> > > > >  kasan_report+0xc8/0x108 mm/kasan/report.c:601
+> > > > >  kasan_check_range+0x94/0xb8 mm/kasan/sw_tags.c:84
+> > > > >  __hwasan_store4_noabort+0x20/0x2c mm/kasan/sw_tags.c:149
+> > > > >  smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
+> > > > >  setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
+> > > > >  start_kernel+0xe0/0xff0 init/main.c:926
+> > > > >  __primary_switched+0x84/0x8c arch/arm64/kernel/head.S:243
+> > > > >
+> > > > > The buggy address belongs to stack of task swapper/0
+> > > > >
+> > > > > Memory state around the buggy address:
+> > > > >  ffff800086867c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > > >  ffff800086867d00: 00 fe fe 00 00 00 fe fe fe fe fe fe fe fe fe fe
+> > > > > >ffff800086867e00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> > > > >                    ^
+> > > > >  ffff800086867f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> > > > >  ffff800086868000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > I can't spot the issue here. We have a couple of fixed-length
+> > > > (4 element) arrays on the stack and they're indexed by a simple loop
+> > > > counter that runs from 0-3.
+> > >
+> > > Having trimmed the config to the extreme, I can only trigger the
+> > > warning with CONFIG_KASAN_SW_TAGS (CONFIG_KASAN_GENERIC does not
+> > > scream). Same thing if I use gcc 14.2.0.
+> > >
+> > > However, compiling with clang 14 (Debian clang version 14.0.6) does
+> > > *not* result in a screaming kernel, even with KASAN_SW_TAGS.
+> > >
+> > > So I can see two possibilities here:
+> > >
+> > > - either gcc is incompatible with KASAN_SW_TAGS and the generic
+> > >   version is the only one that works
+> > >
+> > > - or we have a compiler bug on our hands.
+> > >
+> > > Frankly, I can't believe the later, as the code is so daft that I
+> > > can't imagine gcc getting it *that* wrong.
+> > >
+> > > Who knows enough about KASAN to dig into this?
+>=20
+> This looks related to Samuel's "arm64: Fix KASAN random tag seed
+> initialization" patch that landed in August.
 
-s/V1//
+f75c235565f9 arm64: Fix KASAN random tag seed initialization
 
-...
+$ git describe --contains f75c235565f9 --match=3Dv\*
+v6.11-rc4~15^2
 
->  	id = readl(bank->reg_base + gpio_regs_v2.version_id);
+So while this is in -rc4, -rc6 still has the same issue (with GCC --
+clang is OK).
 
->  
+> I am a bit surprised the bug is reported before the
+> "KernelAddressSanitizer initialized" banner is printed - I thought we
+> shouldn't be reporting anything until the tool is fully initialized.
 
-You may remove this blank line now...
+Specially if this can report false positives...
 
-> -	/* If not gpio v2, that is default to v1. */
-> -	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
-> -		bank->gpio_regs = &gpio_regs_v2;
-> -		bank->gpio_type = GPIO_TYPE_V2;
-> -	} else {
-> +	/* The GPIO version ID is incrementing. */
-> +	switch (id) {
+Thanks,
 
-...basically to have
+	M.
 
-	/* The GPIO version ID is incrementing. */
-	id = readl(bank->reg_base + gpio_regs_v2.version_id);
-	switch (id) {
-
-> +	case GPIO_TYPE_V1:
->  		bank->gpio_regs = &gpio_regs_v1;
->  		bank->gpio_type = GPIO_TYPE_V1;
-> +		break;
-> +	case GPIO_TYPE_V2:
-> +	case GPIO_TYPE_V2_1:
-> +		bank->gpio_regs = &gpio_regs_v2;
-> +		bank->gpio_type = GPIO_TYPE_V2;
-> +		break;
-> +	default:
-> +		dev_err(bank->dev, "cannot get the version ID\n");
-> +		return -ENODEV;
->  	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+Without deviation from the norm, progress is not possible.
 
