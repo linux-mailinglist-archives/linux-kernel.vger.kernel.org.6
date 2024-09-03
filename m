@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-313070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA53969FD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2479A969FDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF15281B0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C352F1F255D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A9A3BB25;
-	Tue,  3 Sep 2024 14:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AerwbmcO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C9B3A1DB;
+	Tue,  3 Sep 2024 14:08:06 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB743FE55;
-	Tue,  3 Sep 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DDB6FBF;
+	Tue,  3 Sep 2024 14:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372314; cv=none; b=kPlFdQtDCupNe5g1g8vfIS3lN8t/eYqD1ypvXopzMMU7JrMlyd8rcmb15FqYBl7pzBfQdaYh8WJc3el9XKyfIn4894FtbdPvkMLCI/3Pq2tqpRjSP+UNUgRCu7CPfivB4oSQCDStBwEU+2JkMnZldjC/7Xhxh4yekkq/sDzvBRk=
+	t=1725372486; cv=none; b=Ee0zdhFMQ9hR4QPr/NPDQnSwiGeTsuj10MTNv0EXmcx6Yt4ELjpx5onx1w9SyjfM9ARebsw/K3FcNd7YgYmFG19Ht0r1S91KRkrVvzRUaLE0nbZmYwZa/VlSWvO8YJPwvnKjDPM6SFqhGCK45SWCY0QId+3ydJ9qouiCDBXe8nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372314; c=relaxed/simple;
-	bh=EB4Qn8QfYNvDbrC1h25pHRe0otvOHZqa46a2972CPJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=grWVNcOtCw/BKl4fwmYE592cNYFqaQF/ntM0oYnE5iouzBZurEO3nbrUlYevAjiFX+aI9GzOfzfrOs9wUuOp5d+f2HHrCOY0IFjKIqGrUsHFWa2F2Ipo/teLeW/y3bv0H63HzuOGgWSYQg+trwGUWXBFBeVIksQ4SCAk2LX4zb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AerwbmcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BFEC4CEC4;
-	Tue,  3 Sep 2024 14:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725372314;
-	bh=EB4Qn8QfYNvDbrC1h25pHRe0otvOHZqa46a2972CPJs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AerwbmcOGrydYlAzihg7843x/7HSBRksRCRLEwKSv8/F/N3gtr0caALyj8o54Md5+
-	 fjsgmNfCHUVOTcnK3JnwEcOl4Pd0e+7K3dTQfW43xkVTQEWMhMkHxF0dYxTr7yyss2
-	 g5bMmqRPY1SSOSRXa8KPQ3A+kST2WYstcOTCmsRKvGIs6ilFXZlFQ3zO+IFnHhcjbW
-	 RJbC/2XGKv8ZvdWexJEnCIDBhnddPtiA+rTlU68XGUh0IB+4AG1nm+15ncqfnPmifn
-	 VMZ0kbhYmAXxodW5JuSL622RDE9P8xt6vF95aI2N2CZ9o6c96Ip+KIckeKvRj2re3D
-	 bVRKj9Zd5WW4w==
-Message-ID: <2804a57d-fb92-4317-b4c4-e1811a915265@kernel.org>
-Date: Tue, 3 Sep 2024 16:05:10 +0200
+	s=arc-20240116; t=1725372486; c=relaxed/simple;
+	bh=2QksUoOzs8b3y01VrtswmMfrqgCljZZYMbvmvw1oO54=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RlFs833fscuxZ8oTk0BujbFqrKDFe62LiOoaEYYQb8v0lds0N4PI+kSBL5aE9D4ia/w19z/j+Ht0UvBIIB6Kp8qSa8k9owK3wpbRzQmz4mNwPICd/6BhL/rpk9Bkwcy5AiIJ8xRiQLU34EiSROZcYToOL13yhhDI0nfOTR904nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so4992842a12.3;
+        Tue, 03 Sep 2024 07:08:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725372483; x=1725977283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+SJUMYC/B/LDdyMOquinpjkUGGxPZTuewBSuACu47Fw=;
+        b=Dlg2Y4FZofcSlY8XM2XWXP7i5gFG3WEMhbjfcQLxKOGNGeo4dTce8HYB4a2YIRntFq
+         2VAN0g2XEw2F1Fga+w56KednJYuHeKezWvrRYdFXm2CnO/nRkvpHfHChrGgQkZd4vxi7
+         vHPmPZagjMNk4j7QkcRLKGKXHfo71FOjG/1E3bZJ3xn/Lz/av3gdZY+Oi5AQe9zZinb0
+         wFzC//A5mceb2aTJ0x3AkNR5DNxMVNTTru0CcQftnUSdWM4Kk2tZ70s/o0e+18lfYJQy
+         kuiTAFoa3NXEGjZl/dDG6uUB1Tgf8LS0HDFaArsGoKdfBTOFRIJLUbuecnkImobO7l9Z
+         mMMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK/pTOrf9AiCSv98pPDBLKWzfl60JrcsoLycSiPBKCs+0C+mjDHq/CAaeEZkQ/jMnOWJchOXr6@vger.kernel.org, AJvYcCWdzxm/+2Cx2rxWtdqVCtCBqPRr/hEZ4oKK8/3e+pN3BczW0XfUuJJfBz/81WB2raETfkYLv9KZmf5nXlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnPyFCOfbEfVP+j+df5KDKfR9zo5WXk1UwYH/1MjptaHwwNdSc
+	6Q9yGY81+WdAJomeR9ODrATu3mXTKJXL2I/pjLCqX85lsAL4ia8w
+X-Google-Smtp-Source: AGHT+IFLqVlI44S1N0roOyi+iH03dFvs/VW2/EpxgDGh6xIeTUhfmVdiQbGMwFTjpp8Z5+ACbehPJw==
+X-Received: by 2002:a50:8d8c:0:b0:5c2:43bd:8ce8 with SMTP id 4fb4d7f45d1cf-5c243bd9034mr5965912a12.21.1725372482267;
+        Tue, 03 Sep 2024 07:08:02 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226cd18a3sm6438847a12.66.2024.09.03.07.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 07:08:01 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: thepacketgeek@gmail.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	davej@codemonkey.org.uk,
+	thevlad@meta.com,
+	max@kutsevol.com
+Subject: [PATCH net-next 0/9] netconsole refactoring and warning fix
+Date: Tue,  3 Sep 2024 07:07:43 -0700
+Message-ID: <20240903140757.2802765-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
-To: xianwei.zhao@amlogic.com, Yiting Deng <yiting.deng@amlogic.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240903-rtc-v2-0-05da5755b8d9@amlogic.com>
- <20240903-rtc-v2-3-05da5755b8d9@amlogic.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903-rtc-v2-3-05da5755b8d9@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2024 09:00, Xianwei Zhao via B4 Relay wrote:
-> From: Yiting Deng <yiting.deng@amlogic.com>
-> 
-> Add Amlogic RTC entry to MAINTAINERS to clarify the maintainers
-> 
-> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42decde38320..cdcd23456567 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2481,6 +2481,14 @@ F:	drivers/irqchip/irq-mvebu-*
->  F:	drivers/pinctrl/mvebu/
->  F:	drivers/rtc/rtc-armada38x.c
->  
-> +AMLOGIC RTC DRIVER
+The netconsole driver was showing a warning related to userdata
+information, depending on the message size being transmitted:
 
-Nope. Read the note in the file about order.
+	------------[ cut here ]------------
+	WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
+	 ? write_ext_msg+0x3b6/0x3d0
+	 console_flush_all+0x1e9/0x330
+	 ...
 
-Best regards,
-Krzysztof
+Identifying the cause of this warning proved to be non-trivial due to:
+
+ * The write_ext_msg() function being over 100 lines long
+ * Extensive use of pointer arithmetic
+ * Inconsistent naming conventions and concept application
+
+The send_ext_msg() function grew organically over time:
+
+ * Initially, the UDP packet consisted of a header and body
+ * Later additions included release prepend and userdata
+ * Naming became inconsistent (e.g., "body" excludes userdata, "header"
+   excludes prepended release)
+
+This lack of consistency made investigating issues like the above warning
+more challenging than what it should be.
+
+To address these issues, the following steps were taken:
+
+ * Breaking down write_ext_msg() into smaller functions with clear scopes
+ * Improving readability and reasoning about the code
+ * Simplifying and clarifying naming conventions
+
+Warning Fix
+-----------
+
+The warning occurred when there was insufficient buffer space to append
+userdata. While this scenario is acceptable (as userdata can be sent in a
+separate packet later), the kernel was incorrectly raising a warning.  A
+one-line fix has been implemented to resolve this issue.
+
+A self-test was developed to write messages of every possible length
+This test will be submitted in a separate patchset
+
+Breno Leitao (9):
+  net: netconsole: remove msg_ready variable
+  net: netconsole: split send_ext_msg_udp() function
+  net: netconsole: separate fragmented message handling in send_ext_msg
+  net: netconsole: rename body to msg_body
+  net: netconsole: introduce variable to track body length
+  net: netconsole: track explicitly if msgbody was written to buffer
+  net: netconsole: extract release appending into separate function
+  net: netconsole: split send_msg_fragmented
+  net: netconsole: fix a wrong warning
+
+ drivers/net/netconsole.c | 207 +++++++++++++++++++++++++--------------
+ 1 file changed, 134 insertions(+), 73 deletions(-)
+
+-- 
+2.43.5
 
 
