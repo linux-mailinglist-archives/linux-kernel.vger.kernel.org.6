@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-313770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCBD96A98B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3490B96A761
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87B0EB23178
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E203028400E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAD31EB236;
-	Tue,  3 Sep 2024 20:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186621D7E2E;
+	Tue,  3 Sep 2024 19:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Og8MuGvH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANS7AbxL"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1591EB229;
-	Tue,  3 Sep 2024 20:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4F91D7E2C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725396518; cv=none; b=ZlcC2B0CTyJUS+f2or5lGj2HA8C4KOFISuVj9BH1iFpYa0VbwpeSDMkgx9B2+NS6cpvMcqr54VkBJ+5T353o1BNTHThSfG5fEn7p+o3l5nCw3kKa6hKNUo7paphas8M9fcxlsibfuG/OViPxbOBEiRoDlfLKxHweJSraxhiy+Q8=
+	t=1725391740; cv=none; b=k8bedt5Pa+kABZ5M0m2MG5Hdwl91uRq3vC4/ARPaVrsNMpQxuwfkJPv9r27T/aTjtfH0/0/pH/nBQNwwvWcKOxJg4ZTWUtcmUCk64rBSsecof/wHbhpHxDLJ5gTNONrVQsYrgn3FAV8VQJfP6QmVnjFPtXUfBcclDpD67bCxL4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725396518; c=relaxed/simple;
-	bh=SjUQEhA6/B1Yfuyb5mPVH3QvnXks9L1Adxm1/+AZ2e4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ErZTOJWwUcREVF95Zzs5nRamXMlwOnglX5rGID61gG7tO9LAUj9ptExlqjXj4maHOcykhTSfTeZR5Zl7BunDQvXkFEC6HF/+95IgHply+Lu7P+Zbn3G4Of9reiNllqo1Y5VtLeblvuyKkmbWS2dOrZV4TAd+p4829+9Xv9FIVUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Og8MuGvH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2074C4CEC8;
-	Tue,  3 Sep 2024 20:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725396518;
-	bh=SjUQEhA6/B1Yfuyb5mPVH3QvnXks9L1Adxm1/+AZ2e4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Og8MuGvHGqaM1nrefheQltDl+4/MFbH/ucwReZzoPLqe6w6E0YBud66in6H9NVqE7
-	 r4ZDPQroELNttSVCHWdWcnAI/HLfUphXtA4E+u9AkEtAYbSeQIBkB2NVfhCFOOe3vv
-	 PsxcNQjI+ei0LzLsmLhjBEhUQWk41nckH+no/jqquQhNboJTHxEETKcpqM3xwTHhqW
-	 nxSRnJDvGsM/wrXQRXFHwxOowYU33LiI8ZDWTJYBEPYbnDu9roXWNZeRmhQ2lngh8v
-	 FfgzuHHIBzWQt0N21XdKfihYA/btU9pCZVadPC0Lau3d5kbFEineVXT2phOcvi52F8
-	 /QXgcM/dAj6OA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kvalo@kernel.org,
-	gregory.greenman@intel.com,
-	ilan.peer@intel.com,
-	shaul.triebitz@intel.com,
-	benjamin.berg@intel.com,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 8/8] wifi: iwlwifi: mvm: don't wait for tx queues if firmware is dead
-Date: Tue,  3 Sep 2024 15:28:44 -0400
-Message-ID: <20240903192859.1108979-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903192859.1108979-1-sashal@kernel.org>
-References: <20240903192859.1108979-1-sashal@kernel.org>
+	s=arc-20240116; t=1725391740; c=relaxed/simple;
+	bh=ajyeQAiqH/g7TQ0qSBKMMDhVqcIKSArCXzkzE5HHHuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjwf1KbOjcoMUpymBCqgJ/K/QIrI/es8KtShGOvcc9DD75g5Kgj2HtYdoVKmTRc65q+zm+QarnsnlxTVIysi6JWLFTR4CkcRr7bwrFs8W7cM+bEYmCbUSTdPTIr1G8D0a678smCCXqa6puCYELDkDRi2RkA7tzqwHFXRqw1t9eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANS7AbxL; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-714302e7285so5177139b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 12:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725391738; x=1725996538; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QrVsF/xtcGUGD8dhVKqbX4p7PSM6BT6D+MzGLwwgGDk=;
+        b=ANS7AbxLAIY3D5YFw6Diev2Ttuym4vzxtdHvAEvbfo0F/JZXCvJCaFdwAiOenmtfuz
+         gF+SQqB1DKL+/cj7d9BMVDRr+RYX6ipYNP4F5TwoiQkkbfCLiBg3dglEAXULhc9FKgIT
+         wMGM9IdEtHRcC/1YWig8Aw8qA4UTPavvYLJmtOVDqapJ3YCkTg9w2ymWQ5IiS0EvcyBJ
+         5tjepwaSf5bv+IiGW5stoTVy2RyXhwuhr115S+E9JyIiw2wbrCTDudED93sJBDP9I2Tf
+         1dRXJ3uA6T5sw/jVrc1PQjETOm8oqEoVabuPXB1BBN1g8uY4Ztky99ng3RuCw1qbm8aD
+         HZoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725391738; x=1725996538;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QrVsF/xtcGUGD8dhVKqbX4p7PSM6BT6D+MzGLwwgGDk=;
+        b=RuUhwt0CKesk0+k02zgv4j57Fhq8IYkZrLWLVbQFb3SygTeCkvvhwsGQ1TqHH7FaSu
+         UvoEKmG84om3vOogEY3wPG/Os2XcBI3AJAVLxqJythfSlej5ibaKtJonaCG6LG5qvrao
+         ia8n5eTx/+OVf+PINEsy92ctqe8yQ1w03LawbsirCgoMsNAuQ4IeIlMx5bBgWxTbxpo/
+         x1/1FnUTKRhGVD7PKJjJz7UXU6eR/WvWJ7UBYgb0hTRsFlqOCtNWHQn3hIcMyTFWK6VJ
+         DFFD24TScjb7FREN5kgPGpbvFshCbXmd7sgAGB0IEQj6KJXO8vuflI1gtbohlRQHj+yI
+         4M7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUteAapWzju9gmsrasY86CAzdz9TKIg5coOWj5JWgRzyCBVtY5QIhgAPBXhUrWcBkR8Db3mAhX7ylHmaFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygh75fv4d7cGiwHneZXYP1VB/PxW0dXHtADbQ6c2p5JerZbIYk
+	8wDHoQs5PFi9zk7Kt1P70CBjb4sYbLIGZJWJ9k6xSa8Tu5Ns//8z
+X-Google-Smtp-Source: AGHT+IEElz3s73Z8vQDiLNbxmkJO97s6+Op5gklyaZWZ9BwLzpCDb2P1V7M6Ga/Whaa1/GltOcGZJw==
+X-Received: by 2002:a05:6a20:d527:b0:1ce:ddf6:f382 with SMTP id adf61e73a8af0-1ceddf6f40dmr10955493637.32.1725391738449;
+        Tue, 03 Sep 2024 12:28:58 -0700 (PDT)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd9287esm199810a12.43.2024.09.03.12.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 12:28:57 -0700 (PDT)
+Date: Tue, 3 Sep 2024 12:28:55 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Valentin Schneider <vschneid@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] cpumask: Implement cpumask_next_andnot
+Message-ID: <Ztdjd9s-eLKrTU9g@yury-ThinkPad>
+References: <20240903190650.53644-1-mathieu.desnoyers@efficios.com>
+ <20240903190650.53644-2-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.282
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903190650.53644-2-mathieu.desnoyers@efficios.com>
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+On Tue, Sep 03, 2024 at 03:06:49PM -0400, Mathieu Desnoyers wrote:
+> Allow finding the next bit within two input cpumasks which is
+> respectively one and zero.
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-[ Upstream commit 3a84454f5204718ca5b4ad2c1f0bf2031e2403d1 ]
+Acked-by: Yury Norov <yury.norov@gmail.com>
 
-There is a WARNING in iwl_trans_wait_tx_queues_empty() (that was
-recently converted from just a message), that can be hit if we
-wait for TX queues to become empty after firmware died. Clearly,
-we can't expect anything from the firmware after it's declared dead.
-
-Don't call iwl_trans_wait_tx_queues_empty() in this case. While it could
-be a good idea to stop the flow earlier, the flush functions do some
-maintenance work that is not related to the firmware, so keep that part
-of the code running even when the firmware is not running.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Link: https://patch.msgid.link/20240825191257.a7cbd794cee9.I44a739fbd4ffcc46b83844dd1c7b2eb0c7b270f6@changeid
-[edit commit message]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index 3c523774ef0e6..c8c884bb5090e 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -4666,6 +4666,10 @@ static void iwl_mvm_flush_no_vif(struct iwl_mvm *mvm, u32 queues, bool drop)
- 	int i;
- 
- 	if (!iwl_mvm_has_new_tx_api(mvm)) {
-+		/* we can't ask the firmware anything if it is dead */
-+		if (test_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
-+			     &mvm->status))
-+			return;
- 		if (drop) {
- 			mutex_lock(&mvm->mutex);
- 			iwl_mvm_flush_tx_path(mvm,
-@@ -4747,8 +4751,11 @@ static void iwl_mvm_mac_flush(struct ieee80211_hw *hw,
- 
- 	/* this can take a while, and we may need/want other operations
- 	 * to succeed while doing this, so do it without the mutex held
-+	 * If the firmware is dead, this can't work...
- 	 */
--	if (!drop && !iwl_mvm_has_new_tx_api(mvm))
-+	if (!drop && !iwl_mvm_has_new_tx_api(mvm) &&
-+	    !test_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
-+		      &mvm->status))
- 		iwl_trans_wait_tx_queues_empty(mvm->trans, msk);
- }
- 
--- 
-2.43.0
-
+> ---
+>  include/linux/cpumask.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 23686bed441d..5da1c66cfa65 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -246,6 +246,23 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
+>  	return find_next_zero_bit(cpumask_bits(srcp), small_cpumask_bits, n+1);
+>  }
+>  
+> +/**
+> + * cpumask_next_andnot - return the next cpu from *srcp1 & ~*srcp2
+> + * @n: the cpu prior to the place to search (ie. return will be > @n)
+> + * @src1p: the first input
+> + * @src2p: the second input
+> + *
+> + * Returns >= nr_cpu_ids if no cpus match in both.
+> + */
+> +static __always_inline
+> +unsigned int cpumask_next_andnot(int n, const struct cpumask *srcp1, const struct cpumask *srcp2)
+> +{
+> +	/* -1 is a legal arg here. */
+> +	if (n != -1)
+> +		cpumask_check(n);
+> +	return find_next_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2), small_cpumask_bits, n+1);
+> +}
+> +
+>  #if NR_CPUS == 1
+>  /* Uniprocessor: there is only one valid CPU */
+>  static inline unsigned int cpumask_local_spread(unsigned int i, int node)
+> -- 
+> 2.39.2
 
