@@ -1,145 +1,223 @@
-Return-Path: <linux-kernel+bounces-313868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7487A96AB48
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:06:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40ED96ABB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CB081F25768
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DE4DB25B4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562EC1DB53C;
-	Tue,  3 Sep 2024 22:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB581D79A1;
+	Tue,  3 Sep 2024 22:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxNMOKSa"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZVFel7s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CB81DA609;
-	Tue,  3 Sep 2024 22:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14811D798E;
+	Tue,  3 Sep 2024 22:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401022; cv=none; b=qFmUp+SfHS5h7oHvlrY0kWFfhJH+YjFy99DLNuj9Pk9jhi/KfdfMiUflpCRu1EnB70FZfwMDNgrvX1fqgUIB+yCNizIZqwtifA+/0fohPpsnHGEL2iaUv4MSYh7tvaoMwLTUr/gTVv8wKG+2XyzWlTko6WVXk/n6ebFisvzQgP8=
+	t=1725401067; cv=none; b=hy1Jvrgwx/a4CXeiniFdM3Rc5u3lzXOOQJBjHXDuz1ygxoRm50rS9n2+784y4OXtG/YObiH0g3xaf1YxwRUzRUriVivEspVsTrRQtL35fK2rac/Nv2DjcV2Tqq3KFMW6/T20OI+ERYtVWsPRPWczU1gzBjLUUuPlPP2HwvOMkdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401022; c=relaxed/simple;
-	bh=cz4p2ODJm/ytXkJBxY6JpLu+G71YhDCA60Y5nA7S0o0=;
+	s=arc-20240116; t=1725401067; c=relaxed/simple;
+	bh=IAvJFDh2rktQgabsaLMqmIoVmG1fDxEHEeTpxxDd4fE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCXyJcvvlUBXy8Nf3Fr4atNdi4BBIeXW136v12KQNgNm+7p1TYGEt5mv9T4h3sxORfvjsOLMnjzKj6HZfD2OfTJecOcTXaw0elom3PVZFW3kkQCokw6t6t1p3+ZuQHMRX6usR4OVg7AwripQbk1qmnDxDWRhZh6WLrggsDqjKZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxNMOKSa; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7b8884631c4so2400642a12.2;
-        Tue, 03 Sep 2024 15:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725401020; x=1726005820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSaJhRoNakzGivzbT5n1z09XgYc1jmuejdmEvDZUXHc=;
-        b=MxNMOKSavYS5lnnsdaSHuetHOOOe/DNm5kciu739JAJgAqm0cxJceGj8yX0FU/Uqbv
-         AZREJYqmW3n7edMctlCwDejBW7aN7yQ0dNP3VmXx1bj2GnVCvVSFQYUsC+xnE0LH+Ezj
-         +AK688IuST2kwHiZ0qPxPo1wsajb/u+HLWQC8Q4pqnT4kfGlWA3fyNM2BSUtF2Hr1CF7
-         4gt1Zo22Bazdxz1ELjVBtE5LfOSCeoGvDZ7Pz5m8XT3Sw/7ZKa/o4HfGgEksI1aQX8XY
-         uqUC4+xF9fric5ijlLRenV9rG2tLcC+D4a+y8sLlOYR8dErarkgZUmluCvxx4wkb8YFQ
-         N1Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725401020; x=1726005820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DSaJhRoNakzGivzbT5n1z09XgYc1jmuejdmEvDZUXHc=;
-        b=RvFd5cfLThafwjwHjtwdoCCTacnGLJwwKaKxQK0Qg656meONVGr5CiOfjlqZgHXWKK
-         dSPMU+3h8XOZH/7mD7GfJHmeII0S44KpfEJAWy1cYPuqnXH6YBJgSuYlP2t3ooFBn43m
-         ND6Wtrez6n0rgMk/3Vftek3U2p5qCX42/eOWsMIcYv/JPHPOYD8DhS96uBB5YND+PcKe
-         qY+i8xPt1CKrncXy1yXCUVCRkezx821SUbnk+//L6onQ/fA2VfzQS4t2S/zdCWz4I8m8
-         HAjXHdUFd5DkeE6rUv2wR1vptG5r5XKkjE/7WD4JowlqLZa2/ernPtRpZJJmtFHJ/yix
-         IoqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX32cd2N8EYJbTmGjVXh6f2Jb5RWUeiv+xQZQqI78Kfl1CPLwg5LqP8oH4OtDKqQCJPSJB9HxIrKmQkvA6J@vger.kernel.org, AJvYcCXTBTove0d2YmRzGE8zzkj/ugJsTx8lCPNi//fO+ohYNhiUPxHlHLPc+m+l316mrLRRZiC5nIUJYefUrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKnNCassjavn97TqIY+kOvoGK9zVFp822SI+K36gnnFOGHebjg
-	+0MiIlmJH8NICUMcMRPpa19NArk9U9x3TPT+zLAFhC0imAV6bU51JtjJ7A==
-X-Google-Smtp-Source: AGHT+IG8eUc0WZDH2DCEUZhRvMBgSX3QFbN75OF5ZsnM7mc2YrLEshXEjhJeQM+16d+pQR1weipTrw==
-X-Received: by 2002:a05:6a21:e91:b0:1cc:cdb6:c10c with SMTP id adf61e73a8af0-1cecf757e4fmr16044272637.37.1725401019875;
-        Tue, 03 Sep 2024 15:03:39 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:e682:e3dc:908:eef0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177859a4d1sm348443b3a.177.2024.09.03.15.03.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 15:03:39 -0700 (PDT)
-Date: Tue, 3 Sep 2024 15:03:36 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Marge Yang <marge.yang@tw.synaptics.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Huang <Vincent.Huang@tw.synaptics.com>,
-	david.chiu@tw.synaptics.com, derek.cheng@tw.synaptics.com,
-	sam.tsai@synaptics.com
-Subject: Re: [PATCH V2] Input: synaptics-rmi4 - Supports to query DPM value.
-Message-ID: <ZteHuMJFkqOk44WE@google.com>
-References: <20240805083636.1381205-1-marge.yang@tw.synaptics.com>
- <ZtdQW7nqAOEJDNBN@radian>
- <ZtdYJkU17y1iNsLG@google.com>
- <ZteAo-bklYbs29Pq@radian>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndLCvuTaR8eupz9Yp6QoZFYnK+0nvabsqGCusTXJu1QM7xOooGlHkeySWCl7aH58UNDrfgkhPF3Dk4BKWkemuoP0lM81Oz5jPHtmafaUMVUjjxh23030GU5hdgoiVw3zfmCAPO/4Zmc/eiDZ4AgpSnTxh6YXGw4DT6g0fNq8n0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZVFel7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBAFC4CEC4;
+	Tue,  3 Sep 2024 22:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725401067;
+	bh=IAvJFDh2rktQgabsaLMqmIoVmG1fDxEHEeTpxxDd4fE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oZVFel7sc4ORVEYeqJUFAWe6zXuPUP9WRuhGgQQQurfxOx8LP+Kp6IIs0TJGhd2sF
+	 uKHU1bAoQpA3hpMUZkE5By8Mgx9EsCQ+ReZ1As4GFio3VVPznZyRZxhOYTaKq3UrlS
+	 cvlEXDLTVN/dQ56Z02bvpIbmexfXWYBDzefn/xLcoPOd4XB3LFnzW9uAaiR+w2fwoG
+	 YdFqzesSrvi76CrVMEYCqku1CIilAckaq/rWx7IF0uyWvUgAcrMpEJkVQmHEUfCwtQ
+	 98AjTEQkmwkmVfxmYCrFyIBVmDwmXtrMzo5OnxqRJsNXueTXt/86rq0aevZiVyPpxd
+	 KrtcRkShsmxOQ==
+Received: by mercury (Postfix, from userid 1000)
+	id D2A63106044E; Wed, 04 Sep 2024 00:04:24 +0200 (CEST)
+Date: Wed, 4 Sep 2024 00:04:24 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Enric Balletbo Serra <enric.balletbo@collabora.com>, Andrey Smirnov <andrew.smirnov@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 0/6] power: supply: Change usb_types from an array into a
+ bitmask
+Message-ID: <ez5ja55dl7w7ynq2wv4efsvvqtk4xyalf4k6agtsuhpgrtlpg3@d6ghlle4cu2q>
+References: <20240831142039.28830-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="btzqktsiaq62mw5e"
+Content-Disposition: inline
+In-Reply-To: <20240831142039.28830-1-hdegoede@redhat.com>
+
+
+--btzqktsiaq62mw5e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZteAo-bklYbs29Pq@radian>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 05:33:23PM -0400, Richard Acayan wrote:
-> On Tue, Sep 03, 2024 at 11:40:38AM -0700, Dmitry Torokhov wrote:
-> > On Tue, Sep 03, 2024 at 02:07:23PM -0400, Richard Acayan wrote:
-> > > > +	/* Use the Query DPM feature when the query register exists for resolution. */
-> > > > +	item = rmi_get_register_desc_item(&f12->query_reg_desc, RMI_F12_QUERY_RESOLUTION);
-> > > > +	if (item) {
-> > > > +		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
-> > > > +			RMI_F12_QUERY_RESOLUTION);
-> > > > +		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-> > > > +		ret = rmi_read(fn->rmi_dev, query_dpm_addr, buf);
-> > > > +		if (ret < 0) {
-> > > > +			dev_err(&fn->dev, "Failed to read DPM value: %d\n", ret);
-> > > > +			return -ENODEV;
-> > > > +		}
-> > > > +		dpm_resolution = buf[0];
-> > > > +
-> > > > +		sensor->x_mm = sensor->max_x / dpm_resolution;
-> > > > +		sensor->y_mm = sensor->max_y / dpm_resolution;
-> > > > +	} else {
-> > > > +		if (rmi_register_desc_has_subpacket(item, 3)) {
-> > > 
-> > > The item variable is NULL in this branch, as it was overwritten just
-> > > before the if statement.
-> > > 
-> > > This patch causes a NULL pointer dereference:
-> > 
-> > Ugh, indeed. I guess the simplest way of fixing this would be:
-> > 
-> > diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
-> > index fc2cc8e2b0ba..8246fe77114b 100644
-> > --- a/drivers/input/rmi4/rmi_f12.c
-> > +++ b/drivers/input/rmi4/rmi_f12.c
-> > @@ -129,9 +129,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
-> >  	 * Use the Query DPM feature when the resolution query register
-> >  	 * exists.
-> >  	 */
-> > -	item = rmi_get_register_desc_item(&f12->query_reg_desc,
-> > -					  RMI_F12_QUERY_RESOLUTION);
-> > -	if (item) {
-> > +	if (rmi_get_register_desc_item(&f12->query_reg_desc,
-> > +				       RMI_F12_QUERY_RESOLUTION)) {
-> >  		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
-> >  						RMI_F12_QUERY_RESOLUTION);
-> >  		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-> > 
-> > Could you please tell me if this works for you?
-> 
-> Yeah, it fixes the bug.
+Hi,
 
-Great, thank you for reporting and testing!
+On Sat, Aug 31, 2024 at 04:20:33PM GMT, Hans de Goede wrote:
+> When support for the "charge_behaviour" property was added the list of
+> available values was made a bitmask in power_supply_desc.
+>=20
+> "usb_types" is very similar in that:
+> 1. It is an enum
+> 2. The list of available values is stored in power_supply_desc
+> 3. When shown it shows all available values, with the active one surround=
+ed
+>    by square brackets.
+>=20
+> But "usb_types" uses an array with valid enum values instead of a bitmask.
+> This uses more memory then the bitmap approach and it makes it impossible
+> to have a shared generic show() function for properties which show
+> available values, with the active one surrounded by square brackets.
+>=20
+> This patch-set moves "usb_types" over to a bitmask in power_supply_desc
+> to indicate the available values.
+>=20
+> Patches 1 - 3:
+>=20
+> It turns out that the ucs1002-power driver contained a surprise in that
+> it supports writing to "usb_type" even though the ABI doc says it is
+> read-only. Since we cannot break shipped userspace API, the ship has sail=
+ed
+> on this one. The first patch documents that writing "usb_type" is allowed,
+> but only for power-supply devices which provide USB power rather then
+> consume it.
+>=20
+> Enum properties accept writing the FOO_TEXT[] string values, passing
+> the enum value matching the FOO_TEXT entry to set_property(), the second
+> patch adjusts ucs1002_set_usb_type() to directly accept enum values.
+>=20
+> The rt9467 driver was another driver which allowed writing to "usb_type"
+> but there the use made no sense, so it is simply dropped.
+>=20
+> Patches 4 - 6:
+>=20
+> These patches implement the actual moving of usb_types to a bitmask.
+>=20
+> Patch 6 is a bit of a bigbang patch moving all drivers over in one go,
+> touching a couple of drivers outside drivers/power/supply: 1 in
+> drivers/extcon/ 1 in drivers/phy/ and 5 in drivers/usb/typec/ since
+> the changes outside of drivers/power/supply are small I've chosen to
+> make all the changes in one go rather then have some sort of
+> intermediate state where both ways are supported.
+>=20
+> For merging this I believe it would be best for an immutable branch / tag
+> to be created on the linux-power-supply tree and then send a pull-request
+> to the extcon, phy and usb-typec maintainers to merge the tag.
+>=20
+> extcon, phy and typec maintainers can you please give your Acked-by for
+> patch 6/6 for merging these changes through the linux-power-supply tree?
+>=20
+> This set is based on top of the latest linux-power-supply/for-next.
 
--- 
-Dmitry
+As we are quite close before the merge window I just took it with
+just the Ack from Greg. The changes in PHY and Extcon are quite
+small. I did prepare an immutable branch in case it is needed by
+any of the other involved trees:
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
+t tags/ib-psy-usb-types-signed
+
+for you to fetch changes up to 364ea7ccaef917a3068236a19a4b31a0623b561a:
+
+  power: supply: Change usb_types from an array into a bitmask (2024-09-03 =
+23:20:28 +0200)
+
+----------------------------------------------------------------
+Immutable branch for usb_types change for v6.12
+
+Changing usb_types type from array to bitmap in the power_supply_desc
+struct requires updating power-supply drivers living in different
+subsystem, so it is handled via an immutable branch.
+
+----------------------------------------------------------------
+Hans de Goede (6):
+      power: supply: "usb_type" property may be written to
+      power: supply: ucs1002: Adjust ucs1002_set_usb_type() to accept strin=
+g values
+      power: supply: rt9467-charger: Remove "usb_type" property write suppo=
+rt
+      power: supply: sysfs: Add power_supply_show_enum_with_available() hel=
+per
+      power: supply: sysfs: Move power_supply_show_enum_with_available() up
+      power: supply: Change usb_types from an array into a bitmask
+
+ Documentation/ABI/testing/sysfs-class-power     |  7 ++-
+ drivers/extcon/extcon-intel-cht-wc.c            | 15 ++----
+ drivers/phy/ti/phy-tusb1210.c                   | 11 ++---
+ drivers/power/supply/axp20x_usb_power.c         | 13 ++---
+ drivers/power/supply/bq256xx_charger.c          | 15 ++----
+ drivers/power/supply/cros_usbpd-charger.c       | 22 +++------
+ drivers/power/supply/lenovo_yoga_c630_battery.c |  7 +--
+ drivers/power/supply/mp2629_charger.c           | 15 ++----
+ drivers/power/supply/mt6360_charger.c           | 13 ++---
+ drivers/power/supply/mt6370-charger.c           | 13 ++---
+ drivers/power/supply/power_supply_core.c        |  4 --
+ drivers/power/supply/power_supply_sysfs.c       | 66 ++++++++-------------=
+----
+ drivers/power/supply/qcom_battmgr.c             | 37 +++++++-------
+ drivers/power/supply/qcom_pmi8998_charger.c     | 13 ++---
+ drivers/power/supply/rk817_charger.c            |  9 +---
+ drivers/power/supply/rn5t618_power.c            | 13 ++---
+ drivers/power/supply/rt9467-charger.c           | 16 ++----
+ drivers/power/supply/rt9471.c                   | 15 ++----
+ drivers/power/supply/ucs1002_power.c            | 26 +++++-----
+ drivers/usb/typec/anx7411.c                     | 11 ++---
+ drivers/usb/typec/rt1719.c                      | 11 ++---
+ drivers/usb/typec/tcpm/tcpm.c                   | 11 ++---
+ drivers/usb/typec/tipd/core.c                   |  9 +---
+ drivers/usb/typec/ucsi/psy.c                    | 11 ++---
+ include/linux/power_supply.h                    |  3 +-
+ 25 files changed, 132 insertions(+), 254 deletions(-)
+
+-- Sebastian
+
+--btzqktsiaq62mw5e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbXh+UACgkQ2O7X88g7
++pqgqxAAmxavPS+UWhWDuuNHRKCOCwsF5Yy/AoqXJUGMO+cnud9xuZ4TIFIA4aev
+ybq790Sxu4dDn2IPzbiota+pW4tz8rgOEOLapwE+9IQLKK0DdA7yRtP/u0W9B2yk
+PTeNd2KkzpFdKz/+000TumcXMaFtJhEbYjOxKS4PUcbUqn1qJ1S1v4tRXzsvEoSR
+fMqYCJULbBtASQe3WZaQLfXZFAYaHIgn56+Djh8ZoTtZWIHBk2Rz0IFnSFHK9/5p
+r4iGTtyC4TQw42s94AhEs5WW4LV7sYb0UYl7M6dwRqdxWV5S8k2HnNCp/3eKfOnz
+eFB37yu5y7hSvkmlIL4K2ZJyZ789Zrmq+tDsTuX9VGQlnY0L0+wPotI/+HlLwJTz
+q0b4AJGEepQ3Y4ahkE0O2itkJv7WC0vrZPRxHLs//t5MtjOl81aAxEkYExeqM1e4
+Tl22Uj/aoVbx4FRMlEczySD7kBzzXWj+Y4kWUWin8x5mKsKEZEHeoBOs+cD/u++W
+NKBvTMEZSpHdRwcdK1c07uyGgCjJkMcRdQyhXYrFxEwz9POJqaMCojqva7WtxLVH
+zSd3DkA8n7c5je0ow9ug6iX9Vsa7bqHPmAIPHx7DiwCkwsMq3dw9+QE0/H+8eX1/
+cXjyrTnp/CZQS1SSwDhnYzaKjy77eWHbZt9G21YDxtJbxeAWA8U=
+=x3oo
+-----END PGP SIGNATURE-----
+
+--btzqktsiaq62mw5e--
 
