@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-313328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714EB96A3FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3258396A405
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174482870C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF432286FC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69DC18B47C;
-	Tue,  3 Sep 2024 16:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBFE18B466;
+	Tue,  3 Sep 2024 16:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WmFFff2k"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1tD2r3Ex";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8wnYF0FF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1tD2r3Ex";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8wnYF0FF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC694189F20
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE661DFCB;
+	Tue,  3 Sep 2024 16:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380107; cv=none; b=lGK5E+Y8nVqdFGoGBC2x54Q83GL/nLi3TUyTWKCRJZrSzsor9lrBym6/SyVddHPO9ucWOfDqjn8XGMJV95AOeeyMtDmCO1M4PFPP3GV21KxKJrU0ctH4gjvCa/qT6uxWmHPOpZY1H02r6vf0MYV53MVDY9rmDUbWAHXZjXBY3XI=
+	t=1725380157; cv=none; b=omTxmasT0xr6GdRSzhhHDGmdYpDT3fb+aReinZqusZH9GXcoFsza+zq2No1AxBgNYzoM1ta2GhJWR9me6n2iZvufk5kfZHu7sKTEzg7aZVFFABw7/rF7s8BG3RgLxnVeaoW9ztZiP7Wqj1sWqZnB9cmqZS1reBZaUo/7TFS7EV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380107; c=relaxed/simple;
-	bh=xpPrjjx3C5+Im8uDKPe6tjHcImbiqGdfdOEgJ6hTna4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7G7TOm46c6cZVsdJaWVUPE5yCzyUUWDm+xhvqe2OsWpi/tE2/jpzGdfs/vhKmoPCi7oC7jmhryoSSZMFGlsjk2CCNlPc6ugQXmMJTSFT2lk7jWypuZqV+m6+YWBJnbKzAeSMydzKKJTUQszF83QNXVKnJmzq0ISQsnvBAMbee4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WmFFff2k; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a7aa086b077so484336866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725380103; x=1725984903; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ujcJQ5WbiK5TK1a1sgf7j5ujXkTQVZFXM9n+2iP5G8w=;
-        b=WmFFff2kFIq19MtQaDjm0FzF2D+n4UmBArivKNenpVoyPiaLTVuuoy/2JRdmVHz05u
-         Lqa4vliOXLpIra5yAWbRIRmH/gr73eNVqOuCZmERDdoW4IBJPAW0sYaVGWss4Y3rKkFr
-         4krm7cnvbgu1nkic+2VZPaHyF42IWfbWvSKSNHgM6O3W1GyyexRpDg7m2fL5vczsU6T9
-         rrPJgADQIB4TeWtAEmnA82LaI4PPec7TQ4J02+Yu8Ger2/dtigf3afQhVAjjOCTzdvv+
-         35EMIx1mozZG7cBMF6y4hcXC4tVN306+ThGE/zCgjgLD3OTRWnpd8TJymP+El+OaQLAH
-         PeVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725380103; x=1725984903;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujcJQ5WbiK5TK1a1sgf7j5ujXkTQVZFXM9n+2iP5G8w=;
-        b=w6kksr2IdK9TMlEw6W74BYafVQEdoq7Re1FrTa9cSp7ERwVPFFKbPsE7h9EtvsaRHa
-         niS4nEMJwYxQGlRqnWC+i8h4nXUDpOW2+923MHaGtP1dyLK8ct23mC4F0LCRVaSdgw4z
-         4XFDqVocGiLFwikGn9NzRYCxf8A4kQXY48FZ/IROjEMXodfKCdK+qiLJDutDu2RyVatB
-         9JVXRjvjptZun7HT6mrTwkuSCXoCpKc8iYGWrDwmkmgAbjw0flPhlNBigfGScNsNLJgo
-         aIgD89XvX9SvD0stet/bxQA6AURMZGd/3cc429XjNsCe++xmqOeAOpZVrjmc421VXfTO
-         9F+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdEilqKjcLjqPGp7FrA4WrI7yWE5dqBQYoMr65YGbhS/KUAT9C3wSb84EVVvGCN94D43lpIrsK6x4HRCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpVWLgifUoSpiuXkqriUviN0tZOz4YrQX17/DXiKvi+Oasr/Rx
-	ocGipIFmsLd0XM3NfbYxUMet3ghIXuPdVO15bWmYFB1qjKLzn3ZHI65R96bMVzY=
-X-Google-Smtp-Source: AGHT+IGOVI/KlbnVkPKcUFB/WP4ky/V34Mnqxzaki61Es6M5ZEdZH9hu90OMWXXvI1MZc9xKoKdrvw==
-X-Received: by 2002:a17:907:d08:b0:a86:6d39:cbfd with SMTP id a640c23a62f3a-a89fafad393mr618619866b.57.1725380102711;
-        Tue, 03 Sep 2024 09:15:02 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1dbfba91sm145366666b.225.2024.09.03.09.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 09:15:02 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 18:15:09 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <Ztc2DadAnxLIYFj-@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
- <ZtChPt4cD8PzfEkF@apocalypse>
- <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
+	s=arc-20240116; t=1725380157; c=relaxed/simple;
+	bh=gjBGzM6fvXyE/aEihJdgERDYx8u+etraR4T2uBhsYss=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iJC+F+mdjP/unp8AQe9NY2tNbrZicnfA+hG0f+vtPOKWGi0yBjlA3NEJS/Vq0CwkIkPaZ3+646hbrYFbsLTFkWf+HtAvAJx3rfbLboSfN33/koX5s/XEAicMo1reSwA2WI0kQGDj55POgWbXyawEU8bI06Oa9N9C6601W05bfEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1tD2r3Ex; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8wnYF0FF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1tD2r3Ex; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8wnYF0FF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B71B921A43;
+	Tue,  3 Sep 2024 16:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725380153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AXur40dr6oJg+rkmyFjm1pAR/rLEyXQXabzhNZLheUg=;
+	b=1tD2r3ExVY87qinoFJQz9t9WbudP5EuPQNvH+UOy61VmsEn7rapqaCdQ48hGOHIvKqPZtN
+	iGWsllBF24upTmYJ21drPLputS5oC0F7vf9tscwwQignHrO8j5ZshLJ2JyxqFMmQSMlBP9
+	fGO9owstxV6lwDp6iYRxLWK3dSeWaeE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725380153;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AXur40dr6oJg+rkmyFjm1pAR/rLEyXQXabzhNZLheUg=;
+	b=8wnYF0FFNltu1jN/0MLW2VO/+Bcy2ICUE3C0ZNKKIF80/ikgPviplk2983UdkrnDB20Rr3
+	tbeDtgEzhlambhBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1tD2r3Ex;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8wnYF0FF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725380153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AXur40dr6oJg+rkmyFjm1pAR/rLEyXQXabzhNZLheUg=;
+	b=1tD2r3ExVY87qinoFJQz9t9WbudP5EuPQNvH+UOy61VmsEn7rapqaCdQ48hGOHIvKqPZtN
+	iGWsllBF24upTmYJ21drPLputS5oC0F7vf9tscwwQignHrO8j5ZshLJ2JyxqFMmQSMlBP9
+	fGO9owstxV6lwDp6iYRxLWK3dSeWaeE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725380153;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AXur40dr6oJg+rkmyFjm1pAR/rLEyXQXabzhNZLheUg=;
+	b=8wnYF0FFNltu1jN/0MLW2VO/+Bcy2ICUE3C0ZNKKIF80/ikgPviplk2983UdkrnDB20Rr3
+	tbeDtgEzhlambhBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7615013A52;
+	Tue,  3 Sep 2024 16:15:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aY3OFjk212ZdfQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 03 Sep 2024 16:15:53 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
+ <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 6/8] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs
+ dirs
+In-Reply-To: <20240902225511.757831-7-andrealmeid@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Mon, 2 Sep 2024 19:55:08 -0300")
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+	<20240902225511.757831-7-andrealmeid@igalia.com>
+Date: Tue, 03 Sep 2024 12:15:52 -0400
+Message-ID: <87jzfshfwn.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,86 +113,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: B71B921A43
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,mailhost.krisman.be:mid];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -6.51
+X-Spam-Flag: NO
 
-Hi Rob,
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-On 14:37 Fri 30 Aug     , Rob Herring wrote:
-> On Thu, Aug 29, 2024 at 11:26 AM Andrea della Porta
-> <andrea.porta@suse.com> wrote:
-> >
-> > Hi Rob,
-> >
-
-...
-
-> 
-> I think simple-bus where you have it is fine. It is really 1 level up
-> that needs to be specified. Basically something that's referenced from
-> the specific PCI device's schema (e.g. the RP1 schema (which you are
-> missing)).
-> 
-> That schema needs to roughly look like this:
-> 
-> properties:
->   "#address-cells":
->     const: 3
->   "#size-cells":
->     const: 2
->   ranges:
->     minItems: 1
->     maxItems: 6
->     items:
->       additionalItems: true
->       items:
->         - maximum: 5  # The BAR number
->         - const: 0
->         - const: 0
->         - # TODO: valid PCI memory flags
-> 
-> patternProperties:
->   "^bar-bus@[0-5]$":
->     type: object
->     additionalProperties: true
->     properties:
->       compatible:
->         const: simple-bus
->       ranges: true
+> Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
+> mounted with casefold support. A special check is need for this flag,
+> since it can't be set for non-empty directories.
 >
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+>  include/linux/shmem_fs.h |  6 +++---
+>  mm/shmem.c               | 40 +++++++++++++++++++++++++++++++++-------
+>  2 files changed, 36 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 1d06b1e5408a..8367ca2b99d9 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -42,10 +42,10 @@ struct shmem_inode_info {
+>  	struct inode		vfs_inode;
+>  };
+>=20=20
+> -#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
+> +#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_CASEFOLD_FL)
+>  #define SHMEM_FL_USER_MODIFIABLE \
+> -	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
+> -#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
+> +	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL | FS_CAS=
+EFOLD_FL)
+> +#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_=
+FL)
+>=20=20
+>  struct shmem_quota_limits {
+>  	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0f918010bc54..9a0fc7636629 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2617,9 +2617,26 @@ static int shmem_initxattrs(struct inode *, const =
+struct xattr *, void *);
+>   * chattr's fsflags are unrelated to extended attributes,
+>   * but tmpfs has chosen to enable them under the same config option.
+>   */
+> -static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
+ags)
+> +static int shmem_set_inode_flags(struct inode *inode, unsigned int fsfla=
+gs, struct dentry *dentry)
+>  {
+> -	unsigned int i_flags =3D 0;
+> +	unsigned int i_flags =3D 0, old =3D inode->i_flags;
+> +	struct super_block *sb =3D inode->i_sb;
+> +
+> +	if (fsflags & FS_CASEFOLD_FL) {
+> +		if (!sb->s_encoding)
+> +			return -EOPNOTSUPP;
+> +
+> +		if (!S_ISDIR(inode->i_mode))
+> +			return -ENOTDIR;
+> +
+> +		if (dentry && !simple_empty(dentry))
+> +			return -ENOTEMPTY;
+> +
+> +		i_flags |=3D S_CASEFOLD;
+> +	} else if (old & S_CASEFOLD) {
+> +		if (dentry && !simple_empty(dentry))
+> +			return -ENOTEMPTY;
 
-Hmmm.. not sure how this is going to work. The PCI device (RP1) will
-havei, at runtime, a compatible like this:
+We don't want to fail if a directory already has the S_CASEFOLD
+flag and we are not flipping it in the current operation.  Something like:
 
-compatible = "pci1de4,1\0pciclass,0200000\0pciclass,0200";
+if ((fsflags ^ old) & S_CASEFOLD) {
+	if (!sb->s_encoding)
+		return -EOPNOTSUPP;
 
-that is basically generated automatically by the OF framework. So, in the
-schema you proposed above, I can put something like:
+	if (!S_ISDIR(inode->i_mode))
+		return -ENOTDIR;
 
-properties:
-  compatible:
-    contains:
-      pattern: '^pci1de4,1'
+	if (dentry && !simple_empty(dentry))
+		return -ENOTEMPTY;
+        i_flags |=3D fsflags & S_CASEFOLD;
+}
 
-or maybe I could omit the compatible entirely, like in:
+>
+>  	if (fsflags & FS_NOATIME_FL)
+>  		i_flags |=3D S_NOATIME;
+> @@ -2630,10 +2647,12 @@ static void shmem_set_inode_flags(struct inode *i=
+node, unsigned int fsflags)
+>  	/*
+>  	 * But FS_NODUMP_FL does not require any action in i_flags.
+>  	 */
+> -	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE);
+> +	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_=
+CASEFOLD);
+> +
+> +	return 0;
+>  }
+>  #else
+> -static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
+ags)
+> +static void shmem_set_inode_flags(struct inode *inode, unsigned int fsfl=
+ags, struct dentry *dentry)
+>  {
+>  }
+>  #define shmem_initxattrs NULL
+> @@ -2680,7 +2699,7 @@ static struct inode *__shmem_get_inode(struct mnt_i=
+dmap *idmap,
+>  	info->fsflags =3D (dir =3D=3D NULL) ? 0 :
+>  		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
+>  	if (info->fsflags)
+> -		shmem_set_inode_flags(inode, info->fsflags);
+> +		shmem_set_inode_flags(inode, info->fsflags, NULL);
+>  	INIT_LIST_HEAD(&info->shrinklist);
+>  	INIT_LIST_HEAD(&info->swaplist);
+>  	simple_xattrs_init(&info->xattrs);
+> @@ -3790,16 +3809,23 @@ static int shmem_fileattr_set(struct mnt_idmap *i=
+dmap,
+>  {
+>  	struct inode *inode =3D d_inode(dentry);
+>  	struct shmem_inode_info *info =3D SHMEM_I(inode);
+> +	int ret, flags;
+>=20=20
+>  	if (fileattr_has_fsx(fa))
+>  		return -EOPNOTSUPP;
+>  	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
+>  		return -EOPNOTSUPP;
+>=20=20
+> -	info->fsflags =3D (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
+> +	flags =3D (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
+>  		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
+>=20=20
+> -	shmem_set_inode_flags(inode, info->fsflags);
+> +	ret =3D shmem_set_inode_flags(inode, flags, dentry);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	info->fsflags =3D flags;
+> +
+>  	inode_set_ctime_current(inode);
+>  	inode_inc_iversion(inode);
+>  	return 0;
 
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-iommu.yaml
-
-that seems to refer to generic compatible values.
-In both cases though, I don't see how these binding could work with
-make dt_binding_check, since there's no compatible known at compile
-time (for the first approach), or no compatible at all (the second
-approach).
-Is it intended only as a loose documentation?
-Or are you proposing that for a future new bus (hence with a new, specific,
-compatible) that could be described by the schema above?
-
-Many thanks,
-Andrea
- 
-> There were some discussions around interrupt handling that might also
-> factor into this.
-> 
-> Rob
+--=20
+Gabriel Krisman Bertazi
 
