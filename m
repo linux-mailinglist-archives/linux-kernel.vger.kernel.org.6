@@ -1,566 +1,200 @@
-Return-Path: <linux-kernel+bounces-313033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D5B969F43
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:41:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A06969F41
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA17285F19
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:41:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1ADBB23498
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397991799B;
-	Tue,  3 Sep 2024 13:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5F7462;
+	Tue,  3 Sep 2024 13:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MHuqFGrm"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FJ6KDKmI"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC27EAD2;
-	Tue,  3 Sep 2024 13:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C53846D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370871; cv=none; b=TD4I2YR5ivIeNPnnnhbM/y0qE6SxO3fRqjldkanwU/PJv4ScyqE/pomzPHJWKyi3qugLgn/KO7cQyqt8kbFGOND/MJy3jBI93Kg36h5xnqJ1LuQVL9f/8Mki/ifW9nxx2V3E6kzV0/z/FGoyx33yuLW9CmXDi7X2d+8TFaNFqlA=
+	t=1725370864; cv=none; b=br3+k59nJmI9GtxSeeaoFGot+6H1MjFOS30sw7ES5iF1q96eq6SOEQCUcL9dQdft5u0jetwigo+RSAFqTcIQPjKeDppqypbPhAXP4+cnVaDnkBTkRcdAGmZyDJLMhrREp4w2dmIWccYvy4SojQTjP551tt36KfArwXERtLd6+YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370871; c=relaxed/simple;
-	bh=37aDRQ2N4C3zyOV6VOoSRGSEHVqsBxwXSaGkA47fOHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V50jIe4LW5UwoQrWeXUELbxrs1b0xFF9DLRPSImgvQhO3NyrDI/1LSFAjO7N4FPFff5XGFtpBygVgNOPWG28ZwYopuYc4zZjBWxO1cJeDvWQ+iJ9P0rOuE2YEpfRtCw9uNOFI93HLUwW1AX9o10fE+Ct5DT9nfamOZcUEb5ZC2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MHuqFGrm; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2PrMrKgte/uaLihPCpSMz3uhBVwGELce5rhWaWV7ytE=; b=MHuqFGrmiOiQMN2m9eE684rknf
-	MO8w2FilzWORmkN0vBequyRQiol96QS0vY2oC4OqEu5jZXkL2hzRqyEjG6OXSCSq6QMrfXgZrbV8T
-	ztMtOI0VKt+X9uKkLK8YSmjtLGfEnoUVlIJf5hb5rM4K/pl0knnnJ/zbMpo3w14KRwAHCPK56zM27
-	uxTGAsk8PdGhkCnX+RR+IFeZP5oG+tbAswbw/ESJFkFs26p9rdtlPxfLnZ70WFcupOMGO7iAuDXN+
-	4NA8dtScdRPBYW/JHGQE1rAYm7GoroZcVykEGM3XbqmmDzJGv9YDjqtBD/jWUy/r7FGX20YRGGv3o
-	9N8c5qhg==;
-Received: from [177.172.122.98] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1slTlx-0091YL-RP; Tue, 03 Sep 2024 15:40:41 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v2] selftests/futex: Create test for robust list
-Date: Tue,  3 Sep 2024 10:40:33 -0300
-Message-ID: <20240903134033.816500-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725370864; c=relaxed/simple;
+	bh=Hm8uaTTnhsmMJ/kyk7EAYPeRsqRxY3Pm0+eWDG0FHmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IN/OtANRUh9jM29TTEgNWO46TP9sOByPXjzYOqjNZdRR6I4mMOT96pCe+22cBDZuLAE4mo8G/FSsG8LSVKsqMQa1UliysdX0NyJCqAtkNzFvmcG5yb/8R16OLxcYDmUR9FotZV7IQk8Z6q4R2oDY6krUbWiio0YW5jNIe1F9eQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FJ6KDKmI; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-375e5c12042so528872f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725370859; x=1725975659; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZPiLwRoBJssyDrESoc8JeuTReUrFQgHukWf8yT2sn0=;
+        b=FJ6KDKmIDEalrWDCNqCVMmXPL4Uqw9ZlFptKO1QIhw5L5NsLF/PDREBmN1KmM6whEp
+         diKVP9qhSqJ3Y22X1mVO6eUvfkb24ny2MoJmB54l6tKjvPNQbP+0nOINGgLZn5M9r7u5
+         wZCbAVa7XOeEgYdg8+tIsyA5vfAvHas0y+MITwXRVjQeQ3HE3O4UITr8NqVfYxe2J9FV
+         PrQkN3TzZJMfpZIhiEGikgQh2sM/4zSKw1Rsi/3EFHS5n2iY5lYhvEaMTtWpMONaLjX/
+         PKsFlUgALJ8YYd53L+1dJ+E2xHlwe/hWm0HEiympLLocAZEZXWAflm57zR38e+o2xzye
+         H8zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725370859; x=1725975659;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UZPiLwRoBJssyDrESoc8JeuTReUrFQgHukWf8yT2sn0=;
+        b=u2Kg9PeqcdF50CjMPi9vhHivvCbQ96n3mWNww+RFIIyruk5lDjGILQThpyYzbGrIj0
+         61KhSXLVaU6FnbZUD86ykYIQQY7X/+HsC/pcyFWfG4BXT92VujB9cpVq+Ml6tNzhhc1K
+         D1ZBq/9z0ONb7aVVPg4HcecFZq03Za5nSM8otPxiIZIhrq80m+U1bDrN5B8xFd8iA0Rf
+         pYUUinqlkzSX+FVXhfj/vzT3flq9kahF1RySpgmcm3pSlBf2KbF+C+VXdjl9RuOhwkI2
+         A8y/J4b3OQPwQgk/RMUp+hTZzi0n6j3BvnyYb4q5tIzZHKmqU4uyf8ADF9uFNrgAAWhf
+         Uomw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2R6f7cjjyUIB0yjnzh7nlnzNN3o1qIN1PwUbk+UlmntX4JU2q2Fe2vTHb5d+qH6OJp57gr0pqV4mh03s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Z0EPVysmZNLBMjlyQoTAVWoS3A/pGYs3QxHvTyr3kA7ZmSxX
+	0Zm2EAaMmU81/wusaF8rSnEA3Bha/HXukTn2BMCGZabTAdo4fZ+QAkSsk8biOQDjTgCZ9kYEdYR
+	4
+X-Google-Smtp-Source: AGHT+IGEnIii2CwULP0MNV6LucnH2tFdwivllv5dXZAfIObPe4f2nwv60Zk8bBT+ybFmOQ1uiRLW9g==
+X-Received: by 2002:a05:6000:4025:b0:374:c847:85d with SMTP id ffacd0b85a97d-374eccc2436mr3060014f8f.29.1725370859112;
+        Tue, 03 Sep 2024 06:40:59 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:ce9e:ba67:4faa:67ad])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42b9e7b7f87sm179383895e9.1.2024.09.03.06.40.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 06:40:58 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:40:55 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: Nishanth Menon <nm@ti.com>, ssantosh@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, 
+	jic23@kernel.org
+Subject: Re: [PATCH -next v2 2/4] soc: ti: knav_dma: Use dev_err_probe() to
+ simplfy code
+Message-ID: <ruphb2pue6tylszwekw7lwzgoyrtdru56vhcwqpnr63wrh37pu@mzpgfi62tyik>
+References: <20240830063228.3519385-1-ruanjinjie@huawei.com>
+ <20240830063228.3519385-3-ruanjinjie@huawei.com>
+ <20240830103155.5vs2hdokw6yysq47@finance>
+ <29edea69-92ce-2ac9-2aa8-bb9a4674ca01@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="az4ay56eqiq25z24"
+Content-Disposition: inline
+In-Reply-To: <29edea69-92ce-2ac9-2aa8-bb9a4674ca01@huawei.com>
 
-Create a test for the robust list mechanism.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v1:
-- Change futex type from int to _Atomic(unsigned int)
-- Use old futex(FUTEX_WAIT) instead of the new sys_futex_wait()
----
- .../selftests/futex/functional/.gitignore     |   1 +
- .../selftests/futex/functional/Makefile       |   3 +-
- .../selftests/futex/functional/robust_list.c  | 448 ++++++++++++++++++
- 3 files changed, 451 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/futex/functional/robust_list.c
+--az4ay56eqiq25z24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/futex/functional/.gitignore b/tools/testing/selftests/futex/functional/.gitignore
-index fbcbdb6963b3..4726e1be7497 100644
---- a/tools/testing/selftests/futex/functional/.gitignore
-+++ b/tools/testing/selftests/futex/functional/.gitignore
-@@ -9,3 +9,4 @@ futex_wait_wouldblock
- futex_wait
- futex_requeue
- futex_waitv
-+robust_list
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index f79f9bac7918..b8635a1ac7f6 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -17,7 +17,8 @@ TEST_GEN_PROGS := \
- 	futex_wait_private_mapped_file \
- 	futex_wait \
- 	futex_requeue \
--	futex_waitv
-+	futex_waitv \
-+	robust_list
- 
- TEST_PROGS := run.sh
- 
-diff --git a/tools/testing/selftests/futex/functional/robust_list.c b/tools/testing/selftests/futex/functional/robust_list.c
-new file mode 100644
-index 000000000000..9308eb189d48
---- /dev/null
-+++ b/tools/testing/selftests/futex/functional/robust_list.c
-@@ -0,0 +1,448 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2024 Igalia S.L.
-+ *
-+ * Robust list test by André Almeida <andrealmeid@igalia.com>
-+ *
-+ * The robust list uAPI allows userspace to create "robust" locks, in the sense
-+ * that if the lock holder thread dies, the remaining threads that are waiting
-+ * for the lock won't block forever, waiting for a lock that will never be
-+ * released.
-+ *
-+ * This is achieve by userspace setting a list where a thread can enter all the
-+ * locks (futexes) that it is holding. The robust list is a linked list, and
-+ * userspace register the start of the list with the syscall set_robust_list().
-+ * If such thread eventually dies, the kernel will walk this list, waking up one
-+ * thread waiting for each futex and marking the futex word with the flag
-+ * FUTEX_OWNER_DIED.
-+ *
-+ * See also
-+ *	man set_robust_list
-+ *	Documententation/locking/robust-futex-ABI.rst
-+ *	Documententation/locking/robust-futexes.rst
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include "../../kselftest_harness.h"
-+
-+#include "futextest.h"
-+
-+#include <pthread.h>
-+#include <stdatomic.h>
-+#include <stddef.h>
-+
-+#define STACK_SIZE (1024 * 1024)
-+
-+#define FUTEX_TIMEOUT 3
-+
-+static pthread_barrier_t barrier, barrier2;
-+
-+int set_robust_list(struct robust_list_head *head, size_t len)
-+{
-+	return syscall(SYS_set_robust_list, head, len);
-+}
-+
-+int get_robust_list(int pid, struct robust_list_head **head, size_t *len_ptr)
-+{
-+	return syscall(SYS_get_robust_list, pid, head, len_ptr);
-+}
-+
-+/*
-+ * Basic lock struct, contains just the futex word and the robust list element
-+ * Real implementations have also a *prev to easily walk in the list
-+ */
-+struct lock_struct {
-+	_Atomic(unsigned int) futex;
-+	struct robust_list list;
-+};
-+
-+/*
-+ * Helper function to spawn a child thread. Returns -1 on error, pid on success
-+ */
-+static int create_child(int (*fn)(void *arg), void *arg)
-+{
-+	char *stack;
-+	pid_t pid;
-+
-+	stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
-+	if (stack == MAP_FAILED)
-+		return -1;
-+
-+	stack += STACK_SIZE;
-+
-+	pid = clone(fn, stack, CLONE_VM | SIGCHLD, arg);
-+
-+	if (pid == -1)
-+		return -1;
-+
-+	return pid;
-+}
-+
-+/*
-+ * Helper function to prepare and register a robust list
-+ */
-+static int set_list(struct robust_list_head *head)
-+{
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(struct robust_list_head));
-+	if (ret)
-+		return ret;
-+
-+	head->futex_offset = (size_t) offsetof(struct lock_struct, futex) -
-+			     (size_t) offsetof(struct lock_struct, list);
-+	head->list.next = &head->list;
-+	head->list_op_pending = NULL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * A basic (and incomplete) mutex lock function with robustness
-+ */
-+static int mutex_lock(struct lock_struct *lock, struct robust_list_head *head, bool error_inject)
-+{
-+	_Atomic(unsigned int) *futex = &lock->futex;
-+	int zero = 0, ret = -1;
-+	pid_t tid = gettid();
-+
-+	/*
-+	 * Set list_op_pending before starting the lock, so the kernel can catch
-+	 * the case where the thread died during the lock operation
-+	 */
-+	head->list_op_pending = &lock->list;
-+
-+	if (atomic_compare_exchange_strong(futex, &zero, tid)) {
-+		/*
-+		 * We took the lock, insert it in the robust list
-+		 */
-+		struct robust_list *list = &head->list;
-+
-+		/* Error injection to test list_op_pending */
-+		if (error_inject)
-+			return 0;
-+
-+		while (list->next != &head->list)
-+			list = list->next;
-+
-+		list->next = &lock->list;
-+		lock->list.next = &head->list;
-+
-+		ret = 0;
-+	} else {
-+		/*
-+		 * We didn't take the lock, wait until the owner wakes (or dies)
-+		 */
-+		struct timespec to;
-+
-+		clock_gettime(CLOCK_MONOTONIC, &to);
-+		to.tv_sec = to.tv_sec + FUTEX_TIMEOUT;
-+
-+		tid = atomic_load(futex);
-+		/* Kernel ignores futexes without the waiters flag */
-+		tid |= FUTEX_WAITERS;
-+		atomic_store(futex, tid);
-+
-+		ret = futex_wait((futex_t *) futex, tid, &to, 0);
-+
-+		/*
-+		 * A real mutex_lock() implementation would loop here to finally
-+		 * take the lock. We don't care about that, so we stop here.
-+		 */
-+	}
-+
-+	head->list_op_pending = NULL;
-+
-+	return ret;
-+}
-+
-+/*
-+ * This child thread will succeed taking the lock, and then will exit holding it
-+ */
-+static int child_fn_lock(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	ret = mutex_lock(lock, &head, false);
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	/*
-+	 * There's a race here: the parent thread needs to be inside
-+	 * futex_wait() before the child thread dies, otherwise it will miss the
-+	 * wakeup from handle_futex_death() that this child will emit. We wait a
-+	 * little bit just to make sure that this happens.
-+	 */
-+	sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Spawns a child thread that will set a robust list, take the lock, register it
-+ * in the robust list and die. The parent thread will wait on this futex, and
-+ * should be waken up when the child exits.
-+ */
-+TEST(robustness)
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	struct robust_list_head head;
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	/*
-+	 * Lets use a barrier to ensure that the child thread takes the lock
-+	 * before the parent
-+	 */
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = create_child(&child_fn_lock, &lock);
-+	ASSERT_NE(ret, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	/*
-+	 * futex_wait() should return 0 and the futex word should be marked with
-+	 * FUTEX_OWNER_DIED
-+	 */
-+	ASSERT_EQ(ret, 0) TH_LOG("futex wait returned %d", errno);
-+	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-+
-+	pthread_barrier_destroy(&barrier);
-+}
-+
-+/*
-+ * The only valid value for len is sizeof(*head)
-+ */
-+TEST(set_robust_list_invalid_size)
-+{
-+	struct robust_list_head head;
-+	size_t head_size = sizeof(struct robust_list_head);
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = set_robust_list(&head, head_size * 2);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, head_size - 1);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * Test get_robust_list with pid = 0, getting the list of the running thread
-+ */
-+TEST(get_robust_list_self)
-+{
-+	struct robust_list_head head, head2, *get_head;
-+	size_t head_size = sizeof(struct robust_list_head), len_ptr;
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head);
-+	ASSERT_EQ(head_size, len_ptr);
-+
-+	ret = set_robust_list(&head2, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head2);
-+	ASSERT_EQ(head_size, len_ptr);
-+}
-+
-+static int child_list(void *arg)
-+{
-+	struct robust_list_head *head = (struct robust_list_head *) arg;
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(struct robust_list_head));
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test get_robust_list from another thread. We use two barriers here to ensure
-+ * that:
-+ *   1) the child thread set the list before we try to get it from the
-+ * parent
-+ *   2) the child thread still alive when we try to get the list from it
-+ */
-+TEST(get_robust_list_child)
-+{
-+	pid_t tid;
-+	int ret;
-+	struct robust_list_head head, *get_head;
-+	size_t len_ptr;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ret = pthread_barrier_init(&barrier2, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	tid = create_child(&child_list, &head);
-+	ASSERT_NE(tid, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	ret = get_robust_list(tid, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(&head, get_head);
-+
-+	pthread_barrier_wait(&barrier2);
-+
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+}
-+
-+static int child_fn_lock_with_error(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	ret = mutex_lock(lock, &head, true);
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Same as robustness test, but inject an error where the mutex_lock() exits
-+ * earlier, just after setting list_op_pending and taking the lock, to test the
-+ * list_op_pending mechanism
-+ */
-+TEST(set_list_op_pending)
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	struct robust_list_head head;
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = create_child(&child_fn_lock_with_error, &lock);
-+	ASSERT_NE(ret, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	ASSERT_EQ(ret, 0) TH_LOG("futex wait returned %d", errno);
-+	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-+
-+	pthread_barrier_destroy(&barrier);
-+}
-+
-+#define CHILD_NR 10
-+
-+static int child_lock_holder(void *arg)
-+{
-+	struct lock_struct *locks = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int i;
-+
-+	set_list(&head);
-+
-+	for (i = 0; i < CHILD_NR; i++) {
-+		locks[i].futex = 0;
-+		mutex_lock(&locks[i], &head, false);
-+	}
-+
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	sleep(1);
-+	return 0;
-+}
-+
-+static int child_wait_lock(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	pthread_barrier_wait(&barrier2);
-+	ret = mutex_lock(lock, &head, false);
-+
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	if (!(lock->futex | FUTEX_OWNER_DIED))
-+		ksft_test_result_fail("futex not marked with FUTEX_OWNER_DIED\n");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test a robust list of more than one element. All the waiters should wake when
-+ * the holder dies
-+ */
-+TEST(robust_list_multiple_elements)
-+{
-+	struct lock_struct locks[CHILD_NR];
-+	int i, ret;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+	ret = pthread_barrier_init(&barrier2, NULL, CHILD_NR + 1);
-+	ASSERT_EQ(ret, 0);
-+
-+	create_child(&child_lock_holder, &locks);
-+
-+	/* Wait until the locker thread takes the look */
-+	pthread_barrier_wait(&barrier);
-+
-+	for (i = 0; i < CHILD_NR; i++)
-+		create_child(&child_wait_lock, &locks[i]);
-+
-+	/* Wait for all children to return */
-+	while (wait(NULL) > 0);
-+
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.46.0
+Hello,
 
+On Sat, Aug 31, 2024 at 09:59:33AM +0800, Jinjie Ruan wrote:
+> On 2024/8/30 18:31, Nishanth Menon wrote:
+> > On 14:32-20240830, Jinjie Ruan wrote:
+> >> Use the dev_err_probe() helper to simplify error handling
+> >> during probe.
+> >>
+> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> >> ---
+> >> v2:
+> >> - Split into 2 patches.
+> >> ---
+> >>  drivers/soc/ti/knav_dma.c | 12 ++++--------
+> >>  1 file changed, 4 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+> >> index 15e41d3a5e22..eeec422a46f0 100644
+> >> --- a/drivers/soc/ti/knav_dma.c
+> >> +++ b/drivers/soc/ti/knav_dma.c
+> >> @@ -708,17 +708,13 @@ static int knav_dma_probe(struct platform_device=
+ *pdev)
+> >>  	struct device_node *node =3D pdev->dev.of_node;
+> >>  	int ret =3D 0;
+> >> =20
+> >> -	if (!node) {
+> >> -		dev_err(&pdev->dev, "could not find device info\n");
+> >> -		return -EINVAL;
+> >> -	}
+> >> +	if (!node)
+> >> +		return dev_err_probe(&pdev->dev, -EINVAL, "could not find device in=
+fo\n");
+> >> =20
+> >>  	kdev =3D devm_kzalloc(dev,
+> >>  			sizeof(struct knav_dma_pool_device), GFP_KERNEL);
+> >> -	if (!kdev) {
+> >> -		dev_err(dev, "could not allocate driver mem\n");
+> >> -		return -ENOMEM;
+> >> -	}
+> >> +	if (!kdev)
+> >> +		return dev_err_probe(dev, -ENOMEM, "could not allocate driver mem\n=
+");
+> >=20
+> > These make no sense to me :( -> just using dev_err_probe when there is
+> > no chance of -EPROBE_DEFER ?
+>=20
+> I noticed a change in dev_err_probe() this year, which is described in
+> this patch:
+>=20
+> For an out-of-memory error there should be no additional output. Adapt
+> dev_err_probe() to not emit the error message when err is -ENOMEM.
+> This simplifies handling errors that might among others be -ENOMEM.
+
+Notice this was carefully worded. Calling dev_err_probe() if you know
+that the error is ENOMEM isn't helpful. The change was introduced to
+simplify
+
+	ret =3D some_function_that_might_return_ENOMEM_and_other_errors()
+	if (ret =3D=3D -ENOMEM)
+		return ret;
+	else if (ret)
+		return dev_err_probe(dev, ret, "....");
+
+to
+
+	ret =3D some_function_that_might_return_ENOMEM_and_other_errors()
+	if (ret)
+		return dev_err_probe(dev, ret, "....");
+
+But adding a dev_err_probe() if you know in the ret !=3D 0 branch that ret
+must be -ENOMEM, actively adding a dev_err_probe() gives very little
+improvement. The main effect is to increase the size of the resulting
+kernel image (or module).
+
+Back when I made dev_err_probe() silent for -ENOMEM, it was suggested to
+even make it fail to compile if ret is ENOMEM.
+
+I wouldn't necessarily object to new code using dev_err_probe() to check
+the return value of a function that can only return (success or)
+-ENOMEM, but I agree to Krzysztof that changing existing code is little
+helpful.
+
+Best regards
+Uwe
+
+--az4ay56eqiq25z24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbXEd4ACgkQj4D7WH0S
+/k7w2Qf/YOrnEJu0mpFQNpf7L0HEd3MMqBoN4msV2nLlptFTxJEIk0o3FMeFvfs9
+ESODHMVvhH8PXA7XoPY+bJSWKhyf6mNnb0BT5sD538yGqH6WqyxMG3bDv6d1Jmof
+B/3QJ99VrTPqm72+ZpM0UpxV+otMu4ELpNLfjgCU37SQDYKTc04HUtr1MiJ6DTKm
+wK9GuNLLOugM2zZTo+/8LVxOSqa0XHfRhxwnFDP07EESvhfROQq/0SJcm5WYtBI2
+aZAKoikhJM9/Y1eUiy9jjHDRFfe6bPpHsut7hwinnG02WJZEK977MK+Dy4ZUQE1q
+Ol6IN5Y5Ti4/obiA+DS/uJMbUwz3JQ==
+=+Cpn
+-----END PGP SIGNATURE-----
+
+--az4ay56eqiq25z24--
 
