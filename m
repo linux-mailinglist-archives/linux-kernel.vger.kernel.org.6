@@ -1,243 +1,150 @@
-Return-Path: <linux-kernel+bounces-312571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F162996984C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AA5969854
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 410FFB22F8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEB41F24144
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBE7131E2D;
-	Tue,  3 Sep 2024 09:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C074F1A303F;
+	Tue,  3 Sep 2024 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPPCjKDi"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaGvgWX7"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC07C1C7668
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F791C7668;
+	Tue,  3 Sep 2024 09:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725354460; cv=none; b=X6p91RoHNexDNTMhjjB6vte4XLtOylvxqs6e91TAg4IlvskDy+oeZa4mKd0vlMW8Gg3X/OQXSIkdz7YthJowAAWx+1Eizx9w8SgkeNtufdrWrMX0lP0ae+h5dSRkLShPEetboD+vSfXIuIOplBm+EenxIDhvCfntAC3L1DCVkck=
+	t=1725354535; cv=none; b=jHJTYXcGD82D8TBN2o1nLbH5DkfekcATUzoHhEGIPi2OYw8JTZjj3QcEhepnvS5vhTrWx3kLePv+r+7f1vpfZsIxj8dU0lNABAm0177rPLwbG9O2up9qiLgEYpPAOzM3d9KsU3P9ptxjGcOMQfWAY5vcNMFp3ZWFeOqn8K5pMG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725354460; c=relaxed/simple;
-	bh=AGjM9sgZ0hqocEvvffJfYM8EM3WykrklcyBqDCdQW8U=;
+	s=arc-20240116; t=1725354535; c=relaxed/simple;
+	bh=yXsteYTYHdjmkVWZSfy+ZgdcoEsEZ5Blm2+Q2trApDk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kH8Mhr4zEB0USq7dYtmWm7A49c1c7rVIlWeDgciKM2+k0jbRz60W3sssnTDkDAXcDkuNFlP8qHNxZqO8tuBRWKshyKO2HsUa+rrsOUnqc0uVAhF4gP5f3A9MRQkEHRiUCK5qnWkTrIqOb28BO+76LmGZJods2URhh72Y03JfQT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPPCjKDi; arc=none smtp.client-ip=209.85.221.180
+	 To:Cc:Content-Type; b=Et88qLaHa8PNtLRrmuAV8hb3co1BhA9/p3PCp2U/OXUPuSC6qU9LMlFT8srnUS/tC8EYenBMVs/JrGzgXUZyUC3dyUdmZyqKNRzJ8CaPQkesXDdap9wjJwWolV0agbiI+FO8ZdXkWA81lm1raDMURf+0wE+vt/3Fr1+HurC/aho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaGvgWX7; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4fcec06ce09so909349e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:07:38 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c35ac3a7e6so13523646d6.1;
+        Tue, 03 Sep 2024 02:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725354458; x=1725959258; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725354532; x=1725959332; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e85t1jRey5hTU/qXZuJShM2FVDPgwHYzlYskgkKH3lk=;
-        b=mPPCjKDi0o6V+FeL3H62lk/r6aqxkNE9HlIm6y61X+UCc8ZhOYPWK3Ri7Xu7p5m3n8
-         0ruWgAGnFTN0rr5eGfci755H7GkT5/pgrvzlsAPeZ5sXrqJahwOxS2OKNzTnuXfmQu07
-         QLQ3FLsZoqn0BbtIHZviZyp6PA9+tpaWAp4KtwRALS6zV7VXt+Hoy2/iXm+xu/FvmCWV
-         fWsXFIebX3FjzPt/1ZT3K7urswZikq5E+evni8Xi+Ejw76/9P0TtN1dIvo4wb8qMkbai
-         dGYGzzBjiJwm+HQwWKfIcypnCYmC8ziBgeqfMsh2GfFHSjQvHWl6BhgE0Pkn3zuRhDjU
-         Pd4Q==
+        bh=RNSUaAuCT1hhn3yR4/PJ6F5Hry7OaS+mwt0V2W/ErFM=;
+        b=jaGvgWX7lWVjeXIzlw+KCB6mCYYwj+RahLH0KTZ1GrLs0Eyeu2rHb+xz7T6jntNOPn
+         dNOfiZ6ePBynmh/OwcpgEjl3UvY00NypsEy1nCG3dKCB3/NZDp8VT39lxFASIXFJ2LMp
+         UzL1wK833hf7dPJi6gNTZdRO+bQKfvfVG57ro6nOdL3xJrgQgIfvmYQQ0G8VjDKEneHr
+         HPP7BFPZ3+YHWBz7f7yOmOCzLiIUPE1mwriTt8iTRo5sJciWxtrV3/+qt5kXxdB1t7jl
+         AkguWTNPWV+hQEghwkL67z1k1T7qbPYrgfX2RsJwOZy4y5ZLUoLLuz8HH9bU9sbdGjQY
+         Fsvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725354458; x=1725959258;
+        d=1e100.net; s=20230601; t=1725354532; x=1725959332;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e85t1jRey5hTU/qXZuJShM2FVDPgwHYzlYskgkKH3lk=;
-        b=P/uY1BvnbnNX+lOvs+lIcO0Dsdtvz7ALmm4IRSIORrbuZWjw7PIMT7GHutgfjclCHc
-         Wr4azlUTzLV+mW+JPXEoFA/4nFJEWLrtfJYFfXHdJLZloSKCzZIuch9fa41VFl6o61LV
-         7OEiR8hcewkLfWWXwDdWzVHOHNJZW1D8MKGBDTYRR2aLGW/RaHfDebzLqrQ7tReHtZPN
-         rOdQ0tclG0WmystB2qwmdkGrlGnEDwMQpQyQJjZRVl1Au2YTxl77GfszCk6TYeDDVaV6
-         8qbctMz2Vq4VtgRygkpDALnDQct0tMEcim9guavhHb2bvUhFOJuyWJxTvnFKnMTqtOaF
-         eIww==
-X-Forwarded-Encrypted: i=1; AJvYcCUe1Ii080m6GkNHrV/IcaetCXxDEL5tJiaqT3KwkUvG8N7ttnC5WXQQPXLhQc4s9mZAx1bT2TxVuYzLhF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbNSE5Dt0fQ0vVzIzWFuC3VsFFL+4cSYuv6Bg1RAIDZh/b9t8
-	5Cl2nUEliwTXKbnxWNkW1wgedVQbjSVjiVdXOey5jkx/bqWqhNLbKrHFL8+UM+kXIKU2P6MZMfw
-	q7mMpTfiu7qVvFF4WtPo3/Y1c60E=
-X-Google-Smtp-Source: AGHT+IHj1AYVj3zCjimE6wgEWqwQiNxIzOdiHbhd55efBHjy3uYLPaw0NRbvJjhQByOZI/TtPwKxBmLc4xUZcamm5RY=
-X-Received: by 2002:a05:6122:c97:b0:4f5:446c:f749 with SMTP id
- 71dfb90a1353d-5009ac67965mr11745711e0c.6.1725354457477; Tue, 03 Sep 2024
- 02:07:37 -0700 (PDT)
+        bh=RNSUaAuCT1hhn3yR4/PJ6F5Hry7OaS+mwt0V2W/ErFM=;
+        b=hE2/xUC5i+ucO+KCP9DA2uHjGSeGMU0J8RsyG7w6PUj/Y3LphDr8/u2k69pApK9G4n
+         M8cCnD4w+lMUJfKyLyf34aLXwIEocqkhggYlNsbU/FkHlhR4uRBlV6YuJj1fhhfM/rcu
+         1mGVWPEjRWgdWxFxRaD94tYQXCgorawKCUOmvF0SR24OgqXfQAIj09wQ0+H+gzIKJm6E
+         WxxBZUwqTXUEXuwKoAIa1zVbHzPP1fJJ0UgPpKIEiDzytAbnF7S5JSkPQRBI11HjjQbE
+         msR4MFP98Qqjc9ETWfhbiTy1RbWlh2MEEXqco+4AeXUIvESxYiRm3FT14WtnUSCPfzUe
+         WaJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcgDh0jfpR50TVkqDfNJHnjBq1TrdMCwHgGa0HhOmZ256Wmo2s+Dq8s2SYRVdFANGHzzak1xvzfgllRmqk@vger.kernel.org, AJvYcCWT+RDJ5aGSGRfNMkG9qEE09wiwek+VGTX+rH3hCDscmcQaJSnJUbotX7PrkQTeV9cwJb8HSrhCEMD4@vger.kernel.org, AJvYcCXG9YTT4+uoorvpsHxSDKxEcxgPhgBlcR3hbfioV32CX42mnrXJrls7or1Us9jMA14Zs2G20hZckU4yl+mx5g==@vger.kernel.org, AJvYcCXhr/8L83IYcjEE5dsJhig2i2G9hEBC+2vgEA3PMe6gykFXm6zu/ZWjCZuYIVfSxdnB04ZuSqv6ifN/lsea7IBjIw==@vger.kernel.org, AJvYcCXsYm/Vv3z6FyvnVK8LwKckkUHVCKb1TzJ/1M0qM6ecj/ixkMjYCVWIulTbKAK/Mg84demY3cm53g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZs20h4OLQgKEGBRD1KGT35Qi8KE1+a3uWeZkk3CqCkQgzs6W/
+	Ew9RgtyKHdH7wyw9yxR1F1n6TWzhqzrMP6livaZ50AXl6Y82cywzuDQndfAncLU1jxsVKfL0aIx
+	/W1+tJ2mWhoV+0qaLazEQAH8g0is=
+X-Google-Smtp-Source: AGHT+IEue1Qt36L3+EfoJIWpUvc4YTUfQcRxk5QLj8xifrUj4YYSFty/txvVnZIkWcK44hKqb/xh7JAqfqX+IIFtem8=
+X-Received: by 2002:a05:6214:5b0f:b0:6c1:6c23:8eaa with SMTP id
+ 6a1803df08f44-6c3551c9af2mr137265166d6.10.1725354532384; Tue, 03 Sep 2024
+ 02:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902225009.34576-1-21cnbao@gmail.com> <2024090325-sublet-unsworn-b6a3@gregkh>
-In-Reply-To: <2024090325-sublet-unsworn-b6a3@gregkh>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 3 Sep 2024 17:07:23 +0800
-Message-ID: <CAGsJ_4ybZRudJ+p7pxgb1xH7HP0rKcWW1Dtr_kvb7EUwnqxsQQ@mail.gmail.com>
-Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
- reduce the lock duration
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240902164554.928371-1-cyphar@cyphar.com> <20240902164554.928371-2-cyphar@cyphar.com>
+ <CAOQ4uxgS6DvsbUsEoM1Vr2wcd_7Bj=xFXMAy4z9PphTu+G6RaQ@mail.gmail.com> <20240903.044647-some.sprint.silent.snacks-jdKnAVp7XuBZ@cyphar.com>
+In-Reply-To: <20240903.044647-some.sprint.silent.snacks-jdKnAVp7XuBZ@cyphar.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 3 Sep 2024 11:08:40 +0200
+Message-ID: <CAOQ4uxhXa-1Xjd58p8oGd9Q4hgfDtGnae1YrmDWwQp3t5uGHeg@mail.gmail.com>
+Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount ID
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Christoph Hellwig <hch@infradead.org>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 4:57=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Sep 3, 2024 at 8:41=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> wro=
+te:
 >
-> On Tue, Sep 03, 2024 at 10:50:09AM +1200, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
+> On 2024-09-02, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com>=
+ wrote:
+> > >
+> > > Now that open_by_handle_at(2) can return u64 mount IDs, do some tests=
+ to
+> > > make sure they match properly as part of the regular open_by_handle
+> > > tests.
+> > >
+> > > Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-v3-0=
+-10c2c4c16708@cyphar.com/
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > ---
+> > > v2:
+> > > - Remove -M argument and always do the mount ID tests. [Amir Goldstei=
+n]
+> > > - Do not error out if the kernel doesn't support STATX_MNT_ID_UNIQUE
+> > >   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
+> > > - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cyphar@cy=
+phar.com/>
 > >
-> > The mmap_write_lock() can block all access to the VMAs, for example pag=
-e
-> > faults. Performing memory allocation while holding this lock may trigge=
-r
-> > direct reclamation, leading to others being queued in the rwsem for an
-> > extended period.
-> > We've observed that the allocation can sometimes take more than 300ms,
-> > significantly blocking other threads. The user interface sometimes
-> > becomes less responsive as a result. To prevent this, let's move the
-> > allocation outside of the write lock.
-> > A potential side effect could be an extra alloc_page() for the second
-> > thread executing binder_install_single_page() while the first thread
-> > has done it earlier. However, according to Tangquan's 48-hour profiling
-> > using monkey, the likelihood of this occurring is minimal, with a ratio
-> > of only 1 in 2400. Compared to the significantly costly rwsem, this is
-> > negligible.
-> > On the other hand, holding a write lock without making any VMA
-> > modifications appears questionable and likely incorrect. While this
-> > patch focuses on reducing the lock duration, future updates may aim
-> > to eliminate the write lock entirely.
+> > Looks good.
 > >
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: "Arve Hj=C3=B8nnev=C3=A5g" <arve@android.com>
-> > Cc: Todd Kjos <tkjos@android.com>
-> > Cc: Martijn Coenen <maco@android.com>
-> > Cc: Joel Fernandes <joel@joelfernandes.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Carlos Llamas <cmllamas@google.com>
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Tested-by: Tangquan Zheng <zhengtangquan@oppo.com>
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >  drivers/android/binder_alloc.c | 18 ++++++++++++++----
-> >  1 file changed, 14 insertions(+), 4 deletions(-)
+> > You may add:
 > >
-> > diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_al=
-loc.c
-> > index b3acbc4174fb..f20074e23a7c 100644
-> > --- a/drivers/android/binder_alloc.c
-> > +++ b/drivers/android/binder_alloc.c
-> > @@ -227,13 +227,23 @@ static int binder_install_single_page(struct bind=
-er_alloc *alloc,
-> >       if (!mmget_not_zero(alloc->mm))
-> >               return -ESRCH;
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 > >
-> > +     /*
-> > +      * Don't allocate page in mmap_write_lock, this can block
-> > +      * mmap_rwsem for a long time; Meanwhile, allocation failure
-> > +      * doesn't necessarily need to return -ENOMEM, if lru_page
-> > +      * has been installed, we can still return 0(success).
-> > +      */
-> > +     page =3D alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+> > It'd be nice to get a verification that this is indeed tested on the la=
+test
+> > upstream and does not regress the tests that run the open_by_handle pro=
+gram.
 >
-> But now you are allocating new pages even if binder_get_installed_page()
-> is an error, right?  Doesn't that slow things down?
+> I've tested that the fallback works on mainline and correctly does the
+> test on patched kernels (by running open_by_handle directly) but I
+> haven't run the suite yet (still getting my mkosi testing setup working
+> to run fstests...).
 
-very very unlikely, as the ratio is only 1/2400 while write lock 100% block=
-s
-everyone.
+I am afraid this has to be tested.
+I started testing myself and found that it breaks existing tests.
+Even if you make the test completely opt-in as in v1 it need to be
+tested and _notrun on old kernels.
 
->
-> How was this benchmarked?
->
+If you have a new version, I can test it until you get your fstests setup
+ready, because anyway I would want to check that your test also
+works with overlayfs which has some specialized exportfs tests.
+Test by running ./check -overlay -g exportfs, but I can also do that for yo=
+u.
 
-i actually put Tangquan's profiling result:
-"
-However, according to Tangquan's 48-hour profiling
- using monkey, the likelihood of this occurring is minimal, with a ratio
- of only 1 in 2400. Compared to the significantly costly rwsem, this is
- negligible."
-
-> > +
-> >       /*
-> >        * Protected with mmap_sem in write mode as multiple tasks
-> >        * might race to install the same page.
-> >        */
-> >       mmap_write_lock(alloc->mm);
-> > -     if (binder_get_installed_page(lru_page))
-> > +     if (binder_get_installed_page(lru_page)) {
-> > +             ret =3D 1;
->
-> That is not a valid error value :(
->
-> >               goto out;
-> > +     }
-> >
-> >       if (!alloc->vma) {
-> >               pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
-> > @@ -241,7 +251,6 @@ static int binder_install_single_page(struct binder=
-_alloc *alloc,
-> >               goto out;
-> >       }
-> >
-> > -     page =3D alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
-> >       if (!page) {
-> >               pr_err("%d: failed to allocate page\n", alloc->pid);
-> >               ret =3D -ENOMEM;
-> > @@ -252,7 +261,6 @@ static int binder_install_single_page(struct binder=
-_alloc *alloc,
-> >       if (ret) {
-> >               pr_err("%d: %s failed to insert page at offset %lx with %=
-d\n",
-> >                      alloc->pid, __func__, addr - alloc->buffer, ret);
-> > -             __free_page(page);
-> >               ret =3D -ENOMEM;
-> >               goto out;
-> >       }
-> > @@ -262,7 +270,9 @@ static int binder_install_single_page(struct binder=
-_alloc *alloc,
-> >  out:
-> >       mmap_write_unlock(alloc->mm);
-> >       mmput_async(alloc->mm);
-> > -     return ret;
-> > +     if (ret && page)
-> > +             __free_page(page);
-> > +     return ret < 0 ? ret : 0;
->
-> Please only use ? : for when you have to, otherwise please spell it out
-> with a normal if statement:
->         if (ret < 0)
->                 return ret;
->         return 0;
->
-> But, this is abusing the fact that you set "ret =3D 1" above, which is
-> going to trip someone up in the future as that is NOT a normal coding
-> pattern we have in the kernel, sorry.
->
-> If you insist on this change, please rework it to not have that type of
-> "positive means one thing, 0 means another, and negative means yet
-> something else" please.
-
-I was trying to consolidate all free_page() calls into one place. Otherwise=
-,
-we would need multiple free_page() calls. I'm perfectly fine with having mo=
-re
-free_page() calls in both the ret =3D 1 and ret < 0 paths. In that case,
-the ret =3D 1
-path can be removed if you prefer.
-
->
-> thanks,
->
-> greg k-h
-
-Thanks
-Barry
+Thanks,
+Amir.
 
