@@ -1,298 +1,225 @@
-Return-Path: <linux-kernel+bounces-313652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAD696A82A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D5196A838
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD3B1F24187
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:18:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DC11F25509
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7821AB6F1;
-	Tue,  3 Sep 2024 20:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677961CDFA6;
+	Tue,  3 Sep 2024 20:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uZ8mFr9j"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AXjjmNlS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9C2175D45
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66FB1DC745;
+	Tue,  3 Sep 2024 20:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725394699; cv=none; b=q33fB3pCN50bFEvz8ca6wF60TvJ3NTSknz27rBSgdhxthTXiM1m1S7sfy1v1QK8AynGfv10qI2+unUA4I/PQ4zYAkn2LuS8ufm4aJ91YNNG6RmoHAC/HvIYdKN+H1cTqgqQ6l6LOKJHXFHmhcXxyKBCCh/XGQml87uzSptC758Y=
+	t=1725394760; cv=none; b=Sp3oP3S29XLfPhVp3rzPJW5YESYmNUasG+qk0utyAVOL8ghuMsEV3DDIn2dQIbW9RpQwQS2Xjsvw0RzJfKnQIkeDHKi+qco0m7SHj/gW1dvWOr7mpEC+jQItSvREtjF47ThIPAaKy/DN9SgsqRW5If9ctCgSQt9sHKrdyQGLqbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725394699; c=relaxed/simple;
-	bh=vqPrsuLAadIVwHpctirEna5UZ8crz7z1K8rS2xh+mUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kjGmY+rxhDxDzm9wgeLgQczTErHHejmnKcW4OnMaiEJLlB1DIuiJfy8aVUnPpUZ/eU4z9bWO02GxbvTBQvRGewpaBPc992k31M2Rfl6b9utEryyrXCn+htXNTwGCofmhnIfa2eMCqrccdljSDfn1Kluzq86VbuTcHWVLTF/mogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uZ8mFr9j; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a90780f6dso3531201276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 13:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725394697; x=1725999497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6IOIYEw/jeHb64GELpDm5TMQOm7M8Rg31rMOmnYe6WQ=;
-        b=uZ8mFr9jYLsTG6YUAty9TB/oSdCf5/NnHu6M6JcobaVZiySBxe+Fbckl5gwKnGEimB
-         x9bc6N6JdDbzOJBGxU4sL0qq6GKEMCvoyFd6D9VWmughvm8niKahVIm4YYNXOPhHpZue
-         hI3+oqZU/+xLy/tCvcQguPrcQH9kOTimNSc0i8uPZH2QlxVMPwOhsLb73oTNdKRkhOGu
-         hDkqq7vQz+eLcDqr94fxR9YsXQf3UmfHR2rY+X0LzwMsmcjDj3UuK/QPJq7FQECLPmZU
-         ZkJMAlibjlzaBPzAMly76GiUTrE2OZhyzRLuu8sirsqQVloVLSJFSk28GVdOMCwPqofU
-         Mg5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725394697; x=1725999497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6IOIYEw/jeHb64GELpDm5TMQOm7M8Rg31rMOmnYe6WQ=;
-        b=BrCYrViyBcPhoC3hpxANV4AZoOl3g/K+WXzu6BeNwaEDV4YTjvUGWGVJuSoYV9LT8c
-         ppzLey13y9pSupEZzfERK3zx9k2J1BVFRcLZSxxJLL50x1clG0OdVygiJWhlKkPPA2rI
-         ccxmjmaHEM/ox+evqbtdkSef4iR+igy2huVEJxtLaj50uwwjoxqW8ijOkye8bcytPe7W
-         zB36jc/fGtXGjX0DqXdoFQHIY8UX5hzSIPMBYtQPwiz4+fLTEOXc3wX4KBpryV6TkpDQ
-         SxQKyK/I8bn0rVxT1BzZ+CkVmQcBbS7jNAV3GeXc2HHKijIrzkJfl17O1hndDw3Ai++n
-         FoZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVna93NmdS9lepi88LA0Gcz0IIbc3/Q+ajU78k1gxrV4Hfr0Y7Aa/Uo9ondugSvx5M6Pclv2Hco4STNUaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9k7klp3X9Tv+r4oCLvX22WOa9yhQH3ZQFdhzAGfO1rD1ABXFU
-	Rij/hT2SHFn5DXhzT0XpR0vK4faDcA953NjaNMzC2mxKG0G/GNoQNIM2nc5mgPvNwV703+zPd8P
-	8P7kTHEGyssTAuf5h5XK7FGVsLJiymoZY+rKdvDaPDMZJb+9/gw==
-X-Google-Smtp-Source: AGHT+IEBPbHaQI58PjAPTmNofcLAkNwr7ellpsk8jvXpXQbpvkKIFZMG2GPmvc+blZiCV4V3tUeq48RgQqu/49/Dgtk=
-X-Received: by 2002:a05:6902:160f:b0:e1a:9461:f828 with SMTP id
- 3f1490d57ef6-e1a9461f8a6mr13035809276.10.1725394696978; Tue, 03 Sep 2024
- 13:18:16 -0700 (PDT)
+	s=arc-20240116; t=1725394760; c=relaxed/simple;
+	bh=dz+tMp2ATV+JMYyjOvthXfNM9cjRqAmDrGururm2O6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HyH/zTIbi0ENJ5Hn4f8GIFuk016cgwSKPRDPiIukASaUOChDcdatnrj48u+XbIzk1ws8s3kb+EE8jJFAllXalQp3bPrgA0ZkoU6vID/esqUE9z7lg+ZZYEnQLiKOdQMuSQXrODantPhkMpPtqzcaxQGSvCXS0rCTsgTpvohYip0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AXjjmNlS; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725394759; x=1756930759;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dz+tMp2ATV+JMYyjOvthXfNM9cjRqAmDrGururm2O6c=;
+  b=AXjjmNlSbl0HoGS3e6t9P3n1xkXcxWHoa460Q+U8oVbUPKVQCvYKC5tN
+   YiK2PfAfcC7Ffd3Z4KukVJDxcAFqCJYLI0anCzGNtk/s4nkZkjWhTMFjL
+   PZcG4xya+GdgFx+sCJ+N+EY/Ppnqd3y2UskLz7KgeiEYs4VSFv4j7yXdq
+   9yuzmt4pp1wBjrUiC1EaHcDPR9RYuXWQROcAHvP8Y+ArpA4Lt2HQq+j11
+   Zbrwr0J7ysukUdHoyX8pY8cRKsBNUeGa6Qe653S991D4FPMzxX3SbrVj0
+   tJoYIJJIxoekqjNJ9EImyU0y4oO3q6H499rj1gb3rKOE3v0BI6csu9nX7
+   g==;
+X-CSE-ConnectionGUID: 3Evnodn6RbqaBQ/iFdWkNA==
+X-CSE-MsgGUID: HxNAq2XXSm6sEamqCBeWjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27777150"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="27777150"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 13:19:18 -0700
+X-CSE-ConnectionGUID: ltyab9DsRua7EElXVGzqoQ==
+X-CSE-MsgGUID: D0DsWEa0Q8utcPlFEBDd3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65748857"
+Received: from unknown (HELO localhost) ([10.79.232.150])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 13:19:17 -0700
+Date: Tue, 3 Sep 2024 13:19:17 -0700
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v2 4/9] x86/hyperv: Parse the ACPI wakeup mailbox
+Message-ID: <20240903201917.GB105@yjiang5-mobl.amr.corp.intel.com>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-5-yunhong.jiang@linux.intel.com>
+ <BN7PR02MB4148CC3F9091BC2604E457CFD4922@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
-In-Reply-To: <20240809194335.1726916-20-seanjc@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Tue, 3 Sep 2024 13:17:40 -0700
-Message-ID: <CADrL8HUvmbtmfcLzqLOVhj-v7=0oEA+0DPrGnngtWoA50=eDPg@mail.gmail.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN7PR02MB4148CC3F9091BC2604E457CFD4922@BN7PR02MB4148.namprd02.prod.outlook.com>
 
-On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Steal another bit from rmap entries (which are word aligned pointers, i.e=
-.
-> have 2 free bits on 32-bit KVM, and 3 free bits on 64-bit KVM), and use
-> the bit to implement a *very* rudimentary per-rmap spinlock.  The only
-> anticipated usage of the lock outside of mmu_lock is for aging gfns, and
-> collisions between aging and other MMU rmap operations are quite rare,
-> e.g. unless userspace is being silly and aging a tiny range over and over
-> in a tight loop, time between contention when aging an actively running V=
-M
-> is O(seconds).  In short, a more sophisticated locking scheme shouldn't b=
-e
-> necessary.
->
-> Note, the lock only protects the rmap structure itself, SPTEs that are
-> pointed at by a locked rmap can still be modified and zapped by another
-> task (KVM drops/zaps SPTEs before deleting the rmap entries)
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 80 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 71 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 8ca7f51c2da3..a683b5fc4026 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -909,11 +909,73 @@ static struct kvm_memory_slot *gfn_to_memslot_dirty=
-_bitmap(struct kvm_vcpu *vcpu
->   * About rmap_head encoding:
->   *
->   * If the bit zero of rmap_head->val is clear, then it points to the onl=
-y spte
-> - * in this rmap chain. Otherwise, (rmap_head->val & ~1) points to a stru=
-ct
-> + * in this rmap chain. Otherwise, (rmap_head->val & ~3) points to a stru=
-ct
->   * pte_list_desc containing more mappings.
->   */
->  #define KVM_RMAP_MANY  BIT(0)
->
-> +/*
-> + * rmaps and PTE lists are mostly protected by mmu_lock (the shadow MMU =
-always
-> + * operates with mmu_lock held for write), but rmaps can be walked witho=
-ut
-> + * holding mmu_lock so long as the caller can tolerate SPTEs in the rmap=
- chain
-> + * being zapped/dropped _while the rmap is locked_.
-> + *
-> + * Other than the KVM_RMAP_LOCKED flag, modifications to rmap entries mu=
-st be
-> + * done while holding mmu_lock for write.  This allows a task walking rm=
-aps
-> + * without holding mmu_lock to concurrently walk the same entries as a t=
-ask
-> + * that is holding mmu_lock but _not_ the rmap lock.  Neither task will =
-modify
-> + * the rmaps, thus the walks are stable.
-> + *
-> + * As alluded to above, SPTEs in rmaps are _not_ protected by KVM_RMAP_L=
-OCKED,
-> + * only the rmap chains themselves are protected.  E.g. holding an rmap'=
-s lock
-> + * ensures all "struct pte_list_desc" fields are stable.
-> + */
-> +#define KVM_RMAP_LOCKED        BIT(1)
-> +
-> +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
-> +{
-> +       unsigned long old_val, new_val;
-> +
-> +       old_val =3D READ_ONCE(rmap_head->val);
-> +       if (!old_val)
-> +               return 0;
+On Mon, Sep 02, 2024 at 03:35:13AM +0000, Michael Kelley wrote:
+> From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > 
+> > Parse the wakeup mailbox VTL2 TDX guest. Put it to the guest_late_init, so
+> > that it will be invoked before hyperv_init() where the mailbox address is
+> > checked.
+> 
+> Could you elaborate on the choice to set the wakeup_mailbox_address
+> in ms_hyperv_late_init()? The code in hv_common.c is intended to be
+> code that is architecture neutral (see the comment at the top of the module),
+> so it's a red flag to see #ifdef CONFIG_X86_64. Couldn't the
+> wakeup_mailbox_address be set in the x86 version of hyperv_init()
+> before it is needed?
 
-I'm having trouble understanding how this bit works. What exactly is
-stopping the rmap from being populated while we have it "locked"? We
-aren't holding the MMU lock at all in the lockless case, and given
-this bit, it is impossible (I think?) for the MMU-write-lock-holding,
-rmap-modifying side to tell that this rmap is locked.
+Sure, will try to put it in hyperv_init() before it's needed.
+> 
+> > 
+> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/mshyperv.h | 3 +++
+> >  arch/x86/kernel/cpu/mshyperv.c  | 2 ++
+> >  drivers/hv/hv_common.c          | 8 ++++++++
+> >  3 files changed, 13 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+> > index 390c4d13956d..5178b96c7fc9 100644
+> > --- a/arch/x86/include/asm/mshyperv.h
+> > +++ b/arch/x86/include/asm/mshyperv.h
+> > @@ -10,6 +10,7 @@
+> >  #include <asm/nospec-branch.h>
+> >  #include <asm/paravirt.h>
+> >  #include <asm/mshyperv.h>
+> > +#include <asm/madt_wakeup.h>
+> > 
+> >  /*
+> >   * Hyper-V always provides a single IO-APIC at this MMIO address.
+> > @@ -49,6 +50,8 @@ extern u64 hv_current_partition_id;
+> > 
+> >  extern union hv_ghcb * __percpu *hv_ghcb_pg;
+> > 
+> > +extern u64 wakeup_mailbox_addr;
+> > +
+> >  bool hv_isolation_type_snp(void);
+> >  bool hv_isolation_type_tdx(void);
+> >  u64 hv_tdx_hypercall(u64 control, u64 param1, u64 param2);
+> > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> > index 3d4237f27569..f6b727b4bd0b 100644
+> > --- a/arch/x86/kernel/cpu/mshyperv.c
+> > +++ b/arch/x86/kernel/cpu/mshyperv.c
+> > @@ -43,6 +43,8 @@ struct ms_hyperv_info ms_hyperv;
+> >  bool hyperv_paravisor_present __ro_after_init;
+> >  EXPORT_SYMBOL_GPL(hyperv_paravisor_present);
+> > 
+> > +u64 wakeup_mailbox_addr;
+> 
+> This value duplicates acpi_mp_wake_mailbox_paddr in
+> madt_wakeup.c. It looks like the duplicate value is used
+> for two things:
+> 
+> 1) In hv_is_private_mmio_tdx() to control the encrypted
+> vs. decrypted mapping (Patch 5 of this series)
+> 
+> 2) As a boolean in hv_vtl_early_init() to avoid overwriting
+> the wakeup_secondary_cpu_64 value when
+> dtb_parse_mp_wake() has set it to acpi_wakeup_cpu().
+> (Patch 9 of this series).
+> 
+> Having a duplicate value is messy, and I'm wondering if
+> it can be avoided. For (1), hv_private_mmio_tdx() could call
+> into a function added to madt_wakeup.c to make the
+> check.  For (2), the check should probably be based on
+> hv_isolation_type_tdx() instead of whether the wakeup
+> mailbox address is set.  I'll note that Patch 5 of this series
+> is using hv_isolation_type_tdx(), so there's a bit of an
+> inconsistency in testing the wakeup_mailbox_addr in
+> Patch 9.
 
-Concretely, my immediate concern is that we will still unconditionally
-write 0 back at unlock time even if the value has changed.
+I think your comment includes two points, the duplicated variables and the
+incosistency in the testing.
 
-I expect that this works and I'm just not getting it... :)
+Thank you for pointing out the duplication of wakeup_mailbox_addr with
+acpi_mp_wake_mailbox_paddr. I didn't realize it. Yes, such duplication should be
+avoided and will fix it in next submission.
 
+Agree the inconsistency in testing wakeup_mailbox_addr and
+hv_isolation_type_tdx() is not good. IMHO, the wakeup_mailbox_addr (or the new
+function you proposed) is better than hv_isolation_type_tdx(), since the
+wakeup_mailbox_addr is more directly related.  But hv_vtl_init_platform()
+happens before DT parse, thus I have to use the hv_isolation_type_tdx() in it. I
+don't have a good idea on how to fix this.
 
-> +
-> +       do {
-> +               /*
-> +                * If the rmap is locked, wait for it to be unlocked befo=
-re
-> +                * trying acquire the lock, e.g. to bounce the cache line=
-.
-> +                */
-> +               while (old_val & KVM_RMAP_LOCKED) {
-> +                       old_val =3D READ_ONCE(rmap_head->val);
-> +                       cpu_relax();
-> +               }
-> +
-> +               /*
-> +                * Recheck for an empty rmap, it may have been purged by =
-the
-> +                * task that held the lock.
-> +                */
-> +               if (!old_val)
-> +                       return 0;
-> +
-> +               new_val =3D old_val | KVM_RMAP_LOCKED;
-> +       } while (!try_cmpxchg(&rmap_head->val, &old_val, new_val));
-> +
-> +       /* Return the old value, i.e. _without_ the LOCKED bit set. */
-> +       return old_val;
-> +}
-> +
-> +static void kvm_rmap_unlock(struct kvm_rmap_head *rmap_head,
-> +                           unsigned long new_val)
-> +{
-> +       WARN_ON_ONCE(new_val & KVM_RMAP_LOCKED);
-> +       WRITE_ONCE(rmap_head->val, new_val);
-> +}
-> +
-> +static unsigned long kvm_rmap_get(struct kvm_rmap_head *rmap_head)
-> +{
-> +       return READ_ONCE(rmap_head->val) & ~KVM_RMAP_LOCKED;
-> +}
-> +
->  /*
->   * Returns the number of pointers in the rmap chain, not counting the ne=
-w one.
->   */
-> @@ -924,7 +986,7 @@ static int pte_list_add(struct kvm_mmu_memory_cache *=
-cache, u64 *spte,
->         struct pte_list_desc *desc;
->         int count =3D 0;
->
-> -       old_val =3D rmap_head->val;
-> +       old_val =3D kvm_rmap_lock(rmap_head);
->
->         if (!old_val) {
->                 new_val =3D (unsigned long)spte;
-> @@ -956,7 +1018,7 @@ static int pte_list_add(struct kvm_mmu_memory_cache =
-*cache, u64 *spte,
->                 desc->sptes[desc->spte_count++] =3D spte;
->         }
->
-> -       rmap_head->val =3D new_val;
-> +       kvm_rmap_unlock(rmap_head, new_val);
->
->         return count;
->  }
-> @@ -1004,7 +1066,7 @@ static void pte_list_remove(struct kvm *kvm, u64 *s=
-pte,
->         unsigned long rmap_val;
->         int i;
->
-> -       rmap_val =3D rmap_head->val;
-> +       rmap_val =3D kvm_rmap_lock(rmap_head);
->         if (KVM_BUG_ON_DATA_CORRUPTION(!rmap_val, kvm))
->                 goto out;
->
-> @@ -1030,7 +1092,7 @@ static void pte_list_remove(struct kvm *kvm, u64 *s=
-pte,
->         }
->
->  out:
-> -       rmap_head->val =3D rmap_val;
-> +       kvm_rmap_unlock(rmap_head, rmap_val);
->  }
->
->  static void kvm_zap_one_rmap_spte(struct kvm *kvm,
-> @@ -1048,7 +1110,7 @@ static bool kvm_zap_all_rmap_sptes(struct kvm *kvm,
->         unsigned long rmap_val;
->         int i;
->
-> -       rmap_val =3D rmap_head->val;
-> +       rmap_val =3D kvm_rmap_lock(rmap_head);
->         if (!rmap_val)
->                 return false;
->
-> @@ -1067,13 +1129,13 @@ static bool kvm_zap_all_rmap_sptes(struct kvm *kv=
-m,
->         }
->  out:
->         /* rmap_head is meaningless now, remember to reset it */
-> -       rmap_head->val =3D 0;
-> +       kvm_rmap_unlock(rmap_head, 0);
->         return true;
->  }
->
->  unsigned int pte_list_count(struct kvm_rmap_head *rmap_head)
->  {
-> -       unsigned long rmap_val =3D rmap_head->val;
-> +       unsigned long rmap_val =3D kvm_rmap_get(rmap_head);
->         struct pte_list_desc *desc;
->
->         if (!rmap_val)
-> @@ -1139,7 +1201,7 @@ struct rmap_iterator {
->  static u64 *rmap_get_first(struct kvm_rmap_head *rmap_head,
->                            struct rmap_iterator *iter)
->  {
-> -       unsigned long rmap_val =3D rmap_head->val;
-> +       unsigned long rmap_val =3D kvm_rmap_get(rmap_head);
->         u64 *sptep;
->
->         if (!rmap_val)
-> --
-> 2.46.0.76.ge559c4bf1a-goog
->
+Thanks
+--jyh
+
+> 
+> This is just a suggestion, as I haven't worked out all
+> the details. If you think it ends up being messier than
+> the duplicate value, then I'm OK with it.
+> 
+> Michael
+> 
+> > +
+> >  #if IS_ENABLED(CONFIG_HYPERV)
+> >  static inline unsigned int hv_get_nested_msr(unsigned int reg)
+> >  {
+> > diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> > index 9c452bfbd571..14b005b6270f 100644
+> > --- a/drivers/hv/hv_common.c
+> > +++ b/drivers/hv/hv_common.c
+> > @@ -365,6 +365,14 @@ void __init ms_hyperv_late_init(void)
+> >  	u8 *randomdata;
+> >  	u32 length, i;
+> > 
+> > +	/*
+> > +	 * Parse the ACPI wakeup structure information from device tree.
+> > +	 * Currently VTL2 TDX guest only.
+> > +	 */
+> > +#ifdef CONFIG_X86_64
+> > +	wakeup_mailbox_addr = dtb_parse_mp_wake();
+> > +#endif
+> > +
+> >  	/*
+> >  	 * Seed the Linux random number generator with entropy provided by
+> >  	 * the Hyper-V host in ACPI table OEM0.
+> > --
+> > 2.25.1
+> > 
+> 
 
