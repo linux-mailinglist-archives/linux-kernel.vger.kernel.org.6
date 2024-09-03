@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-312803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D559F969BC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B11969BD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB40284774
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD4C2849FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FBD1A42C5;
-	Tue,  3 Sep 2024 11:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AE81A42C1;
+	Tue,  3 Sep 2024 11:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgToz5i/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ay00BhWD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF68195;
-	Tue,  3 Sep 2024 11:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1530195;
+	Tue,  3 Sep 2024 11:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725362979; cv=none; b=Ei1YJv38QIO9uL4j2Wu5TTxVpSlcg4Vay5XXq0afQulTGfg01farNwSii721JRwD7CiMwvPlxCBNsLmvXg2r9NHyDRUJ1r/M6az5X7vW4Bc0QoPMDIks+NM9xrnqWemSTH/JNKqwlKYS2euZKDRHPVRklRtiSWqSawD1fToHnG8=
+	t=1725363066; cv=none; b=PaHwZ/nQLL8YAqO1NIu0Ggl1JtZ0H/ITopAnxAd+VcSOosz69liF13lwCZ81jqRQL80PlUGGJimPgfmawC+SqT5EazQnc9j7PfgrhjNx/LSvEdAUzGzyYqfVJvPa1ytPMs5znsuHST7uHDPdnoSC6tgZBbR89oDZY+5+ULiLczo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725362979; c=relaxed/simple;
-	bh=5/fNADynh6uUVs2xNhVUhhCIOd1m9+juLLnQ0tJpKTg=;
+	s=arc-20240116; t=1725363066; c=relaxed/simple;
+	bh=+qwLCWYHeXVSdKM7YqprwtscUazD2JA57+RaPKBbaos=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jESN2QylC8cOFIbaPKAauHQ3ecjZwZA7q5H1FYq9tXY3Mt/EWWPHV8U+JBd5ouYBNmdpZIyUbDAz1JCvkO/mwrMUdgrUicyKcGtuu2Da8Q+XtoCGegmUhnqhGQlMboV8pOGg4q1JUW+zC/TM+50I7avkIdZRTYF8+mf9tI03F5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgToz5i/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4970FC4CEC4;
-	Tue,  3 Sep 2024 11:29:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bumTny95B4LKmfOqlJ3VLZ/b1mQVhPaE8KW4lfisqGD2Yk8RXS/6OYdPFa0zlhjgOxzYDD0RrRgsjp0TaYHuqe2UvJpPYSSTmz0vutUfpHkqtq00QjbjhZbqY7B7wedKVTR7gQ/fGQXNxOb1ZzPzOdy3A+XMxEy4QJsvbMLHufM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ay00BhWD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF038C4CEC5;
+	Tue,  3 Sep 2024 11:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725362978;
-	bh=5/fNADynh6uUVs2xNhVUhhCIOd1m9+juLLnQ0tJpKTg=;
+	s=k20201202; t=1725363066;
+	bh=+qwLCWYHeXVSdKM7YqprwtscUazD2JA57+RaPKBbaos=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OgToz5i/tYMqcGmBuMbjfGT4vp6FT2fJ63ewnHMW5N4QJzdzZSF3xQnZrR4XtUKnU
-	 hp7WMpvgduzLIxOuEty2mmkSaOotRvXRZuL65i4RdldJN/8mfYOq/eO6qDRDSkOkJc
-	 jY6nKf3H+FR5Im22rhVgR63itQz6WVx2VJqSqu7UCZEaKhq2RnKJiPeu7UEO7lZv0r
-	 sXMETKZNgOmnwq3dbC/DRZ21jWFDhBzxqe9OJvmx9AH9vwX/BKrT8lN92JzRUUfsye
-	 Ikbm66lBQe6VNFoQcg47WeKppqvYI3zsoeyrchwRwTDJWUoJ6oGRritxeaoyud+2r8
-	 YOJiC9JPF9FbQ==
-Message-ID: <0f9e9184-740f-4a47-b653-a4b1d1c1239a@kernel.org>
-Date: Tue, 3 Sep 2024 13:29:31 +0200
+	b=Ay00BhWDaWC3mx3OWR/2YdwSjYRf8sxf6Tt8KzWImbsttnbHnX5dQ8AGc0MKX8am8
+	 OLX9EFm8efDuDRQhl922xsaaUISEp25ZWxRULi/TK7gIWKjW02kI+WWs8ipcdQZj74
+	 sv+EtFsTIcr8dPsHWmJvuilnv0X9CmFuBmp/AnVfCg5ArbB3T7/uep+zd40Yg0DItP
+	 qVmUjS7T295A4uxaFY0WJNNalxiONNPtMzzyiIj790tMiDh+Etc+ZaXrG/+/CFSd7s
+	 b1/ltKEcuUjpMq2rs5mzEei4q2rvLJ2/819FFKKHymZZxOcowTpuNBv7D2ye+H94QP
+	 gf8rFVdMKkMRQ==
+Message-ID: <e365b6da-f7f3-4a77-9ebc-a5db349bedbb@kernel.org>
+Date: Tue, 3 Sep 2024 13:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
- controller
-To: Xi Ruoyao <xry111@xry111.site>, Zhao Qunqin <zhaoqunqin@loongson.cn>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
- <20240903015354.9443-3-zhaoqunqin@loongson.cn>
- <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
- <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
- <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
- <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
+Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
+ trace
+To: songchai <quic_songchai@quicinc.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240830092311.14400-1-quic_songchai@quicinc.com>
+ <20240830092311.14400-2-quic_songchai@quicinc.com>
+ <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
+ <65732921-988f-41f7-886e-94415b07608e@quicinc.com>
+ <d4e424f0-5485-4ccc-83e1-d1eb3008af9f@kernel.org>
+ <aef09e24-bdd0-4638-8ddc-55c4d39e37ec@quicinc.com>
+ <51b9e189-7fa0-48b1-b5d2-b043fa1d8ed1@kernel.org>
+ <686f4ff6-d7f0-483e-b5c4-4d2db0661c08@quicinc.com>
+ <b6d0a93b-24bd-4af3-9294-7b069e819b14@kernel.org>
+ <8dbe831f-d48a-4e4f-8681-d0b56b8c5213@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,24 +116,192 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
+In-Reply-To: <8dbe831f-d48a-4e4f-8681-d0b56b8c5213@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2024 10:30, Xi Ruoyao wrote:
-> On Tue, 2024-09-03 at 09:58 +0200, Krzysztof Kozlowski wrote:
->>>>> +	select EDAC_SUPPORT
->>>> I think you got here comment before. How did you address it?
->>> I just randomly found a spot, and I will put it at the end(next version 
->>> patch).
->>
->> No, the comment was different. You must not select user-visible symbols.
+On 03/09/2024 05:16, songchai wrote:
 > 
-> EDAC_SUPPORT isn't user-visible.  EDAC is and it has been removed.
+> On 9/2/2024 6:24 PM, Krzysztof Kozlowski wrote:
+>> On 02/09/2024 12:10, songchai wrote:
+>>> On 9/2/2024 4:05 PM, Krzysztof Kozlowski wrote:
+>>>> On 02/09/2024 09:24, songchai wrote:
+>>>>> On 9/2/2024 3:02 PM, Krzysztof Kozlowski wrote:
+>>>>>> On 02/09/2024 05:14, songchai wrote:
+>>>>>>> On 8/30/2024 6:11 PM, Krzysztof Kozlowski wrote:
+>>>>>>>> On 30/08/2024 11:23, songchai wrote:
+>>>>>>>>> The Trigger Generation Unit (TGU) is designed to detect patterns or
+>>>>>>>>> sequences within a specific region of the System on Chip (SoC). Once
+>>>>>>>>> configured and activated, it monitors sense inputs and can detect a
+>>>>>>>>> pre-programmed state or sequence across clock cycles, subsequently
+>>>>>>>>> producing a trigger.
+>>>>>>>>>
+>>>>>>>>>        TGU configuration space
+>>>>>>>>>             offset table
+>>>>>>>>>      x-------------------------x
+>>>>>>>>>      |                         |
+>>>>>>>>>      |                         |
+>>>>>>>>>      |                         |                           Step configuration
+>>>>>>>>>      |                         |                             space layout
+>>>>>>>>>      |   coresight management  |                           x-------------x
+>>>>>>>>>      |        registers        |                     |---> |             |
+>>>>>>>>>      |                         |                     |     |  reserve    |
+>>>>>>>>>      |                         |                     |     |             |
+>>>>>>>>>      |-------------------------|                     |     |-------------|
+>>>>>>>>>      |                         |                     |     | prioroty[3] |
+>>>>>>>>>      |         step[7]         |<--                  |     |-------------|
+>>>>>>>>>      |-------------------------|   |                 |     | prioroty[2] |
+>>>>>>>>>      |                         |   |                 |     |-------------|
+>>>>>>>>>      |           ...           |   |Steps region     |     | prioroty[1] |
+>>>>>>>>>      |                         |   |                 |     |-------------|
+>>>>>>>>>      |-------------------------|   |                 |     | prioroty[0] |
+>>>>>>>>>      |                         |<--                  |     |-------------|
+>>>>>>>>>      |         step[0]         |-------------------->      |             |
+>>>>>>>>>      |-------------------------|                           |  condition  |
+>>>>>>>>>      |                         |                           |             |
+>>>>>>>>>      |     control and status  |                           x-------------x
+>>>>>>>>>      |           space         |                           |             |
+>>>>>>>>>      x-------------------------x                           |Timer/Counter|
+>>>>>>>>>                                                            |             |
+>>>>>>>>> 						       x-------------x
+>>>>>>>>> TGU Configuration in Hardware
+>>>>>>>>>
+>>>>>>>>> The TGU provides a step region for user configuration, similar
+>>>>>>>>> to a flow chart. Each step region consists of three register clusters:
+>>>>>>>>>
+>>>>>>>>> 1.Priority Region: Sets the required signals with priority.
+>>>>>>>>> 2.Condition Region: Defines specific requirements (e.g., signal A
+>>>>>>>>> reaches three times) and the subsequent action once the requirement is
+>>>>>>>>> met.
+>>>>>>>>> 3.Timer/Counter (Optional): Provides timing or counting functionality.
+>>>>>>>>>
+>>>>>>>>> Add a new coresight-tgu.yaml file to describe the bindings required to
+>>>>>>>>> define the TGU in the device trees.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: songchai<quic_songchai@quicinc.com>
+>>>>>>>> It feels like you are using login name as real name. Please investigate
+>>>>>>>> this and confirm whether latin transcription/transliteration of your
+>>>>>>>> name is like above.
+>>>>>>> yes.. it's my login name. Will use my real name in next version.
+>>>>>>>>> ---
+>>>>>>>>>      .../bindings/arm/qcom,coresight-tgu.yaml      | 136 ++++++++++++++++++
+>>>>>>>>>      1 file changed, 136 insertions(+)
+>>>>>>>>>      create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>>>>>>>
+>>>>>>>>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>>>>>>> new file mode 100644
+>>>>>>>>> index 000000000000..c261252e33e0
+>>>>>>>>> --- /dev/null
+>>>>>>>>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>>>>>>> @@ -0,0 +1,136 @@
+>>>>>>>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>>>>>>>> +# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>>>>>> +%YAML 1.2
+>>>>>>>>> +---
+>>>>>>>>> +$id:http://devicetree.org/schemas/arm/qcom,coresight-tgu.yaml#
+>>>>>>>>> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+>>>>>>>>> +
+>>>>>>>>> +title: Trigger Generation Unit - TGU
+>>>>>>>>> +
+>>>>>>>>> +description: |
+>>>>>>>>> +  The Trigger Generation Unit (TGU) is a Data Engine which can be utilized
+>>>>>>>>> +  to sense a plurality of signals and create a trigger into the CTI or
+>>>>>>>>> +  generate interrupts to processors. The TGU is like the trigger circuit
+>>>>>>>>> +  of a Logic Analyzer.The corresponding trigger logic can be realized by
+>>>>>>>>> +  configuring the conditions for each step after sensing the signal.
+>>>>>>>>> +  Once setup and enabled, it will observe sense inputs and based upon
+>>>>>>>>> +  the activity of those inputs, even over clock cycles, may detect a
+>>>>>>>>> +  preprogrammed state/sequence and then produce a trigger or interrupt.
+>>>>>>>>> +
+>>>>>>>>> +  The primary use case of the TGU is to detect patterns or sequences on a
+>>>>>>>>> +  given set of signals within some region of the SoC.
+>>>>>>>>> +
+>>>>>>>>> +maintainers:
+>>>>>>>>> +  - Mao Jinlong<quic_jinlmao@quicinc.com>
+>>>>>>>>> +  - Sam Chai<quic_songchai@quicinc.com>
+>>>>>>>>> +
+>>>>>>>>> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
+>>>>>>>>> +select:
+>>>>>>>>> +  properties:
+>>>>>>>>> +    compatible:
+>>>>>>>>> +      contains:
+>>>>>>>>> +        enum:
+>>>>>>>>> +          - qcom,coresight-tgu
+>>>>>>>>> +  required:
+>>>>>>>>> +    - compatible
+>>>>>>>>> +
+>>>>>>>>> +properties:
+>>>>>>>>> +  $nodename:
+>>>>>>>>> +    pattern: "^tgu(@[0-9a-f]+)$"
+>>>>>>>> Drop the pattern (and anyway @ is not optional).
+>>>>>>> There will be several TGUs in the SoC, and we want to use the address of
+>>>>>>> each to distinguish them.
+>>>>>> How is this related?
+>>>>>>
+>>>>>>> This is why we added the nodename pattern here.
+>>>>>> How is this related?
+>>>>>>
+>>>>>>> Additionally, I noticed that both TPDM and CTI also use this format to
+>>>>>>> define the nodename.
+>>>>>>>
+>>>>>>> Could you please share any concerns you have about using this pattern?
+>>>>>> I don't get why you insist, but sure:
+>>>>>> The name does not follow DT spec recommendation, plus child schema is
+>>>>>> not really supposed to define the names.
+>>>>> Thanks for you clarification, will drop in the next version.
+>>>>>>>>> +  compatible:
+>>>>>>>>> +    items:
+>>>>>>>>> +      - const: qcom,coresight-tgu
+>>>>>>>>> +      - const: arm,primecell
+>>>>>>>>> +
+>>>>>>>>> +  reg:
+>>>>>>>>> +    maxItems: 1
+>>>>>>>>> +
+>>>>>>>>> +  clocks:
+>>>>>>>>> +    maxItems: 1
+>>>>>>>>> +
+>>>>>>>>> +  clock-names:
+>>>>>>>>> +    items:
+>>>>>>>>> +      - const: apb_pclk
+>>>>>>>>> +
+>>>>>>>>> +  qcom,tgu-steps:
+>>>>>>>>> +    description:
+>>>>>>>>> +      The trigger logic is realized by configuring each step after sensing
+>>>>>>>>> +      the signal. The parameter here is used to describe the maximum of steps
+>>>>>>>>> +      that could be configured in the current TGU.
+>>>>>>>> Why this is board or SoC level property? All below also feel like
+>>>>>>>> unnecessary stuff from downstream.
+>>>>>>> There are actually four properties used to describe the number of
+>>>>>>> registers with different functionality for TGUs at the SoC level.
+>>>>>>>
+>>>>>>> Each TGU may have a different number of registers, so we need to add
+>>>>>>> these four properties to describe each TGU’s hardware design.
+>>>>>> Each TGU on the same SoC?
+>>>>> yes, in other words, there will be several TGUs in the SoC.
+>>>> This I understood, but I am asking if each TGU on the same SoC will have
+>>>> different number of registers and other properties?
+>>> yes, each TGU has a different number of registers.
+>>>
+>>> For example, some TGUs support 6 steps, while others support only 4 steps.
+>>>
+>>> These variations depend on the hardware design, so we need properties to
+>>> describe.
+>> You keep avoiding the answer. ON THE SAME SOC.
+>>
+>> Point to your upstream DTS using this.
+> 
+> I reviewed the hardware design of our chipset and found the following:
+> 
+>   * In the SM8450, there are three TGUs on the same SoC. However, only
+>     one TGU has timer and counter registers to support time/counter
+>     functionality.
+>   * Additionally, in the SM8450, the “tgu-regs” configuration varies:
+>     some TGUs have 8 registers, while others have only 5 registers.
+> 
+> To answer question - yes, on the same soc, will have different number of 
+> registers and other properties.
 
-Ah, ok, I missed that. Shouldn't this be separate patch with its own
-rationale? Or before this driver there was no EDAC support for Loongson
-at all?
+Thank you, this is valid reason for the property.
 
 Best regards,
 Krzysztof
