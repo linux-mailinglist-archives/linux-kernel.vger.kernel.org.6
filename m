@@ -1,204 +1,147 @@
-Return-Path: <linux-kernel+bounces-313540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A322896A6D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:47:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E997C96A6DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF4FCB23A1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B3D1F24662
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA1A192586;
-	Tue,  3 Sep 2024 18:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A62192580;
+	Tue,  3 Sep 2024 18:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXiyYpVx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKSR8VmK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83A518E030;
-	Tue,  3 Sep 2024 18:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38B8192D9A;
+	Tue,  3 Sep 2024 18:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725389226; cv=none; b=bK09cLDVI+RGIFB1UyV5slm5s9POsKdUR0cpUHiUtjShOdnkAbm9mGYevEPnpidJ4MgMlMZ6tT8ffKlH9NzOGshKeFboxmeXuowPydDxa7QY9xRP26EENohZNQkhA4jOiprDEw3USQRnzcjwycbGdmbSqFdhr3yad12dgd1h1G0=
+	t=1725389239; cv=none; b=QBUnSIEYlTYdJGHupdlfe+irIOWL2jo8grtuQ6h1wL+WwOSiqFsJhIKdpENXiP6eLVDyewJKZsI/KwhzDxhk/owi/m9lVDtX0mMNbQEf319HNolAQGtQ8zZrL4kDDU3hQ1swqEM5wifNz9vyyKTnlEQ1Jurlnr3qw3yAJ0WV/e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725389226; c=relaxed/simple;
-	bh=nd6Wtvx8pQAMupTyQ6h0Xwk0uJUJcdsSVJ5cX/m07m4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsD/LvMVgM0di7Y9qzU7ZB7pNMCW1dWXa9/bL08dL/ZbJnuwtKNzYL/ULR7cKR2oUVOcuuTNsZ4uA4EiTFuDHxzd8gu8bfmrTMQHL6TyiUQOaAW9QzANn+ySWdzGrYoc/7ecKm2ZinrchrFmocGrTvXOHTFwf4FI0FDTTJtjR78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXiyYpVx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57BABC4CECC;
-	Tue,  3 Sep 2024 18:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725389225;
-	bh=nd6Wtvx8pQAMupTyQ6h0Xwk0uJUJcdsSVJ5cX/m07m4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TXiyYpVxtIwVZw6k1PFiIFhAbnoHBA0CXi7tGuk5BEvj7s8MeJq8orlX4JMPOAoDe
-	 FmCmFzUFDcXAhR+Px8WOsWA5nV7DNGfkFo4Gjm9qgIuGVoGS27RIWZOpppOZoJRtzz
-	 RuE9zvO2RoSXWQleP6Nw0Yql7B1KNkBrZtCJDuiYEPto/6W7cNzJ3Zy3AYdIuq+E5v
-	 eA1h9TR+Sxxl3O8XGo4orHQ9wJpyQlCGC4oWiZLBZG60/3+SiEjTBtASP1ivFdW6Y4
-	 q6xtOAXAmiJQYR3cjIreNu/RO0h5SiBEzbU7tpcLe6BTuvZ0Mz91sCvWe4Z7cmCwli
-	 YXWJg5pGAkyXw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso8044388e87.2;
-        Tue, 03 Sep 2024 11:47:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUC5SrydgVHT/ziGCdYg6WIDCVNVvYSHWXYbD6ME+Iy5nDaBRoNESjcgMHCIAU7+DIrYf0eMSXr+RpD@vger.kernel.org, AJvYcCUTRFMN39NpKl8mXZG0qarIHm2yvoM9TT/ybtzObxXugZj7F8PCDaVZRBQ1mJZCGbp/OLZ3g/Bd@vger.kernel.org, AJvYcCVDMpMVUyvAJGxlVi2KwnRSMFQTGPX9Y4EXS7bG39BSdeUmYUcF++M7vN4YlbFjcm4bZBfNfIRamw2s@vger.kernel.org, AJvYcCVX9JosvuU9GstaPjWMYsMEm+YoDUjsZl84zkvTh7tJ8qEzBC3ZOMAg+VEkSHSvhaUxmEVlLqo9Z+iPNMM6@vger.kernel.org, AJvYcCWl9R46DHctWaHJN9N65qRWwDY9/NmdjuiwC2EB9ajjpMS/8LXizjOwU70/kbdKvSLw1CNsjlfGzvTgvg==@vger.kernel.org, AJvYcCWvvmbJZ+GfDpEqqNa+ntfdJT9+VTXP0kQWU8TLvivgDV7zvI8Cxyza8zNynB8+8WyVFMdWxH10miGL@vger.kernel.org, AJvYcCXhqhKF8uKa6lFpgWpGfED2fUHfMfm8p8fW3na8LEh2YHCeo7WHnbix54ovbzJBRamxhjr30pj5qi1zoA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrPFZi7uRk6DYed6Qie+YHe9ds2N6iF+AuKgp6MvsT8qt72yrG
-	rXAogyeVlcRhIXI3Gldw5fftVExJEPOrQEkCifsAK/ma24i22Frh5MG7daqbzGS8yakkrroKKCB
-	66Tup0PqFNpO+Ue0nez5wT5ttSw==
-X-Google-Smtp-Source: AGHT+IFPPQF+VZ9KwhNwRdiTpvXZs2B9iqZYAcu8DtAQ5kIA/StJNR3uCDFdRTvA7hWnuCKoLYPHIEkeiaJO+kFnqP8=
-X-Received: by 2002:a05:6512:1244:b0:530:c212:4a5a with SMTP id
- 2adb3069b0e04-53546b25966mr12549174e87.22.1725389223674; Tue, 03 Sep 2024
- 11:47:03 -0700 (PDT)
+	s=arc-20240116; t=1725389239; c=relaxed/simple;
+	bh=WD4iLX3G0Mc0Pf77ixLdZqTxuCoOBIzKMoVCZjgv+pM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nEZprYkAy6qiUbEsX0ErG5Xj7mkXBcwi5POAnnnoHv2mmQ4NifpQ8ow6oerTsZFj5mj4MHUF95ivKp5Hd9UxoHAinXsduHwAqbNheu6HJtrqQGoPTDHqOp0q2fObshHPhvPvTbAP8n6uDUHz7EuHf6jgdMKyA5HYYjb/3TGwMaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKSR8VmK; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725389237; x=1756925237;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WD4iLX3G0Mc0Pf77ixLdZqTxuCoOBIzKMoVCZjgv+pM=;
+  b=UKSR8VmKZtRetMWntUheV7KVVmJGIbGISP3UNFtXypMNrg5e3v3s/yeU
+   exYX/PAs8OCckCQhDKuBNt7TB3eVm/KnPB4TNWr8rZQFon5av3c1cN3Wd
+   Eo7huxUCjvwCDy30VUCWalIN8OBtrRKZF1YUvINLMB1V8HOX73eEslBv/
+   B+jKn1PRH7Zi9E8mTdrQWRGblc8cGNIfEBkb7ggVIpq4Qn+1NRZyvfay+
+   nDLYfDtk9TY/xwRexnT696KC9gHP86dbyDOJPFRkzm/DiNYUekT9wxfam
+   D+EqHxWk5GlnnZ+xC0EM6ak9ELywFP69yJZJFrtQA2vuGA1fobwI9ePq4
+   A==;
+X-CSE-ConnectionGUID: BqXNFw7kSASddRktvPAPbQ==
+X-CSE-MsgGUID: qcqccL7VRde+W4MDs/px6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23968758"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="23968758"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:47:16 -0700
+X-CSE-ConnectionGUID: JCkQF6W2TYqwo68nSCJl3w==
+X-CSE-MsgGUID: sXfcRPatTEG89ObrY7oRTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65367438"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.221.115]) ([10.124.221.115])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:47:16 -0700
+Message-ID: <c9f18ae0-8239-495a-abc2-d6538fbe5f5e@intel.com>
+Date: Tue, 3 Sep 2024 11:46:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1724159867.git.andrea.porta@suse.com> <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org> <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse> <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
- <ZtChPt4cD8PzfEkF@apocalypse> <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
- <Ztc2DadAnxLIYFj-@apocalypse>
-In-Reply-To: <Ztc2DadAnxLIYFj-@apocalypse>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 3 Sep 2024 13:46:51 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+mpVEDthuViQZ6T7tDQ_krgxYSQ0Qg1pBMNW8Kpr+Qcw@mail.gmail.com>
-Message-ID: <CAL_Jsq+mpVEDthuViQZ6T7tDQ_krgxYSQ0Qg1pBMNW8Kpr+Qcw@mail.gmail.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/cpu] x86/cpu/intel: Replace PAT erratum model/family
+ magic numbers with symbolic IFM references
+To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
+ <mingo@kernel.org>, Len Brown <len.brown@intel.com>, x86@kernel.org,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240829220042.1007820-1-dave.hansen@linux.intel.com>
+ <172535592591.2215.9909836777026903684.tip-bot2@tip-bot2>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <172535592591.2215.9909836777026903684.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 3, 2024 at 11:15=E2=80=AFAM Andrea della Porta
-<andrea.porta@suse.com> wrote:
->
-> Hi Rob,
->
-> On 14:37 Fri 30 Aug     , Rob Herring wrote:
-> > On Thu, Aug 29, 2024 at 11:26=E2=80=AFAM Andrea della Porta
-> > <andrea.porta@suse.com> wrote:
-> > >
-> > > Hi Rob,
-> > >
->
-> ...
->
-> >
-> > I think simple-bus where you have it is fine. It is really 1 level up
-> > that needs to be specified. Basically something that's referenced from
-> > the specific PCI device's schema (e.g. the RP1 schema (which you are
-> > missing)).
-> >
-> > That schema needs to roughly look like this:
-> >
-> > properties:
-> >   "#address-cells":
-> >     const: 3
-> >   "#size-cells":
-> >     const: 2
-> >   ranges:
-> >     minItems: 1
-> >     maxItems: 6
-> >     items:
-> >       additionalItems: true
-> >       items:
-> >         - maximum: 5  # The BAR number
-> >         - const: 0
-> >         - const: 0
-> >         - # TODO: valid PCI memory flags
-> >
-> > patternProperties:
-> >   "^bar-bus@[0-5]$":
-> >     type: object
-> >     additionalProperties: true
-> >     properties:
-> >       compatible:
-> >         const: simple-bus
-> >       ranges: true
-> >
->
-> Hmmm.. not sure how this is going to work. The PCI device (RP1) will
-> havei, at runtime, a compatible like this:
->
-> compatible =3D "pci1de4,1\0pciclass,0200000\0pciclass,0200";
->
-> that is basically generated automatically by the OF framework. So, in the
-> schema you proposed above, I can put something like:
->
-> properties:
->   compatible:
->     contains:
->       pattern: '^pci1de4,1'
+On 9/3/24 02:32, tip-bot2 for Dave Hansen wrote:
+> -	if (c->x86 == 6 && c->x86_model < 15)
+> +	if (c->x86_vfm >= INTEL_PENTIUM_PRO &&
+> +	    c->x86_vfm <= INTEL_CORE_YONAH)
+>  		clear_cpu_cap(c, X86_FEATURE_PAT);
 
-No, it should be like this:
+Andy Cooper did point out that there is a theoretical behavioral change
+here with c->x86_model==0.  There is a reference to the existence of
+such a beast on at least on random web page[1] on the Internet as "P6
+A-step".
 
-compatible:
-  items:
-    - const: pci1de4,1
-    - const: pciclass,0200000
-    - const: pciclass,0200
+But the SDM neither confirms nor denies that such a model ever existed.
+If the SDM can't be bothered to acknowledge its existence, Linux
+probably shouldn't either.
 
-or
+Either way, we're talking about a 32-bit CPU that's almost 30 years old
+and was probably pre-production anyway.
 
-compatible:
-  addtionalItems: true
-  maxItems: 3
-  items:
-    - const: pci1de4,1
+I'm fine with the patch as-is.
 
-
-Alternatively, we could instead only generate 'pciclass' compatibles
-for bridge nodes. The reason being that being an ethernet controller
-doesn't really tell us anything. There's no standard interface
-associated with that class.
-
-> or maybe I could omit the compatible entirely, like in:
-
-No.
-
-> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pc=
-i/pci-iommu.yaml
-
-That's not a device node, but just part of pci-host-bridge.yaml.
-
-> that seems to refer to generic compatible values.
-> In both cases though, I don't see how these binding could work with
-> make dt_binding_check, since there's no compatible known at compile
-> time (for the first approach), or no compatible at all (the second
-> approach).
-> Is it intended only as a loose documentation?
-
-No, schemas define exactly what a binding can and can't contain. But
-they are divided into device schemas and common schemas. The latter
-are incomplete and are included by the former. Generally, "compatible"
-goes in device schemas.
-
-> Or are you proposing that for a future new bus (hence with a new, specifi=
-c,
-> compatible) that could be described by the schema above?
-
-The above schema would be the common schema included by a RP1 schema,
-LAN966x schema, or any other device doing the same thing.
-Rob
+1. https://www.sandpile.org/x86/cpuid.htm
 
