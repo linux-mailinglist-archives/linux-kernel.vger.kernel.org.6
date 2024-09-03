@@ -1,84 +1,135 @@
-Return-Path: <linux-kernel+bounces-312460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132309696F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E0F969700
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FF12851B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1FF1F24E7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477BA205E07;
-	Tue,  3 Sep 2024 08:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D72139A1;
+	Tue,  3 Sep 2024 08:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n7luagoU"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aB9Dhkrn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBC21A3AB6;
-	Tue,  3 Sep 2024 08:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8303201279
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352010; cv=none; b=hMLLUEzRfZsBmNBvAAqxJmO4FOqqEVTdLZDjdxwzcDzAnDbvubsVGbqMk5JhTMArfqG+8sHnyqjYpnUixKL/mTPKo99nxgVpxDfsTBs2LvNzSajFw+Z0RIKZUM17IVNP6qLUML17mVBBUm4EDAWdAi3CSFlbRYZ9Nt8uLL/h1is=
+	t=1725352035; cv=none; b=ddZ9A4TaqE2uSWPSzlImxIzVdmYxDYK3WfQ35+zFsu+s5Xm+s6YluVXf73jVCmbWyRUxqzbJd9hE/4z7Wl+sLoBgwETOB1hCvKTqKqyfF6Nt9BFwl3xzLgRA+x1Mj061Mkbz851RBpEiGdqvIVJu1M2xqPz70MFoPHieByJLLY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352010; c=relaxed/simple;
-	bh=cWKo71idxa+YnNjrFO7QIf29Y7rhjeQH2k7fm2C5nFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GEFbjLLS5loJwxUppyFWf1p9tAOa1tXvz4HOvK5a2+qr0fnr3acWfSFSEZXYOkw7py40L1zwm5QZUi4LdMuqobZgz5Zz/nBCYFiJcLfgt70OqRCnlxbacsuhD4+vhntWMAZMmaq+YCV8l0AaBC/RExj+V4our0Q27iWBQuVVqC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n7luagoU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ovpuf2rR+PbFJR3PtoRUS4pojZwzFuKB3HzItsV64sw=; b=n7luagoUKTm6z0U1LWnMqAVE5k
-	eu1zgfnEDU4HJTcBMt2/OVlgXoI3fRqrDMKB7pCOVMPUZPZvjmBge+OnHft+cmoNB1c8INvWgjrtW
-	tjlQ31dCN3Ssl7toOHDy9/NEG7EzQ7AsBa1+tK9N/2+dV04yc23y36RLoIt4Ja1p5WpGCwXWzcqgc
-	NEkkRr1eVmakzHNMeM9PCw8DsZstPw2IU2eCYC5QriLoYfGAFd3vorRp/hLITa5hhZ0dVCaUuXFoE
-	uePxZyvOFWcBdUc2+84a6E2c+JXC+JUNfXGiv8o7l4UE6ywFohBoyuxHHnEwINvZxaY52HKBXw9Wz
-	pG2lL41Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1slOs9-00000007wss-2a2B;
-	Tue, 03 Sep 2024 08:26:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 458FA300390; Tue,  3 Sep 2024 10:26:45 +0200 (CEST)
-Date: Tue, 3 Sep 2024 10:26:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 27/31] objtool: Fix weak symbol detection
-Message-ID: <20240903082645.GO4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <bcedaf8559e7e276e4d9ba511dab038ed70ebd6c.1725334260.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1725352035; c=relaxed/simple;
+	bh=JM+UzVzN2X1BJlZYQbgSK/cg+c8DszVeVxI7Npaipfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rht4VjEn7ghGidMaza3RLPJtSwe6QPCs7Lt6iTie1H7QAZP3AMA/6YVxuH+XwyH6BenWIHIneCLJzDMg3Cm+TypfBOvs2WnBG0AI9FN+xPF72ENlr/2ySO5yIPkbgMNYbg0KhqwjWUrIee8P3lqJVfVWfaKdBABpoaO3s3z6th0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aB9Dhkrn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725352032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQvL7LZaA4b20/+0DqQPZRRvdK7BBL5AnON4S+Zxmn4=;
+	b=aB9Dhkrn3FOxWSARjeM2MEcxOIsuUwHEid8C9uFcw7UgyKgx0GMccO1dE2Gxu0Q4hJoDPt
+	QWl5eGMMA1sxPqJ68Wk1q2knwBzKarIL79sN6AY9YqcXe23Bylqbtt8fPFHSE4WKCk+FbI
+	++CBqZnFTjmWSnPRB/IEDsxXQAMTUtc=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-660-IsaOKVODPO-ISIy6St-bmQ-1; Tue, 03 Sep 2024 04:27:11 -0400
+X-MC-Unique: IsaOKVODPO-ISIy6St-bmQ-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c269f277eeso682635a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:27:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725352030; x=1725956830;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SQvL7LZaA4b20/+0DqQPZRRvdK7BBL5AnON4S+Zxmn4=;
+        b=gOC8tXHsr+PQfT9dwW/aK+psr8YWIbRZlPINULjCuFb0SFtzos3PgalMLbtTd/a8By
+         R4fuSs5TFelzGxyCklftzOm+HgNpwoxw2lrecM2OX6SlPcx1U/+kmihM7Pan9sI+gaMg
+         AKBfcb0kNdxkapbiZ7ed+wl+jYwYzO/1QAWjoTJ8+Lq2NatPsU2GmJ9Nm7qrKi9TuZZK
+         CozWdqOk6/e5Eh2rZpbk82uY/+YQHOnt0gkZrgBEAOd0768A6cfyRqNkqGL1kUrzltNH
+         6Ml2F5R3kO8QpUoKIYQjAr+rCHE9mUZ6KLJRgq5ACWFQiM08XmVR6NO94LQfvlQzqDk0
+         uHkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIjiS5sNh0zRF8V9P/FTsn0/3yrDtyutTRvdVDwdDYX8yryDq581BUEodvF9K9bY+PdqdE8dGRB6BeJiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQKul65T3k2d78Dt7frAdaZ9Oolam8vysZ8fA9qsbsmqILcvI
+	EJLrmKiTA48LQJgmecPJyRxjAm7/Q6BHvPjwhP/joOHEC4/+wbV/SxY6Rf0FXYOkEX3leGkci3r
+	XZcd28XddP1UZ0lTEXd3RpHNJct9BUVJE1MYUXoSLCZGyTC6Y1wkBsgdyUJM/8A==
+X-Received: by 2002:a05:6402:3485:b0:5c2:4cbe:ac1c with SMTP id 4fb4d7f45d1cf-5c25f22d543mr4046209a12.4.1725352030220;
+        Tue, 03 Sep 2024 01:27:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZkT4IwliSyOul1sm+Ls6jB9kvfwfo2otYij4PfY15gdZaWfssNk4SbA6NFcQWLh0QS++FMQ==
+X-Received: by 2002:a05:6402:3485:b0:5c2:4cbe:ac1c with SMTP id 4fb4d7f45d1cf-5c25f22d543mr4046188a12.4.1725352029687;
+        Tue, 03 Sep 2024 01:27:09 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ce4fb9sm6517563a12.87.2024.09.03.01.27.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 01:27:09 -0700 (PDT)
+Message-ID: <6f4e23ce-2f32-44fc-93d9-ab7d0867b0ee@redhat.com>
+Date: Tue, 3 Sep 2024 10:27:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcedaf8559e7e276e4d9ba511dab038ed70ebd6c.1725334260.git.jpoimboe@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] power: supply: Change usb_types from an array into a
+ bitmask
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Enric Balletbo Serra <enric.balletbo@collabora.com>,
+ Andrey Smirnov <andrew.smirnov@gmail.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <20240831142039.28830-1-hdegoede@redhat.com>
+ <20240831142039.28830-7-hdegoede@redhat.com>
+ <2024090340-mumbo-worsening-9a55@gregkh>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <2024090340-mumbo-worsening-9a55@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 09:00:10PM -0700, Josh Poimboeuf wrote:
-> @@ -433,9 +433,13 @@ static void elf_add_symbol(struct elf *elf, struct symbol *sym)
->  	/*
->  	 * Don't store empty STT_NOTYPE symbols in the rbtree.  They
->  	 * can exist within a function, confusing the sorting.
-> +	 *
-> +	 * TODO: is this still true?
+Hi Greg,
 
-a2e38dffcd93 ("objtool: Don't add empty symbols to the rbtree")
+Thank you for the reviews.
 
-I don't think that changed.
+On 9/3/24 9:04 AM, Greg Kroah-Hartman wrote:
+> On Sat, Aug 31, 2024 at 04:20:39PM +0200, Hans de Goede wrote:
+>> The bit_types array just hold a list of valid enum power_supply_usb_type
+>> values which map to 0 - 9. This can easily be represented as a bitmap.
+>>
+>> This reduces the size of struct power_supply_desc and further reduces
+>> the data section size by drivers no longer needing to store the array.
+>>
+>> This also unifies how usb_types are handled with charge_behaviours,
+>> which allows power_supply_show_usb_type() to be removed.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Nice!
+> 
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+I assume this also counts as an ack for merging this through
+the linux-power-supply tree ?
+
+Regards,
+
+Hans
+
+
+
 
