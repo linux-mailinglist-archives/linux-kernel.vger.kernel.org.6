@@ -1,102 +1,90 @@
-Return-Path: <linux-kernel+bounces-313084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F158969FFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:12:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A433E96A004
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 423D61C232D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:12:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1713BB226D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25D6F2E8;
-	Tue,  3 Sep 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD231188A30;
+	Tue,  3 Sep 2024 14:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YNtvufxs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9T3iIxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359003612D;
-	Tue,  3 Sep 2024 14:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4638F13DB92;
+	Tue,  3 Sep 2024 14:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372587; cv=none; b=ELbUE38uw+9m/N09fFBnr44zNGJY3CCz5PIEC1Z2hlzC0GSK2QeE2ZVGBzHbWyfaVUYIwCqHtdU79bMI6Q7o4VokhtCbHgsIxjSVrSe/Pb9rTncKuOHB5fHM5mIFNGsiSCl2nDlSN0TIBHNwMMw8K724fK+Qgw7iTSypqg6O7xY=
+	t=1725372629; cv=none; b=YvPmKcAtadhymH93WTAebl6eLr5N0xXLYgQOkdSFIPI1NTWlUJKKIPzN3Y4sKpxRCwWecRd+iJf+bk6ujbZ0SVM3aYkyO8V23qrE5WxCpw6Ri5XjDIdRV9rJbnx8+Qj4+2irOdL2kwww8J7+N3YQNAqartNNDLf8C0xmjzxghnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372587; c=relaxed/simple;
-	bh=Iw2rgePYRDy4YBtyAyf1f9zbxTadJot1mk68x/JI+TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S/qn1cpjAd44d/jZO2mZzVEnjVnpxyTTbSj3Cx7CZH2gYZ0jH9fptW2+iSPCM3qNhD1pDD6JiRcpU7R0S6rfnDCsqaFw6PscF1G001kOIKnFtCxGm6hYGMNHhzvNofcnGdlVZjVxWoqBpqTyrjwrFrMEpXPIXj6ul1oDqY0mJsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YNtvufxs; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725372586; x=1756908586;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Iw2rgePYRDy4YBtyAyf1f9zbxTadJot1mk68x/JI+TY=;
-  b=YNtvufxsBnyVl6rZ1S5Ng1adJ9scHJadqKWElpLCa2/IRYe84c8E01rG
-   frlyXmJL5SbZ8WS3wBda3FTNYdt17oJqKvilHi1X3WS4ZN9+/ZfhEsGwT
-   ZHjEVlNg/pN1B4GT66zpGLG7b5bfGDtIJHmHJQRlQPE/dKr7XEUAzamwj
-   q4U/iFOrjAxZor+xFsTjpsMepTbrzfpx1md1077AwFFiD/esxPefhJBhR
-   lGMJQ3pBQPqIjQGcn8N06t7wTIqJ075nGxq+QeXmeIa8RVzCnsXdJ6w8a
-   LKFoXZT6KpbTs0aJarZq/MKwBFWjkkP6NO1kQba0tWpDDZ7IoRN52LN5J
-   A==;
-X-CSE-ConnectionGUID: biOIzXnXTQOhe2Xnkz5vTQ==
-X-CSE-MsgGUID: 62l2gzg8QTy1fKPk4doPDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27764768"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="27764768"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:09:22 -0700
-X-CSE-ConnectionGUID: yjq5AXFSSOup/jIPLhTPHA==
-X-CSE-MsgGUID: FuWGoJ8HRxOgvDqTVCPhCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="69067334"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:09:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUDf-00000004jIN-0b4M;
-	Tue, 03 Sep 2024 17:09:19 +0300
-Date: Tue, 3 Sep 2024 17:09:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: intel: Inline
- intel_gpio_community_irq_handler()
-Message-ID: <ZtcYjsy5vu81eQPu@smile.fi.intel.com>
-References: <20240902141441.2683122-1-andriy.shevchenko@linux.intel.com>
- <20240903045457.GX1532424@black.fi.intel.com>
+	s=arc-20240116; t=1725372629; c=relaxed/simple;
+	bh=RWW0YMDKvzh75ZWqq5GEi6cn8xPLNIShRiEe89fToRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QDq8MZ+xkbznDj67zT+qvI3be/p8AhNkHakeDQFhy6f6NXSUzsI4Uharc3DuUrwuLIF+aaE2DXV50AfxFxvJNw7YA5Fe06qP4bGkqgs9UBnQRRcxIT0fPsdgie3X8SZtN4HMdh/KEC54n1IYs79gFtT9+KXeUddGwYbX8aDMjm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9T3iIxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8616C4CECC;
+	Tue,  3 Sep 2024 14:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725372628;
+	bh=RWW0YMDKvzh75ZWqq5GEi6cn8xPLNIShRiEe89fToRk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p9T3iIxvzpqGJFyDLBQFUAgCE1uWJRAQPt7NCAgL9bN6oD2vu2G+jgFAitpffV+eD
+	 GcmPhOZVspqfeoJI7rtDGMVZs/EbohbwGXAyaa7UCJAii1lWfTOwb0Hf3LLKn6LbvU
+	 ulCF2w3JY26aVmym1mBCbu/TuKSPYkhBqkZ7VhJNtl11OydZmu81Rf3OQ+MQOYDCKh
+	 FPAOyje10paNt18ZJdfZ14qCBqWshyueLmRhcHUbQD52HSvzaESYy2hBYzgkPenIpf
+	 dGc7B7hJHgtI46/oHUj0eSvC12iiTD4NqVUczMI9mL9HwPZeqn1TrJsmcy6uZuUFW+
+	 M5XOlgONhn0lw==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-277ccb777baso1264598fac.2;
+        Tue, 03 Sep 2024 07:10:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWeDcYVKsFwDvkQuMayzXMmYb0QLdnPcd2JzynpkNAZfZGDQGw5bKRfuNVLPWoNin4dao3WdFm0YgSmRU=@vger.kernel.org, AJvYcCVH0NPIEfWzKeS8uvn0SnOuM5AQ4owFrsSjkbRb956FgDDeyusQ6V1tqODp3mCe5r0H6cAOuNeOclQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHMZY/a+X0YJRTxQNugq84QWhHivdORGgbSfYrbUfdzeb3OjHg
+	4JGv887aPi35xoai00G43bL6BDjYPJTp6l3/NhJ+5ZEqDRL+ENarJKhxevPKI/QNBw5+f+HT/s0
+	ZkNkeS2nY9pnQBe7Gb0grrzHyqyw=
+X-Google-Smtp-Source: AGHT+IEKnInHbh9MLHEnTt2+WEiYwLOirSgfsGIMEIxu/8PIdC4VupcI2jvIt+WKZBS+UPnsdnLXaCt0QyL6YCeJoSE=
+X-Received: by 2002:a05:6871:889:b0:270:449:291e with SMTP id
+ 586e51a60fabf-2781a945890mr2446784fac.36.1725372628147; Tue, 03 Sep 2024
+ 07:10:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903045457.GX1532424@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240902054959.28073-1-00107082@163.com> <CAJZ5v0gZ9oAByawssaARFN1_crTuMZ-CnU5Fy9D1sWv+Moo-sg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gZ9oAByawssaARFN1_crTuMZ-CnU5Fy9D1sWv+Moo-sg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 3 Sep 2024 16:10:16 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0itLuorOY-4PyDL5eFkWTf2s9JX++oBkzqi1cYcaHYdmA@mail.gmail.com>
+Message-ID: <CAJZ5v0itLuorOY-4PyDL5eFkWTf2s9JX++oBkzqi1cYcaHYdmA@mail.gmail.com>
+Subject: Re: [PATCH] PM: add: move warn message out of mutex lock.
+To: David Wang <00107082@163.com>
+Cc: len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 07:54:57AM +0300, Mika Westerberg wrote:
-> On Mon, Sep 02, 2024 at 05:14:41PM +0300, Andy Shevchenko wrote:
-> > Since we have for_each_intel_pad_group() helper, there is
-> > no advantage of having intel_gpio_community_irq_handler().
-> > Inline it into intel_gpio_irq().
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Tue, Sep 3, 2024 at 3:01=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Mon, Sep 2, 2024 at 7:50=E2=80=AFAM David Wang <00107082@163.com> wrot=
+e:
+> >
+> > dpm_list_mtx does not protect any data used by
+> > dev_warn for checking parent's power, move
+> > dev_warn out of mutex lock block make the
+> > lock more efficient, especially when the warn
+> > is triggered.
+>
+> It does protect the power.is_prepared flag of the parent.
 
-Pushed to my review and testing queue, thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+In fact, the update of it in device_resume() is racy with respect to
+the check in device_pm_add(), but the purpose of it is mostly to allow
+the device driver's resume callback to add children without triggering
+the warning.
 
