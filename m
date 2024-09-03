@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-313046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA71969F79
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E621969F80
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0304BB24274
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC73283D13
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A402383A5;
-	Tue,  3 Sep 2024 13:54:13 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E162AE75;
+	Tue,  3 Sep 2024 13:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HOLybAVD"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F391CA6AD;
-	Tue,  3 Sep 2024 13:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3626846D;
+	Tue,  3 Sep 2024 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371653; cv=none; b=gxGlAgQQI8HhPAUJKkoH6V5JZBTkLPA9PAhPj1cZ5MdKkK0q1inb7KFKoBeZay9uwQ22r/7r6xpcy6PSQh0tfu7hD9AwcvQfvCMUuRKHyMHIk36lU/kT5pv8s4wKvNdM/HrXuN1VtyuqOxxgzoWJHKxM3wJe8Q5P1/AdGifxcIw=
+	t=1725371711; cv=none; b=DTnuU6T16U4X5jURSXxIEpjKLm5ZqDsYTGbmKZ/oA1Wj29FmvU9CP9m3EyFvm/w8cgsdVMCQhhSt+vXd//ATo/MM6EoKInPuCPbldi3ycPqhS9nMis3Ax+TqeJv9aRYUKsSh3yh8qhu5CmlaNuPR+AWdnGp3zweZP0Ko4PMoUzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371653; c=relaxed/simple;
-	bh=LW2aFcZJH14Q1kEXlseBIgZHNW2q6kUp7VYzJkVVKs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZHp3vsDEvsW9yE/TyqX3CYi3LZhhCUQfIPy1UQi7eR+fZKOy30tZUPYxN5uoHCw6JvvYx1eYZrX9/+NvB2KkjMzwtZiJ/5JNo8eQyWjclOnzu7cGl7ALwVchOXxwsJUssmEY5r8SfYaq6Y/KstnuQOGHDZ1MA9z0lEwKeBZyek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-691bb56eb65so47041577b3.0;
-        Tue, 03 Sep 2024 06:54:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725371650; x=1725976450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mqZiEh+o6sfWJuXgzKi0L8anYlIdqwzIKuWOXeuoMnQ=;
-        b=EUj89AIo3DW3yVfoC1jZvW6l1z0QH0q0J5ql+yPr4laTt2+ahkMjmcio+7Flca+7Q9
-         m0McHE+rXk36/KPTJjXc4Fe2rcm2+wTjpuNolJLwN8qo8uInbNQ5ckta5cXZM4HknHPC
-         78bHUtWbliHB/gzGcD7uH7INo1ntfj9i7NPf2k5PmhTkUOaHNe8T+Axi8zuHYsbaFdYK
-         ukny7fx2SwCT2KUUzHyADrg9i8qCPJiJWxhQxk6btb0EIsIqC3NusQGngAHFOhPnTAad
-         0FsdJraLiBLlL2BWm0VOdVjGBkyPMCNJ7VjZS4ZXdeS3Ak4h8MttWHlTHZ0SqPeckFck
-         SZ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVoTzxxnWDMqSQevl6C2a1YC1bwe7UXd7avk9ogywiRFMmXR7ZbhDnK3mGwXKSCCngxpNa3nUKmWTtXsSA@vger.kernel.org, AJvYcCX5gSUJqLmYYcOlMobb7qGVFoWceb2+gA7XBmGXKlAzgdBW8EG2Yfg6/iIWM8MNUXJiTpjej/vftczJppo6IA==@vger.kernel.org, AJvYcCXDRJ5ffddfrhwu3CC1fh2csk5ZZDpSstzlzDlWqPdtHKBlGhmVBsqtbJ3+7zVV+H696NRwk9g3oCbaEz0D6A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCykBD8sZ1+Tr5eXklBq22ghMQFEaO6VloKR6qD3amHKRvy/vY
-	pzqnvoOXqPUpfPll9ct3ZajG9YOSoVOHckvFFJnmiZ3H/5zU3uEnPG/7uEA4
-X-Google-Smtp-Source: AGHT+IH1EEs71yyN4QvmXcCeh/VZvOCftE1Jb6CJ0quGKYOD+39epwfs8DO+4cSDyP+KXqpZU9wazQ==
-X-Received: by 2002:a05:690c:e1b:b0:6d4:4cb:e453 with SMTP id 00721157ae682-6d40df802eemr155752407b3.17.1725371649359;
-        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d57de3e5sm20083137b3.77.2024.09.03.06.54.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6d6891012d5so21436017b3.2;
-        Tue, 03 Sep 2024 06:54:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYoNleSPBCCRaphC+l+3fEkLVS1slTuIEgt8d228oma7Kwpk1OhEhi4iDKtrnYCuBO0pblKvcr47Yp8mcTTg==@vger.kernel.org, AJvYcCV/+D7aQ8mty/7Jxr2yBcv7QfQX15m1lnrcKon48De44yqEtt4lm953NH3Bhbw3l4nlG3kklh7RX/68hSti@vger.kernel.org, AJvYcCV0jYLQW3MDY1l7154RES3Vxno7Jyr/VevgEOrIzSMrw//O61Vx4jzKeTgo0siAX8+NfGdSt7m6a9eDtLRiig==@vger.kernel.org
-X-Received: by 2002:a05:690c:893:b0:6b1:4eb6:345e with SMTP id
- 00721157ae682-6d40e7824cemr173350047b3.26.1725371648843; Tue, 03 Sep 2024
- 06:54:08 -0700 (PDT)
+	s=arc-20240116; t=1725371711; c=relaxed/simple;
+	bh=TZhs90Wfs86m8kmrWdmjdudoyockf7tSMLRE1n+PTJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScUQQJDKB/zcb7QVUtBMngCpM92Frjl0Zi8I6V6cUvM8nxg53xKeDvk8X9zQhHu/ArJAuaqCtsC+JTQ0sn68T2ZRSNllcvX1vtkSJMEslDBCu2iY1SWRnNgL8D5Lo6Uddl7BKWJN+vsqnVuqtlYv4vDXMgsPejKT9+T6KSkRmg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HOLybAVD; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aTa6TKOn9FmWWfnuQkVB5h4+sP16eUgPHREPtwgIrqM=; b=HOLybAVDQjB3YOhr0jmkecXGSD
+	SSCyJItTZJf0Qt6X1/5IzPPgBH4pbFkHxn8V9SbFv6Qosaxcay5HjZYoIDvJsGh/d9NbBYX4lJggv
+	95Czo6JFRqI1T6gKGQK4D/dSp1kIBBcXjblsfmb0e15kKDsKAPyV4AR2LpCzEUYSO/xaactR275lp
+	jy6cLnCew+/AXov7lBodDUdJKXOuolFUd+JIoZo01LCkjmkqXLlKJ/vIzxj8T+6a0U5lUsboBWs/S
+	KHteLuvAzIih0EHDfaPJA+I1EmYg+DH5Mb0YgiEBGOMV7PNFRAtlsIwVo3W0Owr+f3BCobVYwW2jA
+	5VFx0r5g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1slTzr-0000000CLEm-1waM;
+	Tue, 03 Sep 2024 13:55:03 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8625930050D; Tue,  3 Sep 2024 15:55:02 +0200 (CEST)
+Date: Tue, 3 Sep 2024 15:55:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Tim Chen <tim.c.chen@intel.com>
+Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU
+ capacity on hybrid systems
+Message-ID: <20240903135502.GX4723@noisy.programming.kicks-ass.net>
+References: <3310447.aeNJFYEL58@rjwysocki.net>
+ <1979653.PYKUYFuaPT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
-In-Reply-To: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Sep 2024 15:53:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
-Message-ID: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc6
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1979653.PYKUYFuaPT@rjwysocki.net>
 
-Hi Kent,
+On Wed, Aug 28, 2024 at 01:48:10PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Make intel_pstate use the HWP_HIGHEST_PERF values from
+> MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
+> via the previously introduced arch_set_cpu_capacity() on hybrid
+> systems without SMT.
+> 
+> Setting asymmetric CPU capacity is generally necessary to allow the
+> scheduler to compute task sizes in a consistent way across all CPUs
+> in a system where they differ by capacity.  That, in turn, should help
+> to improve scheduling decisions.  It is also necessary for the schedutil
+> cpufreq governor to operate as expected on hybrid systems where tasks
+> migrate between CPUs of different capacities.
+> 
+> The underlying observation is that intel_pstate already uses
+> MSR_HWP_CAPABILITIES to get CPU performance information which is
+> exposed by it via sysfs and CPU performance scaling is based on it.
+> Thus using this information for setting asymmetric CPU capacity is
+> consistent with what the driver has been doing already.  Moreover,
+> HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
+> both the instructions-per-cycle (IPC) factor and the maximum turbo
+> frequency and the units in which that value is expressed are the same
+> for all CPUs in the system, so the maximum capacity ratio between two
+> CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
+> values.  Of course, in principle that capacity ratio need not be
+> directly applicable at lower frequencies, so using it for providing the
+> asymmetric CPU capacity information to the scheduler is a rough
+> approximation, but it is as good as it gets.  Also, measurements
+> indicate that this approximation is not too bad in practice.
+> 
+> If the given system is hybrid and non-SMT, the new code disables ITMT
+> support in the scheduler (because it may get in the way of asymmetric CPU
+> capacity code in the scheduler that automatically gets enabled by setting
+> asymmetric CPU capacity) after initializing all online CPUs and finds
+> the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
+> capacity number for each (online) CPU by dividing the product of its
+> HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PERF.
+> 
+> When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
+> and if it is the one with the maximum HWP_HIGHEST_PERF value, the
+> capacity numbers for all of the other online CPUs are recomputed.  This
+> also takes care of a cleanup during driver operation mode changes.
+> 
+> Analogously, when a new CPU goes online, its capacity number is updated
+> and if its HWP_HIGHEST_PERF value is greater than the current maximum
+> one, the capacity numbers for all of the other online CPUs are
+> recomputed.
+> 
+> The case when the driver is notified of a CPU capacity change, either
+> through the HWP interrupt or through an ACPI notification, is handled
+> similarly to the CPU online case above, except that if the target CPU
+> is the current highest-capacity one and its capacity is reduced, the
+> capacity numbers for all of the other online CPUs need to be recomputed
+> either.
+> 
+> If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
 
-Replying here, as there is (again) no patch email to reply to to report iss=
-ues.
+Trubo :-)
 
-noreply@ellerman.id.au is reporting several build failures[1] in linux-next=
-:
-
-    fs/bcachefs/sb-members.c: In function =E2=80=98bch2_sb_member_alloc=E2=
-=80=99:
-    fs/bcachefs/sb-members.c:503:2: error: a label can only be part of
-a statement and a declaration is not a statement
-      503 |  unsigned nr_devices =3D max_t(unsigned, dev_idx + 1,
-c->sb.nr_devices);
-          |  ^~~~~~~~
-    fs/bcachefs/sb-members.c:505:2: error: expected expression before =E2=
-=80=98struct=E2=80=99
-      505 |  struct bch_sb_field_members_v2 *mi =3D
-bch2_sb_field_get(c->disk_sb.sb, members_v2);
-          |  ^~~~~~
-
-Apparently this fails with gcc-10 and older, but builds with gcc-11
-and gcc-12.
-
-The failure is due to commit 4e7795eda4459bf3 ("bcachefs:
-bch2_sb_member_alloc()"), which is nowhere to be found on
-lore.kernel.org.  Please stop committing private unreviewed patches
-to linux-next, as several people have asked before.
-Thank you!
-
-[1] http://kisskb.ellerman.id.au/kisskb/branch/linux-next/head/6804f0edbe77=
-47774e6ae60f20cec4ee3ad7c187/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> capacity information is computed from scratch to reflect the new turbo
+> status.
 
