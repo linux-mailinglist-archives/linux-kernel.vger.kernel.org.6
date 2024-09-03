@@ -1,84 +1,59 @@
-Return-Path: <linux-kernel+bounces-312113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFAD969268
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3E396926C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98701C226CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0AEF1F2364E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086991CE71A;
-	Tue,  3 Sep 2024 03:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585DF2207A;
+	Tue,  3 Sep 2024 04:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHXnK5hx"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZ//cwH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98F11CE70F;
-	Tue,  3 Sep 2024 03:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887642A1CA;
+	Tue,  3 Sep 2024 04:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725335850; cv=none; b=R8WQQDrdOBRhVTEcb+qFDElPOeqjhk3s/JssknOvJoPbrJEEwppgrL8nSIvtZSYyxV/LJwZ1xtCLNatdOx5WChMBSCXL4nWu7vISGI1MsCrDvoqTnLtxZXYV1/cyDx/Zwm1f0iVh+qA02m/apxYoO84pE5oFgdhFl71pkzqArOo=
+	t=1725336029; cv=none; b=Ye+IYzDGWbDmIN+g6Lfonydqf7OXyDjyuFG6klcFQ3/oyMazPZrzdSZKujDxEAK968xYmqgQwMkFm04jhcQ2cOHBRK7NCV8pKk8SClelwrim8loS9hY+aB2cAzpOnAMQVsY0URcs3wSRW6iVRwmrXbNz4nMwBXFkArB/RzLtve0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725335850; c=relaxed/simple;
-	bh=uyBa81K6sc4nmM89s6vQpxHNyCzh3NCrxdEiUuDNI8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b8zp3Gk/ZmUGXNAif5XJEih7KmaZm/LmiK/MhkmpunQO9Pglk1fJiaZ7ZpFYQlT7YGUS5pT6dD8Ug/1Wq/IDnymh5eBZm+9ibOyOiSgmyzObLLsh3FJNWVXPvRSLPAMfb/DLJDX0o92jZXgWqaZn0Uyqyf9SGYMHdlQaHaq7iWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHXnK5hx; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71430e7eaf8so3837739b3a.1;
-        Mon, 02 Sep 2024 20:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725335847; x=1725940647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nTJOQ7ea7VhKmukuHF2qbo8SZKAFBfgbAfGBVI2fsCA=;
-        b=AHXnK5hxit+ceKUfZ1nyBrflAGYf6IlQDjqtA1udWYecSwZTLpLf34mE25jqjb/asd
-         mxn9BSKT62qicr57azSpt35tAN2qpuLwFFURXi1qBcyXMCpnZkA04T4tJzTXCPNOAtRH
-         GnHiE47HD3fsJtflhD5MCimBZ4jPrEz1RRZLApW+47VDBGqjYHndkn18wVKIZyaG881M
-         kl2Vo8FwIgDMwmqEx6YcmZR+SzTWp869fEqTCqHkplhRf5YyeCSfowntSTZ1NeOn0T/I
-         54aAuBqlWuqGFW9HH1dMrFn0KkmCvwTELNbxANc9Y05iSuw/n3qePolWXwDExHvUXMRW
-         btXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725335847; x=1725940647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nTJOQ7ea7VhKmukuHF2qbo8SZKAFBfgbAfGBVI2fsCA=;
-        b=mqgB3v2xnPYkLqrELXB2BIQ17r9HL8PD5KBWJYnq2hGMaVT60Fudn7zmTd+2vLtgdK
-         r8ljbbpdEf1DYnhKpkfGbhf45h43DXwbjmSMyKL/mDaIvEgpiYgijuSm0VzRw/NMV0/M
-         02YRtsehByI0ODkf//To0RcYs8BvEHhFENNv+J42AnsvJr0y3d3lEzoNVMjMa8HDtldj
-         99goFiCFZTg4Yf2gvZhK7h4A/MbYKVVLntP1yB17/7X39Fdxj502wg/J3wb3/dN+fQaI
-         0m8Z/gZMZwr6/AfJOfz+QXQ7+3qaJdBARVBGms3Guvej0d3ZcXvB8KT78cZhRrm+Z7EK
-         jwBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX891sqkFsbQi3H7CeYaUOCZo9Dm4KZofCCa5dFllIRypTDnLo3xbhyPCilcSEh3zVyuPhbg3bgNjzjCXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTYLrT/WUwyBOp/1NfbOJzIOU4s+tm7LSQY9XX+xcOVKjXduMm
-	50YbvCe61wOw1kDQr/DULQ2AugnKTUDU1GnzMbKW/pUKif1KFSXRuvVhZXo+
-X-Google-Smtp-Source: AGHT+IEfcwiYrIcXox586ZH+yc5de/ZG/AeWrqFu7rq6+hj4CQLbWqMpV7KI6RlvUPqAW1pkYvn79g==
-X-Received: by 2002:a05:6a00:3916:b0:714:3a4b:f78f with SMTP id d2e1a72fcca58-71745884fd6mr8235501b3a.20.1725335846839;
-        Mon, 02 Sep 2024 20:57:26 -0700 (PDT)
-Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7d22e785333sm8329421a12.56.2024.09.02.20.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 20:57:26 -0700 (PDT)
-From: Abhash Jha <abhashkumarjha123@gmail.com>
-To: linux-iio@vger.kernel.org
-Cc: songqiang1304521@gmail.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-kernel@vger.kernel.org,
-	Abhash Jha <abhashkumarjha123@gmail.com>
-Subject: [PATCH v3 2/2] iio: proximity: vl53l0x-i2c: Added continuous mode support
-Date: Tue,  3 Sep 2024 09:26:36 +0530
-Message-ID: <20240903035636.9559-3-abhashkumarjha123@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903035636.9559-1-abhashkumarjha123@gmail.com>
-References: <20240903035636.9559-1-abhashkumarjha123@gmail.com>
+	s=arc-20240116; t=1725336029; c=relaxed/simple;
+	bh=LQfg1VzcDwJ3gm6jVtsTgxwWpZDCtBC0zgWadHHdIq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hSrF4Oo2q7bEq0//W6S5msjQ+vIb4CjZ91IXJqcBbUxiHlWU//r8kUat2L7wsLnjFVc+rlHcq2qFmlS0pmMuV9IZ0Qn1wxGKtK3NSE56ZhWtbgTNbB8WphcLlBmW/a33mzvDXgLIY1gMPsx3sayS6rxG+dcdcz3vLv+DHUgpgP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZ//cwH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900BFC4CEC5;
+	Tue,  3 Sep 2024 04:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725336029;
+	bh=LQfg1VzcDwJ3gm6jVtsTgxwWpZDCtBC0zgWadHHdIq0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lZ//cwH98Ji3wXjofTtRQbcOaObGwLuVhWrW+HgkdwKWrzlHDXfLovHrWDeQFqouD
+	 IFlLh6BjFlXAwFAIGspqYhI3rflMgXc7DTGAC/SGp6JCuWP4PhsfFBM2ZpWfD/wGiW
+	 eaXxwDPbUgMWxkdnw4A/Ek/pxHFSVe3/AbAFTWB54ZlWprimmmPAUCb/Ew5DMUvnGd
+	 dVsmCL5u0g4NnvZSiUvp4EXuqZsX3tz/yGNPXYXV2ibqdw9OwJMO5ZGbtuepvMzL1N
+	 xocXBCdsvzrG0xom8aHuxKwZ3ncBT8nNrMcWv5sVM+xRvVQi2NHnBJtRgIrHkOB4br
+	 aQyGDNJzO73Qw==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: live-patching@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Date: Mon,  2 Sep 2024 20:59:43 -0700
+Message-ID: <cover.1725334260.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,252 +62,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The continuous mode of the sensor is enabled in the buffer_postenable.
-Replaced the original irq handler with a threaded irq handler to perform
-i2c reads during continuous mode.
-The continuous mode is disabled by disabling the buffer.
-Added a trigger for this device to be used for continuous mode.
+Hi,
 
-Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
----
- drivers/iio/proximity/vl53l0x-i2c.c | 164 +++++++++++++++++++++++-----
- 1 file changed, 139 insertions(+), 25 deletions(-)
+Here's a new way to build livepatch modules called klp-build.
 
-diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-index 31d6aeb95..f91a9495a 100644
---- a/drivers/iio/proximity/vl53l0x-i2c.c
-+++ b/drivers/iio/proximity/vl53l0x-i2c.c
-@@ -22,6 +22,12 @@
- #include <linux/module.h>
- 
- #include <linux/iio/iio.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
-+
-+#include <asm/unaligned.h>
- 
- #define VL_REG_SYSRANGE_START				0x00
- 
-@@ -49,14 +55,75 @@ struct vl53l0x_data {
- 	struct completion completion;
- 	struct regulator *vdd_supply;
- 	struct gpio_desc *reset_gpio;
-+	struct iio_trigger *trig;
-+
-+	struct {
-+		u16 chan;
-+		s64 timestamp __aligned(8);
-+	} scan;
- };
- 
--static irqreturn_t vl53l0x_handle_irq(int irq, void *priv)
-+static int vl53l0x_clear_irq(struct vl53l0x_data *data)
-+{
-+	struct device *dev = &data->client->dev;
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					VL_REG_SYSTEM_INTERRUPT_CLEAR, 1);
-+	if (ret < 0)
-+		dev_err(dev, "failed to clear error irq: %d\n", ret);
-+
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					VL_REG_SYSTEM_INTERRUPT_CLEAR, 0);
-+	if (ret < 0)
-+		dev_err(dev, "failed to clear range irq: %d\n", ret);
-+
-+	ret = i2c_smbus_read_byte_data(data->client, VL_REG_RESULT_INT_STATUS);
-+	if (ret < 0 || ret & 0x07) {
-+		dev_err(dev, "failed to clear irq: %d\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static irqreturn_t vl53l0x_trigger_handler(int irq, void *priv)
-+{
-+	struct iio_poll_func *pf = priv;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct vl53l0x_data *data = iio_priv(indio_dev);
-+	u8 buffer[12];
-+	int ret;
-+
-+	ret = i2c_smbus_read_i2c_block_data(data->client,
-+					VL_REG_RESULT_RANGE_STATUS,
-+					sizeof(buffer), buffer);
-+	if (ret < 0)
-+		return ret;
-+	else if (ret != 12)
-+		return -EREMOTEIO;
-+
-+	data->scan.chan = get_unaligned_be16(&buffer[10]);
-+	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
-+					iio_get_time_ns(indio_dev));
-+
-+	iio_trigger_notify_done(indio_dev->trig);
-+	ret = vl53l0x_clear_irq(data);
-+	if (ret < 0)
-+		return ret;
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t vl53l0x_threaded_irq(int irq, void *priv)
- {
- 	struct iio_dev *indio_dev = priv;
- 	struct vl53l0x_data *data = iio_priv(indio_dev);
- 
--	complete(&data->completion);
-+	if (iio_buffer_enabled(indio_dev))
-+		iio_trigger_poll_nested(indio_dev->trig);
-+	else
-+		complete(&data->completion);
- 
- 	return IRQ_HANDLED;
- }
-@@ -71,8 +138,9 @@ static int vl53l0x_configure_irq(struct i2c_client *client,
- 	if (!irq_flags)
- 		irq_flags = IRQF_TRIGGER_FALLING;
- 
--	ret = devm_request_irq(&client->dev, client->irq, vl53l0x_handle_irq,
--			irq_flags, indio_dev->name, indio_dev);
-+	ret = devm_request_threaded_irq(&client->dev, client->irq,
-+			NULL, vl53l0x_threaded_irq,
-+			irq_flags | IRQF_ONESHOT, indio_dev->name, indio_dev);
- 	if (ret) {
- 		dev_err(&client->dev, "devm_request_irq error: %d\n", ret);
- 		return ret;
-@@ -87,26 +155,6 @@ static int vl53l0x_configure_irq(struct i2c_client *client,
- 	return ret;
- }
- 
--static void vl53l0x_clear_irq(struct vl53l0x_data *data)
--{
--	struct device *dev = &data->client->dev;
--	int ret;
--
--	ret = i2c_smbus_write_byte_data(data->client,
--					VL_REG_SYSTEM_INTERRUPT_CLEAR, 1);
--	if (ret < 0)
--		dev_err(dev, "failed to clear error irq: %d\n", ret);
--
--	ret = i2c_smbus_write_byte_data(data->client,
--					VL_REG_SYSTEM_INTERRUPT_CLEAR, 0);
--	if (ret < 0)
--		dev_err(dev, "failed to clear range irq: %d\n", ret);
--
--	ret = i2c_smbus_read_byte_data(data->client, VL_REG_RESULT_INT_STATUS);
--	if (ret < 0 || ret & 0x07)
--		dev_err(dev, "failed to clear irq: %d\n", ret);
--}
--
- static int vl53l0x_read_proximity(struct vl53l0x_data *data,
- 				  const struct iio_chan_spec *chan,
- 				  int *val)
-@@ -128,7 +176,9 @@ static int vl53l0x_read_proximity(struct vl53l0x_data *data,
- 		if (time_left == 0)
- 			return -ETIMEDOUT;
- 
--		vl53l0x_clear_irq(data);
-+		ret = vl53l0x_clear_irq(data);
-+		if (ret < 0)
-+			return ret;
- 	} else {
- 		do {
- 			ret = i2c_smbus_read_byte_data(client,
-@@ -163,7 +213,14 @@ static const struct iio_chan_spec vl53l0x_channels[] = {
- 		.type = IIO_DISTANCE,
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
- 				      BIT(IIO_CHAN_INFO_SCALE),
-+		.scan_index = 0,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 12,
-+			.storagebits = 16,
-+		},
- 	},
-+	IIO_CHAN_SOFT_TIMESTAMP(32),
- };
- 
- static int vl53l0x_read_raw(struct iio_dev *indio_dev,
-@@ -221,6 +278,41 @@ static int vl53l0x_power_on(struct vl53l0x_data *data)
- 	return 0;
- }
- 
-+static int vl53l0x_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct vl53l0x_data *data = iio_priv(indio_dev);
-+
-+	return i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x02);
-+}
-+
-+static int vl53l0x_buffer_postdisable(struct iio_dev *indio_dev)
-+{
-+	struct vl53l0x_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x01);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Let the ongoing reading finish */
-+	reinit_completion(&data->completion);
-+	wait_for_completion_timeout(&data->completion, HZ/10);
-+	vl53l0x_clear_irq(data);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct iio_buffer_setup_ops iio_triggered_buffer_setup_ops = {
-+	.postenable = &vl53l0x_buffer_postenable,
-+	.postdisable = &vl53l0x_buffer_postdisable,
-+};
-+
-+static const struct iio_trigger_ops vl53l0x_trigger_ops = {
-+	.validate_device = iio_trigger_validate_own_device,
-+};
-+
- static int vl53l0x_probe(struct i2c_client *client)
- {
- 	struct vl53l0x_data *data;
-@@ -278,9 +370,31 @@ static int vl53l0x_probe(struct i2c_client *client)
- 	if (client->irq) {
- 		init_completion(&data->completion);
- 
-+		data->trig = devm_iio_trigger_alloc(&client->dev, "%s-dev%d",
-+						indio_dev->name,
-+						iio_device_id(indio_dev));
-+		if (!data->trig)
-+			return -ENOMEM;
-+
-+		data->trig->ops = &vl53l0x_trigger_ops;
-+		iio_trigger_set_drvdata(data->trig, indio_dev);
-+		ret = devm_iio_trigger_register(&client->dev, data->trig);
-+		if (ret)
-+			return ret;
-+
-+		indio_dev->trig = iio_trigger_get(data->trig);
-+
- 		ret = vl53l0x_configure_irq(client, indio_dev);
- 		if (ret)
- 			return ret;
-+
-+		ret = devm_iio_triggered_buffer_setup(&client->dev,
-+					indio_dev,
-+					NULL,
-+					&vl53l0x_trigger_handler,
-+					&iio_triggered_buffer_setup_ops);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return devm_iio_device_register(&client->dev, indio_dev);
+I started working on it when I realized that objtool already does 99% of
+the work needed for detecting function changes.
+
+This is similar in concept to kpatch-build, but the implementation is
+much cleaner.
+
+Personally I still have reservations about the "source-based" approach
+(klp-convert and friends), including the fragility and performance
+concerns of -flive-patching.  I would submit that klp-build might be
+considered the "official" way to make livepatch modules.
+
+Please try it out and let me know what you think.  Based on v6.10.
+
+Also avaiable at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-rfc
+
+More details (cribbed from the big final patch):
+
+------
+
+Add a klp-build script which makes use of a new "objtool klp" subcommand
+to generate livepatch modules using a source patch as input.
+
+The concept is similar to kpatch-build which has been a successful
+out-of-tree project for over a decade.  It takes a source .patch as an
+input, builds kernels before and after, does a binary diff, and copies
+any changed functions into a new object file which is then linked into a
+livepatch module.
+
+By making use of existing objtool functionality, and taking from lessons
+learned over the last decade of maintaining kpatch-build, the overall
+design is much simpler.  In fact, it's a complete redesign and has been
+written from scratch (no copied code).
+
+Advantages over kpatch-build:
+
+  - Runs on vmlinux.o, so it's compatible with late-linked features like
+    IBT and LTO
+
+  - Much simpler design: ~3k fewer LOC
+
+  - Makes use of existing objtool CFG functionality to create checksums
+    for trivially detecting changed functions
+
+  - Offset __LINE__ changes are no longer a problem thanks to the
+    adjust-patch-lines script
+
+  - In-tree means less cruft, easier maintenance, and a larger pool of
+    potential maintainers
+
+To use, run the following from the kernel source root:
+
+  scripts/livepatch/klp-build /path/to/my.patch
+
+If it succeeds, the patch module (livepatch.ko) will be created in the
+current directory.
+
+TODO:
+
+  - specify module name on cmdline
+  - handle edge cases like correlation of static locals
+  - support other arches (currently x86-64 only)
+  - support clang
+  - performance optimization
+  - automated testing
+  - documentation
+
+Josh Poimboeuf (31):
+  x86/alternative: Refactor INT3 call emulation selftest
+  x86/module: Improve relocation error messages
+  x86/kprobes: Remove STACK_FRAME_NON_STANDARD annotation
+  kernel/sys: Don't reference UTS_RELEASE directly
+  x86/compiler: Tweak __UNIQUE_ID naming
+  elfnote: Use __UNIQUE_ID() for note symbols
+  kbuild: Remove "kmod" prefix from __KBUILD_MODNAME
+  objtool: Remove .parainstructions reference
+  objtool: Const string cleanup
+  objtool: Use 'struct elf' in elf macros
+  objtool: Add section/symbol type helpers
+  objtool: 'objname' refactoring
+  objtool: Support references to all symbol types in special sections
+  objtool: Refactor add_jump_destinations()
+  objtool: Interval tree cleanups
+  objtool: Simplify fatal error handling
+  objtool: Open up the elf API
+  objtool: Disallow duplicate prefix symbols
+  objtool: Add elf_create_file()
+  objtool: Add UD1 detection
+  objtool: Fix x86 addend calcuation
+  objtool: Make find_symbol_containing() less arbitrary
+  objtool: Handle __pa_symbol() relocations
+  objtool: Make STACK_FRAME_NON_STANDARD consistent
+  objtool: Fix interval tree insertion for zero-length symbols
+  objtool: Make interval tree functions "static inline"
+  objtool: Fix weak symbol detection
+  x86/alternative: Create symbols for special section entries
+  objtool: Calculate function checksums
+  livepatch: Enable -ffunction-sections -fdata-sections
+  objtool, livepatch: Livepatch module generation
+
+ .gitignore                              |    3 +
+ Makefile                                |    9 +
+ arch/x86/include/asm/alternative.h      |   50 +-
+ arch/x86/include/asm/asm.h              |   24 +-
+ arch/x86/include/asm/bug.h              |    2 +
+ arch/x86/include/asm/cpufeature.h       |    2 +
+ arch/x86/include/asm/jump_label.h       |    2 +
+ arch/x86/kernel/alternative.c           |   51 +-
+ arch/x86/kernel/kprobes/opt.c           |    4 -
+ arch/x86/kernel/module.c                |   15 +-
+ include/asm-generic/vmlinux.lds.h       |    2 +-
+ include/linux/compiler.h                |    8 +-
+ include/linux/elfnote.h                 |   12 +-
+ include/linux/init.h                    |    3 +-
+ include/linux/livepatch.h               |   25 +-
+ include/linux/livepatch_ext.h           |   83 ++
+ include/linux/livepatch_patch.h         |   73 ++
+ include/linux/objtool.h                 |   38 +-
+ kernel/livepatch/core.c                 |    8 +-
+ kernel/sys.c                            |    2 +-
+ scripts/Makefile.lib                    |    5 +-
+ scripts/livepatch/adjust-patch-lines    |  181 +++
+ scripts/livepatch/klp-build             |  355 ++++++
+ scripts/livepatch/module.c              |  120 ++
+ scripts/module.lds.S                    |   22 +-
+ tools/include/linux/livepatch_ext.h     |   83 ++
+ tools/objtool/Build                     |    4 +-
+ tools/objtool/Makefile                  |   34 +-
+ tools/objtool/arch/loongarch/decode.c   |    6 +-
+ tools/objtool/arch/loongarch/orc.c      |   30 +-
+ tools/objtool/arch/powerpc/decode.c     |    6 +-
+ tools/objtool/arch/x86/decode.c         |  118 +-
+ tools/objtool/arch/x86/orc.c            |   27 +-
+ tools/objtool/arch/x86/special.c        |    2 +-
+ tools/objtool/builtin-check.c           |   66 +-
+ tools/objtool/check.c                   | 1414 ++++++++++-------------
+ tools/objtool/elf.c                     | 1059 +++++++++--------
+ tools/objtool/include/objtool/arch.h    |    5 +-
+ tools/objtool/include/objtool/builtin.h |    4 +-
+ tools/objtool/include/objtool/check.h   |    5 +-
+ tools/objtool/include/objtool/elf.h     |  156 ++-
+ tools/objtool/include/objtool/klp.h     |   25 +
+ tools/objtool/include/objtool/objtool.h |    6 +-
+ tools/objtool/include/objtool/orc.h     |   10 +-
+ tools/objtool/include/objtool/special.h |    2 +-
+ tools/objtool/include/objtool/warn.h    |   50 +-
+ tools/objtool/klp-diff.c                | 1112 ++++++++++++++++++
+ tools/objtool/klp-link.c                |  122 ++
+ tools/objtool/klp.c                     |   57 +
+ tools/objtool/objtool.c                 |   78 +-
+ tools/objtool/orc_dump.c                |  100 +-
+ tools/objtool/orc_gen.c                 |   48 +-
+ tools/objtool/special.c                 |   58 +-
+ tools/objtool/sync-check.sh             |    1 +
+ tools/objtool/weak.c                    |   11 +-
+ 55 files changed, 4076 insertions(+), 1722 deletions(-)
+ create mode 100644 include/linux/livepatch_ext.h
+ create mode 100644 include/linux/livepatch_patch.h
+ create mode 100755 scripts/livepatch/adjust-patch-lines
+ create mode 100755 scripts/livepatch/klp-build
+ create mode 100644 scripts/livepatch/module.c
+ create mode 100644 tools/include/linux/livepatch_ext.h
+ create mode 100644 tools/objtool/include/objtool/klp.h
+ create mode 100644 tools/objtool/klp-diff.c
+ create mode 100644 tools/objtool/klp-link.c
+ create mode 100644 tools/objtool/klp.c
+
 -- 
-2.43.0
+2.45.2
 
 
