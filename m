@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-313784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B7596A9B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:08:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D7A96A9B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9C62869D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:08:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B12811F22E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A222A1DA314;
-	Tue,  3 Sep 2024 20:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50A11A4F18;
+	Tue,  3 Sep 2024 21:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqWzmMFh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB5R4DrZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A35126BE2;
-	Tue,  3 Sep 2024 20:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FA3B647;
+	Tue,  3 Sep 2024 21:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397058; cv=none; b=ek51yhLEEAidHk+xn2kBcgw8hMnIY3OlQdbZp51J5PxVR7uB811HURXs13lDEznkOf0h31LJIw/5VFM4zfqKn1OYmgiqUdZUtJ7kTzXWi3kaFFplsuEXXk1B41L4a4JFoqaFLKaKyecuMb1YzAj89uYgnRYmkkQOo3OEEBBIUGg=
+	t=1725397229; cv=none; b=KCjUFggbT5oW+1BIzZdWDEI1rGHMWtvdrZm93aPIeMP0Olh0G0GHd1wM4DNh2VYvt8rc1/v3CoCFf5j1osRLBhW9Y6FB3ZlH/fp4TDA8Kh0mvXKxPvhWx5VdB9YDyu9HsYev/pSgCqp9jkOcaHwRfNCXhilQGcUR/O31CXjVywg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397058; c=relaxed/simple;
-	bh=cjHxtsQ8zjzZhe7UJXgyGFidJuQT14w6eaGx7r1eCSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pVsS2RkbzT8R7I9mxI7Rdqvk/xVmh1R+7E2lOblXUaR+7HwgRU2TAgbifK/q9bgVYsyja4hwZZvb2u8O0Lbr31vT++BgHePftSbap6Crxb814AZmgBIgWn7eG1neo3ClZYxviBd/dmv/ZnRhqh3PWPXfF3EfBIXEeoff9+gBMlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqWzmMFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC048C4CEC4;
-	Tue,  3 Sep 2024 20:57:34 +0000 (UTC)
+	s=arc-20240116; t=1725397229; c=relaxed/simple;
+	bh=jv+1kf8g+dnHYkhxQbSszP1qpuXLncf8k9I1jM1n2QQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oag73Bz2RQp626ff6xPyxrTK1KT8mGL1ZNra5S7XSP5NTlc74UlM2iSVc6f6GppIWkeBstmTmWH0/9JkytydAUoJsxo+ZuXpGWbvROTqmyAgZzVLGZq5/68dxa5eD0p8weNe289a9VyB4PDd4NgAsabRcpg/ubToehljILV+v10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AB5R4DrZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC929C4CEC4;
+	Tue,  3 Sep 2024 21:00:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725397057;
-	bh=cjHxtsQ8zjzZhe7UJXgyGFidJuQT14w6eaGx7r1eCSo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UqWzmMFhPjIcEmGSRWqicfkG7opLjLFdfYbRLzJWYFZ56XS7lYB9xcUh/tAK3MWCF
-	 zDa5EiZgxmrrxEB9dshySBAWiE1sVqjaFCpFnlapq1quju9r2IHPF+qmSeUX0WbiQn
-	 LiOwEXFHf+nY2EQsXvzyksEyVPeH6gWkEjhV2wAlQC01I9w09b09qQHf5RWLFwlHiD
-	 HdeqtNF/1SS1CUjF0ku4mDPRtBSErvO8mjACuRJO55HZ3saLUM/hsBDo7Jerg7a5By
-	 zHYy4UpKL92L/xxZX0nq7CUx8WRaZpfCX5FtRDCLvzYWtx5wL4aBAoDpKHnfx4D6S/
-	 /TvRrf9UwftRA==
-Date: Tue, 3 Sep 2024 13:57:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, "=?UTF-8?B?QmrDtnJuIFTDtnBl?=
- =?UTF-8?B?bA==?=" <bjorn@kernel.org>, Magnus Karlsson
- <magnus.karlsson@intel.com>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
- Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, Willem de Bruijn <willemb@google.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH net-next v24 03/13] netdev: support binding dma-buf to
- netdevice
-Message-ID: <20240903135733.53a83ce6@kernel.org>
-In-Reply-To: <20240831004313.3713467-4-almasrymina@google.com>
-References: <20240831004313.3713467-1-almasrymina@google.com>
-	<20240831004313.3713467-4-almasrymina@google.com>
+	s=k20201202; t=1725397229;
+	bh=jv+1kf8g+dnHYkhxQbSszP1qpuXLncf8k9I1jM1n2QQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AB5R4DrZQ/aI2cRbASR71eUQcs1cE6UTHXVX1DpFAHErRrEkoqaqjmlUllD2+Nu9w
+	 xFVKIluKEsEaXIctdA/rxApJZkG8oOIqALZBu5MuuGxQ2iIef+nK5/OfOqkT5j5y+v
+	 K7AxGx52m57lMrnULyvSZHwno66gxuWU8/gZXgw0zT7d28+Imqjmhi4Rup9e8390GD
+	 HWkx98A1SESPE1rwo8TQKE5JxBRmc9Iyx6gUelKYQo6pvhp112dv6/7Tx2F3Wn+2L/
+	 K2yuWDaHER2Ak+3JmpNTo6cRSDD80KReQrV+iRAyDHjtCmcMJMM8cJUvNLI37rlhcW
+	 V5/U9HkcntSbg==
+Date: Tue, 3 Sep 2024 23:00:25 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, festevam@gmail.com, francesco.dolcini@toradex.com, 
+	Frank.Li@nxp.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v3 4/4] i2c: imx: prevent rescheduling in non dma mode
+Message-ID: <pva2d5fc76ykjlzyxivrau4qnt6cu6qqlgmuvq3ykzlaqvsqio@xuultvre2f4d>
+References: <20240902074330.6349-1-eichest@gmail.com>
+ <20240902074330.6349-5-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902074330.6349-5-eichest@gmail.com>
 
-On Sat, 31 Aug 2024 00:43:03 +0000 Mina Almasry wrote:
-> Add a netdev_dmabuf_binding struct which represents the
-> dma-buf-to-netdevice binding. The netlink API will bind the dma-buf to
-> rx queues on the netdevice. On the binding, the dma_buf_attach
-> & dma_buf_map_attachment will occur. The entries in the sg_table from
-> mapping will be inserted into a genpool to make it ready
-> for allocation.
-> 
-> The chunks in the genpool are owned by a dmabuf_chunk_owner struct which
-> holds the dma-buf offset of the base of the chunk and the dma_addr of
-> the chunk. Both are needed to use allocations that come from this chunk.
-> 
-> We create a new type that represents an allocation from the genpool:
-> net_iov. We setup the net_iov allocation size in the
-> genpool to PAGE_SIZE for simplicity: to match the PAGE_SIZE normally
-> allocated by the page pool and given to the drivers.
-> 
-> The user can unbind the dmabuf from the netdevice by closing the netlink
-> socket that established the binding. We do this so that the binding is
-> automatically unbound even if the userspace process crashes.
-> 
-> The binding and unbinding leaves an indicator in struct netdev_rx_queue
-> that the given queue is bound, and the binding is actuated by resetting
-> the rx queue using the queue API.
-> 
-> The netdev_dmabuf_binding struct is refcounted, and releases its
-> resources only when all the refs are released.
+Hi Stefan,
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+One final ask...
+
+On Mon, Sep 02, 2024 at 09:42:04AM GMT, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> We are experiencing a problem with the i.MX I2C controller when
+> communicating with SMBus devices. We are seeing devices time-out because
+> the time between sending/receiving two bytes is too long, and the SMBus
+> device returns to the idle state. This happens because the i.MX I2C
+> controller sends and receives byte by byte. When a byte is sent or
+> received, we get an interrupt and can send or receive the next byte.
+> 
+> The current implementation sends a byte and then waits for an event
+> generated by the interrupt subroutine. After the event is received, the
+> next byte is sent and we wait again. This waiting allows the scheduler
+> to reschedule other tasks, with the disadvantage that we may not send
+> the next byte for a long time because the send task is not immediately
+> scheduled. For example, if the rescheduling takes more than 25ms, this
+> can cause SMBus devices to timeout and communication to fail.
+> 
+> This patch changes the behavior so that we do not reschedule the
+> send/receive task, but instead send or receive the next byte in the
+> interrupt subroutine. This prevents rescheduling and drastically reduces
+> the time between sending/receiving bytes. The cost in the interrupt
+> subroutine is relatively small, we check what state we are in and then
+> send/receive the next byte. Before we had to call wake_up, which is even
+> less expensive. However, we also had to do some scheduling, which
+> increased the overall cost compared to the new solution. The wake_up
+> function to wake up the send/receive task is now only called when an
+> error occurs or when the transfer is complete.
+> 
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+The code is fine and looks good to me. The commit log is also
+very descriptive. However, there isn’t a single line of comment
+in the code.
+
+If someone else encounters this code without understanding your
+specific context, they might find it too complex and attempt to
+simplify it or revert to the previous implementation.
+
+Please add comments to describe the state machine you
+implemented, the reasoning behind it (as you explained in the
+commit log), and make it understandable for those who haven’t
+reviewed your patches.
+
+Thanks,
+Andi
 
