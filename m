@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-312365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADB696958A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B018F96958E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED9DB1C23245
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25001C2329F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DB81DAC48;
-	Tue,  3 Sep 2024 07:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9211DAC66;
+	Tue,  3 Sep 2024 07:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bGTZJtR8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhitfezH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13A41CE6F0;
-	Tue,  3 Sep 2024 07:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26441CE6F0;
+	Tue,  3 Sep 2024 07:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348631; cv=none; b=EVs7FcB+Gp+5zM7UPnshrKHaFeNUsBgNHitTCJV0Hyf11DxuvciSuZfq1oz4uu3Uy5Ydqt7cucZ9w+eSZ5F+Jbk5YY9AnqiY5xGaqYngPX/3GrU+q6iJok8d0qlh1LsCx4YsJTr4BeHkdioD01VVFKSVJHG7IlrXOBnSqtGXh6o=
+	t=1725348659; cv=none; b=jHRTLef+J3LKc9HDPxPO6ICitwE0y7s8n1vSpNy5AASW/lg3/mRiWrsqZqHQeR+J3adgwrTz8JOfINIzJ+XWeThP8sZEqwe0xlArNI8JxRPLPMa3B/j6EBbHABiRHVWKlYfw3lKCpZjMXbspPG7Ov+WbLxvQcHOG1ZHXhM2NIMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348631; c=relaxed/simple;
-	bh=FQL8+4I3J0aMb+Bg8Af8WE+32XKG96uJyEA6bH70sGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z7oow8xroNaW+z+tGpoVBmvTDVQWkWCK8KzxoJni7cbHMZLIESulGKTQOsEtF7Jlox39Nu0Kmlhw5O3ZU/EGxi+WE0ZIG0/F1bmU/6G12qKGS/Ba6mmwT31V1lqtP3ILkWkROAJOgADICs9R08+dOvPiAqnLbYa4VyfpS3Tm268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bGTZJtR8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482NXddg027125;
-	Tue, 3 Sep 2024 07:30:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xMNo7N8u+Klq9Ajty0axKpZFD9cyAUOWqquZGW4i4fY=; b=bGTZJtR8mrrjKq7C
-	yPrg5+SnM1p9a5dN1G2mBEc8FWZhTkjjA0fYml7C2xHQgjldnuNXzT+kAhF5OcNM
-	2IKMxuk4Yd9x7Ker44IE141jNskc2FzoCQ1sV41snRh7n68mXfteTBnAKUb5nu6p
-	8looIF3TC1sX19Bb5btMhrzE2RQN0hRvE85G1OXC7e0m49P8wclwopP+oFgj5Jsl
-	LI521AgF7OssNcC1Zr96m5gD5/P62d/vWiaJ/Y/A/Ue/Bba+y4YQmNecxyGPw6wX
-	8isLO73KAHPYOUGh/gvBn7aTSyJ/MIcV0u9ne6R6718qiL6k7QRnNDaxrfHdBMc2
-	zWWgIQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41brvexpfw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 07:30:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4837UDrT016525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 07:30:13 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 00:30:10 -0700
-Message-ID: <ac1b3ba2-ac57-411c-acdb-69d288d88355@quicinc.com>
-Date: Tue, 3 Sep 2024 15:30:06 +0800
+	s=arc-20240116; t=1725348659; c=relaxed/simple;
+	bh=/RR2jr1KMQXxUfxuXcD3zaZtecL2ksrKcjhHyOpf0fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWJzMjAh148xUuL7KZ0NPSlZxH9+UDEhEYNnBNnNAGaYsC3BWKp6yKxtA5k6+dz8/0viDxFmd2gmLc9q1wTA5GWFGFomNSQc9SZ/kt1mAkm+1PeqUxvFe+MifKfqAdmJlx2YonKSzQwv9o0vDJRIt9I+ov7EcVoR/43b6WM68tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhitfezH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC2E7C4CEC8;
+	Tue,  3 Sep 2024 07:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725348659;
+	bh=/RR2jr1KMQXxUfxuXcD3zaZtecL2ksrKcjhHyOpf0fM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hhitfezHixV6WCukmGc4VnWzssY6DFst2DXsNBsGTdpx4eNrt1Hc/l62iauhtZnUJ
+	 RlSnAQS+gM7jLnrsqnQd/eki088//7fF7Gs6miYJsIpf74ck5y4z/1flAatH/UVQME
+	 NZo1KQjDRqOudNyMicarVanmPZPimX2a1AkxDBFREWtqlZATxOjRStSKn5Hni+2Jkr
+	 jZeNgLwbicrxiVts5qL2vSCS46810QKURTwCe8xUQTpofg938Xi6D97zTaJTgN4Pdo
+	 sMiLaT4TJpuIr1zjaoBpA5wpucWGVD9AOhYRn6dglnMS6U2IAF67jVWhbGME6BAfCz
+	 Xc+oIlzh86awA==
+Date: Tue, 3 Sep 2024 08:30:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, ramon.nordin.rodriguez@ferroamp.se,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com
+Subject: Re: [PATCH net-next v2 5/7] net: phy: microchip_t1s: add support for
+ Microchip's LAN867X Rev.C1
+Message-ID: <20240903073054.GO23170@kernel.org>
+References: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
+ <20240902143458.601578-6-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: cache: qcom,llcc: add num-banks property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
- <20240903-qcs8300_llcc_driver-v1-1-228659bdf067@quicinc.com>
- <g7fyt57kzynzpux5nea2v22gcuu24asbr54axzms7mhdh4jq5a@xdyqifloofbk>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <g7fyt57kzynzpux5nea2v22gcuu24asbr54axzms7mhdh4jq5a@xdyqifloofbk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: svIScy-1xC1ures7m6vqH_PypRBUBoIS
-X-Proofpoint-ORIG-GUID: svIScy-1xC1ures7m6vqH_PypRBUBoIS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- adultscore=0 mlxlogscore=864 priorityscore=1501 malwarescore=0 spamscore=0
- mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409030059
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902143458.601578-6-Parthiban.Veerasooran@microchip.com>
 
+On Mon, Sep 02, 2024 at 08:04:56PM +0530, Parthiban Veerasooran wrote:
+> This patch adds support for LAN8670/1/2 Rev.C1 as per the latest
+> configuration note AN1699 released (Revision E (DS60001699F - June 2024))
+> https://www.microchip.com/en-us/application-notes/an1699
+> 
+> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
 
+...
 
-On 9/3/2024 3:10 PM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 03, 2024 at 02:21:29PM +0800, Jingyi Wang wrote:
->> Add a property "num-banks" for errata.
-> 
-> This you said in commit subject and we see in the diff. You *MUST*
-> explain why.
-> 
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/cache/qcom,llcc.yaml | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
->> index 68ea5f70b75f..03241b719c98 100644
->> --- a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
->> +++ b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
->> @@ -56,6 +56,11 @@ properties:
->>      items:
->>        - const: multi-chan-ddr
->>  
->> +  num-banks:
-> 
-> No vendor prefix? So this is generic property? Then add to some common
-> schema with proper explanation WHY.
-> 
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      The num of llcc banks
-> 
-> And what are llcc (or LLCC?) banks?
-> 
-> 
-Will add the vendor prefix and description in the next series.
-> Best regards,
-> Krzysztof
-> 
-Thanks,
-Jingyi
+> diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
 
+...
+
+> @@ -290,6 +291,58 @@ static int lan867x_check_reset_complete(struct phy_device *phydev)
+>  	return 0;
+>  }
+>  
+> +static int lan867x_revc1_config_init(struct phy_device *phydev)
+> +{
+> +	s8 offsets[2];
+> +	int ret;
+> +
+> +	ret = lan867x_check_reset_complete(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = lan865x_generate_cfg_offsets(phydev, offsets);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* LAN867x Rev.C1 configuration settings are equal to the first 9
+> +	 * configuration settings and all the sqi fixup settings from LAN865x
+> +	 * Rev.B0/B1. So the same fixup registers and values from LAN865x
+> +	 * Rev.B0/B1 are used for LAN867x Rev.C1 to avoid duplication.
+> +	 * Refer the below links for the comparision.
+
+nit: comparison
+
+     Flagged by checkpatch.pl --codespell
+
+> +	 * https://www.microchip.com/en-us/application-notes/an1760
+> +	 * Revision F (DS60001760G - June 2024)
+> +	 * https://www.microchip.com/en-us/application-notes/an1699
+> +	 * Revision E (DS60001699F - June 2024)
+> +	 */
 
