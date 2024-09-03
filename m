@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel+bounces-313649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097D896A81A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:11:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8886B96A81D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E6BBB2245F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:11:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C83B230D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBEC1D58B1;
-	Tue,  3 Sep 2024 20:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5941D048C;
+	Tue,  3 Sep 2024 20:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKWRIBUY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="i700OaBU"
+Received: from msa.smtpout.orange.fr (smtp-84.smtpout.orange.fr [80.12.242.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0121D5893;
-	Tue,  3 Sep 2024 20:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05B11A3057;
+	Tue,  3 Sep 2024 20:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725394232; cv=none; b=X/3CY/9sjAsKVlFbrcZCzll4ORn9iF1gsJXPTB44GiNghYPIaw2dTA2dd7dek26BbEC8dLF7ehBlvLOX6HKGA7oDu4w6udppPwl1NgCTTK03f8KH6qlhkG+xv48lLBsjpdjyMPvFLj7bugBvtPPkCeUVwPdnOPiDNt5p/4901J0=
+	t=1725394249; cv=none; b=RLzr5kt1QY3GVyExIrvzWyNeCH4KICbo/yn1+NUyJUkOJ7o+PzZpYhfTpl+9nHCJ1edIvDudi8GbEQbkFplS+HUpKSeBDamcMfLPY+8+PBDmtK2x79bNcGK9KHivi7hdvPjnMWHZrtjvkPsUi3u9XuVJlMwTB1ouu7jKhDWyTNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725394232; c=relaxed/simple;
-	bh=uSp9Jl69b3k+/8tAfKbpey3QNlpf8nfEJ4foPHjBdVk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PKWQZXufhxgseDO77Prm7Rutng6Dq/0OazNCZjfTgrysaEHZdnQkvvrz2r1IBT46IQzlsX1XzCWu9Z8sg44i6aXIZYxxF+yXBfyIPusSlEMD1E463jt5CPeBR4EpAdcIrqovRWqeuadtzGnAkwLHINTrGbjGDq5JqRiZgas2Ukk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKWRIBUY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD902C4AF09;
-	Tue,  3 Sep 2024 20:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725394230;
-	bh=uSp9Jl69b3k+/8tAfKbpey3QNlpf8nfEJ4foPHjBdVk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FKWRIBUYhwBlKvJ48wmhU43A3o6UX8g1aMKZzLQUokNU2iepTD74LVjwt9gVxJo12
-	 X0Yx85NWNcx3NCVuFQu/+q0ghhMGEs+ybsaR4mAe+SJGiGEDSUn//HCeGlDhdh5q4Z
-	 nWykIPZgBD0umGLhkyM4N1IY03+c/maJu2XeCig1zqmCE8xOULI8QAPVsz7mj4Uxj+
-	 Donk5dm5v3hAzm+hKntSmBW/01vZPk7/PPjJwBR2UUjg+qpWGago5Xc0HAG/5QaLhz
-	 Sjh51zBHsaW3UG4TTyypurGPCVNUEi9HK65ZFSXtg1C3PJXkDjB1tJ1mwvg9I8BFbc
-	 cRbw7CQC+J93g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDEE3805D82;
-	Tue,  3 Sep 2024 20:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725394249; c=relaxed/simple;
+	bh=QqaaHpNpRoVdiDpL5M+17nve1cS60O+MVRVWdYynLzs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6k9RIUXcSf73UKAcwWoZHIYFbxNiR9It7zifYseWCjmbrLeBu/6oUy4kBwqjsDwURVETdLnxcpIh+2DylrWxakEHpT1H2ls/jMP6eDgR+tsONc+w/RIeZ1fdqt436mdTL3F9XX+/8DhfBufv/07ohbVxZyd9hYqVM5C9ivsito=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=i700OaBU; arc=none smtp.client-ip=80.12.242.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id lZrKsfDJa41DAlZrKsk3Um; Tue, 03 Sep 2024 22:10:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725394238;
+	bh=HXvGRblJckpJgnRTWzq4VwyDlvBY3FPkUJEamxYaz6U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=i700OaBUGhNTb2q5K8bBJtWF8rCwthe/VF17hVK69t+bKm3SseOZE1MTqP5ecSrSI
+	 xr8xl9g9WCKI1GbuCUBC0QLZupTOzB5svRYvwUcrR16KYub+nxvkK8i2AYcR3uBYC4
+	 8ApDmCPWaA6nUDgjNHnqxdQ50Cq/vj8D0aDBk/VdxhUjY/G1L4lGSqwxjXgFA1bCWo
+	 LjSdwT914Wmtg2q7FmAOVSLA3V1H8iBzjJ6VKG7kYm1mdQj5zJWP1zvt4/DpG3f0sh
+	 cyGl7H6XjbI1r/8o720QmwnD4uA09mOvZPOwzfIl7PQeJnSsXzf891790xRfxSMYxt
+	 8Ujjn7e7ThRPw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 03 Sep 2024 22:10:38 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH] wifi: rsi: Remove an unused field in struct rsi_debugfs
+Date: Tue,  3 Sep 2024 22:10:32 +0200
+Message-ID: <15b0609d7b1569ec6c500a175caef4c9189f33e2.1725394207.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +63,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dqs: Do not use extern for unused dql_group
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172539423136.426047.3291554079738014106.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Sep 2024 20:10:31 +0000
-References: <20240902101734.3260455-1-leitao@debian.org>
-In-Reply-To: <20240902101734.3260455-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, leit@meta.com, lkp@intel.com, johannes.berg@intel.com,
- jamie.bainbridge@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+dfs_get_ops has apparently never been used since its introduction by
+commit dad0d04fa7ba ("rsi: Add RS9113 wireless driver") in 2014-03.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+More-over struct rsi_dbg_ops is not defined.
 
-On Mon,  2 Sep 2024 03:17:30 -0700 you wrote:
-> When CONFIG_DQL is not enabled, dql_group should be treated as a dead
-> declaration. However, its current extern declaration assumes the linker
-> will ignore it, which is generally true across most compiler and
-> architecture combinations.
-> 
-> But in certain cases, the linker still attempts to resolve the extern
-> struct, even when the associated code is dead, resulting in a linking
-> error. For instance the following error in loongarch64:
-> 
-> [...]
+Remove the unused field from struct rsi_debugfs.
 
-Here is the summary with links:
-  - [net] net: dqs: Do not use extern for unused dql_group
-    https://git.kernel.org/netdev/net/c/77461c108191
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/net/wireless/rsi/rsi_debugfs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/drivers/net/wireless/rsi/rsi_debugfs.h b/drivers/net/wireless/rsi/rsi_debugfs.h
+index a6a28640ad40..bbc1200dbb62 100644
+--- a/drivers/net/wireless/rsi/rsi_debugfs.h
++++ b/drivers/net/wireless/rsi/rsi_debugfs.h
+@@ -39,7 +39,6 @@ struct rsi_dbg_files {
+ 
+ struct rsi_debugfs {
+ 	struct dentry *subdir;
+-	struct rsi_dbg_ops *dfs_get_ops;
+ 	struct dentry *rsi_files[MAX_DEBUGFS_ENTRIES];
+ };
+ int rsi_init_dbgfs(struct rsi_hw *adapter);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
