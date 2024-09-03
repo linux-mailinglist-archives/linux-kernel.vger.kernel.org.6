@@ -1,57 +1,66 @@
-Return-Path: <linux-kernel+bounces-313421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2798796A544
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:17:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C1996A546
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82401B220DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4642C1C24120
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8A18DF78;
-	Tue,  3 Sep 2024 17:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313F818DF62;
+	Tue,  3 Sep 2024 17:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYpH3V/M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzyyugKc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EE96F315;
-	Tue,  3 Sep 2024 17:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828C43C092;
+	Tue,  3 Sep 2024 17:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383833; cv=none; b=fYmah9bRkU0jbshqaXB4VNajmFe5ejOGlUwYimVuzZQG+K8D08Ee417aTFQUkwOWLi9jpYNsHE2mSij+OqGoAXhEbnVq78CoscV51lo9QlIOQbHXwDlelV2s0MebZocoayUeRAN0rbnJTEncDD74AQ5uH+HTZthJ5iiz/Pzp2wM=
+	t=1725383866; cv=none; b=bXuq3UWr1W29P9hk7XTRl0XhcbpllFGrF1H4ndIV3zFsaUvVsMX1Qgz9NXpfokLkBiSfPTmVKLNuo07SvzTjA1hDLDGhBX/QxmYwPZS1rwi72GALHxTLC7s3tjT53DFSym6Ztl/rtd5h13SqCSxCZjCUyC4UvUHZxgO1GL/sTyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383833; c=relaxed/simple;
-	bh=fqmTGz8O7zkXIZo/mwtdtQWoFNMOlT/1uVo0v7jeQfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3Zymv3z2f5rB+R01VrNechMNWOXxvojBZK9rVQARKmj8iCFNKggAzij0T+XeQYxoVtkIMpDlwo+/9F6ByuY+yZOBTrm9xyFia0G5CKO5YMFh9OCx9jEGA1IhaVSdBeRAJqPBAwBSaR+YHJiA8WMEFF33ZWdN0In2HrABn7+q8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYpH3V/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704C7C4CEC4;
-	Tue,  3 Sep 2024 17:17:12 +0000 (UTC)
+	s=arc-20240116; t=1725383866; c=relaxed/simple;
+	bh=MNR8RLx4Vsu7p3+DVMYZuUkv4rATd9Di0StxoIN+wDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dDszAKfCqchnJ53yDmvwZA3QawbC27KMuZmVwUtaYskEwl/al1FNJhl6ZFwOHG0XgMbw9l0Qt9Kxjqkm6+Ua+ksEBH/AVku9wWBaTLGrBj07BpbEYbaC2zxmH4cDcvjJW7Gi7wPyroD+oqPERWVa560wBsgBU0ZnzMR8A6dqrGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MzyyugKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29DEC4CEC4;
+	Tue,  3 Sep 2024 17:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725383832;
-	bh=fqmTGz8O7zkXIZo/mwtdtQWoFNMOlT/1uVo0v7jeQfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KYpH3V/MFR5Jkqe8hCAQOprPhrvuE53hh4mycQBMYTL9usRUFqBhst9A9u5rmqejD
-	 8e0uC6YsuB1VB4D0C5ttbp79llNj1JWYC5uGpasoleuPUtV039UOzmITDcjLwvXbaV
-	 hcg483CQhhmdWccBL0C+odZTZ75guiLXVnwrR/aj47skDiqZ5aTgFnDaEhVY5meILP
-	 k39JOrVB5KERg+eXtCDbPx0Ym5+BKxm0jbTUOGhkst3oSU/J5ImuVKwgOX1OJfiQ0F
-	 5p6l9BxFXmNpPUJ4PEW7pYHM7+C7pdlzq+Rqu88s6fQoI/h/nZFU1Mm1SLy7flammT
-	 Lh6zeZq5WP0dQ==
-Date: Tue, 3 Sep 2024 10:17:10 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc6
-Message-ID: <20240903171710.GA1164261@thelio-3990X>
-References: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
- <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
+	s=k20201202; t=1725383866;
+	bh=MNR8RLx4Vsu7p3+DVMYZuUkv4rATd9Di0StxoIN+wDw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MzyyugKcCRC/cUB3wB5lEFnNbZIBGyUAFdoCmpVJ/rklZK0FWwDpEmKPWEMmH/34B
+	 ni/Jfuiq/+Nue1I9H7VKo1JxLz0MEUGsucqAd1WRyx07oGsOJYAWpR9T5ee7+W8Ml6
+	 o1M2jtooI+P1a1iTsl+wHpdCeUdp59RuRiO6CPvL7ndAGRei0lNjIZirlJgEI11u0w
+	 VE0JuQmftsvUn6ETFKCr9XjVqJN4CgtJxm6WVcSvg6fEDvaXCq2hX1mo28Ylv6NogB
+	 rjmmKpFZf+pGkajon5ERiE3D6AfyNBWOV4xZ7o0rz5Q5Lq6fnxl452MQiircuPvcQ7
+	 LE3qih4U1Zu/A==
+Date: Tue, 3 Sep 2024 12:17:43 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+Message-ID: <20240903171743.GA255170@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,54 +70,63 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
+In-Reply-To: <20240903144613.GC1403301@rocinante>
 
-On Tue, Sep 03, 2024 at 03:53:56PM +0200, Geert Uytterhoeven wrote:
-> Hi Kent,
+On Tue, Sep 03, 2024 at 11:46:13PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
 > 
-> Replying here, as there is (again) no patch email to reply to to report issues.
+> [...]
+> > > >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+> > > >  {
+> > > > -     u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > > > -     u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > > > +     if (val)
+> > > > +             reset_control_assert(pcie->bridge_reset);
+> > > > +     else
+> > > > +             reset_control_deassert(pcie->bridge_reset);
+> > > >
+> > > > -     tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > -     tmp = (tmp & ~mask) | ((val << shift) & mask);
+> > > > -     writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > +     if (!pcie->bridge_reset) {
+> > > > +             u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > > > +             u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > > > +
+> > > > +             tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > +             tmp = (tmp & ~mask) | ((val << shift) & mask);
+> > > > +             writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > +     }
+> > >
+> > > This pattern looks goofy:
+> > >
+> > >   reset_control_assert(pcie->bridge_reset);
+> > >   if (!pcie->bridge_reset) {
+> > >     ...
+> > >
+> > > If we're going to test pcie->bridge_reset at all, it should be first
+> > > so it's obvious what's going on and the reader doesn't have to go
+> > > verify that reset_control_assert() ignores and returns success for a
+> > > NULL pointer:
+> > >
+> > >   if (pcie->bridge_reset) {
+> > >     if (val)
+> > >       reset_control_assert(pcie->bridge_reset);
+> > >     else
+> > >       reset_control_deassert(pcie->bridge_reset);
+> > >
+> > >     return;
+> > >   }
+> > >
+> > >   u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > >   ...
+> > >
+> > Will do.
+> [...]
 > 
-> noreply@ellerman.id.au is reporting several build failures[1] in linux-next:
-> 
->     fs/bcachefs/sb-members.c: In function ‘bch2_sb_member_alloc’:
->     fs/bcachefs/sb-members.c:503:2: error: a label can only be part of
-> a statement and a declaration is not a statement
->       503 |  unsigned nr_devices = max_t(unsigned, dev_idx + 1,
-> c->sb.nr_devices);
->           |  ^~~~~~~~
->     fs/bcachefs/sb-members.c:505:2: error: expected expression before ‘struct’
->       505 |  struct bch_sb_field_members_v2 *mi =
-> bch2_sb_field_get(c->disk_sb.sb, members_v2);
->           |  ^~~~~~
-> 
-> Apparently this fails with gcc-10 and older, but builds with gcc-11
-> and gcc-12.
+> You will do what?  If you don't mind me asking.
 
-Just noting this also happens with clang. Depending on the version, it
-is either a hard error like this or a warning (that gets upgraded to an
-error with CONFIG_WERROR).
+Can you just do the rework on the branch, Krzysztof?  I think that
+will be easier/quicker than having Jim repost the entire series.
 
-Clang 15:
-
-  fs/bcachefs/sb-members.c:503:2: error: expected expression
-          unsigned nr_devices = max_t(unsigned, dev_idx + 1, c->sb.nr_devices);
-          ^
-  fs/bcachefs/sb-members.c:507:42: error: use of undeclared identifier 'nr_devices'
-                                       le16_to_cpu(mi->member_bytes) * nr_devices, sizeof(u64));
-                                                                       ^
-  include/linux/math.h:37:22: note: expanded from macro 'DIV_ROUND_UP'
-  #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
-                       ^
-  fs/bcachefs/sb-members.c:513:30: error: use of undeclared identifier 'nr_devices'
-          c->disk_sb.sb->nr_devices = nr_devices;
-                                      ^
-
-Clang 19:
-
-  fs/bcachefs/sb-members.c:503:2: error: label followed by a declaration is a C23 extension [-Werror,-Wc23-extensions]
-    503 |         unsigned nr_devices = max_t(unsigned, dev_idx + 1, c->sb.nr_devices);
-        |         ^
-
-Cheers,
-Nathan
+Bjorn
 
