@@ -1,224 +1,119 @@
-Return-Path: <linux-kernel+bounces-312944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9E4969E0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B69969E28
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA90B2832E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9942281F4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502E01D86F1;
-	Tue,  3 Sep 2024 12:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116261A7246;
+	Tue,  3 Sep 2024 12:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpWJM6IZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrlCaRBX"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5C11D6DD0;
-	Tue,  3 Sep 2024 12:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF93F21C18B;
+	Tue,  3 Sep 2024 12:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367473; cv=none; b=a1MNiN8B91kDKQiqmq4pjUKBiVV63a4JD/1KiHG6meo8LgDhNZR0rHnB7HVAjAimqQU44Ic21vdhn6hIxsTHCGkYRzQY/PoBKOUis3WJPUR5x+3DPKV+iLh4qH9qKmhp9mZTENgHAJbmSXm9ly3n4erI3eus/wL49IXqySM3KO4=
+	t=1725367485; cv=none; b=nxLbDfeB1QUmVrQNXIK4bSirvYpdJz/R6V0zfVkaCfhtLpp3oQj7to3t7fPkzby3t/UfslWm2mM6jRczH5UR2UQacgdVgtS0aqHszBX+MmIT/jNpK7hCmLn625PokWjZnEaVHAxInDHX7jpvi9Too9CtgDECL8FBn+fJbj1AiFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367473; c=relaxed/simple;
-	bh=CiS7TLGte5qKutCVWQk0V5K52BRWxgq5Dw+aQUFrRMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sE/RdtQ/Z+ZPs2O4FMiaViF2sHvMUdvOF9cd27ap9HLhRhYJ8sSNA7CgjaZrUchW2lBc0L4IjoY5UQc7+WKCmT1S/5DHxPGT2hnAsJvwHxBwLsTklwmZ/4o5KG/+eU3/Zm0rOpQc2aTk0/xPuKCmpMPRJinIVs1QAgle4XkCy54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpWJM6IZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48948C4CEC7;
-	Tue,  3 Sep 2024 12:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725367473;
-	bh=CiS7TLGte5qKutCVWQk0V5K52BRWxgq5Dw+aQUFrRMg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DpWJM6IZUZzfXrKMMkEzA3nlQK6JFeMBV51+SmXgq6HsuUeDUFVR5a9RMXG/FDswi
-	 WaPMRHTRJvWlhRN4gspqmrC0Z0a5F6eU+d+RoysP6iyTL0F26kLV8RlDccPpKX0k7v
-	 WsaurG48wNbhFIRrQyI4yDtVcVVm8TQUYawnkXvL3q5782LToyBgrs9dL8vsri5Smd
-	 cmIzHgfgoO1JvedTr8iEvLshHGK/5ocnnpnBhVFrb2xO19QLqw91LueX0Dn8bMm7qb
-	 3hie3Q3uxDF6W7mb0gJtIMfwf5SN9pdrD/fYuORFMfG8SNMotElSBXmT2GqRmi/+DY
-	 9ol4VAOBmvX0g==
-Message-ID: <11e49954-5230-4781-8222-2e3360012c37@kernel.org>
-Date: Tue, 3 Sep 2024 14:44:25 +0200
+	s=arc-20240116; t=1725367485; c=relaxed/simple;
+	bh=yMd5DLIFL4KIeheK3HmX082PFerBBz9EYOrbqW0N5mE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fhcqGysusYlI5gD9H38W1GrSqDiSu96uY4tl3rVVj9PO/4tj+SsFwBrb+zrhvilbdJMwyJufeAaztIWiX04tIYAtMysnYPClSC4ErleNpZf76dvmrppkStki3K4kQPbZIPTc24x5x0WCO7AOxwDoGKtytkKpYUU873E+B3xJwo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrlCaRBX; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so3476521a12.1;
+        Tue, 03 Sep 2024 05:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725367482; x=1725972282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qPlQaV17FO9rLqzivtvGzpDMjb4IPNY2uj/S533b4BY=;
+        b=RrlCaRBXgh9L4TdSNeDqwF/CFosfuCn79CQWfi/MzlfqQQKD6mVZTliGuinMVbIfXo
+         yUCnwwKHIg247YsE1O6NjwiN1LeyMLYQ9rNwWVfEnC1qM0b/pGxIRD/xlO+b4kkZupd7
+         3PPkhj16rh34UJzZumh8rbvZQ6kdKMdjmBjcxE1xJcDt4s8L7QUaoo7rTsqMDlnj+EGK
+         FG1ETsejwff/0/1LGVqksWPeBdixYo10V5p7X+EwdH9Ab7wz2mQh+0dpdY+vStQFMo4r
+         PFtKtpuOkB/G+hxxqdIgjbS9bGqbk+jHxdo47ZAqixAG/tgyvlILFMWw92jkVhEetpib
+         NGtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725367482; x=1725972282;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qPlQaV17FO9rLqzivtvGzpDMjb4IPNY2uj/S533b4BY=;
+        b=okVrT5taOGGxj/Z7FmL5DNU9jrp8uACrZnGKP2f9Icv819A7jWDT2bMxeYxOdYU190
+         r/H0T8QRYltIthq+zKg8hye/mwDAV+9r+XZ2X58g2OfMzn9COc+eAck1e6vxz87aYbAN
+         7rbJT2b/gwDYh8mGEUh2Ic7QXDB0J325WM6QQI/OHfYMYPCLIPFSd0D2XZ//Js/fuZuu
+         HlYCehfQL0maj/Ptfvf86cqbh2hDY3DApvN8zDuRG+uGqRyHsL0NXT8HbDKqRM20SMZU
+         yLx2sXgerIhrUx6e3p71hfq8JIoW3BNGoLhiw9JOqBlgAvGxm0S+YKmEUj43RhZ5MzYn
+         RXPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3790t+/dzIVFJWGYsaD6hbZXN+l4epR7BFh+9Lnnw3rAt/en7Z9IxdicX6hb49J2+1UAr6dhl0md39g==@vger.kernel.org, AJvYcCV62Ww71Mw3ONsckrf+0ibuNA8avD0R7qtHjINBWRbbaJCRpKJzhhDC3dnXWDFVz3eqrcut4kmKydHz1d5/@vger.kernel.org, AJvYcCWX61BUwi7nZbPcIlVm4A8HvpoDZ8GxyvyV6+AnAl5FUxNUI7Zx1OF6UsKE46FgAKLiWZuBncswF0DF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+FgWPnLV1WagRHVNu+nWEBVxaZYwnA4t0glVvF/pZWHbvR9Iq
+	cu4lF22ZhkE+GO7iSFO6dZwP3vmWj9TBDcvsuo3K0x+RWYneTiRg
+X-Google-Smtp-Source: AGHT+IHrIE/cTWvhr/2/6vY//0TDgUXD9vtzjFKo8Wsi4lJqMPelBlmr47ctpMp5L1ihba+UNi7YIQ==
+X-Received: by 2002:a17:907:d867:b0:a7a:a4cf:4f93 with SMTP id a640c23a62f3a-a89a29f6270mr1364210366b.32.1725367482112;
+        Tue, 03 Sep 2024 05:44:42 -0700 (PDT)
+Received: from ivaylo-desktop.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989223199sm678461566b.219.2024.09.03.05.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 05:44:41 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 06/10] dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
+Date: Tue,  3 Sep 2024 15:44:25 +0300
+Message-Id: <20240903124429.107076-7-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] coresight: cti: Add Qualcomm extended CTI support
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240903121847.6964-1-quic_jinlmao@quicinc.com>
- <20240903121847.6964-3-quic_jinlmao@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903121847.6964-3-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/09/2024 14:18, Mao Jinlong wrote:
-> The QCOM extended CTI is a heavily parameterized version of ARM’s CSCTI.
-> It allows a debugger to send to trigger events to a processor or to send
-> a trigger event to one or more processors when a trigger event occurs
-> on another processor on the same SoC, or even between SoCs. For Qualcomm
-> extended CTI, it supports up to 128 triggers.
-> 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->  .../hwtracing/coresight/coresight-cti-core.c  |  75 +++++++----
->  .../coresight/coresight-cti-platform.c        |  16 ++-
->  .../hwtracing/coresight/coresight-cti-sysfs.c | 124 ++++++++++++++----
->  drivers/hwtracing/coresight/coresight-cti.h   | 123 +++++++++++------
->  4 files changed, 239 insertions(+), 99 deletions(-)
+Add a dedicated compatible for exynos8895.
 
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml       | 1 +
+ 1 file changed, 1 insertion(+)
 
->  
->  /*
-> - * Device registers
-> - * 0x000 - 0x144: CTI programming and status
-> - * 0xEDC - 0xEF8: CTI integration test.
-> - * 0xF00 - 0xFFC: Coresight management registers.
-> + * CTI CSSoc 600 has a max of 32 trigger signals per direction.
-> + * CTI CSSoc 400 has 8 IO triggers - other CTIs can be impl def.
-> + * Max of in and out defined in the DEVID register.
-> + * - pick up actual number used from .dts parameters if present.
->   */
-> -/* CTI programming registers */
-> +#define CTIINOUTEN_MAX		128
-> +
->  #define CTICONTROL		0x000
-> -#define CTIINTACK		0x010
-> -#define CTIAPPSET		0x014
-> -#define CTIAPPCLEAR		0x018
-> -#define CTIAPPPULSE		0x01C
-> -#define CTIINEN(n)		(0x020 + (4 * n))
-> -#define CTIOUTEN(n)		(0x0A0 + (4 * n))
-> -#define CTITRIGINSTATUS		0x130
-> -#define CTITRIGOUTSTATUS	0x134
-> -#define CTICHINSTATUS		0x138
-> -#define CTICHOUTSTATUS		0x13C
-> -#define CTIGATE			0x140
-> -#define ASICCTL			0x144
-> -/* Integration test registers */
-> -#define ITCHINACK		0xEDC /* WO CTI CSSoc 400 only*/
-> -#define ITTRIGINACK		0xEE0 /* WO CTI CSSoc 400 only*/
-> -#define ITCHOUT			0xEE4 /* WO RW-600 */
-> -#define ITTRIGOUT		0xEE8 /* WO RW-600 */
-> -#define ITCHOUTACK		0xEEC /* RO CTI CSSoc 400 only*/
-> -#define ITTRIGOUTACK		0xEF0 /* RO CTI CSSoc 400 only*/
-> -#define ITCHIN			0xEF4 /* RO */
-> -#define ITTRIGIN		0xEF8 /* RO */
-> +
->  /* management registers */
->  #define CTIDEVAFF0		0xFA8
->  #define CTIDEVAFF1		0xFAC
->  
-> -/*
-> - * CTI CSSoc 600 has a max of 32 trigger signals per direction.
-> - * CTI CSSoc 400 has 8 IO triggers - other CTIs can be impl def.
-> - * Max of in and out defined in the DEVID register.
-> - * - pick up actual number used from .dts parameters if present.
-> - */
-> -#define CTIINOUTEN_MAX		32
-> +static const int cti_normal_offset[] = {
-
-Uh? Why do you add data definitions into header? These NEVER go to
-headers, for obvious reasons.
-
-> +	0x010,		/* CTIINTACK */
-
-
->  /**
->   * Group of related trigger signals
-> @@ -67,7 +109,7 @@
->   */
->  struct cti_trig_grp {
->  	int nr_sigs;
-> -	u32 used_mask;
-> +	DECLARE_BITMAP(used_mask, CTIINOUTEN_MAX);
->  	int sig_types[];
->  };
->  
-> @@ -146,9 +188,9 @@ struct cti_config {
->  	bool hw_powered;
->  
->  	/* registered triggers and filtering */
-> -	u32 trig_in_use;
-> -	u32 trig_out_use;
-> -	u32 trig_out_filter;
-> +	DECLARE_BITMAP(trig_in_use, CTIINOUTEN_MAX);
-> +	DECLARE_BITMAP(trig_out_use, CTIINOUTEN_MAX);
-> +	DECLARE_BITMAP(trig_out_filter, CTIINOUTEN_MAX);
->  	bool trig_filter_enable;
->  	u8 xtrig_rchan_sel;
->  
-> @@ -179,6 +221,7 @@ struct cti_drvdata {
->  	struct cti_config config;
->  	struct list_head node;
->  	void (*csdev_release)(struct device *dev);
-> +	bool	is_extended_cti;
-
-Why different indentation than everything else there? Please write code
-consistent with existing style.
-
-
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+index 4dfb49b0e..91516fedc 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+@@ -42,6 +42,7 @@ properties:
+               - samsung,exynos5433-wakeup-eint
+               - samsung,exynos7885-wakeup-eint
+               - samsung,exynos850-wakeup-eint
++              - samsung,exynos8895-wakeup-eint
+           - const: samsung,exynos7-wakeup-eint
+       - items:
+           - enum:
+-- 
+2.34.1
 
 
