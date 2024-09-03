@@ -1,130 +1,249 @@
-Return-Path: <linux-kernel+bounces-312344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AF396953E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD8B969543
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A301F226B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2161F247E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB5D1D6C71;
-	Tue,  3 Sep 2024 07:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="moDCBtaw"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62851D6C58
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F01D54F2;
+	Tue,  3 Sep 2024 07:25:05 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127391CE70A;
+	Tue,  3 Sep 2024 07:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348219; cv=none; b=Djr7z93TL48utV0Enne+Rf2pXfCksMhiUlGCwnrBqXtVhJsnUf46iM8/GpScAhCMyJS8laz6L6T+sa1hsB6whBMih3IHSz5HjnETQReIeng136lErKQTdIBLl7Sj+8dRyhTHvSRPnskOaQWpqNpVZWY4rNuVgmejuskt3wvyEmQ=
+	t=1725348305; cv=none; b=OE3TOpChIcV0CkoLu5bVm65SFtbEAfTC4snubur+XHJ2cNMHYtPZpuZkKZcjk3cwxZIpJhsyIsbOwrrra0Vpge3lPcGENUG3bIGz2JeS9P47h05r+wAQwe1/tm21L8e5pGq6DTfaNb08D6DhQisspk2hnZf5C+kMUkZPwEgv6Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348219; c=relaxed/simple;
-	bh=RK0CLJiWiFErOQydlKBU1W3DeY8lDl057TNHV3Wy+v0=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=OZfUss17xvBJiJrq0kO4VSraSQMOKsSs9Iug0wfiQ4zjBvyUC8toRBG3M+KgzKRdTjTMMoxtKg+tTO6F2D4lyuP5gjsY/2bW9mAW0Lk5wD0CiU3vwzIrGMUZd7AbRcqzc0m34iz1YoEruKr3bA+eGytWaq9262OXzsiIM1GSQCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=moDCBtaw; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id l6JEsd2yrg2lzlNsxsWWJV; Tue, 03 Sep 2024 07:23:31 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id lNswsfv8uVf7GlNswsPNGf; Tue, 03 Sep 2024 07:23:30 +0000
-X-Authority-Analysis: v=2.4 cv=H9TdwfYi c=1 sm=1 tr=0 ts=66d6b972
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DoUcIWUt8XG70utxTyRBG9NRYRSVnBN6339dmTUA4hg=; b=moDCBtaw1rB7IFoiMV6EspHo+C
-	kmjunu15x3xvRD9Hp5VMAaFWeCwYD1a6eTJ63EoqF5sZTzwSInrDjzwK9eEXFqSjZkawy5J//KfQk
-	YPX/4qSwPLtv8kNMrwJ92fNTurc3CDY3jfqYbu8Nr9qF9BYpkVrgdzaE84u/3EUsS9/FjAOQnkC48
-	oA4qT2pi94IDwMfDU2XGUfN7excYn1V397lK3aCSl9KYj9Pah66t+rwdblR+yHeNg1Kauxjl0JGAP
-	IspQeKzNzyG02+Gk5dXONfuJ1CaE8+yvlNsEaBhElTLetn/X3y1/vguA0jPUm3CBEfq4a4Wo6Jozq
-	AzF8Quxg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38102 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1slNsu-003qRT-0y;
-	Tue, 03 Sep 2024 01:23:28 -0600
-Subject: Re: [PATCH 6.1 00/71] 6.1.108-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240901160801.879647959@linuxfoundation.org>
-In-Reply-To: <20240901160801.879647959@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <69afc5a7-91e1-bda5-98b1-7e2af6410364@w6rz.net>
-Date: Tue, 3 Sep 2024 00:23:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1725348305; c=relaxed/simple;
+	bh=0Lk62AogqXYvQYO5OHvsDaoqs7VIQVuQ5SHSWCYbRSw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nU2EDyip6zddJjsVQYBMXS0VaNWo8df5CqPhaxOD0mwxHa3hJZVcueuqsXaDPbzDzweQSaBl9RJYcWcP3D9zjYBRXuTZi0RLbKw0OA7lzABetwKtzpEWo0rOuMFuH3WQ1N/oPlJao/JDNNbfdF44pmfXLtZy7Hs1+QJ3WG51hsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8BxmprLudZmofAoAA--.43065S3;
+	Tue, 03 Sep 2024 15:24:59 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front2 (Coremail) with SMTP id qciowMCxncXKudZmJ6IEAA--.12539S2;
+	Tue, 03 Sep 2024 15:24:58 +0800 (CST)
+Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
+ controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ chenhuacai@kernel.org, linux-edac@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
+ bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+ rric@kernel.org, loongarch@lists.linux.dev
+References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
+ <20240903015354.9443-3-zhaoqunqin@loongson.cn>
+ <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Message-ID: <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
+Date: Tue, 3 Sep 2024 15:24:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1slNsu-003qRT-0y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:38102
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 42
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfClieHmTD7SaWlU7PlyYwDTJEG0FhRGqrRLJOiR9i5+Bl8VF65CT1a7OqIh+y6c2aLz+lpc40uirONmhTOmPLjJkx/2msYdZqtIMt5NpK43pUGaC7R1t
- c3Apm8ISVetXxAxAbyNnjo3vfyZ+Qk5e1tHYcty5J816plU9dXp49JNcKpwghP2d1plTOO3GhfsPOtb7qaqeWtk3strEgVOeVZY=
+X-CM-TRANSID:qciowMCxncXKudZmJ6IEAA--.12539S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKr1rtr48CFWkGF45GF45Jwc_yoW7WrWUpr
+	nrAa13Cr18Kw13JwsaqrWUGF1Yvw1fJw13CrW3Aa4jk3sxAr95u34ktry2kFykCr1DGr48
+	ZFyrC3ZFkFs8GFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUceOJUU
+	UUU
 
-On 9/1/24 9:17 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.108 release.
-> There are 71 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.108-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+在 2024/9/3 下午2:47, Krzysztof Kozlowski 写道:
+> On Tue, Sep 03, 2024 at 09:53:54AM +0800, Zhao Qunqin wrote:
+>> Report single bit errors (CE) only.
+>>
+>> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+>> ---
+>>   MAINTAINERS                  |   1 +
+>>   arch/loongarch/Kconfig       |   1 +
+>>   drivers/edac/Kconfig         |   8 ++
+>>   drivers/edac/Makefile        |   1 +
+>>   drivers/edac/ls3a5000_edac.c | 187 +++++++++++++++++++++++++++++++++++
+>>   5 files changed, 198 insertions(+)
+>>   create mode 100644 drivers/edac/ls3a5000_edac.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 6cc8cfc8f..b43f82279 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -13242,6 +13242,7 @@ M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
+>>   L:	linux-edac@vger.kernel.org
+>>   S:	Maintained
+>>   F:	Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
+>> +F:	drivers/edac/ls3a5000_edac.c
+>>   
+>>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+>>   M:	Sathya Prakash <sathya.prakash@broadcom.com>
+>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+>> index 70f169210..348030c24 100644
+>> --- a/arch/loongarch/Kconfig
+>> +++ b/arch/loongarch/Kconfig
+>> @@ -182,6 +182,7 @@ config LOONGARCH
+>>   	select PCI_QUIRKS
+>>   	select PERF_USE_VMALLOC
+>>   	select RTC_LIB
+>> +	select EDAC_SUPPORT
+> I think you got here comment before. How did you address it?
+I just randomly found a spot, and I will put it at the end(next version 
+patch).
+>
+>>   	select SPARSE_IRQ
+>>   	select SYSCTL_ARCH_UNALIGN_ALLOW
+>>   	select SYSCTL_ARCH_UNALIGN_NO_WARN
+>> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+>> index 16c8de505..2d10256f0 100644
+>> --- a/drivers/edac/Kconfig
+>> +++ b/drivers/edac/Kconfig
+>> @@ -573,5 +573,13 @@ config EDAC_VERSAL
+>>   	  Support injecting both correctable and uncorrectable errors
+>>   	  for debugging purposes.
+>>   
+> ...
+>
+>   +
+>> +static int loongson_edac_probe(struct platform_device *pdev)
+>> +{
+>> +	struct resource *rs;
+>> +	struct mem_ctl_info *mci;
+>> +	struct edac_mc_layer layers[2];
+>> +	struct loongson_edac_pvt *pvt;
+>> +	u64 *vbase = NULL;
+>> +
+>> +	rs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	/* not return if can not find resource or resource start equals NULL */
+> Why?
 
-Tested-by: Ron Economos <re@w6rz.net>
+Because there are multiple memory controllers in the ls3x soc,
+
+but the ECC function of some memory controllers cannot be used.
+
+But in any case, a node must be created in /sys/devices/system/edac/mc/  
+through edac_mc_add_mc(mci).
+
+Then if the ECC function of the memory controller cannot be used, set 
+start to NULL or do not pass mem resource,
+
+which is equivalent to enumeration of memory controller, and the CE 
+count will always be zero.
+
+>> +	if (rs && rs->start) {
+>> +		vbase = devm_ioremap_resource(&pdev->dev, rs);
+>> +		if (IS_ERR(vbase))
+>> +			return PTR_ERR(vbase);
+>> +	}
+>> +
+>> +	/* allocate a new MC control structure */
+>> +	layers[0].type = EDAC_MC_LAYER_CHANNEL;
+>> +	layers[0].size = 1;
+>> +	layers[0].is_virt_csrow = false;
+>> +	layers[1].type = EDAC_MC_LAYER_SLOT;
+>> +	layers[1].size = 1;
+>> +	layers[1].is_virt_csrow = true;
+>> +	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
+>> +	if (mci == NULL)
+>> +		return -ENOMEM;
+>> +
+>> +	edac_dbg(0, "MC: mci = %p\n", mci);
+> Nope, drop. You should never print pointers.
+I will drop it in next version patch.
+>> +
+>> +	mci->mc_idx = edac_device_alloc_index();
+>> +	mci->mtype_cap = MEM_FLAG_RDDR4;
+>> +	mci->edac_ctl_cap = EDAC_FLAG_NONE;
+>> +	mci->edac_cap = EDAC_FLAG_NONE;
+>> +	mci->mod_name = "loongson_edac.c";
+>> +	mci->ctl_name = "loongson_edac_ctl";
+>> +	mci->dev_name = "loongson_edac_dev";
+>> +	mci->ctl_page_to_phys = NULL;
+>> +	mci->pdev = &pdev->dev;
+>> +	mci->error_desc.grain = 8;
+>> +	/* Set the function pointer to an actual operation function */
+>> +	mci->edac_check = loongson_edac_check;
+>> +
+>> +	loongson_pvt_init(mci, vbase);
+>> +	get_dimm_config(mci);
+>> +
+>> +	if (edac_mc_add_mc(mci)) {
+>> +		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
+>> +		edac_mc_free(mci);
+> That's still a success of probe? Weird a bit.
+
+I will add return ret if (ret =edac_mc_add_mc(mci))  in next version patch.
+
+>
+>> +	}
+>> +	edac_op_state = EDAC_OPSTATE_POLL;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void loongson_edac_remove(struct platform_device *pdev)
+>> +{
+>> +	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
+>> +
+>> +	if (mci)
+>> +		edac_mc_free(mci);
+>> +}
+>> +
+>> +static const struct of_device_id loongson_edac_of_match[] = {
+>> +	{ .compatible = "loongson,ls3a5000-mc-edac", },
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
+>> +
+>> +static struct platform_driver loongson_edac_driver = {
+>> +	.probe		= loongson_edac_probe,
+>> +	.remove		= loongson_edac_remove,
+>> +	.driver		= {
+>> +		.name	= "ls-mc-edac",
+>> +		.of_match_table = loongson_edac_of_match,
+>> +	},
+>> +};
+>> +
+>> +module_platform_driver(loongson_edac_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>\n");
+> Drop \n.
+I will drop it in next version patch.
+>> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+>> -- 
+>> 2.43.0
+>>
+Best regards,
+
+Zhao Qunqin.
 
 
