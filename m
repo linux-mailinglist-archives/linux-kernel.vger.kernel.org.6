@@ -1,130 +1,91 @@
-Return-Path: <linux-kernel+bounces-313854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EDD96AAC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B48396AAD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5061C21F90
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1E11F2483B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761B91D58A1;
-	Tue,  3 Sep 2024 21:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B691A0BDA;
+	Tue,  3 Sep 2024 22:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZJ7sGUQX"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrcLPpQJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEA91D54C6;
-	Tue,  3 Sep 2024 21:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6500120E3;
+	Tue,  3 Sep 2024 22:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725400712; cv=none; b=MPrub3QsqfXPcTvwRSyr7y09oG+PzGyl9lGgfTIi28FjqMslwfT+53pgVeJ2hTDixevHl4m7t+c72hMptP/cMUm/Sce+ptFdA9LnW6GzaWnUbR4ZyPOtVO+G73RqQh4wPSbAfwRy6jZvDDwDaOAfPJbh4CQE2cJ/j7mkfF4zsNI=
+	t=1725400828; cv=none; b=OSm7nAJSWibkND1BdihV8+UrkCGzhjOQe/44f4acI6IWHpS/KvCZWCYeDinnIk2DpjjLyf+RUXu9P7sszMduUvJhO3Q5VExBDj0GPhpM7qxXjIK89YIxdmg+APhU+ZdY3mEKtxjjsl2j39Q6iJz4JHxl84LpHwoDSxQ7ESyoO5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725400712; c=relaxed/simple;
-	bh=+36XtkLue95cvlXX/DCu5KZUdM2/qpeN3Y6e7xOR+1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Humj6gBzwlmhvd1LbJfoPTMxOt6Oqe1SDG2RNJN8q963gHrespV80tv/xAESpsVMyDL2GO0B+es46acD0S9uGhlnu5QdX2Nd/5+ANjGDxfdXtU+gTSxllrfZ8f5m79AI4F2bGqxcV9mX+9CxHlEk3Lci79mjTSgowMhFpthhIhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZJ7sGUQX; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+j6f5if+f2W86QKE1LKn/g5w4kYrcF6g49PNUZ3ZNP4=; b=ZJ7sGUQXwRu0Z1LawQGUT7OBit
-	KFbquRc4bhEA1OEQ2VHQWfx46V+JOwjnHO/o61Mo6y0dAt48EA+LO2qSs8DTMU1lfeKuKHshqU1zl
-	P0rtWSHVVQQ/+rKmX6IFNw5UHexXkrIgSsJgU+Wz1fl4QZghKbyNGiiouVXxCXIg7VlgPY4185KSA
-	CTUlgT/4VY+IibQ1NXqABFZtd0OEsmxOTcctKd6RcfTRErVbQVcVkjQDC4Jc9+JGNBacNP/AT00h7
-	cad9Dn43pVCGeqTMwFp7PrQwUf45OEgBw9kLmvPq2cFzf9VNdpllH0cgz9KY6GfqsGdRjVgZJoxbA
-	YviFHN2w==;
-Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1slbWj-00032m-2x; Tue, 03 Sep 2024 23:57:29 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Ondrej Jirman <megi@xff.cz>, Michael Riesch <michael.riesch@wolfvision.net>,
- Jimmy Hon <honyuenkwun@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>,
- Alexey Charkov <alchark@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-watchdog@vger.kernel.org, kernel@collabora.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 3/9] dt-bindings: i2c: i2c-rk3x: Add rk3576 compatible
-Date: Tue, 03 Sep 2024 23:59:12 +0200
-Message-ID: <23007922.5W6oEpyPa8@diego>
-In-Reply-To: <ycbhqmkwz2hirnvp6j47kz3cxnli3db3i5ah76gngrezs5ww2r@57x2gxnr5hyk>
-References:
- <20240903152308.13565-1-detlev.casanova@collabora.com>
- <12506188.O9o76ZdvQC@bootstrap>
- <ycbhqmkwz2hirnvp6j47kz3cxnli3db3i5ah76gngrezs5ww2r@57x2gxnr5hyk>
+	s=arc-20240116; t=1725400828; c=relaxed/simple;
+	bh=8XcjVoqFny30F6fk2p96WH/symXBb4KHW8bGKXthHtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J9wgTLZ4OnXc9Pv0mHV1uRFwAPGPMa2JoT8g6blC9D7/ooxykUxqOjMor2LpVR/a7HHLjVVsu8Sungoi0ss8BYDI38V8G2Rub9OdammolXCkRqKm8294s4hUARKB/cB71CBuI37UiYEjMYzUHbFzuKSuPw+X5zH49DUoSvEFk8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrcLPpQJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66FB2C4CEC5;
+	Tue,  3 Sep 2024 22:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725400827;
+	bh=8XcjVoqFny30F6fk2p96WH/symXBb4KHW8bGKXthHtw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lrcLPpQJyMO6//PpL56rxySEc7mWHPCd1dtRSDVzEvvMBGP2vHL0e5Sa0grUjOic0
+	 gvMtcqExIxt30DB4EKuxyb/G4sgsLtci21YjsmnldMNLHxoS8bC8g3WOn28uX3BXRG
+	 gqvPL5G+4NYMh2vJRLzWm9tPUJrcJ+9NLhaYLOh8r81mYfrWdPK0+mANtS3dTH7IRA
+	 MYE28TdppCAOiFCHHDsAPMeb0QryHRYBI5VquItB3Vo4NLEau1JCMOpWYLSbbKRdw2
+	 eLcFLXv0LxzP/wwxKO/fm5EvVAY4Ks8arWWh1sEGBtYkrioBCtBzLycj6/49GhpPwS
+	 B+hvMsKzkNXTg==
+Date: Tue, 3 Sep 2024 15:00:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, jiri@resnulli.us, jacob.e.keller@intel.com,
+ liuhangbin@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] tools/net/ynl: fix cli.py --subscribe feature
+Message-ID: <20240903150026.34de5a1d@kernel.org>
+In-Reply-To: <CAD4GDZySRpq97nDG=UQq+C4jBdS-+Km4NjGNob7jrbtBW+SmOg@mail.gmail.com>
+References: <20240830201321.292593-1-arkadiusz.kubalewski@intel.com>
+	<m2mskq2xke.fsf@gmail.com>
+	<20240903130121.5c010161@kernel.org>
+	<CAD4GDZySRpq97nDG=UQq+C4jBdS-+Km4NjGNob7jrbtBW+SmOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Dienstag, 3. September 2024, 18:47:17 CEST schrieb Andi Shyti:
-> On Tue, Sep 03, 2024 at 11:59:34AM GMT, Detlev Casanova wrote:
-> > On Tuesday, 3 September 2024 11:46:00 EDT Andi Shyti wrote:
-> > > Hi,
-> > > 
-> > > On Tue, Sep 03, 2024 at 11:22:33AM GMT, Detlev Casanova wrote:
-> > > > Just like RK356x and RK3588, RK3576 is compatible to the existing
-> > > > rk3399 binding.
-> > > > 
-> > > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > > > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > > Acked-by: Heiko Stuebner <heiko@sntech.de>
-> > > 
-> > > I will apply this after 1 and 2 have been merged.
-> > 
-> > Sure, although it is not really dependent on 1 and 2.
+On Tue, 3 Sep 2024 22:08:54 +0100 Donald Hunter wrote:
+> > On Mon, 02 Sep 2024 10:51:13 +0100 Donald Hunter wrote:  
+> > > Reviewed-by: Donald Hunter <donald.hunter@gmail.com>  
+> >
+> > Any preference on passing self.rsp_by_value, vs .decode() accessing
+> > ynl.rsp_by_value on its own?  
 > 
-> yes, but I want to be sure that everything is coming in.
-> 
-> > > BTW, who is maintaining rockchip.yaml?
-> > 
-> > Heiko Stuebner is the maintainer of Rockchip SoC support.
-> 
-> I would guess so, but I think we should also add the entry to
-> the maintainer's file :-)
+> .decode() accessing ynl.rsp_by_value would be cleaner, but I am
+> working on some notification fixes that might benefit from the map
+> being passed as a parameter. The netlink-raw families use a msg id
+> scheme that is neither unified nor directional. It's more like a mix
+> of both where req and rsp use different values but notifications reuse
+> the req values. I suspect that to fix that we'd need to introduce a
+> dict for ntf_by_value and then the parameter would be context
+> specific. OVS reuses req/rsp values for notifications as well, but it
+> uses a unified scheme, and that's mostly a problem for ynl-gen-c. 
 
-now you made me doubt the wildcards we have in place ;-)
+I was worried you'd say it's ID reuse related. That is tricky business.
 
-# scripts/get_maintainer.pl -f Documentation/devicetree/bindings/arm/rockchip.yaml
-[...]
-Heiko Stuebner <heiko@sntech.de> (maintainer:ARM/Rockchip SoC support)
-[...]
-linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support)
+> We could choose the cleaner approach just now and revisit it as part of
+> fixing notifications for netlink-raw?
 
-So Maintainers seems to be correct ... *phew* :-)
-
-
+That's my intuition; there's a non-zero chance that priorities will
+change or we'll head in a different direction, and the extra arg will
+stick around confusing readers.
 
