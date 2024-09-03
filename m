@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-312595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E85969891
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C64969896
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22A61F23E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EE01F247C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23281AD268;
-	Tue,  3 Sep 2024 09:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a6JFqxfP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B461A4E86;
+	Tue,  3 Sep 2024 09:18:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE5A1AD25E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC61A3050
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355065; cv=none; b=MXfv7Y++pF0N4tid6HE02Eu2J94jGzxQ/u41HleivHK91ikBLLbz/3tkoBFAStVVpxng8xb1r3thoM1Vee57obJe1D26u0c7A0dNJo7sQiWN61CeGs/IaEo1ULMBW2/7ZQAdPxFt8wVKyRGNmfYHi7Ij2BLuo+Hj/rDzv+Ap6IM=
+	t=1725355119; cv=none; b=Sq43ZIlfWEIhe0MDudnSc/JdBCyULcxiDSUKQUw8ZWcVuTJznC9y4DqvdJgXLyhkFhvGofkjNBgXUsUg36ccYHDA9KD2aQFVYxcK3voXqMdTVOcJ9UsMykwqqCTvvmh/PrgeJ4bkZYMsmuhH3Ws2kLzQUmNWhvgsIZpaRP9LKdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355065; c=relaxed/simple;
-	bh=xPOB/Td0YOX7rUyJhql0/J3I8D/m/0TzQpE86H5G0Jk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qVnrvPji+Ub+COP6eJ1bm/IoIsWyrnuUhnGxqfSVRuHZLHT9Thu/Y+y+vlGsNiWo0ZxlVcJZHwkE+5W9BWeSaIriBwX2e3JMCjP9J8esNxRxlwawuOqgBPvLZ86IXVoIRTV/v+DI7zZ8WS56Bj5l5R+E+cgZ7XunmwkVDnITD2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a6JFqxfP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725355062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d9X1NNLzucsrIUJA/W+nkx3jW6oIqsnKng1xNjblM64=;
-	b=a6JFqxfPzFXBAJ6f601AKSO6d2x7GnFWnevFRNupPWw4MLPuSJ37QCXSBtX2R07XyYSKib
-	YqTa/rLHU1OEhr+RADvWcq1FUVUNZUUBupSSCyuDzlOZ+RMAebAonXanle+g274unNu6xp
-	wHhU270BVolF7eSqlJxznsAGu3B/Cjg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-190-4kQLyKVePTCGr2IPiec1vg-1; Tue, 03 Sep 2024 05:17:41 -0400
-X-MC-Unique: 4kQLyKVePTCGr2IPiec1vg-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5334e41c3acso5017919e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:17:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355060; x=1725959860;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9X1NNLzucsrIUJA/W+nkx3jW6oIqsnKng1xNjblM64=;
-        b=nIoLqHTn2DIxk6Z+/GVTyAVMiPANENvoplCf72huVZPPNvH3mIfwq08+WovefRxLwA
-         Oy4dKZbUn1SnIiRinhZT3gZBUFhS0EtV4lng/UPfHquoVsDSTfTIjhvmw/U0hZ36Vd/d
-         Y35BhWNXaCrEPm4RwbbHu7W1O+hpyqmgvh2YzsELWTDkDqZdrZ8i/eVHDg+7sEP4tliu
-         zPO0kl+HzijMIc9bmchLwhHtfcd/TQKYNLkz8g49ac0dgBAmJyyqY9H3CKsMkE3/B2zD
-         UA8c2LIWAeJ+Ike/0OxiVGZF7BZxl+pA7SSsHqqYYv7KpvwF+HLZPIaoSFTZsqlbYWmx
-         svOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFppYvVuC5JTF1pzF/kYj1NETdGAg3pzeK6oQ9Q2hVrxVDK7OVZ2DgsDj9e/O7lNE32Ca9jxB5LUWx80A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsdy2gxIkuCQbRrBUwuoShPu/9MoOIi3Tz4H8GPKQXc38q4U8n
-	lJjkwPtCz7FGSbQonkTpeSc4BFZIZIm6gEAAfRcP+Zjm9ybORGPk3TjoicdCslVNZhD6GCVmQQ2
-	X0fDEZxVXDq583boPoLyHgIJUEKyO1SJu5z4mX55XJs591RZ4WymdfpsPXYOoDA==
-X-Received: by 2002:a05:6512:1328:b0:52e:7656:a0f4 with SMTP id 2adb3069b0e04-53546b93f39mr8985509e87.41.1725355059626;
-        Tue, 03 Sep 2024 02:17:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3xeKyziMqcDCx9+tKLN9bJxYrhVG6uCV34wc0/n7HkAIUcH0MBCdLafl7DwaQE1ysW+KWKQ==
-X-Received: by 2002:a05:6512:1328:b0:52e:7656:a0f4 with SMTP id 2adb3069b0e04-53546b93f39mr8985480e87.41.1725355059058;
-        Tue, 03 Sep 2024 02:17:39 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bacaac810sm183985045e9.33.2024.09.03.02.17.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 02:17:38 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
- neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com, skhan@linuxfoundation.org,
- rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: hx83112a: Switch to wrapped mipi_dsi functions
-In-Reply-To: <20240902170153.34512-1-abhishektamboli9@gmail.com>
-References: <20240902170153.34512-1-abhishektamboli9@gmail.com>
-Date: Tue, 03 Sep 2024 11:17:37 +0200
-Message-ID: <87plplgkpa.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1725355119; c=relaxed/simple;
+	bh=TAyfdxyQuZUkyOl2cPCmdbhNnDh9I2K3ivcsiP4Cztc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFFLW+5sYgm8tCF2+rL+yyAs3guX1saIEM7ugBVoOoMnqBCKLLFc67go6MS9yMaBkxrtZpplv3SPDx3Txzs9BE+cZgdpYgH+k8y6S3Ccit2JJHINiB3a39ZnjLbxbNsnlz85XaGiuClopZ8YevjE+IRPfGDjtk8LLi0B9k3bDnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPfn-00075B-Qy; Tue, 03 Sep 2024 11:18:03 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slPfk-0059Cr-LY; Tue, 03 Sep 2024 11:18:00 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 46253331004;
+	Tue, 03 Sep 2024 09:18:00 +0000 (UTC)
+Date: Tue, 3 Sep 2024 11:17:59 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>, 
+	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH can-next v3 00/20] can: rockchip_canfd: add support for
+ CAN-FD IP core found on Rockchip RK3568
+Message-ID: <20240903-neat-vivacious-leopard-14cb09-mkl@pengutronix.de>
+References: <20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de>
+ <ecj2sv7xhmu6plfnrq4ezejn3d43cl5mwutvkwh4u2bqcmna3k@2jykwgizuxmb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mb3fsyqhiocnajmm"
+Content-Disposition: inline
+In-Reply-To: <ecj2sv7xhmu6plfnrq4ezejn3d43cl5mwutvkwh4u2bqcmna3k@2jykwgizuxmb>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Abhishek Tamboli <abhishektamboli9@gmail.com> writes:
 
-Hello Abhishek
+--mb3fsyqhiocnajmm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Use the new mipi_dsi_*_multi wrapped function in hx83112a_on
-> and hx83112a_disable function.
->
+On 31.08.2024 08:02:00, Krzysztof Kozlowski wrote:
+> On Fri, Aug 30, 2024 at 09:25:57PM +0200, Marc Kleine-Budde wrote:
+> > This series adds support for the CAN-FD IP core found on the Rockchip
+> > RK3568.
+> >=20
+> > The IP core is a bit complicated and has several documented errata.
+> > The driver is added in several stages, first the base driver including
+> > the RX-path. Then several workarounds for errata and the TX-path, and
+> > finally features like hardware time stamping, loop-back mode and
+> > bus error reporting.
+> >=20
+> > regards,
+> > Marc
+> >=20
+> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> > ---
+> > Changes in v3:
+> > - dt-bindings: renamed file to rockchip,rk3568-canfd.yaml (thanks Rob)
+> > - dt-bindings: reworked compatibles (thanks Rob)
+>=20
+> You never tested the patch before sending.
 
-IMO commit messages should explain why the change is needed and
-not just what the patch is changing (for this one can just look
-at the diffstat).
+Well yes, I forgot one of the tests. It seems I need to set up more
+dt-bindings to get used to it. I will send a new series.
 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
+regards,
+Marc
 
--- 
-Best regards,
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+--mb3fsyqhiocnajmm
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbW1EUACgkQKDiiPnot
+vG9v3Af/SSPdXXJCW2ijU8NHVAAS03fECznVQ6XNHAyYOrbjgINxQ3DN+p7ez6+4
+Y5qtbmg8zMV880CEhwj/1aFHpfxjSC0BrCNyqRhucX4KTkn9PmFW33w2gTVrmibY
++OAV7PmoYEXyYl3BOlnvfT09zPfvpvQy5eh7BXKJrDCtZB2V14ZjBwJGKZJU/vmR
+8fEAueEDlRvJ2UY0YJOFjWqlddilH4CVULGaBibxgqVPwb97S5dkBHtE3GcKvvvc
+3NgZbYSx86I2nUV5vtu0emjJq7pkyRxsl+7MclRykO4yCzgeHLPTdh1T+BRRfbuU
+chZX7VYl4l73VrmXNF7/1wtBl+NKCw==
+=cG0j
+-----END PGP SIGNATURE-----
+
+--mb3fsyqhiocnajmm--
 
