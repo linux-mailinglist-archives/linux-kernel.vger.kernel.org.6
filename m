@@ -1,477 +1,113 @@
-Return-Path: <linux-kernel+bounces-314300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF3E96B181
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C15A696A819
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1502D285BF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FF2282DE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964D813342F;
-	Wed,  4 Sep 2024 06:26:37 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA32D12CD88;
-	Wed,  4 Sep 2024 06:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FE51D58AC;
+	Tue,  3 Sep 2024 20:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRAcwvVd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A611D5891;
+	Tue,  3 Sep 2024 20:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431197; cv=none; b=qVtjJAjPHhlu19+GfSw7JpjM/QlZ8EdGEbPuEShGIcdidBJ+Q+HLUSPR05ZIbnRpIsRWf978FrfQlu/4KdLTJvLYs9LLxXfRaUXbtY7+QOLeZH0NYMBy7+GZ1QUu7jLaHmVD4lJROdJO8iYiCaEI5FFnmRuIWluoMzf3du+Zcyc=
+	t=1725394232; cv=none; b=jH0+a6K33d/xs/X55vPjljGyQWOxTnHTqo9SW8kFyq5318x4TWV+bH4ZD7W3lwjGyFG3ljWEcsGCGx6eVPHFC46TWjjK01ocKZRoUB15oyZNpmRdNvdaQQvypww3Om5Dy0en3p25k+3MWuyTC82WqyL1xWcpdmVluiM55rdqlXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431197; c=relaxed/simple;
-	bh=5dFgjk/oabilpVeol8G0eWL9U9/xLN3c1TXk+PgZ3AQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nVcJ1UzelB5MQBpSpn5LXcLJgc+a2WTpooH9QEqkWoPXgd8dpDoKV9e8QDAvq7R7dSdFZFRu9VwHXoAWriuzBi+y9cE3Yg5txvsmfcUBn6LPBGdQo7jlX9nLq9qlDmqmoLZpwLvOOG7YlBoakkSuSfSic1oq7lh2YnsC0w3oaqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee466d7fd8fcc5-b35b9;
-	Wed, 04 Sep 2024 14:26:25 +0800 (CST)
-X-RM-TRANSID:2ee466d7fd8fcc5-b35b9
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.99])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d7fd908e5-15f73;
-	Wed, 04 Sep 2024 14:26:24 +0800 (CST)
-X-RM-TRANSID:2eea66d7fd908e5-15f73
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: jgg@ziepe.ca
-Cc: kevin.tian@intel.com,
-	shuah@kernel.org,
-	iommu@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1725394232; c=relaxed/simple;
+	bh=vpwZJNPO0XrbJLguy28wBPuADqR/WcUHSbWi9p0uZDY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BjG8VfzVCvgnX50m4399RBWn55rPjNJCcVEpY4/s+NqdshO6VaI5MSTW88vrn1RFLO2/nPhfXMg8Oj47kKJhvL1wVIPqnpVvBKhAdQuyczr5dH1/ctVt6It4oriR7rhgponPfnYwwBDNJtrwK7kQQ/OL2g9vuCYSnv6HMClc6Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRAcwvVd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF10C4CEC4;
+	Tue,  3 Sep 2024 20:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725394232;
+	bh=vpwZJNPO0XrbJLguy28wBPuADqR/WcUHSbWi9p0uZDY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qRAcwvVd2eHpjA3jqDUsvYtdam6X8bME6gg5HXXUOHKZ+buSHVCOcMmKkf6zSFvtH
+	 bc0WLzmSNFI+A96qAImSwLa6SEOI3qy02fBAo4qQn/kDUy4qXzpC7WOwAh52iZhZYj
+	 MRvbvsUJjNNkcXImZdxkv5l5hiidyPLSBkVSR/5iRZ/zHd/9i3gWuWKkQl+kuu0fpi
+	 RILQc+ttytzz/sRz4+/osg27juptkcZH8oq/bG1EtcgAI2O8QBzqN4UB3AyzpPPd0F
+	 zrv6+UGNg6ncZSBphgOeZPhJdjp66/wREu2SSYU/OTit7APZ5rhtoB+AcZ9ySXjuBF
+	 0wppFT6T/T8Kg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	rust-for-linux@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] iommufd/selftest:fix a resource leak
-Date: Wed,  4 Sep 2024 04:08:06 +0800
-Message-Id: <20240903200806.9803-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH] MAINTAINERS: mailmap: Update Andreas Hindborg's email address
+Date: Tue,  3 Sep 2024 22:09:48 +0200
+Message-ID: <20240903200956.68231-1-a.hindborg@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1622; i=a.hindborg@kernel.org; h=from:subject; bh=fioxQcbG3apiE4VFtEFZfVL7qHBv3evTsbReL36QZSQ=; b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkFGdEFwTDlrQTBEQUFvQjRiZ2FQb mtvWTNjQnl5WmlBR2JYYTV3NzlQRmpZVW1maEdRR0RQejdYVEpXCjhPVWc1YkkwZnVJeFVRMDRz ejh1ZDRrQ013UUFBUW9BSFJZaEJCTEIrVWRXdjN3cUZkYkFFdUc0R2o1NUtHTjMKQlFKbTEydWN BQW9KRU9HNEdqNTVLR04zbG1jUCtnSU5kRWZ3YkR2QVAweHBvOE1LdTlIMjMzeS83MmNVa2JudA oyNFl0QVdlMmswVVFXYW05QXkvVkwxZDVVYVFWYTBwMW8venFVMXltOGR5OVZ5eHNMUGhTZ1Erc mdIVWVtR1RqCk81S3BRVjMyZE8ySkFydGVwMGw4Y3FuQTczOHloSXdLSkpxRFlNSGphajRVWVg3 SXdHOXdxUHBaM2tsOFE3c1AKZEV2eXljclhMSDViYzFiN0FNbGtzWlpNNmFjeU1Cdmp6TjI0SGt zMC9qeVVETmM5VkFoRWI5TWZqN1RjSUpGUgpESFNLcG5Bb1laNlZUYVRyTkJ5N0s5S1ZDN2g5dl huWUg3UDVtcnVLQjkwUTVpMUNrMFUyQjhkRTZPU0VLODFFCko0M3o4MVNPakRZTEJKK3BWV0tqQ kY4SlNnY2FteHR2K0xxcm9ENVZRMUE5WXRRMExFZDNjNzU1cHhCMjJZVlcKS2VCVDFaNC9acHph UEtxRFI5Yk1hNzluUi9sWEE1R2JxQXlpcEZrTjVhM2tBUUZvVi93d1dhM0pBc2l1bDNEMQpOVkR xOWtMZUlnYlJrWG9yN
+ VB4aHYyMzRDemNQVGJlbExGWmVaK2duOVdWSWJTYmhFRHBPVllhRE1UUW d6UEFvCmFCRkhBUkxxaU5qUFVFMWxiMlpRMC9tQ0Vaa1RCbEFJSlpEdzJDS01vOXlzb2RhNnFiN GE2UW9FeWp3YndrUjYKbU9XRk03Y2pvKytPeFpGTWhFRTgxNHJRbklHbkQ4T3pUK2FOcTZMY0M4 NkN0Yk5YbG5VdG5kR28rbk1ON29obgo5ejA5TmxwQk5XOTZHNm1EaHVhL2gxR1NRa1JyNTNIMTV mNTRNSzlZTlpMK0xrenRWOGFNM3hJN1duSFpVMDlDClAyOE9pQ3RKTFV3aENnPT0KPVRiYzEKLS 0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp; fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-If the file fails to open, not only return return1 but also close the file descriptor,otherwise resource
-leak will occur
+Move away from corporate infrastructure for upstream work. Also update
+mailmap.
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- .../selftests/iommu/iommufd_fail_nth.c        | 143 ++++++++++--------
- 1 file changed, 83 insertions(+), 60 deletions(-)
+ .mailmap    | 1 +
+ MAINTAINERS | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-index c5d5e69452b0..ff4e5d8aad57 100644
---- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
-+++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-@@ -237,10 +237,10 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	{
- 		struct iommu_ioas_iova_ranges ranges_cmd = {
-@@ -250,7 +250,7 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
- 			.allowed_iovas = (uintptr_t)ranges,
- 		};
- 		if (ioctl(self->fd, IOMMU_IOAS_IOVA_RANGES, &ranges_cmd))
--			return -1;
-+			goto close;
- 	}
- 
- 	{
-@@ -264,13 +264,13 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
- 		ranges[0].start = 16*1024;
- 		ranges[0].last = BUFFER_SIZE + 16 * 1024 * 600 - 1;
- 		if (ioctl(self->fd, IOMMU_IOAS_ALLOW_IOVAS, &allow_cmd))
--			return -1;
-+			goto close;
- 	}
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	{
- 		struct iommu_ioas_copy copy_cmd = {
-@@ -284,15 +284,19 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
- 		};
- 
- 		if (ioctl(self->fd, IOMMU_IOAS_COPY, &copy_cmd))
--			return -1;
-+			goto close;
- 	}
- 
- 	if (_test_ioctl_ioas_unmap(self->fd, ioas_id, iova, BUFFER_SIZE,
- 				   NULL))
--		return -1;
-+		goto close;
- 	/* Failure path of no IOVA to unmap */
- 	_test_ioctl_ioas_unmap(self->fd, ioas_id, iova, BUFFER_SIZE, NULL);
- 	return 0;
-+
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- /* iopt_area_fill_domains() and iopt_area_fill_domain() */
-@@ -305,30 +309,33 @@ TEST_FAIL_NTH(basic_fail_nth, map_domain)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_destroy(self->fd, stdev_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
--		return -1;
-+		goto close;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- TEST_FAIL_NTH(basic_fail_nth, map_two_domains)
-@@ -342,40 +349,43 @@ TEST_FAIL_NTH(basic_fail_nth, map_two_domains)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id2, &hwpt_id2,
- 				  NULL))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_destroy(self->fd, stdev_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_destroy(self->fd, stdev_id2))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
--		return -1;
-+		goto close;
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id2, &hwpt_id2,
- 				  NULL))
--		return -1;
-+		goto close;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- TEST_FAIL_NTH(basic_fail_nth, access_rw)
-@@ -387,23 +397,23 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
- 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id, 0))
--		return -1;
-+		goto close;
- 
- 	{
- 		struct iommu_test_cmd access_cmd = {
-@@ -418,22 +428,22 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
- 		// READ
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 
- 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_WRITE;
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 
- 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_SLOW_PATH;
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_SLOW_PATH |
- 					     MOCK_ACCESS_RW_WRITE;
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 	}
- 
- 	{
-@@ -449,12 +459,15 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
- 
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 	}
- 	if (_test_cmd_destroy_access(self->access_id))
- 		return -1;
- 	self->access_id = 0;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- /* pages.c access functions */
-@@ -466,22 +479,22 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id,
- 				    MOCK_FLAGS_ACCESS_CREATE_NEEDS_PIN_PAGES))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
-@@ -497,18 +510,21 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin)
- 
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 		access_pages_id = access_cmd.access_pages.out_access_pages_id;
- 	}
- 
- 	if (_test_cmd_destroy_access_pages(self->fd, self->access_id,
- 					   access_pages_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_destroy_access(self->access_id))
- 		return -1;
- 	self->access_id = 0;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- /* iopt_pages_fill_xarray() */
-@@ -522,25 +538,25 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin_domain)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
- 				 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id,
- 				    MOCK_FLAGS_ACCESS_CREATE_NEEDS_PIN_PAGES))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
-@@ -556,21 +572,24 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin_domain)
- 
- 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
- 			  &access_cmd))
--			return -1;
-+			goto close;
- 		access_pages_id = access_cmd.access_pages.out_access_pages_id;
- 	}
- 
- 	if (_test_cmd_destroy_access_pages(self->fd, self->access_id,
- 					   access_pages_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_destroy_access(self->access_id))
- 		return -1;
- 	self->access_id = 0;
- 
- 	if (_test_ioctl_destroy(self->fd, stdev_id))
--		return -1;
-+		goto close;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
- }
- 
- /* device.c */
-@@ -586,45 +605,49 @@ TEST_FAIL_NTH(basic_fail_nth, device)
- 
- 	self->fd = open("/dev/iommu", O_RDWR);
- 	if (self->fd == -1)
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id2))
--		return -1;
-+		goto close;
- 
- 	iova = MOCK_APERTURE_START;
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, PAGE_SIZE, &iova,
- 				 IOMMU_IOAS_MAP_FIXED_IOVA |
- 					 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 	if (_test_ioctl_ioas_map(self->fd, ioas_id2, buffer, PAGE_SIZE, &iova,
- 				 IOMMU_IOAS_MAP_FIXED_IOVA |
- 					 IOMMU_IOAS_MAP_WRITEABLE |
- 					 IOMMU_IOAS_MAP_READABLE))
--		return -1;
-+		goto close;
- 
- 	fail_nth_enable();
- 
- 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, NULL,
- 				  &idev_id))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_get_hw_info(self->fd, idev_id, &info, sizeof(info), NULL))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, 0, &hwpt_id,
- 				 IOMMU_HWPT_DATA_NONE, 0, 0))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain_replace(self->fd, stdev_id, ioas_id2, NULL))
--		return -1;
-+		goto close;
- 
- 	if (_test_cmd_mock_domain_replace(self->fd, stdev_id, hwpt_id, NULL))
--		return -1;
-+		goto close;
- 	return 0;
-+close:
-+	close(self->fd);
-+	return -1;
-+
- }
- 
- TEST_HARNESS_MAIN
+diff --git a/.mailmap b/.mailmap
+index caf46a652f15..c0e3de93a481 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -60,6 +60,7 @@ Amit Nischal <quic_anischal@quicinc.com> <anischal@codeaurora.org>
+ Andi Kleen <ak@linux.intel.com> <ak@suse.de>
+ Andi Shyti <andi@etezian.org> <andi.shyti@samsung.com>
+ Andreas Herrmann <aherrman@de.ibm.com>
++Andreas Hindborg <a.hindborg@kernel.org> <a.hindborg@samsung.com>
+ Andrej Shadura <andrew.shadura@collabora.co.uk>
+ Andrej Shadura <andrew@shadura.me> <andrew@beldisplaytech.com>
+ Andrew Morton <akpm@linux-foundation.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe83ba7194ea..3f932a631420 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3868,7 +3868,7 @@ F:	kernel/trace/blktrace.c
+ F:	lib/sbitmap.c
+ 
+ BLOCK LAYER DEVICE DRIVER API [RUST]
+-M:	Andreas Hindborg <a.hindborg@samsung.com>
++M:	Andreas Hindborg <a.hindborg@kernel.org>
+ R:	Boqun Feng <boqun.feng@gmail.com>
+ L:	linux-block@vger.kernel.org
+ L:	rust-for-linux@vger.kernel.org
+@@ -19937,7 +19937,7 @@ R:	Boqun Feng <boqun.feng@gmail.com>
+ R:	Gary Guo <gary@garyguo.net>
+ R:	Björn Roy Baron <bjorn3_gh@protonmail.com>
+ R:	Benno Lossin <benno.lossin@proton.me>
+-R:	Andreas Hindborg <a.hindborg@samsung.com>
++R:	Andreas Hindborg <a.hindborg@kernel.org>
+ R:	Alice Ryhl <aliceryhl@google.com>
+ L:	rust-for-linux@vger.kernel.org
+ S:	Supported
 -- 
-2.33.0
-
+2.46.0
 
 
 
