@@ -1,125 +1,141 @@
-Return-Path: <linux-kernel+bounces-312652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B74F969960
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:41:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F39E96995B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EFC0B27B92
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919C71C2377D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3361B1AD256;
-	Tue,  3 Sep 2024 09:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A23A1A0BE1;
+	Tue,  3 Sep 2024 09:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Au6xXDpf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jc8bRgxV"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482E91A0BD5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C67B1A0BC7;
+	Tue,  3 Sep 2024 09:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725356399; cv=none; b=PKUmqAjQLIH/qazL82J/OOP55cyc/mSpwaFrijgvb4Zm/nnn+9Vzz51wdCm5DcsHWdt6UpKacFl4xUahR7CULNcoEA9ZBUEG4R2qRUGrYNHPkvLothcpeoqYa5X2b69xh2/Y1MYaQbsEEw0JQHo5eCvaTHA6dssGEG+WGmaG7lE=
+	t=1725356451; cv=none; b=CHiEeAAzHEOBTwvno+s3No/Fg/Pp/+5ra/1yqvvTTGO+PmDyc/v7AdOURsfFg/N2K9LVgjxnbCZjBnhGuaCWsZSGMMSmFxq8IzvCbrm1pf5EtedktkAXho9q9joYgYwx9ks+yIzEYsu7NidWCEW8R9QpdjGiY12E02GYpTIdghM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725356399; c=relaxed/simple;
-	bh=YmM/1Eehb6jsD664Sl2Rr0CIjdzwq6jIGR9orWtFBBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FZtwnZjJ6My+72n2QgdxcVRJLTBq6Qd5MtF6UNYQa1Cws7sT60T4WP0r7PQmWp6vJxkvwKTqYVigoMmD8PNFkITEI1++mIBHvMRAzr4u+t1LtmT1KA7qL0k8BZnZcWDv459eqP+xvbTx8YyM7NTFTmmKgdvluXYaYQI7fyzQUM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Au6xXDpf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725356397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rPJ8JR2hsu2+h8AaCAr5yRN3QjhSF/kOuIBdMukfuug=;
-	b=Au6xXDpfDdZcsDmgJ1w3MqDvnKqOCoAy6WZkhVJOVH9cgXirJeTD59aNk84INqek034i1E
-	Z4+AivIud2m11d2LO9EmH6HFLPu00Cya485u9JzXj0Vketm6BIa+bXqw1nNr54czTJKwg9
-	dBbMgrd8oE24rbEdTlgKHjNqpYGCYpE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-494-WIgiqh2uPAKZh-BvFH9t5w-1; Tue, 03 Sep 2024 05:39:56 -0400
-X-MC-Unique: WIgiqh2uPAKZh-BvFH9t5w-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42bbd062ac1so37190225e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:39:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725356395; x=1725961195;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rPJ8JR2hsu2+h8AaCAr5yRN3QjhSF/kOuIBdMukfuug=;
-        b=mFhrSE3Kswvi8JILGDWXSoJbIQlbrCz/SPyIqvpWM6Qeqq7W2rgRGxmwz/5nMc5u1f
-         3N53tunZhHmHmVkRJmwn35BSLbA0COMx9MQy6pxPYr2DjiJfoF+UW9aQ6RUNUK/MfSUK
-         HpaWzaRWOEsS/vJM2d4CwZEcmrMNg8CKFwKmTrtWg1WaXxBW2Z0RRNFunDu99opMA5Iw
-         hZL7W6gwF1bnirW/bAQuUfl08WteqLOliqKANx1UIjzKtetVLRgfkSUhoaAGQx5nCtUN
-         k4ynHWCiFuDxGmu3mnNcnmNnSPvSBBliabPcTGbMVH5rXr9EBWWl43jWNOuCINoOImh3
-         48tA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXfdsyA7RvpBsIAH9mUAhsiHR+DfkgcRq+PbkZlfyVYBMjfS6ox7m9LhaK6FfZlbZAqpl8ICuvyNYzkuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCmR/vM7Y8szi1BlSQLTJ9lyLgl7OU1PIGNEQpWSq1EI2QZPcj
-	Jaxsmy4yEJ7DdJuQQnbS3HDX4Oly+aceVPKiYVtqKd+/atJiDdGD+tg2/Jnq4QqUKoWKeGTI4Es
-	XfO8iC4k0T5LzLZGfbh2+jG/q1vgsc1oUhMuToGtA4qSICmvOzaweGfhzSHOhIw==
-X-Received: by 2002:a5d:4086:0:b0:368:7583:54c7 with SMTP id ffacd0b85a97d-374bce97f92mr6805205f8f.8.1725356394862;
-        Tue, 03 Sep 2024 02:39:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHopwsF2Or6X59KptCdtP9shvBUqKfSIOsOAprOTS/L+AM2LQoWh0DPR0/BX78uGFil1dVQkw==
-X-Received: by 2002:a5d:4086:0:b0:368:7583:54c7 with SMTP id ffacd0b85a97d-374bce97f92mr6805193f8f.8.1725356394362;
-        Tue, 03 Sep 2024 02:39:54 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm165511655e9.43.2024.09.03.02.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 02:39:53 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: remove unneeded file entry in INPUT section
-Date: Tue,  3 Sep 2024 11:39:48 +0200
-Message-ID: <20240903093948.122957-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725356451; c=relaxed/simple;
+	bh=lLzr8Ar95hMU50yITbpvwxHOKCESpfKPFuNUnNE06bA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MB+EkMR1EcnacTlZx4F/T0kxIT/wtapWOpp6YAPen+VS89ZtBEPaaLTWr1k/D+4aZ1S+MpY/KAoWWoNIvoNB8gRpMnLkdOgXWTVrohrKHzsBSOxVCcqChmPHqzw8QilT2YVOnfepbgaBTDtcgRHTZyZx3Qdj9FU1T89+tLG86WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jc8bRgxV; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725356414; x=1725961214; i=markus.elfring@web.de;
+	bh=lbfwtFUUUQEa7RKRIipVXPdfzZzi/w41he9XMp87RSQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=jc8bRgxVnO+hRbFNONQ+Gle2zPRAJaZ9E8VnhO7onTUGt4tLtGsfJyTFIAosRW9K
+	 fsTdyGxPyCr8GvNSc9l0D03NNbyswvNWS2NZW4g/PVwXI4nM8Gx5pfXJLwZHibSoS
+	 9GbKGFbqeb+VP0J4mFArOgRQ0HZQpwYJlagx94JHFxJ1aCIkP12hba3fAiekMQ1S9
+	 QTWUf5OvehfchQp1UXq6wcifvKvxHNVY0nNw8mNmg0QcWpmYNHiGgaaIjpGjWHpIy
+	 h5APyOfrrDiUFSdUEfFL1hHj4WLRfRyLGK91hB+pQUvKrCPbHO6xseEtFkrpqcgd6
+	 fEmrqbYVhSdS0TuFkg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOlwj-1sQ9hZ2WGF-00TKth; Tue, 03
+ Sep 2024 11:40:14 +0200
+Message-ID: <95f07e5b-72c4-442c-b58e-25c407389243@web.de>
+Date: Tue, 3 Sep 2024 11:40:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] drm/imagination: Use memdup_user() helper
+To: Matt Coster <Matt.Coster@imgtec.com>, dri-devel@lists.freedesktop.org
+Cc: Donald Robson <donald.robson@imgtec.com>,
+ Frank Binns <Frank.Binns@imgtec.com>, Sarah Walker
+ <sarah.walker@imgtec.com>, Christophe Jaillet
+ <christophe.jaillet@wanadoo.fr>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <ea4ec650-d858-42c2-ab59-e17824069ba9@imgtec.com>
+ <8d30da7f-7a12-4052-b846-66fad0ccb392@web.de>
+ <cc1a5b72-2349-4b7b-b233-1a1b90556d71@imgtec.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <cc1a5b72-2349-4b7b-b233-1a1b90556d71@imgtec.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kYjjDNcb9SSj1h4+Mz2o8aEKK3JGWzSQezmAzIKDl/cfDfCGTxz
+ LAFz8WsXStLaZvw/ztZym00sDpprLKz1uWa4rc0OPsggwoz1gsDPSgRtgxBLidOIfB21nWy
+ MY+g4UEtQ20YdrGGl6WvnIm7USeyWhDgMgb0Pq34Rwpf4URatP60t+zQAkJQvW2/a8vzw/G
+ Qfh9Hd0z8RV2sWM7WDFlQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1qJKy6keiWE=;k7cqz0hdvaJNcoGxY21u3lX3xbU
+ P6XdqaqU9vFKc7GBsi3OVIVLT0jzihjQmJwRZgJp1xzU8slXnwCrFJAqFijQSUQgQdmGFuHTR
+ 8s2KCX8C8FkcY4LhUr1O0nU7Yb9apQyFTHG9EqLhBdfmoVoA5n5fjgd2QO2OiwSePysIr8nOh
+ droIHvmyl89Q7BhyV7F7/HvexeIp4L+eML7TR/3VTehPr3IFR0w7yw4kfEGRNW1f+P4C+A094
+ xVPZFi8j3O2dl1Y8cxxAE6HTTSFERZ6+ASs+YlPMuJTpToSEHet54KCepebKTlxDGG6FH/cIf
+ X8fkeNageXI7Q/PEKyLbYOIqD6GY3TQNMsxnCHJ0g7E7RILTyW52p1sFySrEaT7cvHyO1cWq+
+ HDaUSaYZr9tD+RxLg2Y1qYAjIHzQPKWL6RzyK70MkWaSPVObohpL+FITn6C0zKNq1BKfubXXZ
+ pi7N278AS0iqRuo1tlv4ekT8CjTABOBepGTiGIIJFA9o2lrSAEJPW/BfgJd0SIdd6n4CSh0W1
+ CWzdwYCROyykDQ7g4mmrajtHqLddCxVnZrOYH5p7GT4no/dDai/2tHGujbPi4l5ZU+28AZ/X9
+ 6+5Y1jSVuFNI93Wwabb4oHEby/Y6oic5iV4ilZ8NuG1JZWcYIMWrwtoCYM4IJ0n2gFhtWwQCX
+ VKEJpCFP+qx06ZZqgUNyVlcNtiJF+3w62QM+vd7sOJC+SJvpQ2MrVQ/SLCPiPC1PeS50w09rS
+ gKK/B6v9AB+rKPbPRHF7mAZ8VQKVlPwlfJLzBKXZiMctyTwOBvxIfNeVauH7p8ZHUql58hh6v
+ tzsSV3AcIB6Z2tqDssQsKRjw==
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>>>> Switching to memdup_user(), which combines kmalloc() and copy_from_us=
+er(),
+>>>> and it can simplfy code.
 
-Commit b9401c658d2c ("MAINTAINERS: add gameport.h, serio.h and uinput.h to
-INPUT section") adds further header files in ./include/linux/ and
-./include/uapi/linux to the INPUT section, but the file
-./include/linux/uinput.h does not exist since commit a11bc476b987 ("Input:
-uinput - fold header into the driver proper") removed this header file
-in 2017.
+By the way:
+Would it have been nicer to avoid a typo anyhow in such a change descripti=
+on?
 
-Fortunately, ./scripts/get_maintainer.pl --self-test=patterns complains
-about a broken reference. Remove the file entry referring to the
-non-existing header file in the INPUT section.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+>>> Applied, thanks!
+>>>
+>>> [1/1] drm/imagination: Use memdup_user() helper
+>>>       commit: 2872a57c7ad427d428c6d12e95e55b32bdc8e3b8
+>>
+>> Do you find any previous contributions still similarly interesting?
+>>
+>> Example:
+>> [PATCH] drm/imagination: Use memdup_user() rather than duplicating its =
+implementation
+>> https://lore.kernel.org/r/c07221ed-8eaf-490e-9672-033b1cfe7b6e@web.de
+>> https://lkml.org/lkml/2024/1/28/438
+>
+> Hi Markus,
+>
+> I apologise for missing your earlier email.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87108b3fefaa..3b19921eb948 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11195,7 +11195,6 @@ F:	include/linux/input.h
- F:	include/linux/input/
- F:	include/linux/libps2.h
- F:	include/linux/serio.h
--F:	include/linux/uinput.h
- F:	include/uapi/linux/gameport.h
- F:	include/uapi/linux/input-event-codes.h
- F:	include/uapi/linux/input.h
--- 
-2.46.0
+How could this happen?
 
+
+> In general, we'll happily accept cleanup patches.
+>
+> If you feel like your patch has gone ignored in future,
+
+It seems that some of my development ideas occasionally trigger special co=
+mmunication challenges.
+
+
+> please feel free to ping me directly either by email or on IRC at MTCost=
+er.
+
+Will the attention really grow accordingly?
+
+Regards,
+Markus
 
