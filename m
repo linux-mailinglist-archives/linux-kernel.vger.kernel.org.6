@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-312802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7597969BB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D559F969BC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4661C23385
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB40284774
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006A61A42BB;
-	Tue,  3 Sep 2024 11:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FBD1A42C5;
+	Tue,  3 Sep 2024 11:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="gwCbYHnL"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D35195;
-	Tue,  3 Sep 2024 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgToz5i/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF68195;
+	Tue,  3 Sep 2024 11:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725362840; cv=none; b=CvLXY8CGsmwv/8amVf7KaByVfpvwCrpDjmUJBPL5+ebYr082h0uIx1xTOfXBagnpM4AFVE3eqSMGvjnD7wxCwVAUDp03P6zjj7qpJ9Sl0QFMSyN88TngiD9tj1SByVRmV697s4ECwhYqDWUTY85B7BtuDOrjfPZfFdkKWDu6QKE=
+	t=1725362979; cv=none; b=Ei1YJv38QIO9uL4j2Wu5TTxVpSlcg4Vay5XXq0afQulTGfg01farNwSii721JRwD7CiMwvPlxCBNsLmvXg2r9NHyDRUJ1r/M6az5X7vW4Bc0QoPMDIks+NM9xrnqWemSTH/JNKqwlKYS2euZKDRHPVRklRtiSWqSawD1fToHnG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725362840; c=relaxed/simple;
-	bh=UrhhHWFReJHjjnu/JLe7WxRLG5V0ZxwtyFjI7bs912A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=qr5wXZRFPe4fF4TQ1RhOvYXFsoPb9Hsyj2+WHTFY1KhzAFd+IW4u7AYK0YK9IxVtjKhpEfyBLYR9Q4Q9Xp0cIJW9GQf/5R7EIxMuPrGWnjqbittFCn2uPybdCi+aE2FnC9EFykOkrvAmsRIdeBeeWOhfP4HQ1jRnAXVWFpK6yaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=gwCbYHnL reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=j1RcWAvsKdHSlutlkkpQ3uMJa7lkq98Rrsn9w1ALegE=; b=g
-	wCbYHnL6HDKXmgITlUS7dKBrFMYb++gsU+V6TbpGW0WfDT41GfA5TJCHcq5QcIim
-	KoUIVHo4ZlMpi2ANSl9IJFyAXt9TIUYsv6YF9GLszHtX8xX4GvLnrAXI5S0CWgmf
-	/l23vVCPorZtyMmw78SRmzBxS5ixXE5lrOQ/M4QHwk=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-112 (Coremail) ; Tue, 3 Sep 2024 19:26:27 +0800 (CST)
-Date: Tue, 3 Sep 2024 19:26:27 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, pavel@ucw.cz, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pm: sleep: do not set is_prepared when no_pm_callbacks
- is set
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <2024090347-latter-collide-772a@gregkh>
-References: <20240902125933.5742-1-00107082@163.com>
- <2024090347-latter-collide-772a@gregkh>
-X-NTES-SC: AL_Qu2ZB/+dvU8j4SeYZ+kZnEYQheY4XMKyuPkg1YJXOp80oSTixAceb3lxO2Lx09CXJSq9th6ofwJ/+8pCT4dze4atHEIKzzLK20iGYBTlPtVj
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1725362979; c=relaxed/simple;
+	bh=5/fNADynh6uUVs2xNhVUhhCIOd1m9+juLLnQ0tJpKTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jESN2QylC8cOFIbaPKAauHQ3ecjZwZA7q5H1FYq9tXY3Mt/EWWPHV8U+JBd5ouYBNmdpZIyUbDAz1JCvkO/mwrMUdgrUicyKcGtuu2Da8Q+XtoCGegmUhnqhGQlMboV8pOGg4q1JUW+zC/TM+50I7avkIdZRTYF8+mf9tI03F5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgToz5i/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4970FC4CEC4;
+	Tue,  3 Sep 2024 11:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725362978;
+	bh=5/fNADynh6uUVs2xNhVUhhCIOd1m9+juLLnQ0tJpKTg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OgToz5i/tYMqcGmBuMbjfGT4vp6FT2fJ63ewnHMW5N4QJzdzZSF3xQnZrR4XtUKnU
+	 hp7WMpvgduzLIxOuEty2mmkSaOotRvXRZuL65i4RdldJN/8mfYOq/eO6qDRDSkOkJc
+	 jY6nKf3H+FR5Im22rhVgR63itQz6WVx2VJqSqu7UCZEaKhq2RnKJiPeu7UEO7lZv0r
+	 sXMETKZNgOmnwq3dbC/DRZ21jWFDhBzxqe9OJvmx9AH9vwX/BKrT8lN92JzRUUfsye
+	 Ikbm66lBQe6VNFoQcg47WeKppqvYI3zsoeyrchwRwTDJWUoJ6oGRritxeaoyud+2r8
+	 YOJiC9JPF9FbQ==
+Message-ID: <0f9e9184-740f-4a47-b653-a4b1d1c1239a@kernel.org>
+Date: Tue, 3 Sep 2024 13:29:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2d012670.aff7.191b7a2d57c.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3_3tk8tZm10gfAA--.7876W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hFPqmWX0IqbZQADsz
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
+ controller
+To: Xi Ruoyao <xry111@xry111.site>, Zhao Qunqin <zhaoqunqin@loongson.cn>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ chenhuacai@kernel.org, linux-edac@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
+ bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+ rric@kernel.org, loongarch@lists.linux.dev
+References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
+ <20240903015354.9443-3-zhaoqunqin@loongson.cn>
+ <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
+ <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
+ <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
+ <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SEksIAoKQXQgMjAyNC0wOS0wMyAxODoyMzo1NSwgIkdyZWcgS0giIDxncmVna2hAbGludXhmb3Vu
-ZGF0aW9uLm9yZz4gd3JvdGU6Cj5PbiBNb24sIFNlcCAwMiwgMjAyNCBhdCAwODo1OTozM1BNICsw
-ODAwLCBEYXZpZCBXYW5nIHdyb3RlOgo+PiBXaGVuIHJlc3VtZSwgYSBwYXJlbnQgZGV2aWNlIHdp
-dGggbm8gcG0gY2FsbGJhY2tzCj4+IHdvdWxkIGhhdmUgImlzX3ByZXBhcmVkIiBhbmQgImRpcmVj
-dF9jb21wbGV0ZSIgYml0Cj4+IHNldCwgYW5kIHNraXAgdGhlICJmaWIiIGNoYW5jZSB0byB1bnNl
-dCAiaXNfcHJlcGFyZWQiCj4+IGluIGRldmljZV9yZXN1bWUgYmVjYXVzZSBvZiB0aGUgZGlyZWN0
-X2NvbXBsZXRlIGJpdC4KPj4gVGhpcyB3aWxsIHRyaWdnZXIgYSBrZXJuZWwgd2FybmluZyB3aGVu
-IHJlc3VtZSBpdHMgY2hpbGQKPj4gRm9yIGV4YW1wbGUsIHdoZW4gc3VzcGVuZCBzeXN0ZW0gd2l0
-aCBhbiBVU0Igd2ViY2FtCj4+IG9wZW5lZCwgZm9sbG93aW5nIHdhcm5pbmcgd291bGQgc2hvdyB1
-cCBkdXJpbmcgcmVzdW1lOgo+PiAKPj4gID51c2IgMy0xLjE6IHJlc2V0IGhpZ2gtc3BlZWQgVVNC
-IGRldmljZSBudW1iZXIgNCB1c2luZyB4aGNpX2hjZAo+PiAgPi4uCj4+ICA+ZXBfODE6IFBNOiBw
-YXJlbnQgMy0xLjE6MS4xIHNob3VsZCBub3QgYmUgc2xlZXBpbmcKPj4gCj4+IFRoZSBkZXZpY2Ug
-cGFyZW50aW5nIHJlbGF0aW9uc2hpcHMgYXJlOgo+PiBbdXNiIDMtMS4xXSA8PCBbdXZjdmlkZW8g
-My0xLjE6MS4xXSA8PCBbZXBfODFdLgo+PiBXaGVuIHJlc3VtZSwgc2luY2UgdGhlIHZpcnR1YWwg
-W3V2Y3ZpZGVvIDMtMS4xOjEuMV0gZGV2aWNlCj4+IGhhcyBubyBwbSBjYWxsYmFja3MsIGl0IHdv
-dWxkIG5vdCBjbGVhciAiaXNfcHJlcGFyZWQiCj4+IG9uY2Ugc2V0LiAgVGhlbiwgd2hlbiByZXN1
-bWUgW2VwXzgxXSwgcG0gbW9kdWxlIHdvdWxkCj4+IHlpZWxkIGEgd2FybiBzZWVpbmcgW2VwXzgx
-XSdzIHBhcmVudCBbdXZjdmlkZW8gMy0xLjE6MS4xXQo+PiBoYXZpbmcgImlzX3ByZXBhcmVkIi4K
-Pj4gCj4+IERvIG5vdCBzZXQgImlzX3ByZXBhcmVkIiBmb3IgdmlydHVhbCBkZXZpY2VzIGhhdmlu
-Zwo+PiBubyBwbSBjYWxsYmFja3MgY2FuIGNsZWFyIHRob3NlIGtlcm5lbCB3YXJuaW5ncy4KPj4g
-Cj4+IFNpZ25lZC1vZmYtYnk6IERhdmlkIFdhbmcgPDAwMTA3MDgyQDE2My5jb20+Cj4+IC0tLQo+
-PiAgZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYyB8IDMgKystCj4+ICAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4KPldoYXQgY29tbWl0IGlkIGRvZXMgdGhp
-cyBmaXg/CgpXZWxsLCB0aGUgc3RhdGUgbWFuYWdlbWVudCBvZiBQTSBkZXZpY2VzIGlzIHF1aXRl
-IGNvbXBsaWNhdGVkIHRvIG1lLCBsb3RzIG9mIGNvbW1pdHMgbWFrZSBzbWFsbCBjaGFuZ2VzIAph
-bmQgIEkgY2Fubm90IGlkZW50aWZ5IGEgc2luZ2xlIGNvbW1pdCB0aGF0IHNvbGVseSBpbnRyb2R1
-Y2VkIHRoZSBrZXJuZWwgd2FybmluZyB3aGVuIHN1c3BlbmQgYW4gb3BlbmVkIFVTQiB3ZWJjYW0u
-CgpNb3N0IG9idmlvdXMgY29tbWl0IHNlZW1zIHRvIGJlIAphYThlNTRiNTU5NDc5ZDBjYjdlYjYz
-MmJhNDQzYjhjYWNkMjBjZDRiICIgIlBNIC8gc2xlZXA6IEdvIGRpcmVjdF9jb21wbGV0ZSBpZiBk
-cml2ZXIgaGFzIG5vIGNhbGxiYWNrcyIKYzYyZWM0NjEwYzQwYmNjNDRmMmQzZDVlZDFjMzEyNzM3
-Mjc5ZTJmMyAiUE0gLyBjb3JlOiBGaXggZGlyZWN0X2NvbXBsZXRlIGhhbmRsaW5nIGZvciBkZXZp
-Y2VzIHdpdGggbm8gY2FsbGJhY2tzIgoKYW5kIEkgd2lsbCB0cnkgcmV2ZXJ0IHRob3NlIGxvZ2lj
-IGFuZCB1cGRhdGUgbGF0ZXIuCiAgCiAKPgo+dGhhbmtzLAo+Cj5ncmVnIGstaAoKCkRhdmlk
+On 03/09/2024 10:30, Xi Ruoyao wrote:
+> On Tue, 2024-09-03 at 09:58 +0200, Krzysztof Kozlowski wrote:
+>>>>> +	select EDAC_SUPPORT
+>>>> I think you got here comment before. How did you address it?
+>>> I just randomly found a spot, and I will put it at the end(next version 
+>>> patch).
+>>
+>> No, the comment was different. You must not select user-visible symbols.
+> 
+> EDAC_SUPPORT isn't user-visible.  EDAC is and it has been removed.
+
+Ah, ok, I missed that. Shouldn't this be separate patch with its own
+rationale? Or before this driver there was no EDAC support for Loongson
+at all?
+
+Best regards,
+Krzysztof
+
 
