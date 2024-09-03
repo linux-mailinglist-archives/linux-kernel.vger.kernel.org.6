@@ -1,167 +1,88 @@
-Return-Path: <linux-kernel+bounces-312915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E4D969DA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D85969DA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F33B238B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0856284ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174031D0965;
-	Tue,  3 Sep 2024 12:32:12 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EE41D0959;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025B71A42B5;
 	Tue,  3 Sep 2024 12:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4631B12F1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366731; cv=none; b=MlYf7g228Arn1cUvjJKVcHiKK/eqP1q4SToeqwsjkGEPUyORGVG8BuCNhI8g8cEx/UGhlRK5gmCYG0M0SMZd8CD3MrKfrYJoWwNOxFYqUe6bEDVpEa3qDGD8t9FV/6cVKZUTctyEG2EbrE2IkEr4Yl8cUfIIhtn1cTd4Q8/gnhg=
+	t=1725366724; cv=none; b=IWt8iuBKiFuzeGN5jBkVXU+OlUnxqLy8HVVV1xw89DqgW9iZUzcD1kFrzLOVT93EhqSNEi8V/7xmDsdHLF902ZyIaCjQ9qjnXW1o7FpxbI0GBIgI217nulDkzahRd8sO1h2jHBwNWO5AJZeIqyVyfHfr5ro6rgXgCSgpAjVYwio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366731; c=relaxed/simple;
-	bh=wt0MsrlPeQPhAtDdj7Q1A5xQ3NmHHrGzu1igSPDkRqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GtZTAfxFNxiakwol+72EvrNFvUzzlOJpk6Zz7Hpk0pdvAXd2jTiiQUs9rdnqEpNr0Tiy0lKyYoKo/6ljwQI3aNxzakDA4VPADUEA92GgFxVfq4sstna4u/gfnPWd4/i/hEzG4IEP0ZFvk93BtZ9xwibfCimEi/yDYeuO+qGc7As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee366d701c2796-abfa5;
-	Tue, 03 Sep 2024 20:32:04 +0800 (CST)
-X-RM-TRANSID:2ee366d701c2796-abfa5
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d701c1cbf-e51bd;
-	Tue, 03 Sep 2024 20:32:04 +0800 (CST)
-X-RM-TRANSID:2eea66d701c1cbf-e51bd
-From: tangbin <tangbin@cmss.chinamobile.com>
-To: neal_liu@aspeedtech.com,
-	gregkh@linuxfoundation.org,
-	joel@jms.id.au,
-	andrew@codeconstruct.com.au
-Cc: linux-aspeed@lists.ozlabs.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	tangbin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] usb: gadget: aspeed_udc: use the defined variable to simplify code
-Date: Tue,  3 Sep 2024 20:31:52 +0800
-Message-Id: <20240903123152.6980-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725366724; c=relaxed/simple;
+	bh=wJvkkAwFqkh9LG7i3tDrwGeYoqWiVtR0TR3aaaHgIaU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=flGNncRR2SC+u2S/XdJ6piL25YVZVSVusxixSn0hGYJw0jSgelvbqrihEcviXkNHXkmnXgE6lrGx+bvm7a4oeuf6y31irMW98BMaDEsKphH0ufNuX6mbzjBL8SIejezGygIh3Ify8Ro1ToxoY7/pKd1uSV6SARjZ4pRudDDyEA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f53125f4eso24621845ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725366722; x=1725971522;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=73CfKD8IJsXt8neaGQU7/N60BW2ml7fVPqmUt7/0+Ic=;
+        b=rRBVLbo2FkGVjIv1vo6f0iA2GOyDVmsRmj7410Bqj+DDnkUj4i/KDq7M+YgQnTkj0U
+         rnpN0NJ/a49TqwBfi7S0WWHHtNDy14RGQ6xatbLsojrA4h++CnfCmQJs0GlmoFP7sD14
+         /V+RnofkzXnlDiCE0UNoGXo6iXdfQfsbhUP/7Hi7UIkBRLu/+Vv4+qu/tyIffRHyegMG
+         bBInuVCRYH0ElnHjLbYU+dl+e03qT/GLrIluYa7XK4XJo35iPrxmKCtyjVU9+FN3qE0A
+         Bx6HulxN8OyUfMmSgHDfa1p0cRgeKOlM4R0QVMnp1viNQjZ0omjEzxB/tEwLy2tLGe/r
+         uWLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXZ4D9RIDxOJDdSFqqcmDQDCTYGsAKTOf4CJP6z6zocRLVEMsExwYLYv29nAAWl7RoRXOe96adbJhgosY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6mYHKShc8Il3JvE8kIdh1t3Mg86DT0uQCTCBKRHuaB7/toQcm
+	+gYFHIuVewo6ODYmiTOuwym+89qbMzYSZartqHFOHlQ0O49xc98S0E9OKjq4xutQHhzvhiN8dT3
+	Xuw8IL4cCLvToNnqHQdcak39zbAIkpK9zU9/iR7sy+DzmQN7STO/anro=
+X-Google-Smtp-Source: AGHT+IFDB08SISapjhDvQRPxgF7T0pDDXhwUAoTPI+gGkKaLPrbec4TrE0dajdrtP1KE7sZilxfNk6WkGc7voOecMi/GmpU/X059
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a6c:b0:380:f12f:30de with SMTP id
+ e9e14a558f8ab-39f40f03924mr7659335ab.2.1725366722399; Tue, 03 Sep 2024
+ 05:32:02 -0700 (PDT)
+Date: Tue, 03 Sep 2024 05:32:02 -0700
+In-Reply-To: <b9efefaf-76ea-4ffb-8601-ad83b593ef7a@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000098a0df0621363e09@google.com>
+Subject: Re: [syzbot] [ocfs2?] WARNING: ODEBUG bug in ocfs2_local_read_info
+From: syzbot <syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use the defined variable 'dev' to make the code cleaner.
+Hello,
 
-Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
----
- drivers/usb/gadget/udc/aspeed_udc.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc/aspeed_udc.c
-index f4781e611..702d4806c 100644
---- a/drivers/usb/gadget/udc/aspeed_udc.c
-+++ b/drivers/usb/gadget/udc/aspeed_udc.c
-@@ -1479,7 +1479,7 @@ static int ast_udc_probe(struct platform_device *pdev)
- 	struct ast_udc_dev *udc;
- 	int rc;
- 
--	udc = devm_kzalloc(&pdev->dev, sizeof(struct ast_udc_dev), GFP_KERNEL);
-+	udc = devm_kzalloc(dev, sizeof(struct ast_udc_dev), GFP_KERNEL);
- 	if (!udc)
- 		return -ENOMEM;
- 
-@@ -1494,32 +1494,32 @@ static int ast_udc_probe(struct platform_device *pdev)
- 
- 	udc->reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(udc->reg)) {
--		dev_err(&pdev->dev, "Failed to map resources\n");
-+		dev_err(dev, "Failed to map resources\n");
- 		return PTR_ERR(udc->reg);
- 	}
- 
- 	platform_set_drvdata(pdev, udc);
- 
--	udc->clk = devm_clk_get(&pdev->dev, NULL);
-+	udc->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(udc->clk)) {
- 		rc = PTR_ERR(udc->clk);
- 		goto err;
- 	}
- 	rc = clk_prepare_enable(udc->clk);
- 	if (rc) {
--		dev_err(&pdev->dev, "Failed to enable clock (0x%x)\n", rc);
-+		dev_err(dev, "Failed to enable clock (0x%x)\n", rc);
- 		goto err;
- 	}
- 
- 	/* Check if we need to limit the HW to USB1 */
--	max_speed = usb_get_maximum_speed(&pdev->dev);
-+	max_speed = usb_get_maximum_speed(dev);
- 	if (max_speed != USB_SPEED_UNKNOWN && max_speed < USB_SPEED_HIGH)
- 		udc->force_usb1 = true;
- 
- 	/*
- 	 * Allocate DMA buffers for all EPs in one chunk
- 	 */
--	udc->ep0_buf = dma_alloc_coherent(&pdev->dev,
-+	udc->ep0_buf = dma_alloc_coherent(dev,
- 					  AST_UDC_EP_DMA_SIZE *
- 					  AST_UDC_NUM_ENDPOINTS,
- 					  &udc->ep0_buf_dma, GFP_KERNEL);
-@@ -1534,7 +1534,7 @@ static int ast_udc_probe(struct platform_device *pdev)
- 	 */
- 	udc->desc_mode = AST_UDC_DESC_MODE;
- 
--	dev_info(&pdev->dev, "DMA %s\n", udc->desc_mode ?
-+	dev_info(dev, "DMA %s\n", udc->desc_mode ?
- 		 "descriptor mode" : "single mode");
- 
- 	INIT_LIST_HEAD(&udc->gadget.ep_list);
-@@ -1556,26 +1556,26 @@ static int ast_udc_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	rc = devm_request_irq(&pdev->dev, udc->irq, ast_udc_isr, 0,
-+	rc = devm_request_irq(dev, udc->irq, ast_udc_isr, 0,
- 			      KBUILD_MODNAME, udc);
- 	if (rc) {
--		dev_err(&pdev->dev, "Failed to request interrupt\n");
-+		dev_err(dev, "Failed to request interrupt\n");
- 		goto err;
- 	}
- 
--	rc = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
-+	rc = usb_add_gadget_udc(dev, &udc->gadget);
- 	if (rc) {
--		dev_err(&pdev->dev, "Failed to add gadget udc\n");
-+		dev_err(dev, "Failed to add gadget udc\n");
- 		goto err;
- 	}
- 
--	dev_info(&pdev->dev, "Initialized udc in USB%s mode\n",
-+	dev_info(dev, "Initialized udc in USB%s mode\n",
- 		 udc->force_usb1 ? "1" : "2");
- 
- 	return 0;
- 
- err:
--	dev_err(&pdev->dev, "Failed to udc probe, rc:0x%x\n", rc);
-+	dev_err(dev, "Failed to udc probe, rc:0x%x\n", rc);
- 	ast_udc_remove(pdev);
- 
- 	return rc;
--- 
-2.33.0
+Reported-by: syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
+Tested-by: syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         8efd4bbd Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10dbfb47980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d29b390765df150d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f7af59df5d6b25f0febd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12198963980000
 
+Note: testing is done by a robot and is best-effort only.
 
