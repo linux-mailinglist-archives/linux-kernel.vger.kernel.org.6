@@ -1,150 +1,286 @@
-Return-Path: <linux-kernel+bounces-312718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DBF969A4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B09969A4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3729AB23ABE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:36:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B83B2406A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130501B985C;
-	Tue,  3 Sep 2024 10:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AA71A0BEC;
+	Tue,  3 Sep 2024 10:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sovQNizJ"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iz/I/FCb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bD+GUwmk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE1B1B9837
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE611A0BC7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359752; cv=none; b=hbeebsigTn4cH9M+eX/hLPTainC156WfDzsbo+xRusQkx0N4cTx8Kx52CpycmnPxyLZScM7DADZScG/puIH/+4GYTXxFZ9h0EYqTIp8wRCgsy/uNQYQRi/17Bo4sFUmlmUuiyZRN3YOZC3eqeMn2leEH8ORHUVPa546st+tfI24=
+	t=1725359787; cv=none; b=jUENuKWn4hnaKPL8HQaSMYOXETpMQEwbCrX3g2WAR9edFxto/Nfs1ZZu0A4dVDBefOQnMV8ROa0af4VMnpAiQa/EvdP+352JmbMRT2kX9Kpb7Qs64bHJ5QCDz79E+IJO2yuANudgE0U/7SgbSEB/SOjqlRYcNYJcwFU1vl489uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359752; c=relaxed/simple;
-	bh=YmkObPnyVEltJM+bKrCa4h0N/EDBel+3Kr+3oHWQ2A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u57zmOZcEpPL33s6XbrWWYChjySfJOH/7IGUqA2P6zpJ7CMo7oIWmVWEBUde5h6fSRdZwU0HKm2jSsbd5MLilTS+U3XSw1wA5huqizkl8bnlVo4Xhn9/mdu1igIo+eo82OIdtQZxn7clf5WycsNxkfbIxxjV2ZWmXTyRj9zhb3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sovQNizJ; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a819488e3so3740318276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725359749; x=1725964549; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
-        b=sovQNizJxr+0yvKgumskp0xKen9pTaJ8GptymK4oIeq42YTMxsgeCYcG7575+Wb6dZ
-         UGtifC4UVeFVq4PFMrcDhsPyqPcsj9miMflt60nthF/GkXBRZYUh1AMUOpdcx7sS5D/q
-         ow1NJ1nGolKafoGzEHAEou4VfOJOyRcGXZmL1HYsSefkDf+fYYH3MT6aPh1crSZ6y+sV
-         S2kuldHCGyJ70u3sz54wPvNFrTeWKFt/k4PxF7Lt5i+OLJSIa24WR2eExCoRbYnaJ58r
-         mS3xkcKpz9v4YbNDRQgea9yxhkEvUyOHZPlwRWjDtUXN/+8tj54bFeXz8eNRp/x13Kv3
-         4yxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359749; x=1725964549;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
-        b=okhCJAQkqPnePs8JGgLlVvIEdQ3CjWUqRvXl8mJzxb609QIL9UVVkqTIzRpbCG8vKo
-         CY2o4P3sscw/CBoTnD2QRWBiM4rn8A3fm+q6fW3kB1B4+aydNrNHltLe2LRc5e/yzRY4
-         H0XIDv6HhNrQktZdLJc+ucesU4qTvxiOS0Ktl67/GztnbwWdydZOq5vuXfjWNc+POHr0
-         NpwW31iClci7a3BUxnDqAnMa1Yens3ka6oLkUNwjlxDpIiZVJZYdoCwflF8CmyW/SixO
-         pwdHcqGegagGAQEyeeHCKJwCzpNoyD2J4fi/03vqGrmWnO32hBqFsZK4iLeLYMDzKZCo
-         xxsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVp63q37azCH+im+TeEI0HvIGAIV8OIuuIoos/bljLyV+8v985N10oduSY0QP3VMgVXnAKe5p/d6uhrkFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWyQm9BjjgiC0gvw/HdNVtaztb4Nugl/fx/hKdGZf6MxLYtuR3
-	NRdM7FSGcPWVf4K8mE4uAfeJFkIrzl1+tgGszEIrwoX+puZibYuE7bwB4QtPmOFBTxTbAhvx85z
-	M2e/Jl/D7za3mtfWwRwhSpQKHEouOMvwlG+kdEg==
-X-Google-Smtp-Source: AGHT+IEptjQ9HnzO7IsNO1D9S4qr5WM4xYdZM3VIT60UnRxgn+glo0EzcUHzkrVnacRkJvKM+kyKu9xW5IsYaduxCjQ=
-X-Received: by 2002:a05:6902:120d:b0:e16:55cc:215c with SMTP id
- 3f1490d57ef6-e1a79fe3948mr17521678276.6.1725359748806; Tue, 03 Sep 2024
- 03:35:48 -0700 (PDT)
+	s=arc-20240116; t=1725359787; c=relaxed/simple;
+	bh=cNntLfzflnVh0S0jANv4LpLfJWvxb++G3I5jH7WtMrY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wvr7v9Pf2NBho6oup39nXKovzAIYdDC5Vmhu4aRV5O+Vv5SfclLhKDmb63aFVpnsWX1bVJzUs3tJYrX4NZQuqJ046TTKSUV/fG+79fXaWN2tjF19cYNM5sDkHM1wsvtlTztzI1JmncznZ0N4jSQWLQ9kK4vT3p71uSwsg/ovXDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iz/I/FCb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bD+GUwmk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 3 Sep 2024 12:36:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725359782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojtxnyS4O7KDOKCfeZk7mENAq6gaSLvpMXtpfjPtxzk=;
+	b=iz/I/FCbft6jtUwrTh0tVl+H+mfN9TRfMiDUAi8wWTz3zQXPCxaoANmFoVOftABESq1to4
+	5dvjoctxtV4a+siRmHISB97+4AB5CvhJ3Ud93ZcLCJh2rDP7tz7nKK0TODeHML9kLrukFz
+	s4u2aBslOFxNsTyDTBVxlD/8rsU0M5ywT5CX4v7DiPbXWHl96XLjlaZ1fPEOZcK5m+DYvE
+	r2d209vPF7DP0kzLprng9BKdEO5yjX1223ywNe5e8UYOYjjWnnxwMzG5uAMd5kHuBXFKrx
+	8Hz+24j8eyHMvBfFhJuc3FUlQNU3ZFwDqno1epeFakTcc6qQIekEOw2ivRi63A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725359782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojtxnyS4O7KDOKCfeZk7mENAq6gaSLvpMXtpfjPtxzk=;
+	b=bD+GUwmkP/6q6dVnEA5lDqXqdC9HzIz8QWjlSjDOCdLPwIPndG/7WkPkHgfOM2lwLKGIq5
+	SK4397Z2++oJCqBw==
+From: Nam Cao <namcao@linutronix.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	bigeasy@linutronix.de
+Subject: Re: [PATCH] x86/mm/pat: Support splitting of virtual memory areas
+Message-ID: <20240903103616.i0GrRAfD@linutronix.de>
+References: <20240825152403.3171682-1-namcao@linutronix.de>
+ <5jrd43vusvcchpk2x6mouighkfhamjpaya5fu2cvikzaieg5pq@wqccwmjs4ian>
+ <20240827075841.BO2qAOzq@linutronix.de>
+ <yvcwdfgxnyet7rjf6lhnsypz72jmp5czfkb2muvgzcul53scn6@rkhqrfgdaxsw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
- <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev> <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-In-Reply-To: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 12:35:12 +0200
-Message-ID: <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yvcwdfgxnyet7rjf6lhnsypz72jmp5czfkb2muvgzcul53scn6@rkhqrfgdaxsw>
 
-On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> [...]
->
-> > >
-> > > If not, there are two other options that can be considered I think.
-> > > *) Using the genpd on/off notifiers, to really allow the consumer
-> > > driver of the reset-control to know when the PM domain gets turned
-> > > on/off.
-> > > **) Move the entire reset handling into the PM domain provider, as it
-> > > obviously knows when the domain is getting turned on/off.
-> >
-> > This option is what I've explored, tested on my side.
-> >
-> > I explored it in 2 ways:
-> >
-> > 1/ SYSC modeled as an individual PM domain provider (this is more
-> >    appropriate to how HW manual described the hardware) with this the PHY
-> >    reset DT node would have to get 2 PM domains handlers (one for the
-> >    current PM domain provider and the other one for SYSC):
-> >
-> > +               phyrst: usbphy-ctrl@11e00000 {
-> > +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-> > +                       reg = <0 0x11e00000 0 0x10000>;
-> > +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-> > +                       resets = <&cpg R9A08G045_USB_PRESETN>;
-> > +                       power-domain-names = "cpg", "sysc";
-> > +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-> > R9A08G045_SYSC_PD_USB>;
-> > +                       #reset-cells = <1>;
-> > +                       status = "disabled";
-> > +
-> > +                       usb0_vbus_otg: regulator-vbus {
-> > +                               regulator-name = "vbus";
-> > +                       };
-> > +               };
-> > +
->
-> According to what you have described earlier/above, modelling the SYSC
-> as a PM domain provider seems like a better description of the HW to
-> me. Although, as I said earlier, if you prefer the reset approach, I
-> would not object to that.
+Sorry for the late reply, I was a bit busy, and needed some time to digest
+your email.
 
-Following the discussion I believe I should take this back. If I
-understand correctly, SYSC signal seems best to be modelled as a
-reset.
+On Tue, Aug 27, 2024 at 12:01:28PM -0400, Liam R. Howlett wrote:
+> * Nam Cao <namcao@linutronix.de> [240827 03:59]:
+> > On Mon, Aug 26, 2024 at 09:58:11AM -0400, Liam R. Howlett wrote:
+> > > * Nam Cao <namcao@linutronix.de> [240825 11:29]:
+> > > > When a virtual memory area (VMA) gets splitted, memtype_rbroot's entries
+> > > > are not updated. This causes confusion later on when the VMAs get
+> > > > un-mapped, because the address ranges of the splitted VMAs do not match the
+> > > > address range of the initial VMA.
+> > > > 
+> > > > For example, if user does:
+> > > > 
+> > > > 	fd = open("/some/pci/bar", O_RDWR);
+> > > > 	addr = mmap(0, 8192, PROT_READ, MAP_SHARED, fd, 0);
+> > > > 	mprotect(addr, 4096, PROT_READ | PROT_WRITE);
+> > > > 	munmap(p, 8192);
+> 
+> What is p?  By the comments below, you mean addr here?
+Yes, it should be addr. Sorry about that.
 
- Although, it looks like the USB PM domain provider should rather be
-the consumer of that reset, instead of having the reset being consumed
-by the consumers of the USB PM domain.
+> 
+> > > > 
+> > > > with the physical address starting from 0xfd000000, the range
+> > > > (0xfd000000-0xfd002000) would be tracked with the mmap() call.
+> > > > 
+> > > > After mprotect(), the initial range gets splitted into
+> > > > (0xfd000000-0xfd001000) and (0xfd001000-0xfd002000).
+> > > > 
+> > > > Then, at munmap(), the first range does not match any entry in
+> > > > memtype_rbroot, and a message is seen in dmesg:
+> > > > 
+> > > >     x86/PAT: test:177 freeing invalid memtype [mem 0xfd000000-0xfd000fff]
+> > > > 
+> > > > The second range still matches by accident, because matching only the end
+> > > > address is acceptable (to handle shrinking VMA, added by 2039e6acaf94
+> > > > (x86/mm/pat: Change free_memtype() to support shrinking case)).
+> > > 
+> > > Does this need a fixes tag?
+> > 
+> > Yes, it should have
+> > 	Fixes: 2e5d9c857d4e ("x86: PAT infrastructure patch")
+> > thanks for the reminder.
+> 
+> That commit is from 2008, is there a bug report on this issue?
 
-Did that make sense?
+Not that I am aware of. I'm not entirely sure why, but I would guess due to
+the combination of:
+- This is not an issue for pages in RAM
+- This only happens if VMAs are splitted
+- The only user-visible effect is merely a pr_info(), and people may miss it.
 
-[...]
+I only encountered this issue while "trying to be smart" with mprotect() on
+a portion of mmap()-ed device memory, I guess probably not many people do
+that.
 
-Kind regards
-Uffe
+> 
+> > 
+> > > 
+> > > > 
+> > > > Make sure VMA splitting is handled properly, by splitting the entries in
+> > > > memtype_rbroot.
+> > > > 
+> > > > Signed-off-by: Nam Cao <namcao@linutronix.de>
+> > > > ---
+> > > >  arch/x86/mm/pat/memtype.c          | 59 ++++++++++++++++++++++++++++++
+> > > >  arch/x86/mm/pat/memtype.h          |  3 ++
+> > > >  arch/x86/mm/pat/memtype_interval.c | 22 +++++++++++
+> > > >  include/linux/pgtable.h            |  6 +++
+> > > >  mm/mmap.c                          |  8 ++++
+> > > >  5 files changed, 98 insertions(+)
+> > > > 
+> ...
+> 
+> > > 
+> > > It is also a bit odd that you check VM_PFNMAP() here, then call a
+> > > function to check another flag?
+> > 
+> > Right, this check is redundant, thanks for pointing it out.
+> > 
+> > I stole this "style" from unmap_single_vma(), but I think the check is
+> > redundant there as well.
+> 
+> If you have identified a redundant check, can you please remove it with
+> a separate patch?
+
+Sure.
+
+> 
+> > 
+> > > 
+> > > > +		err = track_pfn_split(vma, addr);
+> > > > +		if (err)
+> > > > +			goto out_vma_unlink;
+> > > > +	}
+> > > > +
+> > > 
+> > > I don't think the __split_vma() location is the best place to put this.
+> > > Can this be done through the vm_ops->may_split() that is called above?
+> > 
+> > I don't think ->may_split() is a suitable place. Its name gives me the
+> > impression that it only checks whether it is okay to split the VMA, but not
+> > really does any splitting work. Also that function pointer can be
+> > overwritten by any driver.
+> 
+> It's a callback that takes the arguments you need and is called as long
+> as it exists.  Your function would deny splitting if it failed, so it
+> may not split in that case.
+> 
+> Also, any driver that overwrites it should do what is necessary for PAT
+> then. I don't love the idea of using the vm_ops either, I just like it
+> better than dropping in flag checks and arch-specific code.  I can see
+> issue with using the callback and drivers that may have their own vma
+> mapping that also use PAT, I guess.
+
+Yeah I don't love this. You mentioned another approach below, which I
+think would be the best (if it's possible). I will attempt that other
+approach.
+
+> 
+> > > 
+> > > This is arch independent code that now has an x86 specific check, and
+> > > I'd like to keep __split_vma() out of the flag checking.
+> > 
+> > I think these track_pfn_*() functions are meant to be arch-independent,
+> > it's just that only x86 implements it at the moment. For instance,
+> > untrack_pfn() and track_pfn_remap() are called in mm/ code.
+> > 
+> 
+> Arch-independent wrappers that are only used by one arch are not
+> arch-independent.  PAT has been around for ages and only exists for x86
+> and x86_64.
+> 
+> We just went through removing arch_unmap(), which was used just for ppc.
+> They cause problems for general mm changes and just get in the way.  If
+> we can avoid them, we should.
+> 
+> memtype_interval.c doesn't have any knowledge of the vmas, so you have
+> this extraction layer in memtype.c that is being bypassed here for the
+> memtype_erase(); ensuring the start-end match or at least the end
+> matches.
+> 
+> So your comment about the second range still matching by accident is
+> misleading - it's not matched at all because you are searching for the
+> exact match or the end address being the same (which it isn't in your
+> interval tree).
+
+But the second range *does* match, because the end address match?
+The second range is (0xfd001000-0xfd002000), which matches with
+(0xfd000000-0xfd002000) in the interval tree.
+
+Perhaps I should be clearer in the description..
+
+> 
+> Taking a step back here, you are splitting a range in an interval tree
+> to match a vma split, but you aren't splitting the range based on PAT
+> changing; you are splitting it based on the vma becoming two vmas.
+> 
+> Since VM_PFNMAP is in VM_SPECIAL, the splitting is never undone and will
+> continue to fragment the interval tree, so even if flags change back to
+> match each other there will always be two vams - and what changed may
+> not even be the PAT.
+
+Right, I did not consider this scenario.
+
+> 
+> So the interval split should occur when the PAT changes and needs to be
+> tracked differently.  This does not happen when the vma is split - it
+> happens when a vma is removed or when the PAT is changed.
+> 
+> And, indeed, for the mremap() shrinking case, you already support
+> finding a range by just the end and have an abstraction layer.  The
+> problem here is that you don't check by the start - but you could.  You
+> could make the change to memtype_erase() to search for the exact, end,
+> or start and do what is necessary to shrink off the front of a region as
+> well.
+
+I thought about this solution initially, but since the interval tree allow
+overlapping ranges, it can be tricky to determine the "best match" out
+of the overlapping ranges. But I agree that this approach (if possible)
+would be better than the current patch.
+
+Let me think about this some more, and I will come back later.
+
+> 
+> What I find very strange is that 2039e6acaf94 ("x86/mm/pat: Change
+> free_memtype() to support shrinking case") enables shrinking of
+> VM_PFNMAP, but doesn't allow shrinking the end address.  Why is one
+> allowed and the other not allowed?
+
+Not really sure what you mean. I think you are ultimately asking why that
+commit only matches end address, and not start address? That's because
+mremap() may shrink a VMA from [start, end] to [start, new_end] (with
+new_end < end). In that case, the range [new_end, end] would be removed
+from the interval tree, and that commit wants to match [new_end, end] to
+[start, end].
+And I don't think mremap() can shrink [start, end] to [new_start, end]?
+
+Thanks for sharing your thoughts.
+
+Best regards,
+Nam
 
