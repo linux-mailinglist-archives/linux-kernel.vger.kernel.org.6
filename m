@@ -1,157 +1,432 @@
-Return-Path: <linux-kernel+bounces-313369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DADF296A494
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E27A596A49A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45659288527
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:36:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B7F2875A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141B018E030;
-	Tue,  3 Sep 2024 16:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61DD18C32A;
+	Tue,  3 Sep 2024 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="odfxCAf9"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YMohtChu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952D18C334;
-	Tue,  3 Sep 2024 16:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9EE18BBB5;
+	Tue,  3 Sep 2024 16:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725381251; cv=none; b=WYMn8aFoj3Xqe3dN8fWDXo4U67KbSnLheuEOhRLZMOzQ98fV24G1UB976on9r0FoZGwfe0jHARdcdGFQPe6v/GIYA9riK9DuTbR9es+Fot1XbO4DhUN/KFyegPRe4X9beEh2YvMncPVAQ7MPfOpcadGHBQa5YLSfLKUqmvi6ixs=
+	t=1725381390; cv=none; b=FBn4NwzgABVL1JK/WojZ9iKmecEfxUDF5beXzs66k5EaAg6dg2XdKHGktV3n4vU4HXplmt5nfyUSNilN0udNvQHk6ioLOoFsGky910ay/m2dp+gZtRrkK4qPIVK/k/GOPkIIWmEfg9kJcdzHGTt3X85ZehMD2A3d5V3MUZEZpXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725381251; c=relaxed/simple;
-	bh=hnoOMPHIelaOOG6+6DV+DgPu+uv33EXGZHi0Ebg/Xbw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZIxnKVGQyuMY6p4AP0YoSOKYLO67XlWyJ0cEQEou9kazYjT9QbXsc7Wm2CuhPZUy5vTv0ARVfOmFi6fNxjqa61Sl/Flzpjonhv6j1i3EJJf4aGFJQuvF5YU4lZy48B8TyPYBcfUWX1h6EwnWdijigmhVd3NOIxOUaqc7C2zOppY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=odfxCAf9; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Iu88FFSUL1wGyVd5VlbCTjXI0fMdyq6cAE9Sm953SYc=; t=1725381247; x=1725986047; 
-	b=odfxCAf9t9DqQ4Zb/XeF15thxUjaFgtq/G2pOXZoTsr4fHfC1fABOEauYsiwUDh7b0g5MHgPBi3
-	AVXZKp6e5ngFwC3VE1BLJ4Wg0bLbpDd3cXAM+dtfYSXU6ulFqN74oQyzYGNnby3lYzveNaqwTwcqF
-	x832YE+9dxZ0+GCyS8vcbYS9hyY1tg6sxHRnoWrtXoG87sQ7zumfqbjnNZM2pxZyw4stFNnM73h+/
-	hbrrrVHNSK2NsJxXyk0uiqKtr9UZmqgiWOhC99vWNNHg9wJWwEJB2C2toye0ceoy9ZcpvZ4EegAPf
-	6y/CWYJ3pMqafd+XgdkGf9pNxtwa6bDOZVxA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1slWTb-00000003v4f-3lLf; Tue, 03 Sep 2024 18:33:55 +0200
-Received: from p5b13a591.dip0.t-ipconnect.de ([91.19.165.145] helo=z6.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1slWTb-00000000Z4H-2cwv; Tue, 03 Sep 2024 18:33:55 +0200
-Received: from glaubitz by z6.fritz.box with local (Exim 4.96)
-	(envelope-from <glaubitz@physik.fu-berlin.de>)
-	id 1slWTb-0000pX-0e;
-	Tue, 03 Sep 2024 18:33:55 +0200
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: feng.tang@intel.com
-Cc: akpm@linux-foundation.org,
-	bristot@redhat.com,
-	bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	vbabka@suse.cz,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	sparclinux@vger.kernel.org
-Subject: Re: sched/debug: Dump end of stack when detected corrupted
-Date: Tue,  3 Sep 2024 18:33:55 +0200
-Message-Id: <20240903163355.3187-1-glaubitz@physik.fu-berlin.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231219032254.96685-1-feng.tang@intel.com>
-References: <20231219032254.96685-1-feng.tang@intel.com>
+	s=arc-20240116; t=1725381390; c=relaxed/simple;
+	bh=543N6+Pih3rc6ARRSx5VE6TXlXwfpZlMMtlOc6RbSP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxfIJ7ZhGVUZZiJAnu4G++SNZ+iv6s+zEQU06AXt+mZQOb2VoIp0YQMAOMruyhUpHcwAv1OvEqiQPOWwU1+EH/dunq5nYlbwLFn3b4/afBUzQWdtD33R0O6bhtv5gtEmz7SPvaOyk487Jue6qeGBXVW2caXGlj7vZEqoWzRJrw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YMohtChu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D6A1840E0285;
+	Tue,  3 Sep 2024 16:36:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6vNpdbQEdZQc; Tue,  3 Sep 2024 16:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725381371; bh=utMPlXJeOSH8aOyxKwjMpiAJT4ZzqbftcxjJbD0c80k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YMohtChuZaVO2ZjNLp29AnffBfHb9IXnvXbmSYw44RFu5R9IgKWZEKFMxTVSKQztj
+	 bOfuWJnT7HjX9RfRDWUKtz0UZRmU9LEvM3KzMzPwhnYaUNThBiXM50sZXJFUzI2h1o
+	 oYhTJo4Levk3Nk0P4EOzeqwfCNK0wCj7f9jTc4g2Fd3/IXctdPGqxCCu3zVn9ttdpO
+	 VpbKm3xCQBGTYy976eQrGaayY/eBOR6lsxGSApdBVW4WdW7enT9VUVUaXNtMlR7Ptb
+	 BvERUNJXAmAwTdu4fm1uAtgSinjyZGtr/QoQZz4UWN5G7KBnn33U0bmq+Z2fASLxKF
+	 iT9L51BLDXlQwCbTgCDoQB8lc/WtoL6zoND0TtjL/3+A2AuB5oLTP2x6xlNGkVNIdo
+	 oAgUsshxP9SwI5y+JmXbPYw/FAq/0OZyyCzHB9LZRFIKFWndIP6PebV5ETvj0bNYJr
+	 4Q7DC/lISfhSv6SqZPI2CgzoHvvvWcHjDj58ChR4TAJsTIg46RGe+ciylbgNzM6dY8
+	 59fJojBQZFf99F5TpuOrLblrgnYwdT9I3OJDpx2QK+xiCzuhFKJ8fpxkhBvsNoQzG1
+	 Knzbo2fIC/FqMJZrJRDucMOG6tR8L2n/srkp0mpd45j+7kkExFY7m9Pwpg//jcz5TI
+	 NzS/z2M3O73LXKWMMgeU/TM8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5329940E0169;
+	Tue,  3 Sep 2024 16:35:25 +0000 (UTC)
+Date: Tue, 3 Sep 2024 18:35:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com, jgroves@micron.com,
+	vsalve@micron.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH v11 01/14] EDAC: Add support for EDAC device feature's
+ control
+Message-ID: <20240903163519.GAZtc6x7o9Cy1MQAsb@fat_crate.local>
+References: <20240816164238.1902-1-shiju.jose@huawei.com>
+ <20240816164238.1902-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240816164238.1902-2-shiju.jose@huawei.com>
 
-Hi Feng,
+On Fri, Aug 16, 2024 at 05:42:24PM +0100, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add generic EDAC device feature's control supports registering
 
-> When debugging a kernel hang during suspend/resume, there are random
-> memory corruptions in different places like being detected by scheduler
-> with error message:
+"features"
+
+Check your whole set.
+
+> RAS features supported in the system. Driver exposes feature's
+> control attributes to the userspace in
+
+s/the //
+
+> /sys/bus/edac/devices/<dev-name>/<ras-feature>/
 > 
->   "Kernel panic - not syncing: corrupted stack end detected inside scheduler"
-> 
-> Dump the corrupted memory around the stack end will give more direct
-> hints about how the memory is corrupted:
-> 
->  "
->  Corrupted Stack: ff11000122770000: ff ff ff ff ff ff 14 91 82 3b 78 e8 08 00 45 00  .........;x...E.
->  Corrupted Stack: ff11000122770010: 00 1d 2a ff 40 00 40 11 98 c8 0a ef 30 2c 0a ef  ..*.@.@.....0,..
->  Corrupted Stack: ff11000122770020: 30 ff a2 00 22 3d 00 09 9a 95 2a 00 00 00 00 00  0..."=....*.....
->  ...
->  Kernel panic - not syncing: corrupted stack end detected inside scheduler
->  "
-> 
-> And with it, the culprit was quickly identified to be an ethernet
-> driver with its DMA operations.
-> 
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 > ---
->  kernel/sched/core.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  drivers/edac/edac_device.c | 178 +++++++++++++++++++++++++++++++++++++
+>  include/linux/edac.h       |  60 +++++++++++++
+>  2 files changed, 238 insertions(+)
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index a795e030678c..1280f7012bc5 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -5949,8 +5949,18 @@ static noinline void __schedule_bug(struct task_struct *prev)
->  static inline void schedule_debug(struct task_struct *prev, bool preempt)
->  {
->  #ifdef CONFIG_SCHED_STACK_END_CHECK
-> -	if (task_stack_end_corrupted(prev))
-> +	if (task_stack_end_corrupted(prev)) {
-> +		unsigned long *ptr = end_of_stack(prev);
+> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+> index 621dc2a5d034..635a41db8b5a 100644
+> --- a/drivers/edac/edac_device.c
+> +++ b/drivers/edac/edac_device.c
+> @@ -570,3 +570,181 @@ void edac_device_handle_ue_count(struct edac_device_ctl_info *edac_dev,
+>  		      block ? block->name : "N/A", count, msg);
+>  }
+>  EXPORT_SYMBOL_GPL(edac_device_handle_ue_count);
 > +
-> +		/* Dump 16 ulong words around the corruption point */
-> +#ifdef CONFIG_STACK_GROWSUP
-> +		ptr -= 15;
-> +#endif
-> +		print_hex_dump(KERN_ERR, "Corrupted Stack: ",
-> +			DUMP_PREFIX_ADDRESS, 16, 1, ptr, 16 * sizeof(*ptr), 1);
+> +/* EDAC device feature */
+> +static void edac_dev_release(struct device *dev)
+> +{
+> +	struct edac_dev_feat_ctx *ctx =
+> +		container_of(dev, struct edac_dev_feat_ctx, dev);
+
+Ew, no, don't do such silly linebreaks pls.
+
+> +	kfree(ctx->dev.groups);
+> +	kfree(ctx);
+> +}
 > +
->  		panic("corrupted stack end detected inside scheduler\n");
+> +const struct device_type edac_dev_type = {
+> +	.name = "edac_dev",
+> +	.release = edac_dev_release,
+> +};
+> +
+> +static void edac_dev_unreg(void *data)
+> +{
+> +	device_unregister(data);
+> +}
+> +
+> +/**
+> + * edac_dev_feature_init - Init a ras feature
+
+s/ras/RAS/g
+
+Check your whole set.
+
+> + * @parent: client device.
+> + * @dev_data: pointer to struct edac_dev_data.
+
+I can see it is a pointer. What it is used for?
+
+> + * @feat: pointer to struct edac_dev_feature.
+> + * @attr_groups: pointer to attribute group's container.
+> + *
+> + * Returns number of scrub feature's attribute groups on success,
+> + * error otherwise.
+> + */
+> +static int edac_dev_feat_init(struct device *parent,
+> +			      struct edac_dev_data *dev_data,
+> +			      const struct edac_dev_feature *ras_feat,
+> +			      const struct attribute_group **attr_groups)
+> +{
+> +	int num;
+> +
+> +	switch (ras_feat->feat) {
+> +	case RAS_FEAT_SCRUB:
+> +		dev_data->scrub_ops = ras_feat->scrub_ops;
+> +		dev_data->private = ras_feat->scrub_ctx;
+> +		return 1;
+> +	case RAS_FEAT_ECS:
+> +		num = ras_feat->ecs_info.num_media_frus;
+> +		dev_data->ecs_ops = ras_feat->ecs_ops;
+> +		dev_data->private = ras_feat->ecs_ctx;
+> +		return num;
+> +	case RAS_FEAT_PPR:
+> +		dev_data->ppr_ops = ras_feat->ppr_ops;
+> +		dev_data->private = ras_feat->ppr_ctx;
+> +		return 1;
+> +	default:
+> +		return -EINVAL;
 > +	}
+> +}
+> +
+> +/**
+> + * edac_dev_register - register device for ras features with edac
+
+s/edac/EDAC/g
+
+Check your whole set.
+
+> + * @parent: client device.
+> + * @name: client device's name.
+> + * @private: parent driver's data to store in the context if any.
+> + * @num_features: number of ras features to register.
+> + * @ras_features: list of ras features to register.
+> + *
+> + * Returns 0 on success, error otherwise.
+> + * The new edac_dev_feat_ctx would be freed automatically.
+> + */
+> +int edac_dev_register(struct device *parent, char *name,
+> +		      void *private, int num_features,
+> +		      const struct edac_dev_feature *ras_features)
+> +{
+> +	const struct attribute_group **ras_attr_groups;
+> +	struct edac_dev_data *dev_data;
+> +	struct edac_dev_feat_ctx *ctx;
+> +	int ppr_cnt = 0, ppr_inst = 0;
+> +	int attr_gcnt = 0;
+> +	int ret, feat;
+> +
+> +	if (!parent || !name || !num_features || !ras_features)
+> +		return -EINVAL;
+> +
+> +	/* Double parse so we can make space for attributes */
+
+Who's "we"?
+
+Please use passive voice in your comments: no "we" or "I", etc.
+
+Personal pronouns are ambiguous in text, especially with so many
+parties/companies/etc developing the kernel so let's avoid them please.
+
+> +	for (feat = 0; feat < num_features; feat++) {
+> +		switch (ras_features[feat].feat) {
+> +		case RAS_FEAT_SCRUB:
+
+Does this need "fallthrough;" or somesuch?
+
+> +		case RAS_FEAT_PPR:
+> +			attr_gcnt++;
+> +			ppr_cnt++;
+> +			break;
+> +		case RAS_FEAT_ECS:
+> +			attr_gcnt += ras_features[feat].ecs_info.num_media_frus;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->dev.parent = parent;
+> +	ctx->private = private;
+> +
+> +	ras_attr_groups = kcalloc(attr_gcnt + 1, sizeof(*ras_attr_groups), GFP_KERNEL);
+> +	if (!ras_attr_groups) {
+> +		ret = -ENOMEM;
+> +		goto ctx_free;
+> +	}
+> +
+> +	if (ppr_cnt) {
+> +		ctx->ppr = kcalloc(ppr_cnt, sizeof(*(ctx->ppr)), GFP_KERNEL);
+> +		if (!ctx->ppr) {
+> +			ret = -ENOMEM;
+> +			goto groups_free;
+> +		}
+> +	}
+> +
+> +	attr_gcnt = 0;
+> +	for (feat = 0; feat < num_features; feat++, ras_features++) {
+> +		switch (ras_features->feat) {
+> +		case RAS_FEAT_SCRUB:
+> +			if (!ras_features->scrub_ops)
+> +				continue;
+> +			dev_data = &ctx->scrub;
+> +			break;
+> +		case RAS_FEAT_ECS:
+> +			if (!ras_features->ecs_ops)
+> +				continue;
+> +			dev_data = &ctx->ecs;
+> +			break;
+> +		case RAS_FEAT_PPR:
+> +			if (!ras_features->ppr_ops)
+> +				continue;
+> +			dev_data = &ctx->ppr[ppr_inst];
+> +			dev_data->instance = ppr_inst;
+> +			ppr_inst++;
+> +			break;
+> +		default:
+> +			ret = -EINVAL;
+> +			goto data_mem_free;
+> +		}
+> +		ret = edac_dev_feat_init(parent, dev_data, ras_features,
+> +					 &ras_attr_groups[attr_gcnt]);
+> +		if (ret < 0)
+> +			goto data_mem_free;
+> +
+> +		attr_gcnt += ret;
+> +	}
+
+Newline.
+
+> +	ras_attr_groups[attr_gcnt] = NULL;
+> +	ctx->dev.bus = edac_get_sysfs_subsys();
+> +	ctx->dev.type = &edac_dev_type;
+> +	ctx->dev.groups = ras_attr_groups;
+> +	dev_set_drvdata(&ctx->dev, ctx);
+
+Ditto.
+
+> +	ret = dev_set_name(&ctx->dev, name);
+> +	if (ret)
+> +		goto data_mem_free;
+> +
+> +	ret = device_register(&ctx->dev);
+> +	if (ret) {
+> +		put_device(&ctx->dev);
+> +		goto data_mem_free;
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(parent, edac_dev_unreg, &ctx->dev);
+> +
+> +data_mem_free:
+> +	if (ppr_cnt)
+> +		kfree(ctx->ppr);
+> +groups_free:
+> +	kfree(ras_attr_groups);
+> +ctx_free:
+> +	kfree(ctx);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(edac_dev_register);
+> diff --git a/include/linux/edac.h b/include/linux/edac.h
+> index b4ee8961e623..cc96f55ac714 100644
+> --- a/include/linux/edac.h
+> +++ b/include/linux/edac.h
+> @@ -661,4 +661,64 @@ static inline struct dimm_info *edac_get_dimm(struct mem_ctl_info *mci,
 >  
->  	if (task_scs_end_corrupted(prev))
->  		panic("corrupted shadow stack detected inside scheduler\n");
+>  	return mci->dimms[index];
+>  }
+> +
+> +/* EDAC device features */
+> +
+> +#define EDAC_FEAT_NAME_LEN	128
+> +
+> +enum edac_dev_feat {
+> +	RAS_FEAT_SCRUB,
+> +	RAS_FEAT_ECS,
+> +	RAS_FEAT_PPR,
 
-Have you gotten any feedback on this? Would be nice to get this merged as we're
-seeing crashes due to stack corruption on sparc from time to time and having the
-end of the stack dumped in such cases would make debugging here a bit easier.
+What are those? Comments ontop explaining pls.
 
-Thanks,
-Adrian
+> +	RAS_FEAT_MAX
+> +};
+> +
+> +struct edac_ecs_ex_info {
+> +	u16 num_media_frus;
+> +};
+> +
+> +/*
+> + * EDAC device feature information structure
+> + */
+> +struct edac_dev_data {
+> +	union {
+> +		const struct edac_scrub_ops *scrub_ops;
+> +		const struct edac_ecs_ops *ecs_ops;
+> +		const struct edac_ppr_ops *ppr_ops;
+> +	};
+> +	u8 instance;
+> +	void *private;
+> +};
+> +
+> +struct device;
+> +
+> +struct edac_dev_feat_ctx {
+> +	struct device dev;
+> +	void *private;
+> +	struct edac_dev_data scrub;
+> +	struct edac_dev_data ecs;
+> +	struct edac_dev_data *ppr;
+> +};
+> +
+> +struct edac_dev_feature {
+> +	enum edac_dev_feat feat;
+
+			ft_type;
+
+> +	u8 instance;
+> +	union {
+> +		const struct edac_scrub_ops *scrub_ops;
+> +		const struct edac_ecs_ops *ecs_ops;
+> +		const struct edac_ppr_ops *ppr_ops;
+> +	};
+> +	union {
+> +		void *scrub_ctx;
+> +		void *ecs_ctx;
+> +		void *ppr_ctx;
+> +	};
+
+Or drop the silly union and simply do
+
+	void *ctx;
+
+> +	union {
+> +		struct edac_ecs_ex_info ecs_info;
+> +	};
+
+Union with a single member?!
+
+> +};
+> +
+> +int edac_dev_register(struct device *parent, char *dev_name,
+> +		      void *parent_pvt_data, int num_features,
+> +		      const struct edac_dev_feature *ras_features);
+>  #endif /* _LINUX_EDAC_H_ */
+> -- 
+> 2.34.1
+> 
 
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
