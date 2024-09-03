@@ -1,176 +1,269 @@
-Return-Path: <linux-kernel+bounces-313123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3920696A08D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:29:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F8696A098
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6429287989
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:29:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DBF1C23DF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A75A187849;
-	Tue,  3 Sep 2024 14:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B85E2AE68;
+	Tue,  3 Sep 2024 14:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nZEvQmf6"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Khq2s4f6"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EB013D50A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4710E7581B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373626; cv=none; b=uyNZ/KIBbJjnE7FhRnJpvr5iTxanu/SJmvtQMAVr/E+OEyJiArDH/UqheDcicLec++KrwBfDlHB2YUJSrZgZbIUhZF+wVYk19F+umyoLZ2HzDwHVyqD1pWpXohb33nSU/YA0SF7cXGt6rjaV6IQ3lhkGlqkxXUnCs3/BTgDVo8M=
+	t=1725373691; cv=none; b=CKQ4Ub2A3biMJbssqyGRS8inuipH0GrXHLpAfLgiS62nzZaENEBPpJCG4KO8E+PIBzvSvX3tWxYwdY9+ao8D3zmUjXDX37m4tAGWy6l9zYoPQrdP4t76pSSl2ZdqErRgEIyx9eRbdUREs2KZSU12dEoOmVoU79uz1lhB7Z+WUdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373626; c=relaxed/simple;
-	bh=YJZad+gj0lbbhihO+iH3TxZ51TS0VnirXp0wz604WKQ=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=gDt2tIxfq0tmdChdkMBSyJWp5w+qsfyBEXnNkbZIW81Mfuj3pV1wDfY6SP55U6ttKJnIPZvUpr7IbKsJo/lX4aAAHDjRO2nG/mgaTtL6csafocez026c1zsjdvfWSvWE2jNcWB2mo2vKYJSYjwYwZpTGc2z4KHFgL4RfFk/8MKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nZEvQmf6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2057c6c57b5so11764315ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725373624; x=1725978424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GoTw6t0Be8aKNozeOjjMtSaTe5hpCqncxCg69X7v8Z4=;
-        b=nZEvQmf6uAOW2qS8vmhA5JnieVaPl3/T2pwH3w3jIIjgSnm9dXRhSkMl3WO/BHlUSk
-         ZWRxArZmPu1ubKWXmpP7a1O94ZtDaZJRoEi9GiKy2G+QhXyN6ecdhOD7QxQzWxhaVPZh
-         sMpsdBeRDz57yao6mx7x2vXXdk7E7xTjJhULrrcJxkXGRukb4caxpaXViADG6LYLwBLR
-         7lTtNr5IR71TV9iHTyFaOw2YZuZsyD0LFaSh7SIGt9LXutGjS/o6e4xb4D74w0FKgZ/v
-         RxqAxuAJKFVQ0Kb/uc/dAP9J4mPkBJyjguSGdQrKn/nh3AuUsZpotBEJjNdy7yGS5/Qh
-         ipVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725373624; x=1725978424;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GoTw6t0Be8aKNozeOjjMtSaTe5hpCqncxCg69X7v8Z4=;
-        b=TnIrqw1CdvUBvpAZNYoZ1haAy1Ez3/kHzD6pQED7wQ3eLylEn5/WKfEkpOgeRa0hu1
-         e0npGof8TsqKXg9yU4hRiiRxHS6f+cKxlZ4OsG4BDtWlfNS6Ot/qWzxmxe7U2OUDlje1
-         1+iaqg1yOlpvgX9Q+v2vGBZIkEzZnQoUzEJaYI5+tt9yR7mSll6hjjFAnbNR6Q8glKKl
-         cpZSG4x7DNuRPGZRqo//l/MNIq56JXz3aWyFzsF/81JlUF0ghJ54UiSBIewkrJOAvUGg
-         9ecq1RP8N16+P9j8uK2Z4vTWg4xcb5SlUHPDAFwVAVVHa/N4lbRADB8NpqA8UNuhY7wP
-         qRdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1/sO2JYvvg6xd24YaLN249/KmoaLS2avdXnA5R06ikRT0oquI/pVIpqhiDbHbTJxCYsH23CikaNlI89U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0oG+X91aZbJHpwaL+02gv4orAJorIdnILosRxIXJTdG6LST+C
-	TgrUz4duiObvch7Kp2FkFAmkFFOBEn6cNJRtqR79MAt30MaQsqYrqqARoc1Gm4c=
-X-Google-Smtp-Source: AGHT+IFEJHC4rZXRkLgfnKMPzqA7B9JvTzO3tbZukAMVMQi69t3KSZUdjoFwdxWGHbJK+agz7xqErg==
-X-Received: by 2002:a17:902:dace:b0:205:8b84:d5e8 with SMTP id d9443c01a7336-2058b84dad4mr100289045ad.18.1725373623730;
-        Tue, 03 Sep 2024 07:27:03 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051555140csm82048875ad.244.2024.09.03.07.27.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 07:27:03 -0700 (PDT)
-Date: Tue, 03 Sep 2024 07:27:03 -0700 (PDT)
-X-Google-Original-Date: Tue, 03 Sep 2024 07:27:01 PDT (-0700)
-Subject:     Re: [PATCH 3/3] riscv: mm: Do not restrict mmap address based on hint
-In-Reply-To: <tencent_A414DA7D8E69B831317A21368D057C378208@qq.com>
-CC: Charlie Jenkins <charlie@rivosinc.com>, corbet@lwn.net,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, shuah@kernel.org, rsworktech@outlook.com,
-  alexghiti@rivosinc.com, linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: cyy@cyyself.name
-Message-ID: <mhng-ad0c8c3b-568a-484d-bc3d-49b56a11dcd6@palmer-ri-x1c9>
+	s=arc-20240116; t=1725373691; c=relaxed/simple;
+	bh=ojz+7WparPkVQwWyEjl4rdXO1jICIRfxsnlaOrFuNlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T5rksNGErLpvFNoq/88MSg7591gDBe0tikFVvraYJE0Qc7h2LG31CFm2QLVBua7dfEtIQKQU5OgTmeWPcltBFhLFmatKIeT2v89KxS2/WzQw/oilImp3gZpvV+loniXM9Xpzn/8EVPBjpQco2L0ZDFeQ8O9uftb57weKf9C1nzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Khq2s4f6; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7348caab-726c-4c30-8634-a7820aec97d1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725373685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ymhIc+2OBz7c40DDcJxEUjad+Et8wdGnqysD/7o2s18=;
+	b=Khq2s4f686heVHMRR8ofZwIgYqRYWzjWwUl8nXBKpHbqHbJbsBtCaKhGArrrLur05F9Sl9
+	35ceY7w+71vvS4uimweBoLi16R0G8++NiTSZVmh11YHxvnHkKbZFjXHBQTuOkmF7qc+JpO
+	EU7MZuSv5cVlo6pRUhG33j4Q0bINjxY=
+Date: Tue, 3 Sep 2024 10:27:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Subject: Re: [PATCH 3/3] arm64: zynqmp: Add thermal zones
+To: "Thangaraj, Senthil Nathan" <SenthilNathan.Thangaraj@amd.com>,
+ "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20240812215129.3599832-1-sean.anderson@linux.dev>
+ <20240812215129.3599832-4-sean.anderson@linux.dev>
+ <LV3PR12MB9260AC14D997DED122284940E2932@LV3PR12MB9260.namprd12.prod.outlook.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <LV3PR12MB9260AC14D997DED122284940E2932@LV3PR12MB9260.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 26 Aug 2024 19:24:38 PDT (-0700), cyy@cyyself.name wrote:
->
->
->> On Aug 27, 2024, at 00:36, Charlie Jenkins <charlie@rivosinc.com> wrote:
->> 
->> The hint address should not forcefully restrict the addresses returned
->> by mmap as this causes mmap to report ENOMEM when there is memory still
->> available.
->> 
->
-> Fixing in this way will break userspace on Sv57 machines as some
-> issues mentioned in the patch [1].
->
-> I suggest restricting to BIT(47) by default, like patch [2], to
-> align with kernel behavior on x86 and aarch64, and this does exist
-> on x86 and aarch64 for quite a long time. In that way, we will also
-> solve the problem mentioned in the first patch [1], as QEMU enables
-> Sv57 by default now and will not break userspace.
->
-> [1] https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosinc.com/
-> [2] https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B511994F4805@qq.com/
-
-I'm going to pick this up as it's a revert and a bug fix, so we can 
-backport it.  If the right answer is to just forget about the sv39 
-userspace and only worry about sv48 userspace then your patches are 
-likely the way to go, but there's a handful of discussions around that 
-which might take a bit.
-
->
+On 9/3/24 04:32, Thangaraj, Senthil Nathan wrote:
+> Hi Sean,
+> 
+> Please find my review comments inline.
+> 
 > Thanks,
-> Yangyu Chen
->
->> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->> Fixes: b5b4287accd7 ("riscv: mm: Use hint address in mmap if available")
->> Fixes: add2cc6b6515 ("RISC-V: mm: Restrict address space for sv39,sv48,sv57")
->> Closes: https://lore.kernel.org/linux-kernel/ZbxTNjQPFKBatMq+@ghost/T/#mccb1890466bf5a488c9ce7441e57e42271895765
+> Senthil.
+> 
+>> -----Original Message-----
+>> From: Sean Anderson <sean.anderson@linux.dev>
+>> Sent: Monday, August 12, 2024 2:51 PM
+>> To: Simek, Michal <michal.simek@amd.com>; linux-arm-
+>> kernel@lists.infradead.org
+>> Cc: Rob Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
+>> Krzysztof Kozlowski <krzk+dt@kernel.org>; linux-kernel@vger.kernel.org;
+>> devicetree@vger.kernel.org; Sean Anderson <sean.anderson@linux.dev>
+>> Subject: [PATCH 3/3] arm64: zynqmp: Add thermal zones
+>> 
+>> Add some thermal trip points. We can't undervolt the CPUs to save power
+>> when we underclock them, so there isn't really a point in throttling them until
+>> we are about to overheat. As such, the passive trip point is right below the
+>> critical trip point.
+>> 
+>> The critical trip point is the extended/industrial-grade maximum junction
+>> temperature of 100C minus the maximum temperature sensor error of 3.5C
+>> (in the range -55C to 110C). Automotive- and military-grade parts can go up
+>> to 125C, but as far as I can tell there is no way to detect them at runtime.
+>> Userspace can adjust the trip points at runtime, but this may not be viable
+>> when booting above 100C. I think it's reasonable to ask automotive/military
+>> users to edit their device trees to bump the trip points, but if that proves to be
+>> an issue we can always go with no default temperatures. However, that
+>> wouldn't be too nice for the majority of extended/industrial users.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 >> ---
->> arch/riscv/include/asm/processor.h | 26 ++------------------------
->> 1 file changed, 2 insertions(+), 24 deletions(-)
 >> 
->> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
->> index 8702b8721a27..efa1b3519b23 100644
->> --- a/arch/riscv/include/asm/processor.h
->> +++ b/arch/riscv/include/asm/processor.h
->> @@ -14,36 +14,14 @@
+>>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 86
+>> ++++++++++++++++++++++++++
+>>  1 file changed, 86 insertions(+)
 >> 
->> #include <asm/ptrace.h>
+>> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>> b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>> index 21c1adbaf35f..467f084c6469 100644
+>> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>> @@ -18,6 +18,7 @@
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>  #include <dt-bindings/power/xlnx-zynqmp-power.h>
+>>  #include <dt-bindings/reset/xlnx-zynqmp-resets.h>
+>> +#include <dt-bindings/thermal/thermal.h>
 >> 
->> -/*
->> - * addr is a hint to the maximum userspace address that mmap should provide, so
->> - * this macro needs to return the largest address space available so that
->> - * mmap_end < addr, being mmap_end the top of that address space.
->> - * See Documentation/arch/riscv/vm-layout.rst for more details.
->> - */
->> #define arch_get_mmap_end(addr, len, flags) \
->> ({ \
->> - unsigned long mmap_end; \
->> - typeof(addr) _addr = (addr); \
->> - if ((_addr) == 0 || is_compat_task() || \
->> -    ((_addr + len) > BIT(VA_BITS - 1))) \
->> - mmap_end = STACK_TOP_MAX; \
->> - else \
->> - mmap_end = (_addr + len); \
->> - mmap_end; \
->> + STACK_TOP_MAX; \
->> })
+>>  / {
+>>  	compatible = "xlnx,zynqmp";
+>> @@ -36,6 +37,7 @@ cpus {
+>>  		#size-cells = <0>;
 >> 
->> #define arch_get_mmap_base(addr, base) \
->> ({ \
->> - unsigned long mmap_base; \
->> - typeof(addr) _addr = (addr); \
->> - typeof(base) _base = (base); \
->> - unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base); \
->> - if ((_addr) == 0 || is_compat_task() || \
->> -    ((_addr + len) > BIT(VA_BITS - 1))) \
->> - mmap_base = (_base); \
->> - else \
->> - mmap_base = (_addr + len) - rnd_gap; \
->> - mmap_base; \
->> + base; \
->> })
+>>  		cpu0: cpu@0 {
+>> +			#cooling-cells = <2>;
+>>  			compatible = "arm,cortex-a53";
+>>  			device_type = "cpu";
+>>  			enable-method = "psci";
+>> @@ -46,6 +48,7 @@ cpu0: cpu@0 {
+>>  		};
 >> 
->> #ifdef CONFIG_64BIT
+>>  		cpu1: cpu@1 {
+>> +			#cooling-cells = <2>;
+>>  			compatible = "arm,cortex-a53";
+>>  			device_type = "cpu";
+>>  			enable-method = "psci";
+>> @@ -56,6 +59,7 @@ cpu1: cpu@1 {
+>>  		};
 >> 
->> -- 
->> 2.45.0
+>>  		cpu2: cpu@2 {
+>> +			#cooling-cells = <2>;
+>>  			compatible = "arm,cortex-a53";
+>>  			device_type = "cpu";
+>>  			enable-method = "psci";
+>> @@ -66,6 +70,7 @@ cpu2: cpu@2 {
+>>  		};
 >> 
+>>  		cpu3: cpu@3 {
+>> +			#cooling-cells = <2>;
+>>  			compatible = "arm,cortex-a53";
+>>  			device_type = "cpu";
+>>  			enable-method = "psci";
+>> @@ -406,6 +411,87 @@ ams {
+>>  			<&xilinx_ams 27>, <&xilinx_ams 28>, <&xilinx_ams
+>> 29>;
+>>  	};
+>> 
+>> +
+>> +	tsens_apu: thermal-sensor-apu {
+>> +		compatible = "generic-adc-thermal";
+>> +		#thermal-sensor-cells = <0>;
+>> +		io-channels = <&xilinx_ams 7>;
+>> +		io-channel-names = "sensor-channel";
+>> +	};
+>> +
+>> +	tsens_rpu: thermal-sensor-rpu {
+>> +		compatible = "generic-adc-thermal";
+>> +		#thermal-sensor-cells = <0>;
+>> +		io-channels = <&xilinx_ams 8>;
+>> +		io-channel-names = "sensor-channel";
+>> +	};
+>> +
+>> +	tsens_pl: thermal-sensor-pl {
+>> +		compatible = "generic-adc-thermal";
+>> +		#thermal-sensor-cells = <0>;
+>> +		io-channels = <&xilinx_ams 20>;
+>> +		io-channel-names = "sensor-channel";
+>> +	};
+>> +
+>> +	thermal-zones {
+>> +		apu-thermal {
+>> +			polling-delay-passive = <1000>;
+>> +			polling-delay = <5000>;
+> 
+> How did we arrive at these delays, 1000 and 5000 ? could you please clarify ?
+
+They're just arbitrary. Feel free to suggest other numbers. I could find
+no guidance on this matter (or anything else thermal-related).
+
+>> +			thermal-sensors = <&tsens_apu>;
+>> +
+>> +			trips {
+>> +				apu_passive: passive {
+>> +					temperature = <93000>;
+>> +					hysteresis = <3500>;
+>> +					type = "passive";
+>> +				};
+>> +
+>> +				apu_critical: critical {
+>> +					temperature = <96500>;
+>> +					hysteresis = <3500>;
+>> +					type = "critical";
+>> +				};
+>> +			};
+>> +
+>> +			cooling-maps {
+>> +				map {
+>> +					trip = <&apu_passive>;
+>> +					cooling-device =
+>> +						<&cpu0 THERMAL_NO_LIMIT
+>> THERMAL_NO_LIMIT>,
+>> +						<&cpu1 THERMAL_NO_LIMIT
+>> THERMAL_NO_LIMIT>,
+>> +						<&cpu2 THERMAL_NO_LIMIT
+>> THERMAL_NO_LIMIT>,
+>> +						<&cpu3 THERMAL_NO_LIMIT
+>> THERMAL_NO_LIMIT>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		rpu-thermal {
+>> +			polling-delay = <10000>;
+> 
+> Same questions, how did we come up with number 10000
+> 
+>> +			thermal-sensors = <&tsens_rpu>;
+>> +
+>> +			trips {
+>> +				critical {
+>> +					temperature = <96500>;
+>> +					hysteresis = <3500>;
+>> +					type = "critical";
+>> +				};
+> 
+> Any reason why we haven't defined for passive trip point for RPU ?
+
+What is there to do? It is up to the RPU software to do something if the
+RPU is going to overheat. But the more-likely occurrence is that the APU
+is overheating and the heat is spreading to the RPU. In which case, the
+APU passive trip point will handle things.
+
+>> +			};
+>> +		};
+>> +
+>> +		pl-thermal {
+>> +			polling-delay = <10000>;
+>> +			thermal-sensors = <&tsens_pl>;
+>> +
+>> +			trips {
+>> +				critical {
+>> +					temperature = <96500>;
+>> +					hysteresis = <3500>;
+>> +					type = "critical";
+>> +				};
+>> +			};
+> Same question, any reason why we haven't defined for passive trip point for PL ?
+>> +		};
+>> +	};
+>> +
+>>  	amba: axi {
+>>  		compatible = "simple-bus";
+>>  		bootph-all;
+>> --
+>> 2.35.1.1320.gc452695387.dirty
+> 
 
