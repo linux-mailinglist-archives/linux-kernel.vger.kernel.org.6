@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-313391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A335796A4DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620AE96A4E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE221F217B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2044A288A94
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A89F18BC3B;
-	Tue,  3 Sep 2024 16:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iEh+Qdhe"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049E18BC3A;
+	Tue,  3 Sep 2024 16:56:46 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DB017A90F;
-	Tue,  3 Sep 2024 16:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD4E17A90F;
+	Tue,  3 Sep 2024 16:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725382475; cv=none; b=aeYoChrpvU8KzIsmjIcxnwTGPfYHOX3EazPd3ICY7QunITlsOWgUorsq6S+1O/ewPR0yoNd1E2y0wXmW6enkA9vrFwX6g3L0J+A0r+nh8zlQfN+FTi1fZYP5jaDjZlurWfj3tcm70Ou11ROqJVBoUa3H3i9t9K6l05QfGiLWy3k=
+	t=1725382606; cv=none; b=CH16yAGkRewze/Ws2dnnKnbkOJq8kYyLi5OmJA/dYVzzwZhRxaDRp/ovGmncF6CPyW3Db80pTN6+2DHfcyUViZGRGiky7TY/0Xp/vaYK5X3YFLg3W758XDzfAhOi/xSKr5bwWKsTFpuFjqxFYzSS8gM8v355gQhr1dK7DQwBKdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725382475; c=relaxed/simple;
-	bh=8W2FKf1mX6wOlnKqq3kseLdpAUtcbmJpAgWyIYzTOco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDMRlVB/FFycEWruOzy6tr0LytmZpeLqumA9d3MrCJCaeTc6HIEiSp3SfWb9lxSXe3I4mycS2JunM2K1CVWkM1Wv3/6csTci34rOwZM9BtUdLwpR0ELtvRFJk2UZo49UBTzDHMeN85fHfbtYtEYMD3hRW+d9OuLkZRxWiChEHd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iEh+Qdhe; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 61C9D40E0275;
-	Tue,  3 Sep 2024 16:54:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6uHhZfpwbo0n; Tue,  3 Sep 2024 16:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725382467; bh=pYKhtjki6SeFDno2F6TDAHe/MTQ7DiBiBkBNTh+qMDY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iEh+QdheQQujp8eWR6xyHMIMIqI26xwx4REdP0K1dOLVoq5ZVZjIZDM8LPgqXKjIt
-	 +51UjdOFu8cQRG9q/E8AW8HYjUS+lvHqif8zZS33UrCBdVIp1Taf4pHEeCjt4DyvZC
-	 G8XXZ4GQ8unC5uTn1+t+f023dbcmwwrXAqrLEKG5LOrMbfW6b8aLjNbPAenMVmOHmb
-	 UYULQ+wES+tNYhB1CrwueQdUIVxy6JM0JiHxlHuuCtJJZcb3tOsnCKmMh8K1B0Ub+u
-	 p02zVIineHl5B8eTW8i+5V1xRgiQou7neqZ4J7uSs10GAW4WsCabtOpif7iP7MMclt
-	 o8iWEwyjjTFUrSag7eNwY8nneI9zgxh/tQm8Bfps3ITdWOOVj97o3yyeTsrJTD6WO6
-	 rmM3cMPwZ8iVdZn8vm+PeU97RLksk4gPOXit8EAX18Jp6AnzHPkDAEEuaMfHvcjsyI
-	 6IFvRZHF/z3rtCYPKhcS8DHAvv+Y/3RkiRXHIsq200Ijo9wA1Og0GZooZWFYa7yR0l
-	 FPWQK1pBRcFySzJx/pefP9T18dSzt4cBmS3vZNRqpPKaFsRy73JheqcA/yUGxDb0/G
-	 YEFBMaL+Jbq3P5oZvKZ6Cb5UMwWfqvVGQLzK0bjhjOr5wwQ8ZbCkHK/BBpB3pay1DK
-	 LFMw4yDYRpeK/Cy2PQklEtfI=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 14E8540E0198;
-	Tue,  3 Sep 2024 16:54:12 +0000 (UTC)
-Date: Tue, 3 Sep 2024 18:54:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com,
-	dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
-	x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	thomas.lendacky@amd.com, michael.roth@amd.com,
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
-Message-ID: <20240903165406.GBZtc_LmcBbsGql9Dj@fat_crate.local>
-References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
- <87475131-856C-44DC-A27A-84648294F094@alien8.de>
- <ZtCKqD_gc6wnqu-P@google.com>
- <155cb321-a169-4a56-b0ac-940676c1e9ee@amd.com>
- <26da9c1f-3cb6-45a5-b4df-1e4838057ea4@amd.com>
+	s=arc-20240116; t=1725382606; c=relaxed/simple;
+	bh=rKkYRwFcgoQMTnREOmP35/mtE44/WeGdXpoaxJyIHhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDGc+I/AY41w3Rjg98hzmL4snUXSJOmgrY0lIvxj2IPU/FrEwuueaGjKyWcd1XcpM1UmCyv/dDzeaXrm4lnOi/fci3Z+hfUJXGl7lO0UR3dy/f9vXssSa8g0KSEnQ4a9v7MV0cIsRq3zwRN+8EsTnN52hxEop0PZYAzyZYosCFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WysGf22nGz9sSH;
+	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id JzJmN4SzLcUB; Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WysGf1FZ7z9sSC;
+	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A00F8B778;
+	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 1Eunu3JRLihx; Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
+Received: from [192.168.234.228] (unknown [192.168.234.228])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9C6338B774;
+	Tue,  3 Sep 2024 18:56:41 +0200 (CEST)
+Message-ID: <90924209-888d-4ff3-8f60-f82a073bcf1c@csgroup.eu>
+Date: Tue, 3 Sep 2024 18:56:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <26da9c1f-3cb6-45a5-b4df-1e4838057ea4@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] of/irq: handle irq_of_parse_and_map() errors
+To: Ma Ke <make24@iscas.ac.cn>, jochen@scram.de, andi.shyti@kernel.org,
+ grant.likely@linaro.org, thierry.reding@gmail.com, rob.herring@calxeda.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240830142127.3446406-1-make24@iscas.ac.cn>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240830142127.3446406-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 04:08:35PM -0500, Kalra, Ashish wrote:
-> Are you convinced with Sean's feedback here that this is a required feature to fix ?
 
-Yes.
 
-Thx.
+Le 30/08/2024 à 16:21, Ma Ke a écrit :
+> Zero and negative number is not a valid IRQ for in-kernel code and the
+> irq_of_parse_and_map() function returns zero on error.  So this check for
+> valid IRQs should only accept values > 0.
 
--- 
-Regards/Gruss,
-    Boris.
+unsigned int irq_of_parse_and_map(struct device_node *node, int index);
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I can't see how an 'unsigned int' can be negative.
+
+Christophe
+
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: f7578496a671 ("of/irq: Use irq_of_parse_and_map()")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>   drivers/i2c/busses/i2c-cpm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-cpm.c b/drivers/i2c/busses/i2c-cpm.c
+> index 4794ec066eb0..41e3c95c0ef7 100644
+> --- a/drivers/i2c/busses/i2c-cpm.c
+> +++ b/drivers/i2c/busses/i2c-cpm.c
+> @@ -435,7 +435,7 @@ static int cpm_i2c_setup(struct cpm_i2c *cpm)
+>   	init_waitqueue_head(&cpm->i2c_wait);
+>   
+>   	cpm->irq = irq_of_parse_and_map(ofdev->dev.of_node, 0);
+> -	if (!cpm->irq)
+> +	if (cpm->irq <= 0)
+>   		return -EINVAL;
+>   
+>   	/* Install interrupt handler. */
 
