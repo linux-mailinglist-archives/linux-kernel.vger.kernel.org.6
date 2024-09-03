@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-312030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CE2969108
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F45969149
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E631C22945
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDFF1F22EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648691CCEE2;
-	Tue,  3 Sep 2024 01:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25BC1CCEDD;
+	Tue,  3 Sep 2024 02:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTXMmwgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FCC4685;
-	Tue,  3 Sep 2024 01:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Zqj48fbM"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5990B1581E5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725327628; cv=none; b=WmQQtCBueIzFS0UxJZgYNxQdN1peuj3otEIV7CRBkh7U2xD/bkW+95Bm4EIPpVhaFEGf1GCNPSm/zfioaZKyzdnXqH7SRxDHE1YPJAS0jXILR1xX4JI6hQRNKWShrqqA4+QyhQo2W9nEa2uwGgLHxBRoKKwaOIp2iDS3uhvr1OA=
+	t=1725329147; cv=none; b=aW/afUyf5t371qOahOlyU/NRHJQCPhYbowAJCAYBqtGzKk+/lbbMfYsZ+gckl2qVrUv/FJR0B7k5SoYWqTcBl9k9b9LvDYpqh+ceYHfw8LzteHgUQoCB+T+fL/kdmSPfYpMddsPITLfVjKRARpCojp+8GNKOEhAmRqPNWjwty2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725327628; c=relaxed/simple;
-	bh=fLY1zZHneHkscAokWVVEhoFYpulyXBBVEIROgVCIbrA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=FThyw9egSZg4NcZ5GZbuw6mbznjRhsMa8gpA5K20zhOzpoqS/POfwWSfAu5Ap0T5ZdZAolbFDOFvb6KjhKAdM9/DmAueoJRWm9vLcig2OZ8Eh2Hr2KG8eBCCjFs+5nwq/iTeajfFDhLUS+N6JrYVSwzkLqilxT59pIeecaSw30E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTXMmwgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D175C4CEC2;
-	Tue,  3 Sep 2024 01:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725327628;
-	bh=fLY1zZHneHkscAokWVVEhoFYpulyXBBVEIROgVCIbrA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=tTXMmwgY5EaC4asHayQkTwE2bHEnAU2JLE1SF7ME08hMKfBqDIVr5CQGk1gnssWLn
-	 1ZOQafCCB9icAHF07TRxKhUtKTV312zpR8xXuLWIY3uDXDOpDH5NlHMQcKKXJsKsaI
-	 IALxS+/CilptWzvK91bMf1eNECmT6t8B4Jg1HC5RcWxm3cU3du5QhVQoSYUrSZG/V3
-	 4En1l0Li8Lq4an+ZM6wY0TCDWV2+DWlm8pZRdaoQXFcJwZx5l9aQpgbN5AAHKCMdft
-	 TGMQSMuE6dipEVTpqhHZhxQ7DHiV+lPpU7tC/xOJt+gCPKR639bckPz67bUj3qs+Ay
-	 pAPQP35aV2Cbg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D6F3805D82;
-	Tue,  3 Sep 2024 01:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725329147; c=relaxed/simple;
+	bh=Ns+E8hrjd/ghEa5DY5olrRcrI4vwyq4CJUUyyiR/4Vw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H2cMTA9bdil/aztXYoh6Tm2+v3qark6VrcwOuAr5/ssyqHLwe2HSUiB+cC/0oYSwjmd5pCi2kX0WF0YlamlG0KCc93bVc3NSptrXQV3ZiQ+xnbJn5zOcQpkCThfRzI1B/BaZ4v+ISDjCtcYSb+LAqdShNHB30c131Q5bsDZPbn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Zqj48fbM; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZyFV9
+	yQfBbszpp7tI1HamkYKcyO0B0xhk9UbvaXQsOU=; b=Zqj48fbMs5WiskT7LadhY
+	qqKDC+gUtS/beWq7TqFYl8+FwPq73vsbonwk4ggaPl0eCRUAT06XuJx3o/Mdkr/v
+	tMp6SSjz3PbR8LrbUJlfZFTlJ+ZGTHp/OIyaltJqwZDjNqog6Do6LhMZL6Jql6VB
+	FjPuGwOtLeiNp8zZQsUSgw=
+Received: from debian.lan (unknown [36.33.36.240])
+	by gzsmtp1 (Coremail) with SMTP id sCgvCgAX3z3NbtZmpC5_Ag--.62293S2;
+	Tue, 03 Sep 2024 10:05:02 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: gregkh@linuxfoundation.org
+Cc: philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH] staging: rtl8723bs: Remove an unused struct in rtw_cmd.h
+Date: Tue,  3 Sep 2024 09:44:02 +0800
+Message-Id: <20240903014402.170750-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +53,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] netdev-genl: Set extack and fix error on napi-get
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172532762901.4027019.9275970527114180608.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Sep 2024 01:40:29 +0000
-References: <20240831121707.17562-1-jdamato@fastly.com>
-In-Reply-To: <20240831121707.17562-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, amritha.nambiar@intel.com,
- stable@kernel.org, kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, sridhar.samudrala@intel.com, sdf@fomichev.me,
- danielj@nvidia.com, linux-kernel@vger.kernel.org
+X-CM-TRANSID:sCgvCgAX3z3NbtZmpC5_Ag--.62293S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr47uFykZF4rCF1fuw13XFb_yoW3Wwb_Ca
+	y7tFn3Wr1DArn7Zr4UGF18AryvqF1xJw40qrn5KFZ8ZFsI9F15Jw1vqr47uFW5Wa17tr9x
+	Z3WFqrySkr1rWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbLSdDUUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYA5PamV4I+SUPgAAs7
 
-Hello:
+struct getcountjudge_rsp is not used, just remove it.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+ drivers/staging/rtl8723bs/include/rtw_cmd.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-On Sat, 31 Aug 2024 12:17:04 +0000 you wrote:
-> In commit 27f91aaf49b3 ("netdev-genl: Add netlink framework functions
-> for napi"), when an invalid NAPI ID is specified the return value
-> -EINVAL is used and no extack is set.
-> 
-> Change the return value to -ENOENT and set the extack.
-> 
-> Before this commit:
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] netdev-genl: Set extack and fix error on napi-get
-    https://git.kernel.org/netdev/net-next/c/4e3a024b437e
-
-You are awesome, thank you!
+diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+index fe1b03101203..cb44119ce9a9 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
++++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+@@ -516,10 +516,6 @@ struct drvextra_cmd_parm {
+ 
+ /*------------------- Below are used for RF/BB tuning ---------------------*/
+ 
+-struct	getcountjudge_rsp {
+-	u8 count_judge[MAX_RATES_LENGTH];
+-};
+-
+ struct addBaReq_parm {
+ 	unsigned int tid;
+ 	u8 addr[ETH_ALEN];
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
 
