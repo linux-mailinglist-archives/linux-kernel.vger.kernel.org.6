@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-312920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E10969DB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00BE969DBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9CA1C210FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35091C212EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7DA1C987F;
-	Tue,  3 Sep 2024 12:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDDA1D6DDA;
+	Tue,  3 Sep 2024 12:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B4TNSYdR"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DSHOxEmR"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCC31D096C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C515F1C9851
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367067; cv=none; b=aLGzglqcViBjEsblKxc1xfjd1opf++aTa4Smx/wk7ctN//Fx/JFUjJvoIj99L/1sPdJ8ur7TaFUnw2Y4zAxMo4JqOEWpbtodWXR8dzkLgeX8WdxE40TzVvfqNDJD5RjTDQlo1kZEX4k6nbqnDru6ke6Vha8CwVEiMK6lR+oox5E=
+	t=1725367073; cv=none; b=KJ0SHZM3Sgcm8VtQ0+mjwGV3imPoZqHWN5rc+3rwfOifBPbk2UjxQcyOZes5szUljB/MJhqicev7lbYLUGFfFjV21uPWZFyB4EF/46FaDYJDsz60FeAqKDlT/BCrXi2Hud1mWr5p9+CcEmxIr+VZJEZ8HlfDqsV6ydvY4nOxQTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367067; c=relaxed/simple;
-	bh=w0NDR4g3yWZcVdllP+36hvrmByCu7wczMm3XTMj/jGM=;
+	s=arc-20240116; t=1725367073; c=relaxed/simple;
+	bh=vAJYUB1JYAdTSCX3IiQu6MnRzSD3ZDq0H7nrMseKveQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cpuRa4S/G0wAeNWS6Fq1/UiFOa6AF8hna7kQR/txIq2ZKGWWfIh+FjRfT74DNXLXoKzW9LLiiEgjfAEg2lEHRsUmRVcjhjRgWChowxha0S+bPZP80jOOs90R2/NnqMPSr6JeKyBa3Y/3xsiVMZ9trdYyQYZDiYVmBzIBsJoLMi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B4TNSYdR; arc=none smtp.client-ip=209.85.219.170
+	 To:Cc:Content-Type; b=NunglB5y1UXUs6bhzVcUf0WyJ4d+Pfew09/atLULNEc4TNFSzsnLI+TAN5AICzrwZmWdgx3wyK49Ujpa9IpqV2KB358wq2bOJE9zJSVrd2pkdyJzbyjBpfOOsi5lErQJA2XG9/KZu/wVmRSknt2bVs/MR8an2Qi20+xodMaKka4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DSHOxEmR; arc=none smtp.client-ip=209.85.219.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a7c25e350so3903874276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:37:44 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e1cf1a4865aso900472276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725367064; x=1725971864; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725367071; x=1725971871; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRSvMnDTMDKxhA7VhtYh7uLTsocsLyQdi8v0n2nl6pk=;
-        b=B4TNSYdROzfSRY2GSYbhWSiTJ2y+IProWkB1BIpcDNtrVd8Vg8k38hVWC3aoFTjSZd
-         B1U5eIWJZ3QRkNkowCgI5SVw6csdua6+V6O91OmPrSsiNjtjUa1OCVFc0AKuRRNOmAI3
-         rQ+QwqN7MrpYOmE2ogJjEkrKYuEjniKLiPcm4IOCceNM3UZx27C1EDr1saEKbzmux6uf
-         R7KoerIEh7R7v5timvpeMMnjiyJezffBhktxJ3gr2iQBGMy5qfm5hEWtuU7XxDDwe03K
-         0qpxeeP/BQOEWKVTThAxpZMFn5D4xzkxUQsWcjCCxkc8LOivTFrS2hbwS7ZaaaS8nPoI
-         pABg==
+        bh=gDo+yVD+3RYI+5zJwy/WNiTtLCeqz/kJT8uN33xHNmA=;
+        b=DSHOxEmRM+WOqbDOk8xdSm/1Rg8Rdt4NVzNc5xWfnTKdbAscy4IchfB7kEvG4/BXzT
+         Z8kEnjYRDRJvr1kQvAxLvNJ/Rkhtv8odHEeLM15wHFZrjVGbRtuB7fY1gp5ipUQELxMc
+         lWkDZVkYhLSnLxMXy3UvZL2g3OqC5AlFS16L0a4bvXNs/Z+Erasrclayn5VxJc+lbrGR
+         aFsvrIO79DyOFJNKEWVq3bB2Oy84bfp7UdlP/9YQYrI3yK6KSDuqEQbX9TOfiSGYekLR
+         5SssdRf9nRrOY0jzzeaM0E1uYVNWTTFjyPwrevp7dw8A/7Sd+DnvPbs7NUKrOqIvUGbq
+         OCgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725367064; x=1725971864;
+        d=1e100.net; s=20230601; t=1725367071; x=1725971871;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xRSvMnDTMDKxhA7VhtYh7uLTsocsLyQdi8v0n2nl6pk=;
-        b=eavQ2YUm/Mn9jMAnBVgGKw+I9ZaYo16ADWdZyBjlFilsrto2RF9CaSrIKY2S9AwDmj
-         W+T5hOT46Rv7T9G7+J+/9ofJ36HA0oI87ok11uualOsuOAunFRpyskiS3LnCO4LENezN
-         KexqCPIU+eCGpHoa1BdE0BeYS+2b27QtEmIj+Kc9r4B8pCiD0t0e6LvvCYXGP+JZ0TuG
-         XpaKo+E5tmxZAtlLMmbRIVE59YWz3wJMsXdrWAsuLOWfd1zaCYynhaXke67jTsMZQ+Nu
-         YjBFxd9LNmICBREjDPA2JNoPUGr3v3xTVntZ+DIoDQlHgrntxNfuxe/o0ugBnmAALeLw
-         JWDw==
-X-Gm-Message-State: AOJu0YzhUbgkeYEaXj0oyy+PgHfR3wIhqOK2HNC39RzN2FhSDWrVS+MG
-	JzGkvGEuG20UT9BsEyq68vJg3B7xdg3bbS+97ZE3y38t6JnPSBJ6ste8C0vDq+5oPzNuYw2+KIG
-	FrTKZpamW7OYb9uyCHGpxTSauF6pVZQ1S5nh9dw==
-X-Google-Smtp-Source: AGHT+IFQF8b0/Dxwwp4pWzLNZOOlIYeobiuC9YLSQvh3EAc6u9FMJheFaNSQtuz4xhHdNlC0iKN7ML0RWiRLCHQ408U=
-X-Received: by 2002:a05:6902:1b8c:b0:e13:c6ec:2a7d with SMTP id
- 3f1490d57ef6-e1a7a1a1cdemr15286662276.37.1725367063845; Tue, 03 Sep 2024
- 05:37:43 -0700 (PDT)
+        bh=gDo+yVD+3RYI+5zJwy/WNiTtLCeqz/kJT8uN33xHNmA=;
+        b=hpZvUiRdgrpBKvZJ8733rJDua3llFF360uxdNbdlG62UAtagfSF2st57Kf6XeJaRCr
+         pokou9LUENtrZZh9lqxcs55xovjK/2dKyjqTBhXiO7bKFxg+iV5ubmiuPHZeykGlLoP0
+         2Z+i05rU2mKX+kOo3XB4PsqZ0fyjN77jkSkZE21luBYFzY45gAPMRZdpJGbJFcOusXPz
+         FfayYjieuTprM5vpatVGRabDNSbGu1cj1qJsHSgcn179MLkaUNnpi705AJaDdhWaXYfN
+         3Yqcy6efFFbEBg1UlKXW7ijHOeJywAb+q9szvXJjl+Ez67ulW9JqwD2io/47fMTApRii
+         NxvA==
+X-Gm-Message-State: AOJu0YxxdqDzwZRgnX5u9OAx1nvyV0lx2TaVKlooa9wiz8zJk0d/EWGF
+	FNEKMOAAqbUWCZ1KoYueqJ2ncD+AfwIxdC8jjozAMCncOcjZB6MFJkNRzg3CdSFH0KxGpefvwJ2
+	oSuHstC/87OAJR3ngRCn3qhKQ3LmiGFfKj6TttA==
+X-Google-Smtp-Source: AGHT+IG7wVWvBwVm8d9fEbO3Oflgii2VupDav0zWIgeWSdeL76IOqUTeZJcnUewS4XpCOBcCGjv00I2YWnT5Qsdy31k=
+X-Received: by 2002:a05:6902:2493:b0:e11:7850:ac6e with SMTP id
+ 3f1490d57ef6-e1a7a1d0785mr13896773276.50.1725367070896; Tue, 03 Sep 2024
+ 05:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
-In-Reply-To: <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
+References: <CGME20240829061840epcas1p4ceeaea9b00a34cae0c2e82652be0d0ee@epcas1p4.samsung.com>
+ <20240829061823.3718-1-sh8267.baek@samsung.com> <20240829061823.3718-2-sh8267.baek@samsung.com>
+In-Reply-To: <20240829061823.3718-2-sh8267.baek@samsung.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 14:37:07 +0200
-Message-ID: <CAPDyKFrZKq69yHnA1w813b6nwy1Bn_A=1c133CSk9scO1qMxEg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Add dw_mmc support for rk3576
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Date: Tue, 3 Sep 2024 14:37:15 +0200
+Message-ID: <CAPDyKFrpLoV_X0cp4ycEeEj_Vhv0+1nmQ87+QVNV-o+Z0YEgmw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: cqhci: Fix checking of CQHCI_HALT state
+To: Seunghwan Baek <sh8267.baek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	ritesh.list@gmail.com, quic_asutoshd@quicinc.com, adrian.hunter@intel.com, 
+	grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com, 
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com, 
+	cw9316.lee@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 28 Aug 2024 at 17:24, Detlev Casanova
-<detlev.casanova@collabora.com> wrote:
+On Thu, 29 Aug 2024 at 08:18, Seunghwan Baek <sh8267.baek@samsung.com> wrote:
 >
-> The SD card controller on the rk3576 SoC stores the phase settings into
-> the dw_mmc controller, so the code has to be adapted to implement that.
+> To check if mmc cqe is in halt state, need to check set/clear of CQHCI_HALT
+> bit. At this time, we need to check with &, not &&.
 >
-> Although the feature can be detected through the USRID register value, the
-> decision to use it is based on the compatible.
->
-> The compatible for rk3576 is added in its own group of compatible to mark
-> that all devices compatible with rk3576 have internal phase settings and
-> don't have the ciu-drive and ciu-sample clocks.
->
-> Changes since v4:
-> - Drop commit that ignores phase above 270 degrees
-> - Use a bool instead of int for internal_phase field
-> - Fix pahse typo
->
-> Changes since v3:
-> - Remove internal phase auto detection
-> - Set compatible in own block, with own dt_parse function
-> - Add internal_phase variable
-> - Use function to set clock parameters based on internal_phase variable
->   instead of multiple ifs
-> - Use different commit for skipping phases higher than 270
->
-> Changes since v2:
-> - Drop rockchip,v2-tuning and use compatible-based detection
-> - Fix coding style
->
-> Changes since v1:
-> - Renamed use-v2-tuning to v2-tuning
-> - Rewrite v2-tuning description as the hardware feature
->
-> Detlev.
->
-> Detlev Casanova (2):
->   dt-bindings: mmc: Add support for rk3576 dw-mshc
->   mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
->
-> Shawn Lin (1):
->   mmc: dw_mmc-rockchip: Add internal phase support
->
->  .../bindings/mmc/rockchip-dw-mshc.yaml        |   2 +
->  drivers/mmc/host/dw_mmc-rockchip.c            | 217 ++++++++++++++++--
->  2 files changed, 204 insertions(+), 15 deletions(-)
->
+> Fixes: a4080225f51d ("mmc: cqhci: support for command queue enabled host")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
 
-The series applied for next, thanks!
+Applied for fixes, thanks!
 
 Kind regards
 Uffe
+
+
+> ---
+>  drivers/mmc/host/cqhci-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index c14d7251d0bb..a02da26a1efd 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>                 cqhci_writel(cq_host, 0, CQHCI_CTL);
+>                 mmc->cqe_on = true;
+>                 pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -               if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
+> +               if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
+>                         pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>                                mmc_hostname(mmc));
+>                 }
+> --
+> 2.17.1
+>
 
