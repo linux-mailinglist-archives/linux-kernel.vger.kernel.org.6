@@ -1,201 +1,114 @@
-Return-Path: <linux-kernel+bounces-312851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD9C969C6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:50:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFF8969C71
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2DE71C23CE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE9DB23BD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6664D1C7686;
-	Tue,  3 Sep 2024 11:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDD91B984D;
+	Tue,  3 Sep 2024 11:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SOriQXDt"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QFfm+qGp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4foM/D8q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91341AD26D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EDE1A42D8
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364245; cv=none; b=mf9XbSbqO8GsyQcjBgFNrkaNCczVyegyWsQ4r/SAIUhfNIwXBSEit9VEaOgPJfmmZW2VSISLe50QaTSbGwfcRN4vdHnSL892P4L9uHYgOO0XMpB/Qfm/2yc0LocxTcxnWzkiXB+9l5BK8EsSR70Vs2XkGnRMmwuJRsRtLh/Mp/M=
+	t=1725364258; cv=none; b=WzEX9wPD/MYklSZ3zHbPfE0KtnCf2NRpkO4H5c+gFV764c6A4WLIu2cwJrWzSMQHU55oZVR+pYlUQSAKkl9VNAcDq6tvlaf7BaFk5CtvmKq1WQgwoq93ruymXWK8CHUG/sUOteTiq1ukWgD+SLiIYMmyX9iIXmF4Gy+b1qP5zKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364245; c=relaxed/simple;
-	bh=4E0xulKVYycTdN6kmcI0wSr9SBqan18ie1bBK3rYCq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GH4qM0mBwZTxldg4F6e829tzfegzQwlZDXu+SOW43RXpQd2+jHoB6VgJgF791N6ch/u3NVzmjBHhtPxx72lb01mUAhcwFj1+KjWnc8ULQJ1OOzN00rNi3vPAFpY+TIKRH8VoyYh0dDnDXl/v2MlvPA68k2CArxmgCvXxgNmHTA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SOriQXDt; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e17c1881a52so4383429276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 04:50:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725364243; x=1725969043; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M6oe5mOo0/Q2QUx8kdHtHzBteg518/H7oafdVdtWZ8E=;
-        b=SOriQXDtzTCxY7hGSVqMQYMwLDq2J+rnEi8OZxrIxATKAQ9u4zSHqL8VK5W80tUHT0
-         05yna/3MsWgBwRhK/SO8KZi2QtBZ4gN5ty2dxyCMlk3mefcMY8lgrDZsfrpv7b7G9ygz
-         3NVtDylH4bhYlgxNdiYUOQrp5SB7mLoweFls1yv/3Fwn9r/nH6lx6vJHdSIAUie9wLfG
-         CGpqnvm1MHdNT1NMQaNk+WiJWx64iP5b6DY4VBFA6C97nENNb6vqLxhwEkoEMcSu6Ol7
-         f8WdbrxrhgMF011LzY+Iu1NhUQ4ewwmHwM7ZG7cBSiGcmfvDYX+0o4dUThR7q/WsJPSA
-         wIMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725364243; x=1725969043;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M6oe5mOo0/Q2QUx8kdHtHzBteg518/H7oafdVdtWZ8E=;
-        b=SmQx10pB5+zZ9u+4uhRBoqP0mqQ8Cmrzobc31uwrRv+OUiQ7tLo4vhbfJgzZ0J4Ybg
-         8/g6pEu/Dy9fLo3T4eZmv9bL3x1HYdcUQQ6CksiCjaKaJx6Q9S0nuQIuqqDs+vnIUca6
-         UMebd/j66Na/MacEYpk4yLEo2b1uQ9KEVi/wm/myXxq+8SmmU3E+dd1w7yxs1pyIrUcG
-         x4GOguQja8cQYv2n8yQbhZ9QC26wZJKl2UPlla8hTeKXS2bNeJm8otxgE3Qc2q13OSHi
-         2zdEcaYwSy1m4A0pMb3l/MUXmNrc8EET1rvhu/qbcGQgojTlixXgmlwTE3Ww6PzSJFUH
-         xq2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzwNJ+LLCoL2L5ZKsTk2srzX/4YDnq7Dbe7xRyCxoL98bHUFJ1vBFEPsGsbvj2s1y9VXr+M+aopzC1AVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOsAHEVBi7EKWiH8BJScUM6AX167BL0Z3Ttr/L6BSZvGQ5wB09
-	2DGKpmyqgX6PhbJq/C/EQM5T74w0zf8wK0p2pXg0JdDNsnba+A/b7rdAbB5sebSZkqmJgE63H6Z
-	TGgXm+zHtk9xx6mk+wBGB+b/tLZMKECENNI53yA==
-X-Google-Smtp-Source: AGHT+IGQtMOS4YakO3mVRU55aBPqdi3LzajbKXFr5W6dpvH6QZXYvNNBmu8gXnrpyyZN1Wg9oeBHgUN50f5gy2PQASY=
-X-Received: by 2002:a05:6902:e92:b0:e0e:8740:2a76 with SMTP id
- 3f1490d57ef6-e1a7a3d95d9mr9063263276.26.1725364242841; Tue, 03 Sep 2024
- 04:50:42 -0700 (PDT)
+	s=arc-20240116; t=1725364258; c=relaxed/simple;
+	bh=CZBsmTZIVXelg9yBz+T49guuUX5vDPDlpK5hF0wRiMg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LZQPebnruloWgYS0SRT0I+5bvPVnWkzucwayn/yatWzcN4K6O8sLUbHR9GBaJArQqb8gjObKeEskGN9iYILLRoGVlCN8qTzMS/zWCkkDDGxaQsHOIDDaqOyo8pqf1THNM+XXUlwtfXIaQauI7Ez+KzteVrWdHUCzAQL/adbCO6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QFfm+qGp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4foM/D8q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725364249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1dwO7EL6YycvwVYVv5JRFzng2Q1LL9OESDppVBBsWQ=;
+	b=QFfm+qGptQ2DptZLy9xzzL7Td1rhv4U0Mn7i9rZ8TjBhyF4+INlgb8TUgTz6rg+WyDwzeH
+	b7QStz8qFBrF76zAM6us2zfdliUUr69InFhNgd9p7nRbxNv8KH1sIAjW7SXN9zjWwBelCG
+	RlFO5JW+JwBI33tp/fE6QFus15jJIYecnkRb/stlFppL+vGJbtkM/Vz1KwISV/GkV6qqo5
+	NlsNchzorkQACQrfohQoDdVLc7QjJl0uAgg/Zsf/aK88kKi7o++pW41AZbH3GI11o3lYHa
+	usrQzXhwX59EmWAM7qcoeSCxgc3B0iAdbt/59RmmvnUN4knWxswdQRqNm60LsA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725364249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1dwO7EL6YycvwVYVv5JRFzng2Q1LL9OESDppVBBsWQ=;
+	b=4foM/D8qtngFSwciSjaLcOIYs77rgcTQEdCjnAVz4/j+e/HMTK9tRHZTcmKtsaTtFJ6RrO
+	tgSyok4GNWlA9ICg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v5 09/17] printk: nbcon: Rely on kthreads for
+ normal operation
+In-Reply-To: <Ztbgi4-gDvxMYMXw@pathway.suse.cz>
+References: <20240830152916.10136-1-john.ogness@linutronix.de>
+ <20240830152916.10136-10-john.ogness@linutronix.de>
+ <Ztbgi4-gDvxMYMXw@pathway.suse.cz>
+Date: Tue, 03 Sep 2024 13:56:48 +0206
+Message-ID: <877cbtj6qv.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
- <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev> <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
- <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com> <da4c57ff-de2b-418f-ba2c-e83c1d399b94@tuxon.dev>
-In-Reply-To: <da4c57ff-de2b-418f-ba2c-e83c1d399b94@tuxon.dev>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 13:50:07 +0200
-Message-ID: <CAPDyKFpkCYuK=T6ZGzJ=V67Jj7C6CSKv1GH1W_apWs2rKF4q-g@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Tue, 3 Sept 2024 at 12:58, claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+On 2024-09-03, Petr Mladek <pmladek@suse.com> wrote:
+>> @@ -3071,12 +3080,21 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
+>>  	do {
+>>  		any_progress = false;
+>>  
+>> +		printk_get_console_flush_type(&ft);
+>> +
+>>  		cookie = console_srcu_read_lock();
+>>  		for_each_console_srcu(con) {
+>>  			short flags = console_srcu_read_flags(con);
+>>  			u64 printk_seq;
+>>  			bool progress;
+>>  
+>> +			/*
+>> +			 * console_flush_all() is only for legacy consoles when
+>> +			 * the nbcon consoles have their printer threads.
+>> +			 */
+>> +			if ((flags & CON_NBCON) && ft.nbcon_offload)
+>> +				continue;
 >
->
->
-> On 03.09.2024 13:35, Ulf Hansson wrote:
-> > On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >>
-> >> [...]
-> >>
-> >>>>
-> >>>> If not, there are two other options that can be considered I think.
-> >>>> *) Using the genpd on/off notifiers, to really allow the consumer
-> >>>> driver of the reset-control to know when the PM domain gets turned
-> >>>> on/off.
-> >>>> **) Move the entire reset handling into the PM domain provider, as it
-> >>>> obviously knows when the domain is getting turned on/off.
-> >>>
-> >>> This option is what I've explored, tested on my side.
-> >>>
-> >>> I explored it in 2 ways:
-> >>>
-> >>> 1/ SYSC modeled as an individual PM domain provider (this is more
-> >>>    appropriate to how HW manual described the hardware) with this the PHY
-> >>>    reset DT node would have to get 2 PM domains handlers (one for the
-> >>>    current PM domain provider and the other one for SYSC):
-> >>>
-> >>> +               phyrst: usbphy-ctrl@11e00000 {
-> >>> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-> >>> +                       reg = <0 0x11e00000 0 0x10000>;
-> >>> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-> >>> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
-> >>> +                       power-domain-names = "cpg", "sysc";
-> >>> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-> >>> R9A08G045_SYSC_PD_USB>;
-> >>> +                       #reset-cells = <1>;
-> >>> +                       status = "disabled";
-> >>> +
-> >>> +                       usb0_vbus_otg: regulator-vbus {
-> >>> +                               regulator-name = "vbus";
-> >>> +                       };
-> >>> +               };
-> >>> +
-> >>
-> >> According to what you have described earlier/above, modelling the SYSC
-> >> as a PM domain provider seems like a better description of the HW to
-> >> me. Although, as I said earlier, if you prefer the reset approach, I
-> >> would not object to that.
-> >
-> > Following the discussion I believe I should take this back. If I
-> > understand correctly, SYSC signal seems best to be modelled as a
-> > reset.
-> >
-> >  Although, it looks like the USB PM domain provider should rather be
-> > the consumer of that reset, instead of having the reset being consumed
-> > by the consumers of the USB PM domain.
->
-> The PM domain provider for USB is the provider for the rest of IPs. To work
-> like this the SYSC these signals should be handled in the USB domains power
-> on/off function. It's not impossible to have it implemented like this but
-> it will complicate a bit the code, AFAICT. This will not describe the
-> hardware, also.
->
-> With the information that we had up to yesterday, the connection b/w HW
-> blocks was something as follows:
->
->                  USB area
->               +--------------------------+
->       sig     | PHY -> USB controller X  |
-> SYSC -------->|  ^                       |
->               |  |                       |
->               | PHY reset                |
->               +--------------------------+
->
-> In this implementation the SYSC signal was connected to PHY reset block as
-> it is the root of the devices used in the USB setup and no USB
-> functionality can exist w/o the PHY reset being setup.
->
-> There is a new information arrived just yesterday from hardware team saying
-> this about SYSC signals: "When turning off USB PHY and PCIe PHY, if they
-> are not controlled, PHY may break" which may means that it is just
-> connected to the PHYs not to the USB area/region or PCIe area/region as
-> initially expressed in HW manual.
->
-> With that the HW connection b/w the USB devices and SYSC might become
-> something like:
->
->                  USB area
->               +--------------------------+
->      sig   +--->PHY -> USB controller X  |
-> SYSC ------+  |  ^                       |
->               |  |                       |
->               | PHY reset                |
->               +--------------------------+
->
-> I haven't got the chance to test this topology, though.
->
-> With this new information would you be OK to still have it as a reset
-> signal and connected only to the PHY driver ?
+> I mean that we really
+> should handle nbcon consoles in the legacy loop only when there
+> is a boot console (both ft.nbcon_* == false).
 
-As long as it's a better description of the HW, I am fine with that too.
+Agreed. I will change it to:
 
-Although, please note that pm_runtime_get|put() doesn't give you full
-controll of how the USB PM domain is being powered. So in that case,
-it sounds like you need to use the genpd on/off notifiers too.
+			/*
+			 * console_flush_all() is only responsible for nbcon
+			 * consoles when the nbcon consoles cannot print via
+			 * their atomic or threaded flushing.
+			 */
+			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
+				continue;
 
-Kind regards
-Uffe
+
+Also note that patch 15/17 ("printk: Implement legacy printer kthread
+for PREEMPT_RT") has the same check in legacy_kthread_should_wakeup(),
+which I will also update.
+
+John
 
