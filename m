@@ -1,85 +1,119 @@
-Return-Path: <linux-kernel+bounces-313517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70BE96A681
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:30:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1BF96A693
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E841C23F1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59722B20CCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A1E1917EC;
-	Tue,  3 Sep 2024 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9B51922D8;
+	Tue,  3 Sep 2024 18:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjnJYSol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpAcO3E0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625F618EFF0;
-	Tue,  3 Sep 2024 18:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D1518E027;
+	Tue,  3 Sep 2024 18:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725388199; cv=none; b=Er5N5u42j36QyUbHBAZ2VEQvDIv5UysbejU4/F+cefkkVvr8TuQcCIsflh3oR6C2rwmGjY/EzfNjZAhdtzN0ahWdSd4B0BX2pMCJjrGlcTjyaJ+ZPxAKgyytodfw/RuHaFY5fVu7PuivY3YD7CuI+OfQKivvf6DgzvgMGunlxEQ=
+	t=1725388303; cv=none; b=bt7VssdDnFW0nrTjBvq5s4P8mZq1mSainSuYvOsYKrMdpDfG6Vxr4V83TETcOGTfmsfw5CtlFyH0TqFhyLLZPdXd4gtu9gluAK+eeORGc5HogC/G58Yke6CBcF+6MX2aMdXRzFDSgoURxzpLcXyT5JhAGj2EmVTuWFCPlNOnNh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725388199; c=relaxed/simple;
-	bh=uNXi3AVtFux7SXNuTj4/Mhy2r5c4MWPhDexce5mMEc4=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=f4vBaPSSfDaUxxghUSKmfKiX7JoNP+u4wWNvVddx2V7H2QiCCWPbL9goXsiyFhTGSiNvEXt6mSU3n+11nkwk1DuNzI9lybszltVvr7u3dlAAN5eUlijibx9j+mhXuaMF8aTRywZ3DJ3hACgkdQIOGU3byVenm8hyUXZoWXH08zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjnJYSol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E6A2C4CEC4;
-	Tue,  3 Sep 2024 18:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725388198;
-	bh=uNXi3AVtFux7SXNuTj4/Mhy2r5c4MWPhDexce5mMEc4=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=bjnJYSolEvwyPx+KYfoWJCVZiuBPq/lX0WzwRq6AIKSnM35zzZsZflAVoqFd4rTLa
-	 etfsiXeeuSrzp085N7jUNb54r7j5vyfWofDTrZzdFIljHhZsS9Y3jZJ4/+VWZ1gJ0F
-	 jtfp+aqH+2aXwqQUIXEooZ0r6inu0oUE5A4b/0fkUCU02aUeiDP99RYjI6eH29oW1o
-	 QnOrp/KKsSbgOWsXxOHzlVz36N5SsmW8fJFLJFe2VnatR9OVHUXmAnE/BKKol7isKK
-	 mr91QmR9MOx/+5ddGA04iC0KvqUUrSgyzRVCpr6K1jmox5zErrM0GK1i4yiHMxPMnp
-	 xGznzDCJZRvDQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725388303; c=relaxed/simple;
+	bh=lLtBvj4b4a9FZjEQXtG8TT4P04Lxq60KH2gciLcoEKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JNOVJtP01XBTQKqp9f16RBO57nvpB48Nzl5Py5EqkqMBUDymlefj8X1J3wgPVIW812F1rZAQFcXf5E77ddWGH0XK45dYLKKdv6q/B8Z++qLeTbeBuGru/nGoP3JowO70OWhp7XISsbGEQpUMc1p8xF9BRH6INm+OB46WTs+o6gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpAcO3E0; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725388302; x=1756924302;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lLtBvj4b4a9FZjEQXtG8TT4P04Lxq60KH2gciLcoEKw=;
+  b=VpAcO3E0dJNsNam4bq2h+6CG9DYzeXY3K2JK+PTai32QIMgEj5egW7qv
+   J5xlkQ66vhnL0PYVLJPrUYMod1/UeTwiMhlb0VcSXBMECoK8xyxroNmUJ
+   hASlnlRheaxLxwY5c6jVmmjJVlDx9w55Y1JLQ4XQ3qyi2VfbP1+pWEl9u
+   jGx7LQeBYxNbud5OOO9VVxBAewRzeJ33bmnvujpX/Z7Q2G+wmZ/QWyvUm
+   bGfVCaGwtuzBhWGzahcUVYxtXRP9dPdVjoxFlgXkr0bRupsuxxSKX2CuX
+   dWqsN8hNNFiPWS0kcPZcmkVgF8QFjENo8zR0Hneg33czdg2ftReu6Ai6X
+   A==;
+X-CSE-ConnectionGUID: Yl7EuGAURHSKzAOrWG3WMw==
+X-CSE-MsgGUID: FvkMtC7sRXipXnpBtsFUPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24147196"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="24147196"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:31:41 -0700
+X-CSE-ConnectionGUID: WVx0QEHbQRynxXfjEMTsWQ==
+X-CSE-MsgGUID: nUIglSs7TRqIA/x//dRGZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="95809013"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 03 Sep 2024 11:31:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 12D613C1; Tue, 03 Sep 2024 21:31:37 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] usb: common: Switch to device_property_match_property_string()
+Date: Tue,  3 Sep 2024 21:31:36 +0300
+Message-ID: <20240903183136.3641770-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH -next v2] wifi: brcmsmac: Use kvmemdup to simplify the
- code
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240821070257.2298559-1-ruanjinjie@huawei.com>
-References: <20240821070257.2298559-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: <arend.vanspriel@broadcom.com>, <johannes.berg@intel.com>,
- <miriam.rachel.korenblit@intel.com>, <erick.archer@outlook.com>,
- <ruanjinjie@huawei.com>, <emmanuel.grumbach@intel.com>,
- <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>,
- <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172538819507.1029035.1932092246762477157.kvalo@kernel.org>
-Date: Tue,  3 Sep 2024 18:29:56 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+Replace open coded device_property_match_property_string().
 
-> Use kvmemdup instead of kvmalloc() + memcpy() to simplify the code.
-> 
-> No functional change.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/usb/common/common.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-Patch applied to wireless-next.git, thanks.
-
-d38792292be7 wifi: brcmsmac: Use kvmemdup to simplify the code
-
+diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+index 84ec00b7966c..b7bea1015d7c 100644
+--- a/drivers/usb/common/common.c
++++ b/drivers/usb/common/common.c
+@@ -107,19 +107,18 @@ EXPORT_SYMBOL_GPL(usb_speed_string);
+  */
+ enum usb_device_speed usb_get_maximum_speed(struct device *dev)
+ {
+-	const char *maximum_speed;
++	const char *p = "maximum-speed";
+ 	int ret;
+ 
+-	ret = device_property_read_string(dev, "maximum-speed", &maximum_speed);
+-	if (ret < 0)
+-		return USB_SPEED_UNKNOWN;
+-
+-	ret = match_string(ssp_rate, ARRAY_SIZE(ssp_rate), maximum_speed);
++	ret = device_property_match_property_string(dev, p, ssp_rate, ARRAY_SIZE(ssp_rate));
+ 	if (ret > 0)
+ 		return USB_SPEED_SUPER_PLUS;
+ 
+-	ret = match_string(speed_names, ARRAY_SIZE(speed_names), maximum_speed);
+-	return (ret < 0) ? USB_SPEED_UNKNOWN : ret;
++	ret = device_property_match_property_string(dev, p, speed_names, ARRAY_SIZE(speed_names));
++	if (ret > 0)
++		return ret;
++
++	return USB_SPEED_UNKNOWN;
+ }
+ EXPORT_SYMBOL_GPL(usb_get_maximum_speed);
+ 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240821070257.2298559-1-ruanjinjie@huawei.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
+2.43.0.rc1.1336.g36b5255a03ac
 
 
