@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-312874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F87969CD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:03:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04AA969CCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7369C285B91
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40591B23C9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE51CDFC5;
-	Tue,  3 Sep 2024 12:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361CA1C9851;
+	Tue,  3 Sep 2024 12:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gp9vvm+C"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C73WGUft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6011C9861
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901C01AD270;
+	Tue,  3 Sep 2024 12:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725365001; cv=none; b=HXkigLhyAISY0U96lnuuYcQdP/NidMpqfVyelm85FdymNNHvTnoDG1HSwanPmEOJlodPWQ1f1vDqWSiCqxuwYNr3Sq9oyCeJhiTPcKRphmaLIV8LK0KtQsENFQwhAR3joly/MqkZuOsqHBsKSFbKtL5FgHf62r/B7o2ntODuicQ=
+	t=1725364998; cv=none; b=icgKc2FwRHFfjSxelUYPoTi/vfAb+1t+2slqJID067Yf2bii3H6W7rgXkxCiDAGoASmrMRON+MVt0kmlxAgFf/zDvcQL95DWc38ZSYJMsBhcnlMcf05Z+POnSsFRNAA0DjgFNHGgIDg8mzCH2jFPNYXKAkiClR7+lkhS67uQPms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725365001; c=relaxed/simple;
-	bh=kEy0uL+fD2lKj3iUlgQ27J8z/bCXyx9tdiqTWqPKOBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k1U4hGChg2fmRH/h1iUEaw6LXLliTujzXThxfjU1zXY6/vm6GtJDMdGiD4LE98k9xDKHYxyHQSOdt3x+mYXzaVi4fY5IeD7P8c5de5YN2G+Aoqqmj7cZll5gLOCtvx4e29Lkngksh4HU2QlZqzQ7pbn/I80daFoR3VCz6zqhOuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gp9vvm+C; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6daf1c4aa86so5747827b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725364999; x=1725969799; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uT/aD2fYaRoviJnEdnc8G+3b8uWSX+p8TECg/DCp5mo=;
-        b=gp9vvm+C1jByzbT/wWT7AOvC50nptTMcmhxYhhhMKcqLUevaeqnTxDw0q2ACVCXp27
-         +TIQB8Jclw1WEKuEQNqJs0wdJ6KVqe2LQJSK23fr41dTVAgmU9n6YrDWhHZO1OyV+GRd
-         28TXKZtpwiP8JNkAiAeqsevQP+/4qwZqjb7V0VInQZSNlvwsLR0CkbekH7DfDM438DSS
-         3zpv8eQCBXbPuTBj5DZMN7LYHBh5Wk/VCNJfxjc/QMNEZSQqQ7jEb7JqnD2SO3SMfm/w
-         oqDQoLlPrRpIpVFjxiKbr8Zzk3LEnuACv8BjUN4FIz5a0T80vqTZnzhqPPpUaux2uiIp
-         2aLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725364999; x=1725969799;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uT/aD2fYaRoviJnEdnc8G+3b8uWSX+p8TECg/DCp5mo=;
-        b=NXsuMfRwD9iYPCxkrJGJkb/ojnnqX4GgBQt5o/3nzUd7VHgJzJW6rbH3VMAZODP38s
-         iuaGqeD6PUcNKVZAU9sxfQ75P7+7D3Qyjw3kl30hP8lO9CGr7xgd/y4Jhr9OqsIiFde6
-         983Ji43dvxjw4qNn5PRSICYwzrAoFRajceUWs02+OqdUwN8hMt+s2d7r1PqHSMnDlkT7
-         u1WOB5E4s6/7O30hht1dlE8dvJNDsbouCOr6Sq4ztS99B1YCKgFqM+u5xhCO4WFg3M7L
-         sEHDXM40mOdrFvSrOlGS0MKq3JuwYx0eD7blOkyYDq1gK06ujQce/fyk4vHU+dB5wbsc
-         EH6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3kLbi4LozRscSY3MeF6c91/z9vz9U1Rg9En0cwI+lj9q/KYYJZ4qBojAZx4JPPvIXwwZyvha3X0aVqdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc3Tnw4tfNjlvn8cd7/3v3pQ+duYUQImZeKUcmnG09Sp75rHKI
-	NNY+8h6UQ86URYVdd1xdnLiHT51Lf48r+cc5txiUx80guqRkiCtgePSPH8UIXvQcl3sQog8pIZL
-	lU7be4HOnYfw+xmFyoFCYBjX8rsjzAB4kqC8V8Q==
-X-Google-Smtp-Source: AGHT+IGjLf7ldseShYpxexhc7HH680FQerWRfT+m5UtLRaHJVdDS5HYSjtVrk09unMIBtJDDtIBsKWubTRG962bdoF0=
-X-Received: by 2002:a05:690c:2a83:b0:6d4:d6de:3de4 with SMTP id
- 00721157ae682-6d4d6de4266mr91396297b3.34.1725364998931; Tue, 03 Sep 2024
- 05:03:18 -0700 (PDT)
+	s=arc-20240116; t=1725364998; c=relaxed/simple;
+	bh=YPy+r4zg7f1az0PYCHCW/JeLrJV/ZbE3/iouVRE6qRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6wupsvQvZO5wh6xyYo6xQrab9g7VmRn9nqkRU+fu6s8x41H06Abo6q182uAp2QMxpHpTAX/PA4R7lB/cArrC62sTNbqRom0f9zDbY59cA4B4r6J37Qshm36ZnsfdIYyl4joBoZAYpcNjWd3B0noqS7VANS5Z8QVDRQlEf9nmv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C73WGUft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AEAEC4CEC4;
+	Tue,  3 Sep 2024 12:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725364998;
+	bh=YPy+r4zg7f1az0PYCHCW/JeLrJV/ZbE3/iouVRE6qRY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C73WGUftiJpFzJsxwyW/z1QaAF6j4KZ4bmGrxlkYK09w3jde19Z+QSMUSjEX25IQI
+	 QAfFvcWJbIhrU9K3cY0oHWhslkDOsGYx9O6Xur9hYfzkeEyfV+/IDdlNpsVdM74mDz
+	 ds6H5kkGSSb0KwenCskfcm8lMoOnes/Bbvi1z3a9NwpBudWb2BtCg0JfMCOtjUT7t5
+	 +cgzAZKIfezcQ5203MXGGSGGmSJL1745AuY0S7l0HrCfFZsKsUL7VlORib4m/YjFMH
+	 yZvK7R0l3kEOyCgNVOAAZkC18T2CNaMkQyiA8Rp9ZKEnkvtVgW3QxkF7mrri4+wiG3
+	 IvntVr4i37KXw==
+Date: Tue, 3 Sep 2024 14:03:09 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc`
+ module
+Message-ID: <Ztb6_XW3ccnHQDmw@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-27-dakr@kernel.org>
+ <20240831135712.0d7366b6.gary@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903-topic-qmp_typo-v1-1-781e81799992@quicinc.com>
-In-Reply-To: <20240903-topic-qmp_typo-v1-1-781e81799992@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 15:03:07 +0300
-Message-ID: <CAA8EJpp_O4B+eciQ9h8nPdiVxy4CTD8nE+WiYbDmUUSuhvwvMg@mail.gmail.com>
-Subject: Re: [PATCH] phy: qcom: qmp: Fix lecacy-legacy typo
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan+linaro@kernel.org>, Konrad Dybcio <quic_kdybcio@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240831135712.0d7366b6.gary@garyguo.net>
 
-On Tue, 3 Sept 2024 at 14:13, Konrad Dybcio <konradybcio@kernel.org> wrote:
->
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
->
-> Introduced in Commit b3982f2144e1 ("phy: qcom-qmp-combo: restructure
-> PHY creation"). No functional changes.
->
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+On Sat, Aug 31, 2024 at 01:57:12PM +0100, Gary Guo wrote:
+> On Fri, 16 Aug 2024 02:11:08 +0200
+> Danilo Krummrich <dakr@kernel.org> wrote:
+> 
+> > Add maintainers entry for the Rust `alloc` module.
+> > 
+> > Currently, this includes the `Allocator` API itself, `Allocator`
+> > implementations, such as `Kmalloc` or `Vmalloc`, as well as the kernel's
+> > implementation of the primary memory allocation data structures, `Box`
+> > and `Vec`.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  MAINTAINERS | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 42decde38320..560516b3aaf4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19925,6 +19925,13 @@ F:	scripts/*rust*
+> >  F:	tools/testing/selftests/rust/
+> >  K:	\b(?i:rust)\b
+> >  
+> > +RUST [ALLOC]
+> > +M:	Danilo Krummrich <dakr@kernel.org>
+> > +L:	rust-for-linux@vger.kernel.org
+> > +S:	Maintained
+> > +F:	rust/kernel/alloc.rs
+> > +F:	rust/kernel/alloc/
+> 
+> It feels like we should use `mod.rs`.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+The same would be true for:
 
--- 
-With best wishes
-Dmitry
+- rust/kernel/sync.rs
+- rust/kernel/net.rs
+- rust/kernel/init.rs
+- rust/kernel/fs.rs
+- ...
+
+Do you propose to change it for all of them?
+
+> 
+> > +
+> >  RXRPC SOCKETS (AF_RXRPC)
+> >  M:	David Howells <dhowells@redhat.com>
+> >  M:	Marc Dionne <marc.dionne@auristor.com>
+> 
 
