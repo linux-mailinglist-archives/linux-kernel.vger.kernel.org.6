@@ -1,66 +1,51 @@
-Return-Path: <linux-kernel+bounces-312079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8F59691A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2451D96919B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9353A2842D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57A161C22988
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5951CDA3A;
-	Tue,  3 Sep 2024 03:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MouyVDgm"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFAA1CDFA3;
+	Tue,  3 Sep 2024 02:56:58 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E762C2AD02;
-	Tue,  3 Sep 2024 03:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95801CDA36
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725332707; cv=none; b=OvnTV88b5fqu3sztmap7Nq8xz+EQvk0aPdyV2eKfqAdiWFibvnLk6IOwt15Iv2QOneu+DM2DQDBLDXoIr9SkW0DOr7BtXVLceu2eDgMQTC4NAJBMVdAa7UJDddbkgA9qFi3l3ONlaYX80fN0FJQBSCfCL5D6p6DBExzaCPs8WIk=
+	t=1725332218; cv=none; b=qK2vtd6o3qKE0Apyp/QLB8cDZR94raSUrC1zIE1z3hEyv9wLEt6XjirnS1S2SMfGIUoftR+f0SPU0rMru3Cd4Bv9GIXdOHT2P0Zq+HCO91CgBMGUKUAzm+9ocESpFBHpXk28PwBrac0niblrxoE+W03jvn8h9trDiBd3WSLaLvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725332707; c=relaxed/simple;
-	bh=xDWnm992v5491wL8vjSVQL2pr5JbS0Y9QE2G+5QdfL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gh5um4vG7cr8l+yRHw9SqsX0ZUJAOhfUAK4N6aaywLLH5SO3HZO2UCgs1aMoD2Qwni0R7jgeUO0XoLvTHLLzazw1lc+cY2+vwzxBIhOrtbJhAnfNPiVx1Yhd9NWyPgzyPHnTnynK+Oq/MiHk/mYywRg5+dBo3M9KodixrlITv8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MouyVDgm; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (unknown [10.101.196.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3BF2D3F815;
-	Tue,  3 Sep 2024 02:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725332168;
-	bh=ju/3DT/96Rz/Meyl3hFHlGrVpwLzX4tHG0xUmw5imBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=MouyVDgm/IaNjs865bzLleq+sK9uWco94O5X0QMwFHvyeLUojFYxOPQStB/rNr89c
-	 agfS+54/cGlK5uGIol5x82pbMNYiELd8/67M1mqXyN7WOlBOU3hIoHamXAoKBQbnI6
-	 Chuh8j5fJv67nGQiorLtQDIxA0vsrsT/UxbLOkIg2oYtaMZ/U5KlxuNO4VGlaZ3VOH
-	 D/oTRAA4+zfOJ0ICPh75Q5SofjTVxsRIM2IiRb6tqMaafmkTgWS4caYdReyAVOdnoo
-	 trsBs5acrRXP/9yONeF7VkUxtwAxIzWTuWezb/JHXMbxfVam1eZOiJP7L3M9M5cgAT
-	 KxoRQrkQiv8Iw==
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: nirmal.patel@linux.intel.com,
-	jonathan.derrick@linux.dev
-Cc: acelan.kao@canonical.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1725332218; c=relaxed/simple;
+	bh=K5KBrNNKs2v3/4RefgFilAcNyEzc1Kbq6dcINtqeu8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NK1Os+qvnTuoxZ4KxQ8FkchdMi6XQSJs0NwUG90lzBC2gus6qiQ3yGher9xbo1ZWoTOKyMUOL+JSbEYr1r9mXMMafhcnufnqkd2nYD4Q7r+iyuiZ7G3MJEc1Nkn4QEFMYojXp4C4/ZeRiDAbZiZgeY7LkexsZCEgVzN8MmH79vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADXaarvetZm_EK1AA--.36173S2;
+	Tue, 03 Sep 2024 10:56:47 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: jani.nikula@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	joonas.lahtinen@linux.intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Date: Tue,  3 Sep 2024 10:55:44 +0800
-Message-ID: <20240903025544.286223-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/i915: convert comma to semicolon
+Date: Tue,  3 Sep 2024 10:55:58 +0800
+Message-Id: <20240903025558.493977-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,103 +53,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADXaarvetZm_EK1AA--.36173S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47Grykuw4fGrg_yoW3ZFcEkr
+	yrCr4fCFy5CFnFvw17Cr43ur9Ivw4q9F4xW34rt3sIyw17J34UX39ruFy7Z345AF1jyFyD
+	Aa18Wr97ZrnrujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5hL0DUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Meteor Lake VMD has a bug that the IRQ raises before the DMA region is
-ready, so the requested IO is considered never completed:
-[   97.343423] nvme nvme0: I/O 259 QID 2 timeout, completion polled
-[   97.343446] nvme nvme0: I/O 384 QID 3 timeout, completion polled
-[   97.343459] nvme nvme0: I/O 320 QID 4 timeout, completion polled
-[   97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion polled
+Replace a comma between expression statements by a semicolon.
 
-The is documented as erratum MTL016 [0]. The suggested workaround is to
-"The VMD MSI interrupt-handler should initially perform a dummy register
-read to the MSI initiator device prior to any writes to ensure proper
-PCIe ordering." which essentially is adding a delay before the interrupt
-handling.
-
-Hence add a delay before handle interrupt to workaround the erratum.
-
-[0] https://edc.intel.com/content/www/us/en/design/products/platforms/details/meteor-lake-u-p/core-ultra-processor-specification-update/errata-details/#MTL016
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=217871
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/pci/controller/vmd.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/display/intel_hdmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index a726de0af011..3433b3730f9c 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -16,6 +16,7 @@
- #include <linux/srcu.h>
- #include <linux/rculist.h>
- #include <linux/rcupdate.h>
-+#include <linux/delay.h>
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index 19498ee455fa..00e98a5ede09 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -1313,8 +1313,8 @@ static int intel_hdmi_hdcp_write(struct intel_digital_port *dig_port,
+ 	memcpy(&write_buf[1], buffer, size);
  
- #include <asm/irqdomain.h>
+ 	msg.addr = DRM_HDCP_DDC_ADDR;
+-	msg.flags = 0,
+-	msg.len = size + 1,
++	msg.flags = 0;
++	msg.len = size + 1;
+ 	msg.buf = write_buf;
  
-@@ -74,6 +75,9 @@ enum vmd_features {
- 	 * proper power management of the SoC.
- 	 */
- 	VMD_FEAT_BIOS_PM_QUIRK		= (1 << 5),
-+
-+	/* Erratum MTL016 */
-+	VMD_FEAT_INTERRUPT_QUIRK	= (1 << 6),
- };
- 
- #define VMD_BIOS_PM_QUIRK_LTR	0x1003	/* 3145728 ns */
-@@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
-  */
- static DEFINE_RAW_SPINLOCK(list_lock);
- 
-+static bool interrupt_delay;
-+
- /**
-  * struct vmd_irq - private data to map driver IRQ to the VMD shared vector
-  * @node:	list item for parent traversal.
-@@ -105,6 +111,7 @@ struct vmd_irq {
- 	struct vmd_irq_list	*irq;
- 	bool			enabled;
- 	unsigned int		virq;
-+	bool			delay_irq;
- };
- 
- /**
-@@ -680,8 +687,11 @@ static irqreturn_t vmd_irq(int irq, void *data)
- 	int idx;
- 
- 	idx = srcu_read_lock(&irqs->srcu);
--	list_for_each_entry_rcu(vmdirq, &irqs->irq_list, node)
-+	list_for_each_entry_rcu(vmdirq, &irqs->irq_list, node) {
-+		if (interrupt_delay)
-+			udelay(4);
- 		generic_handle_irq(vmdirq->virq);
-+	}
- 	srcu_read_unlock(&irqs->srcu, idx);
- 
- 	return IRQ_HANDLED;
-@@ -1015,6 +1025,9 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	if (features & VMD_FEAT_OFFSET_FIRST_VECTOR)
- 		vmd->first_vec = 1;
- 
-+	if (features & VMD_FEAT_INTERRUPT_QUIRK)
-+		interrupt_delay = true;
-+
- 	spin_lock_init(&vmd->cfg_lock);
- 	pci_set_drvdata(dev, vmd);
- 	err = vmd_enable_domain(vmd, features);
-@@ -1106,7 +1119,8 @@ static const struct pci_device_id vmd_ids[] = {
- 	{PCI_VDEVICE(INTEL, 0xa77f),
- 		.driver_data = VMD_FEATS_CLIENT,},
- 	{PCI_VDEVICE(INTEL, 0x7d0b),
--		.driver_data = VMD_FEATS_CLIENT,},
-+		.driver_data = VMD_FEATS_CLIENT |
-+			       VMD_FEAT_INTERRUPT_QUIRK,},
- 	{PCI_VDEVICE(INTEL, 0xad0b),
- 		.driver_data = VMD_FEATS_CLIENT,},
- 	{PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_VMD_9A0B),
+ 	ret = i2c_transfer(ddc, &msg, 1);
 -- 
-2.43.0
+2.25.1
 
 
