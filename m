@@ -1,181 +1,222 @@
-Return-Path: <linux-kernel+bounces-313030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1968C969F3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:39:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF46969F3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B848B215AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB0FF2867E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AF747A73;
-	Tue,  3 Sep 2024 13:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEA2168D0;
+	Tue,  3 Sep 2024 13:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PvrBzRU0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MJY6yb/z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eRG1tJdx"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5363221373;
-	Tue,  3 Sep 2024 13:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C9917756
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370708; cv=none; b=sKtZpTU8YmSOaXfBpmy0u4XlvsHRB/ylOiA2rZm0nm0TXYQGeF9JDWA/OEmnvlqNq1ZbEh9OwfqekQu3vY1ReLoQbd68HwwaFesNU13IEATDDx7CWrqkPPHWr6k0HRTas3FbixNdUVUrmxj/PXz8CZ4q51en9a9kbnFSd8F2l2g=
+	t=1725370732; cv=none; b=SKDJcKvuAnBQz5yiCYfu/6sX5CAbym68VqSnBbSOpy5OroVhYJzpsZhnMteina77+0EnFMtcf5v8d9yq8ZsPLr1YkrBvQPu3gssYP2fChOzalKWl+CNGUeN5Ydn5/HxBr+BqsNHuz5fFM1pXIW+h4hA7cxRN+fGjdU2L0vM4YGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370708; c=relaxed/simple;
-	bh=bWN2jmRqlwrEqJB4pj9hIIuUuUbW9kZtPbQ7J9vv7Gw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=I/5uirlgNcfpXhmpDDogRXSJHmLz4A4hzxxidSnirp8LTNZ9wYj1R/H0rDFKQokRZBgTARJf8eJjEhoguVpl39VY3uyQNAp/P3B9W28gJ7YCMUY4+86xbBhvhpKeFEiNynyyFh8OCvKjrPMFEi2Vx1+hwRWldEgPLWSCWOm7Bwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PvrBzRU0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MJY6yb/z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 03 Sep 2024 13:38:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725370703;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtLbi1xoam4qZUBDA2mfcB292sY0bc7JasomrMukwwk=;
-	b=PvrBzRU0oStx1Fc/0SgENTW7rHI3m9F/hzJhCmshJfk0BL+WB1Dx96fPB+jHA71rN7jlxY
-	xrpG54R9i4TtltdpySxSV1oLjocqUmdSsUwnTJmrzvxF4BUjXMO1sSj4sm/lY+kw77FKeZ
-	ACwkOHNcPl3eHKm6mP7AgzRveZTOJxnckOHJiGkAhPLUbAgA6NQgrPbMVfpoS1pcy4AfAU
-	EgbqocJSwH8D+3TQtmw9MHdKnTQcy0tgAkwIcQ+VOaE8zS/WNkXMtLUMjiOadNUeU+HEjv
-	McyG6olu5/Qxcj92e/XCssHERmAn4VSBZokEZew/qrMfoT4eruVzeo2c+AwHUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725370703;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtLbi1xoam4qZUBDA2mfcB292sY0bc7JasomrMukwwk=;
-	b=MJY6yb/zQEGJe12RrKqeRHz1o2JiXH8PSIifYTBXluCzIiS6hTSkpDarqxG3jQuGN8J5Ym
-	8iJW1yzCL85diAAw==
-From: "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Properly deactivate sched_delayed task
- upon class change
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
- Valentin Schneider <vschneid@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240829135353.1524260-1-vschneid@redhat.com>
-References: <20240829135353.1524260-1-vschneid@redhat.com>
+	s=arc-20240116; t=1725370732; c=relaxed/simple;
+	bh=2GWEjIpz+MSjeECpD3uAima02/GJskSTIUvLsRZEruY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIqeq+0yYLC+Et2khYwnVnw+5MUODpU1nticCNat2VwvQwNhbMo/+yJ/Ur9BXIi/TuZ8RmuT37BA7hUxtbs4ccG2Ce4BV5FYutyLhAfT5N8kXZZEd1d2ro7oCXpDR+T8WkG+a3eVxe44BASmVaIomD1A9DOrCLrjGGQsK/BLPWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eRG1tJdx; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86abbd68ffso884243966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725370728; x=1725975528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DXf+ko9xHOiXDzwKMvUwb6cPd+dFkczo/0jVQ7rjtP4=;
+        b=eRG1tJdxls7+MvAaOA6q/3rX6YAlyt4sGOwipnD6u7H3weelto1HwFB2Tw1vUUEgJ7
+         BE1iZKnjhH/C1JmCvy2G04xO3OUYdVjo0kOdxRC7HiebVwk1bxZ5J6PeamlcjSDXjlKP
+         bns1NtX5fmPjqRUqGZLeT4DKV0zB0wvaHu+D7BZVTICM0qOl+elJV5ZAuHcgHvHlSoCG
+         i832c/8QhAc3Q4N1WnQiqZAwEKLA7EmOPKkPPdc0Wc0pKjDFsgpuUQtJMcwMeOhRYOwR
+         21BOhOqeOICySsAGWIJTqdLayv9Hjsj+lu68GtLiAEr0wBwM75Bq7rrcAwj8FM3ldNXc
+         Xc0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725370728; x=1725975528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DXf+ko9xHOiXDzwKMvUwb6cPd+dFkczo/0jVQ7rjtP4=;
+        b=UCiYCgmamdfV7LzQ8Ekcq8uHclZuH0iNIKmNhzkN8K0bC5XM/6qHNuaXwJcRalTFiM
+         zC15PziGO+uX1GLPYM0cZIz1UrLjz3pYw6yDdZAG5T1PVTyxvBQ8JZiRzViGCxiOi5MN
+         eHA6KSzW2UGfVNUjGPjcqRjN+PgAOYKIPcwmPkXR+M1kB0d6rlMwLexJWYagTjS5/3Yv
+         ASq29UcqoBu/4zHbPvGuwfIJRsjEnRHLmCC3rTMnkUqk8Is1i8SbPa5kElGnieO8kBgz
+         S5zAENukPJuCj0CC3YVgV2/0jCeSvb7dMzF4LzjKRipWHSQmxGwrbcx/GHrnekIcjCPX
+         aQSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrkUU7sE69vgjh35RQ5n4EBCU38h7b3snj3kGrHBz4mWxyEv3ZZ4c1fUgZKEXfNdaVuywGctarkfda3+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFDuXbuxwQKAuBkCzUdeV9pM4i8s/NhMrzMe2TFNy8kGOHB3km
+	8vAQgj2S7rGVwfxEezy8j9iPsMhcjZCFi561HUSboF+zHauFRNjSb6MljV+Nra6mX131JPaqJ95
+	x
+X-Google-Smtp-Source: AGHT+IH/F6IbXemlHgBMRs2Js3Ir8ZqvtYCog5lU8fNn66LEKMc1coQVItVsTdrtkehfy0VLdCAVFA==
+X-Received: by 2002:a17:907:2d21:b0:a72:7a71:7f4f with SMTP id a640c23a62f3a-a89a249ca36mr1379627566b.7.1725370728084;
+        Tue, 03 Sep 2024 06:38:48 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898908f62bsm683472866b.91.2024.09.03.06.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 06:38:47 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:38:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v5 15/17] printk: Implement legacy printer kthread
+ for PREEMPT_RT
+Message-ID: <ZtcRZpLjCjWeC4nG@pathway.suse.cz>
+References: <20240830152916.10136-1-john.ogness@linutronix.de>
+ <20240830152916.10136-16-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172537070257.2215.14068162505453895387.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830152916.10136-16-john.ogness@linutronix.de>
 
-The following commit has been merged into the sched/core branch of tip:
+On Fri 2024-08-30 17:35:14, John Ogness wrote:
+> The write() callback of legacy consoles usually makes use of
+> spinlocks. This is not permitted with PREEMPT_RT in atomic
+> contexts.
+> 
+> For PREEMPT_RT, create a new kthread to handle printing of all
+> the legacy consoles (and nbcon consoles if boot consoles are
+> registered). This allows legacy consoles to work on PREEMPT_RT
+> without requiring modification. (However they will not have
+> the reliability properties guaranteed by nbcon atomic
+> consoles.)
+> 
+> Use the existing printk_kthreads_check_locked() to start/stop
+> the legacy kthread as needed.
+> 
+> Introduce the macro force_legacy_kthread() to query if the
+> forced threading of legacy consoles is in effect. Although
+> currently only enabled for PREEMPT_RT, this acts as a simple
+> mechanism for the future to allow other preemption models to
+> easily take advantage of the non-interference property provided
+> by the legacy kthread.
+> 
+> When force_legacy_kthread() is true, the legacy kthread
+> fulfills the role of the console_flush_type @legacy_offload by
+> waking the legacy kthread instead of printing via the
+> console_lock in the irq_work. If the legacy kthread is not
+> yet available, no legacy printing takes place (unless in
+> panic).
+> 
+> If for some reason the legacy kthread fails to create, any
+> legacy consoles are unregistered. With force_legacy_kthread(),
+> the legacy kthread is a critical component for legacy consoles.
+> 
+> These changes only affect CONFIG_PREEMPT_RT.
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3459,6 +3475,87 @@ static int unregister_console_locked(struct console *console);
+>  /* True when system boot is far enough to create printer threads. */
+>  static bool printk_kthreads_ready __ro_after_init;
+>  
+> +static struct task_struct *printk_legacy_kthread;
+> +
+> +static bool legacy_kthread_should_wakeup(void)
+> +{
+> +	struct console_flush_type ft;
+> +	struct console *con;
+> +	bool ret = false;
+> +	int cookie;
+> +
+> +	if (kthread_should_stop())
+> +		return true;
+> +
+> +	printk_get_console_flush_type(&ft);
+> +
+> +	cookie = console_srcu_read_lock();
+> +	for_each_console_srcu(con) {
+> +		short flags = console_srcu_read_flags(con);
+> +		u64 printk_seq;
+> +
+> +		/*
+> +		 * The legacy printer thread is only for legacy consoles when
+> +		 * the nbcon consoles have their printer threads.
+> +		 */
+> +		if ((flags & CON_NBCON) && ft.nbcon_offload)
+> +			continue;
 
-Commit-ID:     75b6499024a6c1a4ef0288f280534a5c54269076
-Gitweb:        https://git.kernel.org/tip/75b6499024a6c1a4ef0288f280534a5c54269076
-Author:        Valentin Schneider <vschneid@redhat.com>
-AuthorDate:    Thu, 29 Aug 2024 15:53:53 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 03 Sep 2024 15:26:30 +02:00
+I am still scratching my head about the fact that the legacy loop
+probably should not handle the nbcon consoles also when
+printk_get_console_flush_type() returns ft.nbcon_atomic().
 
-sched/fair: Properly deactivate sched_delayed task upon class change
+We probably does not have to take care of it here because this
+code is called only when the legacy kthread is running.
+It means that nbcon consoles should have their kthreads as well
+when they can be handled outside the legacy loop. I mean
+that we should never see ft.nbcon_atomic set here.
 
-__sched_setscheduler() goes through an enqueue/dequeue cycle like so:
+Sigh, the logic is so complicated.
 
-  flags := DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-  prev_class->dequeue_task(rq, p, flags);
-  new_class->enqueue_task(rq, p, flags);
+Do I get it correctly, please?
 
-when prev_class := fair_sched_class, this is followed by:
+> +		if (!console_is_usable(con, flags, false))
+> +			continue;
+> +
+> +		if (flags & CON_NBCON) {
+> +			printk_seq = nbcon_seq_read(con);
+> +		} else {
+> +			/*
+> +			 * It is safe to read @seq because only this
+> +			 * thread context updates @seq.
+> +			 */
+> +			printk_seq = con->seq;
+> +		}
+> +
+> +		if (prb_read_valid(prb, printk_seq, NULL)) {
+> +			ret = true;
+> +			break;
+> +		}
+> +	}
+> +	console_srcu_read_unlock(cookie);
+> +
+> +	return ret;
+> +}
 
-  dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
+> --- a/kernel/printk/printk_safe.c
+> +++ b/kernel/printk/printk_safe.c
+> @@ -44,7 +44,9 @@ bool is_printk_legacy_deferred(void)
+>  	 * The per-CPU variable @printk_context can be read safely in any
+>  	 * context. CPU migration is always disabled when set.
+>  	 */
+> -	return (this_cpu_read(printk_context) || in_nmi());
+> +	return (force_legacy_kthread() ||
 
-the idea being that since the task has switched classes, we need to drop
-the sched_delayed logic and have that task be deactivated per its previous
-dequeue_task(..., DEQUEUE_SLEEP).
+This is not correct when used in panic(). force_legacy_kthread()
+is not a reason for offload in that case.
 
-Unfortunately, this leaves the task on_rq. This is missing the tail end of
-dequeue_entities() that issues __block_task(), which __sched_setscheduler()
-won't have done due to not using DEQUEUE_DELAYED - not that it should, as
-it is pretty much a fair_sched_class specific thing.
+IMHO, we should keep is_printk_legacy_deferred() as is.
+Instead, we should check force_legacy_kthread() explicitly in
+printk_get_console_flush_type(). It should cause the offload only
+in NBCON_PRIO_NORMAL/EMERGENCY.
 
-Make switched_from_fair() properly deactivate sched_delayed tasks upon
-class changes via __block_task(), as if a
-  dequeue_task(..., DEQUEUE_DELAYED)
-had been issued.
+In fact, the legacy kthread should be used only in NBCON_PRIO_NORMAL.
+The legacy loop should be called directly even in NBCON_PRIO_EMERGENCY.
 
-Fixes: 2e0199df252a ("sched/fair: Prepare exit/cleanup paths for delayed_dequeue")
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Reported-by: Chen Yu <yu.c.chen@intel.com>
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20240829135353.1524260-1-vschneid@redhat.com
----
- kernel/sched/fair.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+> +		this_cpu_read(printk_context) ||
+> +		in_nmi());
+>  }
+>  
+>  asmlinkage int vprintk(const char *fmt, va_list args)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fea057b..3a3286d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5456,6 +5456,13 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 
- static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
- 
-+static inline void finish_delayed_dequeue_entity(struct sched_entity *se)
-+{
-+	se->sched_delayed = 0;
-+	if (sched_feat(DELAY_ZERO) && se->vlag > 0)
-+		se->vlag = 0;
-+}
-+
- static bool
- dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
-@@ -5531,11 +5538,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- 
--	if (flags & DEQUEUE_DELAYED) {
--		se->sched_delayed = 0;
--		if (sched_feat(DELAY_ZERO) && se->vlag > 0)
--			se->vlag = 0;
--	}
-+	if (flags & DEQUEUE_DELAYED)
-+		finish_delayed_dequeue_entity(se);
- 
- 	if (cfs_rq->nr_running == 0)
- 		update_idle_cfs_rq_clock_pelt(cfs_rq);
-@@ -13107,11 +13111,16 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
- 	 * and we cannot use DEQUEUE_DELAYED.
- 	 */
- 	if (p->se.sched_delayed) {
-+		/* First, dequeue it from its new class' structures */
- 		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
--		p->se.sched_delayed = 0;
-+		/*
-+		 * Now, clean up the fair_sched_class side of things
-+		 * related to sched_delayed being true and that wasn't done
-+		 * due to the generic dequeue not using DEQUEUE_DELAYED.
-+		 */
-+		finish_delayed_dequeue_entity(&p->se);
- 		p->se.rel_deadline = 0;
--		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
--			p->se.vlag = 0;
-+		__block_task(rq, p);
- 	}
- }
- 
+Best Regards,
+Petr
 
