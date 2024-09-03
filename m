@@ -1,241 +1,317 @@
-Return-Path: <linux-kernel+bounces-312993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC97F969ECA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5051E969ECC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0274E1C238F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 725231C237A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B292A1A7241;
-	Tue,  3 Sep 2024 13:13:30 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7E01A726A;
+	Tue,  3 Sep 2024 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ekAI3M5Q"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847BF1A724E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3271A7255
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369210; cv=none; b=Eoi46RULtf5u4b+HMua3Dl/0Sy7WA672+FM6uw7u3crfv2dE2NsIKe7O4ArGNNlxYZ0xjyDmMJgfY2lCuLxfxtrJj0fOWYieGok3woZxOAzLxuDd84LuS3idMuDUFC5KZ/nOYIM74cYtiwFd04qfBjlHlcj6+xmTO0nHDxUCJS8=
+	t=1725369244; cv=none; b=UWkjCQSXd8fnKCqsGx2hDc1XsROBXGdTsPXFStjWPkfF1KPGSsuIlRehMhrDzFfhwor2Kpf1sScnQtaxEyTb727CXGwu/isZ9jWpXwvylg3tLNbb6HTZbhHPCdQQ25buKwmzw5cYjp6cdkOxX7iZgziAq6eIoHjZvtM+un96hp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369210; c=relaxed/simple;
-	bh=ncdhEc6y/zKdyN7FJjk7BZ/mmD8nRsf5R66HUXMKFNo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OTGf/ftzqlYe1AKWBWJHypDjA2Co451lwjFYfJs8FybDnXVCl/tiooMDDK2j5gERXawCn11Z+A82TRKNNZKohfM9qdPSJOLjvjs7RHJOXx3Nf8tjEujFZ5BdwxrU9xFBzpBmI2Tb4oKjJ6aXWa14Ixgu4P5nQedeXy32v+p0rcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f37874297so66593685ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:13:28 -0700 (PDT)
+	s=arc-20240116; t=1725369244; c=relaxed/simple;
+	bh=osk6WofS+aFUFMMllGU0mNRzQNPp1Qatzi2MSDn6RaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rLJPF2TyReb5r/Z2mKqum56g7xxCA4nr+pbns33QDpZuE3Wbb3Dg/byDePKR7cvhlLS3HMnXBg3BCMdgwMIt5qt1DqKDRHERz/RDwPXhTrxHlKQdlZ8Y37eW2xFmBm+P96vgTWi1u9PYexZGMBcimUokEiob2ywLtJBGqWZtDjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ekAI3M5Q; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b747f2e2b7so46859577b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725369241; x=1725974041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aieioXdBWwbtfxf4c7Swz7Bu9HwgmhP2hJRdgaMP0AQ=;
+        b=ekAI3M5QC2+Sg5I5nIiva8jHEzQkI0OFihjBYZ96Nl6f3DkQv7x5Bew6nFCVoN4IEZ
+         mAn6Ol6gUWKsQUd9HeRkOrN6z+lZ9FL6lrOFii/gnx1SD254Gh50mUF9esYobq67moMY
+         5xY08PCxyqApL7Tfi9UoV7ry+UnoRK5uanc6ky1B7dyH5jBS66p+se6gFBYXVnGE8XoK
+         JLWsGsv9slhFjzhDtYFyEAkbXCV71EZbklsTlNf+tMDV3dOY0lRT7nGbg4HQlgxBo9L3
+         l8zIm9zeNRVJ9OPLf4grjkvU/Ll5/ZXMFyE3UoelF1xdjOYmiCyO8/XY8me/XDP5Jbkv
+         8xlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725369207; x=1725974007;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F5KPYw13jvQBA0s8NvyHZPAaNVBFGSG7LyhkOqJqf/Q=;
-        b=LWQWxOYO4Imy9TZpIbxulP7xxB7ncMgUn19BT72sedcG3dyrsf+jPKltJgbcb/g/ew
-         ppOJTFBA7SU1fHJQAqAWcjVefttO9ndO0Dkm6pT5wXXXqK3TvQUdHCrMtwxY3YqDVcqB
-         d2Zv2nO30TheZzlX17DmX6/j6pVzyvZA5CqW3sJUIaMKRhDxuVJyQvGRNRO+cG82jh4H
-         5hMJIebLFEvwvRiLG6hIbfpjukb+jXlRWTqC0W4oADXElxVYqwNfJxHOBQO4C2RhqbA6
-         JsZGzPRq6+9s3NGF2zmimrk5MVflEgSbUnslDvr8sEWP4Nb/PZrFDjjZGrU04RJe0BBl
-         nv3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/AIuXphn3Won925lm5ybJX2VQYfijezv2MWu3BfjJOynUbn+q7vTO+6+0wC//MQtZAWSSdpJo2t3LviA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIbjaVWA7oaXN7Fzt4MrbhGX7TmjkvOtuT7NuOPAWTF71HPfKm
-	plg+7kwIk1IlniBa6c6GvA8b2OquwOF3O6XQxmGfriRrCSiKLe9mnTRn5syDFakZEDKSmDydaEq
-	iBWoCg2Xot/LE/PRYFmWGoZn8YMdcD74Fkko8rONjxWEJIVGMMfMxL+U=
-X-Google-Smtp-Source: AGHT+IEck3mnaXT3hf10SvaWADCs9Yzz/MVSu4bxnnrdtlDKP6Ij/Wgs84P3wH6Sf/5R8/0YclhjgTnjCuye6DmQGOV2xlr8LKKL
+        d=1e100.net; s=20230601; t=1725369241; x=1725974041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aieioXdBWwbtfxf4c7Swz7Bu9HwgmhP2hJRdgaMP0AQ=;
+        b=VcQukiEFmdpubiiFT+qsfEShjxExNC33agMlYsSxpFOVlch/kWED7MtrlUmvKpBdQW
+         YB8fbr9yAwxpOI78/QqrhHeCpA+2w6o/05L/v3yawGYJ5Lo4mZpWOrQLqtW8uAEOX9Tv
+         toRSIIM/mPjvyRYRwXw6mSvtcFycUOzKp37uxEetZrJP39YmGjPsKW+PM4+AA5YAFyUf
+         gz4aVkDnT1K0vPEgQM31hGONAiJdGoJmTKImnnE1uzcMKjGB5982sq4ZxKkceZeZDGFS
+         L8dMHggqVBesOafuxsRaFpmsEqXgRWRLQ9HYwEaBFgreDn4+lcW89AZTl3m46m894p3M
+         zWqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/ZLDTO2gGFpZDouKPtoisw3ZLmJjT0wKTdqKmSwr4NluRq74XinFdZ3PsriO1Px209IZBLIndFFXujVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSNoUTY3jTD5rEPXFo3VHURhKcZaFylnS9gj4KTqEXl3XoS+Eo
+	zsUphnr4e76ivJ/o/8TKT/XiiL//heiAXqIoe+ZoNfTvoxHPLXKykfCJhlfR+cj8m7+YOlvU5Qx
+	v+B8UUKy5F3tGd7KtqmXFunAnNmIhNuJV0meYDA==
+X-Google-Smtp-Source: AGHT+IHWGp0sSdmRKGXXhqLX/pfDauo1J5cCvK8HcPkWNkLSzA7X4J59dVMwMvto/PiVODxpuK+dgugIvQlS/8Q/gVw=
+X-Received: by 2002:a05:690c:f0e:b0:6be:54e1:f1f3 with SMTP id
+ 00721157ae682-6d40b0f8dacmr158100417b3.0.1725369240962; Tue, 03 Sep 2024
+ 06:14:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:39f:72a0:1759 with SMTP id
- e9e14a558f8ab-39f72a0197bmr54985ab.6.1725369207609; Tue, 03 Sep 2024 06:13:27
- -0700 (PDT)
-Date: Tue, 03 Sep 2024 06:13:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b9e4d4062136d265@google.com>
-Subject: [syzbot] [net?] possible deadlock in ipv6_sock_mc_close (2)
-From: syzbot <syzbot+34658a0f0144bec77d8d@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
+ <20240816174259.2056829-6-quic_bibekkum@quicinc.com> <20240823155918.GD525@willie-the-truck>
+ <3ae75a75-1717-40b6-9149-bc3673d520d6@quicinc.com> <20240827124714.GB4772@willie-the-truck>
+ <b335452a-977e-41cc-9424-a2244fbe20de@quicinc.com> <35849d74-1197-446b-9a4c-1b8aabb38427@arm.com>
+ <a882d634-85b3-4c5b-8309-348b4b3d9f0a@quicinc.com>
+In-Reply-To: <a882d634-85b3-4c5b-8309-348b4b3d9f0a@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 3 Sep 2024 16:13:50 +0300
+Message-ID: <CAA8EJpo4rX=FwAwoocbys4-sv9gzPz6wwgFVyW1x4J7TU_JTgg@mail.gmail.com>
+Subject: Re: [PATCH v14 5/6] iommu/arm-smmu: add ACTLR data and support for SC7280
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>, robdclark@gmail.com, 
+	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
+	konrad.dybcio@linaro.org, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, 3 Sept 2024 at 15:59, Bibek Kumar Patro
+<quic_bibekkum@quicinc.com> wrote:
+>
+>
+>
+> On 8/30/2024 6:01 PM, Robin Murphy wrote:
+> > On 30/08/2024 11:00 am, Bibek Kumar Patro wrote:
+> >>
+> >>
+> >> On 8/27/2024 6:17 PM, Will Deacon wrote:
+> >>> On Mon, Aug 26, 2024 at 04:33:24PM +0530, Bibek Kumar Patro wrote:
+> >>>>
+> >>>>
+> >>>> On 8/23/2024 9:29 PM, Will Deacon wrote:
+> >>>>> On Fri, Aug 16, 2024 at 11:12:58PM +0530, Bibek Kumar Patro wrote:
+> >>>>>> Add ACTLR data table for SC7280 along with support for
+> >>>>>> same including SC7280 specific implementation operations.
+> >>>>>>
+> >>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> >>>>>> ---
+> >>>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 58
+> >>>>>> +++++++++++++++++++++-
+> >>>>>>    1 file changed, 57 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>>>> b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>>>> index dc143b250704..a776c7906c76 100644
+> >>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>>>> @@ -31,6 +31,55 @@
+> >>>>>>    #define PREFETCH_MODERATE    (2 << PREFETCH_SHIFT)
+> >>>>>>    #define PREFETCH_DEEP        (3 << PREFETCH_SHIFT)
+> >>>>>>
+> >>>>>> +static const struct actlr_config sc7280_apps_actlr_cfg[] =3D {
+> >>>>>> +    { 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x0900, 0x0402, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x0901, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x0d01, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x1181, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1182, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1183, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1184, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1185, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1186, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1187, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1188, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x1189, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x118b, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x118c, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x118d, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x118e, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x118f, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +    { 0x2000, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2040, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2062, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2080, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x20c0, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2100, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2140, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> >>>>>> +    { 0x2180, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x2181, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x2183, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x2184, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +    { 0x2187, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static const struct actlr_config sc7280_gfx_actlr_cfg[] =3D {
+> >>>>>> +    { 0x0000, 0x07ff, PREFETCH_DEEP | CPRE | CMTLB },
+> >>>>>> +};
+> >>>>>
+> >>>>> It's Will "stuck record" Deacon here again to say that I don't thin=
+k
+> >>>>> this data belongs in the driver.
+> >>>>>
+> >>>>
+> >>>> Hi Will,
+> >>>>
+> >>>> It will be difficult to reach a consensus here, with Robin and the
+> >>>> DT folks
+> >>>> okay to keep it in the driver, while you believe it doesn't belong
+> >>>> there.
+> >>>>
+> >>>> Robin, Rob, could you please share your thoughts on concluding the
+> >>>> placement
+> >>>> of this prefetch data?
+> >>>>
+> >>>> As discussed earlier [1], the prefetch value for each client doesn=
+=E2=80=99t
+> >>>> define
+> >>>> the hardware topology and is implementation-defined register writes
+> >>>> used by
+> >>>> the software driver.
+> >>>
+> >>> It does reflect the hardware topology though, doesn't it? Those magic
+> >>> hex
+> >>> masks above refer to stream ids, so the table is hard-coding the
+> >>> prefetch
+> >>> values for particular matches.
+> >>
+> >> That is correct in the sense that stream id is mapped to context bank
+> >> where these configurations are applied.
+> >> However the other part of it is implementation-defined register/values
+> >> for which community opinion was register/value kind of data, should no=
+t
+> >> belong to device tree and are not generally approved of.
+> >>
+> >> Would also like to point out that the prefetch values are recommended
+> >> settings and doesn=E2=80=99t mean these are the only configuration whi=
+ch would
+> >> work for the soc.
+> >> So the SID-to-prefetch isn't strictly SoC defined but is a software
+> >> configuration, IMO.
+> >
+> > What's particularly confusing is that most of the IDs encoded here don'=
+t
+> > actually seem to line up with what's in the respective SoC DTSIs...
+> >
+> > However by this point I'm wary of whether we've lost sight of *why*
+> > we're doing this, and that we're deep into begging the question of
+> > whether identifying devices by StreamID is the right thing to do in the
+> > first place. For example, as best I can tell from a quick skim, we have
+> > over 2 dozen lines of data here which all serve the exact same purpose
+> > of applying PREFETCH_DEEP | CPRE | CMTLB to instances of
+> > "qcom,fastrpc-compute-cb". In general it seems unlikely that the same
+> > device would want wildly different prefetch settings across different
+> > SoCs, or even between different instances in the same SoC, so I'm reall=
+y
+> > coming round to the conclusion that this data would probably be best
+> > handled as an extension of the existing qcom_smmu_client_of_match
+> > mechanism.
+> >
+>
+> As per your design idea,do you mean to use qcom_smmu_client_of_match to
+> identify the device using compatible string and apply the device
+> specific settings for all the SoCs (instead of StreamID based device
+> identification) ?
+>
+> something like this rough snippet(?):
+>
+> qcom_smmu_find_actlr_client(struct device *dev)
+> {
+>
+>         if (of_match_device(qcom_smmu_client_of_match, dev) =3D=3D
+> qcom,fastrpc-compute-cb )
+>                 qcom_smmu_set_actlr_value(dev, (PREFETCH_DEEP | CPRE | CM=
+TLB));
+> /*where (PREFETCH_DEEP | CPRE | CMTLB) is used for compute-cb client.*/
+>
+>         else if (of_match_device(qcom_smmu_client_of_match, dev) =3D=3D q=
+com,adreno )
+>                 qcom_smmu_set_actlr_value(dev, (PREFETCH_SHALLOW | CPRE |=
+ CMTLB));
+> /*Where (PREFETCH_SHALLOW | CPRE | CMTLB) is for adreno client. */
 
-syzbot found the following issue on:
+I like this idea, especially once it gets converted into a per-SoC
+table of compatibles.
 
-HEAD commit:    43d0035b2c6a Merge branch 'unmask-dscp-bits'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c73b33980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=34658a0f0144bec77d8d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d9ee2f9a24bd/disk-43d0035b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45ba9b6d0285/vmlinux-43d0035b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/23448fef5f65/bzImage-43d0035b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+34658a0f0144bec77d8d@syzkaller.appspotmail.com
-
-IPVS: stopping backup sync thread 11551 ...
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc5-syzkaller-00764-g43d0035b2c6a #0 Not tainted
-------------------------------------------------------
-syz.2.1876/12083 is trying to acquire lock:
-ffffffff8fc8c048 (rtnl_mutex){+.+.}-{3:3}, at: ipv6_sock_mc_close+0xc9/0x140 net/ipv6/mcast.c:354
-
-but task is already holding lock:
-ffff88805f5ef850 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_switch_to_fallback+0x35/0xdb0 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2771
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
-       __do_sys_sendto net/socket.c:2216 [inline]
-       __se_sys_sendto net/socket.c:2212 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2212
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
-       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ipv6_sock_mc_close+0xc9/0x140 net/ipv6/mcast.c:354
-       inet6_release+0x47/0x70 net/ipv6/af_inet6.c:484
-       __sock_release net/socket.c:659 [inline]
-       sock_release+0x82/0x150 net/socket.c:687
-       stop_sync_thread+0x4e6/0x5e0 net/netfilter/ipvs/ip_vs_sync.c:2004
-       do_ip_vs_set_ctl+0x47b/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2734
-       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
-       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz.2.1876/12083:
- #0: ffff88805f5ef850 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 12083 Comm: syz.2.1876 Not tainted 6.11.0-rc5-syzkaller-00764-g43d0035b2c6a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- ipv6_sock_mc_close+0xc9/0x140 net/ipv6/mcast.c:354
- inet6_release+0x47/0x70 net/ipv6/af_inet6.c:484
- __sock_release net/socket.c:659 [inline]
- sock_release+0x82/0x150 net/socket.c:687
- stop_sync_thread+0x4e6/0x5e0 net/netfilter/ipvs/ip_vs_sync.c:2004
- do_ip_vs_set_ctl+0x47b/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2734
- nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
- smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
- do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
- __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
- __do_sys_setsockopt net/socket.c:2356 [inline]
- __se_sys_setsockopt net/socket.c:2353 [inline]
- __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc693f79eb9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc6939ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007fc694116058 RCX: 00007fc693f79eb9
-RDX: 000000000000048c RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007fc693fe793e R08: 0000000000000018 R09: 0000000000000000
-R10: 00000000200002c0 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fc694116058 R15: 00007ffcf1815ee8
- </TASK>
+>
+> }
+>
+> Let me know if my understanding is incorrect.
+> Then in this case if different SoC would have a different settings for
+> same device, then everytime a new compatible would be necessary for same
+> device on different SoC?
+>
+> On similar lines there is another TBU based approach which I can think
+> of. Identify the TBU -> Identify clients from TopoID derived from SID
+> range specified in qcom,stream-id-range -> Apply the client
+> specific settings ?
+>
+> Both approaches would be driver-based, as they are now.
+>
+> Also I'd like to point out that in the current design, since we fixed
+> the smr_is_subset arguments to make the stream IDs a subset of entries
+> in the actlr_cfg table, we can reduce the number of entries in the
+> table. This way, fewer SID-mask pairs can accommodate several stream IDs.
+>
+> Thanks & regards,
+> Bibek
+>
+> > Thanks,
+> > Robin.
+> >
+> >>
+> >>> If I run on a different SoC configuration > with the same table, then
+> >>> the prefetch settings will be applied to the
+> >>> wrong devices. How is that not hardware topology?
+> >>>
+> >>
+> >> The configuration table is tied to SoC compatible string however as I
+> >> mentioned above, its basically a s/w recommended setting.
+> >> (using prefetch settings other than the recommended values e.g
+> >> PREFECH_DEFAULT instead of PREFETCH_DEEP would not render the device
+> >> unusable unlike changing stream-ids which can make it unusable).
+> >>
+> >> Since it is implementation specific we cannot have a generic DT bindin=
+g,
+> >> tying stream ids to these recommended settings.
+> >> Even with qcom specific binding due to dependency on implementation, n=
+ot
+> >> sure if we would be able to maintain consistency.
+> >>
+> >> So from maintenance perspective carrying these in driver appear to be
+> >> simpler/flexible. And if it doesn=E2=80=99t violate existing precedenc=
+e, we
+> >> would prefer to carry it that way.
+> >>
+> >> This parallels how _"QoS settings"_ are handled within the driver
+> >> (similar to this example [1]).
+> >>
+> >> [1].
+> >> https://lore.kernel.org/linux-arm-msm/20231030-sc8280xp-dpu-safe-lut-v=
+1-1-6d485d7b428f@quicinc.com/#t
+> >>
+> >> Thanks & regards,
+> >> Bibek
+> >>
+> >>> WIll
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+With best wishes
+Dmitry
 
