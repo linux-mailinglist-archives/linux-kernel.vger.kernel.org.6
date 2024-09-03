@@ -1,164 +1,300 @@
-Return-Path: <linux-kernel+bounces-312910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0404D969D96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:29:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C498D969D9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B1A1F22C02
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E996C1C23C06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4A01CB539;
-	Tue,  3 Sep 2024 12:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59C91CDFA3;
+	Tue,  3 Sep 2024 12:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IbY6SCP4"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qn0o1gnF"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6F51C9877
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8B71A0BCB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366555; cv=none; b=a5z9AK74Yz0E+98F6LJ9CCDs4iUuoxrvQlmRW8KvJJWJ8ok1Cha15UIpLO4EB194jPmG5ZIu+rv5xPFBSB9wJQhkQqKSheGZ9Qq3KK0gsb1JpQFNuZ8EtBzU2jneeZ0Iv6U9vEEESu3cNOG9ZAqAAqV+0HpKcJH8rbdZy2nh8YE=
+	t=1725366599; cv=none; b=TYen9fnUuA5L7vPG9I4WQC71Jn7dxjHmSD1vfkUHztc04FwlBUxyAP9vZHjGsA2AiwMceguWul1qisPC+lCelJhe2h3UC0zX+SMVZFFzBDY6D2sOM4K+RoIdifulHy5ihuMnVtYcdDeq8AjwFFDeEC3LmumK+aLegtVE/8unNm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366555; c=relaxed/simple;
-	bh=LYZ3g1BOQrAmEV2a5L00wMHSlNaPPgLH0lWGP87X9VE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvq3mmcm37MBbvmNl5FB4Y1hQ88/oKNrt/aBF5aUFMgtukR2HIC0wivIav/77iMh3/O7J7m6lR8GuLbYUTcfqLjvIt5frDs28hS3EmDVEdTNaHkAwoPL6oToqZgP+KxpyoKSwFNl42wFAYgkg/CtiHfQc3waqyHai021smJNrsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IbY6SCP4; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53345dcd377so7298901e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725366551; x=1725971351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
-        b=IbY6SCP4WWPPL2wU29cTSHcvBDgNnVeuU2grWCJXHhk+8cJGN+SSnRloO9PpTLhe4b
-         LfHYLzWEfoCva2m/GdE8rJ7f62g5YKa0X0eUeeJlCOfybn5LI79N6kFW66kvOiFeQsI4
-         nwhl2hdZbXWiAMrbE89ngBhyAfDA6Df5AKAs07lJUXb6dklEVIGdpN3/ZMrhQn61wc8k
-         NCfOuJ+8YGx7apRuj0krn9P0DlpMk0AeQ+/8hLUd/EjOSK4WIsr6Fz8kMpCSPR04ocF7
-         Ur+e4xK+Hlp8/W0ymMOcrQ9WaxoE++Mj9jQUuF92/3dQCfDuJ/lUIytA6SwFu0eK6Jvt
-         /r1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725366551; x=1725971351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
-        b=TF8oDDerP/IiN4zOTqqe19m6I5MsPr/3mNqsRVEzw8cm/6unX7B+YjwKmQ5HoDHVwF
-         Zh4kg0si3aUVLI3Ic27p0Tlij4FTjP/JnxnLj10DhR4+NKdJfIJNlUrWI9SvaAmDi2mO
-         sniGODPl+4mS0daAiaiN3f0wu1OwH/Y0UP/ziBXuxEuRsQq/8Y6shtQBoqXQI1QygCtZ
-         eu0aLrUGF4oU8rXg6DXNJIiG+f3hjhrI026vfXzEXG4OIPdVpweZzt/EYyw6KXJ3t+Ms
-         iSYvK7BywsNYuCgoB32FJW0vHEfcoMJCWblaoSDw+Tdr2exGtjpxwcJxyhDqIi3xsqbi
-         ndig==
-X-Forwarded-Encrypted: i=1; AJvYcCWb0nrxSG6L/1X8Gw1Gq8gzz7hh0LG6oeld4nHiXGGxdN4zDXcfB/3p2E0RdbnbeZ7YnivFnxsc0N3745U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjhw+7IsqQwFA8TwjXpRMucDkeBOWQyGLWCnlyUwfuXTLjiwxu
-	4Os0HA+dZAZ7B2vI0i/UOhsgRtfYCB70rwaAcwRJtRQFGYWS/1pGmNMusseapBI=
-X-Google-Smtp-Source: AGHT+IFq5h7rZ8oQIIXm6nz6CibNpWmLcPJNLG4TGtm/2ICu6a9ZqKTz9NHYYqSXDVwrc61upSj1pQ==
-X-Received: by 2002:a05:6512:2254:b0:530:ea60:7e07 with SMTP id 2adb3069b0e04-53546bb9455mr9237621e87.58.1725366550821;
-        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7834sm688285166b.177.2024.09.03.05.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 14:29:18 +0200
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 05/11] vmlinux.lds.h: Preserve DTB sections from being
- discarded after init
-Message-ID: <ZtcBHvI9JxgH9iFT@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <12d0909b1612fb6d2caa42b4fda5e5ae63d623a3.1724159867.git.andrea.porta@suse.com>
- <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
+	s=arc-20240116; t=1725366599; c=relaxed/simple;
+	bh=MadOy1n9lMn2gJiTmCo/b3sxyuT0+3q42VXhnUpkc+k=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=lNIkFBof3pyWxpO3jw3MXK/YTkbEt/1T4EkQcYSANy6X6ysyk38ggp2IqT7PW92I/rscFfN+CBQpaTjs7FYTBGBDKy8ox7xP04i3b6fn7JL2mi0mS9mKFbs6M+bMlp21vDiDjpq819h69hXjDp49i9EZU20b3Z1NUXLvcMedgUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qn0o1gnF; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240903122954euoutp0223b60464e0f72eb900aa63ef4ecfe544~xu8bCJyc32679726797euoutp02E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:29:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240903122954euoutp0223b60464e0f72eb900aa63ef4ecfe544~xu8bCJyc32679726797euoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725366594;
+	bh=cgNOgNReNzAJFf9P5wa3Kro2zVp3TLloPkWMjpgBKgI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=qn0o1gnFDe30/e5l1CNLn8s6VRfRR4IZnoshRZ5H/dfQFW/dnweGOz1wEGpuK8ejY
+	 3fMvN4SZzwnOJvlA8hNFLYq18YYKFMZbxMVUX8ekj24TP4NEo8PG/10+sW5G7k8YWf
+	 N7eeu1FWQY93iu2gdIO3BPMiZwKOUaJ2PLjh/kp0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240903122952eucas1p2ac10c1a77d1c5248183d9ccffd55c25a~xu8ZW4yn20966109661eucas1p2g;
+	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 0B.49.09624.04107D66; Tue,  3
+	Sep 2024 13:29:52 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240903122952eucas1p208675907d19ad2a8f7f46756163f0b59~xu8YuAl6V2062120621eucas1p2D;
+	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240903122952eusmtrp1603deb26a30cdd3061f0cbdab62f6f61~xu8YtMypv2418124181eusmtrp1F;
+	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-f3-66d70140ec54
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id FD.CD.14621.F3107D66; Tue,  3
+	Sep 2024 13:29:51 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240903122951eusmtip21569f5ad77ab643529872aec9866690e~xu8YabmBK0762607626eusmtip2R;
+	Tue,  3 Sep 2024 12:29:51 +0000 (GMT)
+Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 3 Sep 2024 13:29:50 +0100
+Date: Tue, 3 Sep 2024 14:29:50 +0200
+From: Daniel Gomez <da.gomez@samsung.com>
+To: <brauner@kernel.org>
+CC: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	<akpm@linux-foundation.org>, <chandan.babu@oracle.com>,
+	<linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>, <hare@suse.de>,
+	<gost.dev@samsung.com>, <linux-xfs@vger.kernel.org>, <hch@lst.de>,
+	<david@fromorbit.com>, Zi Yan <ziy@nvidia.com>,
+	<yang@os.amperecomputing.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <willy@infradead.org>, <john.g.garry@oracle.com>,
+	<cl@os.amperecomputing.com>, <p.raghav@samsung.com>, <mcgrof@kernel.org>,
+	<ryan.roberts@arm.com>, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH v13 10/10] xfs: enable block size larger than page size
+ support
+Message-ID: <20240903122950.eugl53tler4n52ao@AALNPWDAGOMEZ1.aal.scsc.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
+In-Reply-To: <20240822135018.1931258-11-kernel@pankajraghav.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTdRy+7/u+vO+75bjXsfJ7aFZI6ixQLquvB2eA5r2X52VX7jrJZMrr
+	oMbgNhHCuNDudjk2VHIKA2mHpMwt0MHhfgCdowEbktakSHSpgZ0w4ASj1KJ8fdfpf8/n+TzP
+	fZ/nc18al87GxNN5mt2cVqNUJ5Bior3n3vdJ6eDnXavqf1qK6locJBrvngboR/9i1PzNDQy1
+	9YQBGhg7TqHQSCzqaKjCkM3ux9Cl+y6ALtyeIVBHZ4BAIU8dicKOf2OQ528XhYYOjQJk9JoB
+	evDXw4WpMUChWn+YSpexjnoHYIMNkG1tWsE6Tx8gWed0FcX2VT8gWO8v5SRr+nySZO+MXiHY
+	itAQxQ7YMtiprkGSbe3fy844F2+O3SpOy+HUeXs47cq12eJco/cSWTj4UknjyctUObAuMQCa
+	hsxq2O1dYwBiWso0ATjuK6eE4S6AR2udmDDMAHiuw0MYgOiRw3rdD4TFKQAt+puPVefvTuHC
+	4ASw3n8N8BaCSYS3Bo+QPCYZOewKOCn+cRkDoadBwetxxk9AfdMoxmviGAW0/voDzmskzEb4
+	j/sznpYw82GgZuRRCpx5GVq90yQvwZmF8NQczdMiJh1WmH6nhKAvwOrDtmjoMhhsu4IJeL8Y
+	HhzNE/B62Dm8L8rHwbHetqh3Eez/0hj1qmBjsyWKC2HHsCVGOF0qrLygFugM2HvNFqVj4dDE
+	fCFkLKxqP4YLtAR+oZcK6qXQHo4Qh8ASyxO1LE/UsjyuZQX4abCAK9LlqzhdioYrTtYp83VF
+	GlXyzoJ8J3j4Nfvneqdd4PjYnWQfwGjgA5DGE2SSbWcHd0klOcpPSjltwXZtkZrT+cBCmkhY
+	IHkx5zlOyqiUu7mPOa6Q0/6/xWhRfDmWGLR9CLcPlLylMLgnli8KuGZPXnd9ZMoozDo8efWr
+	M/NMx4p/M5vvg3V9y69ORpQ3DxR7kkuXhfdUdvscxvbVedkXxz1/4M71ubi8TN26+ah+VZnG
+	Pu87Q1ZBMO489XQN8LW8kbWtRfPqt+rO15D1g2cHZIqV3MFNFyPASpfWDifNlr33/LtT3drW
+	kcw/x1vMX8e539b02n1yRfyMuejGphTZZVb/lCjz1rqU5uCa2/u67u0Fcuv7mUfeeWXLjpq1
+	Sen2rdmpkVRjWkgxXHAi0lDxzIk397sdn6ZJ+5gNdS6jZi6x1ORunCoWJU2Emis3vt5WvWMD
+	IxLDnapzJfIeVQKhy1WmrMC1OuV/WFlUoAkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsVy+t/xe7r2jNfTDG4ut7CYs34Nm8Xrw58Y
+	LS4dlbNYt/Yhk8WWY/cYLc6+mstucfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XuSxeLy
+	rjlsFvfW/Ge12PVnB7vFjQlPGS16dk9ltPj9AyjRu+Qku8Xso/fYHUQ81sxbw+hxapGEx+YV
+	Wh6bVnWyeWz6NInd48SM3yweu282sHn0Nr9j8/j49BaLR/flG+weZ1c6erzfd5XNY/Ppao/P
+	m+QC+KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
+	Mnp2X2AruKpdsWTZFfYGxgXKXYycHBICJhILHhxl7GLk4hASWMoosWDyARaIhIzExi9XWSFs
+	YYk/17rYIIo+Mkqc3XwfytnEKLF7wQ4mkCoWARWJZ1ensIHYbAKaEvtObmLvYuTgEBGQkNi1
+	KAyknlngKItE24qnYPXCAmESC+5fZAap4RXwlvi7sx4kLCRwglGiZ6UiiM0rIChxcuYTsIOY
+	BXQkFuz+xAZSziwgLbH8HwdImFPAQaK79zk7xJ2KEjMmroS6v1bi899njBMYhWchmTQLyaRZ
+	CJMWMDKvYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECEwg24793LyDcd6rj3qHGJk4GA8xSnAw
+	K4nwxm68mibEm5JYWZValB9fVJqTWnyI0RQYEBOZpUST84EpLK8k3tDMwNTQxMzSwNTSzFhJ
+	nNft8vk0IYH0xJLU7NTUgtQimD4mDk6pBiZdt+45Z3mV3M1lJ62bPv9R4HmL32yxT9tef++N
+	bGLSDMr45373gE7v2+2NFxW/zdicphp5tjG18Nq7wI53bkXvQ0U2Ci065fn1tZzF1NsqNS01
+	HZ4Fp89E3u82DF1r9U6b9f7KBJ5ztiuunc5k/eN7NPrt3Q8zr99mNHG4ZqhifFgrzf3000NH
+	d/tMlxQNyZN6dN1F3f93urL0utSzMfrPWlezxd6+dTvqpPEXeYF50re9yx9e3TDBlFnOyDnb
+	hzuJ6+CrvnMi7jfyjCu7lueEbvNsWdzw/feJ+TznmzhPvGT2dFd6pfaNhb3NpqziwfzAh+pV
+	u6RyPkfYXZh9RemYKUNPaSRPC/vHBW6lRUosxRmJhlrMRcWJAG+r+XKpAwAA
+X-CMS-MailID: 20240903122952eucas1p208675907d19ad2a8f7f46756163f0b59
+X-Msg-Generator: CA
+X-RootMTR: 20240822135125eucas1p1c9928c1596c724973055d94103adba96
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240822135125eucas1p1c9928c1596c724973055d94103adba96
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+	<CGME20240822135125eucas1p1c9928c1596c724973055d94103adba96@eucas1p1.samsung.com>
+	<20240822135018.1931258-11-kernel@pankajraghav.com>
 
-Hi Stephen,
-
-On 12:46 Fri 30 Aug     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2024-08-20 07:36:07)
-> > The special section .dtb.init.rodata contains dtb and dtbo compiled
-> > as objects inside the kernel and ends up in .init.data sectiion that
-> > will be discarded early after the init phase. This is a problem for
-> > builtin drivers that apply dtb overlay at runtime since this happens
-> > later (e.g. during bus enumeration) and also for modules that should
-> > be able to do it dynamically during runtime.
-> > Move the dtb section to .data.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  include/asm-generic/vmlinux.lds.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > index ad6afc5c4918..3ae9097774b0 100644
-> > --- a/include/asm-generic/vmlinux.lds.h
-> > +++ b/include/asm-generic/vmlinux.lds.h
-> > @@ -365,6 +365,7 @@
-> >         TRACE_PRINTKS()                                                 \
-> >         BPF_RAW_TP()                                                    \
-> >         TRACEPOINT_STR()                                                \
-> > +       KERNEL_DTB()                                                    \
+On Thu, Aug 22, 2024 at 03:50:18PM +0200, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> The KERNEL_DTB() macro shows the section name is dtb.init.rodata. Can
-> you remove the ".init." part if this isn't initdata anymore? And
-> shouldn't it be in the RO_DATA() macro?
-
-Ack.
-
+> Page cache now has the ability to have a minimum order when allocating
+> a folio which is a prerequisite to add support for block size > page
+> size.
 > 
-> It would be nice to keep the initdata properties when this isn't used
-> after init as well. Perhaps we need another macro and/or filename to
-> indicate that the DTB{O} can be thrown away after init/module init.
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
+>  fs/xfs/libxfs/xfs_shared.h |  3 +++
+>  fs/xfs/xfs_icache.c        |  6 ++++--
+>  fs/xfs/xfs_mount.c         |  1 -
+>  fs/xfs/xfs_super.c         | 28 ++++++++++++++++++++--------
+>  include/linux/pagemap.h    | 13 +++++++++++++
+>  6 files changed, 45 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
+> index 0af5b7a33d055..1921b689888b8 100644
+> --- a/fs/xfs/libxfs/xfs_ialloc.c
+> +++ b/fs/xfs/libxfs/xfs_ialloc.c
+> @@ -3033,6 +3033,11 @@ xfs_ialloc_setup_geometry(
+>  		igeo->ialloc_align = mp->m_dalign;
+>  	else
+>  		igeo->ialloc_align = 0;
+> +
+> +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
+> +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
+> +	else
+> +		igeo->min_folio_order = 0;
+>  }
+>  
+>  /* Compute the location of the root directory inode that is laid out by mkfs. */
+> diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
+> index 2f7413afbf46c..33b84a3a83ff6 100644
+> --- a/fs/xfs/libxfs/xfs_shared.h
+> +++ b/fs/xfs/libxfs/xfs_shared.h
+> @@ -224,6 +224,9 @@ struct xfs_ino_geometry {
+>  	/* precomputed value for di_flags2 */
+>  	uint64_t	new_diflags2;
+>  
+> +	/* minimum folio order of a page cache allocation */
+> +	unsigned int	min_folio_order;
+> +
+>  };
+>  
+>  #endif /* __XFS_SHARED_H__ */
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index cf629302d48e7..0fcf235e50235 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -88,7 +88,8 @@ xfs_inode_alloc(
+>  
+>  	/* VFS doesn't initialise i_mode! */
+>  	VFS_I(ip)->i_mode = 0;
+> -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
+> +	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
+> +				    M_IGEO(mp)->min_folio_order);
+>  
+>  	XFS_STATS_INC(mp, vn_active);
+>  	ASSERT(atomic_read(&ip->i_pincount) == 0);
+> @@ -325,7 +326,8 @@ xfs_reinit_inode(
+>  	inode->i_uid = uid;
+>  	inode->i_gid = gid;
+>  	inode->i_state = state;
+> -	mapping_set_large_folios(inode->i_mapping);
+> +	mapping_set_folio_min_order(inode->i_mapping,
+> +				    M_IGEO(mp)->min_folio_order);
+>  	return error;
+>  }
+>  
+> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> index 3949f720b5354..c6933440f8066 100644
+> --- a/fs/xfs/xfs_mount.c
+> +++ b/fs/xfs/xfs_mount.c
+> @@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
+>  {
+>  	uint64_t		max_bytes;
+>  
+> -	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+>  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
+>  
+>  	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 210481b03fdb4..8cd76a01b543f 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1638,16 +1638,28 @@ xfs_fs_fill_super(
+>  		goto out_free_sb;
+>  	}
+>  
+> -	/*
+> -	 * Until this is fixed only page-sized or smaller data blocks work.
+> -	 */
+>  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+> -		xfs_warn(mp,
+> -		"File system with blocksize %d bytes. "
+> -		"Only pagesize (%ld) or less will currently work.",
+> +		size_t max_folio_size = mapping_max_folio_size_supported();
+> +
+> +		if (!xfs_has_crc(mp)) {
+> +			xfs_warn(mp,
+> +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
+>  				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> -		error = -ENOSYS;
+> -		goto out_free_sb;
+> +			error = -ENOSYS;
+> +			goto out_free_sb;
+> +		}
+> +
+> +		if (mp->m_sb.sb_blocksize > max_folio_size) {
+> +			xfs_warn(mp,
+> +"block size (%u bytes) not supported; Only block size (%ld) or less is supported",
 
-We can certainly add some more filename extension that would place the
-relevant data in a droppable section. 
-Throwing away the dtb/o after init is like the actual KERNEL_DTB macro that
-is adding teh data to section .init.data, but this would mean t would be
-useful only at very early init stage, just like for CONFIG_OF_UNITTEST.
-Throwing after module init could be more difficult though, I think,
-for example we're not sure when to discard the section in case of deferred
-modules probe.
+This small fix [1] is missing in linux-next and vfs trees. Can it be picked?
 
-Many thanks,
-Andrea
+[1] https://lore.kernel.org/all/Zs_vIaw8ESLN2TwY@casper.infradead.org/
+
+> +				mp->m_sb.sb_blocksize, max_folio_size);
+> +			error = -ENOSYS;
+> +			goto out_free_sb;
+> +		}
+> +
+> +		xfs_warn(mp,
+> +"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
+> +			mp->m_sb.sb_blocksize);
+>  	}
+>  
+>  	/* Ensure this filesystem fits in the page cache limits */
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 4cc170949e9c0..55b254d951da7 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -374,6 +374,19 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>  #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
+>  #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
+>  
+> +/*
+> + * mapping_max_folio_size_supported() - Check the max folio size supported
+> + *
+> + * The filesystem should call this function at mount time if there is a
+> + * requirement on the folio mapping size in the page cache.
+> + */
+> +static inline size_t mapping_max_folio_size_supported(void)
+> +{
+> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
+> +	return PAGE_SIZE;
+> +}
+> +
+>  /*
+>   * mapping_set_folio_order_range() - Set the orders supported by a file.
+>   * @mapping: The address space of the file.
+> -- 
+> 2.44.1
+> 
 
