@@ -1,75 +1,122 @@
-Return-Path: <linux-kernel+bounces-312014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8487F9690E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:28:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D8D9690EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4185F28403F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFF31C225A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20701CCED4;
-	Tue,  3 Sep 2024 01:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107AA1CCED7;
+	Tue,  3 Sep 2024 01:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukfW9kKi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mzxQT8rt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0A19E989;
-	Tue,  3 Sep 2024 01:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD89915D1;
+	Tue,  3 Sep 2024 01:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725326930; cv=none; b=A4Iq6JAuyLarVDaCvL5uobN3JyNzaKbxlTQPJl/1TmXQA/G3kS/5oMt+yyBPTxfAg1e6EL/hej7V5f+mT3rCKHAFTiiXw9DO713dAVdVTW290nxkFzYr3VyWHLbINGOjdtlv/XIaFOq8H3oZ1Uw6ql9gvcL8JKCzb9e85bHsVvY=
+	t=1725327055; cv=none; b=plw99SYmEjlTQwsrSUp56piw/1sbdkqCjhPkffuBra4zBfI5hdyJn0bl0L/U7rpOTCn9P+Y0FOtYK+QPBFVoVP47mKSpJmJ6f418Uwsd8RN216VJxHMdMohaXhD3gBgo4xufcOcVST8WWnPoPTNOjLH5K3b0vFTQrh9G2/50/HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725326930; c=relaxed/simple;
-	bh=B89yEqw5haecuJM/TsGjQ/Q5j0AmnwbH4PTo9ttXBG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8G+R0phyo4Pu3b4ZZdMI4mZzraXFM7CHRQTg/VakJHFCi560F2vMosJV4Dor0JTpM7hP3iLHTfI3qxLw7wRr0MrYw9j08eRhDcNFrdS0CebYThy38w474PuHZj40BBvoBs/X0yDqMK4jzd/YKdQwsBc1UAMoe5zu+nbNStdblU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukfW9kKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225A5C4CEC4;
-	Tue,  3 Sep 2024 01:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725326929;
-	bh=B89yEqw5haecuJM/TsGjQ/Q5j0AmnwbH4PTo9ttXBG0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ukfW9kKiZ+y4GoLXqKIz04O0UZEtRRwhaRLU5U6QpAXz9SxsGR+nZPs4U34MF+Kt8
-	 GnjLU4FRU0k7OYLdA8OFF/Kji5Gga/B9wyRDdvWn6nFdmTYSyIPqk67MlCH3pDFDPJ
-	 L435HjSi+7vA3U8xYi4zvY0WZnZVP0k/gMXpJOUkVnrJsYBWhFnLwiAUYEpM2MimKW
-	 Q+Oc6nA91cBu9qrTzq9P1Ci4kXCs/4W1+nc7ta8zesOvzFEErx72By8lz5nWKxgAZH
-	 R1bC1RKpRESYxUJy3uFHtQ7Wjf3Ji1ipU0qbRSbK9QuP67kCCq8TxQYayvW/mDYOE3
-	 xirJC34/ym1Pw==
-Date: Mon, 2 Sep 2024 18:28:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, Amritha Nambiar
- <amritha.nambiar@intel.com>, stable@kernel.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Daniel Jurgens <danielj@nvidia.com>,
- open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] netdev-genl: Set extack and fix error on napi-get
-Message-ID: <20240902182848.4e1ea70f@kernel.org>
-In-Reply-To: <ZtYJX2HTeiglkxUU@LQ3V64L9R2.station>
-References: <20240831121707.17562-1-jdamato@fastly.com>
-	<ZtYJX2HTeiglkxUU@LQ3V64L9R2.station>
+	s=arc-20240116; t=1725327055; c=relaxed/simple;
+	bh=fo7tlYkk9jPrt8TCHcHcAOeb3lNp4WaAVXtPx2TeG44=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dH31ZTOYYvgsvCNQoOASkqXay67VPjWvBIMA4ourxjL/h4xC9wPLQIy0oBntz3B2RUe160F6vfTG+W0pvhxs+wAPazJ23OVFfb68SbD5MVpoohjdVe1HhT3ZWEZ8bh9Hx8lApR724Uwq+S/NRFodQpIBqeLwL87GTReSAZX3WfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mzxQT8rt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482NxE8T018430;
+	Tue, 3 Sep 2024 01:30:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=FVtv6Yv3URoaXC2cEmRj1Trd
+	fRNj2NGxOvBSfbiEjBo=; b=mzxQT8rt03QoCje6Gqosjg8fgZLCeEF+wXcCzkv2
+	gHyxMqUKrb/ml6wHB0M+SxNh+YIhnzDLlOEPZFDrKUmye+qaqj1JlScwQj+MX6lm
+	RoKbQCTr7mTFPIeZCQ3HaReiMgNbZXpz1O2QdFPaqW24vv9fUpDnqbo+i6MO9IU2
+	bcSWLOyTQHDW1+XxIuWg2u9aZHyQUCH3z4csl+ac/HNHI9IK69nabGwwGtCy9wJY
+	134p37d9ltbvZhDGoNfNDxnmfFpwEN7/gnCfhN/2kp3071KBJhZZURMfbevjTFm/
+	bp2S2dK5gk/kRW7sYjJ8BTqJ/eMfOXd6KZ1XHmyKpVBC5Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bud2nt1r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 01:30:50 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4831Uonw007441
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 01:30:50 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Sep 2024 18:30:45 -0700
+Date: Tue, 3 Sep 2024 09:30:41 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+Message-ID: <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JLfugollkkDNoaYPF8vxTlDZppvg3GJ9
+X-Proofpoint-ORIG-GUID: JLfugollkkDNoaYPF8vxTlDZppvg3GJ9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=637 malwarescore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030010
 
-On Mon, 2 Sep 2024 20:52:15 +0200 Joe Damato wrote:
-> Based on Eric's comment regarding my other patch [1], I should
-> probably re-submit this against net-next instead of net.
+On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
+> On 27.08.2024 9:27 AM, Jie Gan wrote:
+> > Add coresight components for x1e80100. This change includes CTI,
+> > dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+> > 
+> > Change in V1:
+> > Check the dtb with dtbs_check W=1, and fix the warnings for
+> > the change.
+> > 
 > 
-> It's been over 48 hours, but I'll wait a bit longer before
-> resubmitting.
+> Applying this series and enabling CORESIGHT=m (along with all the options
+> in menuconfig) breaks booting on my X1E Surface Laptop 7
+> 
+> Konrad
 
-Change is simple enough, I'll strip the tags and apply to net-next.
-Thanks!
+Did not observe any booting issues with our devices. Any relevant log to share?
+This patch also tested by my colleague.
+
+Can you successfully boot without the patch?
+
+Thanks,
+Jie
 
