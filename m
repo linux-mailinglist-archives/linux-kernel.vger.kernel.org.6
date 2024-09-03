@@ -1,141 +1,193 @@
-Return-Path: <linux-kernel+bounces-313803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A6296AA04
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CEB96AA06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 157D1281B3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8B0280E2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D83C126C1B;
-	Tue,  3 Sep 2024 21:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E801A18E047;
+	Tue,  3 Sep 2024 21:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bKvtYAoE"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQWDzXep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401D2126BE8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B4B1EC013
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725398586; cv=none; b=YO1ZlpJVg1iTjE7ASUlqeP9RBq2IJN+U7UhO6uvKcGgkHZMWzNHKIrQEtPrhK5FAJUi1hDgCEw5ZNQcx1PE4IZEryHeGCbE40NmZTQNfjqiAMgMH+2bKNCMMSuVqwQv6TTj56j0ZXzuMvceTlVYKlFmvR5fp87yDFEV1IuKOoVI=
+	t=1725398627; cv=none; b=Q8y5b/RkBP3tBBrXM/kA1uX/G8+cdhlJrknqNoJ8MJtgnsOcN9FVX6/ZKNM0HAoc65Lvh8NXhwSglWsgvx0UKzwU5o5fXp5vUg06lui2UOCeGkfTmBa5FgLPqBsPvnBimjbNCslbm36dtZws9LtViKmTdacQ9twXDFKJ8B3lrUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725398586; c=relaxed/simple;
-	bh=jO2uDQBQnhOE+b3Vs86Pj9s/3kQUgRcS0rRhGWRV3/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ec3MvmWRaWxY/CxLFt7jeHwTMYMcj7uPXPZRagza187UZxAUmIuc3e85K9RoieQtB+lQNQRHV/RTp+f4vHHrxNiGbYb8u4yLozE42WpC2JCJce54IofaRmNw3NZKVeeq6bjF6MEIidQNkPEOce9V1E0DX00T7PC+p+kH/falu9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bKvtYAoE; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2057917c493so716105ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725398584; x=1726003384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UBCYUVY+kyEAQihHfAIpXMzgk6XSFFHDEmSopvaE4g8=;
-        b=bKvtYAoEyzCTl+bNb9QNqbO5k8hexcEI8R5qHQfSv00dAD9dYSDTwR/wOhcDVfnLQF
-         4qsrqFl8e9pV6satWxpbu+5JGdUt6ScDvo+onldpoARImKj4KLk9FWR7PAaSDovstkZJ
-         CZM0Y8kKhO6UkjyNTagz7CT7D3XriJ6Ugs/cTZw8EKTHJiz1IqXLoWvQyor63XIxS8A5
-         prHV4vlet4D5fSyFMh/nj9iY111b0pcYvv2Y94dDL62FV5CERwQIkLslNRVm3DC1N/d8
-         epXOG04xeAuIGGtYhX+K2bnMnf7Miiz2/Sg/eczCei55TRo5te11TWlE+b/pNonreN0y
-         xwlQ==
+	s=arc-20240116; t=1725398627; c=relaxed/simple;
+	bh=EYF78CP979Wl57jZ8NUAZGx8yDd97++LwymXHvVbAhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsFa0PcW9T1kRTqIKIDX4lOKapMbI1cH2bxBiZsvK6OJe6ruiUy0A4uSqJMFm5ivr3Da7pfTN/byAd6f+iGhbmhq4jhx/Ob7T40WDtF8WGfOii2hXdbMbhCVgraJ4Wrg19l8JZxphr7mjExsWnyqkwHWj/5xvkcs2GreYm1Y0Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQWDzXep; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725398624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9BUz8/XF0Y9T8CJfW/HZEGzqGxZl9wZoaf3L2iMKE4=;
+	b=EQWDzXephu9FfoFD8D7UZUW+6jULG/8DnO0f9hTZizO4LZUAIeug6Q96JGvZ+lZHpthAXY
+	Cfig3aQNT0tHSYkXuAqg1UFME5kqfTmBVLYCj64kXjuQ1eeagSSkGFys1yimLfVS0n6vqE
+	WU6bEeCm42atTLrjghzvmI+DNs/Zre8=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-rAJ7zhrtNfaYDf1AeikQ2Q-1; Tue, 03 Sep 2024 17:23:43 -0400
+X-MC-Unique: rAJ7zhrtNfaYDf1AeikQ2Q-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f4e119c57so43685905ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:23:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725398584; x=1726003384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UBCYUVY+kyEAQihHfAIpXMzgk6XSFFHDEmSopvaE4g8=;
-        b=r9Ab87k7LHST+jfbqJ8WXK7Nbi6qQ+7uDDdgOci5tP7tDFscBZxiCh0iTiFte1ApEX
-         XXoDW0Th/e02DPerYejM1cCcVAfrBXXlb/DYJ9E0tR9Tj8l3tI36LnaSXC3+V2LGopWX
-         adTnHf8KuoveA911ADBNpN3tSWlmgdkdCXT4CrGbW4MUD9A3gcZ3UCBT8KUrgKy5rGbT
-         0Vcx+71B03CK+36PbkKrjnN4efRxPMW1KkRnXfoJ1v6G0bd0MHYPQ52QMTn2TqELh/KP
-         OqTlYqwlPqZ1pW4zG99YwQp/KLCgAljZc5WabsbjSJzz02thhMXw4YRnBZpZwxd9dHVk
-         ktIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCe5iHL5YCeucdH48pUezMDLDJhp3WA8CZd5+SeZIrl+ut5WAGx695BrFz23wPk06g2zb6KbfE0vjbvpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN3NOEJf2CBL3bDmtWN9y/qY/tVhtw+3A9pOGwp1TgqsRkANHR
-	eJxzCVHd2MEqZzRFtAZefvIvpHaCuiqz87K3KPEf2GXxDSP1jVzzO4G/mcRqmS5PDAbQz5yc495
-	OrVKJGxULZOlNt7vyGPF/ZbEgFUtlJvs8uUHn
-X-Google-Smtp-Source: AGHT+IGrH1VC2unY7qDM/hzJ5+tZtVXSRYKJ4GEGN+T3NsiZnSUBdB37jw0R28zr1qAGFIUyrd/mpxuW+gMPnLXeFFY=
-X-Received: by 2002:a17:902:e749:b0:205:950e:1c85 with SMTP id
- d9443c01a7336-205950e1cf6mr97417405ad.10.1725398584234; Tue, 03 Sep 2024
- 14:23:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725398623; x=1726003423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H9BUz8/XF0Y9T8CJfW/HZEGzqGxZl9wZoaf3L2iMKE4=;
+        b=EbY6ibY0JuWd0w39fPvesw5cMxWkLMaT2XTAhO0RI/Sw2nPt1DsPG9vIAozoYLxDst
+         7rpUTg71g/0dPUI+aQUKIrqcbqXUGEW5dXLBZwHIcK0kcoAuYm4n3GTPmSvJxzdUjvI4
+         yADX3ZUE/NNfCAUArByYvjZ68kR780d9C7APt2luvcfO7aDoWvCc4y1m0COnZHsixI66
+         Y/EWmjTZfkhXmpZ40MSjPgTRBANBxkT5SqexHPfbJywSQ3QTtrhORBOcfxMZ5geXX46j
+         PsHhOXTNPjXiE+xYMyz2kuJYh0vXHbW4KOZ6p0wr0bLHpWH/q0/RYYluPDj1jMRLmnp3
+         e46A==
+X-Gm-Message-State: AOJu0YyZqQSx055phk84wy0E8yf+dbjXd0zZqDB71kGBiW0Jddv7r4lg
+	42Jsv6KkC+hFNh3rOjjA28NTROGuVpGL5+qVNvmo7XvxUkkG1kmSbSZ+oj8lcaS1C0ESo8UTaOS
+	cgD1tfhfmQ1RmCz1hG1dd9J3H2lssY9hI/XiKZYX7krtzk7ZImvQWqFAnNMqX3g==
+X-Received: by 2002:a05:6e02:1a27:b0:39f:58f9:8d7c with SMTP id e9e14a558f8ab-39f58f999d6mr98609425ab.26.1725398622643;
+        Tue, 03 Sep 2024 14:23:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxvBmrKrUXlRMceLmp36Br27W1bNa2xkEzECgslwDjjql0QNiHatEZ4EKpj7lp4mRqT0s0iw==
+X-Received: by 2002:a05:6e02:1a27:b0:39f:58f9:8d7c with SMTP id e9e14a558f8ab-39f58f999d6mr98608875ab.26.1725398622195;
+        Tue, 03 Sep 2024 14:23:42 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3af969dfsm32923855ab.14.2024.09.03.14.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 14:23:41 -0700 (PDT)
+Date: Tue, 3 Sep 2024 17:23:38 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
+Message-ID: <Ztd-WkEoFJGZ34xj@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-8-peterx@redhat.com>
+ <ZtVwLntpS0eJubFq@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000f11da7062091eb85@google.com> <87ikve78p5.ffs@tglx>
- <CAHC9VhTDqe8pYbmuNUu-Mdq6rmLo17z+eUTiOFh_PegbN99b-w@mail.gmail.com>
- <202409031223.018C3D1@keescook> <87seug791l.ffs@tglx>
-In-Reply-To: <87seug791l.ffs@tglx>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Tue, 3 Sep 2024 23:22:52 +0200
-Message-ID: <CANp29Y5qbxYhLzq7vwjkp-jsCX3OVfUcokk76Zbbs5pBC7uS6w@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] WARNING in audit_log_start
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	syzbot <syzbot+4576eaa688ef747b8d6c@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, audit@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZtVwLntpS0eJubFq@yzhao56-desk.sh.intel.com>
 
-On Tue, Sep 3, 2024 at 10:54=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Tue, Sep 03 2024 at 12:24, Kees Cook wrote:
-> > On Tue, Sep 03, 2024 at 03:22:17PM -0400, Paul Moore wrote:
-> >> > >  might_alloc include/linux/sched/mm.h:337 [inline]
-> >> > >  slab_pre_alloc_hook mm/slub.c:3987 [inline]
-> >> > >  slab_alloc_node mm/slub.c:4065 [inline]
-> >> > >  kmem_cache_alloc_noprof+0x5d/0x2a0 mm/slub.c:4092
-> >> > >  audit_buffer_alloc kernel/audit.c:1790 [inline]
-> >> > >  audit_log_start+0x15e/0xa30 kernel/audit.c:1912
-> >> > >  audit_seccomp+0x63/0x1f0 kernel/auditsc.c:3007
-> >>
-> >> The audit_seccomp() function allocates an audit buffer using
-> >> GFP_KERNEL, which should be the source of the might_sleep.  We can fix
-> >> that easily enough by moving to GFP_ATOMIC (either for just this code
-> >> path or all callers, need to check that), but I just want to confirm
-> >> that we can't sleep here?  I haven't dug into the syscall code in a
-> >> while, so I don't recall all the details, but it seems odd to me that
-> >> we can't safely sleep here ...
-> >
-> > I had a similar question.. this is at syscall entry time. What is
-> > suddenly different here? We've been doing seccomp logging here for
-> > years...
->
-> Correct.
->
-> syscall_enter_from_user_mode() enables interrupts. At that point
-> preempt_count is 0. So after that the task can sleep and schedule.
-> Nothing in the call chain leading up to the allocation disables
-> preemption or interrupts.
->
-> From the actual console log:
->
-> do not call blocking ops when !TASK_RUNNING; state=3D2 set at [<ffffffff8=
-1908f9e>] audit_log_start+0x37e/0xa30
->
-> I have no idea how that state would leak accross schedule_timeout().
->
+On Mon, Sep 02, 2024 at 03:58:38PM +0800, Yan Zhao wrote:
+> On Mon, Aug 26, 2024 at 04:43:41PM -0400, Peter Xu wrote:
+> > Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
+> > much easier, the write bit needs to be persisted though for writable and
+> > shared pud mappings like PFNMAP ones, otherwise a follow up write in either
+> > parent or child process will trigger a write fault.
+> > 
+> > Do the same for pmd level.
+> > 
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  mm/huge_memory.c | 29 ++++++++++++++++++++++++++---
+> >  1 file changed, 26 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index e2c314f631f3..15418ffdd377 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -1559,6 +1559,24 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> >  	pgtable_t pgtable = NULL;
+> >  	int ret = -ENOMEM;
+> >  
+> > +	pmd = pmdp_get_lockless(src_pmd);
+> > +	if (unlikely(pmd_special(pmd))) {
+> > +		dst_ptl = pmd_lock(dst_mm, dst_pmd);
+> > +		src_ptl = pmd_lockptr(src_mm, src_pmd);
+> > +		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
+> > +		/*
+> > +		 * No need to recheck the pmd, it can't change with write
+> > +		 * mmap lock held here.
+> > +		 *
+> > +		 * Meanwhile, making sure it's not a CoW VMA with writable
+> > +		 * mapping, otherwise it means either the anon page wrongly
+> > +		 * applied special bit, or we made the PRIVATE mapping be
+> > +		 * able to wrongly write to the backend MMIO.
+> > +		 */
+> > +		VM_WARN_ON_ONCE(is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd));
+> > +		goto set_pmd;
+> > +	}
+> > +
+> >  	/* Skip if can be re-fill on fault */
+> >  	if (!vma_is_anonymous(dst_vma))
+> >  		return 0;
+> > @@ -1640,7 +1658,9 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> >  	pmdp_set_wrprotect(src_mm, addr, src_pmd);
+> >  	if (!userfaultfd_wp(dst_vma))
+> >  		pmd = pmd_clear_uffd_wp(pmd);
+> > -	pmd = pmd_mkold(pmd_wrprotect(pmd));
+> > +	pmd = pmd_wrprotect(pmd);
+> > +set_pmd:
+> > +	pmd = pmd_mkold(pmd);
+> >  	set_pmd_at(dst_mm, addr, dst_pmd, pmd);
+> >  
+> >  	ret = 0;
+> > @@ -1686,8 +1706,11 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> >  	 * TODO: once we support anonymous pages, use
+> >  	 * folio_try_dup_anon_rmap_*() and split if duplicating fails.
+> >  	 */
+> > -	pudp_set_wrprotect(src_mm, addr, src_pud);
+> > -	pud = pud_mkold(pud_wrprotect(pud));
+> > +	if (is_cow_mapping(vma->vm_flags) && pud_write(pud)) {
+> > +		pudp_set_wrprotect(src_mm, addr, src_pud);
+> > +		pud = pud_wrprotect(pud);
+> > +	}
+> Do we need the logic to clear dirty bit in the child as that in
+> __copy_present_ptes()?  (and also for the pmd's case).
+> 
+> e.g.
+> if (vma->vm_flags & VM_SHARED)
+> 	pud = pud_mkclean(pud);
 
-There has been a spike in strange crash reports on linux-next lately,
-supposedly due to this large patch series:
-https://lore.kernel.org/all/20240727102732.960974693@infradead.org/
-So if this report is not easily explainable, possibly it is best to
-take it with a grain of salt..
+Yeah, good question.  I remember I thought about that when initially
+working on these lines, but I forgot the details, or maybe I simply tried
+to stick with the current code base, as the dirty bit used to be kept even
+in the child here.
 
-Aleksandr
+I'd expect there's only performance differences, but still sounds like I'd
+better leave that to whoever knows the best on the implications, then draft
+it as a separate patch but only when needed.
 
-> Thanks,
->
->         tglx
->
+Thanks,
+
+-- 
+Peter Xu
+
 
