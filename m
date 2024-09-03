@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-312163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1F59692EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427219692EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81121F231B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B39D1C22AB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7841C62AF;
-	Tue,  3 Sep 2024 04:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8311CDFDA;
+	Tue,  3 Sep 2024 04:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zar2ihSN"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sgn/VxMK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF84195
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 04:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E721CDA02;
+	Tue,  3 Sep 2024 04:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725338634; cv=none; b=ewbTxycl36KwCwtMdxwiGX8QNTzyADgprjd6ADQ5U7IwCYYoKYpW22FSs77oMOGkxO9rANGAfOtKMGtF5XaWuzw1D6PRwPHmiZsy/0XAQUrOOau+wAY8Pf3tcnQ8V2RCJogSWqXsqK0hOELE1Nlrr+llr8fIlNSL9hnU2Kp+Fpw=
+	t=1725339302; cv=none; b=eLDKed6pzJ1wUC+4yiHWVNeYq6w3QhikynuT37ZkASg1MQzBshqK1Q9GRwL/ZeZhDBLM/cNIA3agL6GtMiDmU8ij3lPpfy/Ep73B8yM8aGr9PMfTx8Rxx2iqPQUWL4xl3Ay5lSb0gsFdfdgYPKSWRDWRDYBionBUdmznXAiiG+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725338634; c=relaxed/simple;
-	bh=MHi/HN5BnrPslmHY/fs8mwRjQXU7/b36taEmXBOkUSU=;
+	s=arc-20240116; t=1725339302; c=relaxed/simple;
+	bh=vaxKRkPuxjPUT/MIG2CzhQ8FcCd//sUpnWKwLuJjzYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxR7FeSHohnmXdwe/g4DbFMVDJfgMOBawvovDR9WquoN8kPJsqkDOhp4FyzVyJ1Gp1GrWSJrZSwx9hCRp/AVLf5CldtZDIM+grEom9hp83+AkzzMVpytIkF5rdb+ELXJsx0z8JS7BKVc4WyiBbLwKos+ePrzq/3adNWzX4rkZtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Zar2ihSN; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71456acebe8so3729567b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 21:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725338632; x=1725943432; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=elfWvUxgxU008GtexTVPDvPM5D4zpZXg1ZzCswFsHPM=;
-        b=Zar2ihSN4du4KnMjaGBZGKYpowMb8JPVXnFVUO722ng1p1fvxOyP79jKRa6o1AWaEU
-         FLOjJSRct0d9z64OkuRUNVmXF1lD9sEcZr2ClqX6A+CAKOZWJ3Wm5pcMyY3sYLFFtG42
-         h+zHY/J6fa/iKPUfFPqkC4AXT3SOAkJhGHgI8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725338632; x=1725943432;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=elfWvUxgxU008GtexTVPDvPM5D4zpZXg1ZzCswFsHPM=;
-        b=FnAtoLDkg6bK51XCadVvvzRuDoTC7xXPevoSOF1k7nXw5xjLu7MqCU116L3mkq7z3e
-         1wVJ/HQrPpRNdY/ZcFAsACCreLWO/EAC+R33MUcJp/4HMJ+1cqcjmzyPMDAlqisWKgdS
-         EAN++9RWUcQcK/CnFtzXNaybokpBkMMdt/HvKXHoq5vUkLG1gL/mBmbrolTvRtArq8nA
-         c6RAr1lNeUwAeP7lGHXYanRBPLG59Aqvjo42DH7T4xKWolSWWTmA/bX9Z/E1e3Quuxl3
-         z4m0DhLRrck0KAyHcf8b2S6tFpZF7vwrm8OS2DmSSsCrDMrC49WXwPYZA/ZWI9xeSbLf
-         iEEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKeHPT1qJgotT92e7caf16jMC38hpIrjNjf6A+OJGNPc2LzHKC3/fLVPxI8D+PhWZKUWRdxfdjoBoShiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHS0tir5ZZ0N8uz+f8a+960xny8JCxE4O6GXJciyXFis2yT9CF
-	voCDYdOVtDYLPazyz4GgHbrhc0KKjjJKnV52uJ1ORBEyygnvRY5X5iYFdo/7Ig==
-X-Google-Smtp-Source: AGHT+IFLKoiPLErQqIwizmdB7eIQcYau9pPc/Sxw4HG+k5ReTw6P+/R7CsubSzTy9JCujzJGWDGkoQ==
-X-Received: by 2002:a05:6a20:c6c8:b0:1ce:e725:1723 with SMTP id adf61e73a8af0-1cee7251842mr5626031637.45.1725338632011;
-        Mon, 02 Sep 2024 21:43:52 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:43a1:71e3:7464:e91b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20542d5d1b2sm45598245ad.36.2024.09.02.21.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 21:43:51 -0700 (PDT)
-Date: Tue, 3 Sep 2024 13:43:47 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Kconfig: fixup zsmalloc configuration
-Message-ID: <20240903044347.GE9738@google.com>
-References: <20240903040143.1580705-1-senozhatsky@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qA/wj8vDvKW+NYRzMD09r8xee63hqyxRg/v8rcHqdnQY+XiU1kqPNGiwJlR8GJNOAd9rqm35/ew3dpejeWBXxEW3DC0Kkeiaf/C1nMh5PHV6aeqI7sA9F0lcNdThKNq6AHqc5V6jAHQYWA5M38O6fAdUm52O0Dr/UEWK+28XDPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sgn/VxMK; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725339301; x=1756875301;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vaxKRkPuxjPUT/MIG2CzhQ8FcCd//sUpnWKwLuJjzYI=;
+  b=Sgn/VxMKg9RGCCSZpTn3/oL1SO6/UlHCGLDHkp05yzYuPuZRj5jLJ1VR
+   hGSkEu4yTV5cYLmoRaln9U9Hh5O+/mXDncVfkMRgVvP8AMEjUIkD2jHLL
+   kcFOz12la/jCWuu+FkQ6kkj9guM0ZSHOzSH2WFCAiCn5go8UlQujqBfgO
+   rXd8sA2di+yJILDBqBDM2dIV9X9+lLY1WztnvYBToDWuUP/+SPyqXUBK1
+   cNwzz/viAqk80EhBHqD+AO+PckjhmHO3gnriH0CcR6fRvuE32TQImKb7e
+   WnLXANwO1tLEVpkSBl6uXKblk4SXNqwUg2LhPgRJZyegG6AVK0z7c89jm
+   A==;
+X-CSE-ConnectionGUID: AQF/6/VGTweEd0eib88wWw==
+X-CSE-MsgGUID: CyS3xfeOSj6qY+rBrom/Fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23790338"
+X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
+   d="scan'208";a="23790338"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 21:55:00 -0700
+X-CSE-ConnectionGUID: i+bqkZBzQ5yxLEPhcdumfA==
+X-CSE-MsgGUID: z4wWJ35MQmidfZMETKBISw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
+   d="scan'208";a="88025042"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 02 Sep 2024 21:54:58 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 504A31FA; Tue, 03 Sep 2024 07:54:57 +0300 (EEST)
+Date: Tue, 3 Sep 2024 07:54:57 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Inline
+ intel_gpio_community_irq_handler()
+Message-ID: <20240903045457.GX1532424@black.fi.intel.com>
+References: <20240902141441.2683122-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240903040143.1580705-1-senozhatsky@chromium.org>
+In-Reply-To: <20240902141441.2683122-1-andriy.shevchenko@linux.intel.com>
 
-On (24/09/03 13:00), Sergey Senozhatsky wrote:
+On Mon, Sep 02, 2024 at 05:14:41PM +0300, Andy Shevchenko wrote:
+> Since we have for_each_intel_pad_group() helper, there is
+> no advantage of having intel_gpio_community_irq_handler().
+> Inline it into intel_gpio_irq().
 > 
-> Fixes: Fixes: aa3ba6d72ce0 ...
-> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Developers, developers
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
