@@ -1,215 +1,135 @@
-Return-Path: <linux-kernel+bounces-312500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB9D96977B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE449697EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69991B238FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:42:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A1A1C232BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8DF1AD275;
-	Tue,  3 Sep 2024 08:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB91C7670;
+	Tue,  3 Sep 2024 08:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="aV446yRh"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2086.outbound.protection.outlook.com [40.107.215.86])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EC0eFkri"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276A03DAC09
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352868; cv=fail; b=oJHE7vdUjg8erW27NcOF3Wn+db0bjfj0R33uIZ5nPivpxtOrr/Q0YzXhseTGaXAcCB88m5pHmoiyq/bzfAPOLmh86d9mDCh2ygbICN385uPa3l7wQ4hHl4osvL7DM+UwUq+zZxr074hUZAPkRRZXIqhr+FRSDOsSNMTNYUBycVQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352868; c=relaxed/simple;
-	bh=edtOBKHzBOSiRCBdIrz/ZrKbk3tC1xZL7TmtJVUVnCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D/Q5MKgcPV04kzpHXSRBzVjOId+LcC7GC7XrtNBDLgjb2DFJPCLaK78FwqNA6qX5LODvu6YUFH+C8OV54QToyCLCQQtXU27kMBdcJhSoOnAAvwcgeDmg9XL7eGP6gqg6iwcx5eGLn91WHoic2FJAlk/mPoUyLvdlozE7eAiHmBQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=aV446yRh; arc=fail smtp.client-ip=40.107.215.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j7wjkLHc1aKn6edQE5ZG1P+jjEr9eThCTqiDopNuByXXwmSuWAwczGdJ39Pmw2Ua65/GWWjx9qiQueUqPIezQEaAgM6AmNg4nv2azG9hAxXKwbjGlH6tPhwI6DdxwA3x7AzG51r2X6tm6+NWI2hh0A3HwvWA497ubjGqsr2cWPyz3jON5IbhZk5vwuy+q9dDmxwWN9zg6ffsZ7m/ULSJfBRNciqX0HQLXuCwYCsb/ztL3cz/6jtU8TicML1ZwsTzP41Gj7grLiDHwQ15SLFUgQyC5vGTLjIeqXdU9GBVjeUtjUdnnVcbr8K7ZPflWkHDmoYQGdtxESTX2BL4y1EPqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NMu3pawJjX7tZUFb0bQVd90/AKHOuyxS8U1KgIgm3H0=;
- b=Iq4vrfRifcf4y/5VTn5CzgaO5k19fCJMcL0fNNzX89hc5X5vCy1WGxWlyNfSS4f3fkbEaWCG+nXYWYya4737pCWj92Y7QHD5xd2NjxU9a8vwHuOkOImkJ2gar8BDWlzEFoW0HM1SAySyb8tq9cG/3jLuOdiH30J309lJKl+jtHKZ/0tXqAuUy+6ZxBp6C/kOavJhtGPfUiUSfK7zKQ/zvQ8T0fTJLGSaUydiYJrTpoQO2YoD/9bzPJIazN0TE/SB5rPvKS5/GF8LmrsebkoGogX1I0CIS+MbaIU+oRo38j89ftxpAn4nQNmk4Prrlq/RwC76c3BgPxI45wmBkkPkBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NMu3pawJjX7tZUFb0bQVd90/AKHOuyxS8U1KgIgm3H0=;
- b=aV446yRhhmeAj81mTeNykWE/i7BkTdDHjQdJOvmQwMcjMe7HW/6HJcCOkK+Xr6yBB2dl5r/uU9hqbEjiC19HCTXYEB1T+aPliinWMNosBwpFsPMuZjKYqw7UH9pqDKsGHESbBEVSf3CJu2ptHaS5dOfEIZ98yzSMZ0zy0D4HMhXj8BOXgOqrriWZCu8+EpcpcxEH2sibUeCzH100eQ3zVfj7EFRmDAVmhp6DPwnrvS5y7LX2CzjwEZBH8RwbnIADQZ6ZfIEH57cP2Cxm8d3C7QxQw7+Sg7QX+ZGtL7ntXPLySXIcy/rMXPWWoy0aPjIHR5E0uImey+aIWynWmo18hg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by SEZPR06MB6253.apcprd06.prod.outlook.com (2603:1096:101:e6::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
- 2024 08:40:58 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%6]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 08:40:58 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Wu Bo <wubo.oduw@gmail.com>,
-	Wu Bo <bo.wu@vivo.com>
-Subject: [PATCH 09/13] f2fs: fix data loss during inline tail writing
-Date: Tue,  3 Sep 2024 02:54:53 -0600
-Message-Id: <067f905e4f3b71727cfada291b090896463ef796.1725334811.git.bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1725334811.git.bo.wu@vivo.com>
-References: <cover.1725334811.git.bo.wu@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:194::12) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC1F1C7662
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725353705; cv=none; b=IHETIM+G/jpMlMHRhNYq9I2N8eekZiDb+93KKrNSBG8BkqUtntFs//Iw9ioJueC/j9E219ldZxeWN/gNI4PzAG05dcgg9k/fEaJDyTxHSiI4jU5UoAZncYE/Cx5lRDihICJFL+YL9QftKiKCPwILUZ5AI1q0G6pBtCxmddcJcSs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725353705; c=relaxed/simple;
+	bh=VQpEqB8sfiUpkwf3VCj/Q/HUVt6b9qZeSUA/HzLzH4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmn6leBrGsupbTrlIXZ8CVN2hELR3N3QWbMWPmOUc9jI5OXBYg3zvXJch7zeom0yiVWhcTOePQ/uR+7kGyyK+9DCVgeOj/aRSaYRnl92WV1wF9eOegBNCmHjpjLBt1raSU3iXOeU6DrM+OguZyJrSzPgY3cEtkw5hA3zeAFoAyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EC0eFkri; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=qtkcbQwLM0CdSStH7EBONAFFspkfszGotCfCSr10ReU=; b=EC0eFkriiU8m7sBDdRJ3K5BMyU
+	IRUQG736MdTjcrXgfUZSEegI2yZq03cmKpS0mlYQcqO5miijpdN9I9Xz/ut34a92H6X+HjfQ/mZmH
+	GSeKGdi1IhcLftgFb+XPXWFMeVgcg7Rlaa9VNR6NxAw7UkXCQUoW0zGk8YNeEb4bgupNDp1wAWEJ/
+	WGCDFUqIbg4MJcLeRkaWzx39LKCWmU8WQ0pvtWHyo/rSdYYFxEN5lxzRi+GsIJ620ieaEOqagh2NM
+	g9rxWFBObWVHxdJNsHJLyyxpZ57T4IciIRDN27UhlpTozFrjWguldVKvyAMmgwCO3/IVqEM/40+8f
+	B3BQdRrg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1slPJP-0000000CIDi-1Vgj;
+	Tue, 03 Sep 2024 08:54:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 07222300390; Tue,  3 Sep 2024 10:54:55 +0200 (CEST)
+Date: Tue, 3 Sep 2024 10:54:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Stephane Eranian <eranian@google.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>
+Subject: Re: [RFC/PATCH 4/4] perf/x86: Relax privilege filter restriction on
+ AMD IBS
+Message-ID: <20240903085454.GR4723@noisy.programming.kicks-ass.net>
+References: <20240830232910.1839548-1-namhyung@kernel.org>
+ <20240830232910.1839548-5-namhyung@kernel.org>
+ <20240902091232.GB4723@noisy.programming.kicks-ass.net>
+ <CAM9d7cg-7USE-Ofusc1VDpr3qtviX4xZmoKmBjmEfBDw9XJ+nw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|SEZPR06MB6253:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd5161b9-479e-45e7-c17e-08dccbf4222c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zDd2VlFYivjzkn4QOPiAecorxoETuuze5V46JB0Wu5PADoVW8tp3rNzUYNGT?=
- =?us-ascii?Q?7a/vpvtqDXBDVzM4GtQmXdaB3KMS0VRdXznvsMbkhWTB8dDEc9RjgHzqvni4?=
- =?us-ascii?Q?dgNDUMOHfAPBYualm0Eezslc5+RM7xv/FTAoOO3HCCUNVpPGu0cGovOF+XEi?=
- =?us-ascii?Q?6NbJuuvCRMP5Rc7S2QdrdIXW6kOAWBvB6ENE3RPTgyhJWYTQ5iisctMtAXk2?=
- =?us-ascii?Q?ZeL7Na3sG642BQhJjWjwiWZ558rl+qhfAfltqUCeoP3ODPqY50TCq7hjfkx7?=
- =?us-ascii?Q?OZp3XKe/YUUKMAmP72W8e+ANNisVTri74zU06Yq1QKa6rDZ8gQ8JLj6M3q11?=
- =?us-ascii?Q?X0SO35ApOn1+h/lWF8wSuSOYsw5sLCoPRTDvWb/cbpAyW7M6KOW1LdAe+l0N?=
- =?us-ascii?Q?9uqVlFvOSZA9D3gUmZwIKtl3mOSHz9mWwNHgduEZEeaWZevMPVy8HLPQd4bj?=
- =?us-ascii?Q?rTA4+SQ5bMi1A4r0rsF1Ous5Pp1E/2BLWQVeTVLwovmezzrHgUwZW3JLED/B?=
- =?us-ascii?Q?W+QY7D7rwTioT/k0qwek3bODdLppXjWA69ZWAdwm5b5Ce7dho0dsjqDqgCB8?=
- =?us-ascii?Q?MZQxAiNIEGkknnAfO1WquRGMDicir+WkVD8WNmh/HNO8eqwAQc7O7ck0Xhdu?=
- =?us-ascii?Q?PjmaxBhvEZQf/cPIlCPDxcLn1b0CdJcZS4Cv3+PP9F+F/ZbQgd6UH3zZllw/?=
- =?us-ascii?Q?wpB+V9hEBBnOubVpd3FDSfbdfidmJzmG83DITeF+4oE2MnNXQgfBQXi1i9ez?=
- =?us-ascii?Q?sBzDoUoY+6YjBjI3VJc0tLj6RLN/zl0cX+rB3qeC83Hdn1/71zuBjSV0j8+K?=
- =?us-ascii?Q?44xRQZp9Q2vDzUad9DWT6ITdxdAdSydzRlK6Rr0Z8I3tEHrVzVmXfYgXm/dc?=
- =?us-ascii?Q?DAqvmsbj4U0mbVUlIys5M6J6jW3Ap7x/9FbxgKR0HUY3afNB/qhw8ArGnCS+?=
- =?us-ascii?Q?17T9M/joHmhHgvHTL+ENX10rIusZ181x5g0fVS5MsBrOCLICG5YjQ0RvzBdD?=
- =?us-ascii?Q?0iFRQIQWNK977ZtDOQWnXjzleCpPuh3AgDzBnnwOmZpXtfX8DDZQX+GHc6pU?=
- =?us-ascii?Q?EYae+f74zi2Dqv0/dZkYpFdtVhINaLgzN+tIB5K2aVoxR4hYdQFzNmuSpvwZ?=
- =?us-ascii?Q?F4Z1Hz5BEU5tHxsixPjln2taqqDGrPlNQJrOkC2FGAsCQwzcl6p+5/GviVRL?=
- =?us-ascii?Q?vilGsoDF/pAhYQJsbIRGs55y59RAI6zLtXWyxCVQdh5olQfwSpTGpS1H8+Om?=
- =?us-ascii?Q?mTTep6AxSdw6wj3spWJe2q+DZ0TAn+47f1EeFRfhJK57XQexbdjmy4FlOIpB?=
- =?us-ascii?Q?WpKf8oCMdoGuuthLgUqjMVzdGnKRgDrlpM2xJRWmJtKCeogE47qJJDad5AxU?=
- =?us-ascii?Q?fRXK4kpmEi7sU9Gn1Pr8bjMFzZ3QELqOyfrCLcDewwhiHaMS4Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lh6kRz9wo060ovgpmKCG8eeJWed2xTXNVyHso3gwyJcsHeemEmA4wNXleBvT?=
- =?us-ascii?Q?ZRWmtm2LikePwpxNZ7RYDacvfuf65hgqe+LVJwJFYrDMcK923Z+9xpphboGJ?=
- =?us-ascii?Q?PihzaEpjG2CCO7hjL7fKUpK/N7pPco+XRfwOQqbYYbdqXisvTWVhmbxpZ+Sw?=
- =?us-ascii?Q?egExZa0fLxLZ4gGy8YiaD5WALpAkNLN3DEz+rNgNErXG9UQiG8S9hXqAdDb9?=
- =?us-ascii?Q?DBKBWht+F+6tiRN2jMJ+XCrTeLBn9Px5LuLaGKdNssb03wL3QLHhXN3HkxZt?=
- =?us-ascii?Q?hfPFZKrdjVUNPYxPIhZKOGdvi0ENNv37ZQA5cRdky1IkLGo4UlQ35nnu/3dz?=
- =?us-ascii?Q?a8Dfi1oTRqgxsbLy6QcPpFaJwkg3J8eDca1hbw8VGuj9vq2HDiVvqkho38GR?=
- =?us-ascii?Q?vt70PZ+Gxph+pr7l9NUU0nT2nMylAuw86iz/gIemL+sy03WQK7MjpgdTX8fK?=
- =?us-ascii?Q?F0+PtW54AKQ5AoHT1CHrMoSxJJk3oDlq3Np7ruvyyGGXFwSjDSaeS2fX5Ytj?=
- =?us-ascii?Q?zhPY2dPfhQRG8BHiJd4m4/eXfOmTkpJ+KtzlQ6cV3Y9TKiyXTTo1KPZvDizw?=
- =?us-ascii?Q?Rs9+oDVqHG0cv8dsiaseXZpyRmRJTjN5x2RfBuJu9ISXZDjPEJ3BZ9OudxZy?=
- =?us-ascii?Q?dO4H97xnI7NQB+owwRYQZbqC9DjF9nDyyE8ZWd7Fo5F8Gt7Wv+Mw800i3XL0?=
- =?us-ascii?Q?u4y2vnFJ1ufJOQ56kNuBdLhOz/dcx2E44tSyvedOZB8x6IgcUfnOOI1fu68i?=
- =?us-ascii?Q?OXwR2M4T5YRAdWEG8Jek+u67oDMPX2SRY94joprOuw2/Pm+HPg+A+fPSjZDU?=
- =?us-ascii?Q?e5K07BQnNYmglhLN+ObFTai7rzRvyk3QBmhGg9kO2hfBRBonEATUeJXISbu9?=
- =?us-ascii?Q?L2UvNoi3AMoT2zD3z0Sy8fnzHovrbbvOqS1RHBDOWy+wXom46x5OhPYRcmyZ?=
- =?us-ascii?Q?4+L3/0nZVUJGqO7V87RiuHbv3FhwjLrBuzH/jzmRrEsPlg2+tihkaLmrnWfh?=
- =?us-ascii?Q?vOVunGrPtPMf4PGnn7T4MB7HAh4A+o1zp6GJOcp9zIU1msqtdYJFJvUBj+bL?=
- =?us-ascii?Q?LrFGdgy6jVb7pL3Aup1SF5y14kCo+x7Su8+V+uyg+FU1h72P5wuxtaAXnR9j?=
- =?us-ascii?Q?2fiqwJ3FPgrL9JdHbjQgKWsa0PmYhH1FmbyNxhOAq+I3ObcQgQTgCf5pk4AK?=
- =?us-ascii?Q?2xER8H43niAPZ+GYUtQwqI62iPIFFw2PNvtpcJ0Rle0v1Of24EeCCYMLnuwR?=
- =?us-ascii?Q?wKV0YVDZD50NoO8LH3W+jTgxf6nsaw62Rxm4fgYQJ4LNM6zKqwYNO+rdFBSE?=
- =?us-ascii?Q?FomOU3EKywaVjymqIrh789RsHI8y6WQ0/m0BoRQTy7rsRyJK+G/ndPFnSWjR?=
- =?us-ascii?Q?7TMKc1EtctjZEh9ExpPy/u4BJslirINgxPqyfYbZj7xB5ZP/YzjVqE9KXk78?=
- =?us-ascii?Q?S2UOXTUrZxq9bSmeFjyGLWoZ8zZBzfWbO3JJtCqjzAPhcLpn5dcC66YXA5aD?=
- =?us-ascii?Q?HYqnipYrHcwr9/KJmmul3iPzkLbmPzPNKsfbimWTN35Qho1YWMFgL++syZms?=
- =?us-ascii?Q?fGUsQVlVK/BHg1HN5ZQ27lw9Pgl96R47X9I06EPw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd5161b9-479e-45e7-c17e-08dccbf4222c
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 08:40:58.7522
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: co18DbyZwpk0B//8mkCqpOm3DwHUVk8S5L9/JJvnru5UIbsC94qg+mp5JQy1/E8ad3uX03Fj/rgQSgb6xfA5PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6253
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7cg-7USE-Ofusc1VDpr3qtviX4xZmoKmBjmEfBDw9XJ+nw@mail.gmail.com>
 
-This is detected by xfstest generic/114. The inline data needs to be
-read out before writing to avoid losing the already inline data.
+On Mon, Sep 02, 2024 at 10:30:19AM -0700, Namhyung Kim wrote:
+> On Mon, Sep 2, 2024 at 2:12 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Fri, Aug 30, 2024 at 04:29:10PM -0700, Namhyung Kim wrote:
+> > > While IBS is available for per-thread profiling, still regular users
+> > > cannot open an event due to the default paranoid setting (2) which
+> > > doesn't allow unprivileged users to get kernel samples.  That means
+> > > it needs to set exclude_kernel bit in the attribute but IBS driver
+> > > would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+> > > we want and I've been getting requests to fix this issue.
+> > >
+> > > This should be done in the hardware, but until we get the HW fix we may
+> > > allow exclude_{kernel,user} in the attribute and silently drop the
+> > > samples in the PMU IRQ handler.  It won't guarantee the sampling
+> > > frequency or even it'd miss some with fixed period too.  Not ideal,
+> > > but that'd still be helpful to regular users.
+> >
+> > Urgh.... this is really rather bad. And I'm sure a bunch of people are
+> > going to be spending a lot of time trying to figure out why their
+> > results don't make sense.
+> 
+> I agree it can be confusing but there are use cases where regular users
+> want IBS information like memory data source, data address and so on.
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- fs/f2fs/data.c | 3 ++-
- fs/f2fs/file.c | 7 ++++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Sure, but I'm a bit worried about users not being aware of this
+trickery. This makes IBS events that have exclude_kernel=1 behave
+significantly different from those that don't have it.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 476325a26d4e..275c5739993e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3477,7 +3477,8 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			if (inode->i_nlink)
- 				set_page_private_inline(ipage);
- 			goto out;
--		}
-+		} else if (f2fs_exist_data(inode))
-+			f2fs_do_read_inline_data(page_folio(page), ipage);
- 	}
- 
- 	if (!f2fs_lookup_read_extent_cache_block(inode, index,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2551403a5b83..64ea0bfc2e1e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4729,7 +4729,7 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	if (f2fs_has_inline_tail(inode) &&
- 			(pos + count > MAX_INLINE_TAIL(inode))) {
--		ret = f2fs_clear_inline_tail(inode, true);
-+		ret = f2fs_convert_inline_tail(inode);
- 		if (ret)
- 			return ret;
- 	}
-@@ -4842,6 +4842,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
- 		/* f2fs_convert_inline_inode() and block allocation can block */
- 		if (f2fs_has_inline_data(inode) ||
-+		    f2fs_has_inline_tail(inode) ||
- 		    !f2fs_overwrite_io(inode, pos, count)) {
- 			ret = -EAGAIN;
- 			goto out;
-@@ -4861,6 +4862,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 		if (ret)
- 			goto out;
- 
-+		ret = f2fs_convert_inline_tail(inode);
-+		if (ret)
-+			goto out;
-+
- 		f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
- 		if (do_opu)
- 			f2fs_down_read(&fi->i_gc_rwsem[READ]);
--- 
-2.35.3
+At the very least you should kill the IBS forward in amd_pmu_hw_config()
+when this is active. But perhaps we should also emit a one time
+KERN_INFO message when such an event gets created?
 
+> Also I realized that software events like cpu-clock use the same logic to
+> discard samples by privilege mode already.
+
+Right, but everybody expects the software things to suck :-) And they
+always suck, unconditionally.
+
+While the IBS thing only sucks when you use exclude_[user,kernel]
+things. Stealth suckage is bad and enrages people.
+
+> > I realize that having entry hooks to disable/enable the counters is also
+> > not going to happen, this has a ton of problems too.
+> 
+> Do you mean kernel/user mode change hook?  I guess it'd be too costly.
+
+Yep, insanely expensive :-)
+
+> > Also, that PMU passthrough patch set has guest hooks, so you can
+> > actually do the exclude_host/guest nonsense with those, right?
+> 
+> Oh.. this patch is about exclude_user/kernel not host/guest.  Anyway
+> it'd be great if IBS could support the guest hooks and allow the exclude
+> bits.
+
+Right, but since your other patchset about disabling exclude_guest
+because IBS don't support it I figured I'd mention that it would be
+fairly simple to fix.
 
