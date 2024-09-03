@@ -1,131 +1,94 @@
-Return-Path: <linux-kernel+bounces-312279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12E596946C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D493D96946F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A811C23055
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:01:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48AD2B21017
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7511D6DC0;
-	Tue,  3 Sep 2024 06:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8111D54CD;
+	Tue,  3 Sep 2024 06:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MIP+ydZr"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QE/aQmHJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA101D61B8;
-	Tue,  3 Sep 2024 06:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50031D6182;
+	Tue,  3 Sep 2024 06:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725346719; cv=none; b=KTPzf5O22QWpMQIYA3vkz6NN+ekH1Iqq/d8NPxeaKnd+ng4aQQPzfpYbvhfa0MHAnymWE24tZwKp5ybgRbiByCOGfwiPLxvUxOR7iuEH5rDByqIN+lVMqwfLxME/ftjbKFXsgNhWE6HjDi96k8LoFYb8RPOPDIF/UBGzHLlhA9Y=
+	t=1725346769; cv=none; b=AFbyn2euJnSXxtjC0J066gK+MUqp65vKugEngnvG40ww1arPQPEOetLRdDpszLTY52VASu5FSexvhP7eY9fUOh653dy/0hknL+jHJfkk3n7d30E5QEpDxOVyTUKBONtHmlrvAHMbKFUO64uPZvin3uMRkRkJh6mB8tcjqjeIZls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725346719; c=relaxed/simple;
-	bh=bIS19lMtHeOrnpD3tHXVlWbdXhU7EUk6GpOiiPc4fkE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpz9JpTRo8hfw/OLK+nDDsfe6ox/gGUWCM+0FIxfh5ZG/2dELnAMQocdn7rGHPYbDLKdjsBs1NW4g3VULA1NATlLOAMk7n9Ga0V2tcoTFVCjrXCBhnKWBO/pLbuCLXyAp14HC77QTjF+1bbvxSoFvyA+LNv7GUQPCpCbUcCIvms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MIP+ydZr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4836wNS9111883;
-	Tue, 3 Sep 2024 01:58:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725346703;
-	bh=7QS/PP+dEulS9kB1nTQtMHUpd4L7Wp9gyX90/Aocf1g=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=MIP+ydZrrFcs8UKfYRRA6Nz3BE9U90yHy8kbCQ/q2zDzupQDDQF9pLCLMP5i7mYhj
-	 OcidhjH++y2pHn6NxUjdKVrO3PqXG2ZqO4gCWDhoxl4XUj4h06ncMZ0sKQ3zlgC/7E
-	 W5Ug//OuQzlKJkTHTdrOm1Cz6QTrbIgC+CSMtOYY=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4836wNpQ096024
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 3 Sep 2024 01:58:23 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Sep 2024 01:58:22 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Sep 2024 01:58:23 -0500
-Received: from localhost (dhcp-10-24-72-81.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4836wLtP119241;
-	Tue, 3 Sep 2024 01:58:22 -0500
-Date: Tue, 3 Sep 2024 12:28:21 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 3/5] dt-bindings: arm: ti: Add bindings for J742S2
- SoCs and Boards
-Message-ID: <da17b246-13de-4473-8f73-a29c20467082@ti.com>
-References: <20240902-b4-upstream-j742s2-v6-0-6a7aa2736797@ti.com>
- <20240902-b4-upstream-j742s2-v6-3-6a7aa2736797@ti.com>
+	s=arc-20240116; t=1725346769; c=relaxed/simple;
+	bh=JNtXEBV6t/Ur+CoAftaJeKqF0v5X7Y8stmeb2ra32hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iSFbYYAe2nQab4YcOOJr1LHbXA0liB+UF10i1C2hKaGjIscUzJqkCbrGYX1edQsx219FqjCMUGwfWUtKajHwnM8CrEYpMk/rxywA/640Hp+jCVlgR0NlmlvLuhQsHUr87iWKW2ByvCZ7punrnoZ/PT/snUgUlNWs/VoeIxW4clc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QE/aQmHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F8F0C4CEC5;
+	Tue,  3 Sep 2024 06:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725346769;
+	bh=JNtXEBV6t/Ur+CoAftaJeKqF0v5X7Y8stmeb2ra32hc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QE/aQmHJ+zVpDV5boPwwYuT63zREd59/h8vxKHTaTTq3W9Z7SLSfpkTbxUvuqXbvP
+	 VJu5fLGtycdEbb90lD5X2JhzOtEfcSe1MvHL4kSd01cEw+Tq3s14zNOGPGxTT6VPvJ
+	 2cAS8V9Gf/VzvVX9xBlK+dikTdTN6O7xu6RKxinEfP2jI6yc/KLDS4UdrJhbpXAby2
+	 pPXwG2W/h7+k1fWMAlKxY63k38ceOknutaoNI0m+P1LeSMV3XQHKfBb1De/+v/z3rh
+	 7RX/37leBziWWnY9CpkY1kmT9CaVSRBusAuDypA8aGI6CI4Zgss5Ou3S6TENeRtc1v
+	 Pcb9LRjFdZZTA==
+Date: Tue, 3 Sep 2024 08:59:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+Cc: angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, knoxchiou@google.com, 
+	hsinyi@google.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: mediatek: Add MT8186 Ponyta
+ Chromebook
+Message-ID: <a2jklrd7ozek6n3rhjby5pck5yho4g6ckxkii4toxf3s3k3pbi@mfvdaoz2ki6a>
+References: <20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com>
+ <20240903061603.3007289-2-cengjianeng@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240902-b4-upstream-j742s2-v6-3-6a7aa2736797@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240903061603.3007289-2-cengjianeng@huaqin.corp-partner.google.com>
 
-On Mon, Sep 02, 2024 at 05:56:51PM +0530, Manorit Chawdhry wrote:
-> Add devicetree bindings for J742S2 family of devices.
+On Tue, Sep 03, 2024 at 02:16:02PM +0800, Jianeng Ceng wrote:
+> Add an entry for the MT8186 based Ponyta Chromebook (custom lable).
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
 > ---
+>  Documentation/devicetree/bindings/arm/mediatek.yaml | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> Notes:
->     v6: No change
-> 
->  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> index 5df99e361c21..b0be02f9d125 100644
-> --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> @@ -144,6 +144,12 @@ properties:
->                - ti,j722s-evm
->            - const: ti,j722s
->  
-> +      - description: K3 J742S2 SoC
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index 1d4bb50fcd8d..410145976272 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -257,6 +257,17 @@ properties:
+>            - const: google,steelix-sku393218
+>            - const: google,steelix
+>            - const: mediatek,mt8186
+> +      - description: Google Ponyta (Custom lable)
 
-Is it J742S2 or J742s2? The naming seems to be inconsistent considering
-that it is a lowercase 's' for J784s4 below.
+lable? label? What is this?
 
 > +        items:
-> +          - enum:
-> +              - ti,j742s2-evm
-> +          - const: ti,j742s2
-> +
->        - description: K3 J784s4 SoC
->          items:
->            - enum:
-> 
-> -- 
-> 2.46.0
-> 
+> +          - const: google,ponyta-sku0
+> +          - const: google,ponyta-sku2147483647
+
+maxint? Really?
+
+Best regards,
+Krzysztof
+
 
