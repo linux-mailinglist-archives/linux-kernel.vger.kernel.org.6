@@ -1,257 +1,116 @@
-Return-Path: <linux-kernel+bounces-313313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB8D96A398
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:05:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111DD96A399
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8A11F24A0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4362F1C241D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39954189530;
-	Tue,  3 Sep 2024 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26D418B46A;
+	Tue,  3 Sep 2024 16:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avChr2Ms"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joNpwx+z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3587462
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581E718A6C1;
+	Tue,  3 Sep 2024 16:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379542; cv=none; b=t0UyoZUuMYFgl9NtYQ74kOrSaUNWmqnXcoH1mnrk4bl/1Y+6TvzEmZZzjT0wYddEaMEK000J58KWCO4ajToTsG7F0ggTy5GggM+jwJCP4RfCYEbA/1s4WB/7LrKAadnEThPo0APGLsmZjbZp0v7O26tHqZhmCQFOZz9UqXAVVMM=
+	t=1725379544; cv=none; b=K9/arFuOd8MMoeW63OZXgj/EJVnyagm/o8CcQf3T8HoE3ry1/+SZ3gbBzmF/xx53+Pq8vm1/MY9qR7mfxoghUh4h6I4MU/x2HPvI6ARLV5rtt56/y0vi8LNeYP15N9dZv1gljgiRkaoEI+TAsMsFDamYz7+XldRejayoz4ziURM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379542; c=relaxed/simple;
-	bh=2wQB06Ioy56Jp4yrDEUkgoleTrLVnxBL9fMf8S5OGvI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A+M8O8anBE2oDcJ1dfRKd5lhLruIHXr1VxJZntn1nHldePFxTF/LwSSw3wkDitdoY7PK4ZI0/dV6iCUQ8oYiFCuWPf9+ap06fGsBXrkMLz9LbbiRzyyijJSaDId43qksPHA0fDmam1VCqwD3U3awGPQ3bCi/66+RCQymEfmQul0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avChr2Ms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8605C4CEC4;
-	Tue,  3 Sep 2024 16:05:41 +0000 (UTC)
+	s=arc-20240116; t=1725379544; c=relaxed/simple;
+	bh=78DCBS8RA2D93D+enVkc7piqW+f1dBnC88pDQa0b4Wk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=PXhtXB5J6XK/xpAa9oT3b8Nl3Ycuog4mwra7EamekgFFf1lOrQ9jbRUaAMLFgN0VRyDd/UobJwhVHqfuPfJ6o7BA+BTq3RqvpKWUVfrqb3e+NcfpjlSxelHNKK07LicIjCieE8oKp3OSnW7sUIs6z0/kjCzxrNpyH6rAn5+WYVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joNpwx+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CFBC4CEC4;
+	Tue,  3 Sep 2024 16:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725379542;
-	bh=2wQB06Ioy56Jp4yrDEUkgoleTrLVnxBL9fMf8S5OGvI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=avChr2MsAIGfNuJzgWRsfivkfHVS8fPzjeV0R5R5OcUB44Dwz+v0Eyg7EVtT1bMza
-	 K/scvAyygsVoSlXuVMLVDmTfLcrFwKoV6jovrvvsb8/KgA7iHIg2xgYa6KGOxxbczn
-	 2O4IAS6kuZqvMujtxLx/JMQ08mWc15bRpPvZxbx7H3DlpGx5eT4KBNUjyEEpBnmA3l
-	 mtOZxVishLdwxwj2VXpT8mIq4hYP7eb1K3eS/Y++n3V3pROQFDrnh5D884OOgfhsqR
-	 IfbBVzadiQkjKPLqKW6hAeaGVrB7Rjha/yHqCVY3eLxKXvJuRGHJr7+qdhk3yZYpHP
-	 mOWiON/GAQNdg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1slW2F-009IVG-T3;
-	Tue, 03 Sep 2024 17:05:39 +0100
-Date: Tue, 03 Sep 2024 17:05:38 +0100
-Message-ID: <86seugvi25.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Alexander Potapenko <glider@google.com>
-Cc: samuel.holland@sifive.com,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	kasan-dev <kasan-dev@googlegroups.com>,
-	Will Deacon <will@kernel.org>,
-	syzbot <syzbot+908886656a02769af987@syzkaller.appspotmail.com>,
-	catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [arm?] upstream test error: KASAN: invalid-access Write in setup_arch
-In-Reply-To: <CAG_fn=UbWvN=FiXjU_QZKm_qDhxU8dZQ4fgELXsRsPCj4YHp9A@mail.gmail.com>
-References: <000000000000f362e80620e27859@google.com>
-	<20240830095254.GA7769@willie-the-truck>
-	<86wmjwvatn.wl-maz@kernel.org>
-	<CANp29Y6EJXFTOy6Pd466r+RwzaGHe7JQMTaqMPSO2s7ubm-PKw@mail.gmail.com>
-	<CAG_fn=UbWvN=FiXjU_QZKm_qDhxU8dZQ4fgELXsRsPCj4YHp9A@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1725379543;
+	bh=78DCBS8RA2D93D+enVkc7piqW+f1dBnC88pDQa0b4Wk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=joNpwx+z5DBrT/7UrmsEo+ROkE/86tRHlNi2dCa8xUSvSIBNlbGC0xi+COyHgzVC1
+	 76xVKGLa0FuYbBtX8tUV3Im6ebR5KaZoKqhk/C33YxCxiAj3xHqj8PH6O+PxR8ekaw
+	 mCPq9Xs9RJQLSaWNvAgC+c8F8VOAQVYCFXTxCMmZWKb59WmpmAK+CRRd+mACeHOC35
+	 N4Mp84DAiU4uwGcUvUL+KWPzA6CJRvSz2yBNlJNwGB7j04wskNFKDgMfO0opaXRtTV
+	 pqcwO/vh7CXrJY8Ju0ObGN3Ll0DTlIXV9Ql7CwITUepujouvo3dHIB/MY7O/uuG1S8
+	 NORRuejX5ZCzQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: glider@google.com, samuel.holland@sifive.com, andreyknvl@gmail.com, nogikh@google.com, kasan-dev@googlegroups.com, will@kernel.org, syzbot+908886656a02769af987@syzkaller.appspotmail.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 03 Sep 2024 19:05:40 +0300
+Message-Id: <D3WS02D8SZMG.62T9IWX6WZI4@kernel.org>
+Cc: "Dave Hansen" <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+ <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Zhimin Luo"
+ <zhimin.luo@intel.com>
+Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Aaron Lu" <aaron.lu@intel.com>
+X-Mailer: aerc 0.18.2
+References: <20240829023800.1671210-1-aaron.lu@intel.com>
+ <D3SJOVADFM48.JNOIOZJ0J6OE@kernel.org> <ZtFjPwNWS_hfs4px@ziqianlu-kbl>
+In-Reply-To: <ZtFjPwNWS_hfs4px@ziqianlu-kbl>
 
-On Tue, 03 Sep 2024 16:39:28 +0100,
-Alexander Potapenko <glider@google.com> wrote:
->=20
-> On Mon, Sep 2, 2024 at 12:03=E2=80=AFPM 'Aleksandr Nogikh' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> >
-> > +kasan-dev
-> >
-> > On Sat, Aug 31, 2024 at 7:53=E2=80=AFPM 'Marc Zyngier' via syzkaller-bu=
-gs
-> > <syzkaller-bugs@googlegroups.com> wrote:
-> > >
-> > > On Fri, 30 Aug 2024 10:52:54 +0100,
-> > > Will Deacon <will@kernel.org> wrote:
-> > > >
-> > > > On Fri, Aug 30, 2024 at 01:35:24AM -0700, syzbot wrote:
-> > > > > Hello,
-> > > > >
-> > > > > syzbot found the following issue on:
-> > > > >
-> > > > > HEAD commit:    33faa93bc856 Merge branch kvmarm-master/next into=
- kvmarm-m..
-> > > > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvm=
-arm/kvmarm.git fuzzme
-> > > >
-> > > > +Marc, as this is his branch.
-> > > >
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D13984=
-20b980000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2b7b3=
-1c9aa1397ca
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9088866=
-56a02769af987
-> > > > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binuti=
-ls for Debian) 2.40
-> > > > > userspace arch: arm64
-> > >
-> > > As it turns out, this isn't specific to this branch. I can reproduce
-> > > it with this config on a vanilla 6.10 as a KVM guest. Even worse,
-> > > compiling with clang results in an unbootable kernel (without any
-> > > output at all).
-> > >
-> > > Mind you, the binary is absolutely massive (130MB with gcc, 156MB with
-> > > clang), and I wouldn't be surprised if we were hitting some kind of
-> > > odd limit.
-> > >
-> > > > >
-> > > > > Downloadable assets:
-> > > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-=
-assets/384ffdcca292/non_bootable_disk-33faa93b.raw.xz
-> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/9093742fcee=
-9/vmlinux-33faa93b.xz
-> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/b1f599=
-907931/Image-33faa93b.gz.xz
-> > > > >
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to =
-the commit:
-> > > > > Reported-by: syzbot+908886656a02769af987@syzkaller.appspotmail.com
-> > > > >
-> > > > > Booting Linux on physical CPU 0x0000000000 [0x000f0510]
-> > > > > Linux version 6.11.0-rc5-syzkaller-g33faa93bc856 (syzkaller@syzka=
-ller) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40=
-) #0 SMP PREEMPT now
-> > > > > random: crng init done
-> > > > > Machine model: linux,dummy-virt
-> > > > > efi: UEFI not found.
-> > > > > NUMA: No NUMA configuration found
-> > > > > NUMA: Faking a node at [mem 0x0000000040000000-0x00000000bfffffff]
-> > > > > NUMA: NODE_DATA [mem 0xbfc1d340-0xbfc20fff]
-> > > > > Zone ranges:
-> > > > >   DMA      [mem 0x0000000040000000-0x00000000bfffffff]
-> > > > >   DMA32    empty
-> > > > >   Normal   empty
-> > > > >   Device   empty
-> > > > > Movable zone start for each node
-> > > > > Early memory node ranges
-> > > > >   node   0: [mem 0x0000000040000000-0x00000000bfffffff]
-> > > > > Initmem setup node 0 [mem 0x0000000040000000-0x00000000bfffffff]
-> > > > > cma: Reserved 32 MiB at 0x00000000bba00000 on node -1
-> > > > > psci: probing for conduit method from DT.
-> > > > > psci: PSCIv1.1 detected in firmware.
-> > > > > psci: Using standard PSCI v0.2 function IDs
-> > > > > psci: Trusted OS migration not required
-> > > > > psci: SMC Calling Convention v1.0
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > BUG: KASAN: invalid-access in smp_build_mpidr_hash arch/arm64/ker=
-nel/setup.c:133 [inline]
-> > > > > BUG: KASAN: invalid-access in setup_arch+0x984/0xd60 arch/arm64/k=
-ernel/setup.c:356
-> > > > > Write of size 4 at addr 03ff800086867e00 by task swapper/0
-> > > > > Pointer tag: [03], memory tag: [fe]
-> > > > >
-> > > > > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc5-syzkall=
-er-g33faa93bc856 #0
-> > > > > Hardware name: linux,dummy-virt (DT)
-> > > > > Call trace:
-> > > > >  dump_backtrace+0x204/0x3b8 arch/arm64/kernel/stacktrace.c:317
-> > > > >  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
-> > > > >  __dump_stack lib/dump_stack.c:93 [inline]
-> > > > >  dump_stack_lvl+0x260/0x3b4 lib/dump_stack.c:119
-> > > > >  print_address_description mm/kasan/report.c:377 [inline]
-> > > > >  print_report+0x118/0x5ac mm/kasan/report.c:488
-> > > > >  kasan_report+0xc8/0x108 mm/kasan/report.c:601
-> > > > >  kasan_check_range+0x94/0xb8 mm/kasan/sw_tags.c:84
-> > > > >  __hwasan_store4_noabort+0x20/0x2c mm/kasan/sw_tags.c:149
-> > > > >  smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
-> > > > >  setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
-> > > > >  start_kernel+0xe0/0xff0 init/main.c:926
-> > > > >  __primary_switched+0x84/0x8c arch/arm64/kernel/head.S:243
-> > > > >
-> > > > > The buggy address belongs to stack of task swapper/0
-> > > > >
-> > > > > Memory state around the buggy address:
-> > > > >  ffff800086867c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > > > >  ffff800086867d00: 00 fe fe 00 00 00 fe fe fe fe fe fe fe fe fe fe
-> > > > > >ffff800086867e00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > > > >                    ^
-> > > > >  ffff800086867f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > > > >  ffff800086868000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >
-> > > > I can't spot the issue here. We have a couple of fixed-length
-> > > > (4 element) arrays on the stack and they're indexed by a simple loop
-> > > > counter that runs from 0-3.
-> > >
-> > > Having trimmed the config to the extreme, I can only trigger the
-> > > warning with CONFIG_KASAN_SW_TAGS (CONFIG_KASAN_GENERIC does not
-> > > scream). Same thing if I use gcc 14.2.0.
-> > >
-> > > However, compiling with clang 14 (Debian clang version 14.0.6) does
-> > > *not* result in a screaming kernel, even with KASAN_SW_TAGS.
-> > >
-> > > So I can see two possibilities here:
-> > >
-> > > - either gcc is incompatible with KASAN_SW_TAGS and the generic
-> > >   version is the only one that works
-> > >
-> > > - or we have a compiler bug on our hands.
-> > >
-> > > Frankly, I can't believe the later, as the code is so daft that I
-> > > can't imagine gcc getting it *that* wrong.
-> > >
-> > > Who knows enough about KASAN to dig into this?
->=20
-> This looks related to Samuel's "arm64: Fix KASAN random tag seed
-> initialization" patch that landed in August.
+On Fri Aug 30, 2024 at 9:14 AM EEST, Aaron Lu wrote:
+> On Thu, Aug 29, 2024 at 07:44:13PM +0300, Jarkko Sakkinen wrote:
+> > On Thu Aug 29, 2024 at 5:38 AM EEST, Aaron Lu wrote:
+> > > When current node doesn't have a EPC section configured by firmware a=
+nd
+> > > all other EPC sections memory are used up, CPU can stuck inside the
+> > > while loop in __sgx_alloc_epc_page() forever and soft lockup will hap=
+pen.
+> > > Note how nid_of_current will never equal to nid in that while loop be=
+cause
+> >                                                      ~~~~
+> >=20
+> > Oh *that* while loop ;-) Please be more specific.
+>
+> What about:
+> Note how nid_of_current will never be equal to nid in the while loop that
+> searches an available EPC page from remote nodes because nid_of_current i=
+s
+> not set in sgx_numa_mask.
 
-f75c235565f9 arm64: Fix KASAN random tag seed initialization
+That would work I think!
 
-$ git describe --contains f75c235565f9 --match=3Dv\*
-v6.11-rc4~15^2
+>
+> > > nid_of_current is not set in sgx_numa_mask.
+> > >
+> > > Also worth mentioning is that it's perfectly fine for firmware to not
+> > > seup an EPC section on a node. Setting an EPC section on each node ca=
+n
+> > > be good for performance but that's not a requirement functionality wi=
+se.
+> >=20
+> > This lacks any description of what is done to __sgx_alloc_epc_page().
+>
+> Will add what Dave suggested on how the problem is fixed to the changelog=
+.
 
-So while this is in -rc4, -rc6 still has the same issue (with GCC --
-clang is OK).
+Great. I think the code change is correct reflecting these additions.
+I'll look the next version as a whole but with high probability I can
+ack that as long as the commit message has these updates.
 
-> I am a bit surprised the bug is reported before the
-> "KernelAddressSanitizer initialized" banner is printed - I thought we
-> shouldn't be reporting anything until the tool is fully initialized.
+>
+> > >
+> > > Fixes: 901ddbb9ecf5 ("x86/sgx: Add a basic NUMA allocation scheme to =
+sgx_alloc_epc_page()")
+> > > Reported-by: Zhimin Luo <zhimin.luo@intel.com>
+> > > Tested-by: Zhimin Luo <zhimin.luo@intel.com>
+> > > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>
+> Thanks,
+> Aaron
 
-Specially if this can report false positives...
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+BR, Jarkko
 
