@@ -1,249 +1,153 @@
-Return-Path: <linux-kernel+bounces-313501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F7296A630
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:08:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5272A96A5E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4979283A92
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04B31F25C2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD6C19005F;
-	Tue,  3 Sep 2024 18:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E257A18DF92;
+	Tue,  3 Sep 2024 17:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=viasat.com header.i=@viasat.com header.b="n3F1ZmRD"
-Received: from mx0e-0085b301.gpphosted.com (mx0e-0085b301.gpphosted.com [67.231.147.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N08CB+jL"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E81E18DF78;
-	Tue,  3 Sep 2024 18:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.147.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0721718DF7F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725386903; cv=none; b=JqpXWr6do0XbgQC1WeoT3+fUVDCH/eydOe8JxJSoijbZLZK501R+pbbfVY3pVe7X1XHWuyBu1kOQU+/CbafOuLjKIYBJWrgh/433NqomO8xlx9aHqUmgG0A5TAKiUpNc4suS2XNq55jAfErugIhfubzpllj1+sfW2W694SkB5+s=
+	t=1725385926; cv=none; b=BJWzdwWP7318knIO287PRVy+1rSyMUCaI3836antLp14Wj6/OwhD3PAz6rY0+kWZ4e5uZfTbDrhAgH8z0OJO9dlk4rgDeDqv9wFJ/1Y0OnnKivy7f1VaMSAidEHWdyELUZQaVgZwKUuUR+iMzcTNEKx8vW5WGhoWpMNXSycuYNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725386903; c=relaxed/simple;
-	bh=vX7Lj49srcwh9U4ZlZD08E6ReNYCWzslO4NqrHIYv28=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CTKiKMr6o2GtoKqRKBT+q0nV0YrAUYw0NIF08YMSQN2ynw3gcr4JJmJiw+UrnRpHVgHyKLmNAPYyi2cAjD/9/s5zWbJI1bVLWFPpLtuUx22KZSw2hFJbrqY5PW+STKcIlBts/HjVmrCL3MPpqb7ZbQvau3ZB4MBXUvleR4UHhT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=viasat.com; spf=pass smtp.mailfrom=viasat.com; dkim=pass (2048-bit key) header.d=viasat.com header.i=@viasat.com header.b=n3F1ZmRD; arc=none smtp.client-ip=67.231.147.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=viasat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=viasat.com
-Received: from pps.filterd (m0351329.ppops.net [127.0.0.1])
-	by mx0e-0085b301.gpphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483G0o4T004187;
-	Tue, 3 Sep 2024 17:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=viasat.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=vX7Lj49srcwh9U4ZlZD08E6ReNYCWzslO4NqrHIYv28=;
- b=n3F1ZmRDA7561QNL+cR2mCci5gBk9qQYCPJZTG2K9s/Sf2AROhTBb316cUDKSbbmji87
- dKCQZm04WoGStUjFsq1kj+Ju/McWtfmLcHoTT3wGJ9ZJ3PBa5bf7rfyrcrrIs27QUmbE
- /robcXloeV+rtvjZ1aBnFEbJNvjhU+5GlvnokLo7fNN0iX5jXjk2nqRETScuD6SNcCMM
- 0XjavHeGqxGMkOxD9zvx9N2YG+aF4O4pQU83D2b7DtbhaWFpi5olOKCv8O9YHcB5pwwg
- nk4f48AQ7NrdWQX0KZSRJTKijfe/AfArXP/8ZEnN00IojAyzyaE5a+BZa9BFtlW3YF7X Cg== 
-Received: from wdc1exchp01.hq.corp.viasat.com ([8.37.104.42])
-	by mx0e-0085b301.gpphosted.com (PPS) with ESMTPS id 41e21wt1tk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 03 Sep 2024 17:51:35 +0000
-Received: from WDC1EXCHP05.hq.corp.viasat.com (10.228.7.145) by
- WDC1EXCHP01.hq.corp.viasat.com (10.228.7.141) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 3 Sep 2024 11:51:34 -0600
-Received: from WDC1EXCHP05.hq.corp.viasat.com ([fe80::e59e:1518:91aa:55e9]) by
- WDC1EXCHP05.hq.corp.viasat.com ([fe80::e59e:1518:91aa:55e9%23]) with mapi id
- 15.01.2507.039; Tue, 3 Sep 2024 11:51:34 -0600
-From: "Jones, Morgan" <Morgan.Jones@viasat.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-        Dhananjay Ugwekar
-	<Dhananjay.Ugwekar@amd.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "gautham.shenoy@amd.com"
-	<gautham.shenoy@amd.com>,
-        "perry.yuan@amd.com" <perry.yuan@amd.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "li.meng@amd.com"
-	<li.meng@amd.com>,
-        "ray.huang@amd.com" <ray.huang@amd.com>
-CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Arcari
-	<darcari@redhat.com>
-Subject: RE: [PATCH v2 2/2] cpufreq/amd-pstate: Fix the scaling_max_freq
- setting on shared memory CPPC systems
-Thread-Topic: [PATCH v2 2/2] cpufreq/amd-pstate: Fix the scaling_max_freq
- setting on shared memory CPPC systems
-Thread-Index: AQHTmcEn27fAHGT7pNe1jAQ3Ww8GHAMI4eQEAR3OYjGyM+kx8A==
-Date: Tue, 3 Sep 2024 17:51:34 +0000
-Message-ID: <d6392b1af4ab459195a1954e4e5ad87e@viasat.com>
-References: <20240702081413.5688-1-Dhananjay.Ugwekar@amd.com>
- <20240702081413.5688-3-Dhananjay.Ugwekar@amd.com>
- <bb09e7e8-5824-4bc1-9697-1929a4cf717e@amd.com>
-In-Reply-To: <bb09e7e8-5824-4bc1-9697-1929a4cf717e@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725385926; c=relaxed/simple;
+	bh=UeLXJklQ8pQZXSGosRpzdX4dNQGU5PtQW80YrI2BlRU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ONHFO+s6pfn6rCkaZ92FpIYizKIqW5uGwQ7ibRCv3FqGVV2Tfd8qJN4VYTiJEmpXfoViJYcPijL4f9KF6aD8aGmTxR+BNcbb7rdZQRAuD1gmEGQz8ZFJ3i8gVZ5GI7K9HcNIl5RnUK+i5PuihOnpsRLUH4hPc+HXC4G+FlwRsqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N08CB+jL; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725385920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=arCXP/c/bQi1qoEO/wOkAyALABugDqpI7zGDaG9Y0Js=;
+	b=N08CB+jLABGe2ZJvDO9//a6PyfXSUSRsFOB1qBArK9UXncQoBCoiJNm50gkPeG5RYtUeeh
+	JMKGAzeuhUcppwpnPB6LdTdV/tf4qxow3RnYdnZLMFKH32jVEfYs2mio847enRKKVmoKSk
+	3DeCiEv0kwC8jnM++92mKyTjcJvi72Y=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Ariane Keller <ariane.keller@tik.ee.ethz.ch>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net] net: xilinx: axienet: Fix race in axienet_stop
+Date: Tue,  3 Sep 2024 13:51:41 -0400
+Message-Id: <20240903175141.4132898-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-ORIG-GUID: Lp8aajZJhUEhTmoiokCqSNacacDndcJk
-X-Proofpoint-GUID: Lp8aajZJhUEhTmoiokCqSNacacDndcJk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_05,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2407110000 definitions=main-2409030143
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-SGkgdGhlcmUsDQoNCldlIGFyZSBleHBlcmllbmNpbmcgYSB+MzUlIHBlcmZvcm1hbmNlIHJlZ3Jl
-c3Npb24gb24gYW4gQU1EIEVQWUMgNzcwMiA2NCBjb3JlIG1hY2hpbmUgYWZ0ZXIgYXBwbHlpbmcg
-dGhpcyBwYXRjaC4gV2Ugb2JzZXJ2ZWQgTGludXggNi42LjQ0IHN0YXJ0aW5nIHRvIGNhdXNlIHRo
-ZSBpc3N1ZSwgYW5kIHBlcmZvcm1lZCBhIGJpc2VjdCBpbnZvbHZpbmcgcmVib290aW5nIHRoZSBt
-YWNoaW5lIG92ZXIgMTUgdGltZXMuIChOb3RlIHRoYXQga2V4ZWMgZGlkbid0IHN1Y2Nlc3NmdWxs
-eSBpZGVudGlmeSB0aGUgcHJvYmxlbSwgc2luY2UgdGhlIFBNIG1lbW9yeSBtYWlsYm94IGlzIG5l
-dmVyIHJlc2V0KS4NCg0KSXQgYXBwZWFycyB0aGF0IHdlIGFyZSBnZXR0aW5nIGEgbWF4IG9mIDIu
-MTggR0h6IHdoZW4gdGhpcyBDUFUgY2FuIGJvb3N0IHRvIDMuMzUgR0h6LCBleHBsYWluaW5nIHRo
-ZSBzbG93ZG93bi4gQmxhY2tsaXN0aW5nIGFtZC1wc3RhdGUgc29sdmVzIHRoZSBpc3N1ZSBhdCB0
-aGUgZXhwZW5zZSBvZiB0aGUgcGVyZm9ybWFuY2UgaW5jcmVhc2Ugd2UgdXNlZCB0byBnZXQgYnkg
-dXNpbmcgaXQuDQoNCklzIGl0IHBvc3NpYmxlIHRoYXQgdGhlIHVwcGVyIGxpbWl0cyB3ZXJlIGlt
-cGxpY2l0bHkgYXQgdGhlIG1heCBDUFUgcG93ZXIgYmVmb3JlLCBhbmQgc2V0dGluZyB0aGUgdXBw
-ZXIgbGltaXQgdG8gc29tZXRoaW5nIG90aGVyIHRoYW4gdGhlIGJvb3N0IGZyZXF1ZW5jeSBjYW4g
-cmVkdWNlIHBlcmZvcm1hbmNlIG5vdz8NCg0KIyBiYWQ6IFs3MjEzOTEwNjAwNjY3YzUxYzk3OGU1
-NzdiZjU0NTRkM2Y3YjMxM2I3XSBMaW51eCA2LjYuNDQNCiMgZ29vZDogWzU4YjA0MjVmZjVkZjY4
-MGQwYjY3ZjY0YWUxZjNmMWViZGYxYzRkZTldIExpbnV4IDYuNi40Mw0KZ2l0IGJpc2VjdCBzdGFy
-dCAnNzIxMzkxMDYwMDY2N2M1MWM5NzhlNTc3YmY1NDU0ZDNmN2IzMTNiNycgJzU4YjA0MjVmZjVk
-ZjY4MGQwYjY3ZjY0YWUxZjNmMWViZGYxYzRkZTknDQojIGdvb2Q6IFs3MmZmOWQyNjk2NGEzYTgw
-Zjc2NTBkZjcxOWRmMTM5ZjVjMWY5NjVkXSBhcm02NDogZHRzOiBxY29tOiBzbTYzNTA6IEFkZCBt
-aXNzaW5nIHFjb20sbm9uLXNlY3VyZS1kb21haW4gcHJvcGVydHkNCmdpdCBiaXNlY3QgZ29vZCA3
-MmZmOWQyNjk2NGEzYTgwZjc2NTBkZjcxOWRmMTM5ZjVjMWY5NjVkDQojIGdvb2Q6IFswZmZmYzJl
-MWJmNDBhMjIyMGVmNWEzOGY4MzRlYTA2M2RiYTgzMmQzXSBBUk06IGR0czogc3VueGk6IHJlbW92
-ZSBkdXBsaWNhdGVkIGVudHJpZXMgaW4gbWFrZWZpbGUNCmdpdCBiaXNlY3QgZ29vZCAwZmZmYzJl
-MWJmNDBhMjIyMGVmNWEzOGY4MzRlYTA2M2RiYTgzMmQzDQojIGJhZDogWzhjZGJlNmViZmQxNzYz
-YTVjNDFhMmEzMDU4NDk3YzBhOTE2MzMxMWNdIHBpbmN0cmw6IHJlbmVzYXM6IHI4YTc3OWcwOiBG
-aXggQ0FORkQ1IHN1ZmZpeA0KZ2l0IGJpc2VjdCBiYWQgOGNkYmU2ZWJmZDE3NjNhNWM0MWEyYTMw
-NTg0OTdjMGE5MTYzMzExYw0KIyBiYWQ6IFs1ZGJiOThlN2ZhNDJiZWJjMTMyNTg5OTE5M2Q4ZjEz
-ZjA3MDVhMTQ4XSBkcm0vbWVkaWF0ZWs6IFR1cm4gb2ZmIHRoZSBsYXllcnMgd2l0aCB6ZXJvIHdp
-ZHRoIG9yIGhlaWdodA0KZ2l0IGJpc2VjdCBiYWQgNWRiYjk4ZTdmYTQyYmViYzEzMjU4OTkxOTNk
-OGYxM2YwNzA1YTE0OA0KIyBiYWQ6IFs2OTFlYzcwNDMxMjJjOWM4YzQ2ZDg0ZjZlNmNkODVkMTNk
-NTBjZDkzXSBzZWxmdGVzdHMvYnBmOiBOdWxsIGNoZWNrcyBmb3IgbGlua3MgaW4gYnBmX3RjcF9j
-YQ0KZ2l0IGJpc2VjdCBiYWQgNjkxZWM3MDQzMTIyYzljOGM0NmQ4NGY2ZTZjZDg1ZDEzZDUwY2Q5
-Mw0KIyBiYWQ6IFthMTM1OWUwODVkNzVkNzM5M2EyNTAwNTRlNjZjMGE3YmM2YzNkYmZhXSBwZXJm
-L3g4NjogU2VyaWFsaXplIHNldF9hdHRyX3JkcG1jKCkNCmdpdCBiaXNlY3QgYmFkIGExMzU5ZTA4
-NWQ3NWQ3MzkzYTI1MDA1NGU2NmMwYTdiYzZjM2RiZmENCiMgYmFkOiBbZTk5ZDliMTZmZjE1M2Rl
-OTU0MDA3MzIzOWQyNGFkYzNiMGEzYTk5N10gd2lmaTogYXRoMTJrOiBjaGFuZ2UgRE1BIGRpcmVj
-dGlvbiB3aGlsZSBtYXBwaW5nIHJlaW5qZWN0ZWQgcGFja2V0cw0KZ2l0IGJpc2VjdCBiYWQgZTk5
-ZDliMTZmZjE1M2RlOTU0MDA3MzIzOWQyNGFkYzNiMGEzYTk5Nw0KIyBiYWQ6IFtkMDI3YWM0YTA4
-NTQxYmViMmE4OTU2M2QzZTAzNGRhNzA4NTA1MGJhXSBmaXJtd2FyZTogdHVycmlzLW1veC1yd3Rt
-OiBJbml0aWFsaXplIGNvbXBsZXRpb24gYmVmb3JlIG1haWxib3gNCmdpdCBiaXNlY3QgYmFkIGQw
-MjdhYzRhMDg1NDFiZWIyYTg5NTYzZDNlMDM0ZGE3MDg1MDUwYmENCiMgYmFkOiBbZTZjOWVjYTMy
-N2U2YTQxYTgxZTdlYmEwZDBkZGMxM2RhMzdmODJhMV0gQVJNOiBzcGl0ejogZml4IEdQSU8gYXNz
-aWdubWVudCBmb3IgYmFja2xpZ2h0DQpnaXQgYmlzZWN0IGJhZCBlNmM5ZWNhMzI3ZTZhNDFhODFl
-N2ViYTBkMGRkYzEzZGEzN2Y4MmExDQojIGJhZDogW2I4Y2RlZmRhYTU1NWJiZmMyNjljMjE5ODgw
-M2Y4NzkxYTg5MjM5NjBdIG02OGs6IGNtcHhjaGc6IEZpeCByZXR1cm4gdmFsdWUgZm9yIGRlZmF1
-bHQgY2FzZSBpbiBfX2FyY2hfeGNoZygpDQpnaXQgYmlzZWN0IGJhZCBiOGNkZWZkYWE1NTViYmZj
-MjY5YzIxOTg4MDNmODc5MWE4OTIzOTYwDQojIGJhZDogWzEzYTcxMzg0YWU2YTg3NzlkYTgwOWIw
-MGM2ZjM3OGRjZWFkMTA0MjddIGNwdWZyZXEvYW1kLXBzdGF0ZTogRml4IHRoZSBzY2FsaW5nX21h
-eF9mcmVxIHNldHRpbmcgb24gc2hhcmVkIG1lbW9yeSBDUFBDIHN5c3RlbXMNCmdpdCBiaXNlY3Qg
-YmFkIDEzYTcxMzg0YWU2YTg3NzlkYTgwOWIwMGM2ZjM3OGRjZWFkMTA0MjcNCiMgZmlyc3QgYmFk
-IGNvbW1pdDogWzEzYTcxMzg0YWU2YTg3NzlkYTgwOWIwMGM2ZjM3OGRjZWFkMTA0MjddIGNwdWZy
-ZXEvYW1kLXBzdGF0ZTogRml4IHRoZSBzY2FsaW5nX21heF9mcmVxIHNldHRpbmcgb24gc2hhcmVk
-IG1lbW9yeSBDUFBDIHN5c3RlbXMgIA0KDQpjcHVwb3dlciBvdXRwdXQ6DQoNCmFuYWx5emluZyBD
-UFUgNDc6DQogIGRyaXZlcjogYW1kLXBzdGF0ZS1lcHANCiAgQ1BVcyB3aGljaCBydW4gYXQgdGhl
-IHNhbWUgaGFyZHdhcmUgZnJlcXVlbmN5OiA0Nw0KICBDUFVzIHdoaWNoIG5lZWQgdG8gaGF2ZSB0
-aGVpciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6IDQ3DQogIG1heGltdW0gdHJh
-bnNpdGlvbiBsYXRlbmN5OiAgQ2Fubm90IGRldGVybWluZSBvciBpcyBub3Qgc3VwcG9ydGVkLg0K
-ICBoYXJkd2FyZSBsaW1pdHM6IDQwMCBNSHogLSAyLjE4IEdIeg0KICBhdmFpbGFibGUgY3B1ZnJl
-cSBnb3Zlcm5vcnM6IHBlcmZvcm1hbmNlIHBvd2Vyc2F2ZQ0KICBjdXJyZW50IHBvbGljeTogZnJl
-cXVlbmN5IHNob3VsZCBiZSB3aXRoaW4gNDAwIE1IeiBhbmQgMi4xOCBHSHouDQogICAgICAgICAg
-ICAgICAgICBUaGUgZ292ZXJub3IgInBlcmZvcm1hbmNlIiBtYXkgZGVjaWRlIHdoaWNoIHNwZWVk
-IHRvIHVzZQ0KICAgICAgICAgICAgICAgICAgd2l0aGluIHRoaXMgcmFuZ2UuDQogIGN1cnJlbnQg
-Q1BVIGZyZXF1ZW5jeTogVW5hYmxlIHRvIGNhbGwgaGFyZHdhcmUNCiAgY3VycmVudCBDUFUgZnJl
-cXVlbmN5OiAyLjE3IEdIeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBrZXJuZWwpDQogIGJvb3N0IHN0
-YXRlIHN1cHBvcnQ6DQogICAgU3VwcG9ydGVkOiB5ZXMNCiAgICBBY3RpdmU6IHllcw0KICAgIEFN
-RCBQU1RBVEUgSGlnaGVzdCBQZXJmb3JtYW5jZTogMTY2LiBNYXhpbXVtIEZyZXF1ZW5jeTogMi4x
-OCBHSHouDQogICAgQU1EIFBTVEFURSBOb21pbmFsIFBlcmZvcm1hbmNlOiAxNTIuIE5vbWluYWwg
-RnJlcXVlbmN5OiAyLjAwIEdIei4NCiAgICBBTUQgUFNUQVRFIExvd2VzdCBOb24tbGluZWFyIFBl
-cmZvcm1hbmNlOiAxMTUuIExvd2VzdCBOb24tbGluZWFyIEZyZXF1ZW5jeTogMS41MSBHSHouDQog
-ICAgQU1EIFBTVEFURSBMb3dlc3QgUGVyZm9ybWFuY2U6IDMxLiBMb3dlc3QgRnJlcXVlbmN5OiA0
-MDAgTUh6Lg0KDQpUaGFua3MsDQpNb3JnYW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-CkZyb206IE1hcmlvIExpbW9uY2llbGxvIDxtYXJpby5saW1vbmNpZWxsb0BhbWQuY29tPiANClNl
-bnQ6IFR1ZXNkYXksIEp1bHkgMiwgMjAyNCAxMDo0OSBBTQ0KVG86IERoYW5hbmpheSBVZ3dla2Fy
-IDxEaGFuYW5qYXkuVWd3ZWthckBhbWQuY29tPjsgcmFmYWVsQGtlcm5lbC5vcmc7IHZpcmVzaC5r
-dW1hckBsaW5hcm8ub3JnOyBnYXV0aGFtLnNoZW5veUBhbWQuY29tOyBwZXJyeS55dWFuQGFtZC5j
-b207IHNraGFuQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGxpLm1lbmdAYW1kLmNvbTsgcmF5Lmh1YW5n
-QGFtZC5jb20NCkNjOiBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IERhdmlkIEFyY2FyaSA8ZGFyY2FyaUByZWRoYXQuY29tPg0KU3ViamVjdDog
-UmU6IFtQQVRDSCB2MiAyLzJdIGNwdWZyZXEvYW1kLXBzdGF0ZTogRml4IHRoZSBzY2FsaW5nX21h
-eF9mcmVxIHNldHRpbmcgb24gc2hhcmVkIG1lbW9yeSBDUFBDIHN5c3RlbXMNCg0KT24gNy8yLzIw
-MjQgMzoxNCwgRGhhbmFuamF5IFVnd2VrYXIgd3JvdGU6DQo+IE9uIHNoYXJlZCBtZW1vcnkgQ1BQ
-QyBzeXN0ZW1zLCB3aXRoIGFtZF9wc3RhdGU9YWN0aXZlIG1vZGUsIHRoZSBjaGFuZ2UgDQo+IGlu
-IHNjYWxpbmdfbWF4X2ZyZXEgZG9lc24ndCBnZXQgd3JpdHRlbiB0byB0aGUgc2hhcmVkIG1lbW9y
-eSByZWdpb24uIA0KPiBEdWUgdG8gdGhpcywgdGhlIHdyaXRlcyB0byB0aGUgc2NhbGluZ19tYXhf
-ZnJlcSBzeXNmcyBmaWxlIGRvbid0IHRha2UgDQo+IGVmZmVjdC4gRml4IHRoaXMgYnkgcHJvcGFn
-YXRpbmcgdGhlIHNjYWxpbmdfbWF4X2ZyZXEgY2hhbmdlcyB0byB0aGUgDQo+IHNoYXJlZCBtZW1v
-cnkgcmVnaW9uLg0KPiANCj4gRml4ZXM6IGZmYTUwOTZhN2MzMyAoImNwdWZyZXE6IGFtZC1wc3Rh
-dGU6IGltcGxlbWVudCBQc3RhdGUgRVBQIA0KPiBzdXBwb3J0IGZvciB0aGUgQU1EIHByb2Nlc3Nv
-cnMiKQ0KPiBSZXBvcnRlZC1ieTogRGF2aWQgQXJjYXJpIDxkYXJjYXJpQHJlZGhhdC5jb20+DQo+
-IFNpZ25lZC1vZmYtYnk6IERoYW5hbmpheSBVZ3dla2FyIDxEaGFuYW5qYXkuVWd3ZWthckBhbWQu
-Y29tPg0KUmV2aWV3ZWQtYnk6IE1hcmlvIExpbW9uY2llbGxvIDxtYXJpby5saW1vbmNpZWxsb0Bh
-bWQuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL2NwdWZyZXEvYW1kLXBzdGF0ZS5jIHwgNDMgKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDIz
-IGluc2VydGlvbnMoKyksIDIwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY3B1ZnJlcS9hbWQtcHN0YXRlLmMgDQo+IGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUu
-YyBpbmRleCA5YWQ2MmRiZThiZmIuLmEwOTJiMTNmZmJjMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9jcHVmcmVxL2FtZC1wc3RhdGUuYw0KPiArKysgYi9kcml2ZXJzL2NwdWZyZXEvYW1kLXBzdGF0
-ZS5jDQo+IEBAIC0yNDcsNiArMjQ3LDI2IEBAIHN0YXRpYyBpbnQgYW1kX3BzdGF0ZV9nZXRfZW5l
-cmd5X3ByZWZfaW5kZXgoc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhKQ0KPiAgIAlyZXR1cm4g
-aW5kZXg7DQo+ICAgfQ0KPiAgIA0KPiArc3RhdGljIHZvaWQgcHN0YXRlX3VwZGF0ZV9wZXJmKHN0
-cnVjdCBhbWRfY3B1ZGF0YSAqY3B1ZGF0YSwgdTMyIG1pbl9wZXJmLA0KPiArCQkJICAgICAgIHUz
-MiBkZXNfcGVyZiwgdTMyIG1heF9wZXJmLCBib29sIGZhc3Rfc3dpdGNoKSB7DQo+ICsJaWYgKGZh
-c3Rfc3dpdGNoKQ0KPiArCQl3cm1zcmwoTVNSX0FNRF9DUFBDX1JFUSwgUkVBRF9PTkNFKGNwdWRh
-dGEtPmNwcGNfcmVxX2NhY2hlZCkpOw0KPiArCWVsc2UNCj4gKwkJd3Jtc3JsX29uX2NwdShjcHVk
-YXRhLT5jcHUsIE1TUl9BTURfQ1BQQ19SRVEsDQo+ICsJCQkgICAgICBSRUFEX09OQ0UoY3B1ZGF0
-YS0+Y3BwY19yZXFfY2FjaGVkKSk7DQo+ICt9DQo+ICsNCj4gK0RFRklORV9TVEFUSUNfQ0FMTChh
-bWRfcHN0YXRlX3VwZGF0ZV9wZXJmLCBwc3RhdGVfdXBkYXRlX3BlcmYpOw0KPiArDQo+ICtzdGF0
-aWMgaW5saW5lIHZvaWQgYW1kX3BzdGF0ZV91cGRhdGVfcGVyZihzdHJ1Y3QgYW1kX2NwdWRhdGEg
-KmNwdWRhdGEsDQo+ICsJCQkJCSAgdTMyIG1pbl9wZXJmLCB1MzIgZGVzX3BlcmYsDQo+ICsJCQkJ
-CSAgdTMyIG1heF9wZXJmLCBib29sIGZhc3Rfc3dpdGNoKSB7DQo+ICsJc3RhdGljX2NhbGwoYW1k
-X3BzdGF0ZV91cGRhdGVfcGVyZikoY3B1ZGF0YSwgbWluX3BlcmYsIGRlc19wZXJmLA0KPiArCQkJ
-CQkgICAgbWF4X3BlcmYsIGZhc3Rfc3dpdGNoKTsNCj4gK30NCj4gKw0KPiAgIHN0YXRpYyBpbnQg
-YW1kX3BzdGF0ZV9zZXRfZXBwKHN0cnVjdCBhbWRfY3B1ZGF0YSAqY3B1ZGF0YSwgdTMyIGVwcCkN
-Cj4gICB7DQo+ICAgCWludCByZXQ7DQo+IEBAIC0yNjMsNiArMjgzLDkgQEAgc3RhdGljIGludCBh
-bWRfcHN0YXRlX3NldF9lcHAoc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhLCB1MzIgZXBwKQ0K
-PiAgIAkJaWYgKCFyZXQpDQo+ICAgCQkJY3B1ZGF0YS0+ZXBwX2NhY2hlZCA9IGVwcDsNCj4gICAJ
-fSBlbHNlIHsNCj4gKwkJYW1kX3BzdGF0ZV91cGRhdGVfcGVyZihjcHVkYXRhLCBjcHVkYXRhLT5t
-aW5fbGltaXRfcGVyZiwgMFUsDQo+ICsJCQkJCSAgICAgY3B1ZGF0YS0+bWF4X2xpbWl0X3BlcmYs
-IGZhbHNlKTsNCj4gKw0KPiAgIAkJcGVyZl9jdHJscy5lbmVyZ3lfcGVyZiA9IGVwcDsNCj4gICAJ
-CXJldCA9IGNwcGNfc2V0X2VwcF9wZXJmKGNwdWRhdGEtPmNwdSwgJnBlcmZfY3RybHMsIDEpOw0K
-PiAgIAkJaWYgKHJldCkgew0KPiBAQCAtNDUyLDE2ICs0NzUsNiBAQCBzdGF0aWMgaW5saW5lIGlu
-dCBhbWRfcHN0YXRlX2luaXRfcGVyZihzdHJ1Y3QgYW1kX2NwdWRhdGEgKmNwdWRhdGEpDQo+ICAg
-CXJldHVybiBzdGF0aWNfY2FsbChhbWRfcHN0YXRlX2luaXRfcGVyZikoY3B1ZGF0YSk7DQo+ICAg
-fQ0KPiAgIA0KPiAtc3RhdGljIHZvaWQgcHN0YXRlX3VwZGF0ZV9wZXJmKHN0cnVjdCBhbWRfY3B1
-ZGF0YSAqY3B1ZGF0YSwgdTMyIG1pbl9wZXJmLA0KPiAtCQkJICAgICAgIHUzMiBkZXNfcGVyZiwg
-dTMyIG1heF9wZXJmLCBib29sIGZhc3Rfc3dpdGNoKQ0KPiAtew0KPiAtCWlmIChmYXN0X3N3aXRj
-aCkNCj4gLQkJd3Jtc3JsKE1TUl9BTURfQ1BQQ19SRVEsIFJFQURfT05DRShjcHVkYXRhLT5jcHBj
-X3JlcV9jYWNoZWQpKTsNCj4gLQllbHNlDQo+IC0JCXdybXNybF9vbl9jcHUoY3B1ZGF0YS0+Y3B1
-LCBNU1JfQU1EX0NQUENfUkVRLA0KPiAtCQkJICAgICAgUkVBRF9PTkNFKGNwdWRhdGEtPmNwcGNf
-cmVxX2NhY2hlZCkpOw0KPiAtfQ0KPiAtDQo+ICAgc3RhdGljIHZvaWQgY3BwY191cGRhdGVfcGVy
-ZihzdHJ1Y3QgYW1kX2NwdWRhdGEgKmNwdWRhdGEsDQo+ICAgCQkJICAgICB1MzIgbWluX3BlcmYs
-IHUzMiBkZXNfcGVyZiwNCj4gICAJCQkgICAgIHUzMiBtYXhfcGVyZiwgYm9vbCBmYXN0X3N3aXRj
-aCkgQEAgLTQ3NSwxNiArNDg4LDYgQEAgc3RhdGljIA0KPiB2b2lkIGNwcGNfdXBkYXRlX3BlcmYo
-c3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhLA0KPiAgIAljcHBjX3NldF9wZXJmKGNwdWRhdGEt
-PmNwdSwgJnBlcmZfY3RybHMpOw0KPiAgIH0NCj4gICANCj4gLURFRklORV9TVEFUSUNfQ0FMTChh
-bWRfcHN0YXRlX3VwZGF0ZV9wZXJmLCBwc3RhdGVfdXBkYXRlX3BlcmYpOw0KPiAtDQo+IC1zdGF0
-aWMgaW5saW5lIHZvaWQgYW1kX3BzdGF0ZV91cGRhdGVfcGVyZihzdHJ1Y3QgYW1kX2NwdWRhdGEg
-KmNwdWRhdGEsDQo+IC0JCQkJCSAgdTMyIG1pbl9wZXJmLCB1MzIgZGVzX3BlcmYsDQo+IC0JCQkJ
-CSAgdTMyIG1heF9wZXJmLCBib29sIGZhc3Rfc3dpdGNoKQ0KPiAtew0KPiAtCXN0YXRpY19jYWxs
-KGFtZF9wc3RhdGVfdXBkYXRlX3BlcmYpKGNwdWRhdGEsIG1pbl9wZXJmLCBkZXNfcGVyZiwNCj4g
-LQkJCQkJICAgIG1heF9wZXJmLCBmYXN0X3N3aXRjaCk7DQo+IC19DQo+IC0NCj4gICBzdGF0aWMg
-aW5saW5lIGJvb2wgYW1kX3BzdGF0ZV9zYW1wbGUoc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRh
-KQ0KPiAgIHsNCj4gICAJdTY0IGFwZXJmLCBtcGVyZiwgdHNjOw0KDQoNCg==
+axienet_dma_err_handler can race with axienet_stop in the following
+manner:
+
+CPU 1                       CPU 2
+======================      ==================
+axienet_stop()
+    napi_disable()
+    axienet_dma_stop()
+                            axienet_dma_err_handler()
+                                napi_disable()
+                                axienet_dma_stop()
+                                axienet_dma_start()
+                                napi_enable()
+    cancel_work_sync()
+    free_irq()
+
+Fix this by setting a flag in axienet_stop telling
+axienet_dma_err_handler not to bother doing anything. I chose not to use
+disable_work_sync to allow for easier backporting.
+
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+---
+
+ drivers/net/ethernet/xilinx/xilinx_axienet.h      | 3 +++
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+index 09c9f9787180..1223fcc1a8da 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+@@ -436,6 +436,8 @@ struct skbuf_dma_descriptor {
+  * @tx_bytes:	TX byte count for statistics
+  * @tx_stat_sync: Synchronization object for TX stats
+  * @dma_err_task: Work structure to process Axi DMA errors
++ * @stopping:   Set when @dma_err_task shouldn't do anything because we are
++ *              about to stop the device.
+  * @tx_irq:	Axidma TX IRQ number
+  * @rx_irq:	Axidma RX IRQ number
+  * @eth_irq:	Ethernet core IRQ number
+@@ -507,6 +509,7 @@ struct axienet_local {
+ 	struct u64_stats_sync tx_stat_sync;
+ 
+ 	struct work_struct dma_err_task;
++	bool stopping;
+ 
+ 	int tx_irq;
+ 	int rx_irq;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 9aeb7b9f3ae4..9eb300fc3590 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1460,6 +1460,7 @@ static int axienet_init_legacy_dma(struct net_device *ndev)
+ 	struct axienet_local *lp = netdev_priv(ndev);
+ 
+ 	/* Enable worker thread for Axi DMA error handling */
++	lp->stopping = false;
+ 	INIT_WORK(&lp->dma_err_task, axienet_dma_err_handler);
+ 
+ 	napi_enable(&lp->napi_rx);
+@@ -1580,6 +1581,9 @@ static int axienet_stop(struct net_device *ndev)
+ 	dev_dbg(&ndev->dev, "axienet_close()\n");
+ 
+ 	if (!lp->use_dmaengine) {
++		WRITE_ONCE(lp->stopping, true);
++		flush_work(&lp->dma_err_task);
++
+ 		napi_disable(&lp->napi_tx);
+ 		napi_disable(&lp->napi_rx);
+ 	}
+@@ -2154,6 +2158,10 @@ static void axienet_dma_err_handler(struct work_struct *work)
+ 						dma_err_task);
+ 	struct net_device *ndev = lp->ndev;
+ 
++	/* Don't bother if we are going to stop anyway */
++	if (READ_ONCE(lp->stopping))
++		return;
++
+ 	napi_disable(&lp->napi_tx);
+ 	napi_disable(&lp->napi_rx);
+ 
+-- 
+2.35.1.1320.gc452695387.dirty
+
 
