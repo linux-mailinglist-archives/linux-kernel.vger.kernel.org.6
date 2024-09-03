@@ -1,334 +1,304 @@
-Return-Path: <linux-kernel+bounces-312348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391E196954B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEBC96956B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C432840FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55051C231FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C1E1D6DA2;
-	Tue,  3 Sep 2024 07:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1121D6DC0;
+	Tue,  3 Sep 2024 07:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eKNH7G3R";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sbrmLGd+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40041D61A6;
-	Tue,  3 Sep 2024 07:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RWWYqfra"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168381D54F2;
+	Tue,  3 Sep 2024 07:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348353; cv=none; b=SJmr5MOVL/B1rIAZon29+kyHGmxEnpHlgSxEhT3wB2Eg7K+4H6MTZLK/AeqBS/ZWZuj9V1+fd1lS/fPrvUvc2LZHxw/rj53JGJPdaiNmvuunXzeKEsONkBjHub8WKytUo+YCr3pis4FayXFiO5TkfK84ppJ4cGpdhMJTDuUGNi8=
+	t=1725348560; cv=none; b=pUYINm2dup/wRR6T4gbERDh90fwR4C4CaV9SKeq0GxCpZGS8I2m/h4K4Kph/+10pvnoiwpGPoyI75QIFXoT0Iu8ymepsgw0I98fAkLGFqwvJgHa65/SxJhbWWZqVYVnAk7r4VOXn9KqMGUX+mliAjYyjo0m96Gqu6eEodAkXVTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348353; c=relaxed/simple;
-	bh=ygkQs7ZyOEIM40aHk6n4KczK1faIjw+ybW7hqKw7KGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gRm+/mihCSsmJ93lBK9ot847C4AvjWtEgrC3mFqPi94wd7gFEm7Uso1mXWyE8enqIgHBksj0y9857VC09P8Vi1SOJ8d8MzXKEmjCazSESJ5fATIBpwUBirbjPqjiui8mYBNtNOAPe/sjXf0OioPkIaOQAScilRCgPbCDxy4JtTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eKNH7G3R; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sbrmLGd+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <18cd9ee1-6d12-469c-bf3d-c8fa080b01c1@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725348349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MEbfEIkAataZenuGI17UL2xPHqZIq/9zw171rgDNhPw=;
-	b=eKNH7G3RdzcAGx4BDdExiZcDdT7l2GprOG3pBm5bfQ8MI3IwafbbK02mjmeM5/8qVhHoSb
-	ZSCxxSXnt9xYgCOQ5Bm34eM6tjngEQEuZw7JnRsIKRoFVi3KSBAn4WqWqElX8i5tG5E3tY
-	fIuaOhwlE4NmvMrKkl5UFuV/fQK522Qi/1fr9qHrvMABUUKJRfBexJUUsG+PpbBZcwvTTG
-	Q1IZlM3SE4CzwATpSME4pfoXP2L0HTB1mS+ntW+0KKjQXt0fXuFrBk57xHLqLRwtOiJj2w
-	2r6/0ZPusgtP0GlOJB2Isay6kl5PE7prP5QgMdhlGbm+QURy1cH8Pvv7TejZyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725348349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MEbfEIkAataZenuGI17UL2xPHqZIq/9zw171rgDNhPw=;
-	b=sbrmLGd+oQCo5MK5fWQh4cpAoA6QnTLyBLAHRZDpepD93ueA7BKByK6DgY9zPaFyRap4j8
-	VxAH5CMMgbFGE/Aw==
-Date: Tue, 3 Sep 2024 09:25:42 +0200
+	s=arc-20240116; t=1725348560; c=relaxed/simple;
+	bh=ht9X6hMbbQFDtystccUaqRuUj/Q+XQredwL13eat6v8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PAl7CvsjEKK8yRrLJnmPeJR1M/NH2nMieQLxDS3cwSkrqaprR0x+UJjnC1hIP7ge9htDdEhrLPPBIetJmguXqqTtE9WsBCRtlB9I1AZsEtDl7VtIBZ80rs4pvYKPrkwSTcpw0ehrcd6NKMhRxAI2//pHzF2c0whaeWtMI7Q5miQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RWWYqfra; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ncpbi
+	4bDSuRFtz4GhQxasSaf6qj1oJ5TgIjN7n9LAbo=; b=RWWYqfraaNCvWiAdppS+X
+	kqbJN1VGK8iMCzEeDoxe1yJZX89tcw/ruS6lbwUlsshLZB/O4ld9q0qD5gcAyy6Z
+	FKuhPt28OKOt07hNpvAmy1/6JPYZKVEWOPDXWnj0jyW/yvZ1TGWqpVINEx8PHMLS
+	gCaFEmUikLJ3HsBs8KPJjE=
+Received: from localhost.localdomain (unknown [111.48.69.246])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3Xy0HutZmr9mTBQ--.40251S2;
+	Tue, 03 Sep 2024 15:26:01 +0800 (CST)
+From: yangfeng <yangfeng59949@163.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: bpf: Replace sizeof(arr)/sizeof(arr[0]) with ARRAY_SIZE
+Date: Tue,  3 Sep 2024 15:25:59 +0800
+Message-Id: <20240903072559.292607-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: CPU stuck due to the taprio hrtimer
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, luyun
- <luyun@kylinos.cn>, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
- jiri@resnulli.us
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240627055338.2186255-1-luyun@kylinos.cn>
- <87sewy55gp.fsf@intel.com> <2df10720-1790-48bd-a50c-4816260543b0@kylinos.cn>
- <fcd41a5f-66b5-4ebe-9535-b75e14867444@linutronix.de>
- <87jzftpwo2.fsf@intel.com>
-Content-Language: en-US
-From: Florian Kauer <florian.kauer@linutronix.de>
-Autocrypt: addr=florian.kauer@linutronix.de; keydata=
- xsFNBGO+z80BEADOSjQNIrfbQ28vjDMvs/YD/z0WA/iJNaD9JQDXNcUBDV1q+1kwfgg5Cc7f
- rZvbEeQrO7tJ+pqKLpdKq6QMcUW+aEilXBDZ708/4hEbb4qiRl29CYtFf8kx4qC+Hs8Eo1s3
- kkbtg/T4fmQ+DKLBOLdVWB88w6j/aqi66r5j3w9rMCaSp0eg7zG3s/dW3pRwvEsb+Dj7ai2P
- J1pGgAMKtEJC6jB+rE17wWK1ISUum22u17MKSnsGOAjhWDGiAoG5zx36Qy5+Ig+UwIyYjIvZ
- lKd8N0K35/wyQaLS9Jva0puYtbyMEQxZAVEHptH1BDd8fMKD/n03GTarXRcsMgvlkZk1ikbq
- TL9fe2u9iBI861ATZ4VwXs48encOl3gIkqQ/lZbCo8QRj7pOdvOkx/Vn20yz809TTmRxCxL1
- kdSbHROfEmUCAQdYSLUUfPYctCIajan/zif/W3HZKJJ3ZTbxdsYonLF9+DSlkFU+BSL147in
- tDJ83vqqPSuLqgKIdh2E/ac2Hrua0n80ySiTf7qDwfOrB8Z2JNgl1DlYLbLAguZJ4d608yQZ
- Tidmu22QopA47oQhpathwDpEczpuBBosbytpIG7cNvn98JnEgWAwRk0Ygv9qhUa/Py4AcYG8
- 3VEkoTZ9VNSP1ObMxcraF+KH5YYkR6Rd2ykmTulh4FqrvyOyMwARAQABzStGbG9yaWFuIEth
- dWVyIDxmbG9yaWFuLmthdWVyQGxpbnV0cm9uaXguZGU+wsGUBBMBCgA+FiEE8X2LVBM8IilJ
- PmSgtZdt1lJRlE4FAmO+z80CGwMFCQPCZwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQ
- tZdt1lJRlE41Kw/9EMsgm3D6a4a8J4iKw5UGyDu31LbVW83PKIZ8lALdtzNuT/1Q85IKc7lT
- +hFtYYLos05tjo0lQ2SCf5qRP7FY/hGnk+1Hqnog9eloG+Eh522iojId2rPL4I9w0XvlN4Mm
- BleqCvBn3YPVGW0kxJXTwZDRQfReVLeFSKTvXwWYJYrvleF2Cgyom/tcNrugHJfVPOYOe/qN
- NpiIawhF8Q/9YnGeW0FydhrIB+A4jJvuk36mt6/D/Mqj7kbYp0vGYXmt7lbp/n8luApzNwbZ
- gJzMa+a8l2+5b+95zaJMcxYSP9M26uS5khTCWDs9PcasFB9IfU0uHAhIPxV6SNVXK1A0R8VY
- 2gxtprowtbnWBCIRh2xJls6sOUn4EJH0S0/tlTM/wOH2n3wrKqhz+8gQF5hj3f8P5B5UL/05
- uhZg3zyeTFhQl2zqaD+a1KI4Dm0vf1SfnCpsvJvimfWoyRgMnSuosN+JC2b9LuR7Leq3g0lC
- okVY6546ccr7i4YaGKcdQX8/+0tFECNlhKPjR3ycQXToCquzkuMuHW/5ugmcFaebAOZ1nPT8
- v/IdeuephUj4Xa8GUHmly/t44k1SH8xh2GHYAav43Yo7an2eJwBhRx+4vJioFK134fFTzBET
- DelXAoM5z9A21h1ZTEHHxro2DLbmzEmfDf97Hjhvwytupf1fHwbOwU0EY77PzQEQANDDECcC
- GPzSBAbMY56gUC7pLSy4+2KSRWS4cz3fNb6HHEmdSvhu+oq0zxm3Q04eJO2Mcu5DfTWEng+d
- u2rxRAGqDu/b/EVC0AbQLuDL2kvnO5LOVR9JPcyrsTGyrfq84QspY/KzTZaWkDbTX2G3yLmz
- AJs19LyehFC3kfSyQBcsvPR3fb/gcuU+fYhJiAFrHERovnSCA/owKRrY4aBzp7OGJQ2VzjbT
- g81rWnJY2WJGSzu5QPbU4n/KT+/NrkNQ91/Qsi8BfHmg4R1qdX7vNkMKWACttQKHm38EdwaH
- cX4hzYXad0GKzX219qeExt83dSiYmzLO8+ErJcCQPMIHViLMlLQVmY3u7QLE2OTHw51BRyhl
- i3Yjeqwzh5ScIOX3Fdhlb18S2kPZQZ/rRUkrcMUXa/AAyKEGFZWZhpVBTHSn+tum7NlO/koh
- t4OKO84xkaoa+weYUTqid86nIGOfsgUOZ192MANK/JggQiFJTJ2BMw/p3hxihwC1LUsdXgqD
- NHewjqJhiTjLxC6ER0LdrTURG4MS2tk5WjRgpAaAbKViXLM/nQ7CVlkyzJsdTbiLflyaHHs2
- s18O+jiXDGyQQBP5teBuYFZ3j5EB2O+UVbQMBHoeZJQrtKgxHyyj9K0h7Ln/ItTB3vA9IRKW
- ogvwdJFhrSZBwoz+KQoz3+jo+PcBABEBAAHCwXwEGAEKACYWIQTxfYtUEzwiKUk+ZKC1l23W
- UlGUTgUCY77PzQIbDAUJA8JnAAAKCRC1l23WUlGUTq6wD/4zGODDbQIcrF5Z12Cv7CL2Qubb
- 4PnZDIo4WNVmm7u+lOXciEVd0Z7zZNZBClvCx2AHDJyPE8/ExqX83gdCliA2eaH2qPla1mJk
- iF6U0rDGGF5O+07yQReCL2CXtGjLsmcvYnwVvB5o70dqI/hGm1EKj1uzKRGZSe6ECencCIQ4
- 2bY8CMp+H5xoETgCw90FLEryr+3qnL0PEfWXdogP4g+IQ9wSFA3ls4+4xn6+thpWNhVxEv/l
- gEAES2S7LhgDQUiRLusrVlqPqlpQ51J3hky56x5p5ems42vRUh6ID/0mMgZQd+0BPgJpkovs
- QoaQAqP2O8xQjKdL+YDibmAPhboO1wSoy0YxxIKElx2UReanVc06ue22v0NRZhQwP9z27wwE
- Bp9OJFE0PKOM5Sd5AjHRAUoFfMvGSd8i0e3QRQHEcGH1A9geAzY+aw7xk8I2CUryjAiu7Ccd
- I6tCUxSf29+rP4TKP+akaDnjnpSPwkZKhPjjEjPDs9UCEwW3pKW/DtIMMVBVKNKb5Qnbt02Z
- Ek1lmEFP3jEuAyLtZ7ESmq+Lae5V2CXQ121fLwAAFfuaDYJ4/y4Dl1yyfvNIIgoUEbcyGqEv
- KJGED0XKgdRE7uMZ4gnmBjh4IpY6a2sATFuBiulI/lOKp43mwVUGsPxdVfkN/RRbFW7iEx63
- ugsSqUGtSA==
-In-Reply-To: <87jzftpwo2.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3Xy0HutZmr9mTBQ--.40251S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWfGr13GryfJry3uF1DtF1UKFg_yoWDXFW5pa
+	4kA34jkF1fJF1aqw1UGrsF9F4rWF4DXFWYkr48try5Zr47Xr97XF4xKFWaqF93WrZYvrn3
+	Za4IqrZxZw48ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5YFAUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZQpPeGXAoLOxggAAsd
 
+From: Feng Yang <yangfeng@kylinos.cn>
 
+The ARRAY_SIZE macro is more compact and more formal in linux source.
 
-On 9/2/24 23:34, Vinicius Costa Gomes wrote:
-> Florian Kauer <florian.kauer@linutronix.de> writes:
-> 
->> On 9/2/24 11:12, luyun wrote:
->>>
->>> 在 2024/6/28 07:30, Vinicius Costa Gomes 写道:
->>>> Yun Lu <luyun@kylinos.cn> writes:
->>>>
->>>>> Hello,
->>>>>
->>>>> When I run a taprio test program on the latest kernel(v6.10-rc4), CPU stuck
->>>>> is detected immediately, and the stack shows that CPU is stuck on taprio
->>>>> hrtimer.
->>>>>
->>>>> The reproducer program link:
->>>>> https://github.com/xyyluyun/taprio_test/blob/main/taprio_test.c
->>>>> gcc taprio_test.c -static -o taprio_test
->>>>>
->>>>> In this program, start the taprio hrtimer which clockid is set to REALTIME, and
->>>>> then adjust the system time by a significant value backwards. Thus, CPU will enter
->>>>> an infinite loop in the__hrtimer_run_queues function, getting stuck and unable to
->>>>> exit or respond to any interrupts.
->>>>>
->>>>> I have tried to avoid this problem by apllying the following patch, and it does work.
->>>>> But I am not sure if this can be the final solution?
->>>>>
->>>>> Thanks.
->>>>>
->>>>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->>>>> ---
->>>>>   net/sched/sch_taprio.c | 24 ++++++++++++++++++++++++
->>>>>   1 file changed, 24 insertions(+)
->>>>>
->>>>> diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
->>>>> index a0d54b422186..2ff8d34bdbac 100644
->>>>> --- a/net/sched/sch_taprio.c
->>>>> +++ b/net/sched/sch_taprio.c
->>>>> @@ -104,6 +104,7 @@ struct taprio_sched {
->>>>>       u32 max_sdu[TC_MAX_QUEUE]; /* save info from the user */
->>>>>       u32 fp[TC_QOPT_MAX_QUEUE]; /* only for dump and offloading */
->>>>>       u32 txtime_delay;
->>>>> +    ktime_t offset;
->>>>>   };
->>>>>     struct __tc_taprio_qopt_offload {
->>>>> @@ -170,6 +171,19 @@ static ktime_t sched_base_time(const struct sched_gate_list *sched)
->>>>>       return ns_to_ktime(sched->base_time);
->>>>>   }
->>>>>   +static ktime_t taprio_get_offset(const struct taprio_sched *q)
->>>>> +{
->>>>> +    enum tk_offsets tk_offset = READ_ONCE(q->tk_offset);
->>>>> +    ktime_t time = ktime_get();
->>>>> +
->>>>> +    switch (tk_offset) {
->>>>> +    case TK_OFFS_MAX:
->>>>> +        return 0;
->>>>> +    default:
->>>>> +        return ktime_sub_ns(ktime_mono_to_any(time, tk_offset), time);
->>>>> +    }
->>>>> +}
->>>>> +
->>>>>   static ktime_t taprio_mono_to_any(const struct taprio_sched *q, ktime_t mono)
->>>>>   {
->>>>>       /* This pairs with WRITE_ONCE() in taprio_parse_clockid() */
->>>>> @@ -918,6 +932,7 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
->>>>>       int num_tc = netdev_get_num_tc(dev);
->>>>>       struct sched_entry *entry, *next;
->>>>>       struct Qdisc *sch = q->root;
->>>>> +    ktime_t now_offset = taprio_get_offset(q);
->>>>>       ktime_t end_time;
->>>>>       int tc;
->>>>>   @@ -957,6 +972,14 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
->>>>>       end_time = ktime_add_ns(entry->end_time, next->interval);
->>>>>       end_time = min_t(ktime_t, end_time, oper->cycle_end_time);
->>>>>   +    if (q->offset != now_offset) {
->>>>> +        ktime_t diff = ktime_sub_ns(now_offset, q->offset);
->>>>> +
->>>>> +        end_time = ktime_add_ns(end_time, diff);
->>>>> +        oper->cycle_end_time = ktime_add_ns(oper->cycle_end_time, diff);
->>>>> +        q->offset = now_offset;
->>>>> +    }
->>>>> +
->>>> I think what we should do here is a bit different. Let me try to explain
->>>> what I have in mind with some context.
->>>>
->>>> A bit of context: The idea of taprio is to enforce "TSN" traffic
->>>> schedules, these schedules require time synchronization, for example via
->>>> PTP, and in those cases, time jumps are not expected or a sign that
->>>> something is wrong.
->>>>
->>>> In my mind, a time jump, specially a big one, kind of invalidates the
->>>> schedule, as the schedule is based on an absolute time value (the
->>>> base_time), and when time jumps that reference in time is lost.
->>>>
->>>> BUT making the user's system unresponsive is a bug, a big one, as if
->>>> this happens in the real world, the user will be unable to investigate
->>>> what made the system have so big a time correction.
->>>>
->>>> So my idea is to warn the user that the time jumped, say that the user
->>>> needs to reconfigure the schedule, as it is now invalid, and disable the
->>>> schedule.
->>>>
->>>> Does this make sense?
->>>>
->>>> Ah, and thanks for the report.
->>>
->>> Hello Vinicius,
->>>
->>> May I ask is there a fix patch for this issue?
->>>
->>> I test it on the latest kernel version,  and it still seems to cause CPU stuck.
->>>
->>> As you mentioned, a better way would be to warn the user that the current time has jumped and cancel the hrtimer,
->>>
->>> but I'm not sure how to warn the user, or just through printk?
->>>
->>> Thanks and best regards.
->>
->> I am not sure if it is really the best solution to force the user to reconfigure the schedule
->> "just" because the clock jumped. Yes, time jumps are a big problem for TAPRIO, but stopping might
->> make it worse.
->>
->> Vinicius wrote that the base_time can no longer reference to the correct point in time,
->> so the schedule MUST be invalid after the time jump. It is true that the base_time does not longer
->> refer to the same point in time it referred to before the jump from the view of the local system (!).
->> But the base_time usually refers to the EXTERNAL time domain (i.e. the time the system SHOULD have
->> and not the one the system currently has) and is often configured by an external entity.
->>
->> So it is quite likely that the schedule was incorrectly phase-shifted BEFORE the time jump and after
->> the time jump the base_time refers to the CORRECT point in time viewed from the external time domain.
->>
->> If you now stop the schedule (and I assume you mean by this to let every queue transmit at any time
->> as before the schedule was configured) and the user has to reconfigure the schedule again,
->> it is quite likely that by this you actually increase the interference with the network and in
->> particular confuse the time synchronization via PTP, so once the schedule is set up again,
->> you might get a time jump AGAIN.
->>
->> So yes, a warning to the user is definitely appropriate in the case of a time jump, but apart
->> from that I would prefer the system to adapt itself instead of resigning.
->>
-> 
-> The "warn the user, disable the schedule" is more or less clear in my
-> mind how to implement. But while I was writing this, I was taking
-> another look at the standard, and I think this approach is wrong.
-> 
-> I think what we should do is something like this:
-> 
-> 1. Jump into the past:
->    1.a. before base-time: Keep all queues open until base-time;
->    1.b. after base-time: "rewind" the schedule to the new current time;
-> 2. Jump into the future: "fast forward" the schedule to the new current
->    time;
-> 
-> But I think that for this to fit more neatly, we would need to change
-> how advance_sched() works, right now, it doesn't look at the current
-> time (it considers that the schedule will always advance one-by-one),
-> instead what I am thinking is to consider that every time
-> advance_sched() runs is a pontential "time jump". 
-> 
-> Ideas? Too complicated for an uncommon case? (is it really uncommon?)
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+ tools/testing/selftests/bpf/prog_tests/fexit_stress.c        | 3 ++-
+ tools/testing/selftests/bpf/prog_tests/log_buf.c             | 5 +++--
+ .../testing/selftests/bpf/prog_tests/module_fentry_shadow.c  | 3 ++-
+ .../bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c      | 3 ++-
+ .../selftests/bpf/prog_tests/raw_tp_writable_test_run.c      | 5 +++--
+ tools/testing/selftests/bpf/prog_tests/tc_opts.c             | 2 +-
+ tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c | 3 ++-
+ tools/testing/selftests/bpf/progs/syscall.c                  | 3 ++-
+ tools/testing/selftests/bpf/progs/test_rdonly_maps.c         | 3 ++-
+ tools/testing/selftests/bpf/progs/verifier_bits_iter.c       | 2 +-
+ 10 files changed, 20 insertions(+), 12 deletions(-)
 
-I think that would be the correct solution.
-And I don't think it is that uncommon. Especially when the device joins
-the network for the first time and has not time synchronized itself properly yet.
+diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+index 49b1ffc9af1f..14c91b6f1e83 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
++++ b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright (c) 2019 Facebook */
+ #include <test_progs.h>
++#include "bpf_util.h"
+ 
+ void serial_test_fexit_stress(void)
+ {
+@@ -36,7 +37,7 @@ void serial_test_fexit_stress(void)
+ 	for (i = 0; i < bpf_max_tramp_links; i++) {
+ 		fexit_fd[i] = bpf_prog_load(BPF_PROG_TYPE_TRACING, NULL, "GPL",
+ 					    trace_program,
+-					    sizeof(trace_program) / sizeof(struct bpf_insn),
++					    ARRAY_SIZE(trace_program),
+ 					    &trace_opts);
+ 		if (!ASSERT_GE(fexit_fd[i], 0, "fexit load"))
+ 			goto out;
+diff --git a/tools/testing/selftests/bpf/prog_tests/log_buf.c b/tools/testing/selftests/bpf/prog_tests/log_buf.c
+index 0f7ea4d7d9f6..46611040dec3 100644
+--- a/tools/testing/selftests/bpf/prog_tests/log_buf.c
++++ b/tools/testing/selftests/bpf/prog_tests/log_buf.c
+@@ -5,6 +5,7 @@
+ #include <bpf/btf.h>
+ 
+ #include "test_log_buf.skel.h"
++#include "bpf_util.h"
+ 
+ static size_t libbpf_log_pos;
+ static char libbpf_log_buf[1024 * 1024];
+@@ -143,11 +144,11 @@ static void bpf_prog_load_log_buf(void)
+ 		BPF_MOV64_IMM(BPF_REG_0, 0),
+ 		BPF_EXIT_INSN(),
+ 	};
+-	const size_t good_prog_insn_cnt = sizeof(good_prog_insns) / sizeof(struct bpf_insn);
++	const size_t good_prog_insn_cnt = ARRAY_SIZE(good_prog_insns);
+ 	const struct bpf_insn bad_prog_insns[] = {
+ 		BPF_EXIT_INSN(),
+ 	};
+-	size_t bad_prog_insn_cnt = sizeof(bad_prog_insns) / sizeof(struct bpf_insn);
++	size_t bad_prog_insn_cnt = ARRAY_SIZE(bad_prog_insns);
+ 	LIBBPF_OPTS(bpf_prog_load_opts, opts);
+ 	const size_t log_buf_sz = 1024 * 1024;
+ 	char *log_buf;
+diff --git a/tools/testing/selftests/bpf/prog_tests/module_fentry_shadow.c b/tools/testing/selftests/bpf/prog_tests/module_fentry_shadow.c
+index aa9f67eb1c95..bea05f78de5f 100644
+--- a/tools/testing/selftests/bpf/prog_tests/module_fentry_shadow.c
++++ b/tools/testing/selftests/bpf/prog_tests/module_fentry_shadow.c
+@@ -4,6 +4,7 @@
+ #include <bpf/btf.h>
+ #include "bpf/libbpf_internal.h"
+ #include "cgroup_helpers.h"
++#include "bpf_util.h"
+ 
+ static const char *module_name = "bpf_testmod";
+ static const char *symbol_name = "bpf_fentry_shadow_test";
+@@ -100,7 +101,7 @@ void test_module_fentry_shadow(void)
+ 		load_opts.attach_btf_obj_fd = btf_fd[i];
+ 		prog_fd[i] = bpf_prog_load(BPF_PROG_TYPE_TRACING, NULL, "GPL",
+ 					   trace_program,
+-					   sizeof(trace_program) / sizeof(struct bpf_insn),
++					   ARRAY_SIZE(trace_program),
+ 					   &load_opts);
+ 		if (!ASSERT_GE(prog_fd[i], 0, "bpf_prog_load"))
+ 			goto out;
+diff --git a/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c b/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c
+index e2f1445b0e10..216b0dfac0fe 100644
+--- a/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c
++++ b/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c
+@@ -2,6 +2,7 @@
+ 
+ #include <test_progs.h>
+ #include <linux/nbd.h>
++#include "bpf_util.h"
+ 
+ void test_raw_tp_writable_reject_nbd_invalid(void)
+ {
+@@ -25,7 +26,7 @@ void test_raw_tp_writable_reject_nbd_invalid(void)
+ 	);
+ 
+ 	bpf_fd = bpf_prog_load(BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE, NULL, "GPL v2",
+-			       program, sizeof(program) / sizeof(struct bpf_insn),
++			       program, ARRAY_SIZE(program),
+ 			       &opts);
+ 	if (CHECK(bpf_fd < 0, "bpf_raw_tracepoint_writable load",
+ 		  "failed: %d errno %d\n", bpf_fd, errno))
+diff --git a/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_test_run.c b/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_test_run.c
+index f4aa7dab4766..e3668058b7bb 100644
+--- a/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_test_run.c
++++ b/tools/testing/selftests/bpf/prog_tests/raw_tp_writable_test_run.c
+@@ -2,6 +2,7 @@
+ 
+ #include <test_progs.h>
+ #include <linux/nbd.h>
++#include "bpf_util.h"
+ 
+ /* NOTE: conflict with other tests. */
+ void serial_test_raw_tp_writable_test_run(void)
+@@ -24,7 +25,7 @@ void serial_test_raw_tp_writable_test_run(void)
+ 	);
+ 
+ 	int bpf_fd = bpf_prog_load(BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE, NULL, "GPL v2",
+-				   trace_program, sizeof(trace_program) / sizeof(struct bpf_insn),
++				   trace_program, ARRAY_SIZE(trace_program),
+ 				   &trace_opts);
+ 	if (CHECK(bpf_fd < 0, "bpf_raw_tracepoint_writable loaded",
+ 		  "failed: %d errno %d\n", bpf_fd, errno))
+@@ -41,7 +42,7 @@ void serial_test_raw_tp_writable_test_run(void)
+ 	);
+ 
+ 	int filter_fd = bpf_prog_load(BPF_PROG_TYPE_SOCKET_FILTER, NULL, "GPL v2",
+-				      skb_program, sizeof(skb_program) / sizeof(struct bpf_insn),
++				      skb_program, ARRAY_SIZE(skb_program),
+ 				      &skb_opts);
+ 	if (CHECK(filter_fd < 0, "test_program_loaded", "failed: %d errno %d\n",
+ 		  filter_fd, errno))
+diff --git a/tools/testing/selftests/bpf/prog_tests/tc_opts.c b/tools/testing/selftests/bpf/prog_tests/tc_opts.c
+index 196abf223465..f77f604389aa 100644
+--- a/tools/testing/selftests/bpf/prog_tests/tc_opts.c
++++ b/tools/testing/selftests/bpf/prog_tests/tc_opts.c
+@@ -2384,7 +2384,7 @@ static int generate_dummy_prog(void)
+ 		BPF_MOV64_IMM(BPF_REG_0, 0),
+ 		BPF_EXIT_INSN(),
+ 	};
+-	const size_t prog_insn_cnt = sizeof(prog_insns) / sizeof(struct bpf_insn);
++	const size_t prog_insn_cnt = ARRAY_SIZE(prog_insns);
+ 	LIBBPF_OPTS(bpf_prog_load_opts, opts);
+ 	const size_t log_buf_sz = 256;
+ 	char log_buf[log_buf_sz];
+diff --git a/tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c b/tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c
+index 0adf8d9475cb..472f4f9fa95f 100644
+--- a/tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c
++++ b/tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c
+@@ -7,6 +7,7 @@
+ #include "test_unpriv_bpf_disabled.skel.h"
+ 
+ #include "cap_helpers.h"
++#include "bpf_util.h"
+ 
+ /* Using CAP_LAST_CAP is risky here, since it can get pulled in from
+  * an old /usr/include/linux/capability.h and be < CAP_BPF; as a result
+@@ -146,7 +147,7 @@ static void test_unpriv_bpf_disabled_negative(struct test_unpriv_bpf_disabled *s
+ 		BPF_MOV64_IMM(BPF_REG_0, 0),
+ 		BPF_EXIT_INSN(),
+ 	};
+-	const size_t prog_insn_cnt = sizeof(prog_insns) / sizeof(struct bpf_insn);
++	const size_t prog_insn_cnt = ARRAY_SIZE(prog_insns);
+ 	LIBBPF_OPTS(bpf_prog_load_opts, load_opts);
+ 	struct bpf_map_info map_info = {};
+ 	__u32 map_info_len = sizeof(map_info);
+diff --git a/tools/testing/selftests/bpf/progs/syscall.c b/tools/testing/selftests/bpf/progs/syscall.c
+index 3d3cafdebe72..0f4dfb770c32 100644
+--- a/tools/testing/selftests/bpf/progs/syscall.c
++++ b/tools/testing/selftests/bpf/progs/syscall.c
+@@ -8,6 +8,7 @@
+ #include <linux/btf.h>
+ #include <string.h>
+ #include <errno.h>
++#include "bpf_misc.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+@@ -119,7 +120,7 @@ int load_prog(struct args *ctx)
+ 	static __u64 value = 34;
+ 	static union bpf_attr prog_load_attr = {
+ 		.prog_type = BPF_PROG_TYPE_XDP,
+-		.insn_cnt = sizeof(insns) / sizeof(insns[0]),
++		.insn_cnt = ARRAY_SIZE(insns),
+ 	};
+ 	int ret;
+ 
+diff --git a/tools/testing/selftests/bpf/progs/test_rdonly_maps.c b/tools/testing/selftests/bpf/progs/test_rdonly_maps.c
+index fc8e8a34a3db..7035fb4d4165 100644
+--- a/tools/testing/selftests/bpf/progs/test_rdonly_maps.c
++++ b/tools/testing/selftests/bpf/progs/test_rdonly_maps.c
+@@ -4,6 +4,7 @@
+ #include <linux/ptrace.h>
+ #include <linux/bpf.h>
+ #include <bpf/bpf_helpers.h>
++#include "bpf_misc.h"
+ 
+ const struct {
+ 	unsigned a[4];
+@@ -64,7 +65,7 @@ int full_loop(struct pt_regs *ctx)
+ {
+ 	/* prevent compiler to optimize everything out */
+ 	unsigned * volatile p = (void *)&rdonly_values.a;
+-	int i = sizeof(rdonly_values.a) / sizeof(rdonly_values.a[0]);
++	int i = ARRAY_SIZE(rdonly_values.a);
+ 	unsigned iters = 0, sum = 0;
+ 
+ 	/* validate verifier can allow full loop as well */
+diff --git a/tools/testing/selftests/bpf/progs/verifier_bits_iter.c b/tools/testing/selftests/bpf/progs/verifier_bits_iter.c
+index 716113c2bce2..f4da4d508ddb 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_bits_iter.c
++++ b/tools/testing/selftests/bpf/progs/verifier_bits_iter.c
+@@ -87,7 +87,7 @@ int bits_memalloc(void)
+ 	int *bit;
+ 
+ 	__builtin_memset(&data, 0xf0, sizeof(data)); /* 4 * 16 */
+-	bpf_for_each(bits, bit, &data[0], sizeof(data) / sizeof(u64))
++	bpf_for_each(bits, bit, &data[0], ARRAY_SIZE(data))
+ 		nr++;
+ 	return nr;
+ }
+-- 
+2.27.0
 
-Do you know what the i225/i226 do for hardware offloaded Qbv in that case?
-
-> 
->> Yun Lu, does this only happen for time jumps into the past or also for large jumps into the future?
->> And does this also happen for small time "jumps"?
-> 
-> AFAIU this bug will only happen with large jumps into the past. For
-> small jumps into the past, it will spin uselessly for a bit. For jumps
-> into the future, the schedule will be stuck in a particular gate entry
-> until the future becomes now.
-
-Does "it will spin uselessly for a bit" mean the CPU is stuck for that time
-(even if it is short)? If that is the case, it might lead to very strange effects
-in RT systems. And these small time jumps into the past (even if just a few us)
-should actually be relatively common.
-
-Greetings,
-Florian
-
-> 
->>
->> Thanks,
->> Florian
->>
->>>
->>>
->>>>
->>>>>       for (tc = 0; tc < num_tc; tc++) {
->>>>>           if (next->gate_duration[tc] == oper->cycle_time)
->>>>>               next->gate_close_time[tc] = KTIME_MAX;
->>>>> @@ -1210,6 +1233,7 @@ static int taprio_get_start_time(struct Qdisc *sch,
->>>>>         base = sched_base_time(sched);
->>>>>       now = taprio_get_time(q);
->>>>> +    q->offset = taprio_get_offset(q);
->>>>>         if (ktime_after(base, now)) {
->>>>>           *start = base;
->>>>> -- 
->>>>> 2.34.1
->>>>>
->>>>
->>>> Cheers,
->>>
->>
-> 
-> 
-> Cheers,
 
