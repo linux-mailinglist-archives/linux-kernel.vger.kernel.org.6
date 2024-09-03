@@ -1,153 +1,119 @@
-Return-Path: <linux-kernel+bounces-312922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AAF969DBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A4F969DC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB20283514
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C215D2834A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD6E1C9851;
-	Tue,  3 Sep 2024 12:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906B71DA0EC;
+	Tue,  3 Sep 2024 12:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p1FTf6oU"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VS3kc797"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8D1D86DF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D121DA0E5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367076; cv=none; b=Vny+buc6vYHwDMidPuBQ5oocCbrpDSpvwxhBcEY8OQorJiTMyJtARz762NT9X8pU9P21BUOHU9AA+jB66hLQSHRf5jKIoGNzDitNpJ8Db8wAuDB60BamAn4Mq3x2eBVa8jblxqbKh6gQus+m+DQUBVNd9uF2TRJybuJdl9c5yjI=
+	t=1725367081; cv=none; b=WUvjFBtKQuWNPa4JaebUG3WwNtLkXaZXcNksCrw4x+1kzxe5ddYnWr50p1AzE96iWOHMjg9g1CT/ppzgHvKeWq8xXP0DqWB9GuSIgRC5SZHSD+13sAnyfxnpxL4Jq2ODS+nX+R5Vi1iptMVxC3+8Citt7fsArs/HUZYTQ17l8uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367076; c=relaxed/simple;
-	bh=B9GQaZHEH+VhKCVUh+CkMNjIC0n6Uvue3Y1ZCqmBrTo=;
+	s=arc-20240116; t=1725367081; c=relaxed/simple;
+	bh=uu6Yoeqi+RNoig3ATUPsT67nAJWUqDSiEcB/mI869tk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHyYYD8yFwNrtvJOjzgvKfUzYTAfYJVi0dR8Ai0A1nFyYbmXfskeJs4f07Jg8KrvxkYpJ+sFiRbmqqN7TR6xJ0xNCxHmIJFW5a4YZLXHKnBkXr+R1hCfldoRUfPVeDvu5SKXYug4IUVyD2MiSV2nvpJKn4wn/59ztSZl8rmEKCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p1FTf6oU; arc=none smtp.client-ip=209.85.219.171
+	 To:Cc:Content-Type; b=jLporrENjR8FxzZAM4mKBbhdk/kgXuRZA0GqtRsVnN54xpjYHzFBElG15coQyIH9jpCh46RR5NyTEQpZ8OnYCb3byXE5BSEz1CLLzn+FaCm5cr3R7aKBIQqFXEzSGyl4Sbpu7EBuBMAXHyRpFWu6peXBT1ExEq1owMhuQR08K2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VS3kc797; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a989bd17aso2837171276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:37:54 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e116d2f5f7fso4623719276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725367074; x=1725971874; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725367078; x=1725971878; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZnaiTsQJeVNyMyP3bsJIPbb/u/YgFuRtKmzebQGwg4k=;
-        b=p1FTf6oU/nIanxYl6Iqq1YXkhSc/Tlh3l0Z8M9zIAV9k+Z/r/aG3GUXaMfVtK4Cift
-         BgFfqOsN6uEFVkSrVQMtxOlvSQGo9m6Pd/q4mvcNYNnPQSYpX/syJqIVkL0n++P2niCV
-         zZ2RMgoa7KwplpGxiVS4ykLQap+YiVcZxaxLpWTgQWXe2rD0vb10zBVxp+ApBUjkpYdk
-         PMmkVEHflXrkn+WNR5oRybLE4nroZise+6t8ES7fTewP0yC36KDtJuKPfAh2kzm7gD5W
-         MtYis8PsV85o2H+1jWSkNjK1x+BskTntWSS+T8dQbxKJwawI6G5qNQ0hkdtQq/3CCIOb
-         rQHw==
+        bh=/ttVzkkd4yGmrGeqOJ869ESzGGtHpDRb7/D4IC8eBd4=;
+        b=VS3kc797SAsXs7KxZFv1Ynhn/mC3GBHrU5vSBcwkET2YsMClY5NZDIftw1/GF76o5R
+         5c53yBYiw9M3Ak/M/JTbIcPYaGNmXX63DjRSCW/dsnwXaBtYu5nt5Z7kUQiiBwH0/k5I
+         lJITqAur9HDLJvD+nSzPtbR/2gTCRZ95sgfr4iyjgKoPFX0WtjfQ7PTFZOO2G0StoFRe
+         bddtq1K94RtRKPghvfpXW9Tvsblyr9O8eT/R3cE7Y/3jLffrUg8I3KOIpkRHMfWR+1xs
+         c/2utaYQzxw+Oc3ZK+8iJuyBaBkzqb8TkxsT04ZVkL0fp0+AZl+uMKOko85J24SiW7ei
+         MGsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725367074; x=1725971874;
+        d=1e100.net; s=20230601; t=1725367078; x=1725971878;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZnaiTsQJeVNyMyP3bsJIPbb/u/YgFuRtKmzebQGwg4k=;
-        b=EZ6BjLP7eW1j4/eYFIecqrxh2PrXNY0V+RJ5I2yYVgHy3ouatZz5popZYwzVr9z4LW
-         USv8z02GHrblCHcFsCIAThrs1tKgkNFZFeuPDvrVadG+si32/iCncGJ8SAN8sbtEBdib
-         0pQeCqGuFrLb7BLMNoXlhAk6KcvUw6w9I6FK98fh3roPHv+g3XZCvJKYhAejJR0Xkl16
-         VuuE7LWs7bDxpCFPC877dhEvIbLYFrNaSqE5eBO2Ut2Mq/jfT3JXoEPS7F2JWStOkuvy
-         V37RLH/xQdb8DcP6XCRVadNtPLueIbaudj4MeGk0610wwCG6ebpdB/WJBXvXvImDccOp
-         SqCg==
-X-Gm-Message-State: AOJu0Yxsc6FN74+u1TBbZ8f0S+1n1JMT2ewxfK2NzQ57DuP/jbPcuEr/
-	RWadqIBHxZFbPpdQ3DC35SuT4vtYgJKvTW7Pu9ivBczy3iJgy6hrhhEjiUvAJj3JBiEIoALnxw6
-	nksmzFBCt+7QCNuxNqQAgc/IxzzmxzygSLkRvLw==
-X-Google-Smtp-Source: AGHT+IG17HynGU3mjtWr4zoUdmkHjFCO/zDNCMk5KVQ8L8Ku8TSYbAHSHm4n94LAVjR69BcrXhgysMejjLj105b0f30=
-X-Received: by 2002:a05:6902:150f:b0:e16:6feb:e615 with SMTP id
- 3f1490d57ef6-e1a7a1d2633mr15093173276.48.1725367074096; Tue, 03 Sep 2024
- 05:37:54 -0700 (PDT)
+        bh=/ttVzkkd4yGmrGeqOJ869ESzGGtHpDRb7/D4IC8eBd4=;
+        b=AwpMYAGcTe12hvy4f1QfLFtd1OAogRmNbcYYvkeWRCKqSwdLBq9NCLP0jPp5XbPERo
+         g3srqPEaQ0JvLDBTFvZNXGvocoOZ1t0+wmekcvawE7wmuy7yIvrM/I7ZQT17RBBQdB/i
+         5HzdiLGyC5KasIWVLm7FGZH6O/PzVTE6cruXgznoTiLhEdJNi/Um60Mpa4uLkBnOBjNa
+         hTPedcqeOBc0vs/8GkMCqe6xEQulinhlGEtWk8bXPsmJtVB+du3RYis65SovU/AdsK2h
+         cGpuV2rEkZOaKH30YY8bHR0j1R0f1q+d7yXmsL9rLnDMOMAOiq+yUYChWBvkmHo9H0XC
+         1YNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfpH3fgYM2IAT07pzUrvQCFkH6ffkQvLI7IMvHqcq+FdV6pyTpn8wAUkR8sdWvps0fcyuLNVS5sYVZW1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFvaokbc/RJ+1yKgrQaci58AAlCsUADOfdTLIaWNCwJOmicEre
+	2wT6L7K7gttDsentFHU8EzuBSS2ouY2mz94q6FxNfYs4cSoNU9NEwVPBJqmaY3kUs4oAFX1Ih5U
+	3a+H4SRtUU/tUu+NaNE+5Vhr6RVXZa5VG66vs5x4JCj56Hunr
+X-Google-Smtp-Source: AGHT+IHHBkaojbuJ6rcO32k08NkULZE8JcrC5eAZHxo6A82M/tYG2W17RLlunsSJO2ZGGq1x90VJ7lCRhqfhEMPtblE=
+X-Received: by 2002:a25:8312:0:b0:e16:5174:fdaf with SMTP id
+ 3f1490d57ef6-e1a5c613ad4mr15597080276.1.1725367077643; Tue, 03 Sep 2024
+ 05:37:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240829061842epcas1p25b97a685d0946c360338adf716bfaf2b@epcas1p2.samsung.com>
- <20240829061823.3718-1-sh8267.baek@samsung.com> <20240829061823.3718-3-sh8267.baek@samsung.com>
-In-Reply-To: <20240829061823.3718-3-sh8267.baek@samsung.com>
+References: <20240901173309.7124-1-riyandhiman14@gmail.com>
+In-Reply-To: <20240901173309.7124-1-riyandhiman14@gmail.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 14:37:18 +0200
-Message-ID: <CAPDyKFonYhKdJuFN_v=S-MCyRHUJ8015fxuJ7xeG7jQtX-9xCw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cqhci-core: Make use cqhci_halted() routine
-To: Seunghwan Baek <sh8267.baek@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	ritesh.list@gmail.com, quic_asutoshd@quicinc.com, adrian.hunter@intel.com, 
-	grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com, 
-	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com, 
-	cw9316.lee@samsung.com, wkon.kim@samsung.com
+Date: Tue, 3 Sep 2024 14:37:22 +0200
+Message-ID: <CAPDyKFoFZEKwhAgC4UT7NP1ZaVBj1BjLk79LcUmTg-wSDs7Y+Q@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Calculate size from pointer
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 29 Aug 2024 at 08:18, Seunghwan Baek <sh8267.baek@samsung.com> wrote:
+On Sun, 1 Sept 2024 at 19:33, Riyan Dhiman <riyandhiman14@gmail.com> wrote:
 >
-> Code to check whether cqe is in halt state is modified to cqhci_halted,
-> which has already been implemented.
+> Calculate the size from pointer instead of
+> struct to adhere to linux kernel coding style.
 >
-> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+> Issue reported by checkpatch.
+>
+> This commit has no functional changes.
+>
+> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
 
-Applied for next (and by amending the commit message according to
-suggestions from Adrian), thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
->  drivers/mmc/host/cqhci-core.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  drivers/mmc/core/block.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
-> index a02da26a1efd..178277d90c31 100644
-> --- a/drivers/mmc/host/cqhci-core.c
-> +++ b/drivers/mmc/host/cqhci-core.c
-> @@ -33,6 +33,11 @@ struct cqhci_slot {
->  #define CQHCI_HOST_OTHER       BIT(4)
->  };
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 2c9963248fcb..dfd495e86985 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -2484,7 +2484,7 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+>                 return ERR_PTR(devidx);
+>         }
 >
-> +static bool cqhci_halted(struct cqhci_host *cq_host)
-> +{
-> +       return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
-> +}
-> +
->  static inline u8 *get_desc(struct cqhci_host *cq_host, u8 tag)
->  {
->         return cq_host->desc_base + (tag * cq_host->slot_sz);
-> @@ -282,7 +287,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
->
->         cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
->
-> -       if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
-> +       if (cqhci_halted(cq_host))
->                 cqhci_writel(cq_host, 0, CQHCI_CTL);
->
->         mmc->cqe_on = true;
-> @@ -617,7 +622,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->                 cqhci_writel(cq_host, 0, CQHCI_CTL);
->                 mmc->cqe_on = true;
->                 pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
-> -               if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
-> +               if (cqhci_halted(cq_host)) {
->                         pr_err("%s: cqhci: CQE failed to exit halt state\n",
->                                mmc_hostname(mmc));
->                 }
-> @@ -953,11 +958,6 @@ static bool cqhci_clear_all_tasks(struct mmc_host *mmc, unsigned int timeout)
->         return ret;
->  }
->
-> -static bool cqhci_halted(struct cqhci_host *cq_host)
-> -{
-> -       return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
-> -}
-> -
->  static bool cqhci_halt(struct mmc_host *mmc, unsigned int timeout)
->  {
->         struct cqhci_host *cq_host = mmc->cqe_private;
+> -       md = kzalloc(sizeof(struct mmc_blk_data), GFP_KERNEL);
+> +       md = kzalloc(sizeof(*md), GFP_KERNEL);
+>         if (!md) {
+>                 ret = -ENOMEM;
+>                 goto out;
 > --
-> 2.17.1
+> 2.46.0
 >
 
