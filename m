@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-313574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7EA96A72A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FA496A72C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B06286343
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E5A1F2514A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305A91D5CD6;
-	Tue,  3 Sep 2024 19:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DD21D5CD0;
+	Tue,  3 Sep 2024 19:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bzCvo/11"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btG6/m82"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC631D5CC8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA61D5CC3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725390778; cv=none; b=GGEia6rmoi3Md1TXEgh9PPL74dcaW8xKdwwTUXR7Bm/mqcUNdz3fiN25LtNQ7gePCqv1OrQWk0L+wlaZXVBU3M6oYZFcuCcxl0zy1cCVMREGC3N5zNyuGSo1nqjL6qQVl5F9xNA1fOm3JhT1Iw3A7glh8BrIPJtTE7n1n74/QaY=
+	t=1725390871; cv=none; b=Ph+DFDDcDhGwxCozeB9XvUxA/vAZe6frdQwb0ChgkA7HIRmCbQtLrDPq0i78X6fqJDYzlCaLZRt6thFD7rK8Bwr2I1GivdG420EzSFeAoTxoQhQeetJo6odjrypiU2Wbez/Iz3m4C3SWtpIu+2aVO62uKqRU5/dj73pVwc4Way4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725390778; c=relaxed/simple;
-	bh=CvaDCnV+QaG24AvL/P+QY+StDOYTi5CE3AZLUYyMlzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sv4iDDGAQJu9nMjMmfx6wX68vT8/FeDY75vPkmChnmWCbtpHid/JYLenYdkvDboQxT/Earc4r+1fSd0BsLq5C2/lyLiV5i/aFhX1eJv9Nl5jfgGI52aqliUrEjtbb0b8yRZop4n628g9/ZDN6Agkasmwgqb7csF4OqPvL77neio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bzCvo/11; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f51b67e16dso66264071fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 12:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1725390774; x=1725995574; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kRYQuA2IuhmwnyrQ8YBT5Ts6fvjQ9S9+/c3CTINRklQ=;
-        b=bzCvo/11sPhzkNrfDu/Hkg34CqqvhkZJiQER/tGbQ/O/M7e5HijXXXisYpzIBnG5Xv
-         B4QhzW5JpDpxuUwhl6Y7P1jfNrqhFbnA4kAz5TO64187M+Hy78C32N7j+5PULohg7iLy
-         B9TlqKowEhoSPUHpTr2ogRmEEIJHRat0heMeU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725390774; x=1725995574;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kRYQuA2IuhmwnyrQ8YBT5Ts6fvjQ9S9+/c3CTINRklQ=;
-        b=fi+MAOKA8+Rs165Kz2H2cV76QyYFh6UThqc7hhVerzZnL4tKrYmRIU2LFE/vir4ifp
-         AxxznW9k5sqpLWAr5LQl9yJx/6RBM4inI0CqxNdzKvC4o22iKhkyXM/mk61pzl5l2zU+
-         1Ex3ilf9IGXBzdbkPhznaTFvTxemB2GgSYKjfBw5VOLPW5XC4djKazSPCnQHxgDnVINL
-         Z2lIM0cEhdC6DdfQ7XWfQYjqfjptI4mPr+UDMIqv/MpLVCT+RBqjglo6NRcOGiDr2fQa
-         sUkFeiTUaQTEwOYtN0VWvlfNNKOy2j5a6tqniCFTewEux4HvvM5KDJhRBLnZKAEOY767
-         B2nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+6ou17xE9PF+UeJzZZmfohykKfeqC/tEmrndqJLQgqwgqUworFGVphQ+NSYZp4Hp94Vti9m71dl6hbfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0wsJCz77TKvBdONZqYstSuihSKEiDC4ZRL0AV/UCVt6ib2DoX
-	fNgEKWsNjsQctDtshnAVRfrSDPC6ANlDsIzV+4MfyXmuJxXjCa2sQtr67o5teckOYimUidrpaKv
-	WiRRbLA==
-X-Google-Smtp-Source: AGHT+IGDvgsy7pdTlO/P7qJ3xEQoojZIjuVWutuecbNR3EUc6tvCoxYoiH+VdUm4TldY3XMlH6n/vw==
-X-Received: by 2002:a2e:a586:0:b0:2f3:f4e2:869c with SMTP id 38308e7fff4ca-2f64d570e98mr14434421fa.44.1725390773637;
-        Tue, 03 Sep 2024 12:12:53 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614ed180csm23593181fa.11.2024.09.03.12.12.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 12:12:52 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334c4d6829so7232000e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 12:12:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqZ/xDm3xU/42gdwFh6B+NVg9lJijDWXm8RNGLVL/3iuNkfc1BVqkQwah43OzxVF228AVemMf5DGk/2AM=@vger.kernel.org
-X-Received: by 2002:a05:6512:3a8a:b0:530:c1fb:5192 with SMTP id
- 2adb3069b0e04-53546b335b3mr10741607e87.16.1725390772215; Tue, 03 Sep 2024
- 12:12:52 -0700 (PDT)
+	s=arc-20240116; t=1725390871; c=relaxed/simple;
+	bh=or6X0wP8ozeFggLTdXEFslaB29MDKtBAB44XcYasXF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rM0nfGV/oNZo0gWMI4X4ZJr7cHnlzuex1jjCYt1YwNw9YcZxFzMhlWAieeHQyH8r5NEkJWWtBCPUEvd5rPveQBWNZR0BtUf06nTFzng8BN7cuKnJ4nQovaAyKJBzGQuBJv7nvfjqLSsetUmGI7lRxwSqStl0UqD5pCUQdGWTREk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btG6/m82; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725390870; x=1756926870;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=or6X0wP8ozeFggLTdXEFslaB29MDKtBAB44XcYasXF8=;
+  b=btG6/m82J/LYRmEm3LRjHp8v5QYMmO2QOCMH/5xxp2NYfkWnTm+DrUGp
+   9iDf0mqyjPnZepiqcRgu5SUyZEvD7DNK77uywTIWo9wnSry07RP7pVWeC
+   zH0eh8K3lpnGMbzAamy7F3BmR2XmWe++vGZOF7kKc2UbzJSHCCD73UkMA
+   dvkBfOeUqJd06xcVqCK1WI+whpMWklzyjWYEezWLyEcqdNme2BhtfGefA
+   VZsxqWGfuNZmt5B1BTeMOPGCXp2p4YUou5kDwNL4/8cO+hzY8p7RdIKy1
+   EXUrO/e0A+wUgYL0AVN3wIFlO8R/mHhIXqOHrgckzb3WmGOFIhwy3UcTw
+   w==;
+X-CSE-ConnectionGUID: 2my//sSzQ/mF0ad/hgIPCg==
+X-CSE-MsgGUID: 6qhxLm+sTG6o0FSXJDiPpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35404408"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="35404408"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 12:14:29 -0700
+X-CSE-ConnectionGUID: oS05bFeQT766fMIexoXYvw==
+X-CSE-MsgGUID: tDw2CiK5TbWhr9HnYR3D5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="95746745"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 03 Sep 2024 12:14:28 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slYyu-00074L-25;
+	Tue, 03 Sep 2024 19:14:24 +0000
+Date: Wed, 4 Sep 2024 03:13:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uros Bizjak <ubizjak@gmail.com>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Uros Bizjak <ubizjak@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] longsoon/percpu: Simplify _percpu_read() and
+ _percpu_write()
+Message-ID: <202409040319.2mRdIGd2-lkp@intel.com>
+References: <20240903102342.36957-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
- <20240903073629.2442754-1-svens@linux.ibm.com> <20240903090843.GA17936@redhat.com>
-In-Reply-To: <20240903090843.GA17936@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 3 Sep 2024 12:12:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
-Message-ID: <CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
-Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903102342.36957-1-ubizjak@gmail.com>
 
-On Tue, 3 Sept 2024 at 02:09, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> but with or without this fix __create_xol_area() also needs
->
->         area->xol_mapping.mremap = NULL;
+Hi Uros,
 
-I think the whole thing needs to be zeroed out.
+kernel test robot noticed the following build errors:
 
-It was always horribly buggy. The close thing just made it more
-*obviously* buggy, because closing a vma is a lot more common than
-mremap'ing it.
+[auto build test ERROR on dennis-percpu/for-next]
+[also build test ERROR on linus/master v6.11-rc6 next-20240903]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Either use kzalloc(), or do a proper initializer something like this:
+url:    https://github.com/intel-lab-lkp/linux/commits/Uros-Bizjak/longsoon-percpu-Simplify-_percpu_read-and-_percpu_write/20240903-182524
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git for-next
+patch link:    https://lore.kernel.org/r/20240903102342.36957-1-ubizjak%40gmail.com
+patch subject: [PATCH] longsoon/percpu: Simplify _percpu_read() and _percpu_write()
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240904/202409040319.2mRdIGd2-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409040319.2mRdIGd2-lkp@intel.com/reproduce)
 
--       area->xol_mapping.name = "[uprobes]";
--       area->xol_mapping.fault = NULL;
--       area->xol_mapping.pages = area->pages;
-+       area->xol_mapping = (struct vm_special_mapping) {
-+               .name = "[uprobes]",
-+               .pages = area->pages,
-+               .close = uprobe_clear_state,
-+       };
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409040319.2mRdIGd2-lkp@intel.com/
 
-which should initialize the struct vm_special_mapping fully.
+All errors (new ones prefixed by >>):
 
-                     Linus
+   In file included from include/linux/irqflags.h:19,
+                    from include/linux/spinlock.h:59,
+                    from include/linux/sched.h:2134,
+                    from arch/loongarch/kernel/asm-offsets.c:8:
+   include/linux/sched/mm.h: In function 'set_active_memcg':
+>> arch/loongarch/include/asm/percpu.h:85:33: error: initialization of 'long unsigned int' from 'struct mem_cgroup *' makes integer from pointer without a cast [-Wint-conversion]
+      85 | #define __pcpu_cast_8(val)      (val)
+         |                                 ^
+   arch/loongarch/include/asm/percpu.h:89:35: note: in expansion of macro '__pcpu_cast_8'
+      89 |         unsigned long __pcp_val = __pcpu_cast_##size(_val);             \
+         |                                   ^~~~~~~~~~~~
+   arch/loongarch/include/asm/percpu.h:171:36: note: in expansion of macro '_percpu_write'
+     171 | #define this_cpu_write_8(pcp, val) _percpu_write(8, pcp, val)
+         |                                    ^~~~~~~~~~~~~
+   include/linux/percpu-defs.h:368:25: note: in expansion of macro 'this_cpu_write_8'
+     368 |                 case 8: stem##8(variable, __VA_ARGS__);break;           \
+         |                         ^~~~
+   include/linux/percpu-defs.h:490:41: note: in expansion of macro '__pcpu_size_call'
+     490 | #define this_cpu_write(pcp, val)        __pcpu_size_call(this_cpu_write_, pcp, val)
+         |                                         ^~~~~~~~~~~~~~~~
+   include/linux/sched/mm.h:420:17: note: in expansion of macro 'this_cpu_write'
+     420 |                 this_cpu_write(int_active_memcg, memcg);
+         |                 ^~~~~~~~~~~~~~
+   make[3]: *** [scripts/Makefile.build:116: arch/loongarch/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1199: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +85 arch/loongarch/include/asm/percpu.h
+
+    81	
+    82	#define __pcpu_cast_1(val)	(((unsigned long) val) & 0xff)
+    83	#define __pcpu_cast_2(val)	(((unsigned long) val) & 0xffff)
+    84	#define __pcpu_cast_4(val)	(((unsigned long) val) & 0xffffffff)
+  > 85	#define __pcpu_cast_8(val)	(val)
+    86	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
