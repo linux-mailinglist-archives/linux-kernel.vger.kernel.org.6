@@ -1,125 +1,189 @@
-Return-Path: <linux-kernel+bounces-312445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A579696B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9919696BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35AB2831D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06B41F264E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1299B201256;
-	Tue,  3 Sep 2024 08:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A732205E02;
+	Tue,  3 Sep 2024 08:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kYE/ijij"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bTDgsK2d"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E922519C562;
-	Tue,  3 Sep 2024 08:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058F5201248
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725351371; cv=none; b=IgXmecR4srzohG7zgkGfPC6/wAZYaQkjjn+mUtLiWxYMAl1iRM+wV1SXdREPaEZp4JGZh4eTbysbGEJnvXnXleMTLK0Yj/zH6+vLHGtvRRQZs/pkNUOy/6DmNyiQ+lQntbcriByai3OrggqxiPJuTXf6Xmwo68KpV1SC/hngbiA=
+	t=1725351397; cv=none; b=IcLu3iP65YtWpaD2DzDEtMr8jUwqcr0e0ceM/UPojNT4jyjQhLd/7AsyNxYlNCaFnwv5M3WFCq0/37ija7zwRe5XGivTJyad8toUJflFJCiL+CcmF+VniNuypymlGCm1VReckEUwN9KSogYZO3FGL7jTe6fPPRs3XWXpZ6U67J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725351371; c=relaxed/simple;
-	bh=Lcee6+sOVA87hrJeKC4oisQYXFgVo1X5IP6lYlxWxNE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6jgYmZh3H3yiPHsfoZCYGnOZNHqt99hkiEGZfX0lmuxO7K4cyskNM7haLkTmtEoZHNQFuCtYs9Yf5JRHBwBDDGaMAZjn+gEJtALmqGrLacyUxXbC5bbMBrgXdVkq+LTOm/FR2wbG6tkbZ3JEewhed/b3CngmQRinPCC4M2/kEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kYE/ijij; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4838G3PA050684;
-	Tue, 3 Sep 2024 03:16:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725351363;
-	bh=JXEDvySkzYxZUupzmkZp26uSUZx+30Vm4A8Rk8NYurs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=kYE/ijijR3CjOACnLU2dqSIH+sBRMmbt4kdsc9Uwry5KQovl+0zwEijWAf9VMcfeD
-	 nET8G60zHbImZzTVmeNaCQoEbtADtWqgzj7l247sVPwZOshNr+lSGUgNoMaf1v4tvI
-	 oyXFQY4LKY4IQBn1uzpX+bJ9W4uwPLI8NRtB1emo=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4838G3bj025888;
-	Tue, 3 Sep 2024 03:16:03 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Sep 2024 03:16:02 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Sep 2024 03:16:02 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4838G1Wd066175;
-	Tue, 3 Sep 2024 03:16:02 -0500
-Date: Tue, 3 Sep 2024 13:46:01 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>
-Subject: Re: [PATCH v6 2/5] arm64: dts: ti: Refactor J784s4-evm to a common
- file
-Message-ID: <20240903081601.msfrnt77otpahjxi@uda0497581>
-References: <20240902-b4-upstream-j742s2-v6-0-6a7aa2736797@ti.com>
- <20240902-b4-upstream-j742s2-v6-2-6a7aa2736797@ti.com>
- <4avtzi22ue6nfusdrvyl2x3apwjgmuwa246qu5kh2dk2fdb4si@hka6nygye75z>
+	s=arc-20240116; t=1725351397; c=relaxed/simple;
+	bh=qWD6oDmFhlFtQ26RoWil/u2Xd529kAvKgP/VU8DME+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQx548k9EZ5IpQdAukK4TxCesfaFJWy1lb6P21aO8dqyg+TcazdcGk0kwp2FjQbMci/pFYSn1Yd6qMNyQF2PiXueMxxuQqEwz5auSmdnkAWf2f5eTAiMr483HrgYm+qGT/9YXZ3zclK+ww9ivy/9NwzpA4i8hVxC1Ih8gsCjKpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bTDgsK2d; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7142e002aceso3887650b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725351395; x=1725956195; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+fJrQ0rSs/8UnGUidxILu8gjShkL29ZW5cKN+M+hzbY=;
+        b=bTDgsK2dD6zILapCWerUhi3AG8H0J77nPxP0cS6bYbylvL2O/PGSUjTl1wV3NWsEso
+         95ItRNlQfajjInWZ5UzZel77mvUUGcVI5P2E3sP7fVeNm8tP2LH/tLHq5DW4SAtZbpQo
+         Vfnbolgti7zWyQ5boKI4n+gaYcfW5HcTC+0ArvbPK0WleAHq0wbi5LT7XbFdpKvJrw1u
+         6xVP1O47DFIa+irGdVyzw+e68nYlgf+zi18Oe8fH+hdHUGdDD05XUzQx1A+llD7dFgPC
+         7Ui6g4c2RZjZse+EdcUhJt3jWTWKJ6RAHShAJQMwySv0hhGdC5u+RFNe94lhcQ2T96Iu
+         tv1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725351395; x=1725956195;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+fJrQ0rSs/8UnGUidxILu8gjShkL29ZW5cKN+M+hzbY=;
+        b=Yk2nKb8CDUf1SWcoQqkIOL7SAcPq/j9frtOn2JvKXTFu6NrPBf5SP6XfIGyox5UmBK
+         vthpNgdDcJYH4BAcVxf8TEeg6YqRUKtgNryItnseD2O3gYZhjSzx2njni1VRgNlvJsxn
+         yK+FvnFjxEBZslRt+HvPF6zcJj+dN76MWeIGzdSB1FoFVZ0gfb9Jy1pmUR8um5t3Oeo8
+         +tfrbP+cDbNqooAyiBNGQWCX9nmDaiTgUnzBuEYPvkn4nHQSNTWoenF4tvKAJzrGTvf1
+         Ez4A47dstN2WPTN6HYwxtb5mTWqEfKpPCmelmsgaxl5iIxsnl122jAIk1irvIGn7vakb
+         19qA==
+X-Forwarded-Encrypted: i=1; AJvYcCV08wkcDdCq1ohG3kt+SjWpocPIvVLGrrQiy4wYSTMGx8tQfU9ik1JyJs8LuvJsNWAWaUBQHE8cDFFrSP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoXSVGhH3sx4f195Y1a5oRvSnWD7UIMNTf3FyKDbPCocMqUnac
+	efvN7l8koXL54Xq4eJRSwlvIKRd+KTUzX67fyQ4avQtCQ1nE0bKwuqfndPeJew==
+X-Google-Smtp-Source: AGHT+IEzx2sb61Iw+yKJhSuGvUoiIKIG0B4pIn/MVeglfMXiafwv7HEXXVcBM0YZkQn9Iask8viUjw==
+X-Received: by 2002:a05:6a00:14d1:b0:70d:1b48:e362 with SMTP id d2e1a72fcca58-7173c5c3abemr9762123b3a.26.1725351395259;
+        Tue, 03 Sep 2024 01:16:35 -0700 (PDT)
+Received: from thinkpad ([120.60.129.190])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569e220sm7999432b3a.132.2024.09.03.01.16.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 01:16:34 -0700 (PDT)
+Date: Tue, 3 Sep 2024 13:46:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: bp@alien8.de, tony.luck@intel.com, mchehab@kernel.org, rric@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	quic_sibis@quicinc.com, abel.vesa@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/qcom: Make irq configuration optional
+Message-ID: <20240903081619.5our5kkz5umszdio@thinkpad>
+References: <20240903060138.3191160-1-quic_rjendra@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4avtzi22ue6nfusdrvyl2x3apwjgmuwa246qu5kh2dk2fdb4si@hka6nygye75z>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903060138.3191160-1-quic_rjendra@quicinc.com>
 
-Hi Krzysztof,
-
-On 08:39-20240903, Krzysztof Kozlowski wrote:
-> On Mon, Sep 02, 2024 at 05:56:50PM +0530, Manorit Chawdhry wrote:
-> > Refactor J784s4-evm to a common file which uses the
-> > superset device to allow reuse in j742s2-evm which uses the subset part.
-> > 
-> > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> > Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-> > ---
-> > 
-> > Notes:
-> >     v6:
-> >     - Rebased with conflicts
-> > 
-> >  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 1488 +------------------
-> >  .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 1490 ++++++++++++++++++++
-> >  2 files changed, 1497 insertions(+), 1481 deletions(-)
-> >
+On Tue, Sep 03, 2024 at 11:31:38AM +0530, Rajendra Nayak wrote:
+> On most modern qualcomm SoCs, the configuration necessary to enable the
+> Tag/Data RAM realted irqs being propagated to the SoC irq controller is
+> already done in firmware (in DSF or 'DDR System Firmware')
 > 
-> It's impossible to review this. You need to use -B/-M/-C arguments when
-> creating patch.
-
-Apologies, have resend the series with the following change [0]. Hopefully
-it will be more readable now.
-
-Regards,
-Manorit
-
+> On some like the x1e80100, these registers aren't even accesible to the
+> kernel causing a crash when edac device is probed.
 > 
-> Best regards,
-> Krzysztof
+> Hence, make the irq configuration optional in the driver and mark x1e80100
+> as the SoC on which this should be avoided.
+> 
+> Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+> Reported-by: Bjorn Andersson <andersson@kernel.org>
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/edac/qcom_edac.c           | 8 +++++---
+>  drivers/soc/qcom/llcc-qcom.c       | 3 +++
+>  include/linux/soc/qcom/llcc-qcom.h | 2 ++
+>  3 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+> index d3cd4cc54ace..96611ca09ac5 100644
+> --- a/drivers/edac/qcom_edac.c
+> +++ b/drivers/edac/qcom_edac.c
+> @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
+>  	int ecc_irq;
+>  	int rc;
+>  
+> -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> -	if (rc)
+> -		return rc;
+> +	if (!llcc_driv_data->ecc_irq_configured) {
+> +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> +		if (rc)
+> +			return rc;
+> +	}
+>  
+>  	/* Allocate edac control info */
+>  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 8fa4ffd3a9b5..b1c0ae9991d6 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -139,6 +139,7 @@ struct qcom_llcc_config {
+>  	int size;
+>  	bool need_llcc_cfg;
+>  	bool no_edac;
+> +	bool irq_configured;
+>  };
+>  
+>  struct qcom_sct_config {
+> @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+>  		.need_llcc_cfg	= true,
+>  		.reg_offset	= llcc_v2_1_reg_offset,
+>  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+> +		.irq_configured = true,
+>  	},
+>  };
+>  
+> @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  	drv_data->cfg = llcc_cfg;
+>  	drv_data->cfg_size = sz;
+>  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
+> +	drv_data->ecc_irq_configured = cfg->irq_configured;
+>  	mutex_init(&drv_data->lock);
+>  	platform_set_drvdata(pdev, drv_data);
+>  
+> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+> index 9e9f528b1370..acad1f4cf854 100644
+> --- a/include/linux/soc/qcom/llcc-qcom.h
+> +++ b/include/linux/soc/qcom/llcc-qcom.h
+> @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
+>   * @num_banks: Number of llcc banks
+>   * @bitmap: Bit map to track the active slice ids
+>   * @ecc_irq: interrupt for llcc cache error detection and reporting
+> + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
+>   * @version: Indicates the LLCC version
+>   */
+>  struct llcc_drv_data {
+> @@ -139,6 +140,7 @@ struct llcc_drv_data {
+>  	u32 num_banks;
+>  	unsigned long *bitmap;
+>  	int ecc_irq;
+> +	bool ecc_irq_configured;
+>  	u32 version;
+>  };
+>  
+> -- 
+> 2.34.1
 > 
 
-[0]: https://lore.kernel.org/linux-devicetree/20240903-b4-upstream-j742s2-v6-0-49d980fed889@ti.com/T/#t
+-- 
+மணிவண்ணன் சதாசிவம்
 
