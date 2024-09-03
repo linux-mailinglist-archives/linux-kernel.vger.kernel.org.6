@@ -1,213 +1,139 @@
-Return-Path: <linux-kernel+bounces-313528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18C796A6B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B65A696A6B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA031F24954
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675821F24AED
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8E5191F80;
-	Tue,  3 Sep 2024 18:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4260C191F85;
+	Tue,  3 Sep 2024 18:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OQdSi3T2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCVAeqyQ"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E415574F;
-	Tue,  3 Sep 2024 18:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FAE15574F;
+	Tue,  3 Sep 2024 18:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725388805; cv=none; b=gI7WgpUjR1ObbSk+AB1mjkuaq5iReylEgtvoxZMR7l9rtIiVe17pnkVEDitPO69REZvKZ9vTSxLKolzB+1QHxVIkOajhn5+ADQQrWFhzRhpTRgP6B+MGQipRNDYvDbmpr6Fk4YFw5KTqqAlr9Zg0beh+GlLOeTdhJm6PmB5Mqy4=
+	t=1725388843; cv=none; b=vBCZ6b0w9JGs09tPFawfxJBfE9TcNlYt8jeeEo/SeJxq2iJZqj81fcI2CV+iZaOaHTdNq76rX1sjiGFMaXX+rSPydF5F72pYgZCfodiZCmR1ws2jFWq3vkhVL7Kk8Kqe0cNyE3wqHBt/NIBnCcjgDRWBPciaRyKndeobLa3phBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725388805; c=relaxed/simple;
-	bh=DzmqlxFkbW8l5hee1Qs9zw4hXO9ms1lr7KFAAbhwKtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VUtqOishYS2FwSl8ZcjGyA+GM7lTuPZ/dM/ErzGNjFEL9gaMiAY+t7OXyweuyOcNs2Co2oIfwmjWS8PKKMF44UGHwvqa+HMQBc0bUlI18ZMIu32dmOEKEGLGNe+89cf0Hl8TyQI96ME41f6pWtlKxi6L2sKZe5p+OyLHJBksQ/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OQdSi3T2; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725388804; x=1756924804;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=DzmqlxFkbW8l5hee1Qs9zw4hXO9ms1lr7KFAAbhwKtk=;
-  b=OQdSi3T2MJlHLVurLNrR94FOv+FibwrPysMcOScn5y3HEUTm0+mX5ZhT
-   iBEAAH5rgWymtkgtV0WMlc4mdk+i3kNUrcHn6iYvsGol9YyCPdyu/9vQq
-   UbXAA8vW2BxCaX9XfuNief2HUzb6vdJL/iU18u1LqAwskUuIq4dSor0yP
-   u05r8WUoyXreQivkotRP4oCcH+X+KTbDoLxTYIC7lXcv3cnek1RKSSA6S
-   viwOsW0KPCXtxDPpELwhzL6oWNs/hyd/I5NBKWiY4IYMbpW0ybYImkHyz
-   4e18YtFvtIKfG2pjAi4yCwST7rZya8hbHG81+dYy3OOMANBR6eVVSKpp/
-   A==;
-X-CSE-ConnectionGUID: +si+VclSSmOdD9yNnv+ACQ==
-X-CSE-MsgGUID: R7sP72MHQ2WvklzG2Rlogg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23525669"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="23525669"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:40:03 -0700
-X-CSE-ConnectionGUID: drdrmKCAR4yEXkdLsALm5A==
-X-CSE-MsgGUID: 00LTrQ9DRyugXGYv3JuTeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="102419383"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:39:57 -0700
-Message-ID: <45a41368-8986-491f-a6cc-20800b857f27@intel.com>
-Date: Tue, 3 Sep 2024 21:39:50 +0300
+	s=arc-20240116; t=1725388843; c=relaxed/simple;
+	bh=O0ueIPA3TfCbFwkD/G6Tfz3Wi9LnRBhHUqC09xoX6ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZCfW1EvRYIpmIoGZNjlk258w3uj/2W4C7oMR5hD/Ku/wjXli4N1VwOY5vFer8FQmNRtaBSZkLxRjBO71ZgghfUxauGpQo+99L+KbFaRxIvnFRbOHailmjUkKp7yoZoE/KBhxQrsT4EWEA2bJLFBhrV4dX3aY9T8BAv47q19Xpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kCVAeqyQ; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so2807283a91.3;
+        Tue, 03 Sep 2024 11:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725388841; x=1725993641; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wjgG2ajpqw1hRzc/uMgFC+dB34lcDpuPyL3goEF6q0=;
+        b=kCVAeqyQTR3ah+zBa+skMQwu8L3nx5MQcuxw5RoXjrXkIRkBllRCvKOXOLw4TcJGGA
+         KXdETwPMlbVVncHfdXRtssqQDlEDdVj4qvlRkuGTCC1Sh+Jzbs2HbhC8HTAGvtzp1Orm
+         W/hri/ws84FOoi4iYG6Q8OOiCoI4wnkV1UWHGVWOMZhrpjXJ3LTgkQyDu8U9K8HHk+hA
+         /n1KHP+TtkzvbqU150tBOzNet1lIpwCMPq/3fM+qRcNG1VueQjFA60jdVvneJqfxP4qf
+         WkB9+4e44/vU60Mo1gsG+720n0X5gw1AlywnwHuADL3Oc3DTP4cFK6gAFVIW+e+HgkkA
+         VALw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725388841; x=1725993641;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6wjgG2ajpqw1hRzc/uMgFC+dB34lcDpuPyL3goEF6q0=;
+        b=cS4lGc17EOT0WUGCjB1HbsPBakS1leEQAU7E1luCq5pdRo/g7Vyvkb0JvnFQuUmbX/
+         JLOhI8AHwL91/k0XhIfyELPNOOIT7SLAQKvDzo8dHWsZDMfFYzD+ohiniZIOV12HZKfm
+         +INbV11l9XRFb/vGvshv2b43HMULQv+ncygkN+2dyLodUXjdUvoww6ty3WYwrrcLHSS7
+         8H6S+f9qJPeHT9/uzjU2X2mDyTwGd4JWkugKafIfR03EeN/eNFNCDUyUAVd0K5WsjL5y
+         4A/jZkLeyk6lBYX8e8iZpbnMjRJj99pMXgp7msrSlwHVw746AJpa7ZEqzjEyjpSs9XpF
+         Yp2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWuc5vweyEtkJqoCjmRaecrghPvF2Ne/C1UpL4dEqmZlGnle0WhVQ65i21x/mUFd1cZTtHcNWkMFyH3DQ==@vger.kernel.org, AJvYcCX9+jA12acMvAzAxcvhFpNQ9p9irP7CERBTl+cMTXaFbae8a5IZRT/qit9RksfWXIY+sufcAxno1FQLxHs0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVijht9rZRuBNQS1SGZ/u02hGncT2sdr81xzAKO9cSiikg7/VM
+	KDeD0WFQn/U1YCIuXqSDuFLhW6x+yHMm1dZq1DPH7L2m04J3NSR9
+X-Google-Smtp-Source: AGHT+IHgSutBHeWXw3YJPZ+Yxrdbk7ePwFYldx07gliZ3r1PpfRrHRWr4ftgUOJEMVjexUm+jTrU9A==
+X-Received: by 2002:a17:90b:3b8f:b0:2d3:d95a:36dd with SMTP id 98e67ed59e1d1-2da62ccd76bmr3038201a91.8.1725388841154;
+        Tue, 03 Sep 2024 11:40:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:e682:e3dc:908:eef0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b966948asm5775776a91.17.2024.09.03.11.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 11:40:40 -0700 (PDT)
+Date: Tue, 3 Sep 2024 11:40:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Marge Yang <marge.yang@tw.synaptics.com>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vincent Huang <Vincent.Huang@tw.synaptics.com>,
+	david.chiu@tw.synaptics.com, derek.cheng@tw.synaptics.com,
+	sam.tsai@synaptics.com
+Subject: Re: [PATCH V2] Input: synaptics-rmi4 - Supports to query DPM value.
+Message-ID: <ZtdYJkU17y1iNsLG@google.com>
+References: <20240805083636.1381205-1-marge.yang@tw.synaptics.com>
+ <ZtdQW7nqAOEJDNBN@radian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] perf auxtrace: Refactor evlist__enable_event_idx()
-To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
-References: <20240823113306.2310957-1-leo.yan@arm.com>
- <20240823113306.2310957-6-leo.yan@arm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240823113306.2310957-6-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtdQW7nqAOEJDNBN@radian>
 
-On 23/08/24 14:33, Leo Yan wrote:
-> This commit splits the evlist__enable_event_idx() function into two
-> steps. The first step uses a new function evlist__find_cpu_map_idx() to
-> find the CPU map index, based on the found CPU map index or a thread map
-> index, it continues to call evlist__enable_event_idx() for enabling the
-> corresponding event.
+On Tue, Sep 03, 2024 at 02:07:23PM -0400, Richard Acayan wrote:
+> > +	/* Use the Query DPM feature when the query register exists for resolution. */
+> > +	item = rmi_get_register_desc_item(&f12->query_reg_desc, RMI_F12_QUERY_RESOLUTION);
+> > +	if (item) {
+> > +		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
+> > +			RMI_F12_QUERY_RESOLUTION);
+> > +		query_dpm_addr = fn->fd.query_base_addr	+ offset;
+> > +		ret = rmi_read(fn->rmi_dev, query_dpm_addr, buf);
+> > +		if (ret < 0) {
+> > +			dev_err(&fn->dev, "Failed to read DPM value: %d\n", ret);
+> > +			return -ENODEV;
+> > +		}
+> > +		dpm_resolution = buf[0];
+> > +
+> > +		sensor->x_mm = sensor->max_x / dpm_resolution;
+> > +		sensor->y_mm = sensor->max_y / dpm_resolution;
+> > +	} else {
+> > +		if (rmi_register_desc_has_subpacket(item, 3)) {
 > 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/auxtrace.c | 42 +++++++++++++++++++++++++++++---------
->  1 file changed, 32 insertions(+), 10 deletions(-)
+> The item variable is NULL in this branch, as it was overwritten just
+> before the if statement.
 > 
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index 87e4f21b6edf..e7b582d92811 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -651,20 +651,30 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
->  	return -EINVAL;
->  }
->  
-> -static int evlist__enable_event_idx(struct evlist *evlist, struct evsel *evsel, int idx)
-> +static int evlist__find_cpu_map_idx(struct evlist *evlist, struct evsel *evsel,
-> +				    int idx)
->  {
->  	bool per_cpu_mmaps = !perf_cpu_map__has_any_cpu(evlist->core.user_requested_cpus);
-> +	struct perf_cpu evlist_cpu;
-> +	int cpu_map_idx;
->  
-> -	if (per_cpu_mmaps) {
-> -		struct perf_cpu evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
-> -		int cpu_map_idx = perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
-> +	if (!per_cpu_mmaps)
-> +		return -EINVAL;
->  
-> -		if (cpu_map_idx == -1)
-> -			return -EINVAL;
-> -		return perf_evsel__enable_cpu(&evsel->core, cpu_map_idx);
-> -	}
-> +	evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
-> +	cpu_map_idx = perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
-> +	if (cpu_map_idx == -1)
-> +		return -ENOENT;
-> +
-> +	return cpu_map_idx;
-> +}
->  
-> -	return perf_evsel__enable_thread(&evsel->core, idx);
-> +static int evlist__enable_event_idx(struct evsel *evsel, int cpu_mode, int idx)
-> +{
-> +	if (cpu_mode)
-> +		return perf_evsel__enable_cpu(&evsel->core, idx);
-> +	else
-> +		return perf_evsel__enable_thread(&evsel->core, idx);
->  }
->  
->  int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
-> @@ -676,9 +686,21 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
->  
->  	evlist__for_each_entry(itr->evlist, evsel) {
->  		if (evsel__is_aux_event(evsel)) {
-> +			int cpu_map_idx;
-> +
->  			if (evsel->disabled)
->  				return 0;
-> -			return evlist__enable_event_idx(itr->evlist, evsel, idx);
-> +
-> +			cpu_map_idx = evlist__find_cpu_map_idx(itr->evlist,
-> +							       evsel, idx);
-> +			/* No map is found in per CPU mmap */
-> +			if (cpu_map_idx == -ENOENT)
-> +				return cpu_map_idx;
-> +
-> +			if (cpu_map_idx >= 0)
-> +				return evlist__enable_event_idx(evsel, 1, cpu_map_idx);
-> +			else
-> +				return evlist__enable_event_idx(evsel, 0, idx);
->  		}
->  	}
->  	return -EINVAL;
+> This patch causes a NULL pointer dereference:
 
-What about keeping per_cpu_mmaps in auxtrace_record__read_finish()
-e.g.
+Ugh, indeed. I guess the simplest way of fixing this would be:
 
-static int evlist__find_evsel_cpu_idx(struct evlist *evlist, struct evsel *evsel, int idx)
-{
-	struct perf_cpu evlist_cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
+diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
+index fc2cc8e2b0ba..8246fe77114b 100644
+--- a/drivers/input/rmi4/rmi_f12.c
++++ b/drivers/input/rmi4/rmi_f12.c
+@@ -129,9 +129,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
+ 	 * Use the Query DPM feature when the resolution query register
+ 	 * exists.
+ 	 */
+-	item = rmi_get_register_desc_item(&f12->query_reg_desc,
+-					  RMI_F12_QUERY_RESOLUTION);
+-	if (item) {
++	if (rmi_get_register_desc_item(&f12->query_reg_desc,
++				       RMI_F12_QUERY_RESOLUTION)) {
+ 		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
+ 						RMI_F12_QUERY_RESOLUTION);
+ 		query_dpm_addr = fn->fd.query_base_addr	+ offset;
 
-	return perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
-}
+Could you please tell me if this works for you?
 
-int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
-{
-	bool per_cpu_mmaps = !perf_cpu_map__has_any_cpu(evlist->core.user_requested_cpus);
-	struct evsel *evsel;
-	int evsel_cpu_idx;
+Thanks.
 
-	if (!itr->evlist)
-		return -EINVAL;
-
-	evlist__for_each_entry(itr->evlist, evsel) {
-		if (!evsel__is_aux_event(evsel))
-			continue;
-
-		if (per_cpu_mmaps) {
-			evsel_cpu_idx = evlist__find_evsel_cpu_idx(itr->evlist, evsel, idx);
-			/* No map is found in per CPU mmap */
-			if (evsel_cpu_idx < 0)
-				return -EINVAL;
-		}
-
-		if (evsel->disabled)
-			return 0;
-
-		if (per_cpu_mmaps)
-			return perf_evsel__enable_cpu(&evsel->core, evsel_cpu_idx);
-
-		return perf_evsel__enable_thread(&evsel->core, idx);
-	}
-	return -EINVAL;
-}
-
+-- 
+Dmitry
 
