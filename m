@@ -1,211 +1,117 @@
-Return-Path: <linux-kernel+bounces-312729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFE6969A6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF82F969A7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486191F24228
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD8A1F24388
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405E31B984C;
-	Tue,  3 Sep 2024 10:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B661A0BEC;
+	Tue,  3 Sep 2024 10:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JdGZ4E9A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SeSC/3Hs"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028011B9849
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF3E19F434
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360123; cv=none; b=VRsVcb/HVuXhlsqQfKMP/BQQPINFhUKo6puFKtfKct7yVdoLT6cH1vjUWz/sFd9mKaAXGYM8jtCQCimMVd/O7v7z9wGuS7G6xhFGU3rGN2Mhma+GUifiRrR6jeV+3nsotu7ME0uabG+LKOxnyJsknpksROtYvY2nI85bSzHH3Ek=
+	t=1725360238; cv=none; b=Kq4VtF9NdTXmO5eN7XyJAAFaMtQYLIWBnRF5YOwSix4xfc7qZsGroitcr+XWzRpgByo66EUjHtZPkAnfksCETAPxXE63hG5szAyxZG0HUba927FfL0QbLWZ9/ZvsuB4aXJZMbAPCsmol6V7KJC1kWI7kMpeExhTcgCYDmtPleRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360123; c=relaxed/simple;
-	bh=qbizLx7wTCAOjESO9AyVt8wu2rYiD1MB9P9cW5S88ys=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rA7/wPBEAGQ2uGgU7+9hFU5+vvLuQQr5HIy2mWtZqwGhRO8Qp9x6QZAEkm72WqQMc7x1p36KwYloTEhgOTpFQhPMZb7krAnQzo3G27A7DOd2kiYzIE7tUTWuOk9QG0iZG1k90D12Os/Lp8DSVtm49G2OoA/UKiCaZ4gGvwE/5Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JdGZ4E9A; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725360120;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qbizLx7wTCAOjESO9AyVt8wu2rYiD1MB9P9cW5S88ys=;
-	b=JdGZ4E9AxDnMBQZldkxUFNboucho9/IEJuZRrnfDxneaLFv8sUqfiOqzN6cGMXqqwYx/iN
-	QWOaGCazbcscfQ5vqafnLmdmkC0csgHyYd0NvbVko5PI1NMn+cDq/sARRTLP9WSXDL9BmJ
-	oTIbjaAl+Crf0+x5G0g1qc2Fsr7zkYM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-N8dmKWqaOKWwm1-H6wsmKw-1; Tue, 03 Sep 2024 06:41:59 -0400
-X-MC-Unique: N8dmKWqaOKWwm1-H6wsmKw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42bb68e16b0so58728395e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:41:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725360118; x=1725964918;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qbizLx7wTCAOjESO9AyVt8wu2rYiD1MB9P9cW5S88ys=;
-        b=PwkYledQqWvf1SPRYsYg6YJyvGUy/l0kaKmSiA/jT8u0SJ3BcrC+8SFMb6lumz6Iub
-         R+8G5XZ0NVZ+IQWJp+2XBj2NRJapLPWZKvSemZBiiMtHzccDoC+CTAMy0GEn+mBhNROB
-         dqRo+qjBiKSfEdCELRz44fa710LZKFOkjwScvZ3EvggDYVM5aChLxC5C3ZttkmJWUzqW
-         Q7oxHPaoNuevJCdMf8/bALJuXxw8nfSRks2mIbfRjiVOLR1MVI5SAeRD4qjMdJsZvdJI
-         wW+GLxoLVRDaRnd0a+CSQfPgBYNvtcPixgVDufQiTVjqxNY1hvvmyNu+Cd4tIM51cN9A
-         YHBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCkDa51HALKiysb1SJcKBscxQaJr0NBeYCszfdQywEpg8oVOpqk76TiXMjfneMnDGJJ1Oacu+j/5OmHpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXYkJr4U0Bwzl0gz+Jao82qdAhYOn2YZvstNahTc5frfQ88D19
-	rXstgESyGQWSwwqyvner505ogacTiK86x6gToLLZT2X4cH7v3C374mcvX8eqdCehWS+TbGeCvB3
-	jJxP6e6jk/YKynwG17zGstfoSzL/1gauNKdTUWaJRycncJpqf3tF8HWwy3njZ8A==
-X-Received: by 2002:a05:600c:354b:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-42bb01c1c17mr144185895e9.19.1725360118328;
-        Tue, 03 Sep 2024 03:41:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnJ+QTA8ZKsd8rfiT6e8FYacEzmTRgtvYSZ2cF3fvYtWB375xRT2pTBy4x3T4AFjvx4VWFiw==
-X-Received: by 2002:a05:600c:354b:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-42bb01c1c17mr144185575e9.19.1725360117728;
-        Tue, 03 Sep 2024 03:41:57 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6f9b584sm165397125e9.16.2024.09.03.03.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 03:41:57 -0700 (PDT)
-Message-ID: <5c5c2970fa4b23b348663873771e65a2cd78fcaf.camel@redhat.com>
-Subject: Re: [PATCH v6 0/5] PCI: Remove most pcim_iounmap_regions() users
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, Tom Rix
- <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun
- <yilun.xu@intel.com>,  Andy Shevchenko <andy@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Richard Cochran <richardcochran@gmail.com>, Damien
- Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, John Garry
- <john.g.garry@oracle.com>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org,  linux-pci@vger.kernel.org
-Date: Tue, 03 Sep 2024 12:41:55 +0200
-In-Reply-To: <20240902062342.10446-2-pstanner@redhat.com>
-References: <20240902062342.10446-2-pstanner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725360238; c=relaxed/simple;
+	bh=2i4B9G9+XVzEn2mX2eDNvkuMH6tzga34ElDfEQFuRlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T35x0AtXNHIPMQuB0ivJHdbWBZlmXFvca+Ofb3XC0ONJOM5o5yWLda+10zLgnGSx6a4DoSLngNUeHyFidoiaOsoIQZWKPe84vJuXm1YYUL93jT5cPanHK1cc9q06sO1HszQXjDWmMv0YLbDHj0FK2tTc755+oiaRLgnKTwymxIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SeSC/3Hs; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=XFLl
+	8JzRHfz1hlmPwdert5vlD64V3d4tr2ywxwUOHp4=; b=SeSC/3HsA0tVUFCq99up
+	kIrWsLaVrN8O0lMHm1OUamCuwXxkTherwIptSsHabdVb6+6uq8wZ6yXfBfSlveBG
+	Vzv5bXwpWQgW8q0UrRENS1g4gNeplLaUUWf1CExSzMP2SqfMoHkeMIekTeaDL00j
+	enV+pi7R99U5MBCg76u4pnIpp8dz/poaofGohqQ8sOrqc4/zDB4mqEj0emceN86O
+	uDwN0VWXR7hDNjuWEi3ks4ScrQHRIvPx6kZVVjyMQIlUHFfxyRdLGI6LP10GkKyA
+	3L5MxyhAdyGDA/lM3AbLFU0VZl0vRrv2zjo6R9szvrBmBw5hbPK0+/C4mZwipnth
+	Pg==
+Received: (qmail 221057 invoked from network); 3 Sep 2024 12:43:52 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2024 12:43:52 +0200
+X-UD-Smtp-Session: l3s3148p1@6bLDuzQhZqggAwDPXwdRANgvu6DX4+2c
+Date: Tue, 3 Sep 2024 12:43:52 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] driver core: class: warn if a compatibility class is
+ registered
+Message-ID: <ZtboaI4b_aTfRWNk@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <4660a46b-9128-4407-8baa-f257245784a3@gmail.com>
+ <7bc5fa50-59f6-4455-8f77-1c89f1e17d0b@gmail.com>
+ <2024090242-smother-preview-a1d2@gregkh>
+ <ZtbRLOUO48PzOKmC@shikoro>
+ <ZtbRpMbX6g6vLUzO@shikoro>
+ <2024090338-landfall-geek-58df@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-Because someone asked:
-The proposed merge plan for this series would be to take it through the
-PCI tree, as was done with similar cleanups during the last months.
-
-Cheers,
-P.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Zrcz/tOtrh2Pzhj8"
+Content-Disposition: inline
+In-Reply-To: <2024090338-landfall-geek-58df@gregkh>
 
 
-On Mon, 2024-09-02 at 08:23 +0200, Philipp Stanner wrote:
-> Changes in v6:
-> =C2=A0 - Remove the patches for "vdpa: solidrun" since the maintainer
-> seems
-> =C2=A0=C2=A0=C2=A0 unwilling to review and discuss, not to mention approv=
-e, anything
-> =C2=A0=C2=A0=C2=A0 that is part of a wider patch series across other subs=
-ystems.
-> =C2=A0 - Change series's name to highlight that not all callers are
-> removed
-> =C2=A0=C2=A0=C2=A0 by it.
->=20
-> Changes in v5:
-> =C2=A0 - Patch "ethernet: cavium": Re-add accidentally removed
-> =C2=A0=C2=A0=C2=A0 pcim_iounmap_region(). (Me)
-> =C2=A0 - Add Jens's Reviewed-by to patch "block: mtip32xx". (Jens)
->=20
-> Changes in v4:
-> =C2=A0 - Drop the "ethernet: stmicro: [...] patch since it doesn't apply
-> to
-> =C2=A0=C2=A0=C2=A0 net-next, and making it apply to that prevents it from=
- being
-> =C2=A0=C2=A0=C2=A0 applyable to PCI ._. (Serge, me)
-> =C2=A0 - Instead, deprecate pcim_iounmap_regions() and keep "ethernet:
-> =C2=A0=C2=A0=C2=A0 stimicro" as the last user for now.
-> =C2=A0 - ethernet: cavium: Use PTR_ERR_OR_ZERO(). (Andy)
-> =C2=A0 - vdpa: solidrun (Bugfix) Correct wrong printf string (was "psnet"
-> instead of
-> =C2=A0=C2=A0=C2=A0 "snet"). (Christophe)
-> =C2=A0 - vdpa: solidrun (Bugfix): Add missing blank line. (Andy)
-> =C2=A0 - vdpa: solidrun (Portation): Use PTR_ERR_OR_ZERO(). (Andy)
-> =C2=A0 - Apply Reviewed-by's from Andy and Xu Yilun.
->=20
-> Changes in v3:
-> =C2=A0 - fpga/dfl-pci.c: remove now surplus wrapper around
-> =C2=A0=C2=A0=C2=A0 pcim_iomap_region(). (Andy)
-> =C2=A0 - block: mtip32xx: remove now surplus label. (Andy)
-> =C2=A0 - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
-> =C2=A0=C2=A0=C2=A0 occurs. (Andy, Christophe)
-> =C2=A0 - Some minor wording improvements in commit messages. (Me)
->=20
-> Changes in v2:
-> =C2=A0 - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
-> =C2=A0=C2=A0=C2=A0 patch, put stable kernel on CC. (Christophe, Andy).
-> =C2=A0 - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
-> =C2=A0 - Consequently, drop patch "PCI: Make pcim_release_region() a
-> public
-> =C2=A0=C2=A0=C2=A0 function", since there's no user anymore. (obsoletes t=
-he squash
-> =C2=A0=C2=A0=C2=A0 requested by Damien).
-> =C2=A0 - vdap/solidrun:
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 make 'i' an 'unsigned short' (Andy, me)
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 Use 'continue' to simplify loop (Andy)
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 Remove leftover blank line
-> =C2=A0 - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
->=20
->=20
-> Important things first:
-> This series is based on [1] and [2] which Bjorn Helgaas has currently
-> queued for v6.12 in the PCI tree.
->=20
-> This series shall remove pcim_iounmap_regions() in order to make way
-> to
-> remove its brother, pcim_iomap_regions().
->=20
-> Regards,
-> P.
->=20
-> [1]
-> https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
-> [2]
-> https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
->=20
-> Philipp Stanner (5):
-> =C2=A0 PCI: Deprecate pcim_iounmap_regions()
-> =C2=A0 fpga/dfl-pci.c: Replace deprecated PCI functions
-> =C2=A0 block: mtip32xx: Replace deprecated PCI functions
-> =C2=A0 gpio: Replace deprecated PCI functions
-> =C2=A0 ethernet: cavium: Replace deprecated PCI functions
->=20
-> =C2=A0drivers/block/mtip32xx/mtip32xx.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 18 ++++++++--------
-> --
-> =C2=A0drivers/fpga/dfl-pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 16 ++++------------
-> =C2=A0drivers/gpio/gpio-merrifield.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 +++++++--=
------
-> =C2=A0.../net/ethernet/cavium/common/cavium_ptp.c=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 7 +++----
-> =C2=A0drivers/pci/devres.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++++++--
-> =C2=A0include/linux/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A06 files changed, 29 insertions(+), 35 deletions(-)
->=20
+--Zrcz/tOtrh2Pzhj8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+
+> Delete the code and see if anyone notices?  :)
+
+"Never ever break userspace, at least until Greg says so" :D
+
+Seriously, Heiner initially sent a patch simply removing the code in
+question [1]. May I interpret your above statement as "Acked-by"?
+
+[1] https://lore.kernel.org/r/80c4a898-5867-4162-ac85-bdf7c7c68746@gmail.com
+
+
+--Zrcz/tOtrh2Pzhj8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbW6GQACgkQFA3kzBSg
+KbaB+RAArYXuYJrE39IZx8oz0n0QikWXtAEUIUH/AsZ39W1Z7/r5t0q+nfWCXVpJ
+L3x4I1essT1a3NFYX5Mp7eKAEV6MO/vPTJoyUM9g+m6Qd184755kHLHa+ltpF6oZ
+ksOcPnpFmeQoeKlUvf0C93+AKFYOYNB4DRDf0Wxc5UdWKREO7fGLtXPKJlicFMvP
+xlcFjKpkgdkI7fuVULL6n3x1ZAGjhpzh/XMrYjnoP/3lHL8r6UlKBPJOCzBNBYSX
+bFhtDGt+NH/ncJUh2HP+w64UpBIhrm06MIiz6EDOH4ylo62s+SCivF4TSStcoZY+
+PbM+uLS0gkIRzYHOr4EHPoPFcaaRdOO175JFR7LZoUN8Gf4ZBWjCiJJavr1dBUFS
+ruFyxXUu8uj/RvEiG73v5vquES1iafPfEzu5XeK5bR2AGknkDodcza0NKP4CYuty
+bOLOh7YzhCnfK8XlRVTGg9N3wFk3K2sYVUrN3e42YST5BR5wwpxYTr5b/3azmEsF
+nG3WOr2lK6qsl/vT9gUlLHAjwIZbi83Z3U+R/h06pfCbbD+DdtwbMwM7T0U9ZRZc
+cd1DDmdgUUf0l1JdnPhgc/rvTuj03chRyCGDLs4CzoT8U4I6hbAcz2FVheVhfz8D
+mmfIiadIjZFOhJLzUySVweUMjyQawmgQ19KY51na13/A80paZt0=
+=j3eC
+-----END PGP SIGNATURE-----
+
+--Zrcz/tOtrh2Pzhj8--
 
