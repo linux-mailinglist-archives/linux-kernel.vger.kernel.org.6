@@ -1,105 +1,145 @@
-Return-Path: <linux-kernel+bounces-313910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C67F96AC3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082A396AC43
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F78A1C24525
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6682285667
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30CB1B9825;
-	Tue,  3 Sep 2024 22:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCC51D58B3;
+	Tue,  3 Sep 2024 22:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl1JUbCM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lm1jVuAH"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1D186E30;
-	Tue,  3 Sep 2024 22:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A627318732B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402841; cv=none; b=bpnzZQd1aCQts54c5gp2Y7WGjC/jZbyTMBGgCV5g3csgMS96mt3XGXoid5xKrQRYPXnZskIIeQbueRPdAk/K6gMlNMqg6I/yo3Ll/NNXDvALyU2UNLnQXWNLilqaYBqw3kjJH9ct1Df4+YsLEMB9FacyZuYDsNcixG6VP2Nps+Y=
+	t=1725402947; cv=none; b=b/mZr4pPE3aaLEdZkifE4ZESKTZfgoqKQ3hZuFdW/9bUZf3IZ4bMULvmb4swMUndjcuDEYclcV3OQ1rBxQv0A0GcaCOjEe+mD/i4arO4Nbv1pTutTm7DbEa3crpCJ5c99JV3lb0BA9ezr+kykh7WOu2k99clkBMsT4ZeSZhJZWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402841; c=relaxed/simple;
-	bh=PJuaEhOFGYtVYPKXwDpttFc+q5OxRf2zKobxdkoJmTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K//wJPfSpYyF+/ye7k80CBlGo2aCH2VPno69gSuYuumKkB8ERtGJZjwNvyMu/+0ALmaHEl4UBAFF5getHjCj5f3oBzfmLmkW+027dV32T3z5hihyw2QPnNnrmFFznSPDEUGN8Zj66YYbY1z+Tmc4YfMhZiJDOlS6242n7ijSk3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl1JUbCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93953C4CEC4;
-	Tue,  3 Sep 2024 22:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725402840;
-	bh=PJuaEhOFGYtVYPKXwDpttFc+q5OxRf2zKobxdkoJmTg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=cl1JUbCM9uq01AMIDCJyqCBNoHE8kVLu1Zlum4zDmNcdU2M0Z6EnPJa4JG9Wf+Lxg
-	 9ikXHR3b/LYZxALX/n3kJYWb7UJYyMiEn1vNR5OCoz4ZCXgdA7WsjjR/KAa4Pi2vy9
-	 9/lR7RZJ0t3ms1ZapFF6OgOvJnROLB0By59ayo2ih88WYMa7m3GTJJC01d/rn3oYQ0
-	 24PkAfQWeVHT5hlr+LZ2A/A4/cCBMd4MI4fJ26ElWmpyUx65ztX3RD57VttODew+X/
-	 4AHQ8QRRDKcdEeX934gyYgqkJhQY1wkPe5af2W/7hZ+emoTMzhPMVelMq2ZT4TGqhg
-	 trCXY1uR0rR5w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3796ACE1257; Tue,  3 Sep 2024 15:34:00 -0700 (PDT)
-Date: Tue, 3 Sep 2024 15:34:00 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
-Subject: Re: 16-bit store instructions &c?
-Message-ID: <0974da0a-8788-470d-bb9c-8fc90d7e6f08@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
- <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
- <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
- <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
- <1bb58d8d-4a2a-4728-a8f3-9295145dbbb0@paulmck-laptop>
- <f209bf4d-1d14-404b-8bff-8d6d2854d704@app.fastmail.com>
+	s=arc-20240116; t=1725402947; c=relaxed/simple;
+	bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gyd2Fh4n9et1bnYaDx6DMT2c6S6BOrCEuvCbd2DvyYH7nX1IEsqkg3KACP8gc2aDGc/HtdV7JMy33J7EoMnr4VUJvE2E3aKecDxluUKxlBias2EBf2GjF8wL+WtHZJMlsTHXIiVAIby142QmC0tEIJvWs2HrGK06fOD5642HsAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lm1jVuAH; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a81309072dso288730385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:35:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725402944; x=1726007744; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
+        b=lm1jVuAH2pFMPzHxtGzV+WNdlwFrpY5gjA/JLR95yM3WWoKr/HkJvVpdhDMOr2UWUt
+         Cy2dqItUtK2a+DuFQMqvmArShpAQO3aqWp7sbWN7kjm2tCABSIOadrLNsoPb2cHostjR
+         Law3Q1kIib6qsOl/qn5WpjVr+h8IHVgHTxk8k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725402944; x=1726007744;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Np+Q0wHOCgirMFjVPl8Z6i7/K3O+RkvC3vKi9xQ+BOA=;
+        b=LDak2eA1gCltoJqOkUnOw0PV+NKNzTEL2tAWo55SdzNnksHMW9q/6wVrYATpL0D10v
+         HEAZNNM/rFo4P52lAMllvQ5akky0HqnSq2zh0IOc4G1ITffjDTD90AaJ9teWuRYZlfzJ
+         1eYUSAM9RFSieThm1F3LhnBFDX/0WXIxWj6GGd6PtkNOdU+ZLHd28V6nlbrnRsK/wK0+
+         xq28KRg4w6qK5glT3V0e596ZxDb+TicLmfA73n9xNKPcl8LM1bpWCIJlf6j3STPfKggP
+         e9Y6Ju7vHmGsNkXnew6+qYxfM3kofDHy/6VOLz8P6aCGStrv0ZHpsk6Fjvku6M/dxhv+
+         0X+A==
+X-Forwarded-Encrypted: i=1; AJvYcCViuznUQieJXB8RzQ7GGPNSp8vXirnpbfZvCoXGFdbsLZxRZMBs1fe6+aUiDj7a3TZu7slcWNVZCIyqUGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+F9Efh7I03g9JLKC75LinmLgaop0mFFI5e70AE/5z3AGTovHQ
+	dxdqmCLxSG/LoaUskxRnxA1N7UNHsbky4pU8icLd86rIYUzBZfe4LaunfyLfzRziz/4cocZfKAy
+	3YXWcXcJUHvi855HK22DRwg9P1pvWWfi+rKGG
+X-Google-Smtp-Source: AGHT+IHROkfnEqJwyKjhAgQRGsJgxkFB29+Yc6u1MFfoALprduJBtTl2Q7hk3LAUymLuEO32wO/aAKlH5269r5m9+pM=
+X-Received: by 2002:a05:620a:28c8:b0:7a6:6fd6:9d6a with SMTP id
+ af79cd13be357-7a8f6b767cemr1583962985a.5.1725402944498; Tue, 03 Sep 2024
+ 15:35:44 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 3 Sep 2024 15:35:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f209bf4d-1d14-404b-8bff-8d6d2854d704@app.fastmail.com>
+In-Reply-To: <ZtWeuFUEgnF9e2S4@smile.fi.intel.com>
+References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-11-swboyd@chromium.org>
+ <ZtWeuFUEgnF9e2S4@smile.fi.intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 3 Sep 2024 15:35:44 -0700
+Message-ID: <CAE-0n51nLCNJxhxMr3EmqoWz=3dLU-ckfSwgEUtrhBRZchLu_w@mail.gmail.com>
+Subject: Re: [PATCH v4 10/18] devcon property: Document devcon_match_fn_t
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
+	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 29, 2024 at 09:56:52PM +0200, Arnd Bergmann wrote:
-> On Thu, Aug 29, 2024, at 15:37, Paul E. McKenney wrote:
-> > My plan is to submit a pull request for the remaining three 8-bit
-> > cmpxchg() emulation commits into the upcoming merge window.  In the
-> > meantime, I will create similar patches for 16-bit cmpxchg() and perhaps
-> > also both 8-bit and 16-bit xchg().  I will obviously CC both you and
-> > Russell on the full set.  And if there are hardware-incompatibility
-> > complaints, we can deal with them, whether by dropping the offending
-> > pieces of my patches or by whatever other adjustments make sense.
-> >
-> > Does that seem like a reasonable approach, or is there a better way?
-> 
-> There is one thing I'd really like to see happen here, and that is
-> changing the architectures so they only define the fixed-length
-> __arch_xchg{8,16,32,64} and __arch_cmpxchg{8,16,32,64} helpers,
-> ideally as inline functions to have type checking on the pointer.
-> 
-> If we make the xchg()/cmpxchg() functiuons handle all sizes
-> across architectures, that just ends up cementing the type
-> agnostic macros, so I feel it would be better to have
-> fixed-size helpers as the generic API so we can phase out the
-> use of the existing macros on smaller-than-u32 arguments.
-> 
-> The macro is still needed to allow dealing with both integer
-> and pointer objects, as well as a mix of 'int' and 'long'
-> arguments on 64-bit, but for normal fixed-size objects I
-> think we can best use the same method as the current
-> xchg64()/cmpxchg64().
+Quoting Andy Shevchenko (2024-09-02 04:17:12)
+> On Sat, Aug 31, 2024 at 09:06:48PM -0700, Stephen Boyd wrote:
+> > The usage of this match function is hard to understand at a glance.
+> > Document the arguments and the return value so it is clear how to
+> > implement the function.
+>
+> Thank you for the patch!
+>
+> ...
+>
+> I believe we still use "device property:" in the subject for this header file changes.
+> $ git log --oneline --no-merges -- include/linux/property.h
+>
 
-So the idea is to have architecture-independent xchg()/cmpxchg() that
-invoke the __arch_xchg{8,16,32,64} and __arch_cmpxchg{8,16,32,64} helpers?
-Seems plausible to me.
+Ok.
 
-How can I best help?  My guess is that I should prototype an emulated
-xchg() function, given my limited familiarity with the architectures.
+>
+> > +/**
+> > + * devcon_match_fn_t - device connection match function
+> > + * @fwnode: Remote connection's device node
+> > + * @con_id: Identifier for the connection
+> > + * @data: Match function caller specific data
+> > + *
+> > + * Implement a callback with this function signature to search a fwnode's
+> > + * connections for a match with a function like device_connection_find_match().
+> > + * This function will be called possibly multiple times, once for each
+> > + * connection. The match function should inspect the @fwnode to look for a
+> > + * match. The @con_id and @data provided are the same as the @con_id and @data
+> > + * arguments passed to the functions that take a devcon_match_fn_t argument.
+>
+> > + * Note: This function can be called multiple times.
+>
+> As noted in the next patch, this would be nice to elaborate (at least to me
+> this sounds like declaration of idempotency which is unlikely what is
+> meant, or am I mistaken?).
 
-						Thanx, Paul
+I based this on something that I've already forgotten! :)
+
+It's saying that the function you implement shouldn't have side-effects
+because it will be called many times. I actually wrote above that it
+will be called "possibly multiple times, once for each connection". Let
+me try to remove "multiple times".
 
