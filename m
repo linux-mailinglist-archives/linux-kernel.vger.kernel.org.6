@@ -1,93 +1,164 @@
-Return-Path: <linux-kernel+bounces-313900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D110C96AC0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:20:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C811096AC15
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2A21F257CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53119B24FF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15E61D5898;
-	Tue,  3 Sep 2024 22:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCCB1D460A;
+	Tue,  3 Sep 2024 22:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h77gm+0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Etljk7Bp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1833D126C16;
-	Tue,  3 Sep 2024 22:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ADF3A267;
+	Tue,  3 Sep 2024 22:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402038; cv=none; b=o5IgLf0A/XYWyQ5hDkIl3OGDwskd4BjCQaFmn5eS4oIFENBfMAdVEBJg04rf0vtmc+WdnISFlg7PaWgu1mzDyjHSY4GaIa3xjBFvTWQPsfPfG0wwZZVYBftJo4utRNTZWpxKAIJAo31U4xaT3H7XfQKJZdr15zfy7y9FrkapGuI=
+	t=1725402063; cv=none; b=Vk1c083uipE57aPy5O75yOc6oD8J28017JgOHuqDOOhkI50hdC4fu5daz121fHYo8xtgQINjOVoOD+WOPOcIDA/+PNG/Ux9NTZ6xtAl7ftupWppb6HadL5aUtSFtXkvt6I6LEqiRKd+DaLaknPN6dQ6QBO1aeDcCZeDTOFYZTMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402038; c=relaxed/simple;
-	bh=8CrIzbvXoLHq+nV32EseS4c9azbPQK5+QG+wtMsi3Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VcqJhf7SXumwtHV0fwzw6kN07IU+6m3CMXHI2pEGhQJHkuzHzaIfl30ICcnM4ppNWOn0rd+1YccFoevQLFoyxnm2eLggfcU58qtHq+S4mYdAd8LEUHE32ICJLRBmzOeBs0ncyh6/3nh1tgUrBZul8j2Nj2OVkn3Oi3pRgS8Mv08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h77gm+0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE64C4CEC4;
-	Tue,  3 Sep 2024 22:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725402037;
-	bh=8CrIzbvXoLHq+nV32EseS4c9azbPQK5+QG+wtMsi3Vo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h77gm+0s4Z3/Mhiqmggr4tkyfwkyV0tx4Z0V8LJFBvkyKyd76nUqxVwD3e/ocZvo0
-	 QoeXOFNgYjKrLSYiDUpm0HENEsaInAijd6qIHmi1MLpopuORbnhAOw052RWjQ+0VTh
-	 eFlvrkutQMPc2eA/WE8NZATT1yqHEhTbMHreoRdIEE3b61l4ch+42lZEfmEF7J4KEe
-	 5xUrTxtdsk7S8W4FBaJ9boRAn/8WmbSD96myiDHlNdVx9O+10hDauIVP2Jgp+V6orx
-	 lxtzBT/rJRjmrutSDv9HxbNXs5tUf1g9pg5h6rFIEzvs7mhsgEQxWRjYJSvTbwElyB
-	 AXfidFvfQOjrA==
-Date: Wed, 4 Sep 2024 00:20:33 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, Andy Yan <andyshrk@163.com>, 
-	Muhammed Efe Cetin <efectn@protonmail.com>, Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, 
-	Ondrej Jirman <megi@xff.cz>, Michael Riesch <michael.riesch@wolfvision.net>, 
-	Jimmy Hon <honyuenkwun@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
-	Alexey Charkov <alchark@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>, Finley Xiao <finley.xiao@rock-chips.com>, 
-	Liang Chen <cl@rock-chips.com>, Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org, kernel@collabora.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 3/9] dt-bindings: i2c: i2c-rk3x: Add rk3576 compatible
-Message-ID: <3crgu77c6mgwqqeuiy6m4pupypjwqpwo56z4ydl3emm35m54vu@y354e3jckogf>
-References: <20240903152308.13565-1-detlev.casanova@collabora.com>
- <20240903152308.13565-4-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1725402063; c=relaxed/simple;
+	bh=yiM8tWV/Ct8UYubGe12YSCMEq8k9CGLTQFJ4hMKDaig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s9ILY0y04FRPYUQqfoDN/C8nh7eTWv+lZW6V+nYES61cDmc1JOuNLfePOaaAtW0tK+Yrlp6Ew/Z4etyC25wnEdlwk/B2gwGQrS4Ngfu2TwmLcJnL5/xKbEySK1LB22iyzpzh9FvsG3GcIGZhkG9VH+8vVz1pgCU2nIzk59pWpXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Etljk7Bp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LwKB9028269;
+	Tue, 3 Sep 2024 22:20:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5j0OpXvCFxUbCCZ05zKzT5gBio/MEcN9YIb08hJBy+A=; b=Etljk7Bpc6RxFs6M
+	4YGn3wzPaycjH5SSJYR7z8P611e++hL2XoDdVcJ32C4jklm7nCturesVdcN1/YnT
+	0aPNly0uxVobNqlMD+EQ1DPDFqTG4XLcuFXfOw879ut1Ykwv9z8l2fRlbFDWuunL
+	OO3xRDxF9pR3oR+K3M9ubqUt1iiHIwoJ+cP0zXu2RG0X0iOitAu5vZ7qV/l78BoH
+	qDBlP4akGsBMOUXah8WHnwqFQaD7T1g3cVQUxL6fH5tJIRl6SDb4HQ3gK7ZUi6VR
+	WjZseYrAa9PeZQpIjzHELvnNSxx26Vesh9/Kd2iO8Ym+u5SYMhR0oCNQj9+xSgMJ
+	QzaRbQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxrvjc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 22:20:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483MKmIm029647
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 22:20:48 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 15:20:47 -0700
+Message-ID: <85022ded-962a-47ac-a083-88db7cd81f0f@quicinc.com>
+Date: Tue, 3 Sep 2024 15:20:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903152308.13565-4-detlev.casanova@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/21] drm/msm/dpu: add CWB entry to catalog for SM8650
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-8-502b16ae2ebb@quicinc.com>
+ <audsl366wkyqlizb254haxchirlgycr4wpgmp7sbkmynafivoq@pyanmqyfwj7b>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <audsl366wkyqlizb254haxchirlgycr4wpgmp7sbkmynafivoq@pyanmqyfwj7b>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GLe-fU_ol172R9bwXyOeiuZRzFuLLWlG
+X-Proofpoint-ORIG-GUID: GLe-fU_ol172R9bwXyOeiuZRzFuLLWlG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_10,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409030179
 
-Hi,
 
-On Tue, Sep 03, 2024 at 11:22:33AM GMT, Detlev Casanova wrote:
-> Just like RK356x and RK3588, RK3576 is compatible to the existing
-> rk3399 binding.
+
+On 8/30/2024 10:13 AM, Dmitry Baryshkov wrote:
+> On Thu, Aug 29, 2024 at 01:48:29PM GMT, Jessica Zhang wrote:
+>> From: Esha Bharadwaj <quic_ebharadw@quicinc.com>
+>>
+>> Add new block for concurrent writeback mux to HW catalog and change
+>> pingpong index names to distinguish between general use pingpong blocks
+>> and pingpong blocks dedicated for concurrent writeback
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Please split into two commits.
 
-merged to i2c/i2c-host.
+Hi Dmitry,
+
+Sounds good
+
+> 
+>>
+>> Signed-off-by: Esha Bharadwaj <quic_ebharadw@quicinc.com>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    | 29 +++++++++++++++++++---
+>>   .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h |  4 +--
+>>   .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |  4 +--
+>>   .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |  4 +--
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     | 13 ++++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |  8 +++---
+>>   6 files changed, 48 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+>> index eb5dfff2ec4f..ce2773029763 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+>> @@ -252,25 +252,25 @@ static const struct dpu_pingpong_cfg sm8650_pp[] = {
+>>   		.merge_3d = MERGE_3D_2,
+>>   		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 31),
+>>   	}, {
+>> -		.name = "pingpong_6", .id = PINGPONG_6,
+>> +		.name = "pingpong_6", .id = PINGPONG_CWB_0,
+> 
+> Should we also rename such blocks?
+
+Sure, I can change the name to match the id
 
 Thanks,
-Andi
+
+Jessica Zhang
+
+> 
+>>   		.base = 0x66000, .len = 0,
+>>   		.features = BIT(DPU_PINGPONG_DITHER),
+>>   		.sblk = &sc7280_pp_sblk,
+>>   		.merge_3d = MERGE_3D_3,
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
