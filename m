@@ -1,74 +1,97 @@
-Return-Path: <linux-kernel+bounces-313128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276C196A0A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F088596A0A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96B3287039
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7D31C23BDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8529F153BD7;
-	Tue,  3 Sep 2024 14:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F113C801;
+	Tue,  3 Sep 2024 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/uubxF5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMPhAULP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A371420DD;
-	Tue,  3 Sep 2024 14:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D158F45;
+	Tue,  3 Sep 2024 14:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373804; cv=none; b=h6jmhXksyJlQaB58x/DkW9E6WuM4AomM2d6orN6SPUzsVHz30XWVmLhRoD8Pq6rlS+6hhvYVFbM8jxjhrPZuJYCj9gY9dW7IKLCF9surLSlLXQ88b1zrbt2Zhv1NcSHjfxRolT04SeebWoPPZt2LWLcsJvfFBSxeZ8r4YIPcv1A=
+	t=1725373840; cv=none; b=oUM/4N6VJMDEgtlGne9SfGvajTa2mHCS6/+DYXD/6fJY14hWzcmg5QxiiqZqKDQeqIQJAuMXiXW/GEp2DCVNa2FRCmyPPefB1++Hd7QOQT/Mb7UodTK7wbZ+M6Jno6Wq8H3E0sfLNjkfsBPIL2mVwbECZPpyair5H+VXeWeIJoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373804; c=relaxed/simple;
-	bh=sjKoXk1z/rlVpknvexNcdZienzI2tB0ICyNAVxm1paI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCRraGjr2YsDI6ykE8zytb47mjMYZYpnx8uX3YoyG0V0+oLjCnqtsZexr0AZlBduMI2EkxEwIb9pH33Te851Mv3MMYtuP0snpxpUOTMFYLpl1mp6MxA8pd/n7QMoGbAaingz6ehFtATVRF5NGsybleSzxOBqCrYD1VoXOkRAuyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/uubxF5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10C4C4CEC7;
-	Tue,  3 Sep 2024 14:30:03 +0000 (UTC)
+	s=arc-20240116; t=1725373840; c=relaxed/simple;
+	bh=8hIsX3Gtu284V91gL7N6GgFB7NiLigl/6FXHMFI6wzo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=EcmcJ/XzZDvM9I9nvcG2lhyf5KfbOOd1v0suK8wLNMkj9fzRUe2PTfdiJZHQ+8LXPH8KqOHSMUbtogB99LQKkNdkY6ECfNwuOQWYd6iLpOdo1WBnM7PBw2UA1+LozXBxrDvZbxrtkUNR0O4jG/v03B9u2F0Lc3M2jxYqZ9xwznQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMPhAULP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A67C4CEC4;
+	Tue,  3 Sep 2024 14:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373804;
-	bh=sjKoXk1z/rlVpknvexNcdZienzI2tB0ICyNAVxm1paI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/uubxF5/g0Nm9YFqMtmnEPNf0YHjjrq4S8pt/NCGO+z1GQqlWIZfn/bEBCM/DRFs
-	 lYKXlThzsRBcAqFFcK8pWiYwY+6ynOd94/5XfVlGyUjchm9+/4MWFRI1wxj0Rbc6gO
-	 10MHlhJPYlICf+dUmNCuDrNysHBhrZlXsvTr85jsKvmgHRinTNoHuUVsofmKEKjOwm
-	 Ovam5hlZv9bCQDkRy1D6MW8JPAgA3r6r4hE6z+s/pBMcDyF0+WkjmTK/SaTq/SaVMK
-	 lb+OdwC+QyKM0FIYlbCWpAKOmpdxlhosw+RQqnRPvlGimsrGCnGYWMsDrtym7HnPEI
-	 /MEp+97kU0XGw==
-Date: Tue, 3 Sep 2024 16:30:00 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com, Borislav Petkov <bp@alien8.de>, 
-	Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
-Message-ID: <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
-References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
+	s=k20201202; t=1725373839;
+	bh=8hIsX3Gtu284V91gL7N6GgFB7NiLigl/6FXHMFI6wzo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cMPhAULPDWSY4mHmyASlsRi7jgsoFCb5qncdk7Jm9YyLKiP1V8Y7lViX0Z6v3UdYZ
+	 3hKlLIzyD2wxeMBcwS/sM7csrpCqg2Gyjj2PTMKkz1HE52x+8QTO9oVINqw/wZ2dUO
+	 K2GI7Dq8dYPFk8SxBa/XdFK/R9fQuUz2A4ORDKHr/WrikJkdbS9Am/Mrvvj1XDChZv
+	 3Ox2jpueSGC5u4BsN/VgskFOuyyrur94yhgpyyREzRNvsoDIOZa9PFmdM44MBZo0T9
+	 SIeZAFnHAaXTNNGkeABnF026+EK3JOBXANHgq4uXE78oPEQayzpL+KZbZR908BCG70
+	 yWXz2nhHg9VtA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EF53822D69;
+	Tue,  3 Sep 2024 14:30:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/3] riscv: mm: Do not restrict mmap address based on hint
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172537383996.320952.12145351414026889643.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Sep 2024 14:30:39 +0000
+References: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
+In-Reply-To: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, corbet@lwn.net, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, shuah@kernel.org,
+ cyy@cyyself.name, rsworktech@outlook.com, alexghiti@rivosinc.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, palmer@rivosinc.com,
+ linux-kselftest@vger.kernel.org
 
-Hi Andy,
+Hello:
 
-On Tue, Aug 27, 2024 at 06:00:37PM GMT, Andy Shevchenko wrote:
-> We have the same (*) PM ops in the PCI and plaform drivers.
+This series was applied to riscv/linux.git (fixes)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-/plaform/platform/
+On Mon, 26 Aug 2024 09:36:44 -0700 you wrote:
+> There have been a couple of reports that using the hint address to
+> restrict the address returned by mmap hint address has caused issues in
+> applications. A different solution for restricting addresses returned by
+> mmap is necessary to avoid breakages.
+> 
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> 
+> [...]
 
-with this change I pushed it to i2c/i2c-host.
+Here is the summary with links:
+  - [1/3] Revert "RISC-V: mm: Document mmap changes"
+    https://git.kernel.org/riscv/c/954260ff5a46
+  - [2/3] riscv: selftests: Remove mmap hint address checks
+    https://git.kernel.org/riscv/c/83dae72ac038
+  - [3/3] riscv: mm: Do not restrict mmap address based on hint
+    https://git.kernel.org/riscv/c/2116988d5372
 
-Thanks,
-Andi
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
