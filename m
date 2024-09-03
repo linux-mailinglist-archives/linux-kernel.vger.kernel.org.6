@@ -1,327 +1,154 @@
-Return-Path: <linux-kernel+bounces-313210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0900B96A1EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:17:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E076C96A1F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF191F26DE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:17:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66490B264F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CBD18BC30;
-	Tue,  3 Sep 2024 15:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038D318C929;
+	Tue,  3 Sep 2024 15:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CcXKMBh/"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WULXNsMF"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E7F18891A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA9A185B7D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376531; cv=none; b=Y1kwnAHa2b3ldXmmWyZ+d6cvoTv3SJPmJGRK/tq9Xz8tUWOWj83Nf0hHjA3xWc0jOkW3bqG9wW0+bcHk0DzwUO0OH8dbJrdoBRo0aS5HxezPAaYZoG0SmjzS9KrJ4B5EXZ0pd1q9whEkg7zHP1iXu7TBr/SLgAnCw4djXER3P8o=
+	t=1725376541; cv=none; b=moa1Hd3VDLCyP5I0FjdXzMwoYlVm7mU7wxOFtWsDxRAeeYppPG8xlq5M8Hm4+PBcKEBzSCe/I484pNVQ5U8iaBlHNwvlOeu0BR3OmV3TPCg2+ZYNP8aah8bAByxSMaNTeVfM66/sZuA7B2zCcjwcGCqjsKMyuMNO7+CHI827//s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376531; c=relaxed/simple;
-	bh=U7DXv46kAArn9FLdjrGEE2AWjxJWOWdSgwiVv/J76LE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBVb+aJJ25qGyzDFc6tY9SEmqETQdq+HX7KdMonSCuU//8y2gWgYxOjdmZfJnsXjnRJex15bk0szvj0koMCgyCY9iuMlxf0HWNeVBLdWCpkxOaADvgYqKomNgkji6Iqpmn3lNnCVGXhMhrj6iYqPkMlS+u+V2/0WawZeNdarXr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CcXKMBh/; arc=none smtp.client-ip=209.85.208.65
+	s=arc-20240116; t=1725376541; c=relaxed/simple;
+	bh=VQoch2Jnk1OtZ5AtE+c96J0cQy86KkHUvIBG+sr4F1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecgm5sZZ6LCIAouOFmFlfMHdKKn194cxeaoeQJEml33MAzfTO9bQf9jFsdLfXeDbsKzGB5kHisvv/I0tjpra4JSlzNgxiFv8ziaEsDxFEykejMU+YLr+TnThIDHnJ68Q+pzFhwgnx5uqwloyodK68BmVqe87ZJPK6TfXmvcUhNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WULXNsMF; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5c26852aff1so1838063a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:15:28 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-533461323cdso6890121e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725376527; x=1725981327; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTB7wsQhvCFsxyJgB8CQ5Pa/NBo7hDozebUo452UiWE=;
-        b=CcXKMBh/yTEpgJXgHzTwNQqtauDtBWEk0ZD+eMw20BnH2RdGrmSQKc6uUeCA5PrRse
-         P6A/sBteYAwsDeSQ8ayUU/rmvJyhnYJ5JAdb/HhpfPFs4LVw6w8qNkTDXTqHkjiMhue3
-         uBGYRxp6SmwsWEWs/5USx3A3vVF9GSPj3TxwgpJ+FwB9et1NP0yxpy2uIEwsvd06ddx5
-         mdGOASLxPJfA61KReguknBaa4zXQUDu/nNhF0AlAv7FPhPc7dNT47EVBMFLThvtAiLr6
-         j5doz5L7Q+DjJFFlN+8tpp2iBTEpx/cjJl/z0c7BoDGZxIWkpW79IEZYZ0/4gaGD/hR6
-         prVw==
+        d=suse.com; s=google; t=1725376538; x=1725981338; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/+e0U/aRCvU8DuFYoeV8O/KmFptz8b7Txjch+YXTIjA=;
+        b=WULXNsMFwBairxyGwUrNlaDT+LuyCLt4ia6PJNtRKhbDZfTcfO8L3m2HiHfk3cDrX7
+         +DjCPhtyfHVECGC0+DkgAMq75e6ZgJXAlNykaS7KVzBehf/tZG5cxmGlLA30bq4eSUgF
+         MgHMXRUKF8QNAzHAtaLKW1/qrv8VJqnzzzGalq8BxhYWfHG+ESNn7ZnYme/vPuZJ6VQr
+         f6ALrlWHrQa9RXeo/Rm6s771mFMl0Q9y/rO9Y59ZJ6JgQ3KU8Lu6UwBjZzr/C2NF9nbR
+         jEDJxh/RVmMCTO1Y8hYk6mqebkmxZ5q5LHveKKI9pTBo+MkrefIpG2WH7AGnZWnkcDv/
+         bZEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376527; x=1725981327;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OTB7wsQhvCFsxyJgB8CQ5Pa/NBo7hDozebUo452UiWE=;
-        b=qyZnFHyiAqSkeNIIsDU2mgTofYvd/9V3kWs40758LPXCMmUIvVPSFQhXdMfjLEl2V+
-         YlXcEc+6U0K6FKBPERmqUBKFYIjQ9m4tFcX8LkSQIEIxm7SjviduCI+3/Y0PZYL6uXVg
-         y2XVXN1GSGNbQ4VQQUsp2N49n5U8w844CQpy+BRCjT2Ai/sO2mhp5JgzlyQEzZ0t+4W+
-         vn0H8Y26x+P4c6FVqGUlPDlrQpw6EKyH4pobVo0qwX6Jpc+Ylzc2vT3W3KkC3EQ2Axc5
-         Hug4KrjcdSHxO1iLnYS2dXRrZTUD/D5surYYa5SKB/NIlXxgPSdzB7n4C1yHPzF+T+X/
-         hp1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSRr6uGa5ct+mmWmwx6esidrEUbWwtBeFBwFPbAGGFHPsRaUr85AHGXVZ5tTR+AuL7P2XuTFYwSXbfw6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2OSSFocsM7fIEFerKxC57Y5q4Fk/AkjbfjDRNRwcVZbii13Qn
-	C79gUACKLD2GjVsOrXT2JwavnyM5mBP47AF5KoNBNVxwPkA0tlYCq7+5+WcxqFc=
-X-Google-Smtp-Source: AGHT+IFcTte6BIp8pPXY+ojLOKAWveu1EM1jhlSY6FJHdjViAJCeXH8Z3blw4a5BrzCnpyEjcGVtwQ==
-X-Received: by 2002:a05:6402:3506:b0:5c2:6e5f:3bf9 with SMTP id 4fb4d7f45d1cf-5c26e5f3d09mr1609966a12.28.1725376526784;
-        Tue, 03 Sep 2024 08:15:26 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7bda6sm6607816a12.41.2024.09.03.08.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:15:26 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 17:15:34 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZtcoFmK6NPLcIwVt@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <ZtHN0B8VEGZFXs95@apocalypse>
- <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+        d=1e100.net; s=20230601; t=1725376538; x=1725981338;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/+e0U/aRCvU8DuFYoeV8O/KmFptz8b7Txjch+YXTIjA=;
+        b=AIpkV/aWaqOHBEqczyifYF32HvS66WtpiWiRQXNNeL1BL+/dCc0uiApSwMI4pG1rlM
+         VO/dqd1bApmCk9xwYGORURIrj+miXCx7NvSiHTcTxQ17sh6oszDb6QZHSnOuQwDVaBk5
+         i14RUzB0dJ9euHYDH6VL8zDdCbCK9C9lYuoTqWG2vGiDpwTvtHmcbixXsQy4Rr0+xxMm
+         /aedtd+2vkd9GMe9iUQ79dpsiJ4y81lJUI+WaCIK7LkX84OreUYDoGjA0XuYKrnRF35l
+         qx5qSv128bZKOrHEMT5O/RTRTQIpjpKpw66vqGvL9gq1TwTEJdLM3ePo/wf14LrL6CiC
+         f1EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcuQc8vf/QBN8NhR162+k4QLpEVwG9wJKxMDjeQQgekEzdWjQAmqUM2RzP4utn6QymPqoLDqhPnsWPMDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMZhTLqXlYclA97CrMww+P9GyXFtHQCEJ/uBqn4SinjpNbT+2i
+	Pbbxl4KOfcxGM8zFEE3PTGkJhkLqYI7sNHZBNSIZ/I6nZ0lm7FnJ4dw/hccm/oM=
+X-Google-Smtp-Source: AGHT+IGdZTw/KUyMiDlZSkuc9mANPu7vBYcf24gYwin1fZw518o/l8XDosnXT/1xrZtFfnHMtfr7sg==
+X-Received: by 2002:a05:6512:2383:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-53546b03ffamr9361946e87.14.1725376537413;
+        Tue, 03 Sep 2024 08:15:37 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a2fdsm6520881a12.13.2024.09.03.08.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 08:15:37 -0700 (PDT)
+Message-ID: <47bc562d-b9c7-464b-a2e2-dbb8c14d146b@suse.com>
+Date: Tue, 3 Sep 2024 17:15:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/19] gendwarfksyms: Limit structure expansion
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-32-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240815173903.4172139-32-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 8/15/24 19:39, Sami Tolvanen wrote:
+> Expand each structure type only once per exported symbol. This
+> is necessary to support self-referential structures, which would
+> otherwise result in infinite recursion, but is still sufficient for
+> catching ABI changes.
+> 
+> For pointers to structure types, limit type expansion inside the
+> pointer to two levels. This should be plenty for detecting ABI
+> differences, but it stops us from pulling in half the kernel for
+> types that contain pointers to large kernel data structures, like
+> task_struct, for example.
 
-On 18:52 Fri 30 Aug     , Krzysztof Kozlowski wrote:
-> On 30/08/2024 15:49, Andrea della Porta wrote:
-> > Hi Krzysztof,
-> > 
-> > On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> >> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
-> >>> The RaspberryPi RP1 is ia PCI multi function device containing
-> >>> peripherals ranging from Ethernet to USB controller, I2C, SPI
-> >>> and others.
-> >>> Implement a bare minimum driver to operate the RP1, leveraging
-> >>> actual OF based driver implementations for the on-borad peripherals
-> >>> by loading a devicetree overlay during driver probe.
-> >>> The peripherals are accessed by mapping MMIO registers starting
-> >>> from PCI BAR1 region.
-> >>> As a minimum driver, the peripherals will not be added to the
-> >>> dtbo here, but in following patches.
-> >>>
-> >>> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> >>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> >>> ---
-> >>>  MAINTAINERS                           |   2 +
-> >>>  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
-> >>
-> >> Do not mix DTS with drivers.
-> >>
-> >> These MUST be separate.
-> > 
-> > Separating the dtso from the driver in two different patches would mean
-> > that the dtso patch would be ordered before the driver one. This is because
-> > the driver embeds the dtbo binary blob inside itself, at build time. So
-> > in order to build the driver, the dtso needs to be there also. This is not
-> 
-> Sure, in such case DTS will have to go through the same tree as driver
-> as an exception. Please document it in patch changelog (---).
+I'm quite worried about this optimization for pointer types. It could
+result in some kABI changes not being recognized.
 
-Ack.
+I assume the goal of the optimization is to speed up the tool's runtime.
+How much does it improve the processing time and is there any other way
+how it could be done?
 
-> 
-> > the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
-> > ordered last wrt the driver it refers to.
-> 
-> It's not exactly the "ordered last" that matters, but lack of dependency
-> and going through separate tree and branch - arm-soc/dts. Here there
-> will be an exception how we handle patch, but still DTS is hardware
-> description so should not be combined with driver code.
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> index 92b6ca4c5c91..2f1601015c4e 100644
+> --- a/scripts/gendwarfksyms/dwarf.c
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> [...]
+> @@ -651,6 +742,7 @@ static int process_exported_symbols(struct state *state, struct die *cache,
+>  		else
+>  			check(process_variable(state, &state->die));
+>  
+> +		cache_clear_expanded(&state->expansion_cache);
+>  		return 0;
+>  	default:
+>  		return 0;
 
-Ack.
+I wonder if it would make sense to share the cache between processing
+individual exported symbols.
 
-> 
-> > Are you sure you want to proceed in this way?
-> 
-> 
-> > 
-> >>
-> >>>  drivers/misc/Kconfig                  |   1 +
-> >>>  drivers/misc/Makefile                 |   1 +
-> >>>  drivers/misc/rp1/Kconfig              |  20 ++
-> >>>  drivers/misc/rp1/Makefile             |   3 +
-> >>>  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
-> >>>  drivers/misc/rp1/rp1-pci.dtso         |   8 +
-> >>>  drivers/pci/quirks.c                  |   1 +
-> >>>  include/linux/pci_ids.h               |   3 +
-> >>>  10 files changed, 524 insertions(+)
-> >>>  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
-> >>>  create mode 100644 drivers/misc/rp1/Kconfig
-> >>>  create mode 100644 drivers/misc/rp1/Makefile
-> >>>  create mode 100644 drivers/misc/rp1/rp1-pci.c
-> >>>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
-> >>>
-> >>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >>> index 67f460c36ea1..1359538b76e8 100644
-> >>> --- a/MAINTAINERS
-> >>> +++ b/MAINTAINERS
-> >>> @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
-> >>>  RASPBERRY PI RP1 PCI DRIVER
-> >>>  M:	Andrea della Porta <andrea.porta@suse.com>
-> >>>  S:	Maintained
-> >>> +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
-> >>>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> >>>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >>>  F:	drivers/clk/clk-rp1.c
-> >>> +F:	drivers/misc/rp1/
-> >>>  F:	drivers/pinctrl/pinctrl-rp1.c
-> >>>  F:	include/dt-bindings/clock/rp1.h
-> >>>  F:	include/dt-bindings/misc/rp1.h
-> >>> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> >>> new file mode 100644
-> >>> index 000000000000..d80178a278ee
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> >>> @@ -0,0 +1,152 @@
-> >>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> >>> +
-> >>> +#include <dt-bindings/gpio/gpio.h>
-> >>> +#include <dt-bindings/interrupt-controller/irq.h>
-> >>> +#include <dt-bindings/clock/rp1.h>
-> >>> +#include <dt-bindings/misc/rp1.h>
-> >>> +
-> >>> +/dts-v1/;
-> >>> +/plugin/;
-> >>> +
-> >>> +/ {
-> >>> +	fragment@0 {
-> >>> +		target-path="";
-> >>> +		__overlay__ {
-> >>> +			#address-cells = <3>;
-> >>> +			#size-cells = <2>;
-> >>> +
-> >>> +			rp1: rp1@0 {
-> >>> +				compatible = "simple-bus";
-> >>> +				#address-cells = <2>;
-> >>> +				#size-cells = <2>;
-> >>> +				interrupt-controller;
-> >>> +				interrupt-parent = <&rp1>;
-> >>> +				#interrupt-cells = <2>;
-> >>> +
-> >>> +				// ranges and dma-ranges must be provided by the includer
-> >>> +				ranges = <0xc0 0x40000000
-> >>> +					  0x01/*0x02000000*/ 0x00 0x00000000
-> >>> +					  0x00 0x00400000>;
-> >>
-> >> Are you 100% sure you do not have here dtc W=1 warnings?
-> > 
-> > the W=1 warnings are:
-> > 
-> > arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
-> > arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
-> > arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
-> > arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
-> > 
-> > I don't see anything related to the ranges line you mentioned.
-> 
-> Hm, indeed, but I would expect warning about unit address not matching
-> ranges/reg.
-> 
-> > 
-> >>
-> >>> +
-> >>> +				dma-ranges =
-> >>> +				// inbound RP1 1x_xxxxxxxx -> PCIe 1x_xxxxxxxx
-> >>> +					     <0x10 0x00000000
-> >>> +					      0x43000000 0x10 0x00000000
-> >>> +					      0x10 0x00000000>;
-> >>> +
-> >>> +				clk_xosc: clk_xosc {
-> >>
-> >> Nope, switch to DTS coding style.
-> > 
-> > Ack.
-> > 
-> >>
-> >>> +					compatible = "fixed-clock";
-> >>> +					#clock-cells = <0>;
-> >>> +					clock-output-names = "xosc";
-> >>> +					clock-frequency = <50000000>;
-> >>> +				};
-> >>> +
-> >>> +				macb_pclk: macb_pclk {
-> >>> +					compatible = "fixed-clock";
-> >>> +					#clock-cells = <0>;
-> >>> +					clock-output-names = "pclk";
-> >>> +					clock-frequency = <200000000>;
-> >>> +				};
-> >>> +
-> >>> +				macb_hclk: macb_hclk {
-> >>> +					compatible = "fixed-clock";
-> >>> +					#clock-cells = <0>;
-> >>> +					clock-output-names = "hclk";
-> >>> +					clock-frequency = <200000000>;
-> >>> +				};
-> >>> +
-> >>> +				rp1_clocks: clocks@c040018000 {
-> >>
-> >> Why do you mix MMIO with non-MMIO nodes? This really does not look
-> >> correct.
-> >>
-> > 
-> > Right. This is already under discussion here:
-> > https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
-> > 
-> > IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
-> > using CLK_OF_DECLARE.
-> 
-> Depends. Where are these clocks? Naming suggests they might not be even
-> part of this device. But if these are part of the device, then why this
-> is not a clock controller (if they are controllable) or even removed
-> (because we do not represent internal clock tree in DTS).
+The hard case looks to be the following:
+s#A struct A { int ; }
+s#B struct B { s#A ; }
+foo void foo ( s#B )
+bar void bar ( s#A , s#B )
 
-xosc is a crystal connected to the oscillator input of the RP1, so I would
-consider it an external fixed-clock. If we were in the entire dts, I would have
-put it in root under /clocks node, but here we're in the dtbo so I'm not sure
-where else should I put it.
+When processing foo, the code would cache s#B with expanded s#A.
+However, when processing bar and reaching s#B, the cache should report
+a miss because s#B with unexpanded s#A is required.
 
-Regarding pclk and hclk, I'm still trying to understand where they come from.
-If they are external clocks (since they are fixed-clock too), they should be
-in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
-there's no special management of these clocks, so no new clock definition is
-needed.
-If they are internal tree, I cannot simply get rid of them because rp1_eth node
-references these two clocks (see clocks property), so they must be decalred 
-somewhere. Any hint about this?.
+So the code would need to track which types were already expanded and
+have each cache entry accordingly tagged with similar data.
 
-Many thanks,
-Andrea
+Hm, it might be that doing all this additional tracking would then be
+actually slower than processing the types repeatedly for each symbol.
+I'm not sure.
 
-> 
-> Best regards,
-> Krzysztof
-> 
+-- 
+Thanks,
+Petr
 
