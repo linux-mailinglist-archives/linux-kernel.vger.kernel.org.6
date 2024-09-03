@@ -1,123 +1,223 @@
-Return-Path: <linux-kernel+bounces-312973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8FA969E83
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACB4969E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D8A1C236E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F222EB2246D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071451A7249;
-	Tue,  3 Sep 2024 12:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5F81A7249;
+	Tue,  3 Sep 2024 12:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qk9Hv9bs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BP1eNfZt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3F61CA6A7;
-	Tue,  3 Sep 2024 12:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1B61A7242;
+	Tue,  3 Sep 2024 12:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368299; cv=none; b=TPBiesr0Z8lWWnDh4eTiYmWWmjOnYQV3WqY7LKAYmaPYno4a1pCJhNB3CGZZVTySnpI2l3eyolcM7/nMpB/Egp/H85M4w/PFkMhnSi2ZxrcZE3+vo1vwnc8zgmhgybq8vuOHyGVGx7somMSMPvBxr8nWHGk622IQZMb6PtalQ4M=
+	t=1725368391; cv=none; b=pp6/kOoJvJgpUELEVVmRkiVk3T9xp0VumNjpxUTr2JCX2G1DuYU+pxOnEcCkAZWSA89EKSEGSPSERCMTPA0AIncO52dcPNMk6fL3pFUoMqJzN3MMs67mhnU3hfeU0C0rQKECgOm9FX9EToSi45myROXBjcRp+DWUvqUdTMr9EH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368299; c=relaxed/simple;
-	bh=4T5S9DDic3SFOWYTFLHIzBWd3daU2H4dW6Ld0NcAHwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGIKNZzfvtN2e9QemURkBhRFvpu/6LGgWvjmH4OtvGDOY4l8SOZXVIQ3vwgBrbzFyfVPWe8oa4T/S/YWxJiAziMJ4y0AmsHg3fChJ3A8bgK/oDRBJAotmmkJ5E94YY1K1X6SrXR7n27F5o4EjZPK7Q50UjtTf1D0deubphCyXpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qk9Hv9bs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FB8C4CEC4;
-	Tue,  3 Sep 2024 12:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725368297;
-	bh=4T5S9DDic3SFOWYTFLHIzBWd3daU2H4dW6Ld0NcAHwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qk9Hv9bsuU0L98pUA2ilfqa5nh5zWcbyv3CnfdwyXywgF8PoxaKcUaccfIbaMOaDb
-	 lOZcyEwG899CJrITRGBPX0WSWEtrPAarVHZ/6ajYm2kr1+NXphjnMF9NMRktgI/myN
-	 D9aLW5Pw6DqACUjazsDAQfMLjBYR/RSPxQJtC/uQ=
-Date: Tue, 3 Sep 2024 14:58:14 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Siddh Raman Pant <siddh.raman.pant@oracle.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: CVE-2024-41041: udp: Set SOCK_RCU_FREE earlier in
- udp_lib_get_port().
-Message-ID: <2024090344-repave-clench-3d61@gregkh>
-References: <2024072924-CVE-2024-41041-ae0c@gregkh>
- <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
- <2024090305-starfish-hardship-dadc@gregkh>
- <CANn89iK5UMzkVaw2ed_WrOFZ4c=kSpGkKens2B-_cLhqk41yCg@mail.gmail.com>
+	s=arc-20240116; t=1725368391; c=relaxed/simple;
+	bh=jHyzpKqHokvHJ6S6KmoMJTRdJ5y0C642VzrrUor11Ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BuWGikmpCFBP7SsM5UYuz99/lZ5U9AJoAVowaDnE24aoB2Da/GR3FXK2jaFTZf2VCoFn/KFN5xEzakZSDy/53F0UNDNQ9cBTmWWVYFv7R7i/SaaG1sGMG+hpEdUQsTGlgjJqiYJs6kWHtgXD2pyLG7AGJbXgFex3sIfxzAQXKHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BP1eNfZt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483BcUfk007584;
+	Tue, 3 Sep 2024 12:59:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gcyjG8QKOoXWSL8QH8MzR7ntKgb2gNkywn39XRQw5Wg=; b=BP1eNfZtuMUUfHfu
+	xpRLG9tB7x3CoQSQtQ8lODh3TnVtvcFaaqrdMRQvPCREVLow834i9seVI5MHwF4Y
+	L9hKH5sXhncDa9VJbifiHPjq0NwanuVLkHj6CPJC7loakY3xGDfrCWsWhBftljGP
+	vujXuBcNJMUnKou8gEQ9bdj3LrTfuEmLR3qyE6yn7ZoeY9NJcdFS3mu7ClmjMEyY
+	WtG0u5bi/EGd4nOZ9dxyEGiRuPzm040DpM7sp0dEHBJ4EDOe7/fbwCRKA6rHnptO
+	162aTP23uefr1J0kXy2cgcP2//XdAgcAF3QWaEh2ZkjSYc95b1tSqFPbPy2MNEQI
+	8aN0AA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt4rfcxx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 12:59:32 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483CxV5M026573
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 12:59:31 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 05:59:25 -0700
+Message-ID: <f5121a5f-86f3-4c14-93ed-581b8ef82797@quicinc.com>
+Date: Tue, 3 Sep 2024 18:29:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 1/6] iommu/arm-smmu: re-enable context caching in smmu
+ reset operation
+To: Robin Murphy <robin.murphy@arm.com>, <robdclark@gmail.com>,
+        <will@kernel.org>, <joro@8bytes.org>, <jgg@ziepe.ca>,
+        <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
+ <20240816174259.2056829-2-quic_bibekkum@quicinc.com>
+ <fe5fcd06-ff28-4171-aa22-1bdc1e8510d0@arm.com>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <fe5fcd06-ff28-4171-aa22-1bdc1e8510d0@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iK5UMzkVaw2ed_WrOFZ4c=kSpGkKens2B-_cLhqk41yCg@mail.gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: saTMxbKunqahZcuz22Pw9UQJvnNCBwCH
+X-Proofpoint-ORIG-GUID: saTMxbKunqahZcuz22Pw9UQJvnNCBwCH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030105
 
-On Tue, Sep 03, 2024 at 02:53:57PM +0200, Eric Dumazet wrote:
-> On Tue, Sep 3, 2024 at 2:07 PM gregkh@linuxfoundation.org
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Sep 03, 2024 at 11:56:17AM +0000, Siddh Raman Pant wrote:
-> > > On Mon, 29 Jul 2024 16:32:36 +0200, Greg Kroah-Hartman wrote:
-> > > > In the Linux kernel, the following vulnerability has been resolved:
-> > > >
-> > > > udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
-> > > >
-> > > > [...]
-> > > >
-> > > > We had the same bug in TCP and fixed it in commit 871019b22d1b ("net:
-> > > > set SOCK_RCU_FREE before inserting socket into hashtable").
-> > > >
-> > > > Let's apply the same fix for UDP.
-> > > >
-> > > > [...]
-> > > >
-> > > > The Linux kernel CVE team has assigned CVE-2024-41041 to this issue.
-> > > >
-> > > >
-> > > > Affected and fixed versions
-> > > > ===========================
-> > > >
-> > > >     Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.4.280 with commit 7a67c4e47626
-> > > >     Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.10.222 with commit 9f965684c57c
-> > >
-> > > These versions don't have the TCP fix backported. Please do so.
-> >
-> > What fix backported exactly to where?  Please be more specific.  Better
-> > yet, please provide working, and tested, backports.
-> 
-> 
-> commit 871019b22d1bcc9fab2d1feba1b9a564acbb6e99
-> Author: Stanislav Fomichev <sdf@fomichev.me>
-> Date:   Wed Nov 8 13:13:25 2023 -0800
-> 
->     net: set SOCK_RCU_FREE before inserting socket into hashtable
-> ...
->     Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
-> 
-> It seems 871019b22d1bcc9fab2d1feba1b9a564acbb6e99 has not been pushed
-> to 5.10 or 5.4 lts
-> 
-> Stanislav mentioned a WARN_ONCE() being hit, I presume we could push
-> the patch to 5.10 and 5.4.
-> 
-> I guess this was skipped because of a merge conflict.
 
-Yes, the commit does not apply, we need someone to send a working
-backport for us to be able to take it.
 
-Siddh, can you please do this?
+On 8/30/2024 6:23 PM, Robin Murphy wrote:
+> On 16/08/2024 6:42 pm, Bibek Kumar Patro wrote:
+>> Default MMU-500 reset operation disables context caching in
+>> prefetch buffer. It is however expected for context banks using
+>> the ACTLR register to retain their prefetch value during reset
+>> and runtime suspend.
+>>
+>> Replace default MMU-500 reset operation with Qualcomm specific reset
+>> operation which envelope the default reset operation and re-enables
+>> context caching in prefetch buffer for Qualcomm SoCs.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>> ---
+>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 36 ++++++++++++++++++++--
+>>   1 file changed, 33 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c 
+>> b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>> index 36c6b36ad4ff..8ac1850b852f 100644
+>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>> @@ -16,6 +16,16 @@
+>>
+>>   #define QCOM_DUMMY_VAL    -1
+>>
+>> +/*
+>> + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
+>> + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
+>> + * buffer). The remaining bits are implementation defined and vary 
+>> across
+>> + * SoCs.
+>> + */
+>> +
+>> +#define CPRE            (1 << 1)
+>> +#define CMTLB            (1 << 0)
+>> +
+>>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+>>   {
+>>       return container_of(smmu, struct qcom_smmu, smmu);
+>> @@ -381,11 +391,31 @@ static int qcom_smmu_def_domain_type(struct 
+>> device *dev)
+>>       return match ? IOMMU_DOMAIN_IDENTITY : 0;
+>>   }
+>>
+>> +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
+>> +{
+>> +    int ret;
+>> +    u32 val;
+>> +    int i;
+>> +
+>> +    ret = arm_mmu500_reset(smmu);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    /* arm_mmu500_reset() disables CPRE which is re-enabled here */
+> 
+> I still think it would be good to document why we think this is OK, 
+> given the reasons for disabling CPRE to begin with.
+> 
 
-thanks,
+Hi Robin,
 
-greg k-h
+Sure, I agree with your point. I’ll elaborate on the comment here to 
+document the reason for re-enabling CPRE.
+
+/* The errata for MMU-500 before the r2p2 revision requires CPRE to be
+disabled. The arm_mmu500_reset function disables CPRE to accommodate all
+RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
+the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
+the CPRE bit for the next-page prefetcher to retain the prefetch value
+during reset and runtime suspend operations. */
+
+Does this sound good, let me know of your suggestions as well incase.
+
+Thanks & regards,
+Bibek
+
+> Thanks,
+> Robin.
+> 
+>> +    for (i = 0; i < smmu->num_context_banks; ++i) {
+>> +        val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
+>> +        val |= CPRE;
+>> +        arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int qcom_sdm845_smmu500_reset(struct arm_smmu_device *smmu)
+>>   {
+>>       int ret;
+>>
+>> -    arm_mmu500_reset(smmu);
+>> +    qcom_smmu500_reset(smmu);
+>>
+>>       /*
+>>        * To address performance degradation in non-real time clients,
+>> @@ -412,7 +442,7 @@ static const struct arm_smmu_impl 
+>> qcom_smmu_500_impl = {
+>>       .init_context = qcom_smmu_init_context,
+>>       .cfg_probe = qcom_smmu_cfg_probe,
+>>       .def_domain_type = qcom_smmu_def_domain_type,
+>> -    .reset = arm_mmu500_reset,
+>> +    .reset = qcom_smmu500_reset,
+>>       .write_s2cr = qcom_smmu_write_s2cr,
+>>       .tlb_sync = qcom_smmu_tlb_sync,
+>>   #ifdef CONFIG_ARM_SMMU_QCOM_DEBUG
+>> @@ -445,7 +475,7 @@ static const struct arm_smmu_impl 
+>> qcom_adreno_smmu_v2_impl = {
+>>   static const struct arm_smmu_impl qcom_adreno_smmu_500_impl = {
+>>       .init_context = qcom_adreno_smmu_init_context,
+>>       .def_domain_type = qcom_smmu_def_domain_type,
+>> -    .reset = arm_mmu500_reset,
+>> +    .reset = qcom_smmu500_reset,
+>>       .alloc_context_bank = qcom_adreno_smmu_alloc_context_bank,
+>>       .write_sctlr = qcom_adreno_smmu_write_sctlr,
+>>       .tlb_sync = qcom_smmu_tlb_sync,
+>> -- 
+>> 2.34.1
+>>
 
