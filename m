@@ -1,86 +1,215 @@
-Return-Path: <linux-kernel+bounces-312730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA959969A74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:42:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C0E9699FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21361F2423D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1825D1C231C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02911C62A6;
-	Tue,  3 Sep 2024 10:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186221B9821;
+	Tue,  3 Sep 2024 10:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlSo8KaS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OFxJCAnc"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCC619CC3F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E9019F435
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360142; cv=none; b=XGkfDget5H4nMCpFxF4klHsQXMcQnN5W2drbt50hbuWApk2ispMg0T6orqec2oDmcnyL7KIUkAqwKhdOquZ4ghlVjJjLg5kCwYgqsm0cqLxMshr+YtlhwrCSzUuyal5+2F9hcMy1neDQE4AEsIY8j0eBPgejfyjIEr1TloRvsJE=
+	t=1725358790; cv=none; b=ExPLTTC36NNHZ665aD5loPXN/atCZfBr8kV1nkhTn9YewNqB1kOG7Lqmj4mqAPi9+cvvORf2hdXvDcWkjeInDfslax0aEq4dv14EhUKKSqp8UOok5Ae8MDfAQ1diYf4r8hRFxq5OUn8jr69Wmr70vInH9c9D57HJl2hlEOkW/XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360142; c=relaxed/simple;
-	bh=VtSl96nmF/LCjNO2esvvA9cTDZJDeTeuiBlr6O5ZeXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Atb3+ZwNjC3pJihZ+BEmZux/od39Y67x7QuhL4xYrfXwXfx5krzu3EUE7TeBFrpe08nEpi+YiKTjXLByUoy9A8kNlcghMt5xTN1VLkOVG68+TL1l887bZYpdQiQBt6hOsvStKhr88f3o95VBZU1ZUjRRb5cvX26jG5qADxZhq4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlSo8KaS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC6EC4CEC4;
-	Tue,  3 Sep 2024 10:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725360141;
-	bh=VtSl96nmF/LCjNO2esvvA9cTDZJDeTeuiBlr6O5ZeXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YlSo8KaSkLEWPdHpsVV3WIMQkTuHFLKjF8WLgPUBlNRvIz2l4K/95RD6WzAW51XtE
-	 IffhN8kVYyaSq7wOlS7WCMIYyryLgvbCxHm02uqWYv9g5vjzU5mO9axFka2Yqgm4xv
-	 YnBv1+JfGRS4FRPWwNaxTe7j1k9m2Z/4iLZEG9U4=
-Date: Tue, 3 Sep 2024 12:19:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: srinivas.kandagatla@linaro.org
-Cc: linux-kernel@vger.kernel.org, Sukrut Bellary <sukrut.bellary@linux.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 1/1] misc: fastrpc: Fix double free of 'buf' in error path
-Message-ID: <2024090311-foam-pouncing-fcdd@gregkh>
-References: <20240902141409.70371-1-srinivas.kandagatla@linaro.org>
- <20240902141409.70371-2-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1725358790; c=relaxed/simple;
+	bh=C8KF0NATt/6MEKo6hjD8oYxBGb+BnkEDDEBROE2tMCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkCQGToe5YYtDgnibE3R5l6jj/QsGtWoNmQzbXQzLk2m9oWXRVcaOxaSQLHP6TrSPz0i1W6OHhTTFkg0CfGGKi+G3xG9qA92VEAwVzQdO6OWu8OwGR3pVJfu1kChdUIO36jXVhnB0/DnMtNpEmewKz37WntSDPiK9kdlKXY2ZvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OFxJCAnc; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53345dcd377so7108446e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725358787; x=1725963587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
+        b=OFxJCAncAWZH82ldEgVo3pSwlwXgGZ6kPzJIcnSj0b2oRNk4qg46x0VhvupnrCk97w
+         LmIOT0HFm4ZDSTe7IIKcY5rlfUfgTjggUqQLU1IObU8a3uZSgnTOTZwAra0kwd17wyqx
+         Hnb4PDBG3NWND+zyFG/j0eaUHKmabelAToIS1nT57HQga7sPC/jSccWAG5gAkT5XjFz7
+         m1dQl6Oef4O+40Tqu+mjNXTqOhZcQHvcGJtxy4mTadb6kMsxxGdf5YHWrmANnhmNUDyF
+         eGFXbgaywzYAvuEr3bwjQ1jWejN6QWR6BzlaWBRFGG80dRYbQeKEYTNqhStI/mLzTwJd
+         uJhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725358787; x=1725963587;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
+        b=iNia5vW5JPWeg+pyikA5Md5XA5J+KfSuf0oVPcgLNe8YSSpI6TmMtEFbRqVZYI2iMq
+         yEv1MTnJaq4M/ekYnTBWpCUgoZhbAlgtvWqPhNOeUmwQ7WvCdF84pEEBp3B8lu94tOsZ
+         EcQs7K4j7SaOTVHxMrebQUBSxmx0sl/vvvlPac3qdtHcfyT0ntZSd6LuTwN1C3znW3Yn
+         EgDwfjZUGrv4FZFWFp8mZXt/CnyHUxzmjYnX97+AGXWGcxYKAwg2Zd9XbMt3GMhWN/k4
+         qN2BK3hOMdydXkN6zYf3T4wFqA8MxtFnbV3PMIsNy49ffgPVdrSj+r1TLmAFFL1yTCn5
+         B+ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8fHI40xuKpZlKDJUAG6UFy1DVaKJ6CCKTiFUIiqL7lNaAeorNredQY/kApvTVpkyiL1e5pNlr2VFnYGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKuGGguuvzlbzPB8FmIj6C4vEb0X0hzz7+lAHlngStYGreYPCy
+	VXN3KmR/yqW8Q5N8NSe2yZC4ibOJ5QFHvSFy4Zsw5CSDCTjLuZQ+SCI8UJotarA=
+X-Google-Smtp-Source: AGHT+IEls7cIQ+6hQSbZxyc8bV5YfWpE5Og0ZDGcEK0Z3VxswtkW6lt0WU0csWHFdZCyWxXy9FAPkw==
+X-Received: by 2002:a05:6512:108c:b0:52e:7125:c70a with SMTP id 2adb3069b0e04-53546b93fd9mr8417306e87.47.1725358786595;
+        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb0e5sm675067666b.12.2024.09.03.03.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
+Message-ID: <4cb2f788-1ba6-40f6-a48d-1fd2e5293aa8@tuxon.dev>
+Date: Tue, 3 Sep 2024 13:19:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902141409.70371-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
+ "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
+ <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
+ <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
+ <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 03:14:09PM +0100, srinivas.kandagatla@linaro.org wrote:
-> From: Sukrut Bellary <sukrut.bellary@linux.com>
-> 
-> smatch warning:
-> drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
-> 
-> In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
-> fastrpc_req_munmap_impl() if unmap is successful.
-> 
-> But in the end, there is an unconditional call to fastrpc_buf_free().
-> So the above case triggers the double free of fastrpc buf.
-> 
-> Fixes: 72fa6f7820c4 ("misc: fastrpc: Rework fastrpc_req_munmap")
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/misc/fastrpc.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Any reason you forgot a cc: stable@ on this?
 
-I'll go add it by hand...
+On 02.09.2024 13:47, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, September 2, 2024 11:41 AM
+>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+>>
+>>
+>>
+>> On 02.09.2024 12:18, Biju Das wrote:
+>>>>>>> Do you have any plan to control this power transitions(ALL_ON to AWO and vice versa) in linux?
+>>>>>> As you know, the RZ/G3S USB PM code is already prepared. This is
+>>>>>> also configuring these signals when going to suspend/exiting from resume.
+>>>>>> W/o configuring properly these signals the USB is not working after a suspend/resume cycle.
+>>>>> One option is to handle SYSC USB PWRRDY signal in TF-A, if you plan
+>>>>> to handle system transitions
+>>>> there??
+>>>>
+>>>> As I mentioned, the settings in these registers may be changed by intermediary booting
+>> applications.
+>>>> Depending on that, Linux need to control it also on probe for USB to
+>>>> work (it should be the same with PCIe, these signals seems similar from HW manual description).
+>>> You mean system transition settings will be override by U-boot, so Linux needs to restore it back??
+>>
+>> It was talking about booting...
+> 
+> I am also referring to boot. Boot starts with TF-A and it has a system state.
+> 
+>>
+>> You proposed to handle SYSC signals from TF-A in a discussion about system power transitions:
+>>
+>> "One option is to handle SYSC USB PWRRDY signal in TF-A,  if you plan to handle system transitions"
+>>
+>> (I was guessing the "system transition" statement there refers to power states transitions, ALL_ON <->
+>> AWO/VBAT)
+> 
+> That is correct.
+> 
+>>
+>> and I gave the booting process as a counter example: if we handle it in TF-A it may not be enough as
+>> these signals might be changed by intermediary booting applications (e.g., U-Boot).
+> 
+> Why should U-boot override, system state signals such as USB PWRREADY? Can you please give an example.
 
+I didn't say *should* but *might* and I was referring to a hypothetical
+situation where any used application (bootloader) might trigger this signal
+for whatever reason. My point was to let Linux to handle all the settings
+that it can do for a particular functionality. The resisters in SYSC
+address space controlling these signals are accessible to normal world
+compared to others in the SYSC address spaces.
+
+> 
+>>
+>> To conclude, there are 3 scenarios I see where these signals need to be
+>> handled:
+>> 1/ booting 
+>> 2/ suspend to RAM
+>> 3/ driver unbind/bind
+> 
+> --> It should be OK as linux is not handling USB PWRREADY signal.
+> 
+>>
+>> In case of booting: if we have TF-A to set signals there might be intermediary booting applications
+>> (e.g. U-Boot) that set these signals also. If it leaves it in improper state and Linux wants to use
+>> USB then the USB will not work (if Linux doesn't handle it).
+> 
+> That is the problem of U-boot. U-boot should not override system state signals such as USB PWRREADY.
+
+U-Boot can also use USB as well.
+
+> 
+>>
+>> In case of suspend to RAM: as TF-A is the only application in the suspend to RAM chain, it should work
+>> handling it in TF-A.
+> 
+> That is correct, TF-A should handle based on system state.
+> 
+>>
+>> In case of unbind/bind: currently we don't know if these signals introduces any kind of power saving
+>> so asserting/de-asserting them in Linux may be useful from this perspective, if any.
+> 
+> These are system signals, according to me should not be used in unbind/bind.
+
+It can be done whatever way. I would just prefer to work for all scenarios.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> I may be wrong.
+> 
+> Cheers,
+> Biju
 
