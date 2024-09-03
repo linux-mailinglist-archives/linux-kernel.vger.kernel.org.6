@@ -1,133 +1,87 @@
-Return-Path: <linux-kernel+bounces-313153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F0596A105
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:46:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091FF96A124
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0AA71C230E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C64F1C24070
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4397418593D;
-	Tue,  3 Sep 2024 14:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC000154BE9;
+	Tue,  3 Sep 2024 14:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AGM6Irez"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435EC154BE9;
-	Tue,  3 Sep 2024 14:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YGMFrdY2"
+Received: from m15.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7FB6F30D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374760; cv=none; b=Z+C3qAaz5IJOj0rvIKPBEoXsaUTS74w+6IBRIm+R3U0KdCPe6PFm95StL6OgDXm9nu2+LQSGwGFkIi3WpC5Kj/JlbBmiev4ieWganQuvVNhIVsXlFEDgCDzVSo2SEF++NxX/bsDUJwusc5CrobLMGOV/RirbdpGm18B95cisIb8=
+	t=1725375055; cv=none; b=J7HniJ9Uxfr6RklQZMNRw4urdDdQBibfy9Dw7rFSDaWdj3KzbI6+XYfNicXsFSw49t4ZhvKZ9Et7zDrebsjgk4c5z73tkKjH/3O7MWhvRjGHQD2Qr2Tydjwzga8xcDUKyBuBJbK/YQj5wlehaBv3NHH7lBzMUsgl8XwhKa/LsTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374760; c=relaxed/simple;
-	bh=BZuHabAACmsYxt89i5XvHNz9DSVj9Q7ZinvmM+9Vt/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7pBwT51P5/yEF40OruTkeEU5BVt1c1K6KE1Z0701sTGEw7vwONdF99ZRspcaDy8Q1tlH6VnV+9Lc9zOVFMJYlG0yr1LafE+Hyva9Uxd9StQCkoVnfM9oR9YcPWln8ky6HKd6v0H8ydDdAyjE0pUCATcrGJvMzfV/JVfk8f1GqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AGM6Irez; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725374759; x=1756910759;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BZuHabAACmsYxt89i5XvHNz9DSVj9Q7ZinvmM+9Vt/0=;
-  b=AGM6Irez6GGVhorV++bKHP3tF2UR0gqC0q7CrXzny8sbpD/OFVfFw1PR
-   OKbD/ZisQRM+42zf2YyJO95TA70mchgANCaqrbL3oeJ7+jJl0AEGpUHoH
-   dLJNdcvYDvH9EoQgsLm2V7+o+sPRxJFOXfSrBMk7YvnJsVOMXuWMvbJZt
-   m2migBEcQTdLMv7cyChKEheuwmjoqQmAECvFqs3nOKbSPEsVhhBfpxG6E
-   lAcjubJJ5u2a2CgOatD9d9u9j9W3qrXQiUT/+aGqzf3DrUQBgxvoMeSJS
-   +2mtzJkymy0rt9tyUm5wJwTTTL09aCFBgmeyYnYGB2vE1PbOPILkvfI7F
-   Q==;
-X-CSE-ConnectionGUID: ePRdC55VSCScJtzfcM1W7w==
-X-CSE-MsgGUID: r5nGTs2TSkq6PllSmJNZkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23930419"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="23930419"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:45:59 -0700
-X-CSE-ConnectionGUID: FNNr8um7T3S8euuHkyqm3w==
-X-CSE-MsgGUID: Kl5ExL7NTpqw/PMnis6Ikg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65143739"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:45:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUmz-00000004jxX-0IwS;
-	Tue, 03 Sep 2024 17:45:49 +0300
-Date: Tue, 3 Sep 2024 17:45:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
-	andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, nico@fluxnic.net, arend.vanspriel@broadcom.com,
-	kvalo@kernel.org, robh@kernel.org, saravanak@google.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 6/7] wifi: wlcore: sdio: Make use of
- irq_get_trigger_type()
-Message-ID: <ZtchHGEBtn-BVB-l@smile.fi.intel.com>
-References: <20240902225534.130383-1-vassilisamir@gmail.com>
- <20240902225534.130383-7-vassilisamir@gmail.com>
+	s=arc-20240116; t=1725375055; c=relaxed/simple;
+	bh=k5utM3wgHf32qhGpen5q4SK8rJu+bGuDYsx7xhGgVa0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nckptkWkNynTvx/cSRuPNz4fiegmarknmdETYL5IeMITN0QM6p9VbfGoSE3iOlqqvYHzCittncKSFEbzPZ/OGxnkBbDH7B4Pt7KX6hL8f7GJk4fz4rUhTAt4Zi0xldjy2LsSZM43ZWRakqeKrORIcSur9uEebVFZ93D2IKvwRpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YGMFrdY2; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=PgJJ8
+	SX8BUGlB9T2TFFYMz+dTL9blm1JY4VAnKEEgSk=; b=YGMFrdY2hD/RwPtYoX1sb
+	CiJ85ureLALodvKkINXul3lnJIO5FT+wJEWZsGijMP8pbRk/v8hbIkb4laQ7Ptdl
+	2ZL6E3tw/6arTnorTJfhRvR64YDa7RaV61Z7WTW4hqfku2IdgtIRG6dfpVBfwSZQ
+	IENmUnrj1i1OrZc63OqEzM=
+Received: from localhost.localdomain (unknown [36.33.36.240])
+	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wDX_18bItdm5cJoFQ--.14451S2;
+	Tue, 03 Sep 2024 22:50:04 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH] iommu/vt-d: Fix 'Null pointer dereferences' issue
+Date: Tue,  3 Sep 2024 22:46:01 +0800
+Message-Id: <20240903144601.8149-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902225534.130383-7-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX_18bItdm5cJoFQ--.14451S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr1kGF17Gryruw45CFWrAFb_yoWfWrXEkr
+	y8ZFs7ury5Zr48Z3WayFnruryqqw12vFZ3Z3y0grySqFn8Zrn5Cana9FWfJr45G3yUJFya
+	yF4UWF4fuFyxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUU2Nt5UUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYBZPamV4I-QKmQABsL
 
-On Tue, Sep 03, 2024 at 12:55:33AM +0200, Vasileios Amoiridis wrote:
-> Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
-> simple irq_get_trigger_type(irq).
+Passing null pointer "pdev" to "pci_enable_pasid", which dereferences it.
+Check the "pdev" is null or not before passing to "pci_enable_pasid".
 
-...
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+ drivers/iommu/intel/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  	memset(res, 0x00, sizeof(res));
->  
->  	res[0].start = irq;
-> -	res[0].flags = IORESOURCE_IRQ |
-> -		       irqd_get_trigger_type(irq_get_irq_data(irq));
-> +	res[0].flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
->  	res[0].name = "irq";
-
-
->  	if (wakeirq > 0) {
->  		res[1].start = wakeirq;
-> -		res[1].flags = IORESOURCE_IRQ |
-> -			       irqd_get_trigger_type(irq_get_irq_data(wakeirq));
-> +		res[1].flags = IORESOURCE_IRQ | irq_get_trigger_type(wakeirq);
->  		res[1].name = "wakeirq";
->  		num_irqs = 2;
-
-Since you are touching a lot here, consider also using macros from ioport.h,
-i.e. DEFINE_RES_IRQ_NAMED().
-
-This will become something like
-
-	res[0] = DEFINE_RES_IRQ_NAMED(irq, "irq");
-	res[0].flags |= irq_get_trigger_type(irq);
-
-	if (wakeirq > 0) {
-		res[1] = DEFINE_RES_IRQ_NAMED(wakeirq, "wakeirq");
-		res[1].flags |= irq_get_trigger_type(wakeirq);
-
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 9f6b0780f2ef..a1e54f334330 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -3935,7 +3935,7 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
+ 	 * So always enable PASID support on devices which have it, even if
+ 	 * we can't yet know if we're ever going to use it.
+ 	 */
+-	if (info->pasid_supported &&
++	if (info->pasid_supported && pdev &&
+ 	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
+ 		info->pasid_enabled = 1;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.2
 
 
