@@ -1,274 +1,143 @@
-Return-Path: <linux-kernel+bounces-313321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDF596A3B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D311596A3B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA726281126
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B8C1C208BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB5B189F29;
-	Tue,  3 Sep 2024 16:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FB518953E;
+	Tue,  3 Sep 2024 16:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mbK6qNV4"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujGJwoBi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49722189B8E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F5418A6CB;
+	Tue,  3 Sep 2024 16:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379748; cv=none; b=VM1c0f/rH2y6q7PFxpuME3lDu3HBCt9qaOOFVMxvEjgUllv6m/TXLG/UkfmUhYHm6p2P1bksu/32zXK0i/ouoNYvjE5SpC7v38VV5o++669UlUOr68G22ptBTBo5ng6AJ3O4PFGotKmfAm+C/QGfb7TSzt7LVbp88eEvARbzAD0=
+	t=1725379750; cv=none; b=ckPdAYqLK0x01Lp1v0G6vgM636h0V3BcqyQiUvK30vMjR9aSHzWGbQ33rfyvdzJpn7c1PPoEf+ux1wD3hip/3IaM4Ca7knyio9HZ+JZpOrOCw/JM14fYW+OiQQz21pXiCtDKn+tSifOkpkYA7ATku2p0I1olSXLm1fNHbSwQaDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379748; c=relaxed/simple;
-	bh=y5SL93VBSG2PaFcIjScLBdkpp7+Kda8Df14EgSpWRn0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bDRww/o9cy3I3xqFIAbLhNIrMiSRcGpzxK5LKuwt/1yFi8SbadF7SaUeMXGX6KfKEWuzo5yO2Z88t7Pn+AB1TRogJHIb7TlLddvwloqYXcr0VUkxc4A8pzyxz8VE3RmBYuuv9cGqIB5ryRy73xQNhFh59Tqbzx0ksfRpWm16IK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mbK6qNV4; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-534366c194fso5071902e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725379743; x=1725984543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8l/509FpNkymjZk6uQDQhCFKV86rdSFlJhhBluR1lWQ=;
-        b=mbK6qNV4Fi9dqEktBv1jzHT0Mnt0m0mWZTCV1q0uqJpV5Nfuxkm03fVg2NukbcEkgo
-         Ryqsph6TqgcGAJYnwaUgsaFTusB/2a/wgzLMiVo6LobZOGhov+X0Rvn4k/WzqLsFv6lx
-         +HW+fs96QRi3+AuFsADiiXZYyKLE+fHQsFickhgG45QywOFlgfvzRJ0OkcSsCo/PuTWd
-         GY0CT02kV/Sj1hRqWau/JCjgHQE3l1FEZYLRMH7FRhcpRYF7CV5/t4hACP3RF1JvbI+G
-         dtBxWIFph5o8qzQf7WoZZFWmaE9hFTo4bJiDcDcblEQyDJ1uhCAK+sBx0p0fsy4CllxT
-         dSyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725379743; x=1725984543;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8l/509FpNkymjZk6uQDQhCFKV86rdSFlJhhBluR1lWQ=;
-        b=LY4kgKeDCbLWVXVxH+/d6NH6WF8OjNaj4DRVq0rDQhUCziIJRxf/6WRWPITXA5jNuh
-         AxlL83B9Of1ooi9jxToCCHGhZqx/tdPw6QCtlJWLiQJ89Eo42cjSbKSTCM1pKhGUW/ua
-         yociwE1oWhtIXcF//2sCkSfvNbVeRvaDxXjSCfvNdrpNBB62+leh7r033RL8yHq7PBZ3
-         BYtN8yjNmPeixMa0YKdOxI8UUEjSZ7en/bHHt1HwikoPxhLIEzyQdWLEJnGNoNddKrCT
-         xU1efhbIv5sh6cNpn7IEx1D1YpYtMBoSl/7u2r1/BWYT6sbW6G9uMux/PXCh78h61nhE
-         tVAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi7DeBpS4KDLanqv4AQN95je3EqcbSfGtP9agSpnf/NAb75xm4WFdn6p+Kevr/339BzCQLkgHOX7Yhrlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLZJNGBHe/TpGL+GzVzkpyjxQ8ztIsr6/W3Wy7+zenn8SfuA8b
-	R1jp/W2JXIwsmtrKLCqDYFyR67yVtD0yGbaBOGpHgvISIwqnLq0lyetlOSArj0k=
-X-Google-Smtp-Source: AGHT+IHRgADNb3niI6r59DDvi2vKw+KXHb9j7aF21MTBrDxSrH2/p6N4jk8lRMTOk+xwkvlxmsucsA==
-X-Received: by 2002:a05:6512:b98:b0:52f:2adf:d445 with SMTP id 2adb3069b0e04-53546baacdbmr10597606e87.41.1725379743051;
-        Tue, 03 Sep 2024 09:09:03 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898919686bsm693150066b.134.2024.09.03.09.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 09:09:02 -0700 (PDT)
-Message-ID: <2e49b73c-c645-446c-8606-7a531e0a74f8@tuxon.dev>
-Date: Tue, 3 Sep 2024 19:09:00 +0300
+	s=arc-20240116; t=1725379750; c=relaxed/simple;
+	bh=2oYWilPB6GddQnusHJpSufcnEcbn+RzWwm5DmozUZ5Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=iS8S1hP2YBAN9QBbcv+V/BpwP9oyZUMyPBuf4jQpJ31mIUbdMjB/FEnq/wnvYF705KfifDN7IdJQoME1Sdiua3y75HAC9cJszfAxdxc+39iX96+Y6jzqvAwbPrHgUPmeOO7b3ZsbOr8ZwnEYK/a5AlOFCUW6TGbLCbD7xuHiKkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujGJwoBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95293C4CEC9;
+	Tue,  3 Sep 2024 16:09:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725379750;
+	bh=2oYWilPB6GddQnusHJpSufcnEcbn+RzWwm5DmozUZ5Y=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ujGJwoBiOh2tAitzebKvJV818ZPaoPQPGoqDLnRbHBC9DXT4PpN9tWumvGo3t5ihn
+	 OKUzwmYInDHw+s1JSfEN9mGM6hGjklGRUyjOroraCZYLV7HJivjXdljn72TI34x1w9
+	 rn1br2qKhJ2VlnY1nhQfyi+uRzfy5RZf6lm3H85CvDsX4fGefJaPydF4s3r0luCB2k
+	 j5y1XxE2QDmAhogT7Pn1MdOOnOo26OMmxmfyyUkI3LnLq+J50GDjW7bZg3N7o+/L+k
+	 DyNUk59BgN9jsvVVvfX/zQC12RXSHTDW8wznhdE4b21z523+iZwNymeTE0sfeQG0dN
+	 WuvpuhCHlS5rA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <202408302225417622f1e7@mail.local>
- <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
-In-Reply-To: <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Tue, 03 Sep 2024 19:09:06 +0300
+Message-Id: <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+ <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+ <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+ <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+ <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+ <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+ <zhuo.song@linux.alibaba.com>
+Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <bp@alien8.de>,
+ <rafael@kernel.org>, <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+ <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+ <gregkh@linuxfoundation.org>, <will@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-2-xueshuai@linux.alibaba.com>
+In-Reply-To: <20240902030034.67152-2-xueshuai@linux.alibaba.com>
 
-Hi, Alexandre,
+On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+> Synchronous error was detected as a result of user-space process accessin=
+g
+> a 2-bit uncorrected error. The CPU will take a synchronous error exceptio=
+n
+> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue =
+a
+> memory_failure() work which poisons the related page, unmaps the page, an=
+d
+> then sends a SIGBUS to the process, so that a system wide panic can be
+> avoided.
+>
+> However, no memory_failure() work will be queued unless all bellow
+> preconditions check passed:
+>
+> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_m=
+emory_failure()
+> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
+> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_f=
+ailure()
+> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghe=
+s_do_memory_failure()
+>
+> In such case, the user-space process will trigger SEA again.  This loop
+> can potentially exceed the platform firmware threshold or even trigger a
+> kernel hard lockup, leading to a system reboot.
+>
+> Fix it by performing a force kill if no memory_failure() work is queued
+> for synchronous errors.
+>
+> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>
+> ---
+>  drivers/acpi/apei/ghes.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 623cc0cb4a65..b0b20ee533d9 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>  		}
+>  	}
+> =20
+> +	/*
+> +	 * If no memory failure work is queued for abnormal synchronous
+> +	 * errors, do a force kill.
+> +	 */
+> +	if (sync && !queued) {
+> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption\n",
+> +			current->comm, task_pid_nr(current));
 
-On 02.09.2024 17:49, claudiu beznea wrote:
-> Hi, Alexandre,
-> 
-> On 31.08.2024 01:25, Alexandre Belloni wrote:
->> On 30/08/2024 16:02:12+0300, Claudiu wrote:
->>> +	priv->rtc_dev->range_min = mktime64(2000, 1, 1, 0, 0, 0);
->>
->> RTC_TIMESTAMP_BEGIN_2000
-> 
-> OK
-> 
->>
->>> +	priv->rtc_dev->range_max = mktime64(2099, 12, 31, 23, 59, 59);
->>
->> RTC_TIMESTAMP_END_2099
-> 
-> OK
-> 
->>
->>> +
->>> +	return devm_rtc_register_device(priv->rtc_dev);
->>> +}
->>> +
->>> +static void rtca3_remove(struct platform_device *pdev)
->>> +{
->>> +	struct rtca3_priv *priv = platform_get_drvdata(pdev);
->>> +
->>> +	guard(spinlock_irqsave)(&priv->lock);
->>> +
->>> +	/* Disable alarm, periodic interrupts. */
->>> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
->>
->> Why do you disable alarms on driver remove? I think you need to add a
->> comment if this is because it can't system up, else this is a bad
->> practice.
-> 
-> The RTC cannot power on the system after a power off. It can't also resume
-> it from a deep sleep state (when only the SoC area where the RTC resides
-> remains power on (there is no way to signal from RTC to the power supply
-> chain that an alarm happened)). It can only wake it up from s2idle mode
-> where all SoC components remains powered on.
+Hmm... doest this need "hardware" or would "memory corruption" be
+enough?
 
-FTR, this is still valid.
+Also, does this need to say that it is sending SIGBUS when the signal
+itself tells that already?
 
-> 
-> Also, w/o this change the RTC remains blocked under the following scenarios
-> if the interrupts are not disabled in remove:
+I.e. could "%s:%d has memory corruption" be enough information?
 
-This intrigued me and did some further investigation. I found that
-something is wrong on the driver as described bellow.
-
-The failures described in the previous emails were due to the fact that the
-RTC counter clock was requested by the driver as devres managed resource.
-This is the clock that feeds the RTC counting logic.
-
-With the bellow diff applied on top of this series scenarios 1/ and 2/
-described in the previous email works just fine.
-
-For scenario 3/ the system is not powered up (as expected) but there are no
-more failures on the next boots.
-
-diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-index f908d2a1017d..c9adcadc58c0 100644
---- a/drivers/rtc/rtc-renesas-rtca3.c
-+++ b/drivers/rtc/rtc-renesas-rtca3.c
-@@ -747,10 +747,14 @@ static int rtca3_probe(struct platform_device *pdev)
-        if (ret)
-                return ret;
-
--       clk = devm_clk_get_enabled(dev, "counter");
-+       clk = devm_clk_get(dev, "counter");
-        if (IS_ERR(clk))
-                return PTR_ERR(clk);
-
-+       ret = clk_prepare_enable(clk);
-+       if (ret)
-+               return ret;
-+
-        spin_lock_init(&priv->lock);
-        atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
-        init_completion(&priv->set_alarm_completion);
-@@ -783,7 +787,7 @@ static void rtca3_remove(struct platform_device *pdev)
-
-        guard(spinlock_irqsave)(&priv->lock);
-
--       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-+       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
- }
-
-Question is: the RTC counter clock should stay on when the driver is
-unbinded, right?
-
-Thank you,
-Claudiu Beznea
-
-> 
-> 1/ Configure wake alarm and unbind the RTC driver with the following commands:
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > unbind
-> # sleep 12
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > bind
-> 
-> When rebinding the re-configuration of the RTC device times out:
-> [  121.854190] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  121.861511] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 2/ Configure wake alarm, unbind the RTC driver and switch to s2idle with
-> the following commands:
-> # echo s2idle > /sys/power/mem_sleep
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/31004ec00.rtc > unbind
-> # echo mem > /sys/power/state
-> # #system is resumed by non RTC wakeup source (as the RTC alarm is not
-> working anymore in this case)
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > bind
-> 
-> The system is not waked up from RTC alarm (as expected) and the rebinding
-> fails again:
-> 
-> [  172.483688] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  172.491003] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 3/ configure the RTC alarm, unbind and power off (with the following commands):
-> # echo +60 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > unbind
-> # poweroff
-> 
-> The system is not started after 60 seconds and at the next reboot the RTC
-> configuration on probe is failing the same:
-> 
-> [    0.292068] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [    0.292182] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> 
-> In all scenarios the RTC is recovered only if removing/re-applying the
-> power to the SoC area where it resides.
-> 
-> These tests were done with the patches in this series and then I tried it
-> with the following diff on top of the patches in this series. The results
-> were the same:
-> 
-> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-> index 822c055b6e4d..720fdac3adc6 100644
-> --- a/drivers/rtc/rtc-renesas-rtca3.c
-> +++ b/drivers/rtc/rtc-renesas-rtca3.c
-> @@ -586,7 +586,7 @@ static int rtca3_initial_setup(struct clk *clk, struct
-> rtca3_priv *priv)
->         usleep_range(sleep_us, sleep_us + 10);
-> 
->         /* Disable alarm and carry interrupts. */
-> -       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
-> +       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
->         ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
->         if (ret)
->                 return ret;
-> @@ -784,7 +784,7 @@ static void rtca3_remove(struct platform_device *pdev)
->         guard(spinlock_irqsave)(&priv->lock);
-> 
->         /* Disable alarm, periodic interrupts. */
-> -       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> +       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
+> +		force_sig(SIGBUS);
+> +	}
+> +
+>  	return queued;
 >  }
-> 
-> Thank you,
-> Claudiu Beznea
-> 
+> =20
+
+BR, Jarkko
 
