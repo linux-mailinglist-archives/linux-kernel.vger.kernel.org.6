@@ -1,138 +1,241 @@
-Return-Path: <linux-kernel+bounces-313388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A5696A4D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FEF96A4D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239021C23AD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626141F21C41
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE32618BC2E;
-	Tue,  3 Sep 2024 16:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859CF18BC14;
+	Tue,  3 Sep 2024 16:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icPJAgfL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lbxoMXnX"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2057.outbound.protection.outlook.com [40.107.243.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF18B49A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725382209; cv=none; b=SrLb8BnOXBQPR7YZbPn6xSrm4qkGJKqIs8+v5lGd5B8HlDQhjFX6WgHRmBM6uARnqesZbVJRwS2UyxcHXY4vtHQQJC8MFpmlFAiUI4g4BvWJPP4BPqlYwPa0MeEF3mg2WXj4pxG1UGVYqaCldjQw3m0efnilXR+jbCY2zmpNbjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725382209; c=relaxed/simple;
-	bh=nqmuOyJXosNjfxFp47rk8c/6P1gHeGLK+0RE43HXhZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R+OUukztYX1DGf67gTwiEIFOpuEqSO35S1WTxsHKyxbCGQg6CsRaURR3niECGP06qHqh+ibH9To510Sz2RXWgIq3GeKCzHf4oldy4IRDa8wZuShCdYAR3pCu0TSgOTW52T1eKeaeD3BPt/LzL0mhyboHwZokG+ESthiY3jjXypA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icPJAgfL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725382206;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vt3R45yng9MI1JlX9x1QeReU6N6vf5Xvk3elVudJjyU=;
-	b=icPJAgfLMzxapCbYLu1AtK41aYKR7kT3Nu6ql62ACzFOkZtdBWEXmfg4AkhxtaOnU/Sad2
-	hBQj4g1I/pJAUAHCU5fRQGXHYGPqR/HvFnT/NoLHH1hi0tF6obi9IyprGqMheAoX7hyg2V
-	yWNVrR9lSIm5isTFC7e1PE6LQdypibk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-694-wfQ2-rdzN0ml5yWDjaGr_Q-1; Tue, 03 Sep 2024 12:50:05 -0400
-X-MC-Unique: wfQ2-rdzN0ml5yWDjaGr_Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c881282cfso12651755e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:50:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725382204; x=1725987004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vt3R45yng9MI1JlX9x1QeReU6N6vf5Xvk3elVudJjyU=;
-        b=lZNpkH7C9eagO/Cb0NT7sABm/zw17mDfte+2oN5WOjpjvJsOzPLy1bTCUuRzMGGxZP
-         zztI3UJoXeNM/3J1DvR2bRcPxmBXSvVyuC4vIX/exCIvgk6trVgOl50bqkimRAbRCvpw
-         ILXQErbCZemnVva78O0aOyslOst6KxSjaePQO/f6ujxx2au1ChoXIqR7zBD49vg4pQRq
-         p0QnuahZkenfP6YpiwRKUYYuJMzpDGTtetGTYunxXc5PiCGR+wRdZ4qQPWB+ys61kYjb
-         YkOQjmM1wsTyOPPOcNnlC3yOaie8+igOj+pSmxmqIttX8ojuTBx7+hzExJvmZHzicACQ
-         +9iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjsCNmRcfrqIbo9KIyiIdIuGmI+cOm0dbGUaGnVGPSq453dYb+W6t3NvO+MkRNHqmYjoXtFepIsEB1sDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpwjnBKWdiNDSPAnMyG36gKXN7PrjMT5wW7nPFYPvwWGG9AnuK
-	MfTp9YIy3PznT9iN2R8mYYS6nNMaxk4P6BftoxMtemZXk2ci1sh9xV4xpDgOkEMnhtaeX+ypJ7D
-	na846PgzRPwbTJGZHCxQCMApi/ZLP0CwWKshmWFEsaPIHsk1sAKUo7dXcKue1t4QH7T4YCztl70
-	6IqrXsx3Bvc1hqsDGydMP7ZeK1lLrUP4JwcIhg
-X-Received: by 2002:a05:600c:524f:b0:426:6551:3174 with SMTP id 5b1f17b1804b1-42c8de9ddd7mr11449705e9.29.1725382204127;
-        Tue, 03 Sep 2024 09:50:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxNjqhzJAIg14CVUQX1gVg2ZwKA4TIQQGzXpxWRObTbG7cqWuModpsnWjHvba+Flu3OYEU8hqc/R6SRI6NG7g=
-X-Received: by 2002:a05:600c:524f:b0:426:6551:3174 with SMTP id
- 5b1f17b1804b1-42c8de9ddd7mr11449515e9.29.1725382203627; Tue, 03 Sep 2024
- 09:50:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425771E492;
+	Tue,  3 Sep 2024 16:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725382254; cv=fail; b=inst8xosDedUoatfAMzZD9Tsd+ZGvlZTuSFg02rnRtH/XU6AOglfiI/nNYp65pBQlVZ9SJRyrxEOqpMXAyTyMf0ZAmdFczK9TtetZkEhnWfxOhY1zmc8tDUIEM7Rmg55R/0sN7WuZpSzsOYzsB44Zx/X9MRw9upKjIISbBHatUE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725382254; c=relaxed/simple;
+	bh=pyXaxYEnb6Mvtr/2Pewi7wRZdqT8XSnzTkOHAbjgAVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q/DTKeGuP75YYe9VZMGTywUod2qO+z79Ub7cao/8VeW/NX5GdAEB1UYHHo6mdXWwpWoQm1rtPoOeFbGMT/AwRjF+jl9f/Hcq6nXRRRwuvK3syfpd3QNi2+3DNBDiDsQSfFA+PGGaU3lA4eDCaBEeMa+czMUo1RCip0wZyzJ/do4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lbxoMXnX; arc=fail smtp.client-ip=40.107.243.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JomBznkzHhJzTpYSRA6+iMULFxri0b82al8bnNfc2LEzdYhRTT4DlH2kROI7Cki4OTak6Lr1/3T6YxfYQtqzfkLDLluziO+mD9mz12eKpHPBoAQe5hErHBb+LNo8Yj9A2F3nE6AmE/N/x3P+hT+fvL06IZ9ICfBvbQsoLD0kZx1tRt7qaR5e+FyvLL1ALcrqsWPBH7KD4JyKA7CVioxw+goQ3Ly8lSLpEesv24d24iadSQ4qn7zWjKLjitd3QZ5gI80NG7itQ2I3CSuS6Pu1vI8YXulOWNBdnM5c9Se41bcBEWiCQa+Qsy7A3qBeL8iOVuZ9f02Ylgkk4iVFNnBurw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0oCVWmlIfAFwM5jWPIUjnQgieYPHzW4oXwxuJ8UMlNo=;
+ b=wJ6xhAdf4jRAuYROchpJSBF1UhGQPANBJmdMLVAOHUrUwAqhzE6sjVipUxl4sm9TO6c1WGvZwu6PoYzhFZSNMVHMsHDBdOG2vosOM55avNpbVoKxSAm8dg1PkWQi3K2mCgL7r3oRx+lmnfGfnvE6cnwfD9znuIF5q+JU/3yXU3A9m6kSgCJ74rnx/59/zvvSiO7OXbfMcONU9X0BwpsTlaxue64/GrHLCwoboZINcsNcOAt9WKbPmgAUo4VgDbySTMV+in67Ga8tWAqu18lfLXTVx0Y9kCc/0lBtTnFlHDwqajADa1uhyxsJWFwXDE7ftS0GV7poZlwv+Byh+AsY6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-m68k.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0oCVWmlIfAFwM5jWPIUjnQgieYPHzW4oXwxuJ8UMlNo=;
+ b=lbxoMXnXny8+Ol6MFYlK3ARd3XRGbieYZVBpllI8DSXpDKOO/Oe9osB0h9gWZJEbZOVVMXtwvioAOG83V+gDnZ4GpfnwZD0KOnEnDrKVrNkMsEG6zidOWlMbSrDE+yx7wPdcmfLgJ7TG2ce8X7+10/v55WwcC8t4QInIVkEQXXA=
+Received: from DS7PR03CA0221.namprd03.prod.outlook.com (2603:10b6:5:3ba::16)
+ by CYYPR12MB8871.namprd12.prod.outlook.com (2603:10b6:930:c2::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Tue, 3 Sep
+ 2024 16:50:49 +0000
+Received: from DS3PEPF000099D3.namprd04.prod.outlook.com
+ (2603:10b6:5:3ba:cafe::a5) by DS7PR03CA0221.outlook.office365.com
+ (2603:10b6:5:3ba::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
+ Transport; Tue, 3 Sep 2024 16:50:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS3PEPF000099D3.mail.protection.outlook.com (10.167.17.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Tue, 3 Sep 2024 16:50:48 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Sep
+ 2024 11:50:47 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 3 Sep 2024 11:50:47 -0500
+Message-ID: <e2a37bb6-3353-1c2f-3841-d63748756df1@amd.com>
+Date: Tue, 3 Sep 2024 09:50:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802195120.325560-1-seanjc@google.com> <20240802195120.325560-2-seanjc@google.com>
- <CABgObfYT_X3-Qjb_ouNAGX1OOL2ULT2aEA6SDKessSbJxGZEOQ@mail.gmail.com> <ZtcmtFlX83g7C8Vd@google.com>
-In-Reply-To: <ZtcmtFlX83g7C8Vd@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 3 Sep 2024 18:49:50 +0200
-Message-ID: <CABgObfbwFPDiRbmVMtQZ9HipiT=4zXRqrE1fd7d44EeHt8b7=A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] KVM: x86: Re-enter guest if WRMSR(X2APIC_ICR)
- fastpath is successful
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V12 1/1] dmaengine: amd: qdma: Add AMD QDMA driver
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>, <nishad.saraf@amd.com>
+CC: <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Nishad Saraf <nishads@amd.com>,
+	<sonal.santan@amd.com>, <max.zhen@amd.com>
+References: <1713462643-11781-1-git-send-email-lizhi.hou@amd.com>
+ <1713462643-11781-2-git-send-email-lizhi.hou@amd.com>
+ <CAMuHMdXVoTx8K+Vppt07s06OE6R=4BxoBbgtp1WWkCi8DwqgSA@mail.gmail.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <CAMuHMdXVoTx8K+Vppt07s06OE6R=4BxoBbgtp1WWkCi8DwqgSA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D3:EE_|CYYPR12MB8871:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b1938fe-1b19-45d5-1069-08dccc38902c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WFdBaXR2OTk0R2FXbUxIeXRDUlZ4RmZsUHZzVk9sQ0xHUGVYbmUvdHRXd1dx?=
+ =?utf-8?B?T3dQalIxeDRpaXNiVS92TW5Jbnp6QnhCYlR3R3V0dEhEbG1VRnk5WEdMcDR6?=
+ =?utf-8?B?ZXBidGgrVGJwOFNKNnVsaW9LVDQwZzFTMzNyYWlvcGhKTUc4UlpRQkRDdGF6?=
+ =?utf-8?B?Mnp6YzRhZ1dXdnVJR1o2eTl0QXVTSnhjWlp3OXpuUFp5RkRsK2grcWNCYjZN?=
+ =?utf-8?B?R1NQK3hpRFQ5V0o2WlZLendlKzFUN2srYXA2dndnTlBLdTl5Vm5PcmZNZWxN?=
+ =?utf-8?B?NG5DUVY2T1V2VkRUTEx5Q2grY0o4THNHQUhYanUwbXBNRTZwMGhvb252NmQw?=
+ =?utf-8?B?SFgxZllYOHRLVkpSN0QyTkNYUWNDcHRVSXU2bFNkdWdJdy83R2FKQ1o1aEhT?=
+ =?utf-8?B?aml2ZmEzSm0xSFE2UyttUGFUU2JvVkJ0MHJ2bXNzM2dEQkU1ZWppNzhXVkJU?=
+ =?utf-8?B?ZW4zMDM5TnZlbjF2Tlp2SE5pcWIzWmNwa05SWGFKRFRMaUdpdXVNcXU4S2Zh?=
+ =?utf-8?B?dG5UQ2FRMlA1UTRIZU5mRmdLNFQ1QWlQc3U5RXl0NVFWVVJNdXNOazRSSFpw?=
+ =?utf-8?B?dVFWdm10Q2g2RW1IWVkwOFhiQlVsQndjRGo5WU1VWCtoNURWRWZLckVFYWIr?=
+ =?utf-8?B?b2MxRDlaUGNLRkt1dkVhM3plRWV1ODdDSWMxMmsvNG13RXA1YklzSmNnc2k2?=
+ =?utf-8?B?dUVvclEraG5QbkVValFsSGFLb0U4bkhFRnRoNitVazl1UjdUeHptN3QwQm5a?=
+ =?utf-8?B?WDlvYmo0bDNGMDI4d3V5djZ3N2hKbzlXazhWTTRKU2d0TFVLKy91SDVUME5V?=
+ =?utf-8?B?SVBjNEFrSUVUS1FYbGxYK1pzSktyS3dxQ0QwUWUrVmd3V0lvTG91WXM3U3p1?=
+ =?utf-8?B?ZVpKMzdqOUpJZnFsQmkyT1BURDkvQmdEMVB3WDM0azBjZEI1ZUJmVVdnaGFE?=
+ =?utf-8?B?U0dkK1BTZEYvNzRHb2ZjbjMybjZabUdZK3pwRFY0L0s1UUdkM0dDcXhzYm9K?=
+ =?utf-8?B?Z2h4OEtXdWRyUFU5MVFCVUliVTRQU2FyN1djQ2FQdks4ZWVjcVo4Q3NKYXk2?=
+ =?utf-8?B?ZnEyR1FMdEVvNHROZUJkcDhQOHZrUW9GSkgvVHA3UjNjaUt0aURkb3ZCSUMv?=
+ =?utf-8?B?VkRnYWFMdkxrL2ZuUGFJU1lGREJPbmtiREdFOUJCVDA0Vms5NGZPWGlsOGlr?=
+ =?utf-8?B?WWZicVBoU0kxbWUvNGUveFVOeXpEVWdIYnY5SEU3ZStTZGR1MGNFUEhKZXho?=
+ =?utf-8?B?NDdsUHlOS04vcmoyakZVTU54cHhOQk1ybEdzZldzWlp2dUVZd1hrM2EyTjV4?=
+ =?utf-8?B?RlFwTVdwMFJGSUVuVnE4UW1VSlZ2UzNVZkNlZnZwZTN4UVhHQ2dhTEJPZm5M?=
+ =?utf-8?B?WVBpM3lrSmVjY3p5QU9jRDJ6YmJmMm0rZjlkd1dJNERpTzRJNHNuVEQ5NEEz?=
+ =?utf-8?B?TEZQclNoZkxJQjNoQWxpSUF3RnRCWkpQUDBWS3lxMmNkQmsrTFFsVXJaclM2?=
+ =?utf-8?B?RW5nZHpSeTR4VnlVeTdsWmxjSkZick1WcFNEQXUramxSVE82cUlEYmxkU3Rk?=
+ =?utf-8?B?MG9sYmJCbXFwQmxaRzk2V2FYZzhJemdSd0ZtTGZKMTQxRkxvVVVZODZ1YXFm?=
+ =?utf-8?B?UUw3ZHo2RHBsV0xTU3E3RndqZnlWcUFjZW1BZTFoalJkNDJtK1FlTEtNaWhy?=
+ =?utf-8?B?TEVBUncyVHpXOEFIc2RFdVNWKzdST200OGFCcTZaNmpBb1BYYUNKTk8rWVdQ?=
+ =?utf-8?B?TkFoU1U0ZUtXbzdxRGN4a1dJYWk4emsrWmpmUnZXUlFIb014dyt4V0pCenNl?=
+ =?utf-8?B?cXJPT1Fnc3RuUlIxd1gyUDNsdnNhbGRVSDNDM0hIc2IzTDF4OEYzU2NxZXBa?=
+ =?utf-8?B?WU5MSnUyZ1dIK1NPdFk5NHNzL0wvbTNlWmo5ekJsUzdVMEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 16:50:48.7715
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b1938fe-1b19-45d5-1069-08dccc38902c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D3.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8871
 
-On Tue, Sep 3, 2024 at 5:09=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> On Mon, Sep 02, 2024, Paolo Bonzini wrote:
-> > On Fri, Aug 2, 2024 at 9:51=E2=80=AFPM Sean Christopherson <seanjc@goog=
-le.com> wrote:
-> > > Re-enter the guest in the fastpath if WRMSR emulation for x2APIC's IC=
-R is
-> > > successful, as no additional work is needed, i.e. there is no code un=
-ique
-> > > for WRMSR exits between the fastpath and the "!=3D EXIT_FASTPATH_NONE=
-" check
-> > > in __vmx_handle_exit().
-> >
-> > What about if you send an IPI to yourself?  Doesn't that return true
-> > for kvm_vcpu_exit_request() if posted interrupts are disabled?
+
+On 9/3/24 02:20, Geert Uytterhoeven wrote:
+> Hi Lizhi, Nishad,
 >
-> Yes, but that doesn't have anything to do with WRMSR itself, as KVM needs=
- to morph
-> EXIT_FASTPATH_EXIT_HANDLED =3D> EXIT_FASTPATH_REENTER_GUEST if there's a =
-pending
-> event that needs requires injection.
+> On Thu, Apr 18, 2024 at 7:51 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
+>> From: Nishad Saraf <nishads@amd.com>
+>>
+>> Adds driver to enable PCIe board which uses AMD QDMA (the Queue-based
+>> Direct Memory Access) subsystem. For example, Xilinx Alveo V70 AI
+>> Accelerator devices.
+>>      https://www.xilinx.com/applications/data-center/v70.html
+>>
+>> The QDMA subsystem is used in conjunction with the PCI Express IP block
+>> to provide high performance data transfer between host memory and the
+>> card's DMA subsystem.
+>>
+>>              +-------+       +-------+       +-----------+
+>>     PCIe     |       |       |       |       |           |
+>>     Tx/Rx    |       |       |       |  AXI  |           |
+>>   <=======>  | PCIE  | <===> | QDMA  | <====>| User Logic|
+>>              |       |       |       |       |           |
+>>              +-------+       +-------+       +-----------+
+>>
+>> The primary mechanism to transfer data using the QDMA is for the QDMA
+>> engine to operate on instructions (descriptors) provided by the host
+>> operating system. Using the descriptors, the QDMA can move data in both
+>> the Host to Card (H2C) direction, or the Card to Host (C2H) direction.
+>> The QDMA provides a per-queue basis option whether DMA traffic goes
+>> to an AXI4 memory map (MM) interface or to an AXI4-Stream interface.
+>>
+>> The hardware detail is provided by
+>>      https://docs.xilinx.com/r/en-US/pg302-qdma
+>>
+>> Implements dmaengine APIs to support MM DMA transfers.
+>> - probe the available DMA channels
+>> - use dma_slave_map for channel lookup
+>> - use virtual channel to manage dmaengine tx descriptors
+>> - implement device_prep_slave_sg callback to handle host scatter gather
+>>    list
+>>
+>> Signed-off-by: Nishad Saraf <nishads@amd.com>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> Thanks for your patch, which is now commit 73d5fc92a11cacb7
+> ("dmaengine: amd: qdma: Add AMD QDMA driver") in dmaengine/next.
+>
+>> --- /dev/null
+>> +++ b/drivers/dma/amd/Kconfig
+>> @@ -0,0 +1,14 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +config AMD_QDMA
+>> +       tristate "AMD Queue-based DMA"
+>> +       depends on HAS_IOMEM
+> Any other subsystem or platform dependencies, to prevent asking the
+> user about this driver when configuring a kernel for a system which
+> cannot possibly have this hardware?
+> E.g. depends on PCI, or can this be used with other transports than PCIe?
 
-The other way round? i.e. treat EXIT_FASTPATH_REENTER_GUEST as
-EXIT_FASTPATH_EXIT_HANDLED to go through event injection.
+No, this driver does not have other dependencies. It can be used with 
+other transports.
 
-> Given that kvm_x86_ops.sync_pir_to_irr is likely NULL if virtual interrup=
-t delivery
-> is enabled, the overhead of the trying to re-enter the guest it essential=
-ly a few
-> cycles, e.g. check vcpu->mode and kvm_request_pending().
+It is similar with dmaengine/xilinx/xdma
 
-No, I wasn't worried about performance. Probably I misread
 
-                if (likely(exit_fastpath !=3D EXIT_FASTPATH_REENTER_GUEST))
-                        break;
+Thanks,
 
-as something like
+Lizhi
 
-                if (likely(exit_fastpath =3D=3D EXIT_FASTPATH_REENTER_GUEST=
-))
-                        continue;
-
-EXIT_FASTPATH_REENTER_GUEST is exactly what's needed here.
-
-Paolo
-
+>
+>> --- /dev/null
+>> +++ b/drivers/dma/amd/qdma/qdma-comm-regs.c
+>> +static struct platform_driver amd_qdma_driver = {
+>> +       .driver         = {
+>> +               .name = "amd-qdma",
+> Which code is responsible for creating "amd-qdma" platform devices?
+>
+>> +       },
+>> +       .probe          = amd_qdma_probe,
+>> +       .remove_new     = amd_qdma_remove,
+>> +};
+>> +
+>> +module_platform_driver(amd_qdma_driver);
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
 
