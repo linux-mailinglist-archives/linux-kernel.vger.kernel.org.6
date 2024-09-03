@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-312757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8239A969ADA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D345969ADE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1F0B24D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609681C237B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2D91C9842;
-	Tue,  3 Sep 2024 10:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A7D1D6C7E;
+	Tue,  3 Sep 2024 10:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="AOnmScQF"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="EiUcFSm2"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89791AB6E7
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2A1C9873
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360785; cv=none; b=B0VyXC8YKPwhW9JbR3ddLmUy2hmSjVffzSEcoBxALPQ35FrtNJbIADHW1sYIEWFZcWURBKOqOq2TBfKhkv014sNMhb0OcQJ421T368Uf7OxIpMKcm3xoFR0UGYBU+sWShPdfHFKy/b0lQYKJoiB7hGh1OC69vLiYS6W4ZT/955M=
+	t=1725360787; cv=none; b=aUgd4+8Bz5Mpvhdaie2WUI2XJ3GOcS7Y0ICNUzKnI9NScfu+lejb2uy4O4bfhcgY4pJNsx3TM34ozg6Q2n2FwICDaIQd5GR4b1+8uIq4SEoLjeuR3MxKUjdkZsr0VGYaOmboo9PaTuydUSsZtDcOQLyDl7c1VmemsiIVuEV7tvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360785; c=relaxed/simple;
-	bh=PPLqb9L4Lb33YUhzlJHIMEdQ1CsCgkDnOf0oU80gaVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=egMUgxYBSjD6xAm/Mi+6V7RKPwZFhJT9v7dL1BrSA3RNssE/+oyhTxNBONmXGKs5El4+v2qeRhIVJNZOFGOYNeOgcCnJ19AvwGXRhvJT6UoGANq/85o3wO9jI+JIpDrxC3dct+AAYphb2IYWZ5RchVwl5UcJP7YZptnuHeAqQY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=AOnmScQF; arc=none smtp.client-ip=44.202.169.33
+	s=arc-20240116; t=1725360787; c=relaxed/simple;
+	bh=rQT8ju2EYl+ggnYBWZWGtukvbLYkXbzUYX2xT51wQnE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=i9Gvht1MIK43uFJQOrYUSPi6i1f2tvoi2sm+CkJ9r7GF7SC0ohFThNaCsCfiPMSC3rb4J40FOPulS4fz6yToIzV8Sr9PN7W/s840JLXTwT4Yf6/onhtjYt2gWpXCJI2Wwb9opkGbmMwJKWhHLOI1gr92qTaXF6mqSAarp4eXPe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=EiUcFSm2; arc=none smtp.client-ip=35.89.44.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
 	by cmsmtp with ESMTPS
-	id lHs5sS0Lo1zuHlR9hsd6dz; Tue, 03 Sep 2024 10:53:01 +0000
+	id lMaDs1ZBPVpzplR9ksn2K6; Tue, 03 Sep 2024 10:53:05 +0000
 Received: from md-in-79.webhostbox.net ([43.225.55.182])
 	by cmsmtp with ESMTPS
-	id lR9esDTF9eieBlR9fsTWan; Tue, 03 Sep 2024 10:53:00 +0000
-X-Authority-Analysis: v=2.4 cv=BoBWwpX5 c=1 sm=1 tr=0 ts=66d6ea8c
+	id lR9hsJ7CT2GFYlR9isRlv3; Tue, 03 Sep 2024 10:53:03 +0000
+X-Authority-Analysis: v=2.4 cv=GKAOEPNK c=1 sm=1 tr=0 ts=66d6ea8f
  a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=VwQbUJbxAAAA:8
- a=rT7NhT99x2eMfdz9cs0A:9 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+ a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=IUsOfeiScPouXSuZ-WoA:9
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=UppZcDWe1uFAJ+bvasF5er5A9xgV/I9BZ+SAKDSsjpM=; b=AOnmScQFEyQEi8MZEiPr8iondE
-	FltM80ZG0elT5XHBVsklYzWtsA/cF7y5n7qds476Vjvb4GOGGIZ7CuakK4q6IM07bM3pqsvgW2stH
-	g053R1U2d9Pi/bd410RNCBVxd1l12Td3A2muyhWvOsFwDv1Bz1JqEgsYrKkyqlaz9TGSOlgIGboIO
-	LDKzzeg6ABnbgokk4ZfuOe0RzzRdQsg6OAiEGeqZkTOMhhkFcA+32nbwa6K1LNSJJoCK7a19aArXt
-	tA9XuawYa6emQMHar3wnm/yM+Qg02FEly2b4l1i/kPD+dw9QP6WGqVFUdeui2Em6Y5BYT5Zh/V8ri
-	s2LlJZBQ==;
+	bh=RDY88ra94JBb+IuiAIyKiYCW1DH2SA5E50yh/vMkXuw=; b=EiUcFSm2grXFwHQyuGWeu/Ntmy
+	Pci/WR+to7JAHf38OpkLoY9kHBkuT3PMLqhcr0ewOi/zZDBNl1urlDqsnbUEU5WhQ3XfTtqukp55H
+	o6NOCXT/rD6NyqkbWU5Yodf5iHHZrsaL5h/o0zB4vdSdHI5SKr9ObL/djqxh5q0F1VkiHT76tYIUn
+	GWSlDT+uV0RoaLhqCmXp8CP1wI5RpCIfyhcbDPQe6P1r9Dg1JrA1zBVf75jwGKqpg1sBkDxYGpt/w
+	/T5uQlQTDWpMWHvLG+pgp9qGt8uXUhs/IrgmqZdhFSEuy4AjISFyB/kAtcKdncLnXKgFjH+dYYXMn
+	y1RFBmBg==;
 Received: from [122.165.245.213] (port=41440 helo=localhost.localdomain)
 	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <karthikeyan@linumiz.com>)
-	id 1slR9d-000Elu-0i;
-	Tue, 03 Sep 2024 16:22:57 +0530
+	id 1slR9e-000Elu-1q;
+	Tue, 03 Sep 2024 16:22:58 +0530
 From: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -69,10 +70,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-rtc@vger.kernel.org,
 	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-Subject: [PATCH v2 0/8] Add support Relfor Saib board which is based on Rockchip RV1109 SoC 
-Date: Tue,  3 Sep 2024 16:22:37 +0530
-Message-Id: <20240903105245.715899-1-karthikeyan@linumiz.com>
+Subject: [PATCH v2 1/8] ARM: dts: rockchip: Add i2c3 node for RV1126
+Date: Tue,  3 Sep 2024 16:22:38 +0530
+Message-Id: <20240903105245.715899-2-karthikeyan@linumiz.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240903105245.715899-1-karthikeyan@linumiz.com>
+References: <20240903105245.715899-1-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,59 +91,102 @@ X-AntiAbuse: Sender Address Domain - linumiz.com
 X-BWhitelist: no
 X-Source-IP: 122.165.245.213
 X-Source-L: No
-X-Exim-ID: 1slR9d-000Elu-0i
+X-Exim-ID: 1slR9e-000Elu-1q
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: (localhost.localdomain) [122.165.245.213]:41440
 X-Source-Auth: karthikeyan@linumiz.com
-X-Email-Count: 3
+X-Email-Count: 13
 X-Org: HG=dishared_whb_net_legacy;ORG=directi;
 X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFV/URokypJ6mNreLqXGADMEZlYn3pH2nTGGlInreDtOM0G4GktS2aW1LhDEYHl069H8tTZsPGL1eEJl1PxfdQU9bGnGCMVgzsB0xogWfInDyEhUYY24
- zgdcNSelAEia07PYp5dEmuZBh2XqQTzlt+vdWO2PzZ7RTvm+UpZuj7Po09tiihrDFYlYtkLK1NVMKwlS+hDUJdt8y/7NYbrBXk78Okm46YTqgsA/wT5q6Yj5
+X-CMAE-Envelope: MS4xfGqaLGNVp6pbricSf38Uc8g+yLBrloFjLytYf6HSdEzKza2xbodUZTjg1cyOXlGE5Hkypan3JU+gPKvUdpcWSCTCKGxJRL5zmD9wdxe+t08PzofAm6Xd
+ YcdrOmX4k7HroyiYE1+kfqClskgAuZZkwzY/SWVEDCyRV1Z3tjA7tHBnMagNbgabpJ1+OFM+OW9IxSgpTMpFeIH4gFnvH4zz0R6OPg4KgIiL8kD3vmwwkW67
 
-Rockchip RV1109 is compatible with Rockchip RV1126.
-In this series, adding required missing peripheral in
-RV1126 and its pin mux.
-
-Relfor Saib board is equipped with 1GB of RAM and 4GB of eMMC
-Pheripherals like Bluetooth 4.2, Wifi 5G, audio-codec,
-ir transmitter and receiver, etc
+Add i2c3 node and possible pinctrl for Rockchip RV1126
 
 Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-
----
-Changes in v2:
- - Align to the comments
- - Rebased with master
- - Link to v1: https://lore.kernel.org/all/20240823153528.3863993-1-karthikeyan@linumiz.com
-
 ---
 
-Karthikeyan Krishnasamy (8):
-  ARM: dts: rockchip: Add i2c3 node for RV1126
-  ARM: dts: rockchip: Add i2s0 node for RV1126
-  ARM: dts: rockchip: Add pwm node for RV1126
-  ARM: dts: rockchip: Add watchdog node for RV1126
-  dt-bindings: rtc: microcrystal,rv3028: add clock-cells property
-  dt-bindings: vendor-prefixes: Add Relfor labs
-  dt-bindings: arm: rockchip: Add Relfor Saib
-  ARM: dts: rockchip: Add Relfor Saib board
+Notes:
+    v2:
+    - No change
 
- .../devicetree/bindings/arm/rockchip.yaml     |   5 +
- .../bindings/rtc/microcrystal,rv3028.yaml     |   3 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- arch/arm/boot/dts/rockchip/Makefile           |   1 +
- .../boot/dts/rockchip/rv1109-relfor-saib.dts  | 429 ++++++++++++++++++
- .../arm/boot/dts/rockchip/rv1126-pinctrl.dtsi | 256 +++++++++++
- arch/arm/boot/dts/rockchip/rv1126.dtsi        | 159 +++++++
- 7 files changed, 855 insertions(+)
- create mode 100644 arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts
+ .../arm/boot/dts/rockchip/rv1126-pinctrl.dtsi | 26 +++++++++++++++++++
+ arch/arm/boot/dts/rockchip/rv1126.dtsi        | 15 +++++++++++
+ 2 files changed, 41 insertions(+)
 
-
-base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+diff --git a/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi b/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
+index 06b1d7f2d858..be666b25b830 100644
+--- a/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
++++ b/arch/arm/boot/dts/rockchip/rv1126-pinctrl.dtsi
+@@ -97,6 +97,32 @@ i2c2_xfer: i2c2-xfer {
+ 				<0 RK_PC3 1 &pcfg_pull_none_drv_level_0_smt>;
+ 		};
+ 	};
++	i2c3 {
++		/omit-if-no-ref/
++		i2c3m0_xfer: i2c3m0-xfer {
++			rockchip,pins =
++				/* i2c3_scl_m0 */
++				<3 RK_PA4 5 &pcfg_pull_none>,
++				/* i2c3_sda_m0 */
++				<3 RK_PA5 5 &pcfg_pull_none>;
++		};
++		/omit-if-no-ref/
++		i2c3m1_xfer: i2c3m1-xfer {
++			rockchip,pins =
++				/* i2c3_scl_m1 */
++				<2 RK_PD4 7 &pcfg_pull_none>,
++				/* i2c3_sda_m1 */
++				<2 RK_PD5 7 &pcfg_pull_none>;
++		};
++		/omit-if-no-ref/
++		i2c3m2_xfer: i2c3m2-xfer {
++			rockchip,pins =
++				/* i2c3_scl_m2 */
++				<1 RK_PD6 3 &pcfg_pull_none>,
++				/* i2c3_sda_m2 */
++				<1 RK_PD7 3 &pcfg_pull_none>;
++		};
++	};
+ 	pwm2 {
+ 		/omit-if-no-ref/
+ 		pwm2m0_pins: pwm2m0-pins {
+diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/rockchip/rv1126.dtsi
+index bb603cae13df..59de848c9a83 100644
+--- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
++++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
+@@ -22,6 +22,7 @@ / {
+ 	aliases {
+ 		i2c0 = &i2c0;
+ 		i2c2 = &i2c2;
++		i2c3 = &i2c3;
+ 		serial0 = &uart0;
+ 		serial1 = &uart1;
+ 		serial2 = &uart2;
+@@ -308,6 +309,20 @@ dmac: dma-controller@ff4e0000 {
+ 		clock-names = "apb_pclk";
+ 	};
+ 
++	i2c3: i2c@ff520000 {
++		compatible = "rockchip,rv1126-i2c", "rockchip,rk3399-i2c";
++		reg = <0xff520000 0x1000>;
++		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru CLK_I2C3>, <&cru PCLK_I2C3>;
++		clock-names = "i2c", "pclk";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c3m0_xfer>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++		rockchip,grf = <&pmugrf>;
++	};
++
+ 	pwm11: pwm@ff550030 {
+ 		compatible = "rockchip,rv1126-pwm", "rockchip,rk3328-pwm";
+ 		reg = <0xff550030 0x10>;
 -- 
 2.39.2
 
