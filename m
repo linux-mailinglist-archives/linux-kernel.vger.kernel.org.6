@@ -1,300 +1,177 @@
-Return-Path: <linux-kernel+bounces-312912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C498D969D9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F9A969DA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E996C1C23C06
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7D31C22810
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59C91CDFA3;
-	Tue,  3 Sep 2024 12:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CEB1B12F1;
+	Tue,  3 Sep 2024 12:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qn0o1gnF"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9Cwt331"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8B71A0BCB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF521B12F2;
+	Tue,  3 Sep 2024 12:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366599; cv=none; b=TYen9fnUuA5L7vPG9I4WQC71Jn7dxjHmSD1vfkUHztc04FwlBUxyAP9vZHjGsA2AiwMceguWul1qisPC+lCelJhe2h3UC0zX+SMVZFFzBDY6D2sOM4K+RoIdifulHy5ihuMnVtYcdDeq8AjwFFDeEC3LmumK+aLegtVE/8unNm8=
+	t=1725366677; cv=none; b=dMzl7sQXWUxXqg00fa+89FmAYpQc7Z7/rAqTwH6ziLNqaDxNUx61b/Gjt/+k/zr0JnFyZ7na+hM2Rum5fUhM2RZE3f2UQBcPj/LZtunsZ9697OC4r4yybcQM84gQ8+MKsmSEQ3AXdEEBqRiZNnoanl4AJThf7YpJ1vVS/HSo9HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366599; c=relaxed/simple;
-	bh=MadOy1n9lMn2gJiTmCo/b3sxyuT0+3q42VXhnUpkc+k=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=lNIkFBof3pyWxpO3jw3MXK/YTkbEt/1T4EkQcYSANy6X6ysyk38ggp2IqT7PW92I/rscFfN+CBQpaTjs7FYTBGBDKy8ox7xP04i3b6fn7JL2mi0mS9mKFbs6M+bMlp21vDiDjpq819h69hXjDp49i9EZU20b3Z1NUXLvcMedgUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qn0o1gnF; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240903122954euoutp0223b60464e0f72eb900aa63ef4ecfe544~xu8bCJyc32679726797euoutp02E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:29:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240903122954euoutp0223b60464e0f72eb900aa63ef4ecfe544~xu8bCJyc32679726797euoutp02E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725366594;
-	bh=cgNOgNReNzAJFf9P5wa3Kro2zVp3TLloPkWMjpgBKgI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=qn0o1gnFDe30/e5l1CNLn8s6VRfRR4IZnoshRZ5H/dfQFW/dnweGOz1wEGpuK8ejY
-	 3fMvN4SZzwnOJvlA8hNFLYq18YYKFMZbxMVUX8ekj24TP4NEo8PG/10+sW5G7k8YWf
-	 N7eeu1FWQY93iu2gdIO3BPMiZwKOUaJ2PLjh/kp0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240903122952eucas1p2ac10c1a77d1c5248183d9ccffd55c25a~xu8ZW4yn20966109661eucas1p2g;
-	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 0B.49.09624.04107D66; Tue,  3
-	Sep 2024 13:29:52 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240903122952eucas1p208675907d19ad2a8f7f46756163f0b59~xu8YuAl6V2062120621eucas1p2D;
-	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240903122952eusmtrp1603deb26a30cdd3061f0cbdab62f6f61~xu8YtMypv2418124181eusmtrp1F;
-	Tue,  3 Sep 2024 12:29:52 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-f3-66d70140ec54
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id FD.CD.14621.F3107D66; Tue,  3
-	Sep 2024 13:29:51 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240903122951eusmtip21569f5ad77ab643529872aec9866690e~xu8YabmBK0762607626eusmtip2R;
-	Tue,  3 Sep 2024 12:29:51 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 3 Sep 2024 13:29:50 +0100
-Date: Tue, 3 Sep 2024 14:29:50 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: <brauner@kernel.org>
-CC: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	<akpm@linux-foundation.org>, <chandan.babu@oracle.com>,
-	<linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>, <hare@suse.de>,
-	<gost.dev@samsung.com>, <linux-xfs@vger.kernel.org>, <hch@lst.de>,
-	<david@fromorbit.com>, Zi Yan <ziy@nvidia.com>,
-	<yang@os.amperecomputing.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <willy@infradead.org>, <john.g.garry@oracle.com>,
-	<cl@os.amperecomputing.com>, <p.raghav@samsung.com>, <mcgrof@kernel.org>,
-	<ryan.roberts@arm.com>, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH v13 10/10] xfs: enable block size larger than page size
- support
-Message-ID: <20240903122950.eugl53tler4n52ao@AALNPWDAGOMEZ1.aal.scsc.local>
+	s=arc-20240116; t=1725366677; c=relaxed/simple;
+	bh=qd3YxyjMYJ2bCJ1Cx0VsMYa5IKT9E+IfmiTj9DCPMgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G9NnwcC2AWwWqmyLF6ZDJewj8cooijITXmV9gKUxpMKul9AhMBdj+q71GisT6oVzGxIcwVZlU8Eas6ecfjtod7mK8H/CCRnwLL0yPxPdjW/+uXrAQxdcJIEwQZf2ktAWvc+PS7lpP+vWuAQgtPkqUNH2f0hkZ0EOgvRnxRVErxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9Cwt331; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE55C4CECA;
+	Tue,  3 Sep 2024 12:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725366676;
+	bh=qd3YxyjMYJ2bCJ1Cx0VsMYa5IKT9E+IfmiTj9DCPMgA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p9Cwt331oTsaBNNrEypvf8b/uEF69M+RFSUX9uXcNrYfWJwDNCbrQfL3m8DThVSAl
+	 b3xwH0H91TVS8haXoVVe47qPwvXlze90hFuZWNhzAUhrC6+SuDm6G+7yfDe7n1aC8M
+	 oQgduVcD7wHXryQNOU7oVoSyXYUFhbovZF+IniPUUB4WQufgLugkScpnFnaplx0sb7
+	 UgTP9qp8Qwwvk+SIsZ3Bg03I7YSGkdtGMBBSyIe3U67AOjz6f3LGlxbxTn4tit7wSR
+	 Sf3gTURGWu3c0QVVeXV53F1pjtzBhXHG6PlT2/bejy5vkQ9DUfzJPonN34eFkM4/jg
+	 2m+EyXqZCPTaA==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3df0dc53ec1so3040433b6e.1;
+        Tue, 03 Sep 2024 05:31:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGZSerFs3xsky+yKqtsjR4hp4hWM1u+XDHtAbfa6vS0IG+LiTZGM8TnRmSLUGZh5StukJLmdD5PoI=@vger.kernel.org, AJvYcCUfKZGOg6KohIWCG/oxfoXvuep6gJIVhLn/3kqUHonGFs0FOXzSUShGEoVP0yETx6cu6T73tuheJhYWjio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweraKT1n/Hfky+yI4tseL0TpL/qZsLefAFurlaE5Eqh5ZPKTBc
+	ogC8hnrFZjvQsLKteWpdpQ6zK07l7OSRhNrTzWYhGxLwfMaOWe9C4FnTLkxQ8b9/YdDpDN4/ZWy
+	Wna5C+xJwtopqB+FgbA5w2eLjZ1U=
+X-Google-Smtp-Source: AGHT+IHvp5rsI7Bt85qzdXZ81AuCvRx2LxFL/Zu5C1K0ZMKZAS7lysa3cHAw5xVEHBIQXAYgRKzPVlbJLjZifH3WEk8=
+X-Received: by 2002:a05:6808:1892:b0:3d9:2c7b:26d4 with SMTP id
+ 5614622812f47-3df1d66126dmr13542701b6e.28.1725366675807; Tue, 03 Sep 2024
+ 05:31:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240822135018.1931258-11-kernel@pankajraghav.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTdRy+7/u+vO+75bjXsfJ7aFZI6ixQLquvB2eA5r2X52VX7jrJZMrr
-	oMbgNhHCuNDudjk2VHIKA2mHpMwt0MHhfgCdowEbktakSHSpgZ0w4ASj1KJ8fdfpf8/n+TzP
-	fZ/nc18al87GxNN5mt2cVqNUJ5Bior3n3vdJ6eDnXavqf1qK6locJBrvngboR/9i1PzNDQy1
-	9YQBGhg7TqHQSCzqaKjCkM3ux9Cl+y6ALtyeIVBHZ4BAIU8dicKOf2OQ528XhYYOjQJk9JoB
-	evDXw4WpMUChWn+YSpexjnoHYIMNkG1tWsE6Tx8gWed0FcX2VT8gWO8v5SRr+nySZO+MXiHY
-	itAQxQ7YMtiprkGSbe3fy844F2+O3SpOy+HUeXs47cq12eJco/cSWTj4UknjyctUObAuMQCa
-	hsxq2O1dYwBiWso0ATjuK6eE4S6AR2udmDDMAHiuw0MYgOiRw3rdD4TFKQAt+puPVefvTuHC
-	4ASw3n8N8BaCSYS3Bo+QPCYZOewKOCn+cRkDoadBwetxxk9AfdMoxmviGAW0/voDzmskzEb4
-	j/sznpYw82GgZuRRCpx5GVq90yQvwZmF8NQczdMiJh1WmH6nhKAvwOrDtmjoMhhsu4IJeL8Y
-	HhzNE/B62Dm8L8rHwbHetqh3Eez/0hj1qmBjsyWKC2HHsCVGOF0qrLygFugM2HvNFqVj4dDE
-	fCFkLKxqP4YLtAR+oZcK6qXQHo4Qh8ASyxO1LE/UsjyuZQX4abCAK9LlqzhdioYrTtYp83VF
-	GlXyzoJ8J3j4Nfvneqdd4PjYnWQfwGjgA5DGE2SSbWcHd0klOcpPSjltwXZtkZrT+cBCmkhY
-	IHkx5zlOyqiUu7mPOa6Q0/6/xWhRfDmWGLR9CLcPlLylMLgnli8KuGZPXnd9ZMoozDo8efWr
-	M/NMx4p/M5vvg3V9y69ORpQ3DxR7kkuXhfdUdvscxvbVedkXxz1/4M71ubi8TN26+ah+VZnG
-	Pu87Q1ZBMO489XQN8LW8kbWtRfPqt+rO15D1g2cHZIqV3MFNFyPASpfWDifNlr33/LtT3drW
-	kcw/x1vMX8e539b02n1yRfyMuejGphTZZVb/lCjz1rqU5uCa2/u67u0Fcuv7mUfeeWXLjpq1
-	Sen2rdmpkVRjWkgxXHAi0lDxzIk397sdn6ZJ+5gNdS6jZi6x1ORunCoWJU2Emis3vt5WvWMD
-	IxLDnapzJfIeVQKhy1WmrMC1OuV/WFlUoAkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsVy+t/xe7r2jNfTDG4ut7CYs34Nm8Xrw58Y
-	LS4dlbNYt/Yhk8WWY/cYLc6+mstucfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XuSxeLy
-	rjlsFvfW/Ge12PVnB7vFjQlPGS16dk9ltPj9AyjRu+Qku8Xso/fYHUQ81sxbw+hxapGEx+YV
-	Wh6bVnWyeWz6NInd48SM3yweu282sHn0Nr9j8/j49BaLR/flG+weZ1c6erzfd5XNY/Ppao/P
-	m+QC+KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
-	Mnp2X2AruKpdsWTZFfYGxgXKXYycHBICJhILHhxl7GLk4hASWMoosWDyARaIhIzExi9XWSFs
-	YYk/17rYIIo+Mkqc3XwfytnEKLF7wQ4mkCoWARWJZ1ensIHYbAKaEvtObmLvYuTgEBGQkNi1
-	KAyknlngKItE24qnYPXCAmESC+5fZAap4RXwlvi7sx4kLCRwglGiZ6UiiM0rIChxcuYTsIOY
-	BXQkFuz+xAZSziwgLbH8HwdImFPAQaK79zk7xJ2KEjMmroS6v1bi899njBMYhWchmTQLyaRZ
-	CJMWMDKvYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECEwg24793LyDcd6rj3qHGJk4GA8xSnAw
-	K4nwxm68mibEm5JYWZValB9fVJqTWnyI0RQYEBOZpUST84EpLK8k3tDMwNTQxMzSwNTSzFhJ
-	nNft8vk0IYH0xJLU7NTUgtQimD4mDk6pBiZdt+45Z3mV3M1lJ62bPv9R4HmL32yxT9tef++N
-	bGLSDMr45373gE7v2+2NFxW/zdicphp5tjG18Nq7wI53bkXvQ0U2Ci065fn1tZzF1NsqNS01
-	HZ4Fp89E3u82DF1r9U6b9f7KBJ5ztiuunc5k/eN7NPrt3Q8zr99mNHG4ZqhifFgrzf3000NH
-	d/tMlxQNyZN6dN1F3f93urL0utSzMfrPWlezxd6+dTvqpPEXeYF50re9yx9e3TDBlFnOyDnb
-	hzuJ6+CrvnMi7jfyjCu7lueEbvNsWdzw/feJ+TznmzhPvGT2dFd6pfaNhb3NpqziwfzAh+pV
-	u6RyPkfYXZh9RemYKUNPaSRPC/vHBW6lRUosxRmJhlrMRcWJAG+r+XKpAwAA
-X-CMS-MailID: 20240903122952eucas1p208675907d19ad2a8f7f46756163f0b59
-X-Msg-Generator: CA
-X-RootMTR: 20240822135125eucas1p1c9928c1596c724973055d94103adba96
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240822135125eucas1p1c9928c1596c724973055d94103adba96
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
-	<CGME20240822135125eucas1p1c9928c1596c724973055d94103adba96@eucas1p1.samsung.com>
-	<20240822135018.1931258-11-kernel@pankajraghav.com>
+References: <20240902125933.5742-1-00107082@163.com>
+In-Reply-To: <20240902125933.5742-1-00107082@163.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 3 Sep 2024 14:31:04 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
+Subject: Re: [PATCH] pm: sleep: do not set is_prepared when no_pm_callbacks is set
+To: David Wang <00107082@163.com>
+Cc: rafael@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000d1c4a80621363b96"
 
-On Thu, Aug 22, 2024 at 03:50:18PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> Page cache now has the ability to have a minimum order when allocating
-> a folio which is a prerequisite to add support for block size > page
-> size.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+--000000000000d1c4a80621363b96
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 2, 2024 at 2:59=E2=80=AFPM David Wang <00107082@163.com> wrote:
+>
+> When resume, a parent device with no pm callbacks
+> would have "is_prepared" and "direct_complete" bit
+> set, and skip the "fib" chance to unset "is_prepared"
+> in device_resume because of the direct_complete bit.
+
+Sure, but is_prepared will be cleared in device_complete() AFAICS.
+
+> This will trigger a kernel warning when resume its child
+> For example, when suspend system with an USB webcam
+> opened, following warning would show up during resume:
+>
+>  >usb 3-1.1: reset high-speed USB device number 4 using xhci_hcd
+>  >..
+>  >ep_81: PM: parent 3-1.1:1.1 should not be sleeping
+
+This is printed in device_pm_add(), so apparently something new has
+appeared under the parent while it's between "resume" and "prepare".
+
+The parent is actually still regarded as "suspended" because any
+resume callbacks have not been called for it, but new children can be
+added under it at this point because doing so does not break the
+dpm_list ordering and all of its ancestors have been already resumed.
+
+> The device parenting relationships are:
+> [usb 3-1.1] << [uvcvideo 3-1.1:1.1] << [ep_81].
+> When resume, since the virtual [uvcvideo 3-1.1:1.1] device
+> has no pm callbacks, it would not clear "is_prepared"
+> once set.  Then, when resume [ep_81], pm module would
+> yield a warn seeing [ep_81]'s parent [uvcvideo 3-1.1:1.1]
+> having "is_prepared".
+>
+> Do not set "is_prepared" for virtual devices having
+> no pm callbacks can clear those kernel warnings.
+>
+> Signed-off-by: David Wang <00107082@163.com>
 > ---
->  fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
->  fs/xfs/libxfs/xfs_shared.h |  3 +++
->  fs/xfs/xfs_icache.c        |  6 ++++--
->  fs/xfs/xfs_mount.c         |  1 -
->  fs/xfs/xfs_super.c         | 28 ++++++++++++++++++++--------
->  include/linux/pagemap.h    | 13 +++++++++++++
->  6 files changed, 45 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 0af5b7a33d055..1921b689888b8 100644
-> --- a/fs/xfs/libxfs/xfs_ialloc.c
-> +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> @@ -3033,6 +3033,11 @@ xfs_ialloc_setup_geometry(
->  		igeo->ialloc_align = mp->m_dalign;
->  	else
->  		igeo->ialloc_align = 0;
-> +
-> +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> +	else
-> +		igeo->min_folio_order = 0;
->  }
->  
->  /* Compute the location of the root directory inode that is laid out by mkfs. */
-> diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-> index 2f7413afbf46c..33b84a3a83ff6 100644
-> --- a/fs/xfs/libxfs/xfs_shared.h
-> +++ b/fs/xfs/libxfs/xfs_shared.h
-> @@ -224,6 +224,9 @@ struct xfs_ino_geometry {
->  	/* precomputed value for di_flags2 */
->  	uint64_t	new_diflags2;
->  
-> +	/* minimum folio order of a page cache allocation */
-> +	unsigned int	min_folio_order;
-> +
->  };
->  
->  #endif /* __XFS_SHARED_H__ */
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index cf629302d48e7..0fcf235e50235 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -88,7 +88,8 @@ xfs_inode_alloc(
->  
->  	/* VFS doesn't initialise i_mode! */
->  	VFS_I(ip)->i_mode = 0;
-> -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> +	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  
->  	XFS_STATS_INC(mp, vn_active);
->  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> @@ -325,7 +326,8 @@ xfs_reinit_inode(
->  	inode->i_uid = uid;
->  	inode->i_gid = gid;
->  	inode->i_state = state;
-> -	mapping_set_large_folios(inode->i_mapping);
-> +	mapping_set_folio_min_order(inode->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  	return error;
->  }
->  
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 3949f720b5354..c6933440f8066 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
->  {
->  	uint64_t		max_bytes;
->  
-> -	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
->  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
->  
->  	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 210481b03fdb4..8cd76a01b543f 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1638,16 +1638,28 @@ xfs_fs_fill_super(
->  		goto out_free_sb;
->  	}
->  
-> -	/*
-> -	 * Until this is fixed only page-sized or smaller data blocks work.
-> -	 */
->  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> -		xfs_warn(mp,
-> -		"File system with blocksize %d bytes. "
-> -		"Only pagesize (%ld) or less will currently work.",
-> +		size_t max_folio_size = mapping_max_folio_size_supported();
-> +
-> +		if (!xfs_has_crc(mp)) {
-> +			xfs_warn(mp,
-> +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
->  				mp->m_sb.sb_blocksize, PAGE_SIZE);
-> -		error = -ENOSYS;
-> -		goto out_free_sb;
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-> +		}
-> +
-> +		if (mp->m_sb.sb_blocksize > max_folio_size) {
-> +			xfs_warn(mp,
-> +"block size (%u bytes) not supported; Only block size (%ld) or less is supported",
+>  drivers/base/power/main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 934e5bb61f13..e2149ccf2c3e 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1880,7 +1880,8 @@ int dpm_prepare(pm_message_t state)
+>                 mutex_lock(&dpm_list_mtx);
+>
+>                 if (!error) {
+> -                       dev->power.is_prepared =3D true;
+> +                       if (!dev->power.no_pm_callbacks)
+> +                               dev->power.is_prepared =3D true;
 
-This small fix [1] is missing in linux-next and vfs trees. Can it be picked?
+This is not the way to address the issue IMV.
 
-[1] https://lore.kernel.org/all/Zs_vIaw8ESLN2TwY@casper.infradead.org/
+power.is_prepared set means that the device is in dpm_prepared_list
+and I wouldn't depart from that even for devices without PM callbacks.
 
-> +				mp->m_sb.sb_blocksize, max_folio_size);
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-> +		}
-> +
-> +		xfs_warn(mp,
-> +"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-> +			mp->m_sb.sb_blocksize);
->  	}
->  
->  	/* Ensure this filesystem fits in the page cache limits */
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 4cc170949e9c0..55b254d951da7 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -374,6 +374,19 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->  #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
->  #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
->  
-> +/*
-> + * mapping_max_folio_size_supported() - Check the max folio size supported
-> + *
-> + * The filesystem should call this function at mount time if there is a
-> + * requirement on the folio mapping size in the page cache.
-> + */
-> +static inline size_t mapping_max_folio_size_supported(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
-> +	return PAGE_SIZE;
-> +}
-> +
->  /*
->   * mapping_set_folio_order_range() - Set the orders supported by a file.
->   * @mapping: The address space of the file.
-> -- 
-> 2.44.1
-> 
+>                         if (!list_empty(&dev->power.entry))
+>                                 list_move_tail(&dev->power.entry, &dpm_pr=
+epared_list);
+>                 } else if (error =3D=3D -EAGAIN) {
+> --
+
+It would be better to add a power.no_pm_callbacks check for the parent
+to device_pm_add(), but this would still suppress the warning is some
+cases in which it should be printed (for example, the new device's
+parent is a "virtual" device without PM callbacks, but its grandparent
+is a regular device that has PM callbacks and is suspended).
+
+Something like the attached patch (untested) might work, though.
+
+--000000000000d1c4a80621363b96
+Content-Type: text/x-patch; charset="US-ASCII"; name="pm-sleep-pm-add.patch"
+Content-Disposition: attachment; filename="pm-sleep-pm-add.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m0mepvtg0>
+X-Attachment-Id: f_m0mepvtg0
+
+LS0tCiBkcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jIHwgICAxNiArKysrKysrKysrKysrLS0tCiAx
+IGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCkluZGV4OiBs
+aW51eC1wbS9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jCj09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGxpbnV4LXBt
+Lm9yaWcvZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYworKysgbGludXgtcG0vZHJpdmVycy9iYXNl
+L3Bvd2VyL21haW4uYwpAQCAtMTI3LDYgKzEyNyw4IEBAIHZvaWQgZGV2aWNlX3BtX3VubG9jayh2
+b2lkKQogICovCiB2b2lkIGRldmljZV9wbV9hZGQoc3RydWN0IGRldmljZSAqZGV2KQogeworCXN0
+cnVjdCBkZXZpY2UgKmFuY2VzdG9yOworCiAJLyogU2tpcCBQTSBzZXR1cC9pbml0aWFsaXphdGlv
+bi4gKi8KIAlpZiAoZGV2aWNlX3BtX25vdF9yZXF1aXJlZChkZXYpKQogCQlyZXR1cm47CkBAIC0x
+MzQsMTIgKzEzNiwyMCBAQCB2b2lkIGRldmljZV9wbV9hZGQoc3RydWN0IGRldmljZSAqZGV2KQog
+CXByX2RlYnVnKCJBZGRpbmcgaW5mbyBmb3IgJXM6JXNcbiIsCiAJCSBkZXYtPmJ1cyA/IGRldi0+
+YnVzLT5uYW1lIDogIk5vIEJ1cyIsIGRldl9uYW1lKGRldikpOwogCWRldmljZV9wbV9jaGVja19j
+YWxsYmFja3MoZGV2KTsKKwogCW11dGV4X2xvY2soJmRwbV9saXN0X210eCk7Ci0JaWYgKGRldi0+
+cGFyZW50ICYmIGRldi0+cGFyZW50LT5wb3dlci5pc19wcmVwYXJlZCkKLQkJZGV2X3dhcm4oZGV2
+LCAicGFyZW50ICVzIHNob3VsZCBub3QgYmUgc2xlZXBpbmdcbiIsCi0JCQlkZXZfbmFtZShkZXYt
+PnBhcmVudCkpOworCisJYW5jZXN0b3IgPSBkZXYtPnBhcmVudDsKKwl3aGlsZSAoYW5jZXN0b3Ig
+JiYgYW5jZXN0b3ItPnBvd2VyLm5vX3BtX2NhbGxiYWNrcykKKwkJYW5jZXN0b3IgPSBhbmNlc3Rv
+ci0+cGFyZW50OworCisJaWYgKGFuY2VzdG9yICYmIGFuY2VzdG9yLT5wb3dlci5pc19wcmVwYXJl
+ZCkKKwkJZGV2X3dhcm4oZGV2LCAiYW5jZXN0b3IgJXMgc2hvdWxkIG5vdCBiZSBzbGVlcGluZ1xu
+IiwKKwkJCSBkZXZfbmFtZShhbmNlc3RvcikpOworCiAJbGlzdF9hZGRfdGFpbCgmZGV2LT5wb3dl
+ci5lbnRyeSwgJmRwbV9saXN0KTsKIAlkZXYtPnBvd2VyLmluX2RwbV9saXN0ID0gdHJ1ZTsKKwog
+CW11dGV4X3VubG9jaygmZHBtX2xpc3RfbXR4KTsKIH0KIAo=
+--000000000000d1c4a80621363b96--
 
