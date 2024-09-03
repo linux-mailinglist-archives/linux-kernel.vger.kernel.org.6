@@ -1,378 +1,306 @@
-Return-Path: <linux-kernel+bounces-313791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9ADA96A9CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:10:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDA996A9CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7335D1F24F02
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:10:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87ED7B22DD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087B51EBFF1;
-	Tue,  3 Sep 2024 21:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641771EBFE9;
+	Tue,  3 Sep 2024 21:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIhDpOZp"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="OLKGfgl0"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461D81EBFEB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F642207A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397835; cv=none; b=D6qnBfYkJwQBddcYn3icSBYaY9kU+bHoNuBaTUBi8cMW8B7VFWHm7CAB669WVx4XrTX4HDG3OgwY9rAIU4H5IFp5ofT6rFf76fMkVN/nge5yTdTdAW9qbbvuw/3KbGlkaWv+IFqxWM+DavoDtNzy9JHoalxWWC1zH15eEadfoYM=
+	t=1725397898; cv=none; b=UmdRW4KBxFCQHxlhB0+cQZkwh8btbVCewORnIlMjq+vW2NFIjb1CadsurNA3X5OTnj2wl8BEerp1fGLaEoEIOjHt+6K0+Iib4uc3Yw8GxHLhi6Wuog0Ople9Y0uhUaa68T8eI/KyRqsyvD/wmfqcs2WjY6BBiufac2umhyEeilM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397835; c=relaxed/simple;
-	bh=kTpXgRFyLYM+/yBEitslSJ/oSHaBQDe16DCwXU0SxZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qZjf/C7IR1xWxYuOUOxG8yumfJFDT6aokbitsCtZPKuZ7+7lqIOm5Nzt2efPFEBkPeeZtsqwp93lrLE/GHDAQeJkzGvsBhmGkBLEykz7pLgGA767jIw5W4VNPTbTs/6xTSrGvGtnN6N85mBhdXuMoPw7hzwPLoQwhFgHgUc9wPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIhDpOZp; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-498d0c68a14so1894033137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:10:33 -0700 (PDT)
+	s=arc-20240116; t=1725397898; c=relaxed/simple;
+	bh=wnxGj/yvLACX1iEiLvvS94910R3kQ4GYWmbzIueWK1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVyEryGB4x/QtCpJQcnSv9lx9F68A7rlGKT/70If9ubiyN+Kx5Kw6x6PP2XhoBCmaKGFhOhpoVdPD5WDS8y0ejxjD+LGCcHwTpw1zWfIVQa7WsJFnheBo2uQtMnkPVAhhQ0lGni3jbIwQnXICTId3SZV56xJAACiuqSGT3Qteg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=OLKGfgl0; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374bfc395a5so40471f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:11:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725397832; x=1726002632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k1YSZZgvfXVO5DYb8OvWgPT+mVWIMqYovLPmo9Ff4pQ=;
-        b=UIhDpOZpWVDQU44qg5kT5BA6pkUrAr7wJIfB8KsPG9BCDU0k9u2FfBYkUfesmwy+3h
-         b6N5czRkR4R7cW/ndNz5yZWZd12bgkvH8V4SReWruPxXnjaTzzXmD/aeR1OlTf5I23sk
-         Jd6ks8/7pIZtZPNvZPy99+0oUH7RnUeCF5UZlh00rWkjceB/jkNFj0M6keZYjSVz3d4H
-         fh+m/mSelR0wJpSsfVWxOD0PQHXBNyBYKXLeHqkFifenx6vlARPG2Ybxv6fYw80MRnN8
-         6XLCiyVmoVKchh4+tt9ioSfr5S3XPqXdfUr9pqtDemOLde9B+rkSJCDaaR8aozcHcOjj
-         Qsag==
+        d=ffwll.ch; s=google; t=1725397894; x=1726002694; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8YgAUS2Ry5Qk+wWPJPy+cWmdjbMTWXvNp2C7CLDuQik=;
+        b=OLKGfgl0IIfry1uNrSTXkpJzmYEzBWCTflUrVVnIXZgmmpTbH1H8ZZ205fuNIii6B9
+         BNqV0WP+TBNa+Jg1XbS3avf3gEo8Y6EvIgYZRAfCgqCm9nRKl1726l0p5q2DTMKxfGDu
+         j9z9BJCoN5h+7MrgvHBVtszM5bZzEzVZRyLHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725397832; x=1726002632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k1YSZZgvfXVO5DYb8OvWgPT+mVWIMqYovLPmo9Ff4pQ=;
-        b=YJiPxYNBnC655Iw5Rz9eSQUKLukYqFGHgn4xlwzNtzofHZNoUYQhtdC6y8kEdJq/3n
-         ITbaPfC5oRnY/B8RYRlWN1Bhm2SrIbrM3DnQb8vtIrgY0Im2kHyHESmabHwa7bGMWGiQ
-         aiwLSequQFuMwORTXFTMgPtD1ruKNtyRqAHYKphHt1jEKChxCftZC1fcY+9H0sjLiWGS
-         AIkwfnyeLKIrzEvwHpvSySHRR6PWmgPfx+P5xs2Ld8YIxoVchHW45SvVEIYqStE9YXeS
-         XHtbvbr/cCDiUwwSzIWtfhGG9W2mjXuGDN69tr5oxASXSsrj9lnZWUuAoq4uDP9si1rV
-         HsPw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7DIAMVhuDr3o6cl+KVEha173yQ3DUUj5+tBmhA/XJ0PeL/UdznHXn2z3S0oD8AuOxB4gLIXv5R04thc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0B6GG9XUfohyx08tspbNRNkc6i5WjOnI102B5dgrwywPhaWUd
-	+cQaa1AEVoCvk2S0e9dy490/hgmxh7Zkshtd8fuZdOQm5px5pb1vCl1/53ANWY0P7POkMSpiK2H
-	WcLdo5K28wfaZ2PGq3CslBO2m4WA=
-X-Google-Smtp-Source: AGHT+IERyU0B2xVmbm879xr3A+O4L9Hv/Kmux6TZiP0CyIKM7GOV6cJ1IJPUej4K7CC4lL4Df2rtOuqWOGR1OYtGNgA=
-X-Received: by 2002:a05:6102:3593:b0:498:f027:254a with SMTP id
- ada2fe7eead31-49a798ffb28mr14780511137.1.1725397831982; Tue, 03 Sep 2024
- 14:10:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725397894; x=1726002694;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8YgAUS2Ry5Qk+wWPJPy+cWmdjbMTWXvNp2C7CLDuQik=;
+        b=L4d3btW4wG8WNS1NqgKSqyf9OiwZKb9FPMi+gf7zY5j9TULhsVmmDqcbRA/XZ/Zw4R
+         DAPVFZxf513e9rlTblCYVprDpOXm3IqzLRNt1AfavqTbGjVY6uK8WuXyXvY/aEqrzCeB
+         6zj3PSy2Hhd/XZcmt/B72JhNzI2aFSOh8bo4I3lVRf4edf+/j5UfDg8OCkBlpmet+Kj6
+         3C5rRBgvbht6AcVj/5v9JhocF1Dm5rSCrVCEwlzRp33XyFiPxn7dq7NcrKi0QQElrc+C
+         Jr8r96ZZtEAeasbNdbPNm0k5hBdVAKlO9/PVg0E5zJSq0iGAldB505HE6E2ku/Bu3KP1
+         7siQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqbH9bq0qziVCWkRJcYTjgbP/71dawsCxoKeXOjqFHId80322t6k+jX6WAl1tVHuBAJvfAmfeTXO+d+po=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/B2Wa6wYWcotVA3PFgX9Jc14NyFQhZ/2KaVPqrGqhHtlVVpKc
+	m9u0j0NOfqAvYlWxU0MDTN1rzqFltx9xL7IFe5qf0UFT9nbvYHWHB4o5h5Y5WMM=
+X-Google-Smtp-Source: AGHT+IGTAmkFpaLIX21kpLx9BQXwTM1hqlVv5C+ltwv+zwHAusBxHFX4IUm4ArGw6G3xCPOuhsZ0Gw==
+X-Received: by 2002:adf:b31a:0:b0:374:c618:7fd2 with SMTP id ffacd0b85a97d-374c6188127mr6317040f8f.8.1725397893741;
+        Tue, 03 Sep 2024 14:11:33 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c39eacdfsm8993826f8f.42.2024.09.03.14.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 14:11:33 -0700 (PDT)
+Date: Tue, 3 Sep 2024 23:11:31 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Steven Price <steven.price@arm.com>,
+	Mihail Atanassov <mihail.atanassov@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Ketil Johnsen <ketil.johnsen@arm.com>,
+	Akash Goel <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
+Message-ID: <Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Steven Price <steven.price@arm.com>,
+	Mihail Atanassov <mihail.atanassov@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+	David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Ketil Johnsen <ketil.johnsen@arm.com>,
+	Akash Goel <akash.goel@arm.com>
+References: <20240828172605.19176-1-mihail.atanassov@arm.com>
+ <c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
+ <a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
+ <96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902225009.34576-1-21cnbao@gmail.com> <20240903110109.1696-1-hdanton@sina.com>
- <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com> <ZtcVYBUNWGow40pX@google.com>
-In-Reply-To: <ZtcVYBUNWGow40pX@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 4 Sep 2024 09:10:20 +1200
-Message-ID: <CAGsJ_4y-s25N94b2GnxypFhb-5bv53wOcJBt14Dx83M6AJD=7Q@mail.gmail.com>
-Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
- reduce the lock duration
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Hillf Danton <hdanton@sina.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
+X-Operating-System: Linux phenom 6.9.12-amd64 
 
-On Wed, Sep 4, 2024 at 1:55=E2=80=AFAM Carlos Llamas <cmllamas@google.com> =
-wrote:
->
-> On Tue, Sep 03, 2024 at 07:45:12PM +0800, Barry Song wrote:
-> > On Tue, Sep 3, 2024 at 7:01=E2=80=AFPM Hillf Danton <hdanton@sina.com> =
-wrote:
-> > >
-> > > On Tue, Sep 03, 2024 at 10:50:09AM +1200, Barry Song wrote:
-> > > > From: Barry Song <v-songbaohua@oppo.com>
-> > > >
-> > > > The mmap_write_lock() can block all access to the VMAs, for example=
- page
-> > > > faults. Performing memory allocation while holding this lock may tr=
-igger
-> > > > direct reclamation, leading to others being queued in the rwsem for=
- an
-> > > > extended period.
-> > > > We've observed that the allocation can sometimes take more than 300=
-ms,
-> > > > significantly blocking other threads. The user interface sometimes
-> > > > becomes less responsive as a result. To prevent this, let's move th=
-e
-> > > > allocation outside of the write lock.
->
-> Thanks for you patch Barry. So, we are aware of this contention and I've
-> been working on a fix for it. See more about this below.
+On Tue, Sep 03, 2024 at 03:46:43PM +0200, Christian König wrote:
+> Hi Steven,
+> 
+> Am 29.08.24 um 15:37 schrieb Steven Price:
+> > Hi Christian,
+> > 
+> > Mihail should be able to give more definitive answers, but I think I can
+> > answer your questions.
+> > 
+> > On 29/08/2024 10:40, Christian König wrote:
+> > > Am 28.08.24 um 19:25 schrieb Mihail Atanassov:
+> > > > Hello all,
+> > > > 
+> > > > This series implements a mechanism to expose Mali CSF GPUs' queue
+> > > > ringbuffers directly to userspace, along with paraphernalia to allow
+> > > > userspace to control job synchronisation between the CPU and GPU.
+> > > > 
+> > > > The goal of these changes is to allow userspace to control work
+> > > > submission to the FW/HW directly without kernel intervention in the
+> > > > common case, thereby reducing context switching overhead. It also allows
+> > > > for greater flexibility in the way work is enqueued in the ringbufs.
+> > > > For example, the current kernel submit path only supports indirect
+> > > > calls, which is inefficient for small command buffers. Userspace can
+> > > > also skip unnecessary sync operations.
+> > > Question is how do you guarantee forward progress for fence signaling?
+> > A timeout. Although looking at it I think it's probably set too high
+> > currently:
+> > 
+> > > +#define JOB_TIMEOUT_MS				5000
+> > But basically the XGS queue is a DRM scheduler just like a normal GPU
+> > queue and the jobs have a timeout. If the timeout is hit then any fences
+> > will be signalled (with an error).
+> 
+> Mhm, that is unfortunately exactly what I feared.
+> 
+> > > E.g. when are fences created and published? How do they signal?
+> > > 
+> > > How are dependencies handled? How can the kernel suspend an userspace
+> > > queue?
+> > The actual userspace queue can be suspended. This is actually a
+> > combination of firmware and kernel driver, and this functionality is
+> > already present without the user submission. The firmware will multiplex
+> > multiple 'groups' onto the hardware, and if there are too many for the
+> > firmware then the kernel multiplexes the extra groups onto the ones the
+> > firmware supports.
+> 
+> How do you guarantee forward progress and that resuming of suspended queues
+> doesn't end up in a circle dependency?
+> 
+> > I haven't studied Mihail's series in detail yet, but if I understand
+> > correctly, the XGS queues are handled separately and are not suspended
+> > when the hardware queues are suspended. I guess this might be an area
+> > for improvement and might explain the currently very high timeout (to
+> > deal with the case where the actual GPU work has been suspended).
+> > 
+> > > How does memory management work in this case?
+> > I'm not entirely sure what you mean here. If you are referring to the
+> > potential memory issues with signalling path then this should be handled
+> > by the timeout - although I haven't studied the code to check for bugs here.
+> 
+> You might have misunderstood my question (and I might misunderstand the
+> code), but on first glance it strongly sounds like the current approach will
+> be NAKed.
+> 
+> > The actual new XGS queues don't allocate/free memory during the queue
+> > execution - so it's just the memory usage related to fences (and the
+> > other work which could be blocked on the fence).
+> 
+> But the kernel and the hardware could suspend the queues, right?
+> 
+> > In terms of memory management for the GPU work itself, this is handled
+> > the same as before. The VM_BIND mechanism allows dependencies to be
+> > created between syncobjs and VM operations, with XGS these can then be
+> > tied to GPU HW events.
+> 
+> I don't know the details, but that again strongly sounds like that won't
+> work.
+> 
+> What you need is to somehow guarantee that work doesn't run into memory
+> management deadlocks which are resolved by timeouts.
+> 
+> Please read up here on why that stuff isn't allowed: https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#indefinite-dma-fences
 
-Cool, Carlos!
+panthor doesn't yet have a shrinker, so all memory is pinned, which means
+memory management easy mode.
 
->
-> > >
-> > > I suspect concurrent allocators make things better wrt response, cutt=
-ing
-> > > alloc latency down to 10ms for instance in your scenario. Feel free t=
-o
-> > > show figures given Tangquan's 48-hour profiling.
-> >
-> > Likely.
-> >
-> > Concurrent allocators are quite common in PFs which occur
-> > in the same PTE. whoever gets PTL sets PTE, others free the allocated
-> > pages.
-> >
-> > >
-> > > > A potential side effect could be an extra alloc_page() for the seco=
-nd
-> > > > thread executing binder_install_single_page() while the first threa=
-d
-> > > > has done it earlier. However, according to Tangquan's 48-hour profi=
-ling
-> > > > using monkey, the likelihood of this occurring is minimal, with a r=
-atio
-> > > > of only 1 in 2400. Compared to the significantly costly rwsem, this=
- is
-> > > > negligible.
->
-> This is not negligible. In fact, it is the exact reason for the page
-> allocation to be done with the mmap sem. If the first thread sleeps on
-> vm_insert_page(), then binder gets into a bad state of multiple threads
-> trying to reclaim pages that won't really be used. Memory pressure goes
-> from bad to worst pretty quick.
->
-> FWIW, I believe this was first talked about here:
-> https://lore.kernel.org/all/ZWmNpxPXZSxdmDE1@google.com/
+But also this means there might be an uapi design bug in here, and we
+really don't want to commit to that. My stance is that panthor should gain
+a proper shrinker first, which means there will be some changes here too.
+And then we can properly evaluate this. As-is it's a bit too much on the
+toy end of things.
 
-However, I'm not entirely convinced that this is a problem :-) Concurrent
-allocations like this can occur in many places, especially in PFs. Reclamat=
-ion
-is not useless because it helps free up memory for others; it's not
-without value.
-I also don't believe binder is one of the largest users executing concurren=
-t
-allocations.
+That aside, I've thought this all through with tons of people, and I do
+think it's all possible.
+-Sima
 
->
->
-> > > > On the other hand, holding a write lock without making any VMA
-> > > > modifications appears questionable and likely incorrect. While this
-> > > > patch focuses on reducing the lock duration, future updates may aim
-> > > > to eliminate the write lock entirely.
-> > >
-> > > If spin, better not before taking a look at vm_insert_page().
-> >
-> > I have patch 2/3 transitioning to mmap_read_lock, and per_vma_lock is
-> > currently in the
-> > testing queue. At the moment, alloc->spin is in place, but I'm not
-> > entirely convinced
-> > it's the best replacement for the write lock. Let's wait for
-> > Tangquan's test results.
-> >
-> > Patch 2 is detailed below, but it has only passed the build-test phase
-> > so far, so
-> > its result is uncertain. I'm sharing it early in case you find it
-> > interesting. And I
-> > am not convinced Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in
-> > race with munmap()") is a correct fix to really avoid all UAF of alloc-=
->vma.
-> >
-> > [PATCH]  binder_alloc: Don't use mmap_write_lock for installing page
-> >
-> > Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in race with
-> > munmap()") uses the mmap_rwsem write lock to protect against a race
-> > condition with munmap, where the vma is detached by the write lock,
-> > but pages are zapped by the read lock. This approach is extremely
-> > expensive for the system, though perhaps less so for binder itself,
-> > as the write lock can block all other operations.
-> >
-> > As an alternative, we could hold only the read lock and re-check
-> > that the vma hasn't been detached. To protect simultaneous page
-> > installation, we could use alloc->lock instead.
-> >
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >  drivers/android/binder_alloc.c | 32 +++++++++++++++++---------------
-> >  1 file changed, 17 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_al=
-loc.c
-> > index f20074e23a7c..a2281dfacbbc 100644
-> > --- a/drivers/android/binder_alloc.c
-> > +++ b/drivers/android/binder_alloc.c
-> > @@ -228,24 +228,17 @@ static int binder_install_single_page(struct
-> > binder_alloc *alloc,
-> >                 return -ESRCH;
-> >
-> >         /*
-> > -        * Don't allocate page in mmap_write_lock, this can block
-> > -        * mmap_rwsem for a long time; Meanwhile, allocation failure
-> > -        * doesn't necessarily need to return -ENOMEM, if lru_page
-> > -        * has been installed, we can still return 0(success).
-> > +        * Allocation failure doesn't necessarily need to return -ENOME=
-M,
-> > +        * if lru_page has been installed, we can still return 0(succes=
-s).
-> > +        * So, defer the !page check until after binder_get_installed_p=
-age()
-> > +        * is completed.
-> >          */
-> >         page =3D alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
-> >
-> > -       /*
-> > -        * Protected with mmap_sem in write mode as multiple tasks
-> > -        * might race to install the same page.
-> > -        */
-> > -       mmap_write_lock(alloc->mm);
-> > -       if (binder_get_installed_page(lru_page)) {
-> > -               ret =3D 1;
-> > -               goto out;
-> > -       }
-> > +       mmap_read_lock(alloc->mm);
-> >
-> > -       if (!alloc->vma) {
-> > +       /* vma might have been dropped or deattached */
-> > +       if (!alloc->vma || !find_vma(alloc->mm, addr)) {
-> >                 pr_err("%d: %s failed, no vma\n", alloc->pid, __func__)=
-;
-> >                 ret =3D -ESRCH;
-> >                 goto out;
-> > @@ -257,18 +250,27 @@ static int binder_install_single_page(struct
-> > binder_alloc *alloc,
-> >                 goto out;
-> >         }
-> >
-> > +       spin_lock(&alloc->lock);
->
-> You can't hold a spinlock and then call vm_insert_page().
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> > 
+> > Fundamentally (modulo bugs) there is little change compared to kernel
+> > submission - it's already fairly trivial to write GPU job which will
+> > make no forward progress (a 'while (1)' equivalent job). The only
+> > difference here is that XGS makes this 'easy' and doesn't involve the
+> > GPU spinning. Either way we rely on a timeout to recover from these
+> > situations.
+> > 
+> > Thanks,
+> > Steve
+> > 
+> > > Regards,
+> > > Christian.
+> > > 
+> > > > This is still a work-in-progress, there's an outstanding issue with
+> > > > multiple processes using different submission flows triggering
+> > > > scheduling bugs (e.g. the same group getting scheduled twice), but we'd
+> > > > love to gather some feedback on the suitability of the approach in
+> > > > general and see if there's a clear path to merging something like this
+> > > > eventually.
+> > > > 
+> > > > I've also CCd AMD maintainers because they have in the past done
+> > > > something similar[1], in case they want to chime in.
+> > > > 
+> > > > There are two uses of this new uAPI in Mesa, one in gallium/panfrost
+> > > > (link TBD), and one in panvk [2].
+> > > > 
+> > > > The Gallium implementation is a naïve change just to switch the
+> > > > submission model and exercise the new kernel code, and we don't plan
+> > > > on pursuing this at this time.
+> > > > 
+> > > > The panvk driver changes are, however, a better representation of the
+> > > > intent behind this new uAPI, so please consider that as the reference
+> > > > userspace. It is still very much also a work in progress.
+> > > > 
+> > > >    * patch 1 adds all the uAPI changes;
+> > > >    * patch 2 implements the GROUP_CREATE ioctl changes necessary to expose
+> > > >      the required objects to userspace;
+> > > >    * patch 3 maps the doorbell pages, similarly to how the user I/O
+> > > > page is
+> > > >      mapped;
+> > > >    * patch 4 implements GROUP_KICK, which lets userspace request an
+> > > >      inactive group to be scheduled on the GPU;
+> > > >    * patches 5 & 6 implement XGS queues, a way for userspace to
+> > > >      synchronise GPU queue progress with DRM syncobjs;
+> > > >    * patches 7 & 8 add notification mechanisms for user & kernel to signal
+> > > >      changes to native GPU syncobjs.
+> > > > 
+> > > > [1]
+> > > > https://lore.kernel.org/amd-gfx/CADnq5_N61q_o+5WYUZsZ=qu7VmeXTFHQSxLwTco05gLzHaiswA@mail.gmail.com/t/#m116a36a598d8fad1329e053974ad37a4dc0f28ed
+> > > > [2]
+> > > > https://gitlab.freedesktop.org/larsivsi/mesa/-/commits/panvk-v10-usersubmit?ref_type=heads
+> > > > 
+> > > > Ketil Johnsen (7):
+> > > >     drm/panthor: Add uAPI to submit from user space
+> > > >     drm/panthor: Extend GROUP_CREATE for user submission
+> > > >     drm/panthor: Map doorbell pages
+> > > >     drm/panthor: Add GROUP_KICK ioctl
+> > > >     drm/panthor: Factor out syncobj handling
+> > > >     drm/panthor: Implement XGS queues
+> > > >     drm/panthor: Add SYNC_UPDATE ioctl
+> > > > 
+> > > > Mihail Atanassov (1):
+> > > >     drm/panthor: Add sync_update eventfd handling
+> > > > 
+> > > >    drivers/gpu/drm/panthor/Makefile          |   4 +-
+> > > >    drivers/gpu/drm/panthor/panthor_device.c  |  66 ++-
+> > > >    drivers/gpu/drm/panthor/panthor_device.h  |  35 +-
+> > > >    drivers/gpu/drm/panthor/panthor_drv.c     | 233 +++++++-
+> > > >    drivers/gpu/drm/panthor/panthor_fw.c      |   2 +-
+> > > >    drivers/gpu/drm/panthor/panthor_sched.c   | 408 +++++++++-----
+> > > >    drivers/gpu/drm/panthor/panthor_sched.h   |   8 +-
+> > > >    drivers/gpu/drm/panthor/panthor_syncobj.c | 167 ++++++
+> > > >    drivers/gpu/drm/panthor/panthor_syncobj.h |  27 +
+> > > >    drivers/gpu/drm/panthor/panthor_xgs.c     | 638 ++++++++++++++++++++++
+> > > >    drivers/gpu/drm/panthor/panthor_xgs.h     |  42 ++
+> > > >    include/uapi/drm/panthor_drm.h            | 243 +++++++-
+> > > >    12 files changed, 1696 insertions(+), 177 deletions(-)
+> > > >    create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.c
+> > > >    create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.h
+> > > >    create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.c
+> > > >    create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.h
+> > > > 
 
-Thanks! This patch has only passed the build test so far. It seems like
-we can hold off on further testing for now.
-
->
-> > +       if (binder_get_installed_page(lru_page)) {
-> > +               spin_unlock(&alloc->lock);
-> > +               ret =3D 1;
-> > +               goto out;
-> > +       }
-> > +
-> >         ret =3D vm_insert_page(alloc->vma, addr, page);
-> >         if (ret) {
-> >                 pr_err("%d: %s failed to insert page at offset %lx with=
- %d\n",
-> >                        alloc->pid, __func__, addr - alloc->buffer, ret)=
-;
-> > +               spin_unlock(&alloc->lock);
-> >                 ret =3D -ENOMEM;
-> >                 goto out;
-> >         }
-> >
-> >         /* Mark page installation complete and safe to use */
-> >         binder_set_installed_page(lru_page, page);
-> > +       spin_unlock(&alloc->lock);
-> >  out:
-> > -       mmap_write_unlock(alloc->mm);
-> > +       mmap_read_unlock(alloc->mm);
-> >         mmput_async(alloc->mm);
-> >         if (ret && page)
-> >                 __free_page(page);
-> > --
-> > 2.39.3 (Apple Git-146)
->
->
-> Sorry, but as I mentioned, I've been working on fixing this contention
-> by supporting concurrent "faults" in binder_install_single_page(). This
-> is the appropriate fix. I should be sending a patch soon after working
-> out the conflicts with the shrinker's callback.
-
-Awesome! I=E2=80=99m eager to see your patch, and we=E2=80=99re ready to he=
-lp with testing.
-I strongly recommend dropping the write lock entirely. Using
-`mmap_write_lock()` isn=E2=80=99t just a binder-specific concern; it has th=
-e
-potential to affect the entire Android system.
-
-In patch 3, I experimented with using `per_vma_lock` as well. I=E2=80=99m _=
-not_
-proposing it for merging since you=E2=80=99re already working on it, but I =
-wanted
-to share the idea. (just like patch2, it has only passed build-test)
-
-[PATCH] binder_alloc: Further move to per_vma_lock from mmap_read_lock
-
-To further reduce the read lock duration, let's try using per_vma_lock
-first. If that fails, we can take the read lock, similar to how page
-fault handlers operate.
-
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- drivers/android/binder_alloc.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.=
-c
-index a2281dfacbbc..b40a5dd650c8 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -221,6 +221,8 @@ static int binder_install_single_page(struct
-binder_alloc *alloc,
-                                      struct binder_lru_page *lru_page,
-                                      unsigned long addr)
- {
-+       struct vm_area_struct *vma;
-+       bool per_vma_lock =3D true;
-        struct page *page;
-        int ret =3D 0;
-
-@@ -235,10 +237,15 @@ static int binder_install_single_page(struct
-binder_alloc *alloc,
-         */
-        page =3D alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
-
--       mmap_read_lock(alloc->mm);
-+       vma =3D lock_vma_under_rcu(alloc->mm, addr);
-+       if (!vma) {
-+               per_vma_lock =3D false;
-+               mmap_read_lock(alloc->mm);
-+               vma =3D find_vma(alloc->mm, addr);
-+       }
-
--       /* vma might have been dropped or deattached */
--       if (!alloc->vma || !find_vma(alloc->mm, addr)) {
-+       /* vma might have been dropped, deattached or changed to new one */
-+       if (!alloc->vma || !vma || vma !=3D alloc->vma) {
-                pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
-                ret =3D -ESRCH;
-                goto out;
-@@ -270,7 +277,10 @@ static int binder_install_single_page(struct
-binder_alloc *alloc,
-        binder_set_installed_page(lru_page, page);
-        spin_unlock(&alloc->lock);
- out:
--       mmap_read_unlock(alloc->mm);
-+       if (per_vma_lock)
-+               vma_end_read(vma);
-+       else
-+               mmap_read_unlock(alloc->mm);
-        mmput_async(alloc->mm);
-        if (ret && page)
-                __free_page(page);
---=20
-2.39.3 (Apple Git-146)
-
-
->
-> Thanks,
-> --
-> Carlos Llamas
-
-Thanks
-Barry
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
