@@ -1,201 +1,147 @@
-Return-Path: <linux-kernel+bounces-313931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA64E96AC7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:47:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7099096AC82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726CA282CBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2556A1F26467
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E7A1D58B9;
-	Tue,  3 Sep 2024 22:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8959D18733B;
+	Tue,  3 Sep 2024 22:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qcar98zr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GGtoiBTa"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709F91EC01F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5071EC01E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725403664; cv=none; b=iewoEBj2/5vSLWkqlj9pCqp9Z6DGFBHKavAMAQvkeGGzp11dQqezPLYH97Xzlo1HzG7T6eBMToNVXXp6QA1Uwf1+Mi6SbSgbiXSka7SUaVnz9GQ6QhuL7aITPNmgpwEWBu6fDSric4MWPlfTJuTO3FdEuYKKAGsNXZu5OB8fHEc=
+	t=1725403765; cv=none; b=T+9XalAWcuADlvch3SSr8HctwK/SttqCt+6cfAhhu5xs5ArMiRU304fdeEQMJqJwDlEmHaFPxeqrUAQEUIzDoJbonaBn6sZdTUEfGgR7gNjy2F9eae4qKKe6jiNuemKGUmMWvnisBeBLJvkG88kHaapTQUcWOX6ScFd0JCjeKF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725403664; c=relaxed/simple;
-	bh=iO/fNMW/wiTNAaqtQ6ViRfRRPRXDsdCIOiMd8CyEKww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6d0f4Y3/qiGlRD45ioN1A4sAk5dsIkeHHIrvs2VYfiyYi2Um9H39+x2tYOjcIZVuV7sUDTDK/Ttcn8nI0tpP7GoJYK5ZlJ440C795gRdKjGqgNtv4FdMJT0TlEe/pG4iRwHAThs2RvEDW/bV1O+25vJOMv0TvEKTZa0krgzAPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qcar98zr; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725403661; x=1756939661;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iO/fNMW/wiTNAaqtQ6ViRfRRPRXDsdCIOiMd8CyEKww=;
-  b=Qcar98zrLlG7CmPhXQI/+xwPhr4U8oAJg7LkvUl7grgTD2GPQGcLcnAT
-   TBxG893yNBLQg1WZLpgZ30w10td0rIEmioXd6EuUMrtycRsnXhWX3gISp
-   RabTaJyp3HtMqiT07Nl59e3Xr6r5G5cszR8WXq765Uke2eJxLuzFdjvu5
-   1iDy3QgcJ6LkUBQJyo1uQeI2XaAas+9nkzvCeh5NvoqjLxzZvhdqrUuqC
-   4GiwKO5OCXpcQz3SOzyep6HjrKxpfMCGMjLfw7gyr4+ppUxLsvdBzG4wU
-   tejjrpLmfmTzbU+k7mlsnu+jxilIVqgkoULMNRIdxVcg0oQ1LA5iK1JYV
-   g==;
-X-CSE-ConnectionGUID: zWiqcIWDTyijamZhWyM+CQ==
-X-CSE-MsgGUID: O1VNVLLvSUyF0PIgRcsV6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34637219"
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="34637219"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 15:47:40 -0700
-X-CSE-ConnectionGUID: qDXGN2SpRcmbs2Z1fHbSoA==
-X-CSE-MsgGUID: 7jsQSHVFTSO3IMmq2uCzug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="69223688"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2024 15:47:38 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slcJD-0007JK-3D;
-	Tue, 03 Sep 2024 22:47:35 +0000
-Date: Wed, 4 Sep 2024 06:47:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wu Bo <bo.wu@vivo.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net, Wu Bo <wubo.oduw@gmail.com>
-Subject: Re: [PATCH 13/13] f2fs: implement inline tail forward recovery
-Message-ID: <202409040652.Gn2vQXRR-lkp@intel.com>
-References: <b6e9e02244cf2460df1256e257103e2c77fae2a9.1725334811.git.bo.wu@vivo.com>
+	s=arc-20240116; t=1725403765; c=relaxed/simple;
+	bh=TtyX2gK5m3nn23OtYeDlMe0JllQ4/PmVqk0mkdxmM0g=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OsHnpOxwjB82lfPd9jx7rH8VStLWj3rt8Ebavk5vPTMoFEmzhfl3IEYNSFzS7J/WjChCN7LEpsR0uk0DXQ1GlPOF6444EBY+Ca1wBQ2o5EBNA6VLCrpXtUzpCZTWatC/YPi+/NnByoUqnPJ3jV/q6QdRAGNLS1SDbsKqyjt5WJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GGtoiBTa; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c35b72f943so1315046d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725403763; x=1726008563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uhkZOEeJ95CcasGDNkmg/phbGBaUk1oIC37JjrClemw=;
+        b=GGtoiBTa2PTnMt5qsv43WUG9RdNGUP9XPM1q8sr9xgQRol07+bG+QW2+Ri8SBjndyE
+         39rIBUWhWiH9auxXqu2QyaNOdimkqZaQmRoTBgJWO+P25alTBOOa+lPq9hg8qblXMGci
+         cR+MBD57s0alrU9EjH6ewGjBGpk8wPv8MJP1M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725403763; x=1726008563;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhkZOEeJ95CcasGDNkmg/phbGBaUk1oIC37JjrClemw=;
+        b=lAh2WCl6OzbkY+WsN5ew6RAuoODCfqqZMj86PoH1EG8LFVcA+M0VhCBGKO7xDNlTRy
+         C+jiQ6EndjoIlFzw/tniPsm1C3UFlzn5o3vodVg6wQ7wh3nPFqysRfcR7Lpa/jL+u0Bl
+         B/E6IYTJW2Idsfj6cnMdepfJ9QF+wS5r5WLxNs63vlJ2tTt2zBV5r43cXVvbjQIfYBoO
+         EMl2fnoD1fevIMGAtztCKvDV7HKxZboAApJaIB722TXDg5f6bvuctFqqrIk4Bi5R50xS
+         etPtgDFjkCfXPcrb/mwgTbUtg3spYhDvDzkiKBsNUdWEGY3WfbzYUyKLsejyF93E1d6q
+         s3ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUA5H30QdxKH/wtfvmCMUeqV+sEKwNu3K9pA2NlYsP04tqQRCXQDenjnN+lrfQy/0C5ahmxmcS4SNqiDr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRlrfpM1WlpOyIrb18Ry+hO++aV8nRHtYQOIENWB2uhCThwHUX
+	0QAgtgIfQqriRwd3kq9uSaJ65kOfJZqOCfaHu0LdppusGVDZCrd7tFWk6xB7UUO3Ekls85wJV7a
+	2JRgzRqnPXwdP9oIoENFyD+HX93IjOkWZzEkH
+X-Google-Smtp-Source: AGHT+IF34ocTupB91QqHAUN7muZ3pQu7SJrIS8QiPpHwQnzTFwdvCLem6xytcCmScWzLqSwtal0se6zIR4RyUsc0prs=
+X-Received: by 2002:a05:6214:1c44:b0:6c4:d2f9:644e with SMTP id
+ 6a1803df08f44-6c518e03025mr2177666d6.12.1725403763196; Tue, 03 Sep 2024
+ 15:49:23 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 3 Sep 2024 18:49:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6e9e02244cf2460df1256e257103e2c77fae2a9.1725334811.git.bo.wu@vivo.com>
+In-Reply-To: <ZtWdsZrFxfjYLgaG@smile.fi.intel.com>
+References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-12-swboyd@chromium.org>
+ <ZtWdsZrFxfjYLgaG@smile.fi.intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 3 Sep 2024 18:49:22 -0400
+Message-ID: <CAE-0n52Hupp-ANE2ggeGCRZSM+xmrJt-Q5+5Cb7=C-mxykbz0g@mail.gmail.com>
+Subject: Re: [PATCH v4 11/18] device property: Add remote endpoint to devcon matcher
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
+	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wu,
+Quoting Andy Shevchenko (2024-09-02 04:12:49)
+> On Sat, Aug 31, 2024 at 09:06:49PM -0700, Stephen Boyd wrote:
+>
+> Is it possible to move these Cc:s after --- line below?
 
-kernel test robot noticed the following build warnings:
+Ok.
 
-[auto build test WARNING on v6.11-rc6]
-[also build test WARNING on linus/master]
-[cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev next-20240903]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> >  /**
+> >   * devcon_match_fn_t - device connection match function
+> >   * @fwnode: Remote connection's device node
+> > + * @endpoint: Remote connection's endpoint node
+> >   * @con_id: Identifier for the connection
+> >   * @data: Match function caller specific data
+> >   *
+> >   * Implement a callback with this function signature to search a fwnode's
+> >   * connections for a match with a function like device_connection_find_match().
+> >   * This function will be called possibly multiple times, once for each
+> > - * connection. The match function should inspect the @fwnode to look for a
+> > - * match. The @con_id and @data provided are the same as the @con_id and @data
+> > - * arguments passed to the functions that take a devcon_match_fn_t argument.
+> > + * connection. The match function should inspect the connection's @fwnode
+> > + * and/or @endpoint to look for a match. The @con_id and @data provided are the
+> > + * same as the @con_id and @data arguments passed to the functions that take a
+> > + * devcon_match_fn_t argument.
+>
+> So, struct fwnode_handle is a single-linked list. Can we utilise that instead
+> of adding a new parameter? I.o.w. do those objects (@fwnode and @endpoint) have
+> anything in common and can be chained?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wu-Bo/f2fs-add-inline-tail-mount-option/20240903-164436
-base:   v6.11-rc6
-patch link:    https://lore.kernel.org/r/b6e9e02244cf2460df1256e257103e2c77fae2a9.1725334811.git.bo.wu%40vivo.com
-patch subject: [PATCH 13/13] f2fs: implement inline tail forward recovery
-config: arc-randconfig-r112-20240903 (https://download.01.org/0day-ci/archive/20240904/202409040652.Gn2vQXRR-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240904/202409040652.Gn2vQXRR-lkp@intel.com/reproduce)
+No, we can't use that. We need to know which endpoint in the remote
+fwnode is connected to the fwnode we're searching from. This is how we
+know which typec mux structure is associated with which type-c port so
+we can drive DP there. We might have two endpoints connected to the same
+fwnode and then we wouldn't be able to differentiate the endpoint and
+the typec mux to configure.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409040652.Gn2vQXRR-lkp@intel.com/
+>
+> >   * Note: This function can be called multiple times.
+>
+> What does this mean? Is it idempotent? Or what is the effect of being called
+> multiple times?
 
-sparse warnings: (new ones prefixed by >>)
->> fs/f2fs/inline.c:428:34: sparse: sparse: restricted __le32 degrades to integer
-
-vim +428 fs/f2fs/inline.c
-
-   416	
-   417	int f2fs_recover_inline_tail(struct inode *inode, struct page *npage)
-   418	{
-   419		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-   420		struct f2fs_inode *ri = NULL;
-   421		void *src_addr, *dst_addr;
-   422		struct page *ipage;
-   423	
-   424		if (IS_INODE(npage))
-   425			ri = F2FS_INODE(npage);
-   426	
-   427		if (f2fs_has_inline_tail(inode) &&
- > 428				ri && (ri->i_flags & F2FS_INLINE_TAIL)) {
-   429	process_inline:
-   430			if (!(ri->i_inline & F2FS_DATA_EXIST))
-   431				return 0;
-   432	
-   433			ipage = f2fs_get_node_page(sbi, inode->i_ino);
-   434			if (IS_ERR(ipage))
-   435				return PTR_ERR(ipage);
-   436	
-   437			f2fs_wait_on_page_writeback(ipage, NODE, true, true);
-   438	
-   439			src_addr = inline_data_addr(inode, npage);
-   440			dst_addr = inline_data_addr(inode, ipage);
-   441			memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
-   442	
-   443			set_inode_flag(inode, FI_DATA_EXIST);
-   444	
-   445			set_page_dirty(ipage);
-   446			f2fs_put_page(ipage, 1);
-   447			return 0;
-   448		}
-   449	
-   450		if (f2fs_has_inline_tail(inode)) {
-   451			ipage = f2fs_get_node_page(sbi, inode->i_ino);
-   452			if (IS_ERR(ipage))
-   453				return PTR_ERR(ipage);
-   454			f2fs_truncate_inline_inode(inode, ipage, 0);
-   455			clear_inode_flag(inode, FI_INLINE_TAIL);
-   456			f2fs_put_page(ipage, 1);
-   457		} else if (ri && (ri->i_inline & F2FS_INLINE_TAIL)) {
-   458			int ret;
-   459	
-   460			ret = f2fs_truncate_blocks(inode,
-   461					COMPACT_ADDRS_PER_INODE >> PAGE_SHIFT, false);
-   462			if (ret)
-   463				return ret;
-   464			goto process_inline;
-   465		}
-   466		return 0;
-   467	}
-   468	struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
-   469						const struct f2fs_filename *fname,
-   470						struct page **res_page)
-   471	{
-   472		struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-   473		struct f2fs_dir_entry *de;
-   474		struct f2fs_dentry_ptr d;
-   475		struct page *ipage;
-   476		void *inline_dentry;
-   477	
-   478		ipage = f2fs_get_node_page(sbi, dir->i_ino);
-   479		if (IS_ERR(ipage)) {
-   480			*res_page = ipage;
-   481			return NULL;
-   482		}
-   483	
-   484		inline_dentry = inline_data_addr(dir, ipage);
-   485	
-   486		make_dentry_ptr_inline(dir, &d, inline_dentry);
-   487		de = f2fs_find_target_dentry(&d, fname, NULL);
-   488		unlock_page(ipage);
-   489		if (IS_ERR(de)) {
-   490			*res_page = ERR_CAST(de);
-   491			de = NULL;
-   492		}
-   493		if (de)
-   494			*res_page = ipage;
-   495		else
-   496			f2fs_put_page(ipage, 0);
-   497	
-   498		return de;
-   499	}
-   500	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I've removed this note now.
 
