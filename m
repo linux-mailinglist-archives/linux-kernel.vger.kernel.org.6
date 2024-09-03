@@ -1,152 +1,105 @@
-Return-Path: <linux-kernel+bounces-312725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DCF969A59
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6214B969A5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073511F21B4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9424D1C2360A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FEC1B9859;
-	Tue,  3 Sep 2024 10:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1401B984E;
+	Tue,  3 Sep 2024 10:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ny9UNNzp"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiakuHCG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655101B9850;
-	Tue,  3 Sep 2024 10:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C879019F42A;
+	Tue,  3 Sep 2024 10:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359957; cv=none; b=ZH4Y4v9CNemVwp1ZqZPkzUloW1CeRsLK2xLgT3Gtpj4memf7ZDJpuc7cjLZ1ZFzA9gHaTTkXkw/No85s2PEH6i+1HEuhNYtZIa6HhLKAOP+DJ01AJIP89UVD3zEx+jDs4vfbe0OSd2QRSyG7toHsRAFltZkZN5cq5qeFXnCJRf8=
+	t=1725360032; cv=none; b=mCrcbBOBXrdY7nxXHo0lOxJlsu8ogUUCaUGixmdPIoemqBXfvrpVsMi82lt8wgOZqgI0I4ZbUdN5LQGFW3BTkf0XIJdadGam+mHXx3SA8qio97gnZ3kazVx4SdQOjpyfDN23fY7DXNGEPXrhL2XY4QxxA0Zty6xViTamltLvQ14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359957; c=relaxed/simple;
-	bh=x9VR8yJKbpFlJ9ULZWhO2nDLSKG8nCREG0OWxhGouxU=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYjsxslVPVhqxiR8hYVHNzq+U7fr9lQCg+5zTzIOs/2jHH3/rkEbXYGXft21z/bZEG74Yr56bF47ruyqz0zOV7mQXvGQYw0HjvNzj9Wk4aNxnLhkuZjBslW4oI8Trl6KSbyRDZGDuBVay4VpNl5dULYkZS3D+oyvqBxg/2PPjpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ny9UNNzp; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so5525651e87.2;
-        Tue, 03 Sep 2024 03:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725359953; x=1725964753; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=F/QXg6hFQdGDiK+u7axMDheJkaPRg6gOiLwD/Eu5ECw=;
-        b=Ny9UNNzpSNB1Ri2WKmfEkpTAjCCndF9C9vkrmvVxCjAHzyJA8tu/zgdUAr4ayGG6jC
-         y2X+3I9O+6sv4XqAiL5SLtoFcgbv0RlJmKiApWO3bPNCUMEbrb39Gh9JF34Wj9loNebl
-         iWj+wdfFXob6J48t1DDnh+VFjasH7YDlRr+yg6KpXYTi1+xoSaiEo+RBfY9njgj1P+oX
-         iR2Aii4woDCX+AR+KoJGB8tWNzCFkwuzBQNy9pCeAmNir20SrkxXLe3jVmDOAK6vSJOD
-         vvtHxmneoS+Q7HUA6gEHca8iN+dxAsCYKYaPnhLXLSarsieTWxJ/RHF2ufKvycPed9n7
-         nM2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359953; x=1725964753;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F/QXg6hFQdGDiK+u7axMDheJkaPRg6gOiLwD/Eu5ECw=;
-        b=cMX7dx+QrlyjVSAlb0d2N+bwq4qM1CCb9jRAC+S43eSTVQlwWZPAssEMtSAlKwqryA
-         3FLS1fQxkGSVtOSrqyISIp0jvMFmQPm5kB7fgtWND/nt5l66u0J+6eCf9YW9XJfcQ3rb
-         +NEOLOC7hJvgR79px1BDsajcMhPKIhP48qKwTOwWkujcQkf2WpLFcJUGOyfLb3cduupa
-         J4iSK51UAy6fh+e+YnaesuOLB3BeUXeFILyeWSWpN+db7B29IjoRrSs30vWS2Puu6s6W
-         NqTfCw1Lqi1Zgw/rBMSNpLNfQWkVxp0GW0ApR7/oKx2/UEmBLZaoZOHpmMvPQFchteh8
-         wr6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUN/Fdc3uQIn/lLGjn5Or+c83l3tGixT6+PSwdypadffN70S8ktnWbY/ElOYoqfLFT9DKJgRbvmo0kqUA==@vger.kernel.org, AJvYcCVB4DBFOCCleLwUKcmtNENjRaulSTvG3Bm2oMwrHFONI97eWgtKipKJonIbZ9rcYwHtyrNuBSdtYAA8iANC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ/ne2j4SP2ZD34k7EyomtMg6SKkn2Rhe98Y1J8AoaxqPraGw7
-	wmN6a8aRTSvPnDYjXOo3gEsp8ky00qYnRut6KGNY3ZN1e7qV39VVMIlLuK4f
-X-Google-Smtp-Source: AGHT+IFfDSIgGycFkDwfEkQ/yD94GBs9dZ4GvnjIVsl1C8IImbbjE/sR8SX0srkysrkWbt4kcpFqkQ==
-X-Received: by 2002:a05:6512:1393:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-53546b34943mr7692852e87.32.1725359952885;
-        Tue, 03 Sep 2024 03:39:12 -0700 (PDT)
-Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e274c1sm166861645e9.36.2024.09.03.03.39.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 03:39:12 -0700 (PDT)
-Message-ID: <f19308b7-9613-4b58-a4ff-edc66c964687@gmail.com>
-Date: Tue, 3 Sep 2024 12:39:11 +0200
+	s=arc-20240116; t=1725360032; c=relaxed/simple;
+	bh=wp97o9aMEghfyByYdohbJIy/XpOlCP68IJYi+vOZEqI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZTKagCinr/+Kdx2+4s0aAKFHI7KeIqtMJFROeTyk0WA8Nnw/uakWgk+JG6/PNGXcPRKUQv1Ojkl6C+0PUk0RNPKJvBoV7gnyOD6jBWJzrgLrAfSzPnjD4tZ243Xdor0he8n8zC00ESEI0TS85gbl4VFm4TfhqqMl4jly7MM1iEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiakuHCG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48379C4CEC4;
+	Tue,  3 Sep 2024 10:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725360031;
+	bh=wp97o9aMEghfyByYdohbJIy/XpOlCP68IJYi+vOZEqI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DiakuHCG9J1r6TsqGgooxvKRXhKrcnWfDvOmLCTq4i0gOmoMGXn+5UyPfhkrsgF4K
+	 PaxW/8lSUIumMqAM266D7HBVAf3JDBW+af72TjaYjdReMLwXyAFsDuW4yYW7+6OIB6
+	 PY4l/mG4kApcoEVj1X4lMQW8Ry79cZaHsXSrlhr/YXfJDzQ+SaQFTU6FG0x+/7w30Y
+	 lY3BvMPLS6GSznvoAuuW8JSWCur/oum8M03TtZdAz0Rm0y5pex3U5X2apbEvXLIHZ+
+	 E4woiCJTHqPbi5FptuVTd3jSfUCPzeGzDMwgWeTAfmAAzlo39be0mXFX6Q1ZtQpF3P
+	 U0iKmY4uQwKag==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ECB3805D82;
+	Tue,  3 Sep 2024 10:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] btrfs: Split remaining space to discard in chunks
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v5 0/5] netdev_features: start cleaning
+ netdev_features_t up
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172536003201.249713.3183163361305744893.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Sep 2024 10:40:32 +0000
+References: <20240829123340.789395-1-aleksander.lobakin@intel.com>
+In-Reply-To: <20240829123340.789395-1-aleksander.lobakin@intel.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, dsahern@kernel.org, xuanzhuo@linux.alibaba.com,
+ andrew@lunn.ch, willemdebruijn.kernel@gmail.com,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240903071625.957275-1-luca.stefani.ge1@gmail.com>
- <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
-Content-Language: en-US
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-In-Reply-To: <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On 03/09/24 09:16, Luca Stefani wrote:
-> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
-> mostly empty although we will do the split according to our super block
-> locations, the last super block ends at 256G, we can submit a huge
-> discard for the range [256G, 8T), causing a super large delay.
+On Thu, 29 Aug 2024 14:33:35 +0200 you wrote:
+> NETDEV_FEATURE_COUNT is currently 64, which means we can't add any new
+> features as netdev_features_t is u64.
+> As per several discussions, instead of converting netdev_features_t to
+> a bitmap, which would mean A LOT of changes, we can try cleaning up
+> netdev feature bits.
+> There's a bunch of bits which don't really mean features, rather device
+> attributes/properties that can't be changed via Ethtool in any of the
+> drivers. Such attributes can be moved to netdev private flags without
+> losing any functionality.
 > 
-> We now split the space left to discard based the block discard limit
-> in preparation of introduction of cancellation signals handling.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
-> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
-> ---
->   fs/btrfs/extent-tree.c | 24 +++++++++++++++++++-----
->   1 file changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index a5966324607d..9c1ddf13659e 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -1301,12 +1301,26 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->   	}
->   
->   	if (bytes_left) {
-> -		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
-> -					   bytes_left >> SECTOR_SHIFT,
-> -					   GFP_NOFS);
-> -		if (!ret)
-> -			*discarded_bytes += bytes_left;
-I removed this by mistake, will be re-added.
-> +		u64 bytes_to_discard;
-> +		struct bio *bio = NULL;
-> +		sector_t sector = start >> SECTOR_SHIFT;
-> +		sector_t nr_sects = bytes_left >> SECTOR_SHIFT;
-> +
-> +		while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
-> +				GFP_NOFS))) {
-> +			ret = submit_bio_wait(bio);
-> +			bio_put(bio);
-> +
-> +			if (!ret)
-> +				bytes_to_discard = bio->bi_iter.bi_size;
-> +			else if (ret != -EOPNOTSUPP)
-> +				return ret;
-I think I got the logic wrong, we probably want to `continue` in case 
-ret is set, but it's not -EOPNOTSUPP, otherwise bytes_to_discard might 
-be left uninitialized.
-bio->bi_iter.bi_size can be used directly for all those cases, so I'll 
-remove bytes_to_discard as a whole.
-> +
-> +			start += bytes_to_discard;
-> +			bytes_left -= bytes_to_discard;
-> +		}
->   	}
-> +
->   	return ret;
->   }
->   
+> [...]
 
-I'll fix those up for v4, but I'll wait for more comments before doing so.
+Here is the summary with links:
+  - [net-next,v5,1/5] netdevice: convert private flags > BIT(31) to bitfields
+    (no matching commit)
+  - [net-next,v5,2/5] netdev_features: convert NETIF_F_LLTX to dev->lltx
+    (no matching commit)
+  - [net-next,v5,3/5] netdev_features: convert NETIF_F_NETNS_LOCAL to dev->netns_local
+    (no matching commit)
+  - [net-next,v5,4/5] netdev_features: convert NETIF_F_FCOE_MTU to dev->fcoe_mtu
+    (no matching commit)
+  - [net-next,v5,5/5] netdev_features: remove NETIF_F_ALL_FCOE
+    https://git.kernel.org/netdev/net-next/c/a61fec1c87be
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
