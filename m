@@ -1,197 +1,196 @@
-Return-Path: <linux-kernel+bounces-312514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00796969799
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F12896979C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E861C21641
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC441F22012
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B48719F43A;
-	Tue,  3 Sep 2024 08:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B83F1AD256;
+	Tue,  3 Sep 2024 08:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OnoEST2a"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lof5DmgG"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D876A19F426
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352954; cv=none; b=KduGFl/Ttmbp5wbmqcok5bcluL9JtOVSuVufMUZXg5hgl2c8etSfwbsh9iOa6x8Kazw+5U5VOK/5wgQtb9EuKVRRrGaVPbijYDzONJCp0g2HLvejAJCEKeAMfcsTnrGFqnH0+8ZdVcg+QJcELo7BgjyhngL3aEH7e4kUVKoPIFk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352954; c=relaxed/simple;
-	bh=ingMFnquR2yoDFQxi+MAZTlvtrJFd3Gvon3zM7Ydg30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DVXBSimn+uQgbY/+3w1O9f+m7wZ40d8xw2lZx2aHpYIboBmbdRsQ+Cke3BgKfYjoG7F7fG/Rf4e1NS2QrcFb4viLXPiHVHnfbzhLUz5ufmKvySBuoTz4NdudDUcGcgeVczcyoDchRTxWj6uSkYqYAw+zmtmrGG1T+pcnFhcpixs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OnoEST2a; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d49cec2a5dso31761187b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725352951; x=1725957751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/mrX622vzKi3A5Tls417WrDiltDIV6fbRHi06ziRyY=;
-        b=OnoEST2atZ3MmZCE6Z0YzjDfl+E8LazscZlVjbXtvMpLycp6ei2lfdpuAHf5nMirGQ
-         rYjOju6DF193txBKo4OfS2aO8/Epz2rQfAi9pUx9xgGpE9+Ulk80KiW1q8fFcpn5VNzq
-         dmf2hDAUIZ6F0D9/GnAGeBP6qf95Xzd+4swpSQPF0fQu4G5/l1g+9xJhIfWHJBsv1Q3L
-         RwxVTlbzeyWe/tb0du4Y9RxdDNMpvOVi7zbGAQ4+/9rOvsfExwx4ITT3VG6LjAVe4N9E
-         Lws5+1LyLGSZfclUum4smM+DE+5tPH1FL7idWmiBTeJKLxQbEgdXlqluZ8CxTBUNWYwf
-         QNyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725352951; x=1725957751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q/mrX622vzKi3A5Tls417WrDiltDIV6fbRHi06ziRyY=;
-        b=Ot0/VS74JYZ8DXjCpUsOIurDfKiAC23yxuJPqaoW0FsEzlRHh0PRgtM7EbCtBas2T8
-         A1GYBwsyyhbOW39y3uDj7d6sTdVzj4ZADimexsjemW+1xtfIliMLGM9+YOye85CeVx+S
-         vv6lmMpSDlIatjocq0De4VKuDgdWZKCdIFx+hjZVq0ezfha5IFeImE3fvzBHog3evGWo
-         cYUKUWNAhx9tQFxRkg2aNCqOgNIS4tTvujiQiluwmhF390aqA7yl9git5bmBSFzaVp2W
-         7LSbM3THQxdmEQL1WrEQgkd2RMBI+mGG3sjd904sOufaiqwqITAV9KqXKx22klU7UOni
-         Ragg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzOQn0s65R3T8q+KVkkCTxSoVaYv2XX5cnQ9V2oqojM5Kwa/Z559Zt0o+41BwUFflh3aRI8Z/6AAHzI4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVBrttGzigIA6/NZeJ936I1PFK6lYSimhIvhWEobKw/ioNPfje
-	WDQkQkFPg9hwDbxZbSs9GRdDy0b35HpyswoC14Qd0SVqpiWgzSU0ihoillYj9u2an5CI8JqZCvJ
-	i0ZgsjEWrIIB/EaDoTau1REwzX9Uy93W/Z8t6aw==
-X-Google-Smtp-Source: AGHT+IEiAdbj4FLduYe5iuAiEPo48sVkQb/vb9WqTLElBDOx6SZ98v/BcgjqeHJ5ia7wgrlGOaAExZ2KbJYtwV2Gr2w=
-X-Received: by 2002:a05:690c:f89:b0:65f:a0e5:8324 with SMTP id
- 00721157ae682-6d40ee57193mr161576607b3.4.1725352949951; Tue, 03 Sep 2024
- 01:42:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBA51AD255;
+	Tue,  3 Sep 2024 08:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725352974; cv=fail; b=pZafDJKAf0RxWOHtqMdTaRc9ZlECh2w9X84BR0UKrX44PE9xZdtbDNvrHfykTA+1HlP+0s4sjSZ8nRqlwW+XSDonTeoO1zSF8dxbGPAjEyY5sKneT0UkgldkqGYZaLLf1oNFigW2JDQRblkipVNzkOQNXJ9WxwaWmPRHqdYyKPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725352974; c=relaxed/simple;
+	bh=bHib7BfAuFZJ5dwAWglVeofkYL7CHyKYnD6JMkxEeUY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=j2c5WbzV5ZOTVC2W8KLg7zm7MNu5cCCNRmcw2ppisKlc5x6jW566sgJ/Bu50XIAHA8XjfgbKkCqT6HFxovgwSHZc+31v4aa+Vml3Fpp0x95C42TXrNpzDgqRD30WjtC5puC/4bU+K35/XgEWAMhsQe4HbKs6OxGR5FveqEXtZBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lof5DmgG; arc=fail smtp.client-ip=40.107.92.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RE/IvkNQxz/FKB9bLyQb4fFhlqNVolqoYVO2GHW5HE70kiiGuIXNdv6Yb2veVXM5e3Zn4da8OdI7cQ/djsMb2r9cqps4TPhKPnYbNkB64duPCZURKGDoDxSC1+f60VHsf756tGhcomATo6ll7rbG12qDtv6kyLufe4fFGBrqaWR622txa2fl2yUsF3WIMR/BISST3JfsPGWvtcFb44igh7ckTRSev9lNYnc4ccOSddYU2wmFLsD13jNQCPJpHZdkmb+3k4Yo8sZU+Tcv6/yZif38q+a/TFUR5E/rjxjXX8uX2vo9q5rOfTV9FsOY6AvxI3s5RVm7Ttibq5Bh4LqCcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nQVhii0tA4Om2uJTubK8ioKb/JmlvHFUJleyvo3oXwQ=;
+ b=UpaYiopoBZYm0eOPfII8b/a5tseuCOV/6Td9bQyUXoFMEb5RZgXguIfbjG9SdMFiszDtJv2gTIJ1dy4jCA7M/5ylnnKRHmIdu37pwC3V4Aw71jF076jPQD/xMoH2LVmz94IA06c7qIWdlxdVt9+0CFaTeNAhkRkwfI81wN0mLM+5eZW9birNjspxlfIxnIsoxH5ChBPGpLQ0ck+P10hRX7ZR7/hryDLJt1EVfV+hJm1azKmxzOpuaGz+aoar/bIIDhR59P1UhswCb/xUxQY6XbiC4AVDyKw31huGIiw5+sCUdpKWWCofv/ZQSPS6y2jtiT/chkrPqgId3sgH/DBn1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nQVhii0tA4Om2uJTubK8ioKb/JmlvHFUJleyvo3oXwQ=;
+ b=lof5DmgGUbKas93NLgIqdKR57xH7Q7o4mTnEaQRGWSgA5VD1VeTiMOgBxf9WVwaTTSiZ+HRBCdu10awhDym96cZjrbzVXRAaIidAFGhoGaoPEdVHLor+oexqmcW7MqMD+k34iYQMlq744AHXfCaoFsfzUyWrTz6EJRwKl9Mtu/BLyewIGeig+WXIPKunZfELHFvbMyrSeGXu1a7UmoV9ZtoibskG0cVO5fGrXv7/9PduAfFJEWja09+CnQTje0mFExC2/1wAi0Q3GzFG7OFyOPGklwWSaTQDz7h1KWtMBV6QH8NM//7VffiTb8zZ9ME1GDq2xIi+ORFtkmsWSO/KMQ==
+Received: from BL0PR02CA0008.namprd02.prod.outlook.com (2603:10b6:207:3c::21)
+ by CYYPR12MB8961.namprd12.prod.outlook.com (2603:10b6:930:bf::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 08:42:49 +0000
+Received: from BL6PEPF0001AB73.namprd02.prod.outlook.com
+ (2603:10b6:207:3c:cafe::e0) by BL0PR02CA0008.outlook.office365.com
+ (2603:10b6:207:3c::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25 via Frontend
+ Transport; Tue, 3 Sep 2024 08:42:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB73.mail.protection.outlook.com (10.167.242.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Tue, 3 Sep 2024 08:42:48 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Sep 2024
+ 01:42:38 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Sep 2024
+ 01:42:37 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Sep 2024 01:42:37 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
+In-Reply-To: <20240901160803.673617007@linuxfoundation.org>
+References: <20240901160803.673617007@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-10-bdb05b4b5a2e@linaro.org>
- <CAA8EJppFCVQPFa1-o7T08Bs+vzbykDXwVTOq4=B2LuWJb2gYGw@mail.gmail.com> <CABymUCPi-DbPW=Aos=m0mrHj2TgxEy=QNEFpbCsb3srr-qe1Eg@mail.gmail.com>
-In-Reply-To: <CABymUCPi-DbPW=Aos=m0mrHj2TgxEy=QNEFpbCsb3srr-qe1Eg@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 11:42:19 +0300
-Message-ID: <CAA8EJpqN_r2SCAZ9hSMwn6gNNzcRTyMy_-RJkobk+YN5Oyk1ug@mail.gmail.com>
-Subject: Re: [PATCH 10/21] drm/msm/dpu: fix lm number counter for quad-pipe
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <b6ed4e19-bd88-4cf3-8e47-7402f4d87c8a@rnnvmail201.nvidia.com>
+Date: Tue, 3 Sep 2024 01:42:37 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB73:EE_|CYYPR12MB8961:EE_
+X-MS-Office365-Filtering-Correlation-Id: c288be22-f2e1-43a5-a84f-08dccbf463dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkl1NUg2RFFmc2N5OU5PZndQU0tUWmpqUTV4UXdTUmt1WVAwY1ZvOTc0RHdP?=
+ =?utf-8?B?OHo3NklEOEg2S2xXajJpQTYvMEZ3bFpEZlVxeFRqU1dwRWhpbjJubVRXYzdN?=
+ =?utf-8?B?THhoMmJ1Z2hZOEJ5YUxqUjBqMWFzVE9ONFlEWmVOSkFtYWJEbkppcndlUVk1?=
+ =?utf-8?B?NWRDN3dXRHNoU0ZZVXk4di9oNkJLOEp4cndPa2NTWWwxekh6Zzg1YThBRUxM?=
+ =?utf-8?B?NUF2SGdNNHU1THg3YTRRRjlSWFcyZ2NxdW9KTlRpRlI1OVErVEhvODd4VE1x?=
+ =?utf-8?B?alBBM0VFelREdnNxUUdNLzR0R0Z0L3k4dUlnR0R0NHZTZUF4MVZsYjlJaWpO?=
+ =?utf-8?B?bVRmZGhzUzFFTDlVejQxdy8wWUhnQ3ZzZjVoK0x6dVl5TFpNMVFRdjc0QVcx?=
+ =?utf-8?B?WDV4eFJCRCtxeEZYeG1ydmpWQkc5YjlXU1c0MjM2NnBSK0lQeGdJZ1JIQlV0?=
+ =?utf-8?B?ZmdMMFFXTWE3dEJRdys5bktFckVLSjlDblhHQ0UrWXYvcWtKSTUxV2ZGcUt1?=
+ =?utf-8?B?STNPYjl5aWNqRkpMa0Q2SGpjOUV1Q1JnelNRdm1mLzhqVGZPMTJUSUd5aVVE?=
+ =?utf-8?B?djZTQW1JaFhTSnJyN3ZmUytvVjhQTlNsc2hTK1BXdzBmeHptbmZ6c0txQlFE?=
+ =?utf-8?B?RWg1RmNWcVZYbTZ2OXpHK1FYME1KcDRiejhXZmRlVzdPb3VoNUdoaFdzY3ZG?=
+ =?utf-8?B?VDFjK3JXYzVFMzljTEtGN0ZlWjJuOGN0dDZKYUZWR3RySTBVYW1ZL1Nma05h?=
+ =?utf-8?B?c1N4Qnpud1JQdFhXSDR0WHV5WE1RS25aVWRTdFU2NmxGV1lKT01aanJOcURM?=
+ =?utf-8?B?SzF3dW9aUG9PcVR3RWw4ci9Ja05jQk9BOCszdm52d0hhRmw4c0tMZnhIOHVD?=
+ =?utf-8?B?Z2tVTDg1cEYyK2wzRU5QakhOSWNsT25LekFlWHJFUnZZMDhtZ3FuSWFhMnh2?=
+ =?utf-8?B?WlB4bVJRa2haZHBZUE5vWnBKd1laYjZHRGxsWTdNRm0wb2txNWFyUzVGY1py?=
+ =?utf-8?B?Umdka1ZQeitYT1pQWjlSMlc0UEYwemxhWE1HU2haa21DV2xiVzZJSkszVzdD?=
+ =?utf-8?B?c0wzTjlmM0xzdXRWWEtseFNCdnNXQ2prTkF3VVFMSCt6dFplTmNnUmwwdFRD?=
+ =?utf-8?B?MzNuMlNqeVJsYWZJcVhQenVxdmE2eXVNRzRVZXNOTmJLQUlLS3gvV3ZhSmkz?=
+ =?utf-8?B?VXIrNVZQZUFjNnp6TnMzRTdBaEZvUU5lajdZTjIrQ3JOblpVbGtPQ0lOWStN?=
+ =?utf-8?B?OHcySXZsaFFsbDRQT3RleGI0ZTRsbTQxeVZiamhhcnZucTlvcjdFcHJMZ3or?=
+ =?utf-8?B?bVYrNFh5SGRkUW9Qemk3QzFmVkZsOTJtUU1oZVBTNE1VeU9oZW1KVWk2VjZX?=
+ =?utf-8?B?WGdIalFUc1Q2MW1qTWwxMTlpYTAzcEg5ZWRNOGtBRHV4a2wycE9XM2N6NGZx?=
+ =?utf-8?B?T1VFSTFwQzU5eVMvazRUbUkxNXRMN1Rzcy84UkpEMm1JbnRGZWIwak5mREl6?=
+ =?utf-8?B?T1VUcm8zdlhpNENuK0owNTUyVU9aNVhSOUMvcVlRc0JRaExET0tXWXUyekI4?=
+ =?utf-8?B?bHN5T1lsQktjUVpWR2lXNW0yaHd4R1FUR3NPRW1NenpLT0ZML21kRm8vSHpS?=
+ =?utf-8?B?d1hIdGVyRlYxbUZMV1NySFpFbHB4Q1RtdE83WkxJS05GZ3JkQU81TXlRR0VR?=
+ =?utf-8?B?MStrTnk0SllNR2xvRWltOXcxRS8xZHZtdUNFYU1ZaitxY1A2dGgrcExESmpT?=
+ =?utf-8?B?L1Jyc3lHOFd6TGJWS0srdWh3VUVKYjBoc3liemMrRFBiTHljVUhqbWJlSEFW?=
+ =?utf-8?B?ZUZiRkczd1RFQmJRMjdjL1Q0WC9YMkJhNy9uRnY1MW9MS2IvWUtpYytUQ0VR?=
+ =?utf-8?B?MzhpTm5GYWswK3JvY2puLzVKenY5RmF4cnBncFNpSklXT053bXd6SEVBTVJO?=
+ =?utf-8?Q?waekDQs697ZUGMUvF5UqUFNS+1Kv7aat?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 08:42:48.5822
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c288be22-f2e1-43a5-a84f-08dccbf463dd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB73.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8961
 
-On Tue, 3 Sept 2024 at 10:50, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B48=E6=
-=9C=8829=E6=97=A5=E5=91=A8=E5=9B=9B 19:17=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, 29 Aug 2024 at 13:20, Jun Nie <jun.nie@linaro.org> wrote:
-> > >
-> > > Add the case to reserve multiple pair mixer for high resolution
-> >
-> > I think you already know what is missing here.
->
-> Add the case to reserve multiple pair mixer for high resolution. Current
-> code only support one pair of mixer usage case. To support quad-pipe
-> usage case, multiple pair mixers are needed.
+On Sun, 01 Sep 2024 18:15:30 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.321 release.
+> There are 98 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.321-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-pairs of mixers.
-supports
-two pairs of mixers
+All tests passing for Tegra ...
 
-Also the text doesn't describe how that works. It's not obvious from
-the patch, one has to read the source to understand what is going on.
-Please make it clear.
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
 
->
-> >
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 6 +++---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 8 +++++++-
-> > >  2 files changed, 10 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_encoder.c
-> > > index 33cfd94badaba..f57725ad494d2 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > @@ -54,7 +54,7 @@
-> > >  #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
-> > >         (MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
-> > >
-> > > -#define MAX_CHANNELS_PER_ENC 2
-> > > +#define MAX_CHANNELS_PER_ENC 4
-> > >
-> > >  #define IDLE_SHORT_TIMEOUT     1
-> > >
-> > > @@ -2029,8 +2029,8 @@ static void dpu_encoder_helper_reset_mixers(str=
-uct dpu_encoder_phys *phys_enc)
-> > >         struct dpu_hw_mixer_cfg mixer;
-> > >         int i, num_lm;
-> > >         struct dpu_global_state *global_state;
-> > > -       struct dpu_hw_blk *hw_lm[2];
-> > > -       struct dpu_hw_mixer *hw_mixer[2];
-> > > +       struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-> > > +       struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
-> > >         struct dpu_hw_ctl *ctl =3D phys_enc->hw_ctl;
-> > >
-> > >         memset(&mixer, 0, sizeof(mixer));
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_rm.c
-> > > index e219d706610c2..77d7ff789346e 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> > > @@ -306,7 +306,11 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm=
-,
-> > >                 if (!rm->mixer_blks[i])
-> > >                         continue;
-> > >
-> > > -               lm_count =3D 0;
-> > > +               /*
-> > > +                * Clear the last bit to drop the previous primary mi=
-xer if
-> > > +                * fail to find its peer.
-> > > +                */
-> > > +               lm_count &=3D 0xfe;
-> > >                 lm_idx[lm_count] =3D i;
-> > >
-> > >                 if (!_dpu_rm_check_lm_and_get_connected_blks(rm, glob=
-al_state,
-> > > @@ -353,6 +357,8 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
-> > >
-> > >                 trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, enc_id,
-> > >                                          pp_idx[i] + PINGPONG_0);
-> > > +               DPU_DEBUG("reserve lm[%d]:%d, pp_idx[%d]:%d, dspp[%d]=
-:%d for enc_id %d\n",
-> > > +                         i, lm_idx[i], i, pp_idx[i], i, dspp_idx[i],=
- enc_id);
-> > >         }
-> > >
-> > >         return 0;
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Linux version:	4.19.321-rc1-g0cc44dd838a6
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
---=20
-With best wishes
-Dmitry
+Jon
 
