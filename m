@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-313397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BAD96A4F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:02:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3030969B1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B511C237B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E42FE1C23A0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EF018BC07;
-	Tue,  3 Sep 2024 17:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E4C1A42AF;
+	Tue,  3 Sep 2024 11:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b="gS2Wt6Hy"
-Received: from 3.mo561.mail-out.ovh.net (3.mo561.mail-out.ovh.net [46.105.44.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrSEZjKS"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACC01C14
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.44.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3139B1A42A8;
+	Tue,  3 Sep 2024 11:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725382939; cv=none; b=FYTdcHfWDK1O5Fcmt5haj8G7pRdQRMSO0yNi1t4crRfLiS0hDr+bRippuhxfb+kwdg690tXIzKy3DFkC4kDITA2AIAAlkPWGGVRMBj31wOzFhIf3uBuHEYgxdVEZXt6COm1wH1DnL/RcAtxstDcKcB9crFEk+Xyu53pY7UkQKAs=
+	t=1725361503; cv=none; b=hCCGbbc456Og2F9QEgsdszWaS6MVdlXfqJO1QyQ+2qcnlXsJRpPgq9MjCMs51bX+xjm/3hY252QjnzonDGnCu5uC32AuIB64auXqy/IfBXU1X33BKSO9A29e89uatTEAnXYaIehef6pPnPntaj7odCkhrko2NmLuShnNHdXCJ0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725382939; c=relaxed/simple;
-	bh=XJWsN49MKuwfqhUmsYeBNb3/CGm+AL947KnsCvqSJXU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=cak16P+wKZY1PPs4wB9cWOLjW6xPCErPGVtBPY+7MNZxJjLYy5f+FlYhFXBH6k2RxrgyGD7OZF5Lp60HxvtAVt+57zCB8c+61/sv6EhtHhEQerfzCFdje1rF8YIUmKJfo4+jO6J0+nHpUJDT1jZCbzqgJdLmI0QxZbtCciBVVm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl; spf=pass smtp.mailfrom=milecki.pl; dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b=gS2Wt6Hy; arc=none smtp.client-ip=46.105.44.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=milecki.pl
-Received: from director9.ghost.mail-out.ovh.net (unknown [10.108.17.174])
-	by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4WyjS51Jddz1R66
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:04:21 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-vfzqd (unknown [10.108.42.28])
-	by director9.ghost.mail-out.ovh.net (Postfix) with ESMTPS id D0F9B1FE8D;
-	Tue,  3 Sep 2024 11:04:20 +0000 (UTC)
-Received: from milecki.pl ([37.59.142.102])
-	by ghost-submission-6684bf9d7b-vfzqd with ESMTPSA
-	id OKakMDTt1maMTQEA6n6LAA
-	(envelope-from <rafal@milecki.pl>); Tue, 03 Sep 2024 11:04:20 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-102R004b1da4c13-023e-4a9b-8ea6-35da4fbbdb49,
-                    58277AE186FD25B235DEA53DD7F3636C045A473A) smtp.auth=rafal@milecki.pl
-X-OVh-ClientIp:51.255.71.60
+	s=arc-20240116; t=1725361503; c=relaxed/simple;
+	bh=ABDDHRZiPPWob2a1oKRBnP60wo2gShpt8fRqa4C90kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PltTVIB7mAcmWdvu/g4HYCKqbaWhl0MWEF3WqgXLKDQrpxBD0fI4S1jcmMNibbKeq/NCXCypZk/fzqd9ldjAwW5tTewQRMB9e1RSfShtXRTESFJ4juLGyD6EkeBhxUaU/DVDx41ZEv++BHl8H6vLIpuPJWDq8nqUgHoPfAhe0rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrSEZjKS; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86b46c4831so571443966b.1;
+        Tue, 03 Sep 2024 04:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725361500; x=1725966300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tQ/JGKDAwl3WrmJHCFXW8BRnwfLf9QWi2XX4xMHcFbw=;
+        b=OrSEZjKSHKpM97NcEGhkvds1RyQPODZBtvfUQ4soEZ3O1zK/sToVCCbj8JEwmVzMhW
+         CQmo54k4wo5Q/ltxDxuU6YzIPTtMRSvYu6Stqvdj7aH/JpHbGpzD9TRP7Fj+YJT/oUwm
+         u4qyIOf+AZzeEnA85Bssuzuv5PcPirxSF6u6B+7CbL4XEjJBx6B4Yh1cPFWDV1E6hmd5
+         mHcaGIESwsfnD/X4tRu9XEH4qhoeDGqswtdrexX2FMrVfC85Mj+V34wamrxT72cmKKDQ
+         a8DBS1tTHB+TFxBnLM8BauuUl6gGU6yYr0ZRpkpkp/Uu4EczoZeMOX01XTB2egRHAqO3
+         qK7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725361500; x=1725966300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tQ/JGKDAwl3WrmJHCFXW8BRnwfLf9QWi2XX4xMHcFbw=;
+        b=wGmhqrl3mTj6jQK54rFFYAMT7r/5dv32yTmtalVVulU0q6Kur75XXdhXCKvzkpM7Dl
+         O328GUOldtdlBiJzrjOZEY0aw++AJUXDse4JMqwqBpIJJ1UWeWWcVGLUL1OVsD7FPZoY
+         lgU7Gfk6lIXh+Ly95VCCa11S+kCa5q4VJm+CoDYMLntcTV5I3JNnckB9qMWbrYQ5Zabh
+         ah1n0yBNf1sqzY29N8mq5EcsY+QtQ9OejbrdeXQc6MfQNkKapre9m6AMrhGaDllBssVS
+         teVhNnWWm2T+HNkzwDTLVZvQTdVhhAALQnw6i9KyTbO/uoAt25kYSHWgH8eHCAiDxPDN
+         8/eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPRIEEzST42fvgRPFkGuQ+uigt8BO+sq85f+4P3uRAXpLWSvgyZJgO19v8D1tuldiO7REZB6CnOj2Q0b56@vger.kernel.org, AJvYcCV+U9JEMstHziVCljbbe4y3BAAcxieQ+9/tqYQ6doFGi/gUU1o4LfR55l5ziByFXgn2tch9D7L5OjCf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Fp/Ubeb/zDLNtlLosSoPI9+cvZWVdDO+GjvDLh603TX3I6nX
+	06F4fJPJutphB+LrnnuURrJYZs568Jn/178b0gjY6fx6EAemKF8OhkL6EZhFQ2iWNslEu/PvzTV
+	uGmDOZmLY1wETOg6ZIEj969oo6mE=
+X-Google-Smtp-Source: AGHT+IEkAAm8lugKXCnZcm4zZEeQ4KtP78iZ1nEcg/zictRZjZygLkhQBC/F1HoP2mI6jCIu3ZZnXAEw+Da26HBL/q4=
+X-Received: by 2002:a17:907:3e0e:b0:a86:842a:104a with SMTP id
+ a640c23a62f3a-a89d8ab4b6dmr475835566b.57.1725361500298; Tue, 03 Sep 2024
+ 04:05:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 03 Sep 2024 13:04:20 +0200
-From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org, Miquel
- Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 4/9] nvmem: layouts: add U-Boot env layout
-In-Reply-To: <2024090308-smasher-craftwork-0db5@gregkh>
-References: <20240902142952.71639-1-srinivas.kandagatla@linaro.org>
- <20240902142952.71639-5-srinivas.kandagatla@linaro.org>
- <2024090308-smasher-craftwork-0db5@gregkh>
-Message-ID: <ef6d4f332224bd7a8c1c4244047bf0ea@milecki.pl>
-X-Sender: rafal@milecki.pl
-X-Webmail-UserID: rafal@milecki.pl
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 17092567962599598884
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudehhedgfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghfkfigihgtgfesthekjhdttddtjeenucfhrhhomheptfgrfhgrlhcuofhilhgvtghkihcuoehrrghfrghlsehmihhlvggtkhhirdhplheqnecuggftrfgrthhtvghrnhepjeejkeekgeejtdffffevffeivedtueeifeeuffegkeehkeeliedugfelfedutdeunecukfhppeduvdejrddtrddtrddupdefuddruddurddvudekrddutdeipdehuddrvdehhedrjedurdeitddpfeejrdehledrudegvddruddtvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedupdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=cBsEzXBwS1oJ7/X0qvaQ23UYEd73W8BGXOUmsSkLpO0=;
- c=relaxed/relaxed; d=milecki.pl; h=From; s=ovhmo3028686-selector1;
- t=1725361461; v=1;
- b=gS2Wt6Hyjz2SK6nn6+hdbmwabuV4JURnzNMOtDf5VgMT0OorKvY/mSwGLbsSDAwDmEhr3M+K
- S0opF9ijPKl2r66ojgoPdhAAe1510VLu7rrlCQXZNRiT/hU58guhnC1sij3He3tu+bvHn/tRzta
- kZGBtU/IG3mhxLg2qVQwOKlYBPMjugCLxQSYNVmNHJ1QXKkaxo1pYL4BnA5t6Oq0+5DHrTI8uWv
- 2BSv3D/7dy9wWKAoi5BqxLwhkxhXAc1ySGOal45IG4JQTTKvljg6G6Hxgu7OGD40noILw8SJZyS
- 9n7cAPiGE/MqTVsT/Gtatvdsj8JCoEzxOlgMgaU56WnjA==
+References: <20240902141607.2694988-1-andriy.shevchenko@linux.intel.com> <20240903045706.GY1532424@black.fi.intel.com>
+In-Reply-To: <20240903045706.GY1532424@black.fi.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 3 Sep 2024 14:04:23 +0300
+Message-ID: <CAHp75VcF=bnD94xFDC06knZBU=NyArwj5Yh2qaa=T5mGyuPK1g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Constify struct intel_pinctrl parameter
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Tue, Sep 3, 2024 at 7:57=E2=80=AFAM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Sep 02, 2024 at 05:15:11PM +0300, Andy Shevchenko wrote:
+> > -static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl,
+> > +static void __iomem *intel_get_padcfg(const struct intel_pinctrl *pctr=
+l,
+> >                                     unsigned int pin, unsigned int reg)
+>
+> This is not good. You take const pointer but return non-const inside
+> that struct. I don't think we should "change" the constness this way.
 
-On 2024-09-03 12:12, Greg KH wrote:
-> On Mon, Sep 02, 2024 at 03:29:47PM +0100, 
-> srinivas.kandagatla@linaro.org wrote:
->> From: Rafał Miłecki <rafal@milecki.pl>
->> 
->> U-Boot environment variables are stored in a specific format. Actual
->> data can be placed in various storage sources (MTD, UBI volume, 
->> EEPROM,
->> NVRAM, etc.).
->> 
->> Move all generic (NVMEM device independent) code from NVMEM device
->> driver to an NVMEM layout driver. Then add a simple NVMEM layout code 
->> on
->> top of it.
->> 
->> This allows using NVMEM layout for parsing U-Boot env data stored in 
->> any
->> kind of NVMEM device.
->> 
->> The old NVMEM glue driver stays in place for handling bindings in the
->> MTD context. To avoid code duplication it uses exported layout parsing
->> function. Please note that handling MTD & NVMEM layout bindings may be
->> refactored in the future.
->> 
->> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>  MAINTAINERS                        |   1 +
->>  drivers/nvmem/Kconfig              |   3 +-
->>  drivers/nvmem/layouts/Kconfig      |  11 ++
->>  drivers/nvmem/layouts/Makefile     |   1 +
->>  drivers/nvmem/layouts/u-boot-env.c | 211 
->> +++++++++++++++++++++++++++++
->>  drivers/nvmem/layouts/u-boot-env.h |  15 ++
->>  drivers/nvmem/u-boot-env.c         | 165 +---------------------
->>  7 files changed, 242 insertions(+), 165 deletions(-)
->>  create mode 100644 drivers/nvmem/layouts/u-boot-env.c
->>  create mode 100644 drivers/nvmem/layouts/u-boot-env.h
-> 
-> This patch doesn't apply to my tree :(
-> 
-> Also, if you generate patches with 'git format-patch -M' you can see
-> when files move easier (if that's what happened here, hard to tell..)
+I see. I will double check this. Thank you for reviewing this!
 
-It's because it was developed on top of "nvmem: u-boot-env: error if 
-NVMEM device is too small" which you applied to the "char-misc-linus" 
-branch. Perhaps you could push that fix ("error if...") to your both 
-branches somehow?
+> All changes that take const pointer and return scalar are fine, though
+> (did not check all of them).
 
--- 
-Rafał Miłecki
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
