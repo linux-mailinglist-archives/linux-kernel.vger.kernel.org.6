@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-313023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B51969F2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:38:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C64BC969F39
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD15D284BDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:38:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 105A8B20E18
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE3BBA53;
-	Tue,  3 Sep 2024 13:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB544C8F;
+	Tue,  3 Sep 2024 13:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Iw2QCxW/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AYMmfW+y"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dwr6pl33";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z7hbMpxF"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D648C06;
-	Tue,  3 Sep 2024 13:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF6E1E4AD;
+	Tue,  3 Sep 2024 13:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370703; cv=none; b=HgseKBl17GAL2MZ0fF3fL0zdelMsX2S4TaBNtEKvRK37TijhmBdV6ePMdAr6d7F0OLu2sxOhQ/9lY0shfo0yYXShzpMs5cMbQqrhbq7Yk/5OEfKWMoBBrSCK151j9m1+OednYaFd8Ld77EgfTK9w9BvCIL44zOKQ6zPnPh1DEEI=
+	t=1725370708; cv=none; b=q7c/KDANbWW/jj/rdEUGlQlKq6n36MsAtdOKPVYAr529N5p2v76lAkTDFGJlR5s6RV/qt17rro6FOV/VOftaK21VjwdEeOk/S5w8kk0YDl3usu++sbwUyFVHVNiZI+1w+f/NOx2DgCIBCG28kMABNKdGsj1Wu4kbOzlnZ0blORE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370703; c=relaxed/simple;
-	bh=xp7f8nLWEqAMmtfNNcDy5PlRHMpXmtORVRipmLSkonk=;
+	s=arc-20240116; t=1725370708; c=relaxed/simple;
+	bh=i9B8WKlUvkkKErLDXvmZWsiNaCIFL18hziVaL6MpOQ0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DVcNsw0XdvHFsugiUSxu2mfnRfTR4XIX+K2VMpFUM4XQqxmU5HvBRf9P9jhWd4XNLB4W6ZWKHwBwnA9zVjFWF38bG5+IwiE0kekoW0fSO72q6Z2zIquyDo2JDPolSEyklOW++279fbTQ0uP142N2LvokH6n8nvwJMqSUfQNfacI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Iw2QCxW/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AYMmfW+y; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=WV5bVl52+afdJg9dqlYzjYwQDz3wQCzu419MvqWItzcr/67v+6JBpC6UhbMzsoxmjyenSYmQzrC4/WwP1Ir7kgf24D2sFakJ2JjKSE9TOkVFQun5eLlB+xtWaH2u1hKcsANqVzKGfLmg+xbf5SdQhG4Lb1/oh+UAHCnDDNBGaoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dwr6pl33; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z7hbMpxF; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 03 Sep 2024 13:38:20 -0000
+Date: Tue, 03 Sep 2024 13:38:21 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725370700;
+	s=2020; t=1725370702;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Kt8N9R7Ia+PT1R6huN1rBetdA4xL+ORKXl1fOe0Zx7A=;
-	b=Iw2QCxW/NBmXBn2e1xoFqYk1RMyW1+eCIQcKyfz8meZr8o3rTJpyZ6HVntax+1mN4SFP6E
-	GXqE5AUOusW9qnuM1A8mdD4UXtkGUjp91bAD3e0AS4WYYCXvvZgZFq/perg591bB23MtuH
-	hZ1ggInx1u77gjBzBJ1qWNzRDUIJVlbU12bpCmcJ4IDymsYBFKHL5V3jGu+zUY4MBFX4Ji
-	mkLBMKpSyf//AeUTy5tqGS0fmXGpM9wNH+Pa/JdkKs/FqwzxHbmiB9ZzxJ3p9btfZwoMhm
-	41sZ+YF1dna1H9k24gWdbf31XptcKC0Sw/yn/RLbFlJ9cTM5f+dFK0+Kksj35A==
+	bh=b+ZuHw6riyfhEA/Rp+oBw3hEz0I4hrrsBv7r/rSbU3w=;
+	b=dwr6pl33QE0VZGiMYp14MZB+DCFI6bY4wDMkBdem6ygnjho1cD5AFcufUUmA1Lu3VELZg7
+	CO8e/zcE4MXcgi9tTEtMcToOroOEsyo0Dwp+q4E7YDfUOBd/TmNFX00wCMxd19oMzmzS+G
+	xgot7rPyEtykVr4nrNZi90zwGf+sSIpkSLTYQd+WhJaoOzUlIAD8yxMSrKIR2+qeWU4tYC
+	QY9vueAJBi9OTJQGT0E/74VMJnfbC5yzJqJ3mzCgNID0lDtwR5AhXOfVgWK+tVKVATIopr
+	0J7Yz0DCYzBOk7+F0j0CEmpA2B9vE4TQgHg9cXcTwURuVYup1xoSxnkXK6/V8Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725370700;
+	s=2020e; t=1725370702;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Kt8N9R7Ia+PT1R6huN1rBetdA4xL+ORKXl1fOe0Zx7A=;
-	b=AYMmfW+yrj2Ie+d16+0dIsK/YMjska+nX0FSCQSOtnL3+834b8eZbv7tCGFXOQdxcqHcaa
-	k/m8SMODoKMlYYBA==
+	bh=b+ZuHw6riyfhEA/Rp+oBw3hEz0I4hrrsBv7r/rSbU3w=;
+	b=z7hbMpxFRIQ/1dwJllXWiB+6Yo0nTmCx6c8YlkcMAGAFXo6p9J1wLXAFRqsyJ5ctIMQyi2
+	2UuYoYUE4ZGLUMCA==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Combine the last put_prev_task() and the
- first set_next_task()
+Subject: [tip: sched/core] sched: Fixup set_next_task() implementations
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240813224016.158454756@infradead.org>
-References: <20240813224016.158454756@infradead.org>
+In-Reply-To: <20240813224015.724111109@infradead.org>
+References: <20240813224015.724111109@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172537070017.2215.4630903266570877162.tip-bot2@tip-bot2>
+Message-ID: <172537070185.2215.14750958986616718887.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,110 +80,158 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     436f3eed5c69c1048a5754df6e3dbb291e5cccbd
-Gitweb:        https://git.kernel.org/tip/436f3eed5c69c1048a5754df6e3dbb291e5cccbd
+Commit-ID:     dae4320b29f0bbdae93f7c1f6f80b19f109ca0bc
+Gitweb:        https://git.kernel.org/tip/dae4320b29f0bbdae93f7c1f6f80b19f109ca0bc
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 14 Aug 2024 00:25:54 +02:00
+AuthorDate:    Wed, 14 Aug 2024 00:25:50 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 03 Sep 2024 15:26:31 +02:00
+CommitterDate: Tue, 03 Sep 2024 15:26:30 +02:00
 
-sched: Combine the last put_prev_task() and the first set_next_task()
+sched: Fixup set_next_task() implementations
 
-Ensure the last put_prev_task() and the first set_next_task() always
-go together.
+The rule is that:
+
+  pick_next_task() := pick_task() + set_next_task(.first = true)
+
+Turns out, there's still a few things in pick_next_task() that are
+missing from that combination.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240813224016.158454756@infradead.org
+Link: https://lore.kernel.org/r/20240813224015.724111109@infradead.org
 ---
- kernel/sched/core.c  | 17 ++++-------------
- kernel/sched/fair.c  |  3 +--
- kernel/sched/sched.h | 10 +++++++++-
- 3 files changed, 14 insertions(+), 16 deletions(-)
+ kernel/sched/deadline.c |  6 ++--
+ kernel/sched/fair.c     | 62 ++++++++++++++++++++--------------------
+ 2 files changed, 34 insertions(+), 34 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b9429eb..8a1cf93 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5894,8 +5894,7 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 		/* Assume the next prioritized class is idle_sched_class */
- 		if (!p) {
- 			p = pick_task_idle(rq);
--			put_prev_task(rq, prev);
--			set_next_task_first(rq, p);
-+			put_prev_set_next_task(rq, prev, p);
- 		}
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 2e84037..f7ac7cf 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2386,6 +2386,9 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
+ 		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
  
- 		/*
-@@ -5926,8 +5925,7 @@ restart:
- 		} else {
- 			p = class->pick_task(rq);
- 			if (p) {
--				put_prev_task(rq, prev);
--				set_next_task_first(rq, p);
-+				put_prev_set_next_task(rq, prev, p);
- 				return p;
- 			}
- 		}
-@@ -6016,13 +6014,8 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 		WRITE_ONCE(rq->core_sched_seq, rq->core->core_pick_seq);
+ 	deadline_queue_push_tasks(rq);
++
++	if (hrtick_enabled(rq))
++		start_hrtick_dl(rq, &p->dl);
+ }
  
- 		next = rq->core_pick;
--		if (next != prev) {
--			put_prev_task(rq, prev);
--			set_next_task_first(rq, next);
--		}
+ static struct sched_dl_entity *pick_next_dl_entity(struct dl_rq *dl_rq)
+@@ -2452,9 +2455,6 @@ static struct task_struct *pick_next_task_dl(struct rq *rq)
+ 	if (!p->dl_server)
+ 		set_next_task_dl(rq, p, true);
+ 
+-	if (hrtick_enabled(rq))
+-		start_hrtick_dl(rq, &p->dl);
 -
- 		rq->core_pick = NULL;
--		goto out;
-+		goto out_set_next;
- 	}
- 
- 	prev_balance(rq, prev, rf);
-@@ -6192,9 +6185,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	}
- 
- out_set_next:
--	put_prev_task(rq, prev);
--	set_next_task_first(rq, next);
--out:
-+	put_prev_set_next_task(rq, prev, next);
- 	if (rq->core->core_forceidle_count && next == rq->idle)
- 		queue_core_balance(rq);
+ 	return p;
+ }
  
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 53556b0..c5b7873 100644
+index 3a3286d..eaeb8b2 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8819,8 +8819,7 @@ again:
+@@ -8760,6 +8760,9 @@ again:
+ 	return task_of(se);
+ }
  
++static void __set_next_task_fair(struct rq *rq, struct task_struct *p, bool first);
++static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first);
++
+ struct task_struct *
+ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+@@ -8808,33 +8811,17 @@ again:
+ 
+ 		put_prev_entity(cfs_rq, pse);
+ 		set_next_entity(cfs_rq, se);
++
++		__set_next_task_fair(rq, p, true);
+ 	}
+ 
+-	goto done;
++	return p;
++
  simple:
  #endif
--	put_prev_task(rq, prev);
--	set_next_task_fair(rq, p, true);
-+	put_prev_set_next_task(rq, prev, p);
+ 	if (prev)
+ 		put_prev_task(rq, prev);
+-
+-	for_each_sched_entity(se)
+-		set_next_entity(cfs_rq_of(se), se);
+-
+-done: __maybe_unused;
+-#ifdef CONFIG_SMP
+-	/*
+-	 * Move the next running task to the front of
+-	 * the list, so our cfs_tasks list becomes MRU
+-	 * one.
+-	 */
+-	list_move(&p->se.group_node, &rq->cfs_tasks);
+-#endif
+-
+-	if (hrtick_enabled_fair(rq))
+-		hrtick_start_fair(rq, p);
+-
+-	update_misfit_status(p, rq);
+-	sched_fair_update_stop_tick(rq, p);
+-
++	set_next_task_fair(rq, p, true);
  	return p;
  
  idle:
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 64a4ed7..aae3581 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2370,8 +2370,16 @@ static inline void set_next_task(struct rq *rq, struct task_struct *next)
- 	next->sched_class->set_next_task(rq, next, false);
+@@ -13145,12 +13132,7 @@ static void switched_to_fair(struct rq *rq, struct task_struct *p)
+ 	}
  }
  
--static inline void set_next_task_first(struct rq *rq, struct task_struct *next)
-+static inline void put_prev_set_next_task(struct rq *rq,
-+					  struct task_struct *prev,
-+					  struct task_struct *next)
+-/* Account for a task changing its policy or group.
+- *
+- * This routine is mostly called to set cfs_rq->curr field when a task
+- * migrates between groups/classes.
+- */
+-static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
++static void __set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
  {
-+	WARN_ON_ONCE(rq->curr != prev);
-+
-+	if (next == prev)
+ 	struct sched_entity *se = &p->se;
+ 
+@@ -13163,6 +13145,27 @@ static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
+ 		list_move(&se->group_node, &rq->cfs_tasks);
+ 	}
+ #endif
++	if (!first)
 +		return;
 +
-+	prev->sched_class->put_prev_task(rq, prev);
- 	next->sched_class->set_next_task(rq, next, true);
++	SCHED_WARN_ON(se->sched_delayed);
++
++	if (hrtick_enabled_fair(rq))
++		hrtick_start_fair(rq, p);
++
++	update_misfit_status(p, rq);
++	sched_fair_update_stop_tick(rq, p);
++}
++
++/*
++ * Account for a task changing its policy or group.
++ *
++ * This routine is mostly called to set cfs_rq->curr field when a task
++ * migrates between groups/classes.
++ */
++static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
++{
++	struct sched_entity *se = &p->se;
+ 
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+@@ -13172,10 +13175,7 @@ static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
+ 		account_cfs_rq_runtime(cfs_rq, 0);
+ 	}
+ 
+-	if (!first)
+-		return;
+-
+-	SCHED_WARN_ON(se->sched_delayed);
++	__set_next_task_fair(rq, p, first);
  }
  
+ void init_cfs_rq(struct cfs_rq *cfs_rq)
 
