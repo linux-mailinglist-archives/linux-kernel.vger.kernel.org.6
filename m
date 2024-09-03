@@ -1,197 +1,151 @@
-Return-Path: <linux-kernel+bounces-312615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6F39698DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C639698DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816A6284686
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8DE1F23359
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F511B9838;
-	Tue,  3 Sep 2024 09:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE661B985A;
+	Tue,  3 Sep 2024 09:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sr1Fhf1t"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PQy87fZj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uf+et/c+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D819F43E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50081AD262
 	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355587; cv=none; b=fqqNvXJUjvFyclcj+OFjQB9R2tqGUz3LYP9DtnbBvia9toj2ROcV2PXIhVHy40RnjWOtbLghpeGidkBt4DfKCzERYwRA4hJlEyN6Uyu8LNPErr84dd3780gy6z+MRfufgGEsOLwEc1a6wGxxT1Vq0QtG/gBgvCOySqM1lBcCEGE=
+	t=1725355589; cv=none; b=WPUWHYlVmY81cWggUVLPEE9R1iiJCh6QugGhz7XUhB3N3BaXK7oUWlLFarS1p82+EkypmMXxXdcdg4MD+t8NN3jkJwCmhn8ODJqRGHxnOohhQ3bXRykuQ0hx+rjUEGIEDml6VU/fQZKSj1ek57Rxkc1/5VBy/YjehO0RF6WTN0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355587; c=relaxed/simple;
-	bh=PfEXXIU9sRjka86TJyF3Cc9GISKq8sSKC1fdWUaacbY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jZCMFfRpJybnC8coA+iX5m3anvaD6DqMUd9nBMRkVrfX0049itz8PFF+X12p1kNadrIm+CzXHvPs7XVZ0M0IzTY3P8d/U3VN7Id3hRanlJDPHPW/DJ5L3CC4u2Xc5IjtW0zwsiykHMqCcKrer9A+32rH8M024c1mR0sfxo1LE48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sr1Fhf1t; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725355586; x=1756891586;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=PfEXXIU9sRjka86TJyF3Cc9GISKq8sSKC1fdWUaacbY=;
-  b=Sr1Fhf1t/eRIJxdswzO48GwnftbDKiiFgR6BjkRlWlFSp8eN82QA1pik
-   I7euUuEWCmDAclZskNLiIl4iXO66QkhnD/BFTqmCOTJAx7dG2dqnlyp0b
-   lRH3QCby111iUSwRnCyD+oXXGlXhrkuQ+v6E66LaVdQRKR10FYiP90WfW
-   /t4IH+bNtgicE5X+mbno5FbxunzcKKZLW4ggFroriy4MDdQLeDHk4nen3
-   X84HMyK1gyq7y0u+vB+Mj9IrxpJIQEa1yMx1Cfo6tIiYEKSJ4yNDgQbBa
-   kFcPKojzXRu6K9c9GQyPbbGb2qkCjTytm/pHdBslsunACX29VrAzKJtXM
-   w==;
-X-CSE-ConnectionGUID: cMak4iJvQiilfHx2yEX4yQ==
-X-CSE-MsgGUID: uNgwPI5rQLW8z+6zf3/b5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="41411779"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="41411779"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:26:25 -0700
-X-CSE-ConnectionGUID: Az/ee2smTjCulo37yWasMw==
-X-CSE-MsgGUID: LZcDm11OT4emPXWWjCo5BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="65348229"
-Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO [10.245.244.199]) ([10.245.244.199])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:26:22 -0700
-Message-ID: <80ed1e928de230f54098d2a4b7f14b5d3556a687.camel@linux.intel.com>
-Subject: Re: [git pull] drm fixes for 6.11-rc6
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Dave
-	Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel
- <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, 
- Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, Alex Deucher
- <alexdeucher@gmail.com>, lingshan.zhu@amd.com, Matthew Brost
- <matthew.brost@intel.com>
-Date: Tue, 03 Sep 2024 11:26:20 +0200
-In-Reply-To: <5c493bd5-e657-4241-81d7-19ccd380b379@amd.com>
-References: 
-	<CAPM=9tzX71UKndfu8JECMOzc9kf4s4pp9cWTMWwE476cQXt_Yw@mail.gmail.com>
-	 <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
-	 <CAPM=9txF4+rC_CXQTftPctUd0N37t306YKcV3oKPjz+_zQGqag@mail.gmail.com>
-	 <440d041982f7f232f0ce3284bed4db391adb05c1.camel@linux.intel.com>
-	 <5c493bd5-e657-4241-81d7-19ccd380b379@amd.com>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1725355589; c=relaxed/simple;
+	bh=qBM0qMzMHJ26PiMVzRrGCiHERAZKkXObNeBOdeT3xwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIRrv9f5n+yHjqT9qMfz/pJdxqZAjQqm2RPrqKIvfoj5ZbUABg2/GYBsqbVDQpUj7xr0jWEkn7ggJqniceWGWmo+gqcaBi/sHui4TLV8+ijfUIh56Yor/gYeKlx3/sMkdOvF7xcwpVgKDWn76isD7qYsFWq4CBoiHqekD9eEfI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PQy87fZj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uf+et/c+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 3 Sep 2024 11:26:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725355583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=32pnX+8iKASsJE5a++zViMDL/zgeEfLuyhfdPbGJ/gg=;
+	b=PQy87fZjVXxq8NRTATvOliSAyZrM542/54okF4rJswi+PQBM1iaFCp0tVjf8/SYcoNWTe4
+	fY0whTmi4+OKo0hMc/DOd5YRJuSjHOztPY3CxPvnCWTyl1ATOB5pviYTVFAOKm4JyePw3a
+	dGNKQdzZkt6UFLN6ikUrphjnoABh3W2q06zTTFz7RemN4ZJ3XFJXfMbwAod36d+6000Tf2
+	UyRP4sV7MyH+UZHhio5RbI7N+fztqzUJ/Ky88FBKDPL1TPOuPQlCRb2dk4BjyfPcf0feDr
+	NQ6I41lUwLJf/0Kv8mC0wnkU1Gn32UHugkB2dIiSYtB8j3/4WnJThI5lv5bhtw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725355583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=32pnX+8iKASsJE5a++zViMDL/zgeEfLuyhfdPbGJ/gg=;
+	b=uf+et/c+keELxwAV/wXo08rvJzoLfnYYJTqoPO9Ohm0Q851PnHJwOMQHU4s8erv9321J+P
+	nbfvBSpLgFZIreBg==
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: "Brandt, Oliver - Lenze" <oliver.brandt@lenze.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irq_work: Avoid unnecessary "IRQ work" interrupts
+Message-ID: <20240903092622.1Vxa89yN@linutronix.de>
+References: <25833c44051f02ea2fd95309652628e2b1607a1e.camel@lenze.com>
+ <20240828093719.3KJWbR6Y@linutronix.de>
+ <20240828095415.43iwHYdM@linutronix.de>
+ <1dc4fa0a48b05e14a1ae2a751441ba021ecee286.camel@lenze.com>
+ <20240828140223.P5vGN54Q@linutronix.de>
+ <2f59d15b63bfe1911261af86991820aadaf54b38.camel@lenze.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2f59d15b63bfe1911261af86991820aadaf54b38.camel@lenze.com>
 
-On Mon, 2024-09-02 at 12:33 +0200, Christian K=C3=B6nig wrote:
-> Am 02.09.24 um 11:32 schrieb Thomas Hellstr=C3=B6m:
-> > On Mon, 2024-09-02 at 08:13 +1000, Dave Airlie wrote:
-> > > On Fri, 30 Aug 2024 at 12:32, Linus Torvalds
-> > > <torvalds@linux-foundation.org> wrote:
-> > > > On Fri, 30 Aug 2024 at 14:08, Dave Airlie <airlied@gmail.com>
-> > > > wrote:
-> > > > > The TTM revert is due to some stuttering graphical apps
-> > > > > probably
-> > > > > due
-> > > > > to longer stalls while prefaulting.
-> > > > Yeah, trying to pre-fault a PMD worth of pages in one go is
-> > > > just
-> > > > crazy talk.
-> > > >=20
-> > > > Now, if it was PMD-aligned and you faulted in a single PMD,
-> > > > that
-> > > > would
-> > > > be different. But just doing prn_insert_page() in a loop is
-> > > > insane.
-> > > >=20
-> > > > The code doesn't even stop when it hits a page that already
-> > > > existed,
-> > > > and it keeps locking and unlocking the last-level page table
-> > > > over
-> > > > and
-> > > > over again.
-> > > >=20
-> > > > Honestly, that code is questionable even for the *small* value,
-> > > > much
-> > > > less the "a PMD size" case.
-> > > >=20
-> > > > Now, if you have an array of 'struct page *", you can use
-> > > > vm_insert_pages(), and that's reasonably efficient.
-> > > >=20
-> > > > And if you have a *contiguous* are of pfns, you can use
-> > > > remap_pfn_range().
-> > > >=20
-> > > > But that "insert one pfn at a time" that the drm layer does is
-> > > > complete garbage. You're not speeding anything up, you're just
-> > > > digging
-> > > > deeper.
-> >=20
-> > > I wonder if there is functionality that could be provided in a
-> > > common
-> > > helper, by the mm layers, or if there would be too many locking
-> > > interactions to make it sane,
-> > >=20
-> > > It seems too fraught with danger for drivers or subsystems to be
-> > > just
-> > > doing this in the simplest way that isn't actually that smart.
-> > Hmm. I see even the "Don't error on prefaults" check was broken at
-> > some
-> > point :/.
-> >=20
-> > There have been numerous ways to try to address this,
-> >=20
-> > The remap_pfn_range was last tried, at least in the context of the
-> > i915
-> > driver IIRC by Christoph Hellwig but had to be ripped out since it
-> > requires the mmap_lock in write mode. Here we have it only in read
-> > mode.
-> >=20
-> > Then there's the apply_to_page_range() used by the igfx
-> > functionality
-> > of the i915 driver. I don't think we should go that route without
-> > turning it into something like vm_insert_pfns() with proper
-> > checking.
-> > This approach populates all entries of a buffer object.
-> >=20
-> > Finally there's the huge fault attempt that had to be ripped out
-> > due to
-> > lack of pmd_special and pud_special flags and resulting clashes
-> > with
-> > gup_fast.
-> >=20
-> > Perhaps a combination of the two latter if properly implemented
-> > would
-> > be the best choice.
->=20
-> I'm not deep enough into the memory management background to judge
-> which=20
-> approach is the best, just one more data point to provide:
->=20
-> The pre-faulting was increased because of virtualization. When
-> KVM/XEN=20
-> is mapping a BO into a guest the switching overhead for each fault is
-> so=20
-> high that mapping a lot of PFNs at the same time becomes beneficial.
+On 2024-08-28 14:52:17 [+0000], Brandt, Oliver - Lenze wrote:
+> On Wed, 2024-08-28 at 16:02 +0200, bigeasy@linutronix.de wrote:
+> > CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.
+> > 
+> > On 2024-08-28 13:26:42 [+0000], Brandt, Oliver - Lenze wrote:
+> > > Hmm.... I see. What about calling wake_irq_workd() directly; something
+> > > like
+> > > 
+> > >         if (rt_lazy_work)
+> > >                 wake_irq_workd();
+> > >         else if (!lazy_work || tick_nohz_tick_stopped())
+> > >                 irq_work_raise(work);
+> > 
+> > this might work but I'm not too sure about it. This will become a
+> > problem if irq_work_queue() is invoked from a path where scheduling is
+> > not possible due to recursion or acquired locks.
+> > 
+> > How much of a problem is it and how much you gain by doing so?
+> > 
+> 
+> To be honest I haven't made any measurements. But we have a system with
+> *very* tight timing constrains: One thing is a 16kHz irq; the other a
+> 4kHz RT-task; both running on an isolated core. So if we assume ~2us
+> "overhead" for an irq (this should be more or less the time on our
+> system; Cortex-A9 with 800MHz) we would spend ~1% of our 250us grid for
+> the additionally irq. Not really something we would like.
+> 
+> Additionally we may get an (additionally) latency of ~2us before our 16-
+> kHz irq could go to work. Also something we wouldn't like.
 
-Since populating at mmap time is not possible due to eviction /
-migration, perhaps one way would be to use madvise() to toggle
-prefaulting size? MADV_RANDOM vs MADV_SEQUENTIAL vs MADV_NORMAL.
+This is a local-IRQ. It will be slightly more expensive than doing the
+wakeup directly.
 
-/Thomas
+> What I didn't understand: The "IRQ work" irqs are needed in order to
+> start the execution of something. Ok. But how was this done before? It
+> seems that "softirqs" were used for this purpose on kernel v4.14 (don't
+> ask why we are using such an old version). But I didn't get the idea of
+> these "softirqs". Are they triggered via "real" irqs (e.g. IPIs)? In
+> this case we would most likely have the same count of irqs on a kernel
+> 4.14 and a kernel 6.1 (our goal for now; I don't lose hope that even a
+> v6.6 may be used the next year).
 
->=20
-> Regards,
-> Christian.
->=20
-> >=20
-> > /Thomas
-> >=20
-> > > Dave.
->=20
+You schedule a "work item" via irq_work. This can be compared with
+tasklet or workqueue for instance. In the past a softirq was raised and
+it was handled as part it. Raising a softirq is simply ORing a bit and
+the softirq will be handled on IRQ-exit path or ksoftirqd will be
+scheduled (= task wakeup). This is all CPU-local in general. Cross-CPU
+requires sending an interrupt (IPI) and within that IPI you need to
+raise (OR) the bit for softirq. 
 
+It is likely I had some hacks to get it work. However. Some of the
+things require hard-irq context and IRQs-off and it might be triggered
+from an NMI and the former infrastructure was not really fit for it. So
+we went closer to what mainline is doing and this is what we have now.
+
+You could look at what is triggering the irq_work requests and maybe
+based on understanding you could disable it (say this is issued by
+driver X and you can disable it because you don't use it).
+
+You could, without breaking much (I think), avoid triggering irq-work
+locally for the "only-lazy-work" case and then ensuring the timer-tick
+will do the wake-up of the irq-work thread. This is done in case there
+is no HW support for signaling irq-work. So would have less irqs but the
+work will be delayed to the next jiffy which will it make take a little
+bit longer.
+
+Ideally would be avoiding having to deal with irq-work in the first
+place.
+
+> Any ideas about this assumption?
+> 
+> Oliver
+
+Sebastian
 
