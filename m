@@ -1,103 +1,477 @@
-Return-Path: <linux-kernel+bounces-313644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF05A96A80C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF3E96B181
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877B21F25448
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1502D285BF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6025D1D0178;
-	Tue,  3 Sep 2024 20:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tdypDXlu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD1F1CCB3D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964D813342F;
+	Wed,  4 Sep 2024 06:26:37 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA32D12CD88;
+	Wed,  4 Sep 2024 06:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725394079; cv=none; b=Rg8Nm3raS8XGG2Pq6LaEqTkaA0kJbEpGZbnaKmnKZm8N9rdkB3u2+cYa0CAec4xXj8JwrFBt0nDdhqFPiVJu5gc2o5X9ewxLDiIO8a9LvhPAa8Sv7RRRhirsHs14wWXlAWGl9Mur0d8JRGAwu5vmCnjtdvuOknE7MBKcqOrf7VY=
+	t=1725431197; cv=none; b=qVtjJAjPHhlu19+GfSw7JpjM/QlZ8EdGEbPuEShGIcdidBJ+Q+HLUSPR05ZIbnRpIsRWf978FrfQlu/4KdLTJvLYs9LLxXfRaUXbtY7+QOLeZH0NYMBy7+GZ1QUu7jLaHmVD4lJROdJO8iYiCaEI5FFnmRuIWluoMzf3du+Zcyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725394079; c=relaxed/simple;
-	bh=fQAFo9M1O4RDOc+KfzpdXU0fZMbaXUrNjpO0iTtsDXk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=e8rO5boeqsWeGgu3vSqudyioYwkutc/XItSOlUtyJoOV8gVrpw11IvzcI5UtvVOKGySzUetOwIYcTRLN5qst5sMx6IJme5iYGtgJCr9IABgMnaD6DjvQUBgr24XQVDMY/BEOScZzs1eoxOxaEM1oNlhtGP6M3a/ggY2HmRtO1Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tdypDXlu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621B1C4CEC4;
-	Tue,  3 Sep 2024 20:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725394079;
-	bh=fQAFo9M1O4RDOc+KfzpdXU0fZMbaXUrNjpO0iTtsDXk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tdypDXlugF8gxU6YXJwTUXcQlu15769ykVcnFmgPEgfDlq9YK2vr57n/hw17ICRBE
-	 24X0Gy7eQNu155hon6k4beqTF8q82Kpkis4P3GWE91cALUSA9B7ZpvkzU4YMBfLzFC
-	 y+8WHiOvstLLt6e6tGRlZHBrBCdiKI6aOHnkiDDQ=
-Date: Tue, 3 Sep 2024 13:07:57 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, Usama Arif
- <usamaarif642@gmail.com>, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com,
- hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com,
- linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org,
- nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org,
- shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com,
- v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org,
- ying.huang@intel.com, hch@infradead.org
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io
- devices
-Message-Id: <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
-In-Reply-To: <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
-References: <20240821074541.516249-1-hanchuanhua@oppo.com>
-	<20240821074541.516249-3-hanchuanhua@oppo.com>
-	<CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
-	<CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725431197; c=relaxed/simple;
+	bh=5dFgjk/oabilpVeol8G0eWL9U9/xLN3c1TXk+PgZ3AQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nVcJ1UzelB5MQBpSpn5LXcLJgc+a2WTpooH9QEqkWoPXgd8dpDoKV9e8QDAvq7R7dSdFZFRu9VwHXoAWriuzBi+y9cE3Yg5txvsmfcUBn6LPBGdQo7jlX9nLq9qlDmqmoLZpwLvOOG7YlBoakkSuSfSic1oq7lh2YnsC0w3oaqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee466d7fd8fcc5-b35b9;
+	Wed, 04 Sep 2024 14:26:25 +0800 (CST)
+X-RM-TRANSID:2ee466d7fd8fcc5-b35b9
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d7fd908e5-15f73;
+	Wed, 04 Sep 2024 14:26:24 +0800 (CST)
+X-RM-TRANSID:2eea66d7fd908e5-15f73
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: jgg@ziepe.ca
+Cc: kevin.tian@intel.com,
+	shuah@kernel.org,
+	iommu@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] iommufd/selftest:fix a resource leak
+Date: Wed,  4 Sep 2024 04:08:06 +0800
+Message-Id: <20240903200806.9803-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Sep 2024 11:38:37 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
+If the file fails to open, not only return return1 but also close the file descriptor,otherwise resource
+leak will occur
 
-> > [   39.157954] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000007
-> > [   39.158288] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> > [   39.158634] R13: 0000000000002b9a R14: 0000000000000000 R15: 00007ffd619d5518
-> > [   39.158998]  </TASK>
-> > [   39.159226] ---[ end trace 0000000000000000 ]---
-> >
-> > After reverting this or Usama's "mm: store zero pages to be swapped
-> > out in a bitmap", the problem is gone. I think these two patches may
-> > have some conflict that needs to be resolved.
-> 
-> Yup. I saw this conflict coming and specifically asked for this
-> warning to be added in Usama's patch to catch it [1]. It served its
-> purpose.
-> 
-> Usama's patch does not handle large folio swapin, because at the time
-> it was written we didn't have it. We expected Usama's series to land
-> sooner than this one, so the warning was to make sure that this series
-> handles large folio swapin in the zeromap code. Now that they are both
-> in mm-unstable, we are gonna have to figure this out.
-> 
-> I suspect Usama's patches are closer to land so it's better to handle
-> this in this series, but I will leave it up to Usama and
-> Chuanhua/Barry to figure this out :)
-> 
-> [1]https://lore.kernel.org/lkml/CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com/
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ .../selftests/iommu/iommufd_fail_nth.c        | 143 ++++++++++--------
+ 1 file changed, 83 insertions(+), 60 deletions(-)
 
-Thanks.  To unbreak -next I'll drop the two-patch series "mm: Ignite
-large folios swap-in support" for now.
+diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
+index c5d5e69452b0..ff4e5d8aad57 100644
+--- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
++++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
+@@ -237,10 +237,10 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	{
+ 		struct iommu_ioas_iova_ranges ranges_cmd = {
+@@ -250,7 +250,7 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
+ 			.allowed_iovas = (uintptr_t)ranges,
+ 		};
+ 		if (ioctl(self->fd, IOMMU_IOAS_IOVA_RANGES, &ranges_cmd))
+-			return -1;
++			goto close;
+ 	}
+ 
+ 	{
+@@ -264,13 +264,13 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
+ 		ranges[0].start = 16*1024;
+ 		ranges[0].last = BUFFER_SIZE + 16 * 1024 * 600 - 1;
+ 		if (ioctl(self->fd, IOMMU_IOAS_ALLOW_IOVAS, &allow_cmd))
+-			return -1;
++			goto close;
+ 	}
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	{
+ 		struct iommu_ioas_copy copy_cmd = {
+@@ -284,15 +284,19 @@ TEST_FAIL_NTH(basic_fail_nth, basic)
+ 		};
+ 
+ 		if (ioctl(self->fd, IOMMU_IOAS_COPY, &copy_cmd))
+-			return -1;
++			goto close;
+ 	}
+ 
+ 	if (_test_ioctl_ioas_unmap(self->fd, ioas_id, iova, BUFFER_SIZE,
+ 				   NULL))
+-		return -1;
++		goto close;
+ 	/* Failure path of no IOVA to unmap */
+ 	_test_ioctl_ioas_unmap(self->fd, ioas_id, iova, BUFFER_SIZE, NULL);
+ 	return 0;
++
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ /* iopt_area_fill_domains() and iopt_area_fill_domain() */
+@@ -305,30 +309,33 @@ TEST_FAIL_NTH(basic_fail_nth, map_domain)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_destroy(self->fd, stdev_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ TEST_FAIL_NTH(basic_fail_nth, map_two_domains)
+@@ -342,40 +349,43 @@ TEST_FAIL_NTH(basic_fail_nth, map_two_domains)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id2, &hwpt_id2,
+ 				  NULL))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_destroy(self->fd, stdev_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_destroy(self->fd, stdev_id2))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id2, &hwpt_id2,
+ 				  NULL))
+-		return -1;
++		goto close;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ TEST_FAIL_NTH(basic_fail_nth, access_rw)
+@@ -387,23 +397,23 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, 262144, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+ 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id, 0))
+-		return -1;
++		goto close;
+ 
+ 	{
+ 		struct iommu_test_cmd access_cmd = {
+@@ -418,22 +428,22 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
+ 		// READ
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 
+ 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_WRITE;
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 
+ 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_SLOW_PATH;
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 		access_cmd.access_rw.flags = MOCK_ACCESS_RW_SLOW_PATH |
+ 					     MOCK_ACCESS_RW_WRITE;
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 	}
+ 
+ 	{
+@@ -449,12 +459,15 @@ TEST_FAIL_NTH(basic_fail_nth, access_rw)
+ 
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 	}
+ 	if (_test_cmd_destroy_access(self->access_id))
+ 		return -1;
+ 	self->access_id = 0;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ /* pages.c access functions */
+@@ -466,22 +479,22 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id,
+ 				    MOCK_FLAGS_ACCESS_CREATE_NEEDS_PIN_PAGES))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+@@ -497,18 +510,21 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin)
+ 
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 		access_pages_id = access_cmd.access_pages.out_access_pages_id;
+ 	}
+ 
+ 	if (_test_cmd_destroy_access_pages(self->fd, self->access_id,
+ 					   access_pages_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_destroy_access(self->access_id))
+ 		return -1;
+ 	self->access_id = 0;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ /* iopt_pages_fill_xarray() */
+@@ -522,25 +538,25 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin_domain)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_set_temp_memory_limit(self->fd, 32))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, &hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, BUFFER_SIZE, &iova,
+ 				 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_create_access(self->fd, ioas_id, &self->access_id,
+ 				    MOCK_FLAGS_ACCESS_CREATE_NEEDS_PIN_PAGES))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+@@ -556,21 +572,24 @@ TEST_FAIL_NTH(basic_fail_nth, access_pin_domain)
+ 
+ 		if (ioctl(self->fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_ACCESS_RW),
+ 			  &access_cmd))
+-			return -1;
++			goto close;
+ 		access_pages_id = access_cmd.access_pages.out_access_pages_id;
+ 	}
+ 
+ 	if (_test_cmd_destroy_access_pages(self->fd, self->access_id,
+ 					   access_pages_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_destroy_access(self->access_id))
+ 		return -1;
+ 	self->access_id = 0;
+ 
+ 	if (_test_ioctl_destroy(self->fd, stdev_id))
+-		return -1;
++		goto close;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
+ }
+ 
+ /* device.c */
+@@ -586,45 +605,49 @@ TEST_FAIL_NTH(basic_fail_nth, device)
+ 
+ 	self->fd = open("/dev/iommu", O_RDWR);
+ 	if (self->fd == -1)
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_ioctl_ioas_alloc(self->fd, &ioas_id2))
+-		return -1;
++		goto close;
+ 
+ 	iova = MOCK_APERTURE_START;
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id, buffer, PAGE_SIZE, &iova,
+ 				 IOMMU_IOAS_MAP_FIXED_IOVA |
+ 					 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 	if (_test_ioctl_ioas_map(self->fd, ioas_id2, buffer, PAGE_SIZE, &iova,
+ 				 IOMMU_IOAS_MAP_FIXED_IOVA |
+ 					 IOMMU_IOAS_MAP_WRITEABLE |
+ 					 IOMMU_IOAS_MAP_READABLE))
+-		return -1;
++		goto close;
+ 
+ 	fail_nth_enable();
+ 
+ 	if (_test_cmd_mock_domain(self->fd, ioas_id, &stdev_id, NULL,
+ 				  &idev_id))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_get_hw_info(self->fd, idev_id, &info, sizeof(info), NULL))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, 0, &hwpt_id,
+ 				 IOMMU_HWPT_DATA_NONE, 0, 0))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain_replace(self->fd, stdev_id, ioas_id2, NULL))
+-		return -1;
++		goto close;
+ 
+ 	if (_test_cmd_mock_domain_replace(self->fd, stdev_id, hwpt_id, NULL))
+-		return -1;
++		goto close;
+ 	return 0;
++close:
++	close(self->fd);
++	return -1;
++
+ }
+ 
+ TEST_HARNESS_MAIN
+-- 
+2.33.0
 
-btw, next time can we please call it "enable large folios swap-in
-support"?  "ignite" doesn't make much sense here.
+
+
 
