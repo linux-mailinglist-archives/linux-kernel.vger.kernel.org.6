@@ -1,166 +1,203 @@
-Return-Path: <linux-kernel+bounces-312941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5B4969E04
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A1A969DF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088881F21B96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3541B1F214F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB971D0970;
-	Tue,  3 Sep 2024 12:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1708E1D6DC2;
+	Tue,  3 Sep 2024 12:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="RpQsetTt"
-Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JAI1fYGT"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28C41D095C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6321CE6F5;
+	Tue,  3 Sep 2024 12:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367448; cv=none; b=X+F8SEPvACKuflUQ0lzeJjdJZy10IzrDvPcgMft+StIkCHywZIMS30Uyh7k1Z1YplmikgxJygRrjl6fIHy8RXy0GmyN4ghRO1754r0B9zTNcteF/v4flpvztLejZGBrO8Kr4aqVjHd0PzDTlFvXqV0pJUZO3Kxvu46xyGSOn9XU=
+	t=1725367324; cv=none; b=rLQeqK7ME5PB3vISp1jH1D2m0XL6R08cKMjunjnPicXBFVlA7DxltT4LOrQJpv/HOg3m9d3tfbCww+V+LH+7jKevW7xXhKNj57V5EkDHG9Wpo8YG94nKNjMhufBv/Ao4m6QC/DE3j5CxlVCW41sDfQ2iscpoF1reKvK3zLek1zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367448; c=relaxed/simple;
-	bh=NCxLoS7pJBA/A6sZejri9a3QzwC1XvakjDQEyT5H520=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h0Ac5AnKVIOubbxQf8MklkUf/AB3n6ShTjbbD39K2UswFOOJ85nnxyqaQtu+oNvS1IGYBMzsQdz8I/zOSfxN2DmcVEvdq16dRRQLigYjIAJlrfqU7qP6LoN+X1qaW9PijnDlGlz+2P0cfBZHy4NRx3vyIhgR021P6T3HiVyZicU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=RpQsetTt; arc=none smtp.client-ip=17.58.6.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725367446;
-	bh=tEfTAfNjlVglE6qtj9e61J5uaCFS+zpjP4F6IfurRvs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=RpQsetTtpYAcAZDJdo5WBAxLsuubUbh2IDwdNMXXN88kD0LbyDCyEwOdSEFZlRZE+
-	 8vUdzYeglDnnmaBRdYIBj+eGfeDBOe951MCx+SZbJwIoR7/H/VihtKIvqg3NZIAh9G
-	 Ok8iXN4hck/ImVBlr3YnRNuxOln/Kcaw+egEtGwC4WpA0jJpc3T/iQtwlq1WlQjqBm
-	 jRTmAcOLoSq76MXcH5CwkvG2Y1+NsZ1e+QB6iHbV8fGjVlBuBd2XDJ2ipusSKtL0yT
-	 I1stCPSCs2HhWa3CZIezd6R1UIknc45Y1nGIxsSsXnvxPMxx0onU6R6sG+iRqpE2ge
-	 kuPtzMPCwWUEw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id 2DDC220102BD;
-	Tue,  3 Sep 2024 12:43:59 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 03 Sep 2024 20:41:44 +0800
-Subject: [PATCH] cxl/region: Fix logic for finding a free cxl decoder
+	s=arc-20240116; t=1725367324; c=relaxed/simple;
+	bh=ZVaq84pLPhwJhLzIfPmKiEeXxZp1YukNWV5ldKPBgPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LGjMU7Dc3rZlZksAKyxiV1cgAmHz99dZVUkwPYA/j8WVxxKCeqjo4E+jQbzRUdnelHyLdRgRt1Y101OSM9C6Bn5eA+WWUqZ7e2i4iaJgOrJflgH1sckfLeHeVQNaO1rBPsmZtTvDuDLu/6r0UIgGSy2/yoJvKainJp6TZmmh5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JAI1fYGT; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8776BFF803;
+	Tue,  3 Sep 2024 12:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725367319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KAmTuYuyXHduAW64UkV2JwUoEe69ueUNZdmvsuTuQfI=;
+	b=JAI1fYGTKKL5l+SCb0pblQoraFWgfaGoP5aGV8o3omBndzVv3jbWnhkQg2MDx8pN2AE4nA
+	H7TJooczOhsB4V2Gv6IXMu5Q+O3hN8jorwDWOYwp++FZyTKUpqbUBcW/mhFmq8LMmJNY7J
+	oH0dLvK0dZbfxhVoHjmk7te/whHswi3b0coVuTZPVGVXVACLPUH6Rxgz61Ce/77fvlmJnN
+	sQSCwGhJ5KmOmafWnCseLz4TXeg85i6zAMeIdqBhqNQfKN9ac7o+MeVyj1xa2y8cB8WESQ
+	qZromrecx3UAesYiYeOqaaBiQSiHw9uik7IbAJ67GeXCc4hftSYMOTOPjIMm5w==
+Message-ID: <78be1cb2-a6c6-44e3-8974-06731dd055f2@bootlin.com>
+Date: Tue, 3 Sep 2024 14:41:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-fix_cxld-v1-1-61acba7198ae@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAcE12YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSwNj3bTMivjkipwUXZM0M1Nz00RLAzNDSyWg8oKiVKAc2Kjo2NpaAOd
- 52OZaAAAA
-To: Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>, Ben Widawsky <bwidawsk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Zijun Hu <zijun_hu@icloud.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-cxl@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: hjGKpDrPx5TerylKFjNZHA9BMEHdaUxu
-X-Proofpoint-ORIG-GUID: hjGKpDrPx5TerylKFjNZHA9BMEHdaUxu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- malwarescore=0 clxscore=1011 mlxlogscore=999 phishscore=0 bulkscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409030103
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/7] Add suspend to ram support for PCIe on J7200
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: gregory.clement@bootlin.com, theo.lebrun@bootlin.com,
+ thomas.petazzoni@bootlin.com, u-kumar1@ti.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+References: <20240102-j7200-pcie-s2r-v7-0-a2f9156da6c3@bootlin.com>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20240102-j7200-pcie-s2r-v7-0-a2f9156da6c3@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 6/19/24 12:15, Thomas Richard wrote:
+> This adds suspend to ram support for the PCIe (RC mode) on J7200 platform.
+> 
+> In this 7th iteration, the i2c and mux patches were moved to dedicated
+> series ([1] and [2]).
+> The patch for the gpio-pca953x driver was removed. It will be sent
+> separately for further testing and discussion.
+> 
+> No merge conflict with 6.10-rc4.
+> 
+> [1]: https://lore.kernel.org/all/20240613-i2c-omap-wakeup-controller-during-suspend-v1-0-aab001eb1ad1@bootlin.com/
+> [2]: https://lore.kernel.org/all/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com/
 
-match_free_decoder()'s logic for finding a free cxl decoder depends on
-a prerequisite that all child decoders are sorted by ID in ascending order
-but the prerequisite may not be guaranteed, fix by finding a free cxl
-decoder with minimal ID.
+Hello !!
 
-Fixes: 384e624bb211 ("cxl/region: Attach endpoint decoders")
-Closes: https://lore.kernel.org/all/cdfc6f98-1aa0-4cb5-bd7d-93256552c39b@icloud.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/cxl/core/region.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+This series has no remaining comment to address.
+Is there any chance to get this series merged ?
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 21ad5f242875..b9607b4fc40b 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -797,21 +797,26 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
- static int match_free_decoder(struct device *dev, void *data)
- {
- 	struct cxl_decoder *cxld;
--	int *id = data;
-+	struct cxl_decoder *target_cxld;
-+	struct device **target_device = data;
- 
- 	if (!is_switch_decoder(dev))
- 		return 0;
- 
- 	cxld = to_cxl_decoder(dev);
--
--	/* enforce ordered allocation */
--	if (cxld->id != *id)
-+	if (cxld->region)
- 		return 0;
- 
--	if (!cxld->region)
--		return 1;
--
--	(*id)++;
-+	if (!*target_device) {
-+		*target_device = get_device(dev);
-+		return 0;
-+	}
-+	/* enforce ordered allocation */
-+	target_cxld = to_cxl_decoder(*target_device);
-+	if (cxld->id < target_cxld->id) {
-+		put_device(*target_device);
-+		*target_device = get_device(dev);
-+	}
- 
- 	return 0;
- }
-@@ -839,8 +844,7 @@ cxl_region_find_decoder(struct cxl_port *port,
- 			struct cxl_endpoint_decoder *cxled,
- 			struct cxl_region *cxlr)
- {
--	struct device *dev;
--	int id = 0;
-+	struct device *dev = NULL;
- 
- 	if (port == cxled_to_port(cxled))
- 		return &cxled->cxld;
-@@ -849,7 +853,8 @@ cxl_region_find_decoder(struct cxl_port *port,
- 		dev = device_find_child(&port->dev, &cxlr->params,
- 					match_auto_decoder);
- 	else
--		dev = device_find_child(&port->dev, &id, match_free_decoder);
-+		/* Need to put_device(@dev) after use */
-+		device_for_each_child(&port->dev, &dev, match_free_decoder);
- 	if (!dev)
- 		return NULL;
- 	/*
+Best Regards,
 
----
-base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
-change-id: 20240903-fix_cxld-4f6575a90619
+Thomas
 
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Regards,
+> 
+> Thomas
+> 
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> ---
+> Changes in v7:
+> - all: series rebased on Linux 6.10-rc4.
+> - i2c: patches moved to a dedicated series.
+> - mux: patches moved to a dedicated series.
+> - gpio-pca953x: patch removed, will be sent separately.
+> - Link to v6: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com
+> 
+> Changes in v6:
+> - i2c-omap: add a patch to remove __maybe_unused attribute of
+>   omap_i2c_runtime_suspend() and omap_i2c_runtime_resume()
+> - i2c-omap: fix compile issue if CONFIG_PM_SLEEP is not set
+> - Link to v5: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com
+> 
+> Changes in v5:
+> - all: series rebased on Linux 6.9-rc1
+> - pinctrl-single: patch removed (already applied to the pinctrl tree)
+> - phy: patches moved to a dedicated series.
+> - pci: add T_PERST_CLK_US macro.
+> - pci-j721e: update the comments about T_PERST_CLK_US.
+> - Link to v4: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v4-0-6f1f53390c85@bootlin.com
+> 
+> Changes in v4:
+> - all: use SoB/Co-developed-by for patches initially developed by Théo
+>   Lebrun.
+> - pinctrl-single: squash the two commits.
+> - i2c-omap: fix line lenghts of the comment in omap_i2c_suspend().
+> - mux: mux_chip_resume() return 0 or at the first error.
+> - phy-j721e-wiz: clean code around dev_err_probe().
+> - phy-j721e-wiz: use REF_CLK_100MHZ macros.
+> - pci: fix subject line for all PCI patches.
+> - pci-cadence: use fsleep() instead of usleep_range().
+> - pci-cadence: remove cdns_torrent_clk_cleanup() call in
+>   cdns_torrent_phy_resume_noirq().
+> - pci-j721e: add a patch to use dev_err_probe() instead of dev_err() in the probe().
+> - pci-j721e: fix unordered header files.
+> - pci-j721e: remove some log spammers.
+> - pci-j721e: add a missing clock disable in j721e_pcie_resume_noirq().
+> - pci-j721e: simplify the patch "Add reset GPIO to struct j721e_pcie"
+> - Link to v3: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v3-0-5c2e4a3fac1f@bootlin.com
+> 
+> Changes in v3:
+> - pinctrl-single: split patch in two parts, a first patch to remove the
+>   dead code, a second to move suspend()/resume() callbacks to noirq.
+> - i2c-omap: add a comments above the suspend_noirq() callback.
+> - mux: now mux_chip_resume() try to restores all muxes, then return 0 if
+>   all is ok or the first failure.
+> - mmio: fix commit message.
+> - phy-j721e-wiz: add a patch to use dev_err_probe() instead of dev_err() in
+>   the wiz_clock_init() function.
+> - phy-j721e-wiz: remove probe boolean for the wiz_clock_init(), rename the
+>   function to wiz_clock_probe(), extract hardware configuration part in a
+>   new function wiz_clock_init().
+> - phy-cadence-torrent: use dev_err_probe() and fix commit messages
+> - pcie-cadence-host: remove probe boolean for the cdns_pcie_host_setup()
+>   function and extract the link setup part in a new function
+>   cdns_pcie_host_link_setup().
+> - pcie-cadence-host: make cdns_pcie_host_init() global.
+> - pci-j721e: use the cdns_pcie_host_link_setup() cdns_pcie_host_init()
+>   functions in the resume_noirq() callback.
+> - Link to v2: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v2-0-8e4f7d228ec2@bootlin.com
+> 
+> Changes in v2:
+> - all: fix commits messages.
+> - all: use DEFINE_NOIRQ_DEV_PM_OPS and pm_sleep_ptr macros.
+> - all: remove useless #ifdef CONFIG_PM.
+> - pinctrl-single: drop dead code
+> - mux: add mux_chip_resume() function in mux core.
+> - mmio: resume sequence is now a call to mux_chip_resume().
+> - phy-cadence-torrent: fix typo in resume sequence (reset_control_assert()
+>   instead of reset_control_put()).
+> - phy-cadence-torrent: use PHY instead of phy.
+> - pci-j721e: do not shadow cdns_pcie_host_setup return code in resume
+>   sequence.
+> - pci-j721e: drop dead code.
+> - Link to v1: https://lore.kernel.org/r/20240102-j7200-pcie-s2r-v1-0-84e55da52400@bootlin.com
+> 
+> ---
+> Thomas Richard (5):
+>       PCI: cadence: Extract link setup sequence from cdns_pcie_host_setup()
+>       PCI: cadence: Set cdns_pcie_host_init() global
+>       PCI: j721e: Use dev_err_probe() in the probe() function
+>       PCI: Add T_PERST_CLK_US macro
+>       PCI: j721e: Use T_PERST_CLK_US macro
+> 
+> Théo Lebrun (2):
+>       PCI: j721e: Add reset GPIO to struct j721e_pcie
+>       PCI: j721e: Add suspend and resume support
+> 
+>  drivers/pci/controller/cadence/pci-j721e.c         | 121 ++++++++++++++++++---
+>  drivers/pci/controller/cadence/pcie-cadence-host.c |  44 +++++---
+>  drivers/pci/controller/cadence/pcie-cadence.h      |  12 ++
+>  drivers/pci/pci.h                                  |   3 +
+>  4 files changed, 146 insertions(+), 34 deletions(-)
+> ---
+> base-commit: 7510725e693fb5e4b4cd17086cc5a49a7a065b9c
+> change-id: 20240102-j7200-pcie-s2r-ecb1a979e357
+> 
+> Best regards,
 
 
