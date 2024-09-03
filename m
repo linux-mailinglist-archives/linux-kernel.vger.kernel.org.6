@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-313172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D806696A163
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:57:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EB796A168
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090F01C240FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91C53B212E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507ED158DD2;
-	Tue,  3 Sep 2024 14:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650FB1684AC;
+	Tue,  3 Sep 2024 14:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q0Tc4FtZ"
-Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MiUZoso7"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B068186E58
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D913DB92
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375405; cv=none; b=I+brqOFJ0QlWPR962Uf7JVBUBSDCEEIV4ew/xvjK46O0EQOGy/NmDyHxKm/a0HV9L7e/feRY/5/wvR7qXbtty5g91LsDewckJN67/sdEdA4Iai88DCZ0lD+xEfCJ21vH3GwttkT4Fh942oTYYxl+U7TB8zM+hjvNy2ajEK/PANk=
+	t=1725375456; cv=none; b=Yl4YzRMXvEkYyiEKcy9ozYt5N2tbj5+mVtzcD61Z/bxZDD4HGYBYz6LMCaxkuq6idDleCHQuaCwNzVxn6hsnwD4eBZ4DM5JHOEiEYHeWKBpp/7y9l0xm8HQ2nnX+ZsbTX0TpdAuvf5+ioTMPN7a3+OB07xW/gQx7hIc82Zv9EYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375405; c=relaxed/simple;
-	bh=gXdcYhlkFiZc7PZFYt6CuTb/sBzByoIKPWKoUDitZO4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=an2GDVuCeoO333DSfwLs80MDzboKrHjINd9uUseKAnft7imlqSLPQTp2gTCJhvnlC4hcfQAeZsTuHdqZ/FezAX2uAB2OVan/bJKnzlJxJyC8coJFC/BsUBGkeaz2RSA5Sco5+CF+hO4QzaEwIBcdJv/7+j8Fmg3z8OMyVU20db0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q0Tc4FtZ; arc=none smtp.client-ip=209.85.208.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2f406034874so65776121fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:56:43 -0700 (PDT)
+	s=arc-20240116; t=1725375456; c=relaxed/simple;
+	bh=3SQv/PRSdQoqO6h8q8wzZHOHhRfN+7S6QeWKLTqgeEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H+F8IXYHLA/+2ptXuzjefYa7AEuqM7yDHdzp0NGRqDr5BDOrvlEwxTZqW5M75eLW1QQjxf9hU3t65nsDGRG/Orzda/qskb3COGSKHCCaSMPzaR8WgEm/xLxmPtxrAPyszMsi0pFyBTP4c/4RQUTBW4sdB6MfO5w7gjlbHunGhXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MiUZoso7; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fee6435a34so38494585ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725375402; x=1725980202; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
-        b=Q0Tc4FtZ9SyE23cE51CxIDm3wr4xpdfEF1VKGG6D4hTRBcgGU5VbqgJQ2ZOvvsiokB
-         O897E9H8Ceu35GO2fLP7wWkVj1zNiOz8o/yzTXtv1IQpcjEu6FZE0i20hK5UhLjGfpm3
-         Tz6y34T9Z+D6FaXMRl6+35GiVoDPpbhYuIjsnFnc64aLPewU1Wpn9QNkXUdtRMzZjRF/
-         UOo6xTuJ2HKJHVHXFdcjiVlLeFiRL5Uvov8jurz90Zh9bm/54N4qQ0PIecWdbt1GRigt
-         wvuLIAD+7FbwJsD2yJkqpyEEpiIUpSI9lBYP8DhbFcnzaN5Kg/pp8wcDzR/7FMWCasNB
-         wjpQ==
+        d=broadcom.com; s=google; t=1725375454; x=1725980254; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xXFFIKSPu1H0dDt7Ywmp+wTzLxxigU6BuVkvk1PoMrM=;
+        b=MiUZoso7c4/+N2bhwF8XlJrtqgPlUemMURlvevWcP6zr5m8eAhk0BBo4yYITTACjuu
+         cFK4h+9QZaPLBzIuzbpc4j1/31LtllZALzT0RitiV19dA7+G1VDn4glj/BOy9eb2CzvV
+         lcGsFTCX8xErYF7UbAGoUgIVKi96ucCwNqHTs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725375402; x=1725980202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
-        b=v5QmAFGhb9GrmMfpVbFCrcjpsVNv9FS5DqSpsFxEf6YYFHz9PUp2rS1Q2p/UpnvOhD
-         EdNiV2ZdZfVy2QdPp7EisIzP3wAa99Z6nOpnJIHBnqbWyFWmUBGTlfxK6jW4YtFrpetZ
-         aLcOdDYR4O4+D0fTvulgMhO5xeuMaCqyXaET/TJWNBIR9D9xsEbBk4T7kbiHz7TqI5wK
-         W+Fy0zJDMjd2GA2bm5GCzCjcmYgCFxiR1gbDZ3D+MG2YD4hm3kMCMUJuoS02JAR9OzsI
-         tQGIwofi7GeX6rtZi8dFSneA3C7Xc3EbF8HE3pT0Tjw+jSdqPhbGY1JZh1aQpYjo6fUh
-         305w==
-X-Forwarded-Encrypted: i=1; AJvYcCVT1+qPUQEavlRvw2RuDYg+EDo5i0zXa1kL4MT/6U8aTNTsL9yIEFAzRxnPGFS15xM8Pzd8smtHbqIauIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/nyIpD5YDP6DGZTC1H6NvfaPV0fv3RC+tk+sZtKBjMPJ3t99J
-	WEUEAPUy6eOVLGW+iATeTwTLXWRt4nl/Eudk1EVQ2Mf53AgUkh6WQRnys1ubqvg=
-X-Google-Smtp-Source: AGHT+IGPXzXKjSyzj6ohNmy2x1Ly5xLLwbpSN9O7C4k6PqMn2bhMNSeS1m3Dv1qGKiKQSC913q2XHw==
-X-Received: by 2002:a2e:4e01:0:b0:2f3:b76e:4983 with SMTP id 38308e7fff4ca-2f64d4aa546mr6486601fa.22.1725375401093;
-        Tue, 03 Sep 2024 07:56:41 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a29bsm6517320a12.17.2024.09.03.07.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 07:56:40 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 16:56:48 +0200
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZtcjsHnIb7iuDfhw@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <ZtHN0B8VEGZFXs95@apocalypse>
- <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
+        d=1e100.net; s=20230601; t=1725375454; x=1725980254;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xXFFIKSPu1H0dDt7Ywmp+wTzLxxigU6BuVkvk1PoMrM=;
+        b=kzMr4Z3fWh2xAlJoc7pSMAXr5YN7eGR23moLnQmGpuoIAWmpf01Lw83fYiaexFRVSX
+         r2mQpsNbJN3NcykSgZbvisp4AnAKp4EVU4o/SCBpCzGZKsD3sCjjna4rChDDkt/3nmI2
+         m3wUf0FMpJpjvx4xAC7g0x/8YGgmBXFJCcceRU3CGGDrsuLDmxosZz5zuQNtPSKlscpT
+         3Z8TtUD3fI2P8ToMkeMLN5ylNtMuHs4hmHWi58HS7fkaXrGp1nE+R4vEJ8uGb8068XMj
+         CzEEYmUS1ENvbobqkVggkS6+bVvwqL+pqRc9IdHBdjtns9yG4S2Ri+fbGDgOsbJ8XqvR
+         u2Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiZkcIRmNZWojc5UQmLCMgCxbXlHdUKEz+6fUhe+tafBtjXdv+0A2Zw3deOyp/3Mx/bTJ5nMdzQxBVauc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjxO5YUz+gjMQApQua6OVoc2NTMrr94DGRS8zMfyOLkOWDVkY6
+	gee0a5zUsxFRjMQoWpLUum3Ipuz35c24jFuVz+305L9q7im5XiAHivgQ0eapSrqMWe/AMlCr2V/
+	9HM12/8Vb4VM9cYXMvjm7xOEx1P82KZVDi8br
+X-Google-Smtp-Source: AGHT+IEAD+yyRTD4ddrHX96xW+yly1c7HiVJBmKS58JbXP5uTQz/mXskG1LiH4NbHjLvyOYJtTL6bw+7INoupd7X/rk=
+X-Received: by 2002:a17:902:db12:b0:205:4531:54d with SMTP id
+ d9443c01a7336-20699af1129mr30196675ad.30.1725375454154; Tue, 03 Sep 2024
+ 07:57:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
+References: <20240903124048.14235-1-gakula@marvell.com> <20240903124048.14235-2-gakula@marvell.com>
+In-Reply-To: <20240903124048.14235-2-gakula@marvell.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Tue, 3 Sep 2024 20:27:21 +0530
+Message-ID: <CALs4sv0s0=8Mg-5hQAeLEnTDfwKFy2esp9yFchX0kpPCEciNpA@mail.gmail.com>
+Subject: Re: [net-next PATCH 1/4] octeontx2-pf: Defines common API for HW
+ resources configuration
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org, 
+	davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us, edumazet@google.com, 
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000001596bf062138476a"
 
-Hi Andrew,
+--0000000000001596bf062138476a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16:21 Fri 30 Aug     , Andrew Lunn wrote:
-> On Fri, Aug 30, 2024 at 03:49:04PM +0200, Andrea della Porta wrote:
-> > Hi Krzysztof,
-> > 
-> > On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> > > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
-> > > > The RaspberryPi RP1 is ia PCI multi function device containing
-> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > > > and others.
-> > > > Implement a bare minimum driver to operate the RP1, leveraging
-> > > > actual OF based driver implementations for the on-borad peripherals
-> > > > by loading a devicetree overlay during driver probe.
-> > > > The peripherals are accessed by mapping MMIO registers starting
-> > > > from PCI BAR1 region.
-> > > > As a minimum driver, the peripherals will not be added to the
-> > > > dtbo here, but in following patches.
-> > > > 
-> > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > ---
-> > > >  MAINTAINERS                           |   2 +
-> > > >  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
-> > > 
-> > > Do not mix DTS with drivers.
-> > > 
-> > > These MUST be separate.
-> > 
-> > Separating the dtso from the driver in two different patches would mean
-> > that the dtso patch would be ordered before the driver one. This is because
-> > the driver embeds the dtbo binary blob inside itself, at build time. So
-> > in order to build the driver, the dtso needs to be there also. This is not
-> > the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
-> > ordered last wrt the driver it refers to.
-> > Are you sure you want to proceed in this way?
-> 
-> It is more about they are logically separate things. The .dtb/dtbo
-> describes the hardware. It should be possible to review that as a
-> standalone thing. The code them implements the binding. It makes no
-> sense to review the code until the binding is correct, because changes
-> to the binding will need changes to the code. Hence, we want the
-> binding first, then the code which implements it.
+On Tue, Sep 3, 2024 at 6:11=E2=80=AFPM Geetha sowjanya <gakula@marvell.com>=
+ wrote:
+>
+> -
+>         /* Assign default mac address */
+>         otx2_get_mac_from_af(netdev);
+>
+> @@ -3118,11 +3141,8 @@ static int otx2_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+>         if (test_bit(CN10K_LMTST, &pf->hw.cap_flag))
+>                 qmem_free(pf->dev, pf->dync_lmt);
+>         otx2_detach_resources(&pf->mbox);
+Isn't some of this unwinding/cleanup already moved to the new
+function? Looks like duplicate code to me.
 
-Ack.
+> -err_disable_mbox_intr:
+>         otx2_disable_mbox_intr(pf);
+> -err_mbox_destroy:
+>         otx2_pfaf_mbox_destroy(pf);
+> -err_free_irq_vectors:
+>         pci_free_irq_vectors(hw->pdev);
+>  err_free_netdev:
+>         pci_set_drvdata(pdev, NULL);
+> --
+> 2.25.1
+>
+>
 
-Cheers,
-Andrea
+--0000000000001596bf062138476a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> 
-> 	Andrew
+MIIQbQYJKoZIhvcNAQcCoIIQXjCCEFoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3EMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBUwwggQ0oAMCAQICDBX9eQgKNWxyfhI1kzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODE3NDZaFw0yNTA5MTAwODE3NDZaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFTATBgNVBAMTDFBhdmFuIENoZWJiaTEoMCYGCSqGSIb3DQEJ
+ARYZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBAK3X+BRR67FR5+Spki/E25HnHoYhm/cC6VA6qHwC3QqBNhCT13zsi1FLLERdKXPRrtVBM6d0
+mfg/0rQJJ8Ez4C3CcKiO1XHcmESeW6lBKxOo83ZwWhVhyhNbGSwcrytDCKUVYBwwxR3PAyXtIlWn
+kDqifgqn3R9r2vJM7ckge8dtVPS0j9t3CNfDBjGw1DhK91fnoH1s7tLdj3vx9ZnKTmSl7F1psK2P
+OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
+dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
+fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
+9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
+pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
+25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
+Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIO8E9K5C9Kcaq6A//uRmXHoPYR1GiUim
+hxCd7OjyQineMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
+MzE0NTczNFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQAA+fzOlnNbGi06qG5cbJXvw2Kl1f0uwhRD0YYbhrR2IDNPNX+h
+1gHZKft7BMWNFT2iQpWbc9n4cc0SANVb7BbFCz7BvwBVDlcydVQAVPAtP9Gn0Y+c81Rtmu3Q/DpO
+HI0i6h7d9Kg/NWvq2xQNc3wX3ZTQ4zSfSZPJH7BI+j+WTU9dPDUnxd0KSgjIj0LEOA2jwDfR4Atn
+FWh7aE0fYWEPklpdUhOjKmubCx5edINjnyD8BcZRRbEkIlCs7B3gh9qJL/fULU3q3wC9AcLk7Fqu
+1rqG6QAx3HFFKdeiXLRUfrUWIu6SYi4UXOirq8u/j3NR2b3FFCkYhKJQ3KFSg+po
+--0000000000001596bf062138476a--
 
