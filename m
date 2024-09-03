@@ -1,111 +1,175 @@
-Return-Path: <linux-kernel+bounces-312227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12E49693CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:36:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5349693CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876011F24397
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:36:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC701B22841
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC731D3195;
-	Tue,  3 Sep 2024 06:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hajXK8wW"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1321D319D;
+	Tue,  3 Sep 2024 06:36:46 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBAF1D1F63
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D182E3EB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345365; cv=none; b=bkRKwaogZa6qsTeOfi33J7jU6YuX+NucWisfdubnk6YT7yibPnrFGbnKHVuiZiqrSuhaTNfomtWtpA+iI2LKYAUa0LK7CC6LdIvE0wtFmkF429RuNX7ITsIzrCxjD/RxbbtR5jzMSt/nncCVQbctRo/TtFRiJGZjdu4ZeHM46t0=
+	t=1725345405; cv=none; b=U6OZN6spka2c/Zd38l/aE4JxwRvHUvKQCcRB+wo9QtXg4A6r5gLBhkWuWJtbkrfePuUAalVJn4YdlCZ9b4sXD/vQzjYzj7otOzNNLVNJomKtLkyGeMYDPCFEX7WmEilxBVlYSvAg+kCO+VhsUqjuWAGax+jdeM7YdUQAXN9UeGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345365; c=relaxed/simple;
-	bh=VPZudvRVHbus4LXrbfoMkcg6cOhLHcVHXr99PO6hzJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ETm7q7hnfoyQ2Mf1GEdJv9mETx+K6sg+AwAyI9Muhh2b4u+rxopDEZu6z3uZOiuz8FnYtm2XGi1iSzRP2Jp4HoPs6mkpyDY8HxCQWN43KdH+ZPDZB7gbHHt7e4+oZwyvJhwwl8HTpxrTireZ/EwGl0CdmQY7ER+Cz+UG86WX/EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hajXK8wW; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a82d1ef62so3633170276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 23:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725345362; x=1725950162; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VPZudvRVHbus4LXrbfoMkcg6cOhLHcVHXr99PO6hzJo=;
-        b=hajXK8wWGEiEnEp7p6c67laIekBPpgZjOkgYyqoY+73rQ5caD45AKhOqKxYE48bzCv
-         PCutU+gdFGzVBUxkWJa7nDjs3pOxwJVQB1njzJyWObN6JvZShBJQJ7NuMG1buaZbFztX
-         Igz8RV9hFpydBGhghxQyZYVRb/NwxIT1k8N8cEjWdyUiArvbjNzv/peKvXGsy32ATHpX
-         dfAwKSCHLJGRWVV0VxfkfH7VuaelAg2e/HQ5eljZABTL2zURyOgv/RgMGzY6M3hkAkMy
-         oCg+myQ06p4adbpsB1e5tEjqiVjxaINXb/V9ypBAUykFcJeZJU7gj6ZvCSQsabYuvmPI
-         kL2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725345362; x=1725950162;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VPZudvRVHbus4LXrbfoMkcg6cOhLHcVHXr99PO6hzJo=;
-        b=ilnptlpgaJMHrH4lTCuuiag+vgoc2p0lB8qWTxlYsH68a9TUGomHMLoXOCIHbM54MW
-         lMWcv7w+/3de81TyYhdrq5kDoJYwyN9pjRCOiV8+K+DwLiLUFvha0ObD+gUUoS5jkqIC
-         4S4fE90Pg5fbXPEEIGB5sdCefCSWbkLouXjHf6YrZNhEyn58cdItlmwvIPDVJMmnuMDx
-         YBG3WoN5HXTWWP5psZcX36JlZxJW/PUae5LhwV5WdWAkrmzV0tA5WWbhmlmAZeZKFqel
-         aMfnRhsfyaQEcck2bkF/2l3xKZeZQQ9GM7vg17fhg1HbOB0mbPt0W1xp0uYGa/bA5oiO
-         MheQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlqksECT66LOXB8WmIKZxipzqdyfc3H0116Q3m6gFYvseF7aNgpGehoNkuPaj8Q1PzTiZHF1pbRL0i8FY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ2PfS6ilsaTOy6KBZwTB0PxvDfbNCfmmJNLDQExK6mMESipWC
-	Dj+V8ZeJRiXEFJy7O893Ge3ZExdjCPk+RszFLD+Ql9FihW8Qi05VM0LYCxuhZXzkkqYsSd5k2HJ
-	jsd41wn9ZK1NTG4XiCZig/4H+I4c=
-X-Google-Smtp-Source: AGHT+IHR8tpiw3igY6qGfaRdI1dxqyE9jFzmjN8jYW30VTbpCYodS9kwBwFF3bZihMwsgZEMvLsrfMZBR6/T790BhzE=
-X-Received: by 2002:a05:6902:2313:b0:e0b:ba20:7f87 with SMTP id
- 3f1490d57ef6-e1a79ffa00amr10498144276.25.1725345361902; Mon, 02 Sep 2024
- 23:36:01 -0700 (PDT)
+	s=arc-20240116; t=1725345405; c=relaxed/simple;
+	bh=yg24vRONR2mLZ0z7yDQa4hEfXzegR5chkg8PG+m4V7E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=L93qamBWMdKK4VSkV3B2MaJ/wABDeD/DCQccvcQWlGmorJqiGzmeNd1aAnjnNnKKvBpZjr6RjhLs/DyGjHh+s6gXipLhtgygV4KtSQwN/7+FHlflL2KXnLyy34DBsmHdvCntAGqLfObv1dMuDz5b9DFNumJWV6Vs+VZPza1DCW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WybWF5HjZz9sSH;
+	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2PdnbsYL7xth; Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WybWF4Jw0z9sSC;
+	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 822B98B76E;
+	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 8n4_MCluhO-u; Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EAAC8B768;
+	Tue,  3 Sep 2024 08:36:41 +0200 (CEST)
+Message-ID: <326d9a7d-7674-4c28-aa40-dd2c190244dd@csgroup.eu>
+Date: Tue, 3 Sep 2024 08:36:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
- <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
-In-Reply-To: <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Tue, 3 Sep 2024 11:35:51 +0500
-Message-ID: <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-To: Leo Li <sunpeng.li@amd.com>, Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com, 
-	pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: [GIT PULL] SOC FSL for 6.12 (retry)
+To: soc@kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Lu Baolu <baolu.lu@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Language: fr-FR
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 25, 2024 at 2:12=E2=80=AFAM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
->
-> Hi,
-> Is anyone trying to look into it?
-> I continue to reproduce this issue on fresh kernel builds 6.11-rc4+.
-> In addition to the RenPy engine, the problem also reproduces on games
-> from Ubisoft, such as Far Cry 4.
-> A very important note that I missed in the first message.
-> To reproduce the problem, you need to enable scaling in Gnome for
-> HiDPI monitors.
-> I am using 4K resolution with 200% of fractional scaling.
+Hi Arnd,
 
-Sorry for persistence, but I'm afraid there's no time left to fix this
-regression.
-There's a week left until the release.
-A month later, no one has looked at what the problem is.
+Please pull the following Freescale Soc Drivers changes for 6.12
 
---=20
-Best Regards,
-Mike Gavrilov.
+There are no conflicts with latest linux-next tree.
+
+Thanks
+Christophe
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+   https://github.com/chleroy/linux.git tags/soc_fsl-6.12-2
+
+for you to fetch changes up to 7a99b1c0bce5cf8c554ceecd29ad1e8085557fd3:
+
+   Merge branch 'support-for-quicc-engine-tsa-and-qmc' (2024-09-03 
+07:51:34 +0200)
+
+----------------------------------------------------------------
+- A series from HervÃ© Codina that bring support for the newer version
+of QMC (QUICC Multi-channel Controller) and TSA (Time Slots Assigner)
+found on MPC 83xx micro-controllers.
+
+- Misc changes for qbman freescale drivers for removing a redundant
+warning and using iommu_paging_domain_alloc()
+
+----------------------------------------------------------------
+Christophe Leroy (1):
+       Merge branch 'support-for-quicc-engine-tsa-and-qmc'
+
+Herve Codina (36):
+       soc: fsl: cpm1: qmc: Update TRNSYNC only in transparent mode
+       soc: fsl: cpm1: qmc: Enable TRNSYNC only when needed
+       soc: fsl: cpm1: tsa: Fix tsa_write8()
+       soc: fsl: cpm1: tsa: Use BIT(), GENMASK() and FIELD_PREP() macros
+       soc: fsl: cpm1: tsa: Fix blank line and spaces
+       soc: fsl: cpm1: tsa: Add missing spinlock comment
+       dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine (QE) TSA controller
+       soc: fsl: cpm1: tsa: Remove unused registers offset definition
+       soc: fsl: cpm1: tsa: Use ARRAY_SIZE() instead of hardcoded 
+integer values
+       soc: fsl: cpm1: tsa: Make SIRAM entries specific to CPM1
+       soc: fsl: cpm1: tsa: Introduce tsa_setup() and its CPM1 
+compatible version
+       soc: fsl: cpm1: tsa: Isolate specific CPM1 part from 
+tsa_serial_{dis}connect()
+       soc: fsl: cpm1: tsa: Introduce tsa_version
+       soc: fsl: cpm1: tsa: Add support for QUICC Engine (QE) implementation
+       MAINTAINERS: Add QE files related to the Freescale TSA controller
+       soc: fsl: cpm1: tsa: Introduce tsa_serial_get_num()
+       soc: fsl: cpm1: qmc: Rename QMC_TSA_MASK
+       soc: fsl: cpm1: qmc: Use BIT(), GENMASK() and FIELD_PREP() macros
+       soc: fsl: cpm1: qmc: Fix blank line and spaces
+       soc: fsl: cpm1: qmc: Remove unneeded parenthesis
+       soc: fsl: cpm1: qmc: Fix 'transmiter' typo
+       soc: fsl: cpm1: qmc: Add missing spinlock comment
+       dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine (QE) QMC controller
+       soc: fsl: cpm1: qmc: Introduce qmc_data structure
+       soc: fsl: cpm1: qmc: Re-order probe() operations
+       soc: fsl: cpm1: qmc: Introduce qmc_init_resource() and its CPM1 
+version
+       soc: fsl: cpm1: qmc: Introduce qmc_{init,exit}_xcc() and their 
+CPM1 version
+       soc: fsl: cpm1: qmc: Rename qmc_chan_command()
+       soc: fsl: cpm1: qmc: Handle RPACK initialization
+       soc: fsl: cpm1: qmc: Rename SCC_GSMRL_MODE_QMC
+       soc: fsl: cpm1: qmc: Introduce qmc_version
+       soc: fsl: qe: Add resource-managed muram allocators
+       soc: fsl: qe: Add missing PUSHSCHED command
+       soc: fsl: cpm1: qmc: Add support for QUICC Engine (QE) implementation
+       soc: fsl: cpm1: qmc: Handle QUICC Engine (QE) soft-qmc firmware
+       MAINTAINERS: Add QE files related to the Freescale QMC controller
+
+Lu Baolu (1):
+       soc: fsl: qbman: Use iommu_paging_domain_alloc()
+
+Xiaolei Wang (1):
+       soc: fsl: qbman: Remove redundant warnings
+
+  .../bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml        | 210 +++++++
+  .../bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml    | 197 ++++++
+  MAINTAINERS                                        |   3 +
+  drivers/soc/fsl/qbman/qman_ccsr.c                  |   2 -
+  drivers/soc/fsl/qbman/qman_portal.c                |   5 +-
+  drivers/soc/fsl/qe/Kconfig                         |  18 +-
+  drivers/soc/fsl/qe/qe_common.c                     |  80 +++
+  drivers/soc/fsl/qe/qmc.c                           | 667 
+++++++++++++++++-----
+  drivers/soc/fsl/qe/tsa.c                           | 659 
++++++++++++++++-----
+  drivers/soc/fsl/qe/tsa.h                           |   3 +
+  include/dt-bindings/soc/qe-fsl,tsa.h               |  13 +
+  include/soc/fsl/qe/qe.h                            |  23 +-
+  12 files changed, 1552 insertions(+), 328 deletions(-)
+  create mode 100644 
+Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
+  create mode 100644 
+Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
+  create mode 100644 include/dt-bindings/soc/qe-fsl,tsa.h
 
