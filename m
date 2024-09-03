@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-313129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F088596A0A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:30:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29CF96A0A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7D31C23BDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D381C23E6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F113C801;
-	Tue,  3 Sep 2024 14:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FEF155743;
+	Tue,  3 Sep 2024 14:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMPhAULP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NY0GouET"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D158F45;
-	Tue,  3 Sep 2024 14:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA1113F43A;
+	Tue,  3 Sep 2024 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373840; cv=none; b=oUM/4N6VJMDEgtlGne9SfGvajTa2mHCS6/+DYXD/6fJY14hWzcmg5QxiiqZqKDQeqIQJAuMXiXW/GEp2DCVNa2FRCmyPPefB1++Hd7QOQT/Mb7UodTK7wbZ+M6Jno6Wq8H3E0sfLNjkfsBPIL2mVwbECZPpyair5H+VXeWeIJoU=
+	t=1725373841; cv=none; b=IcyoZOSkb1+Y1pbQKvNa+PFwz4WHKXm7xIRKRUGYTHgbhJF+GkVR/fcvLf8oyGqlss+J8mbmYxeOY/htZQkZFY9zkuVBV6sDaOJ125gYxBIOP7OMgz2lHOpM9gOxlYuazijUtZeESXeZAjFRFZzOzFyUaMlpI0QSnRR8LP5M4fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373840; c=relaxed/simple;
-	bh=8hIsX3Gtu284V91gL7N6GgFB7NiLigl/6FXHMFI6wzo=;
+	s=arc-20240116; t=1725373841; c=relaxed/simple;
+	bh=gXbykwMFgquDkN8SDMxjOjIVVBU81MHk34Ikbht7mSU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EcmcJ/XzZDvM9I9nvcG2lhyf5KfbOOd1v0suK8wLNMkj9fzRUe2PTfdiJZHQ+8LXPH8KqOHSMUbtogB99LQKkNdkY6ECfNwuOQWYd6iLpOdo1WBnM7PBw2UA1+LozXBxrDvZbxrtkUNR0O4jG/v03B9u2F0Lc3M2jxYqZ9xwznQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMPhAULP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A67C4CEC4;
-	Tue,  3 Sep 2024 14:30:39 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=bkS17V9ljJFLGRG964Qyf582D1PecjStplfudgqLV6cBrBZDGdoz/gz0jeM2XfbM6gtL2ZqgLpp7FCIBxktYu13uDR7VZVLkPjfsF2Ni7XjlivSKPfshL45yHlDgjz4NjPkhbzmGprNl2mnEgWYBGs+MAE4FUEU84NAGj+hcUuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NY0GouET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4BCC4CEC7;
+	Tue,  3 Sep 2024 14:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373839;
-	bh=8hIsX3Gtu284V91gL7N6GgFB7NiLigl/6FXHMFI6wzo=;
+	s=k20201202; t=1725373840;
+	bh=gXbykwMFgquDkN8SDMxjOjIVVBU81MHk34Ikbht7mSU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cMPhAULPDWSY4mHmyASlsRi7jgsoFCb5qncdk7Jm9YyLKiP1V8Y7lViX0Z6v3UdYZ
-	 3hKlLIzyD2wxeMBcwS/sM7csrpCqg2Gyjj2PTMKkz1HE52x+8QTO9oVINqw/wZ2dUO
-	 K2GI7Dq8dYPFk8SxBa/XdFK/R9fQuUz2A4ORDKHr/WrikJkdbS9Am/Mrvvj1XDChZv
-	 3Ox2jpueSGC5u4BsN/VgskFOuyyrur94yhgpyyREzRNvsoDIOZa9PFmdM44MBZo0T9
-	 SIeZAFnHAaXTNNGkeABnF026+EK3JOBXANHgq4uXE78oPEQayzpL+KZbZR908BCG70
-	 yWXz2nhHg9VtA==
+	b=NY0GouETMhA6ixaEs0zebQd5v7X+lytuVzWSrsX+un7J9l8MbCKFjBQ9tsj3llMIn
+	 2bNW4KVWrafxBjqUy1uBWpHCYTMQO2lNRQok087HJxKgOaUsgFu0Qy6LhqbXEd2Az2
+	 exFQx9qQYItrxEkjQSgvRlCOVX6ebKHflhY9EaaMIna+fJaPXHQso+o1aMlh4q6+DK
+	 V/Ik3nYsoEeTElmDyRUplk/g4pwHkkRowcIwWQcK977tzMiRdOPe9RMMrwgWPRPM0/
+	 jtsNV7OVJqCsb6B6Bhuk7xBHEP6WxXgDI9HMEgez8NjerpNdifVBYhFG4AVKretDIC
+	 WNtGxNkrUDiYw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EF53822D69;
-	Tue,  3 Sep 2024 14:30:41 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDB03822D69;
+	Tue,  3 Sep 2024 14:30:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] riscv: mm: Do not restrict mmap address based on hint
+Subject: Re: [PATCH] riscv: misaligned: Restrict user access to kernel memory
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172537383996.320952.12145351414026889643.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Sep 2024 14:30:39 +0000
-References: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
-In-Reply-To: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, corbet@lwn.net, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, shuah@kernel.org,
- cyy@cyyself.name, rsworktech@outlook.com, alexghiti@rivosinc.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, palmer@rivosinc.com,
- linux-kselftest@vger.kernel.org
+ <172537384152.320952.10274584984472776456.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Sep 2024 14:30:41 +0000
+References: <20240815005714.1163136-1-samuel.holland@sifive.com>
+In-Reply-To: <20240815005714.1163136-1-samuel.holland@sifive.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com,
+ stable@vger.kernel.org, aou@eecs.berkeley.edu, ben.dooks@codethink.co.uk,
+ bjorn@rivosinc.com, charlie@rivosinc.com, cleger@rivosinc.com,
+ conor.dooley@microchip.com, evan@rivosinc.com, paul.walmsley@sifive.com,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (fixes)
+This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Mon, 26 Aug 2024 09:36:44 -0700 you wrote:
-> There have been a couple of reports that using the hint address to
-> restrict the address returned by mmap hint address has caused issues in
-> applications. A different solution for restricting addresses returned by
-> mmap is necessary to avoid breakages.
+On Wed, 14 Aug 2024 17:57:03 -0700 you wrote:
+> raw_copy_{to,from}_user() do not call access_ok(), so this code allowed
+> userspace to access any virtual memory address.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 7c83232161f6 ("riscv: add support for misaligned trap handling in S-mode")
+> Fixes: 441381506ba7 ("riscv: misaligned: remove CONFIG_RISCV_M_MODE specific code")
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/3] Revert "RISC-V: mm: Document mmap changes"
-    https://git.kernel.org/riscv/c/954260ff5a46
-  - [2/3] riscv: selftests: Remove mmap hint address checks
-    https://git.kernel.org/riscv/c/83dae72ac038
-  - [3/3] riscv: mm: Do not restrict mmap address based on hint
-    https://git.kernel.org/riscv/c/2116988d5372
+  - riscv: misaligned: Restrict user access to kernel memory
+    https://git.kernel.org/riscv/c/b686ecdeacf6
 
 You are awesome, thank you!
 -- 
