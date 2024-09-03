@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-313581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8933D96A73B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:19:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E8796A73D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344C81F21A6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6DD1C214B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8318FDD8;
-	Tue,  3 Sep 2024 19:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1249118E03A;
+	Tue,  3 Sep 2024 19:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nq+KH05I"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5Fm1kNo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0C71D5CC6;
-	Tue,  3 Sep 2024 19:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A781D5CC6;
+	Tue,  3 Sep 2024 19:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391143; cv=none; b=rJQ0ruvkOBqGFFJxxMpJfYOIrDVuZl5l4iSt7jzbk41lH+qM32hTzhFvfHhd3e0nLsC+fMdtL/IgGFaoJhNrFrmlMe+NMdqNDOIKn4UkddqsXrW6PrK44VPyJpOLax2P7UD/WmMo+IFBLqZjDjVc5FWVuicyuiuCrdn6iuK1Khc=
+	t=1725391155; cv=none; b=gMzcVYD2mh2iIusiAapE0I1B8Vo5G3UFmMdhk/MvjvqT+rEQiWK8dycn9li1Qzml73/Ys/Wm885HLOdoz9oZ3jtRTYGLD1z8ezQlhGuC7j8dShH78jTNjv3wUlrpjC/ZFcTpCN9LHHz4YhzFw280g2lXSYpQE3mvJgJSC011P8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391143; c=relaxed/simple;
-	bh=C6tyTlzrvQ744QWHSoF7W4UR1hVGzE0ndrYG0/hpzi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CTyebVzMzjjMD8i+vSH+qqIIScZnyg4CP2JyfTvdAeb5H0WTcE+NZgqCM6pzG6JsTdRTLotzAJv1ISX9DNyPjXpdMQuwSUhFNFmtOZtPXgHYSmii3GFLls8Hjfruw/gZIk36PnLCmO6SZWEbLpESx/HdkTqNWMZZkZAtRVk6yYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nq+KH05I; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WywQr4RVlzlgTWR;
-	Tue,  3 Sep 2024 19:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725391138; x=1727983139; bh=coBZ9lyHTBRDqRpSWT44D/Qb
-	8lF4EuJZ+HhHtbYLR84=; b=nq+KH05ICOejEbF/Vx9An/ZPSCrbZ9al6t60YGnM
-	3+jcmjDwTpzIXxAkK8yP7ETk41ppy6mTmftCMkt774RTyHjswE3KB+tftKBfYnSZ
-	HMgckfje6oChlcucWYiR7YbDc6tuMAhPAp9Mg0okrfrKugfAcmtpHCpB6JJvlxM3
-	FpwfByf1NTuQ2tglPUEvyFryOmRIjfYNRstqkIRRSFmBYNwOj9hce30NthTMVdde
-	i/bOo9AUXgAW8kEWmBSKdJ4ekoq9QfG1za3cIxm1094ZwmQ84DFwvvTFOHPDVutd
-	WOTKz1vdWL4k3hkppWC3hA7oShOjaDJb8sZJySmiP9QZ6A==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id XDfrxYmerwhi; Tue,  3 Sep 2024 19:18:58 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WywQn6JmnzlgTWP;
-	Tue,  3 Sep 2024 19:18:57 +0000 (UTC)
-Message-ID: <b7f0acf4-5e7d-4491-81be-71518197c58b@acm.org>
-Date: Tue, 3 Sep 2024 12:18:56 -0700
+	s=arc-20240116; t=1725391155; c=relaxed/simple;
+	bh=zNBJb0Am3LrwammltYmj+EDx77Wu870OUwPwLSva0Kk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GWyWdYhDngwjVF6qmb4CMC4gwyzRSpHOUkLodcYMgjmcYc1Tzl+NWXAOa6MUTkkSpAebHHw3+40EvgGo0NJc1s2sGYz/u9csQ8mbTrOvjH87tIFe8LdNsn4OE1lPmayxVQ3yhenNEci5QWNzdib7Phl80E932ni0zHUKnLzoX4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5Fm1kNo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95D9C4CEC5;
+	Tue,  3 Sep 2024 19:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725391154;
+	bh=zNBJb0Am3LrwammltYmj+EDx77Wu870OUwPwLSva0Kk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i5Fm1kNo6Njs/8OMK+wEuuN2H/hfoFd6a4G550mCsgTzLrwvaoReBIOkcNfx05lkG
+	 8nPXuR0ItmLtQwFERkiWkL+fVJ76kSX3xHhLnaSFVSsmvqAyjKceVXiuyLYNbcNnya
+	 8cRAukeur12wBFDaA9ANifGcB3R5GLUOftzEE7VNJDbxnEUCZ1qI52EKi9HezsOwxX
+	 xDb5H+G+lO9Ld9QH6DzMo6x9L3qZaP5Fkcm+7QoDtdY1m7s0Kl/PQH93C4XWBwKoMl
+	 9oSxHtGwKSURi5pavqtxFwPFRDcp0e8KWoI14MgcX6UC5amB/vFn2HwldTUve6OQyF
+	 jLDo0XEhIcEcg==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5353d0b7463so9699307e87.3;
+        Tue, 03 Sep 2024 12:19:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWUF4G6XRza3N8f3B+Mgx+tqciFpc67JVYAwFOO0eDPJ/Oqj0jzVvZlZeX9uVKT8W+/3wimrhJQSfzVHag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0SqB4OfCR8u4V5ZGHk7fmYAI0TId/4cPz9LyUutgmhzEGzCP0
+	uAg3hCThVcedC0EZ3F4TlhE86JU5KGuzBa6ubOqv2ayM+dVs6PgKhxZBvU485SxMgmgdShx35NB
+	BYiWZG4lqZsyR6ObLzAH8hC0dYQ==
+X-Google-Smtp-Source: AGHT+IHSSH7/wsWs18XW1gVFkfqHT1Iv/ZsuHjs5Zrf13IvWU0WXtsE+RVuZ46asRbfT35DuRPdXhJujD4r2ukvbUds=
+X-Received: by 2002:a05:6512:3b14:b0:52e:9cc7:4462 with SMTP id
+ 2adb3069b0e04-53546b1dea6mr13937464e87.11.1725391153329; Tue, 03 Sep 2024
+ 12:19:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: aacraid: Fix memory leak in open_getadapter_fib
- function
-To: Riyan Dhiman <riyandhiman14@gmail.com>, aacraid@microsemi.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240903185410.21144-1-riyandhiman14@gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240903185410.21144-1-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240731191312.1710417-25-robh@kernel.org> <syfawfdkulanw7kile7qfg5qpfzakaqolh2qkjqwyarskgg2sg@ond7ytjil2yi>
+In-Reply-To: <syfawfdkulanw7kile7qfg5qpfzakaqolh2qkjqwyarskgg2sg@ond7ytjil2yi>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 3 Sep 2024 14:19:01 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+GVSwiEVRRcN5xL7pgOn7rRNLsWU8s-5ByCP4rpj9JGw@mail.gmail.com>
+Message-ID: <CAL_Jsq+GVSwiEVRRcN5xL7pgOn7rRNLsWU8s-5ByCP4rpj9JGw@mail.gmail.com>
+Subject: Re: [PATCH] pwm: Use of_property_read_bool()
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/3/24 11:54 AM, Riyan Dhiman wrote:
-> In the open_getadapter_fib() function, memory allocated for the fibctx structure
-> was not freed when copy_to_user() failed. This can lead to memory leaks as the
-> allocated memory remains unreferenced and cannot be reclaimed.
-> 
-> This patch ensures that the allocated memory for fibctx is properly
-> freed if copy_to_user() fails, thereby preventing potential memory leaks.
+On Thu, Aug 1, 2024 at 3:41=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+>
+> Hello,
+>
+> On Wed, Jul 31, 2024 at 01:13:03PM -0600, Rob Herring (Arm) wrote:
+> > Use of_property_read_bool() to read boolean properties rather than
+> > of_get_property(). This is part of a larger effort to remove callers
+> > of of_get_property() and similar functions. of_get_property() leaks
+> > the DT property data pointer which is a problem for dynamically
+> > allocated nodes which may be freed.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  drivers/pwm/pwm-omap-dmtimer.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Looks good to me. Unless you object I'd apply with adding
+> "omap-dmtimer: " to the short log.
 
-What made you analyze the code modified by this patch?
+No objection and sorry I missed that.
 
-How has this patch been tested?
-
-> Changes:
-> - Added kfree(fibctx); to release memory when copy_to_user() fails.
-
-Changes compared to what? I don't see a version number in the email
-subject.
-
-> @@ -220,6 +220,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
->   		if (copy_to_user(arg, &fibctx->unique,
->   						sizeof(fibctx->unique))) {
->   			status = -EFAULT;
-> +			kfree(fibctx);
->   		} else {
->   			status = 0;
->   		}
-
-Just above the copy_to_user() call there is the following statement:
-
-	list_add_tail(&fibctx->next, &dev->fib_list);
-
-Does that mean that the above kfree() will cause list corruption?
-
-Bart.
+Rob
 
