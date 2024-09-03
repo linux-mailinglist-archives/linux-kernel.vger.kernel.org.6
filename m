@@ -1,79 +1,56 @@
-Return-Path: <linux-kernel+bounces-313039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98937969F62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:48:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23FB969F6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85D41C23FCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88019282361
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662A98C1E;
-	Tue,  3 Sep 2024 13:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJI2EsjF"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8315F39AE3;
+	Tue,  3 Sep 2024 13:53:30 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFA71CA682;
-	Tue,  3 Sep 2024 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6F12A1D1;
+	Tue,  3 Sep 2024 13:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371320; cv=none; b=abQKkYivDDmCuk/Bzdy32rFpbpHNgNMRCWUWjO+aiTLkGJjULTKifOT3O8LZuafnQmDQfM3enRWd4oHsKCwZh9rlehrsm8VqWaZrsJIJjiAm2j3BAqZOZb3taOo1F9C+TLZq5Xkqdsi0R/1OetgiN/X/4qyXoIxTEPCn1nA0zmQ=
+	t=1725371610; cv=none; b=Q4yAC2+nG2UiSqGuC4m13KNYGW9mLnWvDDfatP2/HvUOF0aDIuq+dMY2k3G3hAWDW9Dm5FfeHXDlkjgIiancdyRpMx2w++8FtLKB0W4PAmfd14IYhky/Czo3pB0ceUXeJc5xD5MDkVJOdqevvlFBexlZkM+wRG0rS6N8VZGVxnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371320; c=relaxed/simple;
-	bh=GfAJ31uVBCQfDcYwWC28kWiRyOOUCGErkUC149AKq8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FPD2d0YpoIE8LeOzR+SC/hjP4b2rRuAp48TW8u/DY6xC6MRCL/BM32oRqKXR0L9cBovvaD/vUDo3TeFAQ8GzNCtNljbVJ+vDc42K3ecp146wHKiLO4eOmHzmxN6sHfeAT8OpmlQKt+HWhAw7dvPT0weGpQxeDTcdI6FgqpSmEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJI2EsjF; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8f06c2459so1144663a91.0;
-        Tue, 03 Sep 2024 06:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725371318; x=1725976118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CkO4LO0iIgeVPWEypCVZBj97mLMZOxv6D2spYKCPoc=;
-        b=CJI2EsjF00XHhky1Nc0ng1TGJeb3UY3ZN8Pe7nAHinIc+Sh6DQQiY3w7vP6GjVFhmQ
-         coWb6wVSiEwNBtKQjuKNPQ+PUbxOc4qQDC/d7tYjn9zP1i/0cPHV0+HiGM1HBlobwmTF
-         lvsAdPqh+IYR7p/JjorwpkrFBOxrUPh+DCtdQL2jM3dFi/bfmvUINoVc0MOxV/Jxd8Mz
-         D3bXP1Bd/5ICvFgIBscj7te/2Paky/rncZjIFwAvGANPHLWXYL4QEglpl3iAXtkQpziO
-         uWJprGQOJD4yfbsZ3XJBXu/xYCibIDAZzzZZJ7ynEI7ZtB7P0Owp3Pnzv0sp3R7fQDMS
-         Jhdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725371318; x=1725976118;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8CkO4LO0iIgeVPWEypCVZBj97mLMZOxv6D2spYKCPoc=;
-        b=FaNoV6MzJcx3fAWuochx+h0CRhQVj4XIDBbZB2aTj0205tkipgixaH7ygqR1SipGKI
-         D7wOEe5KbOB37gDs79R7JDWGElfq1EBCucEyjOToydl3vqSY1j+rG4XcuW5jA2X0PcNa
-         WEHt2/cJxPb3s9Bil4kIQEY17WumdbEGNAwdOYRBMrAwXh0C48opPLCvBJp9vHJjgE91
-         RAqSvITcWYAeTZpVVz+9KxkUs7Sya2qsVAbDnIwbXOgTXQJQpyFSQCS0Tpj5yglMhItn
-         Vc6cnplJx7EwW+LhpDVaBGZBrapRh618+YJ3nziLrijhbCHs2FagIYQkUQywRykdkK4N
-         uJHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUO5R3Z4RBUvNJMsul5G6twDGXupb9nqQNIcIr78++eBYyQN23+3AsjQObPTOAhKlIzrjwONvKdGfBeAEk=@vger.kernel.org, AJvYcCUzRu4bgCcYBrxIq6NDSNmcXYF0sBlK+7voanXl2f+Qs5PtKXooAYYwHuWmAOGt1JVFcGmOO4ud6vFOA/X5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXWFPg6jSeiokHf97lAl1RlHYKGLtUYZUZxFHxhd4XwIMgBnPS
-	46BDpkgYm6EteSdCv5vSfyUgtmoaLx5h/G/AP9T0uphRdWv6f/6y
-X-Google-Smtp-Source: AGHT+IE0ozs3PMwhIotGD8U/MicGghL1ZPAo0jdAAA28tajLjyvmIAl4xRILEG65te3lGOTE67Knsw==
-X-Received: by 2002:a17:90b:350d:b0:2d3:c9bb:9cd7 with SMTP id 98e67ed59e1d1-2da55a77e52mr3115600a91.36.1725371317968;
-        Tue, 03 Sep 2024 06:48:37 -0700 (PDT)
-Received: from fedora.. ([106.219.162.224])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8d0985062sm4863045a91.12.2024.09.03.06.48.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 06:48:37 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: dhowells@redhat.com
-Cc: keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1725371610; c=relaxed/simple;
+	bh=eRvAw5gUYiYbGYcmo6ULILTcimbPH/X+9URh1vQ92F0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JkSzarWheIpC1Yuzv80inJQobPwi6+0W8WTNEWU6cAl13O+gMBKUhTZU/iJ4BWM+iby+8r6Osq1TbgjOlDOtni/w8FU96/3zEEe+1MF085UPVsbhBST/IMcVJItRHq2DrvBtDTFp6yo345p+NH79h7PLyDQWo3eAc1Mmbug8yHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WynBr6w2Jz4f3kpX;
+	Tue,  3 Sep 2024 21:53:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 370B11A0568;
+	Tue,  3 Sep 2024 21:53:19 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+sbNFNdmiUgjAQ--.58276S4;
+	Tue, 03 Sep 2024 21:53:18 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] KEYS: asymmetric: Calculate size from pointer
-Date: Tue,  3 Sep 2024 19:18:31 +0530
-Message-ID: <20240903134831.15448-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH for-6.12 0/2] blk-throttle: support prioritized processing of metadata
+Date: Tue,  3 Sep 2024 21:51:47 +0800
+Message-Id: <20240903135149.271857-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,33 +58,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+sbNFNdmiUgjAQ--.58276S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYB7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14
+	v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Calculate the size from pointer instead of
-struct to adhere to linux kernel coding style.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Issue reported by checkpatch.
+Yu Kuai (2):
+  blk-throttle: remove last_low_overflow_time
+  blk-throttle: support prioritized processing of metadata
 
-This commit has no functional changes.
+ block/blk-throttle.c | 69 +++++++++++++++++++++++++++-----------------
+ block/blk-throttle.h |  2 --
+ 2 files changed, 42 insertions(+), 29 deletions(-)
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- crypto/asymmetric_keys/asymmetric_type.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index a5da8ccd353e..59b5c6f3ebb4 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -151,7 +151,7 @@ struct asymmetric_key_id *asymmetric_key_generate_id(const void *val_1,
- {
- 	struct asymmetric_key_id *kid;
- 
--	kid = kmalloc(sizeof(struct asymmetric_key_id) + len_1 + len_2,
-+	kid = kmalloc(sizeof(*kid) + len_1 + len_2,
- 		      GFP_KERNEL);
- 	if (!kid)
- 		return ERR_PTR(-ENOMEM);
 -- 
-2.46.0
+2.39.2
 
 
