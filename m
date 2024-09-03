@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-312468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A3396970C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7D9969713
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4EF71F22EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA71B1C23AA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FDA205E0B;
-	Tue,  3 Sep 2024 08:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qrnZsW65"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA06920FA95;
+	Tue,  3 Sep 2024 08:30:24 +0000 (UTC)
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB511A3AB6;
-	Tue,  3 Sep 2024 08:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5B1DAC4D;
+	Tue,  3 Sep 2024 08:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352155; cv=none; b=kRjY6gJh/n6KGVF1J1Sjc4YFswIiVQEsyzmg+4j9+5Jmc0am40QRh7aG3FN/J/x31hbt0pwav9xusIwxl7C2GPGZ3qAVlrKfmOS0FiWDoJN/s1K7BMMTjedFKr3aOpXukS0dfffxt+6SjNyFLRYhbQjA23XfdrwytH9e79xojFU=
+	t=1725352224; cv=none; b=cExbwHmY7Vr/uX52EN9tSIGPwKOdq9G5Dv/ehNfy7UgDcysUboYmZ3yzs2BTjatoUWRAVblL8I643BClYgdXDB/wgQG83hoU4v31lwNSQpR2OhQv74p/cSgYrawryvHYcTSgvGn57/un1FOJmHr8AVep0Xjw2Qsu6bGTTzcie9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352155; c=relaxed/simple;
-	bh=XHThfvecMWnHVoWyhx5fVWBfkn6uUcz5Hr+0eH7kgBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKpl7ZUWRM0JhRrLsDdlLHo4ou20rHunTE65ALaeh0lpBxjQu2wsoX6wWzaR+t5sq/VVu/djL+2DLABjHWAlBUpHK0/vCugT34aqd/jTAp7Z5n/D/+NgpfRxc2/+fAKuRp4MCwAx+zpXhOHQvzCkRm/VbQQ6MEO1qBTNWBEnvn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qrnZsW65; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=F5AQp6KPXCrFsNoLD7654I5rCWGg696HbTeNZbZmNsU=; b=qrnZsW65/tYG6VCIqazNZ3PbAt
-	v6S+DJ0JERSprLI8e0aNjqtdEwa8SX9CFX69acmEWd3M+KnzTm8yPpdhDudtPCACxQoUcBOvSQyA4
-	q3bcASZSPPlVU7iIevc6XSliph5fExMC/rC+o7hcNNkLwWaJpgzjCkyUxykhC6wI23Ss6kqS2vt79
-	PmM+LtA7dH9PD0DFHRhBJLpFGWVXB1ImS7CSrWzS3EkPQg3iJ/yeZnPyvTt5yrHGquzqie1CiCjgW
-	yNXg/HPfxdXZw/0NqtBmVL4i22ceFcECOgkmkZPODwHVIl7ZnUVuSt8c5gsUaiOF4reFBv8I4baCn
-	yOryRM9Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1slOuU-0000000CHzH-22ka;
-	Tue, 03 Sep 2024 08:29:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B869A300390; Tue,  3 Sep 2024 10:29:09 +0200 (CEST)
-Date: Tue, 3 Sep 2024 10:29:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
- entries
-Message-ID: <20240903082909.GP4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1725352224; c=relaxed/simple;
+	bh=M6JcT0iepMiXrkvVS8NhkD1BtIrnIm22E0HeLr/NOa8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NXoXfEdc3kcPiDveJ94xq6CRmz/lOO6o9ffBN/SBgUpNwoZf1Cu6tLbCRk+poMn/3KlklXWKpi1EAy15k5pNtDFDsBP1EmF3tJ1WLifypdsxR3GZiitYAzCJeEyTi3cA43q4R6/DGbcXebKq518VDMxiolhqAhbmt49HHd279DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+Received: from [192.168.124.6] (unknown [113.200.174.110])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 872021A3F67;
+	Tue,  3 Sep 2024 04:30:11 -0400 (EDT)
+Message-ID: <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
+Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
+ controller
+From: Xi Ruoyao <xry111@xry111.site>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Zhao Qunqin
+ <zhaoqunqin@loongson.cn>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ chenhuacai@kernel.org, linux-edac@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ kernel@xen0n.name, bp@alien8.de, tony.luck@intel.com,  james.morse@arm.com,
+ mchehab@kernel.org, rric@kernel.org,  loongarch@lists.linux.dev
+Date: Tue, 03 Sep 2024 16:30:08 +0800
+In-Reply-To: <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
+References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
+	 <20240903015354.9443-3-zhaoqunqin@loongson.cn>
+	 <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
+	 <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
+	 <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
 
-On Mon, Sep 02, 2024 at 09:00:11PM -0700, Josh Poimboeuf wrote:
-> Create a symbol for each special section entry.  This helps objtool
-> extract needed entries.
+On Tue, 2024-09-03 at 09:58 +0200, Krzysztof Kozlowski wrote:
+> > > > +	select EDAC_SUPPORT
+> > > I think you got here comment before. How did you address it?
+> > I just randomly found a spot, and I will put it at the end(next version=
+=20
+> > patch).
+>=20
+> No, the comment was different. You must not select user-visible symbols.
 
-A little more explanation would be nice,..
+EDAC_SUPPORT isn't user-visible.  EDAC is and it has been removed.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
