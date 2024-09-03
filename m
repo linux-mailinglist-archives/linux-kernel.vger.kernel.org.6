@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-312484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EAB96973C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:36:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224C7969753
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432461C22B1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:36:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 882E9B22C98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC75B1C62A5;
-	Tue,  3 Sep 2024 08:36:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCCD2139D1;
+	Tue,  3 Sep 2024 08:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hla0dovU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E05200116;
-	Tue,  3 Sep 2024 08:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DA91A265F;
+	Tue,  3 Sep 2024 08:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352579; cv=none; b=OaYb9oFZILIFaX9OfRoewoDZITwvbTlrIfKMh+5aUUu0kpT5HHrilmthR09ig+ShtZdFqRK3+qLeNazutVdSBs6TJTQmR/smnuI/TRYrE+BhzQiUOTUwcQzlbLh2I+nqriGBKSlUyCNMsNmEZEfM4QMHpd+6T6E49w+9GXk/+to=
+	t=1725352693; cv=none; b=CPJdeJE/33NEoqaAIqRjgSr+93BGgi5aEj0hQkuWrJelUp72NDqB2xRB0F4e415lR+H9E3YUIhKRcKTVMQJlzz+xZU5YsmyycSLyHDjD3P1Ac4dFAZoLs/RD75D65nkQ6t1dBBJBXzq96Wxk10fQlFLMfAxmF5bOccoB5LWTHNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352579; c=relaxed/simple;
-	bh=2+C1JwNOInUIAA1rNB1sOdcsewGTgxK0O8vupNv4API=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N+gWthCnyozknq8j7c0DDCEwidio5bqQvck2uMSUCuzmOmk5orJsXcmYMmgxgiq56wUmoDeJlWjXGymM7JR9/qzADDJ1975Ljdabl22jh+AdCaZreZ+CxeS4NsHJ76X/NeaJ3DSSZmCITrSBRVAmrBYupjBZFMSktbLjjo2H7l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wyf491JC8z6K603;
-	Tue,  3 Sep 2024 16:31:53 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B6E84140B55;
-	Tue,  3 Sep 2024 16:36:13 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 3 Sep
- 2024 09:36:13 +0100
-Date: Tue, 3 Sep 2024 09:36:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <wangshuaijie@awinic.com>
-CC: <jic23@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<gustavoars@kernel.org>, <kangjiajun@awinic.com>, <kees@kernel.org>,
-	<krzk+dt@kernel.org>, <lars@metafoo.de>, <linux-hardening@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liweilei@awinic.com>, <robh@kernel.org>
-Subject: Re: [PATCH V9 0/2] Add support for aw96103/aw96105 proximity sensor
-Message-ID: <20240903093611.0000637f@Huawei.com>
-In-Reply-To: <20240903060304.910863-1-wangshuaijie@awinic.com>
-References: <20240831150724.201e7d73@jic23-huawei>
-	<20240903060304.910863-1-wangshuaijie@awinic.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1725352693; c=relaxed/simple;
+	bh=XbrhZalToo1tSy22aYkgfedlGGwKm/cH60Z8HE/u53c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n+fxNkgxBZxHDmEcHuosefYTfsOvvAjD5yxVdtH0yN+Qs7YZsU6PSSg+LRZGRpOnVLCkSFq3pz4XFL+1PY2osufMb1hCHa1PERAe9wrd5GdyiePIJeHt7jJnZafM56e7B6KDV1hVApj7OHv3yv2DZCJLnHEAb6RfGRT8E9u8Eps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hla0dovU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482LRSAv028888;
+	Tue, 3 Sep 2024 08:38:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CSiPVPzWfiduYlMyPPYbxX3CLFqvDnkaba/MGBq03C4=; b=hla0dovUsUQyu5i1
+	/X4QDlKTV8tinazPua/aAgH1vxaOKLEtC1oPI7vDrWzWSEiYvhgt7tGizGUQ8vpr
+	QX8dojdW0fEcLPBxqn8RPSAGtdNicZ/oBts7K5+4Djuq3FhQn0nrcw/0jmg5yn3z
+	kQ8+pRyGxzHuOCZuHxoMySNcnZ7AHZk6uYdOgFnoPR/s2q1NMTh6cIAViSrE1nWH
+	9NrIAt4SmrGKhFxmsWEAR8NiB3okgPonU24gq14q+q7rJFuxuGz/Xsruqfp9o73W
+	FUbWugwXUGC8IpZtgw1UF0Qx7OyDBl21vcsFBkp+slrIRNdTMWszTrEjvZogaCer
+	m9tj8w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bud2pnad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 08:38:07 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4838c62H025569
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 08:38:06 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 01:38:04 -0700
+Message-ID: <7688ac1c-14da-46a2-a5dc-f01c104485f8@quicinc.com>
+Date: Tue, 3 Sep 2024 16:38:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: cache: qcom,llcc: add num-banks property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
+ <20240903-qcs8300_llcc_driver-v1-1-228659bdf067@quicinc.com>
+ <g7fyt57kzynzpux5nea2v22gcuu24asbr54axzms7mhdh4jq5a@xdyqifloofbk>
+ <ac1b3ba2-ac57-411c-acdb-69d288d88355@quicinc.com>
+ <21715065-c48a-4172-98ec-ce48c6a1126e@kernel.org>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <21715065-c48a-4172-98ec-ce48c6a1126e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4w54AiTzy5QvcFY8ll7gxavilQIAA0ZG
+X-Proofpoint-ORIG-GUID: 4w54AiTzy5QvcFY8ll7gxavilQIAA0ZG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030068
 
-On Tue, 3 Sep 2024 06:03:04 +0000
-<wangshuaijie@awinic.com> wrote:
 
-> On Sat, 31 Aug 2024 15:07:24 +0100, jic23@kernel.org wrote:
-> >On Tue, 27 Aug 2024 08:02:27 +0000
-> >wangshuaijie@awinic.com wrote:
-> >   
-> >> From: shuaijie wang <wangshuaijie@awinic.com>
-> >> 
-> >> Add drivers that support Awinic aw96103/aw96105 proximity sensors.
-> >> 
-> >> The aw9610x series are high-sensitivity capacitive proximity detection
-> >> sensors. This device detects human proximity and assists electronic devices
-> >> in reducing specific absorption rate (SAR) to pass SAR related certifications.
-> >> The device reduces RF power and reduces harm when detecting human proximity. 
-> >> Increase power and improve signal quality when the human body is far away.
-> >> 
-> >> The specific absorption rate (SAR) is a metric that measures the degree of
-> >> absorption of electromagnetic radiation emitted by wireless devices,
-> >> such as mobile phones and tablets, by human tissue.
-> >> 
-> >> This patch implements device initialization, registration,
-> >> I/O operation handling and interrupt handling, and passed basic testing.   
-> >I made one trivial tweak to add static to the iio_info declaration and
-> >applied to the togreg branch of iio.git, initially pushed out as testing
-> >for 0-day to see if it can find any issues we missed.
-> >
-> >Thanks,
-> >
-> >Jonathan   
+
+On 9/3/2024 4:00 PM, Krzysztof Kozlowski wrote:
+> On 03/09/2024 09:30, Jingyi Wang wrote:
+>>
+>>
+>> On 9/3/2024 3:10 PM, Krzysztof Kozlowski wrote:
+>>> On Tue, Sep 03, 2024 at 02:21:29PM +0800, Jingyi Wang wrote:
+>>>> Add a property "num-banks" for errata.
+>>>
+>>> This you said in commit subject and we see in the diff. You *MUST*
+>>> explain why.
+>>>
+Usually the num of LLCC banks is read from hardware, but there is errata
+on some SoCs to get the wrong bank num from LLCC_COMMON_STATUS0. Add a
+property "num-banks" to indicate the accurate data.
+>>>>
+>>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/cache/qcom,llcc.yaml | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+>>>> index 68ea5f70b75f..03241b719c98 100644
+>>>> --- a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+>>>> +++ b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+>>>> @@ -56,6 +56,11 @@ properties:
+>>>>      items:
+>>>>        - const: multi-chan-ddr
+>>>>  
+>>>> +  num-banks:
+>>>
+>>> No vendor prefix? So this is generic property? Then add to some common
+>>> schema with proper explanation WHY.
+>>>
+
+will qcom,num-banks be okay?
+
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    description:
+>>>> +      The num of llcc banks
+>>>
+>>> And what are llcc (or LLCC?) banks?
+>>>
+>>>
+
+LLCC banks means LLCC register regions with same memory size and reg offset
+and different memory base for LLCC configuration.
+
+>> Will add the vendor prefix and description in the next series.
 > 
-> Hi Jonathan,
+> You did not provide rationale nor answer to concerns so far.
 > 
-> Thank you very much for your help and suggestions, which have been very
-> beneficial to me. May I ask if I need to continue modifying my patch?
-> If not, please inform me of the approximate time for review and merging.
-
-It's already merged.
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=a369e1d1a10790f63b4b858dc74b53730146754f
-
-That will be tested by the autobuilders + I need to rebase the whole
-tree on char-misc once Greg (hopefully) takes a pull request that is outstanding.
-
-That isn't relevant for your patch, but there is some other work queued
-up that has dependencies on fixes that went upstream quicker.
-
-This 'should' make the coming merge window so should be in v6.12 in
-about 3 months time.  You can develop additional features on top of it
-now but they are unlikely to make the 6.12 cycle as there is only about
-a week left.
-
-Jonathan
-
+> Best regards,
+> Krzysztof
 > 
-> I look forward to your reply so that I can better plan my subsequent work.
-> 
-> Kind regards,
-> Wang Shuaijie
-
+Thanks,
+Jingyi
 
