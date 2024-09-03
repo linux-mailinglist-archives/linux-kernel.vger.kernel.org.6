@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-313789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5471396A9C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:10:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813F896A9C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34341F21277
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:10:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA6D4B22AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCA0168D0;
-	Tue,  3 Sep 2024 21:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E46126BE8;
+	Tue,  3 Sep 2024 21:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSmRQjo6"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIs57Wl9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3661EBFE1;
-	Tue,  3 Sep 2024 21:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB9E1EC011;
+	Tue,  3 Sep 2024 21:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397748; cv=none; b=c2d/5Pm9hp1PKgDQb7TDo1XM2HxDakOBDNkkfUYjTiI63VoRIN+/AY5XoFK8xiyrWYNa9xmD7hWBOt3Pb3N+DK3piXHt8tUYCWFPxedNDGy7GZAUSdfNFT+DS/7+qDTZmpXEBf+HT9R+8Yl4Bq9oyghoPy2IfxzC/JL7uEUv7SI=
+	t=1725397762; cv=none; b=Acro83MF5fRt/IIefJ0NQXFT44PpVAjV9SFTanpRLUmhyXD7QvZOIXpc0IVU7rraMtPRUKuUJ4+Nfv6dkYfqHIauGRSLtnGJ9/aHqBcvxE9AdDBi0HXGgkuUxfqIHTl2AqQkEBu4aRmDmAVuloqJoqYIpV9z0/yGL64pryPyg+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397748; c=relaxed/simple;
-	bh=C9rqR5d0ngajWirJwHMBnN8WmVFnDVKK0a1KRgD6wyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=czavwKvLR1Bc7kyAEOeY9scAefwfUszijBLmNh5w2hLVpIuZARIiFtgWWhboe06KLkpkHQ33ySjs5yYqZ4OI4hWRX4/2p3NChwYy0kisBRGQvh6GL2lvEbphSjFViykb7V/mqFy4byIhM5HoF18g2rlLUz95YXO57gboHzqD3OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSmRQjo6; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-277e6be2ef6so1414254fac.0;
-        Tue, 03 Sep 2024 14:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725397745; x=1726002545; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9rqR5d0ngajWirJwHMBnN8WmVFnDVKK0a1KRgD6wyU=;
-        b=iSmRQjo63r9L/FzE13DY12MXc49VWrDDjh3SHb7dB8WFn4REEn6FqqnpIWyDlNQtBm
-         CUAWewQcf8bzcuugLxOgkIJnCd9MOC9MsOrrwjx/aFme9RK60WOoh15I1BYaVOxAJJ6G
-         MRxf4m3n00pocVFaBoSVbWKpFRbQhnF23HUPrA4Wj7Lyaqs6HPSfHglOyKl3qMHTUwo1
-         GA9yyRu0aD2YZ2yrRfnlF+EC8XkiIVJd7XdyjOnrvFZ8lyDWz1zaCRMuPJuQdnqo9bPi
-         sH71JIO89tjbfChpmLa90ZLO/bkU3g+BLPqTkvitKpqyK6QqohoJEI3q45pTUVUWF2V+
-         xJ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725397745; x=1726002545;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C9rqR5d0ngajWirJwHMBnN8WmVFnDVKK0a1KRgD6wyU=;
-        b=WmFT/nvF7g6oe48d3w41+464M+1KGe/YLyotk/FiTfaO17cM38HMxnDw6Xwbz1oFnz
-         KN9yd604i4Jt1tKMQFQZCUq6NJj94BktFFYagk1oaQ2AMutjgfFj2DSI+s4u2Ufl3u9A
-         V1V/tVeX2G928L6qSkHONNGa4zYid60J1gFvIMw9dKcv+yuAD/onp3ta9qehhMhjJ/46
-         SOnEI4PbWTPP/+8FpLHFlm+/6DTiXH8HeXrkyGtLHzwl4JluoqOY+tyMPKSQX4296dup
-         a9pGbEYO95o9bs2OPsW06dvq+PI7hNr35MJP4Ftc5l7KP9yArhKyyLZB48XdiQFg2z4i
-         t7CA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2enpUt+6l/aLsjyffbFryJuu4ONZXPCTFkBREQb31bwGiuDMfwgkhjaUysxSnzfZfDIrRH6VtIT5PDyo=@vger.kernel.org, AJvYcCX56Ps75CrZ0623N1fOJWqwx2+xPhJ8srMNFy16HRc2Dz4JJDAoPQzVUlnxzyApYFLT+WZrti8k@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCYkUpzfik/IVKFN7o8Q7b2TvzdC5/q6hmuiWC2sXOey12P6M3
-	q6LQ4+DOZ2XAoW5v2i4q78xkbl7Y1M2WDkOzdc6Tb+k3i0pxDIMWaTP7UTI8eympgfXLB1ha1ff
-	DW54WhnsZt2V8VK9fGHOpAnog9qiBi6QD
-X-Google-Smtp-Source: AGHT+IF1kaMRbpDQdao8rhQHs3bGzprFM9ki5kv2cEFNVsd6aGSJq2B7h8diX+uWOv+t6ygigdi30WQLwlMowZ1CUM8=
-X-Received: by 2002:a05:6870:330c:b0:277:e6f6:b383 with SMTP id
- 586e51a60fabf-2780032b29emr7789768fac.24.1725397745554; Tue, 03 Sep 2024
- 14:09:05 -0700 (PDT)
+	s=arc-20240116; t=1725397762; c=relaxed/simple;
+	bh=zMYA+LcGsMb9VFlyyQ4rB4esNt0Wsi3Z7wJ735oK+TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RUU/rXfiqoLn5vuFQXuaIxlnKK6jIrbbSN6Ld5kH8tSR+M8hsQiSd0uBQHNDZcBWwGLdNr5IxJAYYKfhEHlYlWn7WYsjMimj/N29WBjGv0OopnCB2YWXiAeWNoqKwptRZJBTzyLnf+r3RQlu8Pj2JQP05uJkqMHAYQZqT0qHJLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIs57Wl9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592A7C4CEC4;
+	Tue,  3 Sep 2024 21:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725397761;
+	bh=zMYA+LcGsMb9VFlyyQ4rB4esNt0Wsi3Z7wJ735oK+TQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qIs57Wl9jXFEqhkEJPkefxf7DNEpJ/KpO+Vz3giW1hy7mMsLHGeVdOQkkjx/+NmmV
+	 negBj0xkg1WEhOt0XYT1iCrGGzGIJjYOxxCttFb3gTJdQXofcN90AjhNG7CpX04DtM
+	 KZRTymWXV6TvKAfXJsYwF/8MLR3SFgpQ3A2G9pGoe7h5HvQZUN1YNvmHVLrMQz1Z4l
+	 2ikCqhcsHbDY86LeQwgeqBYLxKygEr8a9LXBVjf8UWZukvXPDMYqHdu01RuCB2vuiW
+	 BGoMAVReWhiBiAHDqtZ3Qws9SVbgQPKBWbRxUKIcOCWb8KeuNEhpfNWrdR44PJ3vnL
+	 nsP/xhzYHVYBw==
+Date: Tue, 3 Sep 2024 16:09:19 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 11/11] PCI: imx6: Add i.MX8Q PCIe root complex (RC)
+ support
+Message-ID: <20240903210919.GA277611@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830201321.292593-1-arkadiusz.kubalewski@intel.com>
- <m2mskq2xke.fsf@gmail.com> <20240903130121.5c010161@kernel.org>
-In-Reply-To: <20240903130121.5c010161@kernel.org>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Tue, 3 Sep 2024 22:08:54 +0100
-Message-ID: <CAD4GDZySRpq97nDG=UQq+C4jBdS-+Km4NjGNob7jrbtBW+SmOg@mail.gmail.com>
-Subject: Re: [PATCH net] tools/net/ynl: fix cli.py --subscribe feature
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, netdev@vger.kernel.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, jiri@resnulli.us, 
-	jacob.e.keller@intel.com, liuhangbin@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtdzIxr3YnDAW5VY@lizhi-Precision-Tower-5810>
 
-On Tue, 3 Sept 2024 at 21:01, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Mon, 02 Sep 2024 10:51:13 +0100 Donald Hunter wrote:
-> > Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
->
-> Any preference on passing self.rsp_by_value, vs .decode() accessing
-> ynl.rsp_by_value on its own?
+On Tue, Sep 03, 2024 at 04:35:47PM -0400, Frank Li wrote:
+> On Mon, Sep 02, 2024 at 08:49:27PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Jul 29, 2024 at 04:18:18PM -0400, Frank Li wrote:
+> > > From: Richard Zhu <hongxing.zhu@nxp.com>
+> > >
+> > > Implement i.MX8Q (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe RC support. While
+> > > the controller resembles that of iMX8MP, the PHY differs significantly.
+> > > Notably, there's a distinction between PCI bus addresses and CPU addresses.
+> >
+> > This bus/CPU address distinction is unrelated to the PHY despite the
+> > fact that this phrasing suggests they might be related.
+> 
+> This just list two indepentent differences.
 
-.decode() accessing ynl.rsp_by_value would be cleaner, but I am
-working on some notification fixes that might benefit from the map
-being passed as a parameter. The netlink-raw families use a msg id
-scheme that is neither unified nor directional. It's more like a mix
-of both where req and rsp use different values but notifications reuse
-the req values. I suspect that to fix that we'd need to introduce a
-dict for ntf_by_value and then the parameter would be context
-specific. OVS reuses req/rsp values for notifications as well, but it
-uses a unified scheme, and that's mostly a problem for ynl-gen-c. We
-could choose the cleaner approach just now and revisit it as part of
-fixing notifications for netlink-raw?
+Yes.  But using "Notably" here connects them by suggesting that the
+address space translation is a major part of what came before.  Weird
+subtlety of English usage, I guess.
+
+Krzysztof, if you have a chance, just s/Notably/Also/ here.
 
