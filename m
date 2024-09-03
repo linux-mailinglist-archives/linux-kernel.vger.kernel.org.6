@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-312859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785C9969C86
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA60D969C72
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241551F25B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77088284A1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68F51B985D;
-	Tue,  3 Sep 2024 11:56:22 +0000 (UTC)
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BFA1B985C;
+	Tue,  3 Sep 2024 11:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwwYuWKC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8F019F41F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0331A42C2;
+	Tue,  3 Sep 2024 11:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364582; cv=none; b=ow6UrtXVzCU/RNho33U7DDxigkp/n8PuEYkybgy655MdPBBhMGmtJHG7F7Y/Fxso22e/Xjy1J0ssM9Ue7k8170fQob0gFxH0FJZSZtKth9vMO4RG1eEBSnnySF+gZXUh/EL8uZVhtG6tVZo+RbAjLFTOpZF01/9P0Lk0DGY+KeU=
+	t=1725364285; cv=none; b=eq+7wC0DszoJo6pBVRXkTrMlgC3ZXBDh+5z2iW4hS7OF73tObGEo2ZhUmeI0W7DXfT+NYwOU1k7fFI3ahAPCqG9xbLU0SPY5UnlyO7MClHC/tW3OxjhRvq8ACiL9Hf/yA0t24nH9jxkT4QTNba5UT1ZMXBHUhgdcZk3u0/mCP3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364582; c=relaxed/simple;
-	bh=tzr0tMSvLofHsivK4RyE1rSmjxQf2TavoJx1LBG6zIg=;
+	s=arc-20240116; t=1725364285; c=relaxed/simple;
+	bh=RzB6YC4thRbWllGcX/ESUcoHvfzT8kbLenTRs0/mh8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Proi+d68YGD2ZFAas3k+zqVYQp/3URntxG+HtOu22zL39NlJOcLDLExf2tjhmjE4/arg6XgXceDHM71J85bnk1RwzWz4peVe+Va1R+YPREQc2sYFr3XoQdluhxhq8S/s/UGbJJ9mjGuBOIk07lhZOHXIeWx1HXrLzsxwjAp6hec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id DE3F61F965;
-	Tue,  3 Sep 2024 13:51:01 +0200 (CEST)
-Date: Tue, 3 Sep 2024 13:51:00 +0200
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
-Subject: Re: [PATCH 02/21] drm/msm/dsi: fix DSC width for the bonded DSI case
-Message-ID: <p6xw4newsbrpog5ftclvgi2mpg3hn3ujfukmtilqewz7kbjhqh@6geosjawh3ul>
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-2-bdb05b4b5a2e@linaro.org>
- <rspuwp3zpnzwfe26hv2yezy5ad5o7wliq7ucpobyaheytvcs3j@qtshf6cewb2f>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOePFOZ6HlO/PUsbH4yZRiI/CBgspJ7s4rZAX9POtZ7Y10QokWmYBxHB2ZEOqGbQuUTmEs/itKhkhCOtxLI6AYwhJ8OdQgiuLhlmuaa/WuVdQs6466eFULEWU/V+wNEAQTfimHVLbWH6T3D/9EHoPrVcexs873EkC3ZNvQsDriU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwwYuWKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97766C4CEC4;
+	Tue,  3 Sep 2024 11:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725364284;
+	bh=RzB6YC4thRbWllGcX/ESUcoHvfzT8kbLenTRs0/mh8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nwwYuWKCicwK42VHzZEm0U0j0nq056rRrPh0STwHLbdc7fTd2xbpPbAFarbMXSmsx
+	 HEKwUXVQ/izX2Srosl8iL6GrkKJuu9LtugIlsvQXef9MeCDzICIs6K/UfyHX6VTged
+	 PuqD1DUkzl5fbcmmKrz1svHhtACBER6jJuhwqTRIMXTOVL1t2fUT3p2HWqaFL6i8Sf
+	 XNOyQlFpJ7MPm2RLgSli59T+xeFDAMgyfwXEiP4/F+mecZOQl28+PlPCqsxJPJy8yR
+	 lM+7PzvgKeNSgJGk9za1MIt3YFTqq7+P4jpi5n3JIH9me88Y09PU6DGuIrgF1iZESC
+	 UanpIuzwhRhLg==
+Date: Tue, 3 Sep 2024 12:51:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
+Message-ID: <84ca0eb4-6f09-42c0-a27a-8f1765977a1e@sirena.org.uk>
+References: <20240901160823.230213148@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0b5zt7XZsA0lZcED"
+Content-Disposition: inline
+In-Reply-To: <20240901160823.230213148@linuxfoundation.org>
+X-Cookie: Words must be weighed, not counted.
+
+
+--0b5zt7XZsA0lZcED
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <rspuwp3zpnzwfe26hv2yezy5ad5o7wliq7ucpobyaheytvcs3j@qtshf6cewb2f>
 
-On 2024-09-03 11:50:36, Marijn Suijten wrote:
-> On 2024-08-29 18:17:31, Jun Nie wrote:
-> > From: Jonathan Marek <jonathan@marek.ca>
-> > 
-> > For the bonded DSI case, DSC pic_width and timing calculations should use
-> > the width of a single panel instead of the total combined width.
-> 
-> When this patch was originally proposed we already discussed [1] that this is
-> **not** universally true.  On my hardware a single bonded panel always receives
-> the full width, at least on downstream kernels, and it works [2].
-> 
-> [1]: https://lore.kernel.org/linux-arm-msm/eanx45rnasj7lu3r2tfhtg4qkqkcidd6zctsz6ci6jlklu4fgi@3nf73w2ka4li/T/#u
-> [2]: https://gitlab.freedesktop.org/drm/msm/-/issues/41
-> 
-> Can we please figure this out before landing this patch?
+On Sun, Sep 01, 2024 at 06:15:12PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.166 release.
+> There are 215 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-For completeness I've picked this patch, together with the following
-mis-squashed change from patch 03/21:
+Tested-by: Mark Brown <broonie@kernel.org>
 
-	diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-	index 7a4d9c071be5a..5abade8f26b88 100644
-	--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-	+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-	@@ -953,7 +953,7 @@ static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
-	 			return;
-	 		}
- 
-	-		dsc->pic_width = mode->hdisplay;
-	+		dsc->pic_width = hdisplay;
-	 		dsc->pic_height = mode->vdisplay;
-	 		DBG("Mode %dx%d\n", dsc->pic_width, dsc->pic_height);
+--0b5zt7XZsA0lZcED
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And this is what it looks like on a bonded DSI CMD-mode display:
-https://gitlab.freedesktop.org/drm/msm/-/issues/41#note_2553207
-https://gitlab.freedesktop.org/-/project/2206/uploads/dc5c53d09ecb635fdc9f190fbc9b37ac/1000027079.jpg
+-----BEGIN PGP SIGNATURE-----
 
-That's a clear regression :)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbW+DQACgkQJNaLcl1U
+h9D11gf/dsArFwbKy1DHDFQbQIAFBTgM3q5UdOwMJ2WHkaciyZFmRsM2VawoSwcj
+kQv6T1iAsViSZA1Rqd0S4da0/NFvt69ou+Gy6dGOOu/L1lcMyfC72JO6g8RLB9In
+yZAs9rK0kCWIds9tx7447GFdRWEznJoXLjzIMTiZNbha/Q3spZCNYh+2MaNnAF91
+D1bAvM3rf6lnTJ+bq53tGx7fnI3mLqF2Gi1fYf33yIfHGEE4+KlRdOTvpS/pGiQ9
+AL4Mq4r9dsZ6StYWYCqg9VE74M26x91htNtU3kAVLKlR7Wn725pf4KNbAHcsR7Or
+66vR2IlJ591WAHvNrhALRCtP+60oIw==
+=q78k
+-----END PGP SIGNATURE-----
 
-- Marijn
+--0b5zt7XZsA0lZcED--
 
