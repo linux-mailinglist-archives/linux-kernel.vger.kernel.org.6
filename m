@@ -1,226 +1,226 @@
-Return-Path: <linux-kernel+bounces-313196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C6996A1C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDF696A1CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1851F23AA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773911F254B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C962D17C7C3;
-	Tue,  3 Sep 2024 15:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB471865E9;
+	Tue,  3 Sep 2024 15:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DXbWoswO"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omWlnZO3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822AC1D6AA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393E613DB92;
+	Tue,  3 Sep 2024 15:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376348; cv=none; b=XNZkbBXyNh9cmMmADitUC5IKq5Bwq8+M3T3VRKQed/oWhgb3+GvatN/hCxa2YPUSYDhtPY/ooQUp/csiVCZLaiWu7OT5N5Cgf8yT1mtdJrbThhYGJlzrDmO1Af2tLKc/LFakmHPz2moizWX9UTA6/hHE2j3Cam8koRExGiJlVas=
+	t=1725376405; cv=none; b=L8BQ28l2WgqojuF08S6g/ELjt0gxUWTnChFmsE6mJUjrYgYkeBHlY+c71OK0mqQOZAnybCmwJL/CWeCgfcEWoRXPftmcshZQ42dhpT9mJeM84Kufz1dHcmwtYNb/P7vzxs3p1tqbTsPBMKgFD4T6e7Cs4jpn3Q1Uv+csKdp1Kb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376348; c=relaxed/simple;
-	bh=peoAuxq7chHJ+B0kk0cQ4vl4bNvemAMOe3PVFY1SA9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2Dd2b2lqAQCfJZm3VmtMX6tvwk8txskYFYWuBOC0c7uaKyBk7r48jtxoYQyzNzj0+KY9uTxgLGVqwOhp+uJFjnVbKlrjOmLtVsbcTagyzTk24IwapnsnkyOyj6yFiSS7ihzUPttcFtk7JheHXwFnRoLWVh0ZfGtGhOI5KauzRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DXbWoswO; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d8b68bddeaso1895929a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725376346; x=1725981146; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsrgmEE8vNYmYgwSjm7Ffo2aZ3cw1KThqmzE/9gOhyA=;
-        b=DXbWoswOdSam8r+ZeUzAqw1wXZEQ9p/8NwM2zMeqhgxRpco3tO7BQZDczfY8AlyJJM
-         8PF7SMdR1o+qBxKGNdSI8UipSrQSnMA0ezBzseQ5fTMSx2rsjjMRuOh6xkgH9LWnDT/N
-         ksbVf/N9BrryZNkOIyeTdxoptkPF+U1Tpojmc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725376346; x=1725981146;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PsrgmEE8vNYmYgwSjm7Ffo2aZ3cw1KThqmzE/9gOhyA=;
-        b=Oj/Tp1N0vKahwmrDT4BVu//tCCaD1Em/qInR3yBigZRiU6bWoVnUDeAujr0KUmSRAe
-         58VHudm22jXCDms4zQBonZhl/s58hhdAuZ1iathmEpIuYiRfBKB2fkrdse0ijZK+7P+E
-         8Ab5MCscBzWofO+ABYFKIPqaySF0tdX11HzBIIXt0iyLqxX2CdqDecm2EYFVq5kRqTgG
-         j6fhxwLl2/lz17zYiimasja7dI+ztky++vsNs+Rd40AeFeEOop/tOzCILPsIoadbYia7
-         CPcKr1Xfj8aI2oYlDLBx3DR/ZTEWpvT8dsmEcb5aUiKm0vNP1v3bCj2VWTQVBULaTOmw
-         D5Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcrJvUBGu3khnAlj3vbO4gpZxGgFB8eo5/8/d+SyUlAYqEQazzjFwCzozzC8M4ODvE/ton04PeAylZtZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpLgDoWAmOFM+1vGFOLK4759rMOBt0C0FUnSFUL65Phvy3O+Mh
-	yoVNoOnhkdAg5KvCT1F9QsD/4gaP6S9KwzHO1OWe2xGZVGS4XO1StJhjjfGf6R7jq9wd5fnQDIL
-	9NHzRXmuhHwhLZTEYDPf3WQMejD37jCLae/Tc
-X-Google-Smtp-Source: AGHT+IEVsh4Pz5U7yMVuSUtZ0SnK6Hcnq19Cu/S6EpXeRxqn2b5zL7kKjXJjso2OLo6ePSHAZ7K+Vr4lKZX4GTYxkPk=
-X-Received: by 2002:a17:90a:8d0f:b0:2c9:7611:e15d with SMTP id
- 98e67ed59e1d1-2d88d6db509mr12699331a91.20.1725376345593; Tue, 03 Sep 2024
- 08:12:25 -0700 (PDT)
+	s=arc-20240116; t=1725376405; c=relaxed/simple;
+	bh=mqSG8zmYkLbysxx98xITPffGwNgDwNQDDeyLT76Ts00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7s6pMyquJTPrlSKLC7dAf6dMEwc2TEinSKdb95xJWIWf7WX5f7vVctvZ+wLRw3x1wY75GqlkazKFx9hcPl7UasaiSLTXyL//Pc4VdXDgE2WGDdlkml6RtuhuXvRbKtHzTFwRvIiV/j18SADWIm/O8lMud2PAg4FPXGdP/g/i4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omWlnZO3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31914C4CEC4;
+	Tue,  3 Sep 2024 15:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725376404;
+	bh=mqSG8zmYkLbysxx98xITPffGwNgDwNQDDeyLT76Ts00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=omWlnZO38v/uzvDFb7eGgU1lN0MaIhjFVkxx2TTKBUa5tV62bj2kd7/YzKn65tk9I
+	 XpbPwxy/aks95eUWT+fjT+2XB0PaeALE/J39M+rZ04HdoMn+6H5AS4IA/ZVxK5gDdH
+	 ykdarH/HyzA6G+oKC33xdzNe+HFElh2lgJU6xu/UwAd4N44HA5/ljCTMuwxm7aN9BG
+	 HOCOcZVg8zKF4Iw7VkeRCDQ5kwfD5FpXpdU+gnonn0yUKSfPWg0EwHxhi7W8MrSkut
+	 dGMxfkf7505s0XX2gWP5qyH1YXbzqx3W0aSHI2i/WEE6QAdym4t8HNnB8BSpZmVU3k
+	 aNlhpRRpN8QYg==
+Date: Tue, 3 Sep 2024 17:13:21 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v7 2/8] i2c: muxes: add support for tsd,mule-i2c
+ multiplexer
+Message-ID: <fvk5u2j7wu7pjrlpbbnggp3vhopotctu2vr3fh77kl2icrvnyt@tukh2ytkiwdz>
+References: <20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de>
+ <20240902-dev-mule-i2c-mux-v7-2-bf7b8f5385ed@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903124048.14235-1-gakula@marvell.com> <20240903124048.14235-3-gakula@marvell.com>
-In-Reply-To: <20240903124048.14235-3-gakula@marvell.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Tue, 3 Sep 2024 20:42:10 +0530
-Message-ID: <CALs4sv3KVxTFex3FHWSFjx37FahOTiMN0DJyZ0Zn9qxQZQpZow@mail.gmail.com>
-Subject: Re: [net-next PATCH 2/4] octeontx2-pf: Add new APIs for queue memory alloc/free.
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org, 
-	davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us, edumazet@google.com, 
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000003794da0621387cfc"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902-dev-mule-i2c-mux-v7-2-bf7b8f5385ed@cherry.de>
 
---0000000000003794da0621387cfc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Farouk,
 
-On Tue, Sep 3, 2024 at 6:12=E2=80=AFPM Geetha sowjanya <gakula@marvell.com>=
- wrote:
->
-> Group the queue(RX/TX/CQ) memory allocation and free code to single APIs.
->
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
-> ---
->  .../marvell/octeontx2/nic/otx2_common.h       |  2 +
->  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 56 +++++++++++++------
->  2 files changed, 41 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/d=
-rivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> index a47001a2b93f..df548aeffecf 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> @@ -997,6 +997,8 @@ int otx2_pool_init(struct otx2_nic *pfvf, u16 pool_id=
-,
->  int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
->                    int pool_id, int numptrs);
->  int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
-> +void otx2_free_queue_mem(struct otx2_qset *qset);
-> +int otx2_alloc_queue_mem(struct otx2_nic *pf);
->
->  /* RSS configuration APIs*/
->  int otx2_rss_init(struct otx2_nic *pfvf);
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drive=
-rs/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> index 4cfeca5ca626..68addc975113 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> @@ -1770,15 +1770,23 @@ static void otx2_dim_work(struct work_struct *w)
->         dim->state =3D DIM_START_MEASURE;
->  }
->
-> -int otx2_open(struct net_device *netdev)
-> +void otx2_free_queue_mem(struct otx2_qset *qset)
+Before jumping into the review, who is going to take this and the
+previous patch?
+
+Peter shall I take it?
+
+Now to the review :-)
+
+On Mon, Sep 02, 2024 at 06:38:15PM GMT, Farouk Bouabid wrote:
+> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
+> among which an amc6821 and devices that are reachable through an I2C-mux.
+> The devices on the mux can be selected by writing the appropriate device
+> number to an I2C config register (amc6821 reg 0xff).
+> 
+> This driver is expected to be probed as a platform device with amc6821
+> as its parent i2c device.
+> 
+> Add support for the mule-i2c-mux platform driver. The amc6821 driver
+
+Along the driver I expressed some concern about the prefixes.
+
+You should avoid prefixes such as mux_* or MUX_* because they
+don't belong to your driver. You should always use your driver's
+name:
+
+ 1. mule_*
+ 2. mule_mux_*
+ 3. mule_i2c_mux_*
+
+You have used the 3rd, I'd rather prefer the 1st. Because when
+you are in i2c/muxex/ it's implied that you are an i2c mux
+device. But it's a matter of personal taste.
+
+Other than this, there is still, one major error down below.
+
+> support for the mux will be added in a later commit.
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+
+...
+
+> +#include <linux/i2c-mux.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +
+> +#define MUX_CONFIG_REG  0xff
+> +#define MUX_DEFAULT_DEV 0x0
+
+Please define these as MULE_I2C_MUX_*
+
+> +
+> +struct mule_i2c_reg_mux {
+> +	struct regmap *regmap;
+> +};
+> +
+> +static int mux_select(struct i2c_mux_core *muxc, u32 dev)
 > +{
-> +       kfree(qset->sq);
-> +       qset->sq =3D NULL;
-> +       kfree(qset->cq);
-> +       qset->cq =3D NULL;
-> +       kfree(qset->rq);
-> +       qset->rq =3D NULL;
-> +       kfree(qset->napi);
+> +	struct mule_i2c_reg_mux *mux = muxc->priv;
+> +
+> +	return regmap_write(mux->regmap, MUX_CONFIG_REG, dev);
 > +}
-> +EXPORT_SYMBOL(otx2_free_queue_mem);
-> +int otx2_alloc_queue_mem(struct otx2_nic *pf)
->  {
-> -       struct otx2_nic *pf =3D netdev_priv(netdev);
-> -       struct otx2_cq_poll *cq_poll =3D NULL;
->         struct otx2_qset *qset =3D &pf->qset;
-> -       int err =3D 0, qidx, vec;
-> -       char *irq_name;
-> +       struct otx2_cq_poll *cq_poll;
-> +       int err =3D -ENOMEM;
-I don't see 'err' getting set to anything else. Can avoid the variable
-and directly return -ENOMEM everywhere?
+> +
+> +static int mux_deselect(struct i2c_mux_core *muxc, u32 dev)
+> +{
+> +	return mux_select(muxc, MUX_DEFAULT_DEV);
+> +}
+> +
+> +static void mux_remove(void *data)
 
---0000000000003794da0621387cfc
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Please call these mule_i2c_mux_*(), the mux_ prefix doesn't
+belong to this driver.
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMw8k44Tqc3GIkC5poBBkcb7bIkJVgar
-WZEE24MUCx/kMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
-MzE1MTIyNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQBhHAZ4zRAVvxy1Q2jtf5lVJzeIOaSjznKai9Jk5HaFt8KwOsiV
-BZBZuc6ARvc+TgFjWuMpnFMnTMczI3HWmW1QWf5MlqAL++Zf6XmrKxSFOGJ5HSD6Yom4Ml9sDlW/
-OIM8EfgxCAX6ONZiKVfb1+oDus7qXp0QnU9H02ykZcyuBV2EHY4XRffvs0tjU4qCHKQQ+bEuuLJ2
-ZP2uwmtSElZAhKD3DDdK6HeVGIUe1y/q9vK/0Em5+zNGUN0EEmWRzlJaQJ5WIimIAsE27D+cQ+qC
-4NN7VLtLA2oIRlJlJ2m4WbRw9igcQ/+Blz/yR5Vsq6/nqNVd4l9G834MTEYduKAM
---0000000000003794da0621387cfc--
+> +{
+> +	struct i2c_mux_core *muxc = data;
+> +
+> +	i2c_mux_del_adapters(muxc);
+> +
+> +	mux_deselect(muxc, MUX_DEFAULT_DEV);
+> +}
+
+...
+
+> +	/* Create device adapters */
+> +	for_each_child_of_node(mux_dev->of_node, dev) {
+> +		u32 reg;
+> +
+> +		ret = of_property_read_u32(dev, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(mux_dev, ret,
+> +					     "No reg property found for %s\n",
+> +					     of_node_full_name(dev));
+> +
+> +		if (old_fw && reg != 0) {
+> +			dev_warn(mux_dev,
+> +				 "Mux is not supported, please update Mule FW\n");
+> +			continue;
+> +		}
+> +
+> +		ret = mux_select(muxc, reg);
+> +		if (ret) {
+> +			dev_warn(mux_dev,
+> +				 "Device %d not supported, please update Mule FW\n", reg);
+> +			continue;
+> +		}
+> +
+> +		ret = i2c_mux_add_adapter(muxc, 0, reg);
+> +		if (ret)
+> +			return ret;
+
+do we need to delete the adapters we added in previous cycles?
+
+> +	}
+> +
+> +	mux_deselect(muxc, MUX_DEFAULT_DEV);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mule_i2c_mux_of_match[] = {
+> +	{.compatible = "tsd,mule-i2c-mux",},
+
+if you are going to resend, can you leave one space after the
+'{' and before the '}'
+
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mule_i2c_mux_of_match);
+> +
+> +static struct platform_driver mule_i2c_mux_driver = {
+> +	.driver		= {
+
+I don't see the need for this '\t' here, the alignment is too
+far. It just looks bad. Your choice, though.
+
+Thanks,
+Andi
+
+> +		.name	= "mule-i2c-mux",
+> +		.of_match_table = mule_i2c_mux_of_match,
+> +	},
+> +	.probe		= mule_i2c_mux_probe,
+> +};
+> +
+> +module_platform_driver(mule_i2c_mux_driver);
+> +
+> +MODULE_AUTHOR("Farouk Bouabid <farouk.bouabid@cherry.de>");
+> +MODULE_DESCRIPTION("I2C mux driver for Theobroma Systems Mule");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.34.1
+> 
 
