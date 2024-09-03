@@ -1,98 +1,92 @@
-Return-Path: <linux-kernel+bounces-312826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44551969C1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:39:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD544969C27
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4001280285
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8237C1F2242A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6641C9872;
-	Tue,  3 Sep 2024 11:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501261A42A0;
+	Tue,  3 Sep 2024 11:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCiuNqMj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iibFK2d/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443321C985E;
-	Tue,  3 Sep 2024 11:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14031A42CF;
+	Tue,  3 Sep 2024 11:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363479; cv=none; b=cO+QVfQ4wJyRQcQNLcuZpzWDKwP8anM4dQEWjN32//qAheYlgJKWuFRC3go4fRj59NfFQB2EpH2MtBxoAkF6wSGdspUQ0AcxfU22AAJfYzxiCHSLEjIOJh/k5NsDSKpk5NcHQmGncLD74YWIazz7u053OxaD705FzVneazXxVAw=
+	t=1725363580; cv=none; b=Ob6zSYEXwqvPnbxbZHfRth/O7RNNXzKiz04nq76hRNbSZllSHPkE1EPtGOpywmgsfheR8IRqZ7fV0F9jBpTFY71mFZ9nuBBW/LHpNfWdpyDMjWSlPne8LLfp6qV4PpEQU37rYw+OnBLzh0Y8yGu4d5pzCoVce/5GmnecJhIb6rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363479; c=relaxed/simple;
-	bh=VU2AL8gzcAybPFd7XKWxlWyUsR2cBFvhtk6ksKQLrzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YCac7GcLInRO8UuhsyRrjR105adZBDidUZoX2BtT/nyGzy8+IH9sKxSMEy2KSc95pwcC7lyluZ2FziB72uX4Lvw8wygad9vrRANG/wVLTIuYP+KY3ZFqcoY9IChz2sxUJbh7qTeo9QYrCYlAH23f46t451mx+FQS4q8+/nuW0b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCiuNqMj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AF6C4CEC9;
-	Tue,  3 Sep 2024 11:37:57 +0000 (UTC)
+	s=arc-20240116; t=1725363580; c=relaxed/simple;
+	bh=EssRZidkPY/Pg62sztnKSI+A+HzJf2rF2rz0IHtNeps=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XgNlAswNKsyhuR599mNCPL9RpstxV5TWiNJcLfmC+zM4bmdzyWjXDx7JgkKgLnlFcG+4Y4/SieMwMkewYEin7fekqoIqm320yKZolEnPUaH9khc7PwWM/msfEzSegL6EjVOkUzp5B4wbxe0JN3BExpjyp4pSd8GdCSZOLQIchTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iibFK2d/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6F8C4CEC4;
+	Tue,  3 Sep 2024 11:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725363478;
-	bh=VU2AL8gzcAybPFd7XKWxlWyUsR2cBFvhtk6ksKQLrzE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=vCiuNqMj4S1DjlGb8QrFwRUFzUWtNk4ofN1z9mVkzPfpG1uhrCd0zV4Vb6nvB10Th
-	 UbOnbAAHZezXfVQrFm/nj+PuIV9Wtejw30sfeXpfKshJnYLQ3lbmxOxdF4GidyW+/Z
-	 Ny1WY2LZFdOHdMN1YHEefCWop9ZlMTchSz9lXkeTPDJftdU3YqfAkqb11as29gz2+O
-	 4CcBcbyENqYuSWEXSKwtitgDaol5A1996nnp4VCQri46h+3P6+4UpGAHRxl6vWNc0L
-	 TVldKSAp2Ln2ssm9uuLA1Z2AZuXUC/vLD/aeGs1SwdADMbUNH+SGO3uiYHGtGPmpTG
-	 ypqu0cMfh5a1Q==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Yishai Hadas <yishaih@nvidia.com>
-Subject: [PATCH rdma-next 0/2] Introduce mlx5 data direct placement (DDP)
-Date: Tue,  3 Sep 2024 14:37:50 +0300
-Message-ID: <cover.1725362773.git.leon@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=k20201202; t=1725363580;
+	bh=EssRZidkPY/Pg62sztnKSI+A+HzJf2rF2rz0IHtNeps=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=iibFK2d/7GjoAJK+Gkv8yD4hGNYD6cQk9QIAfhNjtUW7uzqmz/D8pVZsb0UWAQUzY
+	 UQ811n25FoQUMC4taNmcseHz8fuxppd5iwt/CGuAf28fusLngTXNJhoOW2nlTLd/yv
+	 fxNgVaT5xRGlksOEDdjoqpi9vJA9/W64/X+gb2A38wjh/S0gikz8gmx2LzsoIKi0Xs
+	 e91Q2c0Og9U6uUoZBZYsuwxsxzubumX1uIL+11fvLYcnzfwWkB/i77u54S3stH5gD2
+	 br1RJNP7zMdj2pQSOoDVu3VwiQH1DsIZYDoH5sTzINOmiI2unffAkL6jyfsMY67Xva
+	 /LxgG4EnPMhMw==
+Date: Tue, 3 Sep 2024 13:39:38 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+cc: basavaraj.natikar@amd.com, bentiss@kernel.org, Shyam-sundar.S-k@amd.com, 
+    mario.limonciello@amd.com, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: amd_sfh: Convert comma to semicolon
+In-Reply-To: <20240903024402.493709-1-nichen@iscas.ac.cn>
+Message-ID: <nycvar.YFH.7.76.2409031339330.31206@cbobk.fhfr.pm>
+References: <20240903024402.493709-1-nichen@iscas.ac.cn>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Tue, 3 Sep 2024, Chen Ni wrote:
 
-Hi,
+> Replace a comma between expression statements by a semicolon.
+> 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
+> index 621793d92464..db36d87d5634 100644
+> --- a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
+> +++ b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
+> @@ -299,8 +299,8 @@ static void amd_sfh_set_ops(struct amd_mp2_dev *mp2)
+>  
+>  	sfh_interface_init(mp2);
+>  	mp2_ops = mp2->mp2_ops;
+> -	mp2_ops->clear_intr = amd_sfh_clear_intr_v2,
+> -	mp2_ops->init_intr = amd_sfh_irq_init_v2,
+> +	mp2_ops->clear_intr = amd_sfh_clear_intr_v2;
+> +	mp2_ops->init_intr = amd_sfh_irq_init_v2;
+>  	mp2_ops->suspend = amd_sfh_suspend;
+>  	mp2_ops->resume = amd_sfh_resume;
 
-This series from Edward introduces mlx5 data direct placement (DDP)
-feature. 
-
-This feature allows WRs on the receiver side of the QP to be consumed
-out of order, permitting the sender side to transmit messages without
-guaranteeing arrival order on the receiver side.
-
-When enabled, the completion ordering of WRs remains in-order,
-regardless of the Receive WRs consumption order.
-
-RDMA Read and RDMA Atomic operations on the responder side continue to
-be executed in-order, while the ordering of data placement for RDMA
-Write and Send operations is not guaranteed.
-
-Thanks
-
-Edward Srouji (2):
-  net/mlx5: Introduce data placement ordering bits
-  RDMA/mlx5: Support OOO RX WQE consumption
-
- drivers/infiniband/hw/mlx5/main.c    |  8 +++++
- drivers/infiniband/hw/mlx5/mlx5_ib.h |  1 +
- drivers/infiniband/hw/mlx5/qp.c      | 51 +++++++++++++++++++++++++---
- include/linux/mlx5/mlx5_ifc.h        | 24 +++++++++----
- include/uapi/rdma/mlx5-abi.h         |  5 +++
- 5 files changed, 78 insertions(+), 11 deletions(-)
+Applied, thanks.
 
 -- 
-2.46.0
+Jiri Kosina
+SUSE Labs
 
 
