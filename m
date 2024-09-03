@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-313404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFD596A507
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:08:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AA396A4FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDEB280DCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E824D1F26A4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D5D18DF6F;
-	Tue,  3 Sep 2024 17:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B554E18BC39;
+	Tue,  3 Sep 2024 17:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mX6QoEII"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZuwgsKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E8B1E492;
-	Tue,  3 Sep 2024 17:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202B81E492
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383280; cv=none; b=IVVqdvJu61nj14UBNYGw2UTugl/mM7203W4YjGmS9Kp6ouV1XHNM2WVmDtk51pMfjggJTLxjxSSRafY7Hzy3L7A260q1E0IGIOSlg3gQoDEl3KM2NwfSVxcY8d1WC231Jz4nabWY1+dvC3OdhuyUmnkMGaWjLwreZkfJ1Lve1rM=
+	t=1725383142; cv=none; b=EPizn1qnKNymsupq0tu6JUqtKA688q1MDNt9viuqckdM373j1eEG1o+fbFyAeomf9r7JRy8vfZz9gkzFGFcjhPepTcyAxENHB5AA8Dh4E/5HuE9mWyQhFr7S0WexHE7PvW16rNxpjGaLyYSfItHJe6IYKjieNOFhxxVKx5bZpeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383280; c=relaxed/simple;
-	bh=X+TCqUJQ5rTyv8aAKraFeyml+cLPaiPiSJXWQHfz/J8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TSWphcaPmOZdrM/KIBIzjKnN4Z2GkjCPk63NePZXaZsuvIXmgXn1ZTeEzlWa7DsOoEB5u0h9e6rxf6oZKSD0exSOX3k/rI5sdXHy+z2OsGPLYCUicXsrfWGAjcLgY6grUpt9ruBp/oVhEtM2xAVaw8HimM9mnSLdXdvprVdA0OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mX6QoEII; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725383279; x=1756919279;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=X+TCqUJQ5rTyv8aAKraFeyml+cLPaiPiSJXWQHfz/J8=;
-  b=mX6QoEII+4swQIsWPRDtNLqzwFqwr0iFN0POA/wpkhxLmf0s4T+wL+tv
-   1IfKib+b4fzEj6tDzHgRzRQnKxP2Q4IRIv8U4Kvll9BeFGgISAHdkwv8M
-   uBVYK5Budx0XkQ1BBVY4Pf9ZlORtStgTURJSIDPnQZD5Khv0Kf5J3u2NA
-   B6yEw4MSej+MEmzyZjvRYiiVQEefZp9clFgVfXVsM76YOIu6UB43spnC0
-   m/pDmXM93RV8epQlwSE69WR1fq8D/gncmdCoC/Kkj++nBunajs7Hm1DuR
-   YOfcDU5xXCAWHofd9/r1vFlOkl1HAoq5BGyhU77B1HlZKWmhzg2K7IfSR
-   g==;
-X-CSE-ConnectionGUID: 1UgS5UOdSK+Tz/1bu4oZ4w==
-X-CSE-MsgGUID: l6Eb2E84R3mAbkNO2KJ4wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41494052"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="41494052"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:07:59 -0700
-X-CSE-ConnectionGUID: ybgYp6rNQt+mF8pgWXuqHw==
-X-CSE-MsgGUID: 3EVpEHrhQ/KQMVFqwMIAXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69767070"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 03 Sep 2024 10:07:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9438848D; Tue, 03 Sep 2024 20:07:55 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 3/3] pinctrl: cherryview: Replace ifdeffery by pm_sleep_ptr() macro
-Date: Tue,  3 Sep 2024 20:04:51 +0300
-Message-ID: <20240903170752.3564538-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
-References: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725383142; c=relaxed/simple;
+	bh=KDEMp+pzqqkgH9YNk/FQO0UlQZO0u4LjtiQ4Csd25gE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmM4H/rXD4mi1G1twEFUX7Ead1b1hkxfZA00T3VHWnVg0q0VLUhQk9fIXKElXtT8noND1CuHLlnoOrmwHm4y7xXrrfslX2HXv+rj+Cl/V6Z5fAEiBqD97ir0zwo3zv1tMcHIU8siTW2AfBRPXLgGuH3eX8RcguANlvJbcRzFfYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZuwgsKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A048BC4CEC8
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725383141;
+	bh=KDEMp+pzqqkgH9YNk/FQO0UlQZO0u4LjtiQ4Csd25gE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QZuwgsKpnjB39latEAEszX9u3W1MZtB59J848U7j9NWUACnjRnDb6fv+GAwarNe+J
+	 Z5pLiFaaufBkhKnXokjcIrHHEiow5dFjSSO/RMofqYtNHKieoiHpzAtk/YYgUY7kqn
+	 B45y/jqzze8pkRLPfyENUx9QLTxEemBrbH7tYHzC5/FPiBc1f/UvR50KBmLzhqrIix
+	 ETpZfOKJT+T7P3ASvnb0GGasiGcp6S4V78Th4QPGKHwWjdWMc1fYQj2vTmjlUsW8uT
+	 5m+W8zMRUPkVo6jVzdeN2PQdEm2esfi+Kne9G4Y0ZEu8Wa7QWAnHRh5qkL3XKAlbrI
+	 LcUhttytRKBdw==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f505118fso64273491fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:05:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVf0nGSrgEZ4XT4o7lqvuJIhezeP8eL1By6NRuU06cf99QMk+9Hlb8dUTeP/3qHzNAEo7KsxEq52/dT1w0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcPECtzcUzZ6nvXMGORSQn/5sqPs40i+iOXkhEc5B0NJFMULke
+	KU1WkEfNY+Txg5h+btA+OvRZ8E1MAZ5Dn6+JaBUHkfdIBXJ81tSzbkF2JfflfsttIqZ0mX/xdpL
+	rFFuH8puhKsH4J36T9tm5WJiirrE=
+X-Google-Smtp-Source: AGHT+IGZ5lQbHCzKN6XXvCQw+Y4PHBxvxxgEyUDbL3iSgHhKX8qsiaG0VzN46xsqAPEaQ05hU8wcRbkvwVycLSz0DFA=
+X-Received: by 2002:a2e:b887:0:b0:2f4:fc1c:e5dc with SMTP id
+ 38308e7fff4ca-2f6265d771bmr94290551fa.33.1725383140316; Tue, 03 Sep 2024
+ 10:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240831101045.1381258-1-masahiroy@kernel.org>
+ <CAK7LNATtOzj175_Y0qQz338FRG1GYCrsorA=jWG+Go1Wjn9rnw@mail.gmail.com>
+ <8795e8da-981a-4876-99fe-8a4edb2185bf@linux.dev> <CAK7LNAQfpge7Hg8+yq3uyWD26D=kMcB3pKuoN+BGLfrOFFNgLA@mail.gmail.com>
+ <e72b55f5-2e12-43b1-8f9e-ddd7c9db8246@kernel.org>
+In-Reply-To: <e72b55f5-2e12-43b1-8f9e-ddd7c9db8246@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 4 Sep 2024 02:05:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATFVFMTToJ-xWoKsj-LkqocHX-p86aEsHsB5mDHrsYgXQ@mail.gmail.com>
+Message-ID: <CAK7LNATFVFMTToJ-xWoKsj-LkqocHX-p86aEsHsB5mDHrsYgXQ@mail.gmail.com>
+Subject: Re: [PATCH] ARC: update the help message for CONFIG_ARC_BUILTIN_DTB_NAME
+To: Vineet Gupta <vgupta@kernel.org>
+Cc: linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Explicit ifdeffery is ugly and theoretically might be not synchronised
-with the rest of functions that are assigned via pm_sleep_ptr() macro.
-Replace ifdeffery by pm_sleep_ptr() macro to improve this.
+On Tue, Sep 3, 2024 at 9:39=E2=80=AFAM Vineet Gupta <vgupta@kernel.org> wro=
+te:
+>
+>
+>
+> On 8/31/24 23:50, Masahiro Yamada wrote:
+> > On Sun, Sep 1, 2024 at 8:02=E2=80=AFAM Vineet Gupta <vineet.gupta@linux=
+.dev> wrote:
+> >>
+> >>
+> >> On 8/31/24 03:13, Masahiro Yamada wrote:
+> >>> On Sat, Aug 31, 2024 at 7:10=E2=80=AFPM Masahiro Yamada <masahiroy@ke=
+rnel.org> wrote:
+> >>>> Commit abe11ddea1d7 ("ARC: [plat-arcfpga]: Enabling DeviceTree for
+> >>>> Angel4 board") changed the default built-in DTB from "skeleton" to
+> >>>> "angel4".
+> >>>>
+> >>>> Commit fd1557923b2e ("ARC: [plat_arcfpga]->[plat_sim]") changed it
+> >>>> from "angel4" to "nsim_70".
+> >>> A typo.
+> >>>
+> >>>  ... to "nsim_700".
+> >>>
+> >>>
+> >>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> >> Acked-by: Vineet Gupta <vgupta@kernel.org>
+> >
+> > Will you pick it up, or shall I do it?
+>
+> I don't have anything major in my queue, so please take it.
+>
+> Thx,
+> -Vineet
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 2f0e29c78dfb..9cdffd73e345 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1608,6 +1608,16 @@ static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
- 	return AE_OK;
- }
- 
-+static int chv_pinctrl_pm_init(struct intel_pinctrl *pctrl)
-+{
-+	pctrl->context.pads = devm_kcalloc(pctrl->dev, pctrl->soc->npins,
-+					   sizeof(*pctrl->context.pads), GFP_KERNEL);
-+	if (!pctrl->context.pads)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- static int chv_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct intel_pinctrl_soc_data *soc_data;
-@@ -1648,13 +1658,9 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- 
- 	community->pad_regs = community->regs + FAMILY_PAD_REGS_OFF;
- 
--#ifdef CONFIG_PM_SLEEP
--	pctrl->context.pads = devm_kcalloc(dev, pctrl->soc->npins,
--					   sizeof(*pctrl->context.pads),
--					   GFP_KERNEL);
--	if (!pctrl->context.pads)
--		return -ENOMEM;
--#endif
-+	ret = pm_sleep_ptr(chv_pinctrl_pm_init) ? chv_pinctrl_pm_init(pctrl) : 0;
-+	if (ret)
-+		return ret;
- 
- 	pctrl->context.communities = devm_kcalloc(dev, pctrl->soc->ncommunities,
- 						  sizeof(*pctrl->context.communities),
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Applied to linux-kbuild. Thanks
 
+
+--=20
+Best Regards
+Masahiro Yamada
 
