@@ -1,214 +1,110 @@
-Return-Path: <linux-kernel+bounces-313500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED88F96A62D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB44696A634
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8DC1C23711
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:07:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57751C22F59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543FE1917D8;
-	Tue,  3 Sep 2024 18:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E83190064;
+	Tue,  3 Sep 2024 18:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jTwrZ4SR"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lMnnm3Zl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED380190665
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 18:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AA218DF78;
+	Tue,  3 Sep 2024 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725386854; cv=none; b=KKUMNtx9L485v1T2Zr5gT3TWnlESWSgnOEMEWHfEG1O0W6iWg233b9SX1pARS8cvRkaIKObpjANnDnkDAXxGfDpAzLe1LYWBC4WfmOB1VVauD26bFOPN9H2esklQteTqADwBqAx1Puytnrky516KtbCL3bQ21mZsd5/u0LhcZjk=
+	t=1725386971; cv=none; b=AXwTirv+qDHpRQ7TCLP4PI9xuT8bS9LY63pqcqJ44/+0l9QEF4IOqyzq0uXJ2+PgwZyybPrbReWZgKwm3gfI67+Pmt/Y8KUnAgfm27naRxJI/FqiAhCGROLwLzBhBfUqYZdDXBj2+4ky9mLnnuWSLW5ofCNG80ssVLmUnRq67P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725386854; c=relaxed/simple;
-	bh=klsfJ1Hq2Re+YPq/Pa3ldNM9QbpNsKv5uXNqj+Cxohc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l28uzIypGXOPL1jXtEVqkXT1RKwIvVZ2PW2Tt424MGffIF859kwWn4x087QZcjTklW1/fde6LMTLyE46zdLkYTLDhhOduGAfTaB8VOzxVUTKBVKveKXqzUfiKkdr0MeAHPIM+FrrEYdT1PIO3864rVYL/ujq28Tq4pvzlB7jHu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jTwrZ4SR; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20556f1cfebso32448275ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 11:07:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725386852; x=1725991652; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/mYjEszGj3VrU1zhax/3scIdkCgdcwnWdTWHjZj2Pk=;
-        b=jTwrZ4SRTyZ2AOwCQfDmpx5ecRs9L+MqlLF3kUDjfcIqE6eg2kyhcmKZrkVshCucPe
-         5RGm2clpYfusB36C3L0GwACddOuRaBKdwPZEcs8m3EXiEkD7WQj5p8dfqcJ6+vrpqowQ
-         XjzJEtiHCt5Q5e2q+dwJFB0DdWxY9xCyw6Qcqkk3kBCtQN2mKPd7Po7ouAkEapGzCyal
-         22OmXOxhvSAZhEUROoaeuc9DToccIXkC9Iizv+El+Ea8p9FVMkj3EYf6p93y/nvsvQIw
-         C1GyBwy0tkRn4bNtvhssokx2yHvqQR51e04vDTnW0jYohjYDfed1mnFyYvLYukHcdJoc
-         szbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725386852; x=1725991652;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/mYjEszGj3VrU1zhax/3scIdkCgdcwnWdTWHjZj2Pk=;
-        b=be6UqYuDljCAscPvZ3maLsQEjo6pRJMTPCjAYnSX/kYg/shMF08v2jK+NR+3HtWeWv
-         g+9XEdhgjUFYpBteQXq5JtelmZph9fD782VUVa7cs3ZEXQyDBQyqlNDdPbU0i+diy336
-         dwK8IqeB/DiYn1m8B8B0OWE+cbuZEEo7hjfzuntz/wZWmTjYICeB3hdWmaXJMKpgrmb5
-         bb46ihjN2yx8UmxjjgFpSc9bwFjoJIJnmGmgPW/3vf+nt4jsEiAXy0D6qCQPcNwTuEfd
-         VJ2CX7j6xdLvd5YukwP/ShmRnQCrc1kG/3eNBfLvl0HkaPXqwf1JCF8fP1l7TUT+30kQ
-         oZQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNw5d8kyPjEpHPcHbzneHpk2vXjzRjTn95TyfXBe4oRvz+CpcBrGiIyxzSliSN6opg8htrYNqrcxpHOfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJDFrDWEwVDMsH3nSVw7Fqiw5KBztop1Ol0Q1quvDPpHfTmft8
-	jFdL75B8/LOZ7WWgtaLbWcLtRT0/vB668yLdZONZvCL59buQvPGkgxYR+nTFi1tpASNvaHPnelK
-	CmA==
-X-Google-Smtp-Source: AGHT+IFWNUf5Q+CP+RQfZ6qatkFRaN1+ePphu3o0HxeU9cZo+gQlQzy/TThthvyRGlnikrtrGRaZqDo1feU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d505:b0:1fc:5ef0:23d1 with SMTP id
- d9443c01a7336-20527f73900mr13706515ad.7.1725386852143; Tue, 03 Sep 2024
- 11:07:32 -0700 (PDT)
-Date: Tue, 3 Sep 2024 11:07:30 -0700
-In-Reply-To: <ZnPUTGSdF7t0DCwR@LeoBras>
+	s=arc-20240116; t=1725386971; c=relaxed/simple;
+	bh=1/wa6dmOiQR2kuGnKHwGR3pQ3U7BTwDOhzLIzse3DPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=up8z06GR+Xc+FmssusoCCFx4zl6D1mpwlgs8LhOGJeSgXLbpwd9gXoJiBCTCGf3ZnK2eUU3YmRPPdZ+jVZAZjjaEf/oLNVyWRQ5Gev7tH2HqKMvmYKsG8ZEo3xx+G1qSiJf9hgDDNdpdtuhohQRMmlV9hwWGp+I8+zTvMtv1/kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lMnnm3Zl; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725386971; x=1756922971;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1/wa6dmOiQR2kuGnKHwGR3pQ3U7BTwDOhzLIzse3DPM=;
+  b=lMnnm3Zlby4poQJjI8GceK9wFUi218pIJxHDi7ihmZtguqs0KhxPxcPi
+   Vxmi+pYKx0d28DjbMyd7+9ev0rEbK9qCNPlsIVOKgGlyU4naTYG9371FH
+   LPCrHV5/UX60SZJ/W9jJa8d93vK2WXyVFUHFdvWGsFrIeXb7SuHikX4v3
+   zboupbLYYs5NoEA4nMxIhcF62v8CHoDKjtlkAlZLpslXyws5vlby5pVmm
+   n58KGeJZQhRYJ/cdEpAJdZ7OdEcEvOpsaIQCz0G/fiKtBtcvpamdF2+ZQ
+   QhxV3nd7ZT4OGqaWwpsoUDgZxyUZrTuzuM+dXACvl86GhQqIqWoE+vvGT
+   g==;
+X-CSE-ConnectionGUID: 4ACzHa1eQe6c6yVhzHFFWA==
+X-CSE-MsgGUID: 7ZOHaDWwSRWhLiKhjwx4TA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23571444"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="23571444"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:09:30 -0700
+X-CSE-ConnectionGUID: z7Nx9V2KTfeoEKSgqH5d2g==
+X-CSE-MsgGUID: jlzMR6hsSoCPu7drFJwQRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69616555"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:09:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slXy0-00000004ngi-2Pk5;
+	Tue, 03 Sep 2024 21:09:24 +0300
+Date: Tue, 3 Sep 2024 21:09:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v2 2/3] iio: imu: st_lsm6dsx: Use aligned data type for
+ timestamp
+Message-ID: <ZtdQ1JsSlUxehQkm@smile.fi.intel.com>
+References: <20240903180218.3640501-1-andriy.shevchenko@linux.intel.com>
+ <20240903180218.3640501-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240511020557.1198200-1-leobras@redhat.com> <ZkJsvTH3Nye-TGVa@google.com>
- <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
- <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop> <ZkQ97QcEw34aYOB1@LeoBras>
- <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop> <ZnPUTGSdF7t0DCwR@LeoBras>
-Message-ID: <ZtdQYvfw9GV3LCRK@google.com>
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-From: Sean Christopherson <seanjc@google.com>
-To: Leonardo Bras <leobras.c@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Leonardo Bras <leobras@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903180218.3640501-3-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Jun 20, 2024, Leonardo Bras wrote:
-> On Wed, May 15, 2024 at 07:57:41AM -0700, Paul E. McKenney wrote:
-> I tested x86 by counting cycles (using rdtsc_ordered()).
-> 
-> Cycles were counted upon function entry/exit on 
-> {svm,vmx}_vcpu_enter_exit(), and right before / after 
-> __{svm,vmx}_vcpu_run() in the same function.
+On Tue, Sep 03, 2024 at 08:59:05PM +0300, Andy Shevchenko wrote:
+> Use __aligned_s64 for the timestamp field.
 
-Note, for posterity, this is the super-duper inner portion of KVM's run loop.
-I.e. the 18-22% increase in latency sounds scary, but only because Leo used a
-a relatively small portion of the entry flow for the baseline.  E.g. the total
-time would be significantly higher, and thus the percentage increase much lower,
-if the measurement started at the beginning of vmx_vcpu_run().
+Oh, heck. I forgot to change the commit message...
 
-> The main idea was to get cycles spend in the procedures before entering 
-> guest (such as reporting RCU quiescent state in entry / exit) and the 
-> cycles actually used by the VM. 
-> 
-> Those cycles were summed-up and stored in per-cpu structures, with a 
-> counter to get the average value. I then created a debug file to read the 
-> results and reset the counters.
-> 
-> As for the VM, it got 20 vcpus, 8GB memory, and was booted with idle=poll.
-> 
-> The workload inside the VM consisted in cyclictest in 16 vcpus 
-> (SCHED_FIFO,p95), while maintaining it's main routine in 4 other cpus 
-> (SCHED_OTHER). This was made to somehow simulate busy and idle-er cpus. 
-> 
->  $cyclictest -m -q -p95 --policy=fifo -D 1h -h60 -t 16 -a 4-19 -i 200 
->   --mainaffinity 0-3
-> 
-> All tests were run for exaclty 1 hour, and the clock counter was reset at 
-> the same moment cyclictest stared. After that VM was poweroff from guest.
-> Results show the average for all CPUs in the same category, in cycles.
-> 
-> With above setup, I tested 2 use cases:
-> 1 - Non-RT host, no CPU Isolation, no RCU patience (regular use-case)
-> 2 - PREEMPT_RT host, with CPU Isolation for all vcpus (pinned), and 
->     RCU patience = 1000ms (best case for RT)
-> 
-> Results are:
-> # Test case 1:
-> Vanilla: (average on all vcpus)
-> VM Cycles / RT vcpu:		123287.75 
-> VM Cycles / non-RT vcpu:	709847.25
-> Setup Cycles:			186.00
-> VM entries / RT vcpu:		58737094.81
-> VM entries / non-RT vcpu:	10527869.25
-> Total cycles in RT VM:		7241564260969.80
-> Total cycles in non-RT VM:	7473179035472.06
-> 
-> Patched: (average on all vcpus)
-> VM Cycles / RT vcpu:		124695.31        (+ 1.14%)
-> VM Cycles / non-RT vcpu:	710479.00        (+ 0.09%)
-> Setup Cycles:			218.65           (+17.55%)
-> VM entries / RT vcpu:		60654285.44      (+ 3.26%) 
-> VM entries / non-RT vcpu:	11003516.75      (+ 4.52%)
-> Total cycles in RT VM:		7563305077093.26 (+ 4.44%)
-> Total cycles in non-RT VM:	7817767577023.25 (+ 4.61%)
-> 
-> Discussion:
-> Setup cycles raised in ~33 cycles, increasing overhead.
-> It proves that noting a quiescent state in guest entry introduces setup 
+...
 
-Isn't the effect of the patch note a quiescent state in guest exit?  
+> -	/* Ensure natural alignment of buffer elements */
 
-> routine costs, which is expected.
-> 
-> On the other hand, both the average time spend inside the VM and the number 
-> of VM entries raised, causing the VM to have ~4.5% more cpu cycles 
-> available to run, which is positive. Extra cycles probably came from not 
-> having invoke_rcu_core() getting ran after VM exit.
-> 
-> 
-> # Test case 2:
-> Vanilla: (average on all vcpus)
-> VM Cycles / RT vcpu:		123785.63
-> VM Cycles / non-RT vcpu:	698758.25
-> Setup Cycles:			187.20
-> VM entries / RT vcpu:		61096820.75
-> VM entries / non-RT vcpu:	11191873.00
-> Total cycles in RT VM:		7562908142051.72
-> Total cycles in non-RT VM:	7820413591702.25
-> 
-> Patched: (average on all vcpus)
-> VM Cycles / RT vcpu:		123137.13        (- 0.52%)
-> VM Cycles / non-RT vcpu:	696824.25        (- 0.28%)
-> Setup Cycles:			229.35           (+22.52%)
-> VM entries / RT vcpu:		61424897.13      (+ 0.54%) 
-> VM entries / non-RT vcpu:	11237660.50      (+ 0.41%)
-> Total cycles in RT VM:		7563685235393.27 (+ 0.01%)
-> Total cycles in non-RT VM:	7830674349667.13 (+ 0.13%)
-> 
-> Discussion:
-> Setup cycles raised in ~42 cycles, increasing overhead.
-> It proves that noting a quiescent state in guest entry introduces setup 
+...and for some reason this haven't been updated to be not removed.
 
-Same here, s/entry/exit, correct?  I just want to make sure I'm not completely
-misunderstanding something.
+I have updated locally, but will wait for other comments, maybe it's the only
+problem and Jonathan can fix whilst applying.
 
-> routine costs, which is expected.
-> 
-> The average time spend inside the VM was reduced, but the number of VM  
-> entries raised, causing the VM to have around the same number of cpu cycles 
-> available to run, meaning that the overhead caused by reporting RCU 
-> quiescent state in VM exit got absorbed, and it may have to do with those 
-> rare invoke_rcu_core()s that were bothering latency.
-> 
-> The difference is much smaller compared to case 1, and this is probably 
-> because there is a clause in rcu_pending() for isolated (nohz_full) cpus 
-> which may be already inhibiting a lot of invoke_rcu_core()s.
-> 
-> Sean, Paul, what do you think?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I'm in favor of noting the context switch on exit.  Singling out this patch for
-introducing ~30 cycles of latency in entry/exit is rather ridiculous.  I guarantee
-ww have introduced far more latency at various times without any scrutiny, even
-if we were to limit the search to just the fastpath entry/exit loop.  Outside of
-the fastpath, there's basically zero chance the extra 30-40 cycles are meaningful.
 
-Even without the non-RT improvement, I'd give this a thumbs up just so that entry
-and exit are symmetrical.  The fact that noting the context switches seems to be
-a win-win is icing on the cake.
-
-So, assuming the above entry/exit confusion was just a typo,
-
-Acked-by: Sean Christopherson <seanjc@google.com>
 
