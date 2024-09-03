@@ -1,75 +1,108 @@
-Return-Path: <linux-kernel+bounces-313056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429C3969FA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:00:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28712969FA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40321F24C7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB3D1C23A5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFB3364AE;
-	Tue,  3 Sep 2024 13:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9182B9A5;
+	Tue,  3 Sep 2024 14:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZsM5/YX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tkax2lHD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F964F20E;
-	Tue,  3 Sep 2024 13:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293FC2B9D4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371964; cv=none; b=d+VmHTMNZ3F7d48OI6YaXt4bHICONk+6VF6VfzLgG3WkiSUBgwv8ry87Yp0Db4B3uvkDbzu5aRBTvf3R3iDPTocDgRFOV15pVcw1mIIaf7vJgfxwH9YofwLEqyPunJ6bd6eq+bcCva9T3GRHr2ZeK9mg7CwkLe8MQCGE/COqKiU=
+	t=1725372008; cv=none; b=JAoeDFwWv5Ztp4HtcN0LhbTHmnVeYRDSamQRrFA3oL3DmZhQVXwfzBq7BeG8Ne5rFpTWIFuYsbWTgAk3W2msNk96/pAKzICsqvGeIssXBIQ6vHQB6Uybm+wEdEg2dSPQSuHAdq90a1NU3An1FNHJSNNT4TMNcMXsRyxo8iNJp/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371964; c=relaxed/simple;
-	bh=rqOGhsMdMGrV5HJZRvHOtwkBtQNWY9ELDZYn9vJAdPU=;
+	s=arc-20240116; t=1725372008; c=relaxed/simple;
+	bh=GsjevHJXsnqvGMZ8L30qbBHqavxUfCBayoBtcR6NkSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPrTrthg1C2gZRzOqJhFkHckmJxBQ3n6br131IvNkIUsLIUBNEsX/vRLLAU1Gt/BjtnqmnVeW4jatHmt2J1s6MhhEksleL2ZNQjXxRKMZhs/ZHFxJXr4TSuzJPwtBDP71FBBdyLZbZNkw0dVKkHBacF5qy77wtW1cW3Bxyuow24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZsM5/YX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E48CC4CEC4;
-	Tue,  3 Sep 2024 13:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725371964;
-	bh=rqOGhsMdMGrV5HJZRvHOtwkBtQNWY9ELDZYn9vJAdPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bZsM5/YXPYUMG0bRFaJNEDz00J1OJx7WnK3+UdDJzuk9xqggDH1olKgewst4FCPkE
-	 dglBPYtB8RFo8ZDzPz5obdnl3WSnFwrcvhWwAVXkubaVhCtddIWoy8xnNe5kCvuuoi
-	 fC3vx90s5cAqUafb+D/Z9S9fqL58peAKvBnRL10No9HfarVlJtuTGEqjoQvJxvPXfY
-	 SPu1EMmbaogV1wbBR24wrbBFH7NkDi6m8VpaywT8kNYZtCY6vqMI++RNrARUoRjx44
-	 SlcYkgx+Tk6WoJ6wXzh9qK6ym87clD+WOuXrhoOLple31ijGtIuw5RjQxMd03Amsgk
-	 xrVqLiO51h6Eg==
-Date: Tue, 3 Sep 2024 15:59:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Christian Brauner <christianvanbrauner@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [brauner-vfs:work.f_version.wip.v1] [proc] e85c0d9e72:
- WARNING:lock_held_when_returning_to_user_space
-Message-ID: <20240903-lehrgang-gepfercht-7fe83a53f87d@brauner>
-References: <202409032134.c262dced-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bysw+isbqskz2Xl7lOB+bGOUhT7HfhJJ+jVmLseiwUyN6BE1FGlN3jkmCUQZU/y41gfrgEdr1dDNqEYiZFGiHLylH5NBQxTqU7CIvoth7POOFiZIAUJKbYCNBxrkAZ0Y6nrfWJV/iGsrKzAo46HScnSvDfu0qUzuTYDiYo0ppK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tkax2lHD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725372005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vOyoZGP/p+DT+U1ETspm+Bx5HvccqPRxCBRFOBQrO4c=;
+	b=Tkax2lHDX8R01R3/6JYbmLkfFDBXW2nZHnRrhv1gVedHkKH7o1/9GGxSbloNrXNd5BtVES
+	9srCYzGUm/Yes/gR2RRj1SLnONIT8+8zMSECYUiQF/w32SHIGe5UlCqitGoARkrl1EU9ZD
+	vtJzIpFyhexMuAH1iZb/ev7805JMwcY=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-350-VS-W_Pz6P-6r_Y7YKaslCw-1; Tue,
+ 03 Sep 2024 10:00:01 -0400
+X-MC-Unique: VS-W_Pz6P-6r_Y7YKaslCw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 727E018EA8B6;
+	Tue,  3 Sep 2024 13:59:59 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.38])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BE0DD1956052;
+	Tue,  3 Sep 2024 13:59:54 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  3 Sep 2024 15:59:49 +0200 (CEST)
+Date: Tue, 3 Sep 2024 15:59:43 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 0/8] uprobes: RCU-protected hot path optimizations
+Message-ID: <20240903135943.GE17936@redhat.com>
+References: <20240829183741.3331213-1-andrii@kernel.org>
+ <20240830102400.GA20163@redhat.com>
+ <20240903132103.GV4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202409032134.c262dced-lkp@intel.com>
+In-Reply-To: <20240903132103.GV4723@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Sep 03, 2024 at 09:53:05PM GMT, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "WARNING:lock_held_when_returning_to_user_space" on:
-> 
-> commit: e85c0d9e725529a5ed68ad0b6abc62b332654156 ("proc: wean of off f_version")
-> https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git work.f_version.wip.v1
+On 09/03, Peter Zijlstra wrote:
+>
+> On Fri, Aug 30, 2024 at 12:24:01PM +0200, Oleg Nesterov wrote:
+> > On 08/29, Andrii Nakryiko wrote:
+> > >
+> > > v3->v4:
+> > >   - added back consumer_rwsem into consumer_del(), which was accidentally
+> > >     omitted earlier (Jiri);
+> >
+> > still,
+> >
+> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> >
+>
+> Let me go queue this in perf/core then. Thanks!
 
-This is once again an old branch that's dead and was never sent.
-Can you please exclude anything that has a *.v<nr> suffix? I thought I
-already added a commit to this effect to the repository.
+FYI, Andrii was going to send another revision due to missing include
+inux/rcupdate_trace.h in kernel/events/uprobes.c.
+
+See the build failure reported kernel test robot:
+https://lore.kernel.org/all/202408310130.t9EBKteQ-lkp@intel.com/
+
+Oleg.
+
 
