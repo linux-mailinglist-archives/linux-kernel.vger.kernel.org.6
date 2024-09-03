@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-313061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB61C969FB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:02:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25453969FB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576C61F25385
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:02:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B482B21D53
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAD3846D;
-	Tue,  3 Sep 2024 14:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE0B2B9D4;
+	Tue,  3 Sep 2024 14:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOT0nQb+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQbrtLlc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3714A06;
-	Tue,  3 Sep 2024 14:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BCB1CA6B5;
+	Tue,  3 Sep 2024 14:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372100; cv=none; b=E4DLiCMgEM20VieWrm4KS+gm2muBtzjdKYSXACwuUwNi6O4+Lnb8spORQOwkvvLGQVU3lDoetqp0kkSDtFaHbnD8WgUpuQ9guW4l5D6tPoXZVBBRmmf5SUT0xUEAdI1f+zGz473qf2auOyJ7aXAfuEeVQhh3uYOz4Xo6TxnskbM=
+	t=1725372153; cv=none; b=SrcT7G/Jgb/BewJJlI+6QjIhC9I89r5egLlBNexR1f2Cl9vxjNp/+5bSYHI3t4alP1Xkjb124mICgKX3wIcFotIEr/Ub7bRTDNo5V7x4Sbobix5Lgi3xNxmfzTNbQ0p4hfq4uLZ+cuvOd1Pf7xAKq3EYiysWaT+saRARijagaHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372100; c=relaxed/simple;
-	bh=dTT0S78Dc3nmmCLqO9HMGM+dRiCO5S/9a1tMC3Cf8NU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIz7aCJIEG5qcc2aRrXvzdfkG4JxPXFoipxPwHUchgTXBz7cRXXqlxAbvktC8l+3Tcvk2M+yAQiepEZ6yE2sWGofHpZYVC98NqizFit7z+sdYoSfdDy0+vUfokBNYNGon1BKWSp/0G15SXoCYNacZxdxwLkNx8l6paF+FVZtM3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOT0nQb+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D55C4CEC4;
-	Tue,  3 Sep 2024 14:01:39 +0000 (UTC)
+	s=arc-20240116; t=1725372153; c=relaxed/simple;
+	bh=ISEPiyuW5HpWwnRmZ2TxcXfpXbOWpUrDh3u1r9u6zYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ghdIrWdSg6FAuOmwSch5rhhh2qUOJF5MggqHf/qDEqvF9O12DH9liU5xKVupgOKk5kMIqxk2UsO6NrG+4RwSXhCySQu1D2q/dvcUE/yJZjHDMGi6hdkqXmjXpE3ymLPq72vfGG4UBHsl2SguItYMXeRSnQTIEZKYTlL6460iCDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQbrtLlc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B9BC4CED0;
+	Tue,  3 Sep 2024 14:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725372100;
-	bh=dTT0S78Dc3nmmCLqO9HMGM+dRiCO5S/9a1tMC3Cf8NU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SOT0nQb+f7ZhkPA8azVACOmw/NHVd7277EoXhHMIDpkOd6DqGe6JU/AZAETCOyLn0
-	 SCcY9I4/erLsjJfsJpmMezUjhCFZy5MbxOYg7snazr6lk5qYTa2ngLs5mIHmEGSTbG
-	 bc9ICPG5+D7xdWR8KThOAPS2dirkinw1ubudO8qEBFdMttvPIYGvQclF+Xm7t1py4D
-	 fRitzSddYyUg1ohXsbDxmQbSGN8iBgUuBoualrwW1zBVLZtllcOwxOayvxsrMy6evh
-	 rTT3lWlo5CNWGhAC4XTfWmzBwfGU3dWCm32H6i0MknjAkr+aTJGcsB3rUEqp8015Hw
-	 yTkHL/kkapZxA==
-Date: Tue, 3 Sep 2024 11:01:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Steinar H. Gunderson" <sesse@google.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
-Message-ID: <ZtcWwANOWyXEnGdC@x1>
-References: <20240719150051.520317-1-sesse@google.com>
- <ZqlCIJ4khe2_xyp9@x1>
- <ZqlDuIj_nMVXhYou@x1>
- <ZtRIla5pCqlMIKvN@google.com>
- <Ztbga0xLyt1eaehi@x1>
+	s=k20201202; t=1725372152;
+	bh=ISEPiyuW5HpWwnRmZ2TxcXfpXbOWpUrDh3u1r9u6zYM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lQbrtLlcW9ICfUMaj/zhYwPRIurwZCpLyv/YF4PQjdawRjF20Gd02tEPTIUY28Zy6
+	 VRhBBPEM/cYTyRIwsNXleZaOQiZaUJBAr2i7SbRI3554Hwa1V7qu7M2gyMiNRfy5xk
+	 6ArpHsOt4wizacmbEr85taTAbW2dj+iLbdJj6vR1Cgl5ipoqHVGk/fPjsxoENcVNaW
+	 UttbttRqyhwLpg10InLEqhabK3Zj8PBL5mP+TryTtEYxVCdcGKcj9ONRqSCoGGCfzf
+	 p8fIDB84tQWteze56ZoppQ3pVXKEoeUhHaysF7xZTww4ZaocH0zav9dgZ4nkvb9h5D
+	 ENYMdIkVJU60A==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5e172cc6d97so1058262eaf.1;
+        Tue, 03 Sep 2024 07:02:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdYaDWa0GCjJ9viq0qD89D/ZyRYuhDgGR92eAN7Msbmf76tFV/lYQZUBp96uZ2xW03il2jJKVn+7RMkqM=@vger.kernel.org, AJvYcCXvBF48M5NYaRZdMXyrI1rBRIjzTCiCzGKmhdYePxqntdz4llaFB3I0HAvnqRBbD+DTZaPKuaqw2Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf9+dX4jEUtbz8x09V+NmCF04CIE4pu28/fI1saAJs4TdSRs5K
+	yp8c19s4ZiBycnu5uJAZt7RwYe6T2oQCUysUWlauR6LJiXRkl+Jxw9dFrS+z4A8jff3dekI/5N/
+	VScyX0H5+AvVHjHDOv2M+0xz6BEs=
+X-Google-Smtp-Source: AGHT+IFf2DBDKS65tIQFLlU5VpFjsDfIqRxNn8mDJQyYoNTfaBwsAmEvaa2hTrEUkMwd8an5t150Tgkh6hcyPFWpUr0=
+X-Received: by 2002:a05:6870:c186:b0:260:71c4:f33a with SMTP id
+ 586e51a60fabf-277902b2663mr18497038fac.39.1725372152062; Tue, 03 Sep 2024
+ 07:02:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Ztbga0xLyt1eaehi@x1>
+References: <3310447.aeNJFYEL58@rjwysocki.net> <1979653.PYKUYFuaPT@rjwysocki.net>
+ <20240903135502.GX4723@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240903135502.GX4723@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 3 Sep 2024 16:02:20 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jWAfvSXkiQfg5yRaZRwT6gWAjDN=jqwnhDuE=UwcFsKw@mail.gmail.com>
+Message-ID: <CAJZ5v0jWAfvSXkiQfg5yRaZRwT6gWAjDN=jqwnhDuE=UwcFsKw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity
+ on hybrid systems
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 07:09:47AM -0300, Arnaldo Carvalho de Melo wrote:
->    3: almalinux:9-i386WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
-> WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
->     17.58 almalinux:9-i386              : FAIL gcc version 11.4.1 20231218 (Red Hat 11.4.1-3) (GCC) 
->     util/llvm-c-helpers.cpp: In function ‘char* make_symbol_relative_string(dso*, const char*, u64, u64)’:
->     util/llvm-c-helpers.cpp:150:52: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘u64’ {aka ‘long long unsigned int’} [-Werror=format=]
->       150 |                 snprintf(buf, sizeof(buf), "%s+0x%lx",
->           |                                                  ~~^
->           |                                                    |
->           |                                                    long unsigned int
->           |                                                  %llx
->       151 |                          demangled ? demangled : sym_name, addr - base_addr);
->           |                                                            ~~~~~~~~~~~~~~~~
->           |                                                                 |
->           |                                                                 u64 {aka long long unsigned int}
->     cc1plus: all warnings being treated as errors
->     make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
+On Tue, Sep 3, 2024 at 3:55=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Wed, Aug 28, 2024 at 01:48:10PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Make intel_pstate use the HWP_HIGHEST_PERF values from
+> > MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
+> > via the previously introduced arch_set_cpu_capacity() on hybrid
+> > systems without SMT.
+> >
+> > Setting asymmetric CPU capacity is generally necessary to allow the
+> > scheduler to compute task sizes in a consistent way across all CPUs
+> > in a system where they differ by capacity.  That, in turn, should help
+> > to improve scheduling decisions.  It is also necessary for the scheduti=
+l
+> > cpufreq governor to operate as expected on hybrid systems where tasks
+> > migrate between CPUs of different capacities.
+> >
+> > The underlying observation is that intel_pstate already uses
+> > MSR_HWP_CAPABILITIES to get CPU performance information which is
+> > exposed by it via sysfs and CPU performance scaling is based on it.
+> > Thus using this information for setting asymmetric CPU capacity is
+> > consistent with what the driver has been doing already.  Moreover,
+> > HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
+> > both the instructions-per-cycle (IPC) factor and the maximum turbo
+> > frequency and the units in which that value is expressed are the same
+> > for all CPUs in the system, so the maximum capacity ratio between two
+> > CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
+> > values.  Of course, in principle that capacity ratio need not be
+> > directly applicable at lower frequencies, so using it for providing the
+> > asymmetric CPU capacity information to the scheduler is a rough
+> > approximation, but it is as good as it gets.  Also, measurements
+> > indicate that this approximation is not too bad in practice.
+> >
+> > If the given system is hybrid and non-SMT, the new code disables ITMT
+> > support in the scheduler (because it may get in the way of asymmetric C=
+PU
+> > capacity code in the scheduler that automatically gets enabled by setti=
+ng
+> > asymmetric CPU capacity) after initializing all online CPUs and finds
+> > the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
+> > capacity number for each (online) CPU by dividing the product of its
+> > HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PE=
+RF.
+> >
+> > When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
+> > and if it is the one with the maximum HWP_HIGHEST_PERF value, the
+> > capacity numbers for all of the other online CPUs are recomputed.  This
+> > also takes care of a cleanup during driver operation mode changes.
+> >
+> > Analogously, when a new CPU goes online, its capacity number is updated
+> > and if its HWP_HIGHEST_PERF value is greater than the current maximum
+> > one, the capacity numbers for all of the other online CPUs are
+> > recomputed.
+> >
+> > The case when the driver is notified of a CPU capacity change, either
+> > through the HWP interrupt or through an ACPI notification, is handled
+> > similarly to the CPU online case above, except that if the target CPU
+> > is the current highest-capacity one and its capacity is reduced, the
+> > capacity numbers for all of the other online CPUs need to be recomputed
+> > either.
+> >
+> > If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
+>
+> Trubo :-)
 
-The one above is fixed by the patch at the end, that I already added to
-the cset where the problem was being introduced.
+Thanks, will fix before applying.
 
-Now there is something a bit more tricky, we'll have to add a feature
-check to see if the libllvm has what is needed if this appears in some
-distro we still want to support, since alpine 3.16 has what is needed
-I'll take the opportunity to drop test building on alpine 3.15.
-
-FYI, so far:
-
-perfbuilder@number:~$ time dm
-   1   101.42 almalinux:8       : Ok   gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-22) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8.10.0+3757+fc27b834) flex 2.6.1
-   2    89.34 almalinux:9       : Ok   gcc (GCC) 11.4.1 20231218 (Red Hat 11.4.1-3) , clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9) flex 2.6.4
-   3: almalinux:9-i386WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
-WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
-   104.86 almalinux:9-i386      : Ok   gcc (GCC) 11.4.1 20231218 (Red Hat 11.4.1-3) , clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9) flex 2.6.4
-   4    16.20 alpine:3.15                   : FAIL gcc version 10.3.1 20211027 (Alpine 10.3.1_git20211027) 
-    util/llvm-c-helpers.cpp: In function 'char* llvm_name_for_code(dso*, const char*, u64)':
-    util/llvm-c-helpers.cpp:178:21: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
-      178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
-          |                     ^~~~~~~~~~~~
-    util/llvm-c-helpers.cpp:178:49: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
-      178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
-          |                                                 ^~~~~~~~~~~~
-    make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
-   5   119.65 alpine:3.16       : Ok   gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219 , Alpine clang version 13.0.1 flex 2.6.4
-   6    98.62 alpine:3.17       : Ok   gcc (Alpine 12.2.1_git20220924-r4) 12.2.1 20220924 , Alpine clang version 15.0.7 flex 2.6.4
-   7   101.00 alpine:3.18       : Ok   gcc (Alpine 12.2.1_git20220924-r10) 12.2.1 20220924 , Alpine clang version 16.0.6 flex 2.6.4
-   8   106.74 alpine:3.19       : Ok   gcc (Alpine 13.2.1_git20231014) 13.2.1 20231014 , Alpine clang version 17.0.5 flex 2.6.4
-   9   103.22 alpine:3.20       : Ok   gcc (Alpine 13.2.1_git20240309) 13.2.1 20240309 , Alpine clang version 17.0.6 flex 2.6.4
-  10   109.79 alpine:edge       : Ok   gcc (Alpine 14.2.0) 14.2.0 , Alpine clang version 18.1.8 flex 2.6.4
-  11    87.75 amazonlinux:2023  : Ok   gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2) , clang version 15.0.7 (Amazon Linux 15.0.7-3.amzn2023.0.1) flex 2.6.4
-
-- Arnaldo
-
-diff --git a/tools/perf/util/llvm-c-helpers.cpp b/tools/perf/util/llvm-c-helpers.cpp
-index 4070e2d5682fd674..663bcaba2041fc25 100644
---- a/tools/perf/util/llvm-c-helpers.cpp
-+++ b/tools/perf/util/llvm-c-helpers.cpp
-@@ -11,6 +11,7 @@
- #include <llvm/Support/TargetSelect.h>
- #pragma GCC diagnostic pop
- 
-+#include <inttypes.h>
- #include <stdio.h>
- #include <sys/types.h>
- #include <linux/compiler.h>
-@@ -147,7 +148,7 @@ make_symbol_relative_string(struct dso *dso, const char *sym_name,
- 	char *demangled = dso__demangle_sym(dso, 0, sym_name);
- 	if (base_addr && base_addr != addr) {
- 		char buf[256];
--		snprintf(buf, sizeof(buf), "%s+0x%lx",
-+		snprintf(buf, sizeof(buf), "%s+0x%" PRIx64,
- 			 demangled ? demangled : sym_name, addr - base_addr);
- 		free(demangled);
- 		return strdup(buf);
+> > capacity information is computed from scratch to reflect the new turbo
+> > status.
 
