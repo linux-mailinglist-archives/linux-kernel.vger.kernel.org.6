@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-312724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85BF969A57
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DCF969A59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529B51F23C14
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073511F21B4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452711C62AA;
-	Tue,  3 Sep 2024 10:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FEC1B9859;
+	Tue,  3 Sep 2024 10:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFRLK9oV"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ny9UNNzp"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533861A4E7C;
-	Tue,  3 Sep 2024 10:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655101B9850;
+	Tue,  3 Sep 2024 10:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359941; cv=none; b=faudUuy5hEPEbKBmYM6gmf7NpA44W+R4PcjMtazGy0rL5X02W+89ufXIrKvfnO+IBk2BxbxJOmedrNhpus7AsIe4dQXRljJxXDMfopuoWQInbxXNy1XIEiUr2mPmzVXh4wANWklGCX0GQ1sKTwuDZH/mSsLmyohYh9xF1a5ry2o=
+	t=1725359957; cv=none; b=ZH4Y4v9CNemVwp1ZqZPkzUloW1CeRsLK2xLgT3Gtpj4memf7ZDJpuc7cjLZ1ZFzA9gHaTTkXkw/No85s2PEH6i+1HEuhNYtZIa6HhLKAOP+DJ01AJIP89UVD3zEx+jDs4vfbe0OSd2QRSyG7toHsRAFltZkZN5cq5qeFXnCJRf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359941; c=relaxed/simple;
-	bh=QsB9ytTgaYVg/jbAlllbbzbJruHNK7+AM8/jWK6QZqY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rgne7EcmmpjNkwYvX9ThzVl1Y6fBYRcheJnPAk+Lt08SsugFaRG+3CucqBzLFz3W0Ws9OaAkmCAfJm2J9K3lOgCpPEgZ2+RvwlRbIk6HJVpRJm6BXL9ACDTGp7Gh6B9kiJwKQ/rRFGV06xT1yF/4WlJt+Up+xjassvkjc2iGfr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFRLK9oV; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1725359957; c=relaxed/simple;
+	bh=x9VR8yJKbpFlJ9ULZWhO2nDLSKG8nCREG0OWxhGouxU=;
+	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RYjsxslVPVhqxiR8hYVHNzq+U7fr9lQCg+5zTzIOs/2jHH3/rkEbXYGXft21z/bZEG74Yr56bF47ruyqz0zOV7mQXvGQYw0HjvNzj9Wk4aNxnLhkuZjBslW4oI8Trl6KSbyRDZGDuBVay4VpNl5dULYkZS3D+oyvqBxg/2PPjpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ny9UNNzp; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71446767885so662220b3a.1;
-        Tue, 03 Sep 2024 03:38:59 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so5525651e87.2;
+        Tue, 03 Sep 2024 03:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725359938; x=1725964738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBup1UfPYH+jBIe3t6bYSH/YuGGit6nmS2KxsQ9yvQE=;
-        b=gFRLK9oV56iUKX1M46fGOJ6aTHj/CdusgmsDfYbD7Ggj2AIqh5Pwk/f0N79P4YsGOQ
-         H+OnwAdhszgZgtn+lvkp1pmR09dh3cDSoTLV5WBwwQddofvEvSSz7c/eIuG0ocMyDQVt
-         QI0bVIMzNBIiJb5AEm81RWVl/7RtPdXr4qumo2USVP8Pe31GuK3zVZNxApsBxVLxujBT
-         vOW7ymW+PC4KOXjIYQfh5ImuJ5UoEJyP1LPyvpq5hAd1P29Fl9UnFecvKEc9Qw0ZSryp
-         PjN5crbyd6DMgchEJK9jODA5ajVP4ixYK9vakWjUJMfOC2DDQRWf6szzBDDSB7plXBFW
-         y1Vw==
+        d=gmail.com; s=20230601; t=1725359953; x=1725964753; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=F/QXg6hFQdGDiK+u7axMDheJkaPRg6gOiLwD/Eu5ECw=;
+        b=Ny9UNNzpSNB1Ri2WKmfEkpTAjCCndF9C9vkrmvVxCjAHzyJA8tu/zgdUAr4ayGG6jC
+         y2X+3I9O+6sv4XqAiL5SLtoFcgbv0RlJmKiApWO3bPNCUMEbrb39Gh9JF34Wj9loNebl
+         iWj+wdfFXob6J48t1DDnh+VFjasH7YDlRr+yg6KpXYTi1+xoSaiEo+RBfY9njgj1P+oX
+         iR2Aii4woDCX+AR+KoJGB8tWNzCFkwuzBQNy9pCeAmNir20SrkxXLe3jVmDOAK6vSJOD
+         vvtHxmneoS+Q7HUA6gEHca8iN+dxAsCYKYaPnhLXLSarsieTWxJ/RHF2ufKvycPed9n7
+         nM2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359938; x=1725964738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBup1UfPYH+jBIe3t6bYSH/YuGGit6nmS2KxsQ9yvQE=;
-        b=jcxqnuAyCvAfrM8TPEtkYpG1SjGIcmUxfgHta2NNVnRubv/NwFVKhe9/+kfCOxyLnk
-         C0J608XK4sePjLM+ocmK0yLXU0nq/uth3YZEhdB7LhTCXrblc7EUIyfBX30T9jugQy8s
-         /2w82BPhwUaHsTz08TbtoCJSPpyIRp506bcs0U2EvDerwQ6MzEh4KL+lvTHRYbF8eF1E
-         3AGVfYewsOIfZUMWv5Un+h2mrmLoF0iK0LF32H7KUJhu5H0rwB9vRQ7+KF00KKLbkWn/
-         mFjOq/EmfmErcOEjZq5BjFk61yYSF93dtqGfPesYS/6MTDXtEDjkCjnJDvigXK7g+ozE
-         8Y+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVwaCBGwJ9CnR4eJM8fC2gxCIqePw+Zjrxh11q3M5GFPgnZDMKp3nmTfhDyfVvkpUY38m3TnBH5IgXk7nc96C8=@vger.kernel.org, AJvYcCWjVgYb+0RAIONQxdIFMyxDV4SEPPxeSRi9wyb6Xph+2IePSujAKaBYMRSxlMJSgM1+yrNZq1SDT67uhw==@vger.kernel.org, AJvYcCXg2Aa26fKmpjmrrr7Ffii4to4I5QE8iQv6WUF8dpXhR7KWAb5bnfB5QSxbGxkQRyEK9fwuZzS+YHPTeWJ9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyruVfvRHxTg2sZEHiENF9TezV3lCw88eOEdZL2Zz6B78ODk0t
-	8eSkLN+gdRa249tyJ+QuzUfOlqyFe06xnIYoFcirfOu7OMQ0IkYJRhEt31wQlShrcx86s9ctSjx
-	Pidk03KE6TbtvSehKp/319XFJdJU=
-X-Google-Smtp-Source: AGHT+IGJh9PB9LY+D4XML3Q1TRSkEKR3shqWi/yNYLbCnuZNYDMh4hnKUJGX/kIVREqL/OIQ2aA3uUgtgScUrvRnQds=
-X-Received: by 2002:a05:6a20:7f86:b0:1c4:c4cc:fa49 with SMTP id
- adf61e73a8af0-1ccee5179b7mr8048831637.7.1725359938563; Tue, 03 Sep 2024
- 03:38:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725359953; x=1725964753;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F/QXg6hFQdGDiK+u7axMDheJkaPRg6gOiLwD/Eu5ECw=;
+        b=cMX7dx+QrlyjVSAlb0d2N+bwq4qM1CCb9jRAC+S43eSTVQlwWZPAssEMtSAlKwqryA
+         3FLS1fQxkGSVtOSrqyISIp0jvMFmQPm5kB7fgtWND/nt5l66u0J+6eCf9YW9XJfcQ3rb
+         +NEOLOC7hJvgR79px1BDsajcMhPKIhP48qKwTOwWkujcQkf2WpLFcJUGOyfLb3cduupa
+         J4iSK51UAy6fh+e+YnaesuOLB3BeUXeFILyeWSWpN+db7B29IjoRrSs30vWS2Puu6s6W
+         NqTfCw1Lqi1Zgw/rBMSNpLNfQWkVxp0GW0ApR7/oKx2/UEmBLZaoZOHpmMvPQFchteh8
+         wr6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUN/Fdc3uQIn/lLGjn5Or+c83l3tGixT6+PSwdypadffN70S8ktnWbY/ElOYoqfLFT9DKJgRbvmo0kqUA==@vger.kernel.org, AJvYcCVB4DBFOCCleLwUKcmtNENjRaulSTvG3Bm2oMwrHFONI97eWgtKipKJonIbZ9rcYwHtyrNuBSdtYAA8iANC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ/ne2j4SP2ZD34k7EyomtMg6SKkn2Rhe98Y1J8AoaxqPraGw7
+	wmN6a8aRTSvPnDYjXOo3gEsp8ky00qYnRut6KGNY3ZN1e7qV39VVMIlLuK4f
+X-Google-Smtp-Source: AGHT+IFfDSIgGycFkDwfEkQ/yD94GBs9dZ4GvnjIVsl1C8IImbbjE/sR8SX0srkysrkWbt4kcpFqkQ==
+X-Received: by 2002:a05:6512:1393:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-53546b34943mr7692852e87.32.1725359952885;
+        Tue, 03 Sep 2024 03:39:12 -0700 (PDT)
+Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e274c1sm166861645e9.36.2024.09.03.03.39.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 03:39:12 -0700 (PDT)
+Message-ID: <f19308b7-9613-4b58-a4ff-edc66c964687@gmail.com>
+Date: Tue, 3 Sep 2024 12:39:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902211553.103807-1-frazar00@gmail.com>
-In-Reply-To: <20240902211553.103807-1-frazar00@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 3 Sep 2024 12:38:46 +0200
-Message-ID: <CANiq72naAHm81thntNdaEoq8rMVH0gVNAKB_Fd5dy2Eu1pk5mA@mail.gmail.com>
-Subject: Re: [PATCH] docs: rust: fix formatting for kernel::block::mq::Request
-To: Francesco Zardi <frazar00@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] btrfs: Split remaining space to discard in chunks
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240903071625.957275-1-luca.stefani.ge1@gmail.com>
+ <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
+Content-Language: en-US
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 2, 2024 at 11:16=E2=80=AFPM Francesco Zardi <frazar00@gmail.com=
-> wrote:
->
-> Fix several issues with rustdoc formatting for the
-> `kernel::block::mq::Request` module, in particular:
 
-Thanks for the patch, Francesco! These look good (I didn't render it though=
-).
 
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1108
->
-> Signed-off-by: Francesco Zardi <frazar00@gmail.com>
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+On 03/09/24 09:16, Luca Stefani wrote:
+> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+> mostly empty although we will do the split according to our super block
+> locations, the last super block ends at 256G, we can submit a huge
+> discard for the range [256G, 8T), causing a super large delay.
+> 
+> We now split the space left to discard based the block discard limit
+> in preparation of introduction of cancellation signals handling.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
+> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+> ---
+>   fs/btrfs/extent-tree.c | 24 +++++++++++++++++++-----
+>   1 file changed, 19 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index a5966324607d..9c1ddf13659e 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -1301,12 +1301,26 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>   	}
+>   
+>   	if (bytes_left) {
+> -		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+> -					   bytes_left >> SECTOR_SHIFT,
+> -					   GFP_NOFS);
+> -		if (!ret)
+> -			*discarded_bytes += bytes_left;
+I removed this by mistake, will be re-added.
+> +		u64 bytes_to_discard;
+> +		struct bio *bio = NULL;
+> +		sector_t sector = start >> SECTOR_SHIFT;
+> +		sector_t nr_sects = bytes_left >> SECTOR_SHIFT;
+> +
+> +		while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
+> +				GFP_NOFS))) {
+> +			ret = submit_bio_wait(bio);
+> +			bio_put(bio);
+> +
+> +			if (!ret)
+> +				bytes_to_discard = bio->bi_iter.bi_size;
+> +			else if (ret != -EOPNOTSUPP)
+> +				return ret;
+I think I got the logic wrong, we probably want to `continue` in case 
+ret is set, but it's not -EOPNOTSUPP, otherwise bytes_to_discard might 
+be left uninitialized.
+bio->bi_iter.bi_size can be used directly for all those cases, so I'll 
+remove bytes_to_discard as a whole.
+> +
+> +			start += bytes_to_discard;
+> +			bytes_left -= bytes_to_discard;
+> +		}
+>   	}
+> +
+>   	return ret;
+>   }
+>   
 
-If we considered these a fix (I think at least for the first bullet
-point it makes sense to do so), these should probably be (in this
-order, and without blank newlines):
-
-    Reported-by:
-    Closes:
-    Signed-off-by:
-
-But depending on the maintainer they may do this without a v2 when
-picking it up -- it depends on what Andreas wants to do (it could go
-through Block or Rust).
-
-Thanks!
-
-Cheers,
-Miguel
+I'll fix those up for v4, but I'll wait for more comments before doing so.
 
