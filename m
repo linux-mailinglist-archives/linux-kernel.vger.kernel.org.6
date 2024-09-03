@@ -1,551 +1,147 @@
-Return-Path: <linux-kernel+bounces-312760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D868F969AE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8239A969ADA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 902E628320A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1F0B24D8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94E81DA0EA;
-	Tue,  3 Sep 2024 10:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2D91C9842;
+	Tue,  3 Sep 2024 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="Owd+i6vA"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="AOnmScQF"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C851C62A8;
-	Tue,  3 Sep 2024 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89791AB6E7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360787; cv=none; b=Uuu01fgr1mpXP9psT4etJaPMkaRgdmRP/M/DYcMwd4t/iwa83fGaWEOoQ0L9Rsncv4BK3NMRk26HjfVNhA7393UJwGIhY1my4ckM+jY1Pe40U0o1wOfvMgipdfnxck8v8q23kaBuT7ZHVBZwTymVTq9m89doE5zlJyQepwuWB4U=
+	t=1725360785; cv=none; b=B0VyXC8YKPwhW9JbR3ddLmUy2hmSjVffzSEcoBxALPQ35FrtNJbIADHW1sYIEWFZcWURBKOqOq2TBfKhkv014sNMhb0OcQJ421T368Uf7OxIpMKcm3xoFR0UGYBU+sWShPdfHFKy/b0lQYKJoiB7hGh1OC69vLiYS6W4ZT/955M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360787; c=relaxed/simple;
-	bh=JgvJqVTf/u0LE0bfE/k5DEn8YPyIpzNmeGr9DZ3HNVA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TBJRJT6C+64nesvbrPmBADy8FcbzprGLCYjaVxMw1e+9KewDevLizSgb9gDmy46BS7QRjhY4sKDhtaospjTW79hixqDjGF3Ei1XyBnPVJEqtgP9OC4Og2VLw94K7q7sPdMaaKrpfMYrbYnYOr8SVHfPDT4YoMqFKUYBAqGR59kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=Owd+i6vA; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 8C44B4425F;
-	Tue,  3 Sep 2024 10:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1725360774;
-	bh=JgvJqVTf/u0LE0bfE/k5DEn8YPyIpzNmeGr9DZ3HNVA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Owd+i6vAmlXWlsnZLWaLZBZqaC7FGgd3qooN5pEpcaWYESRhiseBCFPYw+8M3TruZ
-	 9iqgFz8N43ExNRlBHSes3A3U6sUlTZZ4F+dsvAqVJL7ErECJaH/EGKESFwA/eVdgOA
-	 VfIxfzuoLbC4wUW51FW8PMpLNhYyX1q/4PX7S7tP5sejdscUeMAVo5obr+/76eG1Yh
-	 PkpPMbRhDzSdrHmEnf6P0TCE4Y7xf2cbzdYjAUK4SJhwcJd4Impk9j1gJuMeS5sMYS
-	 CAJxbUm7AdXzaK9XXRp0ObKklt7bSgi5VDO0NaXUInVSVL6D08BOz7i43wY8sVIIWh
-	 MAW9WS3r8iMyw==
-From: Asahi Lina <lina@asahilina.net>
-Date: Tue, 03 Sep 2024 19:52:30 +0900
-Subject: [PATCH v2 2/2] ALSA: usb-audio: Add mixer quirk for RME Digiface
- USB
+	s=arc-20240116; t=1725360785; c=relaxed/simple;
+	bh=PPLqb9L4Lb33YUhzlJHIMEdQ1CsCgkDnOf0oU80gaVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=egMUgxYBSjD6xAm/Mi+6V7RKPwZFhJT9v7dL1BrSA3RNssE/+oyhTxNBONmXGKs5El4+v2qeRhIVJNZOFGOYNeOgcCnJ19AvwGXRhvJT6UoGANq/85o3wO9jI+JIpDrxC3dct+AAYphb2IYWZ5RchVwl5UcJP7YZptnuHeAqQY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=AOnmScQF; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+	by cmsmtp with ESMTPS
+	id lHs5sS0Lo1zuHlR9hsd6dz; Tue, 03 Sep 2024 10:53:01 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id lR9esDTF9eieBlR9fsTWan; Tue, 03 Sep 2024 10:53:00 +0000
+X-Authority-Analysis: v=2.4 cv=BoBWwpX5 c=1 sm=1 tr=0 ts=66d6ea8c
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=VwQbUJbxAAAA:8
+ a=rT7NhT99x2eMfdz9cs0A:9 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=UppZcDWe1uFAJ+bvasF5er5A9xgV/I9BZ+SAKDSsjpM=; b=AOnmScQFEyQEi8MZEiPr8iondE
+	FltM80ZG0elT5XHBVsklYzWtsA/cF7y5n7qds476Vjvb4GOGGIZ7CuakK4q6IM07bM3pqsvgW2stH
+	g053R1U2d9Pi/bd410RNCBVxd1l12Td3A2muyhWvOsFwDv1Bz1JqEgsYrKkyqlaz9TGSOlgIGboIO
+	LDKzzeg6ABnbgokk4ZfuOe0RzzRdQsg6OAiEGeqZkTOMhhkFcA+32nbwa6K1LNSJJoCK7a19aArXt
+	tA9XuawYa6emQMHar3wnm/yM+Qg02FEly2b4l1i/kPD+dw9QP6WGqVFUdeui2Em6Y5BYT5Zh/V8ri
+	s2LlJZBQ==;
+Received: from [122.165.245.213] (port=41440 helo=localhost.localdomain)
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1slR9d-000Elu-0i;
+	Tue, 03 Sep 2024 16:22:57 +0530
+From: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	alexandre.belloni@bootlin.com
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Subject: [PATCH v2 0/8] Add support Relfor Saib board which is based on Rockchip RV1109 SoC 
+Date: Tue,  3 Sep 2024 16:22:37 +0530
+Message-Id: <20240903105245.715899-1-karthikeyan@linumiz.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-rme-digiface-v2-2-71b06c912e97@asahilina.net>
-References: <20240903-rme-digiface-v2-0-71b06c912e97@asahilina.net>
-In-Reply-To: <20240903-rme-digiface-v2-0-71b06c912e97@asahilina.net>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: "Geoffrey D. Bennett" <g@b4.vu>, 
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Mark Hills <mark@xwax.org>, 
- Arun Raghavan <arun@arunraghavan.net>, Cyan Nyan <cyan.vtb@gmail.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725360771; l=15325;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=JgvJqVTf/u0LE0bfE/k5DEn8YPyIpzNmeGr9DZ3HNVA=;
- b=pB+8J1+dsvbcIo7/TCZHwn8ZAwlpQrGSiFIaMBJ6No+gcCI1cQixUUiFP0xvt6TugnHuvTYqM
- EO7TQwBM52LCZ+21uCJShRulmDvBSt932h4vsianIP9NsjIVKZ/VDn8
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1slR9d-000Elu-0i
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [122.165.245.213]:41440
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 3
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFV/URokypJ6mNreLqXGADMEZlYn3pH2nTGGlInreDtOM0G4GktS2aW1LhDEYHl069H8tTZsPGL1eEJl1PxfdQU9bGnGCMVgzsB0xogWfInDyEhUYY24
+ zgdcNSelAEia07PYp5dEmuZBh2XqQTzlt+vdWO2PzZ7RTvm+UpZuj7Po09tiihrDFYlYtkLK1NVMKwlS+hDUJdt8y/7NYbrBXk78Okm46YTqgsA/wT5q6Yj5
 
-Implement sync, output format, and input status mixer controls, to allow
-the interface to be used as a straight ADAT/SPDIF (+ Headphones) I/O
-interface.
+Rockchip RV1109 is compatible with Rockchip RV1126.
+In this series, adding required missing peripheral in
+RV1126 and its pin mux.
 
-This does not implement the matrix mixer, output gain controls, or input
-level meter feedback. The full mixer interface is only really usable
-using a dedicated userspace control app (there are too many mixer nodes
-for alsamixer to be usable), so for now we leave it up to userspace to
-directly control these features using raw USB control messages. This is
-similar to how it's done with some FireWire interfaces (ffado-mixer).
+Relfor Saib board is equipped with 1GB of RAM and 4GB of eMMC
+Pheripherals like Bluetooth 4.2, Wifi 5G, audio-codec,
+ir transmitter and receiver, etc
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
+Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+
 ---
- sound/usb/mixer_quirks.c | 413 +++++++++++++++++++++++++++++++++++++++++++++++
- sound/usb/quirks-table.h |   1 +
- 2 files changed, 414 insertions(+)
+Changes in v2:
+ - Align to the comments
+ - Rebased with master
+ - Link to v1: https://lore.kernel.org/all/20240823153528.3863993-1-karthikeyan@linumiz.com
 
-diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-index 5d6792f51f4c..2a9594f34dac 100644
---- a/sound/usb/mixer_quirks.c
-+++ b/sound/usb/mixer_quirks.c
-@@ -14,6 +14,7 @@
-  *	    Przemek Rudy (prudy1@o2.pl)
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/hid.h>
- #include <linux/init.h>
- #include <linux/math64.h>
-@@ -3087,6 +3088,415 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
- 	return 0;
- }
- 
-+/*
-+ * RME Digiface USB
-+ */
-+
-+#define RME_DIGIFACE_READ_STATUS 17
-+#define RME_DIGIFACE_STATUS_REG0L 0
-+#define RME_DIGIFACE_STATUS_REG0H 1
-+#define RME_DIGIFACE_STATUS_REG1L 2
-+#define RME_DIGIFACE_STATUS_REG1H 3
-+#define RME_DIGIFACE_STATUS_REG2L 4
-+#define RME_DIGIFACE_STATUS_REG2H 5
-+#define RME_DIGIFACE_STATUS_REG3L 6
-+#define RME_DIGIFACE_STATUS_REG3H 7
-+
-+#define RME_DIGIFACE_CTL_REG1 16
-+#define RME_DIGIFACE_CTL_REG2 18
-+
-+/* Reg is overloaded, 0-7 for status halfwords or 16 or 18 for control registers */
-+#define RME_DIGIFACE_REGISTER(reg, mask) (((reg) << 16) | (mask))
-+#define RME_DIGIFACE_INVERT BIT(31)
-+
-+/* Nonconst helpers */
-+#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-+#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
-+
-+static int snd_rme_digiface_write_reg(struct snd_kcontrol *kcontrol, int item, u16 mask, u16 val)
-+{
-+	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
-+	struct snd_usb_audio *chip = list->mixer->chip;
-+	struct usb_device *dev = chip->dev;
-+	int err;
-+
-+	err = snd_usb_ctl_msg(dev, usb_sndctrlpipe(dev, 0),
-+			      item,
-+			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+			      val, mask, NULL, 0);
-+	if (err < 0)
-+		dev_err(&dev->dev,
-+			"unable to issue control set request %d (ret = %d)",
-+			item, err);
-+	return err;
-+}
-+
-+static int snd_rme_digiface_read_status(struct snd_kcontrol *kcontrol, u32 status[4])
-+{
-+	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
-+	struct snd_usb_audio *chip = list->mixer->chip;
-+	struct usb_device *dev = chip->dev;
-+	__le32 buf[4];
-+	int err;
-+
-+	err = snd_usb_ctl_msg(dev, usb_rcvctrlpipe(dev, 0),
-+			      RME_DIGIFACE_READ_STATUS,
-+			      USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+			      0, 0,
-+			      buf, sizeof(buf));
-+	if (err < 0) {
-+		dev_err(&dev->dev,
-+			"unable to issue status read request (ret = %d)",
-+			err);
-+	} else {
-+		for (int i = 0; i < ARRAY_SIZE(buf); i++)
-+			status[i] = le32_to_cpu(buf[i]);
-+	}
-+	return err;
-+}
-+
-+static int snd_rme_digiface_get_status_val(struct snd_kcontrol *kcontrol)
-+{
-+	int err;
-+	u32 status[4];
-+	bool invert = kcontrol->private_value & RME_DIGIFACE_INVERT;
-+	u8 reg = (kcontrol->private_value >> 16) & 0xff;
-+	u16 mask = kcontrol->private_value & 0xffff;
-+	u16 val;
-+
-+	err = snd_rme_digiface_read_status(kcontrol, status);
-+	if (err < 0)
-+		return err;
-+
-+	switch (reg) {
-+	/* Status register halfwords */
-+	case RME_DIGIFACE_STATUS_REG0L ... RME_DIGIFACE_STATUS_REG3H:
-+		break;
-+	case RME_DIGIFACE_CTL_REG1: /* Control register 1, present in halfword 3L */
-+		reg = RME_DIGIFACE_STATUS_REG3L;
-+		break;
-+	case RME_DIGIFACE_CTL_REG2: /* Control register 2, present in halfword 3H */
-+		reg = RME_DIGIFACE_STATUS_REG3H;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (reg & 1)
-+		val = status[reg >> 1] >> 16;
-+	else
-+		val = status[reg >> 1] & 0xffff;
-+
-+	if (invert)
-+		val ^= mask;
-+
-+	return field_get(mask, val);
-+}
-+
-+static int snd_rme_digiface_rate_get(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	int freq = snd_rme_digiface_get_status_val(kcontrol);
-+
-+	if (freq < 0)
-+		return freq;
-+	if (freq >= ARRAY_SIZE(snd_rme_rate_table))
-+		return -EIO;
-+
-+	ucontrol->value.integer.value[0] = snd_rme_rate_table[freq];
-+	return 0;
-+}
-+
-+static int snd_rme_digiface_enum_get(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	int val = snd_rme_digiface_get_status_val(kcontrol);
-+
-+	if (val < 0)
-+		return val;
-+
-+	ucontrol->value.enumerated.item[0] = val;
-+	return 0;
-+}
-+
-+static int snd_rme_digiface_enum_put(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	bool invert = kcontrol->private_value & RME_DIGIFACE_INVERT;
-+	u8 reg = (kcontrol->private_value >> 16) & 0xff;
-+	u16 mask = kcontrol->private_value & 0xffff;
-+	u16 val = field_prep(mask, ucontrol->value.enumerated.item[0]);
-+
-+	if (invert)
-+		val ^= mask;
-+
-+	return snd_rme_digiface_write_reg(kcontrol, reg, mask, val);
-+}
-+
-+static int snd_rme_digiface_current_sync_get(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	int ret = snd_rme_digiface_enum_get(kcontrol, ucontrol);
-+
-+	/* 7 means internal for current sync */
-+	if (ucontrol->value.enumerated.item[0] == 7)
-+		ucontrol->value.enumerated.item[0] = 0;
-+
-+	return ret;
-+}
-+
-+static int snd_rme_digiface_sync_state_get(struct snd_kcontrol *kcontrol,
-+					   struct snd_ctl_elem_value *ucontrol)
-+{
-+	u32 status[4];
-+	int err;
-+	bool valid, sync;
-+
-+	err = snd_rme_digiface_read_status(kcontrol, status);
-+	if (err < 0)
-+		return err;
-+
-+	valid = status[0] & BIT(kcontrol->private_value);
-+	sync = status[0] & BIT(5 + kcontrol->private_value);
-+
-+	if (!valid)
-+		ucontrol->value.enumerated.item[0] = SND_RME_CLOCK_NOLOCK;
-+	else if (!sync)
-+		ucontrol->value.enumerated.item[0] = SND_RME_CLOCK_LOCK;
-+	else
-+		ucontrol->value.enumerated.item[0] = SND_RME_CLOCK_SYNC;
-+	return 0;
-+}
-+
-+
-+static int snd_rme_digiface_format_info(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_info *uinfo)
-+{
-+	static const char *const format[] = {
-+		"ADAT", "S/PDIF"
-+	};
-+
-+	return snd_ctl_enum_info(uinfo, 1,
-+				 ARRAY_SIZE(format), format);
-+}
-+
-+
-+static int snd_rme_digiface_sync_source_info(struct snd_kcontrol *kcontrol,
-+					     struct snd_ctl_elem_info *uinfo)
-+{
-+	static const char *const sync_sources[] = {
-+		"Internal", "Input 1", "Input 2", "Input 3", "Input 4"
-+	};
-+
-+	return snd_ctl_enum_info(uinfo, 1,
-+				 ARRAY_SIZE(sync_sources), sync_sources);
-+}
-+
-+static int snd_rme_digiface_rate_info(struct snd_kcontrol *kcontrol,
-+				      struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-+	uinfo->count = 1;
-+	uinfo->value.integer.min = 0;
-+	uinfo->value.integer.max = 200000;
-+	uinfo->value.integer.step = 0;
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new snd_rme_digiface_controls[] = {
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 1 Sync",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_sync_state_info,
-+		.get = snd_rme_digiface_sync_state_get,
-+		.private_value = 0,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 1 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG0H, BIT(0)) |
-+			RME_DIGIFACE_INVERT,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 1 Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG1L, GENMASK(3, 0)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 2 Sync",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_sync_state_info,
-+		.get = snd_rme_digiface_sync_state_get,
-+		.private_value = 1,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 2 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG0L, BIT(13)) |
-+			RME_DIGIFACE_INVERT,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 2 Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG1L, GENMASK(7, 4)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 3 Sync",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_sync_state_info,
-+		.get = snd_rme_digiface_sync_state_get,
-+		.private_value = 2,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 3 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG0L, BIT(14)) |
-+			RME_DIGIFACE_INVERT,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 3 Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG1L, GENMASK(11, 8)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 4 Sync",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_sync_state_info,
-+		.get = snd_rme_digiface_sync_state_get,
-+		.private_value = 3,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 4 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG0L, GENMASK(15, 12)) |
-+			RME_DIGIFACE_INVERT,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Input 4 Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG1L, GENMASK(3, 0)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Output 1 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.put = snd_rme_digiface_enum_put,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG2, BIT(0)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Output 2 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.put = snd_rme_digiface_enum_put,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG2, BIT(1)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Output 3 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.put = snd_rme_digiface_enum_put,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG2, BIT(3)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Output 4 Format",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.info = snd_rme_digiface_format_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.put = snd_rme_digiface_enum_put,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG2, BIT(4)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Sync Source",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.info = snd_rme_digiface_sync_source_info,
-+		.get = snd_rme_digiface_enum_get,
-+		.put = snd_rme_digiface_enum_put,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG1, GENMASK(2, 0)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Current Sync Source",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_digiface_sync_source_info,
-+		.get = snd_rme_digiface_current_sync_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG0L, GENMASK(12, 10)),
-+	},
-+	{
-+		/*
-+		 * This is writeable, but it is only set by the PCM rate.
-+		 * Mixer apps currently need to drive the mixer using raw USB requests,
-+		 * so they can also change this that way to configure the rate for
-+		 * stand-alone operation when the PCM is closed.
-+		 */
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "System Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_CTL_REG1, GENMASK(6, 3)),
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Current Rate",
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ | SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.info = snd_rme_rate_info,
-+		.get = snd_rme_digiface_rate_get,
-+		.private_value = RME_DIGIFACE_REGISTER(RME_DIGIFACE_STATUS_REG1H, GENMASK(7, 4)),
-+	}
-+};
-+
-+static int snd_rme_digiface_controls_create(struct usb_mixer_interface *mixer)
-+{
-+	int err, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(snd_rme_digiface_controls); ++i) {
-+		err = add_single_ctl_with_resume(mixer, 0,
-+						 NULL,
-+						 &snd_rme_digiface_controls[i],
-+						 NULL);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Pioneer DJ DJM Mixers
-  *
-@@ -3645,6 +4055,9 @@ int snd_usb_mixer_apply_create_quirk(struct usb_mixer_interface *mixer)
- 	case USB_ID(0x2a39, 0x3fb0): /* RME Babyface Pro FS */
- 		err = snd_bbfpro_controls_create(mixer);
- 		break;
-+	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
-+		err = snd_rme_digiface_controls_create(mixer);
-+		break;
- 	case USB_ID(0x2b73, 0x0017): /* Pioneer DJ DJM-250MK2 */
- 		err = snd_djm_controls_create(mixer, SND_DJM_250MK2_IDX);
- 		break;
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 631b9ab80f6c..24c981c9b240 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3620,6 +3620,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
- 			 * Three modes depending on sample rate band,
- 			 * with different channel counts for in/out
- 			 */
-+			{ QUIRK_DATA_STANDARD_MIXER(0) },
- 			{
- 				QUIRK_DATA_AUDIOFORMAT(0) {
- 					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+---
 
+Karthikeyan Krishnasamy (8):
+  ARM: dts: rockchip: Add i2c3 node for RV1126
+  ARM: dts: rockchip: Add i2s0 node for RV1126
+  ARM: dts: rockchip: Add pwm node for RV1126
+  ARM: dts: rockchip: Add watchdog node for RV1126
+  dt-bindings: rtc: microcrystal,rv3028: add clock-cells property
+  dt-bindings: vendor-prefixes: Add Relfor labs
+  dt-bindings: arm: rockchip: Add Relfor Saib
+  ARM: dts: rockchip: Add Relfor Saib board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../bindings/rtc/microcrystal,rv3028.yaml     |   3 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm/boot/dts/rockchip/Makefile           |   1 +
+ .../boot/dts/rockchip/rv1109-relfor-saib.dts  | 429 ++++++++++++++++++
+ .../arm/boot/dts/rockchip/rv1126-pinctrl.dtsi | 256 +++++++++++
+ arch/arm/boot/dts/rockchip/rv1126.dtsi        | 159 +++++++
+ 7 files changed, 855 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts
+
+
+base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
 -- 
-2.46.0
+2.39.2
 
 
