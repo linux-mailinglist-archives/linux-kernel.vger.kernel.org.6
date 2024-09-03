@@ -1,153 +1,208 @@
-Return-Path: <linux-kernel+bounces-313020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DEE969F22
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D206F969F29
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E7A1C23BD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D4A1C23CFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C4F7462;
-	Tue,  3 Sep 2024 13:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4500AB640;
+	Tue,  3 Sep 2024 13:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YEy6xRW3"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lOGG0tUe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T03wFJyX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D135B63CB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62E18489;
+	Tue,  3 Sep 2024 13:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370639; cv=none; b=GsIlcKTdVUmOvtUf3co8x3uHEsXZYc2WG0piTGiqeqIl7ExSj6uncj5AYVw8X7SLBGTcxR7YBktvtFLsy6E9lOc+ypiC7r/6y38Nt3Y0iszPDMkFdmPlQS4E0mZyegKF5rHGa9khxgHo+4c83laIhtzKvzwZG3Rl+uA+peVjJLM=
+	t=1725370703; cv=none; b=hDgNYiZX+tOc1xlk4oCD2h8ulR+J5zr7EGc451mNHKssgtV11sxihXwrl/XW274YxiRVHT4YRYU+yuAIis/ZyrzhtfX0joQJSiEh5AlYBSF5rR8cNspCIlRA9+mLce7vCy/HuipfaXoyU6qqXyYRXM4YX4xqa0b7E9oluWcBsdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370639; c=relaxed/simple;
-	bh=zK4sxTzKS9zno4bDB1GFZG25ka8k5P4lmUmsy43LBUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LP73zwMAuyKMDgHSGmvxTqzIW0CwbMJkmB4U88GPqL2EVUK9RjJqiKiObUVKwat8Y31+4G/89CDMICuLxBUUTwLGF7KdyzW0suL84ZPTC2/JbKaSHgTowEeKExUsDWeRSeDpGTgJruziqFcWFqy6FNZNtILRahpb3B0dK4/XpkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YEy6xRW3; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4568571de47so25738841cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1725370636; x=1725975436; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3JF7HWNoOErj8MlWsrCPxI4aMhOK2ReOgZKcSkTwbsQ=;
-        b=YEy6xRW3g+izcuYNL78lgXbqlHub+rLTh7/QGM5GwsKj9eCcnw8d3pn1B7vRMMKgY4
-         +zB6w5TIiHFvq3x8h+9fOLlnqaI+xoXRgufDzki4XmvgtSNW2HPGmdiU9enM2+h4vj2R
-         3c+ZpfuBKjIUux2ULCRFfLiFM/txTdOBteiPWhnAR86CJRo/bPML7p5wZ/PS14jC0fxo
-         udqMoZVEG6eOMuy5I/ZiZXZh328RH8IxAoNZQY0v8elak97rzabMEU3S9f/RqlbELnyv
-         LDkpLW2ZgMgi1D/vpMGh+pcV7+4p3DKORJXqb5yaKUDleK/Cx/VAgk0J48dxOiiK7XDn
-         kzaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725370636; x=1725975436;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3JF7HWNoOErj8MlWsrCPxI4aMhOK2ReOgZKcSkTwbsQ=;
-        b=FMRw0pUeffqOrgjxo0m1M7M/cLgQOnmkdzPvqabV1tsYIV0RyvKpnMD9ksoGHrsQLS
-         Ofek279Z9iGFXx/+98WHxBaS3h6Xiqe9pIgWp9koen3530nf3JzMjTFdr4uqd9Qs9NG2
-         b3emkfdXR6oDp1e9XL2uut3OV8AQ1MxxXd7q7iWQFCecB+cVut5XoJCeizhY7GYJDqpa
-         kWU9TxJXjnjJa1gDuMltJ8rQXpVu2oLos3yjZ9V0XAq1bc9/wHcHMG06FHpso2bkRSb6
-         8RMacclbwJB8hF36ZbZvYnDQD5VECUFZa0uLHJMZn5q5pSyD+2dGKUlQjTbbMlhBOWsK
-         YqnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7DSw56ocpEZB1oPG5fVIBsemOIuQFSK/B3n2DvLoKGabpkT5py2Pr32+938UxvG/W2XSgRZvXRDkmov0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI/OQlZLzyeP8UC6O9LPt/G94nYtGyMqQknRGe/8TMkA8dS/re
-	TvfQxGV6EID0dJ1I2qhWkjmea9t+mHSKsWyPbE3D5DcM2V9egpnjhAr9qFg4QqY=
-X-Google-Smtp-Source: AGHT+IFbHa7o20qp9c+PMcvFFBJrJFRlDIPpShG96ziR0pYYFpBTDIwKUMfBGqIoY0lzHhFD85PCPQ==
-X-Received: by 2002:a05:622a:580d:b0:447:f922:64fd with SMTP id d75a77b69052e-456fd7e531fmr123363691cf.35.1725370636441;
-        Tue, 03 Sep 2024 06:37:16 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-457ca0d55f2sm28229081cf.66.2024.09.03.06.37.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 06:37:16 -0700 (PDT)
-Date: Tue, 3 Sep 2024 09:36:50 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, nphamcs@gmail.com,
-	nehagholkar@meta.com, abhishekd@meta.com,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Feng Tang <feng.tang@intel.com>
-Subject: Re: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
-Message-ID: <ZtcQ8sgr_Wgu3pB0@PC2K9PVX.TheFacebook.com>
-References: <20240803094715.23900-1-gourry@gourry.net>
- <875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZsNhgU-TiTz2WKg5@PC2K9PVX.TheFacebook.com>
- <87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1725370703; c=relaxed/simple;
+	bh=C+sgy9ygPjkKKWYikAn16K6Zatsen+TKguANslXVzuA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=CJgQ0GaOrNffm2EIVbJX38zUFhyxdilk/07Y8SzYvlXPoKA7xw+jto1mSJ8xuixfq5ijlbTqB541FxtQ7QGplEnC2f0QM9LAv7QOnL0eXJBY3asUborvhawJpz6WBgFVdw+Qmc0X2moDHx/m+5S0zNlyQ3Q8Fe2ok9lb0cXa8HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lOGG0tUe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T03wFJyX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Sep 2024 13:38:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725370699;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0ZeKejKZoUyFGInMN6zCugIaeKk50Mi219VWLIw9NRM=;
+	b=lOGG0tUet5ccZHq+A4iVUDFBTqjXS1HmwA3xQA4La9KGASZqg5LQoFXDgSsV9AlXKts+UZ
+	AEVEjgG0sOlwoAdaViHO9DMPzfVCVPw6Qdi8ZzqUpAhWvndN0ogpnSgktzRmZy9HpKjPRu
+	KoT5OHyIXrIFOl17cmibZnfd9Rshbld5Nvq6GKCs8R3Dmgpee5Pey5aUm3hDxT/WVA7egz
+	QYpJ0zIciVNwF0IcT0Bsh/5t0XVcIQuE3pUiad01/LCngEvV6kbrV65N9PeN5I1vnz0NN9
+	JD11aNfOVoDiHjyseJli+X0Do65WeXED3I5YBl1T8UDN9BJ+39EL0AbRwgLTaw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725370699;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0ZeKejKZoUyFGInMN6zCugIaeKk50Mi219VWLIw9NRM=;
+	b=T03wFJyXCrJJlLgYvbrEG/+NxQzJB9WCq6ogNtjsCcDm9Rh7GHXJI/F/0s0/6tmJGDxVqU
+	5splABlI1z/+U2BA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Add put_prev_task(.next)
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240813224016.367421076@infradead.org>
+References: <20240813224016.367421076@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Message-ID: <172537069920.2215.6437489420063122852.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 02:53:26PM +0800, Huang, Ying wrote:
-> Gregory Price <gourry@gourry.net> writes:
-> 
-> > On Mon, Aug 19, 2024 at 03:46:00PM +0800, Huang, Ying wrote:
-> >> Gregory Price <gourry@gourry.net> writes:
-> >> 
-> >> > Unmapped pagecache pages can be demoted to low-tier memory, but 
-> >> > they can only be promoted if a process maps the pages into the
-> >> > memory space (so that NUMA hint faults can be caught).  This can
-> >> > cause significant performance degradation as the pagecache ages
-> >> > and unmapped, cached files are accessed.
-> >> >
-> >> > This patch series enables the pagecache to request a promotion of
-> >> > a folio when it is accessed via the pagecache.
-> >> >
-> >> > We add a new `numa_hint_page_cache` counter in vmstat to capture
-> >> > information on when these migrations occur.
-> >> 
-> >> It appears that you will promote page cache page on the second access.
-> >> Do you have some better way to identify hot pages from the not-so-hot
-> >> pages?  How to balance between unmapped and mapped pages?  We have hot
-> >> page selection for hot pages.
-> >> 
-> >> [snip]
-> >> 
-> >
-> > I've since explored moving this down under a (referenced && active) check.
-> >
-> > This would be more like promotion on third access within an LRU shrink
-> > round (the LRU should, in theory, hack off the active bits on some decent
-> > time interval when the system is pressured).
-> >
-> > Barring adding new counters to folios to track hits, I don't see a clear
-> > and obvious way way to track hotness.  The primary observation here is 
-> > that pagecache is un-mapped, and so cannot use numa-fault hints.
-> >
-> > This is more complicated with MGLRU, but I'm saving that for after I
-> > figure out the plan for plain old LRU.
-> 
-> Several years ago, we have tried to use the access time tracking
-> mechanism of NUMA balancing to track the access time latency of unmapped
-> file cache folios.  The original implementation is as follows,
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=5f2e64ce75c0322602c2ec8c70b64bb69b1f1329
-> 
-> What do you think about this?
->
+The following commit has been merged into the sched/core branch of tip:
 
-Also seems like an interesting option. I've been looking at another old
-proposal to simply add a new LRU that was implemented by kbusch a few
-years back.
+Commit-ID:     b2d70222dbf2a2ff7a972a685d249a5d75afa87f
+Gitweb:        https://git.kernel.org/tip/b2d70222dbf2a2ff7a972a685d249a5d75afa87f
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 14 Aug 2024 00:25:56 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 03 Sep 2024 15:26:32 +02:00
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kbusch/linux.git/commit/?h=lru-promote&id=6616afe9a722f6ebedbb27ade3848cf07b9a3af7
+sched: Add put_prev_task(.next)
 
-I may spend a little time to add a few different methods in with a switch
-I can flip to test them side by side / with each other and see what results
-we can get.
+In order to tell the previous sched_class what the next task is, add
+put_prev_task(.next).
+
+Notable SCX will use this to:
+
+ 1) determine the next task will leave the SCX sched class and push
+    the current task to another CPU if possible.
+ 2) statistics on how often and which other classes preempt it
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20240813224016.367421076@infradead.org
+---
+ kernel/sched/deadline.c  | 2 +-
+ kernel/sched/fair.c      | 2 +-
+ kernel/sched/idle.c      | 2 +-
+ kernel/sched/rt.c        | 2 +-
+ kernel/sched/sched.h     | 6 +++---
+ kernel/sched/stop_task.c | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index e83b684..9ce93d0 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2436,7 +2436,7 @@ static struct task_struct *pick_task_dl(struct rq *rq)
+ 	return __pick_task_dl(rq);
+ }
  
-> --
-> Best Regards,
-> Huang, Ying
+-static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
++static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_struct *next)
+ {
+ 	struct sched_dl_entity *dl_se = &p->dl;
+ 	struct dl_rq *dl_rq = &rq->dl;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f673112..d697a0a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8869,7 +8869,7 @@ void fair_server_init(struct rq *rq)
+ /*
+  * Account for a descheduled task:
+  */
+-static void put_prev_task_fair(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ {
+ 	struct sched_entity *se = &prev->se;
+ 	struct cfs_rq *cfs_rq;
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index a343e1c..7a105a0 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -450,7 +450,7 @@ static void wakeup_preempt_idle(struct rq *rq, struct task_struct *p, int flags)
+ 	resched_curr(rq);
+ }
+ 
+-static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ {
+ 	dl_server_update_idle_time(rq, prev);
+ }
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 8025f39..172c588 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1748,7 +1748,7 @@ static struct task_struct *pick_task_rt(struct rq *rq)
+ 	return p;
+ }
+ 
+-static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
++static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct task_struct *next)
+ {
+ 	struct sched_rt_entity *rt_se = &p->rt;
+ 	struct rt_rq *rt_rq = &rq->rt;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 2a216c9..3744f16 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2314,7 +2314,7 @@ struct sched_class {
+ 	 */
+ 	struct task_struct *(*pick_next_task)(struct rq *rq, struct task_struct *prev);
+ 
+-	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
++	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct task_struct *next);
+ 	void (*set_next_task)(struct rq *rq, struct task_struct *p, bool first);
+ 
+ #ifdef CONFIG_SMP
+@@ -2364,7 +2364,7 @@ struct sched_class {
+ static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+ {
+ 	WARN_ON_ONCE(rq->curr != prev);
+-	prev->sched_class->put_prev_task(rq, prev);
++	prev->sched_class->put_prev_task(rq, prev, NULL);
+ }
+ 
+ static inline void set_next_task(struct rq *rq, struct task_struct *next)
+@@ -2393,7 +2393,7 @@ static inline void put_prev_set_next_task(struct rq *rq,
+ 	if (next == prev)
+ 		return;
+ 
+-	prev->sched_class->put_prev_task(rq, prev);
++	prev->sched_class->put_prev_task(rq, prev, next);
+ 	next->sched_class->set_next_task(rq, next, true);
+ }
+ 
+diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
+index 0fd5352..058dd42 100644
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -59,7 +59,7 @@ static void yield_task_stop(struct rq *rq)
+ 	BUG(); /* the stop task should never yield, its pointless. */
+ }
+ 
+-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ {
+ 	update_curr_common(rq);
+ }
 
