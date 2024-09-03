@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-312033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D923D969112
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:49:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221AC969115
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9721B284173
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 881ABB2248A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D545C1CCEFD;
-	Tue,  3 Sep 2024 01:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+QeXC2X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276531CCEF4;
+	Tue,  3 Sep 2024 01:50:19 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F341CCED9;
-	Tue,  3 Sep 2024 01:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B49D33CD2;
+	Tue,  3 Sep 2024 01:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725328170; cv=none; b=Mp27Ce4jJcdla1f4fpC+eHy2jIaoCCnWU1dEayWHer0WVjNORf6aDPBEGynkrfY2khEyvwGWMTQzYiK1RKlqPYKOV6F8kRq096vbA8AWRMG2C5eZoQkEm20Erzz7G5f3V3faauAVjWFSzBz6GJo+NhpZH4MKea30lqO6tllJdxc=
+	t=1725328218; cv=none; b=PzgmtAMUmwGr9z8yC8MJqq0lRj++zI+PhQ0G0/8IWTZYfCqYh5Y9ZAKJg39vTsxNSVXEG29ZAgrtPpDsEf4p16uoDAmH8NxLlGTH+Yai35nk1iA3KdxwAJcNI6ffnf8GFhA+FWyVjvgxzGVF0WRQW3CPK0UopQ/LXEa8fWV7uFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725328170; c=relaxed/simple;
-	bh=MYd+BDZHjT4A49/uPMG3JKdeSg29HklOPqAeNtZYWOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OmLRmpl3g80+up3s6JN655JLehkFlbeO4yhab40wvF4Z7nGLnIC/Ity0k5z1QMFqcYf69cDJpTJD4cxMcsuTQx6P5DUb3IgJvmjz0TbXgP7BdHbtvxs+dMglbjtZkemh7CiYhrpds0db60tovpd6DQBfxlHlziU3gYtSTa0omaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+QeXC2X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF07C4CEC2;
-	Tue,  3 Sep 2024 01:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725328169;
-	bh=MYd+BDZHjT4A49/uPMG3JKdeSg29HklOPqAeNtZYWOQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=U+QeXC2X1xudw533PDy63Jd71UFCyOegTYWfMWdJdl3xMIYgieBBJ57QEvO6Nuiju
-	 ziBP/E56LLdhirSIbhjy6x8sI34F8nBb45hV5jKNdTLAXJbkMwucnaexUitgrIYxxx
-	 eTtBCzAXlxQ2SUJPDMXoKkV79upiyjETusnKFJJMF/oa5meQdZusy5ltBUMmusM8d1
-	 ymNSYkz94NenKd1w/Ilg0MKS5kNr+lt5tLnXLPvVCc29bzwaY1pZtvgAxvsZytlsAT
-	 m/Ng3cEBcXjRjxAROcOECAXlXd2LxDMc/Fmtw48XMcjld5OPjdSWg1GgKdwiiCnokn
-	 o+iSZYY52Z6CQ==
-Date: Mon, 2 Sep 2024 20:49:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 11/11] PCI: imx6: Add i.MX8Q PCIe root complex (RC)
- support
-Message-ID: <20240903014927.GA230795@bhelgaas>
+	s=arc-20240116; t=1725328218; c=relaxed/simple;
+	bh=c7iGIBmPQ0+X5ed9jb4ofzKU/5N8V6B+VMyfLL4JSoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rla34cmNkkfWpCJCyukMyyTaCkJqOIrJLQ/tc9ItlAtPaAYpek/4n+HCiJd8Q+3XZ1eGOfEdQ1tEIJN+gqPzAc4NeFgOn95rLuR1Fn4KJKSpiZB5TgvCYTUuV+qfA7+JtWevGcAemBpBZk8SaLA4LnT8vb2SjFFMooY2kcVWPjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowACHj6NIa9Zm_wqzAA--.29549S2;
+	Tue, 03 Sep 2024 09:50:01 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	johannes.berg@intel.com,
+	ruanjinjie@huawei.com,
+	make24@iscas.ac.cn,
+	howard-yh.hsu@mediatek.com,
+	chui-hao.chiu@mediatek.com,
+	greearb@candelatech.com,
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] mt76: mt7915: check devm_kasprintf() returned value
+Date: Tue,  3 Sep 2024 09:49:55 +0800
+Message-Id: <20240903014955.4145423-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729-pci2_upstream-v8-11-b68ee5ef2b4d@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACHj6NIa9Zm_wqzAA--.29549S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW7ZFW5Ww13Zw4xXFWxCrg_yoWDAFbEgr
+	W8Zrn3GFyrGwn0kr47Cry3Cryaya4kZF1kJ393trW5GrW8AFW7WryfZrn8J397Cws29r15
+	Gwn8AryrZ398ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbh8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRMzuWDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Mon, Jul 29, 2024 at 04:18:18PM -0400, Frank Li wrote:
-> From: Richard Zhu <hongxing.zhu@nxp.com>
-> 
-> Implement i.MX8Q (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe RC support. While
-> the controller resembles that of iMX8MP, the PHY differs significantly.
-> Notably, there's a distinction between PCI bus addresses and CPU addresses.
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked. Fix this lack and check the returned value.
 
-This bus/CPU address distinction is unrelated to the PHY despite the
-fact that this phrasing suggests they might be related.
+Found by code review.
 
-> Introduce IMX_PCIE_FLAG_CPU_ADDR_FIXUP in drvdata::flags to indicate driver
-> need the cpu_addr_fixup() callback to facilitate CPU address to PCI bus
-> address conversion according to "ranges" property.
+Cc: stable@vger.kernel.org
+Fixes: 6ae39b7c7ed4 ("wifi: mt76: mt7921: Support temp sensor")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/net/wireless/mediatek/mt76/mt7915/init.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I actually don't understand why the .cpu_addr_fixup() callback exists
-at all.  I guess this is my lack of understanding here, but on the
-ACPI side, if CPU addresses and PCI bus addresses are different, ACPI
-tells us how to convert them.  It seems like it should be analogous
-for DT.
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+index a978f434dc5e..7bc3b4cd3592 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+@@ -194,6 +194,8 @@ static int mt7915_thermal_init(struct mt7915_phy *phy)
+ 
+ 	name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7915_%s",
+ 			      wiphy_name(wiphy));
++	if (!name)
++		return -ENOMEM;
+ 
+ 	cdev = thermal_cooling_device_register(name, phy, &mt7915_thermal_ops);
+ 	if (!IS_ERR(cdev)) {
+-- 
+2.25.1
 
-> +static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
-> +{
-> +	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
-> +	struct dw_pcie_rp *pp = &pcie->pp;
-> +	struct resource_entry *entry;
-> +	unsigned int offset;
-> +
-> +	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
-> +		return cpu_addr;
-> +
-> +	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> +	offset = entry->offset;
-
-I would have assumed that if the DT is correct, "offset" will be zero
-for platforms where PCI bus addresses are identical to CPU addresses,
-so we could (and *should*) do this for all platforms, not just IMX8Q.
-But I must be missing something?
-
-> +	return (cpu_addr - offset);
-> +}
 
