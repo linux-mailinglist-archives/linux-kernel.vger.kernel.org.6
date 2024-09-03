@@ -1,166 +1,181 @@
-Return-Path: <linux-kernel+bounces-313498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3C196A628
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:07:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C413096A626
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612291C23FCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A593287865
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773C919007E;
-	Tue,  3 Sep 2024 18:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C70018FDCD;
+	Tue,  3 Sep 2024 18:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ataplj0G"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A24EF9DF;
-	Tue,  3 Sep 2024 18:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQh42C54"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C20F9DF;
+	Tue,  3 Sep 2024 18:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725386831; cv=none; b=j3A9jxqao5fx0RdZhpiGv7k8XkbpyGqqlNCggkK7XTAuGLlB/hy7Dkfg4bWQhm9TfzgPsDnfLkHYW35CnNLkCtQRH9i/9s6bbLT7gRW4xnBUt29xNqJBLcq3xNfrt0pTQHD0Qb5Mjy1KFhs350G2x59G6uCp1Cp2YfCnj8LSrvs=
+	t=1725386801; cv=none; b=QKIEJ8byKjFcScduZd94rdq8irmmyZWi6HyUy5sGor7DRxxE1ENgTdqA2Gite6iiBmp6lgbU2ue2F3YUv3PYCO7PYM/yrgIiwQkQmFdOuleC6R+PPI9V2M/Mk3KS1w56/LRiqRmeOu7IKU72gN4ViZJMqQZLUkWtOC9TMjF0EdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725386831; c=relaxed/simple;
-	bh=GcyWQO62Icmx4b81tJNoRo89mbEkBZ4wiHm4cqVtjbg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=R5lFOLNAcl6bAu0Y9/zhWn5LDRVdCQdHTZEm7cI9EmlaHNxBFazeChvSAL2dD9iAXbhxkgU7qKgVKfbrx4UfKIhE1ppi49KeLw4RHc1mA0u9CcSgwzFJZd5h3b95PSEk6IJFxQfX5jcDc1mOFnfc5d3f/VNtxZ9+ASFJT5WwaEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ataplj0G; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from smtpclient.apple (d66-183-91-182.bchsia.telus.net [66.183.91.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7313C20B7165;
-	Tue,  3 Sep 2024 11:07:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7313C20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1725386824;
-	bh=eDO1Gub+WhZH8e1yf5DOAq4k3qry711BGtAlfp/se7c=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=Ataplj0G1mJQ7jpADnNfZwl/BaDhy+4NcF3ctLVfTPGo3y8YDLo8rvOGL1dt7I5iX
-	 95S4fwK1a4WgoRp7i99SXDxPcsNindIBOq8Zpq+JCr6n/wypWoABYpR+zP3YYpFjWM
-	 LRZNkPa0HlgUVZZ8LlGdg3J9nSLRg2EDzLigUO3U=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1725386801; c=relaxed/simple;
+	bh=QBlWFVCUitxnwtkee+MaQw7kPhB3x9e9lyFjxZvuhUs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=J+ktwUu2CZYioxjq3YVRjG//djAts/wWO/DyO4mE/Iu18S0kOvTxvCnyR67dkBhinBlUDzA6xEinedkasQ8w8sfUV+LUIbcCy9GpSawCGNAajItrDRfq6Y9xIHFu5cxk6nOU1AJ6O1ouUROgkoumvzVvfl9ru3XEtb4+6GVfWgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQh42C54; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53345dcd377so7854087e87.2;
+        Tue, 03 Sep 2024 11:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725386798; x=1725991598; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xXRpbXbCVh0YAZLb+6qWmUYss8TmYOa1oNMVO2XKui0=;
+        b=CQh42C54A/zf5BjzyV7lPJ+KljWOZ88pAnkp1p7yCLR/XaQWl0tHxBBC8+VqUzEOUU
+         OPY+3LQk1VGDploVyuoGn9IUberBBnGfK3kvmTf7HdLC4U2HE82vlJNbkttIc7XOwnwl
+         02Oi96ZORpH7gVxAuKZJsTtso4sg5oKrwDfc6Hkt7NBVvXzBB3V7eizPUZCfJ2aSMzRl
+         4sN2cKicBkyAfkZ3i0kJ3dv608HPr7yAY7Hy92orZCblCeVSrtRW88sRGzBKMTHNfRkO
+         6JgKkDDTZc5vW+JA3cl9ZYL/yfPrejC69Vt6k9dAuIYKH+aPIapFtqYfv942sL1BmAme
+         eltw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725386798; x=1725991598;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xXRpbXbCVh0YAZLb+6qWmUYss8TmYOa1oNMVO2XKui0=;
+        b=aIZ9GrQarcjyuZU/eQOdPzAp6iESKLaWsOZzVbATX5y6IK2RmWGHLCc+Rb7s61zDFV
+         QaEysLRZUzu3sTcuavCCJPsL/AS0Q76937iB8UZxNB9hsSVAFfZfDsa3bI6JCr1AO1I9
+         DWskIOLQnMExYil28WAM4wzzu3p31fkjB4SxzZWCXDJ52PbrjURkNKp6qTqskQrHkG0n
+         jJCtDluqufhUZL+mmKWlNzrsIJHYYUzMX2M4XOVInaaYHXVBmbDvAG9JmPdagV68R8F+
+         5dcD8N/Tdw/h9WYCzkV81q1Md5KBlu7nrWKIBcX7rS7noVKZfY0YjAxBsmwUskzH/nRn
+         sIsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHtd02yRvvyxhKJUoN/Kb4IZvRGSSQZlJloLxggAgBMEkEfcFoU8T5T9ynQB7BDNGMsJiMFNsAxBOyUJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkWIb7PDiJfr10VfjPESffduUtudc2YZHHTQy6RvoKbApNCYt6
+	ZCXmMV/4mw8EoQhYTcDqWLOCcR3CTLnBdcAFYHSZFgbN0qEj7rJH
+X-Google-Smtp-Source: AGHT+IHJPovIlcxdpj7GDjPSGCf3ASW4Oletmm6vw7nAJOFodovFo1rmO0RWmerXoHTUB6RkuMYm/Q==
+X-Received: by 2002:a05:6512:ea1:b0:52e:9c69:b25b with SMTP id 2adb3069b0e04-53546b2a85fmr9316277e87.28.1725386797488;
+        Tue, 03 Sep 2024 11:06:37 -0700 (PDT)
+Received: from [10.0.0.100] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079b82fsm2102561e87.17.2024.09.03.11.06.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 11:06:36 -0700 (PDT)
+Message-ID: <ed0bb435-c7a0-490e-a1b4-3de05fdf4434@gmail.com>
+Date: Tue, 3 Sep 2024 21:06:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFT][PATCH 0/5] firewire: use sleepable workqueue to handle 1394
- OHCI IT/IR context events
-From: Allen Pais <apais@linux.microsoft.com>
-In-Reply-To: <20240901110642.154523-1-o-takashi@sakamocchi.jp>
-Date: Tue, 3 Sep 2024 11:06:53 -0700
-Cc: linux1394-devel@lists.sourceforge.net,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-sound@vger.kernel.org,
- edmund.raile@protonmail.com,
- linux-media@vger.kernel.org,
- netdev@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EB8EC5FD-AB6C-48C3-8980-65E8CB444BDF@linux.microsoft.com>
-References: <20240901110642.154523-1-o-takashi@sakamocchi.jp>
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: ti: k3-udma: Prioritize CSI RX traffic as RT
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+To: Jai Luthra <j-luthra@ti.com>, Vinod Koul <vkoul@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827-csi_rt-v1-1-f0c5b9488a1e@ti.com>
+ <69542ad0-c62f-438a-8e3e-0c827b65f0d9@gmail.com>
+Content-Language: en-US
+In-Reply-To: <69542ad0-c62f-438a-8e3e-0c827b65f0d9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
->This series of change is inspired by BH workqueue available in recent
->kernel.
+On 02/09/2024 23:24, Péter Ujfalusi wrote:
+> Hi,
+> 
+> On 27/08/2024 15:43, Jai Luthra wrote:
+>> From: Vignesh Raghavendra <vigneshr@ti.com>
+>>
+>> Mark BCDMA CSI RX as real-time traffic using OrderID 8/15.
+>> This ensures CSI traffic takes dedicated RT path towards DDR ensuring
+>> proper priority when under competing system load.
+>>
+>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+>> ---
+>>  drivers/dma/ti/k3-udma.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+>> index 406ee199c2ac..74cdb9ec07c3 100644
+>> --- a/drivers/dma/ti/k3-udma.c
+>> +++ b/drivers/dma/ti/k3-udma.c
+>> @@ -135,6 +135,7 @@ struct udma_match_data {
+>>  	u32 statictr_z_mask;
+>>  	u8 burst_size[3];
+>>  	struct udma_soc_data *soc_data;
+>> +	u8 order_id;
+> 
+> I would add a new property to the BCDM in DT, like ti,order_id to be
+> configurable by device and boards if needed.
 
->In Linux FireWire subsystem, tasklet softIRQ context has been utilized =
-to
->operate 1394 OHCI Isochronous Transmit (IT) and Isochronous Receive =
-(IR)
->contexts. The tasklet context is not preferable, as you know.
+Or should the order_id be per channel configurable? Audio is handled by
+generic BCDMA and might need higher priority to avoid starvation.
 
->I have already received a proposal[1][2] to replace the usage of =
-tasklet
->with BH workqueue. However, the proposal includes bare replacement for =
-1394
->OHCI IT, IR, Asynchronous Transmit (AT), and Asynchronous Receive (AR)
->contexts with neither any care of actual usage for each context nor
->practical test reports. In theory, this kind of change should be done =
-by
->step by step with enough amount of evaluation over software design to =
-avoid
->any disorder.
+But how this affect other none navss DMAs, like display?
 
->In this series of changes, the usage of tasklet for 1394 OHCI IT/IR
->contexts is just replaced, as a first step. In 1394 OHCI IR/IT events,
->software is expected to process the content of page dedicated to DMA
->transmission for each isochronous context. It means that the content =
-can be
->processed concurrently per isochronous context. Additionally, the =
-content
->of page is immutable as long as the software schedules the transmission
->again for the page. It means that the task to process the content can =
-sleep
->or be preempted. Due to the characteristics, BH workqueue is _not_ =
-used.
+> Static 8 and 15 in code is not too nice and begs for a question why 8
+> here and why 15 there...
+> 
+> Even if the 'defaults' in code are these magic ones, it is still better
+> to have means to adjust it without the need to recompile the kernel.
+> 
+>>  };
+>>  
+>>  struct udma_soc_data {
+>> @@ -2110,6 +2111,7 @@ static int udma_tisci_rx_channel_config(struct udma_chan *uc)
+>>  static int bcdma_tisci_rx_channel_config(struct udma_chan *uc)
+>>  {
+>>  	struct udma_dev *ud = uc->ud;
+>> +	const struct udma_match_data *match_data = ud->match_data;
+>>  	struct udma_tisci_rm *tisci_rm = &ud->tisci_rm;
+>>  	const struct ti_sci_rm_udmap_ops *tisci_ops = tisci_rm->tisci_udmap_ops;
+>>  	struct udma_rchan *rchan = uc->rchan;
+>> @@ -2120,6 +2122,11 @@ static int bcdma_tisci_rx_channel_config(struct udma_chan *uc)
+>>  	req_rx.nav_id = tisci_rm->tisci_dev_id;
+>>  	req_rx.index = rchan->id;
+>>  
+>> +	if (match_data->order_id) {
+>> +		req_rx.valid_params |= TI_SCI_MSG_VALUE_RM_UDMAP_CH_ORDER_ID_VALID;
+>> +		req_rx.rx_orderid = match_data->order_id;
+>> +	}
+>> +
+>>  	ret = tisci_ops->rx_ch_cfg(tisci_rm->tisci, &req_rx);
+>>  	if (ret)
+>>  		dev_err(ud->dev, "rchan%d cfg failed %d\n", rchan->id, ret);
+>> @@ -4332,6 +4339,7 @@ static struct udma_match_data am62a_bcdma_csirx_data = {
+>>  		0, /* No UH Channels */
+>>  	},
+>>  	.soc_data = &am62a_dmss_csi_soc_data,
+>> +	.order_id = 8,
+>>  };
+>>  
+>>  static struct udma_match_data am64_bcdma_data = {
+>> @@ -4370,6 +4378,7 @@ static struct udma_match_data j721s2_bcdma_csi_data = {
+>>  		0, /* No UH Channels */
+>>  	},
+>>  	.soc_data = &j721s2_bcdma_csi_soc_data,
+>> +	.order_id = 15,
+>>  };
+>>  
+>>  static const struct of_device_id udma_of_match[] = {
+>>
+>> ---
+>> base-commit: 6f923748057a4f6aa187e0d5b22990d633a48d12
+>> change-id: 20240827-csi_rt-fc6bff701f81
+>>
+>> Best regards,
+> 
 
->At present, 1394 OHCI driver is responsible for the maintenance of =
-tasklet
->context, while in this series of change the core function is =
-responsible
->for the maintenance of workqueue and work items. This change is an =
-attempt
->to let each implementation focus on own task.
-
->The change affects the following implementations of unit protocols =
-which
->operate isochronous contexts:
-
->- firewire-net for IP over 1394 (RFC 2734/3146)
->- firedtv
->- drivers in ALSA firewire stack for IEC 61883-1/6
->- user space applications
-
->As long as reading their codes, the first two drivers look to require =
-no
->change. While the drivers in ALSA firewire stack require change to =
-switch
->the type of context in which callback is executed. The series of change
->includes a patch for them to adapt to work process context.
-
->Finally, these changes are tested by devices supported by ALSA firewire
->stack with/without no-period-wakeup runtime of PCM substream. I also =
-tested
->examples in libhinoko[3] as samples of user space applications. =
-Currently I
->face no issue.
-
->On the other hand, I have neither tested for firewire-net nor firedtv,
->since I have never used these functions. If someone has any experience =
-to
->use them, I would request to test the change.
-
->[1] =
-https://lore.kernel.org/lkml/20240403144558.13398-1-apais@linux.microsoft.=
-com/
->[2] https://github.com/allenpais/for-6.9-bh-conversions/issues/1
->[3] https://git.kernel.org/pub/scm/libs/ieee1394/libhinoko.git/
-
-
->Regards
-
-Thank you for doing this work. You will probably need to send out a v2
-As most of you patches have single line comment instead of Block style
-Commnents (/* ..*/). Please have it fixed.
-
-- Allen
-
->Takashi Sakamoto (5):
-> firewire: core: allocate workqueue to handle isochronous contexts in
->   card
-> firewire: core: add local API for work items scheduled to workqueue
->   specific to isochronous contexts
-> firewire: ohci: process IT/IR events in sleepable work process to
->   obsolete tasklet softIRQ
-> firewire: core: non-atomic memory allocation for isochronous event to
->   user client
-> ALSA: firewire: use nonatomic PCM operation
-
-
+-- 
+Péter
 
