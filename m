@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-313814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA41D96AA34
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C381D96AA38
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982282864DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABA21F25D0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FB11922D5;
-	Tue,  3 Sep 2024 21:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992AA126C19;
+	Tue,  3 Sep 2024 21:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZOZSvlT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEFb0OGD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF7D1EBFEE;
-	Tue,  3 Sep 2024 21:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31D623D7;
+	Tue,  3 Sep 2024 21:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725399096; cv=none; b=NZl9GJFZ0Y3g9WUuKemp6zzc5wLIPzsC2CHBwWxK+7eOlfjKEIw98PZi+nLYEkfQmXdGG9yaV6FdOTkk84sAxCiKA1nB5pD1mJ1YT/DhZFJhx6U8UMvZWAvCbVGm5rISsHQCzoHOfY5gzB1aATwYg0WGhFJZKoXvmLVKrqIghp0=
+	t=1725399163; cv=none; b=aR+NTY16bqLrtlHJ0a6jMqfdHeckLoNh4T3QymZ5mDJT31uZS2MN29sXQcvlr83HRh9U0aP98UOqn80ULxlcTuaw77gOmzQ4JQsgFsOpmlhEgISJHNSUtQTPeHU3yEqYQRVhidh2MELwKlAFNH9RJ3nfrRwBuDzgiU/bw3hhTuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725399096; c=relaxed/simple;
-	bh=QXi/ll4uuI2edg5BwxfzCEhzkKn1Hj/er7+RJFOMUlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i2u4+rXmV7WNcUw7M+MTy0So9itRow3CuYGe9IFcO3DbWWw4BYL5mRWM5e7r+p9h18AP4e/bu9Y3c4BYW8pA0ZKQV0Syn91QgS/+qkcs6x3qjUm+qvGwdvnXc7hJtCrDaoWrj9D4wv1TF0bwzj/SV2dD3WZ7i4hYtv6+42zZIsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZOZSvlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAC2C4CEC4;
-	Tue,  3 Sep 2024 21:31:33 +0000 (UTC)
+	s=arc-20240116; t=1725399163; c=relaxed/simple;
+	bh=1PUjVCqjErd2tSXMz7+npk0yPYPdMQTbhHntugIF9E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=WzRAHFBS2W+njdTQ8Y6k2lDPKTKu0zkNb8rcZUKKcxOhl1NJLJEu9jw2VSDEoSrcupeoLfvlTCRNzn74ghq2+IfT6UBhKAOj/JXfyUtkcMzlyHcfw77LwEK78ENlv1qs+uzsfE7kuP410ofIHSARqcyl+nhxW9yDpQgej9y2iQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEFb0OGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B05C4CEC4;
+	Tue,  3 Sep 2024 21:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725399095;
-	bh=QXi/ll4uuI2edg5BwxfzCEhzkKn1Hj/er7+RJFOMUlo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eZOZSvlToUkAOVqd0UgmlzLGJUkWpA5komnwhd3xww+g6jIGmcTpmsJKJAZ/u9WpK
-	 GU77r0k/GGoy7CrDGc/aZonl6bEJwK6ypjnhspjZlwsPAkcmt4XviAs8GBY95CbGPm
-	 3Li7cKsQ+n/qMSCfHXM0Nb15U/xuM8eAAB8+LAgyAlWiLZvN4LqnH1pnYNNkVjsq6e
-	 MZ4RSVtCqFI6Btqrs4A0Rre3i3WYij+2y21/8CPBajl1zRcFJaR6qc7SOQ/Ot2QVKE
-	 beXe5GAu7dxHaeUXEb9LFKdDm4bkIOgT8TB1ospVQcxsozRXdmxvHyIG4LSGdWRaFu
-	 OMdwFEomkGRGw==
-Date: Tue, 3 Sep 2024 14:31:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, "=?UTF-8?B?QmrDtnJuIFTDtnBl?=
- =?UTF-8?B?bA==?=" <bjorn@kernel.org>, Magnus Karlsson
- <magnus.karlsson@intel.com>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
- Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>
-Subject: Re: [PATCH net-next v24 07/13] net: support non paged skb frags
-Message-ID: <20240903143132.424c08e5@kernel.org>
-In-Reply-To: <20240831004313.3713467-8-almasrymina@google.com>
-References: <20240831004313.3713467-1-almasrymina@google.com>
-	<20240831004313.3713467-8-almasrymina@google.com>
+	s=k20201202; t=1725399162;
+	bh=1PUjVCqjErd2tSXMz7+npk0yPYPdMQTbhHntugIF9E4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YEFb0OGD6Xk6NFc6FGeJSC7MBhKOOlQV4XpIj0igsjreZXQHcGLCQbsx/LRP/3I+o
+	 +qm4hZAy6JYsQuPQlOZAMO+kr6A3y62hFTpc/awuwWdmXjMjcZpIc2vI0qnTHmbOL9
+	 SwoCpd6UtUbzqoYTzAxdqKI5p/q3uoo7djbjKCa1KB9Pl+OAfq5jKt6FhrJIcgF2/h
+	 qLRCh5xHwJwL8yuRCKCF8Z5uc8QbXKbu3wBEQ9IcLuK9Byd+MhefqE3UtrLbLSPMKy
+	 aVdeZdRg6YC2W459wIRs9HgJ0Vqw/tjICZCcwj0wVUYEVtJ8LgiaoIrtis1kd2Vd28
+	 Mnoo+4F/cu64g==
+Date: Tue, 3 Sep 2024 16:32:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Gary Li <Gary.Li@amd.com>, Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240903213240.GA304079@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
 
-On Sat, 31 Aug 2024 00:43:07 +0000 Mina Almasry wrote:
-> Make skb_frag_page() fail in the case where the frag is not backed
-> by a page, and fix its relevant callers to handle this case.
+On Tue, Sep 03, 2024 at 01:32:30PM -0500, Mario Limonciello wrote:
+> On 9/3/2024 13:25, Bjorn Helgaas wrote:
+> > On Tue, Sep 03, 2024 at 12:31:00PM -0500, Mario Limonciello wrote:
+> > > On 9/3/2024 12:11, Bjorn Helgaas wrote:
+> > > ...
+> > 
+> > > >     8) The USB4 stack sees the device and assumes it is in D0, but it
+> > > >     seems to still be in D3cold.  What is this based on?  Is there a
+> > > >     config read that returns ~0 data when it shouldn't?
+> > > 
+> > > Yes there is.  From earlier in the thread I have a [log] I shared.
+> > > 
+> > > The message emitted is from ring_interrupt_active():
+> > > 
+> > > "thunderbolt 0000:e5:00.5: interrupt for TX ring 0 is already enabled"
+> > 
+> > Right, that's in the cover letter, but I can't tell from this what the
+> > ioread32(ring->nhi->iobase + reg) returned.  It looks like this is an
+> > MMIO read of BAR 0, not a config read.
 > 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Eric Dumazet <edumazet@google.com>
+> Yeah.  I suppose another way to approach this problem is to make something
+> else in the call chain poll PCI_PM_CTRL.
+> 
+> Polling at the start of nhi_runtime_resume() should also work.  For the
+> "normal" scenario it would just be a single read to PCI_PM_CTRL.
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+It doesn't sound like this is anything specific to Thunderbolt, so
+there should be a generic solution.
 
