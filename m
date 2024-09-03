@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-312435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F1A96969A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:11:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4090996969D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63054285E29
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A2B1C210EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6223C201244;
-	Tue,  3 Sep 2024 08:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590BD201252;
+	Tue,  3 Sep 2024 08:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QkWrn3Qr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPGgWoDz"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D115573A;
-	Tue,  3 Sep 2024 08:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F88420124E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725351094; cv=none; b=X8HF8IfRqXI84b/oMtGRBfL194h6eQK/JRyu02WyQDQr6QwGYaEu8TMZPFgcf+dZPYeii2DyVefXYzwsjz8KjHHCO2Q5P89EI51uuJYqVlZ+UmrmdGoBZsQ2YUkKm0A319IYuux/kOVCyoHBLJyTLab5JFggYnnc1ypLUclpKRU=
+	t=1725351097; cv=none; b=fy1ZN0PyIvZrq/vRqA06Vap0DGiLCag6IuBWYZPTlklq4ucHdKhp/40/bu4zKk7pjEPp8TWizKb/lcu+kQPXF39DYqZvtv1LjtXhuUAQnkVe3E7gwU02q0jIUQ2S6DjIItzh0NNC8C4pko9ivLoW+u/UW6/XtFzUl/2GcCKMbno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725351094; c=relaxed/simple;
-	bh=3WT4YhrvIXByI531oOZsnICq37sHBt1S6wXSAuYjBOk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T/g3Kw8VXgVUVDoWvJHuOwdPrP+zL6o4eOXAVCnfCIahSOL5ny15xyFrDMXA9hpeE7rTjSz0xim9xPeAWkwGGuYhJdM/xDNms5NyHtbNSCI1BKUKgRt3VC7iHhOZh2jeSGnkzSXZi4NldhzRibfKJMoMFcPCaG3GX5StpTNAvOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QkWrn3Qr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4831lFsk011825;
-	Tue, 3 Sep 2024 08:11:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=Bn8RNZPjAEKRN
-	FGkkzHpV2AgIOoZAQ1VfOIxAAhP/gg=; b=QkWrn3QrJFvAUVxnyilfooJG9UQss
-	8tjNBudeJ0OhmEwUzugEtKDyqsD6xgokCvM6dAySBbXcdpsmy0Rz1Kvkxr667aSc
-	9/wsQvDZORfQwvm51P5LyuNzxIpwaEPvCS2vquNPuM6Cck8Fm5o1JPfd1E9rD9VN
-	Nh+KePB9n7CetbeNiQfbaWF81/gAs3813J/bF8tBwY6l+spE4bmI0pTAf2QfJ9/C
-	l0xVd1fV7P6H4QXuCccHzwRBo3cTB5lebKkGc96BbQyw+Xq1W1Is59Z8hOcb2Nyi
-	PJpVhi/lnzRAKWlH2X1W8fgNkmGLY5iarXRj/7Pqzw2lIbBWLF+JQJ6iA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41bttychw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 08:11:25 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4838BO15015732;
-	Tue, 3 Sep 2024 08:11:24 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41bttychw3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 08:11:24 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48344L2p007980;
-	Tue, 3 Sep 2024 08:11:24 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41cfqmsjua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 08:11:24 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4838BMiV29426170
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Sep 2024 08:11:22 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A2C120040;
-	Tue,  3 Sep 2024 08:11:22 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EAD5F20043;
-	Tue,  3 Sep 2024 08:11:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.109.242.235])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  3 Sep 2024 08:11:20 +0000 (GMT)
-From: R Nageswara Sastry <rnsastry@linux.ibm.com>
-To: jstancek@redhat.com
-Cc: dhowells@redhat.com, dwmw2@infradead.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zxu@redhat.com,
-        R Nageswara Sastry <rnsastry@linux.ibm.com>
-Subject: Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for OpenSSL >= 3.0
-Date: Tue,  3 Sep 2024 13:41:19 +0530
-Message-Id: <20240903081119.73876-1-rnsastry@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <cover.1720728319.git.jstancek@redhat.com>
-References: <cover.1720728319.git.jstancek@redhat.com>
+	s=arc-20240116; t=1725351097; c=relaxed/simple;
+	bh=oK2N716Wf5zWuyGseX+K7OxwDsTjJt4KWsutUjuIEwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eooSA2F+z1CQkNEGPbRWXWdSnRaEIMg4L3wo4VloauLyBMWgeA4wpbI60Lv4QOVP69VO6GofQuA+a8JZVFALGuwtJrS0whTDS973wgaBjHEcGO5ryClgipml+vilFTTKF2JIKLmp9ochvDxOFyKQgQD3JxRDOjrmaJceHHVMaCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mPGgWoDz; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53438aa64a4so6035981e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725351094; x=1725955894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oK2N716Wf5zWuyGseX+K7OxwDsTjJt4KWsutUjuIEwg=;
+        b=mPGgWoDzK+7qApQWCsbaYxiABpN0rhd7ZXJ/XaaYIrjcqIJp/WItudNPNcYTtoE8kf
+         Cmv3360wCvPPec2qvMpO5ZNxT4Q1uVDpYqr+Vji8Nf6U0rVo9lcJfM0T2dmg2zPdoFXp
+         g556LFc3ybQmITTPpANP4GoxT9fhY9r5z6LrzkuV4HbmudwcfX3tPhqBoWs7wSjSCSOZ
+         ZSqd8QIKX3l68uQlUfmY4cFILPkIyqWUZe7QfiTRbRIx5m/WeHnicdirBsODM23mfCXV
+         6OPDk/y2o0DX4qRLPyvMSWcTwmXWIAnd+HEM/H4EQSwGx1qHDACKO2uIW2K3asIO47XT
+         TnnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725351094; x=1725955894;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oK2N716Wf5zWuyGseX+K7OxwDsTjJt4KWsutUjuIEwg=;
+        b=kdxxECaGl6TQySxwspSDtJJJT4zGzlSfAGd6Qn5A5DjkWJG7RPBwU4eXSfYwNOI5m9
+         iYFOEXEANlmnVcbI4sHptGrXqqLgcGHI3RKwDVHMh2E92HFXwCvhFYHCXhfMy1KTiPao
+         YU1yJwkzX7AgPhuGPu65BdiVnSNHIX5Gd4iUAgUQxhkjpOsOEmeg58kF6SHjbpD+OiSZ
+         1rctdt0jS9sX0p3tv/qjHAmt0tRqsRAqUGfXdzyQ0SLlKmLZK7JQ3Uxx0gKoMxweSfGu
+         2tGXJHAVvfw5A3zFmg9j9sp/2iSCsIm+09qZ0GqiOqL1cpA7cmpEAgyXAZcY13CS05L3
+         u9aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeYmoBpIVosO9TQa2YlvicyB8ywhgJZgukXM6o1zalItj+7Uk/l1AUlPq0koT9y8wj0KKGRjEUrn3onrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCb0nn6derB3E28s8nI/wgJSvtvTZy5P8/oMaIRk03fZKp4JpX
+	xlaYzkN26cEsm7mmj63h5aGMWBBt8F0o7Q3bTsg6FcwuWlcys3YPVg+2X2L8S70LBwRb5vrV6B+
+	FYeA8AoeyzDuFET0QzZ+Yl/BHZRYhNok8OObh4Q==
+X-Google-Smtp-Source: AGHT+IFA+v/Lw2VM8YBLUxDrbigDTMftuBsPCXYDExzuRQnypmgUTiFnyFUrx8r3ouJS7IWB+TH+Av+oI+GuAY+0oHc=
+X-Received: by 2002:a05:6512:1044:b0:52c:9e25:978d with SMTP id
+ 2adb3069b0e04-53546b691afmr8245078e87.45.1725351093898; Tue, 03 Sep 2024
+ 01:11:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: KWAQLZDZaAqzXHINLm59PUD_CkdJApQ2
-X-Proofpoint-ORIG-GUID: dWhGuoXOSej-xNj3d5d7JwtLrG4QIjp9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=403
- suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- phishscore=0 spamscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409030064
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-1-bdb05b4b5a2e@linaro.org>
+ <CAA8EJprgHAmuFxj5hO5BYFywW7sGC2VcMZwaadBLOmYJr88OYg@mail.gmail.com>
+In-Reply-To: <CAA8EJprgHAmuFxj5hO5BYFywW7sGC2VcMZwaadBLOmYJr88OYg@mail.gmail.com>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Tue, 3 Sep 2024 16:11:22 +0800
+Message-ID: <CABymUCPEnU2ReAve=P6yzndZy5-=YQRB60bixxHGeoQK4cWTAw@mail.gmail.com>
+Subject: Re: [PATCH 01/21] drm/msm/dsi: add support to DSI CTRL v2.8.0
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->Date: Fri, 12 Jul 2024 09:11:13 +0200	[thread overview]
->Message-ID: <cover.1720728319.git.jstancek@redhat.com> (raw)
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B48=E6=
+=9C=8829=E6=97=A5=E5=91=A8=E5=9B=9B 18:35=E5=86=99=E9=81=93=EF=BC=9A
 >
->The ENGINE interface has its limitations and it has been superseded
->by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
->Some distros have started removing it from header files.
+> On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
+> >
+> > From: Jonathan Marek <jonathan@marek.ca>
+> >
+> > Add support to DSI CTRL v2.8.0 with priority support
 >
->Update sign-file and extract-cert to use PROVIDER API for OpenSSL Major >= 3.
->
->Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2, openssl-pkcs11-0.4.12-4
->and softhsm-2.6.1-5 by using same key/cert as PEM and PKCS11 and comparing that
->the result is identical.
->
->Jan Stancek (3):
->  sign-file,extract-cert: move common SSL helper functions to a header
->  sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
->  sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >= 3
->
-> MAINTAINERS          |   1 +
-> certs/Makefile       |   2 +-
-> certs/extract-cert.c | 138 +++++++++++++++++++++++--------------------
-> scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
-> scripts/ssl-common.h |  32 ++++++++++
-> 5 files changed, 178 insertions(+), 129 deletions(-)
-> create mode 100644 scripts/ssl-common.h
+> Proper description is missing
 
-Tested on a system where openssl-engine package was not available.
-With out the patch, couldn't compile upstream kernel (tried 6.11-rc5)
-With patch, could compile upstream kernel (tried 6.11-rc5)
-
-Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
-
+Actually, there is no clear doc for this register. Any URL or
+doc key word to search?
 >
->-- 
->2.39.3
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+>
+> Several tags are missing here.
+
+Co-develop and SoB tag, right?
+>
+> Also, how is this patch related to quadpipe?
+
+It is a must per test. Maybe it is just related to dual-DSI.
+We can have answer if 2:2:2 is enabled.
+
+- Jun
 
