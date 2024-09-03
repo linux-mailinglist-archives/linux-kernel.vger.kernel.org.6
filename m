@@ -1,249 +1,140 @@
-Return-Path: <linux-kernel+bounces-313332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2633596A40F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EDD96A412
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C311F27469
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D451C23D7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666BA18A6A7;
-	Tue,  3 Sep 2024 16:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF09D18B486;
+	Tue,  3 Sep 2024 16:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vxVZ+v3T"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ELxiChKw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1AF189B88
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8632118858C;
+	Tue,  3 Sep 2024 16:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380249; cv=none; b=IEPHJN9BCnrIuNEWO2Uj/uYL4Eci/XiiJvdKBOCtrzkFoUOcnQLT1nv3/4MmYn4tXERee4VCX4mkHO3A7IHlEIrkazlR0YWE7K26NluQccTmNPbWIaoJ+yeC9ZalptB/SrE1pvig+FGv35S9Pr6cFcaY3crgc3G9qd9WB+VOt+0=
+	t=1725380317; cv=none; b=qFcrXIO5V5tSXwFOQzuxbxVKcLkDXfHpPuRhOogzsgbAzCm/6nidDJggdV3R0pneb5JaCseQeRD8aGno3Wco/ul1xH4SJdNTrGF7eDcd2e5w/9dojDouZfiZNtjE0P9RxtuaFuP/0vWAfCpHWRKOLKZDvj26OqJMcudQS42gYC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380249; c=relaxed/simple;
-	bh=QUrDmjGxDWVKFhcNoy+HxAmj0c8osU6YyWrVQMdtj1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=acPZB1dTA6rw9jWjDl+OTQpd8Tu4g1ezc9IT4sXvBH8KwL8JuMwU5uXUqhvHpc0U4fUWcRoh35DmhyMmvIugcEhYzWhOYRaDHhHOvfP2mcYjP3LK/zc+KVILzkcKbGhiqDzvmMjb6bUGDROX/SbgH9czYWnknWAiDoDcbqlb1mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vxVZ+v3T; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7093ba310b0so2320759a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725380246; x=1725985046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=53GiOZpe/Mi1YNWuIB9EhTKXzBDKqq6MqraEG6tJCLo=;
-        b=vxVZ+v3TwtDPT8w9+afpdOjiOGpM1Y1AkdGzRLtBB19QBo/1OFxKowXzOJNoUmyRxL
-         yd7RLz9I52TSVvygBytT5/tpR6TGCQTdS442PgXfbsA2PCIgzD+hi5HE8DhXI2OrwnnP
-         LuR8V7OVqGMdvBE9z+NmWasqR1uJxbgeupXNSn5vFGL4jiDIs5/kZh26BEz+EmhfELQd
-         RG7WOfsSevRw7KvJrxeeryDcglWp3NHfmnW1p55SxhFYG8oVyDB0BevwXgi4ZLumx89o
-         xrMag5qBcGNGiglA/U5xPgTK5m5q10vWCoMbUZUwQeNhyKJtU7a3e6IvPvUrWIRP/R0T
-         pPmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725380246; x=1725985046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=53GiOZpe/Mi1YNWuIB9EhTKXzBDKqq6MqraEG6tJCLo=;
-        b=AlgEe8Tf0520l5MTqWGiH8fR//0xibubQC+i8wiiVn3axRJz8BD/pF9AF9IKrINXZN
-         ZTX/slPHxZnaVqdMng3+0vtw5EGzQ9Y07u5bnQnabZrxx0J4zuD287BfV8e85ExeWGzN
-         ruiE13BirOOuss1RA0Y3j0Dgr2YgIJ2RRloiiGcea0hxHWfiyNwbqW1skMtBysFS+rWn
-         Bp1/GZ3M97VPhb2HDjsH+MDtUmDFCGuB/Of/v0oo5Kwts4NA298uJPqyFKln7O1KLEJ+
-         aMyB+eb4Y/w3cYk3rkSlXDrhK/3PKaEpi98am73jIU0YHRrLq0l9j6Fdq4eCuP6wA3Ba
-         aiYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXbXeWGavJ7AhtBqlUrxGbl1nGtZigJKvCzKjMh+KjqMO/FNJi+mEnVshH8VYD3AOhN8f67RUI5I1fcgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYNdrtt8HwY7RWixaoCZMclphNiOJsek8CNuC7KnIAANmFMdu5
-	er1YqFFhlAcxumB3Bh1WCnvh1FVTIiqrONpulOgVReZsIB3RwvI24oxJIaUtGdY=
-X-Google-Smtp-Source: AGHT+IHTlOQ2HrzrTU2Q3N454srcRMdp7zFoL+AYKDmUWAD5RYsVkxQj4bH6We19C8bVDozpvH490g==
-X-Received: by 2002:a05:6830:dc8:b0:70c:92ee:5662 with SMTP id 46e09a7af769-70f71efed69mr13403446a34.8.1725380246297;
-        Tue, 03 Sep 2024 09:17:26 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f671a82a0sm2413574a34.60.2024.09.03.09.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 09:17:25 -0700 (PDT)
-Message-ID: <4a62ea7b-a8af-49e0-9718-30d927a69038@baylibre.com>
-Date: Tue, 3 Sep 2024 11:17:24 -0500
+	s=arc-20240116; t=1725380317; c=relaxed/simple;
+	bh=e+ztJAswj0zgxwfKO74jE9paujDwSwvONdxkFHmYZtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=naA9Azucd2g/SqEQFdVZ108kO9U942mZGK5qSspoSb/Zt2/KpiY5mNnHHFSAYgki2sdHf4OjbaIYEQrgS81+g0IAojYCgOEfaBSjTrY5bs8He8f9IRjDXRnHguiRsxe0MO/H69j4jKAEu/+eE2YV4LvCEtbjtm5v7GwL2B6QEFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ELxiChKw; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725380315; x=1756916315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e+ztJAswj0zgxwfKO74jE9paujDwSwvONdxkFHmYZtQ=;
+  b=ELxiChKwc4dF49dhSp8SJgCvijuaQLbRpCeWDypeH5xfYPyKrBSMAY99
+   oG2TdpEnA1Vx6IG7H4qyYhckxkNytMwzY7eC9gl2jyvLzD2RPXtoxpBLF
+   2IGmup6uKGZZCWP0gIy1WQAWMCws+31VrTZdN0H9VUP4msXx2qWfsxvjw
+   A12d+775sYxt7ddB479PQAhXWGGyg34QF4NmPrR+7lWPXHChhLvSnePxw
+   UhZyiCZp8euY6dXVmO0D1Zr58b2ftZQTKcVqwHkTo2eJGftmVhbb7yaHe
+   CTkzHGWKAaLUOwEfWA10OyNrAk8s8o2v/2PaN+uln4JkMsx0QxfdVHbxa
+   w==;
+X-CSE-ConnectionGUID: Z11yb9mcSximYVxaEofeGg==
+X-CSE-MsgGUID: HLLeWEr2TtShi7vdmljLWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="13350043"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="13350043"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:18:27 -0700
+X-CSE-ConnectionGUID: WLEjygFwQ62mC3ud2PgMXA==
+X-CSE-MsgGUID: zETu7SKwTqORrT/a8qb2dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69753081"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 03 Sep 2024 09:18:21 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slWER-0006t0-2e;
+	Tue, 03 Sep 2024 16:18:15 +0000
+Date: Wed, 4 Sep 2024 00:17:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, acelan.kao@canonical.com,
+	lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+Message-ID: <202409040016.XGnUy9HW-lkp@intel.com>
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/8] iio: dac: introducing ad3552r-axi
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240831123837.26a1070a@jic23-huawei>
- <74e0b200-d4c0-4aa3-9ee6-f49ac3f1467d@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <74e0b200-d4c0-4aa3-9ee6-f49ac3f1467d@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903025544.286223-1-kai.heng.feng@canonical.com>
 
-On 9/3/24 3:34 AM, Angelo Dureghello wrote:
-> Hi Jonathan and all,
-> 
-> 
-> On 31/08/24 1:38 PM, Jonathan Cameron wrote:
->> On Thu, 29 Aug 2024 14:31:58 +0200
->> Angelo Dureghello <adureghello@baylibre.com> wrote:
->>
->>> Hi, asking for comments for this patchset, that is mostly
->>> ready, at least feature-complete and functionally tested.
->>>
->>> I am introducing ad3552r-axi variant, controlled from a fpga-based
->>> AXI IP, as a platform driver, using the DAC backend. The patchset is
->>> actually based on linux-iio, since some needed DAC backend features
->>> was already there on that repo only, still to be merged in mainline.
->>>
->>> Comments i would like to ask are:
->>>
->>> - i added some devicetree bindings inside current ad3552r yaml,
->>>    device is the same, so i wouldn't create a different yaml file.
->> Agreed. If same device, it's usually better to keep it in one file.
->>
->>> - if it's ok adding the bus-type property in the DAC backend:
->>>    actually, this platform driver uses a 4 lanes parallel bus, plus
->>>    a clock line, similar to a qspi. This to read an write registers
->>>    and as well to send samples at double data rate. Other DAC may
->>>    need "parallel" or "lvds" in the future.
->> If it is for register read + write as well, sounds to me like you need
->> to treat this as a new bus type, possibly then combined with a
->> backend, or something similar to spi offload?
->>
->> What bus does this currently sit on in your DT bindings?
->> (add an example)
-> 
-> 
-> &amba {
-> 
->     ref_clk: clk@44B00000 {
->         compatible = "adi,axi-clkgen-2.00.a";
->         reg = <0x44B00000 0x10000>;
->         #clock-cells = <0>;
->         clocks = <&clkc 15>, <&clkc 15>;
->         clock-names = "s_axi_aclk", "clkin1";
->         clock-output-names = "ref_clk";
->     };
-> 
->     dac_tx_dma: dma-controller@0x44a30000 {
->         compatible = "adi,axi-dmac-1.00.a";
->         reg = <0x44a30000 0x10000>;
->         #dma-cells = <1>;
->         interrupt-parent = <&intc>;
->         interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
->         clocks = <&clkc 15>;
-> 
->         adi,channels {
->             #size-cells = <0>;
->             #address-cells = <1>;
-> 
->             dma-channel@0 {
->                 reg = <0>;
->                 adi,source-bus-width = <32>;
->                 adi,source-bus-type = <0>;
->                 adi,destination-bus-width = <32>;
->                 adi,destination-bus-type = <1>;
->             };
->         };
->     };
-> 
->     backend: controller@44a70000 {
->         compatible = "adi,axi-dac-9.1.b";
->         reg = <0x44a70000 0x1000>;
->         dmas = <&dac_tx_dma 0>;
->         dma-names = "tx";
->         #io-backend-cells = <0>;
->         clocks = <&ref_clk>;
->         bus-type = <1>;  /* IIO QSPI */
->     };
-> 
->     axi-ad3552r {
->         compatible = "adi,ad3552r";
->         reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
->         io-backends = <&backend>;
->         #address-cells = <1>;
->         #size-cells = <0>;
->         channel@0 {
->             reg = <0>;
->             adi,output-range-microvolt = <(-10000000) (10000000)>;
->         };
->     };
+Hi Kai-Heng,
 
-Shouldn't the axi-ad3552r node be one level higher since it isn't
-a memory-mapped device, but rather an external chip?
+kernel test robot noticed the following build warnings:
 
-But based on the other feedback we got in this series and some
-#devicetree IRC chat here is an alternate binding suggestion we
-could consider.
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.11-rc6 next-20240903]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-First, even though the FPGA IP block for use with AD3225R uses
-the same register map as the AXI DAC IP block, some of the
-registers behave differently, so it makes sense to have a
-different compatible string rather than using the bus-type
-property to tell the difference between the two IP blocks.
-There are likely more differences than just the bus type.
+url:    https://github.com/intel-lab-lkp/linux/commits/Kai-Heng-Feng/PCI-vmd-Delay-interrupt-handling-on-MTL-VMD-controller/20240903-110553
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20240903025544.286223-1-kai.heng.feng%40canonical.com
+patch subject: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20240904/202409040016.XGnUy9HW-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409040016.XGnUy9HW-lkp@intel.com/reproduce)
 
-Second, technically, the AXI DAC IP block can't be used as
-a generic SPI controller, so it wouldn't make sense to put
-it in drivers/spi. But, from wiring point of view, it could
-still make sense to use SPI DT bindings since we have SPI
-wiring. At the same time, the AXI DAC IP block is also
-providing extra functionality in addition to the SPI bus
-so it makes sense to keep the io-backend bindings for those
-extra bits.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409040016.XGnUy9HW-lkp@intel.com/
 
-    backend: spi@44a70000 {
-        compatible = "adi,axi-dac-ad3225r";
-        reg = <0x44a70000 0x1000>;
-        dmas = <&dac_tx_dma 0>;
-        dma-names = "tx";
-        #io-backend-cells = <0>;
-        clocks = <&ref_clk>;
+All warnings (new ones prefixed by >>):
 
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        dac@0 {
-            compatible = "adi,ad3552r";
-            reg = <0>;
-
-            /* 
-             * Not sure how right this is - attempting to say that
-             * the QSPI select pin is hardwired high, so the 4 SPI I/O
-             * pins on the DAC are always functioning as SDIO0/1/2/3
-             * as opposed to the usual 2 SDI/SDO pins and 2 unused.
-             */
-            spi-3-wire;
-            spi-tx-bus-width = <4>;
-            spi-rx-bus-width = <4>;
-
-            reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
-            io-backends = <&backend>;
-
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            channel@0 {
-                reg = <0>;
-                adi,output-range-microvolt = <(-10000000) (10000000)>;
-            };
-        };
-    };
+>> drivers/pci/controller/vmd.c:115: warning: Function parameter or struct member 'delay_irq' not described in 'vmd_irq'
 
 
+vim +115 drivers/pci/controller/vmd.c
+
+7cdbc4e9cd808b5 drivers/pci/controller/vmd.c Kai-Heng Feng 2024-09-03   98  
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12   99  /**
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  100   * struct vmd_irq - private data to map driver IRQ to the VMD shared vector
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  101   * @node:	list item for parent traversal.
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  102   * @irq:	back pointer to parent.
+21c80c9fefc3db1 arch/x86/pci/vmd.c           Keith Busch   2016-08-23  103   * @enabled:	true if driver enabled IRQ
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  104   * @virq:	the virtual IRQ value provided to the requesting driver.
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  105   *
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  106   * Every MSI/MSI-X IRQ requested for a device in a VMD domain will be mapped to
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  107   * a VMD IRQ using this structure.
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  108   */
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  109  struct vmd_irq {
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  110  	struct list_head	node;
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  111  	struct vmd_irq_list	*irq;
+21c80c9fefc3db1 arch/x86/pci/vmd.c           Keith Busch   2016-08-23  112  	bool			enabled;
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  113  	unsigned int		virq;
+7cdbc4e9cd808b5 drivers/pci/controller/vmd.c Kai-Heng Feng 2024-09-03  114  	bool			delay_irq;
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12 @115  };
+185a383ada2e779 arch/x86/pci/vmd.c           Keith Busch   2016-01-12  116  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
