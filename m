@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-313457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB7196A5AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A86296A5B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 475BDB2422C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D011F214BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810A218F2DD;
-	Tue,  3 Sep 2024 17:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D561917EC;
+	Tue,  3 Sep 2024 17:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R3MwxzxZ"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aGoszKsh"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C6B19005F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D531917EE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385543; cv=none; b=NYYZyXGtbUBuwhoTyproJBq6r+AxRpOKntV/fGhjypVlBXVYG8/xhbddq65wbLnAhUKM5/WXEEsURbOC5zAby9R2oFUkxFhsPbXRpJPelkNm+Aghy8+FuB4Yr+0Jw1mvNc1IO+P88k17W9BlcOl6SqJgxhRECZm0+QWz3hBeEDw=
+	t=1725385546; cv=none; b=iEv2u6fh43znhy/tmPm6lHDnBA5qRATuu07s5L9Q/gKOWanrSF/XPcrytTM3980orRXgoi+tMtsIw9TPd4/qLh1C4qsyOJ9UhmJu72v7oZBYY0PcRt+SZTL02fyULnXK0u9SmMyNMcElcH7DuYLXPbYufmy0VcQzqW+6YwmJxkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385543; c=relaxed/simple;
-	bh=tmLHyBWRKQOXP83hFUC5eqTGxvHhDGqj62+4WSqNhLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1+4LLG7fTw+rlgmRfpfAkqtAOrh6h4lqeXSgd15qA+W4iawqfyIMm/TezOyROtX1Siq3VBbD17SjI0olevRTK9GZWP2xseM//4n9y5kw7HbmlgJcR/7o8yN1S1BNMw6pCwbRO7EmA/eJZG8bstZpNfuWKO6VOJd5oNH0ho/e3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R3MwxzxZ; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82a13d1c8f9so245902139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:45:40 -0700 (PDT)
+	s=arc-20240116; t=1725385546; c=relaxed/simple;
+	bh=nTdrb9uR7/jd8t4QLRscoBSzgtYa4mrJOywfJWfrOe8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qefoIhFpdexWa8AdjKdFHWgbDABial6jPfJcHaTQVsej3kKSZphn0wjxXCL3vehsRZTugmONj9WvNhnWQ/gHITHBfGggZkv7sOqF524G/ETiTxRhD/RxGPP8Kssx44emoefoTTiNiIcwgk++PJSQt7HduYQpt8ose8vzma7xtnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aGoszKsh; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71774dcd09aso592878b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:45:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725385540; x=1725990340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2CfCUXPwTuKDSS4V+2JDx2g+w3NaNXN4kLDT7fz6YbA=;
-        b=R3MwxzxZgwBd2D3rXY82ixVfku9uU+HI5Sueq6caBdIg5Ww1tcImSsVOfPRCp3/CNZ
-         2g/hz6HWtJIJdDrH0XLkiT767So23LwmMD8dX1ihf7HwuJ8Q3NhGGuNGVeg0cxOfu7UD
-         GznBhJnffkywvNQ1dCbUPUEEZyrS9A0Pq4J0c=
+        d=broadcom.com; s=google; t=1725385545; x=1725990345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3U/qOEAcWb5c4MQDovr6aE/At0h1Z9coG62wGqmbh7c=;
+        b=aGoszKshg/0z2UhQdp3rJvRIZpIWUKkxmCLEDP2kyK2L6cLsgIFq0bZEHPKMCGpXw0
+         aUGrZ5hcwCZbLZQmByN8bt4KQhGLfe/0oo3UHBKIkTO1vjgfga0dWpOjvQugZv2YGNKQ
+         SF3mRCbFv+82WX5vd4rNQZYB2LIyOveNKRBDQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725385540; x=1725990340;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2CfCUXPwTuKDSS4V+2JDx2g+w3NaNXN4kLDT7fz6YbA=;
-        b=osfFlWjzGZffcMmZgPZxYbIORNueuj8eCIzS03E7hEIOLBzPottGzkZTIN/VqXHYNB
-         ldkweDuqU5M3dg68x/rn+3A3pu/eaSiNZ6pkTbkBD04/9/AKFPkvKmVQP9NC9Kua+n9r
-         G9KUaBYi2ckvBjutv7OF7vntUCo1YDTwlzKi0HLu8t7q51TtVJ8bmNsbxsxHBNLLeR/P
-         Lvkq8EPnSel1iaHvstk8QO1uB/s52S3wVsgP9Y2VeKET0Yju8pmAoa+d0LzI+vs0LSnF
-         ELfEd1B8LmdQxJRO19WafPEb1MZTciW0PwxQB9pvXniia4pEoh83a/+Ld4TSKIVfcrtc
-         v8Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYGrHIEeDReuXcxYMroFzuanBwkxWScK3MhzIZlU7kj1sHTqCgAbg1zPf0MCvAQxSC2kRx1FxLSlCP0iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBPFisfwPaszSkm2mj81ijQlBILQ2FjlZ7ske1upJH9rIf10oO
-	dePUk405DGOE7GqN2dfqZoAsHPFnF4B7jR5Ui2wX/jtS1eTyZfdA/okKTLb1EG0=
-X-Google-Smtp-Source: AGHT+IFj0D0gfLdT8okAc9oFR9k6hi/DKqmjBZCI1iVGf8G9Z3WbgHeoS8IPkBZMqCW9IAWep0jTUA==
-X-Received: by 2002:a05:6602:6c0a:b0:82a:3ca1:6f75 with SMTP id ca18e2360f4ac-82a648a0e4emr419865839f.8.1725385539904;
-        Tue, 03 Sep 2024 10:45:39 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2ecd888sm2729179173.156.2024.09.03.10.45.38
+        d=1e100.net; s=20230601; t=1725385545; x=1725990345;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3U/qOEAcWb5c4MQDovr6aE/At0h1Z9coG62wGqmbh7c=;
+        b=DQc0AHNFfAX73+3LGjKZulzJHWgkVPXtn28E9VV7Yg1VRYwdbaB7A/Cpe9WStcFqQw
+         7nxGnQ1J1xG3HU23NA2L1STdngEilRt6Xfng3Lu40OKZtX069Q5i31LeDoGnm42U+OI7
+         StSEfB7yfguyDBlo1r6OyaielPBizA/deeM1uETarfwnYuvcJkbTFluoL32XykEFJmF2
+         MqdkWBMAtHMhZ8VlfhyJ00mmgH0qcrwNFmFvQHNbllzGon7WygfDmPUFdj+psJ6qYkCC
+         hPN0gAol15iGlBRAqv4gFsdPapSySWwGjBJ79hVN2B/Co/aXCDYf5V23e8aR9un4BJuI
+         DUYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjk2/dGB++4n+VEyU4AOEl/uYzmPmsougFIKFXl4zEnADDoM7ebgH1jcnxy0RQfhFWGOTIDJuaoPH1FFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNSHuhBlPn6BDfFpz8tYSYPvtezB3AS5caz3LDl+dF1bZ4OGW3
+	AfjUerKNB3iZfceiks4sJJYRWmLSfEG6f0wpZMXHGGfu+Nj+E7c7cWGlbDQAvQ==
+X-Google-Smtp-Source: AGHT+IGM+TTtHmKs1QSDI2elSVemAmtiLyWfX+nlSvkMSsZAECRrfa7OaE627B71XLU6LRmGdYHT7Q==
+X-Received: by 2002:a05:6a00:22d5:b0:70d:2a88:a483 with SMTP id d2e1a72fcca58-7173f8adafdmr10905636b3a.0.1725385544296;
+        Tue, 03 Sep 2024 10:45:44 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717785996d0sm137258b3a.145.2024.09.03.10.45.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 10:45:39 -0700 (PDT)
-Message-ID: <405c28dd-bf6d-4f17-92c4-182808182899@linuxfoundation.org>
-Date: Tue, 3 Sep 2024 11:45:38 -0600
+        Tue, 03 Sep 2024 10:45:43 -0700 (PDT)
+Message-ID: <2f3e01d0-9b4b-4678-b05b-226074579b8a@broadcom.com>
+Date: Tue, 3 Sep 2024 10:45:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,50 +73,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: filesystems: fix warn_unused_result build
- warnings
-To: Abhinav Jain <jain.abhinav177@gmail.com>, shuah@kernel.org
-Cc: javier.carrasco.cruz@gmail.com, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kselftest@vger.kernel.org, brauner@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240810135333.672845-1-jain.abhinav177@gmail.com>
- <5fd97d54-fa64-4c03-865f-961ed4596a6e@linuxfoundation.org>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Subject: Re: [PATCH v6 07/13] PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG,
+ INTR2_CPU_BASE offsets SoC-specific
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240902194649.GA224705@bhelgaas>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <5fd97d54-fa64-4c03-865f-961ed4596a6e@linuxfoundation.org>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240902194649.GA224705@bhelgaas>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/16/24 07:11, Shuah Khan wrote:
-> On 8/10/24 07:53, Abhinav Jain wrote:
->> Add return value checks for read & write calls in test_listmount_ns
->> function. This patch resolves below compilation warnings:
->>
->> ```
->> statmount_test_ns.c: In function ‘test_listmount_ns’:
->>
->> statmount_test_ns.c:322:17: warning: ignoring return value of ‘write’
->> declared with attribute ‘warn_unused_result’ [-Wunused-result]
->>
->> statmount_test_ns.c:323:17: warning: ignoring return value of ‘read’
->> declared with attribute ‘warn_unused_result’ [-Wunused-result]
->> ```
->>
->> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
->> ---
-
-> Hi Christian,
+On 9/2/24 12:46, Bjorn Helgaas wrote:
+> On Thu, Aug 15, 2024 at 06:57:20PM -0400, Jim Quinlan wrote:
+>> Do prepatory work for the 7712 SoC, which is introduced in a future commit.
+>> Our HW design has changed two register offsets for the 7712, where
+>> previously it was a common value for all Broadcom SOCs with PCIe cores.
+>> Specifically, the two offsets are to the registers HARD_DEBUG and
+>> INTR2_CPU_BASE.
 > 
-> Let me know if it is okay to take this patch through kselftest tree.
-> The change looks good to me.
+>> @@ -1499,12 +1502,16 @@ static const int pcie_offsets[] = {
+>>   	[RGR1_SW_INIT_1] = 0x9210,
+>>   	[EXT_CFG_INDEX]  = 0x9000,
+>>   	[EXT_CFG_DATA]   = 0x9004,
+>> +	[PCIE_HARD_DEBUG] = 0x4204,
+>> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>>   };
+>>   
+>>   static const int pcie_offsets_bmips_7425[] = {
+>>   	[RGR1_SW_INIT_1] = 0x8010,
+>>   	[EXT_CFG_INDEX]  = 0x8300,
+>>   	[EXT_CFG_DATA]   = 0x8304,
+>> +	[PCIE_HARD_DEBUG] = 0x4204,
+>> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>>   };
+>>   
+>>   static const struct pcie_cfg_data generic_cfg = {
+>> @@ -1539,6 +1546,8 @@ static const int pcie_offset_bcm7278[] = {
+>>   	[RGR1_SW_INIT_1] = 0xc010,
+>>   	[EXT_CFG_INDEX] = 0x9000,
+>>   	[EXT_CFG_DATA] = 0x9004,
+>> +	[PCIE_HARD_DEBUG] = 0x4204,
+>> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>>   };
 > 
-> thanks,
-> -- Shuah
+> What's the organization scheme here?  We now have:
+> 
+>    static const int pcie_offsets[] = { ... };
+>    static const int pcie_offsets_bmips_7425[] = { ... };
+>    static const int pcie_offset_bcm7712[] = { ... };
+> 
+>    static const struct pcie_cfg_data generic_cfg = { ... };
+>    static const struct pcie_cfg_data bcm7425_cfg = { ... };
+>    static const struct pcie_cfg_data bcm7435_cfg = { ... };
+>    static const struct pcie_cfg_data bcm4908_cfg = { ... };
+> 
+>    static const int pcie_offset_bcm7278[] = { ... };
+> 
+>    static const struct pcie_cfg_data bcm7278_cfg = { ... };
+>    static const struct pcie_cfg_data bcm2711_cfg = { ... };
+>    static const struct pcie_cfg_data bcm7216_cfg = { ... };
+>    static const struct pcie_cfg_data bcm7712_cfg = { ... };
+> 
+> So we have pcie_offsets_bmips_7425[] and pcie_offset_bcm7712[] (with
+> gratuituously different "offset" vs "offsets") which are all together
+> before the pcie_cfg_data.
+> 
+> Then we have pcie_offset_bcm7278[] (again gratuitously different
+> "offset") separately, next to bcm7278_cfg.
+> 
+> It would be nice to pick one scheme and stick to it.
+> 
+> Also a seemingly random order of the pcie_cfg_data structs and
+> .compatible strings.
+> 
+> Also a little confusing to have "bmips_7425" and "bcm7425" associated
+> with the same chip.  I suppose there's historical reason for it, but I
+> don't think it's helpful in this usage.
 
-Thank you for the patch.
-
-Applied to linux-kselftest next for Linux 6.12-rc1
-
-thanks,
--- Shuah
+All fair points, especially the lack of consistency, thanks for cleaning 
+that up.
+-- 
+Florian
 
