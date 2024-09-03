@@ -1,232 +1,143 @@
-Return-Path: <linux-kernel+bounces-312036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7953969118
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:52:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F260596911B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F818284181
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43259B226B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25101CCEF2;
-	Tue,  3 Sep 2024 01:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A39A1CCEDD;
+	Tue,  3 Sep 2024 01:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Uwch0Ibb"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2086.outbound.protection.outlook.com [40.107.105.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1FPn8WrK"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD931A4E6B;
-	Tue,  3 Sep 2024 01:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725328312; cv=fail; b=N7777Fpx7+DKzR3oixUCsX0zrPcmynGHKuWxbpXwbLP+/Vc498OMX+9WyGvCaRSjO0walRvoOQ7RF3GCy0cvo8u4MVrL9kH1+KVz7pCPbOo7+Jizn0P0od96RixN4cU7DprxYvnnFULDg3+fK5RpwQ2dsgjzXXlKzL0aJ4QKQf8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725328312; c=relaxed/simple;
-	bh=84RZoTTepUQUOHdN/NW1JSpCU/ZwonIhp3cfzJ+vjnM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gN/8G50MbB2SQEMOe0YFBhYs6LfbL6RsVVOuBbMK0FYS54mmKwgSbMt3uT+bGkTdgaMq//dWxrRj0/wrJgzEaEnTIfoynNju3bUHIkB+w2grdq+ZyNTw9SZIv2XqBHfa14C09QCydXEEpQrVCEAD7UBmNi0oJSc5ulKMwDfQJls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Uwch0Ibb; arc=fail smtp.client-ip=40.107.105.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yowxFmkldYwg00Aw75OhlUBjeoILJEOp81ucWcAA5YxiT3S+TeL3hDtncQ9wrJ0SvhKibPXzgECVuXcszZKKK5+Q6jecncOVYZBZ7MYTXEfB45Ery7j+KSMemQgHYX3EfAn4tCuwe27673CkizMR4iNh+ba0Dqb0chNl8DyYV8CNDvIcUi4T8XUmuvLKdDcsw0besGo4YCBrcA8GcLUzx/3ely0mFm++wmBRNHO76HiZW09iHFJGEiEg0o8XbmKfN5uMTx8Dcd8UMqtAHo+vpBcTkVbq3o//aOHqqpaLa11w727oThEVXDnyjeKpUAQaDv4h8OsQDmWIZ8Son+ploA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g+64IIb4kA90FRggb4LkkVjKhxvz9toCP1j0gQjcHtc=;
- b=wkPOGfZIz8rv9fvyB0Dk35+dxU57Nfj7mFgtbZOIcmA3hVV1gx0plgGKKWdnroKdBHtq+7arcDTjlB0oR1ZXsETqPULwcxxIhJhMmRQLBbZHPIK9ro+XsrSM9SSHCQbx+SZZcNV09QVNJpGB8f7KCcJXwMkpgUd2Qmshb0xUeajqW8fYGsSw0ENznO0OnTylaAa7SC/iYkigHZ+TeKSSeYPis2G+js2rjfVRxkx/1C9YhqGCNDoAXgFqK+67xyC0uKouDCGPuXDX6p2V4yvPygDi1R2uU70osiHHegQ36lRh65QXnmlSrSMF2DqShgu3HOSrOZSVL1cw8XgKBf5D7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g+64IIb4kA90FRggb4LkkVjKhxvz9toCP1j0gQjcHtc=;
- b=Uwch0IbbOUqZujccEegukEwvcYzeX/m+Vqc/wmFil4wTSL8OBgc99SpfU18iSxJjY+8Emq+UhGr//vfr5o346xN4ZYjUnEcCPR60N4Z1HOmvSnVqtIaeq4tsZEIsaE3AubktBcfVR0yDomNirDzy40V5T82fw4JLVzY40CyZ3q0CFRXUWkyLc2LVYX3jF1rKjnWso9LyOj+3S5bXyCVFLZwiQEMrPf5qImOUZMFAusPYC9xFLoT/n+NkeqRyhGgsp191AbzXnKSHrYZFZWk1mlF+8gIWINC96RcEMWJUQQDoNU4dsGFfkNMrGzTwFnRQk4Tz8ykqHcn72BS0eOK8Zw==
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by AS4PR04MB9292.eurprd04.prod.outlook.com (2603:10a6:20b:4e7::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Tue, 3 Sep
- 2024 01:51:46 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7918.020; Tue, 3 Sep 2024
- 01:51:46 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Francesco Dolcini <francesco@dolcini.it>, Calvin Owens
-	<calvin@wbinvd.org>, Brian Norris <briannorris@chromium.org>, Kalle Valo
-	<kvalo@kernel.org>, "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>
-Subject: RE: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Thread-Topic: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Thread-Index:
- AQHa94lYwasmKIL7I0OVdvDE0AaRyrJDyhdAgABM2ICAAAJRsIAAEAAAgAACqQCAAFg9AIAA03Ag
-Date: Tue, 3 Sep 2024 01:51:46 +0000
-Message-ID:
- <PA4PR04MB963814F85BBA6DD39F516469D1932@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240826072648.167004-1-s.hauer@pengutronix.de>
- <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVd3__wfm6EOOgH@pengutronix.de>
- <PA4PR04MB9638CF45263E713203A53EF7D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVtPJSsIr9eIFWv@pengutronix.de>
- <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtW5fFocfr9_WgGD@pengutronix.de>
-In-Reply-To: <ZtW5fFocfr9_WgGD@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AS4PR04MB9292:EE_
-x-ms-office365-filtering-correlation-id: 27515ab2-392e-4649-0305-08dccbbaf822
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?nkeiMBvLYlIelicAWkQtbDsWD8YLnLkoQ+M6vNVQTZmmMH2jpnql6RQMWZl3?=
- =?us-ascii?Q?Tv2XbBof3WrZ3t3NaJ905WBHKgr6KNaOt5Hyk9JjwgeXfn9au6cymxRU+LPs?=
- =?us-ascii?Q?ElFkymS9Yc4YOyd4W8TpFb4wHIgLHwM/bgh0na9TfJJ+TMtvC5ntKUBQl4ZT?=
- =?us-ascii?Q?bfjygxdxBhDSDefaVAQRU0jrPFm8kNaq512p4RBOz7KpT20WZ/FwiGGgdSEO?=
- =?us-ascii?Q?gtUsMkTC5/+x0Zq8MS7XOfwY8lNBiZFI5cZwpwvQC2JAoXHZgktM/kBKPsiM?=
- =?us-ascii?Q?gcM7z99Lxw+MDECWKKIkmvdrymLbzRMIPED/wIxGnieWG8HmPhDTQtbAM2Ea?=
- =?us-ascii?Q?+p1k7FCmfpm4zz/gKEIJeyx6peX55XAj++++zFrDhNbZlqDvYYPWf6tHQ9J0?=
- =?us-ascii?Q?4t3urdBoBcPiUjcbv+mqA7l19OVUXKmCsvQRUsmfFZSQkcSsnNkJac+9GF4n?=
- =?us-ascii?Q?YbOtTJs09DrZ2eNk8k6kqDFrhZQ2dRcHNZQzccLz9WtmDckwgDLHPMKfUC8M?=
- =?us-ascii?Q?Hgvf92Su35btSDevuOklo9i60tIixvat+H/yytm54u86xUYdGRbNjV0XlsCU?=
- =?us-ascii?Q?cE0MmWdNLYOb7RVXMZR1YFk+S9y608xubgDKCHc47JXoWJTszS6/y1/afKY+?=
- =?us-ascii?Q?rxmOrNCMZ+Iz5XiVoMFd+Cbi9ClyeU0e3Bg8uvU0etMTWX/N7257g5HxgqY/?=
- =?us-ascii?Q?zdSy21Idi8HMLV8cS4TmmYRBKrX2SlkmhWE8+MjVVOCtm7wAMGIJqcqjKN2s?=
- =?us-ascii?Q?tE68N5953Vw4mNqxm5vqF3uDMxx7aQ0uP63fvglkdQ2Hq7FlwIl0hMHeQTdg?=
- =?us-ascii?Q?f5zIPZHGhj3V+CELgkmvvdYyT6xn5p26PuYyDjTXTvc5S3vAvJm/kwlADrhB?=
- =?us-ascii?Q?/qGbHoyVyj9s8djBKptbNdZv8OPRJoVtvDn8pU3aFVBdb0ayjdxFbx1a07Nn?=
- =?us-ascii?Q?WdemJXF4lahgv0HyhONw9YkQKHmh27mnO1ELJDrd2TO58MK+61UR/6cMWB4G?=
- =?us-ascii?Q?UbRndiOeaWJqCxS1tCyZ3cn9xYUoXf0EG3U02LtCgXhzqMHP2RnjfH/rQFsq?=
- =?us-ascii?Q?EXaYmFWqiqvR0DvQtIk1HJuk2YA12D+i2QDXJE4cAQXTxhKxvk0/4qIq8a9q?=
- =?us-ascii?Q?DWoxGCEfaym0pwdot8FA71PDRyio87ho3OVTcP7dDItICORTLlLl+jiNBxIC?=
- =?us-ascii?Q?M4RtnZn6EInG3RU7eHohXv7oZ2HQCnIaZcveUDpD1LrqyvuNih2cjjVwCrXd?=
- =?us-ascii?Q?z2dEmOqlxE4jTir/5HlKz6AxeklKBZ05IY6HV005N6XsZF/C6QNN7zUdQnwr?=
- =?us-ascii?Q?7JLrRMekvoeq5Y5vuqVB4QHBl/HfC/dYEBUXVPefYPjJ6p9X9ldXobB1xYO5?=
- =?us-ascii?Q?RggRhLXt9JTrDbUI6okO4AhXA+WDIswdH03/c7vFayIc/fUnng=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?EV4iiuNbgBl02EsgZx5YE2NqLcXUfVjpnBukVFEpRDmhgJD46ezkEMq5gl90?=
- =?us-ascii?Q?zD1uSj1/nMVkzsXn/n/3yfqBeWCKJQSP+TB5jl326YVQjPmnhnPFva4n2q94?=
- =?us-ascii?Q?VDCm6iz8OJf5Z0jdYmZo2goiVlHpQUOq3QGmP3dA88FVWT0Ube+BrAYnWsjF?=
- =?us-ascii?Q?UA0oCqQD6nSOVEbiQdjLRwmJA2eZBCe3cg3ezuweYpUG31UfABagdY5bnK2g?=
- =?us-ascii?Q?UNMxAHxzzZcHqsDpNulnsxaPOBt4DTGQWg9jh+wBlsdNVJFsVUjKRqNl8JhU?=
- =?us-ascii?Q?qbYD1DHIHzK4KwYcIX3DFnLKiT9BAYdPVkLVpBGrXblDofLLka19YKVVFM+B?=
- =?us-ascii?Q?MQYhw2ooLpeLGi3mAdKSfv7OuEjpFmxGX7su0HJ8bossC1/Jsz10m/phLwuh?=
- =?us-ascii?Q?7UW9qzEx0lo3uEM2hqbHumSTD1vpLJJtt3RrUOc9SPp/kwwNczNskg7a3u3W?=
- =?us-ascii?Q?MVJRogPVFr1FHRT2VGljEsDpaO1yrEXRxDqE0nXc9TKQbA3IYSuGTq9bPvAD?=
- =?us-ascii?Q?TSADHvnbeSEU66BNCgLvRtOwlW9H26GNQHjuQsyF9wubQpL7byIZ4sVDXtYV?=
- =?us-ascii?Q?dcTqCy8jawJIj2GpStJuNx3ukSD7Mf8sepoQJ9CAG4XI1g1Rnv2hcqDSTqc+?=
- =?us-ascii?Q?HaP/in03HMHkdOA20BD4Zbo9CvsTXnhd7lOUVfHmZaVPoDVJZ86/bPVy7vqK?=
- =?us-ascii?Q?w9FN4WbExG1HhFDv20XlIzf4YEp/dzCLRbnPQY23FNrJpqTNs4kBZ7url+db?=
- =?us-ascii?Q?myk9xZmHmPY2I81iEj7dFndTd69uTjtGtkZVLIufv+ftYM7J+rvqtzY6RNfe?=
- =?us-ascii?Q?7WlOhO775dfiTx+w0u9PsD2HO464B9iDF7HVwOtrS783yaaA1cyLjZc4gxw4?=
- =?us-ascii?Q?CPi8nRK5MxOog9jbIXdsSUOXhz2/wA4PkkrzT5uwC2Qmk0C6BX0p1k2P7hEs?=
- =?us-ascii?Q?gUUj/ulb409fBBoNPvnQEVz0JjRStK9GLPUKsXFTVErdR4JOLG8WBnSosqeN?=
- =?us-ascii?Q?/nIc3TR0nAvXfxVYaLXbZ5yFx1RqUTjoLSVv7GvFg62jAlNQfnQXqY+z9ajA?=
- =?us-ascii?Q?5iXXWQJQ68QknCYHTQsaGyZeQMJbcj54A0Y2ucU8Y2i8pFPJ+3aChiO3s0Fw?=
- =?us-ascii?Q?CnPBNGiq2MMNyENB+yEWndjKDet2TB2f5eZIar3OEEG7BG3XrrceuteI/teM?=
- =?us-ascii?Q?5QASR12oVN6UoDkTo/8y6nKv1fFGn6/2I8fBcrqTmWkWFNk0Ee7X1eG2MowE?=
- =?us-ascii?Q?wyWMdCwLxn8pDuyMk/q/7f0Pv6w5oB5tMqKPZfqgcBtIkRX+q5D1NFhuDUFd?=
- =?us-ascii?Q?YJM4VaBaLTJtlzyFcU3WKO1ay5dAaOMuEfcQaA/cvFiNWJ+TzKusuU0mdipQ?=
- =?us-ascii?Q?9K1DdpTr0CWu86eijSfz+OA+l1/py4BB0tI7PBll0cjVggEteLJqmtwwTGtr?=
- =?us-ascii?Q?iEICcfZIAjlsG7GxJl8AmcU20inHS4b5VOOrCr3z6WwpUli9L0596zFwvF6Z?=
- =?us-ascii?Q?+XXG/celB4R9U8WrUdembdzAx3x6TdP/rHJKPEpNznU9CxPQF3r4YDvdAVib?=
- =?us-ascii?Q?r5gYv8FL4wuty72qg8+UH3HROjqtJRGGp6wAwHwi?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A701581F8
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725328400; cv=none; b=CxJtMlHRj45fCabxpICflkdS9+byuy0Dx7hVaG8VN87lGLbqNZgyFT+xNgoIEbp+TyY8FW7s18LvssKXDqYzkkrApp4yUUrVZlaa7w2dpuMIDXojyC//ugyaThuT2YNCeBWL3YaLGz4n02yhmkZSPY9FOgp+TtqZjUEltgK0z5A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725328400; c=relaxed/simple;
+	bh=fkxm6iC7ztmIiMJhRW39ZHvuvClsWNEbzax9c3tQp0c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=M98qqqg1eMBeBpM0eORt3fHzSG5o52icw4itNy1k0mKvmINjLL8Gik1nS/eR6BCogsTrAccpJ0tjVSo7ih85O5jbw4aQeWQqHFN07lacXt/DJCLflPZMQk+mxV5E7R64IoVdKHlPtVI93FYRYfWifnz31GihrRArNlf3kaXYFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1FPn8WrK; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2056aa5cefcso302795ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 18:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725328398; x=1725933198; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oa5rtkcqTKo2zYhIyQDpkUbrotmaYMsM7bl9Xg4sY14=;
+        b=1FPn8WrKi2zgVP3IhRbo441gf7nD9OQCVWoTWr8s0mN95pgBN/+fnjXOajqrER/DUV
+         YYN6SHwVi0KFOXbMhPGpqWN8QzQgbjr9CftuykmICpcsKUrxB3wPvFjo4EjksNpBZkZs
+         ZF627kkVpcz9+zw1zK717UCBEtInzhL4+24mRJkjeyC4RqZfN1GAJBvxv1WuOXZVbbm8
+         f0V2I5hthcl38nYUbtp8AhIaD8G5b8QrX0mSj+rYARfDwllFzm48u+4Q7J0QixKnViUC
+         /vCzwX4c2AoX5yrBNhFlUQ/RFHk0hMJM53uqfm0Fr3oYK87B/QUO6x9KBntIZuTTljDn
+         VQ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725328398; x=1725933198;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oa5rtkcqTKo2zYhIyQDpkUbrotmaYMsM7bl9Xg4sY14=;
+        b=H9R/uikTBWsyR9GraAby42lcfm+dZ7OvkoqH0DWiHT6uDtR6hGM0ToguhcEkpF71To
+         62POQRV1TgP9hEWdRItt/24EY+LdxeWkOh0Kcre/WimTNABN+rTqPuOv5DHMHJD0psCR
+         K5HIuq/QPk4BxS7aLjqXdQUtF1nwnJcFxbH5zp6NcZSixwrRLq7EvH9mEiyKfWugaWfN
+         wn2kapyGTFSX6bZz6KyEECaFXzfzvWcz1LBYnk7Uq4S29kSAiMkmKfF5xVSxQbO22bP8
+         p/Df+gJhRRb/8jdx5ionV2QXYUNx5OaglFsgdH1lj7ZqDYEcl4pONR1Nf5VViwWeu62M
+         8svg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhKYyzDKI8qBqmSi10pnGFzReuq/tu6/FKgXhkCVvAQxGNTqnPAiML3OMoB4wYf5Gunc/zOkwDsGZSdD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxqlWBvcd2lZFRrl02Ipk5sIwQGYJZI+O0yPF3doNg2QGjqRN5
+	O6MZibi0gu/ir26fFhnXBXao9V/ZM+R6onbiuc0XPSG+flsCsW7lhU7A8QcRTA==
+X-Google-Smtp-Source: AGHT+IGDQJviICqG8bzc9DeFAVvSmJK6ShP9hGVeUCTgS+t0sDI+6Q3vyH4V+VJA5A7u6K8sZJldmg==
+X-Received: by 2002:a17:902:c947:b0:1fd:8c42:61ce with SMTP id d9443c01a7336-20549b895b1mr5165455ad.27.1725328398008;
+        Mon, 02 Sep 2024 18:53:18 -0700 (PDT)
+Received: from [2620:0:1008:15:69a5:b87c:3c08:3343] ([2620:0:1008:15:69a5:b87c:3c08:3343])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56d6ecasm7679373b3a.142.2024.09.02.18.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 18:53:17 -0700 (PDT)
+Date: Mon, 2 Sep 2024 18:53:16 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>, 
+    "open list:SLAB ALLOCATOR" <linux-mm@kvack.org>, 
+    open list <linux-kernel@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] mm, slub: avoid zeroing kmalloc redzone
+In-Reply-To: <20240829032911.2801669-1-peng.fan@oss.nxp.com>
+Message-ID: <889f1f51-4c57-6833-ab79-bcc9674c3e76@google.com>
+References: <20240829032911.2801669-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27515ab2-392e-4649-0305-08dccbbaf822
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 01:51:46.6526
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vm3FH6w6F/zKLv4je6hDYmJQ6N2A/u21APnaqe70aOMQyv8MchrHEgrftL/6NY17oSLSBL224QgsmVeDxvbcAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9292
+Content-Type: text/plain; charset=US-ASCII
 
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Monday, September 2, 2024 9:11 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle Valo
-> <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
->=20
-> > > > > > >
-> > > > > > > Sascha
-> > > > > > >
-> > > > > > >
-> > > > > > > Sascha Hauer (4):
-> > > > > > >   wifi: mwifiex: release firmware at remove time
-> > > > > > >   wifi: mwifiex: handle VDLL
-> > > > > > >   wifi: mwifiex: wait longer for SDIO card status
-> > > > > > >   mwifiex: add iw61x support
-> > > > > > >
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/cmdevt.c | 86
-> > > > > +++++++++++++++++++
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/fw.h     | 16 ++++
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/main.c   |  9 +-
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/main.h   |  4 +
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.c   | 81
-> > > ++++++++++++++++-
-> > > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.h   |  3 +
-> > > > > > >  .../net/wireless/marvell/mwifiex/sta_event.c  |  4
-> > > > > > > +  .../net/wireless/marvell/mwifiex/uap_event.c  |  4 +
-> > > > > > >  include/linux/mmc/sdio_ids.h                  |  3 +
-> > > > > > >  9 files changed, 205 insertions(+), 5 deletions(-)
-> > > > > > >
-> > > > > > > --
-> > > The VDLL support in the downstream driver supports a case when a
-> > > VDLL event comes in while a command is being sent. I catched this
-> > > with this
-> > > test:
-> > >
-> > >         if (adapter->cmd_sent) {
-> > >                 mwifiex_dbg(adapter, MSG, "%s: adapter is busy\n",
-> > > __func__);
-> > >                 return -EBUSY;
-> > >         }
-> > >
-> > > The downstream driver defers handling of the VDLL event to the main
-> > > process in this case. I haven't implemented this case in my patch
-> > > because I wasn't able to trigger it, but is this the case you are ref=
-erring to?
-> > >
-> >
-> > Not only this code segment. In fact, you did not add VDLL data patch su=
-pport
-> to sdio.c.
-> > If you try to add the code and do test, you will know what is missing i=
-n your
-> code.
->=20
-> Could you point me to the code you mean?
->=20
-> Sascha
->=20
+On Thu, 29 Aug 2024, Peng Fan (OSS) wrote:
 
-I only know the porting VDLL code in nxpwifi.
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Since commit 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
+> allocated kmalloc space than requested"), setting orig_size treats
+> the wasted space (object_size - orig_size) as a redzone. However with
+> init_on_free=1 we clear the full object->size, including the redzone.
+> 
+> Additionally we clear the object metadata, including the stored orig_size,
+> making it zero, which makes check_object() treat the whole object as a
+> redzone.
+> 
+> These issues lead to the following BUG report with "slub_debug=FUZ
+> init_on_free=1":
+> 
+> [    0.000000] =============================================================================
+> [    0.000000] BUG kmalloc-8 (Not tainted): kmalloc Redzone overwritten
+> [    0.000000] -----------------------------------------------------------------------------
+> [    0.000000]
+> [    0.000000] 0xffff000010032858-0xffff00001003285f @offset=2136. First byte 0x0 instead of 0xcc
+> [    0.000000] FIX kmalloc-8: Restoring kmalloc Redzone 0xffff000010032858-0xffff00001003285f=0xcc
+> [    0.000000] Slab 0xfffffdffc0400c80 objects=36 used=23 fp=0xffff000010032a18 flags=0x3fffe0000000200(workingset|node=0|zone=0|lastcpupid=0x1ffff)
+> [    0.000000] Object 0xffff000010032858 @offset=2136 fp=0xffff0000100328c8
+> [    0.000000]
+> [    0.000000] Redzone  ffff000010032850: cc cc cc cc cc cc cc cc                          ........
+> [    0.000000] Object   ffff000010032858: cc cc cc cc cc cc cc cc                          ........
+> [    0.000000] Redzone  ffff000010032860: cc cc cc cc cc cc cc cc                          ........
+> [    0.000000] Padding  ffff0000100328b4: 00 00 00 00 00 00 00 00 00 00 00 00              ............
+> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.11.0-rc3-next-20240814-00004-g61844c55c3f4 #144
+> [    0.000000] Hardware name: NXP i.MX95 19X19 board (DT)
+> [    0.000000] Call trace:
+> [    0.000000]  dump_backtrace+0x90/0xe8
+> [    0.000000]  show_stack+0x18/0x24
+> [    0.000000]  dump_stack_lvl+0x74/0x8c
+> [    0.000000]  dump_stack+0x18/0x24
+> [    0.000000]  print_trailer+0x150/0x218
+> [    0.000000]  check_object+0xe4/0x454
+> [    0.000000]  free_to_partial_list+0x2f8/0x5ec
+> 
+> To address the issue, use orig_size to clear the used area. And restore
+> the value of orig_size after clear the remaining area.
+> 
+> When CONFIG_SLUB_DEBUG not defined, (get_orig_size()' directly returns
+> s->object_size. So when using memset to init the area, the size can simply
+> be orig_size, as orig_size returns object_size when CONFIG_SLUB_DEBUG not
+> enabled. And orig_size can never be bigger than object_size.
+> 
+> Fixes: 946fa0dbf2d8 ("mm/slub: extend redzone check to extra allocated kmalloc space than requested")
+> Reviewed-by: Feng Tang <feng.tang@intel.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-David
+Acked-by: David Rientjes <rientjes@google.com>
 
