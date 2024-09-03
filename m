@@ -1,159 +1,221 @@
-Return-Path: <linux-kernel+bounces-313942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDFF96ACA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2896396ACAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6338A1F2557F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24011F25467
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA8C1D58B7;
-	Tue,  3 Sep 2024 23:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871F41AD26F;
+	Tue,  3 Sep 2024 23:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iEAGK9Ys"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wkU249GA"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2060.outbound.protection.outlook.com [40.107.94.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750E01EC00B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725405297; cv=none; b=sqRgjH4ECrB5o7svatbnUwi0gSxw5mtB9FaBl6wshdV8Nkqc9A2zrG83wnbxGWVl9ge2jEt6kkHERfgExQuuDNMk2MC1kIdoI7WkfUXJO/kWzxjwyzeN5GRxu54EurSSPtQsZa2srplknzoznGtKhddepGb1pfQybvkwZGeGAYc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725405297; c=relaxed/simple;
-	bh=plmlcLlzOAXF+94zhqL6I3TOmr7yQc1mIxhUIPH7J28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2WxIuWpaUTtnOGIJHDia6uH8KgtF/H7GTL7oSyNIIaKM4Ku3L8Ph4e4qLDJmcGpDDP7qThbTGgaRdNGyKbfeyPO0SJx+m+/lhCKUMNFSTbdrgH+oduJ5moogpA3OWi4MKaqbOEpbXZGVaehmIiezzfpITah6aglqEQkstvEt6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iEAGK9Ys; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a7f86026a0so392513285a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 16:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725405294; x=1726010094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vKGnNzBix9k9BwTLwmd0F4XaUJ7PXl0Hgu4ajuAli18=;
-        b=iEAGK9YsubFctjBESMJocxHUt5aSXcbEq6ZfvBLjGQWqdW2HCdegX78T4UdMhGnN5v
-         Sb9tHPvIR+pAS0zgj9V9wq77u9lLMnGFhSYjHWHS0nRiBmuHOjHyYaSl56AP7yxQvlzX
-         oU92880EOPDFBu3AYoMkT5VkfVLo9ZIVInTfQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725405294; x=1726010094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vKGnNzBix9k9BwTLwmd0F4XaUJ7PXl0Hgu4ajuAli18=;
-        b=lScHaTEC1SpQ1DshUvhyAQDlY4uDDKgLSNT3a4wszxdImcq0Of1LREZ6lcQN/ed6JY
-         oGhhiOb5ZTNy8b2k0rjcrNzQ+1MNlxJiSBSJUR/JmEH9/JPU9luZYND9Hcqc+kBBQj28
-         bwHXRl9p7IfcSyuxaasFSzVx6Y3+Ldxt6j8zto59lK2ORo8NX66HrpKVUz+R5/Wk0u0z
-         bxYO/+t/Qkjj7QDc9GOi3U2kLeqb2uXhZzh6HHlIBMCU6cgPgjaEz5vz7JOmms2yw/vi
-         0hkk9Kw2I+4VcgR2P6xH2xYceTzUMT4ykO/hLkjqRTync9n/97kxOdX6Kb/rSKANxFte
-         bfAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXybzGC8/ES0UuWvm99cb5CnnFPzllpxJMTq7pV48XFdGrsoyzt0TiP4o5W3K3VUXpOGIRJw+OC/49jdxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy+W0kyvUZzwUhk19E6tOmGigTouR8vP5iX4N2+47Akmokf9Ih
-	Ty0bCW0lZZ17XOYpRpZzSa8M+cq3RO54+v3RWQkK3wFhO/9mbsdPdGqBabEu/YvN50RPXHf6FVI
-	=
-X-Google-Smtp-Source: AGHT+IEYr8RcAj+6tyR0G4cK3cfrjxodQAN9vcOi+GbiVQmEDHQ/hQxWQ8uE2SK2EJXjQQHiQ097hA==
-X-Received: by 2002:a05:620a:2681:b0:7a1:da5e:c4c8 with SMTP id af79cd13be357-7a89324a1camr1664055185a.40.1725405293513;
-        Tue, 03 Sep 2024 16:14:53 -0700 (PDT)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com. [209.85.219.49])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806c24067sm572000685a.47.2024.09.03.16.14.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 16:14:52 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf92f96f83so28943046d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 16:14:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVMaqnJ2q5LP+sBpdFxvYH9WWwt8kETcWS8qtefVicQV1wtn/MJaO8aeMES/SZJ06VWZHYGhKrh8DmUH8=@vger.kernel.org
-X-Received: by 2002:a05:6214:5b0f:b0:6bd:83c3:ba1 with SMTP id
- 6a1803df08f44-6c3554753f6mr170317256d6.52.1725405292025; Tue, 03 Sep 2024
- 16:14:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0F2207A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725405334; cv=fail; b=QDR0MGaTLCycJwWJjOm4zSc7y2R5niQ1e768HNacZzxEigmWkGVMBJlD96/ooPFBmBBO6Gm9OHjtMLZOy7FBF8DP9s3aZe6cdkdFILwmksq5SyJCQbCYTOYopXWrdUuyXh3cYde42FqMVaqxmm6H2YaJTit2hYMlYzA1DDKvdRU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725405334; c=relaxed/simple;
+	bh=xEK8nem/QeAyUWlqeaQAHpN3x5+pT0d+ckS0uOumsjk=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QOkokKvKq66tEpdNEkYurx3cxjzeWiHD4VqfTtv+6lcTTps0qv6aYoUDwQY1q58GzpYYgteWkRgzvOdwB1UOtcfL5gpK+/YkElrWbZR33tEjtfXjSjISZsrXUl3c4pBBgePRwRSFqxAcXG9BZ0qLo8rcvXKksEw64UU9bylxTiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wkU249GA; arc=fail smtp.client-ip=40.107.94.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UyqfA0WOtRzwUZLukDYrQ2V4ZVUw9gOMb31TulGYP3M1y1Kq6ocTyZsb75kKokhnNpD5hpnQDGbIOmZu2rhM+c2xEOMdRuJ7wFmE49LsIA1vRMbwaRUiOzNXMLRTCwuuuyC0c55vQu186K+TiWnHSCVF+z+7APJI3VHmo2CX1TiA73kcK68TpH9QYvAEAsXJ8wPWZf3lPABN86FxeJfnBS4OgwuieaMAotkIT0ipqXm4f3qGa77DaHeIjXDzk2e8O+r83OkWij8ePZRN2LTc/ajblOumo+dvAdoOaIevP2YWc323froZRGa0kHKk4bVkLUvCH9YAhIxG/U6XCGfuQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+qrJUJVkIJKV6C1Ebp+MTAiBBfiwzvDBoyH2atPuYws=;
+ b=JzRpZWgDSYh/qIC6srXsRjp8/gwpPC2MdSgsw5lQ+I2QTTMAC0z+lActsPtfwYLTnH9DZPE2aFKxEX7EhhgIgtJ/6C5k4AMb0BAXTiblekqD5jOSwX8Cj6K8MO4/KfFWSww43R3eAG9QwqgAbNrJpgHUi4nk7GkVklhNzLuqadsKKNpiXwdIQtb5KOiY/mWKpELRfJsDRo6SdOdrMM+lnTPSS6rMqA8gRPBt+msR/xZEwfqsQFeaW0UZcTa8aLPRWNwVNwcg5uS2333ZmNSg/nidmSgbRiTK8ear82mLiWS8ROjjIf7882nq/JYz1unfSIsLKa/fbF4TXaF5mT1McQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+qrJUJVkIJKV6C1Ebp+MTAiBBfiwzvDBoyH2atPuYws=;
+ b=wkU249GAiKTbWuvkVvTG0jc4aP4c5WwucnccpbV7q9gBci7najJSrsKY3P56aVEF27yVTVOeHFwPuaS94mVttB1ijQpbT1k/PCtjpxW9WqzsG9OXEGpM01lnNl3yh25wdc/AMV1Fzzly7kY81BXzLeAcMDZ/D6VmQrYx4VovzL8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5311.namprd12.prod.outlook.com (2603:10b6:5:39f::7) by
+ SA1PR12MB7246.namprd12.prod.outlook.com (2603:10b6:806:2bc::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 23:15:30 +0000
+Received: from DM4PR12MB5311.namprd12.prod.outlook.com
+ ([fe80::a846:49eb:e660:1b5b]) by DM4PR12MB5311.namprd12.prod.outlook.com
+ ([fe80::a846:49eb:e660:1b5b%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 23:15:30 +0000
+Message-ID: <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com>
+Date: Tue, 3 Sep 2024 19:15:27 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
+ some RenPy games causes computer hang
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+ Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com,
+ pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
+ <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
+ <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
+Content-Language: en-US
+From: Leo Li <sunpeng.li@amd.com>
+In-Reply-To: <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQBPR0101CA0054.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::31) To DM4PR12MB5311.namprd12.prod.outlook.com
+ (2603:10b6:5:39f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823163513.4344-1-hanchunchao@inspur.com> <CAD=FV=X_a2NzAi6L3N-Bgta4Vn7uSd3DPZ355LBg1gpd=A7H+w@mail.gmail.com>
-In-Reply-To: <CAD=FV=X_a2NzAi6L3N-Bgta4Vn7uSd3DPZ355LBg1gpd=A7H+w@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 3 Sep 2024 16:14:38 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UzEucvODyhYo=o-eroe3Q3+siKN2yWwAfOQ=L8NXBD_Q@mail.gmail.com>
-Message-ID: <CAD=FV=UzEucvODyhYo=o-eroe3Q3+siKN2yWwAfOQ=L8NXBD_Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: himax-hx83102: Add NULL pointer check in hx83102_get_modes
-To: Charles Han <hanchunchao@inspur.com>
-Cc: neil.armstrong@linaro.org, yangcong5@huaqin.corp-partner.google.com, 
-	quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, liuyanming@ieisystem.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5311:EE_|SA1PR12MB7246:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08fc01da-32a4-4167-a751-08dccc6e4d70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TEs3NTRZSU9nNHhYc0JXd3ZpOENuYnVJRGdwZUZaa2tBY0xSUHAwK2ptUTdO?=
+ =?utf-8?B?WGRSVnpGemJ3cXZTT3J4cUVGVzF3RjdHbHRjNGx3dTYrMGYvOWJRWTFMN0xn?=
+ =?utf-8?B?dGc5c0J3dUJjNzZaOEVjRVVYUVFyMG91WFI1NWRsRkRyL3lkWWhycGtCbU1z?=
+ =?utf-8?B?RDlwN01zaThEckVBRFlsQVc0ZjJWUGQ2TkcydWVWMVFVaFlZakYyUitqdTJK?=
+ =?utf-8?B?aDBRMVhva1JPTG91MytxaForMXh1ZU84b3BzUUdIOUZ2TnRROWk0Y2QyeXh3?=
+ =?utf-8?B?eCtHVTJqOGs0YTdlbTB1Tmw3L0VYaitZMTBSNEdRTGoxMzhLRUZzZFJFOCs5?=
+ =?utf-8?B?VE5Oc1J2ZDdTTGhyQktaWUgxV3dDdzNZd3pwZVY3ZGtoZkJyTHU2YllhdXZv?=
+ =?utf-8?B?TWlPWUQyUElIN2x6Y2YyUUJydVBVV1lhazYrSEdwd25OS0NpWFJJZUpyNExP?=
+ =?utf-8?B?WHFTRm9DT29MWXUrOUFJRStnSVpIbEV4WnBlL240VnB3ZXZiaHRnNVkxR2ls?=
+ =?utf-8?B?VTFjb1gyWTVTUktWRzBUZnRlSnYvKytqbTZiM0sxbEhOQzNBdEorL25XSkJa?=
+ =?utf-8?B?VTR5bkE5ektjanhtdUFtSWMvNjR0MlNWUlBVTEx5bk1BT2ZyWkd2clBYZEJ6?=
+ =?utf-8?B?UmhFbHowWXROdUhVMzZuRzIrZjE4VEo3U3JmalRRRjBub2xTQnUvbmp1bG5E?=
+ =?utf-8?B?WWxnK01oYndTQzJiT09FZWJCOUlBVlhZWHloak05Tm90VldqM3hlU3ozMjMz?=
+ =?utf-8?B?Q3lyUDJ5WmRyV2RIcE16dElkeVZxK2xPNWN4U0RONFk1cEZhVy9udmZQNnRT?=
+ =?utf-8?B?dnJORFdTY1F0OEZ3WVluRFZnNVgwekc5Y0lzb3VGZG5YbTVBNUxQU0wvVFpz?=
+ =?utf-8?B?V2RLaG01R2RTWHRLcHlWS3AvVkJDODdFQnFoNEE5dHhNUVBxR0VKYkJIaytI?=
+ =?utf-8?B?VnR3U2NGUE81SGNRQlRCTk9TYmtrSUlKTnp1MUdLUTZlWWw4a0JhL2V0aVRC?=
+ =?utf-8?B?UG1mZmgxQ0cyTjd6OERSNGdKLy9hcHFFTDU0Skc1OVhhczQ2LytQN3VscE9Q?=
+ =?utf-8?B?K1g3VlE0MnlEZmhSWmFQNzJ3a3dnUlB6MXIwZmFuWVVYSHRqQ1l2QUZsZi9T?=
+ =?utf-8?B?OGFHN2ZoVXNkcWNjOFhSODV1ZkhSNitRS0tCZiszemJQTXpTcDhybjU0UU8r?=
+ =?utf-8?B?UDVFTDZNUHpvaTdCY25CemNZR0MwNlN0Qk5neDFMR1hkS0FxU1U4TjdQaW9M?=
+ =?utf-8?B?d2taNnRhK1M2QlMvckc3dDZPUVRRQmtsdzFwRS8wdTk5eDkyQTUyTWJnM2Vj?=
+ =?utf-8?B?b21FMkJWaHFPNzlsSUw2OVJFQU9STEM2ajJKUFpWMU5yUTcybUhQRmxHN0Jm?=
+ =?utf-8?B?TGRCQUc0ODFjaTJwQWFjWkdOTVBDbnVQZ0s2bGRDNzJkdEZFOGpQeGlyV1BO?=
+ =?utf-8?B?QXE0cVFIaTV5RFc3cmpxbVJTMmU1YnllR0E3NG1KekdDNG94QTlKamg2b0th?=
+ =?utf-8?B?c25la2lVTTZVcUVCWlcva2h6Vm5TMCtjWDJveDRrNXB4NE9tVFNxVjdWSnFh?=
+ =?utf-8?B?dEUzVU9NOVA1bDJRZkxVMnlYR3hkV3BnWEFyc0JERlFrQjhWZkt0Tld4ZWR4?=
+ =?utf-8?B?d1E5VCs1MGxDTE9CdHpYWjdQbmZ3ZXZPQUJqb25ZSXVNRXdVUlZBOU5FZ0hR?=
+ =?utf-8?B?TzhHNkgyTEV0aExuRkYwK1gzVktGUVZPOFZRVm9DSTRDR05zbmlKeXY5K3VF?=
+ =?utf-8?B?RTd4d0d0eVhBL1dZNU4vcmJkbjh1eVJjd1N0RDRneXB1bi9CWTF4cEdnUWxl?=
+ =?utf-8?Q?/1nL3Y50ksVVME8H4tL6ahesDCH1M69CzMq84=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5311.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VjdrVHoxV3hFK3NEemExU0QzRDBGWGk1Qm96RkVCMnRpQkJsZDVBWFBFc0Zr?=
+ =?utf-8?B?dmJsU3R4WEVsdWpqYTFJb0l3azMzS2JNT1hQQnBlRm9NaWtQaXFLS1VBb1Fm?=
+ =?utf-8?B?OHlLWmYvUnJUV2hFZFNoZHJRalJoMXhZVEdwMlBtKzRRSU5DU0hxQXgzS1Mv?=
+ =?utf-8?B?YWRNK0RkcmxMMkRTY2M0OUdONjFOSVNOVXFQZTg1WUFEd2w1cTdId0dNa05n?=
+ =?utf-8?B?L2hOeHJ5K0UyeTJac1FhMFNhVXdvN1JoTTlhVGhKRkEzK0pmWDUrWTcwYmpy?=
+ =?utf-8?B?VHlTWG5TT3d6dkpzWE13S3o3VytmZkoxVkpZT3F1dDJCOVR4S01IYXdxZHhG?=
+ =?utf-8?B?eUF0dU1ma1NSM2xiSy9ZT1Y5NngrNFFxcHBVT3VPb3ljSXc1WFBjeE1RNkJs?=
+ =?utf-8?B?ZTJaR0VmZ2dicmZtbzg3V0NOcUF0YXdKcUxFdENybWtydDkvOG94MUFkY1cw?=
+ =?utf-8?B?eFlhSnoxcWNUNnExU0dnSjlDVFBIYnRWRDU4R0k1OEpLcVBFeHo0MlF1WDhp?=
+ =?utf-8?B?VFdJR0FrZmF5N3l2UEhyd0paVFhueGJHN0VwNDRrV0NQbHV3YVI0UWpXODVp?=
+ =?utf-8?B?dVZxMitCUjBPMXg0cVFqM3E3MmhZNVlvcjJhOHJLVTE4U3R4VzFiMDdwb1A4?=
+ =?utf-8?B?Q2wzTXdLcW01aVlzQU50ekJYR0Jva3JpM2lSMy9tdzZOWFAvc0krTWV4YVJn?=
+ =?utf-8?B?SE8rZk9mNHZXajZHOEp0NjNmUnpPZXUrSmZGWHp5d2IvTkNtR1RDbWsvNms0?=
+ =?utf-8?B?bElvTElwRnBENkNqR1M1UmYwaFl1M3B2d2NFQS8wRHEwOEU3MVBlMzV5Nmg0?=
+ =?utf-8?B?TDhjdHZQOE5zaktadWI5eFF4T1BEQUIyRGc0aUhheWYyTUFKWHhyOVYxZGN4?=
+ =?utf-8?B?ZWZlMGIxQ0hFM3FFeHVQZkdBZU5wZTBiUFB5K3RNeCsrOERJWEE1b3NpcjdU?=
+ =?utf-8?B?ZTRKTnJWejVLRG93VWtkQ1NiM2VaR1RoWStmTnhORTUycDhrNHVkV0xISDND?=
+ =?utf-8?B?RlZkekZlK1dHVGRDZXpNczZJYWVydEF2eHNIS3o5VDZFODJ2ZjM0Vk5WdnBN?=
+ =?utf-8?B?d0E2dTk5MTNwUDd5U2lLc0hhZGlHNkJITTQ5eko2K1FYcEZta0JvQXhRdGg1?=
+ =?utf-8?B?OGs1Q3kwVHpWd0JENUNNSVRQeFpoMlFRM2ZSZGV6L2NCQXVpSFNmTnNjSmhS?=
+ =?utf-8?B?OTNiY0lSWWtId2g2UVljdjFzT1RYS2hiazJ4V1piRndBRHlseGVTZHNKSXp1?=
+ =?utf-8?B?azlxdGZCT3o0YWdsbVc4Y1VmNUdTZ1FkOFpqSkV5cSs2Wm1pOUU3VGF4U0dp?=
+ =?utf-8?B?Qkw2cHRsLzQvcm1vTUM1eEZzdGhyRjFXczJyUy9zWGY0S0VLYklsMmp6aW1N?=
+ =?utf-8?B?bWJEdVBLWGJBQW1yRC9EU0pYQVk2bDVkeFlEWUE5cTRwMmZWYUZaR2F5QUlk?=
+ =?utf-8?B?WTcrR21PMnFxVzJFNWNoSGFZbnV6OE52dm5jd21iVUJ1T2FydmxVLzNMU05W?=
+ =?utf-8?B?ZDkwcFl1YzVaUlA2WEphVGVvQStqUUdDZ2VrTTlGTmJCVFpxTVpTdHRRcUJG?=
+ =?utf-8?B?V2pNcFNlN0U1ZXcxTGltajlZV0FTZ0hLQmZEaUdIbUZEWjBZWWlxamo1WjNE?=
+ =?utf-8?B?eTdqN2xUNldJbzVmdnIraXhCSnNjS3VFVzloTXlJa0M1TFZGZlZJVG5rOHcr?=
+ =?utf-8?B?SXMybk1qZzkyZ3BaQzhwb1NxMjIwVng3d0tvRHVlYWhBaUQzeGpma2wvNThJ?=
+ =?utf-8?B?RFNXeHRLR25CZ2FUUTlzNCt4Q0NuSWJVQ3padXpqWG1aSnRnbUUra2xiUmsz?=
+ =?utf-8?B?R2diOEZVYnpRMWpFSmU5N0E3endOTjJudlV4LzduZm1yVUlPU2R1bFcyMmZD?=
+ =?utf-8?B?Nnp3U21yUEh2V2toMWlVZVFvRjdqVVgzVW13ck5zZ1ZZODM2VmlqOVJLZlR6?=
+ =?utf-8?B?UVVUOGoxVkZDU2lCK3ZhNHVKblF0bnpMVVZMazljajkxU2FLSllLMEp6ZkNm?=
+ =?utf-8?B?T0dvQ1o0Y2lnaG40M3lkeWVobWFuOFNRak5xSWVtOUJ4UUhGK0dvc2c0MFpY?=
+ =?utf-8?B?NU54cWVMcitwb3F5NjF2bWdlNHloWUVFNTJRd0crek1MTjdzTTI4UWdRMTNZ?=
+ =?utf-8?Q?Rt1pl8OADhSvKvsVB7iiKTtHU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08fc01da-32a4-4167-a751-08dccc6e4d70
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5311.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 23:15:30.1316
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2KrM29wbzqoxyw/7sWTcTkRzgne/uB8PvHMNxebZgOPKtpCzmXK7GX4CJtue5862
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7246
 
-Hi,
 
-On Fri, Aug 23, 2024 at 9:49=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Fri, Aug 23, 2024 at 9:35=E2=80=AFAM Charles Han <hanchunchao@inspur.c=
-om> wrote:
-> >
-> > In hx83102_get_modes(), the return value of drm_mode_duplicate()
-> > is assigned to mode, which will lead to a possible NULL pointer
-> > dereference on failure of drm_mode_duplicate(). Even though a
-> > small allocation failing is basically impossible, kernel policy
-> > is still to check for NULL so add the check.
-> >
-> > Fixes: 0ef94554dc40 ("drm/panel: himax-hx83102: Break out as separate d=
-river")
-> > Signed-off-by: Charles Han <hanchunchao@inspur.com>
-> > ---
-> >  drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 ++
-> >  1 file changed, 2 insertions(+)
->
-> FWIW, this looks to be v4 of your patch, right? The subject line
-> should include a version number and you should be providing version
-> history "after the cut" in your patch. Tools like "b4" and "patman"
-> can help you get this correct [1]. If you plan to continue posting
-> patches you'll need to start getting this right. The next version of
-> your patch would be v5.
->
-> [1] https://sched.co/1aBGS
->
-> I see:
->
-> v1: https://lore.kernel.org/r/20240821095039.15282-1-hanchunchao@inspur.c=
-om
-> v2: https://lore.kernel.org/r/20240822093442.4262-1-hanchunchao@inspur.co=
-m
-> v3: https://lore.kernel.org/r/20240823083657.7100-1-hanchunchao@inspur.co=
-m
->
->
-> > diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/=
-drm/panel/panel-himax-hx83102.c
-> > index 6e4b7e4644ce..e67555323d3b 100644
-> > --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> > +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> > @@ -565,6 +565,8 @@ static int hx83102_get_modes(struct drm_panel *pane=
-l,
-> >         struct drm_display_mode *mode;
-> >
-> >         mode =3D drm_mode_duplicate(connector->dev, m);
-> > +       if (!mode)
-> > +               return -EINVAL;
->
-> I would have returned -ENOMEM since drm_mode_duplicate() is defined to
-> allocate memory copy the mode (like strdup does for strings) and it
-> should be clear that the only failure case is failure to allocate
-> memory. Other callers convert a NULL return as -ENOMEM.
 
-FWIW: if you spin v5 of this patch and have it return -ENOMEM then I'm
-happy to apply it.
 
--Doug
+On 2024-09-03 02:35, Mikhail Gavrilov wrote:
+> On Sun, Aug 25, 2024 at 2:12 AM Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
+>>
+>> Hi,
+>> Is anyone trying to look into it?
+>> I continue to reproduce this issue on fresh kernel builds 6.11-rc4+.
+>> In addition to the RenPy engine, the problem also reproduces on games
+>> from Ubisoft, such as Far Cry 4.
+>> A very important note that I missed in the first message.
+>> To reproduce the problem, you need to enable scaling in Gnome for
+>> HiDPI monitors.
+>> I am using 4K resolution with 200% of fractional scaling.
+> 
+> Sorry for persistence, but I'm afraid there's no time left to fix this
+> regression.
+> There's a week left until the release.
+> A month later, no one has looked at what the problem is.
+> 
+
+Hi Mike,
+
+Super sorry for the ridiculous wait. Your first two emails slipped by my inbox,
+which is really silly, given I'm first in the to field...
+
+Thanks for bisecting and finding a free game to reproduce it on. I did not have
+luck reproducing this today, but I am on sway and not gnome. While I get gnome
+set up, will you be able to test which one of these reverts fixes the hang for
+you? Whether just 1/2 is enough, or both 1/2 and 2/2 is required?
+
+I applied them on top of Linus's v6.11-rc6 tag, so hopefully they'll git am
+cleanly for you:
+
+1/2:
+https://gist.github.com/leeonadoh/69147b5fa8d815b39c5f4c3e005cca28#file-0001-revert-drm-amd-display-move-primary-plane-zpos-highe-patch
+2/2:
+https://gist.github.com/leeonadoh/69147b5fa8d815b39c5f4c3e005cca28#file-0002-revert-drm-amd-display-introduce-overlay-cursor-mode-patch
+
+Thanks,
+Leo
 
