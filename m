@@ -1,89 +1,114 @@
-Return-Path: <linux-kernel+bounces-313589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E2B96A74D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A1196A927
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E671C23035
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2E01C23C72
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C6B1922C7;
-	Tue,  3 Sep 2024 19:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9131E490E;
+	Tue,  3 Sep 2024 20:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TkH6RSzB"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICbzbPBQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346AB1D5CEE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4AB1E4903;
+	Tue,  3 Sep 2024 20:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391536; cv=none; b=PbvSZBaYufWZr1zZX4WEeRmQEGS/5PNg0/jwww75HGIwNUFgmTIAXaA9D5NVIqe01hvQGOLQ5d2KGWwHPpwfskR/nw8vxQrNrpQYnno4vvpBju9oHdgLkP1N1As/7t13LtFCHUgPdMO3StpgA8HOGwCGBDTSgtrenc7z69SeiyU=
+	t=1725396339; cv=none; b=AGQ1RlEqTA3cGxFGjpRTHMdS4ZChr+xb7UKuTRFPt2qlBWqZZPyLdvJVLeMJROxQbu7Z7jXE2rP5kJnMpbQKi950hKBLMNrC5EV5Tis+bTtPwzao6bEDxBk5qr9Ctkk4i111fFIB4F7zOGL7nm05MUPLgOk30xHZoZX4JtPnGYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391536; c=relaxed/simple;
-	bh=ykCWykWpqVTMRvC3YPz6AH99OxBvDavSRS0ceXi2Zrg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DEUornYA4l/k9qPKgh8pptn+Y+qYoUYaBr5AkIq0M1o1YBA/wfj26OMX33pUDyXNxI1XJ+8LsKq8CAk2z3YTWXnBmeVw3KGly7cyJ0rtRdVPO/TtybdhM43xsXGPc+NNuouUSr4uLOcJJqpta3RehBRy64fi4Phs27r66tNvUIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TkH6RSzB; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725391531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QF360K14VcVg7z2XyE8+/3/eZAXYC2hLsD6VFynELLc=;
-	b=TkH6RSzBANNSz9eMRL4aH1xDpt+94KF6D3b99fh83OcYt65v9F58AnMqcnx1zqkdQhMdGD
-	6qdScVDA1xOw5SUsCacyH4LihW5/0G8vWk8vdOhhvSZLup6kaNQODxPYQQx9AWF3LsMvbC
-	f2a0rTOpUvfhwqYvCV9C61uIV+4mpmA=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Heng Qi <hengqi@linux.alibaba.com>
-Subject: [PATCH net-next 0/2] net: xilinx: axienet: Enable adaptive IRQ coalescing with DIM
-Date: Tue,  3 Sep 2024 15:25:22 -0400
-Message-Id: <20240903192524.4158713-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1725396339; c=relaxed/simple;
+	bh=eJhHm6BaaNJyN8LTeOFX0aEUTzybHyl8k3oGUVcMwJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jpcfADPIeXyJ3vtjOCZsGjPBCxJqltnEgaCIbSeFeDGM1W4q9xsuuUtF3LQrSQ+Fl0TcGumg/9C3PdUN9j3lQLJI+3y9BanR/71Um+2wwCt29MpDsKcnPLXhpj69JNJq19eMD6r8Ior6vnclPShLCW0iXwuaHm4Eee8SZvddtXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICbzbPBQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A55C4CEC5;
+	Tue,  3 Sep 2024 20:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725396339;
+	bh=eJhHm6BaaNJyN8LTeOFX0aEUTzybHyl8k3oGUVcMwJ0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ICbzbPBQh6xJ0Tvc2vCD/Sl4PlBiqueTmBePKYLvHfjIxjZHSE4RhUBlSrs320Gz9
+	 BIRHvykwh6qRARU/+nUFVSwkaBH4Pf1l0K9t2LTxiRVecZQk6q3d7jmv1p/d2sE6IK
+	 5ThlcYXJRRjPNGFEQTSfafAvM2u9Si9h+O4zE0xAS8K7t9C+mJ0/GW52OYCPEjNfaG
+	 3DudwHzngOnIrRnFEfvokagyXAM+A8mhCEQMRFhT2/JR/GwqADvDecAm1uBpYLOmps
+	 VJujaS51LRGzyxGn1wN/eFbXv9IoGi3yfNiESxLhP1aJCL6X4tdR85eLZGun1uWpd9
+	 eGhMQYiEJpYyw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	monstr@monstr.eu
+Subject: [PATCH AUTOSEL 6.1 09/17] microblaze: don't treat zero reserved memory regions as error
+Date: Tue,  3 Sep 2024 15:25:23 -0400
+Message-ID: <20240903192600.1108046-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903192600.1108046-1-sashal@kernel.org>
+References: <20240903192600.1108046-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.107
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-To improve performance without sacrificing latency under low load,
-enable DIM. While I appreciate not having to write the library myself, I
-do think there are many unusual aspects to DIM, as detailed in the last
-patch.
+From: Mike Rapoport <rppt@kernel.org>
 
-This series depends on [1].
+[ Upstream commit 0075df288dd8a7abfe03b3766176c393063591dd ]
 
-[1] https://lore.kernel.org/netdev/20240903180059.4134461-1-sean.anderson@linux.dev/
+Before commit 721f4a6526da ("mm/memblock: remove empty dummy entry") the
+check for non-zero of memblock.reserved.cnt in mmu_init() would always
+be true either because  memblock.reserved.cnt is initialized to 1 or
+because there were memory reservations earlier.
 
+The removal of dummy empty entry in memblock caused this check to fail
+because now memblock.reserved.cnt is initialized to 0.
 
-Sean Anderson (2):
-  net: xilinx: axienet: Support adjusting coalesce settings while
-    running
-  net: xilinx: axienet: Enable adaptive IRQ coalescing with DIM
+Remove the check for non-zero of memblock.reserved.cnt because it's
+perfectly fine to have an empty memblock.reserved array that early in
+boot.
 
- drivers/net/ethernet/xilinx/Kconfig           |   1 +
- drivers/net/ethernet/xilinx/xilinx_axienet.h  |  18 +-
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 254 ++++++++++++++----
- 3 files changed, 220 insertions(+), 53 deletions(-)
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Mike Rapoport <rppt@kernel.org>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20240729053327.4091459-1-rppt@kernel.org
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/microblaze/mm/init.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index 353fabdfcbc54..2a3248194d505 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -193,11 +193,6 @@ asmlinkage void __init mmu_init(void)
+ {
+ 	unsigned int kstart, ksize;
+ 
+-	if (!memblock.reserved.cnt) {
+-		pr_emerg("Error memory count\n");
+-		machine_restart(NULL);
+-	}
+-
+ 	if ((u32) memblock.memory.regions[0].size < 0x400000) {
+ 		pr_emerg("Memory must be greater than 4MB\n");
+ 		machine_restart(NULL);
 -- 
-2.35.1.1320.gc452695387.dirty
+2.43.0
 
 
