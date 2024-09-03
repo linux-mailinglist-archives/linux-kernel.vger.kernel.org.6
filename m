@@ -1,277 +1,156 @@
-Return-Path: <linux-kernel+bounces-313234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F0E96A227
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:23:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A698596A232
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D417285C56
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E82EFB2919E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7C51891D9;
-	Tue,  3 Sep 2024 15:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DEC18BC06;
+	Tue,  3 Sep 2024 15:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hajlWzrF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SaU9sjrp"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2059.outbound.protection.outlook.com [40.92.18.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7496222EE5;
-	Tue,  3 Sep 2024 15:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376727; cv=none; b=esZh9x063Ei8eGzH9ndD2QuWrnVYiH04mfjot3JEfyw1SRKaivUK9EehH1vXyBuq3n79/hsoRRxorzBcTTLBg48LuepKG3WnvgMO4a7+kJMFn2Et142vO45O6rh0Bf4Y/5PF5DNXucvi3KbJjGko0llqnqwagf5Q5mn+XFXM/X4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376727; c=relaxed/simple;
-	bh=KjfS86PFrrzBccvKSo00f6geSxiz6DpoalzH4tV6qKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VI1yI5yigIWVhvInKazXeTQSmn1gKxCI0WRzHHCg7iXPP7++nbM/GscP8Gc4GKcRoMCJRO/Ei2A9IDZkQrbTAQO+nYtymK/BSDrEYad9PySfqcL5bqYYwHq9cb0BF8t8H5zycDCk1TONh+f+el96W2bcjdLjQtUOG6q+xg9mSkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hajlWzrF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C554BC4CEC4;
-	Tue,  3 Sep 2024 15:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725376726;
-	bh=KjfS86PFrrzBccvKSo00f6geSxiz6DpoalzH4tV6qKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hajlWzrFyqkD1wZavYtTAVS4BjsI3w9FwZHtfEv3D2QoL3Xi6XwUpSp6sExiEEZgd
-	 6Rod9J5ADvmLEaZWXNVyLDsOWuMpI39BkLhXqwZayoAZ+0+P9p/tR8LwrPAYBgnKBx
-	 SUzYW1XngjdNwWMLYowYjc2o3MumtkzQ7cqIrqr+Pf5eyTmYTeTP4a+iuh27wStmDk
-	 Su6tGMKneFMVrHkQveXWmWmnad4OPiaRgP/RpswNBmbriLraixlvcdMz/0l7kfJKw5
-	 z0JKn3m5PzsWnr2mzl61sZNSbw7KlNP1oYx7A08ws3SPBjxoIJP6u38tnC8zuivxEw
-	 go/HxekI3Gqqg==
-Date: Tue, 3 Sep 2024 10:18:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl
- bindings
-Message-ID: <20240903151845.GA1031888-robh@kernel.org>
-References: <20240902-th1520-pinctrl-v1-0-639bf83ef50a@tenstorrent.com>
- <20240902-th1520-pinctrl-v1-1-639bf83ef50a@tenstorrent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4164D18757C;
+	Tue,  3 Sep 2024 15:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.18.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725376801; cv=fail; b=sJCzcrv5l+IPK1hb9MDaGoYNCIG21iJxXh6RioMqyHR5X/Q1yKAarwlAmWO6qyIz3fT63s+xobjAnPUgXx2XZeSPoJoCrAmIXwI8uZGB99MgBVB2hNvNabri4QgAQUX/qROI/UcRmhhxZOavoNrb1/qZ+FOnHzYJd9eZxVZ2EZ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725376801; c=relaxed/simple;
+	bh=o7oVyoWdexFWTTYlKPVhbu5Ugjjqs/qAmPcpGac0u9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UICqoZR4zHNdr14kJEkjguWw5EKf1ahw2qpSQTddLON8UukMA/+7EAMbdC12vRczGplB6uRymkfllHcnMynd8uCwrDh0CAFAWxQeU2/trFECmweTljXTN26fXgpTCUVKS8PTLpw2wlwGuSJClEGmKMxOmQAS/PayJKIwdva9mPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SaU9sjrp; arc=fail smtp.client-ip=40.92.18.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OHlzSSjZpm/FBUynNM4a+Ivu5UoBkms1tQpGPAUBIkkIoSi0cA8w09xxB5wyA+3Z7tvh7auEzBIoeeemG780sg59d4tYoDsbCjAIJQOPKjgPq837m3TKfFN+4T6p6SgxMHo5SAMZRxMS1pz3FGcxWr7PV005U5Jl/5jD5VNm90N8fyCGGOGl450vI1BH2s7WuKOMSbjILM7lDWJTwgemaXQVICKpExWOkSOnG6uW1PMWkQyWIpWjjQGWzpYSQeIgTjTZ6rpcw/TcqmOtCIDbhJ8zN4Q+GsBMkd96ydcZLVlxLvfcYD2KxsiijXqn7rn/Pt2mwtUVd5njqDsaI87OHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TdPvQpD5yfUHbGBfLNeGC8wiSNe1cju9PBajbobsikU=;
+ b=GK04aFEJPa8rhHjJ7/ogIwtslJnffQBZkZNar4T5vVEcmh7PTLuSL+ExIBZ7HTFSx3RRvDwO7hTL/tpZLVwX1vf0fMgyQ4ZXffW4kCWwJPhrqcyWDPHJEXT+kIgZYbqbG2eCuocQbunFjx9XDHTMNWlqHTpJBRlbDEgIuibDlCLn1dRx04brigm8M0fxQ7u3yQ3+9UouegO57ZGwZSMCl/P8QRjErepXVNuVFmey2PIFF3beqE6WMBGaJxNIRc6JAxZpkb5SSV5rt3l5DcAnlgF7ioO15agRuMSMVB/P9yGN6lj/fGcTOXKACHwqb8+JsLXL/2RwwsVnC6RNILeaKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TdPvQpD5yfUHbGBfLNeGC8wiSNe1cju9PBajbobsikU=;
+ b=SaU9sjrpLSuBAax5i1J2SlXyeUHTyjo3j45ZXH60LvMQ58nf2Kaj5rhpwarP7hZWHcxJ8iuA+7BFjTrLy6Du3Eg3e8ShQ/E+S1yCPll7F3u8XwoeIXDGZgvOnQ0d7ka3kt0m8Ej6ZN6vfeJI7cWN5t7ZTijgEP8ZY4X8Ac/GEmAcuh7gP31QejGKMKfRgjQ3jft/ehv0UJ8HLnARZmEP6Gfv/V0hytR+tr4rVWWlQMdXF44jGw88AuaMlCUqAx6A9uNtwbx4RSKKYEUwkFGNq0e0LJBJAdDsRKLKYZFzH4KAlGmumVhvP1dVqr78n+acZM63MNLKF+1S22qRYxx+gg==
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
+ by MW4P223MB0633.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:1e8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 15:19:57 +0000
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 15:19:57 +0000
+From: Steven Davis <goldside000@outlook.com>
+To: corbet@lwn.net
+Cc: workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Steven Davis <goldside000@outlook.com>
+Subject: [PATCH] Documentation: maintainer: Improve grammar in mailing list participation section
+Date: Tue,  3 Sep 2024 11:19:25 -0400
+Message-ID:
+ <SJ2P223MB1026BD1839CFD474395FACDEF7932@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [8/W1uacSFlEl72h71bwugoeL3SWYy3wN]
+X-ClientProxiedBy: CH0P223CA0003.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:116::15) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:a03:570::8)
+X-Microsoft-Original-Message-ID:
+ <20240903151925.17307-1-goldside000@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902-th1520-pinctrl-v1-1-639bf83ef50a@tenstorrent.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|MW4P223MB0633:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96df7a78-c7c5-4e8a-bac5-08dccc2bdeb3
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|19110799003|8060799006|15080799006|5072599009|1602099012|3412199025|4302099013|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	cyHif1cae3p5OmBmjcntmByh2qeRaHlBi2d58LEs/S+gE2609PoUoarASOUgtPPSRxbNwfzDO5A8JR4DsFcz5aYDaWn4FJitV9hn2dur5fd1m/bKR4DUccaWpbbfySo/F6ppIS9hzo1Qcsey/f4lXZL2hj6pPGNktTNE+3sB/1MIP65N4pMN7/YzBHudHpeoHX6i63YGML8NAil/TRbvaYve+xyj1Y4I+UlhIyg/0opiUGq+EUjM5jLvfCwJjja89QIjhnU1v8wiP+S+3bDCB67czy2PHnqnLa/YQN2wFQ/KcZdAI+O3rg5HrO2KWXE4DJ/D/Exg61+5MHXT6YjYELWcuEodbK6WR4dAbQuAbeP3fvBOsK4bveavQqaNObbakNIPsxgeP+UNHcgqLLNvQNrhIPrGOE0t8dE8j83MuDWacDalKySMQFLDdCXLhNjc8t/Ix4CQ0biRTwFtJ5Am4ufRFunjqmycBbQx2fnCedgo4nIUa/qTn5yo5WtBLQra1JTki64wtLJ6m2uiRSxWwkKSZ1TgMw+Bp20wibt4/aTAtoP1PI/GVsgncf/MY7SO3fF59hIeYdNLxvsIsMGhzF+ETXUe/ejBiANncUL9GR8mpCN+TAmpegYFqv8qM/tG1JZjdrcnkhjmtsJfNP6/fWmJ3IZ3HMBvd7jTjfXPFxE0jbeiFLjFC7qD3LMb8OdN2xsrW62XZBhq9HRzPEE2r0GM6EkWrJ8er5uZHPd+rv5mN8OQhvocnTuyMqgs8qtTEh0cDNjYyxFCsl73YCemE/SqamqrxeH6eDWzFCKkNj9zIfdgnPNOlJ7hyOdeDGaC0aRPPlR5QDjqmDGwJdtQhjzNEik9VSZOeT+YZP2Ymh0OTmre/3xvm0ZhS4MlR97lvNtlZPdi/nZRMax5Zk+Q1w==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5azED9V5vSl/ikmsZ3DUtWz8F5iGRSe6JBF2A95afUQn3eImyByp9dJUN1SS?=
+ =?us-ascii?Q?WwcAcC9W3OTexnW8r7Hcxb47Q3Kgk1HYql+0WTNmI/+NmezeDITPkQPR5ZH5?=
+ =?us-ascii?Q?eOkmChPsGdsDDivjYSr3i1a+4UD5ts/4F1wkH+ANM6z4SY2EMSamwSG5e5m4?=
+ =?us-ascii?Q?2gXyt7AgHZD7lZ5qbdXU3qOeBxrFuQCZANR7zhOKNSLTHtZ3qFsp1IKvZ6hC?=
+ =?us-ascii?Q?5t7nf3M5hcwsB2zDfchIUmlAyuE5U/pcEbBNp5eS0xMMtAlJy+5dk84QahMT?=
+ =?us-ascii?Q?5gLmDpPv4n8FH77PnvdMGq1cqxle/x0Rnt+nv+60eNOiE226iMlMlNpJDG3u?=
+ =?us-ascii?Q?owXjBYsoz9DefNsSCM3VgbG9UGfbbhK6JQWtytbSbcEljU1IZ8U6XXz8iuw9?=
+ =?us-ascii?Q?46eiozQVRP83R2NQHLl9u1FPAo7Y/A7FngVrHowCfdAQk0D0b8j5G8gZ61fp?=
+ =?us-ascii?Q?iHJevYqk9ATuXARN/KBGYRxFmjFwxa4W5V34r6q24KXvitxleF5kjU3NaMf3?=
+ =?us-ascii?Q?Yp9dzE4GbMtjH6EPJ4CN+lDD7zR1TeQiUTn2NXk2wuDJ8CyDqTPubZQbqaLz?=
+ =?us-ascii?Q?sQmXo7wLbV+v7j3oseNxjaKpwMtkXCyT2SBojAIGntEjshmNB2y5ZD0LFiZ7?=
+ =?us-ascii?Q?GKfIavt7BxiDT7c83MGkQ9r6My5xgX81IJEpUhYlro4H6TOQREB2BbVIbR7S?=
+ =?us-ascii?Q?XBOqLiyWV4NVygdhZmIZDMIvQl3vtv1p+4hNWdbtW5IYv5u31+fAfYOc5JKh?=
+ =?us-ascii?Q?HPh06lsA0WJUrrzJRIiF2us55EH7moTI4YZ+rNeu4hv7G5wGUm8rjpikbfP9?=
+ =?us-ascii?Q?CCysf65RntKIciMbh+0iIor3O+obpyKyBZW5fcS5lsRxSeH52m6TARc3/Plv?=
+ =?us-ascii?Q?LWZNbcpCFRtlnkCGwN9bRu8uMwHk7FcmyFwJyv84gTM9Qg8ZBsQlsVsofQ4z?=
+ =?us-ascii?Q?NvVB9XakmLMWB9yNVOQ3+jarb5f0iuCzphdjQyLgIQo1STwiSC9xZd4HZ1A3?=
+ =?us-ascii?Q?pDV6lku9MkmN0elGP2Mksc5zogBiebT7nTKnZKCqC1fZYpCFXHmbX9R47g5T?=
+ =?us-ascii?Q?npBsxBNZxyZxvT8S/86/w08NV078BZlrszmmDq1h8E+7vqk4Z6UmQRDycivd?=
+ =?us-ascii?Q?vGhNhfv9UCsKHRW4KGM1acDDYzC6s+dujIl3wnHuN/m+xS9IDbT3WOK5uRaT?=
+ =?us-ascii?Q?VnhtXb3N3bxEoSuqUxqMh3KgiRJ97VRP6nySM19dV3jq2klaCTnJsy3nzICU?=
+ =?us-ascii?Q?wAjOxoCyyPLT4zQxVVX8?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96df7a78-c7c5-4e8a-bac5-08dccc2bdeb3
+X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 15:19:57.6070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4P223MB0633
 
-On Mon, Sep 02, 2024 at 09:06:54PM -0700, Drew Fustini wrote:
-> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> 
-> Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
-> 
-> Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> [dfustini: use a single compatible for all pin controller instances]
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
->  .../bindings/pinctrl/thead,th1520-pinctrl.yaml     | 165 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 166 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..429cc0bc1100
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> @@ -0,0 +1,165 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: T-Head TH1520 SoC pin controller
-> +
-> +maintainers:
-> +  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> +
-> +description: |
-> +  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
-> +
-> +  The TH1520 has 3 groups of pads each controlled from different memory ranges.
-> +  Confusingly the memory ranges are named
-> +    PADCTRL_AOSYS  -> PAD Group 1
-> +    PADCTRL1_APSYS -> PAD Group 2
-> +    PADCTRL0_APSYS -> PAD Group 3
-> +
-> +  Each pad can be muxed individually to up to 6 different functions. For most
-> +  pads only a few of those 6 configurations are valid though, and a few pads in
-> +  group 1 does not support muxing at all.
-> +
-> +  Pinconf is fairly regular except for a few pads in group 1 that either can't
-> +  be configured or has some special functions. The rest have configurable drive
-> +  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
-> +  addition to a special strong pull up.
-> +
-> +  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
-> +  are then meant to be used by the audio co-processor. Each such pad can then
-> +  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
-> +  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
-> +  also configured in different registers. All of this is done from a different
-> +  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - thead,th1520-pinctrl
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  '-[0-9]+$':
-> +    type: object
-> +
-> +    additionalProperties: false
-> +
-> +    patternProperties:
-> +      '-pins$':
-> +        type: object
-> +        $ref: /schemas/pinctrl/pincfg-node.yaml
-> +
-> +        additionalProperties: false
-> +
-> +        description:
-> +          A pinctrl node should contain at least one subnode describing one
-> +          or more pads and their associated pinmux and pinconf settings.
-> +
-> +        properties:
-> +          pins:
-> +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pins
+In the section "Mailing list participation", the first few
+lines had grammatical errors and overall was not clear. I
+fixed this by adding "The" before "Linux kernel" and
+specifying that the mailing list is for developers.
 
-No, we generally don't reference individual properties across schemas. 
-Add a reference to pinmux-node.yaml for the node.
+Signed-off-by: Steven Davis <goldside000@outlook.com>
+---
+ .../maintainer/feature-and-driver-maintainers.rst         | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +            description: List of pads that properties in the node apply to.
-> +
-> +          function:
-> +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/function
-> +            enum: [ gpio, pwm, uart, ir, i2c, spi, qspi, sdio, audio, i2s,
-> +                    gmac0, gmac1, dpu0, dpu1, isp, hdmi, bootsel, debug,
-> +                    clock, jtag, iso7816, efuse, reset ]
-> +            description: The mux function to select for the given pins.
-> +
-> +          bias-disable: true
-> +
-> +          bias-pull-up:
-> +            oneOf:
-> +              - type: boolean
-> +                description: Enable the regular 48kOhm pull-up
-> +              - enum: [ 2100, 48000 ]
-> +                description: Enable the strong 2.1kOhm pull-up or regular 48kOhm pull-up
-> +
-> +          bias-pull-down:
-> +            oneOf:
-> +              - type: boolean
-> +              - const: 44000
-> +            description: Enable the regular 44kOhm pull-down
-> +
-> +          drive-strength:
-> +            enum: [ 1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25 ]
-> +            description: Drive strength in mA
-> +
-> +          input-enable: true
-> +
-> +          input-disable: true
-> +
-> +          input-schmitt-enable: true
-> +
-> +          input-schmitt-disable: true
-> +
-> +          slew-rate:
-> +            maximum: 1
-> +
-> +        required:
-> +          - pins
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +
-> +examples:
-> +  - |
-> +    padctrl0_apsys: pinctrl@ec007000 {
-> +        compatible = "thead,th1520-pinctrl";
-> +        reg = <0xec007000 0x1000>;
-> +        clocks = <&apb_clk>;
-> +
-> +        uart0_pins: uart0-0 {
-> +            tx-pins {
-> +                pins = "UART0_TXD";
-> +                function = "uart";
-> +                bias-disable;
-> +                drive-strength = <3>;
-> +                input-disable;
-> +                input-schmitt-disable;
-> +                slew-rate = <0>;
-> +            };
-> +
-> +            rx-pins {
-> +                pins = "UART0_RXD";
-> +                function = "uart";
-> +                bias-disable;
-> +                drive-strength = <1>;
-> +                input-enable;
-> +                input-schmitt-enable;
-> +                slew-rate = <0>;
-> +            };
-> +        };
-> +    };
-> +
-> +    padctrl1_apsys: pinctrl@e7f3c000 {
-> +        compatible = "thead,th1520-pinctrl";
-> +        reg = <0xe7f3c000 0x1000>;
-> +        clocks = <&apb_clk>;
-> +
-> +        i2c5_pins: i2c5-0 {
-> +            i2c-pins {
-> +                pins = "QSPI1_CSN0",    /* I2C5_SCL */
-> +                       "QSPI1_D0_MOSI"; /* I2C5_SDA */
-> +                function = "i2c";
-> +                bias-pull-up = <2100>;
-> +                drive-strength = <7>;
-> +                input-enable;
-> +                input-schmitt-enable;
-> +                slew-rate = <0>;
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 878dcd23b331..a73953c0f080 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19700,6 +19700,7 @@ L:	linux-riscv@lists.infradead.org
->  S:	Maintained
->  T:	git https://github.com/pdp7/linux.git
->  F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> +F:	Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
->  F:	arch/riscv/boot/dts/thead/
->  F:	drivers/clk/thead/clk-th1520-ap.c
->  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
-> 
-> -- 
-> 2.34.1
-> 
+diff --git a/Documentation/maintainer/feature-and-driver-maintainers.rst b/Documentation/maintainer/feature-and-driver-maintainers.rst
+index fb94a9b29061..b56b6ad5ba4e 100644
+--- a/Documentation/maintainer/feature-and-driver-maintainers.rst
++++ b/Documentation/maintainer/feature-and-driver-maintainers.rst
+@@ -39,10 +39,10 @@ to as long as a few weeks in slower moving parts of the kernel.
+ Mailing list participation
+ --------------------------
+ 
+-Linux kernel uses mailing lists as the primary form of communication.
+-Maintainers must be subscribed and follow the appropriate subsystem-wide
+-mailing list. Either by subscribing to the whole list or using more
+-modern, selective setup like
++The Linux kernel uses mailing lists as the primary form of communication
++between developers. Maintainers must be subscribed and follow the
++appropriate subsystem-wide mailing list. Either by subscribing to the
++whole list or using more modern, selective setup like
+ `lei <https://people.kernel.org/monsieuricon/lore-lei-part-1-getting-started>`_.
+ 
+ Maintainers must know how to communicate on the list (plain text, no invasive
+-- 
+2.39.2
+
 
