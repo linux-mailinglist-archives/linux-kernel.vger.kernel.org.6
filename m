@@ -1,514 +1,178 @@
-Return-Path: <linux-kernel+bounces-313833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D107896AA74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AAE96AA75
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33041B24EC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EAFA1F25FBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402541D5896;
-	Tue,  3 Sep 2024 21:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D771419ABDD;
+	Tue,  3 Sep 2024 21:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cN2lNTdT"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rOK8OIDy"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBDE1D5891;
-	Tue,  3 Sep 2024 21:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F0213F43E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725399641; cv=none; b=q+jy6dSlwZXXFFawCaHpUPWEJO7Swo2goAVUAbNTjeTKtphVGm0txq8xKYXl7dU/ADX0FN7aSH0aocyINT96rJr4OnpA+Rss8eP+diIkrsCGX6MKwKHU+WoQABC0th9mGEcMblsEssJx3eBGqIajjAkdrVpJNZL1ydRB562GGN8=
+	t=1725399676; cv=none; b=QADK2Qz13Xxtmyy/0Rllx3iiP7yh+Qd4vl+Qw171GrtsJ7W4ZwKqNyb6fIUVe1qmwEg42NSCuGz6p8tz3flSUYO/H5h+yrLVbRp0NiCNlwkUtM0/uGYbfxv/sf+x6dBCkIbyaRM1qiPj68zvPxSk0HeJLh+pTbvyrlJYdmaHFOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725399641; c=relaxed/simple;
-	bh=qnomJCLvVtF8f+qx3fNZZxi0tIn96cMXjmUErjLpmJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lgGm5yvkFYD3Vg8i5W/LmF+uO9J1HscndwkgYnzUrbYekpAk9rXmXsFt280iHvW7Pn9kgUzxIidlBvkKuBf7yljzhHFDCabMHh5i4zE5fL7Sma8hW5Kuvb0x6frXjz9tf7OMgQ3smCKoT7VRj8kyFtLwnoXdsXZrWgGBxpYOOFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cN2lNTdT; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d86f713557so3164696a91.2;
-        Tue, 03 Sep 2024 14:40:39 -0700 (PDT)
+	s=arc-20240116; t=1725399676; c=relaxed/simple;
+	bh=e1h7zTR9/S25Fd3D7+oznWXEX729eyTG7XRG+ROQ+5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JRBL4J3huse4J8AgZ3c3R+Vu0fwHtdxEDDChbqFPXUTPBm/Bcf6COa2nCBePi11IdL40UuFO7aKsZUnMqQroYEh5Kfxck/oYaPpKTI/ACD/nfnzK3Hknjw9Q5Z2hfM2RoDt6lQVr/2ehPwAiALJDLvhlIhnHSBTbbxhqsxI+zqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rOK8OIDy; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1a8ae00f5eso4032471276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725399639; x=1726004439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1725399673; x=1726004473; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9+fJap+X8qN/9fnhn2J+/mVQg1Exd8on5U1Vz/Ah3lc=;
-        b=cN2lNTdTIGolAEe6m2vumKJchk+nykEsR1k6QbtaYUIUOZj23t9dT6NRFPot7S8opu
-         qatDuhU4CLp9NTGgFLC6YD4JVBs/3G2ZGdudZXO48wQ4yPKIyTAU7r8/MXfLIPwtgMex
-         uFeUO1cDexbbmb1K6AidT4mSrHMLD8Q11JtMUAbeMKW1NzdxA+DjsfHt44f5xT1cwf1i
-         5xYZaokw9BQxxT2m5rtRk8YgCraVc/IDBQ0XMARudxV3jlvAHx53MDpeODaRGybb4FhI
-         jcthe/8aAhMf0BiOgRttWwYwsZly48tflcokIeJ3i4m4A7yrqKlEt8vtT6Bwr91MEbO3
-         Hnug==
+        bh=KTDnuKwd75FUnpcfChbe8v1J7QDzpMPR82p5HLmU/tQ=;
+        b=rOK8OIDy4K9e9pqabDKRE2oB4OasFy7ya6YOYrV3T9T9mQEaMCeBmb+yo92UQfqElS
+         gRzdlFIMp+/3FvHJJ3HG8UXWPw9ks3Ap6rah9Wj5iA735CCaTVjbMCN346u9ZroRP9su
+         txru6x7bRnL/BaW1EaF6Ohdn7MRu7yCLI0J4P8rG1bdTJI8y1JZv/oxFKMdkMZEysLsm
+         2aD+p+FDZhenab5DSN/WIthigK2TlbuyX5MeftffhdhkiBC9+G0+M0aex4AGIpbZKzW0
+         6tw2eVG3fzxJJF7CkilDpIjamQd36sxg3MXlMMZHqhBc3jJ0TRzLL+5eUNW0U2sSsvih
+         V0Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725399639; x=1726004439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725399673; x=1726004473;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9+fJap+X8qN/9fnhn2J+/mVQg1Exd8on5U1Vz/Ah3lc=;
-        b=boMA7OvPsnfWM87O6e2BF2SaGDqeAJwMFhEDdVzpMvqlkYGVCC/f+iHbTikiuAgCw1
-         aZesFcJxuW6eilJDRtUvrtYiDsJTmX9a8JdGNjk5d3GRfWu/M10AERG9CSsdT2sABltK
-         md0/kqP1xSOASyvNYmG7y93PPXaeam0PPz3PAiaC5Vz+AqkQUE2YXu8EpX3sMvEX6VLs
-         hzxT6nwSD/ZqOhRCi0ldjDqiHv9GZfzUdpE+pgaRgz/T+j6hgDQGIIfrLBEHOt2PM42e
-         cVjmZLS0itDnctohvBOwHScCvQtXbe85ZgGj5UrsabdwUy09I/DJWxhzoqazQQTaHFzD
-         swCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT2Gp5Wb2Tmn0/BgZE3MjVrBAlWbB6UNplnkTbHKmt7iJeseuYPW3kIPM54e1ifYWFsNdHMHUUV+K+IXOrn9vX@vger.kernel.org, AJvYcCUYp01rBeyyriwoqZYJvD1qo7TVw9F4BkX7jaOygoLZNXgoG7qr0h8NcsaFRoLCcY2ABEX0lLsu2qbFhhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkAgrKgqMSLlbuxnNz88mFKoFmOqbEsAeX9N2KgEMOm1cy2DfR
-	AK0HDSGAMttjHiy45e8ovXm+zT9IAcdSvIFUzPTPOodF71U3xti9
-X-Google-Smtp-Source: AGHT+IGS8y412iA96GRVbq8ZXvtVWoHoZHkJl09OSyvOsc9/h98BXxJ/3btCWcAKrB50rTWnt0JOEw==
-X-Received: by 2002:a17:90b:3006:b0:2d3:ba42:775c with SMTP id 98e67ed59e1d1-2d8904c6ea8mr10540124a91.1.1725399638803;
-        Tue, 03 Sep 2024 14:40:38 -0700 (PDT)
-Received: from arch.. ([2804:1b3:a700:a499:26ee:9aff:fe39:f350])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea3864csm2699525ad.141.2024.09.03.14.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 14:40:38 -0700 (PDT)
-From: Artur Alves <arturacb@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Cc: n@nfraprado.net,
-	andrealmeid@riseup.net,
-	vinicius@nukelet.com,
-	diego.daniel.professional@gmail.com
-Subject: [PATCH v2 1/1] lib/llist_kunit.c: add KUnit tests for llist
-Date: Tue,  3 Sep 2024 18:40:27 -0300
-Message-ID: <20240903214027.77533-2-arturacb@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240903214027.77533-1-arturacb@gmail.com>
-References: <20240903214027.77533-1-arturacb@gmail.com>
+        bh=KTDnuKwd75FUnpcfChbe8v1J7QDzpMPR82p5HLmU/tQ=;
+        b=HIgHTlADfV5BQi+A3YoLzQRy5dXSweSo/9V7tsQIGejhspFkXkgrI7SK07jAd4w3EX
+         y3YcQUSDR6ZDOgwAZaHzYLasFYxTlfH6FxbPwUHcvjcA59POoPWIeQLhmLR8MwE6V68b
+         uP8n3aLUzcgeKnHLIJgzY4/LIfz4TQudLkNoMPGrWKePhCZbUq0fKdieq04B5POg+Rrg
+         IiaNxKX0fQaM/XOsnNA94IBEaDz//QFGFKwI0QmqTqLcOaUaJKDxNhfxLN7yQmdYtDpa
+         QODyEyem21LlGLuoGULP9HWIV4YcwO8nxrdWKgxk6RLcn7M7kVKsGkjRwKXHQxigx337
+         qzGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxLZFjke0jRwN7kgZmocWL5ChTC0Muv8aeKpWnQ91P1AwaxCM7tyiQQ4b92uUuJbfX8BGXzq221oAQ53g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWE8J85yz6vWtAL9N/Dz+AUYUi75vkxcf5UcPN/5euSNbDZmc2
+	aMEOwtPId9XkFFPABiKOGPfXkS3ZWzNakVmjqsJBeHldRLLdcmCp5bJSUB08VGoGrp2KwzuMr/T
+	lkq2BGDKv4ms8stPd+5dgVgtX7MiQEqc4X7L3
+X-Google-Smtp-Source: AGHT+IEq+la7fPI+jIUHIuVIxCQYY3gRR0EF+qaAb/jS0UgdTzRMeA/McH6lpLLI1QRVjuVO9S5Kgb3LHQb8oJYs9N4=
+X-Received: by 2002:a05:6902:2406:b0:e1a:b361:4d9b with SMTP id
+ 3f1490d57ef6-e1ab36153f7mr8782208276.24.1725399673389; Tue, 03 Sep 2024
+ 14:41:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
+ <CADrL8HUvmbtmfcLzqLOVhj-v7=0oEA+0DPrGnngtWoA50=eDPg@mail.gmail.com> <Ztd_N7KfcRBs94YM@google.com>
+In-Reply-To: <Ztd_N7KfcRBs94YM@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Tue, 3 Sep 2024 14:40:36 -0700
+Message-ID: <CADrL8HVpPOBkM4tD0xBpxWzYMiAoE5Gcg8Cg0=Xi5mvgeqR0gA@mail.gmail.com>
+Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
+ rmaps outside of mmu_lock
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add KUnit tests for the llist data structure. They test the vast
-majority of methods and macros defined in include/linux/llist.h.
+On Tue, Sep 3, 2024 at 2:27=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Tue, Sep 03, 2024, James Houghton wrote:
+> > On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > > +/*
+> > > + * rmaps and PTE lists are mostly protected by mmu_lock (the shadow =
+MMU always
+> > > + * operates with mmu_lock held for write), but rmaps can be walked w=
+ithout
+> > > + * holding mmu_lock so long as the caller can tolerate SPTEs in the =
+rmap chain
+> > > + * being zapped/dropped _while the rmap is locked_.
+> > > + *
+> > > + * Other than the KVM_RMAP_LOCKED flag, modifications to rmap entrie=
+s must be
+> > > + * done while holding mmu_lock for write.  This allows a task walkin=
+g rmaps
+> > > + * without holding mmu_lock to concurrently walk the same entries as=
+ a task
+> > > + * that is holding mmu_lock but _not_ the rmap lock.  Neither task w=
+ill modify
+> > > + * the rmaps, thus the walks are stable.
+> > > + *
+> > > + * As alluded to above, SPTEs in rmaps are _not_ protected by KVM_RM=
+AP_LOCKED,
+> > > + * only the rmap chains themselves are protected.  E.g. holding an r=
+map's lock
+> > > + * ensures all "struct pte_list_desc" fields are stable.
+> > > + */
+> > > +#define KVM_RMAP_LOCKED        BIT(1)
+> > > +
+> > > +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
+> > > +{
+> > > +       unsigned long old_val, new_val;
+> > > +
+> > > +       old_val =3D READ_ONCE(rmap_head->val);
+> > > +       if (!old_val)
+> > > +               return 0;
+> >
+> > I'm having trouble understanding how this bit works. What exactly is
+> > stopping the rmap from being populated while we have it "locked"?
+>
+> Nothing prevents the 0=3D>1 transition, but that's a-ok because walking r=
+maps for
+> aging only cares about existing mappings.  The key to correctness is that=
+ this
+> helper returns '0' when there are no rmaps, i.e. the caller is guaranteed=
+ to do
+> nothing and thus will never see any rmaps that come along in the future.
+>
+> > aren't holding the MMU lock at all in the lockless case, and given
+> > this bit, it is impossible (I think?) for the MMU-write-lock-holding,
+> > rmap-modifying side to tell that this rmap is locked.
+> >
+> > Concretely, my immediate concern is that we will still unconditionally
+> > write 0 back at unlock time even if the value has changed.
+>
+> The "readonly" unlocker (not added in this patch) is a nop if the rmap wa=
+s empty,
+> i.e. wasn't actually locked.
 
-These are inspired by the existing tests for the 'list' doubly
-linked in lib/list-test.c [1]. Each test case (llist_test_x)
-tests the behaviour of the llist function/macro 'x'.
+Ah, that's what I was missing. Thanks! This all makes sense now.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/list-test.c?h=v6.11-rc6
-
-Signed-off-by: Artur Alves <arturacb@gmail.com>
----
- lib/Kconfig.debug       |  11 ++
- lib/tests/Makefile      |   1 +
- lib/tests/llist_kunit.c | 361 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 373 insertions(+)
- create mode 100644 lib/tests/llist_kunit.c
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index a30c03a66172..b2725daccc52 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2813,6 +2813,17 @@ config USERCOPY_KUNIT_TEST
- 	  on the copy_to/from_user infrastructure, making sure basic
- 	  user/kernel boundary testing is working.
- 
-+config LLIST_KUNIT_TEST
-+	tristate "KUnit tests for lib/llist" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This option builds the "llist_kunit" test module that
-+	  helps to verify the correctness of the functions and
-+	  macros defined in (<linux/llist.h>).
-+
-+	  If unsure, say N.
-+
- config TEST_UDELAY
- 	tristate "udelay test driver"
- 	help
-diff --git a/lib/tests/Makefile b/lib/tests/Makefile
-index c6a14cc8663e..8d7c40a73110 100644
---- a/lib/tests/Makefile
-+++ b/lib/tests/Makefile
-@@ -34,4 +34,5 @@ CFLAGS_stackinit_kunit.o += $(call cc-disable-warning, switch-unreachable)
- obj-$(CONFIG_STACKINIT_KUNIT_TEST) += stackinit_kunit.o
- obj-$(CONFIG_STRING_KUNIT_TEST) += string_kunit.o
- obj-$(CONFIG_STRING_HELPERS_KUNIT_TEST) += string_helpers_kunit.o
-+obj-$(CONFIG_LLIST_KUNIT_TEST) += llist_kunit.o
- 
-diff --git a/lib/tests/llist_kunit.c b/lib/tests/llist_kunit.c
-new file mode 100644
-index 000000000000..f273c0d175c7
---- /dev/null
-+++ b/lib/tests/llist_kunit.c
-@@ -0,0 +1,361 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit test for the Kernel lock-less linked-list structure.
-+ *
-+ * Author: Artur Alves <arturacb@gmail.com>
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/llist.h>
-+
-+#define ENTRIES_SIZE 3
-+
-+struct llist_test_struct {
-+	int data;
-+	struct llist_node node;
-+};
-+
-+static void llist_test_init_llist(struct kunit *test)
-+{
-+	/* test if the llist is correctly initialized */
-+	struct llist_head llist1 = LLIST_HEAD_INIT(llist1);
-+	LLIST_HEAD(llist2);
-+	struct llist_head llist3, *llist4, *llist5;
-+
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist1));
-+
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist2));
-+
-+	init_llist_head(&llist3);
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist3));
-+
-+	llist4 = kzalloc(sizeof(*llist4), GFP_KERNEL | __GFP_NOFAIL);
-+	init_llist_head(llist4);
-+	KUNIT_EXPECT_TRUE(test, llist_empty(llist4));
-+	kfree(llist4);
-+
-+	llist5 = kmalloc(sizeof(*llist5), GFP_KERNEL | __GFP_NOFAIL);
-+	memset(llist5, 0xFF, sizeof(*llist5));
-+	init_llist_head(llist5);
-+	KUNIT_EXPECT_TRUE(test, llist_empty(llist5));
-+	kfree(llist5);
-+}
-+
-+static void llist_test_init_llist_node(struct kunit *test)
-+{
-+	struct llist_node a;
-+
-+	init_llist_node(&a);
-+
-+	KUNIT_EXPECT_PTR_EQ(test, a.next, &a);
-+}
-+
-+static void llist_test_llist_entry(struct kunit *test)
-+{
-+	struct llist_test_struct test_struct, *aux;
-+	struct llist_node *llist = &test_struct.node;
-+
-+	aux = llist_entry(llist, struct llist_test_struct, node);
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct, aux);
-+}
-+
-+static void llist_test_add(struct kunit *test)
-+{
-+	struct llist_node a, b;
-+	LLIST_HEAD(llist);
-+
-+	init_llist_node(&a);
-+	init_llist_node(&b);
-+
-+	/* The first assertion must be true, given that llist is empty */
-+	KUNIT_EXPECT_TRUE(test, llist_add(&a, &llist));
-+	KUNIT_EXPECT_FALSE(test, llist_add(&b, &llist));
-+
-+	/* Should be [List] -> b -> a */
-+	KUNIT_EXPECT_PTR_EQ(test, llist.first, &b);
-+	KUNIT_EXPECT_PTR_EQ(test, b.next, &a);
-+}
-+
-+static void llist_test_add_batch(struct kunit *test)
-+{
-+	struct llist_node a, b, c;
-+	LLIST_HEAD(llist);
-+	LLIST_HEAD(llist2);
-+
-+	init_llist_node(&a);
-+	init_llist_node(&b);
-+	init_llist_node(&c);
-+
-+	llist_add(&a, &llist2);
-+	llist_add(&b, &llist2);
-+	llist_add(&c, &llist2);
-+
-+	/* This assertion must be true, given that llist is empty */
-+	KUNIT_EXPECT_TRUE(test, llist_add_batch(&c, &a, &llist));
-+
-+	/* should be [List] -> c -> b -> a */
-+	KUNIT_EXPECT_PTR_EQ(test, llist.first, &c);
-+	KUNIT_EXPECT_PTR_EQ(test, c.next, &b);
-+	KUNIT_EXPECT_PTR_EQ(test, b.next, &a);
-+}
-+
-+static void llist_test_llist_next(struct kunit *test)
-+{
-+	struct llist_node a, b;
-+	LLIST_HEAD(llist);
-+
-+	init_llist_node(&a);
-+	init_llist_node(&b);
-+
-+	llist_add(&a, &llist);
-+	llist_add(&b, &llist);
-+
-+	/* should be [List] -> b -> a */
-+	KUNIT_EXPECT_PTR_EQ(test, llist_next(&b), &a);
-+	KUNIT_EXPECT_NULL(test, llist_next(&a));
-+}
-+
-+static void llist_test_empty_llist(struct kunit *test)
-+{
-+	struct llist_head llist = LLIST_HEAD_INIT(llist);
-+	struct llist_node a;
-+
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-+
-+	llist_add(&a, &llist);
-+
-+	KUNIT_EXPECT_FALSE(test, llist_empty(&llist));
-+}
-+
-+static void llist_test_llist_on_list(struct kunit *test)
-+{
-+	struct llist_node a, b;
-+	LLIST_HEAD(llist);
-+
-+	init_llist_node(&a);
-+	init_llist_node(&b);
-+
-+	llist_add(&a, &llist);
-+
-+	/* should be [List] -> a */
-+	KUNIT_EXPECT_TRUE(test, llist_on_list(&a));
-+	KUNIT_EXPECT_FALSE(test, llist_on_list(&b));
-+}
-+
-+static void llist_test_del_first(struct kunit *test)
-+{
-+	struct llist_node a, b, *c;
-+	LLIST_HEAD(llist);
-+
-+	llist_add(&a, &llist);
-+	llist_add(&b, &llist);
-+
-+	/* before: [List] -> b -> a */
-+	c = llist_del_first(&llist);
-+
-+	/* should be [List] -> a */
-+	KUNIT_EXPECT_PTR_EQ(test, llist.first, &a);
-+
-+	/* del must return a pointer to llist_node b
-+	 * the returned pointer must be marked on list
-+	 */
-+	KUNIT_EXPECT_PTR_EQ(test, c, &b);
-+	KUNIT_EXPECT_TRUE(test, llist_on_list(c));
-+}
-+
-+static void llist_test_del_first_init(struct kunit *test)
-+{
-+	struct llist_node a, *b;
-+	LLIST_HEAD(llist);
-+
-+	llist_add(&a, &llist);
-+
-+	b = llist_del_first_init(&llist);
-+
-+	/* should be [List] */
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-+
-+	/* the returned pointer must be marked out of the list */
-+	KUNIT_EXPECT_FALSE(test, llist_on_list(b));
-+}
-+
-+static void llist_test_del_first_this(struct kunit *test)
-+{
-+	struct llist_node a, b;
-+	LLIST_HEAD(llist);
-+
-+	llist_add(&a, &llist);
-+	llist_add(&b, &llist);
-+
-+	llist_del_first_this(&llist, &a);
-+
-+	/* before: [List] -> b -> a */
-+
-+	// should remove only if is the first node in the llist
-+	KUNIT_EXPECT_FALSE(test, llist_del_first_this(&llist, &a));
-+
-+	KUNIT_EXPECT_TRUE(test, llist_del_first_this(&llist, &b));
-+
-+	/* should be [List] -> a */
-+	KUNIT_EXPECT_PTR_EQ(test, llist.first, &a);
-+}
-+
-+static void llist_test_del_all(struct kunit *test)
-+{
-+	struct llist_node a, b;
-+	LLIST_HEAD(llist);
-+	LLIST_HEAD(empty_llist);
-+
-+	llist_add(&a, &llist);
-+	llist_add(&b, &llist);
-+
-+	/* deleting from a empty llist should return NULL */
-+	KUNIT_EXPECT_NULL(test, llist_del_all(&empty_llist));
-+
-+	llist_del_all(&llist);
-+
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-+}
-+
-+static void llist_test_for_each(struct kunit *test)
-+{
-+	struct llist_node entries[ENTRIES_SIZE] = { 0 };
-+	struct llist_node *pos, *deleted_nodes;
-+	LLIST_HEAD(llist);
-+	int i = 0;
-+
-+	for (int i = ENTRIES_SIZE - 1; i >= 0; i--)
-+		llist_add(&entries[i], &llist);
-+
-+	/* before [List] -> entries[0] -> ... -> entries[ENTRIES_SIZE - 1] */
-+	llist_for_each(pos, llist.first) {
-+		KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-+
-+	i = 0;
-+
-+	/* traversing deleted nodes */
-+	deleted_nodes = llist_del_all(&llist);
-+
-+	llist_for_each(pos, deleted_nodes) {
-+		KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-+}
-+
-+static void llist_test_for_each_safe(struct kunit *test)
-+{
-+	struct llist_node entries[ENTRIES_SIZE] = { 0 };
-+	struct llist_node *pos, *n;
-+	LLIST_HEAD(llist);
-+	int i = 0;
-+
-+	for (int i = ENTRIES_SIZE - 1; i >= 0; i--)
-+		llist_add(&entries[i], &llist);
-+
-+	llist_for_each_safe(pos, n, llist.first) {
-+		KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-+		llist_del_first(&llist);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-+}
-+
-+static void llist_test_for_each_entry(struct kunit *test)
-+{
-+	struct llist_test_struct entries[ENTRIES_SIZE], *pos;
-+	LLIST_HEAD(llist);
-+	int i = 0;
-+
-+	for (int i = ENTRIES_SIZE - 1; i >= 0; --i) {
-+		entries[i].data = i;
-+		llist_add(&entries[i].node, &llist);
-+	}
-+
-+	i = 0;
-+
-+	llist_for_each_entry(pos, llist.first, node) {
-+		KUNIT_EXPECT_EQ(test, pos->data, i);
-+		i++;
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-+}
-+
-+static void llist_test_for_each_entry_safe(struct kunit *test)
-+{
-+	struct llist_test_struct entries[ENTRIES_SIZE], *pos, *n;
-+	LLIST_HEAD(llist);
-+	int i = 0;
-+
-+	for (int i = ENTRIES_SIZE - 1; i >= 0; --i) {
-+		entries[i].data = i;
-+		llist_add(&entries[i].node, &llist);
-+	}
-+
-+	i = 0;
-+
-+	llist_for_each_entry_safe(pos, n, llist.first, node) {
-+		KUNIT_EXPECT_EQ(test, pos->data, i++);
-+		llist_del_first(&llist);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, ENTRIES_SIZE, i);
-+	KUNIT_EXPECT_TRUE(test, llist_empty(&llist));
-+}
-+
-+static void llist_test_reverse_order(struct kunit *test)
-+{
-+	struct llist_node entries[3], *pos, *reversed_llist;
-+	LLIST_HEAD(llist);
-+	int i = 0;
-+
-+	llist_add(&entries[0], &llist);
-+	llist_add(&entries[1], &llist);
-+	llist_add(&entries[2], &llist);
-+
-+	/* before [List] -> entries[2] -> entries[1] -> entries[0] */
-+	reversed_llist = llist_reverse_order(llist_del_first(&llist));
-+
-+	/* should be [List] -> entries[0] -> entries[1] -> entrires[2] */
-+	llist_for_each(pos, reversed_llist) {
-+		KUNIT_EXPECT_PTR_EQ(test, pos, &entries[i++]);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, 3, i);
-+}
-+
-+static struct kunit_case llist_test_cases[] = {
-+	KUNIT_CASE(llist_test_init_llist),
-+	KUNIT_CASE(llist_test_init_llist_node),
-+	KUNIT_CASE(llist_test_llist_entry),
-+	KUNIT_CASE(llist_test_add),
-+	KUNIT_CASE(llist_test_add_batch),
-+	KUNIT_CASE(llist_test_llist_next),
-+	KUNIT_CASE(llist_test_empty_llist),
-+	KUNIT_CASE(llist_test_llist_on_list),
-+	KUNIT_CASE(llist_test_del_first),
-+	KUNIT_CASE(llist_test_del_first_init),
-+	KUNIT_CASE(llist_test_del_first_this),
-+	KUNIT_CASE(llist_test_del_all),
-+	KUNIT_CASE(llist_test_for_each),
-+	KUNIT_CASE(llist_test_for_each_safe),
-+	KUNIT_CASE(llist_test_for_each_entry),
-+	KUNIT_CASE(llist_test_for_each_entry_safe),
-+	KUNIT_CASE(llist_test_reverse_order),
-+	{}
-+};
-+
-+static struct kunit_suite llist_test_suite = {
-+	.name = "llist",
-+	.test_cases = llist_test_cases,
-+};
-+
-+kunit_test_suite(llist_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("KUnit tests for the llist data structure.");
--- 
-2.46.0
-
+>
+> +static void kvm_rmap_unlock_readonly(struct kvm_rmap_head *rmap_head,
+> +                                    unsigned long old_val)
+> +{
+> +       if (!old_val)
+> +               return;
+> +
+> +       KVM_MMU_WARN_ON(old_val !=3D (rmap_head->val & ~KVM_RMAP_LOCKED))=
+;
+> +       WRITE_ONCE(rmap_head->val, old_val);
+> +}
+>
+> The TODO in kvm_rmap_lock() pretty much sums things up: it's safe to call=
+ the
+> "normal", non-readonly versions if and only if mmu_lock is held for write=
+.
+>
+> +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
+> +{
+> +       /*
+> +        * TODO: Plumb in @kvm and add a lockdep assertion that mmu_lock =
+is
+> +        *       held for write.
+> +        */
+> +       return __kvm_rmap_lock(rmap_head);
+> +}
 
