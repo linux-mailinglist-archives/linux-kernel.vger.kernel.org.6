@@ -1,67 +1,70 @@
-Return-Path: <linux-kernel+bounces-312217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4FE9693B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A459693B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5C91C22CFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4911F22243
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A221D4174;
-	Tue,  3 Sep 2024 06:33:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DF41D4143;
+	Tue,  3 Sep 2024 06:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLgPA+y5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4141CF28D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87A81CE6F4;
+	Tue,  3 Sep 2024 06:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345200; cv=none; b=pVpC7ZS1/FUDd4/863CzPYqskGHVb3dw/Au6EdukNzvqCFTfpwkKySdJSEGquYSpKOuyY4BSToTXxahrORzTRXBK/YaHy/Xpq3hyPAgrn8fiG4kj+CJ2CDhgO7S6nIxWjCgtO1TxUJZe5RllgkyyIs4afVlSGPMo8PkwjJbbkjk=
+	t=1725345169; cv=none; b=Xsp9uRJda2I2L1hlvwbZ9xLdClOXPTvZIRo92sY1yrdgFawLrE6tBxJPVkMo5gLE9r9b0+22lxMa/UiMAvtwz4dwxVBuvNKHFB/C9otwuYcP0CaT4ukV7GcR0coub57OEn6dTJr6XvHjy8JrrePQxuWNsFU2pNhMj9Fj7sq9cf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345200; c=relaxed/simple;
-	bh=bWTYGSEkN+qEPafiZXabnURnos5QBjb8WnYA9NzgsqY=;
+	s=arc-20240116; t=1725345169; c=relaxed/simple;
+	bh=Bm7MKarr3FGzALiV2kY3ApdriLG46rhsB+q0R5b2a/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhYI0D/E/Feq9/2K145nJWILk3w2oCc4XynXr/XeRtUC/TiBnfiJc5AdH8MDcS4fW7bnEhjw8GdG5tex2+6Z0HEjcS0gHdqfHeLXW/KTRgZky99yKDcgdoyDH3BrWhyrnJ2VYMcRKYTcwktjcwMSicUYFcEQyBZAxuv2oYLkXpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slN65-0002jB-HH; Tue, 03 Sep 2024 08:33:01 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slN64-0057Lz-5G; Tue, 03 Sep 2024 08:33:00 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slN64-004Lui-08;
-	Tue, 03 Sep 2024 08:33:00 +0200
-Date: Tue, 3 Sep 2024 08:33:00 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Message-ID: <ZtatnHp_7FBSSpko@pengutronix.de>
-References: <20240826072648.167004-1-s.hauer@pengutronix.de>
- <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVd3__wfm6EOOgH@pengutronix.de>
- <PA4PR04MB9638CF45263E713203A53EF7D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVtPJSsIr9eIFWv@pengutronix.de>
- <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtW5fFocfr9_WgGD@pengutronix.de>
- <PA4PR04MB963814F85BBA6DD39F516469D1932@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxllOI7D65YJWd2JpLmJ0AbIhiunUJU3L3Q87uhMCBEjjVmdhtlLhVylTpGxZwtxed8QK0qPEtvbmNrFqhG6eq8pI09YAHSr9YOP4c598Bpu3QkSRFM0l1AUWg+Z3Z++TouQojCyaiQUf8N2tUbRlhGrcWAlFX/7+qr7ecaLshc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLgPA+y5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A65FC4CEC5;
+	Tue,  3 Sep 2024 06:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725345168;
+	bh=Bm7MKarr3FGzALiV2kY3ApdriLG46rhsB+q0R5b2a/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sLgPA+y5ZN2JNKRTfReoir61qmFkStH/MIIzmKsYB+LZ6tP7ImeW8smOxRJxyX1A8
+	 dR5dZvqzj7ElaIrKhvnLu+BHSEPwi8ul6fILNnv5pZBVvQSOLgQI4Ov4t8f14wRNji
+	 YPVWWnRCI+xZas1t5w4D2eK0wzLx1m8Kjf0d7XgcIMP8pfufjGzVb5+n+Q7Qo66nza
+	 rp4hpW44lSxjVRJ6iaxiZiyZUao/0rGC0LKgaII/br+Qs2mgPwhCv0gGNCGk56a7I0
+	 /f3m4ZAnit0ThQGGR4MvtJbgwAQHNxxWk8oVo1aAuXnabihhcqTRzLPI70GTi1MHaQ
+	 nliEuWvdPHr7g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slN67-000000004SR-114w;
+	Tue, 03 Sep 2024 08:33:03 +0200
+Date: Tue, 3 Sep 2024 08:33:03 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 17/22] iio: light: lm3533-als: Get platform data via
+ dev_get_platdata()
+Message-ID: <Ztatn6sZjmQ59N4j@hovoldconsulting.com>
+References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
+ <20240902222824.1145571-18-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,87 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB963814F85BBA6DD39F516469D1932@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240902222824.1145571-18-andy.shevchenko@gmail.com>
 
-On Tue, Sep 03, 2024 at 01:51:46AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Monday, September 2, 2024 9:11 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> > <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle Valo
-> > <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-> > 
-> > > > > > > >
-> > > > > > > > Sascha
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > Sascha Hauer (4):
-> > > > > > > >   wifi: mwifiex: release firmware at remove time
-> > > > > > > >   wifi: mwifiex: handle VDLL
-> > > > > > > >   wifi: mwifiex: wait longer for SDIO card status
-> > > > > > > >   mwifiex: add iw61x support
-> > > > > > > >
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/cmdevt.c | 86
-> > > > > > +++++++++++++++++++
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/fw.h     | 16 ++++
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/main.c   |  9 +-
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/main.h   |  4 +
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.c   | 81
-> > > > ++++++++++++++++-
-> > > > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.h   |  3 +
-> > > > > > > >  .../net/wireless/marvell/mwifiex/sta_event.c  |  4
-> > > > > > > > +  .../net/wireless/marvell/mwifiex/uap_event.c  |  4 +
-> > > > > > > >  include/linux/mmc/sdio_ids.h                  |  3 +
-> > > > > > > >  9 files changed, 205 insertions(+), 5 deletions(-)
-> > > > > > > >
-> > > > > > > > --
-> > > > The VDLL support in the downstream driver supports a case when a
-> > > > VDLL event comes in while a command is being sent. I catched this
-> > > > with this
-> > > > test:
-> > > >
-> > > >         if (adapter->cmd_sent) {
-> > > >                 mwifiex_dbg(adapter, MSG, "%s: adapter is busy\n",
-> > > > __func__);
-> > > >                 return -EBUSY;
-> > > >         }
-> > > >
-> > > > The downstream driver defers handling of the VDLL event to the main
-> > > > process in this case. I haven't implemented this case in my patch
-> > > > because I wasn't able to trigger it, but is this the case you are referring to?
-> > > >
-> > >
-> > > Not only this code segment. In fact, you did not add VDLL data patch support
-> > to sdio.c.
-> > > If you try to add the code and do test, you will know what is missing in your
-> > code.
-> > 
-> > Could you point me to the code you mean?
-> > 
-> > Sascha
-> > 
+On Tue, Sep 03, 2024 at 01:17:02AM +0300, Andy Shevchenko wrote:
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> I only know the porting VDLL code in nxpwifi.
+> Access to platform data via dev_get_platdata() getter to make code cleaner.
+> 
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Yes, and I asked for a pointer to that code, some function name, or
-file/line or whatever, because I looked at the nxpwifi driver and don't
-know what you mean with "VDLL data patch support" in sdio.c.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
