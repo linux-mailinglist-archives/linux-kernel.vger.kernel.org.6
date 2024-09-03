@@ -1,99 +1,140 @@
-Return-Path: <linux-kernel+bounces-313593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1524496A75A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495EF96A961
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA97286411
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C7AE1C24513
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C4E1D7E28;
-	Tue,  3 Sep 2024 19:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4491E8410;
+	Tue,  3 Sep 2024 20:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="daHZ84FV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4GQIO5o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E783F1D7E22
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6EC1E8403;
+	Tue,  3 Sep 2024 20:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725391640; cv=none; b=ZCGJnvJ64mGeigbe386c23GG36wvgnucBuTWaVBIp7slX6gMeWcK2yBEE4sHvV9K3PjI4T1zIj2mtphPVIij2/nV+waEggiWOVhW59JsSwqpShd4AvotUs1wZcffQaxQecHWERwy+hTsi4pbw51OxcT4oHYCv3o3eJEiQXVqgV8=
+	t=1725396431; cv=none; b=eVESsD0qUzrZiTkjCms4cJGzKbSpZZ1mq080c/PS+QKmpa9v1XfgCZlL8jKcL4kOIJjB1yHwybBB4bGVzVu4coRuBik/H3ljs5Qgc2Db2CfFT2GuXQhZhJ0F2kKzB/tkYtwlIergBuI6pL6H/qY4dVLyczuw/3UdzUa4UGucnQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725391640; c=relaxed/simple;
-	bh=tyWxhsVYTRl+R9E6ELW5SRl7j9E7+e9hZ2jbj0htGlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dz9jmcboQfmSfLPF4/Tj7vK2w1piM/6NwV3N+nvbJEtgS5IfaiUV9YvS/347MObUgoAM63x5xAjrUJhlaZ4NURIXFv6cIyIVEV9H43YwCXI3sxQlCFzg7t20pE48GGVHywAAXxp1G5lO2Ay7Oy61GJ4r4QvRwLHUmJ0BDJ9Et/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=daHZ84FV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 918C740E0169;
-	Tue,  3 Sep 2024 19:27:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Qm7zIwiZHxlg; Tue,  3 Sep 2024 19:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725391631; bh=h45jq0TJwScbq6yFp9KYP7d+KXV8D6MnNFctu9uAbG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=daHZ84FVycPj5S2y3kWuzYTojJPo3zq17F8KYaj+YnRr7jBkI1cE4ABPlzbgAtmMa
-	 mA9sD1KQg4T2Rev/438cUJPxdb4ubEusTZ4a+IYb2YdCI4DXm3NunCWjGWP4IINmPg
-	 bPGZQEgu3v5bXFiFqUWMA/1H1Vnw8eSL17xQDGBkT+b+Lw2BVZXtF9pibfxDJRbjA7
-	 QJnbFBg5HJZhXTIbPw/YuAv2VgHfZ0PtQTDzQ2yUgJ7xEDQJ08vFbWoVrhJj7c7NNU
-	 vwuv6eD6d/PH47RgR2fJBTkaPu3E2aK8bLe+QEnFpIW3Vv/zrLWYpc6bi6bKqhy1d3
-	 SjsPnd558EoWtFmNt4MesShhy/HCiliAIT1vOV79560UILfUaxY9fPA9SQnp1Kb3rl
-	 nuHjuYB0WUx6FnEfr7MijVBhBZHJJSoCqV6dlpwGJep+PuxnI5ufOMUZBMzPoDQLgJ
-	 bPAfSVypa9SqOQGMb2Pe1Ejw4z6OzsZLaStljM0pDWm4y1yKDoBRgSg5XtYs9A2zNO
-	 xCIIR+IuIXO8X4J7P0rOr5edxkTr8gEPg41CRQ/mnJzG9DgdOqrBEuAQNG49L4Xa/E
-	 gnVvaM1r7dAjtHu3ryEpcLG5h5eOsbm0GM8GVDWjAo/WWMgBDFWn1tX0oAzK08cEi8
-	 n7SR/V/6yilufrJpbUbrT8ZQ=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 11DEC40E0275;
-	Tue,  3 Sep 2024 19:27:01 +0000 (UTC)
-Date: Tue, 3 Sep 2024 21:26:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tony Luck <tony.luck@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v8 0/3] Final pieces of Intel new families support
-Message-ID: <20240903192655.GCZtdi_w9xN6z9hPGV@fat_crate.local>
-References: <20240903173443.7962-1-tony.luck@intel.com>
+	s=arc-20240116; t=1725396431; c=relaxed/simple;
+	bh=n6eaSCxbSbkY42Jzi/5kjdbj6pXsgPDGUtNNCIwqb9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nuDyBJ0TwacW3Kvd7uMJfL7Tm/Ggn557DIfEZrgATgIz0ZZ9udLd8OkX7dXarrxvshVirpsRQYL/P3ao//fx7Ltdcw28+enlYxZO3cKG5dXM/pLiqwtB3Iy/O6+WpTMHRcG4Uh44g83KVKjra4LQXf3kE+j4cP4Nrd/XFtbs744=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4GQIO5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7B6C4CEC5;
+	Tue,  3 Sep 2024 20:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725396430;
+	bh=n6eaSCxbSbkY42Jzi/5kjdbj6pXsgPDGUtNNCIwqb9w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f4GQIO5osfwxXFfMMXdOXa7Vsy/kxp/KCsWrM1RS42ZiQMXn/AUNlxytSV8r2YlAR
+	 g3cywVUibFYRaKEdOCn7IaK+QSxp0VG6rhSaapFXvRHHvTv5T0Ono4Y8xWV3tuLcp7
+	 vBnpxyx5T2TyfIDQFirrZA8yPE/qGS+ZXAmu4ynFwAIIEotTZLRvkSvWTxfS8qrh74
+	 xYo30IJZG4A0Bil5+WiZpHpWFrwKA5ckAL/+DIJnT7J9SEd8dtrdCSH3yvKsuGADrH
+	 FXVcCaDz11/lHwSBj678/iAg5vxW/8caTwxFdvvBFz+1u5civSxiL8TCjw1B59Wi/K
+	 fOMTvmRzCbphg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	kvalo@kernel.org,
+	gregory.greenman@intel.com,
+	daniel.gabay@intel.com,
+	yedidya.ben.shimol@intel.com,
+	justinstitt@google.com,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 12/12] wifi: iwlwifi: clear trans->state earlier upon error
+Date: Tue,  3 Sep 2024 15:26:56 -0400
+Message-ID: <20240903192718.1108456-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903192718.1108456-1-sashal@kernel.org>
+References: <20240903192718.1108456-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240903173443.7962-1-tony.luck@intel.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.165
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 10:34:40AM -0700, Tony Luck wrote:
-> All except one of the precursor patches were merged to Linus' tree
-> in the v6.11 merge window. The exception is a one-liner that is in
-> the maintainer tree and linux-next, but didn't get pulled this time.
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-So when is Chanwoo planning on sending that one to Linus?
+[ Upstream commit 094513f8a2fbddee51b055d8035f995551f98fce ]
 
-Or should he drop it and I pick up all three and finish this conversion?
+When the firmware crashes, we first told the op_mode and only then,
+changed the transport's state. This is a problem if the op_mode's
+nic_error() handler needs to send a host command: it'll see that the
+transport's state still reflects that the firmware is alive.
 
-Hmmm.
+Today, this has no consequences since we set the STATUS_FW_ERROR bit and
+that will prevent sending host commands. iwl_fw_dbg_stop_restart_recording
+looks at this bit to know not to send a host command for example.
 
+To fix the hibernation, we needed to reset the firmware without having
+an error and checking STATUS_FW_ERROR to see whether the firmware is
+alive will no longer hold, so this change is necessary as well.
+
+Change the flow a bit.
+Change trans->state before calling the op_mode's nic_error() method and
+check trans->state instead of STATUS_FW_ERROR. This will keep the
+current behavior of iwl_fw_dbg_stop_restart_recording upon firmware
+error, and it'll allow us to call iwl_fw_dbg_stop_restart_recording
+safely even if STATUS_FW_ERROR is clear, but yet, the firmware is not
+alive.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Link: https://patch.msgid.link/20240825191257.9d7427fbdfd7.Ia056ca57029a382c921d6f7b6a6b28fc480f2f22@changeid
+[I missed this was a dependency for the hibernation fix, changed
+ the commit message a bit accordingly]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/dbg.c    | 2 +-
+ drivers/net/wireless/intel/iwlwifi/iwl-trans.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+index f34a02b33ccd4..fc630a0d9c83c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
+@@ -2862,7 +2862,7 @@ void iwl_fw_dbg_stop_restart_recording(struct iwl_fw_runtime *fwrt,
+ {
+ 	int ret __maybe_unused = 0;
+ 
+-	if (test_bit(STATUS_FW_ERROR, &fwrt->trans->status))
++	if (!iwl_trans_fw_running(fwrt->trans))
+ 		return;
+ 
+ 	if (fw_has_capa(&fwrt->fw->ucode_capa,
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+index a2919a32d7081..d2b31599340fc 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+@@ -1393,8 +1393,8 @@ static inline void iwl_trans_fw_error(struct iwl_trans *trans, bool sync)
+ 
+ 	/* prevent double restarts due to the same erroneous FW */
+ 	if (!test_and_set_bit(STATUS_FW_ERROR, &trans->status)) {
+-		iwl_op_mode_nic_error(trans->op_mode, sync);
+ 		trans->state = IWL_TRANS_NO_FW;
++		iwl_op_mode_nic_error(trans->op_mode, sync);
+ 	}
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
