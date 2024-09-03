@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-313818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E9396AA3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:33:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BEC96AA3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C988B286BA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:33:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75C33B25115
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864D1193415;
-	Tue,  3 Sep 2024 21:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEDC188912;
+	Tue,  3 Sep 2024 21:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUVcQzTq"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcy+32Sy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAB1922D3;
-	Tue,  3 Sep 2024 21:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31829126BF9;
+	Tue,  3 Sep 2024 21:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725399207; cv=none; b=ukUMVX5yP9VmvJ9hXv6hu8LHbuSUSt6feIt0p1nOzfyAGlvufKVvUEHc1IYLq6UnaCCB6PJyFvw4QoaT8kGimUe55ccS1HQ77z3dCMBvwtqKxhoPUY2t6KUN41gH10JA/qKadvaMsr6eKwY7jm6ekEMv8v9qF1OWVKmjo+tOzJI=
+	t=1725399228; cv=none; b=T/qGgONNQuztbK2M726RJgDIKKUqGnfokQfd+d1BifrAQiEqvko/GOFAPRUXK6YPD7WGOb6XDN0LIv4cpy/eryeojC3IRBstr0zQsQ1snon3SHHXNYfbeGzjAimD0lFiBSCZkgxu0X5y+56QDkFAkcMgFOQtlTnPiE9mu0ljwYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725399207; c=relaxed/simple;
-	bh=siROdXbi6QoNvp1nbq7OjP+/sFCOE+zKn39MtBEqcCY=;
+	s=arc-20240116; t=1725399228; c=relaxed/simple;
+	bh=TRTXUqQFASSC2sfWl1tDxNXxSXeWrjjjNTyL3ofIRFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rb7TLYcNmk12S+i1yTgpjIe8p8vawkVDjx163JPTWKT0eR4YiVJT0yC154MEnkaF08sElLtWw2P2mo0uMLaJOpYHyz1oZa5aQ+8FmrwF2ZZ00e3+UVN1+Nc8nDTwg6ME6KuSxafqJIMIJIFOCVl+PEhMMs/YzrPIHIZdGkP1ct0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUVcQzTq; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4570ec45fc8so19354431cf.3;
-        Tue, 03 Sep 2024 14:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725399205; x=1726004005; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=huMuxx+pTzI5Ed2sFfVpPNrmfrYqodc/tD1h5FMXjt4=;
-        b=LUVcQzTqbI/0BC+UShZ8HS9b4SOzi358crh+YMO7cbJKNrSGVXVK7uiN/nHvzvoFMb
-         d7gKuU+qOT0FHyXcV44t8UySVKdbOiAaqJJORDR44YXItHuvo/kcDxSIvQZyNh4TlzOT
-         204x7jd/LFGQN5Dp5xlwjX2zeaWP7XItmSI30U63tS7JA7C9qECV6R2udyyu7wtVOYz7
-         DIDeANm8vKgot2xwRLCKYGS7oZ5H6iscCpZ/G9lqnnJSlOMBhZJO7H8PQRCg7T2FPAu6
-         jEEMS18P9LZA4BEZ5mLkqE+XvSReOADW31x9InW6ftKYKwTSWJh+x/4zr8A5fvmwAjYR
-         wswA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725399205; x=1726004005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=huMuxx+pTzI5Ed2sFfVpPNrmfrYqodc/tD1h5FMXjt4=;
-        b=pjtn9ey2L+A5PxkHCcgOzQ0e954GT47qPnRmZvP7urQswmQrMgBIVeSKu1Sus447co
-         vDRBW+9QheWRqKQ9heBA9niogK18qB2FQPAVz8znv2fyGlMtv9Uc/NHM9u2XTFWZ47Ko
-         d49xOYuZNLN0ZbJwA7Om/lZYowtFGDljJqhz8s6FPUd2uAwcMEAnD2rYgbAS0BRfG8uB
-         lzASBdQNhZIOgph913JbzK4IUNrYlUh1VHC3lswRkVsNOapWAAt8MF0aC8Ha+dYpa6SB
-         4qdy6jf4Pdy31Gi8fDneLlTLV92/+TctxhwlZVXe+eCqr+n+ZhGepvej5AT1Qw39P17i
-         z7og==
-X-Forwarded-Encrypted: i=1; AJvYcCWLZTSEnDviY0R+CD9uaTegpNG3xJCRJ0V8aORCVuKmGmkTQYhm/5aZeS1oVAYmr9Mp8rhYUrek+uqseA==@vger.kernel.org, AJvYcCWRFSFpjq8/bq7/zfGt3uKdan7bGB4dZPPtwq/hIBw4OCov1g6+pb3p0k9xLxCNKf5kcBnZJraYfk7zO7Ih@vger.kernel.org
-X-Gm-Message-State: AOJu0YziCHXdgz8LWulwdkNgs5qTsBVQXwNI2v2YBeFvIKE8VlCeOxjc
-	9YRGY8plEsispDpdqWXOKCz0jRLEY17fDPHc8/Ih6pycUl1GupSf
-X-Google-Smtp-Source: AGHT+IEZTGLAaGioDRreFw0HgRmPpymCve4FCUEmLnZ4OxenWVmxkLRToLtBOinXu4jUWil4YzFuTA==
-X-Received: by 2002:a05:622a:428b:b0:453:74cc:ce09 with SMTP id d75a77b69052e-457e2d27101mr61344411cf.8.1725399205142;
-        Tue, 03 Sep 2024 14:33:25 -0700 (PDT)
-Received: from localhost ([2607:fea8:52a3:d200::24da])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682d9560fsm53679411cf.86.2024.09.03.14.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 14:33:24 -0700 (PDT)
-Date: Tue, 3 Sep 2024 17:33:23 -0400
-From: Richard Acayan <mailingradian@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Marge Yang <marge.yang@tw.synaptics.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Huang <Vincent.Huang@tw.synaptics.com>,
-	david.chiu@tw.synaptics.com, derek.cheng@tw.synaptics.com,
-	sam.tsai@synaptics.com
-Subject: Re: [PATCH V2] Input: synaptics-rmi4 - Supports to query DPM value.
-Message-ID: <ZteAo-bklYbs29Pq@radian>
-References: <20240805083636.1381205-1-marge.yang@tw.synaptics.com>
- <ZtdQW7nqAOEJDNBN@radian>
- <ZtdYJkU17y1iNsLG@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxFPG4vK1Bzzlk5uSbN20ruSPpREQ6ejf+atQypsR5fBnF38nRG8UzcizaPKqny47F8kMY5belu7Hvte21MUmbidzGo0iu93U5RmMj1A0GXF+P/tXipXPceJFXiBqDDO8sny05AWnB6+nxbwJxHLcQw7JsOJPvhgHtiytDkkWJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcy+32Sy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EA4C4CEC4;
+	Tue,  3 Sep 2024 21:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725399227;
+	bh=TRTXUqQFASSC2sfWl1tDxNXxSXeWrjjjNTyL3ofIRFk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qcy+32SyyNWs9DvcCknqrehZ0qycvbeI2/oXHtMcCUsS+agASWN2lNHi+ue4g1AOv
+	 08YSQoCoaFH/t/f+7/XyV8dNczLn0h/urozp/P9E+IlOyk8HAH1x/NUMI6z4cn0SWD
+	 Y/wmGzKJkcpkxYSJBsg3MYdt3+lC+5aQpl+T64IvQO2w91IGiNoClj42+ur0vqqvw+
+	 HZxOU2lEyxuALluRwpBTic8AlZM/+TquBWT2IB+T687+YOj0C5/whqMCeQeFuJqn8m
+	 MtOoov9IoKfXcfjy6YRJkEE+ugijVoKTiyw5qK0BJ7AonMSXF2MQMvI7GYP/1YWK+i
+	 u/YAALwDiorZw==
+Date: Tue, 3 Sep 2024 23:33:44 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	bpf@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS frames
+Message-ID: <ZteAuB-QjYU6PIf7@lore-desk>
+References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
+ <20240903135158.7031a3ab@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="X4TJpRX71CgNtJFP"
+Content-Disposition: inline
+In-Reply-To: <20240903135158.7031a3ab@kernel.org>
+
+
+--X4TJpRX71CgNtJFP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtdYJkU17y1iNsLG@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 11:40:38AM -0700, Dmitry Torokhov wrote:
-> On Tue, Sep 03, 2024 at 02:07:23PM -0400, Richard Acayan wrote:
-> > > +	/* Use the Query DPM feature when the query register exists for resolution. */
-> > > +	item = rmi_get_register_desc_item(&f12->query_reg_desc, RMI_F12_QUERY_RESOLUTION);
-> > > +	if (item) {
-> > > +		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
-> > > +			RMI_F12_QUERY_RESOLUTION);
-> > > +		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-> > > +		ret = rmi_read(fn->rmi_dev, query_dpm_addr, buf);
-> > > +		if (ret < 0) {
-> > > +			dev_err(&fn->dev, "Failed to read DPM value: %d\n", ret);
-> > > +			return -ENODEV;
-> > > +		}
-> > > +		dpm_resolution = buf[0];
-> > > +
-> > > +		sensor->x_mm = sensor->max_x / dpm_resolution;
-> > > +		sensor->y_mm = sensor->max_y / dpm_resolution;
-> > > +	} else {
-> > > +		if (rmi_register_desc_has_subpacket(item, 3)) {
-> > 
-> > The item variable is NULL in this branch, as it was overwritten just
-> > before the if statement.
-> > 
-> > This patch causes a NULL pointer dereference:
-> 
-> Ugh, indeed. I guess the simplest way of fixing this would be:
-> 
-> diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
-> index fc2cc8e2b0ba..8246fe77114b 100644
-> --- a/drivers/input/rmi4/rmi_f12.c
-> +++ b/drivers/input/rmi4/rmi_f12.c
-> @@ -129,9 +129,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
->  	 * Use the Query DPM feature when the resolution query register
->  	 * exists.
->  	 */
-> -	item = rmi_get_register_desc_item(&f12->query_reg_desc,
-> -					  RMI_F12_QUERY_RESOLUTION);
-> -	if (item) {
-> +	if (rmi_get_register_desc_item(&f12->query_reg_desc,
-> +				       RMI_F12_QUERY_RESOLUTION)) {
->  		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
->  						RMI_F12_QUERY_RESOLUTION);
->  		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-> 
-> Could you please tell me if this works for you?
+> On Fri, 30 Aug 2024 18:24:59 +0200 Alexander Lobakin wrote:
+> > * patch 4: switch cpumap from a custom kthread to a CPU-pinned
+> >   threaded NAPI;
+>=20
+> Could you try to use the backlog NAPI? Allocating a fake netdev and
+> using NAPI as a threading abstraction feels like an abuse. Maybe try
+> to factor out the necessary bits? What we want is using the per-cpu=20
+> caches, and feeding GRO. None of the IRQ related NAPI functionality
+> fits in here.
 
-Yeah, it fixes the bug.
+I was thinking allocating a fake netdev to use NAPI APIs is quite a common
+approach, but sure, I will looking into it.
+
+Regards,
+Lorenzo
+
+--X4TJpRX71CgNtJFP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZteAuAAKCRA6cBh0uS2t
+rBhMAPwLo2CYrtIKtGFCymhR3ixx9kulDbNEgsx5341RlzPlXwEAtMsfLpf+0ONw
+iCDcu9hQMiby73ZWqMQYrmXUvpKxYQ8=
+=B7pJ
+-----END PGP SIGNATURE-----
+
+--X4TJpRX71CgNtJFP--
 
