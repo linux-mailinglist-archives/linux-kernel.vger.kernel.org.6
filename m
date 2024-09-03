@@ -1,105 +1,204 @@
-Return-Path: <linux-kernel+bounces-313623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F69596A7BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:48:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA4D96A7C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94EB1F251F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:48:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 043DDB214AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3EC1DC72A;
-	Tue,  3 Sep 2024 19:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EFD1DC733;
+	Tue,  3 Sep 2024 19:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOiBXY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="eBd/C53f"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5201DC720;
-	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4184E1DC720;
+	Tue,  3 Sep 2024 19:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392886; cv=none; b=E4sqaFolTM9pRXSDRbJbtEu+Ov+rWlIqZRREMQstgwtGGIDbr202hrM7x4We1Hs6lroKz3K6gCbbAlOIzB6LD/9ZwDZlzhf6lHcx9Eisf11Hkas0+beOFaUsu3wXFbTD387dJIXt3pJCzq6fHqPBTZ/3mToWQ7XHf0Q0Fd9K4o0=
+	t=1725392964; cv=none; b=CHghaBCgXn4LjxtQG5PmxD/xntcOBnaEykqVfyWg5Y4aRucGdegAodxRP3dayZPYMoPGM89hs3IAJnHy0XdiN43lqmJnnw7797110j3l4fPmwxn3pTx2UgAQZt2TSiVAdJjffKryWi1zVQm/A+8/HWhjsmP3QvrsPugRe7yFiQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392886; c=relaxed/simple;
-	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=dQ+FkNlt4qppexpm0z9atIeqQBosP87a465F1ccGT/8bFVW2XjbMkFw7nQishmBWEhofgE1gwJfHk/h2RbG0Sfxfq46io5IIqFWNJeYnsb8MDzgAvwywbVpH9tDOYFVqzqel3tXyAAZMijbcpAcEhchx/1wlNC82uaxGdXbpQuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOiBXY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D6BC4CEC4;
-	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725392885;
-	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WaOiBXY/KVKWzml45UCJb+WWIBSw0lvuhE0Mv7k/zWUsAqIsb4Mma5kz3NxWBQ0bq
-	 Q5p2ZfbrI+3zDeagmBF4/6SsbBGUnCt9Gb07whtcTgm+Yn9V4kqIHjm2WRtzTCL3Ti
-	 etT4gj82eXuH2jyWUUA61XPuxMAYeWXuCztfUklSF0l/KuB+auXZVOC2lwBBoR2ulI
-	 5OnSKLo0z4pYiY++tp1dAgKItd46IXo+cd8RZ7GM6DotjLox9rxNPM1u2FKZ9vOsj6
-	 WrMHdMs4peE8U35yOBAcPUURlOazdQiP08efgujoHR0JylWzVrkkfqi+wYLOQtSJYs
-	 z+Y3lm9vigyDA==
-Message-ID: <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725392964; c=relaxed/simple;
+	bh=ROj9kqpOSFemG0GEO1bYY09F9alqNxe4Bb0al29yNEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+Td+HAijFwv4PgFNrpI28+smhaGoa20Y4OenTp7zidanCjD/l3KvB1vFCV4/xLDFiLXOfso/tG7sXnDkrCEydPFuqGcnFyB8x0x7IV+116NuKVK1eUjVlS3laZx/3OPmhgl0nvL02yeI0Pd0YQZLpIQHwYmT5huATr3nOkTy2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=eBd/C53f; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IRivim3ffLLDf7rcgH+ESDzV4H+sYZRxkj85fKwazmU=; b=eBd/C53fK7FCkwxaCWq9uJJI1q
+	HqJM8DtZmZ6JRwjLK/KUdnu/LxOInAz3o3jPrTv1YFt3rDziz27OwS4hUK7qskpTxquuAEnthUMll
+	CsBWGhaF6OUPupKLhWxqHvbg10UFA2a3XdddvXOtZUXMwg0bAOgqXDwBgeckEfQFF8mfiMgDvkhUJ
+	0sB7DOl6p53V9N2ro/wmmk9E0z86FIn7r3LkmVwuWhKYL4tGTSotFlPHQH/LFbzeW/N09gXmJC74A
+	pQGfPgPTzlPUtLnsQATbgrQXB3wrENhyBNBXpGtdz8i6ox1Vm5U8PasbCCS9NsyZE/NkLvPjxBmMm
+	/rkimeOg==;
+Received: from [2001:9e8:9e4:e501:3235:adff:fed0:37e6] (port=32920 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1slZWS-00EkYB-St;
+	Tue, 03 Sep 2024 21:49:05 +0200
+Date: Tue, 3 Sep 2024 21:48:59 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
+ error messages
+Message-ID: <20240903-super-elk-of-bliss-eaed2c@lindesnes>
+References: <20240902160828.1092891-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Tue, 03 Sep 2024 12:48:03 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902160828.1092891-1-ojeda@kernel.org>
 
-Quoting Claudiu (2024-08-30 06:02:13)
-> diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-> index 067a26a66c24..247fa80a4f53 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -160,6 +160,18 @@ i2c3: i2c@10090c00 {
->                         status =3D "disabled";
->                 };
-> =20
-> +               vbattb: vbattb@1005c000 {
-> +                       compatible =3D "renesas,r9a08g045-vbattb";
-> +                       reg =3D <0 0x1005c000 0 0x1000>;
-> +                       interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&=
-vbattb_xtal>;
-> +                       clock-names =3D "bclk", "rtx";
-> +                       #clock-cells =3D <1>;
-> +                       power-domains =3D <&cpg>;
-> +                       resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
-> +                       status =3D "disabled";
-> +               };
+On Mon, Sep 02, 2024 at 06:08:28PM +0200, Miguel Ojeda wrote:
+> Like patch "rust: suppress error messages from
+> CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1], do not assume the file existing
+> and being executable implies executing it will succeed.
+> 
+> Instead, bail out if executing it fails for any reason, as well as if
+> the program does not print to standard output what we are expecting from
+> `pahole --version`. The script needs to ensure that it always returns
+> an integer, since its output will go into a Kconfig `int`-type symbol.
+> 
+> In addition, check whether the program exists first, and provide
+> error messages for each error condition, similar to how it is done in
+> e.g. `scripts/rust_is_available.sh`.
+> 
+> For instance, currently `pahole` may be built for another architecture
+> or may be a program we do not expect that fails:
+> 
+>     $ echo 'bad' > bad-pahole
+>     $ chmod u+x bad-pahole
+>     $ make PAHOLE=./bad-pahole defconfig
+>     ...
+>     ./bad-pahole: 1: bad: not found
+>     init/Kconfig:112: syntax error
+>     init/Kconfig:112: invalid statement
+> 
+> With this applied, we get instead:
+> 
+>     ***
+>     *** Running './bad-pahole' to check the pahole version failed with
+>     *** code 127. pahole will not be used.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=0
+> 
+> Similarly, `pahole` currently may be a program that returns successfully,
+> but that does not print the version that we would expect:
+> 
+>     $ echo 'echo' > bad-pahole
+>     $ chmod u+x bad-pahole
+>     $ make PAHOLE=./bad-pahole defconfig
+>     ...
+>     init/Kconfig:114: syntax error
+>     init/Kconfig:114: invalid statement
+> 
+> With this applied, we get instead:
+> 
+>     ***
+>     *** pahole './bad-pahole' returned an unexpected version output.
+>     *** pahole will not be used.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=0
+> 
+> Finally, with this applied, if the program does not exist, we get:
+> 
+>     $ make PAHOLE=./bad-pahole defconfig
+>     ...
+>     ***
+>     *** pahole './bad-pahole' could not be found. pahole will not be used.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=0
+> 
+> Link: https://lore.kernel.org/rust-for-linux/20240727140302.1806011-1-masahiroy@kernel.org/ [1]
+> Co-developed-by: Nicolas Schier <nicolas@fjasle.eu>
+> Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> v1: https://lore.kernel.org/all/20240728125527.690726-1-ojeda@kernel.org/
+> v2:
+> 
+> Reworked to catch successful programs that may not output what we expect from
+> pahole as well as to do the checking step-by-step (for better error messages).
+> 
+> I didn't change the regular expression to reduce the changes (except adding
+> `p`) -- it can be improved separately.
+> 
+> Also, please note that I added Nicolas as co-author since he proposed part of
+> the solution, but he has not formally signed off yet.
+
+thanks, no objections.
+
+>  scripts/pahole-version.sh | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/pahole-version.sh b/scripts/pahole-version.sh
+> index f8a32ab93ad1..cdb80a3d6e4f 100755
+> --- a/scripts/pahole-version.sh
+> +++ b/scripts/pahole-version.sh
+> @@ -5,9 +5,33 @@
+>  #
+>  # Prints pahole's version in a 3-digit form, such as 119 for v1.19.
+> 
+> -if [ ! -x "$(command -v "$@")" ]; then
+> -	echo 0
+> +set -e
+> +trap "echo 0; exit 1" EXIT
 > +
->                 cpg: clock-controller@11010000 {
->                         compatible =3D "renesas,r9a08g045-cpg";
->                         reg =3D <0 0x11010000 0 0x10000>;
-> @@ -425,4 +437,11 @@ timer {
->                 interrupt-names =3D "sec-phys", "phys", "virt", "hyp-phys=
-",
->                                   "hyp-virt";
->         };
+> +if ! command -v "$@" >/dev/null; then
+> +	echo >&2 "***"
+> +	echo >&2 "*** pahole '$@' could not be found. pahole will not be used."
+
+shellcheck likes to have '$*' instead of '$@', but I can't think of a
+set of arguments which might cause problems.
+
+> +	echo >&2 "***"
+> +	exit 1
+> +fi
 > +
-> +       vbattb_xtal: vbattb-xtal {
+> +output=$("$@" --version 2>/dev/null) || code=$?
+> +if [ -n "$code" ]; then
+> +	echo >&2 "***"
+> +	echo >&2 "*** Running '$@' to check the pahole version failed with"
+> +	echo >&2 "*** code $code. pahole will not be used."
+> +	echo >&2 "***"
+> +	exit 1
+> +fi
+> +
+> +output=$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9]+)/\1\2/p')
 
-The node name should be something like clock-<frequency> but if the
-frequency is different per-board then I don't know what should happen
-here. Can you leave the vbattb_xtal phandle up above and then require
-the node to be defined in the board with the proper frequency after the
-dash?
+I'd rather like to have
 
-> +               compatible =3D "fixed-clock";
-> +               #clock-cells =3D <0>;
-> +               /* This value must be overridden by the board. */
-> +               clock-frequency =3D <0>;
+    output=$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9][0-9])/\1\2/p')
+
+here (thus, explicitly check against a two number subversion), so that
+we can detect also versions like 1.100 or 2.1 and bail out.
+
+Kind regards,
+Nicolas
 
