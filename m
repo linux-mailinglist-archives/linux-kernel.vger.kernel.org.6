@@ -1,92 +1,205 @@
-Return-Path: <linux-kernel+bounces-312828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD544969C27
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:40:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E9C969C2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8237C1F2242A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C35B1C23509
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501261A42A0;
-	Tue,  3 Sep 2024 11:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811FB1B982E;
+	Tue,  3 Sep 2024 11:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iibFK2d/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBvTXwjN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14031A42CF;
-	Tue,  3 Sep 2024 11:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695F19F422;
+	Tue,  3 Sep 2024 11:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363580; cv=none; b=Ob6zSYEXwqvPnbxbZHfRth/O7RNNXzKiz04nq76hRNbSZllSHPkE1EPtGOpywmgsfheR8IRqZ7fV0F9jBpTFY71mFZ9nuBBW/LHpNfWdpyDMjWSlPne8LLfp6qV4PpEQU37rYw+OnBLzh0Y8yGu4d5pzCoVce/5GmnecJhIb6rA=
+	t=1725363644; cv=none; b=t8053X7s0e/FKPqJY9WW8AcKuWZSwUVJe8lmYBH6cgPiPw/LNjUup6kKBFnjbWaMqZMZyZ7f+mtoU4zyA1u+05YtUAUK+4XHU7ArEk+DTLhhFV3c95X6umMR9GAHWp2112Oc31roGXt/AKwpWtIhvFBPPIGrn9GR+WjI6KWtl64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363580; c=relaxed/simple;
-	bh=EssRZidkPY/Pg62sztnKSI+A+HzJf2rF2rz0IHtNeps=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XgNlAswNKsyhuR599mNCPL9RpstxV5TWiNJcLfmC+zM4bmdzyWjXDx7JgkKgLnlFcG+4Y4/SieMwMkewYEin7fekqoIqm320yKZolEnPUaH9khc7PwWM/msfEzSegL6EjVOkUzp5B4wbxe0JN3BExpjyp4pSd8GdCSZOLQIchTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iibFK2d/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6F8C4CEC4;
-	Tue,  3 Sep 2024 11:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725363580;
-	bh=EssRZidkPY/Pg62sztnKSI+A+HzJf2rF2rz0IHtNeps=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=iibFK2d/7GjoAJK+Gkv8yD4hGNYD6cQk9QIAfhNjtUW7uzqmz/D8pVZsb0UWAQUzY
-	 UQ811n25FoQUMC4taNmcseHz8fuxppd5iwt/CGuAf28fusLngTXNJhoOW2nlTLd/yv
-	 fxNgVaT5xRGlksOEDdjoqpi9vJA9/W64/X+gb2A38wjh/S0gikz8gmx2LzsoIKi0Xs
-	 e91Q2c0Og9U6uUoZBZYsuwxsxzubumX1uIL+11fvLYcnzfwWkB/i77u54S3stH5gD2
-	 br1RJNP7zMdj2pQSOoDVu3VwiQH1DsIZYDoH5sTzINOmiI2unffAkL6jyfsMY67Xva
-	 /LxgG4EnPMhMw==
-Date: Tue, 3 Sep 2024 13:39:38 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-cc: basavaraj.natikar@amd.com, bentiss@kernel.org, Shyam-sundar.S-k@amd.com, 
-    mario.limonciello@amd.com, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: amd_sfh: Convert comma to semicolon
-In-Reply-To: <20240903024402.493709-1-nichen@iscas.ac.cn>
-Message-ID: <nycvar.YFH.7.76.2409031339330.31206@cbobk.fhfr.pm>
-References: <20240903024402.493709-1-nichen@iscas.ac.cn>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1725363644; c=relaxed/simple;
+	bh=TiMloUZtEOzhiMiKfurPxe7QoHWBPp0gKnxyea5FPRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DocEikGirmRrCH7ttziOoiC33wX4N9tqyQG9j/GvxdDt2w57NnTMwF8RAgUNuyegE58uDZtnbMcnT7cg/75oFvS8Tdjfvar9V87S1KCXPzVEDU9nAwu87DgKmn52P0hLJ42xNImev4Wc2v1grNr2dGgVCBw4KdS+BQm/R2nWFRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBvTXwjN; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725363644; x=1756899644;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TiMloUZtEOzhiMiKfurPxe7QoHWBPp0gKnxyea5FPRA=;
+  b=kBvTXwjNKEc8gdmeRBUUa02xzMg+MdVsc2VLL4GYVJZ393Lfagdiftnt
+   Co6ZEC9VJElga5Ogs3etZBMuxs8b/Db3ReZsvAwtGTtrIzaDpd413o6Yh
+   KxuecPH1aLLdxGBQcECOU45fZdPhb51S/kpXULNr8ZKPW+aBpm9DXNDor
+   Jo6dUnijAiv/NKODOM7W9/cNWydFo3XOhRCkGXo2HFeMlktP3GiSnmTI+
+   Jmn5d2+RN5matrVQsKfRnKJ6E1diIMbrCcPAamKlqxKC8HeqjBuwpUKLE
+   Y0BNWZdVhRAIY9z5tC/DaDCpcYtBJUFVm+I1GzmLcB6x6c5yz7LHMImKQ
+   g==;
+X-CSE-ConnectionGUID: jf2M9tg7T+SOEyt4UyMLew==
+X-CSE-MsgGUID: yiq6FPocS/KmY+E/J1ccnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="27711949"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="27711949"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 04:40:43 -0700
+X-CSE-ConnectionGUID: HQD9FPlFRrCFVhb6qQT2Lg==
+X-CSE-MsgGUID: 02SRmlM4S3SyHIy3i8zzKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="65389034"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa007.jf.intel.com with SMTP; 03 Sep 2024 04:40:33 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 03 Sep 2024 14:40:32 +0300
+Date: Tue, 3 Sep 2024 14:40:32 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v4 03/18] usb: typec: Stub out typec_switch APIs when
+ CONFIG_TYPEC=n
+Message-ID: <Ztb1sI2W7t5k2yT7@kuha.fi.intel.com>
+References: <20240901040658.157425-1-swboyd@chromium.org>
+ <20240901040658.157425-4-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901040658.157425-4-swboyd@chromium.org>
 
-On Tue, 3 Sep 2024, Chen Ni wrote:
-
-> Replace a comma between expression statements by a semicolon.
+On Sat, Aug 31, 2024 at 09:06:41PM -0700, Stephen Boyd wrote:
+> Ease driver development by adding stubs for the typec_switch APIs when
+> CONFIG_TYPEC=n. Copy the same method used for the typec_mux APIs to be
+> consistent.
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: <linux-usb@vger.kernel.org>
+> Cc: Pin-yen Lin <treapking@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  include/linux/usb/typec_mux.h | 43 +++++++++++++++++++++++++++++++----
+>  1 file changed, 38 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
-> index 621793d92464..db36d87d5634 100644
-> --- a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
-> +++ b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c
-> @@ -299,8 +299,8 @@ static void amd_sfh_set_ops(struct amd_mp2_dev *mp2)
+> diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
+> index 2489a7857d8e..efb5ed32b813 100644
+> --- a/include/linux/usb/typec_mux.h
+> +++ b/include/linux/usb/typec_mux.h
+> @@ -3,6 +3,7 @@
+>  #ifndef __USB_TYPEC_MUX
+>  #define __USB_TYPEC_MUX
 >  
->  	sfh_interface_init(mp2);
->  	mp2_ops = mp2->mp2_ops;
-> -	mp2_ops->clear_intr = amd_sfh_clear_intr_v2,
-> -	mp2_ops->init_intr = amd_sfh_irq_init_v2,
-> +	mp2_ops->clear_intr = amd_sfh_clear_intr_v2;
-> +	mp2_ops->init_intr = amd_sfh_irq_init_v2;
->  	mp2_ops->suspend = amd_sfh_suspend;
->  	mp2_ops->resume = amd_sfh_resume;
-
-Applied, thanks.
+> +#include <linux/err.h>
+>  #include <linux/property.h>
+>  #include <linux/usb/typec.h>
+>  
+> @@ -24,16 +25,13 @@ struct typec_switch_desc {
+>  	void *drvdata;
+>  };
+>  
+> +#if IS_ENABLED(CONFIG_TYPEC)
+> +
+>  struct typec_switch *fwnode_typec_switch_get(struct fwnode_handle *fwnode);
+>  void typec_switch_put(struct typec_switch *sw);
+>  int typec_switch_set(struct typec_switch *sw,
+>  		     enum typec_orientation orientation);
+>  
+> -static inline struct typec_switch *typec_switch_get(struct device *dev)
+> -{
+> -	return fwnode_typec_switch_get(dev_fwnode(dev));
+> -}
+> -
+>  struct typec_switch_dev *
+>  typec_switch_register(struct device *parent,
+>  		      const struct typec_switch_desc *desc);
+> @@ -42,6 +40,41 @@ void typec_switch_unregister(struct typec_switch_dev *sw);
+>  void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data);
+>  void *typec_switch_get_drvdata(struct typec_switch_dev *sw);
+>  
+> +#else
+> +
+> +static inline struct typec_switch *
+> +fwnode_typec_switch_get(struct fwnode_handle *fwnode)
+> +{
+> +	return NULL;
+> +}
+> +static inline void typec_switch_put(struct typec_switch *sw) {}
+> +static inline int typec_switch_set(struct typec_switch *sw,
+> +		     enum typec_orientation orientation)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline struct typec_switch_dev *
+> +typec_switch_register(struct device *parent,
+> +		      const struct typec_switch_desc *desc)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +static inline void typec_switch_unregister(struct typec_switch_dev *sw) {}
+> +
+> +static inline void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data) {}
+> +static inline void *typec_switch_get_drvdata(struct typec_switch_dev *sw)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +
+> +#endif /* CONFIG_TYPEC */
+> +
+> +static inline struct typec_switch *typec_switch_get(struct device *dev)
+> +{
+> +	return fwnode_typec_switch_get(dev_fwnode(dev));
+> +}
+> +
+>  struct typec_mux_state {
+>  	struct typec_altmode *alt;
+>  	unsigned long mode;
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+heikki
 
