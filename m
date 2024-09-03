@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-312585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D37969873
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:14:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F420E969880
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5514E1F21D28
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317CA1C21338
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE831A303F;
-	Tue,  3 Sep 2024 09:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8018819F424;
+	Tue,  3 Sep 2024 09:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NVLewLIm"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VdGUxvQP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B47D1C767C;
-	Tue,  3 Sep 2024 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E31A4E89;
+	Tue,  3 Sep 2024 09:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725354867; cv=none; b=r0Dd7Jrf6eZUkPF+lwWCph4KeT7v/tj0jS6KlYjQv+fRrJs0rr7Cf2XYQFglh498jIxVAkAU7UXjlSCMu8HtAhS97q2P1j2HTP8CA5gs/ZX4+m6Qem2hVrz1iXXeThfhX/4BJrnehOqci4c6h4/Y/ZW3/kdrEMgpiQCgp/kU1iI=
+	t=1725354989; cv=none; b=WSobYEK5NolBdsG1Mgr8iQcKLknXDGczayYLQraeT0sJWLLIJt14qsoBe7XDqhdD3W6FYOFhUr9V+posS+3mEvI44JQAYDmr6mLSUVMnOj4XGZEqH/v2Qd6LdW2uNDq1YBEt6BHK2u52jnwQ2LfO8joMTeTGSPI3FS5rv/ajlmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725354867; c=relaxed/simple;
-	bh=Z+iq6pQpAnUlmLYB3fvLhnqZrJvrth6tuFKVD0jRPKM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8oB0JtihKeVf6WU2pi2Zdmko893BBkJPI0OWf1wy3VFEBqq/tL56c0BlmMLbine16O9tE3Tp0PUZslkHeAFxr5gF5FOLQ+6E9zZouBd+yTOiKUGqV9GdMlyuOMqDMwqYVnAnbzKt7+begAs9Gwx0lIMl56GA1m8GMMKDoQF1/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NVLewLIm; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4839EEMD029493;
-	Tue, 3 Sep 2024 04:14:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725354854;
-	bh=lGxRkcTWErgfsKaHOZPHJn/0YfodHMNERSKEXygiM1Y=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=NVLewLImU8nd4+pcvpSi7tDxuxuFTI0V5CqSwkm7n+n4lz2lmKxBlEmEs2Pb6sXhU
-	 jABQEzOojukE0r/3kcBbJ5nvmj9AZdjJNgJNsgpokuIxAu38Z+a6SqqFDdccuBt2Qd
-	 aIARdTG19Ae0MDkTEBIpH5z++i/W/pfJLvsKK/Zo=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4839EEQL054867
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 3 Sep 2024 04:14:14 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Sep 2024 04:14:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Sep 2024 04:14:14 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4839EDbv039010;
-	Tue, 3 Sep 2024 04:14:14 -0500
-Date: Tue, 3 Sep 2024 14:44:13 +0530
-From: Jai Luthra <j-luthra@ti.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-CC: <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: ti: j721e-csi2rx: Convert comma to semicolon
-Message-ID: <4nku6uyhn3akjcdkw4bc4oo6ktyjefh6qblpgcmbrozxql4pc6@6kcz6o7hsvt2>
-References: <20240903072904.780819-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1725354989; c=relaxed/simple;
+	bh=Y42K+VKdaOGaWK9Z/RB9RHq/t5rX2mCJb59mIktkP64=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=CCpKyJXA57KZ2NNz4Thv4ElewQkgh7sKvamX4ccsQCZ5TuHBCnMbtCwuJidXIYsorssIXF+oRGFalGBBrz5NT6oEUYgCvLBv9y21WRI70ZZIb2qRYBi4YA8PLCdsxv63wEf9ijV3RouFCudbDoCpPrOWBbmgakbkw4OhduHyke0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VdGUxvQP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4835AldG009037;
+	Tue, 3 Sep 2024 09:15:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f+aDtDkpqgV1KQ/TcVWTCcSca/Y0X5xFWjMV1qZhGnM=; b=VdGUxvQPWzKAoMkO
+	T0himFDsc9/6hcdNDyf3bIY1Sjq/GTEqWqb3E2JJz1P+TyvKhLrPOs+DeiO6Q0GW
+	40NDT2z+W2Y7k21QWUt0N5l5a5Hmql+HLdacfuhBsIRQgvervtpD1zhYhL0gk28n
+	I3O0ph/u5L1v0CkIPxEzsZSm7nvXzOBLseAoQe8uyareib8c+uueetl0ji00oAQ1
+	YblUxjC7yuMjZ+CGTx68PLhntYsy8IH6PKz6Fa6UZQ8c6V+GuRCP9Yna61xAWd81
+	AL8HIfEm2/nLVdKhOF8vVsht4xCfkencTutYkKg5jC1jkYr4/SgLWGSMTwdSoqdR
+	J3ajvg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt66xu4s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 09:15:55 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4839Fs58008084
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 09:15:54 GMT
+Received: from [10.216.9.110] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 02:15:49 -0700
+Message-ID: <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+Date: Tue, 3 Sep 2024 14:45:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240903072904.780819-1-nichen@iscas.ac.cn>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <esben@geanix.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UmnCr2WGft70bqzkiVvBtlXxBDElRjoT
+X-Proofpoint-GUID: UmnCr2WGft70bqzkiVvBtlXxBDElRjoT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030074
 
-Hi Chen,
+Hi Miquel,
 
-Thanks for the patch.
-
-On Sep 03, 2024 at 15:29:04 +0800, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
+On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
+> v8:
+>   * Fixed compilation warning reported by kernel test robot
+>   * Added "chip" description in nandc_set_read_loc_first()
+>   * Added "chip" description" in nandc_set_read_loc_last()
+>   * Changed data type of read_location0, read_location1,
+>     read_location2, read_location3, addr0, addr1, cmd, cfg0,
+>     cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+>     orig_cmd1, orig_vld to __le32 to fix compilation warning.
+>   * Included bitfield.h header file in spi-qpic-snand.c to
+>     fix compilation warning
+>   * Removed unused variable "steps" variable from
+>     qcom_spi_ecc_init_ctx_pipelined()
 > 
+     I have addressed your comments to v6 and further posted till v8.
+     Could you please let me know if this is fine.
+     and how to get this merged ?
 
-Fixes: b4a3d877dc92 ("media: ti: Add CSI2RX support for J721E")
-Reviewed-by: Jai Luthra <j-luthra@ti.com>
-
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 22442fce7607..d124c1256562 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -1014,9 +1014,9 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_dev *csi)
->  	pix_fmt->height = 480;
->  	pix_fmt->field = V4L2_FIELD_NONE;
->  	pix_fmt->colorspace = V4L2_COLORSPACE_SRGB;
-> -	pix_fmt->ycbcr_enc = V4L2_YCBCR_ENC_601,
-> -	pix_fmt->quantization = V4L2_QUANTIZATION_LIM_RANGE,
-> -	pix_fmt->xfer_func = V4L2_XFER_FUNC_SRGB,
-> +	pix_fmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> +	pix_fmt->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-> +	pix_fmt->xfer_func = V4L2_XFER_FUNC_SRGB;
->  
->  	ti_csi2rx_fill_fmt(fmt, &csi->v_fmt);
->  
-> -- 
-> 2.25.1
-> 
-
--- 
-Thanks,
-Jai
-
-GPG Fingerprint: 4DE0 D818 E5D5 75E8 D45A AFC5 43DE 91F9 249A 7145
+Regards,
+Alam.
 
