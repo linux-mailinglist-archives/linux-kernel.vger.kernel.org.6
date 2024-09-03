@@ -1,178 +1,135 @@
-Return-Path: <linux-kernel+bounces-313100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A730896A033
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:20:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE5696A03C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5093F1F25F32
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:20:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89019B23626
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2687581A;
-	Tue,  3 Sep 2024 14:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2C777107;
+	Tue,  3 Sep 2024 14:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="Fjmh1NiK";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="o7uaFkk+"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h234HtXn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBFE626CB;
-	Tue,  3 Sep 2024 14:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8257CB1;
+	Tue,  3 Sep 2024 14:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373195; cv=none; b=g0OmRoJIgsTb+F3Ib9+o7GgJXJYRV5sx9xLAkv0JK914um9vgfdLbFMtwJrAsp5CXeTaz2PV39uFfNWVSCLpPrChNTUV+xFFb/ITHgP1hdWZ+5ZfAxByQGN3X8i9PWK7bqU00fmpR2CJlRZacE4vRhTszHximRbJDoyNp+PzQYE=
+	t=1725373274; cv=none; b=ofAjqNuTQLmY33pitWfJ+H5tEO60vL/cKFcZ0ekeuS2BkjkiyCvJWSdEO1NeicTGYZ92zlFLPAPz9V1B9IOAccHmSSJc/kcD6UtnoYSrCb9nEtaZh7TW1b+f06n3boDu0VZ9HvPE/XkLilyB26cGjzaxcCiT/DUVisRn3MPqRzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373195; c=relaxed/simple;
-	bh=m9h16UYK6VrodXkfwFXX8YBOZhgH7dvUHnJmBo2jgow=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ij8AT79NyIJH1US2iPbMqc0xCtDgaeGB+7iZQ2PJUIx8pEGLtXze4Fok3l5MBNCKlB8NJhluB7MugVNo5wcvGl/iOYekOCxEcLqLdFFhrJoPKpyV4/L9Ghb8+WT8oVyCQL935CKLD7NN2u+cez5PR82u0bCBUlb2pJVFd4lrrVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=Fjmh1NiK; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=o7uaFkk+; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id DFC6B21F8;
-	Tue,  3 Sep 2024 14:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1725372722;
-	bh=lb7cGFCjC+Kuzri59R3hcR62KcT5/hnyzDqin22FzGA=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Fjmh1NiKj/Y30UEJPV1m1fsj3KD9I5/K1nC3WxYSlM69czvmohEpeNBFZrobaU/ei
-	 k59sBG98WsP04JavjbCmqwmBgyO5KWZqEECug4sasBjeOrfj2pG6DWVCRRjujRWlno
-	 CMsms/94rXeIpeasz6mXLkA6sHPq1mOrl1K7fOtE=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 2C0A22213;
-	Tue,  3 Sep 2024 14:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1725373190;
-	bh=lb7cGFCjC+Kuzri59R3hcR62KcT5/hnyzDqin22FzGA=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=o7uaFkk+1QwMl00Zmi+gPIvU8PIpuyg/LTsv+PtZiTcLMMt7K951pVXCKoIbTSIqy
-	 kYlMTAbm1FsWshWBWrywTxHMj1VxDqgNhJ+Rv/TnELEJNY+kg+tnne7aGG+4Pq3eOl
-	 yDMfBMJ8qpi8dAX8o6BW+rnBrP4Fhwpkr49V+Y18=
-Received: from ntfs3vm.paragon-software.com (192.168.211.161) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 3 Sep 2024 17:19:49 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, kernel test
- robot <lkp@intel.com>
-Subject: [PATCH v2] fs/ntfs3: Fix sparse warning in ni_fiemap
-Date: Tue, 3 Sep 2024 17:19:42 +0300
-Message-ID: <20240903141942.25596-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822155207.600355-7-almaz.alexandrovich@paragon-software.com>
-References: <20240822155207.600355-7-almaz.alexandrovich@paragon-software.com>
+	s=arc-20240116; t=1725373274; c=relaxed/simple;
+	bh=i9SA9sYcW47JT0EdjfF+/zlZw9kvF/ULNqmShlQVxY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z0vIsMUhyTNaBKtr9d/l2KuLgkDscTYHEj1szv4ckkaiUJKi8ScmnAQmZClWweo97IBDOWvHMyoaXDqjeDZml4D/ELzSzZ4JyU5QAo1rqrSD//cgIhdThnmYp09aAlZPd3Uh5WKPW1xzz/JH7fa0b49RqJWABeWHvZasPbwJBLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h234HtXn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4838R7AC020929;
+	Tue, 3 Sep 2024 14:20:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	44ZenkOsuRdWbJkYILWBtuSlvXtFq9Y0l8/3H8KjMRU=; b=h234HtXng3G752zd
+	EpaXh+8bPMhNeDv7ECr1Rbzq5KVF5eTj9PsfpredkPe0Vc5yOcJIB40ITkI06/Mq
+	akLMCsERb8eZC3BXMp9lnlQ4DfxQcy/JvipcbLEbwyt/mfyoefcZPhEw0W5Cs3XX
+	IGGzj3LJLlpdMp2PXhidwcqWCiMxzu0jdoB+k7BMKVF2slJuUb5KM6zJl2dDXTtW
+	AKeb0I7PNpOoXTW3t/k31nHYuuRb9A29S4vIeDl1Q1MvTsSVEBdxF7DEVEEsgC57
+	E6Z7Q4oKcROTkZRUdQCxYoGZ0qo2wt3ceWzAP4lKeqIVS8zWo7/pzYj29dH1Xuak
+	84BGRA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dxy20y50-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 14:20:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483EKhvl006075
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 14:20:43 GMT
+Received: from [10.216.9.110] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 07:20:38 -0700
+Message-ID: <9989334b-cd91-9493-6097-c1f94c518cb8@quicinc.com>
+Date: Tue, 3 Sep 2024 19:50:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
+Content-Language: en-US
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <esben@geanix.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+ <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+ <20240903150826.749b8560@xps-13>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20240903150826.749b8560@xps-13>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XjxU3FVBARlC6hh-Q6OUfpodIPFZY2Z4
+X-Proofpoint-ORIG-GUID: XjxU3FVBARlC6hh-Q6OUfpodIPFZY2Z4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_02,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=974 spamscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030117
 
-The interface of fiemap_fill_next_extent_k() was modified
-to eliminate the sparse warning.
 
-Fixes: d57431c6f511 ("fs/ntfs3: Do copy_to_user out of run_lock")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406271920.hndE8N6D-lkp@intel.com/
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/frecord.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index a469c608a394..60c975ac38e6 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -1900,13 +1900,13 @@ enum REPARSE_SIGN ni_parse_reparse(struct ntfs_inode *ni, struct ATTRIB *attr,
- 
- /*
-  * fiemap_fill_next_extent_k - a copy of fiemap_fill_next_extent
-- * but it accepts kernel address for fi_extents_start
-+ * but it uses 'fe_k' instead of fieinfo->fi_extents_start
-  */
- static int fiemap_fill_next_extent_k(struct fiemap_extent_info *fieinfo,
--				     u64 logical, u64 phys, u64 len, u32 flags)
-+				     struct fiemap_extent *fe_k, u64 logical,
-+				     u64 phys, u64 len, u32 flags)
- {
- 	struct fiemap_extent extent;
--	struct fiemap_extent __user *dest = fieinfo->fi_extents_start;
- 
- 	/* only count the extents */
- 	if (fieinfo->fi_extents_max == 0) {
-@@ -1930,8 +1930,7 @@ static int fiemap_fill_next_extent_k(struct fiemap_extent_info *fieinfo,
- 	extent.fe_length = len;
- 	extent.fe_flags = flags;
- 
--	dest += fieinfo->fi_extents_mapped;
--	memcpy(dest, &extent, sizeof(extent));
-+	memcpy(fe_k + fieinfo->fi_extents_mapped, &extent, sizeof(extent));
- 
- 	fieinfo->fi_extents_mapped++;
- 	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
-@@ -1949,7 +1948,6 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 	      __u64 vbo, __u64 len)
- {
- 	int err = 0;
--	struct fiemap_extent __user *fe_u = fieinfo->fi_extents_start;
- 	struct fiemap_extent *fe_k = NULL;
- 	struct ntfs_sb_info *sbi = ni->mi.sbi;
- 	u8 cluster_bits = sbi->cluster_bits;
-@@ -2008,7 +2006,6 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 		err = -ENOMEM;
- 		goto out;
- 	}
--	fieinfo->fi_extents_start = fe_k;
- 
- 	end = vbo + len;
- 	alloc_size = le64_to_cpu(attr->nres.alloc_size);
-@@ -2098,8 +2095,8 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 			if (vbo + dlen >= end)
- 				flags |= FIEMAP_EXTENT_LAST;
- 
--			err = fiemap_fill_next_extent_k(fieinfo, vbo, lbo, dlen,
--							flags);
-+			err = fiemap_fill_next_extent_k(fieinfo, fe_k, vbo, lbo,
-+							dlen, flags);
- 
- 			if (err < 0)
- 				break;
-@@ -2120,7 +2117,7 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 		if (vbo + bytes >= end)
- 			flags |= FIEMAP_EXTENT_LAST;
- 
--		err = fiemap_fill_next_extent_k(fieinfo, vbo, lbo, bytes,
-+		err = fiemap_fill_next_extent_k(fieinfo, fe_k, vbo, lbo, bytes,
- 						flags);
- 		if (err < 0)
- 			break;
-@@ -2137,15 +2134,13 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- 	/*
- 	 * Copy to user memory out of lock
- 	 */
--	if (copy_to_user(fe_u, fe_k,
-+	if (copy_to_user(fieinfo->fi_extents_start, fe_k,
- 			 fieinfo->fi_extents_max *
- 				 sizeof(struct fiemap_extent))) {
- 		err = -EFAULT;
- 	}
- 
- out:
--	/* Restore original pointer. */
--	fieinfo->fi_extents_start = fe_u;
- 	kfree(fe_k);
- 	return err;
- }
--- 
-2.34.1
+On 9/3/2024 6:38 PM, Miquel Raynal wrote:
+> Hi,
+> 
+> quic_mdalam@quicinc.com wrote on Tue, 3 Sep 2024 14:45:15 +0530:
+> 
+>> Hi Miquel,
+>>
+>> On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
+>>> v8:
+>>>    * Fixed compilation warning reported by kernel test robot
+>>>    * Added "chip" description in nandc_set_read_loc_first()
+>>>    * Added "chip" description" in nandc_set_read_loc_last()
+>>>    * Changed data type of read_location0, read_location1,
+>>>      read_location2, read_location3, addr0, addr1, cmd, cfg0,
+>>>      cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+>>>      orig_cmd1, orig_vld to __le32 to fix compilation warning.
+>>>    * Included bitfield.h header file in spi-qpic-snand.c to
+>>>      fix compilation warning
+>>>    * Removed unused variable "steps" variable from
+>>>      qcom_spi_ecc_init_ctx_pipelined()
+>>>    
+>>       I have addressed your comments to v6 and further posted till v8.
+>>       Could you please let me know if this is fine.
+>>       and how to get this merged ?
+> 
+> There are still kernel test robot reports, so this means there are
+> issues in your code that I don't need to point out explicitly, but I am
+> actively waiting for them to be fixed.
 
+   Sorry I missed it, will fix and post next revision.
+> 
+> Thanks,
+> Miquèl
 
