@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-312965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2A3969E5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE138969E6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF181C23608
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7D01C23B35
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7151A7246;
-	Tue,  3 Sep 2024 12:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34701A42C7;
+	Tue,  3 Sep 2024 12:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVC0b0NQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xF/qSqYD"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE841CA687;
-	Tue,  3 Sep 2024 12:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCD41CA687
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367910; cv=none; b=jEGokaDzu6x4LetYebBucIQV/S/Px1UsH0SpQnIPwtKx27hg1oHR3MU3GKmeKUyjZFa3U8BK5K3JbkrzID2GGMLZtXH25miFg+oKR7dz6WCRk1WEC0GMAUX09NNhiYp1UKRUpWCx5DRnxbbeQbP2Jt/qJcp87laVV9mhW1t39pE=
+	t=1725368055; cv=none; b=oBCiRzx1wiUVvZK0U6SnJRPliM7xejygVvu5CCYZSpUrmN8MJoP70f8LfSSZ1KnB3h/pC4ibX7IM4M8GTonvFHLi17Pmh0+v54DqLsl5GTPPjkRRFEUFdLGQ4H6zXVOdWlRqCPhdJ1xT/vnYECrl7MV/f9pkymjINKhuHEsHRAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367910; c=relaxed/simple;
-	bh=O1/2050F39XQfvPLXCTizegImM8YWOlhzXwUWl0cmGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghBmBWcVoUrdROecbWYx5vamBzFfbXqq0rtzVvKRJqpM44eoYc0E5IXxv/hUMFHXqSP9iCsVpCPL3Bojl91focyJtxAc/MUkfy+1NRPA7fXCYuj02cDE6LhgSaVEoxXKdUxseO6eX2R34q4+alq4yv0tgiCjG83NdnNEjVx9+tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVC0b0NQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26D8C4CEC8;
-	Tue,  3 Sep 2024 12:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725367909;
-	bh=O1/2050F39XQfvPLXCTizegImM8YWOlhzXwUWl0cmGc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UVC0b0NQj7rgTFak72/K9eNJK53Q/LY20+pdBaml/kH3932/NnVhKhTs2pwDi49mP
-	 37DpJeBWYNWqe8gIfuoVVB0nYjYID0ZJPxuY/01jDlqgcDSkkOkpdxKPWEYkTRRTEm
-	 7r4P4BmCHGVgyAH28hoc5UIoyBtz/2R95vJXgcrjYQ83gVK18S73YmvwAlkAo9kIur
-	 w6PVeG5Q05GIgwWqxrf0ISdswgNBBQxTJPB5jxb79iH4lOztZT34D+E1Up3oBxBYao
-	 gleCTnUrHgUsMxH9XQGGNAvADbVYuO66wCq1tRN9YdsB4vaWONy8KNZTkAiGti2bjR
-	 2QZms2dkKEAmQ==
-Message-ID: <558d6214-b408-484c-992e-bbb58ffd161b@kernel.org>
-Date: Tue, 3 Sep 2024 14:51:43 +0200
+	s=arc-20240116; t=1725368055; c=relaxed/simple;
+	bh=1sQBXbrxFIepozBp6rnoQlrnGCfeK/Fpe+8jGrr1poA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IbE6V0un77TMwSi1tZK85u+jmWUlxWuMZ1hTL38OE5M9TZgK7wDPEdEMia5nCsw3Pc7z/oN0vG4boyruzinV+p5he7QZZDxan8NHryh/CPdO2NNkBZ6d72yjW3A7JWvufpMbAdy8X9X0hXj9qfCKg7Oky+4LHw8Xl01g30K41W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xF/qSqYD; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aa086b077so452864266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725368052; x=1725972852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4EDBDFztnJ7QXRoMHA2gILDtQaFW+5NDgEd/OR5D7qQ=;
+        b=xF/qSqYD5OArC0KIDCAZXJnbE/Zpk65OIwi7S7bYHHRUQkJrxJ8cwcgzsKTRylhZoP
+         LQeJ8qxYpCZl9gha3ygopcLBYApnrEvb9JEP8v6Nn1RirvQT389Ghs5Yrfmklxeg/sgc
+         VAeXbgqEtHMk9JABwMzQ3s1htl00LhvSaHlKIMiOnyFIb9oLubvTR4cn9GBLzThne9xH
+         TC534VEg+gNe0k/jdDIU6kgp9K+Gsx4SacrE7i/bnuNwV/LeT7erdUqiANCPMVIPMKtu
+         7cuGNkaONUG4yTFD6LA1geRh6VRhG698PHP5NF2CdcznKiapEND09UvD6KiTC75SsAZH
+         Zrhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725368052; x=1725972852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4EDBDFztnJ7QXRoMHA2gILDtQaFW+5NDgEd/OR5D7qQ=;
+        b=rq4twbzm3BDMuGsstn09Ax2V6yz8X/S5r6RyGp9JUxHXg8kE3PgbiyeQ8SUOBIiEky
+         ZppqeegK2PwWFK8jSFyXW4dCs0D9OSMfwkNdQjjpUvsuEjaN++Y7MrIr4MeZnH+DFvoM
+         3SS0H5ducQ7UoglDoV+HnatHL5OzxrYyzJZhTJsCSyzk8Fyr64SENAEfRAxVkyHvrSy/
+         XL7EBr2nQbWFWkmYjIgXpVCPWx4oVIRsZYYOw1jjYB6Y0OIk1zdHJKV8c41pZY0wodFd
+         FuLxrp9h+bQ5573JD7q0SufcRndtGlAvRnvJuqkceO3TQqdFGc51Csk1fQcJviIrLfDA
+         sjPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5ZdANRSH6xSrzYh7GwDCLEQ0rKpM52hTTOXn3P3wN9C8qcUapNFYzrFjWdUDs8FnXyFdK1lFxRUbbPVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJxOFTYrJOz9B8rNN6hWkjbYSRAMykwxhXnhkZ3GIG43bbhdPd
+	cJfeaWzB3qwk0jV44hUBA02v5hBoP74j7ML1aH+Z4zakCaH94muaY9jPrRHJ6/KXjr+nA4vtaVx
+	taEeNcFep2+nk+kPuiGNn47fn5+KIEtrJX1Hz
+X-Google-Smtp-Source: AGHT+IGMhRSDzER85v0Usuyk6HaZqJzCZmoVnPlKt+9m2DPGiVR7zgy1X34wbIdjxq2rxCpi5bJ1oQh3i/P43zRUBXw=
+X-Received: by 2002:a17:907:3e9c:b0:a86:a0ec:331d with SMTP id
+ a640c23a62f3a-a89fadc0cfdmr506031266b.18.1725368051226; Tue, 03 Sep 2024
+ 05:54:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] dt-bindings: vendor-prefixes: Add Relfor labs
-To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- alexandre.belloni@bootlin.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <20240903105245.715899-1-karthikeyan@linumiz.com>
- <20240903105245.715899-7-karthikeyan@linumiz.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903105245.715899-7-karthikeyan@linumiz.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <2024072924-CVE-2024-41041-ae0c@gregkh> <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
+ <2024090305-starfish-hardship-dadc@gregkh>
+In-Reply-To: <2024090305-starfish-hardship-dadc@gregkh>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 3 Sep 2024 14:53:57 +0200
+Message-ID: <CANn89iK5UMzkVaw2ed_WrOFZ4c=kSpGkKens2B-_cLhqk41yCg@mail.gmail.com>
+Subject: Re: CVE-2024-41041: udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: Siddh Raman Pant <siddh.raman.pant@oracle.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/09/2024 12:52, Karthikeyan Krishnasamy wrote:
-> Add Relfor Labs Pvt. Ltd. vendor prefixes
-> https://www.relfor.com/
-> 
-> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-> ---
-> 
+On Tue, Sep 3, 2024 at 2:07=E2=80=AFPM gregkh@linuxfoundation.org
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 03, 2024 at 11:56:17AM +0000, Siddh Raman Pant wrote:
+> > On Mon, 29 Jul 2024 16:32:36 +0200, Greg Kroah-Hartman wrote:
+> > > In the Linux kernel, the following vulnerability has been resolved:
+> > >
+> > > udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
+> > >
+> > > [...]
+> > >
+> > > We had the same bug in TCP and fixed it in commit 871019b22d1b ("net:
+> > > set SOCK_RCU_FREE before inserting socket into hashtable").
+> > >
+> > > Let's apply the same fix for UDP.
+> > >
+> > > [...]
+> > >
+> > > The Linux kernel CVE team has assigned CVE-2024-41041 to this issue.
+> > >
+> > >
+> > > Affected and fixed versions
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > >
+> > >     Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.=
+4.280 with commit 7a67c4e47626
+> > >     Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.=
+10.222 with commit 9f965684c57c
+> >
+> > These versions don't have the TCP fix backported. Please do so.
+>
+> What fix backported exactly to where?  Please be more specific.  Better
+> yet, please provide working, and tested, backports.
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
+commit 871019b22d1bcc9fab2d1feba1b9a564acbb6e99
+Author: Stanislav Fomichev <sdf@fomichev.me>
+Date:   Wed Nov 8 13:13:25 2023 -0800
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+    net: set SOCK_RCU_FREE before inserting socket into hashtable
+...
+    Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+It seems 871019b22d1bcc9fab2d1feba1b9a564acbb6e99 has not been pushed
+to 5.10 or 5.4 lts
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+Stanislav mentioned a WARN_ONCE() being hit, I presume we could push
+the patch to 5.10 and 5.4.
 
-Best regards,
-Krzysztof
-
+I guess this was skipped because of a merge conflict.
 
