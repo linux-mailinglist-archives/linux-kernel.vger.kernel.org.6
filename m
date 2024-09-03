@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-313307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5510096A38A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B573196A38D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884D2B261EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75FA1C211A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD36189526;
-	Tue,  3 Sep 2024 16:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89D0189530;
+	Tue,  3 Sep 2024 16:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="Ninv5cqG"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOcr5b0T"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B428188A22
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4677462;
+	Tue,  3 Sep 2024 16:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379312; cv=none; b=ppFWXtsQZh4v2asHCDMUArw0uxUBZE2CatgSuVr92U6iBNJMtR8D7GIjcD3TTdANA2c763jQ9DajxB52ej+RrbF0hVkEGgAceNPR/c/jjK9U7tmJOxMXdfhrrQKd3fFa6PqA3gzvic/Sgm+WPf/YrN/4DgQ5ZsPWhhNrSOa3HIY=
+	t=1725379363; cv=none; b=nJYgCsRkIPUzlwr84Ij+BK0Q5CK5a7aq4J6UOg1k96WkVTvewcD7sXkYbfXBdyBVAun/vYM91HHIsxOVCD0+GGaCqnxCOhPOsCHBkdW5XTSLeHRgpB3Kgbkx63xF4oTk3azWfapU8cQxcDDn43yq5mOY8TiSAb/cOJK6Hb327js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379312; c=relaxed/simple;
-	bh=NRZT8abCFdh85/3FHugcXrZh7c00Mi9fTSZoCHvP0hI=;
+	s=arc-20240116; t=1725379363; c=relaxed/simple;
+	bh=FlG0P/a8/LjKfzT07rX6IuqJDUQD4dupqho4dM495L0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p12Nc+Fo+OYBY0uhYfuop9wqcogaqOea9bM+UiSegH4hYvcmPQVQs3GM+bP0QxJdIP4GuucoB7yfFE8q0ENxzZ/ZA7h3KMxiCo2cRyJfejn8PR5NYUAtRVsXc1TYX54bOjBGNAvA0gtbEurqCCcgjfe4RZmpJzVluSlnzefYwFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=Ninv5cqG; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so36727855e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:01:49 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=YTSy2BHMB2HeS3kMQgnYMXPyt2EJjv9NYGFENRFRKxXibOBXJ4Jcr+WC3SZ76k5yjBwsr4LRIsRyEZ6nRTgPF4Zsw/BInpncVZzLnWao1rPvaCMxuF7rpvd4VM6VV+zHZYZHMQdZvjIr+vcQaAqNJJ5ye+JoN3NQoB0z8Yc9KZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOcr5b0T; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso7251289e87.0;
+        Tue, 03 Sep 2024 09:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1725379307; x=1725984107; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725379360; x=1725984160; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NdVAZ1Lff6N0nukYJ/rHVQx42BffOFWzvcbVrT7bSPQ=;
-        b=Ninv5cqGEvljUTmd/ZOBP4WMwK4ZHjGGIJKQNMJSfrzti+6s+Us/5yj2WGDMCqkFuG
-         EVrCW8kPaY4Ic6M+/6AshpzPEQW7zfPzenqkcDNtmgJxHkwArTB79NX+Rx4o3pmdqHU/
-         cwuc6oCrjFvEvgtONEG2AKSedLKpjvq2UnW44=
+        bh=4aCoypAsKmzFZppdJCHZk5LXiRNLHO4vzm+kgetzzDo=;
+        b=gOcr5b0T4ZKK1qObHn6GSnV395smKG1aQpC4jZdysqYRNLrCUCUv+zz0JHc7FYWJuO
+         qrWa7TSVZHkNHYwfA+vE/krRbsALvkixXhem5Mx7o/rdqi9S/IiHnrC3EGZvoL9i8CIw
+         ocOW4A/zuMmZPguF+kqjcMSlQTQAqCrNGF7wWzZpICIDL7csviR6dAj/y7XgTpUYV0TM
+         sgCg8B6Za5mBwa/QLEgH7M0koRNqR/HQts+XoA7/59RlOsZ2aiLMo37SD+oq7qPgqAtJ
+         j+sX1Cut0XwoVuT00UKbS3TGThFDSspj3EkWu9W4wzUmYe3Uq4g89OP7N5DkOGdzrdW1
+         yASw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725379307; x=1725984107;
+        d=1e100.net; s=20230601; t=1725379360; x=1725984160;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdVAZ1Lff6N0nukYJ/rHVQx42BffOFWzvcbVrT7bSPQ=;
-        b=H4rr0ZfEHm/cbaaglpASV24FLI80p4MSnGhkt78nxbSQk0g92rFfmaFXMOXkVjQRnr
-         lA250CsPlCVCFOYD64sF8MgCIZ7+3xkEdT48N08qXkXJxPMF6gG1rV7uV932uYrWDLTU
-         ILvcHHh+vF0n+o/dfo+yhdo8Vji5piD3GyfxFbjYUtYXbYRW1LfNtqck2vYR+XUbyKI3
-         jYWRuqEM5Ab8ZNP86uDF1AxM2jVqy5RKg1jUC60wmljEF1ficdM2I5eu6jI079XeWhdr
-         uP2jWD1Wm0Xls9QUDUtcot2Vy+ywvN1iqJNtBIVXgtCe7NIOkw5BUFQeKcazpmYrxOQl
-         TtpA==
-X-Forwarded-Encrypted: i=1; AJvYcCURF0yJRDI27Md9b+qnDrzsVmMB8L5GgUe+yMzoamslLbUjNW52MLFMjBg7CKX2XoOBx8TQM1belZKb64o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc1jEwsY4DERvq9bE831P3EjwGdXPYjXt9X9yfLkTkxMaxOxTh
-	vXO8sWajMF9OHvauRAWBUTv3zgj8+WbP3VL7jKSzZ7R3fkZQxLFNauBw+0mkRVg=
-X-Google-Smtp-Source: AGHT+IHIL/6aYNZW1Hx3t8q1OA7oE/XZn0XaW2g6YYk2G/Tqz2Q4bQue8JZweBesdA9BWRRKLdOFfA==
-X-Received: by 2002:adf:e544:0:b0:374:be28:d808 with SMTP id ffacd0b85a97d-376dd15b11emr891434f8f.20.1725379307085;
-        Tue, 03 Sep 2024 09:01:47 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:9198:79cc:8e64:e479? ([2603:8080:7400:36da:9198:79cc:8e64:e479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c08e07b6sm9403391f8f.63.2024.09.03.09.01.44
+        bh=4aCoypAsKmzFZppdJCHZk5LXiRNLHO4vzm+kgetzzDo=;
+        b=YD0c6dOoJG28wZRoUetoDdjCojFHCxpnnrz5BKSfx5tBnkPuF7RQkPLvHeSXNXsf+U
+         vrrgbEDNDkXiwWmwmMoEBL2SlfKBSwpPmZ2Dja3ddGRZAGoKMRsaLapUXVgTXjDXXP32
+         jTer7BSlKUM/vG0CG6aRRZPWAUEEzYSqbX+wMWj4YUSIQ9GleG1FrWUiJEuhP7N8OXH/
+         fCDNgT+dnW+MCpcKpnkjc8SFZeNiJJkOMWJEtsZvxY3gEKsFJq8JLB/+4XepUh6M+dSL
+         J3ZV+o/YY8HNosKm8BplN6WVslut75vmELBTRgu64V/KzNxtUdbzfjPWyyeLBMVvZAV2
+         CmnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ5U4lBN/FGTLD99skp0J/HnXJxJIr5waCFhckUahkhl/1jO9zHU1DT7Rm3aJDOS0tH88FoyGKYLYFRxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzswOmePGNyXPR44oiNScJiROjrkHKRcznP5VPmrFF/BruQt++B
+	cqukbwgz3CyThoJh6zXKJrtm4YvpOHjWk4DOigT9VKcxmcQDk9/J
+X-Google-Smtp-Source: AGHT+IF7iiLnFlcvVX0QRMw+6iyyHZ4NDafQthpozDOmvSA/ld4dv9KH9F48b5E5gcLWjNZ0jEquXA==
+X-Received: by 2002:a05:6512:39d4:b0:530:e228:7799 with SMTP id 2adb3069b0e04-53546bab2e9mr10840141e87.58.1725379359267;
+        Tue, 03 Sep 2024 09:02:39 -0700 (PDT)
+Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9ba8esm14619644f8f.50.2024.09.03.09.02.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 09:01:46 -0700 (PDT)
-Message-ID: <c383c897-79ce-43fc-966a-06a4d609390a@digitalocean.com>
-Date: Tue, 3 Sep 2024 11:01:41 -0500
+        Tue, 03 Sep 2024 09:02:38 -0700 (PDT)
+Message-ID: <8f7269b0-e8f1-47cc-9ad7-1f1c2e452b02@gmail.com>
+Date: Tue, 3 Sep 2024 18:02:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,124 +75,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] vdpa: Add support to update speed/duplex in
- vDPA/mlx5_vnet
-To: Jason Wang <jasowang@redhat.com>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
- bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
- cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
- <20240829161620.38679-3-carlos.bilbao.osdev@gmail.com>
- <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
- <CACGkMEtDSDTS_SVvsf7nwMdabGCN85P-r5WpjgZdVDV5PMdc0g@mail.gmail.com>
- <f5e3768d-bb16-48eb-96df-ce5f9593b843@digitalocean.com>
- <CACGkMEtsNeL+o6Rgb=ehj8OJpfkoojasPK1ZMp4S5bMKBjwcng@mail.gmail.com>
+Subject: Re: [PATCH] block: Export blk_alloc_discard_bio
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Zta6RR1gXPi7cRH3@infradead.org>
+ <20240903073915.989741-1-luca.stefani.ge1@gmail.com>
+ <8d5a0a41-0112-4c53-a7c4-67bfc5332ba9@kernel.dk>
 Content-Language: en-US
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-In-Reply-To: <CACGkMEtsNeL+o6Rgb=ehj8OJpfkoojasPK1ZMp4S5bMKBjwcng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <8d5a0a41-0112-4c53-a7c4-67bfc5332ba9@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-On 9/1/24 11:27 PM, Jason Wang wrote:
-> On Fri, Aug 30, 2024 at 9:15 PM Carlos Bilbao <cbilbao@digitalocean.com> wrote:
->> Hello,
+
+On 03/09/24 17:49, Jens Axboe wrote:
+> On 9/3/24 1:39 AM, Luca Stefani wrote:
+>> The fs trim loops over ranges and sends discard requests, some ranges
+>> can be large so it's all transparently handled by blkdev_issue_discard()
+>> and processed in smaller chunks.
 >>
->> On 8/29/24 9:31 PM, Jason Wang wrote:
->>> On Fri, Aug 30, 2024 at 5:08 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>>> (resending as I accidentally replied only to Carlos)
->>>>
->>>> On 29.08.24 18:16, Carlos Bilbao wrote:
->>>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
->>>>>
->>>>> Include support to update the vDPA configuration fields of speed and
->>>>> duplex (as needed by VHOST_VDPA_SET_CONFIG). This includes function
->>>>> mlx5_vdpa_set_config() as well as changes in vdpa.c to fill the initial
->>>>> values to UNKNOWN. Also add a warning message for when
->>>>> mlx5_vdpa_get_config() receives offset and length out of bounds.
->>>>>
->>>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
->>>>> ---
->>>>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 34 ++++++++++++++++++++++++++++++-
->>>>>  drivers/vdpa/vdpa.c               | 27 ++++++++++++++++++++++++
->>>>>  include/uapi/linux/vdpa.h         |  2 ++
->>>>>  3 files changed, 62 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>>> index c47009a8b472..a44bb2072eec 100644
->>>>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>>> @@ -3221,12 +3221,44 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
->>>>>
->>>>>       if (offset + len <= sizeof(struct virtio_net_config))
->>>>>               memcpy(buf, (u8 *)&ndev->config + offset, len);
->>>>> +     else
->>>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
->>>>>  }
->>>>>
->>>>>  static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
->>>>>                                unsigned int len)
->>>>>  {
->>>>> -     /* not supported */
->>>>> +     struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
->>>>> +     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
->>>>> +
->>>>> +     if (offset + len > sizeof(struct virtio_net_config)) {
->>>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
->>>>> +             return;
->>>>> +     }
->>>>> +
->>>>> +     /*
->>>>> +      * Note that this will update the speed/duplex configuration fields
->>>>> +      * but the hardware support to actually perform this change does
->>>>> +      * not exist yet.
->>>>> +      */
->>>>> +     switch (offset) {
->>>>> +     case offsetof(struct virtio_net_config, speed):
->>>>> +             if (len == sizeof(((struct virtio_net_config *) 0)->speed))
->>>>> +                     memcpy(&ndev->config.speed, buf, len);
->>>>> +             else
->>>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for speed.\n");
->>>>> +             break;
->>>>> +
->>>>> +     case offsetof(struct virtio_net_config, duplex):
->>>>> +             if (len == sizeof(((struct virtio_net_config *)0)->duplex))
->>>>> +                     memcpy(&ndev->config.duplex, buf, len);
->>>>> +             else
->>>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for duplex.\n");
->>>>> +             break;
->>>>> +
->>>>> +     default:
->>>>> +             mlx5_vdpa_warn(mvdev, "Configuration field not supported.\n");
->>>> This will trigger noise in dmesg because there is a MAC configuration here.
->>>>> +     }
->>>> I would prefer that the .set_config remains a stub TBH. Setting the fields here is
->>>> misleading: the user might deduce that the configuration worked when they read the
->>>> values and see that they were updated.
->>> Yes, and actually, those fields are read-only according to the spec:
->>>
->>> """
->>> The network device has the following device configuration layout. All
->>> of the device configuration fields are read-only for the driver.
->>> """
->>>
->>> Thanks
+>> To support cancellation (or suspend) requests we need to insert checks
+>> into the the loop, exporting the symbol allows to reimplement
+>> such loop with the desired behavior.
 >>
->> Should I go ahead and remove the ioctl then?
-> If you meant mlx5_vdpa_set_config, I think yes.
+>> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+>> ---
+>>   block/blk-lib.c        | 1 +
+>>   include/linux/blkdev.h | 2 ++
+>>   2 files changed, 3 insertions(+)
+>>
+>> diff --git a/block/blk-lib.c b/block/blk-lib.c
+>> index 4c9f20a689f7..ebaef47d8ce7 100644
+>> --- a/block/blk-lib.c
+>> +++ b/block/blk-lib.c
+>> @@ -59,6 +59,7 @@ struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+>>   	cond_resched();
+>>   	return bio;
+>>   }
+>> +EXPORT_SYMBOL_GPL(blk_alloc_discard_bio);
+>>   
+>>   int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+>>   		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
+>> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+>> index b7664d593486..f3631044d905 100644
+>> --- a/include/linux/blkdev.h
+>> +++ b/include/linux/blkdev.h
+>> @@ -1088,6 +1088,8 @@ static inline long nr_blockdev_pages(void)
+>>   
+>>   extern void blk_io_schedule(void);
+>>   
+>> +struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+>> +		sector_t *sector, sector_t *nr_sects, gfp_t gfp_mask);
+>>   int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+>>   		sector_t nr_sects, gfp_t gfp_mask);
+>>   int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+> 
+> Since blk_alloc_discard_bio() is already defined in a header (otherwise
+> it would've been static and your export symbol above would have failed
+> miserably), why add it to another header?
+> 
 
+ACK, will remove the header change in v4,
 
-Ack, I will send a new patch set in which the second commit gets rid of the
-ioctl -- but not only for mlx5 but for all vDPA implementations.
-
-
->
-> Thanks
->
-
-Thanks, Carlos
-
+Thanks.
 
