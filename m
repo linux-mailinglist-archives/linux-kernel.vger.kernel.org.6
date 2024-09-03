@@ -1,134 +1,155 @@
-Return-Path: <linux-kernel+bounces-313541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B866796A6D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:47:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A2196A6DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38571B20FFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC4C1C244EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED511922FF;
-	Tue,  3 Sep 2024 18:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7364D188902;
+	Tue,  3 Sep 2024 18:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ftBGUyz2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y4JsSm1q"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A2318FDC3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 18:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554C19258E;
+	Tue,  3 Sep 2024 18:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725389233; cv=none; b=U5i8aZI7BBsxzknDCBpCVC/SEYTPFjPxkpbMEu+0N5qY9Maf6f2TfB8FtIwCRppVX2rUBixxpg986Tcml1FLYBiwy8oi9PUKJcVF8Z/2GB9/CPES2JohO7sL6PpART5lUm+O5clJJGQwE/ZUpxIL8Sl9F87a8eGfFW5N1PbfGrs=
+	t=1725389255; cv=none; b=QdJ6n3E0Gxsl0nBxRDN9omNm+IC8D2+dVWz3gxelyiME4VXQ9Zm25WNMsnL6gToy7p/aRx+9fusT3M3bSVpr9CrPKpW46EBDYq8ycJWgctN/Mx8tRcB0KSod2W2kVxFIK08S6R4Sq25FVumQ5BAss9WX4Y2UlCXhg7W065jaVH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725389233; c=relaxed/simple;
-	bh=9fw3yLmVGvVS67/sHkf7QjBMcfR2KArwbDGYPnK0ydc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z7KxTaPmmk6GY+/QufvH+OADnX4K7v6YwuWLtObq/ZD5gncKQUcg53+EVT2xvNwMBhbdVlbDpDCup1RAiKjRUnsDdS+VtqZZ4eYYl8goIwn00fQlVuZWRcqLQ7FNBPXBouwIYRqbbKnvMKBM7DBlx4bevKYfE7snCSnUx5dvFh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ftBGUyz2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725389231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RiYZls7XAH3fXWooN5lGFOF3Jc3SZNKa7sVf+1sWGVg=;
-	b=ftBGUyz2leFy9EsCefTL8s4ylQoo3IFY80tqUzh/7fxRGRcBIExzxqDTbvFqJV55FO9nTk
-	6We3v5SR7ETKLnadtbDmBv/eAlZW/IGOsnQxvSz8o0tLipz9yk16YsKU89O9l5fGsA9puX
-	pmzDElDYKGSpQ2P7Bqmio/tgYgib/Qo=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-387-WHbym7oQPg2Fycw8ZqwRDw-1; Tue, 03 Sep 2024 14:47:09 -0400
-X-MC-Unique: WHbym7oQPg2Fycw8ZqwRDw-1
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-80028cf643bso100739139f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 11:47:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725389229; x=1725994029;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RiYZls7XAH3fXWooN5lGFOF3Jc3SZNKa7sVf+1sWGVg=;
-        b=NBQx56ypKrsjcYiO/FsMqjgGgB0MN0BSx69+xwOiIV3ZCB7VqPm0/f1dS4jgjrvFYn
-         AXppQQ+epnZwqegqEauYuiq/j4Xi5tbiEyLUPXCd0lZz6HXqK2S8FvY6KRnIgkomDLAi
-         NYUPs/tKWh6tOzoD6bx/UfIcJoZIysA9dz8jVqGhZcs9v0Y2dYOT0iiJ6abOZzkphoYC
-         CEikvgEeVjTi9BHKRq5vxBXUzhL4LhIn7n/99sf+nBVisrVRV6uQS09zyHB/tpT1S+VW
-         /A6YHDNGyaJRNNZJxLfkIPcjrNlHL37g7G8xTW+5mzR9yk9/jgAUjk5Xmv3J1nMYDmAC
-         a2ug==
-X-Forwarded-Encrypted: i=1; AJvYcCXKhU5V319/zxbXDLd/5ypc9ZMMX9IBPhyvzZxspBgJBfzNubU5BaHTtTvyaJ0urCI2sT0O8OxKhmEd5eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxehkAb39Ry2wq4OoWxlAY/7kAjNO+zkgrr3jIV58kNHSvbQ1JW
-	Ozgy+WWTY3RbPMaLUOk1/MwomhB8c4bUsy4xhjPVIWXsfmr5/8qh1RZydd28if7vKkqD5pCjl/U
-	xDYaqM27FQuLH51eUYAdL5DyGym7UqjUYkmVPjg49wvn8PeWWUr6Y47HOAms0iw==
-X-Received: by 2002:a05:6e02:19c8:b0:39f:7050:6f5f with SMTP id e9e14a558f8ab-39f70506fb4mr10497845ab.5.1725389229138;
-        Tue, 03 Sep 2024 11:47:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJhPRnAYcOWTvXTG2dd2PcZkuZ1cOljpqdC47/lzql5dL1/zxTeKjMgQttAAOA6UoUgBJvxw==
-X-Received: by 2002:a05:6e02:19c8:b0:39f:7050:6f5f with SMTP id e9e14a558f8ab-39f70506fb4mr10497605ab.5.1725389228707;
-        Tue, 03 Sep 2024 11:47:08 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3afc4ff6sm32862425ab.37.2024.09.03.11.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 11:47:08 -0700 (PDT)
-Date: Tue, 3 Sep 2024 12:47:07 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] vfio/fsl-mc: Remove unused variable 'hwirq'
-Message-ID: <20240903124707.4ecfc5de.alex.williamson@redhat.com>
-In-Reply-To: <20240730141133.525771-1-yuehaibing@huawei.com>
-References: <20240730141133.525771-1-yuehaibing@huawei.com>
-Organization: Red Hat
+	s=arc-20240116; t=1725389255; c=relaxed/simple;
+	bh=ssgzH7Oc3qh676QCEo9CYK0VCZM8yF5XfpuYiyIoGkg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eSWdWaWfECVAKWv0hTMb2qvRwh/ggNOBPr2AH1Gzfk4sKv7+28ON+jbdBi1BLQ4TI9weNzRxiRREKvz4UPGLAUE0uqDgovkHV1DcniNHwh2NLcIAbM6Agfwnud7XcGfhpEKPcVcaqxm85X2q5FZZzxYRIMqS0HdFyT/6XbBGg6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Y4JsSm1q; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 483IlD8l014660;
+	Tue, 3 Sep 2024 13:47:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725389233;
+	bh=FTqTyrECFvbLD17NBUWn4/583otSS6XLuEd+TP20G+I=;
+	h=From:To:CC:Subject:Date;
+	b=Y4JsSm1q5fFCVCyu7U7R/zp9O4h3Ge7Fo9rsYjLUds7t3Lip38a0++nzk0EsGTzj4
+	 Mvi107htYdS9aBxknJ/fuzpXEAh5W8pfgPSjpCOBqi386Kp04mRnyFuCeoZ35Tw124
+	 E/zsKSKZWmnL8OSn3R9bOvssyvBipDhTrfcyPtYo=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 483IlDLW008470;
+	Tue, 3 Sep 2024 13:47:13 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Sep 2024 13:47:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Sep 2024 13:47:12 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 483IlCbZ127692;
+	Tue, 3 Sep 2024 13:47:12 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Lee Jones <lee@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Mark Brown
+	<broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: [PATCH V2] mfd: syscon: Use regmap max_register_is_0 as needed
+Date: Tue, 3 Sep 2024 13:47:10 -0500
+Message-ID: <20240903184710.1552067-1-nm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Organization: Texas Instruments, Inc.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, 30 Jul 2024 22:11:33 +0800
-Yue Haibing <yuehaibing@huawei.com> wrote:
+syscon has always set the optional max_register configuration of
+regmap to ensure the correct checks are in place. However, a recent
+commit 0ec74ad3c157 ("regmap: rework ->max_register handling")
+introduced explicit configuration in regmap framework for register
+maps that is exactly 1 register, when max_register is pointing to a
+valid register 0. This commit solved a previous limitation of regmap
+framework.
 
-> Commit 7447d911af69 ("vfio/fsl-mc: Block calling interrupt handler without trigger")
-> left this variable unused, so remove it.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
->  drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c b/drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c
-> index 82b2afa9b7e3..7e7988c4258f 100644
-> --- a/drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c
-> +++ b/drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c
-> @@ -108,10 +108,10 @@ static int vfio_fsl_mc_set_irq_trigger(struct vfio_fsl_mc_device *vdev,
->  				       void *data)
->  {
->  	struct fsl_mc_device *mc_dev = vdev->mc_dev;
-> -	int ret, hwirq;
->  	struct vfio_fsl_mc_irq *irq;
->  	struct device *cont_dev = fsl_mc_cont_dev(&mc_dev->dev);
->  	struct fsl_mc_device *mc_cont = to_fsl_mc_device(cont_dev);
-> +	int ret;
->  
->  	if (!count && (flags & VFIO_IRQ_SET_DATA_NONE))
->  		return vfio_set_trigger(vdev, index, -1);
-> @@ -136,8 +136,6 @@ static int vfio_fsl_mc_set_irq_trigger(struct vfio_fsl_mc_device *vdev,
->  		return vfio_set_trigger(vdev, index, fd);
->  	}
->  
-> -	hwirq = vdev->mc_dev->irqs[index]->virq;
-> -
->  	irq = &vdev->mc_irqs[index];
->  
->  	if (flags & VFIO_IRQ_SET_DATA_NONE) {
+Update syscon driver to consistent in regmap configuration for
+all sizes of syscons by using this new capability by setting
+max_register_is_0, when the max_register is valid and 0.
 
-Applied to vfio next branch for v6.12.  Thanks!
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
 
-Alex
+Based on my search
+https://gist.github.com/nmenon/d537096d041fa553565fba7577d2cd24, the
+pattern of syscon registers that may potentially be impacted by this
+patch (that are exactly 1 register wide) is probably limited, though
+this patch in itself was inspired by a buggy driver code fixed in
+https://lore.kernel.org/linux-pm/20240828131915.3198081-1-nm@ti.com/
+I have tried to Cc lists that may be interested in looking closer to
+avoid un-intended side-effects.
+
+Changes since V1:
+* Incorporate review comments by rewording commit message and $subject
+  and dropped Fixes.
+* No functional change to the patch.
+* Expand the CC list to notify potential users.
+
+V1: https://lore.kernel.org/all/20240828121008.3066002-1-nm@ti.com/
+
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+
+ drivers/mfd/syscon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index 2ce15f60eb10..3e1d699ba934 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -108,6 +108,8 @@ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+ 	syscon_config.reg_stride = reg_io_width;
+ 	syscon_config.val_bits = reg_io_width * 8;
+ 	syscon_config.max_register = resource_size(&res) - reg_io_width;
++	if (!syscon_config.max_register)
++		syscon_config.max_register_is_0 = true;
+ 
+ 	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+ 	kfree(syscon_config.name);
+@@ -357,6 +359,9 @@ static int syscon_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	syscon_config.max_register = resource_size(res) - 4;
++	if (!syscon_config.max_register)
++		syscon_config.max_register_is_0 = true;
++
+ 	if (pdata)
+ 		syscon_config.name = pdata->label;
+ 	syscon->regmap = devm_regmap_init_mmio(dev, base, &syscon_config);
+
+-- 
+2.46.0
 
 
