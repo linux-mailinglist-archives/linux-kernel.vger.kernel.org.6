@@ -1,290 +1,117 @@
-Return-Path: <linux-kernel+bounces-312908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479C5969D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE5A969D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCDC1C23C01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E6284F8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299C11D61B7;
-	Tue,  3 Sep 2024 12:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318D81C9856;
+	Tue,  3 Sep 2024 12:22:24 +0000 (UTC)
 Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDB31D0952;
-	Tue,  3 Sep 2024 12:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833651A0BD6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366485; cv=none; b=gHthvCJoYyoMThlcwwejgJ7N+x5RQ+elyNnRaiZ/tRA1RIIFS0qhvh8UOPjTNL2JiFsXrlah7kz5v/NGTvN4MJ5Oe4sk0Uz4ZaG6YlW6QEXK/xGyLwWzfeQBVKElF7zIo7pOFfbftst4n9zIiQ2OTM3bJLYDM08AfA0Lhvj6W8U=
+	t=1725366143; cv=none; b=q5I7Kgye2uR6nofUrw8u+M5XYtTuBQ/EPAkAdohhGhFSiRp4MBcGpjyzOhLrAZALbj05HMoVYrL33Ac/02GBUXJd851szGqEKIKi2gFAI6ZliM9lSNSEcSmJMAViJc78CKe+YPL34RyPAhD17tuXdRLDI39kOWbU9mRIRF0l9l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366485; c=relaxed/simple;
-	bh=IQEK2KkWZrhcbgTwyqBPhsr/hApnnXhwOWrHZS79ILc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pVOKAy43ee2zvR1WwEsH8crE1GGbRBoGfFj15jcwaRERsT4Ct13inXc7ICT8etO39fiRMdT6bi2BmGmGrJCJobJJBANuOdIAxAYnW9LS3+lrgs3SJLEJeWGVWix0Gy7b5hSH4qs50HY9/Ybflrp1hO5TiVRmAAUuLwgs+x6zIyk=
+	s=arc-20240116; t=1725366143; c=relaxed/simple;
+	bh=D1QZLqf/ULyBTYN540ylQlZwL9I4r/S1/yvyea/Kpxs=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MvDIufhA/ET1NJaCsCPOngHrwzs+wBA1ELtsQd2TNnDsnHZsOks6qdwpZdNvZflrBfsuPNsOqQ272vpaziT5TLM+GeKLctZ39qKb4NftCN8rH+/ilhgUm6tnIpBxiOVImsYt/DUlf5G6FSO10nGjRcWzou+QYmOKPHMcWTyXDY0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WylJF5x1hz2CpMk;
-	Tue,  3 Sep 2024 20:27:41 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id F346C1A0188;
-	Tue,  3 Sep 2024 20:28:00 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wyl4K648Bz20nMZ;
+	Tue,  3 Sep 2024 20:17:21 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id E14971400D7;
+	Tue,  3 Sep 2024 20:22:17 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 3 Sep 2024 20:28:00 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Eric Dumazet <edumazet@google.com>, Jesper Dangaard
- Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC] page_pool: add debugging to catch concurrent access to pool->alloc
-Date: Tue, 3 Sep 2024 20:22:07 +0800
-Message-ID: <20240903122208.3379182-1-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
+ 15.2.1544.11; Tue, 3 Sep 2024 20:22:17 +0800
+Subject: Re: [PATCH 1/5] debugobjects: Fix the misuse of global variables in
+ fill_pool()
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
+ <20240902140532.2028-2-thunder.leizhen@huawei.com> <87mskq58l5.ffs@tglx>
+ <13d2be50-4a52-7cf0-8325-65435ad47a62@huawei.com>
+ <3bb35c94-dd54-33d4-b7ac-64f0d2b77c07@huawei.com>
+ <659f0321-e567-ad48-4545-4a47a158d6c2@huawei.com> <87seuh84cx.ffs@tglx>
+ <5cf23898-892c-c0a6-2525-206e21732665@huawei.com> <87a5gp7ykb.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <3ae3de70-0999-bf76-3da5-b1ef9d6a015a@huawei.com>
+Date: Tue, 3 Sep 2024 20:22:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <87a5gp7ykb.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-Currently if there is a warning message almost infinity as
-below when driver is unloaded, it seems there may be three
-reasons as below:
-1. Concurrent accese to the pool->alloc related data causing
-   incorrect inflight stat.
-2. The driver leaks some page.
-3. The network stack holds the skb pointing to some page and
-   does not seem to release it.
 
-"page_pool_release_retry() stalled pool shutdown: id 949, 98
-inflight 1449 sec"
 
-Use the currently unused pool->ring.consumer_lock to catch the
-case of concurrent access to pool->alloc.
+On 2024/9/3 19:43, Thomas Gleixner wrote:
+> On Tue, Sep 03 2024 at 19:14, Leizhen wrote:
+>> On 2024/9/3 17:37, Thomas Gleixner wrote:
+>>> On Tue, Sep 03 2024 at 15:00, Leizhen wrote:
+>>>>>> @@ -84,10 +85,7 @@ static int __data_racy                       debug_objects_fixups __read_mostly;
+>>>>>>  static int __data_racy                 debug_objects_warnings __read_mostly;
+>>>>>>  static int __data_racy                 debug_objects_enabled __read_mostly
+>>>>>>                                         = CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
+>>>>>> -static int __data_racy                 debug_objects_pool_size __read_mostly
+>>>>>> -                                       = ODEBUG_POOL_SIZE;
+>>>>>> -static int __data_racy                 debug_objects_pool_min_level __read_mostly
+>>>>>> -                                       = ODEBUG_POOL_MIN_LEVEL;
+>>>>>> +static int __data_racy                 obj_pool_min_free = ODEBUG_POOL_SIZE;
+>>>>
+>>>> Sorry, I rechecked it again. After this patch, obj_pool_min_free is referenced in the
+>>>> same way as obj_pool_max_used. The only race point is located in debug_stats_show().
+>>>> However, this reference point does not need to be included in the race analysis. So
+>>>> there is no need to add __data_racy for obj_pool_min_free.
+>>>
+>>> The read races against the write, so KCSAN can detect it and complain, no?
+>>
+>> Oh, I just saw that there were a lot of other global variables in that function
+>> that didn't mask KCSAN's detection. So I'll recheck each global variable.
+>> However, for obj_pool_min_free, it seems that it would be better to just add
+>> READ_ONCE() in debug_stats_show(). This does not prevent the compiler from
+>> optimizing variable references in the lock.
+>>
+>> # define __data_racy volatile
+> 
+> This is only when KCSAN is enabled. Otherwise it's empty.
+> 
+> And if you do a READ_ONCE() then you need a corresponding WRITE_ONCE()
+> to make sense. __data_racy is much simpler for that.
 
-The binary size is unchanged after this patch when the debug
-feature is not enabled.
+OK, I will use __data_racy, thanks
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- net/Kconfig.debug    |  8 +++++
- net/core/page_pool.c | 70 +++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 74 insertions(+), 4 deletions(-)
+> 
+> Thanks,
+> 
+>         tglx
+> .
+> 
 
-diff --git a/net/Kconfig.debug b/net/Kconfig.debug
-index 5e3fffe707dd..5575d63d7a36 100644
---- a/net/Kconfig.debug
-+++ b/net/Kconfig.debug
-@@ -18,6 +18,14 @@ config NET_NS_REFCNT_TRACKER
- 	  Enable debugging feature to track netns references.
- 	  This adds memory and cpu costs.
- 
-+config PAGE_POOL_DEBUG
-+	bool "Enable page pool debugging"
-+	depends on PAGE_POOL
-+	default n
-+	help
-+	  Enable debugging feature in page pool to catch concurrent
-+	  access for pool->alloc cache.
-+
- config DEBUG_NET
- 	bool "Add generic networking debug"
- 	depends on DEBUG_KERNEL && NET
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 2abe6e919224..8ef70d4252fb 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -31,6 +31,36 @@
- 
- #define BIAS_MAX	(LONG_MAX >> 1)
- 
-+#ifdef CONFIG_PAGE_POOL_DEBUG
-+#define __page_pool_debug_alloc_lock(pool, allow_direct, warn_on_destry)		\
-+	do {										\
-+		if (allow_direct) {							\
-+			WARN_ON_ONCE(spin_is_locked(&(pool)->ring.consumer_lock));	\
-+			spin_lock(&(pool)->ring.consumer_lock);				\
-+			WARN_ON_ONCE(warn_on_destry && (pool)->destroy_cnt);		\
-+		}									\
-+	} while (0)
-+
-+#define __page_pool_debug_alloc_unlock(pool, allow_direct, warn_on_destry)		\
-+	do {										\
-+		if (allow_direct) {							\
-+			WARN_ON_ONCE(warn_on_destry && (pool)->destroy_cnt);		\
-+			spin_unlock(&(pool)->ring.consumer_lock);			\
-+		}									\
-+	} while (0)
-+
-+#define page_pool_debug_alloc_lock(pool, allow_direct)					\
-+			__page_pool_debug_alloc_lock(pool, allow_direct, true)
-+
-+#define page_pool_debug_alloc_unlock(pool, allow_direct)				\
-+			__page_pool_debug_alloc_unlock(pool, allow_direct, true)
-+#else
-+#define __page_pool_debug_alloc_lock(pool, allow_direct, warn_on_destry)
-+#define __page_pool_debug_alloc_unlock(pool, allow_direct, warn_on_destry)
-+#define page_pool_debug_alloc_lock(pool, allow_direct)
-+#define page_pool_debug_alloc_unlock(pool, allow_direct)
-+#endif
-+
- #ifdef CONFIG_PAGE_POOL_STATS
- static DEFINE_PER_CPU(struct page_pool_recycle_stats, pp_system_recycle_stats);
- 
-@@ -563,7 +593,7 @@ static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool *pool,
- /* For using page_pool replace: alloc_pages() API calls, but provide
-  * synchronization guarantee for allocation side.
-  */
--netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
-+static netmem_ref __page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
- {
- 	netmem_ref netmem;
- 
-@@ -576,6 +606,17 @@ netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
- 	netmem = __page_pool_alloc_pages_slow(pool, gfp);
- 	return netmem;
- }
-+
-+netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
-+{
-+	netmem_ref netmem;
-+
-+	page_pool_debug_alloc_lock(pool, true);
-+	netmem = __page_pool_alloc_netmem(pool, gfp);
-+	page_pool_debug_alloc_unlock(pool, true);
-+
-+	return netmem;
-+}
- EXPORT_SYMBOL(page_pool_alloc_netmem);
- 
- struct page *page_pool_alloc_pages(struct page_pool *pool, gfp_t gfp)
-@@ -776,6 +817,8 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
- 	if (!allow_direct)
- 		allow_direct = page_pool_napi_local(pool);
- 
-+	page_pool_debug_alloc_lock(pool, allow_direct);
-+
- 	netmem =
- 		__page_pool_put_page(pool, netmem, dma_sync_size, allow_direct);
- 	if (netmem && !page_pool_recycle_in_ring(pool, netmem)) {
-@@ -783,6 +826,8 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
- 		recycle_stat_inc(pool, ring_full);
- 		page_pool_return_page(pool, netmem);
- 	}
-+
-+	page_pool_debug_alloc_unlock(pool, allow_direct);
- }
- EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
- 
-@@ -817,6 +862,7 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
- 	bool in_softirq;
- 
- 	allow_direct = page_pool_napi_local(pool);
-+	page_pool_debug_alloc_lock(pool, allow_direct);
- 
- 	for (i = 0; i < count; i++) {
- 		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
-@@ -831,6 +877,8 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
- 			data[bulk_len++] = (__force void *)netmem;
- 	}
- 
-+	page_pool_debug_alloc_unlock(pool, allow_direct);
-+
- 	if (!bulk_len)
- 		return;
- 
-@@ -878,10 +926,14 @@ static netmem_ref page_pool_drain_frag(struct page_pool *pool,
- 
- static void page_pool_free_frag(struct page_pool *pool)
- {
--	long drain_count = BIAS_MAX - pool->frag_users;
--	netmem_ref netmem = pool->frag_page;
-+	netmem_ref netmem;
-+	long drain_count;
- 
-+	page_pool_debug_alloc_lock(pool, true);
-+	drain_count = BIAS_MAX - pool->frag_users;
-+	netmem = pool->frag_page;
- 	pool->frag_page = 0;
-+	page_pool_debug_alloc_unlock(pool, true);
- 
- 	if (!netmem || page_pool_unref_netmem(netmem, drain_count))
- 		return;
-@@ -899,6 +951,7 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
- 	if (WARN_ON(size > max_size))
- 		return 0;
- 
-+	page_pool_debug_alloc_lock(pool, true);
- 	size = ALIGN(size, dma_get_cache_alignment());
- 	*offset = pool->frag_offset;
- 
-@@ -911,9 +964,10 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
- 	}
- 
- 	if (!netmem) {
--		netmem = page_pool_alloc_netmem(pool, gfp);
-+		netmem = __page_pool_alloc_netmem(pool, gfp);
- 		if (unlikely(!netmem)) {
- 			pool->frag_page = 0;
-+			page_pool_debug_alloc_unlock(pool, true);
- 			return 0;
- 		}
- 
-@@ -924,12 +978,14 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
- 		*offset = 0;
- 		pool->frag_offset = size;
- 		page_pool_fragment_netmem(netmem, BIAS_MAX);
-+		page_pool_debug_alloc_unlock(pool, true);
- 		return netmem;
- 	}
- 
- 	pool->frag_users++;
- 	pool->frag_offset = *offset + size;
- 	alloc_stat_inc(pool, fast);
-+	page_pool_debug_alloc_unlock(pool, true);
- 	return netmem;
- }
- EXPORT_SYMBOL(page_pool_alloc_frag_netmem);
-@@ -986,8 +1042,10 @@ static void page_pool_empty_alloc_cache_once(struct page_pool *pool)
- 
- static void page_pool_scrub(struct page_pool *pool)
- {
-+	__page_pool_debug_alloc_lock(pool, true, false);
- 	page_pool_empty_alloc_cache_once(pool);
- 	pool->destroy_cnt++;
-+	__page_pool_debug_alloc_unlock(pool, true, false);
- 
- 	/* No more consumers should exist, but producers could still
- 	 * be in-flight.
-@@ -1089,6 +1147,8 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
- {
- 	netmem_ref netmem;
- 
-+	page_pool_debug_alloc_lock(pool, true);
-+
- 	trace_page_pool_update_nid(pool, new_nid);
- 	pool->p.nid = new_nid;
- 
-@@ -1097,5 +1157,7 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
- 		netmem = pool->alloc.cache[--pool->alloc.count];
- 		page_pool_return_page(pool, netmem);
- 	}
-+
-+	page_pool_debug_alloc_unlock(pool, true);
- }
- EXPORT_SYMBOL(page_pool_update_nid);
 -- 
-2.33.0
-
+Regards,
+  Zhen Lei
 
