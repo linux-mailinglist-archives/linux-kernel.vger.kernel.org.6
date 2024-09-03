@@ -1,131 +1,93 @@
-Return-Path: <linux-kernel+bounces-313009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99B3969EF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CFD969F02
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3871F24EFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A0B1F250FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085561A726D;
-	Tue,  3 Sep 2024 13:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0954B1C2423;
+	Tue,  3 Sep 2024 13:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzwIGbkm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=diekuehnen.com header.i=@diekuehnen.com header.b="yp1r/26l"
+Received: from mail.diekuehnen.com (mail.diekuehnen.com [78.47.205.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69BB1CA6AF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9054D1A726A;
+	Tue,  3 Sep 2024 13:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.205.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369860; cv=none; b=fMwGCDYgejKA3Ex2jjU/IsMj5wzGeNJy6ZWCGxpU5mhfltxHfJgq0Ex2P2SeUPqa4dDUnMOKWqyKN1RxVqgSBC0M+2CWaWCQcpDO0y7OP5iwC5GW+VYOwDRBDOAaEP5vKuNzl3XbRPFs8g6/YWsTsoBnorpsL3tDMwCb6vxNEOQ=
+	t=1725370078; cv=none; b=P54XtiVPgMXbnqmVgdQj5L2odlnNFSszgLhwsYkrbRxQvp0jt8J9ZJ3nORvPwl/JJ72iq+jQOjLVe+586zSHViUTDRnBB3ZoPRQ1FJg2hqykxXDgUvOamk6/o46IL2OqwDjzhnRT3crHoeaINU0MmbvVqNMvZB2Jxl7ENlRKnEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369860; c=relaxed/simple;
-	bh=8YVLXhDhqqmJ8iift7tYrNvCIwI3ZUn4scQZalvinuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FuxnHFIwbl0Q6dXcJsNSD1IYWkJoiYoSrOQ75ikHc4pBYRRaJsjqrJ5p0HutXv0psD6W8JpZAD4gai1QkIAvkvrkx5JpaImQbeukL8eIaP1yCfg3pYdldxyBuq5nTDyQYXOh8gER9zGFqtw3Lq9LvCJ1koosOK33vUkYm9Ds03Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PzwIGbkm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725369857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ghPHEvdoDmipgIdCSuvU6E6B9zqjyhhmpEJwlzNWqhQ=;
-	b=PzwIGbkm89P+HoJNtn74Knbeu97ulaLLvl6iuF1nTTpJL8ZpS9SarFTD/jG8REvCeoVSa5
-	Z+RYPKP8OnigG6DodAjBhEPpP+E96opsasoPkk0TJqu2V+xkTXoqFq92jEXZOaucusHyWG
-	tHCgX2eRLZeXziRDkFhIKVKFYPxNKJQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-no3ofb49PoWW46HWr9IHKA-1; Tue,
- 03 Sep 2024 09:24:14 -0400
-X-MC-Unique: no3ofb49PoWW46HWr9IHKA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4293818EA80D;
-	Tue,  3 Sep 2024 13:24:12 +0000 (UTC)
-Received: from [10.2.16.89] (unknown [10.2.16.89])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4E82C19560AE;
-	Tue,  3 Sep 2024 13:24:09 +0000 (UTC)
-Message-ID: <7fa3dbd5-7c2e-4614-a5f4-258546cb090b@redhat.com>
-Date: Tue, 3 Sep 2024 09:24:08 -0400
+	s=arc-20240116; t=1725370078; c=relaxed/simple;
+	bh=CLQG+IdwZ22SMXaJSPeFr07Fb9OMYcb0Y4GqWfh/YmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I18QGyS7OZ3oDNq+ernLCvgo462pocg5Yc/ZycFoL5drpwdjGqZIfqCRMdAYG9WK0Hhl/WUhXizR3cZD56ZRdeRr3GkPXd5sNCmRMPLhNm628xvAMMUmF74HkI661UwAOUp0NcY9nKV2iyXKT5z/AkLQRx65D9PKMh7WT5w9vw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diekuehnen.com; spf=pass smtp.mailfrom=diekuehnen.com; dkim=pass (2048-bit key) header.d=diekuehnen.com header.i=@diekuehnen.com header.b=yp1r/26l; arc=none smtp.client-ip=78.47.205.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diekuehnen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diekuehnen.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD2EE7E70D;
+	Tue,  3 Sep 2024 15:27:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=diekuehnen.com;
+	s=dkim; t=1725370068;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=HV2hf1nSATsA3NNJxSWkfgMwLvWvQ3pMvRpwUZxKkXc=;
+	b=yp1r/26lNKqk7dD7+0Bh9E7ZrMQKfgz+bGiBEeBdChNJ567eFsyqrGZq1VTcMhFk4hoGwg
+	ZpUBSD0nmRlaGKi+SSeQnVLwBY/d/7R7o67TUMm/KcJlLOT57Imw6g2tXihs+Hp397/Kin
+	8WFCA/oHt1CBebwGnNIw9qBQrGMtBJFcYIkOwup+hDeWJa1aSCm+UrSuyB7hTI90ttxHLH
+	XCsQsPFsXflPnWPHchXA2uTfQ4ET/WKP4Epez4sMkqNpuOqN1xRXCeJTp9m7TM0AGirIPq
+	ouIESRkTIQtc2p6gpjXtn+51mF/8cssoG+wsiI2hOh8DVvcmh7WjR8j8T6KAHA==
+From: =?UTF-8?q?Andreas=20K=C3=BChn?= <andreas.kuehn@diekuehnen.com>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	peter.chen@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: =?UTF-8?q?Andreas=20K=C3=BChn?= <andreas.kuehn@diekuehnen.com>,
+	openbmc@lists.ozlabs.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: chipidea: npcm: Fix coding style with clarification of data type
+Date: Tue,  3 Sep 2024 15:25:15 +0200
+Message-ID: <20240903132535.15554-1-andreas.kuehn@diekuehnen.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] sched/isolation: Add HK_FLAG_SCHED to nohz_full
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20240818234520.90186-1-longman@redhat.com>
- <20240818234520.90186-2-longman@redhat.com>
- <ZtcK3aF_d3BUhiVz@localhost.localdomain>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZtcK3aF_d3BUhiVz@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Last-TLS-Session-Version: TLSv1.3
 
+Fixed coding style issue: unsigned to unsigned int.
 
-On 9/3/24 09:10, Frederic Weisbecker wrote:
-> Le Sun, Aug 18, 2024 at 07:45:18PM -0400, Waiman Long a écrit :
->> The HK_FLAG_SCHED/HK_TYPE_SCHED flag is defined and is also used
->> in kernel/sched/fair.c since commit de201559df87 ("sched/isolation:
->> Introduce housekeeping flags"). However, the corresponding cpumask isn't
->> currently updated anywhere. So the mask is always cpu_possible_mask.
->>
->> Add it in nohz_full setup so that nohz_full CPUs will now be removed
->> from HK_TYPE_SCHED cpumask.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/sched/isolation.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
->> index 5891e715f00d..a514994af319 100644
->> --- a/kernel/sched/isolation.c
->> +++ b/kernel/sched/isolation.c
->> @@ -196,7 +196,7 @@ static int __init housekeeping_nohz_full_setup(char *str)
->>   	unsigned long flags;
->>   
->>   	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU |
->> -		HK_FLAG_MISC | HK_FLAG_KTHREAD;
->> +		HK_FLAG_MISC | HK_FLAG_KTHREAD | HK_FLAG_SCHED;
->>   
->>   	return housekeeping_setup(str, flags);
->>   }
-> find_new_ilb() already has HK_FLAG_MISC to prevent an isolated CPU
-> from being elected as an ilb. So I think we should simply remove HK_FLAG_SCHED.
+Signed-off-by: Andreas Kühn <andreas.kuehn@diekuehnen.com>
+---
+ drivers/usb/chipidea/ci_hdrc_npcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is a check for HK_TYPE_SCHED in nohz_balance_enter_idle() and 
-nohz_newidle_balance(), though it is essentially a no-op as the cpumask 
-has all the CPUs. If we remove HK_TYPE_SCHED, the question now will be 
-whether we should remove the checks at these 2 functions or change them 
-to HK_TYPE_MISC.
-
-Cheers,
-Longman
-
->
-> Thanks.
->
+diff --git a/drivers/usb/chipidea/ci_hdrc_npcm.c b/drivers/usb/chipidea/ci_hdrc_npcm.c
+index c89c68f41ccc..3e5e05dbda89 100644
+--- a/drivers/usb/chipidea/ci_hdrc_npcm.c
++++ b/drivers/usb/chipidea/ci_hdrc_npcm.c
+@@ -18,7 +18,7 @@ struct npcm_udc_data {
+ 	struct ci_hdrc_platform_data pdata;
+ };
+ 
+-static int npcm_udc_notify_event(struct ci_hdrc *ci, unsigned event)
++static int npcm_udc_notify_event(struct ci_hdrc *ci, unsigned int event)
+ {
+ 	struct device *dev = ci->dev->parent;
+ 
+-- 
+2.43.0
 
 
