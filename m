@@ -1,577 +1,302 @@
-Return-Path: <linux-kernel+bounces-312715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A03D969A3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52860969A3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3A11C23180
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:32:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32711F23F81
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8221B9849;
-	Tue,  3 Sep 2024 10:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C4C1B985D;
+	Tue,  3 Sep 2024 10:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="Y7Q1nqmv"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="dV+kXHSA"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011064.outbound.protection.outlook.com [52.101.125.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721881B983E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359531; cv=none; b=hw7MlRv7vE2Psa1TYZl2FYDDgBKfHo1BArP91UwHVNfEkXcIhDnMe47c7+RUz05Kjyg2skPJx4gj7H+MGXTu0PF6t6eNqMZwhLmCNyvnRFYpz4yOvgcjFzau6qfRH03C+vQZ1X/JGt/ymbvrQxcIZfspC+PAN+b4srJZX/bOLHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359531; c=relaxed/simple;
-	bh=g+BQndnSQ/jZ8t98Qt3EL5uxMiVUeagDTEntJJ2poTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/20w2Wz9/aX5iGN699d33J2w7/hadIyOqiUGAjmp0dSFvctjmWH4Yi4Kyh4K0qEK04Zyf/LvhIZfU30aPDqctMJiauaUo8U6psVmBV5FHEldgmJk1p1seempFWlO449BXjAJQqqc8HpcJcyxfJ4xOONZEE+wFvlaAtQXRchzWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=Y7Q1nqmv; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e1651f48c31so5325138276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1725359528; x=1725964328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yBhI+3qYA9cPBuR2PukJkDlon3K6gbOkQAbgvhgFwyU=;
-        b=Y7Q1nqmvrjMQpJgi7Fii31LkzzcfssDupXC0V4LpCsecFTj8fajdbJhuxDZds8bXau
-         OfuhOCezl9GaTz/FgpdbUfRCec+le16nW+mDTQYPL+jcKHX7kEn08u+/SvWWnnjbQ+aY
-         hPCEAtvMDjgQrtxgVayGsyjm1samgBuU76ZWf/F+YWmxelbVrSds57UKPBOqleXDame1
-         xI4a4PcRC2vITEVYAijjtHGjMHl3zGP6c2LdazitgsKUk7vMAWppiwsZv447TeZESfVz
-         LO2OkJZYIwpyRJDuWiWeoZfk+5ti5UxV7YU2wRJJf2deiKn68ZB/EhHgnzre7elZm72e
-         Zmzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359528; x=1725964328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yBhI+3qYA9cPBuR2PukJkDlon3K6gbOkQAbgvhgFwyU=;
-        b=NG8OI9WelAAsh5cHMWLwLQyikb3qLK8lUUdh6itppOVmUZk7CiSTJZoj7yS/rcBwsy
-         Er8AnuXGj+vmJOT5zYsajgIeU4bGW0GwE8EldAVcODw1nh/2C860us/QB8QPtmo8bBn9
-         WLlKrQxEEGhMsSiCO1fNt9gkB9H59iG6X8+B++BvYa6xo2u+cv/KSv5qIiXBiwZ7LbKT
-         /LYPdHad8eccCPpdDVXwpnnIRZxc850bGbaxMSqVtqFwUp6VsseuD/Ad2D+YYjkj5cLw
-         1V7e0Yctdtr/pqTvo33I4bR7icru20+g5g9LPBPKzuWl26oqyusNq+L5qk+0IgtXnUyy
-         sNwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXbKwakWpCvMIsRmAyL6RJbUcAS/PlVpPEQXIs2brYg/Mq2ujcwkEj/xk5v+rI3+wPgzeuPBlErWW6FY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv5/2kcsXI3g/vHwLiHUSlu22rbEx9R5e3/gDpXpG66daXM1mM
-	F46aJRkXc2jahiVodWRUAMsJb4qRpjpKmHdmrFpTb5j3k4C2Pnno9fOGVo26htJ8TGCo1KRyDAc
-	R3HVu1FDzog+m2HDwp99z3jjrtBd34OqS2097MQ==
-X-Google-Smtp-Source: AGHT+IGYN2hClAynDOQSPkdh+tDja2D/Gm5+uHAP/0af6YinOuzCGD4fvpyEFhIKOmdk9my6ZhU65uXaK8bkO/bOJs8=
-X-Received: by 2002:a05:6902:90d:b0:e0e:cef6:5265 with SMTP id
- 3f1490d57ef6-e1a7a1a377amr13825850276.41.1725359527986; Tue, 03 Sep 2024
- 03:32:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5731A0BEC;
+	Tue,  3 Sep 2024 10:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725359515; cv=fail; b=gRVCMZWVv9+eXVl5Xo0Wx2ObSPrNfXGwXKdJau2AkV0Rg+3SU0LsTMOyXVt4ahwlGUbmsMObMSH3ouFcMVwetjNVmW1JigHZhbedjjhyvo+WKoTy0viuKH1FU7Cta0g+bGbxiD12A+24H4EnK/P/lM3eAH9iJmPSPQGfb03IzMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725359515; c=relaxed/simple;
+	bh=d+qKk37rQp06PgTm+/pH1YMc/B42zjDPmCvKNvl4cjw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dvBYpvn0wZHLZubNH5VO6CCo+eR4UgPiKxQli6ENxV4ZSIJ7Y8fLA4UyaTH9lAstIWg96unah1fTT5jlVfAoW9bgMXk2mfGWeMbjCCeu9ifJ+BfKVoAO+WAqTQo0nfV7GBbDyGF8xclMBG8fSRNtw2s1pAvURaLEfANmBmaXkyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=dV+kXHSA; arc=fail smtp.client-ip=52.101.125.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DKMZNnICJEUOsybMucPrlnEtuukIyt6i0vEjfMHRx1afMzbGLorAY975uo5lad6lgQ5TXMJ8a6+42tLd68HxNoPim+0B4Cco8vf3jH4U9qo0LFGRiHj09lkJnvGG8UHtk8Z/xFcTa01NGoRneJiDk2sq395FZYDqxl5p8423KS3I1sAwMCWtsij1+JRV4td5ev0McITsKY0mnxHpQbpAdeYsbNB/FA17mLUnILOFTr/TYPrh/8Fxzk0d1tDDXl9RoEkudP5E3wigLiVEgpAu7GbcZweCJfmVXYxBS5yy2m043saIUmg4A7u6yxYjP8ToiRINwtmM8xwTe2skl+4fkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d+qKk37rQp06PgTm+/pH1YMc/B42zjDPmCvKNvl4cjw=;
+ b=aKxt0RRgts0xwRHh3/t1mxNBeM0gUdFbofJy19IEyM8N3DTdMDmvgE9QjkqcJ/rrRD9ziWPE+LBd/btrz1uPoQP4ZheKmSF7/AS7zOV5vcthoGqlY7T1SBBssJtT7CL/6zqk/sxgj+4ChHKPcSc4t0oOut8DLvu4C+KVm4AEUEWPmQYdYxqvn1ybIkRPXiET1taPlDoWiuZZvLh9+jbMDV8M6I1qht6539VHdNFfA5b5DZfleygpgwkH8okfAszFbuIWd8IMGdaP3f1nE8ewXAjrHOYXkREO+A1Mv0FYMcOcepXiCXKfNlvsjtYv5faqlQr2Ydg97nB6AVG2x03V4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d+qKk37rQp06PgTm+/pH1YMc/B42zjDPmCvKNvl4cjw=;
+ b=dV+kXHSAEvrDpyNLGcr+L/x9hJkcMOOHV5KL4QKBFKGHhtVqQ7oN8i1V5AqJhia2Te2+F5Iirr/Wop9bHyfke455gKt0kcQv75yzb5l2OE+blrbuCK6nuhiHNGKfH8yCRGJcMGfhA9zrOPybTI5qvGCdLevKDiyJ6lHo9tNBOFs=
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
+ by OS3PR01MB6533.jpnprd01.prod.outlook.com (2603:1096:604:100::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 10:31:48 +0000
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479%7]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 10:31:48 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: "vkoul@kernel.org" <vkoul@kernel.org>, "kishon@kernel.org"
+	<kishon@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, Yoshihiro
+ Shimoda <yoshihiro.shimoda.uh@renesas.com>, "linux-phy@lists.infradead.org"
+	<linux-phy@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Thread-Topic: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Thread-Index:
+ AQHa9KfrLpE8CCuWg0uaPyaAgZR3ArI+ZjUAgAEcCoCAAVgqEIADVdkwgAAP5ACAAACycIAABtQAgAAAhkCAABeagIAAAFcwgAFU0LCAADjlgIAAAKQQ
+Date: Tue, 3 Sep 2024 10:31:47 +0000
+Message-ID:
+ <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
+ <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
+ <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
+ <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
+In-Reply-To: <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|OS3PR01MB6533:EE_
+x-ms-office365-filtering-correlation-id: d21cf789-105d-4232-745b-08dccc039d86
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NmIwQUNIcFhMRGZzaFNkdFFkbncyUElIWGRFYzhZQU9rT0NlYkNxYWplSVFN?=
+ =?utf-8?B?cjlVeWdCUW9mYWJYQlNiWmJoMkpKM21lT09OMk8xc3MxbVlYS0hFL0hSZXJL?=
+ =?utf-8?B?bnlnRWxXNWErQTZ3c0lMa09VSzFSNXA4ZC9vSVhGOTJKdkxnOTJ5Y25XNGNn?=
+ =?utf-8?B?QUVGaUsvOGZGU1RKcnI4U3BJVnNEVnl3cW15TU5sa05Qc2lnVUZJWENaWFNF?=
+ =?utf-8?B?ZTdpVU9WRDFFQVFmZjNMOFRiSW51SHlKWnRBRm54ekJtTGJmUmtmMmNSTS9I?=
+ =?utf-8?B?eW1jd2Zvb052dzRaZnVuUTdIZjVmQjZobzB1NndjejVJeHVQaExHNWZYNncw?=
+ =?utf-8?B?NnB1QlNibit3STMrcW1WYlZlR1R3cW5nbW9xako2azR1OWRNcXBOcmRMWjJl?=
+ =?utf-8?B?RmpvZFRkeDl1SWE4Tkw2dkVPNExiRTNtNng2U2czalRJU3pWS2NKSEVab2kw?=
+ =?utf-8?B?YkFicjlvTld0TXJLeFV0cUQ2d1pDQ0l3RkZaaTM1aVFMdVQ1WEpudlkwNmFI?=
+ =?utf-8?B?LzNWUXg0YVpDWkNuNkdWVU83Y1FsVEVJdjUyUHNpZWVyZW56MmF6bk5iRmhl?=
+ =?utf-8?B?VVFmbmdDbm1CNmxnTHdNY1pSOHdhRkJwN3JWWG1jSzZpZU1JR1dZSkpiaWNz?=
+ =?utf-8?B?MjZXSHFab1lVcGdqK3o5UUg1VmtSMU1VZTRsWElmbElQQ3JjZmtYZVBFa2xu?=
+ =?utf-8?B?M1FCUnptOC91TWp6NEwzK1hnd1NTNnY3WDJTVFpnUlhDaDRNNUthdFFNcWVm?=
+ =?utf-8?B?U1Q1d2JXL0g2VWkyVG5wZGZMSmg4OG93QjBwaE93SWpxVTAxZW1xN3dOU0ZK?=
+ =?utf-8?B?K01nSlFNVlFpWEdkNWVrR3JZNDhqd0VhUnRISWxpWUI3M2Q0WXIzMUQ3ckZO?=
+ =?utf-8?B?RUtmbEFDVGoyZ3BYcXQzY0Rmc0VoM3pOSFRWK3d1dk51QmI4VGdqVVRBU3Zi?=
+ =?utf-8?B?V0NDZlNsS0ZWaFZXQUdZbjQyK0Z3M29QakRueDRyVzdLM2NqSGFvbDBvYkd4?=
+ =?utf-8?B?YkdQQm5JZHdIUEo2ODcrYjR3dUhUdit5UWhLRFVwa1NkQy9FckxmUC8veEo5?=
+ =?utf-8?B?NFJLZVZaTlJLdnp3QUUza0ZJRVY1OG4ya2U0L21BTXAzMmJ0YjJtMVliTGdu?=
+ =?utf-8?B?aHoyLzdaUzRBck1iVVcvTXl6NG5YTStObTd6TnBXbnRmWnZMQUQ4Y0srWktv?=
+ =?utf-8?B?U2h3ZWVMNnF2TEl1bmV4MWlFckNHRlQvYXNXTlcxL0g2Y09CTG9BNlRqNHBN?=
+ =?utf-8?B?Mi9pVGc4WjRWNDNOMFltZWNETlBacGJvWTY4cjQ2UGpLaytROGFVZDE5d3Rm?=
+ =?utf-8?B?YjBXeGszei9Md1ZUWjdidDlMNHpqZnJNZ0NrWGt5Zmt5U242T2JhNmtQSDc2?=
+ =?utf-8?B?SGVaMGxld1lDeG1XalcxQnFXOSsvNlc2MmthR09xSlBQaWg4WlhEWHM0aG9v?=
+ =?utf-8?B?ejk4eFhEa1Y0VFZJVm83UFhtOElXc0c1aUNUSkhXMUc2UTlFYTVzYVFwc3pl?=
+ =?utf-8?B?VHJDTFByNjlxTklLWWVubkFxSW44bk4rZ0pySWpXT20xQ2lkWkhLQllQbmg5?=
+ =?utf-8?B?YVpwQStyTkczQk1WZ3piRHZFSkVyQnQ2RzBSUE4xLzhuSkFtWnl5NTlqU1hp?=
+ =?utf-8?B?bzA5M0d3ckxaaGpmdy9GTGtRNUJXemJOZnE4Z1g2ZWZPN0I5OEZhMVpjQmxL?=
+ =?utf-8?B?RXIydEptSVBSUThxV09yRUxwdkQ2UnZpZ0V1cWplQnpEdXYyMCtoY0wraXRk?=
+ =?utf-8?B?UVc5VXBMemcxVFlFU1ZRREpxTHNVTU9TN3FreVR5dWJVN3ovU2VGM1ZseVVs?=
+ =?utf-8?B?Nzd6a3BLcU1HUm1GZ0pmN2M3d1lkT3J6WTVtbTh5a2Z2RG1sRWtCdFQxV3Ux?=
+ =?utf-8?B?eDM0dXdueno0RkFHT1VQOW9JU0pKM1RyMjdFNmU2YURaT2c9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Z0g4cU5uZ1NkbUQ3bVlzUFl6Qjl5ZldaeWZxWjZ4UWZ2dUtvelhVMm5hV2N4?=
+ =?utf-8?B?SlptWDRZeFY1NklFaTlaam5xL2tEMGwwdXpIbEVPY09NR0dKV3hXbGt6WUo4?=
+ =?utf-8?B?aVVTeWdnbnlIMEVaTmYwQkNhTzE0M05jS2t6eVQzcW1tTEE4M24wM1Q2UEdY?=
+ =?utf-8?B?bmlUakNUZFpyczBhQzVnb2xnMXVHNW9XekpKKy84Z3cyc2xLVm1jUzNPM1kv?=
+ =?utf-8?B?WGd6by9mTFZVdUp1K1Ard1BDNFBXNGsrSis0SFJXWVpRTGFSdTF4S3pHUSti?=
+ =?utf-8?B?czNyVEMzVytMbGJLbXdRRTR5Qmw3ZkF2UUlmQzcwYjNNT2RlZktpK3NCdG9H?=
+ =?utf-8?B?b1hleU1QWndiQ1lnYVdXM0VPTVcrL3M0YzdRa1RQdExjUGZPaitEcWViWk5a?=
+ =?utf-8?B?S3pNZk9Ha2NwLytvL3N2QTI0bXZRRUFkV1lTenBZWEN3QXBXSURjZ1pJbVpC?=
+ =?utf-8?B?N2x5Z0xtZktHOVJmYVI1SzRCLzBGSERlMHdMRTJmcDVLVlpmR2h4d29LelFR?=
+ =?utf-8?B?ajdDMzhuNnBsL2lxcTlFTUtuRFVhMGVuTFFIQ203Qmc0R1J4aWtVRmpaeTdV?=
+ =?utf-8?B?ZVFrRFo2UEE4U05QMHE0cVVTVE9ZNkhKbW9UR2tLbGhzQm9DaWlaK0pJZjlJ?=
+ =?utf-8?B?UWw1UTRybWorWW9KTTcwSTlQeXY0dE5ZMm8wbExpYk01U2tieXhuT0g0SDhN?=
+ =?utf-8?B?L0d5K0hmeHREaEZ4eW8vT0U5WnBSWVhxcWZia0pMS0cvakNNbEJDY0g1L2hO?=
+ =?utf-8?B?MllDUDVWOTVLMGpoM1lDMFBESkxBbmdjN2RIR3NCaVhqalBYd085NUdLMWd1?=
+ =?utf-8?B?TER3N0JYNEdWU1NLRVFqaDI3bnhHMmdXQy9xL1ZYWUc0YTlxK21GTHZ1VXRj?=
+ =?utf-8?B?RkIvTDdGSlJFSEhpUUtURGc1bnhFTnNmTEpWQ0FVejYrbEZBWlRzRk5lTXBI?=
+ =?utf-8?B?V1QvNVpTenhjckgrVVpSLzFSb0lJNzNYTDI4VlZTM21MVFQxdk4wVEtudS9p?=
+ =?utf-8?B?UnhsOUVBVjlOYUREcXd0RTd3QityNER2RzRDNzRad1R0RGlQMk0xL2FFK2ww?=
+ =?utf-8?B?K2hsa1hGRnBPSEdhelEreGtrOWkxU3NtYjRiUEo4aG95VXQwSVZwK0hUZmFZ?=
+ =?utf-8?B?NThxaWczTVJTWk9FeklaRmczaUdaZE9kM1NUWE9vNUd1bzRqRXpQV3lPVDYw?=
+ =?utf-8?B?cy93aUtkQ28rcUZkNXdabDNwV0tGajJqazNCYmowUGI2djdXWEJscjdadlJY?=
+ =?utf-8?B?WDNoeWozOEhaOU9OL1M4MUpnNXNpY1VlZW1xK014WmVPSDVYc1ZIYjZzdmRM?=
+ =?utf-8?B?aDlOeWp2bVhPcDVVbStFQTIycUx1UmVmQTVoYlc4VVNpbWVrRVZaYnhBUm9j?=
+ =?utf-8?B?OE82VWJ6b2wwb0VzOTVlNXNwa3cxclRhSnlBSWdKNDNSZGE4ZlhOSjljMmsv?=
+ =?utf-8?B?bjhCZFdybkJUNEhUMmxHVjFuZG5MamtLRUZUTy83ZGhHaWhMZVA1YndpeFZP?=
+ =?utf-8?B?SDVCSkxOZk00TEhvQW9hMFE1QlBCUXZVRC9WbWh1SDR1bVJCNTZsYUIvQnlM?=
+ =?utf-8?B?TmFoN1dlcXpiQUhaQlVCMWIwZm5IdkFXQWtvK3E3NUc5UWlVTE9LSTlVSnpN?=
+ =?utf-8?B?Z2NKbnJOWmNQdEhxUFJhekFGTmpqUmJ2clpsZkUzWERYWXRJSEx3a2NYakZ6?=
+ =?utf-8?B?RFpyc0paVXo2a0lqbmk0ckhSL1oyS3JqOXliRFBWdUdsVHlndEJyNEJtNGxD?=
+ =?utf-8?B?cG51OVl4aHlZalZhZ2pTWEh6TzJkbU9ORXZQeExKbmQ5L2Q2NlprZ2JIT1hX?=
+ =?utf-8?B?ZzAzZFhxdVhKdmdkMk1xOVZFckhzbit1TER3SFJRWm85Ty9ERVFzaVpaMmtO?=
+ =?utf-8?B?ajFENkE5UHprZWZCM0VUYkMvMDJBYWFrVGFjV2E5NXNKZG1HOXlnK0U4aVJr?=
+ =?utf-8?B?KzQwWk9HWTJTLzNTaWwxU0xZb3Q4NVZabk9mTlRRUmFVVzZvNmk4WVZQc2Vj?=
+ =?utf-8?B?dVpYMVdkZkhsR1R1TUh1b2k0T3RENlVaUCtnUG0zUkIxbFg2RkNYRyt5WXBx?=
+ =?utf-8?B?OGN0YktycjdoMzZndlZTQ0Y3cVdpTE1mVjdMcEJXUTk1WkhvWU8vZFJ2aXVq?=
+ =?utf-8?B?N0pWbjhuOFVySFRJTUgrbTRIdGFudnpYWDJDQmFsNGJIUkVOc2xaenUzTmRM?=
+ =?utf-8?B?dVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719075200.10717-2-jhp@endlessos.org> <20240719080255.10998-2-jhp@endlessos.org>
- <CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com>
- <e37536a435630583398307682e1a9aadbabfb497.camel@linux.intel.com>
- <CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com>
- <eb900245-5e13-bc6c-994a-43f2db8322ea@linux.intel.com> <fc0e8066b06abed97d3857c5deefb03041a0fd2e.camel@linux.intel.com>
- <f9660f21-f2e8-c62c-5e86-ed4875f61701@linux.intel.com> <CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
- <4295d0e8-12c7-927c-2da5-682163ec3d9c@linux.intel.com>
-In-Reply-To: <4295d0e8-12c7-927c-2da5-682163ec3d9c@linux.intel.com>
-From: Jian-Hong Pan <jhp@endlessos.org>
-Date: Tue, 3 Sep 2024 18:31:31 +0800
-Message-ID: <CAPpJ_ec0ADUmH8VsNh-aHA1zLnDSEhVXKprU1x1ELugwE1M_sQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link state
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "David E. Box" <david.e.box@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, 
-	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>, linux-pci@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d21cf789-105d-4232-745b-08dccc039d86
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 10:31:47.9407
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YnX1JJ3cjwa7y5yfB7wMZ1F/8TZt6YarXrbliEws2/8HF24lymO50i+E9UsBvpAXctdx8spORNxbAYg33TOABkwUZh69KmO0VjAq/LoeoyA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6533
 
-Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=
-=E6=9C=882=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8811:44=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Mon, 12 Aug 2024, Jian-Hong Pan wrote:
->
-> > Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=888=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:49=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > > On Wed, 7 Aug 2024, David E. Box wrote:
-> > > > On Wed, 2024-08-07 at 14:18 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > > > On Wed, 7 Aug 2024, Jian-Hong Pan wrote:
-> > > > >
-> > > > > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=886=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:26=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > > > > > >
-> > > > > > > Hi Jian-Hong,
-> > > > > > >
-> > > > > > > On Fri, 2024-08-02 at 16:24 +0800, Jian-Hong Pan wrote:
-> > > > > > > > Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=
-=E6=9C=8819=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > > > > > > > >
-> > > > > > > > > Currently, when enable link's L1.2 features with
-> > > > > > > > > __pci_enable_link_state(),
-> > > > > > > > > it configs the link directly without ensuring related L1.=
-2 parameters,
-> > > > > > > > > such
-> > > > > > > > > as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THR=
-ESHOLD have
-> > > > > > > > > been
-> > > > > > > > > programmed.
-> > > > > > > > >
-> > > > > > > > > This leads the link's L1.2 between PCIe Root Port and chi=
-ld device
-> > > > > > > > > gets
-> > > > > > > > > wrong configs when a caller tries to enabled it.
-> > > > > > > > >
-> > > > > > > > > Here is a failed example on ASUS B1400CEAE with enabled V=
-MD:
-> > > > > > > > >
-> > > > > > > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core=
- Processor
-> > > > > > > > > PCIe
-> > > > > > > > > Controller (rev 01) (prog-if 00 [Normal decode])
-> > > > > > > > >     ...
-> > > > > > > > >     Capabilities: [200 v1] L1 PM Substates
-> > > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ AS=
-PM_L1.1+
-> > > > > > > > > L1_PM_Substates+
-> > > > > > > > >                   PortCommonModeRestoreTime=3D45us PortTP=
-owerOnTime=3D50us
-> > > > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ A=
-SPM_L1.1-
-> > > > > > > > >                    T_CommonMode=3D45us LTR1.2_Threshold=
-=3D101376ns
-> > > > > > > > >         L1SubCtl2: T_PwrOn=3D50us
-> > > > > > > > >
-> > > > > > > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk Cor=
-p WD Blue
-> > > > > > > > > SN550
-> > > > > > > > > NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-> > > > > > > > >     ...
-> > > > > > > > >     Capabilities: [900 v1] L1 PM Substates
-> > > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ AS=
-PM_L1.1-
-> > > > > > > > > L1_PM_Substates+
-> > > > > > > > >                   PortCommonModeRestoreTime=3D32us PortTP=
-owerOnTime=3D10us
-> > > > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ A=
-SPM_L1.1-
-> > > > > > > > >                    T_CommonMode=3D0us LTR1.2_Threshold=3D=
-0ns
-> > > > > > > > >         L1SubCtl2: T_PwrOn=3D10us
-> > > > > > > > >
-> > > > > > > > > According to "PCIe r6.0, sec 5.5.4", before enabling ASPM=
- L1.2 on the
-> > > > > > > > > PCIe
-> > > > > > > > > Root Port and the child NVMe, they should be programmed w=
-ith the same
-> > > > > > > > > LTR1.2_Threshold value. However, they have different valu=
-es in this
-> > > > > > > > > case.
-> > > > > > > > >
-> > > > > > > > > Invoke aspm_calc_l12_info() to program the L1.2 parameter=
-s properly
-> > > > > > > > > before
-> > > > > > > > > enable L1.2 bits of L1 PM Substates Control Register in
-> > > > > > > > > __pci_enable_link_state().
-> > > > > > > > >
-> > > > > > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D21839=
-4
-> > > > > > > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > > > > > > > > ---
-> > > > > > > > > v2:
-> > > > > > > > > - Prepare the PCIe LTR parameters before enable L1 Substa=
-tes
-> > > > > > > > >
-> > > > > > > > > v3:
-> > > > > > > > > - Only enable supported features for the L1 Substates par=
-t
-> > > > > > > > >
-> > > > > > > > > v4:
-> > > > > > > > > - Focus on fixing L1.2 parameters, instead of re-initiali=
-zing whole
-> > > > > > > > > L1SS
-> > > > > > > > >
-> > > > > > > > > v5:
-> > > > > > > > > - Fix typo and commit message
-> > > > > > > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Int=
-roduce
-> > > > > > > > >   aspm_get_l1ss_cap()"
-> > > > > > > > >
-> > > > > > > > > v6:
-> > > > > > > > > - Skipped
-> > > > > > > > >
-> > > > > > > > > v7:
-> > > > > > > > > - Pick back and rebase on the new version kernel
-> > > > > > > > > - Drop the link state flag check. And, always config link=
- state's
-> > > > > > > > > timing
-> > > > > > > > >   parameters
-> > > > > > > > >
-> > > > > > > > > v8:
-> > > > > > > > > - Because pcie_aspm_get_link() might return the link as N=
-ULL, move
-> > > > > > > > >   getting the link's parent and child devices after check=
- the link is
-> > > > > > > > >   not NULL. This avoids NULL memory access.
-> > > > > > > > >
-> > > > > > > > >  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
-> > > > > > > > >  1 file changed, 15 insertions(+)
-> > > > > > > > >
-> > > > > > > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/a=
-spm.c
-> > > > > > > > > index 5db1044c9895..55ff1d26fcea 100644
-> > > > > > > > > --- a/drivers/pci/pcie/aspm.c
-> > > > > > > > > +++ b/drivers/pci/pcie/aspm.c
-> > > > > > > > > @@ -1411,9 +1411,15 @@ EXPORT_SYMBOL(pci_disable_link_sta=
-te);
-> > > > > > > > >  static int __pci_enable_link_state(struct pci_dev *pdev,=
- int state,
-> > > > > > > > > bool
-> > > > > > > > > locked)
-> > > > > > > > >  {
-> > > > > > > > >         struct pcie_link_state *link =3D pcie_aspm_get_li=
-nk(pdev);
-> > > > > > > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
-> > > > > > > > > +       struct pci_dev *parent, *child;
-> > > > > > > > >
-> > > > > > > > >         if (!link)
-> > > > > > > > >                 return -EINVAL;
-> > > > > > > > > +
-> > > > > > > > > +       parent =3D link->pdev;
-> > > > > > > > > +       child =3D link->downstream;
-> > > > > > > > > +
-> > > > > > > > >         /*
-> > > > > > > > >          * A driver requested that ASPM be enabled on thi=
-s device, but
-> > > > > > > > >          * if we don't have permission to manage ASPM (e.=
-g., on ACPI
-> > > > > > > > > @@ -1428,6 +1434,15 @@ static int __pci_enable_link_state=
-(struct
-> > > > > > > > > pci_dev
-> > > > > > > > > *pdev, int state, bool locked)
-> > > > > > > > >         if (!locked)
-> > > > > > > > >                 down_read(&pci_bus_sem);
-> > > > > > > > >         mutex_lock(&aspm_lock);
-> > > > > > > > > +       /*
-> > > > > > > > > +        * Ensure L1.2 parameters: Common_Mode_Restore_Ti=
-mes,
-> > > > > > > > > T_POWER_ON and
-> > > > > > > > > +        * LTR_L1.2_THRESHOLD are programmed properly bef=
-ore enable
-> > > > > > > > > bits for
-> > > > > > > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
-> > > > > > > > > +        */
-> > > > > > > > > +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
-> > > > > > > > > +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
-> > > > > > > > > +       aspm_calc_l12_info(link, parent_l1ss_cap, child_l=
-1ss_cap);
-> > > > > > >
-> > > > > > > I still don't think this is the place to recalculate the L1.2=
- parameters
-> > > > > > > especially when know the calculation was done but was cleared=
- by
-> > > > > > > pci_bus_reset(). Can't we just do a pci_save/restore_state() =
-before/after
-> > > > > > > pci_bus_reset() in vmd.c?
-> > > > > >
-> > > > > > I have not thought pci_save/restore_state() around pci_bus_rese=
-t()
-> > > > > > before.  It is an interesting direction.
-> > > > > >
-> > > > > > So, I prepare modification below for test.  Include "[PATCH v8 =
-1/4]
-> > > > > > PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 subst=
-ates",
-> > > > > > too.  Then, both the PCIe bridge and the PCIe device have the s=
-ame
-> > > > > > LTR_L1.2_THRESHOLD 101376ns as expected.
-> > > > > >
-> > > > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/control=
-ler/vmd.c
-> > > > > > index bbf4a47e7b31..6b8dd4f30127 100644
-> > > > > > --- a/drivers/pci/controller/vmd.c
-> > > > > > +++ b/drivers/pci/controller/vmd.c
-> > > > > > @@ -727,6 +727,18 @@ static void vmd_copy_host_bridge_flags(str=
-uct
-> > > > > > pci_host_bridge *root_bridge,
-> > > > > >         vmd_bridge->native_dpc =3D root_bridge->native_dpc;
-> > > > > >  }
-> > > > > >
-> > > > > > +static int vmd_pci_save_state(struct pci_dev *pdev, void *user=
-data)
-> > > > > > +{
-> > > > > > +       pci_save_state(pdev);
-> > > > > > +       return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static int vmd_pci_restore_state(struct pci_dev *pdev, void *u=
-serdata)
-> > > > > > +{
-> > > > > > +       pci_restore_state(pdev);
-> > > > > > +       return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > >  /*
-> > > > > >   * Enable ASPM and LTR settings on devices that aren't configu=
-red by BIOS.
-> > > > > >   */
-> > > > > > @@ -927,6 +939,7 @@ static int vmd_enable_domain(struct vmd_dev=
- *vmd,
-> > > > > > unsigned long features)
-> > > > > >         pci_scan_child_bus(vmd->bus);
-> > > > > >         vmd_domain_reset(vmd);
-> > > > > >
-> > > > > > +       pci_walk_bus(vmd->bus, vmd_pci_save_state, NULL);
-> > > > > >         /* When Intel VMD is enabled, the OS does not discover =
-the Root
-> > > > > > Ports
-> > > > > >          * owned by Intel VMD within the MMCFG space. pci_reset=
-_bus()
-> > > > > > applies
-> > > > > >          * a reset to the parent of the PCI device supplied as =
-argument.
-> > > > > > This
-> > > > > > @@ -945,6 +958,7 @@ static int vmd_enable_domain(struct vmd_dev=
- *vmd,
-> > > > > > unsigned long features)
-> > > > > >                         break;
-> > > > > >                 }
-> > > > > >         }
-> > > > > > +       pci_walk_bus(vmd->bus, vmd_pci_restore_state, NULL);
-> > > > >
-> > > > > Why not call pci_reset_bus() (or __pci_reset_bus()) then in
-> > > > > vmd_enable_domain() which preserves state unlike pci_reset_bus()?
-> > > > >
-> > > > > (Don't tell me naming of these functions is a horrible mess. :-/)
-> > > >
-> > > > Hmm. So this *is* calling pci_reset_bus().
-> > >
-> > > Yeah, I managed to get confused by the names myself, I somehow
-> > > ended up thinking it calls pci_bus_reset() which is not correct...
-> > >
-> > > > L1.2 configuration has specific
-> > > > ordering requirements for changes to parent & child devices. Could =
-be why it's
-> > > > not getting restored properly.
-> > >
-> > > Indeed, it has to be something else since the patch above doesn't eve=
-n
-> > > restore anything because dev->state_saved should get set to false by =
-the
-> > > first pci_restore_state() called from
-> > > __pci_reset_bus() -> pci_bus_restore_locked() -> pci_dev_restore(), I
-> > > think!?
-> >
-> > Inspired by Ilpo's comment.  I add some debug messages based on
-> > linux-next's tag 'next-20240809' to understand the code path of
-> > pci_reset_bus():
-> >
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index ffaaca0978cb..3ee71374f1de 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -5133,8 +5133,10 @@ static void pci_dev_save_and_disable(struct pci_=
-dev *dev)
-> >          * races with ->remove() by the device lock, which must be held=
- by
-> >          * the caller.
-> >          */
-> > -       if (err_handler && err_handler->reset_prepare)
-> > +       if (err_handler && err_handler->reset_prepare) {
-> > +               pci_info(dev, "%s: %pF\n", __func__,
-> > err_handler->reset_prepare);
-> >                 err_handler->reset_prepare(dev);
-> > +       }
-> >
-> >         /*
-> >          * Wake-up device prior to save.  PM registers default to D0 af=
-ter
-> > @@ -5144,6 +5146,7 @@ static void pci_dev_save_and_disable(struct pci_d=
-ev *dev)
-> >         pci_set_power_state(dev, PCI_D0);
-> >
-> >         pci_save_state(dev);
-> > +       pci_info(dev, "%s: PCI state_saved is %s\n", __func__,
-> > dev->state_saved ? "true" : "false");
-> >         /*
-> >          * Disable the device by clearing the Command register, except =
-for
-> >          * INTx-disable which is set.  This not only disables MMIO and =
-I/O port
-> > @@ -5655,6 +5658,10 @@ static void
-> > pci_bus_save_and_disable_locked(struct pci_bus *bus)
-> >         struct pci_dev *dev;
-> >
-> >         list_for_each_entry(dev, &bus->devices, bus_list) {
-> > +               pci_info(dev, "%s: PCI state_saved is %s, and %s subord=
-inate\n",
-> > +                        __func__,
-> > +                        dev->state_saved ? "true" : "false",
-> > +                        dev->subordinate ? "has" : "does not have");
-> >                 pci_dev_save_and_disable(dev);
-> >                 if (dev->subordinate)
-> >                         pci_bus_save_and_disable_locked(dev->subordinat=
-e);
-> > @@ -5671,6 +5678,10 @@ static void pci_bus_restore_locked(struct pci_bu=
-s *bus)
-> >         struct pci_dev *dev;
-> >
-> >         list_for_each_entry(dev, &bus->devices, bus_list) {
-> > +               pci_info(dev, "%s: PCI state_saved is %s, and %s subord=
-inate\n",
-> > +                        __func__,
-> > +                        dev->state_saved ? "true" : "false",
-> > +                        dev->subordinate ? "has" : "does not have");
-> >                 pci_dev_restore(dev);
-> >                 if (dev->subordinate)
-> >                         pci_bus_restore_locked(dev->subordinate);
-> > @@ -5786,8 +5797,10 @@ static int pci_bus_reset(struct pci_bus *bus, bo=
-ol probe)
-> >         if (!bus->self || !pci_bus_resettable(bus))
-> >                 return -ENOTTY;
-> >
-> > -       if (probe)
-> > +       if (probe) {
-> > +               pci_info(bus->self, "%s: probe is true.  So return 0
-> > directly", __func__);
-> >                 return 0;
-> > +       }
-> >
-> >         pci_bus_lock(bus);
-> >
-> > @@ -5858,10 +5871,12 @@ static int __pci_reset_bus(struct pci_bus *bus)
-> >         int rc;
-> >
-> >         rc =3D pci_bus_reset(bus, PCI_RESET_PROBE);
-> > +       pci_info(bus->self, "%s: pci_bus_reset() returns %d\n", __func_=
-_, rc);
-> >         if (rc)
-> >                 return rc;
-> >
-> >         if (pci_bus_trylock(bus)) {
-> > +               pci_info(bus->self, "%s: pci_bus_trylock() returns
-> > true\n", __func__);
-> >                 pci_bus_save_and_disable_locked(bus);
-> >                 might_sleep();
-> >                 rc =3D pci_bridge_secondary_bus_reset(bus->self);
-> > @@ -5881,6 +5896,7 @@ static int __pci_reset_bus(struct pci_bus *bus)
-> >   */
-> >  int pci_reset_bus(struct pci_dev *pdev)
-> >  {
-> > +       pci_info(pdev, "%s: %s", __func__,
-> > !pci_probe_reset_slot(pdev->slot) ? "true" : "false");
-> >         return (!pci_probe_reset_slot(pdev->slot)) ?
-> >             __pci_reset_slot(pdev->slot) : __pci_reset_bus(pdev->bus);
-> >  }
-> >
-> > And, have the information of VMD PCIe devices with the built kernel:
-> >
-> > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-> > Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-> > decode])
-> >   ...
-> >   Capabilities: [200 v1] L1 PM Substates
-> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Sub=
-states+
-> >       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-> >     L1SubCtl2: T_PwrOn=3D0us
-> >
-> > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-> > Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-> >   ...
-> >   Capabilities: [900 v1] L1 PM Substates
-> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Sub=
-states+
-> >       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
-> >     L1SubCtl2: T_PwrOn=3D50us
-> >
-> > We can see the NVMe has expected LTR1.2_Threshold=3D101376ns, but the
-> > PCIe bridge has LTR1.2_Threshold=3D0ns.
->
-> This is now the other way around as in the original posting that had
-> 0ns for 10000:e1:00.0 ??
->
-> Is this behavior even consistent or did you e.g. mess up some copy
-> pasting somewhere?
-
-The original posting came with older kernel 6.5. It shows:
-
-10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-decode])
-...
-  Capabilities: [200 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substat=
-es+
-      PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
-    L1SubCtl2: T_PwrOn=3D50us
-...
-
-10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-...
-  Capabilities: [900 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substat=
-es+
-      PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-    L1SubCtl2: T_PwrOn=3D10us
-...
-
-Full information:
-https://gist.github.com/starnight/e19487a44efefff477f9ac9ed641c183
-
-But, newer kernel, for example linux-next next-20240809 and
-next-20240820 which I have tried shows:
-
-10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-decode])
-...
-  Capabilities: [200 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substat=
-es+
-      PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-    L1SubCtl2: T_PwrOn=3D0us
-...
-
-10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-...
-  Capabilities: [900 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substat=
-es+
-      PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
-    L1SubCtl2: T_PwrOn=3D50us
-...
-
-Full information:
-https://gist.github.com/starnight/081ea4adbce40a27faf234e5e135b49a
-
-So, according to the information above, different kernel versions show
-different L1 sub-states.
-
-Jian-Hong Pan
+SGkgQ2xhdWRpdSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBjbGF1
+ZGl1IGJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAdHV4b24uZGV2Pg0KPiBTZW50OiBUdWVzZGF5LCBT
+ZXB0ZW1iZXIgMywgMjAyNCAxMToyNSBBTQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAwLzE2XSBB
+ZGQgaW5pdGlhbCBVU0Igc3VwcG9ydCBmb3IgdGhlIFJlbmVzYXMgUlovRzNTIFNvQw0KPiANCj4g
+DQo+IA0KPiBPbiAwMy4wOS4yMDI0IDEwOjE4LCBCaWp1IERhcyB3cm90ZToNCj4gPiBIaSBDbGF1
+ZGl1LA0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IEJp
+anUgRGFzDQo+ID4+IFNlbnQ6IE1vbmRheSwgU2VwdGVtYmVyIDIsIDIwMjQgMTE6NDggQU0NCj4g
+Pj4gU3ViamVjdDogUkU6IFtQQVRDSCAwMC8xNl0gQWRkIGluaXRpYWwgVVNCIHN1cHBvcnQgZm9y
+IHRoZSBSZW5lc2FzDQo+ID4+IFJaL0czUyBTb0MNCj4gPj4NCj4gPj4gSGkgQ2xhdWRpdSwNCj4g
+Pj4NCj4gPj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+PiBGcm9tOiBjbGF1ZGl1
+IGJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAdHV4b24uZGV2Pg0KPiA+Pj4gU2VudDogTW9uZGF5LCBT
+ZXB0ZW1iZXIgMiwgMjAyNCAxMTo0MSBBTQ0KPiA+Pj4gU3ViamVjdDogUmU6IFtQQVRDSCAwMC8x
+Nl0gQWRkIGluaXRpYWwgVVNCIHN1cHBvcnQgZm9yIHRoZSBSZW5lc2FzDQo+ID4+PiBSWi9HM1Mg
+U29DDQo+ID4+Pg0KPiA+Pj4NCj4gPj4+DQo+ID4+PiBPbiAwMi4wOS4yMDI0IDEyOjE4LCBCaWp1
+IERhcyB3cm90ZToNCj4gPj4+Pj4+Pj4gRG8geW91IGhhdmUgYW55IHBsYW4gdG8gY29udHJvbCB0
+aGlzIHBvd2VyIHRyYW5zaXRpb25zKEFMTF9PTiB0byBBV08gYW5kIHZpY2UgdmVyc2EpIGluDQo+
+IGxpbnV4Pw0KPiA+Pj4+Pj4+IEFzIHlvdSBrbm93LCB0aGUgUlovRzNTIFVTQiBQTSBjb2RlIGlz
+IGFscmVhZHkgcHJlcGFyZWQuIFRoaXMgaXMNCj4gPj4+Pj4+PiBhbHNvIGNvbmZpZ3VyaW5nIHRo
+ZXNlIHNpZ25hbHMgd2hlbiBnb2luZyB0byBzdXNwZW5kL2V4aXRpbmcgZnJvbSByZXN1bWUuDQo+
+ID4+Pj4+Pj4gVy9vIGNvbmZpZ3VyaW5nIHByb3Blcmx5IHRoZXNlIHNpZ25hbHMgdGhlIFVTQiBp
+cyBub3Qgd29ya2luZyBhZnRlciBhIHN1c3BlbmQvcmVzdW1lIGN5Y2xlLg0KPiA+Pj4+Pj4gT25l
+IG9wdGlvbiBpcyB0byBoYW5kbGUgU1lTQyBVU0IgUFdSUkRZIHNpZ25hbCBpbiBURi1BLCBpZiB5
+b3UNCj4gPj4+Pj4+IHBsYW4gdG8gaGFuZGxlIHN5c3RlbSB0cmFuc2l0aW9ucw0KPiA+Pj4+PiB0
+aGVyZT8/DQo+ID4+Pj4+DQo+ID4+Pj4+IEFzIEkgbWVudGlvbmVkLCB0aGUgc2V0dGluZ3MgaW4g
+dGhlc2UgcmVnaXN0ZXJzIG1heSBiZSBjaGFuZ2VkIGJ5DQo+ID4+Pj4+IGludGVybWVkaWFyeSBi
+b290aW5nDQo+ID4+PiBhcHBsaWNhdGlvbnMuDQo+ID4+Pj4+IERlcGVuZGluZyBvbiB0aGF0LCBM
+aW51eCBuZWVkIHRvIGNvbnRyb2wgaXQgYWxzbyBvbiBwcm9iZSBmb3IgVVNCDQo+ID4+Pj4+IHRv
+IHdvcmsgKGl0IHNob3VsZCBiZSB0aGUgc2FtZSB3aXRoIFBDSWUsIHRoZXNlIHNpZ25hbHMgc2Vl
+bXMNCj4gPj4+Pj4gc2ltaWxhciBmcm9tIEhXIG1hbnVhbA0KPiA+PiBkZXNjcmlwdGlvbikuDQo+
+ID4+Pj4gWW91IG1lYW4gc3lzdGVtIHRyYW5zaXRpb24gc2V0dGluZ3Mgd2lsbCBiZSBvdmVycmlk
+ZSBieSBVLWJvb3QsIHNvDQo+ID4+Pj4gTGludXggbmVlZHMgdG8gcmVzdG9yZSBpdA0KPiA+PiBi
+YWNrPz8NCj4gPj4+DQo+ID4+PiBJdCB3YXMgdGFsa2luZyBhYm91dCBib290aW5nLi4uDQo+ID4+
+DQo+ID4+IEkgYW0gYWxzbyByZWZlcnJpbmcgdG8gYm9vdC4gQm9vdCBzdGFydHMgd2l0aCBURi1B
+IGFuZCBpdCBoYXMgYSBzeXN0ZW0gc3RhdGUuDQo+ID4+DQo+ID4+Pg0KPiA+Pj4gWW91IHByb3Bv
+c2VkIHRvIGhhbmRsZSBTWVNDIHNpZ25hbHMgZnJvbSBURi1BIGluIGEgZGlzY3Vzc2lvbiBhYm91
+dCBzeXN0ZW0gcG93ZXIgdHJhbnNpdGlvbnM6DQo+ID4+Pg0KPiA+Pj4gIk9uZSBvcHRpb24gaXMg
+dG8gaGFuZGxlIFNZU0MgVVNCIFBXUlJEWSBzaWduYWwgaW4gVEYtQSwgIGlmIHlvdSBwbGFuIHRv
+IGhhbmRsZSBzeXN0ZW0NCj4gdHJhbnNpdGlvbnMiDQo+ID4+Pg0KPiA+Pj4gKEkgd2FzIGd1ZXNz
+aW5nIHRoZSAic3lzdGVtIHRyYW5zaXRpb24iIHN0YXRlbWVudCB0aGVyZSByZWZlcnMgdG8NCj4g
+Pj4+IHBvd2VyIHN0YXRlcyB0cmFuc2l0aW9ucywgQUxMX09OIDwtPg0KPiA+Pj4gQVdPL1ZCQVQp
+DQo+ID4+DQo+ID4+IFRoYXQgaXMgY29ycmVjdC4NCj4gPj4NCj4gPj4+DQo+ID4+PiBhbmQgSSBn
+YXZlIHRoZSBib290aW5nIHByb2Nlc3MgYXMgYSBjb3VudGVyIGV4YW1wbGU6IGlmIHdlIGhhbmRs
+ZSBpdA0KPiA+Pj4gaW4gVEYtQSBpdCBtYXkgbm90IGJlIGVub3VnaCBhcyB0aGVzZSBzaWduYWxz
+IG1pZ2h0IGJlIGNoYW5nZWQgYnkNCj4gPj4+IGludGVybWVkaWFyeSBib290aW5nIGFwcGxpY2F0
+aW9ucw0KPiA+PiAoZS5nLiwgVS1Cb290KS4NCj4gPj4NCj4gPj4gV2h5IHNob3VsZCBVLWJvb3Qg
+b3ZlcnJpZGUsIHN5c3RlbSBzdGF0ZSBzaWduYWxzIHN1Y2ggYXMgVVNCIFBXUlJFQURZPyBDYW4g
+eW91IHBsZWFzZSBnaXZlIGFuDQo+IGV4YW1wbGUuDQo+ID4+DQo+ID4+Pg0KPiA+Pj4gVG8gY29u
+Y2x1ZGUsIHRoZXJlIGFyZSAzIHNjZW5hcmlvcyBJIHNlZSB3aGVyZSB0aGVzZSBzaWduYWxzIG5l
+ZWQgdG8NCj4gPj4+IGJlDQo+ID4+PiBoYW5kbGVkOg0KPiA+Pj4gMS8gYm9vdGluZw0KPiA+Pj4g
+Mi8gc3VzcGVuZCB0byBSQU0NCj4gPj4+IDMvIGRyaXZlciB1bmJpbmQvYmluZA0KPiA+Pg0KPiA+
+PiAtLT4gSXQgc2hvdWxkIGJlIE9LIGFzIGxpbnV4IGlzIG5vdCBoYW5kbGluZyBVU0IgUFdSUkVB
+RFkgc2lnbmFsLg0KPiA+Pg0KPiA+Pj4NCj4gPj4+IEluIGNhc2Ugb2YgYm9vdGluZzogaWYgd2Ug
+aGF2ZSBURi1BIHRvIHNldCBzaWduYWxzIHRoZXJlIG1pZ2h0IGJlDQo+ID4+PiBpbnRlcm1lZGlh
+cnkgYm9vdGluZyBhcHBsaWNhdGlvbnMgKGUuZy4gVS1Cb290KSB0aGF0IHNldCB0aGVzZQ0KPiA+
+Pj4gc2lnbmFscyBhbHNvLiBJZiBpdCBsZWF2ZXMgaXQgaW4gaW1wcm9wZXIgc3RhdGUgYW5kIExp
+bnV4IHdhbnRzIHRvDQo+ID4+PiB1c2UgVVNCIHRoZW4gdGhlIFVTQiB3aWxsIG5vdCB3b3JrIChp
+Zg0KPiA+PiBMaW51eCBkb2Vzbid0IGhhbmRsZSBpdCkuDQo+ID4+DQo+ID4+IFRoYXQgaXMgdGhl
+IHByb2JsZW0gb2YgVS1ib290LiBVLWJvb3Qgc2hvdWxkIG5vdCBvdmVycmlkZSBzeXN0ZW0gc3Rh
+dGUgc2lnbmFscyBzdWNoIGFzIFVTQg0KPiBQV1JSRUFEWS4NCj4gPj4NCj4gPj4+DQo+ID4+PiBJ
+biBjYXNlIG9mIHN1c3BlbmQgdG8gUkFNOiBhcyBURi1BIGlzIHRoZSBvbmx5IGFwcGxpY2F0aW9u
+IGluIHRoZQ0KPiA+Pj4gc3VzcGVuZCB0byBSQU0gY2hhaW4sIGl0IHNob3VsZCB3b3JrIGhhbmRs
+aW5nIGl0IGluIFRGLUEuDQo+ID4+DQo+ID4+IFRoYXQgaXMgY29ycmVjdCwgVEYtQSBzaG91bGQg
+aGFuZGxlIGJhc2VkIG9uIHN5c3RlbSBzdGF0ZS4NCj4gPj4NCj4gPj4+DQo+ID4+PiBJbiBjYXNl
+IG9mIHVuYmluZC9iaW5kOiBjdXJyZW50bHkgd2UgZG9uJ3Qga25vdyBpZiB0aGVzZSBzaWduYWxz
+DQo+ID4+PiBpbnRyb2R1Y2VzIGFueSBraW5kIG9mIHBvd2VyIHNhdmluZyBzbyBhc3NlcnRpbmcv
+ZGUtYXNzZXJ0aW5nIHRoZW0NCj4gPj4+IGluIExpbnV4IG1heSBiZSB1c2VmdWwgZnJvbSB0aGlz
+DQo+ID4+IHBlcnNwZWN0aXZlLCBpZiBhbnkuDQo+ID4+DQo+ID4+IFRoZXNlIGFyZSBzeXN0ZW0g
+c2lnbmFscywgYWNjb3JkaW5nIHRvIG1lIHNob3VsZCBub3QgYmUgdXNlZCBpbiB1bmJpbmQvYmlu
+ZC4NCj4gPj4NCj4gPj4gSSBtYXkgYmUgd3JvbmcuDQo+ID4NCj4gPiBKdXN0IHRvIGFkZCB0aGUg
+YmVsb3cgYXJlIHRoZSA0IHN5c3RlbSBzdGF0ZXMgKHBvd2VyIG1vZGUpIGZvciB0aGlzIExTSS4N
+Cj4gPg0KPiA+IElmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIHdlIG5lZWQgdG8gY29uZmlndXJl
+IFVTQiBQV1JSRFkgc2lnbmFsIG9ubHkNCj4gPiB3aGVuIHRoZXJlIGlzIGEgdHJhbnNpdGlvbiBm
+cm9tIEFMTF9PTiB0byBBV08gbW9kZSBhbmQgdmljZSB2ZXJzYS4NCj4gPiBhcyB5b3Ugc2VlIG9u
+IEFXTyBtb2RlIG9ubHkgQ00tMzMgaXMgYWN0aXZlLg0KPiA+DQo+ID4g4oCiIEFMTF9PRkYgbW9k
+ZTogQWxsIENQVXMgYW5kIHBlcmlwaGVyYWwgbW9kdWxlcyBjYW4gbm90IGJlIHdvcmtlZC4NCj4g
+PiDigKIgQUxMX09OIG1vZGU6IEFsbCBDUFVzIGFuZCBwZXJpcGhlcmFsIG1vZHVsZXMgY2FuIGJl
+IHdvcmtlZC4NCj4gPiDigKIgQVdPIG1vZGU6IENvcnRleC1NMzMgYW5kIHBlcmlwaGVyYWwgbW9k
+dWxlcyBpbiBQRF9WQ0MgYW5kIFBEX1ZCQVRUIGRvbWFpbiBjYW4gYmUgd29ya2VkLg0KPiA+IOKA
+oiBWQkFUVCBtb2RlOiBPbmx5IFJUQywgdGFtcGVyIGRldGVjdGlvbiBhbmQgYmFja3VwIHJlZ2lz
+dGVycyBjYW4gYmUgd29ya2VkLg0KPiA+DQo+ID4gU3lzdGVtIG1hbmFnZXIgd2hpY2ggaXMgY29u
+dHJvbGxpbmcgYm90aCBDQS01NSBhbmQgQ00tMzMsIHdpbGwgc2V0IFVTQg0KPiA+IFBXUlJEWSBz
+aWduYWwgYmFzZWQgb24gc3lzdGVtIHN0YXRlLg0KPiA+DQo+ID4gU2luY2Ugd2UgZG9uJ3QgaGF2
+ZSBzeXN0ZW0gbWFuYWdlciBmb3IgY29udHJvbGxpbmcgYm90aCBDQS01NSBhbmQNCj4gPiBDTS0z
+MyBQcm9iYWJseSBmcm9tIENBLTU1IHBlcnNwZWN0aXZlLCBURi1BIHNob3VsZCBiZSBzdWZmaWNp
+ZW50Lg0KPiA+DQo+ID4gRHVyaW5nIGJvb3QgY2xyIFVTQiBQV1IgUkVBRFkgc2lnbmFsIGluIFRG
+LUEuDQo+ID4gU1RSIGNhc2UsIHN1c3BlbmQgc2V0IFVTQiBQV1IgUkVBRFkgc2lnbmFsIGluIFRG
+LUEuDQo+ID4gU1RSIGNhc2UsIHJlc3VtZSBjbHIgVVNCIFBXUiBSRUFEWSBzaWduYWwgaW4gVEYt
+QS4NCj4gDQo+IEFzIEkgc2FpZCBwcmV2aW91c2x5LCBpdCBjYW4gYmUgZG9uZSBpbiBkaWZmZXJl
+bnQgd2F5cy4gTXkgcG9pbnQgd2FzIHRvIGxldCBMaW51eCBzZXQgd2hhdCBpdCBuZWVkcw0KPiBm
+b3IgYWxsIGl0J3MgZGV2aWNlcyB0byB3b3JrLiBJIHRoaW5rIHRoZSB3YXkgdG8gZ28gZm9yd2Fy
+ZCBpcyBhIG1haW50YWluZXIgZGVjaXNpb24uDQoNCg0KSSBhZ3JlZSwgdGhlcmUgY2FuIGJlIG4g
+bnVtYmVyIG9mIHNvbHV0aW9uIGZvciBhIHByb2JsZW0uDQoNClNpbmNlIHlvdSBtb2RlbGxlZCBz
+eXN0ZW0gc3RhdGUgc2lnbmFsIChVU0IgUFdSUkRZKSBhcyByZXNldCBjb250cm9sIHNpZ25hbCwg
+aXQgaXMgcmVzZXQvRFQgbWFpbnRhaW5lcidzIGRlY2lzaW9uDQp0byBzYXkgdGhlIGZpbmFsIHdv
+cmQgd2hldGhlciB0aGlzIHNpZ25hbCBmaXRzIGluIHJlc2V0IHN5c3RlbSBmcmFtZXdvcmsgb3Ig
+bm90Pw0KDQpDaGVlcnMsDQpiaWp1DQo=
 
