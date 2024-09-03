@@ -1,150 +1,138 @@
-Return-Path: <linux-kernel+bounces-313336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9FE96A41B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:20:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E723B96A41E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1ACB28653C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:20:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4BD82849A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C08518BB86;
-	Tue,  3 Sep 2024 16:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B82118BC0F;
+	Tue,  3 Sep 2024 16:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdIVNYcG"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2xDt6aZG"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696F51DFCB;
-	Tue,  3 Sep 2024 16:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BD618BB98
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380413; cv=none; b=P274ovIPIA2m30BGhAYJnLT8Kop4hYL4lWDzoqZ+vZkNRIxbddwmxlOwO3vqlxZslzJ0ibZSwLNFtWk2qsCCRj60yVc/JZ/fkSN1bGFTRy/vNpLx40wmnyEhi5CpPPXXyUVXhZGXnuZzZ1Vj5KBppXw2Jm91Cyj8xR85eJk+0os=
+	t=1725380415; cv=none; b=TibgvG9aLlAwsytlznqTt2dEfT2HNbw6Ju0pmfaN9XerIsAiCVqlOmtM2sqW1uBrsorJAyoL+H9o220SOIKkehS8OOGTw9gfNBjRr1x4UcBzcZPXTPbTMvDUIjg1z3Yq3bG2pyTZvW6p6Q8uj/icjLVPRoJGbs0Sjlaq8jYpaX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380413; c=relaxed/simple;
-	bh=kU60dZi/5tUizJ2hHxOG1Lno1caiHGBgxAEiEnaaI/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5UPLoIqy7r4DLlu7uhIKvvVUj2pLDz53EQW9mH0UHKcVJ4rLvOd90OFASjeoMQUJqUUYQGo8q/yI0QzLgzVD6qgvUanSoZ/KTudw8LvYJ9wele7alhEOMiEAMBtBMyA5R4MJS+f6zMP7MafXo7JwH4mgLR68ZXgMhVax44TvGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AdIVNYcG; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f3f163e379so2534151fa.3;
-        Tue, 03 Sep 2024 09:20:11 -0700 (PDT)
+	s=arc-20240116; t=1725380415; c=relaxed/simple;
+	bh=H74pYIhXSdOFwMm2aJy9P2vz5eCGVW8B8NAt3TGxtpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PyHI3GY3q6tvoy6/ZvHwCnYeGvZnL7NxOaWd8GyZiOKvfbu6M54jsFm8aL2dAclGE6Y7S+idQImpEZWnJg/JIQ+1QsdfMggaUN7UvmiAEsZ5fUW3vtPNTEQO1/LdsF5tUbA7ZsuNhgc9eunwdF0K1JjzKJY4KPUZHuvJFF+wX8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2xDt6aZG; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a86abbd68ffso919407666b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:20:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725380409; x=1725985209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eg+e1TxP/Op9Jw93xjWXFvNAEp6dpRVhx1w8c9CEMg0=;
-        b=AdIVNYcGBaWrg1y/BUbsw17Ib5xbumvcTRs4ivVst15O/fMP+qGNL0cio/DNTDYO3r
-         wYuzmHBD0+mTjw23kJR62UhPH2DBDh20vxP5hU7yqNK96oYCuDOYVg7VdYOLk5OLwWo3
-         XcEnX4YM5r6JPoOBjH6sGOG0WHKW+zmGE+s6scc++VXe88z/kEOV9N+LrbFzbKrXU1nf
-         GCiriX6MyLry+zXkVXGodKHj5baCkeh7xA3i1LBNs6rWBW34RTR6Y+CLcBtWyrz7rURl
-         0V8b4PEBqL/ND1SHMXqOgo7hSkOnMESdrAfLsoXTYOKjw6tLugm1sigx1jkC8/F56omv
-         ngPQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725380412; x=1725985212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H74pYIhXSdOFwMm2aJy9P2vz5eCGVW8B8NAt3TGxtpU=;
+        b=2xDt6aZG6POoEJim/Es6+VfEgvXYihL1Gq00yhUe5jbP9B2k9oKNcLx0fUvobXHXm0
+         qqivlVmZUO0ykDaxLGUHJ7ugtJYkBc4V9+HwXMA+8h2RP4/dm+Fq6eGk1fuKzWGxFlv7
+         PKdnE6B+gE1negs2ZpyQ02qrfMAnkTr64bWFcDPY96D4IMz9blXNmuSQEuIr2lAcf+qr
+         IQQGS2fpisIbonvLwlWZA5VQiPKSOuq731iAfxscJ6AaBuFAzLwIzn0ctNV9uNhqZ7uI
+         VFTTIMcMN/uEvuih0Zz5aMoLH64vyVgTS7LzR3YX+gIHlcpTZ81uuAKiWuVmZG3qACND
+         h7mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725380409; x=1725985209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eg+e1TxP/Op9Jw93xjWXFvNAEp6dpRVhx1w8c9CEMg0=;
-        b=Pj80ZMkNB4/2fJR53euv3oRX86SxIS2gNoleNcz9QvW5/yx2km4pzNPjvNes47AFCF
-         uHZiIcjp8sBhDG+DZrxVJWIeEc5Cie/79I5z2Ke1TWJeMi/68nXnqsGKExsYVhcATgKZ
-         5Xw63jeY+IDuEK8E/p08s0+peElh2zFvYZ76PZoAUTiPP7A3hb7lM4aSDvqvoaUaRFKm
-         U6JrFWB59z9BvXwgD1+8LmEB+WJirr0cH2qoUwvRYnZ2CG0XtEIjXF/cRkME/VzZUOcf
-         gAZs1Hn9bf/xIMamioWrIb74awoCiK4bCPMGxXJlGLsWUfumws6T9Yham5AQjIXAQjlB
-         ZnTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1oyE6uQ3AA5AV5VsXGe38wYZg51ds74ZNgGr/EDVl2ger8X35eVyIPXAo/ys9ZtjldlvM2U/F@vger.kernel.org, AJvYcCX25fA/hA2GDgKvZvqpt/3d7QeDSJ+e9iiWWHJ4LeL5U18KdWsbgvgosJB5HO/t6cDQRs5lvx25Q1+rr/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRKwm2ENi9vD83FWGJsIbCrhZxaHGZ91DjKLsvC314E2hm8T8l
-	WPASrhnXBayxLW7vGXIQSQARr0d0tPZ+3CNVDql5VBhMUKlgXupnQgq71zFv6JERsqcapCDiPH3
-	9rASqAKc76AGyxRrJksGTQtPIzzY=
-X-Google-Smtp-Source: AGHT+IGbuJMzCcU8E6GuXGE3Yw1Wnw7/FaQcsnCRRQVHXCyizIgOX5Kdra1kU41zTbMVeftv64aqZc3t5o/t96RE08M=
-X-Received: by 2002:a05:651c:220e:b0:2f3:e2fd:aae0 with SMTP id
- 38308e7fff4ca-2f6105c4b9cmr163510071fa.6.1725380408920; Tue, 03 Sep 2024
- 09:20:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725380412; x=1725985212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H74pYIhXSdOFwMm2aJy9P2vz5eCGVW8B8NAt3TGxtpU=;
+        b=lPIbuo+rRElXc7yqjn6jsnDTW/EOWZmMIRYB+m/G+5hf4+TBolhiB1HHfqshzwhwV+
+         mhpFdWoklxWbvPO4rWXRLpRcjT6I+iFv9i3yFOScGcKEnJRGkInsJpR+uD+KaCwGKz4t
+         +WzCMaOSn11+bV7h51IMZR08NciEEkgF111aL3dFqRJz8Iz8CONZJ16GUDjtUeYgr6BV
+         fOUbxEhgm6lkBvrFqUO067usg2vMvlIGADq4BLCOiboAdOVXq7aWszLpq/BkOSXMrOIk
+         Os1BaxEh8QXaPon3Oq0TPwM9G3PFVrv8UT7+yLEtJWRNbuNvXuk4kLuF4S8rI6Y4BFLf
+         YaSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdj1HKA5dGCG9lOzLD29rLgtJ/TYCAKQQ7KpoJAJ25H7HKfPiYedwe2tDeQJS2Umrv8cBkgA9lm5hRHTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJwqHCTaw730KCpac5h2HtPhSJou7MenpJ/MuE+uThUZ8CDmoL
+	5+prH7/NKjCwLgPL8VTxUqRPfGNx7ZJxaGJnHCpEMHFb+2WtN1CD6m1jXuaYukQ=
+X-Google-Smtp-Source: AGHT+IEr5QVGgWbiVYfCs11rGjeX6QjZhxJmrTzkAqzKLetbWL3snVsaK/w2xgyZunk5r3yWMEi8Iw==
+X-Received: by 2002:a17:907:7286:b0:a86:beb2:1d6d with SMTP id a640c23a62f3a-a89827a4283mr1958213666b.26.1725380412471;
+        Tue, 03 Sep 2024 09:20:12 -0700 (PDT)
+Received: from localhost (p5dc68f76.dip0.t-ipconnect.de. [93.198.143.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898919670asm708945766b.140.2024.09.03.09.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 09:20:12 -0700 (PDT)
+Date: Tue, 3 Sep 2024 18:20:10 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Liu Ying <victor.liu@nxp.com>, linux-gpio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, xiaoning.wang@nxp.com, 
+	Frank.Li@nxp.com, lee@kernel.org
+Subject: Re: [PATCH] pwm: adp5585: Set OSC_EN bit to 1 when PWM state is
+ enabled
+Message-ID: <tpjuy3wiaxoowyry5r23ubm5veznenrvdzrqcpqp3rid5hjoxh@yiqctlab32le>
+References: <20240826083337.1835405-1-victor.liu@nxp.com>
+ <20240826085049.GA23129@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829154739.16691-1-ubizjak@gmail.com> <Ztc16pw4r3Tf_U7h@calendula>
-In-Reply-To: <Ztc16pw4r3Tf_U7h@calendula>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Tue, 3 Sep 2024 18:19:57 +0200
-Message-ID: <CAFULd4amgCH=h02SSEdxrdazq0A+5wOZgvPmRmn19eb7orSV_g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] netfilter: nf_tables: Fix percpu address space
- issues in nf_tables_api.c
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="orgfecggc6qxpui4"
+Content-Disposition: inline
+In-Reply-To: <20240826085049.GA23129@pendragon.ideasonboard.com>
+
+
+--orgfecggc6qxpui4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 6:14=E2=80=AFPM Pablo Neira Ayuso <pablo@netfilter.o=
-rg> wrote:
->
-> Hi,
->
-> On Thu, Aug 29, 2024 at 05:29:30PM +0200, Uros Bizjak wrote:
-> > Use {ERR_PTR,IS_ERR,PTR_ERR}_PCPU() macros when crossing between generi=
-c
-> > and percpu address spaces and add __percpu annotation to *stats pointer
-> > to fix percpu address space issues.
->
-> IIRC, you submitted patch 1/2 in this series to the mm tree.
+Hello Laurent,
 
-Yes, patch 1/2 is in this series just for convenience.
+On Mon, Aug 26, 2024 at 11:50:49AM +0300, Laurent Pinchart wrote:
+> Thank you for the patch.
+>=20
+> On Mon, Aug 26, 2024 at 04:33:37PM +0800, Liu Ying wrote:
+> > It turns out that OSC_EN bit in GERNERAL_CFG register has to be set to 1
+> > when PWM state is enabled, otherwise PWM signal won't be generated.
+>=20
+> Indeed, this likely got lost during one of the reworks. The apply
+> function correctly clears the bit when disabling PWM, but doesn't set it
+> otherwise.
+>=20
+> > Fixes: e9b503879fd2 ("pwm: adp5585: Add Analog Devices ADP5585 support")
+> > Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>=20
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>=20
+> Uwe, would you be able to queue this for v6.12 ?
 
-> Let us know if this patch gets upstreamed via MM tree (if mm
-> maintainers are fine with it) or maybe MM maintainers prefer an
-> alternative path for this.
+Yes, I just merged Lee's immutable branch into my for-next branch to get
+e9b503879fd2 and applied this patch on top.
 
-The patch is accepted into the MM tree [1].
+Best regards
+Uwe
 
-[1] https://lore.kernel.org/mm-commits/20240820052852.CB380C4AF0B@smtp.kern=
-el.org/
+--orgfecggc6qxpui4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Uros.
+-----BEGIN PGP SIGNATURE-----
 
->
-> Thanks.
->
-> > NOTE: The patch depends on a patch that introduces *_PCPU() macros [1]
-> > that is on the way to mainline through the mm tree. For convience, the
-> > patch is included in this patch series, so CI tester is able to test
-> > the second patch without compile failures.
-> >
-> > [1] https://lore.kernel.org/lkml/20240818210235.33481-1-ubizjak@gmail.c=
-om/
-> >
-> > The netfilter patch obsoletes patch [2].
-> >
-> > [2] https://patchwork.ozlabs.org/project/netfilter-devel/patch/20240806=
-102808.804619-1-ubizjak@gmail.com/
-> >
-> > Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-> > Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Paolo Abeni <pabeni@redhat.com>
-> >
-> > Uros Bizjak (2):
-> >   err.h: Add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_PCPU() macros
-> >   netfilter: nf_tables: Fix percpu address space issues in
-> >     nf_tables_api.c
-> >
-> >  include/linux/err.h           |  9 +++++++++
-> >  net/netfilter/nf_tables_api.c | 16 ++++++++--------
-> >  2 files changed, 17 insertions(+), 8 deletions(-)
-> >
-> > --
-> > 2.42.0
-> >
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbXNzQACgkQj4D7WH0S
+/k7d/wgAkOCSryP0aa2OHiPimr3aQ59Aq7DHTjNLIsOXmVjJwgRlwH1+QWVuAWpL
+1rGSNLnhgeaAARgbXAWnIwcklDUu8Q10slOXg9BSEoY0Ikrz8l0IMuB6TyXPxjEM
+6OcXyZz/kdWRQd4lDVKosPmyimSUjaRFHpCZ/kz5Ms8eWWgsvXEtgPDFKccy34KL
+mbDVVi+5QuZRraizVpUT6E0c17l/+21wnumsrFcl5HCy6bRFUkVqgOqPQoeR3445
+irfbJEmkyOG2dqYjdrJ+hMBbz6/TkKza3ImH1ClXe1q7PYCxOBBUk28D2CBNdJ3z
+AzhHsAzA9XMQvcOPjQSAqD7tG0On3A==
+=RtDb
+-----END PGP SIGNATURE-----
+
+--orgfecggc6qxpui4--
 
