@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-313019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDF2969F17
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD06F969EEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDCF2866AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B7D1F24FE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C561E8472;
-	Tue,  3 Sep 2024 13:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="BEhArPy+"
-Received: from terefe.re (terefe.re [5.255.96.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8D61A726B;
+	Tue,  3 Sep 2024 13:20:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308805684;
-	Tue,  3 Sep 2024 13:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6998A1A7241;
+	Tue,  3 Sep 2024 13:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370335; cv=none; b=VubInlK43bXgNLiITt4kEp5bKr+lkAWHn1o1TNnwCHJ1EtkHLq3VmjvLZczeJ9NsGhaitLJnuFy0f+ZzDJGrv/2BuSAodW8jvyFUGWckiaSoJZXR4xi4FvzdffsP6LDsQjKBMysPaQTL6wc9UKNBofnsw/wkIl/BXRU6YKXUzNw=
+	t=1725369659; cv=none; b=g0HrKS9kfKBTxrh+OPaTDzJJKZBb/Eh33OIQmVMWaEj74TLGY9FF0AzEau/PZg0BM/E5/lM8VrPmouJ7gD2Um5DK+vFi/OSnAvW/jIOMFeZ/yOyxgRs3O1FCWbYuSZ7oDQkqSKyzWsUdNN1lTB2ecdAV87GlR80/Jkz0bWRFzL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370335; c=relaxed/simple;
-	bh=MMjjOmscQiumevRnZT3RgPpiEGiI+t4U1IBVrmUKeCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oAEKcr/Qa9xnzb1gHexXBqwHG4tUvLPjfMMaQi2F+0cLuG0jmek7fphYakSu8wJMQY0PfKwI9q6azlSkUlF1dCcPNZM+fsV1brOOiba8tD52UPYNbwYXX0xgol0YHRnAaNTpEcYcHdw75PRLsWJyDxWUNH6NmCTGjNZZNgpOXMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=BEhArPy+; arc=none smtp.client-ip=5.255.96.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
-Received: from localhost.localdomain (unknown [212.106.161.95])
-	by terefe.re (Postfix) with ESMTPSA id CAA7A200DF;
-	Tue,  3 Sep 2024 15:22:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
-	t=1725369741; bh=MMjjOmscQiumevRnZT3RgPpiEGiI+t4U1IBVrmUKeCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BEhArPy+VtVGdzNZ4kl0FsJvgdbtkMWAnMJUOAduey84uUeKcoJab+53ogm9OdyC/
-	 mW9XLPWdRgm9r4cBhGphT4wW+16te9nzSY537hG7OpG/i6IS+yYtWH4WsWYGxWsG8Y
-	 IfqcdzEk1zuziRco5qUCUtWarKHAhKXvSZn9IYH62+AasPGMrOPImzqBDWKHjv135A
-	 341ZMxdcMg5kRQ8fHoHuVWWscvcLk3d8pNq6KeeTKtciwVu1/wJEzzT2lhP8+0o+4Q
-	 sLIMLnMv17JhchiQ5SZWS/daHy0cRQqrtFPddHNql3uD2vL4ewlOxOXnimbMkzsFeS
-	 brRpcaT5Ao2JA==
-From: Tomasz Maciej Nowak <tmn505@terefe.re>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	linux-mm@kvack.org,
-	Tomasz Maciej Nowak <tmn505@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] arm64: tegra: p2180: Add mandatory compatible for WiFi node
-Date: Tue,  3 Sep 2024 15:21:48 +0200
-Message-ID: <20240903132200.3350-1-tmn505@terefe.re>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <202409030438.8tumAnp1-lkp@intel.com>
-References: <202409030438.8tumAnp1-lkp@intel.com>
+	s=arc-20240116; t=1725369659; c=relaxed/simple;
+	bh=E9esfCmEIzf9ByeRji9mirDZcedtac57Ki466691NyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UQDyuHyYtsJXyM73N6sHIApBkapTGXXignva0B5HxxeF1L2sbiG8pje2avrdNilAUFRSIJrZOzG9d0WDU9AeaakY4kFBnooVQKRAqj3iMxC3IDkaCk0/63WiGSnSnjErDdIG08cZ/Aa9iRook78URIdTQtxAWtOfGZP+Eqdcgsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC969C4CEC4;
+	Tue,  3 Sep 2024 13:20:56 +0000 (UTC)
+Date: Tue, 3 Sep 2024 09:21:54 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Sean Anderson <sean.anderson@linux.dev>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dma: Trace API
+Message-ID: <20240903092154.5f0bfafe@gandalf.local.home>
+In-Reply-To: <20240903072512.GA1521@lst.de>
+References: <20240826203240.2234615-1-sean.anderson@linux.dev>
+	<20240829041912.GB4408@lst.de>
+	<4c2c6b24-aee1-495f-ab47-662e1e818f4b@linux.dev>
+	<20240903072512.GA1521@lst.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Tomasz Maciej Nowak <tmn505@gmail.com>
+On Tue, 3 Sep 2024 09:25:12 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
-The dtschema requires to specify common ancestor which all SDIO chips are
-derived from, so add accordingly.
+> On Thu, Aug 29, 2024 at 10:24:52AM -0400, Sean Anderson wrote:
+> > >> When debugging drivers, it can often be useful to trace when memory gets
+> > >> (un)mapped for DMA (and can be accessed by the device). Add some
+> > >> tracepoints for this purpose.
+> > >> 
+> > >> We use unsigned long long instead of phys_addr_t and dma_addr_t (and
+> > >> similarly %llx instead of %pa) because libtraceevent can't handle
 
-Fixes: a50d5dcd2815 ("arm64: tegra: Wire up WiFi on Jetson TX1 module")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409030438.8tumAnp1-lkp@intel.com
-Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think the issue is that libtraceevent doesn't handle "%pa", which I can
+fix.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index c00db75e3910..1c53ccc5e3cb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -351,7 +351,7 @@ mmc@700b0200 {
- 		#size-cells = <0>;
- 
- 		wifi@1 {
--			compatible = "brcm,bcm4354-fmac";
-+			compatible = "brcm,bcm4354-fmac", "brcm,bcm4329-fmac";
- 			reg = <1>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(H, 2) IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.46.0
+> > >> typedefs.  
+> > > 
+> > > and a __u64 would seem like the better type here.  
+> > 
+> > libtraceevent can't handle typedefs, including u64.  
+> 
+> Weird.  The xfs trace events which were some of the first ever are full
+> of typedefs and no one ever complained.  And looking at other
+> trace event definitions they are full of it.
+> 
+> I've added the tracing maintainers to see if we can shed some light
+> on this issue.
 
+libtraceevent doesn't even really bother with the types. It gets its
+information from the other fields.
+
+For example:
+
+ events/x86_fpu/x86_fpu_after_restore/format:	field:u64 xfeatures;	offset:24;	size:8;	signed:0;
+
+
+The "field:u64" is more for humans than the tools. And it can be used for
+hints when the printfmt fails to parse. But the libtraceevent really looks
+at the "offset", "size" and "signed" to know how to use that number.
+
+-- Steve
 
