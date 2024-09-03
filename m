@@ -1,230 +1,180 @@
-Return-Path: <linux-kernel+bounces-312195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0EE969361
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:58:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB0B969365
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F2FB2379D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF5031C2289C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8047F1CEAD1;
-	Tue,  3 Sep 2024 05:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D55C1CEAB2;
+	Tue,  3 Sep 2024 06:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="vg6/7YIC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QYN2FeIg"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E45c19Bc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983651CE6ED;
-	Tue,  3 Sep 2024 05:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DA41A262A;
+	Tue,  3 Sep 2024 06:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725343084; cv=none; b=thFxQBWPIwzph1EsjKuYrWiwosgJe1Py+DfpSTnAQxuyzgW1YJnATJkyeLBhOe1eVqS+PEL9kPJyw3eTv4Z4cHlvOnB0XvODh0DkLXcyssUn9PCjvDrVY+hprQA86nB3ctgCVVeGmJDJg/asMBbcZOJvb/6kf3mPlrbG1FkjwZo=
+	t=1725343355; cv=none; b=Kg3tPrPYRsJvO+w1nnS4EVgm7ud5I0VfbeFnX3FMyPzPF6z3m/Z4faL5axRoYAxr7mB12CGEaH1mebiEKHzvxjOzax57jPFmwXevUgiqh2xgJClJvn6Q7IBTyKsdVKOa68+Pr/FtchFVfyYjAs7Yd5QcA2qipjum6iuoyTFsT8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725343084; c=relaxed/simple;
-	bh=ORxlrybr0miEKGUNReRTbzJyZOz1c7Aa8Ya/cInZS1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISmUjMUnavlq7OFWFC6K9UwgEHMJQVtaaSku/nTvvvDNP97CGwu6zDVy+D/koodJBccz0WVx4NXtdS2eM9dzeVMCTfK0SCdxWrK/4iCAKxO2W+R0zfzgOLHsCO0FXSH2uaTxiTyIEQsw1X/UjoWYeqDFJaJngjNUxGe+sp4/CRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=vg6/7YIC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QYN2FeIg; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-07.internal (phl-compute-07.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id A6846138030D;
-	Tue,  3 Sep 2024 01:58:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 03 Sep 2024 01:58:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1725343081; x=1725429481; bh=uXeKgWb/Nb
-	mdrKy6APCtXUQCm+rImJ9sCZU2y2bBhlU=; b=vg6/7YICBZHR9f3szRFh/cQig/
-	DNaY1aZ5JmhDIIx4KCDfhcLfPpWtP39TITjfCfKLOtSQF5KYXkAE2XuoyT9iC728
-	YtxI9UsdAGCnWpf+SVwfE8KlL8yY9uhio8RNfwQaIoE5ZJO6H2uSsYbhNqVUKnx0
-	9SHQz3oQKzbee4Aixv9RRPmOmxvfLG6mX/5UJnEITwK4Pys2/Q9aRaFL8w9G3OWO
-	3DhupZBSXzRpVgZ7V+cvewVwjGINTrSHxFCi4KrLDGJnRSJqjlpj2B9En/Vlc691
-	Gz8IoS5s0enxrSnfD4a2+SnBbPnntKAqQ0zj2jk7R091tQDfvDlzI6fy+psg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1725343081; x=1725429481; bh=uXeKgWb/NbmdrKy6APCtXUQCm+rI
-	mJ9sCZU2y2bBhlU=; b=QYN2FeIgrnp8fXXVsqgtqSdld5SwhaC0eQ7YDC0dNJIT
-	qJkbk1Y1eCYz66vhk0wKUseKlSDrSd76aj2zY28N4F9Z0OxTiLYGSDM2QB1MIhTF
-	CnVWWoCSeIUhcdKUAtE/CXB3RtxMCe1X8e1jUVAeZMRtSiR9eto/6rYVW9fzakc5
-	c5XgphBVPUXurLHzrjYPS+3Z1zZPPuWQEN3791JW1olsglwBuZ+sf95TjsdM6L+V
-	RUNYkhYW95mIDWMRJfK0KhUYU+mwcbLuHBvCWZEZ75vX4h/DmVHw3DRsLXUyunEF
-	Q3xLPICYm1UDSs3NZ9sp7CoZCycEhXE+pQsg0C1ldQ==
-X-ME-Sender: <xms:aaXWZvO2Kjs83oBigi6qXamK4OdhS7wlDQfD62GgooZm6kZlGrI33g>
-    <xme:aaXWZp9TiDv8Nu9Yk8hlDduQlWtpNJCmwf8_8kys0JKyB-kNQgNucCBx_gKj40pKm
-    aiVNuMESsWh7tjMYqM>
-X-ME-Received: <xmr:aaXWZuTMIMSn9--GEHnBrdxne9BvADl9Bevj4zH9m3MGxjXKVL5pT3DVGXRiwCVSt4daoQR0EpQ4Y-y4XiFuwTwUvGYbch5qJbtW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgedguddthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrh
-    gvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepkedvkeegheefjefgvddu
-    fffhveehjeffvefgiefgkefhudeifedugfetudfgtefgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseif
-    hhhoqdhtrdhnvghtpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhi
-    khhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhisegvnhgurhhifhhtrdgtoh
-    hmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptgho
-    rhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshht
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghpfhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:aaXWZjuBH9kiJCw0mc01PZhbRpTKUT6aNshhONPnQhJQ3mPn9EcWyQ>
-    <xmx:aaXWZnfMLEm0JzETI8SVFn9VGpEHAWj80Lz_Hxz3nCvYgLbUuOty0A>
-    <xmx:aaXWZv2UYJhCGfPlpzDkXF_RJTV102N5Nky9SGhLTggShHPjAI4Egw>
-    <xmx:aaXWZj9P1NhHHekCkf6heJrlO3VGD9ioaP_bEcTcYsNxIZtr-12S-g>
-    <xmx:aaXWZoVqS8ReMzE7Ij44VaqquyuzicGTLylgFfxoIjLXMAheXr8wSJtp>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Sep 2024 01:57:58 -0400 (EDT)
-Date: Tue, 3 Sep 2024 15:57:45 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Vicki Pfau <vi@endrift.com>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH HID 6/7] HID: bpf: Allow to control the connect mask of
- hid-generic from BPF
-Message-ID: <20240903055745.GB968953@quokka>
-References: <20240903-hid-bpf-hid-generic-v1-0-9511a565b2da@kernel.org>
- <20240903-hid-bpf-hid-generic-v1-6-9511a565b2da@kernel.org>
+	s=arc-20240116; t=1725343355; c=relaxed/simple;
+	bh=c7OwncET3S07TVYEQkYbUn8vyBJnFAyeX3HWzwxSyVM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=duTLT+yTDPqxe3A/5+BOvU43WNwbYtW4TgGt8OIKJUMpHBMDsVvJEahFlQWEUaIkJd+JfN0B3BScqEIBu1fRqtCDEmd3y8h5oAhH4vFnTD3nQ585TlDvUVBsg5FyK33CCRgkDdrB+SWuwA4XefT8ymHjydJBgikvjWGZPRG61mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E45c19Bc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4830UGA7003593;
+	Tue, 3 Sep 2024 06:02:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CtBhF/Jutccylq0sCgsOfv
+	DcS65LLQXCeQhKyWudZPw=; b=E45c19BcK+emxYsCUltZ1nxXMHrqfDw+y/Q1GZ
+	D9DU27fC7vJNGAaJoBeKVYRSEFdmRFdMIWTibYbMQckuUsj/t4+MFvqK8gngp6sh
+	QJNGtsMbYJ/xCQWz+qDEpcSQWYs2MqX5gjcDOgrBz2Dg3N/3gga3iZi8Ktmgsq0H
+	A3KW68m74i/RujKfQ5eqx/VMKtJJn69jCzcxgeGiiXswDWBBW649PGfEnj65Jx09
+	Kt7qaZBIV25Tl97sOPS6pwgu9mefHz6Qklvt+aMNgChZnqYgcCyV3Ro9tfCGlERR
+	umLAxEOovp7cyF3BTdL/8k+vPHUY+AnqcOakqCnw0NTgnNmg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxf64nt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 06:02:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48362K9p011026
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 06:02:20 GMT
+Received: from hu-rjendra-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Sep 2024 23:02:16 -0700
+From: Rajendra Nayak <quic_rjendra@quicinc.com>
+To: <manivannan.sadhasivam@linaro.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+        <mchehab@kernel.org>, <rric@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <quic_sibis@quicinc.com>,
+        <abel.vesa@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: [PATCH] EDAC/qcom: Make irq configuration optional
+Date: Tue, 3 Sep 2024 11:31:38 +0530
+Message-ID: <20240903060138.3191160-1-quic_rjendra@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903-hid-bpf-hid-generic-v1-6-9511a565b2da@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w7gKmULcMuxrDkMWLrx3shRvXv6WvPSy
+X-Proofpoint-ORIG-GUID: w7gKmULcMuxrDkMWLrx3shRvXv6WvPSy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ adultscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409030046
 
-On Tue, Sep 03, 2024 at 01:14:36AM +0900, Benjamin Tissoires wrote:
-> We make struct hid_device_id writeable and use the .driver_data field
-> of hid-generic as the connect mask.
+On most modern qualcomm SoCs, the configuration necessary to enable the
+Tag/Data RAM realted irqs being propagated to the SoC irq controller is
+already done in firmware (in DSF or 'DDR System Firmware')
 
-I think this needs to be spelled out a bit more: for this to work the
-driver *must* be hid-generic, otherwise this doesn't work. But I'm a bit
-confused why we have a custom fields for force/ignore driver but 
-whether the device is connected (and thus uses the driver) is hidden in
-an effectively undocumented private field of one specific driver.
+On some like the x1e80100, these registers aren't even accesible to the
+kernel causing a crash when edac device is probed.
 
-Wouldn't it be easier to add another boolean (or enum entry, see my
-other comment) to hid_bpf_driver? This way *how* it happens is hidden
-from the API as well - you say "hidraw only please" and the kernel does
-the rest (through hid-generic or otherwise).
+Hence, make the irq configuration optional in the driver and mark x1e80100
+as the SoC on which this should be avoided.
 
-Cheers,
-  Peter
+Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+Reported-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+---
+ drivers/edac/qcom_edac.c           | 8 +++++---
+ drivers/soc/qcom/llcc-qcom.c       | 3 +++
+ include/linux/soc/qcom/llcc-qcom.h | 2 ++
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-> 
-> This way, we can control from a HID-BPF program if a device needs to
-> be exported through hidraw and/or hid-input mainly.
-> 
-> This is useful in case we want to have a third party program that directly
-> talks to the hidraw node and we don't want regular input events to be
-> emitted. This third party program can load a BPF program that instructs
-> hid-generic to rebind on the device with hidraw only and then open the
-> hidraw node itself.
-> 
-> When the application is closed, the BPF program is unloaded and the normal
-> driver takes back the control of the device.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
->  drivers/hid/bpf/hid_bpf_struct_ops.c |  1 +
->  drivers/hid/hid-core.c               | 14 ++++++++------
->  drivers/hid/hid-generic.c            |  5 +++--
->  3 files changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
-> index 1e13a22f73a1..bb755edd02f0 100644
-> --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
-> +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-> @@ -80,6 +80,7 @@ static int hid_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
->  		WRITE_RANGE(hid_device, name, true),
->  		WRITE_RANGE(hid_device, uniq, true),
->  		WRITE_RANGE(hid_device, phys, true),
-> +		WRITE_RANGE(hid_device_id, driver_data, false),
->  		WRITE_RANGE(hid_bpf_driver, force_driver, false),
->  		WRITE_RANGE(hid_bpf_driver, ignore_driver, false),
->  	};
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 7845f0a789ec..2bd279b23aa4 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -2637,15 +2637,17 @@ EXPORT_SYMBOL_GPL(hid_compare_device_paths);
->  
->  static bool hid_check_device_match(struct hid_device *hdev,
->  				   struct hid_driver *hdrv,
-> -				   const struct hid_device_id **id)
-> +				   struct hid_device_id *id)
->  {
-> +	const struct hid_device_id *_id = hid_match_device(hdev, hdrv);
->  	int ret;
->  
-> -	*id = hid_match_device(hdev, hdrv);
-> -	if (!*id)
-> +	if (!_id)
->  		return false;
->  
-> -	ret = call_hid_bpf_driver_probe(hdev, hdrv, *id);
-> +	memcpy(id, _id, sizeof(*id));
-> +
-> +	ret = call_hid_bpf_driver_probe(hdev, hdrv, id);
->  	if (ret)
->  		return ret > 0;
->  
-> @@ -2662,7 +2664,7 @@ static bool hid_check_device_match(struct hid_device *hdev,
->  
->  static int __hid_device_probe(struct hid_device *hdev, struct hid_driver *hdrv)
->  {
-> -	const struct hid_device_id *id;
-> +	struct hid_device_id id;
->  	int ret;
->  
->  	if (!hid_check_device_match(hdev, hdrv, &id))
-> @@ -2677,7 +2679,7 @@ static int __hid_device_probe(struct hid_device *hdev, struct hid_driver *hdrv)
->  	hdev->driver = hdrv;
->  
->  	if (hdrv->probe) {
-> -		ret = hdrv->probe(hdev, id);
-> +		ret = hdrv->probe(hdev, &id);
->  	} else { /* default probe */
->  		ret = hid_open_report(hdev);
->  		if (!ret)
-> diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
-> index f9db991d3c5a..5cd1f3a79a4b 100644
-> --- a/drivers/hid/hid-generic.c
-> +++ b/drivers/hid/hid-generic.c
-> @@ -64,11 +64,12 @@ static int hid_generic_probe(struct hid_device *hdev,
->  	if (ret)
->  		return ret;
->  
-> -	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-> +	return hid_hw_start(hdev, id->driver_data);
->  }
->  
->  static const struct hid_device_id hid_table[] = {
-> -	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
-> +	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID),
-> +		.driver_data = HID_CONNECT_DEFAULT },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(hid, hid_table);
-> 
-> -- 
-> 2.46.0
-> 
+diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+index d3cd4cc54ace..96611ca09ac5 100644
+--- a/drivers/edac/qcom_edac.c
++++ b/drivers/edac/qcom_edac.c
+@@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
+ 	int ecc_irq;
+ 	int rc;
+ 
+-	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+-	if (rc)
+-		return rc;
++	if (!llcc_driv_data->ecc_irq_configured) {
++		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
++		if (rc)
++			return rc;
++	}
+ 
+ 	/* Allocate edac control info */
+ 	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index 8fa4ffd3a9b5..b1c0ae9991d6 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -139,6 +139,7 @@ struct qcom_llcc_config {
+ 	int size;
+ 	bool need_llcc_cfg;
+ 	bool no_edac;
++	bool irq_configured;
+ };
+ 
+ struct qcom_sct_config {
+@@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+ 		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
++		.irq_configured = true,
+ 	},
+ };
+ 
+@@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+ 	drv_data->cfg = llcc_cfg;
+ 	drv_data->cfg_size = sz;
+ 	drv_data->edac_reg_offset = cfg->edac_reg_offset;
++	drv_data->ecc_irq_configured = cfg->irq_configured;
+ 	mutex_init(&drv_data->lock);
+ 	platform_set_drvdata(pdev, drv_data);
+ 
+diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+index 9e9f528b1370..acad1f4cf854 100644
+--- a/include/linux/soc/qcom/llcc-qcom.h
++++ b/include/linux/soc/qcom/llcc-qcom.h
+@@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
+  * @num_banks: Number of llcc banks
+  * @bitmap: Bit map to track the active slice ids
+  * @ecc_irq: interrupt for llcc cache error detection and reporting
++ * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
+  * @version: Indicates the LLCC version
+  */
+ struct llcc_drv_data {
+@@ -139,6 +140,7 @@ struct llcc_drv_data {
+ 	u32 num_banks;
+ 	unsigned long *bitmap;
+ 	int ecc_irq;
++	bool ecc_irq_configured;
+ 	u32 version;
+ };
+ 
+-- 
+2.34.1
+
 
