@@ -1,313 +1,198 @@
-Return-Path: <linux-kernel+bounces-313885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B9E96ABCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B279A96ABDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177A01F24ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6972B285B1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E81A1DA600;
-	Tue,  3 Sep 2024 22:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6021D54E4;
+	Tue,  3 Sep 2024 22:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5zotwSH"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixcf00Dk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5881DA2E1;
-	Tue,  3 Sep 2024 22:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401316; cv=none; b=f/8qGfpYAecXWuTjynjL+FtXk5U5VvmMhp7rg+cPQ3Wjb0qinOn0p7XUoHlk84oKKLMf4XrvhgctQN/ICRvlwN2VXHUzJHkMUx25Neu8op+Pl8QYEWHEljYzKAidRhpCATmgo4MfZdU12XCHSz0FqqB6w6n9+LSXta0Nk4N6heo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401316; c=relaxed/simple;
-	bh=WJvWFGlKBfr1UFCnZDHbjycRp7LWitNkxwg5KciGAWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cKfc/Qabg069J9cGrXDZu9AftP9+0zq43Hd6n1as+Wb2PRzCFnQfwn64HWNuyqArnza83Q9nFQ2U6aEvfj0sdAopsBRD83sCVix0R7vBxOeFGhZK8+B5cGdWrnnTMnSQxXRmXitQJEGLEJStOuPcj7KnO8EKl03d3GBnAk2mUS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5zotwSH; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4090400a91.2;
-        Tue, 03 Sep 2024 15:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725401314; x=1726006114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=05+oB0bcf+Hu9+RUtMLlTIM2Mu/BEj3LxW6llWiweaw=;
-        b=C5zotwSHtTfmYCS+1gENouP/6OSFCi8kkCEfrsAlO+2/zyjMgF7iUKuflMuBkJ6+KP
-         8OeUoDTc0aWJPiuHT9+I5Z4Lc6taAAzF6FW03OfgZDFMZVWQa5EDSHEqCGcNyE0+kM3D
-         PvwpN42Mp2v1IeaZ4XiBKvloqpa8u8uil2GsQRYXPn7fyG8KALjPvDsVByUnO0tr+CGA
-         JFjSudA1TyLlE/cibcF+dwLLuunCcmiJqwGMmLluDcpkNhDZVLfDRsyMSd3ixML69VUE
-         yEU0d8AQJqhunWV7exejSwWaIZ1oXS7SByV6vtFDnQYKlg64L6+0XwXAmB5J2Eztsw8I
-         hdWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725401314; x=1726006114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=05+oB0bcf+Hu9+RUtMLlTIM2Mu/BEj3LxW6llWiweaw=;
-        b=bcwvhWCeprz7apLc53rqo25riL3PrUthntDqM9jy35xE7nQeOhUPeS/cmRHMckZtK8
-         yBoCK427RDkBiRCEiJ790+3KnyHyzNpKJdzCmVQjQD3CWkLsyZryXyD6hLQxtx1hz2YG
-         1sez/5wJZTS/0ZlCCdKFZZRVwEDG6Ra85OwAU5VtwuYWqO7XK7vgfi1yIMr5efPz7hg4
-         FPHbYp5ZX7hILCFFahJ4/mzSYPVsJGrGLMYh0u29OJwZUe6e9oT+LwN3CwASgC4Wsfm6
-         ouPcI/WdtO9eKgEwLM7VMlaqSjDCKpl4B2y8HM4rTnmBeN59Vp3E9SRfszRIYjz1QmB0
-         ZFDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+IG+qRDVw0LnwHm8tgPJPNsrq/zWRfPHlUh2xNe5Or9ugS7dM5fggs4ty7X4nGq0oBtE=@vger.kernel.org, AJvYcCVnvAI0crcXDuIGGmoAmc3lZtro05Vb+tQbDirsnt6QWc0nqlG0CPlCcTzCQmzHIxgLO3FkP+tjXMA/oP/P@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ka8p/GooxQkGf1KksoT8g7FnxcNRNPpJ2TdQ+yyc91/IOhKM
-	8MK7oKdjZlgmrkmsrX/KKqL9eDRuecZPj2oSeYZ7/lQ7JnwgfTzVaCUeiA3hypytPuyLIZGZHKi
-	ICVOwKM3oyHV5wlN+sot6OqwPcBoY5xg6
-X-Google-Smtp-Source: AGHT+IGvZoUtmLtLglqrbGXzcQ2X93GVrFFInJCAwPUq9a9ZToo0X5iXfW2raXz9m33c02yJx7iDMTumqNT2zhroDmc=
-X-Received: by 2002:a17:90b:274e:b0:2d3:cb16:c8e with SMTP id
- 98e67ed59e1d1-2d85649e92cmr19669581a91.43.1725401313781; Tue, 03 Sep 2024
- 15:08:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4261DA2EE;
+	Tue,  3 Sep 2024 22:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725401361; cv=fail; b=CrE0siqJUwaClnBOsUTctBIj7CDinRleZbwMVnKGRE/9XjiBJ7d4hGMo3pfGrCxtHTz2mYiDcA9hfQoWejCVMAD3keYtuihuuZJt115OaOCsnUQyPZ+6upo3vLoP8/20Ce8d8mmWHiBEiCWzTB4Z/BT9wXganB50fsiK/fTO0S0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725401361; c=relaxed/simple;
+	bh=mBMh3Rgp4fx7V7biLGf+72oSM6HMTD3LqYU01szGe+8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=phfLZlI4wW+mxEUT9L5irf2o1Z7nVNdneU58ep72vEgenaWAtqOaJM7wJk3O/WZ/ZxI3Fpg0QREYR1Xh9krK+nBIHOSkitG+e18qDEfDOfUEUoVFUv0oMC425v8zeBN6cI/xHWHhQHDiDdZ1Jo8jdvthF686SRxaNfmxQW7z9g8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixcf00Dk; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725401360; x=1756937360;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mBMh3Rgp4fx7V7biLGf+72oSM6HMTD3LqYU01szGe+8=;
+  b=ixcf00DkXBU8cDyFfKULYModxbIa+rmKX3jYAgDrmtycLTrbxsVISY5w
+   W+yQgKPh1k4rXMzl9+hxmiOdX1fcBPgarjtkyS5tuug5CAURJfzOm9fP4
+   fKKevEjMcX7j4eGNaJvPlaUH/nSRsZuAlWnTgs5dFZUK2aD2k7027Zs2f
+   2XIiGomyeIsyEcq1dpKjbavPQeg8BYse7hHIdyq0uKRKMr1CESfrChWd/
+   pyeWcyE6dp9CDyidL3k2hf5J1Jw2mHkupoIVkUm6ZoVjFzTRAIaXVzRkE
+   y17CxCGY8ynQQYiHPJkzzBcpRISHLYXXFHH9iLSZYYPUWzE/OTxjQx2am
+   g==;
+X-CSE-ConnectionGUID: ysGR9ns0SaSCsE0y2ISmCg==
+X-CSE-MsgGUID: /UJxpCSHQGeljQbSrN530w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35186541"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="35186541"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 15:09:18 -0700
+X-CSE-ConnectionGUID: NJ3KviFjR3ih/VZHbYC7ww==
+X-CSE-MsgGUID: o8q5JL1zShCS3fu6ExREBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65561781"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Sep 2024 15:09:18 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 15:09:17 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 3 Sep 2024 15:09:17 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.46) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 15:09:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rhelXSuN16U/8gJuCBq7xtRsJFBcpY/6U4+1uwbnKB0y098tIu/hdbCh+4btSkisP9Pw0LU37mnk9ij/vf2GeA/ms8W7K8eQNlVMJq1sWZSnFHGjZhxyG+cxeeEhCcamdiUtctCZr83+Po0k87Vc6L3UysWHTkp0yLOgPAgF4buFCEK7lBQtLregNjCSwAqXPGrcjLOp2iX9mgYkuQ8tLbWULMH0fIBj8L/4tNBccXOrnzw9YI4hsPdIUR8hyxV9qd14Our84FcE7AwMxdRQcM0bONVrzISqx59xHtw6psJ3SduTcx6YI1MxxSwvlUtXEbhvZhlTlFrSu5hHm59Sqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hNdy+ynbXbsNEiyXM33h4aGPSZLCDxmHucMdlYmxqsY=;
+ b=Aag22CuYYwsf41bS5Rv2zckMJpWWDLLJXAXRwfXizAteUXf2MKhQyUT3ucraS2UwF9x18/XL3eFV39u+0atMr0vXhRlpgK6pIUCokzSukQvOP9pvJtU6Vh1fkbUCPsG7ciXxvj+1wWmX5NetiRzMhgiOdvrgKtaCACO4sjpcBZY3RNW+pAJMhbV6zFdKUP1+l/Eq2DfsYwebsG+iK27OQ3j3sD0Uc2ToxJ/oTNSC5wGK0OzHg1e2hA/ezexP1Xsi7i2Zr37c7xOU3ncYuKOPOiDyF/YSbTRpXrAercpNOoo/YaJJWg0mx9NYNgC+jrOWJHGPwXQgAnTegGHtvwGPSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by MN0PR11MB5962.namprd11.prod.outlook.com (2603:10b6:208:371::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 22:09:15 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 22:09:14 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab
+	<mchehab+samsung@kernel.org>, Borislav Petkov <bp@alien8.de>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+Subject: RE: linux-next: Signed-off-by missing for commit in the edac tree
+Thread-Topic: linux-next: Signed-off-by missing for commit in the edac tree
+Thread-Index: AQHa/kz76YZ4Hy0EK0GXXgRXdBr65rJGnu5g
+Date: Tue, 3 Sep 2024 22:09:14 +0000
+Message-ID: <SJ1PR11MB60833DD539A2191E72F1202BFC932@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240904080201.407ada9b@canb.auug.org.au>
+In-Reply-To: <20240904080201.407ada9b@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|MN0PR11MB5962:EE_
+x-ms-office365-filtering-correlation-id: acaa8433-8c59-4d2d-2228-08dccc650c10
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?NZuvMwyo81BtbYcQ/1HPi8TbapWAb5bNuT3Igecy58lp+xu4+dlu9QC8svv0?=
+ =?us-ascii?Q?VYEBzqH4Zkf3xdPCagOkRUE0v+VT/YpExiMy6jkO1LR9I/kpEZW91HEDFB2I?=
+ =?us-ascii?Q?jkLmLEnwGF1GCNzVJfch2Lq6OepP8na85Mhy2LWuBUcxuYQJQD3DN8o7o2qv?=
+ =?us-ascii?Q?qBst/kP/h1MwWWgmHUVDXpObrwoG8D4h812qFBzIUkcaBe5ezjcQqiYFpz7R?=
+ =?us-ascii?Q?0Qn2SWmIgB+KDyI70FHwPzO/daGakOv8Php1sDXyhMOTxkVqaMBO1tOz8LvK?=
+ =?us-ascii?Q?G/qfDpGX4qoP78/feaCvHmOaS6Z86gsrtldocYn1PLVb9PgSA397N73ur/sy?=
+ =?us-ascii?Q?QjCBrmnUMOq1oxBDGaykuPQxipXjeBNGIFNt9vYnjEpMihA6k+C69EKa7KBU?=
+ =?us-ascii?Q?3cX6sD42AJUSkD73x32hljDihPmgBRnvmoGsKNKIlXp6Fo+Gp5hq7IWm7Dha?=
+ =?us-ascii?Q?P80Muqk44lkrxZ5mxp2ZBadoKw6jAQq/aoJCfjXICARXkdkU41NS3diilBvJ?=
+ =?us-ascii?Q?DOXDYBlLSL4lRaJkxvLdsyMyQ8kogB2OR0H7kAJuC3v2Whkxw+u54NPUpVve?=
+ =?us-ascii?Q?yaOGzy90tg1aYKZ6g1BZZ5bVkpTCpuvy7bcGKyZ1Zto8KsGSO7+r/luu9xTP?=
+ =?us-ascii?Q?l9tvTC39y9QpgmSRrw/jvXylAgGVI3r1Emg4D+iIO/8PIAEqGAoVkilv7vY9?=
+ =?us-ascii?Q?YsNIu4qosScNopu/0E9kL/1Z+yZRW+6R6zirkH2W7cagKYmprAK0tVeZE7hN?=
+ =?us-ascii?Q?Gf6UyNTBuwDdTEz6JwBsZ6PZqloyahx6JdJq1b7oebfAQEZP2Yk/i0ICw8y6?=
+ =?us-ascii?Q?QYNZI1sXP/D+jC/BOg51lQViClTAhiJDWJb7ASwYtGilg+z1DTrl4tcw49CT?=
+ =?us-ascii?Q?xaUdxyEBifCH1bJUTY9a+A7Ra+gFZdfQhpuX5D/kFXxH/VJgjaCK13E+qDtF?=
+ =?us-ascii?Q?W68QgsTiyzU08VboUcMo0y4vxCm8wLTpHydfcafBQi/8AtQNMEjOuorkwdZv?=
+ =?us-ascii?Q?2xJjR0pQ+iYnsN0NeSqP/HjmZEBU+TK6m1Z+ft0jnGndYcr0nOKMrLz5/ff3?=
+ =?us-ascii?Q?fNY7y0hsEEmDsD+L0Ynv4Buw1pQ5AymoUSmZnuyxYDJai38R83sSN3K8KoXP?=
+ =?us-ascii?Q?yFE2e0g7o5WXqJg7Lhztvv6gUJrY4bQQAv3eluL1+4ibwS2PIrWfpopVQoox?=
+ =?us-ascii?Q?g5VIzMQlixyjW5DzTcz0rcaxs9q/SZkrKaTXVnxjc5kNuAsvQVUAL/nIHesC?=
+ =?us-ascii?Q?yvMqtZT1cZLerzOD4Y+UZUY6+aTxRfwX1TE3lBN7/DypMQTSVDeWQQBFsx1n?=
+ =?us-ascii?Q?QJ9UoPxJqyg4szhgb/6upgGMzKKdD5Jk5x1zt/TV+7S3KzxfrffCMBfSABxq?=
+ =?us-ascii?Q?adjuOX7urA5H6z/Lt745WCultvfgZ9zmW3/wubzBdviwx7gVxg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RgOhlAObPmZpWCXfN4Y2/NkH3YxsVi3wUZyU2ABTMveHvzZ9v0VlHCq+ggRe?=
+ =?us-ascii?Q?UPp7JH8wc6OXQRFdWUDchEeHICOdMZx37D9Nk2SHzt8No1gp4mX04fJ72RVP?=
+ =?us-ascii?Q?I6OhFUKNSeM191Tw1VVExOCEtV7oGpGdzcBKcRVWMiDkYUsEyjSrlKphzMMN?=
+ =?us-ascii?Q?YCuE15CuE2kYDZFhybLZ7mxwmWiSXheRczy9NeYr6ReT9UECyjqzB0N8kPbc?=
+ =?us-ascii?Q?8G0/X3tc/o3B3aAYglWinJsmteuEBhEY6rs4IsIjouHZUorenT5JXhs1ST7+?=
+ =?us-ascii?Q?NNNvmmQF2zz0RjDH0GeKMPzoztpIsdDGwLxSj5uYgENpbnDsyAOhvBKmr5oo?=
+ =?us-ascii?Q?A3XPAAMkmu/tdFTxQkXqj65R2hUEdA2NtJh5TPqmdOdvLVp2DvFnPWkDqfov?=
+ =?us-ascii?Q?9z4fh+gBu9sKixYmGo4nJQR7jNittr1gkcUKYkQGjfEpWdKD96Gxze+zLuh0?=
+ =?us-ascii?Q?BA1ibHsXKXXdJUd+WJUapMsKm24mSbj+t7gQn0TMNvf/lvaj3Z0o+oy8wYkf?=
+ =?us-ascii?Q?HI8ziZJ4VtG88f8SXm9bjYrpEls1BZqxC/HrhDCM+Zuyqbxk7tGTGbbdnjM/?=
+ =?us-ascii?Q?O40r7K/55ZDsUpmAkcTjGYbrL7nV0oouyu7cf21pj+Yu2YCcOCK+NK8DOiVt?=
+ =?us-ascii?Q?blAxypd4XRBRXSrM/BFOduGkxiBvxHYDd+GGtoJJemAyy6zTVzuivgSvxIEN?=
+ =?us-ascii?Q?sKaIyo+vQqn3ddOZCGwy7yhmATJ4NPEQrxKQCkRT5ermRuRg/21nnNEqRP8E?=
+ =?us-ascii?Q?/Loopgr1xhPyYg1RzfPb0vHntYxwQcUrMfHWwbNUVrUJ397Kqt+mqHh81yW5?=
+ =?us-ascii?Q?YaamYMqiZheFlNei9tAwPlyeL1XdUrkI7ntBJOIv5yOJiEhxfESmWIZS6m5b?=
+ =?us-ascii?Q?RRWfjcL7vX1uTyCh5GJDVeH271Evqr3SqrfaR8f67LGV9zYLuiJhqdHIpUqy?=
+ =?us-ascii?Q?nDcrP8uX7O4zOQIJZTRr8kCFbYBRjn9mH1aVTeVTuEUeDXCPAD/Immm1TeQe?=
+ =?us-ascii?Q?yZGe7HOsXtrnxCqM8YKBsnfHv7JqsP0vYjfsisgbMRfvzAgAjzH4Kj9RQnfj?=
+ =?us-ascii?Q?qgzdNO5yn1EBuLZLMIu2rQND713wM6T6n+8MPwrHlvyRwskynn7r682VDahH?=
+ =?us-ascii?Q?sNmhx9g2v9XTNm+M+dQxLi2ZSaExxWW0LAlsq3i9NdQY6G3OfxzCkb1GA2fz?=
+ =?us-ascii?Q?WdZMp8EkLdNISS+PNUm1ztVXecaODXPK8rTdNz7dOZUnrk+k7ffll7+UqWwx?=
+ =?us-ascii?Q?ggXVGjDmfEqbGvA/lH8QkD9Fwr+xjBMYrHe3xVpm3QcsLMd8vibPKG78LFDV?=
+ =?us-ascii?Q?GyIhipm1o3QFkLeVExj4W+SuvDw7Yzk6pJ69p4E/lMiPgGvVjPk7ZPqasdZQ?=
+ =?us-ascii?Q?4WHzC006QdJz3DzpmlVRby+Y3WJqaxv+Zsk5zdw6gOxh41YMcO7pE8AqBByp?=
+ =?us-ascii?Q?RA49qmQI38IjXTb6zeVGJb+saecP7X97Xh7YEl5Kbua4cf17FPutKcpt4nx6?=
+ =?us-ascii?Q?D/V/6y3Oxe4kZ2LYCf2N3oD6+/hOFmXnS5hXgVeGLZJgW4KyyTaaMfm9BNga?=
+ =?us-ascii?Q?G6AW4xnotaR/L+/ANL1CLfZm2AmlAR2pT3x57SwA?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
-In-Reply-To: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 3 Sep 2024 15:08:21 -0700
-Message-ID: <CAEf4BzZ5mJH5+4j56zSKkvuRLLfcQMEbkjM-T86onZdAWtsN+g@mail.gmail.com>
-Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
-To: paulmck@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acaa8433-8c59-4d2d-2228-08dccc650c10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 22:09:14.5625
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JyiOfekSv0Ds2wbxbePQr0IP8DC55wtROGhsqwr+v+xlHuEnjp68TY/p1OiYgOp/ZA2+8Z15VVbp8QoBPcPcSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5962
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 3, 2024 at 9:32=E2=80=AFAM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
+> Commit
 >
-> Hello!
+>  b4765ca18f95 ("EDAC/sb_edac: Fix the compile warning of large frame size=
+")
 >
-> This series provides light-weight readers for SRCU.  This lightness
-> is selected by the caller by using the new srcu_read_lock_lite() and
-> srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
-> srcu_read_unlock() flavors.  Although this passes significant rcutorture
-> testing, this should still be considered to be experimental.
->
-> There are a few restrictions:  (1) If srcu_read_lock_lite() is called
-> on a given srcu_struct structure, then no other flavor may be used on
-> that srcu_struct structure, before, during, or after.  (2) The _lite()
-> readers may only be invoked from regions of code where RCU is watching
-> (as in those regions in which rcu_is_watching() returns true).  (3)
-> There is no auto-expediting for srcu_struct structures that have
-> been passed to _lite() readers.  (4) SRCU grace periods for _lite()
-> srcu_struct structures invoke synchronize_rcu() at least twice, thus
-> having longer latencies than their non-_lite() counterparts.  (5) Even
-> with synchronize_srcu_expedited(), the resulting SRCU grace period
-> will invoke synchronize_rcu() at least twice, as opposed to invoking
-> the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
-> srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
-> srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
-> from NMI handlers (that is what the _nmisafe() interface are for).
-> Although one could imagine readers that were both _lite() and _nmisafe(),
-> one might also imagine that the read-modify-write atomic operations that
-> are needed by any NMI-safe SRCU read marker would make this unhelpful
-> from a performance perspective.
->
-> All that said, the patches in this series are as follows:
->
-> 1.      Rename srcu_might_be_idle() to srcu_should_expedite().
->
-> 2.      Introduce srcu_gp_is_expedited() helper function.
->
-> 3.      Renaming in preparation for additional reader flavor.
->
-> 4.      Bit manipulation changes for additional reader flavor.
->
-> 5.      Standardize srcu_data pointers to "sdp" and similar.
->
-> 6.      Convert srcu_data ->srcu_reader_flavor to bit field.
->
-> 7.      Add srcu_read_lock_lite() and srcu_read_unlock_lite().
->
-> 8.      rcutorture: Expand RCUTORTURE_RDR_MASK_[12] to eight bits.
->
-> 9.      rcutorture: Add reader_flavor parameter for SRCU readers.
->
-> 10.     rcutorture: Add srcu_read_lock_lite() support to
->         rcutorture.reader_flavor.
->
-> 11.     refscale: Add srcu_read_lock_lite() support using "srcu-lite".
->
->                                                 Thanx, Paul
->
+> is missing a Signed-off-by from its committer.
 
-Thanks Paul for working on this!
+Thanks. I'll fix it and push -f an update.
 
-I applied your patches on top of all my uprobe changes (including the
-RFC patches that remove locks, optimize VMA to inode resolution, etc,
-etc; basically the fastest uprobe/uretprobe state I can get to). And
-then tested a few changes:
-
-  - A) baseline (no SRCU-lite, RCU Tasks Trace for uprobe, normal SRCU
-for uretprobes)
-  - B) A + SRCU-lite for uretprobes (i.e., SRCU to SRCU-lite conversion)
-  - C) B + RCU Tasks Trace converted to SRCU-lite
-  - D) I also pessimized baseline by reverting RCU Tasks Trace, so
-both uprobes and uretprobes are SRCU protected. This allowed me to see
-a pure gain of SRCU-lite over SRCU for uprobes, taking RCU Tasks Trace
-performance out of the equation.
-
-In uprobes I used basically two benchmarks. One, uprobe-nop, that
-benchmarks entry uprobes (which are the fastest most optimized case,
-using RCU Tasks Trace in A and SRCU in D), and another that benchmarks
-return uprobes (uretprobes), called uretprobe-nop, which is normal
-SRCU both in A) and D). The latter uretprobe-nop benchmark basically
-combines entry and return probe overheads, because that's how
-uretprobes work.
-
-So, below are the most meaningful comparisons. First, SRCU vs
-SRCU-lite for uretprobes:
-
-BASELINE (A)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-uretprobe-nop         ( 1 cpus):    1.941 =C2=B1 0.002M/s  (  1.941M/s/cpu)
-uretprobe-nop         ( 2 cpus):    3.731 =C2=B1 0.001M/s  (  1.866M/s/cpu)
-uretprobe-nop         ( 3 cpus):    5.492 =C2=B1 0.002M/s  (  1.831M/s/cpu)
-uretprobe-nop         ( 4 cpus):    7.234 =C2=B1 0.003M/s  (  1.808M/s/cpu)
-uretprobe-nop         ( 8 cpus):   13.448 =C2=B1 0.098M/s  (  1.681M/s/cpu)
-uretprobe-nop         (16 cpus):   22.905 =C2=B1 0.009M/s  (  1.432M/s/cpu)
-uretprobe-nop         (32 cpus):   44.760 =C2=B1 0.069M/s  (  1.399M/s/cpu)
-uretprobe-nop         (40 cpus):   52.986 =C2=B1 0.104M/s  (  1.325M/s/cpu)
-uretprobe-nop         (64 cpus):   43.650 =C2=B1 0.435M/s  (  0.682M/s/cpu)
-uretprobe-nop         (80 cpus):   46.831 =C2=B1 0.938M/s  (  0.585M/s/cpu)
-
-SRCU-lite for uretprobe (B)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-uretprobe-nop         ( 1 cpus):    2.014 =C2=B1 0.014M/s  (  2.014M/s/cpu)
-uretprobe-nop         ( 2 cpus):    3.820 =C2=B1 0.002M/s  (  1.910M/s/cpu)
-uretprobe-nop         ( 3 cpus):    5.640 =C2=B1 0.003M/s  (  1.880M/s/cpu)
-uretprobe-nop         ( 4 cpus):    7.410 =C2=B1 0.003M/s  (  1.852M/s/cpu)
-uretprobe-nop         ( 8 cpus):   13.877 =C2=B1 0.009M/s  (  1.735M/s/cpu)
-uretprobe-nop         (16 cpus):   23.372 =C2=B1 0.022M/s  (  1.461M/s/cpu)
-uretprobe-nop         (32 cpus):   45.748 =C2=B1 0.048M/s  (  1.430M/s/cpu)
-uretprobe-nop         (40 cpus):   54.327 =C2=B1 0.093M/s  (  1.358M/s/cpu)
-uretprobe-nop         (64 cpus):   43.672 =C2=B1 0.371M/s  (  0.682M/s/cpu)
-uretprobe-nop         (80 cpus):   47.470 =C2=B1 0.753M/s  (  0.593M/s/cpu)
-
-You can see that across the board (except for noisy 64 CPU case)
-SRCU-lite is faster.
-
-
-Now, comparing A) vs C) on uprobe-nop, so we can see RCU Tasks Trace
-vs SRCU-lite for uprobes.
-
-BASELINE (A)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-uprobe-nop            ( 1 cpus):    3.574 =C2=B1 0.004M/s  (  3.574M/s/cpu)
-uprobe-nop            ( 2 cpus):    6.735 =C2=B1 0.006M/s  (  3.368M/s/cpu)
-uprobe-nop            ( 3 cpus):   10.102 =C2=B1 0.005M/s  (  3.367M/s/cpu)
-uprobe-nop            ( 4 cpus):   13.087 =C2=B1 0.008M/s  (  3.272M/s/cpu)
-uprobe-nop            ( 8 cpus):   24.622 =C2=B1 0.031M/s  (  3.078M/s/cpu)
-uprobe-nop            (16 cpus):   41.752 =C2=B1 0.020M/s  (  2.610M/s/cpu)
-uprobe-nop            (32 cpus):   84.973 =C2=B1 0.115M/s  (  2.655M/s/cpu)
-uprobe-nop            (40 cpus):  102.229 =C2=B1 0.030M/s  (  2.556M/s/cpu)
-uprobe-nop            (64 cpus):  125.537 =C2=B1 0.045M/s  (  1.962M/s/cpu)
-uprobe-nop            (80 cpus):  143.091 =C2=B1 0.044M/s  (  1.789M/s/cpu)
-
-SRCU-lite for uprobes (C)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-uprobe-nop            ( 1 cpus):    3.446 =C2=B1 0.010M/s  (  3.446M/s/cpu)
-uprobe-nop            ( 2 cpus):    6.411 =C2=B1 0.003M/s  (  3.206M/s/cpu)
-uprobe-nop            ( 3 cpus):    9.563 =C2=B1 0.039M/s  (  3.188M/s/cpu)
-uprobe-nop            ( 4 cpus):   12.454 =C2=B1 0.016M/s  (  3.113M/s/cpu)
-uprobe-nop            ( 8 cpus):   23.172 =C2=B1 0.013M/s  (  2.897M/s/cpu)
-uprobe-nop            (16 cpus):   39.793 =C2=B1 0.005M/s  (  2.487M/s/cpu)
-uprobe-nop            (32 cpus):   79.616 =C2=B1 0.207M/s  (  2.488M/s/cpu)
-uprobe-nop            (40 cpus):   96.851 =C2=B1 0.128M/s  (  2.421M/s/cpu)
-uprobe-nop            (64 cpus):  119.432 =C2=B1 0.146M/s  (  1.866M/s/cpu)
-uprobe-nop            (80 cpus):  135.162 =C2=B1 0.207M/s  (  1.690M/s/cpu)
-
-
-Overall, RCU Tasks Trace beats SRCU-lite, which I think is expected,
-so consider this just a confirmation. I'm not sure I'd like to switch
-from RCU Tasks Trace to SRCU-lite for uprobes part, but at least we
-have numbers to make that decision.
-
-Finally, to see SRCU vs SRCU-lite for entry uprobes improvements
-(i.e., if we never had RCU Tasks Trace). I've included a bit more
-extensive set of CPU counts for completeness.
-
-BASELINE w/ SRCU for uprobes (D)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-uprobe-nop            ( 1 cpus):    3.413 =C2=B1 0.003M/s  (  3.413M/s/cpu)
-uprobe-nop            ( 2 cpus):    6.305 =C2=B1 0.003M/s  (  3.153M/s/cpu)
-uprobe-nop            ( 3 cpus):    9.442 =C2=B1 0.018M/s  (  3.147M/s/cpu)
-uprobe-nop            ( 4 cpus):   12.253 =C2=B1 0.006M/s  (  3.063M/s/cpu)
-uprobe-nop            ( 5 cpus):   15.316 =C2=B1 0.007M/s  (  3.063M/s/cpu)
-uprobe-nop            ( 6 cpus):   18.287 =C2=B1 0.030M/s  (  3.048M/s/cpu)
-uprobe-nop            ( 7 cpus):   21.378 =C2=B1 0.025M/s  (  3.054M/s/cpu)
-uprobe-nop            ( 8 cpus):   23.044 =C2=B1 0.010M/s  (  2.881M/s/cpu)
-uprobe-nop            (10 cpus):   28.778 =C2=B1 0.012M/s  (  2.878M/s/cpu)
-uprobe-nop            (12 cpus):   31.300 =C2=B1 0.016M/s  (  2.608M/s/cpu)
-uprobe-nop            (14 cpus):   36.580 =C2=B1 0.007M/s  (  2.613M/s/cpu)
-uprobe-nop            (16 cpus):   38.848 =C2=B1 0.017M/s  (  2.428M/s/cpu)
-uprobe-nop            (24 cpus):   60.298 =C2=B1 0.080M/s  (  2.512M/s/cpu)
-uprobe-nop            (32 cpus):   77.137 =C2=B1 1.957M/s  (  2.411M/s/cpu)
-uprobe-nop            (40 cpus):   89.205 =C2=B1 1.278M/s  (  2.230M/s/cpu)
-uprobe-nop            (48 cpus):   99.207 =C2=B1 0.444M/s  (  2.067M/s/cpu)
-uprobe-nop            (56 cpus):  102.399 =C2=B1 0.484M/s  (  1.829M/s/cpu)
-uprobe-nop            (64 cpus):  115.390 =C2=B1 0.972M/s  (  1.803M/s/cpu)
-uprobe-nop            (72 cpus):  127.476 =C2=B1 0.050M/s  (  1.770M/s/cpu)
-uprobe-nop            (80 cpus):  137.304 =C2=B1 0.068M/s  (  1.716M/s/cpu)
-
-SRCU-lite for uprobes (C)
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-uprobe-nop            ( 1 cpus):    3.446 =C2=B1 0.010M/s  (  3.446M/s/cpu)
-uprobe-nop            ( 2 cpus):    6.411 =C2=B1 0.003M/s  (  3.206M/s/cpu)
-uprobe-nop            ( 3 cpus):    9.563 =C2=B1 0.039M/s  (  3.188M/s/cpu)
-uprobe-nop            ( 4 cpus):   12.454 =C2=B1 0.016M/s  (  3.113M/s/cpu)
-uprobe-nop            ( 5 cpus):   15.634 =C2=B1 0.008M/s  (  3.127M/s/cpu)
-uprobe-nop            ( 6 cpus):   18.443 =C2=B1 0.018M/s  (  3.074M/s/cpu)
-uprobe-nop            ( 7 cpus):   21.793 =C2=B1 0.057M/s  (  3.113M/s/cpu)
-uprobe-nop            ( 8 cpus):   23.172 =C2=B1 0.013M/s  (  2.897M/s/cpu)
-uprobe-nop            (10 cpus):   29.430 =C2=B1 0.021M/s  (  2.943M/s/cpu)
-uprobe-nop            (12 cpus):   32.035 =C2=B1 0.008M/s  (  2.670M/s/cpu)
-uprobe-nop            (14 cpus):   37.174 =C2=B1 0.046M/s  (  2.655M/s/cpu)
-uprobe-nop            (16 cpus):   39.793 =C2=B1 0.005M/s  (  2.487M/s/cpu)
-uprobe-nop            (24 cpus):   61.656 =C2=B1 0.187M/s  (  2.569M/s/cpu)
-uprobe-nop            (32 cpus):   79.616 =C2=B1 0.207M/s  (  2.488M/s/cpu)
-uprobe-nop            (40 cpus):   96.851 =C2=B1 0.128M/s  (  2.421M/s/cpu)
-uprobe-nop            (48 cpus):  104.178 =C2=B1 0.033M/s  (  2.170M/s/cpu)
-uprobe-nop            (56 cpus):  105.689 =C2=B1 0.703M/s  (  1.887M/s/cpu)
-uprobe-nop            (64 cpus):  119.432 =C2=B1 0.146M/s  (  1.866M/s/cpu)
-uprobe-nop            (72 cpus):  127.574 =C2=B1 0.033M/s  (  1.772M/s/cpu)
-uprobe-nop            (80 cpus):  135.162 =C2=B1 0.207M/s  (  1.690M/s/cpu)
-
-So, say, at 32 threads, we get 79.6 vs 77.1, which is about 3%
-throughput win. Which is not negligible!
-
-Note that as we get to 80 cores data is more noisy (hyperthreading,
-background system noise, etc). But you can still see an improvement
-across basically the entire range.
-
-Hopefully the above data is useful.
-
-> ------------------------------------------------------------------------
->
->  Documentation/admin-guide/kernel-parameters.txt   |    4
->  b/Documentation/admin-guide/kernel-parameters.txt |    8 +
->  b/include/linux/srcu.h                            |   21 +-
->  b/include/linux/srcutree.h                        |    2
->  b/kernel/rcu/rcutorture.c                         |   28 +--
->  b/kernel/rcu/refscale.c                           |   54 +++++--
->  b/kernel/rcu/srcutree.c                           |   16 +-
->  include/linux/srcu.h                              |   86 +++++++++--
->  include/linux/srcutree.h                          |    5
->  kernel/rcu/rcutorture.c                           |   37 +++-
->  kernel/rcu/srcutree.c                             |  168 +++++++++++++++=
--------
->  11 files changed, 308 insertions(+), 121 deletions(-)
+-Tony
 
