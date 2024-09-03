@@ -1,200 +1,263 @@
-Return-Path: <linux-kernel+bounces-313032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A06969F41
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:41:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEB0969F46
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1ADBB23498
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63060280F17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5F7462;
-	Tue,  3 Sep 2024 13:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC02848E;
+	Tue,  3 Sep 2024 13:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FJ6KDKmI"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kfO+DAAj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C53846D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F76E7462
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370864; cv=none; b=br3+k59nJmI9GtxSeeaoFGot+6H1MjFOS30sw7ES5iF1q96eq6SOEQCUcL9dQdft5u0jetwigo+RSAFqTcIQPjKeDppqypbPhAXP4+cnVaDnkBTkRcdAGmZyDJLMhrREp4w2dmIWccYvy4SojQTjP551tt36KfArwXERtLd6+YE=
+	t=1725370934; cv=none; b=pOcpalFWrZFPiGlIUA/SsOowRYkIjkUDy4fQ8/70bKdVIBxjmvJZMUH++TDa8OGGCBWEkh5ceE04O77KXMQ+ZYma/ZaAQ11EqSFC95lT3+M0pONyMy+RLBuciqQmnX1i7+UgJrtlhBz39HxjVIddUIdgLBr6kmG8uHetwftyVqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370864; c=relaxed/simple;
-	bh=Hm8uaTTnhsmMJ/kyk7EAYPeRsqRxY3Pm0+eWDG0FHmU=;
+	s=arc-20240116; t=1725370934; c=relaxed/simple;
+	bh=wJSMcnHCJktibnXKxXUjv9d4PA0Suc3KAWKHub7ARUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IN/OtANRUh9jM29TTEgNWO46TP9sOByPXjzYOqjNZdRR6I4mMOT96pCe+22cBDZuLAE4mo8G/FSsG8LSVKsqMQa1UliysdX0NyJCqAtkNzFvmcG5yb/8R16OLxcYDmUR9FotZV7IQk8Z6q4R2oDY6krUbWiio0YW5jNIe1F9eQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FJ6KDKmI; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-375e5c12042so528872f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725370859; x=1725975659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UZPiLwRoBJssyDrESoc8JeuTReUrFQgHukWf8yT2sn0=;
-        b=FJ6KDKmIDEalrWDCNqCVMmXPL4Uqw9ZlFptKO1QIhw5L5NsLF/PDREBmN1KmM6whEp
-         diKVP9qhSqJ3Y22X1mVO6eUvfkb24ny2MoJmB54l6tKjvPNQbP+0nOINGgLZn5M9r7u5
-         wZCbAVa7XOeEgYdg8+tIsyA5vfAvHas0y+MITwXRVjQeQ3HE3O4UITr8NqVfYxe2J9FV
-         PrQkN3TzZJMfpZIhiEGikgQh2sM/4zSKw1Rsi/3EFHS5n2iY5lYhvEaMTtWpMONaLjX/
-         PKsFlUgALJ8YYd53L+1dJ+E2xHlwe/hWm0HEiympLLocAZEZXWAflm57zR38e+o2xzye
-         H8zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725370859; x=1725975659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UZPiLwRoBJssyDrESoc8JeuTReUrFQgHukWf8yT2sn0=;
-        b=u2Kg9PeqcdF50CjMPi9vhHivvCbQ96n3mWNww+RFIIyruk5lDjGILQThpyYzbGrIj0
-         61KhSXLVaU6FnbZUD86ykYIQQY7X/+HsC/pcyFWfG4BXT92VujB9cpVq+Ml6tNzhhc1K
-         D1ZBq/9z0ONb7aVVPg4HcecFZq03Za5nSM8otPxiIZIhrq80m+U1bDrN5B8xFd8iA0Rf
-         pYUUinqlkzSX+FVXhfj/vzT3flq9kahF1RySpgmcm3pSlBf2KbF+C+VXdjl9RuOhwkI2
-         A8y/J4b3OQPwQgk/RMUp+hTZzi0n6j3BvnyYb4q5tIzZHKmqU4uyf8ADF9uFNrgAAWhf
-         Uomw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2R6f7cjjyUIB0yjnzh7nlnzNN3o1qIN1PwUbk+UlmntX4JU2q2Fe2vTHb5d+qH6OJp57gr0pqV4mh03s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Z0EPVysmZNLBMjlyQoTAVWoS3A/pGYs3QxHvTyr3kA7ZmSxX
-	0Zm2EAaMmU81/wusaF8rSnEA3Bha/HXukTn2BMCGZabTAdo4fZ+QAkSsk8biOQDjTgCZ9kYEdYR
-	4
-X-Google-Smtp-Source: AGHT+IGEnIii2CwULP0MNV6LucnH2tFdwivllv5dXZAfIObPe4f2nwv60Zk8bBT+ybFmOQ1uiRLW9g==
-X-Received: by 2002:a05:6000:4025:b0:374:c847:85d with SMTP id ffacd0b85a97d-374eccc2436mr3060014f8f.29.1725370859112;
-        Tue, 03 Sep 2024 06:40:59 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:ce9e:ba67:4faa:67ad])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42b9e7b7f87sm179383895e9.1.2024.09.03.06.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 06:40:58 -0700 (PDT)
-Date: Tue, 3 Sep 2024 15:40:55 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Nishanth Menon <nm@ti.com>, ssantosh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, 
-	jic23@kernel.org
-Subject: Re: [PATCH -next v2 2/4] soc: ti: knav_dma: Use dev_err_probe() to
- simplfy code
-Message-ID: <ruphb2pue6tylszwekw7lwzgoyrtdru56vhcwqpnr63wrh37pu@mzpgfi62tyik>
-References: <20240830063228.3519385-1-ruanjinjie@huawei.com>
- <20240830063228.3519385-3-ruanjinjie@huawei.com>
- <20240830103155.5vs2hdokw6yysq47@finance>
- <29edea69-92ce-2ac9-2aa8-bb9a4674ca01@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJDPVNCNrz2BmsCSZ5xq0GNglsJub4l1/PTAaw8Lg2CEBESuQdZmb1G4Ch3KZhFfP6rNNIO10jrEBIcXEuJ9sANnyC6snTfq46a7uOKN+hqEA7zuxVqLWMYeF740U6vLERABMgmDR/iErXKr7ILkXb0NNg/A+7TWFJ1tqxLyeOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kfO+DAAj; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725370932; x=1756906932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wJSMcnHCJktibnXKxXUjv9d4PA0Suc3KAWKHub7ARUg=;
+  b=kfO+DAAjSdZl95OuUd7tnqLNTfCfemB8VDHyNeBgIcCSE1CsN3RwsLc/
+   Tx0s3HFM98ZJNfNJoUlyPU2mxVjRbLYMSWOXCwSPRHQDMVd+ZY0TEdot5
+   RJUs/mUq1QqkmeKGn12ggooQUO3l4b0ZJpux0gzKLDevvLbJNCR7j6y/h
+   kSUONflNRZY99+lr+gGn4V9jYYXBV/yYGOgQsZpo2X7FVfY3TrSShDjtg
+   UK/l8a8RHLGBbJfdG7yBSyFpSbJjj89JVlUFIim2mzAo/fg6oOkYNmGbB
+   xHwUcnH7YdrAUUz/vpabcyHUnBInIQ2uBHrJmpMRU7G4jId8Pd1sg1xBz
+   w==;
+X-CSE-ConnectionGUID: D3K1zKYlSm+bpFvWtHJSCw==
+X-CSE-MsgGUID: of7WBsbbTW29m0rgcvQY3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23919396"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="23919396"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 06:42:12 -0700
+X-CSE-ConnectionGUID: 3+bn2VRSRQSnkfRmCOPgDw==
+X-CSE-MsgGUID: l4XtIPx7RPWAcNQ8MzBwZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="69708051"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 03 Sep 2024 06:42:08 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slTnJ-0006jP-1U;
+	Tue, 03 Sep 2024 13:42:05 +0000
+Date: Tue, 3 Sep 2024 21:42:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+	neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: oe-kbuild-all@lists.linux.dev, quic_jesszhan@quicinc.com,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: hx83112a: Switch to wrapped mipi_dsi functions
+Message-ID: <202409032131.EA1cqdff-lkp@intel.com>
+References: <20240902170153.34512-1-abhishektamboli9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="az4ay56eqiq25z24"
-Content-Disposition: inline
-In-Reply-To: <29edea69-92ce-2ac9-2aa8-bb9a4674ca01@huawei.com>
-
-
---az4ay56eqiq25z24
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240902170153.34512-1-abhishektamboli9@gmail.com>
 
-Hello,
+Hi Abhishek,
 
-On Sat, Aug 31, 2024 at 09:59:33AM +0800, Jinjie Ruan wrote:
-> On 2024/8/30 18:31, Nishanth Menon wrote:
-> > On 14:32-20240830, Jinjie Ruan wrote:
-> >> Use the dev_err_probe() helper to simplify error handling
-> >> during probe.
-> >>
-> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> >> ---
-> >> v2:
-> >> - Split into 2 patches.
-> >> ---
-> >>  drivers/soc/ti/knav_dma.c | 12 ++++--------
-> >>  1 file changed, 4 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-> >> index 15e41d3a5e22..eeec422a46f0 100644
-> >> --- a/drivers/soc/ti/knav_dma.c
-> >> +++ b/drivers/soc/ti/knav_dma.c
-> >> @@ -708,17 +708,13 @@ static int knav_dma_probe(struct platform_device=
- *pdev)
-> >>  	struct device_node *node =3D pdev->dev.of_node;
-> >>  	int ret =3D 0;
-> >> =20
-> >> -	if (!node) {
-> >> -		dev_err(&pdev->dev, "could not find device info\n");
-> >> -		return -EINVAL;
-> >> -	}
-> >> +	if (!node)
-> >> +		return dev_err_probe(&pdev->dev, -EINVAL, "could not find device in=
-fo\n");
-> >> =20
-> >>  	kdev =3D devm_kzalloc(dev,
-> >>  			sizeof(struct knav_dma_pool_device), GFP_KERNEL);
-> >> -	if (!kdev) {
-> >> -		dev_err(dev, "could not allocate driver mem\n");
-> >> -		return -ENOMEM;
-> >> -	}
-> >> +	if (!kdev)
-> >> +		return dev_err_probe(dev, -ENOMEM, "could not allocate driver mem\n=
-");
-> >=20
-> > These make no sense to me :( -> just using dev_err_probe when there is
-> > no chance of -EPROBE_DEFER ?
->=20
-> I noticed a change in dev_err_probe() this year, which is described in
-> this patch:
->=20
-> For an out-of-memory error there should be no additional output. Adapt
-> dev_err_probe() to not emit the error message when err is -ENOMEM.
-> This simplifies handling errors that might among others be -ENOMEM.
+kernel test robot noticed the following build errors:
 
-Notice this was carefully worded. Calling dev_err_probe() if you know
-that the error is ENOMEM isn't helpful. The change was introduced to
-simplify
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.11-rc6 next-20240903]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-	ret =3D some_function_that_might_return_ENOMEM_and_other_errors()
-	if (ret =3D=3D -ENOMEM)
-		return ret;
-	else if (ret)
-		return dev_err_probe(dev, ret, "....");
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Tamboli/drm-panel-hx83112a-Switch-to-wrapped-mipi_dsi-functions/20240903-010317
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240902170153.34512-1-abhishektamboli9%40gmail.com
+patch subject: [PATCH] drm/panel: hx83112a: Switch to wrapped mipi_dsi functions
+config: x86_64-buildonly-randconfig-003-20240903 (https://download.01.org/0day-ci/archive/20240903/202409032131.EA1cqdff-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240903/202409032131.EA1cqdff-lkp@intel.com/reproduce)
 
-to
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409032131.EA1cqdff-lkp@intel.com/
 
-	ret =3D some_function_that_might_return_ENOMEM_and_other_errors()
-	if (ret)
-		return dev_err_probe(dev, ret, "....");
+All errors (new ones prefixed by >>):
 
-But adding a dev_err_probe() if you know in the ret !=3D 0 branch that ret
-must be -ENOMEM, actively adding a dev_err_probe() gives very little
-improvement. The main effect is to increase the size of the resulting
-kernel image (or module).
+   drivers/gpu/drm/panel/panel-himax-hx83112a.c: In function 'hx83112a_on':
+>> drivers/gpu/drm/panel/panel-himax-hx83112a.c:63:9: error: 'dsi' undeclared (first use in this function)
+      63 |         dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+         |         ^~~
+   drivers/gpu/drm/panel/panel-himax-hx83112a.c:63:9: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/gpu/drm/panel/panel-himax-hx83112a.c: In function 'hx83112a_disable':
+   drivers/gpu/drm/panel/panel-himax-hx83112a.c:197:9: error: 'dsi' undeclared (first use in this function)
+     197 |         dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+         |         ^~~
 
-Back when I made dev_err_probe() silent for -ENOMEM, it was suggested to
-even make it fail to compile if ret is ENOMEM.
 
-I wouldn't necessarily object to new code using dev_err_probe() to check
-the return value of a function that can only return (success or)
--ENOMEM, but I agree to Krzysztof that changing existing code is little
-helpful.
+vim +/dsi +63 drivers/gpu/drm/panel/panel-himax-hx83112a.c
 
-Best regards
-Uwe
+654f26a0f43cfd Luca Weiss       2024-02-16   58  
+654f26a0f43cfd Luca Weiss       2024-02-16   59  static int hx83112a_on(struct hx83112a_panel *ctx)
+654f26a0f43cfd Luca Weiss       2024-02-16   60  {
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   61  	struct mipi_dsi_multi_context dsi_ctx = {.dsi = ctx->dsi};
+654f26a0f43cfd Luca Weiss       2024-02-16   62  
+654f26a0f43cfd Luca Weiss       2024-02-16  @63  	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+654f26a0f43cfd Luca Weiss       2024-02-16   64  
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   65  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETEXTC, 0x83, 0x11, 0x2a);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   66  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPOWER1,
+654f26a0f43cfd Luca Weiss       2024-02-16   67  			       0x08, 0x28, 0x28, 0x83, 0x83, 0x4c, 0x4f, 0x33);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   68  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDISP,
+654f26a0f43cfd Luca Weiss       2024-02-16   69  			       0x00, 0x02, 0x00, 0x90, 0x24, 0x00, 0x08, 0x19,
+654f26a0f43cfd Luca Weiss       2024-02-16   70  			       0xea, 0x11, 0x11, 0x00, 0x11, 0xa3);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   71  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDRV,
+654f26a0f43cfd Luca Weiss       2024-02-16   72  			       0x58, 0x68, 0x58, 0x68, 0x0f, 0xef, 0x0b, 0xc0,
+654f26a0f43cfd Luca Weiss       2024-02-16   73  			       0x0b, 0xc0, 0x0b, 0xc0, 0x00, 0xff, 0x00, 0xff,
+654f26a0f43cfd Luca Weiss       2024-02-16   74  			       0x00, 0x00, 0x14, 0x15, 0x00, 0x29, 0x11, 0x07,
+654f26a0f43cfd Luca Weiss       2024-02-16   75  			       0x12, 0x00, 0x29);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   76  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   77  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDRV,
+654f26a0f43cfd Luca Weiss       2024-02-16   78  			       0x00, 0x12, 0x12, 0x11, 0x88, 0x12, 0x12, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16   79  			       0x53);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   80  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   81  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x03);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   82  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
+654f26a0f43cfd Luca Weiss       2024-02-16   83  			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
+654f26a0f43cfd Luca Weiss       2024-02-16   84  			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
+654f26a0f43cfd Luca Weiss       2024-02-16   85  			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
+654f26a0f43cfd Luca Weiss       2024-02-16   86  			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
+654f26a0f43cfd Luca Weiss       2024-02-16   87  			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
+654f26a0f43cfd Luca Weiss       2024-02-16   88  			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
+654f26a0f43cfd Luca Weiss       2024-02-16   89  			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
+654f26a0f43cfd Luca Weiss       2024-02-16   90  			       0x40);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   91  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02   92  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
+654f26a0f43cfd Luca Weiss       2024-02-16   93  			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
+654f26a0f43cfd Luca Weiss       2024-02-16   94  			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
+654f26a0f43cfd Luca Weiss       2024-02-16   95  			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
+654f26a0f43cfd Luca Weiss       2024-02-16   96  			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
+654f26a0f43cfd Luca Weiss       2024-02-16   97  			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
+654f26a0f43cfd Luca Weiss       2024-02-16   98  			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
+654f26a0f43cfd Luca Weiss       2024-02-16   99  			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
+654f26a0f43cfd Luca Weiss       2024-02-16  100  			       0x40);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  101  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  102  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
+654f26a0f43cfd Luca Weiss       2024-02-16  103  			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
+654f26a0f43cfd Luca Weiss       2024-02-16  104  			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
+654f26a0f43cfd Luca Weiss       2024-02-16  105  			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
+654f26a0f43cfd Luca Weiss       2024-02-16  106  			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
+654f26a0f43cfd Luca Weiss       2024-02-16  107  			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
+654f26a0f43cfd Luca Weiss       2024-02-16  108  			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
+654f26a0f43cfd Luca Weiss       2024-02-16  109  			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
+654f26a0f43cfd Luca Weiss       2024-02-16  110  			       0x40);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  111  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  112  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT, 0x01);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  113  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTCON,
+654f26a0f43cfd Luca Weiss       2024-02-16  114  			       0x70, 0x00, 0x04, 0xe0, 0x33, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  115  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPANEL, 0x08);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  116  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPOWER2, 0x2b, 0x2b);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  117  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP0,
+654f26a0f43cfd Luca Weiss       2024-02-16  118  			       0x80, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x08,
+654f26a0f43cfd Luca Weiss       2024-02-16  119  			       0x08, 0x03, 0x03, 0x22, 0x18, 0x07, 0x07, 0x07,
+654f26a0f43cfd Luca Weiss       2024-02-16  120  			       0x07, 0x32, 0x10, 0x06, 0x00, 0x06, 0x32, 0x10,
+654f26a0f43cfd Luca Weiss       2024-02-16  121  			       0x07, 0x00, 0x07, 0x32, 0x19, 0x31, 0x09, 0x31,
+654f26a0f43cfd Luca Weiss       2024-02-16  122  			       0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x08,
+654f26a0f43cfd Luca Weiss       2024-02-16  123  			       0x09, 0x30, 0x00, 0x00, 0x00, 0x06, 0x0d, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16  124  			       0x0f);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  125  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  126  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP0,
+654f26a0f43cfd Luca Weiss       2024-02-16  127  			       0x00, 0x00, 0x19, 0x10, 0x00, 0x0a, 0x00, 0x81);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  128  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  129  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP1,
+654f26a0f43cfd Luca Weiss       2024-02-16  130  			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+654f26a0f43cfd Luca Weiss       2024-02-16  131  			       0xc0, 0xc0, 0x18, 0x18, 0x19, 0x19, 0x18, 0x18,
+654f26a0f43cfd Luca Weiss       2024-02-16  132  			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
+654f26a0f43cfd Luca Weiss       2024-02-16  133  			       0x28, 0x28, 0x24, 0x24, 0x02, 0x03, 0x02, 0x03,
+654f26a0f43cfd Luca Weiss       2024-02-16  134  			       0x00, 0x01, 0x00, 0x01, 0x31, 0x31, 0x31, 0x31,
+654f26a0f43cfd Luca Weiss       2024-02-16  135  			       0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  136  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP2,
+654f26a0f43cfd Luca Weiss       2024-02-16  137  			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+654f26a0f43cfd Luca Weiss       2024-02-16  138  			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x19, 0x19,
+654f26a0f43cfd Luca Weiss       2024-02-16  139  			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
+654f26a0f43cfd Luca Weiss       2024-02-16  140  			       0x24, 0x24, 0x28, 0x28, 0x01, 0x00, 0x01, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16  141  			       0x03, 0x02, 0x03, 0x02, 0x31, 0x31, 0x31, 0x31,
+654f26a0f43cfd Luca Weiss       2024-02-16  142  			       0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  143  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
+654f26a0f43cfd Luca Weiss       2024-02-16  144  			       0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea,
+654f26a0f43cfd Luca Weiss       2024-02-16  145  			       0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa,
+654f26a0f43cfd Luca Weiss       2024-02-16  146  			       0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa, 0xaa, 0xaa);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  147  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  148  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
+654f26a0f43cfd Luca Weiss       2024-02-16  149  			       0xaa, 0x2e, 0x28, 0x00, 0x00, 0x00, 0xaa, 0x2e,
+654f26a0f43cfd Luca Weiss       2024-02-16  150  			       0x28, 0x00, 0x00, 0x00, 0xaa, 0xee, 0xaa, 0xaa,
+654f26a0f43cfd Luca Weiss       2024-02-16  151  			       0xaa, 0xaa, 0xaa, 0xee, 0xaa, 0xaa, 0xaa, 0xaa);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  152  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  153  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
+654f26a0f43cfd Luca Weiss       2024-02-16  154  			       0xaa, 0xff, 0xff, 0xff, 0xff, 0xff, 0xaa, 0xff,
+654f26a0f43cfd Luca Weiss       2024-02-16  155  			       0xff, 0xff, 0xff, 0xff);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  156  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x03);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  157  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
+654f26a0f43cfd Luca Weiss       2024-02-16  158  			       0xaa, 0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+654f26a0f43cfd Luca Weiss       2024-02-16  159  			       0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xff, 0xff, 0xff,
+654f26a0f43cfd Luca Weiss       2024-02-16  160  			       0xff, 0xff, 0xaa, 0xff, 0xff, 0xff, 0xff, 0xff);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  161  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  162  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
+654f26a0f43cfd Luca Weiss       2024-02-16  163  			       0x0e, 0x0e, 0x1e, 0x65, 0x1c, 0x65, 0x00, 0x50,
+654f26a0f43cfd Luca Weiss       2024-02-16  164  			       0x20, 0x20, 0x00, 0x00, 0x02, 0x02, 0x02, 0x05,
+654f26a0f43cfd Luca Weiss       2024-02-16  165  			       0x14, 0x14, 0x32, 0xb9, 0x23, 0xb9, 0x08);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  166  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  167  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
+654f26a0f43cfd Luca Weiss       2024-02-16  168  			       0x02, 0x00, 0xa8, 0x01, 0xa8, 0x0d, 0xa4, 0x0e);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  169  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  170  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
+654f26a0f43cfd Luca Weiss       2024-02-16  171  			       0x00, 0x00, 0x08, 0x00, 0x01, 0x00, 0x00, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16  172  			       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16  173  			       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
+654f26a0f43cfd Luca Weiss       2024-02-16  174  			       0x00, 0x00, 0x00, 0x02, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  175  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  176  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0xc3);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  177  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETCLOCK, 0xd1, 0xd6);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  178  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0x3f);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  179  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0xc6);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  180  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPTBA, 0x37);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  181  	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0x3f);
+654f26a0f43cfd Luca Weiss       2024-02-16  182  
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  183  	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  184  	mipi_dsi_msleep(&dsi_ctx, 150);
+654f26a0f43cfd Luca Weiss       2024-02-16  185  
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  186  	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  187  	mipi_dsi_msleep(&dsi_ctx, 50);
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  188  
+a76c4f29a2e42d Abhishek Tamboli 2024-09-02  189  	return dsi_ctx.accum_err;
+654f26a0f43cfd Luca Weiss       2024-02-16  190  }
+654f26a0f43cfd Luca Weiss       2024-02-16  191  
 
---az4ay56eqiq25z24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbXEd4ACgkQj4D7WH0S
-/k7w2Qf/YOrnEJu0mpFQNpf7L0HEd3MMqBoN4msV2nLlptFTxJEIk0o3FMeFvfs9
-ESODHMVvhH8PXA7XoPY+bJSWKhyf6mNnb0BT5sD538yGqH6WqyxMG3bDv6d1Jmof
-B/3QJ99VrTPqm72+ZpM0UpxV+otMu4ELpNLfjgCU37SQDYKTc04HUtr1MiJ6DTKm
-wK9GuNLLOugM2zZTo+/8LVxOSqa0XHfRhxwnFDP07EESvhfROQq/0SJcm5WYtBI2
-aZAKoikhJM9/Y1eUiy9jjHDRFfe6bPpHsut7hwinnG02WJZEK977MK+Dy4ZUQE1q
-Ol6IN5Y5Ti4/obiA+DS/uJMbUwz3JQ==
-=+Cpn
------END PGP SIGNATURE-----
-
---az4ay56eqiq25z24--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
