@@ -1,152 +1,169 @@
-Return-Path: <linux-kernel+bounces-312213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2779693A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:26:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E668969369
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87185281940
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:26:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39028B211B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4DA1CFEAA;
-	Tue,  3 Sep 2024 06:26:40 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC69E1CEACD;
+	Tue,  3 Sep 2024 06:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uDOAyzKr"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB69CA5F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 06:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2352D15575F;
+	Tue,  3 Sep 2024 06:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725344799; cv=none; b=tIDYn3VY7j7BFZbKf1aNbcjQnimo8g7x+ujOPuGulPrwDmEJcCK+gXu5PUj+McNL3uIOxFo9TUmJRxHWtyMLW1i/O0ofphwstuxi16CuiDvFQKxAgPaSm/yivBUScl0dyxR1cNGnv4q+ekoM0iQpEOupUDHLEGhdRspt8gRXnck=
+	t=1725343631; cv=none; b=kWOy2EDavv6l2q4ytwfj+ZeBWMCa/xCLqNM1r+EM+KTyNloR5l6FG4JnvnMNnzV0yPtatA9Zlzs2c6tYbu44PqEEc+waOVhFVSHpIN7UrbZmv3s9G6boFaMu7bTqnmiLfBSoeINvWlrqUtARnn1tSldWUUfHnbhaBEAOXwtDeuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725344799; c=relaxed/simple;
-	bh=ayf8JTB8NyIqXFvyJm8O4YskZpoAxeoLWgd9+JbZzTs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZLJ9GnRtlwjIpqAeZEE38l1bMU9Qt9TOplJqkBmsQykn3cODFVovn4DKfz9t1NJXS2GA2ukKnvl7H4Qmb21SKTW7DxRihnZ3mr0ffHzHBU5vgCNclI8Mkxr9HKgLTdHDOR7v22y/UdAMT16xF1HJWnCo8A70uX/aU50A2UDSBXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4WyZpp1dLYzYl1nc;
-	Tue,  3 Sep 2024 14:05:06 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 14:07:06 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 14:07:06 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-CC: <chao@kernel.org>, <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag if receive SIGKILL
-Date: Tue, 3 Sep 2024 14:06:58 +0800
-Message-ID: <20240903060658.1780002-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <52ced02d-728b-4e3b-9079-73efd91c90e3@kernel.org>
-References: <52ced02d-728b-4e3b-9079-73efd91c90e3@kernel.org>
+	s=arc-20240116; t=1725343631; c=relaxed/simple;
+	bh=539kkzcGlo+tQAl0gprzgy3D6qKVOHdlY2W1Lc3T/fI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=szBzYWrKvaVgSQeYPT2SH0P0jSqK2w23K7Uzc30Mk2SJ3g2pJxppyWhGpiQPffB7ImbTJ/Leoi+cfIUKlfPTEbdF8mSAyuDOtPf6fiXXAt7G+h/9Zwou3YVL21jFxjtwN/tqJxZocyMNYgbMiQR+tDPNcyE4gNzT/BKOAqlQOzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uDOAyzKr; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 483672CP012825;
+	Tue, 3 Sep 2024 01:07:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725343622;
+	bh=o7Y13VcXEhTIeT0XZuF16cMK0itSnKkJa+trfAbeC1c=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=uDOAyzKrEFaeNaFdN0W8z2/aSsEnutN2I1Ie3wu06ikl612NBqzfZ5Y0KOhnzcT7U
+	 NhPclyxEI92ZqJidApqsA0tcPG5RrKoJTySbI/ZwvHXHojOwXJMoQnVenl1jxbYO4A
+	 t/gbEwsx3Kr2MPbU7TTILMcMu3sAq7PtNeiD/+Hg=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 483672je069231
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 3 Sep 2024 01:07:02 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Sep 2024 01:07:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Sep 2024 01:07:01 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 483671mW063507;
+	Tue, 3 Sep 2024 01:07:01 -0500
+Date: Tue, 3 Sep 2024 11:37:00 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>, <vibhore@ti.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/2] cpufreq: ti-cpufreq: Make the AM625 efuse_offset 0
+Message-ID: <20240903060700.ekytq3rj3wz3yw4k@lcpd911>
+References: <20240902093222.2828345-1-d-gole@ti.com>
+ <20240902093222.2828345-3-d-gole@ti.com>
+ <20240902233439.z5kpszcwaswkch6q@bryanbrattlof.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
-X-Mailman-Version: 2.1.21
-Precedence: list
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-Reply-To: Chao Yu <chao@kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240902233439.z5kpszcwaswkch6q@bryanbrattlof.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Hi Bryan,
 
->On 2024/8/27 14:22, wangzijie wrote:
->> Thread A
->> -dquot_initialize
->>   -dqget
->>    -f2fs_dquot_acquire
->>     -v2_read_dquot
->>      -qtree_read_dquot
->>       -find_tree_dqentry
->>        -f2fs_quota_read
->>         -read_cache_page_gfp
->>          -do_read_cache_folio
->>           -fiemap_read_folio
->>            -folio_wait_locked_killable
->>             -receive SIGKILL : return -EINTR
->>         -set SBI_QUOTA_NEED_REPAIR
->>     -set SBI_QUOTA_NEED_REPAIR
->> 
->> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
->> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
->
->f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
->for f2fs_dquot_initialize() case?
->
->Thanks,
+On Sep 02, 2024 at 18:34:39 -0500, Bryan Brattlof wrote:
+> On September  2, 2024 thus sayeth Dhruva Gole:
+> > Since the efuse_offset is basically derived from the syscon node, we no
+> > longer need to use any efuse_offset for AM625. This is in line with how
+> > the AM62Ax and AM62Px are already doing.
+> > 
+> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> > ---
+> >  drivers/cpufreq/ti-cpufreq.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> > index ba621ce1cdda..98e320832f78 100644
+> > --- a/drivers/cpufreq/ti-cpufreq.c
+> > +++ b/drivers/cpufreq/ti-cpufreq.c
+> > @@ -313,7 +313,7 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
+> >  
+> >  static struct ti_cpufreq_soc_data am625_soc_data = {
+> >  	.efuse_xlate = am625_efuse_xlate,
+> > -	.efuse_offset = 0x0018,
+> > +	.efuse_offset = 0x0,
+> >  	.efuse_mask = 0x07c0,
+> >  	.efuse_shift = 0x6,
+> >  	.rev_offset = 0x0014,
+> 
+> This may work but it really shouldn't. Unfortunately when I sent out the 
+> am62ax and am62px support I missed the .rev_offset and now it's pointed 
+> to some random spot in the WKUP_CTRL_MMR space. How it worked on my 
 
-Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to 
-ignore this errno for more cases. If we need to do so, I will check it and resend patch.
-Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
+Thanks for taking the time to review.
 
-Thank you for review.
+If by "this" you mean the rev offset, then it's anyway unused. I have
+mentioned the dependency [1] in the cover letter where I am using the
+revision info based on the socinfo driver.
 
->> 
->> Signed-off-by: wangzijie <wangzijie1@honor.com>
->> ---
->>   fs/f2fs/inode.c | 3 ++-
->>   fs/f2fs/super.c | 6 +++---
->>   2 files changed, 5 insertions(+), 4 deletions(-)
->> 
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index ed629dabb..2af98e2b7 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
->>   
->>   	err = f2fs_dquot_initialize(inode);
->>   	if (err) {
->> +		if (err != -EINTR)
->> +			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>   		err = 0;
->> -		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>   	}
->>   
->>   	f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 1f1b3647a..f99a36ff3 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>   			if (PTR_ERR(page) == -ENOMEM) {
->>   				memalloc_retry_wait(GFP_NOFS);
->>   				goto repeat;
->> -			}
->> -			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->> +			} else if (PTR_ERR(page) != -EINTR)
->> +				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>   			return PTR_ERR(page);
->>   		}
->>   
->> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>   
->>   	f2fs_down_read(&sbi->quota_sem);
->>   	ret = dquot_acquire(dquot);
->> -	if (ret < 0)
->> +	if (ret < 0 && ret != -EINTR)
->>   		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>   	f2fs_up_read(&sbi->quota_sem);
->>   	return ret;
+I have also applied the AM62Ax [2] patches that you'd sent and
+tested it here on AM62A [3].
 
+> bench was complete luck (or bad luck depending on how we view this).
+> 
+> We'll need to pull out a OMAP3 chip and try to separate the OMAP and K3 
+> OPN decoding before we can move the .efuse_offset
+> 
+> ~Bryan
 
+The efuse part of this driver is completely fine, and IMHO doesn't need
+any playing with. What does need MAJOR fixing is the rev part of it. I
+am wondering if we even really use the revision info to determine what
+OPP the devices support in most cases (I am confident that it's useless
+for AM62, 62A and 62P). In such cases we should rather even make the
+get_revision part optional. I am open to suggestions if there's another
+way to do it than what I have done in this series and in the dependency[1].
+
+Looking at `drivers/cpufreq/sti-cpufreq.c`: If they fail to obtain a
+version then they simply do version[0] = BIT(major);
+If that's acceptable for devices that have revision as _don't care_ then I
+can do that as well.
+
+I am also open to the idea of moving the new K3 devices into a
+new ti-k3-cpufreq driver if required, to avoid over complicating in this driver itself
+with more quirks and legacy vs new SoC differences which exist at
+a both SW and HW layer.
+
+Perhaps Viresh/ Nishanth can comment on what they think is the best way
+to move forward.
+
+But otherwise,
+I don't think these patches are fundamentally wrong or that they won't
+work, unless there's something I've missed.
+
+[1] https://lore.kernel.org/all/20240902092135.2826470-1-d-gole@ti.com
+[2] https://lore.kernel.org/all/20240826-opp-v3-1-0934f8309e13@ti.com/
+[3] https://gist.github.com/DhruvaG2000/d0c360b0bd7e43d0fd28cfe3eab941d2
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
