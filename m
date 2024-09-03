@@ -1,202 +1,139 @@
-Return-Path: <linux-kernel+bounces-313058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91D7969FA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B4E969FAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0927E1C23A85
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9CAB24DFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5FA39FFE;
-	Tue,  3 Sep 2024 14:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72553B7AC;
+	Tue,  3 Sep 2024 14:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TUfNwDtM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="T8IavOfe"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B3F1CA697;
-	Tue,  3 Sep 2024 14:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372054; cv=none; b=UNmbGyL5MFU/Hw2kHB4x95QeqyrhU0i+pMjGXJf+xFD2MsvPLeeYoIOId00xxHp5qkJBqcdqNa1UsOkKz7cCISfzEV5mN5pEkhH74NtBtELgtw3qZrtCGzw2ibjJT1sEy9MpRL4ddLfhmpJaMnijaBvKcrTHq4bi5Lo/Zuyxcys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372054; c=relaxed/simple;
-	bh=igim95csUW7LnJxvigcFbN18DG1zFyzXXFLsxrKbWPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tSE66CTwUOQdeb39PjMsYlyr3ybHMkgdxEJf/C8bcIVxuhBgV6kKjFl8Uc7jbnbjY9CTtfgEjC4bsNnQMSzjwrJ9Ksvek7mjPDfC1mQX3jRUCYEyNdZDfikdZ1MySm2m2fRX7WAwd5+1GtUZefkOjWgLD+qjsv9LSJZdbssDj0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TUfNwDtM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483DRGQJ015471;
-	Tue, 3 Sep 2024 14:00:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M19MjH5GN2vUkixXEwnIbMnZjmoXwomIsHt9uzvXfD8=; b=TUfNwDtM1Kr4Gmjk
-	cJplNsbURxn+ARqpbrc61MD5kuSHKQno/1rVc8Vmqj14wDKKyQFMd8JZggmVcQWQ
-	gEUfPb7cN22M90IAZM1+RWVOvMJjpSXwIzcmJNk/xwx/TsOckW9jOuwkEfI6AISD
-	P2Y7Vy/IGpppScV+d6zJktK6Zlj5YT4WeP86mXZa/JtgegEbPFk4dSm8Z12tC09G
-	qVyhthlNfzV5LnyKmAnDwpxSRvPag6DySAj4lGdmPpsSPK5i5PLgq98/JfUtiYrj
-	yRXXD7yf2fz3I0aR3WDUCxE65sVToyD4F3cG7l52NRbw3wIhKXYmW2VzlEUSMP9K
-	GqDfWA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt699jwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 14:00:42 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483E0eTs030414
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 14:00:40 GMT
-Received: from [10.253.79.111] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 07:00:35 -0700
-Message-ID: <492e3c19-c06d-4faa-8064-e6b73c46b13e@quicinc.com>
-Date: Tue, 3 Sep 2024 22:00:31 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ACE364BC;
+	Tue,  3 Sep 2024 14:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725372084; cv=pass; b=NEiKFyPq1iEDJg7xnFJry7QmFstWZrZsvHjT+AiPC9UaGcm5D1sictIbjcNOp/f37Qyvz7s688w39hbcGv3jmG4wOYXWqwzK80AX6ZDZPna9GSM3o62tp/hazzABsZEKXhfc2pBC/mgEZzeO2z/47D8Mn3+/s2R0pUd3ju5vQGM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725372084; c=relaxed/simple;
+	bh=DgKxU7ymeyfOn8smC+a1eI8FG8Ya+bjC3XbwIbFlPW8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=heMtNGEA17mjfMXzZgkFz2HCgJbany7HnSv02fY41u6U1xOjcJaR/bKz4QHeW+m6KEIBJRHrqZVQEEGTCxnr9TQrVeSVlQHXTx8Xd0zjjbWOQPmxVuum2TZ75mlRy1Fju9uDxXYxhEAH2s7+iGGe6TqWmNHUex8O4KYCRxn9r14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=T8IavOfe; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725372052; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jRDM+URDR9uwOmWNvoFX5gNWeDHB2mlFa8lxqT5+BqHKd5gH1/ET2RzteklqT6gUMllBtOnEKhbEXHgilyIoHCQS4o6rJtcpsAEDJ2jjzTs18whMloAbBjib3A4W+fKLOhoyQqDwCbMZuPHm31ElMQoPX9srIRJvbSnqQg3xsx8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725372052; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=B3X7/BScnuaQ5QIic6vas4I7lF55wl7Aex0QV6b1zjA=; 
+	b=FtWnMeyyyw1il1g48Jw+eZyB+f1o+5udDFtzZAihGuvA/wvnbgrNKLAowasYLX3P8juVlvEYPeiEBXTRt6fR/PENQi3apZ5s4PRh4sJoFOQKydTT2SpIjFmWVtFhpZi2jXrx8hbE/bL3clhV0VqagEHKwj0Qzu71X+7kXMrb8qI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725372052;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=B3X7/BScnuaQ5QIic6vas4I7lF55wl7Aex0QV6b1zjA=;
+	b=T8IavOfespJk1awZh/FhBdD7tDA9xoyNL+wYPwGUCA5+9q17wAaoCmpZwuKEWbhg
+	1PvlP4tsy53JIKD+DvvQpIxrcobF1//jNwBd4xtncM/dmXtB/3Hb/fGWOBSlYlO7Ts9
+	jTcpxM0PNYYam5SWT7OfDiCP4faZFAXHr+u2z4aM=
+Received: by mx.zohomail.com with SMTPS id 1725372050874491.02003731810225;
+	Tue, 3 Sep 2024 07:00:50 -0700 (PDT)
+Message-ID: <c47861dae9d339b9033ed71c45160009a7464888.camel@collabora.com>
+Subject: Re: [PATCH] net: enetc: Replace ifdef with IS_ENABLED
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Claudiu Manoil	
+ <claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@collabora.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 03 Sep 2024 15:00:47 +0100
+In-Reply-To: <ecd830fe-28a8-4995-b4d3-fa4e5312b305@linux.dev>
+References: <20240830175052.1463711-1-martyn.welch@collabora.com>
+	 <ecd830fe-28a8-4995-b4d3-fa4e5312b305@linux.dev>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
- IPQ SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
- <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
- <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
- <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
- <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
- <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
- <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
- <6sk7sx4pz2gnne2tg3d5lsphmnp6vqjj2tjogqcop7fwn3yk3r@ftevsz77w6pt>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <6sk7sx4pz2gnne2tg3d5lsphmnp6vqjj2tjogqcop7fwn3yk3r@ftevsz77w6pt>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eqlx0lhrApFUXS5H6T0rnZxsY0SxJD09
-X-Proofpoint-ORIG-GUID: eqlx0lhrApFUXS5H6T0rnZxsY0SxJD09
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_01,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2409030113
+X-ZohoMailClient: External
 
+On Mon, 2024-09-02 at 10:21 +0100, Vadim Fedorenko wrote:
+> On 30/08/2024 18:50, Martyn Welch wrote:
+> > The enetc driver uses ifdefs when checking whether
+> > CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This
+> > works
+> > if the driver is compiled in but fails if the driver is available
+> > as a
+> > kernel module. Replace the instances of ifdef with use of the
+> > IS_ENABLED
+> > macro, that will evaluate as true when this feature is built as a
+> > kernel
+> > module.
+> >=20
+> > Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> > ---
+> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 8 ++++----
+> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc.h=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc_ethtool.c | 2 +-
+> > =C2=A0 3 files changed, 7 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c
+> > b/drivers/net/ethernet/freescale/enetc/enetc.c
+> > index 5c45f42232d3..276bc96dd1ef 100644
+> > --- a/drivers/net/ethernet/freescale/enetc/enetc.c
+> > +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+> > @@ -977,7 +977,7 @@ static int enetc_refill_rx_ring(struct
+> > enetc_bdr *rx_ring, const int buff_cnt)
+> > =C2=A0=C2=A0	return j;
+> > =C2=A0 }
+> > =C2=A0=20
+> > -#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+> > +#if IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)
+> > =C2=A0 static void enetc_get_rx_tstamp(struct net_device *ndev,
+> > =C2=A0=C2=A0				union enetc_rx_bd *rxbd,
+> > =C2=A0=C2=A0				struct sk_buff *skb)
+> > @@ -1041,7 +1041,7 @@ static void enetc_get_offloads(struct
+> > enetc_bdr *rx_ring,
+> > =C2=A0=C2=A0		__vlan_hwaccel_put_tag(skb, tpid,
+> > le16_to_cpu(rxbd->r.vlan_opt));
+> > =C2=A0=C2=A0	}
+> > =C2=A0=20
+> > -#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+> > +#if IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)
+> > =C2=A0=C2=A0	if (priv->active_offloads & ENETC_F_RX_TSTAMP)
+> > =C2=A0=C2=A0		enetc_get_rx_tstamp(rx_ring->ndev, rxbd, skb);
+>=20
+> I believe IS_ENABLED can go directly to if statement and there should
+> be
+> no macros dances anymore. You can change these lines into
+> 	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) &&
+> 	=C2=A0=C2=A0=C2=A0 priv->active_offloads & ENETC_F_RX_TSTAMP)
+>=20
+> The same applies to other spots in the patch.
+>=20
 
+Thanks, v2 on the way....
 
-On 9/3/2024 2:39 AM, Dmitry Baryshkov wrote:
-> On Mon, Sep 02, 2024 at 11:33:57PM GMT, Jie Luo wrote:
->>
->>
->> On 8/31/2024 6:24 AM, Stephen Boyd wrote:
->>> Quoting Jie Luo (2024-08-30 09:14:28)
->>>> Hi Stephen,
->>>> Please find below a minor update to my earlier message on clk_ops usage.
->>>
->>> Ok. Next time you can trim the reply to save me time.
->>
->> OK.
->>
->>>
->>>> On 8/28/2024 1:44 PM, Jie Luo wrote:
->>>>> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
->>>>>> Quoting Luo Jie (2024-08-27 05:46:00)
->>>>>>> +       case 48000000:
->>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->>>>>>> +               break;
->>>>>>> +       case 50000000:
->>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
->>>>>>> +               break;
->>>>>>> +       case 96000000:
->>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->>>>>>> +               val &= ~CMN_PLL_REFCLK_DIV;
->>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
->>>>>>> +               break;
->>>>>>> +       default:
->>>>>>> +               return -EINVAL;
->>>>>>> +       }
->>>>>>
->>>>>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
->>>>>
->>>>> OK, I will move this code into the clk_ops::init().
->>>>
->>>> This code is expected to be executed once for initializing the CMN PLL
->>>> to enable output clocks, and requires the parent clock rate to be
->>>> available. However the parent clock rate is not available in the
->>>> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
->>>> for this. Please let us know if this approach is fine. Thanks.
->>>
->>> Sure. It actually sounds like the PLL has a mux to select different
->>> reference clks. Is that right? If so, it seems like there should be
->>> multiple 'clocks' for the DT property and many parents possible. If
->>> that's the case then it should be possible to have something like
->>>
->>> 	clocks = <0>, <&refclk>, <0>;
->>>
->>> in the DT node and then have clk_set_rate() from the consumer actually
->>> set the parent index in hardware. If that's all static then it can be
->>> done with assigned-clock-parents or assigned-clock-rates.
->>
->> Thanks Stephen. The CMN PLL block always uses a single input reference
->> clock pin on any given IPQ SoC, however its rate may be different on
->> different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96MHZ
->> on IPQ5018.
->>
->> Your second suggestion seems more apt for this device. I can define the
->> DT property 'assigned-clock-parents' to configure the clock parent of
->> CMN PLL. The code for reference clock selection will be added in
->> clk_ops::set_parent(). Please let us know if this approach is fine.
-> 
-> What is the source of this clock? Can you call clk_get_rate() on this
-> input?
-> 
-
-The source (parent clock) for CMN PLL is always from on-board Wi-Fi
-block for any given IPQ SoC.
-
- From the discussion so far, it seems there are two approaches possible
-which I would like to summarize below to be clear. Please let us know
-if this understanding or approach needs correction. Thanks.
-
-1. clk_get_rate() requires the parent clock instance to be acquired by
-devm_clk_get(). Per our understanding from Stephen's previous comment,
-it is preferred that a clock provider driver (this) does not use the
-_get_ APIs on the parent clock to get the rate. Instead the parent rate
-should be passed to the clk_ops using parent data. So the parent clock
-should be specified in the DT using assigned-clock-parents property, and
-can be accessed from the clk_ops::set_parent(). This seems like a more
-reasonable method.
-
-2. Alternatively, if it is architecturally acceptable to use
-devm_clk_get() and clk_get_rate() in this clock provider driver, we can
-save this parent clock rate into a local driver data structure and then
-access it from clk_ops::init() for configuring the PLL.
-
+Martyn
 
