@@ -1,277 +1,197 @@
-Return-Path: <linux-kernel+bounces-312614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8A39698E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6F39698DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C9FB28969
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816A6284686
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A071AD242;
-	Tue,  3 Sep 2024 09:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F511B9838;
+	Tue,  3 Sep 2024 09:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YOfu9l53"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sr1Fhf1t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69FC19F43E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D819F43E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355484; cv=none; b=GSdhFItlbgAnpqyVUQF49BLGN8T5/je75OGxImXrDtOZ26DOzoMljyWZrlXoixrvlGrUqD96QOvpDrXxI7v3iRUdA/C2TIF9s1fIK6o2qukQW6qp98pnggcYgUgJQatti0fXQsGOiooZwAryomWarHxJzAmudZ0Tj82Xavw5IS0=
+	t=1725355587; cv=none; b=fqqNvXJUjvFyclcj+OFjQB9R2tqGUz3LYP9DtnbBvia9toj2ROcV2PXIhVHy40RnjWOtbLghpeGidkBt4DfKCzERYwRA4hJlEyN6Uyu8LNPErr84dd3780gy6z+MRfufgGEsOLwEc1a6wGxxT1Vq0QtG/gBgvCOySqM1lBcCEGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355484; c=relaxed/simple;
-	bh=C88QgseTf5svIX72vF9YjAawJ/OqfVeT+abNQqK5gxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QL5z6+qJsUeJPoa1CIT/qMxLuvGF98LnEnE2fntrt7+96NYNiTtTZp3nT5aMGi3LGGEr01fNGJLg+cOZJZVeX7FdaRVYWdbKvIi2RE5GdEAo8eTqPeLhZgLfjSin6H8/XFxfW3ZCHfhp67QhBpk0ImkzrVbAnNILRcJlp1BnKyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YOfu9l53; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725355481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t06Usb+7GCh8eRzIVQtpE7SH1xzcDEf04HaEyeOIHw4=;
-	b=YOfu9l53T5VPQetgBxSF1FlOVww9mERj+AlIAoaw0sD5Yh42KiV4OmEJSMyo8FdhrHojVP
-	UU4QZndQWp4STe9LMYfJgGLcWsgabZ7xfWHodI1baHmoPsVa4081DU7z4cDVBa8T2r3EIP
-	+baznVwQLMlv+imUwpxHmbMyFgTjo1M=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-yTlXI0c2O8eMKiTWD8iflw-1; Tue, 03 Sep 2024 05:24:40 -0400
-X-MC-Unique: yTlXI0c2O8eMKiTWD8iflw-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5343a54e108so5349127e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:24:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355479; x=1725960279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t06Usb+7GCh8eRzIVQtpE7SH1xzcDEf04HaEyeOIHw4=;
-        b=IfEpdHdmVVtKLk2Ds9HtPknMTpLjKwTkvSb2TDZQDc1GcJlw9WZ8QlqJPhPNmkiRrF
-         KFJA9Vxw1rY1mEwBQGgxtF8I6HRQf3GUaI95Yup8Y6v2eCstZVx/2yaEsZJ/jQ+f3MVL
-         5RB2zQF1cyXahdZKTpYn/odoD4xT9h/29uGa4Mq86pC08VK31J2JARmarhMY7vb5mO4q
-         RdS2AZnEYcnvLPSSnoqNq82sjnZ1xe6GcVyyGRQmvX2C18S8g548Xq9tEsY+yj9QUY5q
-         BZJFMXw3kaAa6iNlHoBzJYVwMVrLkMoVw+2DUYdOgc8bwuvJcvjq4yMSQKK+KplzrBJy
-         ji1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXkxxxNd3PmPR3w587FzW68IENAYUIaeNDBoI1hZ0XO4hn40MGTRHp6VAi8LH4K1bE6Y3Hd2P8T5nXwZmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFcMD/DicIKGuLlMFfW2sA7igX7CD8TnIs8AYAMhgxOR4JJIdP
-	SRwSDOXNAHsd+2FVu7ziUkSbFbShOcRn6QgotDvOQQoR5IPHMkHKMDtJ0CGo11TVUOW5bjw/JAd
-	eI/5h2ADRnxDvvq064V43KkIjCf0WEQSU81KzX8TlheRuU8rMdmjDrFXXqv/HkQ==
-X-Received: by 2002:a05:6512:1282:b0:52e:91ff:4709 with SMTP id 2adb3069b0e04-53546b2574fmr9284198e87.21.1725355478920;
-        Tue, 03 Sep 2024 02:24:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQAT4XToSYikFbG/yyzMEKVCK+e/XPhr/IBFLWLbzHtUpo5lYIXPVLJHzU5gy7Jzkm4eB7/Q==
-X-Received: by 2002:a05:6512:1282:b0:52e:91ff:4709 with SMTP id 2adb3069b0e04-53546b2574fmr9284174e87.21.1725355478288;
-        Tue, 03 Sep 2024 02:24:38 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-5-217.dyn.eolo.it. [146.241.5.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d83sm164911255e9.44.2024.09.03.02.24.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 02:24:37 -0700 (PDT)
-Message-ID: <d4c6eae3-8dce-4418-a5c6-da5904f580cd@redhat.com>
-Date: Tue, 3 Sep 2024 11:24:36 +0200
+	s=arc-20240116; t=1725355587; c=relaxed/simple;
+	bh=PfEXXIU9sRjka86TJyF3Cc9GISKq8sSKC1fdWUaacbY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jZCMFfRpJybnC8coA+iX5m3anvaD6DqMUd9nBMRkVrfX0049itz8PFF+X12p1kNadrIm+CzXHvPs7XVZ0M0IzTY3P8d/U3VN7Id3hRanlJDPHPW/DJ5L3CC4u2Xc5IjtW0zwsiykHMqCcKrer9A+32rH8M024c1mR0sfxo1LE48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sr1Fhf1t; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725355586; x=1756891586;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=PfEXXIU9sRjka86TJyF3Cc9GISKq8sSKC1fdWUaacbY=;
+  b=Sr1Fhf1t/eRIJxdswzO48GwnftbDKiiFgR6BjkRlWlFSp8eN82QA1pik
+   I7euUuEWCmDAclZskNLiIl4iXO66QkhnD/BFTqmCOTJAx7dG2dqnlyp0b
+   lRH3QCby111iUSwRnCyD+oXXGlXhrkuQ+v6E66LaVdQRKR10FYiP90WfW
+   /t4IH+bNtgicE5X+mbno5FbxunzcKKZLW4ggFroriy4MDdQLeDHk4nen3
+   X84HMyK1gyq7y0u+vB+Mj9IrxpJIQEa1yMx1Cfo6tIiYEKSJ4yNDgQbBa
+   kFcPKojzXRu6K9c9GQyPbbGb2qkCjTytm/pHdBslsunACX29VrAzKJtXM
+   w==;
+X-CSE-ConnectionGUID: cMak4iJvQiilfHx2yEX4yQ==
+X-CSE-MsgGUID: uNgwPI5rQLW8z+6zf3/b5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="41411779"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="41411779"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:26:25 -0700
+X-CSE-ConnectionGUID: Az/ee2smTjCulo37yWasMw==
+X-CSE-MsgGUID: LZcDm11OT4emPXWWjCo5BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="65348229"
+Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO [10.245.244.199]) ([10.245.244.199])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 02:26:22 -0700
+Message-ID: <80ed1e928de230f54098d2a4b7f14b5d3556a687.camel@linux.intel.com>
+Subject: Re: [git pull] drm fixes for 6.11-rc6
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Dave
+	Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel
+ <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, 
+ Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, Alex Deucher
+ <alexdeucher@gmail.com>, lingshan.zhu@amd.com, Matthew Brost
+ <matthew.brost@intel.com>
+Date: Tue, 03 Sep 2024 11:26:20 +0200
+In-Reply-To: <5c493bd5-e657-4241-81d7-19ccd380b379@amd.com>
+References: 
+	<CAPM=9tzX71UKndfu8JECMOzc9kf4s4pp9cWTMWwE476cQXt_Yw@mail.gmail.com>
+	 <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
+	 <CAPM=9txF4+rC_CXQTftPctUd0N37t306YKcV3oKPjz+_zQGqag@mail.gmail.com>
+	 <440d041982f7f232f0ce3284bed4db391adb05c1.camel@linux.intel.com>
+	 <5c493bd5-e657-4241-81d7-19ccd380b379@amd.com>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 0/5] netdev_features: start cleaning
- netdev_features_t up
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: David Ahern <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew@lunn.ch>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240829123340.789395-1-aleksander.lobakin@intel.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240829123340.789395-1-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 8/29/24 14:33, Alexander Lobakin wrote:
-> NETDEV_FEATURE_COUNT is currently 64, which means we can't add any new
-> features as netdev_features_t is u64.
-> As per several discussions, instead of converting netdev_features_t to
-> a bitmap, which would mean A LOT of changes, we can try cleaning up
-> netdev feature bits.
-> There's a bunch of bits which don't really mean features, rather device
-> attributes/properties that can't be changed via Ethtool in any of the
-> drivers. Such attributes can be moved to netdev private flags without
-> losing any functionality.
-> 
-> Start converting some read-only netdev features to private flags from
-> the ones that are most obvious, like lockless Tx, inability to change
-> network namespace etc. I was able to reduce NETDEV_FEATURE_COUNT from
-> 64 to 60, which mean 4 free slots for new features. There are obviously
-> more read-only features to convert, such as highDMA, "challenged VLAN",
-> HSR (4 bits) - this will be done in subsequent series.
-> 
-> Please note that currently netdev features are not uAPI/ABI by any means.
-> Ethtool passes their names and bits to the userspace separately and there
-> are no hardcoded names/bits in the userspace, so that new Ethtool could
-> work on older kernels and vice versa.
-> This, however, isn't true for Ethtools < 3.4. I haven't changed the bit
-> positions of the already existing features and instead replaced the freed
-> bits with stubs. But it's anyway theoretically possible that Ethtools
-> older than 2011 will break. I hope no currently supported distros supply
-> such an ancient version.
-> Shell scripts also most likely won't break since the removed bits were
-> always read-only, meaning nobody would try touching them from a script.
-> 
-> Alexander Lobakin (5):
->    netdevice: convert private flags > BIT(31) to bitfields
->    netdev_features: convert NETIF_F_LLTX to dev->lltx
->    netdev_features: convert NETIF_F_NETNS_LOCAL to dev->netns_local
->    netdev_features: convert NETIF_F_FCOE_MTU to dev->fcoe_mtu
->    netdev_features: remove NETIF_F_ALL_FCOE
-> 
->   .../networking/net_cachelines/net_device.rst  |  7 +++-
->   Documentation/networking/netdev-features.rst  | 15 -------
->   Documentation/networking/netdevices.rst       |  4 +-
->   Documentation/networking/switchdev.rst        |  4 +-
->   drivers/net/ethernet/tehuti/tehuti.h          |  2 +-
->   include/linux/netdev_features.h               | 16 ++-----
->   include/linux/netdevice.h                     | 42 +++++++++++++------
->   drivers/net/amt.c                             |  4 +-
->   drivers/net/bareudp.c                         |  2 +-
->   drivers/net/bonding/bond_main.c               |  8 ++--
->   drivers/net/dummy.c                           |  3 +-
->   drivers/net/ethernet/adi/adin1110.c           |  2 +-
->   drivers/net/ethernet/chelsio/cxgb/cxgb2.c     |  3 +-
->   .../net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c   |  6 +--
->   .../net/ethernet/freescale/dpaa/dpaa_eth.c    |  3 +-
->   .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  |  3 +-
->   .../net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c   |  2 +-
->   drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c |  4 +-
->   drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c  |  2 +-
->   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 11 ++---
->   .../net/ethernet/intel/ixgbe/ixgbe_sriov.c    |  4 +-
->   .../ethernet/marvell/prestera/prestera_main.c |  3 +-
->   .../net/ethernet/mellanox/mlx5/core/en_main.c |  4 +-
->   .../net/ethernet/mellanox/mlx5/core/en_rep.c  |  3 +-
->   .../net/ethernet/mellanox/mlxsw/spectrum.c    |  6 ++-
->   .../ethernet/microchip/lan966x/lan966x_main.c |  2 +-
->   .../net/ethernet/netronome/nfp/nfp_net_repr.c |  3 +-
->   drivers/net/ethernet/pasemi/pasemi_mac.c      |  5 ++-
->   .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |  2 +-
->   drivers/net/ethernet/rocker/rocker_main.c     |  3 +-
->   drivers/net/ethernet/sfc/ef100_rep.c          |  4 +-
->   drivers/net/ethernet/tehuti/tehuti.c          |  4 +-
->   drivers/net/ethernet/ti/cpsw_new.c            |  3 +-
->   drivers/net/ethernet/toshiba/spider_net.c     |  3 +-
->   drivers/net/geneve.c                          |  2 +-
->   drivers/net/gtp.c                             |  2 +-
->   drivers/net/hamradio/bpqether.c               |  2 +-
->   drivers/net/ipvlan/ipvlan_main.c              |  3 +-
->   drivers/net/loopback.c                        |  4 +-
->   drivers/net/macsec.c                          |  4 +-
->   drivers/net/macvlan.c                         |  6 ++-
->   drivers/net/net_failover.c                    |  4 +-
->   drivers/net/netkit.c                          |  3 +-
->   drivers/net/nlmon.c                           |  4 +-
->   drivers/net/ppp/ppp_generic.c                 |  2 +-
->   drivers/net/rionet.c                          |  2 +-
->   drivers/net/team/team_core.c                  |  8 ++--
->   drivers/net/tun.c                             |  5 ++-
->   drivers/net/veth.c                            |  2 +-
->   drivers/net/vrf.c                             |  4 +-
->   drivers/net/vsockmon.c                        |  4 +-
->   drivers/net/vxlan/vxlan_core.c                |  5 ++-
->   drivers/net/wireguard/device.c                |  2 +-
->   drivers/scsi/fcoe/fcoe.c                      |  4 +-
->   drivers/staging/octeon/ethernet.c             |  2 +-
->   lib/test_bpf.c                                |  3 +-
->   net/8021q/vlan_dev.c                          | 10 +++--
->   net/8021q/vlanproc.c                          |  4 +-
->   net/batman-adv/soft-interface.c               |  5 ++-
->   net/bridge/br_device.c                        |  6 ++-
->   net/core/dev.c                                |  8 ++--
->   net/core/dev_ioctl.c                          |  9 ++--
->   net/core/net-sysfs.c                          |  3 +-
->   net/core/rtnetlink.c                          |  2 +-
->   net/dsa/user.c                                |  3 +-
->   net/ethtool/common.c                          |  3 --
->   net/hsr/hsr_device.c                          | 12 +++---
->   net/ieee802154/6lowpan/core.c                 |  2 +-
->   net/ieee802154/core.c                         | 10 ++---
->   net/ipv4/ip_gre.c                             |  4 +-
->   net/ipv4/ip_tunnel.c                          |  2 +-
->   net/ipv4/ip_vti.c                             |  2 +-
->   net/ipv4/ipip.c                               |  2 +-
->   net/ipv4/ipmr.c                               |  2 +-
->   net/ipv6/ip6_gre.c                            |  7 ++--
->   net/ipv6/ip6_tunnel.c                         |  4 +-
->   net/ipv6/ip6mr.c                              |  2 +-
->   net/ipv6/sit.c                                |  4 +-
->   net/l2tp/l2tp_eth.c                           |  2 +-
->   net/openvswitch/vport-internal_dev.c          | 11 ++---
->   net/wireless/core.c                           | 10 ++---
->   net/xfrm/xfrm_interface_core.c                |  2 +-
->   tools/testing/selftests/net/forwarding/README |  2 +-
->   83 files changed, 208 insertions(+), 194 deletions(-)
-> 
-> ---
->  From v4[0]:
-> * don't remove the freed feature bits completely and replace them with
->    stubs to keep the original bit positions of the already present
->    features (Jakub);
-> * mention potential Ethtool < 3.4 breakage (Eric).
-> 
->  From v3[1]:
-> * 0001: fix kdoc for priv_flags_fast (it doesn't support describing
->    struct_groups()s yet) (Jakub);
-> * 0006: fix subject prefix (make it consistent with the rest).
-> 
->  From v2[2]:
-> * rebase on top of the latest net-next;
-> * 0003: don't remove the paragraph saying "LLTX is deprecated for real
->    HW drivers" (Willem);
-> * 0006: new, remove %NETIF_F_ALL_FCOE used only 2 times in 1 file
->    (Jakub);
-> * no functional changes.
-> 
->  From v1[3]:
-> * split bitfield priv flags into "hot" and "cold", leave the first
->    placed where the old ::priv_flags is and move the rest down next
->    to ::threaded (Jakub);
-> * document all the changes in Documentation/networking/net_cachelines/
->    net_device.rst;
-> * #3: remove the "-1 cacheline on Tx" paragraph, not really true (Eric).
-> 
->  From RFC[4]:
-> * drop:
->    * IFF_LOGICAL (as (LLTX | IFF_NO_QUEUE)) - will be discussed later;
->    * NETIF_F_HIGHDMA conversion - requires priv flags inheriting etc.,
->      maybe later;
->    * NETIF_F_VLAN_CHALLENGED conversion - same as above;
-> * convert existing priv_flags > BIT(31) to bitfield booleans and define
->    new flags the same way (Jakub);
-> * mention a couple times that netdev features are not uAPI/ABI by any
->    means (Andrew).
-> 
-> [0] https://lore.kernel.org/netdev/20240821150700.1760518-1-aleksander.lobakin@intel.com
-> [1] https://lore.kernel.org/netdev/20240808152757.2016725-1-aleksander.lobakin@intel.com
-> [2] https://lore.kernel.org/netdev/20240703150342.1435976-1-aleksander.lobakin@intel.com
-> [3] https://lore.kernel.org/netdev/20240625114432.1398320-1-aleksander.lobakin@intel.com
-> [4] https://lore.kernel.org/netdev/20240405133731.1010128-1-aleksander.lobakin@intel.com
+On Mon, 2024-09-02 at 12:33 +0200, Christian K=C3=B6nig wrote:
+> Am 02.09.24 um 11:32 schrieb Thomas Hellstr=C3=B6m:
+> > On Mon, 2024-09-02 at 08:13 +1000, Dave Airlie wrote:
+> > > On Fri, 30 Aug 2024 at 12:32, Linus Torvalds
+> > > <torvalds@linux-foundation.org> wrote:
+> > > > On Fri, 30 Aug 2024 at 14:08, Dave Airlie <airlied@gmail.com>
+> > > > wrote:
+> > > > > The TTM revert is due to some stuttering graphical apps
+> > > > > probably
+> > > > > due
+> > > > > to longer stalls while prefaulting.
+> > > > Yeah, trying to pre-fault a PMD worth of pages in one go is
+> > > > just
+> > > > crazy talk.
+> > > >=20
+> > > > Now, if it was PMD-aligned and you faulted in a single PMD,
+> > > > that
+> > > > would
+> > > > be different. But just doing prn_insert_page() in a loop is
+> > > > insane.
+> > > >=20
+> > > > The code doesn't even stop when it hits a page that already
+> > > > existed,
+> > > > and it keeps locking and unlocking the last-level page table
+> > > > over
+> > > > and
+> > > > over again.
+> > > >=20
+> > > > Honestly, that code is questionable even for the *small* value,
+> > > > much
+> > > > less the "a PMD size" case.
+> > > >=20
+> > > > Now, if you have an array of 'struct page *", you can use
+> > > > vm_insert_pages(), and that's reasonably efficient.
+> > > >=20
+> > > > And if you have a *contiguous* are of pfns, you can use
+> > > > remap_pfn_range().
+> > > >=20
+> > > > But that "insert one pfn at a time" that the drm layer does is
+> > > > complete garbage. You're not speeding anything up, you're just
+> > > > digging
+> > > > deeper.
+> >=20
+> > > I wonder if there is functionality that could be provided in a
+> > > common
+> > > helper, by the mm layers, or if there would be too many locking
+> > > interactions to make it sane,
+> > >=20
+> > > It seems too fraught with danger for drivers or subsystems to be
+> > > just
+> > > doing this in the simplest way that isn't actually that smart.
+> > Hmm. I see even the "Don't error on prefaults" check was broken at
+> > some
+> > point :/.
+> >=20
+> > There have been numerous ways to try to address this,
+> >=20
+> > The remap_pfn_range was last tried, at least in the context of the
+> > i915
+> > driver IIRC by Christoph Hellwig but had to be ripped out since it
+> > requires the mmap_lock in write mode. Here we have it only in read
+> > mode.
+> >=20
+> > Then there's the apply_to_page_range() used by the igfx
+> > functionality
+> > of the i915 driver. I don't think we should go that route without
+> > turning it into something like vm_insert_pfns() with proper
+> > checking.
+> > This approach populates all entries of a buffer object.
+> >=20
+> > Finally there's the huge fault attempt that had to be ripped out
+> > due to
+> > lack of pmd_special and pud_special flags and resulting clashes
+> > with
+> > gup_fast.
+> >=20
+> > Perhaps a combination of the two latter if properly implemented
+> > would
+> > be the best choice.
+>=20
+> I'm not deep enough into the memory management background to judge
+> which=20
+> approach is the best, just one more data point to provide:
+>=20
+> The pre-faulting was increased because of virtualization. When
+> KVM/XEN=20
+> is mapping a BO into a guest the switching overhead for each fault is
+> so=20
+> high that mapping a lot of PFNs at the same time becomes beneficial.
 
-I think we are better off merging this series not too far into the 
-release cycle. My understanding is that the points raised on the 
-previous revisions have been addressed so I'll go over this a last time 
-and eventually merge it soon.
+Since populating at mmap time is not possible due to eviction /
+migration, perhaps one way would be to use madvise() to toggle
+prefaulting size? MADV_RANDOM vs MADV_SEQUENTIAL vs MADV_NORMAL.
 
-Thanks,
+/Thomas
 
-Paolo
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > /Thomas
+> >=20
+> > > Dave.
+>=20
 
 
