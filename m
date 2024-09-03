@@ -1,167 +1,168 @@
-Return-Path: <linux-kernel+bounces-312961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E43D969E50
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F294B969E52
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABC11C236D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA641C23866
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932271CA6B9;
-	Tue,  3 Sep 2024 12:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816A1CA6B6;
+	Tue,  3 Sep 2024 12:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZhEJafBA"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="SCTIEJoW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ke7gOsRH"
+Received: from pfhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CA91CA691
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E123B5227;
+	Tue,  3 Sep 2024 12:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367726; cv=none; b=pbYNPlhy87taIGsePTe6VA0w5Rg43sbNRQiT253OEudW/Rvoe64gGZsuiBZNzUWJSPOKvjALZ3Dd459P4DiLNBj3xmjHT1HVrZ11zBGuO7oJ2lZ1oh9n78ZLZ5JF5dP3vfyufFkSVx4ppfvpotKPLU7cYyYUq591zSpKtR+Y0LY=
+	t=1725367793; cv=none; b=l8zUwOCtdiDkVuodGyvoo2JZNHZX7LAtufeZOa/yh5esuTSgQpOjqks92gLNb/gydcfslowM3AWDx+sH5+EzuRfS7rLeCthUt8LraJLRtpeVuRN9HGLvWQBZL39oOYh2z2oT6mfXYGs0hAlFiY2i/goH767s40JgxLvkQbGLitc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367726; c=relaxed/simple;
-	bh=sAx+Uc/fmfmW8W3oB3SyU8lQhPLkmf/xd9J+I9e1tIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CDmtjcGwuWg2cuXfTCKPTsreX0pfbI1PzePVgnDQ+iDsUaTD4Kby6tbGpQTei1xDFlxtZ/ptnlO77l67zFGad6pQcDkIBlBukX8+W5rqjhFuMTNkMFQzJYeHYkBKhNPJjk375FhyND9x/H2mnMx7ojYwJbcPI+utmX7UmGG/kEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZhEJafBA; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20536dcc6e9so23740295ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725367723; x=1725972523; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZZH1YqkOpH09mugMgFcfroQPHP+w3Y22Xtsixkm+tk=;
-        b=ZhEJafBA84SzcPlJYFNmRpNj7TMsftEvBq9CoD62JIEEC5loJ29UHSzR1KYq5rtZI5
-         vTaTaR+Y/cZZkRggdJ/8rDHV+oVcgW0NeygItStYY0BRFMNm5Xs+fINEdan0LFEi+3fL
-         8pJkTAoXCZtCgaGya/Nj8YaGiY1qyZPNw7V/UEWsDFKrWpmqjEwvsxbiVJg0B2XPywyQ
-         dKxk0Ni+8pTLV91U6g2acQoBLKaP8NECP2tZ+4C6Rx3eUvi/rOqBOi67wclsb/Wi03m/
-         DiHy1GG2OHw7guLPWOrG/yO4Y6b8U8cUO5/u01eJmUCf/K7OWpImcpLR8R6/0DW09KqD
-         TeMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725367723; x=1725972523;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HZZH1YqkOpH09mugMgFcfroQPHP+w3Y22Xtsixkm+tk=;
-        b=Clsuwg+L+lX+4WpxBtZmDaPGnqfM6IFslPBOIy7YeNDKLj7eI1f7AzaGOHhs+PcrzW
-         91HhkQXjmtdXAZm0I3wNhx1PxC5hmzvoSXpeODfKKCy4ZqmUbliRSCUKJ6zkxNQTjaID
-         iWRt83M63OCUa3RVK9sOQ2zeL8do6m/IG7ZxQ079ekzqah+CpVzPVJFgDymCYCrOKTM0
-         hCgtb7ehPn2XxmQI0LEmxgwF8+BIyTxGWX9sIggqck48BJIkddnydot2bQG/2AJrIKSo
-         Rqz338PBOV4wDAUp0Kd1hxA/Tvinfsf3y6G6pGrp9XMsa7lLasYRCiInoE5N2huTPSHH
-         8otQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmP0biBalPftvUVw9fRTNuGos2UFksOXWV3dOw6atYrOnuexjH5GE0OznSnpCyiYxiL5XUHIVrQnKeBaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrqv2NwXZ9udtWTVBUCA5/o/diREqgoEcH8pecHJjallcL0H5n
-	W80guXvhZBeXFcR1V67crUQrsAkXoKsEMrhv/Yao3rcI8btgxmbX8NI2j41P0NeuiP6WZNvxT4R
-	04tqTQRdi3hM8olrhvKrA1YR90wGXtD/Vf90WFA==
-X-Google-Smtp-Source: AGHT+IG8GSALtD4HNlPBTo4AnbCT7xBd3i5CBDh3kwgJfM8Pd+mjTIUNWIuKcS1euhjl5D1F5YDoKkiBRutyHk3K230=
-X-Received: by 2002:a17:902:e848:b0:206:9ab3:2ec1 with SMTP id
- d9443c01a7336-2069ab336f0mr22068835ad.22.1725367723430; Tue, 03 Sep 2024
- 05:48:43 -0700 (PDT)
+	s=arc-20240116; t=1725367793; c=relaxed/simple;
+	bh=f0KKhbrLThdJMjZSEehIjis59dSoFnO019R8uYSZr34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GJbuX+Xu/yeo6szU5rlQL8ACWo49a2WOV6m04fbPttdJLZYrJGIyj0nlYtmmamfY80kycNVwk7TWjB2U2ug3bo47R1Xpi6iGZbs6Kux9OXBvsKAY/6L9tvex4DXIN92KhTNrbtgbCukmSnRd+XaeHR/qqmFCTXX7XNeki5F334w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=invisiblethingslab.com; spf=none smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=SCTIEJoW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ke7gOsRH; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id EEB041140312;
+	Tue,  3 Sep 2024 08:49:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 03 Sep 2024 08:49:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
+	 t=1725367790; x=1725454190; bh=1E+BR3n5Z2r9Job4iJ8m7+Qj6dAdD2l1
+	1Popp9sAYmE=; b=SCTIEJoWndflLhuisooQw4Fajc3sPxUIHH4AELiNjRpS2lAc
+	coaBOMZQL6xbbqPdDWrO1bwlTMRnc2euR53c1UGRP4oghYwSC9ZuXMSR0rADu0rC
+	tfQEbMFnvdFVROKDsx4cqtMyHQu5JM0H6OuuMaX0oWzxgOGJqqxdJbmR28/o6864
+	hK8viT4V84uoMovvZPosV2H1iQNuowuRYCGmozb8hOBkeZD6GXBHNwG5QBxbU/zD
+	IjCDLMN7Rc6Ik7o5EJ2adKkU0w7LMnvVwiangLjZjDZ5PIxd4ezL+kCYl6sEc8+e
+	d/LV305FkcR88SOBSsbc0lB+OMNP4fazLKUVkg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1725367790; x=1725454190; bh=1E+BR3n5Z2r9J
+	ob4iJ8m7+Qj6dAdD2l11Popp9sAYmE=; b=ke7gOsRH5cfxHIwJqdYFsVFTuUo8x
+	/4SzdEPACUSiNf1U4ekVEXYrWmF62Hpvp9Kte7AL596v6BQ7rs9PxeFjmGzz68Gh
+	YsrS3o01CfFXzb/07G/CY97ZKzVaM7aBQ+r9VMG5YvXcsOBdyuqtFIUn7hZ1paTD
+	pBelaNSs8tAuJMwEYgUWK2JDC9T93B6niYpbgVW3ZySD+WLH7gCkDSTSKjACq+12
+	XF9/4Exyf/XkiQzDtzHPZxnpqtRt+Wp7S1lLiOBflwDqa0+4cRrE4J4oFC0G0Cyd
+	3MFvvQWRYORHJXw6ECNMK0G9kOUYw7Wh534c/9bEYxparStJdpNHIyfbg==
+X-ME-Sender: <xms:7QXXZroU0JDe7zPRYsPzIkDCocXmuqZY6hjjH7rb2yh8fFdVCs9Dbw>
+    <xme:7QXXZloLpkr2EjMucq-Al0eQCxAclkGNb_NZGbSnzNZ31jH4PMYcY0KrZADsYUVHz
+    Fd41nNaxpt0iA>
+X-ME-Received: <xmr:7QXXZoMJPnENco3m9sWDtkmea9HPREBDsY_-eENQRyzk80iYNUl6sd1eNdijnwi3pjuF19PCm_LYbKsCfSK4h9PnH4vfdqkF4f5ddJ3ZWt8PoyRD6z0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehhedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecu
+    hfhrohhmpeforghrvghkucforghrtgiihihkohifshhkihdqifpkrhgvtghkihcuoehmrg
+    hrmhgrrhgvkhesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhmqeenucggtffr
+    rghtthgvrhhnpeelkefhudelteelleelteetveeffeetffekteetjeehlefggeekleeghe
+    fhtdehvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehmrghrmhgrrhgvkhesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhmpdhnsg
+    gprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrh
+    hmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomhdprhgtphhtthho
+    pehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthh
+    grlhdrkhhophgvtgesfehmuggvsgdrtghomhdprhgtphhtthhopehpvghrvgigsehpvghr
+    vgigrdgtiidprhgtphhtthhopehtihifrghisehsuhhsvgdrtghomhdprhgtphhtthhope
+    hkrghilhgrnhhgsehrvggrlhhtvghkrdgtohhmpdhrtghpthhtohepshgsihhnughinhhg
+    sehophgvnhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepshhimhhonh
+    htsehophgvnhhsohhurhgtvgdrtghirhhruhhsrdgtohhm
+X-ME-Proxy: <xmx:7QXXZu4qnZc0yP8zYaFPa2u2EW7WZnj5rOYx3PJbo5V6gu6jaZNBIQ>
+    <xmx:7QXXZq7fKPZFc67adNu71liSYSm0S8zOvAofRlaEhKalPb20vAQl7A>
+    <xmx:7QXXZmgtrCGCDEzlufIgzLvKcsUh2O---JKjyAb5Iqqqpp1PjuDJ-Q>
+    <xmx:7QXXZs5WmIXAZnikbQ-hvRiZDnnuVNNXwhPehEaMDRttvteUpcaERQ>
+    <xmx:7gXXZihqyLaLla69jKMWz3CClVBpO3mTb2F1VKVSNgnThQ3HbtVZozA1>
+Feedback-ID: i1568416f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Sep 2024 08:49:48 -0400 (EDT)
+From: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
+	stable@vger.kernel.org,
+	=?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal.kopec@3mdeb.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Athaariq Ardhiansyah <foss@athaariq.my.id>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org (open list:SOUND)
+Subject: [PATCH] ALSA: hda/realtek: extend quirks for Clevo V5[46]0
+Date: Tue,  3 Sep 2024 14:49:31 +0200
+Message-ID: <20240903124939.6213-1-marmarek@invisiblethingslab.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240728184551.42133-1-qyousef@layalina.io> <CAKfTPtBxFTxZQT=w6iexLEciHD736+ubLOd_PJnvXge09h-rXw@mail.gmail.com>
- <20240901180109.bqcgujqpdjsult5i@airbuntu>
-In-Reply-To: <20240901180109.bqcgujqpdjsult5i@airbuntu>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 3 Sep 2024 14:48:32 +0200
-Message-ID: <CAKfTPtB1LFQF3kCQ67-5cu-eABbuWR19FC6sTnnPVane4D+EAA@mail.gmail.com>
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Christian Loehle <christian.loehle@arm.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, 1 Sept 2024 at 20:01, Qais Yousef <qyousef@layalina.io> wrote:
->
-> On 08/13/24 12:02, Vincent Guittot wrote:
-> > >  void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
-> > > @@ -4913,6 +4923,93 @@ static inline void __balance_callbacks(struct rq *rq)
-> > >
-> > >  #endif
-> > >
-> > > +static __always_inline void
-> > > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> > > +{
-> > > +#ifdef CONFIG_CPU_FREQ
-> > > +       if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
-> > > +               /* Sugov just did an update, don't be too aggressive */
-> > > +               return;
-> > > +       }
-> > > +
-> > > +       /*
-> > > +        * RT and DL should always send a freq update. But we can do some
-> > > +        * simple checks to avoid it when we know it's not necessary.
-> > > +        *
-> > > +        * iowait_boost will always trigger a freq update too.
-> > > +        *
-> > > +        * Fair tasks will only trigger an update if the root cfs_rq has
-> > > +        * decayed.
-> > > +        *
-> > > +        * Everything else should do nothing.
-> > > +        */
-> > > +       switch (current->policy) {
-> > > +       case SCHED_NORMAL:
-> > > +       case SCHED_BATCH:
-> > > +       case SCHED_IDLE:
-> > > +               if (unlikely(current->in_iowait)) {
-> > > +                       cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> > > +                       return;
-> > > +               }
-> > > +
-> > > +#ifdef CONFIG_SMP
-> > > +               /*
-> > > +                * Send an update if we switched from RT or DL as they tend to
-> > > +                * boost the CPU and we are likely able to reduce the freq now.
-> > > +                */
-> > > +               rq->cfs.decayed |= prev && (rt_policy(prev->policy) || dl_policy(prev->policy));
-> > > +
-> > > +               if (unlikely(rq->cfs.decayed)) {
-> >
-> > My previous use case of a task non preempting current with large
-> > util_est is fixed with this version but I'm facing a new one a bit
-> > similar because of waiting for the context switch and the decay to try
-> > to update the frequency.
-> >
-> > When the task wakes up on an idle cpu, you wait for the decay to
-> > update the freq but if the freq is low and the pelt has been updated
-> > recently (less than 1024us) you can wait a long time before the next
-> > decay and the freq update. This is a problem if the task's util_est is
-> > large because you can stay several ms at low frequency before taking
-> > into account task's util_est
->
-> It is a symptom of the same problem. It seems we don't decay and we omit the
-> cpufreq update.
->
-> Why this was not a problem before? AFAICT we only send an update before my
-> patch if we had a decay and I didn't change this condition. Were we just
-> getting more lucky or did I change some behavior unwittingly?
+The mic in those laptops suffers too high gain resulting in mostly (fan
+or else) noise being recorded. In addition to the existing fixup about
+mic detection, apply also limiting its boost. While at it, extend the
+quirk to also V5[46]0TNE models, which have the same issue.
 
-I'm not able to reproduce this behavior with current code but I don't
-know why the behavior is different to be honest
+Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Cc: <stable@vger.kernel.org>
+---
+Cc: Michał Kopeć <michal.kopec@3mdeb.com>
+---
+ sound/pci/hda/patch_realtek.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
->
-> The problem with my patch is that I do this unconditional only if we failed
-> preemption check. But looks like I must enforce a cpufreq update after every
-> enqueue. I think the overhead of not checking rq->cfs.decayed would be high if
-> we always call a cpufreq update.
->
-> I'll just set rq->cfs.decayaed in util_est_enqueue() which should address both
-> use cases.
->
-> Thanks!
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 588738ce7380..01e2414b8839 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7637,6 +7637,7 @@ enum {
+ 	ALC287_FIXUP_LENOVO_14ARP8_LEGION_IAH7,
+ 	ALC287_FIXUP_LENOVO_SSID_17AA3820,
+ 	ALCXXX_FIXUP_CS35LXX,
++	ALC245_FIXUP_CLEVO_NOISY_MIC,
+ };
+ 
+ /* A special fixup for Lenovo C940 and Yoga Duet 7;
+@@ -9970,6 +9971,12 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = cs35lxx_autodet_fixup,
+ 	},
++	[ALC245_FIXUP_CLEVO_NOISY_MIC] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc269_fixup_limit_int_mic_boost,
++		.chained = true,
++		.chain_id = ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -10619,7 +10626,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1558, 0xa600, "Clevo NL50NU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1558, 0xa650, "Clevo NP[567]0SN[CD]", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1558, 0xa671, "Clevo NP70SN[CDE]", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+-	SND_PCI_QUIRK(0x1558, 0xa763, "Clevo V54x_6x_TU", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1558, 0xa741, "Clevo V54x_6x_TNE", ALC245_FIXUP_CLEVO_NOISY_MIC),
++	SND_PCI_QUIRK(0x1558, 0xa763, "Clevo V54x_6x_TU", ALC245_FIXUP_CLEVO_NOISY_MIC),
+ 	SND_PCI_QUIRK(0x1558, 0xb018, "Clevo NP50D[BE]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1558, 0xb019, "Clevo NH77D[BE]Q", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1558, 0xb022, "Clevo NH77D[DC][QW]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+-- 
+2.46.0
+
 
