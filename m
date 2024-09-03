@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-312411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92156969641
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:56:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7276C969647
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F927285748
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA2A285B27
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E051DAC78;
-	Tue,  3 Sep 2024 07:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M3mk1ojI"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B9E20010C;
+	Tue,  3 Sep 2024 07:57:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0D21AB6C0;
-	Tue,  3 Sep 2024 07:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946411DAC7D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725350202; cv=none; b=diILS32kllhsUdcB9NZaeNHDDwcvMSaadEnR37XKbD/r/WmCsXqBEoURq+r38l/dCdk4dWyJBQcWv/izdYYNwN2/4HFP0BkNCfHGRb1Jy3KQAuPaU0PktvfnvZuO/ED0Q7VGbItB4hQuBNFa42bNxobbBvNL/i6o0FlcNw6wXL4=
+	t=1725350263; cv=none; b=h426ZutiaZeOUooXk2PuslTD+cWBWyRD/FM7uhUWFVmSXs4EDmPkhDn5KV5aJimW6Oyi5v5pBm7qmzTOuVwIS+8KSubGJ3BABbaTLZrSjT+kO5HvlaViZriI3vor5OCDqKEiyrZ+5qFwcMWcVAD+yYhIrVOj+cGa92OdCYCMHHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725350202; c=relaxed/simple;
-	bh=3iqBpCGXD0+XoQjWD0N9kr9wPeUiZDyOWml2r1piz4I=;
+	s=arc-20240116; t=1725350263; c=relaxed/simple;
+	bh=mS89u6S+9MB6huaeT8Y+NqcQKExuTO5JOQzm6wkGMyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVSsbVd48YgurInhT2cnbbRCyNjQiIFGoMK6DXplMfgFRQ53uVcPz/vlHyIThvN4rLK0kwqfMQ9wOOWltbdGwDOSho4kUUo8FD1uttZm6sM98BmAz3e3TJUPdcYzGqE7JQl9k+ZYlbauoeQEhYK5hRsw3OuSpscwE2OQdP96fSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M3mk1ojI; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EJj1lsHhkDenjaw2zJUFO78CGxYRY5w+c/TRMqgr/ns=; b=M3mk1ojIlF0ZMZxUKKCBdUSxqy
-	R5qJrJiLcgnV1EriaXulB3T7liZbQbEkL7URw/RedNsLC9zDpB7WhYWmx9J6QN6AUcUF5zCK6rjMU
-	whNjbwPWcMxOkNmH+QvIZBuf4tOZusMuDSjRpNRTf2eFdZ9t8jv/ZKlp5SfcUgDNhcLXKZmv/BaTK
-	tOc1ToNTXWDwzuztDGFMhNrQrojhE1ZvjQ4F9bZXjmysffCyV84nIlgWoPCa9yXbVmzyc7TOBxIsN
-	417KAM2IEEkeAU0C4oo0xLzzQz4z4r9PQipOvrc9+F2r8B8GU1XFijILLRi/XT606/TiOiYLuerRZ
-	MEPDK1sA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1slOOy-0000000CHis-09M4;
-	Tue, 03 Sep 2024 07:56:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E1E39300390; Tue,  3 Sep 2024 09:56:34 +0200 (CEST)
-Date: Tue, 3 Sep 2024 09:56:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 05/31] x86/compiler: Tweak __UNIQUE_ID naming
-Message-ID: <20240903075634.GL4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <d8d876dcd1d76c667a4449f4673104669480c08d.1725334260.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEiVIZ/xtH8JW5izUFj+iXktU6f0QJQE2Rt9w+Bjz/h4wOEl82ztyVCuBnia93GRFJL+ywug5yqleOos0ItgWBwj+KJCEXj6HiFLFJixiN2734Urs2uB22ZjXG2z235hG45stdHXd9nH8pc2yjdpihjzsigHU9cN6k4yGjfkDls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1slOPq-0007ir-QS; Tue, 03 Sep 2024 09:57:30 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1slOPq-0058GW-4b; Tue, 03 Sep 2024 09:57:30 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1slOPq-004NHD-04;
+	Tue, 03 Sep 2024 09:57:30 +0200
+Date: Tue, 3 Sep 2024 09:57:30 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-phy@lists.infradead.org, dominique.martinet@atmark-techno.com,
+	linux-imx@nxp.com, festevam@gmail.com, frieder.schrempf@kontron.de,
+	aford@beaconembedded.com, Sandor.yu@nxp.com,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 2/5] phy: freescale: fsl-samsung-hdmi: Simplify
+ REG21_PMS_S_MASK lookup
+Message-ID: <20240903075730.3323moqlc37ykeas@pengutronix.de>
+References: <20240903013113.139698-1-aford173@gmail.com>
+ <20240903013113.139698-3-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,57 +65,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8d876dcd1d76c667a4449f4673104669480c08d.1725334260.git.jpoimboe@kernel.org>
+In-Reply-To: <20240903013113.139698-3-aford173@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2024 at 08:59:48PM -0700, Josh Poimboeuf wrote:
-> Add an underscore between the "name" and the counter so tooling can
-> distinguish between the non-unique and unique portions of the symbol
-> name.
-> 
-> This will come in handy for "objtool klp diff".
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Hi Adam,
+
+On 24-09-02, Adam Ford wrote:
+> The value of 'S' is writen to two places, PHY_REG3[7:4] and
+> PHY_REG21[3:0].  There is a lookup table which contains
+> the value of PHY_REG3.  Rather than using a switch statement
+> based on the pixel clock to search for the value of 'S' again,
+> just shift the contents of PHY_REG3[7:4] >> 4 and place the value
+> in PHY_REG21[3:0].  Doing this can eliminate an entire function.
+
+Good catch!
+
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+
 > ---
->  include/linux/compiler.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 39 ++------------------
+>  1 file changed, 4 insertions(+), 35 deletions(-)
 > 
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 8c252e073bd8..d3f100821d45 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -186,7 +186,11 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->  	__asm__ ("" : "=r" (var) : "0" (var))
->  #endif
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> index bc5d3625ece6..a700a300dc6f 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -355,40 +355,6 @@ to_fsl_samsung_hdmi_phy(struct clk_hw *hw)
+>  	return container_of(hw, struct fsl_samsung_hdmi_phy, hw);
+>  }
 >  
-> -#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-> +/* Format: __UNIQUE_ID_<name>_<__COUNTER__> */
-> +#define __UNIQUE_ID(name)					\
-> +	__PASTE(__UNIQUE_ID_,					\
-> +	__PASTE(name,						\
-> +	__PASTE(_, __COUNTER__)))
-
-OK, that's just painful to read; how about so?
-
-	__PASTE(__UNIQUE_ID_,					\
-	        __PASTE(name,					\
-		        __PASTE(_, __COUNTER)))
-
+> -static void
+> -fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_samsung_hdmi_phy *phy,
+> -				      const struct phy_config *cfg)
+> -{
+> -	u8 div = 0x1;
+> -
+> -	switch (cfg->pixclk) {
+> -	case  22250000 ...  33750000:
+> -		div = 0xf;
+> -		break;
+> -	case  35000000 ...  40000000:
+> -		div = 0xb;
+> -		break;
+> -	case  43200000 ...  47500000:
+> -		div = 0x9;
+> -		break;
+> -	case  50349650 ...  63500000:
+> -		div = 0x7;
+> -		break;
+> -	case  67500000 ...  90000000:
+> -		div = 0x5;
+> -		break;
+> -	case  94000000 ... 148500000:
+> -		div = 0x3;
+> -		break;
+> -	case 154000000 ... 297000000:
+> -		div = 0x1;
+> -		break;
+> -	}
+> -
+> -	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
+> -	       phy->regs + PHY_REG(21));
+> -}
+> -
+>  static void
+>  fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
+>  					    const struct phy_config *cfg)
+> @@ -457,7 +423,10 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
+>  	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+>  		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
 >  
->  /**
->   * data_race - mark an expression as containing intentional data races
-> @@ -218,7 +222,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->   */
->  #define ___ADDRESSABLE(sym, __attrs) \
->  	static void * __used __attrs \
-> -	__UNIQUE_ID(__PASTE(__addressable_,sym)) = (void *)(uintptr_t)&sym;
-> +	__UNIQUE_ID(__PASTE(addressable_, sym)) = (void *)(uintptr_t)&sym;
-
-This change doesn't get mention ?
-
->  #define __ADDRESSABLE(sym) \
->  	___ADDRESSABLE(sym, __section(".discard.addressable"))
+> -	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
+> +	/* High nibble of pll_div_regs[1] contains S which also gets written to REG21 */
+> +	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
+> +	       cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
+> +
+>  	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
 >  
+>  	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
 > -- 
-> 2.45.2
+> 2.43.0
+> 
 > 
 
