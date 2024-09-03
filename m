@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-313003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3F1969EE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5A969EEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42DC0B22C01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137CC1F24FA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487421A7262;
-	Tue,  3 Sep 2024 13:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GQiLXW81"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779CC1A726E;
+	Tue,  3 Sep 2024 13:20:50 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0150188010
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B781A7241;
+	Tue,  3 Sep 2024 13:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369629; cv=none; b=j+867CDEAUUGihxya2WJAQd02nvNrL5WOxyScVscFyawg/0Wei+mhTHzLMCprEKY339cp06E6KPJNv4FCb96boYFmDVJUh4muwXVcZo3/OM67bOBHgDHbtbJGJVTTpDKVjp5Cz5WSjImUcKeDLJ75a1bC0ExqXmNqTmZFfrCmHI=
+	t=1725369650; cv=none; b=kRD9+boA8/SPJKqu4r4Nn7IAU9P8gn3QHzmhBVdZ0Ms5rOC0TT5laPcwaGGyl/pLUBuLMYmVpD1xy8c+9Y+6vuPqJGAUhgpgdX8y1wpaiNsHJprfogQf4t1jvt6zjjcOGIXJVAdTuEuSfuAevzN5gIMZS+aOJTJJyNvAkvyIhHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369629; c=relaxed/simple;
-	bh=cLdJ/Bo1M/oU70Oco1Bx/Spn8T+t4KNsJgX5z4vwuYU=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=jAmTOdgDi27hqkbiXSKHOlkB48x1Pf9mjyEjUHLL0dryig9iJms5nFLtKYb6JeZukyUVK1ueFWHIUCX1k5qM8+AdY7mfK740IqbSN7tf7TMH+6qfDVtM4KCGvEBiCary7FULgow+RTII2FIhsbQwvrmlXq+p0UJK9JShtpee478=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GQiLXW81; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240903132024euoutp01fda1323ca17ebed495f78dbeb3267832~xvohQ05dr1764917649euoutp01Z
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:20:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240903132024euoutp01fda1323ca17ebed495f78dbeb3267832~xvohQ05dr1764917649euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725369624;
-	bh=b3eUhjP/q8xVDSgFAb1R6wktjZ+nfbbg5bdYLi1f8sI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=GQiLXW81lmBjNNRUG7JYlQEY+8BwYpkr0bMHalPWVu75jGJ8EeP5mZnf2XHdJUCcq
-	 lLvOZzAsV7hP1aFEEBUfY27YqhQCkZ1hDC8xTPfAzGV2j1Iur5jxzyOx4RyorusWDS
-	 thIOnc6it+9lLjyAHpn6Qj6ea6Cl9jl2f8bH/P3U=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240903132024eucas1p13619797f8ffa587ec8fd1e8fde35164b~xvog3ZWDl0865208652eucas1p1i;
-	Tue,  3 Sep 2024 13:20:24 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 95.76.09624.81D07D66; Tue,  3
-	Sep 2024 14:20:24 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240903132023eucas1p16128f5b09073a01bddff6b4b7bd03ce4~xvogJov8E3189331893eucas1p1o;
-	Tue,  3 Sep 2024 13:20:23 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240903132023eusmtrp2630d3411cc9d723ced18a4f4f434ad36~xvogI6Zi93039330393eusmtrp2g;
-	Tue,  3 Sep 2024 13:20:23 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-92-66d70d184bdf
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.F8.19096.71D07D66; Tue,  3
-	Sep 2024 14:20:23 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240903132023eusmtip23725f57a1af6343a1273a5c5c262e453~xvof6KI0g0590805908eusmtip2I;
-	Tue,  3 Sep 2024 13:20:23 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 3 Sep 2024 14:20:21 +0100
-Date: Tue, 3 Sep 2024 15:20:18 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>, "David
- Woodhouse" <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Will
-	Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
-	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
-	<k.jensen@samsung.com>
-Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
- non-nested and non-svm cases
-Message-ID: <20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
+	s=arc-20240116; t=1725369650; c=relaxed/simple;
+	bh=cM3rv0XpicNOM9aK0xqxXErRTqQmF+yKq6mSltXsMmk=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Eab1PREIHbKurVlPHZA64HTdAF4i9p3OdF3iGgPa2UOKD3ZXigAl22YNPj4DCA6OFG2yZXaR+GBUf/Yq9kKkL59N3vCVZSkOQw77ZW+zjLMrDZVjq67W3Tdi2tGmxjvwdBPQdVwybdL3NJ5hzPrcmZ8bTvL18acw6/7Oe9X7Iac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (31.173.81.58) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 3 Sep
+ 2024 16:20:27 +0300
+Subject: Re: [PATCH] usb: dwc2: drd: fix clock gating on USB role switch
+To: Tomas Marek <tomas.marek@elrest.cz>, <hminas@synopsys.com>,
+	<gregkh@linuxfoundation.org>
+CC: <Arthur.Petrosyan@synopsys.com>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <oleg.karfich@wago.com>
+References: <20240903094156.6516-1-tomas.marek@elrest.cz>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <a2ea1fa0-645d-2a16-f396-797e5b96fd45@omp.ru>
+Date: Tue, 3 Sep 2024 16:20:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7oSvNfTDN5vlrTYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
-	row3i3kKzgpVfD37l72B8RtfFyMnh4SAicSHacuYuxi5OIQEVjBK9J2YzgjhfGGU+DrpHCuE
-	85lRYtml32wwLRc3fmCDSCxnlPj8/SIjXNXy5l4mCGcTo8TCE5+YQVpYBFQkVrQvYAKx2QR0
-	JM6/uQMWFxFQl2hq3As2ilngP5PEntN9YAlhgVSJJSs3gDXwCjhIXDsznQXCFpQ4OfMJmM0M
-	NGjB7k9AzRxAtrTE8n8cIGFOAWeJ3Q//skOcqijxdfE9Fgi7VuLUlltgx0kIzOaU2NGxASrh
-	IrHwSReULSzx6vgWqGYZif8750M1TGaU2P/vAzuEsxoYGo1fmSCqrCVarjxhB7lCQsBR4snN
-	CAiTT+LGW0GIO/kkJm2bzgwR5pXoaBOCaFSTWH3vDcsERuVZSD6bheSzWQifLWBkXsUonlpa
-	nJueWmyYl1quV5yYW1yal66XnJ+7iRGYtk7/O/5pB+PcVx/1DjEycTAeYpTgYFYS4Y3deDVN
-	iDclsbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJg1OqgSlss+QM6bt+
-	msGbz21jkN7NxvmxSSkr4uQkmRn3qg+YXO+7/XhqwJYVD+UF1JvMbOoDNfeGFZvIHUzgCPkW
-	6zV1l6NITFXpo0OnLdauCH/y7u6qdtP2FQJVDO5pC/wf5bLqnDw9WXO51Ob6xkmveucyZkV/
-	9r1j8u+d6+meiEctYWKPYn+f+frDfrm7ksXE66rzBIJzcg+wek5sFP5bwnLu2+U5v8O6VIX3
-	G/F6KjJuUPplG7L0+AZNy6fyjawR0TonM1P5j2wScdqoLMYWI7N10ZINU0y6+MKOxm/9wP2t
-	7sXh2hv20fFKzxRykxYmulfPMypbvPgkyw3enGU/TwbOlAt7ovQl/+TFvc4cCUosxRmJhlrM
-	RcWJANlxMSbKAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7rivNfTDLruqVpsnriVzWLiysnM
-	Fr++WFjsP/iN1WLmjBOMFp2zN7BbLH27ld3i8q45bBYHPzxhtWi5Y+rA5fHk4DwmjzXz1jB6
-	bF6h5bF4z0smj3M7zrN7bFrVyeYx72Sgx4vNMxk9Pm+S89j6+TZLAFeUnk1RfmlJqkJGfnGJ
-	rVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsabxTwFZ4Uqvp79y97A+I2v
-	i5GTQ0LAROLixg9sXYxcHEICSxkljnZdZYJIyEhs/HKVFcIWlvhzrQuq6COjxIeOC4wgCSGB
-	TYwS2/cbgNgsAioSK9oXgDWzCehInH9zhxnEFhFQl2hq3AvWzCzwn0miZeliFpCEsECqxJKV
-	G8AaeAUcJK6dmc4CsWE1k8SfSxOZIRKCEidnPgFrYAaaumD3J6BJHEC2tMTyfxwgYU4BZ4nd
-	D/+yQ1yqKPF18T0WCLtW4vPfZ4wTGIVnIZk0C8mkWQiTFjAyr2IUSS0tzk3PLTbSK07MLS7N
-	S9dLzs/dxAiM3W3Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeGM3Xk0T4k1JrKxKLcqPLyrNSS0+
-	xGgKDIuJzFKiyfnA5JFXEm9oZmBqaGJmaWBqaWasJM7LduV8mpBAemJJanZqakFqEUwfEwen
-	VANT9fST3iEbvnRt8KgR5bJ1nr7h/LoP3wxOsHq+Plzie363b8gjj7iIG8KrehZVTrq74L3F
-	sqpSpyNvbVR7RJy05+Y8bfDSLV4oe3+R5w2FHVdXLf9jVL94hbzoLS/jmfrdByTrpjfliR+d
-	KeW4a9F7hl6FjTwzQtfPClbN5/21N1PlkI+vgndQtuiuF7NN+t66KtS1tahur5umFsnLw2/d
-	5xx1JuXcieKGI5vbGw6f2cc+uSNJd/HN/2yRlsx1k7p+Tq6d72ntpaIsdcDCcr6hwKVM7fyl
-	tUEJ5cvlJNRSfa4svsPPJPFbbYvti02LDBy7jU9obtx1U8PrV+fCkvIMmZTz/1+bP5zFG9K4
-	xUKJpTgj0VCLuag4EQCUwhYeZgMAAA==
-X-CMS-MailID: 20240903132023eucas1p16128f5b09073a01bddff6b4b7bd03ce4
-X-Msg-Generator: CA
-X-RootMTR: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
-References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
-	<CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
-	<20240826135955.GI3468552@ziepe.ca>
-	<20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
-	<d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
+In-Reply-To: <20240903094156.6516-1-tomas.marek@elrest.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/03/2024 12:48:06
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187499 [Sep 03 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
+ 766319f57b3d5e49f2c79a76e7d7087b621090df
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.58 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.58
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/03/2024 12:51:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/3/2024 10:53:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Mon, Sep 02, 2024 at 08:47:21PM +0800, Baolu Lu wrote:
-> On 2024/9/2 18:48, Joel Granados wrote:
-> >> I definitely expect PRI to work outside PASID and SVA cases, so this
-> >> is going in a good direction
-> > This touches on a detail (at least in Intel's vtd-io spec) that is not
-> > 100% clear to me. Second paragraph of section "3.4.3 Scalable Mode
-> > Address Translation" reads:
-> > "
-> >    ... Scalable-mode context-entries support both requests-without-PASID
-> >    and requests-with-PASID. However unlike legacy mode, in scalable-mode,
-> >    requests-without-PASID obtain a PASID value from the RID_PASID field of
-> >    the scalable-mode context- entry and are processed similarly to
-> >    requests-with-PASID.Implementations not supporting RID_PASID capability
-> >    (ECAP_REG.RPS is 0b), use a PASID value of 0 to perform address
-> >    translation for requests without PASID.
-> > "
-> > This basically means that a default PASID is used even though the
-> > request is without PASID. Right? Therefore "outside PASID" means with
-> > the default PASID (at least in Intels case). Right?
+On 9/3/24 12:41 PM, Tomas Marek wrote:
+
+> The dwc2_handle_usb_suspend_intr() function disables gadget clocks in USB
+> peripheral mode when no other power-down mode is available (introduced by
+> commit 0112b7ce68ea ("usb: dwc2: Update dwc2_handle_usb_suspend_intr function.")).
+> However, the dwc2_drd_role_sw_set() USB role update handler attempts to
+> read DWC2 registers if the USB role has changed while the USB is in suspend
+> mode (when the clocks are gated). This causes the system to hang.
 > 
-> Kind of yes.
+> Release gadget clocks before handling the USB role update.
 > 
-> The PCI specification defines the concept of PASID and its role in
-> transaction routing. We refer to PCI transactions with a PASID prefix as
-> "request-with-PASID" and those without a PASID prefix as "request-
-> without-PASID." Consequently, I understand 'outside PASID' to mean
-> transactions that do not have a PASID prefix.
+> Fixes: 0112b7ce68ea ("usb: dwc2: Update dwc2_handle_usb_suspend_intr function.")
 > 
-> The VT-d specification describes how the IOMMU hardware handles request-
-> without-PASID. It uses a reserved PASID for its internal routing and
-> handling purposes. If RID_PASID is supported (ECAP_REG.RPS=1), software
-> can select its own reserved PASID. Otherwise, the IOMMU hardware will
-> use a default value of 0.
+> Signed-off-by: Tomas Marek <tomas.marek@elrest.cz>
+> ---
+>  drivers/usb/dwc2/drd.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-Thx for getting back to me. This generates another doubt in my head
-regarding the published capabilities from the intel IOMMU Hardware:
+> diff --git a/drivers/usb/dwc2/drd.c b/drivers/usb/dwc2/drd.c
+> index a8605b02115b..ccb33cd1f04b 100644
+> --- a/drivers/usb/dwc2/drd.c
+> +++ b/drivers/usb/dwc2/drd.c
+> @@ -127,6 +127,18 @@ static int dwc2_drd_role_sw_set(struct usb_role_switch *sw, enum usb_role role)
+>  			role = USB_ROLE_DEVICE;
+>  	}
+>  
+> +#if IS_ENABLED(CONFIG_USB_DWC2_PERIPHERAL) || \
+> +	IS_ENABLED(CONFIG_USB_DWC2_DUAL_ROLE)
+> +	if (dwc2_is_device_mode(hsotg)) {
 
-So ecap_pasid [1] does not have to be set in scalable-mode. Right? This
-allows hardware supporting scalable-mode to reject transactions with
-PASID whenever ecap_pasid is *NOT* set; even though internally things
-are handled with a PASID. This question is directly related to the two
-last patches in the set.5/6 and 6/6.
+   Why not avoid #ifdef by doing e.g.:
 
-Best
+	if ((IS_ENABLED(CONFIG_USB_DWC2_PERIPHERAL) || \
+	     IS_ENABLED(CONFIG_USB_DWC2_DUAL_ROLE) &&
+	     dwc2_is_device_mode(hsotg)) {
 
-[1] I use ecap_pasid like in the kernel `ecap_pasid(e)  (e>>40) & 0x1`
+> +		if (hsotg->lx_state == DWC2_L2) {
+> +			if (hsotg->params.power_down ==
+> +			    DWC2_POWER_DOWN_PARAM_NONE && hsotg->bus_suspended &&
+> +			    !hsotg->params.no_clock_gating)
 
--- 
+   Well, these *if*s are mergeable too... :-)
 
-Joel Granados
+> +				dwc2_gadget_exit_clock_gating(hsotg, 0);
+> +		}
+> +	}
+> +#endif
+> +
+[...]
+
+MBR, Sergey
 
