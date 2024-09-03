@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-313455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6392F96A5A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB7196A5AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E851B1F24194
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 475BDB2422C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6639C18FDB3;
-	Tue,  3 Sep 2024 17:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810A218F2DD;
+	Tue,  3 Sep 2024 17:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gx84vVng"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R3MwxzxZ"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBD718E367
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C6B19005F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385532; cv=none; b=W5PQhJNebNJMGsRdZUvDrprPgFbG2zg/T1odn5xPIQqOOTQ+F18MCZUGsFNBRK5xIM6umaVE1/IqHS3sYED0gNSuyGWnOgztolcbpzpi/8EBrLmZcqJcft9SXtMyL2Nc9jvReoAMiiGRWL1tZOfLv06Zubqx93Xhmem367+cSx8=
+	t=1725385543; cv=none; b=NYYZyXGtbUBuwhoTyproJBq6r+AxRpOKntV/fGhjypVlBXVYG8/xhbddq65wbLnAhUKM5/WXEEsURbOC5zAby9R2oFUkxFhsPbXRpJPelkNm+Aghy8+FuB4Yr+0Jw1mvNc1IO+P88k17W9BlcOl6SqJgxhRECZm0+QWz3hBeEDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385532; c=relaxed/simple;
-	bh=rYPFCPoP6TAvaL3Ro+0czbeQ09HcZBwhjsTsLYAV4s0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fpB46Q8y7xf75x70/Hi/C0MC1eGS0SH7MNUyPdWua559KVeWcZ+7WSvo9/oKVcJb58GVOMahw2bMIRvErhaEUR9lMF2BVngNGlrC+73CYk5ff9FYcyXayCs9HSCjHBnyzpbJdlIO7pJicyf2Zpu8GWWsQwAFKh/WedkJbod4R9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gx84vVng; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2057917c493so18113015ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:45:31 -0700 (PDT)
+	s=arc-20240116; t=1725385543; c=relaxed/simple;
+	bh=tmLHyBWRKQOXP83hFUC5eqTGxvHhDGqj62+4WSqNhLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k1+4LLG7fTw+rlgmRfpfAkqtAOrh6h4lqeXSgd15qA+W4iawqfyIMm/TezOyROtX1Siq3VBbD17SjI0olevRTK9GZWP2xseM//4n9y5kw7HbmlgJcR/7o8yN1S1BNMw6pCwbRO7EmA/eJZG8bstZpNfuWKO6VOJd5oNH0ho/e3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R3MwxzxZ; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82a13d1c8f9so245902139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725385530; x=1725990330; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=P6f0+kkAoDMMNIRygtqDJeti1CcNmvIahIPj65DnoCo=;
-        b=gx84vVngGRZbBYyH/txZZkXWGM8azF/XHNSsZx+E3k/H74+TtYH2laRdNkIUk3HLGx
-         aJC/UJiNNuK8JoXfu4hhvBNj2akVGethz1PXaCHhjS5i/wNv2IJviFDh5o1vuCxoufPW
-         Unpu2i8u/i/aL6rc7ds21Xdxa0OZd0XoiSM0o=
+        d=linuxfoundation.org; s=google; t=1725385540; x=1725990340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2CfCUXPwTuKDSS4V+2JDx2g+w3NaNXN4kLDT7fz6YbA=;
+        b=R3MwxzxZgwBd2D3rXY82ixVfku9uU+HI5Sueq6caBdIg5Ww1tcImSsVOfPRCp3/CNZ
+         2g/hz6HWtJIJdDrH0XLkiT767So23LwmMD8dX1ihf7HwuJ8Q3NhGGuNGVeg0cxOfu7UD
+         GznBhJnffkywvNQ1dCbUPUEEZyrS9A0Pq4J0c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725385530; x=1725990330;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P6f0+kkAoDMMNIRygtqDJeti1CcNmvIahIPj65DnoCo=;
-        b=sA88PWxHtUObLjH4nYIgoPPKQhfOMuu9Czwhtr0X4XU0QRizLH3106q9d6ej68dZoK
-         kYG2LXTqhKtnZLAYGqJRDPrOb9Nnj+997xgHDjLLTaVc4t8sVB1cshpmUL07RbfI3i2Q
-         cKuj5T2tobhS/8yfMgSruEA63wFtuWO5Q7BIMpUg5lOQVHGC+Hs7q37yYG7y+CoGBLjX
-         s6a4piS76HdBneCZBmE+dE35cyZyO5MQbAz8ocVBHuAzzDOCSFi18UobXwyId/PnKhSH
-         GDqNkD2cvwJSNSe0bAFztclK1xTDHqRvegcOgiEMCKr4Phz8lUhXt0HmL7UEhnbksN5p
-         xdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUAQjsI05lMHfyXcm56Wf0r1xiCmBN7qbe6VdGjPmi3GkEewajLdz2PNbYYaezWP3nNr6rkpG41Sq/7r4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDOFw73lT9QTAPhO0zks+g3ao33+YyOgsjzrVzJn0/DwHdNdoM
-	gKO61d91MkAYK83E6vVqwwOy5nadKuBGlphQ4WOXnbpqeHprkNk9iE2TsNJfiw==
-X-Google-Smtp-Source: AGHT+IF4a+RzkWGPJDt3e7oGqe+xveFDIyLkVpMgSpCetnaEKOW1ehZUjPnPiS59EGj0zcA0/2Nomw==
-X-Received: by 2002:a17:903:234b:b0:205:866d:177d with SMTP id d9443c01a7336-205866d1ac4mr110496075ad.21.1725385530463;
-        Tue, 03 Sep 2024 10:45:30 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea67a68sm1101985ad.280.2024.09.03.10.45.28
+        d=1e100.net; s=20230601; t=1725385540; x=1725990340;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2CfCUXPwTuKDSS4V+2JDx2g+w3NaNXN4kLDT7fz6YbA=;
+        b=osfFlWjzGZffcMmZgPZxYbIORNueuj8eCIzS03E7hEIOLBzPottGzkZTIN/VqXHYNB
+         ldkweDuqU5M3dg68x/rn+3A3pu/eaSiNZ6pkTbkBD04/9/AKFPkvKmVQP9NC9Kua+n9r
+         G9KUaBYi2ckvBjutv7OF7vntUCo1YDTwlzKi0HLu8t7q51TtVJ8bmNsbxsxHBNLLeR/P
+         Lvkq8EPnSel1iaHvstk8QO1uB/s52S3wVsgP9Y2VeKET0Yju8pmAoa+d0LzI+vs0LSnF
+         ELfEd1B8LmdQxJRO19WafPEb1MZTciW0PwxQB9pvXniia4pEoh83a/+Ld4TSKIVfcrtc
+         v8Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYGrHIEeDReuXcxYMroFzuanBwkxWScK3MhzIZlU7kj1sHTqCgAbg1zPf0MCvAQxSC2kRx1FxLSlCP0iE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBPFisfwPaszSkm2mj81ijQlBILQ2FjlZ7ske1upJH9rIf10oO
+	dePUk405DGOE7GqN2dfqZoAsHPFnF4B7jR5Ui2wX/jtS1eTyZfdA/okKTLb1EG0=
+X-Google-Smtp-Source: AGHT+IFj0D0gfLdT8okAc9oFR9k6hi/DKqmjBZCI1iVGf8G9Z3WbgHeoS8IPkBZMqCW9IAWep0jTUA==
+X-Received: by 2002:a05:6602:6c0a:b0:82a:3ca1:6f75 with SMTP id ca18e2360f4ac-82a648a0e4emr419865839f.8.1725385539904;
+        Tue, 03 Sep 2024 10:45:39 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2ecd888sm2729179173.156.2024.09.03.10.45.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 10:45:29 -0700 (PDT)
-Message-ID: <8160bbe9-3b36-4232-8d34-4a5ecaa6815e@broadcom.com>
-Date: Tue, 3 Sep 2024 10:45:28 -0700
+        Tue, 03 Sep 2024 10:45:39 -0700 (PDT)
+Message-ID: <405c28dd-bf6d-4f17-92c4-182808182899@linuxfoundation.org>
+Date: Tue, 3 Sep 2024 11:45:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,93 +72,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: florian.fainelli@broadcom.com
-Subject: Re: [PATCH] PCI: brcmstb: Sort enums, pcie_offsets[], pcie_cfg_data,
- .compatible strings
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Jim Quinlan <james.quinlan@broadcom.com>
-Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- jim2101024@gmail.com, bcm-kernel-feedback-list@broadcom.com,
- linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>
-References: <20240902205456.227409-1-helgaas@kernel.org>
+Subject: Re: [PATCH] selftests: filesystems: fix warn_unused_result build
+ warnings
+To: Abhinav Jain <jain.abhinav177@gmail.com>, shuah@kernel.org
+Cc: javier.carrasco.cruz@gmail.com, Shuah Khan <skhan@linuxfoundation.org>,
+ linux-kselftest@vger.kernel.org, brauner@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240810135333.672845-1-jain.abhinav177@gmail.com>
+ <5fd97d54-fa64-4c03-865f-961ed4596a6e@linuxfoundation.org>
 Content-Language: en-US
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240902205456.227409-1-helgaas@kernel.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <5fd97d54-fa64-4c03-865f-961ed4596a6e@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/2/24 13:54, 'Bjorn Helgaas' via BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Sort enum pcie_soc_base values.
-> 
-> Rename pcie_offsets_bmips_7425[] to pcie_offsets_bcm7425[] to match BCM7425
-> pcie_soc_base enum, bcm7425_cfg, and "brcm,bcm7425-pcie" .compatible
-> string.
-> 
-> Rename pcie_offset_bcm7278[] to pcie_offsets_bcm7278[] to match other
-> "pcie_offsets" names.
-> 
-> Rename pcie_offset_bcm7712[] to pcie_offsets_bcm7712[] to match other
-> "pcie_offsets" names.
-> 
-> Sort pcie_offsets_*[] by SoC name, move them all together, indent values
-> for easy reading.
-> 
-> Sort pcie_cfg_data structs by SoC name.
-> 
-> Sort .compatible strings by SoC name.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On 8/16/24 07:11, Shuah Khan wrote:
+> On 8/10/24 07:53, Abhinav Jain wrote:
+>> Add return value checks for read & write calls in test_listmount_ns
+>> function. This patch resolves below compilation warnings:
+>>
+>> ```
+>> statmount_test_ns.c: In function ‘test_listmount_ns’:
+>>
+>> statmount_test_ns.c:322:17: warning: ignoring return value of ‘write’
+>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>>
+>> statmount_test_ns.c:323:17: warning: ignoring return value of ‘read’
+>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>> ```
+>>
+>> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+>> ---
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Hi Christian,
+> 
+> Let me know if it is okay to take this patch through kselftest tree.
+> The change looks good to me.
+> 
+> thanks,
+> -- Shuah
 
-There was some appeal in preserving the enumeration in the order in 
-which the chips have been produced, like 7425, 7435 etc.. but I see we 
-probably got some parts of the timeline wrong at some point anyway.
+Thank you for the patch.
 
-Should we push a bit further an accept a little bit of duplication and 
-simply embed the array of register offsets directly into the 
-pcie_cfg_data structure, rather than a pointer to to an array?
--- 
-Florian
+Applied to linux-kselftest next for Linux 6.12-rc1
+
+thanks,
+-- Shuah
 
