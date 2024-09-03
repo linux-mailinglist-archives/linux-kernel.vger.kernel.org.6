@@ -1,94 +1,54 @@
-Return-Path: <linux-kernel+bounces-313896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F0C96ABFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:17:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE9496ABFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2557B232D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD031F2570B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963531A0BE6;
-	Tue,  3 Sep 2024 22:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80B91A4E80;
+	Tue,  3 Sep 2024 22:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZTmY122Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gke3Wjn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0A31A3ABA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157221EBFE4;
+	Tue,  3 Sep 2024 22:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401847; cv=none; b=fW9apLOjGJ6Z3qPJM6m9QsevoJa5l2SC9uDibyECp9KBK8LOUyqs3kJenlOT+OPmwdnV3KzaYEsx/njAbJqqadOOQ1j50d6+/+oi7yjn5aPuoGunEnv7AexTjnMfj9lJX9/nbEwlDMJBigWFtFq3WGBP8SKHUbvqcEqHhiW9GUU=
+	t=1725401902; cv=none; b=T+fb1Fx0mGEaAj0deCQixlfQZRGUeMGmLJidi1bbjrxAtrXK0CYK/C4f8ukCJcFsFUP88fF9V2FKeGSPLO9pOIv1oi99g5RBKs8T3Iihm6Bu+CRATCuScTPbQdySt2I3vu3Tr4oVyPvMvx3mQY3kdZkxMz5cHSrXbFHpjnp/ojs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401847; c=relaxed/simple;
-	bh=6nSKMdl8/rMSTMas7fu7iffrXDBuMrREFVYndWL2WPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zi3a6u68WD0mMs2y2xMv9KAjhmzNeCHAOYP+kqGyGpipqOLoCSshSk7kU6vWPxnMjXLNeqhx+uZ5e+5xzddjf21oLxN1nq4x57UIMXRJw9EeZNkf/WmRjrxZFPRvRB/Wkccp0CS8WRaxAjX9TeJNd6ebfwwPvVLj/u7mUCD7S8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZTmY122Z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725401843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uX67JJ48/X+mbq8S3u6zeSeVmMvnaUsc25ToyEvfFRg=;
-	b=ZTmY122ZtzOHLAtbHw0c4M6rXfsTOP8DzJ7v9rm/k8quprz7XmzcIzbTHJQL87ja3/OBra
-	dbGPqFkMAxKOqGz0swrr8KS1ReY0OefNyDIjssArIWY+0o2+3GkuY3lUl4jrjVdLnh4Rbx
-	D9UEwOQbfadzYIRzc8pV/n5AqLdRz/Q=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-ORRI7aRXM3CQvIcnuNL4ew-1; Tue, 03 Sep 2024 18:17:22 -0400
-X-MC-Unique: ORRI7aRXM3CQvIcnuNL4ew-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4574542503fso46552831cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:17:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725401842; x=1726006642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uX67JJ48/X+mbq8S3u6zeSeVmMvnaUsc25ToyEvfFRg=;
-        b=wLbkFFYpZZuPPdkWPSYDqwkZfHrWU4i2UXVrTu6zgbwPhOcFRKXVS1WaXOeHzkd/7c
-         5vF7NpvVFJwawmU0A+F9uH9FCUjuJeIwRR7Ev01YI95vZOxxzMfYtUg8pEdkU0xFKpZC
-         YDkwR4wh9ejKbOrdFycyaJv0WeOJ56Ur++LlSJkBSunooaKg5O3XLfDYbDnYfvaZSUkj
-         ZnPtQDPTXfUUU/Gv1qFgJ6e+2xlSosrzxZKyh8DaYw+s4KUpZh3baHIyhHcXoeTHIYW0
-         eWxbkw5dxgxuqyZWLfUBYT0310L5aSKVQ4Nq+Gw/9xtAInRefAA6mlFELYcLzFIhLvYC
-         dX3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWxVhxcpoqPGjAYChJ6tgflENyTprGBUNaxiGrOuylU5AMm5QHIAIvFuCxyvgLp2+p8u0EJeiVB0FSXfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBpC0ktd1r/0ioB3X6hjrqky7TPYR9a8bnOwcpDOyuuXVmPdA9
-	Z3+6r+kbiENvceTFZvS8vQ5mMWCXrt6MKDxu89F1PpXRckkj1PM1BIsqZhLRGOoSzbALJqf5EBc
-	ZRKJr66G8CG0hCJEcN0KiyhFzpFuZwGdv1nhok/wt4+szOwHvA8SAJLzNsLZsxQ==
-X-Received: by 2002:a05:622a:4892:b0:456:80dd:2b74 with SMTP id d75a77b69052e-456f166a883mr180080161cf.2.1725401841792;
-        Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGF+ADqf+HvwhdXdoU9v++JYfldALmtFlgglwFanWYamzzbURjrFGiQObND/oVCHlOkCKZ8dQ==
-X-Received: by 2002:a05:622a:4892:b0:456:80dd:2b74 with SMTP id d75a77b69052e-456f166a883mr180079751cf.2.1725401841295;
-        Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c8788asm54097881cf.1.2024.09.03.15.17.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 15:17:20 -0700 (PDT)
-Date: Tue, 3 Sep 2024 17:17:18 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Suraj Jaiswal <quic_jsuraj@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, Andy Gross <agross@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Rob Herring <robh@kernel.org>, kernel@quicinc.com
-Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for
- multiple descriptors
-Message-ID: <yy2prsz3tjqwjwxgsrumt3qt2d62gdvjwqsti3favtfmf7m5qs@eychxx5qz25f>
-References: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+	s=arc-20240116; t=1725401902; c=relaxed/simple;
+	bh=ofGtKLeOINGZt+upXE0xfK5KYPswpVR/C0fqSZ1f660=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=f5SMD6sBdLbfBxgsh/YbaCckMUDuAkMpzykBiEaeWhg0JCt+SMRa/SEbOaiLYtpXubSyOVFiZ2mhkI8hHAWuWnBj4U+cXOZ/8Dh8zNisp6cKH6moUyMt4kBhJr72+G1nq8XK3K/wuWj/SsTjAbNaDEtO5+894yAeTBkMpix3GdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gke3Wjn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A706DC4CEC4;
+	Tue,  3 Sep 2024 22:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725401901;
+	bh=ofGtKLeOINGZt+upXE0xfK5KYPswpVR/C0fqSZ1f660=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gke3Wjn5dqoKGbiIjlmeVKG/Uji8+RsT/iTji1DWda8O2EOneTnCfE9IYIQBE3xLL
+	 9Hq23w02oVgePst9seHWNuObDevufpAOqki9LRTc9SsIa7fLr5xfcQcaBsfKdxZ7LQ
+	 9b3Ah99gYGoaOd5srztlbqgm/o+tDoYmvGiyKrV+Pd/2/Ln8GnNHkVKEdOswfPoUFf
+	 MtjadBFzjSmGfp7fMtkg1K8GFtVkHQH2VZJQdqwsdeTeoo08EuFz0qBl7R5fng2e+q
+	 0GCeKDKBBdXZhRUJKSrnnpJ+dQtdqy+KmM9GbXqKMd283c0QSE78kIyWL/zN37r7aC
+	 0CHE2RsDryp0A==
+Date: Tue, 3 Sep 2024 17:18:20 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Tony Hutter <hutter2@llnl.gov>
+Cc: bhelgaas@google.com, minyard@acm.org, linux-pci@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Introduce Cray ClusterStor E1000 NVMe slot LED
+ driver
+Message-ID: <20240903221820.GA26364@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,230 +57,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+In-Reply-To: <40c7776f-b168-4cbe-a352-122e56fe7b31@llnl.gov>
 
-On Mon, Sep 02, 2024 at 03:24:36PM GMT, Suraj Jaiswal wrote:
-> Currently same page address is shared
-> between multiple buffer addresses and causing smmu fault for other
-> descriptor if address hold by one descriptor got cleaned.
-> Allocate separate buffer address for each descriptor
-> for TSO path so that if one descriptor cleared it should not
-> clean other descriptor address.
+On Tue, Aug 27, 2024 at 02:03:48PM -0700, Tony Hutter wrote:
+> Add driver to control the NVMe slot LEDs on the Cray ClusterStor E1000.
+> The driver provides hotplug attention status callbacks for the 24 NVMe
+> slots on the E1000.  This allows users to access the E1000's locate and
+> fault LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs
+> entries.  This driver uses IPMI to communicate with the E1000 controller to
+> toggle the LEDs.
 
-I think maybe you mean something like:
+I hope/assume the interface is the same as one of the others, i.e.,
+the existing one added for NVMe behind VMD by
+https://git.kernel.org/linus/576243b3f9ea ("PCI: pciehp: Allow
+exclusive userspace control of indicators") or the new one for NPEM
+and the _DSM at
+https://lore.kernel.org/linux-pci/20240814122900.13525-3-mariusz.tkaczyk@linux.intel.com/
 
-    Currently in the TSO case a page is mapped with dma_map_single(), and then
-    the resulting dma address is referenced (and offset) by multiple
-    descriptors until the whole region is programmed into the descriptors.
+I suppose we intend that the ledmon utility will be able to drive
+these LEDs?  Whatever the user, we should try to minimize the number
+of different interfaces for this functionality.
 
-    This makes it possible for stmmac_tx_clean() to dma_unmap() the first of the
-    already processed descriptors, while the rest are still being processed
-    by the DMA engine. This leads to an iommu fault due to the DMA engine using
-    unmapped memory as seen below:
+A few minor random comments from a quick look below.
 
-    <insert splat>
+> +config HOTPLUG_PCI_PCIE_CRAY_E1000
+> +	tristate "PCIE Hotplug extensions for Cray ClusterStor E1000"
 
-    You can reproduce this easily by <reproduction steps>.
+s/PCIE/PCIe/
 
-    To fix this, let's map each descriptor's memory reference individually.
-    This way there's no risk of unmapping a region that's still being
-    referenced by the DMA engine in a later descriptor.
+> +static ssize_t craye1k_show(struct kobject *kobj, struct kobj_attribute *kattr,
+> +			    char *buf);
+> +static ssize_t craye1k_store(struct kobject *kobj, struct kobj_attribute *kattr,
+> +			     const char *buf,
+> +			     size_t count);
+> +static void craye1k_new_smi(int iface, struct device *dev);
+> +static void craye1k_smi_gone(int iface);
+> +static void craye1k_msg_handler(struct ipmi_recv_msg *msg, void *user_msg_data);
 
-That's a bit nitpicky wording wise, but your first sentence is hard
-for me to follow (buffer addresses seems to mean descriptor?). I think
-showing a splat and mentioning how to reproduce is always a bonus as
-well.
+Is it possible to reorder the function implementations such that these
+forward declarations are not needed?  That's the typical Linux style, so
+that ordering will be more familiar to readers.
 
-> 
-> Signed-off-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
-
-Fixes: ?
-
-At a quick glance I think its f748be531d70 ("stmmac: support new GMAC4")
-
-> ---
-> 
-> Changes since v2:
-> - Fixed function description 
-> - Fixed handling of return value.
-> 
-
-This is v1 as far as netdev is concerned :)
-
-> 
->  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 63 ++++++++++++-------
->  1 file changed, 42 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 83b654b7a9fd..5948774c403f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4136,16 +4136,18 @@ static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
->  /**
->   *  stmmac_tso_allocator - close entry point of the driver
->   *  @priv: driver private structure
-> - *  @des: buffer start address
-> + *  @addr: Contains either skb frag address or skb->data address
->   *  @total_len: total length to fill in descriptors
->   *  @last_segment: condition for the last descriptor
->   *  @queue: TX queue index
-> + * @is_skb_frag: condition to check whether skb data is part of fragment or not
->   *  Description:
->   *  This function fills descriptor and request new descriptors according to
->   *  buffer length to fill
-> + *  This function returns 0 on success else -ERRNO on fail
->   */
-> -static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
-> -				 int total_len, bool last_segment, u32 queue)
-> +static int stmmac_tso_allocator(struct stmmac_priv *priv, void *addr,
-> +				int total_len, bool last_segment, u32 queue, bool is_skb_frag)
->  {
->  	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
->  	struct dma_desc *desc;
-> @@ -4153,6 +4155,8 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
->  	int tmp_len;
->  
->  	tmp_len = total_len;
-> +	unsigned int offset = 0;
-> +	unsigned char *data = addr;
-
-Reverse xmas tree order, offset is always set below so you could just
-declare it, and data really doesn't seem necessary to me vs using addr
-directly.
-
-https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
-
->  
->  	while (tmp_len > 0) {
->  		dma_addr_t curr_addr;
-> @@ -4161,20 +4165,44 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
->  						priv->dma_conf.dma_tx_size);
->  		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
->  
-> +		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ? TSO_MAX_BUFF_SIZE : tmp_len;
+> +static atomic64_t *craye1k_lookup_stat(struct kobject *kobj, const char *name)
+> +{
+> +	struct craye1k *craye1k;
+> +	struct device *dev;
+> +	int i;
 > +
->  		if (tx_q->tbs & STMMAC_TBS_AVAIL)
->  			desc = &tx_q->dma_entx[tx_q->cur_tx].basic;
->  		else
->  			desc = &tx_q->dma_tx[tx_q->cur_tx];
->  
-> -		curr_addr = des + (total_len - tmp_len);
-> +		offset = total_len - tmp_len;
-> +		if (!is_skb_frag) {
-> +			curr_addr = dma_map_single(priv->device, data + offset, buff_size,
-> +						   DMA_TO_DEVICE);
+> +	/* Lookup table for name -> atomic64_t offset */
+> +	const struct {
+> +		const char *name;
+> +		size_t offset;
+> +	} table[] = {
+> +		CRAYE1K_TABLE(check_primary),
+> +		CRAYE1K_TABLE(check_primary_failed),
+> +		CRAYE1K_TABLE(was_already_primary),
+> +		CRAYE1K_TABLE(was_not_already_primary),
+> +		CRAYE1K_TABLE(set_primary),
+> +		CRAYE1K_TABLE(set_initial_primary_failed),
+> +		CRAYE1K_TABLE(set_primary_failed),
+> +		CRAYE1K_TABLE(set_led_locate_failed),
+> +		CRAYE1K_TABLE(set_led_fault_failed),
+> +		CRAYE1K_TABLE(set_led_readback_failed),
+> +		CRAYE1K_TABLE(set_led_failed),
+> +		CRAYE1K_TABLE(get_led_failed),
+> +		CRAYE1K_TABLE(completion_timeout),
+> +		CRAYE1K_TABLE(wrong_msgid),
+> +		CRAYE1K_TABLE(request_failed)
+> +	};
 
-Instead of defining "data" above, can't you just use "addr" directly here?
+Looks like possibly this table could be static instead of being on the
+stack?
 
+> + * __craye1k_set_primary() - Tell the BMC we want to be the primary server
+> + *
+> + * An E1000 board has two physical servers on it.  In order to set a slot
+> + * NVMe LED, this server needs to first tell the BMC that it's the primary
+> + * server.
+> + *
+> + * Returns: 0 on success, 1 otherwise.
+> + */
 > +
-> +			if (dma_mapping_error(priv->device, curr_addr))
-> +				return -ENOMEM;
+
+Spurious blank line.
+
+> +static int __craye1k_set_primary(struct craye1k *craye1k)
+
+> + * craye1k_is_primary() - Are we the primary server?
+> + *
+> + * Returns: 1 if we are the primary server, 0 otherwise.
+> + */
+> +static int craye1k_is_primary(struct craye1k *craye1k)
+> +{
+> +	u8 byte = 0;
+> +	int rc;
 > +
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
-> +		} else {
-> +			curr_addr = skb_frag_dma_map(priv->device, addr, offset,
-> +						     buff_size,
-> +						     DMA_TO_DEVICE);
+> +	/* Response byte is 0x1 on success */
+> +	rc = craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, &byte, 1);
+> +	atomic64_inc(&craye1k->check_primary);
+> +	if (rc == 0x1)
+> +		return 1;   /* success */
 > +
-> +			if (dma_mapping_error(priv->device, curr_addr))
-> +				return -ENOMEM;
+> +	atomic64_inc(&craye1k->check_primary_failed);
+> +	return 0;   /* We are not the primary server node */
+> +}
 > +
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
-> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+> +/*
+> + * craye1k_set_primary() - Attempt to set ourselves as the primary server
+> + *
+> + * Returns: 0 on success, 1 otherwise.
+
+Maybe return a negative error value like -EIO for failure?  Then the
+caller can simply pass that return value up.  Same for
+__craye1k_set_primary().
+
+> +	 * We know that our attention status callback functions have been swapped
+> +	 * into the PCI device's hotplug_slot->ops values.  We can use that
+> +	 * knowledge to lookup our craye1k.
+> +	 *
+> +	 * To do that, we use the current hotplug_slot->ops value, which is going
+> +	 * to be one of the entries in craye1k->ops[], and offset our slot number
+> +	 * to get the address of craye1k->ops[0].  We then use that with
+> +	 * container_of() to get craye1k.  Slots start at 1, so account for that.
+
+99% of this file fits in 80 columns.  This and one or two other
+comments use 81, which seems like a random width.  Can you reflow
+these to fit in 80?
+
+> +static int __craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
+> +					  u8 *status, bool set_primary)
+> +{
+> +	unsigned char slot;
+> +	int locate, fault;
+> +	int rc = 0;
+> +	struct craye1k *craye1k;
+> +
+> +	slot = PSN(to_ctrl(hotplug_slot));
+> +	if (!(slot >= 1 && slot <= 24)) {
+> +		rc = -EINVAL;
+> +		goto out;
+
+There's no cleanup at "out", so drop the "rc" and the label, use
+"return -EINVAL/-EIO/etc " directly here, and then "return 0" at the
+end.
+
+> +	}
+> +
+> +	craye1k = craye1k_from_hotplug_slot(hotplug_slot);
+> +
+> +	if (set_primary) {
+> +		if (craye1k_set_primary(craye1k) != 0) {
+> +			rc = -EIO;
+> +			goto out;
 > +		}
+> +	}
 > +
->  		if (priv->dma_cap.addr64 <= 32)
->  			desc->des0 = cpu_to_le32(curr_addr);
->  		else
->  			stmmac_set_desc_addr(priv, desc, curr_addr);
->  
-> -		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ?
-> -			    TSO_MAX_BUFF_SIZE : tmp_len;
-> -
->  		stmmac_prepare_tso_tx_desc(priv, desc, 0, buff_size,
->  				0, 1,
->  				(last_segment) && (tmp_len <= TSO_MAX_BUFF_SIZE),
-> @@ -4182,6 +4210,7 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
->  
->  		tmp_len -= TSO_MAX_BUFF_SIZE;
->  	}
-> +	return 0;
-
-nit: add a newline before return 0
-
->  }
->  
->  static void stmmac_flush_tx_descriptors(struct stmmac_priv *priv, int queue)
-> @@ -4351,25 +4380,17 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  		pay_len = 0;
->  	}
->  
-> -	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
-> +	if (stmmac_tso_allocator(priv, (skb->data + proto_hdr_len),
-> +				 tmp_pay_len, nfrags == 0, queue, false))
-> +		goto dma_map_err;
-
-Changing the second argument here is subtly changing the dma_cap.addr64 <= 32
-case right before this. Is that intentional?
-
-i.e., prior, pretend des = 0 (side note but des is a very confusing
-variable name for "dma address" when there's also mentions of desc meaning
-"descriptor" in the DMA ring). In the <= 32 case, we'd call
-stmmac_tso_allocator(priv, 0) and in the else case we'd call
-stmmac_tso_allocator(priv, 0 + proto_hdr_len).
-
-With this change in both cases its called with the (not-yet-dma-mapped)
-skb->data + proto_hdr_len always (i.e. like the else case).
-
-Honestly, the <= 32 case reads weird to me without this patch. It
-seems some of the buffer is filled but des is not properly incremented?
-
-I don't know how this hardware is supposed to be programmed (no databook
-access) but that seems fishy (and like a separate bug, which would be
-nice to squash if so in its own patch). Would you be able to explain the
-logic there to me if it does make sense to you?
-
->  
->  	/* Prepare fragments */
->  	for (i = 0; i < nfrags; i++) {
-> -		const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-> +		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
->  
-> -		des = skb_frag_dma_map(priv->device, frag, 0,
-> -				       skb_frag_size(frag),
-> -				       DMA_TO_DEVICE);
-> -		if (dma_mapping_error(priv->device, des))
-> +		if (stmmac_tso_allocator(priv, frag, skb_frag_size(frag),
-> +					 (i == nfrags - 1), queue, true))
-
-Personally I think it would be nice to change stmmac_tso_allocator() so
-you can keep the frag const above... i.e. something like
-stmmac_tso_allocator(..., void *addr, ..., const skb_frag_t *frag)
-and just check if frag is NULL to determine if you're dealing with a
-frag or not (instead of passing the boolean in to indicate that).
-
-I'm curious if someone else can think of a cleaner API than that for
-that function, even that's not super pretty...
-
->  			goto dma_map_err;
-> -
-> -		stmmac_tso_allocator(priv, des, skb_frag_size(frag),
-> -				     (i == nfrags - 1), queue);
-> -
-> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
-> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_frag_size(frag);
-> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
-> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
->  	}
->  
->  	tx_q->tx_skbuff_dma[tx_q->cur_tx].last_segment = true;
-> -- 
-> 2.25.1
-> 
-
+> +	locate = craye1k_get_slot_led(craye1k, slot, true);
+> +	if (locate == -1) {
+> +		rc = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	fault = craye1k_get_slot_led(craye1k, slot, false);
+> +	if (fault == -1) {
+> +		rc = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (rc != 0)
+> +		atomic64_inc(&craye1k->get_led_failed);
+> +
+> +	*status = locate << 1 | fault;
+> +
+> +out:
+> +	return rc;
+> +}
 
