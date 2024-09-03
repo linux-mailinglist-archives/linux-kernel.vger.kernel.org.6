@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-313288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C2296A330
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5143F96A33B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4F7B25F84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFEBA1F242F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A381885A2;
-	Tue,  3 Sep 2024 15:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C07188A3B;
+	Tue,  3 Sep 2024 15:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QESuzkL+"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AeccBDcV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66AA1E492;
-	Tue,  3 Sep 2024 15:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83A1E492;
+	Tue,  3 Sep 2024 15:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725378433; cv=none; b=nIXcPqnz9zLSJxWXM2IqZ+57JJ+IQWXIuBqGBBOtRBXmMFIfugNEA/GbDIGcsl5rniGciKRbVFdSFEVMyQf9igC21lpBsb4Gwx0KIDXd8PVc+Yzb/9EB0ecj+6f1IwAKAuao+8kUssQcrTfQ1TBnUjlkazbks4woK/tQ6tSN0dA=
+	t=1725378499; cv=none; b=NDFud1KdZJWSYy5QLlW29Pz/FmQDwLWHmJFUdQ1p1qT+ZrTWC4U+K5wCErZucEwIaFX9W8mkFx+MXuUfi7El5sQzwhTfFRTkhvRdS2ciX5/iLeyRE/A4h8nW7ogK8vqTWXrZ4nBn98L99QI3rhRy6jdJROsgvwZWMFOWg/HiX3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725378433; c=relaxed/simple;
-	bh=5kUdSagbe/GJ8lJhvIzZg25K9C6/1izhcdvJhYWGWNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVYAK1AgKeDI7OF7WUU6SPJHGLC1vwZsmVmQUVqeftIjJ2HUioajwx5obIfD2LJUgxGRYRyYOkDFbKW1td0/RzJi0UCe/j5JkKnnE4Q4Gq9AksVA1YY5yhVL7opsfziT/ROALHpJJPSviqWanvB+rs41KI3RfiYpV7Z9YvfYQ4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QESuzkL+; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8815ef6d2so2718890a91.0;
-        Tue, 03 Sep 2024 08:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725378432; x=1725983232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/FRmqd1fd5s4pr9pNoowMmPBZe4VgMiMQoqWg50Gtk=;
-        b=QESuzkL+AZyy1WUhh5RQYu5Fp4CDlQnE1Uxrlv7PycJQHKim0LE++3+AHI0EPmgnFN
-         b7Q3KtwoR06Vluqmim9NgFcqFPd8de62MPux1i8WeJ0XX+2/oJ0BrY0wak/Pj6EdAISv
-         UnPZiy672tsyu0m9Kwi9uvMxSB8SwkgbwLVOrfPrT09aORz2ZeBAY83czOxvpfl3rbHa
-         cLBA0IQh6KpI0QPLXS/9G8xOHFwT2T+7MCZnv3vhalrRKTbrOaiM+G3UWubf2ODxpyYS
-         5oLZRXwX13G8kH48dXy8+WaiAdZjvfpTZ/sZMjKjrHPE9XbYgOp7gYeJn4433V2BhCKE
-         fxBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725378432; x=1725983232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B/FRmqd1fd5s4pr9pNoowMmPBZe4VgMiMQoqWg50Gtk=;
-        b=Ciw/scWauAFjrmNm9OtPN8eFXHjY9RI0LYdECDUToM+7YKYb7+eN6LNZGj+lLrolal
-         UM0IvRoqQeE96ij28TYEPLWDRFLRV/WWf1hJhoxIKj8glqZweK9p1UWE3II6ZK7xZrQ+
-         Iw7wtP+yOJNspnfuCwAg2AAkGQP31USb07l15TSlQiJEbBiXfescGOg5gLNQIQzQgE9g
-         2h5lvM6FcQWrMRhQ6zBQ+jYtrMaJ6icURVd4aLpjHWp8bSySe4w4JoHSQO8QY0eRBcSG
-         xGDqMa75g305Ne5a+9ZPH3QBRnHDO/zEXlgCHXyZCXBF2Cwqf0SQCe5Sd2cjFUBTlCGS
-         IurQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJELg3DKwqi/m9T1uaoAWYcmXYwlNuCcClzXtDGi7Z/ujcCf9fz9uxLDdC0VSOWnNaj7F4dOQex00lN3jDj78=@vger.kernel.org, AJvYcCWm46zAqGd98J0LNdcfACmhJnJa4eFNS+/rUkede7SSR1FKnOYp8/fxf2lsf4Bjr1nt7B+LMLf217pdrbvI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNZQlCXjpOt/ayChswnPVqst1L4n4tIZnlAT2MZJryesC/cYp7
-	NImIz+60nYStzMiFkZr9GRmaOQEukQ2WlWgWtn4Jx4Iey2ATjj09VUey2w==
-X-Google-Smtp-Source: AGHT+IHIteDa49wYcvWfo7PiouXO3lBPb7jvb/m+6iuR+EVyA7oATaaDEX9vJPyBkY93nIIwiT22Xw==
-X-Received: by 2002:a17:90a:ec16:b0:2da:6812:c1bd with SMTP id 98e67ed59e1d1-2da6812c3e9mr2003869a91.15.1725378431451;
-        Tue, 03 Sep 2024 08:47:11 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6a38:89e0:6dd:908b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b69a61eesm5716092a91.43.2024.09.03.08.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 08:47:11 -0700 (PDT)
-Date: Tue, 3 Sep 2024 08:47:08 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: remove unneeded file entry in INPUT section
-Message-ID: <ZtcvfGanifeeUFZL@google.com>
-References: <20240903093948.122957-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1725378499; c=relaxed/simple;
+	bh=mHodSV3xioRI39Wwv+Ql0YTtiQAzSTQ32PxYoucNwzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GH/Z+tl2Q4nByszjuc0of+Y9us3EVVjUEb9I9SRuZLY8yJP6/VTsUQWxq87OSApbKw4ww37zFcv3Y9egnEZpSmUGwoW6WrbA48/GRWhR10GE0Ldo7n8Z/7ab2XhYDJk9fdPbIsiqyzFQSHCdaS0CEbGCsLxlYlUReQ5sl6q/Z0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AeccBDcV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725378497; x=1756914497;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mHodSV3xioRI39Wwv+Ql0YTtiQAzSTQ32PxYoucNwzE=;
+  b=AeccBDcV9YrJh54eQDzuGWjri7x4CQ2h59mplXTTr9Fb6cHD6fMkP4XE
+   dtiTmbVfMZYCmdCltHCjw/kP7c2hmZllozGOEWFPPcNKfthuk40uwW+HS
+   KEvDR3d5k3PAizqEjaPoV5pFuJU37QZp7U4SBEayPBJBUcSmzLPyEkAG9
+   0YIYj49RHbtu12b1Ogxb8pbh6SaB8kAD+fA2sykrEYSWGKBWW3UDJHTHZ
+   EVDgRkXxDWWmQuFmE7qUc6J+KavyykWXboC6y1cPYS2HqHTNY3oLRsRA0
+   +jFpquhGawNS5adpkGVoBu0rCeBw1xLqFJeGVM3FhfopnFQ6bjYtnVj4S
+   w==;
+X-CSE-ConnectionGUID: /uLK4j1STLqo6Pic6iKVlA==
+X-CSE-MsgGUID: Lo3MoLy1Qf6kVDwtnOU7SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="13348023"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="13348023"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:47:59 -0700
+X-CSE-ConnectionGUID: 7zM06NTTTCKywPQieFKqzA==
+X-CSE-MsgGUID: 2c5kyVAoS/eHTvZmd/nPWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65464055"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 03 Sep 2024 08:47:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 294B63C1; Tue, 03 Sep 2024 18:47:56 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 1/1] pinctrl: baytrail: Drop duplicate return statement
+Date: Tue,  3 Sep 2024 18:47:55 +0300
+Message-ID: <20240903154755.3460442-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903093948.122957-1-lukas.bulwahn@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 11:39:48AM +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit b9401c658d2c ("MAINTAINERS: add gameport.h, serio.h and uinput.h to
-> INPUT section") adds further header files in ./include/linux/ and
-> ./include/uapi/linux to the INPUT section, but the file
-> ./include/linux/uinput.h does not exist since commit a11bc476b987 ("Input:
-> uinput - fold header into the driver proper") removed this header file
-> in 2017.
-> 
-> Fortunately, ./scripts/get_maintainer.pl --self-test=patterns complains
-> about a broken reference. Remove the file entry referring to the
-> non-existing header file in the INPUT section.
+No need to repeat 'return ret;' inside and outside conditional.
+Just use one outside conditional for both cases.
 
-TIL about get_maintainer.pl --self-test.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied, thank you.
-
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 6dab0316715b..ad6a5e7157ee 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1535,10 +1535,8 @@ static int byt_gpio_probe(struct intel_pinctrl *vg)
+ 	}
+ 
+ 	ret = devm_gpiochip_add_data(vg->dev, gc, vg);
+-	if (ret) {
++	if (ret)
+ 		dev_err(vg->dev, "failed adding byt-gpio chip\n");
+-		return ret;
+-	}
+ 
+ 	return ret;
+ }
 -- 
-Dmitry
+2.43.0.rc1.1336.g36b5255a03ac
+
 
