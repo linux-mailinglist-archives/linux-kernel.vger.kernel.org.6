@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-313325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4441896A3D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:11:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AA396A3CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0164728294E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801391F26C5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2451189F29;
-	Tue,  3 Sep 2024 16:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55050189F29;
+	Tue,  3 Sep 2024 16:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJAUHpzR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IA5U16DO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18381DFFC;
-	Tue,  3 Sep 2024 16:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFD71891D9;
+	Tue,  3 Sep 2024 16:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379871; cv=none; b=Jlt6EOZ548mNGpIcNJ/na0aJGGv336kj0tOkBxHDuEulHKimgXuskygB/U4hYvYfvOIq4cXA6ZP4JfikNcRmraK8PutuWTb2sUQDZ8pnnOEJ5r1mWfgZOPUhbhpB6lw/ejF9KCpmxYSgWTKkzMDC2WyFZf69n7NBaRtqDNxo/wo=
+	t=1725379838; cv=none; b=WYOZTVX5K/MPsUDHTjEszf/TMgpjKxjqQynpG7hp+IDR1WTTkmXsUghV9hQtQvjg9p2x8thAtzMNr8QOFl7V1udsl/3vKZfLD/2gB3jvF9Zb/1fkNw7Sin9vE60WbOxRfgD/M3HrkDoX6dCk2f/uuz6QUz0kk6PmqBEDg4ZmcuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379871; c=relaxed/simple;
-	bh=23UJof+bw4z17P2EuEFVPPtXB7zf9hg2doA/jFPekec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MrYSD1Us8Ex44vEjlWIhwCTPxUOdLVHhCUTiYvVpHpI/SsKY9SoqwvVrp0/2BH3QRsQskRHyZ/ioQiBypBTVxldUBdwIA/ahv0OykFU15iZCS6/BZ/qNMOp6L46Xzpw1nof1JHIZzjhbzmT1ReT+I7NBb1X0FNYNVbGTAK1IE4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJAUHpzR; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725379870; x=1756915870;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=23UJof+bw4z17P2EuEFVPPtXB7zf9hg2doA/jFPekec=;
-  b=kJAUHpzRVWRyQRpTnMRKlK7y1728IP5prMIjHHNKHtUcohHYrdDJDedP
-   KQb0le2OxaMdTexDb0Nqv4gE/1pIoVdIXwfc2p3Uo+7Ti6nm2/jLp4c5I
-   /mwPt4pD7fqf+UlMzMwuqCRo7gP4jhERwGK3azUiY2q8WtI/sutSJwMAH
-   1+dVPQQ3vh8UoYs2J/jy+ji13T+pzT0lMvIPLUX0cCkhHtbY9ZqQQA+JY
-   MWm6xS0ukzK9Zv0tJsY8WYx17fuAoyqtYtW43K19hz/d+3/74wWyLEGxQ
-   01+2HROE5h3Kb2Yd0dZ7MYMUwzM3bgRNQ5MzyZSOjbiBzawZ0UFWDZAvZ
-   w==;
-X-CSE-ConnectionGUID: z+Mi9ddLRHm1uhoDtGjyZg==
-X-CSE-MsgGUID: kFtuT8ZOTAGAP1gFM0/MFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35147602"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="35147602"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:11:09 -0700
-X-CSE-ConnectionGUID: iiiYSyOkTkSWL/6RgAW03w==
-X-CSE-MsgGUID: xmCnEEbvQOKNkRB36feE1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69585899"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:11:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slW6l-00000004lR0-24Yh;
-	Tue, 03 Sep 2024 19:10:19 +0300
-Date: Tue, 3 Sep 2024 19:10:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v3 12/12] gpio: rockchip: replace mutex_lock() with
- guard()
-Message-ID: <Ztc03cbpPjPZatoL@smile.fi.intel.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
- <20240903073649.237362-13-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1725379838; c=relaxed/simple;
+	bh=xex94DES95vi44hvW2E+tvA/zSdqkC8n+EuRP566ZLE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=IVEzcaT67IHabiteaCSn3v8VBS+MwSSIWMSh704pTeqyCkxnfTmbxnFs69s2Xb/dTF+zZPWKRiyzYbbXhydQ6pqPTK204LBDG/0nklXJdh7SOKRQz5jDt57czhhj86S30IrK6aePF5jiKJx/th4DPgySYe7LUWCaOE/12kvZlp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IA5U16DO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA66C4CEC4;
+	Tue,  3 Sep 2024 16:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725379838;
+	bh=xex94DES95vi44hvW2E+tvA/zSdqkC8n+EuRP566ZLE=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=IA5U16DOtLR6DbrDi1P5qpGMi5ooAiZQRplmIii4n4vbRax6vGy+wFArnwd1ZjJUb
+	 ZHS6G4UDnyyVfDVgqwoBRglWfd+0wdrs6rq3FjniF+5bzDRdAyDWSdYErvIq3tLRrC
+	 ZQ95U4BqBbOblMTd/mRPtWz+QKb0tbNkGwwwmPpKUAQIPxbyfp4LWbojukrsIapA25
+	 1I4gJ6he/rDTUCA30WigqyOXrCsI92cARsoxPw73N+BamQ1RLjiq4e5dXXOcProWEo
+	 NOt1ivbA0Qgk+GBWVBaN82dKIFQdA4c23tVVHIfISgNM+FpCrAAaPFi0mYB/ttNpUh
+	 GF+7o1P09u0Yw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903073649.237362-13-ye.zhang@rock-chips.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 03 Sep 2024 19:10:34 +0300
+Message-Id: <D3WS3TK054QR.580Q46WYCDEZ@kernel.org>
+Subject: Re: [PATCH v12 2/3] mm: memory-failure: move return value
+ documentation to function declaration
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <bp@alien8.de>,
+ <rafael@kernel.org>, <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+ <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+ <gregkh@linuxfoundation.org>, <will@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+ <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+ <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+ <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+ <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+ <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+ <zhuo.song@linux.alibaba.com>
+X-Mailer: aerc 0.18.2
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-3-xueshuai@linux.alibaba.com>
+In-Reply-To: <20240902030034.67152-3-xueshuai@linux.alibaba.com>
 
-On Tue, Sep 03, 2024 at 03:36:49PM +0800, Ye Zhang wrote:
-> Replacing mutex_lock with guard() simplifies the code and helps avoid
-
-mutex_lock()
-
-avoiding
-
-> deadlocks.
-
-...
-
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-
-+ cleanup.h
-
-...
-
+On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+> Part of return value comments for memory_failure() were originally
+> documented at the call site. Move those comments to the function
+> declaration to improve code readability and to provide developers with
+> immediate access to function usage and return information.
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 7 -------
+>  mm/memory-failure.c            | 9 ++++++---
+>  2 files changed, 6 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/cor=
+e.c
+> index b85ec7a4ec9e..66693b6dd1cd 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -1361,13 +1361,6 @@ static void kill_me_maybe(struct callback_head *cb=
+)
+>  		return;
 >  	}
-> -	mutex_lock(&bank->deferred_lock);
-> +	guard(mutex)(&bank->deferred_lock);
+> =20
+> -	/*
+> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
+> -	 * to the current process with the proper error info,
+> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
+> -	 *
+> -	 * In both cases, no further processing is required.
+> -	 */
+>  	if (ret =3D=3D -EHWPOISON || ret =3D=3D -EOPNOTSUPP)
+>  		return;
+> =20
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 7066fc84f351..df26e2ff5e06 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2199,9 +2199,12 @@ static void kill_procs_now(struct page *p, unsigne=
+d long pfn, int flags,
+>   * Must run in process context (e.g. a work queue) with interrupts
+>   * enabled and no spinlocks held.
+>   *
+> - * Return: 0 for successfully handled the memory error,
+> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
+> - *         < 0(except -EOPNOTSUPP) on failure.
+> + * Return values:
 
-Make it surrounded by blank lines.
+s/Return values/Return:/=20
 
-> +	ret = rockchip_get_bank_data(bank);
-> +	if (ret)
-> +		goto err_disabled_clk;
+https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
 
--- 
-With Best Regards,
-Andy Shevchenko
+> + *   0             - success,
+> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
+> + *   -EHWPOISON    - the page was already poisoned, potentially
+> + *                   kill process,
+> + *   other negative values - failure.
+>   */
+>  int memory_failure(unsigned long pfn, int flags)
+>  {
 
-
+BR, Jarkko
 
