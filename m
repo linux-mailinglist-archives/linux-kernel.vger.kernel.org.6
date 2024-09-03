@@ -1,95 +1,152 @@
-Return-Path: <linux-kernel+bounces-312647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBB396995F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:41:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C016969959
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1E03B25524
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869F0B29700
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D41A0BC9;
-	Tue,  3 Sep 2024 09:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LKAjHEJw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EDYadUxW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6D21A0BF2;
+	Tue,  3 Sep 2024 09:38:20 +0000 (UTC)
+Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [207.211.30.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDE51A0BC8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF761A0BD6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.211.30.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725356274; cv=none; b=lwZSP7UrKq515IRFn7cQXGISGUeS+0PDYBXons/oxPkZvhu7iN2bd5p4kyMYfmS+uclenEsRk0+S3czQfcyjYR+mHX1q6dR8sjf9fWjcOA79opYzXbfXIjCFBz2KGfKO4BJOZaMRTrjIh7VdTUEKSeZOuLM4Fs5gOecFDiEivr8=
+	t=1725356300; cv=none; b=T0fumQst8PooXd1VuTQxoacAR8ZO72PlvLkWYt8IV6rCdQRQINC7EjDzcJPpdRPVe1erKbHtzuwPmMwq0k6Nmoe8zc/RGfJ/8/jNpYMS9HN9Hm3KPBD4Y8INZ8c/GOzFjS6xA2H+DqCBiURM5BT5+XmbfKJEMaV7BcDMKA/7/8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725356274; c=relaxed/simple;
-	bh=5owENPUpHeTyQSQfpeKzSn3pwcPBnuBMu3AJfFthQ0U=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IQ+I1Hay5Ut9IMtVeBoHzguSzFW/sCZsubnFjSYQGd3pHfUwPvhGcWyPQe0DwlwM6OWHpCGx8VzBeyq/tufpy+SZGj9E8gJXPuFgsppwxUwAOkFzwU2uhyf5MvTAp60z00sRBzC3VSy4l36JsqFE6oKaWKRUNJJwnXT/BpNko98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LKAjHEJw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EDYadUxW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725356271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RqE10hI3QOgAEO71wJ+N+VawSeiWDqVE66hPggIFXso=;
-	b=LKAjHEJw5kEBD7n7BMkvd1vwOy4IlBTCCVO/UgyJsKDiBHtxBM/VOleZ6wsg6xo+WOJ2yT
-	GsVxkc3kCfPV6997d3mtW18BTAQ9fM7R3yamrQnw9dEzeMB8+LS5MFoEP4O4xMV1bBSMqN
-	O5VzELpDbEowwPY8gTvWdkZ65Q1lqu4So8oOKV+vM3dqs38z1n70QTpDDU+tqH9j1nHCyz
-	saeQTh/gOIVnUT2xq44/J00xKP7Qt3nDONYvu6A+998a5VF9+euc2D16tcs8Iqqv2xw/1+
-	i4zEOCq3Exk2iGZ9UTX98k88f6CVyX1GKECp98eIn3sdG8PLr5IwKKZCcyeiCw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725356271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RqE10hI3QOgAEO71wJ+N+VawSeiWDqVE66hPggIFXso=;
-	b=EDYadUxWOdUcfba9SLO7omxNxpNpQ6mOwBW/faB8XB5Ahwk80n3TBXLV89kp5grXl+5A6t
-	RnDXg/UTojaJgdCQ==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] debugobjects: Fix the misuse of global variables in
- fill_pool()
-In-Reply-To: <659f0321-e567-ad48-4545-4a47a158d6c2@huawei.com>
-References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
- <20240902140532.2028-2-thunder.leizhen@huawei.com> <87mskq58l5.ffs@tglx>
- <13d2be50-4a52-7cf0-8325-65435ad47a62@huawei.com>
- <3bb35c94-dd54-33d4-b7ac-64f0d2b77c07@huawei.com>
- <659f0321-e567-ad48-4545-4a47a158d6c2@huawei.com>
-Date: Tue, 03 Sep 2024 11:37:50 +0200
-Message-ID: <87seuh84cx.ffs@tglx>
+	s=arc-20240116; t=1725356300; c=relaxed/simple;
+	bh=5J6KdP2Oj9RJK48xtumgyC8tF7u+LNmkzQUFdbvZH08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9SobMvwCqQCsuhwB6ZhW4qVujd+FmyZodzo2csj1HVQPi9hOqPzr5cYCOD73fOancG9nFW/A5c69ryEs25lF4HdqURDBfo5UCBxJ4an3XcXJLDPSJwFEJuqh0UiooJGp4Up/sXsWXipzTyDAd7MvEor6hOup/di4ZjYZMQ0kjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=none smtp.mailfrom=queasysnail.net; arc=none smtp.client-ip=207.211.30.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=queasysnail.net
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-271-kutVcPASMXiW5EbXuE9tXA-1; Tue,
+ 03 Sep 2024 05:38:06 -0400
+X-MC-Unique: kutVcPASMXiW5EbXuE9tXA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D7331956064;
+	Tue,  3 Sep 2024 09:38:04 +0000 (UTC)
+Received: from hog (unknown [10.39.192.5])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 73B8030001A4;
+	Tue,  3 Sep 2024 09:37:58 +0000 (UTC)
+Date: Tue, 3 Sep 2024 11:37:56 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
+	lcherian@marvell.com, richardcochran@gmail.com,
+	bharatb.linux@gmail.com
+Subject: Re: [net-next PATCH v8 5/8] cn10k-ipsec: Add SA add/del support for
+ outb ipsec crypto offload
+Message-ID: <ZtbY9AF1fjUCcBOH@hog>
+References: <20240903045937.1759543-1-bbhushan2@marvell.com>
+ <20240903045937.1759543-6-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903045937.1759543-6-bbhushan2@marvell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Sep 03 2024 at 15:00, Leizhen wrote:
->>> @@ -84,10 +85,7 @@ static int __data_racy                       debug_objects_fixups __read_mostly;
->>>  static int __data_racy                 debug_objects_warnings __read_mostly;
->>>  static int __data_racy                 debug_objects_enabled __read_mostly
->>>                                         = CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
->>> -static int __data_racy                 debug_objects_pool_size __read_mostly
->>> -                                       = ODEBUG_POOL_SIZE;
->>> -static int __data_racy                 debug_objects_pool_min_level __read_mostly
->>> -                                       = ODEBUG_POOL_MIN_LEVEL;
->>> +static int __data_racy                 obj_pool_min_free = ODEBUG_POOL_SIZE;
->
-> Sorry, I rechecked it again. After this patch, obj_pool_min_free is referenced in the
-> same way as obj_pool_max_used. The only race point is located in debug_stats_show().
-> However, this reference point does not need to be included in the race analysis. So
-> there is no need to add __data_racy for obj_pool_min_free.
+2024-09-03, 10:29:34 +0530, Bharat Bhushan wrote:
+> +static int cn10k_ipsec_validate_state(struct xfrm_state *x)
+> +{
+> +	struct net_device *netdev = x->xso.dev;
+> +
+> +	if (x->props.aalgo != SADB_AALG_NONE) {
+> +		netdev_err(netdev, "Cannot offload authenticated xfrm states\n");
 
-The read races against the write, so KCSAN can detect it and complain, no?
+This should use extack, to return this information directly to the
+application that's creating the invalid config. You can propagate it
+from cn10k_ipsec_add_state down to this function, and then:
 
-Thanks,
+    NL_SET_ERR_MSG_MOD(extack, "Cannot offload authenticated xfrm states");
 
-        tglx
+
+> +static int cn10k_ipsec_inb_add_state(struct xfrm_state *x)
+> +{
+> +	struct net_device *netdev = x->xso.dev;
+> +
+> +	netdev_err(netdev, "xfrm inbound offload not supported\n");
+
+Here too, extack.
+
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int cn10k_ipsec_outb_add_state(struct xfrm_state *x)
+> +{
+> +	struct net_device *netdev = x->xso.dev;
+> +	struct cn10k_tx_sa_s *sa_entry;
+> +	struct cpt_ctx_info_s *sa_info;
+> +	struct otx2_nic *pf;
+> +	int err;
+> +
+> +	err = cn10k_ipsec_validate_state(x);
+> +	if (err)
+> +		return err;
+> +
+> +	pf = netdev_priv(netdev);
+> +	if (!mutex_trylock(&pf->ipsec.lock)) {
+
+Why not wait until we can take the lock? Failing to offload the state
+because this lock is temporarily busy isn't nice to users.
+
+> +		netdev_err(netdev, "IPSEC device is busy\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	if (!(pf->flags & OTX2_FLAG_IPSEC_OFFLOAD_ENABLED)) {
+> +		netdev_err(netdev, "IPSEC not enabled/supported on device\n");
+
+You should also use extack in this function.
+
+
+[...]
+> +static void cn10k_ipsec_del_state(struct xfrm_state *x)
+> +{
+> +	struct net_device *netdev = x->xso.dev;
+> +	struct cn10k_tx_sa_s *sa_entry;
+> +	struct cpt_ctx_info_s *sa_info;
+> +	struct otx2_nic *pf;
+> +	int sa_index;
+> +
+> +	if (x->xso.dir == XFRM_DEV_OFFLOAD_IN)
+> +		return;
+> +
+> +	pf = netdev_priv(netdev);
+> +	if (!mutex_trylock(&pf->ipsec.lock)) {
+> +		netdev_err(netdev, "IPSEC device is busy\n");
+> +		return;
+
+If we can't take the lock, we leave the state installed on the device
+and leak some memory? That's not good. I assume we're going to reach
+HW limits if this happens a bunch of times, and then we can't offload
+ipsec at all anymore?
+
+I think it would be better to wait until we can take the lock.
+
+-- 
+Sabrina
+
 
