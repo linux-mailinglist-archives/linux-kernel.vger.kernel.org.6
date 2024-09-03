@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-312360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D5496957F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:30:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13CC969581
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22C01F23BD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:30:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12C8FB23EB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B23205E18;
-	Tue,  3 Sep 2024 07:29:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BE31DAC76;
+	Tue,  3 Sep 2024 07:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwL9/4d1"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2DB1DAC5F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCAD171C9;
+	Tue,  3 Sep 2024 07:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348586; cv=none; b=FtqbmeYKXP0SvujaiLipmxxC+OKBMkhFQeiAhqAJQfJYc8i9cVRAewAGRLe5eKNiH111Iuc45ez9hpX3EgJVxAdinHUjyEc/ldQPjz/eQ/xgOv5aeOBHk/eIDgWmH6+sb7bZP2Gsj2006NU9f31uPdS55SFxqdu7J5kiiG9+QPs=
+	t=1725348596; cv=none; b=P0DOZj3OL5mBeBNh5BLNLP9mPL86Bp0sO35GFw6dYdnxl9t9CH6K/pxjFilLgR/Z1mnUiaaCgXvEFx5zvnbn4VD4x0MVQnsqeKAdXicVdiRrh2L5l9w675G+XSYVeWMYYk6jMaXg2rEB6dw3eBImXO6guGJ49gzODpkwCiGPE1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348586; c=relaxed/simple;
-	bh=RhoUQ7A0/YWMznDNlR/sD3pn+cKlBvmXNBktAEQZ/TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNHVFxMVbp18HTSUs7v920nO2rnwCw1C7btCtAe+YyUNfywqLkWec+aKh4OwYzPH/v4BKD9xf1+peiNa86dpByfvCmq2P/WFthNbZDvEKIPk4aeg1pTHB/Exy5TFvXjeJiyXijFh+Rae+OIq0a9o9BjAmCXpbz6q4tSavnrMUys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slNyq-0006Fv-2x; Tue, 03 Sep 2024 09:29:36 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slNyp-00581t-3h; Tue, 03 Sep 2024 09:29:35 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slNyo-004MyL-3D;
-	Tue, 03 Sep 2024 09:29:35 +0200
-Date: Tue, 3 Sep 2024 09:29:34 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Message-ID: <Zta63ltdVl_UcX9R@pengutronix.de>
-References: <20240826072648.167004-1-s.hauer@pengutronix.de>
- <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVd3__wfm6EOOgH@pengutronix.de>
- <PA4PR04MB9638CF45263E713203A53EF7D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVtPJSsIr9eIFWv@pengutronix.de>
- <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtW5fFocfr9_WgGD@pengutronix.de>
- <PA4PR04MB963814F85BBA6DD39F516469D1932@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtatnHp_7FBSSpko@pengutronix.de>
- <DU0PR04MB9636EF4BC137C95F70594E9DD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1725348596; c=relaxed/simple;
+	bh=8UbaJl5e853OSI6GPlasFrnnlrbjyzUr3/6fMoeJWOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVtKbHea2syBMHR2QhdCgafcm3a9acFP0L0zR/hnC+CXzeOOaBJ95gDLH2R6ZBQbaTjcjvU3sNoGi7dzLix55uohWkzF6gZDAI4EnVJonrURATHClsb4nOLx1PMCNCwXhnbEEUjjGg9Gv7+3rFiNW5h6EKnuGNmk/TLbOfo1F5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwL9/4d1; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42bbd16fcf2so33268715e9.2;
+        Tue, 03 Sep 2024 00:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725348593; x=1725953393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Va87QrbleAQsq44INM+JbVeUGv1keqyFrGSxukKZ4M8=;
+        b=MwL9/4d1XRFlpZlLAfQGSkzwRcaJrndQzCMT8f8K7diEbGyCbY3PD6ZwxA6HfP8ftQ
+         uT6k3KNPW+9l7uxGok7Lj3CS80d3+D13cqOvqIG2GzUr+j9uuT3thNsH6NHhiOV3YS0Y
+         NmP42WV1vdjkNco3JJ3a3yhP+EL23H9RwiILnnYPpz05PdnJbiw+Bcr4R6SfrnyFFYKB
+         8lKyFsM25uPc7w9xCFnqxiCAe25VmxSys7wJv7s1+jZN9RgSE0k3TzmHzRYMFRBZSTFz
+         ZRO5iUuAfe13ya0+k6piyzhZYW6kZs/17DQT31MGLDFpY1ziDcwf//4zrMh5MbazyNf/
+         cScQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725348593; x=1725953393;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Va87QrbleAQsq44INM+JbVeUGv1keqyFrGSxukKZ4M8=;
+        b=T80fQ/pzKfgaq9WAUlBbst9yc8OekJeVqa05OBqbfqdfOfFaCLuS0Jo+rcRLNu396a
+         Q/UbqvqWzS6FiF5jVjuoV5219G1GfUVR9792FtxvyC72+Ct4LzUDVt7JEhXA2oaQfXyp
+         V5WwsgcHOPGBTHugVntmBbaS5V/fIfIb3PXYhGl0yZh55AqSIx3KfEY3SShSehqENy5X
+         ZgA5GS+4QqBaj71bwjofiXgSvzUYeEpVdjcZ8yCkp/AKMcELNmlEDSdB/P7r0nCYi+7T
+         xGP8vJ+bR3DPqoOMqsoSym1aIEWaT8dw20bPEJwcpACH0Nk0hvaKJvlBe6nFi+luI1lQ
+         3MUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGJm1M4Nsf4WUtNgsUJcCLBEabMf9DKDCMgIdhQDWWB8SeWeQrBU/QitmkL9gjopNzbuXBm/BlIgqSMLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhaBzYxW8YLAY4BJRufOjtf3y8QPAuCZx8+mIkgr3xUE4D5DKK
+	B9y2sIywckxksenKTPRnGfHSKKY7Q3Xm2rSaUdOz3A6nyKJ26sz+
+X-Google-Smtp-Source: AGHT+IHoSwnh150ySCVCgL6H5ZM6h/TyXfrUwMAdfNMetfEcIlUdtUYDgCoRCv7+Bp9k+/T2EDO41w==
+X-Received: by 2002:adf:fe03:0:b0:374:bde6:d375 with SMTP id ffacd0b85a97d-374bde6d48bmr5225643f8f.29.1725348593090;
+        Tue, 03 Sep 2024 00:29:53 -0700 (PDT)
+Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a37asm6121947a12.1.2024.09.03.00.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 00:29:52 -0700 (PDT)
+From: vtpieter@gmail.com
+To: Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Arun.Ramadoss@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tristram.Ha@microchip.com,
+	o.rempel@pengutronix.de,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>
+Subject: [PATCH net-next v3 0/3] net: dsa: microchip: rename and clean ksz8 series files
+Date: Tue,  3 Sep 2024 09:29:36 +0200
+Message-ID: <20240903072946.344507-1-vtpieter@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9636EF4BC137C95F70594E9DD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 06:39:15AM +0000, David Lin wrote:
-> > > > > Not only this code segment. In fact, you did not add VDLL data
-> > > > > patch support
-> > > > to sdio.c.
-> > > > > If you try to add the code and do test, you will know what is
-> > > > > missing in your
-> > > > code.
-> > > >
-> > > > Could you point me to the code you mean?
-> > > >
-> > > > Sascha
-> > > >
-> > >
-> > > I only know the porting VDLL code in nxpwifi.
-> > 
-> > Yes, and I asked for a pointer to that code, some function name, or file/line or
-> > whatever, because I looked at the nxpwifi driver and don't know what you
-> > mean with "VDLL data patch support" in sdio.c.
-> > 
-> > Sascha
-> > 
-> 
-> It is better for you to check MXM driver. It is the same as Mwifiex which support all SDIO modes.
+From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
 
-Now I am confused. You said:
+The first KSZ8 series implementation was done for a KSZ8795 device but
+since several other KSZ8 devices have been added. Rename these files
+to adhere to the ksz8 naming convention as already used in most
+functions and the existing ksz8.h; add an explanatory note.
 
-> In fact, you did not add VDLL data patch support to sdio.c
+In addition, clean the files by removing macros that are defined at
+more than one place and remove confusion by renaming the KSZ8830
+string which in fact is not an existing KSZ series switch.
 
-I was under the assumption that the nxpwifi driver that you specifically
-posted for the iw61x chipset should contain this code. Isn't that the
-case?
+Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+---
+v3:
+ - rename all KSZ8830 to KSZ88X3 only (not KSZ8863)
+ - update Kconfig as per Arun's suggestion
 
-BTW did you really mean "VDLL data patch" or did you mean "VDLL data path"?
+v2: https://lore.kernel.org/netdev/20240830141250.30425-1-vtpieter@gmail.com/
+ - more finegrained description in Kconfig and ksz8.c header
+ - add KSZ8830/ksz8830 to KSZ8863/ksz88x3 renaming
 
-Sascha
+v1: https://lore.kernel.org/netdev/20240828102801.227588-1-vtpieter@gmail.com/
 
+Pieter Van Trappen (3):
+  net: dsa: microchip: rename ksz8 series files
+  net: dsa: microchip: clean up ksz8_reg definition macros
+  net: dsa: microchip: replace unclear KSZ8830 strings
+
+ drivers/net/dsa/microchip/Kconfig             |  9 ++--
+ drivers/net/dsa/microchip/Makefile            |  2 +-
+ .../net/dsa/microchip/{ksz8795.c => ksz8.c}   | 13 +++--
+ drivers/net/dsa/microchip/ksz8863_smi.c       |  4 +-
+ .../microchip/{ksz8795_reg.h => ksz8_reg.h}   | 15 +++---
+ drivers/net/dsa/microchip/ksz_common.c        | 48 +++++++++----------
+ drivers/net/dsa/microchip/ksz_common.h        |  4 +-
+ drivers/net/dsa/microchip/ksz_spi.c           |  6 +--
+ include/linux/platform_data/microchip-ksz.h   |  2 +-
+ 9 files changed, 57 insertions(+), 46 deletions(-)
+ rename drivers/net/dsa/microchip/{ksz8795.c => ksz8.c} (99%)
+ rename drivers/net/dsa/microchip/{ksz8795_reg.h => ksz8_reg.h} (98%)
+
+
+base-commit: e5899b60f52a7591cfc2a2dec3e83710975117d7
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.43.0
+
 
