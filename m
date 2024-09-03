@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-312597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C64969896
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2D4969899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EE01F247C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2901C235FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B461A4E86;
-	Tue,  3 Sep 2024 09:18:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E391C767C;
+	Tue,  3 Sep 2024 09:18:47 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC61A3050
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D121A4E97;
+	Tue,  3 Sep 2024 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355119; cv=none; b=Sq43ZIlfWEIhe0MDudnSc/JdBCyULcxiDSUKQUw8ZWcVuTJznC9y4DqvdJgXLyhkFhvGofkjNBgXUsUg36ccYHDA9KD2aQFVYxcK3voXqMdTVOcJ9UsMykwqqCTvvmh/PrgeJ4bkZYMsmuhH3Ws2kLzQUmNWhvgsIZpaRP9LKdM=
+	t=1725355126; cv=none; b=uPNTikgCCW8YRvHq74cDzu7YR+eJho9+S1nfRu8nJuQUDaC+tPI7YsGW7FkoUh8b/xGSOpgchCVBxLpXf2tV0R6QWhtZG66yrxoXzdYXKPuRej4sPBvaiP9FX1qRY5ddVuHBAGMzdlrVSmPUsZeDcUKzTps37YcgFrkC4ttydFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355119; c=relaxed/simple;
-	bh=TAyfdxyQuZUkyOl2cPCmdbhNnDh9I2K3ivcsiP4Cztc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFFLW+5sYgm8tCF2+rL+yyAs3guX1saIEM7ugBVoOoMnqBCKLLFc67go6MS9yMaBkxrtZpplv3SPDx3Txzs9BE+cZgdpYgH+k8y6S3Ccit2JJHINiB3a39ZnjLbxbNsnlz85XaGiuClopZ8YevjE+IRPfGDjtk8LLi0B9k3bDnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slPfn-00075B-Qy; Tue, 03 Sep 2024 11:18:03 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slPfk-0059Cr-LY; Tue, 03 Sep 2024 11:18:00 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 46253331004;
-	Tue, 03 Sep 2024 09:18:00 +0000 (UTC)
-Date: Tue, 3 Sep 2024 11:17:59 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>, 
-	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
-Subject: Re: [PATCH can-next v3 00/20] can: rockchip_canfd: add support for
- CAN-FD IP core found on Rockchip RK3568
-Message-ID: <20240903-neat-vivacious-leopard-14cb09-mkl@pengutronix.de>
-References: <20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de>
- <ecj2sv7xhmu6plfnrq4ezejn3d43cl5mwutvkwh4u2bqcmna3k@2jykwgizuxmb>
+	s=arc-20240116; t=1725355126; c=relaxed/simple;
+	bh=NtX+6yB97NtVGALvaPIfDfrFsr7PAI8spCIrDJGjcOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KlSS/gNH6xz37EZldxbICUy0nXZITeLmNrikVIqNmA1/BNEQNREA7PUakUfEz8AMYSg2Efvo9nwmIOKLrNbQPximt2cWsHIb9J2t3nLBuP5MmxXotaDxC80SOe7oa/0IXR0tlXbuFdnBsf768t3eQqtI59WBgLAoroqubeYs6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wyg3k6gCzzgYpm;
+	Tue,  3 Sep 2024 17:16:34 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id A29351800FE;
+	Tue,  3 Sep 2024 17:18:41 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Sep 2024 17:18:40 +0800
+Message-ID: <2437d861-af70-42b1-b517-aad0a66351cd@huawei.com>
+Date: Tue, 3 Sep 2024 17:18:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mb3fsyqhiocnajmm"
-Content-Disposition: inline
-In-Reply-To: <ecj2sv7xhmu6plfnrq4ezejn3d43cl5mwutvkwh4u2bqcmna3k@2jykwgizuxmb>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Some boundary error bugfix related to XFS fsmap.
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
+	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
+References: <20240826031005.2493150-1-wozizhi@huawei.com>
+ <9337ebda-8e27-4754-bc57-748e44f3b5e0@huawei.com>
+ <20240902190828.GA6224@frogsfrogsfrogs>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20240902190828.GA6224@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
 
---mb3fsyqhiocnajmm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 31.08.2024 08:02:00, Krzysztof Kozlowski wrote:
-> On Fri, Aug 30, 2024 at 09:25:57PM +0200, Marc Kleine-Budde wrote:
-> > This series adds support for the CAN-FD IP core found on the Rockchip
-> > RK3568.
-> >=20
-> > The IP core is a bit complicated and has several documented errata.
-> > The driver is added in several stages, first the base driver including
-> > the RX-path. Then several workarounds for errata and the TX-path, and
-> > finally features like hardware time stamping, loop-back mode and
-> > bus error reporting.
-> >=20
-> > regards,
-> > Marc
-> >=20
-> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> > ---
-> > Changes in v3:
-> > - dt-bindings: renamed file to rockchip,rk3568-canfd.yaml (thanks Rob)
-> > - dt-bindings: reworked compatibles (thanks Rob)
->=20
-> You never tested the patch before sending.
+在 2024/9/3 3:08, Darrick J. Wong 写道:
+> On Thu, Aug 29, 2024 at 07:24:55PM +0800, Zizhi Wo wrote:
+>> friendly ping
+> 
+> Sorry, I'm not going to get to this until late September.
+> 
+> --D
 
-Well yes, I forgot one of the tests. It seems I need to set up more
-dt-bindings to get used to it. I will send a new series.
+OK, I've got it. Have a nice holiday😀
 
-regards,
-Marc
+Thanks,
+Zizhi Wo
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---mb3fsyqhiocnajmm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbW1EUACgkQKDiiPnot
-vG9v3Af/SSPdXXJCW2ijU8NHVAAS03fECznVQ6XNHAyYOrbjgINxQ3DN+p7ez6+4
-Y5qtbmg8zMV880CEhwj/1aFHpfxjSC0BrCNyqRhucX4KTkn9PmFW33w2gTVrmibY
-+OAV7PmoYEXyYl3BOlnvfT09zPfvpvQy5eh7BXKJrDCtZB2V14ZjBwJGKZJU/vmR
-8fEAueEDlRvJ2UY0YJOFjWqlddilH4CVULGaBibxgqVPwb97S5dkBHtE3GcKvvvc
-3NgZbYSx86I2nUV5vtu0emjJq7pkyRxsl+7MclRykO4yCzgeHLPTdh1T+BRRfbuU
-chZX7VYl4l73VrmXNF7/1wtBl+NKCw==
-=cG0j
------END PGP SIGNATURE-----
-
---mb3fsyqhiocnajmm--
+> 
+>> 在 2024/8/26 11:10, Zizhi Wo 写道:
+>>> Prior to this, I had already sent out a patchset related to xfs fsmap
+>>> bugfix, which mainly introduced "info->end_daddr" to fix omitted extents[1]
+>>> and Darrick had already sent out a patchbomb for merging into stable[2],
+>>> which included my previous patches.
+>>>
+>>> However, I recently discovered two new fsmap problems...What follows is a
+>>> brief description of them:
+>>>
+>>> Patch 1: In this scenario, fsmap lost one block count. The root cause is
+>>> that during the calculation of highkey, the calculation of start_block is
+>>> missing an increment by one, which leads to the last query missing one
+>>> This problem is resolved by adding a sentinel node.
+>>>
+>>> Patch 2: In this scenario, the fsmap query for realtime deivce may display
+>>> extra intervals. This is due to an extra increase in "end_rtb". The issue
+>>> is resolved by adjusting the relevant calculations. And this patch depends
+>>> on the previous patch that introduced "info->end_daddr".
+>>>
+>>> [1] https://lore.kernel.org/all/20240819005320.304211-1-wozizhi@huawei.com/
+>>> [2] https://lore.kernel.org/all/172437083728.56860.10056307551249098606.stgit@frogsfrogsfrogs/
+>>>
+>>> Zizhi Wo (2):
+>>>     xfs: Fix missing block calculations in xfs datadev fsmap
+>>>     xfs: Fix incorrect parameter calculation in rt fsmap
+>>>
+>>>    fs/xfs/libxfs/xfs_rtbitmap.c |  4 +---
+>>>    fs/xfs/xfs_fsmap.c           | 39 +++++++++++++++++++++++++++++++-----
+>>>    2 files changed, 35 insertions(+), 8 deletions(-)
+>>>
+>>
+> 
 
