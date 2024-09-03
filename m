@@ -1,531 +1,314 @@
-Return-Path: <linux-kernel+bounces-313225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE8696A20E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E9F96A222
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A39E28538F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CE7285028
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2230192B63;
-	Tue,  3 Sep 2024 15:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D59188A1A;
+	Tue,  3 Sep 2024 15:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WSP8LrL2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ig0Rdftt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B3B191F71;
-	Tue,  3 Sep 2024 15:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376633; cv=none; b=Q93Smg/Vcupk3q1k+aoXzAWtwdcAA4rOfiJyoJUq31xVZGXhrpNKRoIRb6JsHhB7CC2ON76/twRUQKHenR2UCj8fBqTozx9QvgLWApKQYHG/RxZ77XbDF0ykFGU6Sv9malHX79BLiAuNlfKa4VXkhzRgAYFuz3f8VkSpnnpAu60=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376633; c=relaxed/simple;
-	bh=tlNtHFLQM5AdDXZHGT8DIsZfvcHD1tWEPpoLoW/UHhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npLrMstdZJY8QMMeF36yaddDgUm6mmr9MA8YMwkB1DMbAqEOFjoWcw2vRdLoJ44n0CblkacS6Xg6JBcQy3dCc44+eeazvGs/auhoOXWmLLpDgMEpz/DWu4iwt8Iw+E+lQ8X5k79DF0xVSs+C8gFDV/TdyyG13wZrgvWLhBW+n04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WSP8LrL2; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093122301;
+	Tue,  3 Sep 2024 15:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725376666; cv=fail; b=UEhgGceBWrEJfwg0Pc1UI1fWpEJAt2wxtBgaGYDtY1sV/RW86GC2KcE2MGm7pNmevW2SnMorAj/F10pePNXjX7PzBpJusu3TnDFwBYyusmbvQdQKQGyrNcZqE2I5AbkSRMDzHKIpTCAr2gaGZ7uAnmKvfe8Y5RVVKMtrcvypPMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725376666; c=relaxed/simple;
+	bh=gA79svbUL60kpKVxjbd31g8Kxlxb0r6DkfkVLV0llh4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MIqvGSBs7DO4L0BPejeTgxv9i39YNEjTxnWvnkBeoCUjo5+1F6Y+Q14N7fZl29hIQDiYDjk2eTrRnQ0NksKGIKcjWnrjqT0iAX5lq9DCy4hSRL7g/9bmCUG4zWAkEhIuUHuMtxhLETJ2DdwhpvwUg/VkS8ey3TFdH2JUhvNwtig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ig0Rdftt; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725376631; x=1756912631;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tlNtHFLQM5AdDXZHGT8DIsZfvcHD1tWEPpoLoW/UHhs=;
-  b=WSP8LrL2f1vRijaoGax34RLLo2m3JAyTP/A85f+jXhWylPnzGm0iKm14
-   M1ba/c/AIwTKPfpLwC4/NSVXYDt3eF9TzYrEINvTXafqkxWFz/yjJhdsK
-   m7m7meUAVX7jSVZGpUfM6krIwG0rq16qqM5SBpbGGUzqA+E+vE+PoUliT
-   agj5xT97ToFMIiB/LLEg9bCVHlzGHFF0u0n6l6zCBWllYVtlImyf3F7AS
-   w30ktNTfpMMr6wOT6JrSePgJ/29o0FB11nL3VI464hheJmCGp8KjnmKkP
-   JgMsVGN0IxmPCOz83QQi/v6xCjGKJLrkDWbwStU6pohu8AzhARejR7L+6
-   w==;
-X-CSE-ConnectionGUID: 0f1EzWJYRk6Z56zsF5p1mA==
-X-CSE-MsgGUID: vZIsk5DaSOe5evJEHBPBsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24134287"
+  t=1725376665; x=1756912665;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gA79svbUL60kpKVxjbd31g8Kxlxb0r6DkfkVLV0llh4=;
+  b=Ig0Rdfttxe7/MIclFOpi9qvt6teRuEnFGkuYVQF/A/MiKMEn/IM9xAFP
+   biLhVCbbUOI3ZqgtjfocVkOeX+3/2jm0jhpUFWAcsA4a0/QB9P7SCU98F
+   7Fs5XenLC4KBMBuApp+afyKTaOlRfQs4Bot6n7MUYVnUOD4O7oX98uX/k
+   OJfdHsL8IFNzZ2WWlPwLgs4vGSwnB8xDDkCheKcUfefINuzu+40KB7w4E
+   AeLnEls5B6AWacHkIJftBKGB4UK5UFjnLAyH5AOlNVXKNtPIMqgGbBZFk
+   +V0cG1gmWeKT3bZQkBXECBglZc3JPPG2uJRl9xeeX/qxuTZg2rTPQaI7q
+   Q==;
+X-CSE-ConnectionGUID: Pun0VdNwS6Obg0RxR386Uw==
+X-CSE-MsgGUID: om6HQ3yiQCSytWsf1eAgsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35138766"
 X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="24134287"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:17:10 -0700
-X-CSE-ConnectionGUID: XYUdPjt9QgS7UJW/37EWTA==
-X-CSE-MsgGUID: /Hj2jRovTXuQWhMreTI+8Q==
+   d="scan'208";a="35138766"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:17:44 -0700
+X-CSE-ConnectionGUID: 7ZFeiSCKSTCC83WhGA2DcA==
+X-CSE-MsgGUID: 1ta4tnS8SF+8FCnA1KUnsA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="95673710"
-Received: from unknown (HELO localhost) ([10.2.132.131])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:17:10 -0700
-Date: Tue, 3 Sep 2024 08:17:05 -0700
-From: Nirmal Patel <nirmal.patel@linux.intel.com>
-To: Jian-Hong Pan <jhp@endlessos.org>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, "David
- E. Box" <david.e.box@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>,
- Johan Hovold <johan@kernel.org>, Kuppuswamy Sathyanarayanan
- <sathyanarayanan.kuppuswamy@linux.intel.com>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>,
- Jonathan Derrick <jonathan.derrick@linux.dev>, Paul M Stillwell Jr
- <paul.m.stillwell.jr@intel.com>, linux-pci@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, linux@endlessos.org
-Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link
- state
-Message-ID: <20240903081705.00001334@linux.intel.com>
-In-Reply-To: <CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
-References: <20240719075200.10717-2-jhp@endlessos.org>
-	<20240719080255.10998-2-jhp@endlessos.org>
-	<CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com>
-	<e37536a435630583398307682e1a9aadbabfb497.camel@linux.intel.com>
-	<CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com>
-	<eb900245-5e13-bc6c-994a-43f2db8322ea@linux.intel.com>
-	<fc0e8066b06abed97d3857c5deefb03041a0fd2e.camel@linux.intel.com>
-	<f9660f21-f2e8-c62c-5e86-ed4875f61701@linux.intel.com>
-	<CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-w64-mingw32)
+   d="scan'208";a="69741485"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Sep 2024 08:17:44 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Sep 2024 08:17:43 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 3 Sep 2024 08:17:43 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 08:17:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TUthKMRUoboD6HEbOyPpnXZyp2X+SnuJtpLpbJF2zGYs/fvqtOm/bHAZ9ncUAJkrcLNMcc8luo5v3wc3+uZa0LeCcu4KgsMLayQ26uLJsC3NpoDiBV14bI2/YngySI1istiXpwAQU7fMQ9dsU/wJCqkGKzEMVodFOlYol1IjzomWgOiPhUE9q0hpZ/J4VG6agUtHSN2QZsjnMhY7cTluk/eaytBoivlAvftA0/8Tnvdf2s/qNc1sRGE+fHAg3t/HTyDK2WMgPcNjO+mbQ/Hh1pVKqMo5jHtzT+F6gqOROF0nEPmljONFk+BrKgZ7D5RjXJvlJcDnZhpz/PjMP7vOZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gA79svbUL60kpKVxjbd31g8Kxlxb0r6DkfkVLV0llh4=;
+ b=E/5U255n9vEUbwaCTsoYQP6Ph3AZYQ/5Gr1aey8CeSSCzSudxvDJH319ItbDdcX5lzn98URMMKwz7nUrg3eQxcUfh/fi9fqgdKu9GyXkGOyCef9a+rfxqrGge1JhRUqDupADpZAVxFoZ8sAR+A3VwNPPSludyX5FemSJIDfxV4jW/qlC+eQk5ngX9OUI/cV6khYA90Rq7XpYz6/Ac8Oc7BXJTDePwFAAkTbRlqnwc3ugnhIpWZXVuquOESmhLDtdvDKhZZ5jbzRX5W2iioYeWLogmbYjsB38elIGugFKuy0QstIrhIsyIvoB1Ic/DtLIiZUujH/seRCB7p2xE4x8wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ2PR11MB8424.namprd11.prod.outlook.com (2603:10b6:a03:53e::10)
+ by DS7PR11MB7739.namprd11.prod.outlook.com (2603:10b6:8:e0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 15:17:39 +0000
+Received: from SJ2PR11MB8424.namprd11.prod.outlook.com
+ ([fe80::4053:18a0:f95:3b9c]) by SJ2PR11MB8424.namprd11.prod.outlook.com
+ ([fe80::4053:18a0:f95:3b9c%5]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 15:17:39 +0000
+From: "Liao, Bard" <bard.liao@intel.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "Liao, Bard"
+	<yung-chuan.liao@linux.intel.com>, Vinod Koul <vkoul@kernel.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+CC: "Kale, Sanyog R" <sanyog.r.kale@intel.com>, Shreyas NC
+	<shreyas.nc@intel.com>, "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+Thread-Topic: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+Thread-Index: AQHa/dPIv+IuF9PHKU+qr1Y/gjKPvrJGA+0AgAAiMHA=
+Date: Tue, 3 Sep 2024 15:17:39 +0000
+Message-ID: <SJ2PR11MB84242BC3EAED16BEE6B46F85FF932@SJ2PR11MB8424.namprd11.prod.outlook.com>
+References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+ <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
+ <ZqngD56bXkx6vGma@matsya>
+ <b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com>
+ <f5110f23-6d73-45b5-87a3-380bb70b9ac8@linaro.org>
+In-Reply-To: <f5110f23-6d73-45b5-87a3-380bb70b9ac8@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ2PR11MB8424:EE_|DS7PR11MB7739:EE_
+x-ms-office365-filtering-correlation-id: c496a633-7226-4fdb-ed82-08dccc2b8c8c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?QmgwRXMrWjNBNDZRTFNLR29tVnBzbmZLWnp3dkszSkhYVkFqQmM3UnhMZ2ZO?=
+ =?utf-8?B?a2FZR1MvcXVya3FXNi9DZk5RQmxodU9CRWQ3T0xCSWI2TE1XMEkwcUN6MUJz?=
+ =?utf-8?B?d1U4Z2RYY0xJR2pjeWJxTFNoejIxOW9OK2Fja0pEZ3lrOG00Q0czbFB4eWNX?=
+ =?utf-8?B?bGhmTHpSVHlveFVXTU95ZVl6SStUMURWbDZBY3ZvTnFmWENJTDNRaUFuanZU?=
+ =?utf-8?B?NE9ucjVReThNSm5KeWcvaWFjQklTY1F1bFVldE9YZVU5cVovM3pqTHBSVXhC?=
+ =?utf-8?B?SmxDQXY1S0EyU1UraDF2a3BMcFV0QXJrVjNvUnVZcDhhNkcyZlZWMUpzWWE5?=
+ =?utf-8?B?cGQwVFVvRlBWdFlsRzZaQmZEWG5PeUtCZDhEYjd2TGVxOUtCa09uS1krSTZa?=
+ =?utf-8?B?UDJkejdlVkc4MERYMnh6cmltZnp5a0hxUCtES3FhQWxHNjZFSHJvaVFOcGRn?=
+ =?utf-8?B?cXdFOVNva3MzRDdGNXJzeXN4NjlyVldYRVk2U3FvTWE0Mm5SRDZra3VPZEdz?=
+ =?utf-8?B?MWxIcmJFWkYvbjNJSExFNTlyR05pTnZ4aHFVSExDbTZ3WGNOd1ByVG9mUytB?=
+ =?utf-8?B?V0h0bXk2dUs3YXFObnhicHhYQWVhYXV0NkJzZm1vWXcrUlN5bzIzS2NLcElD?=
+ =?utf-8?B?R2lUNFF0MzlhRXVWRmJKemdadkgvWUR4d2tHZmtCbDl4YTJJQXVHQWhYYmJq?=
+ =?utf-8?B?TEdaaVZ1S0VQd1k3aXVZc1pKQkZnd09GZWF3QW5MT25nNVRKMWpydmVyQWJH?=
+ =?utf-8?B?OUJjNU5YMUtLanZIb0lTUXJnWEoxcHVmdDFtOEdBam5xbnk1THNDZnJhNmxk?=
+ =?utf-8?B?TnNrOWYyVTVmUzFyck5ldjlsWWlBVVkwYkFjWVYyUUlrK2wweER3M09UbEdT?=
+ =?utf-8?B?MmE5aWZveWt3NWp3UWtCb2dyNnpseTZlYnRuc2E1UEEwVjRObk8rdVcvV0xH?=
+ =?utf-8?B?aHlKQXF6bVN0Tnp5eGtqZFVlbGw3V3UwRFQyV2FPT0lMbDAxNUhKaXRPT1hR?=
+ =?utf-8?B?MVZvMzZ0SGk4ZEw4M3d0RFBOUkxqVkxSN2wxQlg0YkErdEI5V2drUUFWak9R?=
+ =?utf-8?B?Z1phWWt1YlVTYkhGeWpFZ2M4SStPOG1ZL01oRWV2N216bFY4QW5ZTDZPUnpI?=
+ =?utf-8?B?ODhORE5kcVRKUTRIRkFmN1ZpWG5OelMzZ0t2N21pdUFOOGlRbkV6TTA4VjJu?=
+ =?utf-8?B?ZmQ5L24yZmdrS24yUE1YajArU1l1N3g3QVpoWDJMUnIyL2xxS1luTmttRVBS?=
+ =?utf-8?B?VG5hRTAzNTBDeGNDbUVLb3NyaFVxNktwQjBiUStZUHArMi9kOUVKem94UWRk?=
+ =?utf-8?B?MUVTMXg2bFEzcDBRTHhwQjUxSHJlU25id2JZTGRKNldJWnFzRkZLeEh1MktO?=
+ =?utf-8?B?Y1hlS01DTUs1c08vbUNtS0lKV2ozQkJrUEp2NU5FZVMvTzc2K0NlbC9zZDVV?=
+ =?utf-8?B?M1ZLazg3OWRMY1VDQXBzUlpIVUhGb1hVemMxRHFKUllYb1FHZ0hFRmFNWCtV?=
+ =?utf-8?B?ZFB1RStMUmF2TmlqdGwrRUpsMmxFb2N3aUxqVTQrNzhsVE9Td1pDdUxUWDRE?=
+ =?utf-8?B?YWZPRWRVOTNLb1NGeCtOeHhsLzRPckM2S3VMZnlMVTV1UmUzSmRwQXpMZGVh?=
+ =?utf-8?B?QnRDQkdsczdHbWZoYVd0SnhqU09UZDcxYktVbDVvRGVBYndIM3dMalhnTjYv?=
+ =?utf-8?B?ZUlOVCsxZGk1WWF6YUJHWC9hbk40Y1hNSUVGTmdyLzVyRkR6UFhxSWwxQTBK?=
+ =?utf-8?B?UzhqSkQ4eWdTc2o3ak56Q1V6V2EwQTNzNnJqaWJWWE5pVDE2b3hMM0ZUSTVx?=
+ =?utf-8?B?TGRHTG9ZOXFQTFRpTEQ0citUV1ppN2JuUlRMVjRaK21HMTI2WHMxTnVyYkZt?=
+ =?utf-8?B?UXUzNHJrSFRZVmgwTWRwUEwvY1c5UVdzSGdMdkJqelVwOFE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB8424.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z2I2T2RDMlZXemRXTmMvM3FnOVVyMStsS1ZLMXovcy8vREVNQm9iK3oyamF5?=
+ =?utf-8?B?MVFoVFcxWU56OU52UUVmM0VaeGVITmdqam1KNjE1eWdZdHpTbVc0bW9QYVFG?=
+ =?utf-8?B?Q1MwNVVpc1o4R2gvdm5mZDlabTNzbHo5RHFtREgzMkdPTEtwVHJ5ci9ONUI1?=
+ =?utf-8?B?Ym84QndPb1J5RHBRWFlid0JmeElMZWhWbkVsMDFmSnJpYWNCNTA1WHF2Rm1R?=
+ =?utf-8?B?K3A3WWJ5dXdXM21HazdqRnY3aE1OR3d0OERMUFpQVlIwdVBaYXdKcE4rQ0tp?=
+ =?utf-8?B?VUhwd04xTFQzdVRiaG5YVmNyWGdOdmpqb09ETnJKNlFrd0JNbTFlM1N3aVp3?=
+ =?utf-8?B?eHBGRW0wT0FvamFNK2daQ2M1amdPdlZ1UnFBakNDeFF2R0g5T2lGeDZiWEhZ?=
+ =?utf-8?B?bVlHNUlJWmQxVUFDWXNsbnRaMVRxdW5JUURWeGlwSTV3WlpJNUtNb2ptdDRv?=
+ =?utf-8?B?a0lFY0lINmV0eHYxQVhpU3dzeWVjQWo1RlBqRjlnVTh4ckhnVm1ZeGs4T1hC?=
+ =?utf-8?B?LzhtRW5tdDZOcmQ0T1pxVkkyTWYrREFNNEJ2bXZCQ3RzYm5FTmNidzdJNVJq?=
+ =?utf-8?B?OCt0VGVkUmFabXFwY1Y3K01wTnkvUFFiV2RwdW9raTVBVGQyK2plc29xcS83?=
+ =?utf-8?B?Vk5maXhvT1p5VlRPdFVvdzRSWnoyR1ZzS0M0Wnp6OTRJVTNHQ04zdVN1UUd1?=
+ =?utf-8?B?NUJ1aWIyRzRMbDJOL3lYaWV0UFU2U1dEQzNobkZwenpTb1grOGI4OUpkckdE?=
+ =?utf-8?B?eG1uM29RUGZoRXVJYU9adk5ia3RJKzR1TzFSVC9IQ1QxdGo5MnNQTENRT0to?=
+ =?utf-8?B?bTYyOWhtMVE4Zk5aLzJKRGFESDUxR3hTYWYydWtUdnFDaUZjSlVaMWNsVUVZ?=
+ =?utf-8?B?MHFxN2hNU2ZPUC9HS2dHVDd5RDB4QVpDU28vdkxYeVZESk5URzRSRzJ6ZGs2?=
+ =?utf-8?B?QkhaZ3hKS0hFSHpEZ2tGWUQza2pJVTJjM1UzY2ZTbEJkWUVxT2FjaXp4ZWVD?=
+ =?utf-8?B?QmtqMC9nWnNPZ0VuSFFkOW4xaWVoV0hxdEtwTUdHNXl2WWhXUnpubmgwNnVC?=
+ =?utf-8?B?eWNoM3RnUzlzR2w3Q2xEUjQveUI0akpiK1ZOZUNSTFVhdHg3UlAxRndGT1Mw?=
+ =?utf-8?B?aWI2UW5EdDJuODdjVkdKaUV2bDVJMlY3dld3NW1NeXM4N3JYWlVWc3ExTkFW?=
+ =?utf-8?B?Y3loUk1XelRWNXFKMkk0OVRHSzVSSHhQYjJkUGxGSUtvU2N3STNOZDZYOXEz?=
+ =?utf-8?B?aDhiTzBZMjEzL1o2dkh1Z1BzZkNpNTlYUXpIMlh2VEtFSndoSjl1VWZmZ1Q3?=
+ =?utf-8?B?Q1ZGSUpWVFcyaFJhZkE5MVBpeVpBTUZwZktzYkp4bWZ3Y3Zuejc0UGJ0a0dv?=
+ =?utf-8?B?bUJXKzFHL1k1YVhCa2RuNTR2YUtLSnBKcVRBenpIZ2JjQWE4UnNSWmVIWnh4?=
+ =?utf-8?B?VU9GcXRlMFFJZC9uZEQ3NGF0OGpTT2NYdEVqaUp2Q2FBdEtoMXJSWTJvd3lV?=
+ =?utf-8?B?VkYydUZzNE4wR2JrQ3NEZDgyTDBMNEd3cktzdlRDVnRzQk9paGFQUXVZby90?=
+ =?utf-8?B?d1JZNUZNckk5WUtORklveEJ4dk5nenNMR29lUFdiSHEraDlvUFVGbUpJb2RL?=
+ =?utf-8?B?QnRqM1QrbklVc0NZbitiM0ZXTkhLZFMweDV1Y3lmY1hmdk5PRlV3Lzh6SFJZ?=
+ =?utf-8?B?LzBWeFVKQVN5bUFMWGVlMzd0ZEpMQzJSMzhKVGp2L0ZSKy9KTm56YWJaOXRj?=
+ =?utf-8?B?QXQxSXorZHFCdC9rU2Y2b2VaRTBxc1pFS1JpUS9CY2FWK0lFYkFlN3NYeTlv?=
+ =?utf-8?B?VW5kb3V1NVpYOTNIQVVsdE5ZMklabVZjcEx1R0hZK2Q5Q1BZRkdRV2RoemIx?=
+ =?utf-8?B?VDFYRktpQ3hhNGhNYXBTaHhpSFlidjZ6Vy9yN2E3b3BicVkzK3pTZUVqYVZa?=
+ =?utf-8?B?SnlMYWpNbUZpTVdYSzRaOXpuOGxQUUZJSHhzY2VGNldOVXk1NlR0azdscFJw?=
+ =?utf-8?B?cjlVR3lkZWxackNWR25RWWhIMzFkVG4vVXg3RzhPMnM3SVNydHY1WktqQW9K?=
+ =?utf-8?B?NlQrKzM5a1lRMGtJblE5MzU5dVNFYUVOcVQ2Qkptd0hNQ3VGT2hUbFhpTHc4?=
+ =?utf-8?Q?JUug=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB8424.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c496a633-7226-4fdb-ed82-08dccc2b8c8c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 15:17:39.3406
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4+Uxy+ebB/+xChhh1V1bDhr1nCvL6NUfV/XKAdpVYwM+HxiSDsEUmNH2ULENINga3xGGTj4N0zFqQBpesm/Jiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7739
+X-OriginatorOrg: intel.com
 
-On Mon, 12 Aug 2024 16:18:22 +0800
-Jian-Hong Pan <jhp@endlessos.org> wrote:
-
-> Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=888=E6=97=A5 =E9=80=B1=E5=9B=9B
-> =E4=B8=8B=E5=8D=885:49=E5=AF=AB=E9=81=93=EF=BC=9A
-> >
-> > On Wed, 7 Aug 2024, David E. Box wrote:
-> > =20
-> > > On Wed, 2024-08-07 at 14:18 +0300, Ilpo J=C3=A4rvinen wrote: =20
-> > > > On Wed, 7 Aug 2024, Jian-Hong Pan wrote:
-> > > > =20
-> > > > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=886=E6=97=A5
-> > > > > =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:26=E5=AF=AB=E9=81=93=EF=BC=
-=9A =20
-> > > > > >
-> > > > > > Hi Jian-Hong,
-> > > > > >
-> > > > > > On Fri, 2024-08-02 at 16:24 +0800, Jian-Hong Pan wrote: =20
-> > > > > > > Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=E6=
-=9C=8819=E6=97=A5 =E9=80=B1=E4=BA=94
-> > > > > > > =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=81=93=EF=BC=9A =20
-> > > > > > > >
-> > > > > > > > Currently, when enable link's L1.2 features with
-> > > > > > > > __pci_enable_link_state(),
-> > > > > > > > it configs the link directly without ensuring related
-> > > > > > > > L1.2 parameters, such
-> > > > > > > > as T_POWER_ON, Common_Mode_Restore_Time, and
-> > > > > > > > LTR_L1.2_THRESHOLD have been
-> > > > > > > > programmed.
-> > > > > > > >
-> > > > > > > > This leads the link's L1.2 between PCIe Root Port and
-> > > > > > > > child device gets
-> > > > > > > > wrong configs when a caller tries to enabled it.
-> > > > > > > >
-> > > > > > > > Here is a failed example on ASUS B1400CEAE with enabled
-> > > > > > > > VMD:
-> > > > > > > >
-> > > > > > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen
-> > > > > > > > Core Processor PCIe
-> > > > > > > > Controller (rev 01) (prog-if 00 [Normal decode])
-> > > > > > > >     ...
-> > > > > > > >     Capabilities: [200 v1] L1 PM Substates
-> > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+
-> > > > > > > > ASPM_L1.1+ L1_PM_Substates+
-> > > > > > > >                   PortCommonModeRestoreTime=3D45us
-> > > > > > > > PortTPowerOnTime=3D50us L1SubCtl1: PCI-PM_L1.2-
-> > > > > > > > PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- T_CommonMode=3D45us
-> > > > > > > > LTR1.2_Threshold=3D101376ns L1SubCtl2: T_PwrOn=3D50us
-> > > > > > > >
-> > > > > > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk
-> > > > > > > > Corp WD Blue SN550
-> > > > > > > > NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-> > > > > > > >     ...
-> > > > > > > >     Capabilities: [900 v1] L1 PM Substates
-> > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+
-> > > > > > > > ASPM_L1.1- L1_PM_Substates+
-> > > > > > > >                   PortCommonModeRestoreTime=3D32us
-> > > > > > > > PortTPowerOnTime=3D10us L1SubCtl1: PCI-PM_L1.2-
-> > > > > > > > PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- T_CommonMode=3D0us
-> > > > > > > > LTR1.2_Threshold=3D0ns L1SubCtl2: T_PwrOn=3D10us
-> > > > > > > >
-> > > > > > > > According to "PCIe r6.0, sec 5.5.4", before enabling
-> > > > > > > > ASPM L1.2 on the PCIe
-> > > > > > > > Root Port and the child NVMe, they should be programmed
-> > > > > > > > with the same LTR1.2_Threshold value. However, they
-> > > > > > > > have different values in this case.
-> > > > > > > >
-> > > > > > > > Invoke aspm_calc_l12_info() to program the L1.2
-> > > > > > > > parameters properly before
-> > > > > > > > enable L1.2 bits of L1 PM Substates Control Register in
-> > > > > > > > __pci_enable_link_state().
-> > > > > > > >
-> > > > > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> > > > > > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > > > > > > > ---
-> > > > > > > > v2:
-> > > > > > > > - Prepare the PCIe LTR parameters before enable L1
-> > > > > > > > Substates
-> > > > > > > >
-> > > > > > > > v3:
-> > > > > > > > - Only enable supported features for the L1 Substates
-> > > > > > > > part
-> > > > > > > >
-> > > > > > > > v4:
-> > > > > > > > - Focus on fixing L1.2 parameters, instead of
-> > > > > > > > re-initializing whole L1SS
-> > > > > > > >
-> > > > > > > > v5:
-> > > > > > > > - Fix typo and commit message
-> > > > > > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM:
-> > > > > > > > Introduce aspm_get_l1ss_cap()"
-> > > > > > > >
-> > > > > > > > v6:
-> > > > > > > > - Skipped
-> > > > > > > >
-> > > > > > > > v7:
-> > > > > > > > - Pick back and rebase on the new version kernel
-> > > > > > > > - Drop the link state flag check. And, always config
-> > > > > > > > link state's timing
-> > > > > > > >   parameters
-> > > > > > > >
-> > > > > > > > v8:
-> > > > > > > > - Because pcie_aspm_get_link() might return the link as
-> > > > > > > > NULL, move getting the link's parent and child devices
-> > > > > > > > after check the link is not NULL. This avoids NULL
-> > > > > > > > memory access.
-> > > > > > > >
-> > > > > > > >  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
-> > > > > > > >  1 file changed, 15 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/pci/pcie/aspm.c
-> > > > > > > > b/drivers/pci/pcie/aspm.c index
-> > > > > > > > 5db1044c9895..55ff1d26fcea 100644 ---
-> > > > > > > > a/drivers/pci/pcie/aspm.c +++ b/drivers/pci/pcie/aspm.c
-> > > > > > > > @@ -1411,9 +1411,15 @@
-> > > > > > > > EXPORT_SYMBOL(pci_disable_link_state); static int
-> > > > > > > > __pci_enable_link_state(struct pci_dev *pdev, int
-> > > > > > > > state, bool locked)
-> > > > > > > >  {
-> > > > > > > >         struct pcie_link_state *link =3D
-> > > > > > > > pcie_aspm_get_link(pdev);
-> > > > > > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
-> > > > > > > > +       struct pci_dev *parent, *child;
-> > > > > > > >
-> > > > > > > >         if (!link)
-> > > > > > > >                 return -EINVAL;
-> > > > > > > > +
-> > > > > > > > +       parent =3D link->pdev;
-> > > > > > > > +       child =3D link->downstream;
-> > > > > > > > +
-> > > > > > > >         /*
-> > > > > > > >          * A driver requested that ASPM be enabled on
-> > > > > > > > this device, but
-> > > > > > > >          * if we don't have permission to manage ASPM
-> > > > > > > > (e.g., on ACPI @@ -1428,6 +1434,15 @@ static int
-> > > > > > > > __pci_enable_link_state(struct pci_dev
-> > > > > > > > *pdev, int state, bool locked)
-> > > > > > > >         if (!locked)
-> > > > > > > >                 down_read(&pci_bus_sem);
-> > > > > > > >         mutex_lock(&aspm_lock);
-> > > > > > > > +       /*
-> > > > > > > > +        * Ensure L1.2 parameters:
-> > > > > > > > Common_Mode_Restore_Times, T_POWER_ON and
-> > > > > > > > +        * LTR_L1.2_THRESHOLD are programmed properly
-> > > > > > > > before enable bits for
-> > > > > > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
-> > > > > > > > +        */
-> > > > > > > > +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
-> > > > > > > > +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
-> > > > > > > > +       aspm_calc_l12_info(link, parent_l1ss_cap,
-> > > > > > > > child_l1ss_cap); =20
-> > > > > >
-> > > > > > I still don't think this is the place to recalculate the
-> > > > > > L1.2 parameters especially when know the calculation was
-> > > > > > done but was cleared by pci_bus_reset(). Can't we just do a
-> > > > > > pci_save/restore_state() before/after pci_bus_reset() in
-> > > > > > vmd.c? =20
-> > > > >
-> > > > > I have not thought pci_save/restore_state() around
-> > > > > pci_bus_reset() before.  It is an interesting direction.
-> > > > >
-> > > > > So, I prepare modification below for test.  Include "[PATCH
-> > > > > v8 1/4] PCI: vmd: Set PCI devices to D0 before enable PCI
-> > > > > PM's L1 substates", too.  Then, both the PCIe bridge and the
-> > > > > PCIe device have the same LTR_L1.2_THRESHOLD 101376ns as
-> > > > > expected.
-> > > > >
-> > > > > diff --git a/drivers/pci/controller/vmd.c
-> > > > > b/drivers/pci/controller/vmd.c index
-> > > > > bbf4a47e7b31..6b8dd4f30127 100644 ---
-> > > > > a/drivers/pci/controller/vmd.c +++
-> > > > > b/drivers/pci/controller/vmd.c @@ -727,6 +727,18 @@ static
-> > > > > void vmd_copy_host_bridge_flags(struct pci_host_bridge
-> > > > > *root_bridge, vmd_bridge->native_dpc =3D
-> > > > > root_bridge->native_dpc; }
-> > > > >
-> > > > > +static int vmd_pci_save_state(struct pci_dev *pdev, void
-> > > > > *userdata) +{
-> > > > > +       pci_save_state(pdev);
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int vmd_pci_restore_state(struct pci_dev *pdev, void
-> > > > > *userdata) +{
-> > > > > +       pci_restore_state(pdev);
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > >  /*
-> > > > >   * Enable ASPM and LTR settings on devices that aren't
-> > > > > configured by BIOS. */
-> > > > > @@ -927,6 +939,7 @@ static int vmd_enable_domain(struct
-> > > > > vmd_dev *vmd, unsigned long features)
-> > > > >         pci_scan_child_bus(vmd->bus);
-> > > > >         vmd_domain_reset(vmd);
-> > > > >
-> > > > > +       pci_walk_bus(vmd->bus, vmd_pci_save_state, NULL);
-> > > > >         /* When Intel VMD is enabled, the OS does not
-> > > > > discover the Root Ports
-> > > > >          * owned by Intel VMD within the MMCFG space.
-> > > > > pci_reset_bus() applies
-> > > > >          * a reset to the parent of the PCI device supplied
-> > > > > as argument. This
-> > > > > @@ -945,6 +958,7 @@ static int vmd_enable_domain(struct
-> > > > > vmd_dev *vmd, unsigned long features)
-> > > > >                         break;
-> > > > >                 }
-> > > > >         }
-> > > > > +       pci_walk_bus(vmd->bus, vmd_pci_restore_state, NULL); =20
-> > > >
-> > > > Why not call pci_reset_bus() (or __pci_reset_bus()) then in
-> > > > vmd_enable_domain() which preserves state unlike
-> > > > pci_reset_bus()?
-> > > >
-> > > > (Don't tell me naming of these functions is a horrible mess.
-> > > > :-/) =20
-> > >
-> > > Hmm. So this *is* calling pci_reset_bus(). =20
-> >
-> > Yeah, I managed to get confused by the names myself, I somehow
-> > ended up thinking it calls pci_bus_reset() which is not correct...
-> > =20
-> > > L1.2 configuration has specific
-> > > ordering requirements for changes to parent & child devices.
-> > > Could be why it's not getting restored properly. =20
-> >
-> > Indeed, it has to be something else since the patch above doesn't
-> > even restore anything because dev->state_saved should get set to
-> > false by the first pci_restore_state() called from
-> > __pci_reset_bus() -> pci_bus_restore_locked() -> pci_dev_restore(),
-> > I think!? =20
->=20
-> Inspired by Ilpo's comment.  I add some debug messages based on
-> linux-next's tag 'next-20240809' to understand the code path of
-> pci_reset_bus():
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index ffaaca0978cb..3ee71374f1de 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5133,8 +5133,10 @@ static void pci_dev_save_and_disable(struct
-> pci_dev *dev)
->          * races with ->remove() by the device lock, which must be
-> held by
->          * the caller.
->          */
-> -       if (err_handler && err_handler->reset_prepare)
-> +       if (err_handler && err_handler->reset_prepare) {
-> +               pci_info(dev, "%s: %pF\n", __func__,
-> err_handler->reset_prepare);
->                 err_handler->reset_prepare(dev);
-> +       }
->=20
->         /*
->          * Wake-up device prior to save.  PM registers default to D0
-> after @@ -5144,6 +5146,7 @@ static void
-> pci_dev_save_and_disable(struct pci_dev *dev)
-> pci_set_power_state(dev, PCI_D0);
->=20
->         pci_save_state(dev);
-> +       pci_info(dev, "%s: PCI state_saved is %s\n", __func__,
-> dev->state_saved ? "true" : "false");
->         /*
->          * Disable the device by clearing the Command register,
-> except for
->          * INTx-disable which is set.  This not only disables MMIO
-> and I/O port @@ -5655,6 +5658,10 @@ static void
-> pci_bus_save_and_disable_locked(struct pci_bus *bus)
->         struct pci_dev *dev;
->=20
->         list_for_each_entry(dev, &bus->devices, bus_list) {
-> +               pci_info(dev, "%s: PCI state_saved is %s, and %s
-> subordinate\n",
-> +                        __func__,
-> +                        dev->state_saved ? "true" : "false",
-> +                        dev->subordinate ? "has" : "does not have");
->                 pci_dev_save_and_disable(dev);
->                 if (dev->subordinate)
->                         pci_bus_save_and_disable_locked(dev->subordinate);
-> @@ -5671,6 +5678,10 @@ static void pci_bus_restore_locked(struct
-> pci_bus *bus) struct pci_dev *dev;
->=20
->         list_for_each_entry(dev, &bus->devices, bus_list) {
-> +               pci_info(dev, "%s: PCI state_saved is %s, and %s
-> subordinate\n",
-> +                        __func__,
-> +                        dev->state_saved ? "true" : "false",
-> +                        dev->subordinate ? "has" : "does not have");
->                 pci_dev_restore(dev);
->                 if (dev->subordinate)
->                         pci_bus_restore_locked(dev->subordinate);
-> @@ -5786,8 +5797,10 @@ static int pci_bus_reset(struct pci_bus *bus,
-> bool probe) if (!bus->self || !pci_bus_resettable(bus))
->                 return -ENOTTY;
->=20
-> -       if (probe)
-> +       if (probe) {
-> +               pci_info(bus->self, "%s: probe is true.  So return 0
-> directly", __func__);
->                 return 0;
-> +       }
->=20
->         pci_bus_lock(bus);
->=20
-> @@ -5858,10 +5871,12 @@ static int __pci_reset_bus(struct pci_bus
-> *bus) int rc;
->=20
->         rc =3D pci_bus_reset(bus, PCI_RESET_PROBE);
-> +       pci_info(bus->self, "%s: pci_bus_reset() returns %d\n",
-> __func__, rc); if (rc)
->                 return rc;
->=20
->         if (pci_bus_trylock(bus)) {
-> +               pci_info(bus->self, "%s: pci_bus_trylock() returns
-> true\n", __func__);
->                 pci_bus_save_and_disable_locked(bus);
->                 might_sleep();
->                 rc =3D pci_bridge_secondary_bus_reset(bus->self);
-> @@ -5881,6 +5896,7 @@ static int __pci_reset_bus(struct pci_bus *bus)
->   */
->  int pci_reset_bus(struct pci_dev *pdev)
->  {
-> +       pci_info(pdev, "%s: %s", __func__,
-> !pci_probe_reset_slot(pdev->slot) ? "true" : "false");
->         return (!pci_probe_reset_slot(pdev->slot)) ?
->             __pci_reset_slot(pdev->slot) : __pci_reset_bus(pdev->bus);
->  }
->=20
-> And, have the information of VMD PCIe devices with the built kernel:
->=20
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-> Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-> decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
-> L1_PM_Substates+ PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
->     L1SubCtl2: T_PwrOn=3D0us
->=20
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-> Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> L1_PM_Substates+ PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
->     L1SubCtl2: T_PwrOn=3D50us
->=20
-> We can see the NVMe has expected LTR1.2_Threshold=3D101376ns, but the
-> PCIe bridge has LTR1.2_Threshold=3D0ns.
->=20
-> Then, check the dmesg.  I notice the debug messages:
->=20
-> pci 10000:e0:06.0: PCI bridge to [bus e1]
-> pci 10000:e0:06.0: Primary bus is hard wired to 0
-> pci 10000:e1:00.0: pci_reset_bus: false
-> pci 10000:e0:06.0: pci_bus_reset: probe is true.  So return 0 directly
-> pci 10000:e0:06.0: __pci_reset_bus: pci_bus_reset() returns 0
-> pci 10000:e0:06.0: __pci_reset_bus: pci_bus_trylock() returns true
-> pci 10000:e1:00.0: pci_bus_save_and_disable_locked: PCI state_saved is
-> false, and does not have subordinate
-> pci 10000:e1:00.0: pci_dev_save_and_disable: PCI state_saved is true
-> Freeing initrd memory: 75236K
-> pci 10000:e1:00.0: pci_bus_restore_locked: PCI state_saved is true,
-> and does not have subordinate
->=20
-> So, the code path is:
->=20
-> vmd_enable_domain()
->   pci_reset_bus()
->     __pci_reset_bus()
->       pci_bus_reset()
->         pci_bus_save_and_disable_locked()
->           pci_dev_save_and_disable()
->         pci_bus_restore_locked()
->           pci_dev_restore()
->=20
-> And, from the debug messages, I learned only NVMe 10000:e1:00.0 does
-> pci_save/restore_state.  But, the PCIe bridge 10000:e0:06.0 does not.
-> So, PCIe bridge 10000:e0:06.0 does not restore state correctly.
->=20
-> Besides, it is NVMe 10000:e1:00.0's bus [e1] been reset, not the VMD's
-> bus in vmd_enable_domain().
-> * Bus "e1" has only NVMe 10000:e1:00.0
-> * VMD's bus in vmd_enable_domain() has PCIe bridge 10000:e0:06.0, NVMe
-> 10000:e1:00.0 and SATA Controller 10000:e0:17.0.
->=20
-> Here is the PCI tree:
->=20
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  |           +-02.0  Intel Corporation Tiger Lake-LP GT2 [UHD
-> Graphics G4] |           +-04.0  Intel Corporation TigerLake-LP
-> Dynamic Tuning Processor Participant
->  |           +-06.0  Intel Corporation RST VMD Managed Controller
->  |           +-07.0-[01-2b]--
->  |           +-08.0  Intel Corporation GNA Scoring Accelerator module
->  |           +-0a.0  Intel Corporation Tigerlake Telemetry Aggregator
-> Driver |           +-0d.0  Intel Corporation Tiger Lake-LP
-> Thunderbolt 4 USB Controller
->  |           +-0d.2  Intel Corporation Tiger Lake-LP Thunderbolt 4
-> NHI #0 |           +-0e.0  Intel Corporation Volume Management Device
-> NVMe RAID Controller
->  |           +-14.0  Intel Corporation Tiger Lake-LP USB 3.2 Gen 2x1
-> xHCI Host Controller
->  |           +-14.2  Intel Corporation Tiger Lake-LP Shared SRAM
->  |           +-14.3  Intel Corporation Wi-Fi 6 AX201
->  |           +-15.0  Intel Corporation Tiger Lake-LP Serial IO I2C
-> Controller #0 |           +-15.1  Intel Corporation Tiger Lake-LP
-> Serial IO I2C Controller #1 |           +-16.0  Intel Corporation
-> Tiger Lake-LP Management Engine Interface |           +-17.0  Intel
-> Corporation RST VMD Managed Controller |           +-1f.0  Intel
-> Corporation Tiger Lake-LP LPC Controller |           +-1f.3  Intel
-> Corporation Tiger Lake-LP Smart Sound Technology Audio Controller
->  |           +-1f.4  Intel Corporation Tiger Lake-LP SMBus Controller
->  |           +-1f.5  Intel Corporation Tiger Lake-LP SPI Controller
->  |           \-1f.6  Intel Corporation Ethernet Connection (13) I219-V
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
->=20
-> According the findings above, to ensure the devices on the VMD bus
-> have correctly states, seems pci_save_state() all the devices before
-> pci_reset_bus(), and pci_restore_state() all the devices after
-> pci_reset_bus() is the correct answer.
-What happens if you call pci_reset_bus with PCIe bridge 10000:e0:06.0
-instead of NVMe 10000:e1:00.0? I believe the current implementation in
-vmd_enable_domain finds first child device on each rootport and calls
-pci_reset_bus with NVMe.
-
--nirmal
->=20
-> Jian-Hong Pan
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tp
+IDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+DQo+IFNlbnQ6IFR1ZXNkYXksIFNlcHRl
+bWJlciAzLCAyMDI0IDg6NTAgUE0NCj4gVG86IExpYW8sIEJhcmQgPHl1bmctY2h1YW4ubGlhb0Bs
+aW51eC5pbnRlbC5jb20+OyBWaW5vZCBLb3VsDQo+IDx2a291bEBrZXJuZWwub3JnPjsgUGllcnJl
+LUxvdWlzIEJvc3NhcnQgPHBpZXJyZS0NCj4gbG91aXMuYm9zc2FydEBsaW51eC5pbnRlbC5jb20+
+DQo+IENjOiBLYWxlLCBTYW55b2cgUiA8c2FueW9nLnIua2FsZUBpbnRlbC5jb20+OyBTaHJleWFz
+IE5DDQo+IDxzaHJleWFzLm5jQGludGVsLmNvbT47IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9y
+ZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHN0YWJsZUB2Z2VyLmtlcm5lbC5v
+cmc7IExpYW8sIEJhcmQNCj4gPGJhcmQubGlhb0BpbnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0hdIHNvdW5kd2lyZTogc3RyZWFtOiBmaXggcHJvZ3JhbW1pbmcgc2xhdmUgcG9ydHMgZm9y
+IG5vbi0NCj4gY29udGlub3VzIHBvcnQgbWFwcw0KPiANCj4gT24gMDMvMDkvMjAyNCAwOTozNCwg
+TGlhbywgQmFyZCB3cm90ZToNCj4gPg0KPiA+IE9uIDcvMzEvMjAyNCAyOjU2IFBNLCBWaW5vZCBL
+b3VsIHdyb3RlOg0KPiA+PiBPbiAyOS0wNy0yNCwgMTY6MjUsIFBpZXJyZS1Mb3VpcyBCb3NzYXJ0
+IHdyb3RlOg0KPiA+Pj4NCj4gPj4+IE9uIDcvMjkvMjQgMTY6MDEsIEtyenlzenRvZiBLb3psb3dz
+a2kgd3JvdGU6DQo+ID4+Pj4gVHdvIGJpdG1hc2tzIGluICdzdHJ1Y3Qgc2R3X3NsYXZlX3Byb3An
+IC0gJ3NvdXJjZV9wb3J0cycgYW5kDQo+ID4+Pj4gJ3NpbmtfcG9ydHMnIC0gZGVmaW5lIHdoaWNo
+IHBvcnRzIHRvIHByb2dyYW0gaW4NCj4gPj4+PiBzZHdfcHJvZ3JhbV9zbGF2ZV9wb3J0X3BhcmFt
+cygpLiAgVGhlIG1hc2tzIGFyZSB1c2VkIHRvIGdldCB0aGUNCj4gPj4+PiBhcHByb3ByaWF0ZSBk
+YXRhIHBvcnQgcHJvcGVydGllcyAoJ3N0cnVjdCBzZHdfZ2V0X3NsYXZlX2Rwbl9wcm9wJykNCj4g
+ZnJvbQ0KPiA+Pj4+IGFuIGFycmF5Lg0KPiA+Pj4+DQo+ID4+Pj4gQml0bWFza3MgY2FuIGJlIG5v
+bi1jb250aW51b3VzIG9yIGNhbiBzdGFydCBmcm9tIGluZGV4IGRpZmZlcmVudCB0aGFuIDAsDQo+
+ID4+Pj4gdGh1cyB3aGVuIGxvb2tpbmcgZm9yIG1hdGNoaW5nIHBvcnQgcHJvcGVydHkgZm9yIGdp
+dmVuIHBvcnQsIHdlIG11c3QNCj4gPj4+PiBpdGVyYXRlIG92ZXIgbWFzayBiaXRzLCBub3QgZnJv
+bSAwIHVwIHRvIG51bWJlciBvZiBwb3J0cy4NCj4gPj4+Pg0KPiA+Pj4+IFRoaXMgZml4ZXMgYWxs
+b2NhdGlvbiBhbmQgcHJvZ3JhbW1pbmcgc2xhdmUgcG9ydHMsIHdoZW4gYSBzb3VyY2Ugb3Igc2lu
+aw0KPiA+Pj4+IG1hc2tzIHN0YXJ0IGZyb20gZnVydGhlciBpbmRleC4NCj4gPj4+Pg0KPiA+Pj4+
+IEZpeGVzOiBmODEwMWM3NGFhNTQgKCJzb3VuZHdpcmU6IEFkZCBNYXN0ZXIgYW5kIFNsYXZlIHBv
+cnQNCj4gcHJvZ3JhbW1pbmciKQ0KPiA+Pj4+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4N
+Cj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnp5c3p0b2Yua296
+bG93c2tpQGxpbmFyby5vcmc+DQo+ID4+PiBUaGlzIGlzIGEgdmFsaWQgY2hhbmdlIHRvIG9wdGlt
+aXplIGhvdyB0aGUgcG9ydCBhcmUgYWNjZXNzZWQuDQo+ID4+Pg0KPiA+Pj4gQnV0IHRoZSBjb21t
+aXQgbWVzc2FnZSBpcyBub3QgY29tcGxldGVseSBjbGVhciwgdGhlIGFsbG9jYXRpb24gaW4NCj4g
+Pj4+IG1pcGlfZGlzY28uYyBpcyBub3QgbW9kaWZpZWQgYW5kIEkgZG9uJ3QgdGhpbmsgdGhlcmUn
+cyBhbnl0aGluZyB0aGF0DQo+ID4+PiB3b3VsZCBjcmFzaC4gSWYgdGhlcmUgYXJlIG5vbi1jb250
+aWd1b3VzIHBvcnRzLCB3ZSB3aWxsIHN0aWxsIGFsbG9jYXRlDQo+ID4+PiBzcGFjZSB0aGF0IHdp
+bGwgbm90IGJlIGluaXRpYWxpemVkL3VzZWQuDQo+ID4+Pg0KPiA+Pj4gCS8qIEFsbG9jYXRlIG1l
+bW9yeSBmb3Igc2V0IGJpdHMgaW4gcG9ydCBsaXN0cyAqLw0KPiA+Pj4gCW52YWwgPSBod2VpZ2h0
+MzIocHJvcC0+c291cmNlX3BvcnRzKTsNCj4gPj4+IAlwcm9wLT5zcmNfZHBuX3Byb3AgPSBkZXZt
+X2tjYWxsb2MoJnNsYXZlLT5kZXYsIG52YWwsDQo+ID4+PiAJCQkJCSAgc2l6ZW9mKCpwcm9wLT5z
+cmNfZHBuX3Byb3ApLA0KPiA+Pj4gCQkJCQkgIEdGUF9LRVJORUwpOw0KPiA+Pj4gCWlmICghcHJv
+cC0+c3JjX2Rwbl9wcm9wKQ0KPiA+Pj4gCQlyZXR1cm4gLUVOT01FTTsNCj4gPj4+DQo+ID4+PiAJ
+LyogUmVhZCBkcG4gcHJvcGVydGllcyBmb3Igc291cmNlIHBvcnQocykgKi8NCj4gPj4+IAlzZHdf
+c2xhdmVfcmVhZF9kcG4oc2xhdmUsIHByb3AtPnNyY19kcG5fcHJvcCwgbnZhbCwNCj4gPj4+IAkJ
+CSAgIHByb3AtPnNvdXJjZV9wb3J0cywgInNvdXJjZSIpOw0KPiA+Pj4NCj4gPj4+IElPVywgdGhp
+cyBpcyBhIHZhbGlkIGNoYW5nZSwgYnV0IGl0J3MgYW4gb3B0aW1pemF0aW9uLCBub3QgYSBmaXgg
+aW4gdGhlDQo+ID4+PiB1c3VhbCBzZW5zZSBvZiAna2VybmVsIG9vcHMgb3RoZXJ3aXNlJy4NCj4g
+Pj4+DQo+ID4+PiBBbSBJIG1pc3Npbmcgc29tZXRoaW5nPw0KPiA+Pj4NCj4gPj4+IEJUVywgdGhl
+IG5vdGlvbiBvZiBEUG4gaXMgdGhhdCBuID4gMC4gRFAwIGlzIGEgc3BlY2lhbCBjYXNlIHdpdGgN
+Cj4gPj4+IGRpZmZlcmVudCBwcm9wZXJ0aWVzLCBCSVQoMCkgY2Fubm90IGJlIHNldCBmb3IgZWl0
+aGVyIG9mIHRoZSBzaW5rL3NvdXJjZQ0KPiA+Pj4gcG9ydCBiaXRtYXNrLg0KPiA+PiBUaGUgZml4
+IHNlZW1zIHJpZ2h0IHRvIG1lLCB3ZSBjYW5ub3QgaGF2ZSBhc3N1bXB0aW9uIHRoYXQgcG9ydHMg
+YXJlDQo+ID4+IGNvbnRhZ2lvdXMsIHNvIHdlIG5lZWQgdG8gaXRlcmF0ZSBvdmVyIGFsbCB2YWxp
+ZCBwb3J0cyBhbmQgbm90IHRvIE4NCj4gPj4gcG9ydHMgd2hpY2ggY29kZSBkb2VzIG5vdyENCj4g
+Pg0KPiA+DQo+ID4gU29ycnkgdG8ganVtcCBpbiBhZnRlciB0aGUgY29tbWl0IHdhcyBhcHBsaWVk
+LiBCdXQsIGl0IGJyZWFrcyBteSB0ZXN0Lg0KPiA+DQo+ID4gVGhlIHBvaW50IGlzIHRoYXQgZHBu
+X3Byb3BbaV0ubnVtIHdoZXJlIHRoZSBpIGlzIHRoZSBhcnJheSBpbmRleCwgYW5kDQo+ID4NCj4g
+PiBudW0gaXMgdGhlIHBvcnQgbnVtYmVyLiBTbywgYGZvciAoaSA9IDA7IGkgPCBudW1fcG9ydHM7
+IGkrKylgIHdpbGwgaXRlcmF0ZQ0KPiANCj4gUGxlYXNlIGZpeCB5b3VyIGVtYWlsIGNsaWVudCBz
+byBpdCB3aWxsIHdyaXRlIHByb3BlciBwYXJhZ3JhcGhzLg0KPiBJbnNlcnRpbmcgYmxhbmsgbGlu
+ZXMgYWZ0ZXIgZWFjaCBzZW50ZW5jZSByZWR1Y2VzIHRoZSByZWFkYWJpbGl0eS4NCj4gDQo+ID4N
+Cj4gPiBvdmVyIGFsbCB2YWxpZCBwb3J0cy4NCj4gPg0KPiA+IFdlIGNhbiBzZWUgaW4gYmVsb3cg
+ZHJpdmVycy9zb3VuZHdpcmUvbWlwaV9kaXNjby5jDQo+ID4NCj4gPiAgwqDCoMKgwqDCoMKgwqAg
+bnZhbCA9IGh3ZWlnaHQzMihwcm9wLT5zaW5rX3BvcnRzKTsNCj4gPg0KPiA+ICDCoMKgwqDCoMKg
+wqDCoCBwcm9wLT5zaW5rX2Rwbl9wcm9wID0gZGV2bV9rY2FsbG9jKCZzbGF2ZS0+ZGV2LCBudmFs
+LA0KPiA+DQo+ID4gc2l6ZW9mKCpwcm9wLT5zaW5rX2Rwbl9wcm9wKSwNCj4gPg0KPiA+ICDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgR0ZQX0tFUk5FTCk7DQo+ID4NCj4gPiBBbmQgc2R3X3Ns
+YXZlX3JlYWRfZHBuKCkgc2V0IGRhdGEgcG9ydCBwcm9wZXJ0aWVzIG9uZSBieSBvbmUuDQo+ID4N
+Cj4gPiBgZm9yX2VhY2hfc2V0X2JpdChpLCAmbWFzaywgMzIpYCB3aWxsIGJyZWFrIHRoZSBzeXN0
+ZW0gd2hlbiBwb3J0IG51bWJlcnMNCj4gDQo+IFRoZSBlbnRpcmUgcG9pbnQgb2YgdGhlIGNvbW1p
+dCBpcyB0byBmaXggaXQgZm9yIG5vbi1jb250aW51b3VzIG1hc2tzLg0KPiBBbmQgSSB0ZXN0ZWQg
+aXQgd2l0aCBub24tY29udGludW91cyBtYXNrcy4NCj4gDQo+ID4NCj4gPiBhcmUgbm90IGNvbnRp
+bnVvdXMuIEZvciBleGFtcGxlLCBhIGNvZGVjIGhhcyBzb3VyY2UgcG9ydCBudW1iZXIgPSAxIGFu
+ZCAzLA0KPiANCj4gV2hpY2ggY29kZWM/IENhbiB5b3UgZ2l2ZSBhIGxpbmsgdG8gZXhhY3QgbGlu
+ZSBpbiAqVVBTVFJFQU0qIGtlcm5lbC4NCg0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2Nt
+L2xpbnV4L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVlL3NvdW5kL3NvYy9jb2Rl
+Y3MvcnQ3MjItc2RjYS1zZHcuYyNuMjE3DQpwcm9wLT5zb3VyY2VfcG9ydHMgPSBCSVQoNikgfCBC
+SVQoMik7IC8qIEJJVE1BUDogMDEwMDAxMDAgKi8NCnByb3AtPnNpbmtfcG9ydHMgPSBCSVQoMykg
+fCBCSVQoMSk7IC8qIEJJVE1BUDogIDAwMDAxMDEwICovCQ0KDQo+IA0KPiA+DQo+ID4gdGhlbiBk
+cG5fcHJvcFswXS5udW0gPSAxIGFuZCBkcG5fcHJvcFsxXS5udW0gPSAzLiBBbmQgd2UgbmVlZCB0
+byBnbw0KPiA+DQo+ID4gdGhyb3V0aCBkcG5fcHJvcFswXSBhbmQgZHBuX3Byb3BbMV0gaW5zdGVh
+ZCBvZiBkcG5fcHJvcFsxXSBhbmQNCj4gZHBuX3Byb3BbM10uDQo+ID4NCj4gDQo+IFdoYXQgYXJl
+IHRoZSBzb3VyY2Ugb3Igc2luayBwb3J0cyBpbiB5b3VyIGNhc2U/IE1heWJlIHlvdSBqdXN0IGdl
+bmVyYXRlDQo+IHdyb25nIG1hc2s/DQoNCkkgY2hlY2tlZCBteSBtYXNrIGlzIDB4YSB3aGVuIEkg
+ZG8gYXBsYXkgYW5kIGl0IG1hdGNoZXMgdGhlIHNpbmtfcG9ydHMgb2YNCnRoZSBydDcyMiBjb2Rl
+Yy4NCg0KPiANCj4gSXQncyBub3Qgb25seSBteSBwYXRjaCB3aGljaCB1c2VzIGZvcl9lYWNoX3Nl
+dF9iaXQoKS4gc3lzZnNfc2xhdmVfZHBuDQo+IGRvZXMgdGhlIHNhbWUuDQoNCldoYXQgc3lzZnNf
+c2xhdmVfZHBuIGRvZXMgaXMgDQogICAgICAgIGkgPSAwOyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgDQogICAgICAgIGZvcl9lYWNoX3NldF9iaXQoYml0LCAmbWFzaywgMzIpIHsNCiAgICAgICAg
+ICAgICAgICBpZiAoYml0ID09IE4pIHsNCiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBz
+cHJpbnRmKGJ1ZiwgZm9ybWF0X3N0cmluZywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGRwbltpXS5maWVsZCk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAg
+ICAgIGkrKzsNCiAgICAgICAgfSAgICAgICAgICAgICAgICAgICAgICAgICANCkl0IHVzZXMgYSB2
+YXJpYWJsZSAiaSIgdG8gcmVwcmVzZW50IHRoZSBhcnJheSBpbmRleCBvZiBkcG5baV0uDQpCdXQs
+IGl0IGlzIGZvcl9lYWNoX3NldF9iaXQoaSwgJm1hc2ssIDMyKSBpbiB5b3VyIHBhdGNoIGFuZCB0
+aGUgdmFyaWFibGUgImkiDQp3aGljaCByZXByZXNlbnRzIGVhY2ggYml0IG9mIHRoZSBtYXNrIGlz
+IHVzZWQgYXMgdGhlIGluZGV4IG9mIGRwbl9wcm9wW2ldLg0KDQpBZ2FpbiwgdGhlIHBvaW50IGlz
+IHRoYXQgdGhlIGJpdHMgb2YgbWFzayBpcyBub3QgdGhlIGluZGV4IG9mIHRoZSBkcG5fcHJvcFtd
+DQphcnJheS4NCg0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCg0K
 
