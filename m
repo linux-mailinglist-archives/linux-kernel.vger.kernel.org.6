@@ -1,263 +1,615 @@
-Return-Path: <linux-kernel+bounces-313048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48877969F87
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF46969F8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C41C23FEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E271E1C20A93
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF43F2AE97;
-	Tue,  3 Sep 2024 13:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAB52C6A3;
+	Tue,  3 Sep 2024 13:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="McaI5UkH"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZC1PQ+I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C692A1D6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE501AACA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371751; cv=none; b=u8hNNY6fznPvwDuA53eL9AVe6IzCFG+1hXSY0pxtOzF2Jd09b4ByF9v2lchdJ7Wp7gxaaahiUyMLuI79eWLrM/tsATS1fUMHrV3NeEDpVsLwzHCXlSxpGtRB0dGY36wGzAoGgd1ybxfsyDOZpIH6rDhH/2mD0pxBHtbKlCd1BgY=
+	t=1725371776; cv=none; b=hKJd5GPTjUXAZzs6aQAdKxLdBcDzHB2d44PpjXY3MSFVbDlZMn0MTUDulkPut8xEXaS9uUioniXKDqZYTwPWl0gf6zmfI9ZCu28pQ7QZ/5BWcq6xDVWyBcrUMebAepM8iDsmpY5ZuoFdkfWUchTWbCMwz4/IrmYJIjTZ9/K7ayM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371751; c=relaxed/simple;
-	bh=5zIeyeM/Qmt4j7Zx6DyEsvWyE6OtRWbAlepzVfbZTEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o1RoA+I44hC9lHVcC/t4c+DaKGRcShwOtfuF9uVLkCaGOEs70PUVcCeDgzXqL8kXsclOv/0zKOFmZufcVqowdKnWkdpUCmaeOConhrNSMa6ZmyLVwX/BP56ItdqGzzuL2gi5MzxMxhDasz3Zv91McjLaPeI/x8ZNXxNV0/9aCIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=McaI5UkH; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2056aa5cefcso428395ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725371749; x=1725976549; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aFVlJE2wcPJ/73dJ2/hsvJKsdhKy12KE5SwOspRc07o=;
-        b=McaI5UkHa4DuiC7qsBPkyg86dNp2oK3+vIkPd4f9ZXyzVsRZ0TzUfiZc5WKT8iI270
-         XFhD/HtFDnz7ySdvMaO7S1Bc5tSe0JxLXgxhzqXusZDIiSlnVP1z9VzhaYsgsVYrYFMv
-         6CffEUK1aY+IsTN4IBQikTsjtSMd4rktysXN2nuLBSCXAZ3i9PTvrpaXO1QiUuABF4+r
-         TPJ7mKwvuGEf18TIFhkjItq5KeD4oO0mgbDshVSwzgt2vU/Tjbt1/nkZrmDDq4emJQFz
-         od2Lr2EK/OBozvgwaS+kohV+8ZhvYsXmWCKHXh9IhdytTXSZdOa3FtrJ35U9Xfc70FUE
-         s9Hw==
+	s=arc-20240116; t=1725371776; c=relaxed/simple;
+	bh=t4Y7hIeIAarXA5+34v/upgeEA4IT1TimD5n6FrEchII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLG55cIS86NbT17Y+dS3PRMtiIoQw79T2+N8HRahZUwv8Sj/EaKtn2elFrMjKkTaXH9pxF5zBAK7WoYZ2F55eTFH5i/mdAAOyLy4GGEtoNAh1uDwV5XTG49ULO6zdn4KhM2R0dyuGWKvVd9M5Mn/aKh7CdjTkDM2mJjNXiblq3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZC1PQ+I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725371773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mZUahBRGc+zhy9j2+IrRTtUJ4R6G0EU0I10UIHmemvg=;
+	b=cZC1PQ+IVsm/Jix58L6Vhd+GMnvW+fqPXL5Hus4x86d/lZQlkRqUBirmsxgiAsyLw3S0XB
+	ESzlC9WKHUj4rcvVtLcRr0/D0b638uDeHCyLtQS0xlGfDW6MmYMR2GHkGJc6fObMfHyz7X
+	Nb+X19/E/PIeG9BFjF6EwNYznbTY40U=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-572-LrBF4aDbMvCSpUWshbsoaA-1; Tue, 03 Sep 2024 09:56:12 -0400
+X-MC-Unique: LrBF4aDbMvCSpUWshbsoaA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c32158d0so1664651f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:56:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725371749; x=1725976549;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1725371771; x=1725976571;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aFVlJE2wcPJ/73dJ2/hsvJKsdhKy12KE5SwOspRc07o=;
-        b=EqNAhGMcsOZVgyVixT8prND/8OlQsGkMGIlH0W/jMSnKpYEAzBFMAAFqVnkfNO3lfc
-         6euIbXCTZr8wm7GzYYRPCZl3+8pkajciuRQD6iwhPyGKsi0BGgMkBMNsKTC6DEb03cnj
-         kGVsuTrxWmrostqCtXv/AUB8jwjx0ib8lXAcArJzVCH4gFdCCq0IMlbd8U9GK9tWUoJO
-         2LoYvREqHpb1JljFuNS8kw1VHsTrXM36wTcmahvzvOYcPNMZC1Jk5vHJPK7WWZQ7wEiW
-         rbEb8lW4ickuY84XJ9stVpMef7kNuh5uYB5Ryfr+QXFqiT5Ash1uQU9+9ZUBuY9aYcwF
-         BAwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjjr/Np21EMxAQJogo8YTXSs0cUI4xEWOKVQeTZmRSuipfMQ3Xw2jh2TD+kMEIGfmkc4Kvz6qR7cs/5ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynM3OuhA7YqL01u6+mtAydlDuzGVyXZGVK4cKuAYPYnZMm3nzW
-	KugvSu7RQ+LQiceod4gWwDRmv4qVTI9FLdKOV91JvrMP8AAoXxmU4h0UIqIr1Q==
-X-Google-Smtp-Source: AGHT+IGrElXa+ZnVJVusZLLZ3n1gY1PRDfijfMKbWF3ERqoNh+U8MNTJcATggm62KZcSLZN+diKQuQ==
-X-Received: by 2002:a17:902:da92:b0:1f9:dc74:6c2b with SMTP id d9443c01a7336-20549b8e7c6mr6672125ad.29.1725371748904;
-        Tue, 03 Sep 2024 06:55:48 -0700 (PDT)
-Received: from google.com (55.212.185.35.bc.googleusercontent.com. [35.185.212.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd9a3sm81638545ad.90.2024.09.03.06.55.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 06:55:48 -0700 (PDT)
-Date: Tue, 3 Sep 2024 13:55:44 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Tangquan Zheng <zhengtangquan@oppo.com>
-Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
- reduce the lock duration
-Message-ID: <ZtcVYBUNWGow40pX@google.com>
-References: <20240902225009.34576-1-21cnbao@gmail.com>
- <20240903110109.1696-1-hdanton@sina.com>
- <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com>
+        bh=mZUahBRGc+zhy9j2+IrRTtUJ4R6G0EU0I10UIHmemvg=;
+        b=M9s0EEvNBEGFK8769WoU/cpRu7Gc91b0fgUkDYb4ygOIhYXerL8buumyNn9iUz6FjU
+         ZJv+olhemRO0pPIiHfNMvlpy4SzaR7G2j5/zp7fiT6QzI1lV7Owz6WyF3MtBj5rZDsRD
+         kRONyu6JY+dxkhc3DaqDYws4vRyRc4BkMLv61Fxnaw6ReLfFe+49HVmVoft6l1cwLv64
+         TYjy6cEWjbuhpBX2o7xCURgAOpuAj7zqA/B3xL2foZyDGhHPN3SsvU1k716/q+tyFdqr
+         s50Xc4056/OMIWaufaM/QkgidvK9fARCv3QGdoEfL9ME0jhZIIQPmnpc5wUQ9qKjZWFv
+         9XrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXc6E8nKSkmZVMmk/T32cXJBPygJK1qmGTMuH4a2PBd7cROdUVJj8WD9zS+RZlnVAaJ7ErS1A4gosh6Bhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2uhFEu0SIxZusY1DJQJyUUA3+WTGJOuTQHo7ijZk78jg4Q3Vm
+	nDAj/iWLAJT2KytzHKbFWdlEqIp+2df1+QB75ew8nEVQXWhWJWby3nES2MTqD/LYN5+TMT6rYZc
+	5xWmp2Vf43lcHx90P1W5JnhQVR6Luh07dXmaOax9pQlcfcpIXYfD1CAjH+C1Zhg==
+X-Received: by 2002:a5d:67cd:0:b0:374:b5fc:d31a with SMTP id ffacd0b85a97d-374bceb37a3mr7053512f8f.25.1725371770866;
+        Tue, 03 Sep 2024 06:56:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKMEOZbckYPKzqhZb37HeOJ7zsJWuV4GdJpSA6eNrl8UONYbHS5JM6qgDTBvQXT+ieXorLCQ==
+X-Received: by 2002:a5d:67cd:0:b0:374:b5fc:d31a with SMTP id ffacd0b85a97d-374bceb37a3mr7053489f8f.25.1725371770178;
+        Tue, 03 Sep 2024 06:56:10 -0700 (PDT)
+Received: from [192.168.88.27] (146-241-55-250.dyn.eolo.it. [146.241.55.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c8547c0csm6893161f8f.17.2024.09.03.06.56.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 06:56:09 -0700 (PDT)
+Message-ID: <5c0303f4-c609-4a4e-a012-c27f08cfa6f9@redhat.com>
+Date: Tue, 3 Sep 2024 15:56:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ptp: Add support for the AMZNC10C 'vmclock' device
+Content-Language: en-US
+To: David Woodhouse <dwmw2@infradead.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
+ "Chashper, David" <chashper@amazon.com>,
+ "Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>
+Cc: "Christopher S . Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+References: <dac0cd7e3c140dc309534a4c6e8976360bf6f3b9.camel@infradead.org>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <dac0cd7e3c140dc309534a4c6e8976360bf6f3b9.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com>
 
-On Tue, Sep 03, 2024 at 07:45:12PM +0800, Barry Song wrote:
-> On Tue, Sep 3, 2024 at 7:01 PM Hillf Danton <hdanton@sina.com> wrote:
-> >
-> > On Tue, Sep 03, 2024 at 10:50:09AM +1200, Barry Song wrote:
-> > > From: Barry Song <v-songbaohua@oppo.com>
-> > >
-> > > The mmap_write_lock() can block all access to the VMAs, for example page
-> > > faults. Performing memory allocation while holding this lock may trigger
-> > > direct reclamation, leading to others being queued in the rwsem for an
-> > > extended period.
-> > > We've observed that the allocation can sometimes take more than 300ms,
-> > > significantly blocking other threads. The user interface sometimes
-> > > becomes less responsive as a result. To prevent this, let's move the
-> > > allocation outside of the write lock.
-
-Thanks for you patch Barry. So, we are aware of this contention and I've
-been working on a fix for it. See more about this below.
-
-> >
-> > I suspect concurrent allocators make things better wrt response, cutting
-> > alloc latency down to 10ms for instance in your scenario. Feel free to
-> > show figures given Tangquan's 48-hour profiling.
-> 
-> Likely.
-> 
-> Concurrent allocators are quite common in PFs which occur
-> in the same PTE. whoever gets PTL sets PTE, others free the allocated
-> pages.
-> 
-> >
-> > > A potential side effect could be an extra alloc_page() for the second
-> > > thread executing binder_install_single_page() while the first thread
-> > > has done it earlier. However, according to Tangquan's 48-hour profiling
-> > > using monkey, the likelihood of this occurring is minimal, with a ratio
-> > > of only 1 in 2400. Compared to the significantly costly rwsem, this is
-> > > negligible.
-
-This is not negligible. In fact, it is the exact reason for the page
-allocation to be done with the mmap sem. If the first thread sleeps on
-vm_insert_page(), then binder gets into a bad state of multiple threads
-trying to reclaim pages that won't really be used. Memory pressure goes
-from bad to worst pretty quick.
-
-FWIW, I believe this was first talked about here:
-https://lore.kernel.org/all/ZWmNpxPXZSxdmDE1@google.com/
-
-
-> > > On the other hand, holding a write lock without making any VMA
-> > > modifications appears questionable and likely incorrect. While this
-> > > patch focuses on reducing the lock duration, future updates may aim
-> > > to eliminate the write lock entirely.
-> >
-> > If spin, better not before taking a look at vm_insert_page().
-> 
-> I have patch 2/3 transitioning to mmap_read_lock, and per_vma_lock is
-> currently in the
-> testing queue. At the moment, alloc->spin is in place, but I'm not
-> entirely convinced
-> it's the best replacement for the write lock. Let's wait for
-> Tangquan's test results.
-> 
-> Patch 2 is detailed below, but it has only passed the build-test phase
-> so far, so
-> its result is uncertain. I'm sharing it early in case you find it
-> interesting. And I
-> am not convinced Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in
-> race with munmap()") is a correct fix to really avoid all UAF of alloc->vma.
-> 
-> [PATCH]  binder_alloc: Don't use mmap_write_lock for installing page
-> 
-> Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in race with
-> munmap()") uses the mmap_rwsem write lock to protect against a race
-> condition with munmap, where the vma is detached by the write lock,
-> but pages are zapped by the read lock. This approach is extremely
-> expensive for the system, though perhaps less so for binder itself,
-> as the write lock can block all other operations.
-> 
-> As an alternative, we could hold only the read lock and re-check
-> that the vma hasn't been detached. To protect simultaneous page
-> installation, we could use alloc->lock instead.
-> 
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  drivers/android/binder_alloc.c | 32 +++++++++++++++++---------------
->  1 file changed, 17 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-> index f20074e23a7c..a2281dfacbbc 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -228,24 +228,17 @@ static int binder_install_single_page(struct
-> binder_alloc *alloc,
->                 return -ESRCH;
-> 
->         /*
-> -        * Don't allocate page in mmap_write_lock, this can block
-> -        * mmap_rwsem for a long time; Meanwhile, allocation failure
-> -        * doesn't necessarily need to return -ENOMEM, if lru_page
-> -        * has been installed, we can still return 0(success).
-> +        * Allocation failure doesn't necessarily need to return -ENOMEM,
-> +        * if lru_page has been installed, we can still return 0(success).
-> +        * So, defer the !page check until after binder_get_installed_page()
-> +        * is completed.
->          */
->         page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
-> 
-> -       /*
-> -        * Protected with mmap_sem in write mode as multiple tasks
-> -        * might race to install the same page.
-> -        */
-> -       mmap_write_lock(alloc->mm);
-> -       if (binder_get_installed_page(lru_page)) {
-> -               ret = 1;
-> -               goto out;
-> -       }
-> +       mmap_read_lock(alloc->mm);
-> 
-> -       if (!alloc->vma) {
-> +       /* vma might have been dropped or deattached */
-> +       if (!alloc->vma || !find_vma(alloc->mm, addr)) {
->                 pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
->                 ret = -ESRCH;
->                 goto out;
-> @@ -257,18 +250,27 @@ static int binder_install_single_page(struct
-> binder_alloc *alloc,
->                 goto out;
->         }
-> 
-> +       spin_lock(&alloc->lock);
-
-You can't hold a spinlock and then call vm_insert_page().
-
-> +       if (binder_get_installed_page(lru_page)) {
-> +               spin_unlock(&alloc->lock);
-> +               ret = 1;
-> +               goto out;
-> +       }
+On 8/23/24 12:09, David Woodhouse wrote:
+> diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+> index 604541dcb320..e98c9767e0ef 100644
+> --- a/drivers/ptp/Kconfig
+> +++ b/drivers/ptp/Kconfig
+> @@ -131,6 +131,19 @@ config PTP_1588_CLOCK_KVM
+>   	  To compile this driver as a module, choose M here: the module
+>   	  will be called ptp_kvm.
+>   
+> +config PTP_1588_CLOCK_VMCLOCK
+> +	tristate "Virtual machine PTP clock"
+> +	depends on X86_TSC || ARM_ARCH_TIMER
+> +	depends on PTP_1588_CLOCK && ACPI && ARCH_SUPPORTS_INT128
+> +	default y
+> +	help
+> +	  This driver adds support for using a virtual precision clock
+> +	  advertised by the hypervisor. This clock is only useful in virtual
+> +	  machines where such a device is present.
 > +
->         ret = vm_insert_page(alloc->vma, addr, page);
->         if (ret) {
->                 pr_err("%d: %s failed to insert page at offset %lx with %d\n",
->                        alloc->pid, __func__, addr - alloc->buffer, ret);
-> +               spin_unlock(&alloc->lock);
->                 ret = -ENOMEM;
->                 goto out;
->         }
-> 
->         /* Mark page installation complete and safe to use */
->         binder_set_installed_page(lru_page, page);
-> +       spin_unlock(&alloc->lock);
->  out:
-> -       mmap_write_unlock(alloc->mm);
-> +       mmap_read_unlock(alloc->mm);
->         mmput_async(alloc->mm);
->         if (ret && page)
->                 __free_page(page);
-> --
-> 2.39.3 (Apple Git-146)
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called ptp_vmclock.
+> +
+>   config PTP_1588_CLOCK_IDT82P33
+>   	tristate "IDT 82P33xxx PTP clock"
+>   	depends on PTP_1588_CLOCK && I2C
+> diff --git a/drivers/ptp/Makefile b/drivers/ptp/Makefile
+> index 68bf02078053..01b5cd91eb61 100644
+> --- a/drivers/ptp/Makefile
+> +++ b/drivers/ptp/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_PTP_1588_CLOCK_DTE)	+= ptp_dte.o
+>   obj-$(CONFIG_PTP_1588_CLOCK_INES)	+= ptp_ines.o
+>   obj-$(CONFIG_PTP_1588_CLOCK_PCH)	+= ptp_pch.o
+>   obj-$(CONFIG_PTP_1588_CLOCK_KVM)	+= ptp_kvm.o
+> +obj-$(CONFIG_PTP_1588_CLOCK_VMCLOCK)	+= ptp_vmclock.o
+>   obj-$(CONFIG_PTP_1588_CLOCK_QORIQ)	+= ptp-qoriq.o
+>   ptp-qoriq-y				+= ptp_qoriq.o
+>   ptp-qoriq-$(CONFIG_DEBUG_FS)		+= ptp_qoriq_debugfs.o
+> diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
+> new file mode 100644
+> index 000000000000..f772bcb23599
+> --- /dev/null
+> +++ b/drivers/ptp/ptp_vmclock.c
+> @@ -0,0 +1,607 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Virtual PTP 1588 clock for use with LM-safe VMclock device.
+> + *
+> + * Copyright © 2024 Amazon.com, Inc. or its affiliates.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/file.h>
+> +#include <linux/fs.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <uapi/linux/vmclock-abi.h>
+> +
+> +#include <linux/ptp_clock_kernel.h>
+> +
+> +#ifdef CONFIG_X86
+> +#include <asm/pvclock.h>
+> +#include <asm/kvmclock.h>
+> +#endif
+> +
+> +#ifdef CONFIG_KVM_GUEST
+> +#define SUPPORT_KVMCLOCK
+> +#endif
+> +
+> +static DEFINE_IDA(vmclock_ida);
+> +
+> +ACPI_MODULE_NAME("vmclock");
+> +
+> +struct vmclock_state {
+> +	struct resource res;
+> +	struct vmclock_abi *clk;
+> +	struct miscdevice miscdev;
+> +	struct ptp_clock_info ptp_clock_info;
+> +	struct ptp_clock *ptp_clock;
+> +	enum clocksource_ids cs_id, sys_cs_id;
+> +	int index;
+> +	char *name;
+> +};
+> +
+> +#define VMCLOCK_MAX_WAIT ms_to_ktime(100)
+> +
+> +/* Require at least the flags field to be present. All else can be optional. */
+> +#define VMCLOCK_MIN_SIZE offsetof(struct vmclock_abi, pad)
+> +
+> +#define VMCLOCK_FIELD_PRESENT(_c, _f)			  \
+> +	le32_to_cpu((_c)->size) >= (offsetof(struct vmclock_abi, _f) +	\
+> +				    sizeof((_c)->_f))
+> +
+> +/*
+> + * Multiply a 64-bit count by a 64-bit tick 'period' in units of seconds >> 64
+> + * and add the fractional second part of the reference time.
+> + *
+> + * The result is a 128-bit value, the top 64 bits of which are seconds, and
+> + * the low 64 bits are (seconds >> 64).
+> + */
+> +static uint64_t mul_u64_u64_shr_add_u64(uint64_t *res_hi, uint64_t delta,
+> +					uint64_t period, uint8_t shift,
+> +					uint64_t frac_sec)
 
+I'm sorry for the late feedback.
 
-Sorry, but as I mentioned, I've been working on fixing this contention
-by supporting concurrent "faults" in binder_install_single_page(). This
-is the appropriate fix. I should be sending a patch soon after working
-out the conflicts with the shrinker's callback.
+uint64_t should be u64 (in a lot of places), mutatis mutandis uint32_t, 
+etc...
 
-Thanks,
---
-Carlos Llamas
+> +{
+> +	unsigned __int128 res = (unsigned __int128)delta * period;
+> +
+> +	res >>= shift;
+> +	res += frac_sec;
+> +	*res_hi = res >> 64;
+> +	return (uint64_t)res;
+> +}
+> +
+> +static bool tai_adjust(struct vmclock_abi *clk, uint64_t *sec)
+> +{
+> +	if (likely(clk->time_type == VMCLOCK_TIME_UTC))
+> +		return true;
+> +
+> +	if (clk->time_type == VMCLOCK_TIME_TAI &&
+> +	    (le64_to_cpu(clk->flags) & VMCLOCK_FLAG_TAI_OFFSET_VALID)) {
+> +		if (sec)
+> +			*sec += (int16_t)le16_to_cpu(clk->tai_offset_sec);
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static int vmclock_get_crosststamp(struct vmclock_state *st,
+> +				   struct ptp_system_timestamp *sts,
+> +				   struct system_counterval_t *system_counter,
+> +				   struct timespec64 *tspec)
+> +{
+> +	ktime_t deadline = ktime_add(ktime_get(), VMCLOCK_MAX_WAIT);
+> +	struct system_time_snapshot systime_snapshot;
+> +	uint64_t cycle, delta, seq, frac_sec;
+> +
+> +#ifdef CONFIG_X86
+> +	/*
+> +	 * We'd expect the hypervisor to know this and to report the clock
+> +	 * status as VMCLOCK_STATUS_UNRELIABLE. But be paranoid.
+> +	 */
+> +	if (check_tsc_unstable())
+> +		return -EINVAL;
+> +#endif
+> +
+> +	while (1) {
+> +		seq = le32_to_cpu(st->clk->seq_count) & ~1ULL;
+> +
+> +		/*
+> +		 * This pairs with a write barrier in the hypervisor
+> +		 * which populates this structure.
+> +		 */
+> +		virt_rmb();
+> +
+> +		if (st->clk->clock_status == VMCLOCK_STATUS_UNRELIABLE)
+> +			return -EINVAL;
+> +
+> +		/*
+> +		 * When invoked for gettimex64(), fill in the pre/post system
+> +		 * times. The simple case is when system time is based on the
+> +		 * same counter as st->cs_id, in which case all three times
+> +		 * will be derived from the *same* counter value.
+> +		 *
+> +		 * If the system isn't using the same counter, then the value
+> +		 * from ktime_get_snapshot() will still be used as pre_ts, and
+> +		 * ptp_read_system_postts() is called to populate postts after
+> +		 * calling get_cycles().
+> +		 *
+> +		 * The conversion to timespec64 happens further down, outside
+> +		 * the seq_count loop.
+> +		 */
+> +		if (sts) {
+> +			ktime_get_snapshot(&systime_snapshot);
+> +			if (systime_snapshot.cs_id == st->cs_id) {
+> +				cycle = systime_snapshot.cycles;
+> +			} else {
+> +				cycle = get_cycles();
+> +				ptp_read_system_postts(sts);
+> +			}
+> +		} else {
+> +			cycle = get_cycles();
+> +		}
+> +
+> +		delta = cycle - le64_to_cpu(st->clk->counter_value);
+> +
+> +		frac_sec = mul_u64_u64_shr_add_u64(&tspec->tv_sec, delta,
+> +						   le64_to_cpu(st->clk->counter_period_frac_sec),
+> +						   st->clk->counter_period_shift,
+> +						   le64_to_cpu(st->clk->time_frac_sec));
+> +		tspec->tv_nsec = mul_u64_u64_shr(frac_sec, NSEC_PER_SEC, 64);
+> +		tspec->tv_sec += le64_to_cpu(st->clk->time_sec);
+> +
+> +		if (!tai_adjust(st->clk, &tspec->tv_sec))
+> +			return -EINVAL;
+> +
+> +		virt_rmb();
+
+Even this one deserves a comment.
+
+> +		if (seq == le32_to_cpu(st->clk->seq_count))
+> +			break;
+> +
+> +		if (ktime_after(ktime_get(), deadline))
+> +			return -ETIMEDOUT;
+> +	}
+> +
+> +	if (system_counter) {
+> +		system_counter->cycles = cycle;
+> +		system_counter->cs_id = st->cs_id;
+> +	}
+> +
+> +	if (sts) {
+> +		sts->pre_ts = ktime_to_timespec64(systime_snapshot.real);
+> +		if (systime_snapshot.cs_id == st->cs_id)
+> +			sts->post_ts = sts->pre_ts;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef SUPPORT_KVMCLOCK
+> +/*
+> + * In the case where the system is using the KVM clock for timekeeping, convert
+> + * the TSC value into a KVM clock time in order to return a paired reading that
+> + * get_device_system_crosststamp() can cope with.
+> + */
+> +static int vmclock_get_crosststamp_kvmclock(struct vmclock_state *st,
+> +					    struct ptp_system_timestamp *sts,
+> +					    struct system_counterval_t *system_counter,
+> +					    struct timespec64 *tspec)
+> +{
+> +	struct pvclock_vcpu_time_info *pvti = this_cpu_pvti();
+> +	unsigned pvti_ver;
+
+unsigned int
+
+> +	int ret;
+> +
+> +	preempt_disable_notrace();
+> +
+> +	do {
+> +		pvti_ver = pvclock_read_begin(pvti);
+> +
+> +		ret = vmclock_get_crosststamp(st, sts, system_counter, tspec);
+> +		if (ret)
+> +			break;
+> +
+> +		system_counter->cycles = __pvclock_read_cycles(pvti,
+> +							       system_counter->cycles);
+> +		system_counter->cs_id = CSID_X86_KVM_CLK;
+> +
+> +		/*
+> +		 * This retry should never really happen; if the TSC is
+> +		 * stable and reliable enough across vCPUS that it is sane
+> +		 * for the hypervisor to expose a VMCLOCK device which uses
+> +		 * it as the reference counter, then the KVM clock sohuld be
+> +		 * in 'master clock mode' and basically never changed. But
+> +		 * the KVM clock is a fickle and often broken thing, so do
+> +		 * it "properly" just in case.
+> +		 */
+> +	} while (pvclock_read_retry(pvti, pvti_ver));
+> +
+> +	preempt_enable_notrace();
+> +
+> +	return ret;
+> +}
+> +#endif
+> +
+> +static int ptp_vmclock_get_time_fn(ktime_t *device_time,
+> +				   struct system_counterval_t *system_counter,
+> +				   void *ctx)
+> +{
+> +	struct vmclock_state *st = ctx;
+> +	struct timespec64 tspec;
+> +	int ret;
+> +
+> +#ifdef SUPPORT_KVMCLOCK
+> +	if (READ_ONCE(st->sys_cs_id) == CSID_X86_KVM_CLK)
+> +		ret = vmclock_get_crosststamp_kvmclock(st, NULL, system_counter,
+> +						       &tspec);
+> +	else
+> +#endif
+> +		ret = vmclock_get_crosststamp(st, NULL, system_counter, &tspec);
+> +
+> +	if (!ret)
+> +		*device_time = timespec64_to_ktime(tspec);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ptp_vmclock_getcrosststamp(struct ptp_clock_info *ptp,
+> +				      struct system_device_crosststamp *xtstamp)
+> +{
+> +	struct vmclock_state *st = container_of(ptp, struct vmclock_state,
+> +						ptp_clock_info);
+> +	int ret = get_device_system_crosststamp(ptp_vmclock_get_time_fn, st,
+> +						NULL, xtstamp);
+> +#ifdef SUPPORT_KVMCLOCK
+> +	/*
+> +	 * On x86, the KVM clock may be used for the system time. We can
+> +	 * actually convert a TSC reading to that, and return a paired
+> +	 * timestamp that get_device_system_crosststamp() *can* handle.
+> +	 */
+> +	if (ret == -ENODEV) {
+> +		struct system_time_snapshot systime_snapshot;
+
+Please insert an empty line after the variable declarations.
+
+> +		ktime_get_snapshot(&systime_snapshot);
+> +
+> +		if (systime_snapshot.cs_id == CSID_X86_TSC ||
+> +		    systime_snapshot.cs_id == CSID_X86_KVM_CLK) {
+> +			WRITE_ONCE(st->sys_cs_id, systime_snapshot.cs_id);
+> +			ret = get_device_system_crosststamp(ptp_vmclock_get_time_fn,
+> +							    st, NULL, xtstamp);
+> +		}
+> +	}
+> +#endif
+> +	return ret;
+> +}
+> +
+> +/*
+> + * PTP clock operations
+> + */
+> +
+> +static int ptp_vmclock_adjfine(struct ptp_clock_info *ptp, long delta)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int ptp_vmclock_adjtime(struct ptp_clock_info *ptp, s64 delta)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int ptp_vmclock_settime(struct ptp_clock_info *ptp,
+> +			   const struct timespec64 *ts)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static int ptp_vmclock_gettimex(struct ptp_clock_info *ptp, struct timespec64 *ts,
+> +				struct ptp_system_timestamp *sts)
+> +{
+> +	struct vmclock_state *st = container_of(ptp, struct vmclock_state,
+> +						ptp_clock_info);
+> +
+> +	return vmclock_get_crosststamp(st, sts, NULL, ts);
+> +}
+> +
+> +static int ptp_vmclock_enable(struct ptp_clock_info *ptp,
+> +			  struct ptp_clock_request *rq, int on)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static const struct ptp_clock_info ptp_vmclock_info = {
+> +	.owner		= THIS_MODULE,
+> +	.max_adj	= 0,
+> +	.n_ext_ts	= 0,
+> +	.n_pins		= 0,
+> +	.pps		= 0,
+> +	.adjfine	= ptp_vmclock_adjfine,
+> +	.adjtime	= ptp_vmclock_adjtime,
+> +	.gettimex64	= ptp_vmclock_gettimex,
+> +	.settime64	= ptp_vmclock_settime,
+> +	.enable		= ptp_vmclock_enable,
+> +	.getcrosststamp = ptp_vmclock_getcrosststamp,
+> +};
+> +
+> +static struct ptp_clock *vmclock_ptp_register(struct device *dev,
+> +					      struct vmclock_state *st)
+> +{
+> +	enum clocksource_ids cs_id;
+> +
+> +	if (IS_ENABLED(CONFIG_ARM64) &&
+> +	    st->clk->counter_id == VMCLOCK_COUNTER_ARM_VCNT) {
+> +		/* Can we check it's the virtual counter? */
+> +		cs_id = CSID_ARM_ARCH_COUNTER;
+> +	} else if (IS_ENABLED(CONFIG_X86) &&
+> +		   st->clk->counter_id == VMCLOCK_COUNTER_X86_TSC) {
+> +		cs_id = CSID_X86_TSC;
+> +	} else {
+> +		return NULL;
+> +	}
+> +
+> +	/* Only UTC, or TAI with offset */
+> +	if (!tai_adjust(st->clk, NULL)) {
+> +		dev_info(dev, "vmclock does not provide unambiguous UTC\n");
+> +		return NULL;
+> +	}
+> +
+> +	st->sys_cs_id = st->cs_id = cs_id;
+
+Please avoid multiple assignments in the same statement.
+
+> +	st->ptp_clock_info = ptp_vmclock_info;
+> +	strscpy(st->ptp_clock_info.name, st->name);
+> +
+> +	return ptp_clock_register(&st->ptp_clock_info, dev);
+> +}
+> +
+> +static int vmclock_miscdev_mmap(struct file *fp, struct vm_area_struct *vma)
+> +{
+> +	struct vmclock_state *st = container_of(fp->private_data,
+> +						struct vmclock_state, miscdev);
+> +
+> +	if ((vma->vm_flags & (VM_READ|VM_WRITE)) != VM_READ)
+> +		return -EROFS;
+> +
+> +	if (vma->vm_end - vma->vm_start != PAGE_SIZE || vma->vm_pgoff)
+> +		return -EINVAL;
+> +
+> +        if (io_remap_pfn_range(vma, vma->vm_start,
+> +			       st->res.start >> PAGE_SHIFT, PAGE_SIZE,
+> +                               vma->vm_page_prot))
+> +                return -EAGAIN;
+> +
+> +        return 0;
+
+This chunk looks whitespace-damaged, use tab for indentation.
+
+> +}
+> +
+> +static ssize_t vmclock_miscdev_read(struct file *fp, char __user *buf,
+> +				    size_t count, loff_t *ppos)
+> +{
+> +	struct vmclock_state *st = container_of(fp->private_data,
+> +						struct vmclock_state, miscdev);
+> +	ktime_t deadline = ktime_add(ktime_get(), VMCLOCK_MAX_WAIT);
+> +	size_t max_count;
+> +	uint32_t seq;
+> +
+> +	if (*ppos >= PAGE_SIZE)
+> +		return 0;
+> +
+> +	max_count = PAGE_SIZE - *ppos;
+> +	if (count > max_count)
+> +		count = max_count;
+> +
+> +	while (1) {
+> +		seq = le32_to_cpu(st->clk->seq_count) & ~1U;
+> +		virt_rmb();
+> +
+> +		if (copy_to_user(buf, ((char *)st->clk) + *ppos, count))
+> +			return -EFAULT;
+> +
+> +		virt_rmb();
+> +		if (seq == le32_to_cpu(st->clk->seq_count))
+> +			break;
+> +
+> +		if (ktime_after(ktime_get(), deadline))
+> +			return -ETIMEDOUT;
+> +	}
+> +
+> +	*ppos += count;
+> +	return count;
+> +}
+> +
+> +static const struct file_operations vmclock_miscdev_fops = {
+> +        .mmap = vmclock_miscdev_mmap,
+> +        .read = vmclock_miscdev_read,
+> +};
+> +
+> +/* module operations */
+> +
+> +static void vmclock_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct vmclock_state *st = dev_get_drvdata(dev);
+> +
+> +	if (st->ptp_clock)
+> +		ptp_clock_unregister(st->ptp_clock);
+> +
+> +	if (st->miscdev.minor != MISC_DYNAMIC_MINOR)
+> +		misc_deregister(&st->miscdev);
+> +}
+> +
+> +static acpi_status vmclock_acpi_resources(struct acpi_resource *ares, void *data)
+> +{
+> +	struct vmclock_state *st = data;
+> +	struct resource_win win;
+> +	struct resource *res = &(win.res);
+
+Unnecessary parentheses
+
+There are several checkpatch offenders, please double check your next 
+version before the submission.
+
+Thanks!
+
+Paolo
+
 
