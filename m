@@ -1,169 +1,87 @@
-Return-Path: <linux-kernel+bounces-312676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AD59699A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:59:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216A796997A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BE11F23D7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9788BB21FAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31671A4E9D;
-	Tue,  3 Sep 2024 09:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OepdFj+c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121091A0BC6;
-	Tue,  3 Sep 2024 09:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D375519F41B;
+	Tue,  3 Sep 2024 09:49:11 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115BC1A0BF2
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357556; cv=none; b=Fxp+a08voG1NuftbvqmqWUzbUmGJGp7jGePU5Q1wRlOMfVNWtkGLAxWmdxCeSrU2kmAQ1nX0K3cRYSBoDUcvpSMEkmTwmX17XlpQfq63M7JvxJ3G0kYk+RDIUdRMH1EuR2CRsKYm5nB9qBHOWZux4jFY8zf9DgvfPOz555EmKD0=
+	t=1725356951; cv=none; b=uoz3ZJjs3ZeMAettkYURX0+ck4lxi9Ftq/vUIZSsY6P3tE7nci5qNYgm+r9P9HMk4lNUTQ+jcMNHduCSqwlpz+2PAyBddFefaMFNknZOjm8MM0hTkaZaGUARmxIZVXCdsZYfLXI2bbEspAgm/yOtqWuZZp1oOe9y9/eNBT8a0aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357556; c=relaxed/simple;
-	bh=92HOKrc+FF3iMGsMq6TdS8V0rw2rCv+/h4iwd8p1KBY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=pPMiDAs557ofOu4NFWCSwWsJAyWEwbV5oVJrIO9yFA+7BVneJFH/SGQ4tsx1Or9HHcOArbHLZ44pRaM0/121KMWHVuVt0Z01ilAaT5qE5UQQMr5vikuJoJj+RcqyiCCdbuV3cyxwEPiX+AuJFFLCV4GitWzYKhPmBfmDeUm6I3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OepdFj+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D5DC4CEC4;
-	Tue,  3 Sep 2024 09:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725357555;
-	bh=92HOKrc+FF3iMGsMq6TdS8V0rw2rCv+/h4iwd8p1KBY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=OepdFj+cGeEAv7ArruHtbA5Yh0E0bzUXw1hzh0ryRjgql/WjT9jLmSksMFHarWu9Q
-	 XgEL5vDOZR3NuzcS5wvZZY9+sxNVf8Ac8gYuBXcwSqE+PM+VjI7u05xd/mDWv1v2qF
-	 uT4nJHlBQiKDgPjEpIeLxCKZHJNawfAsc5/9arAVPHU2t9UQOKHHvI5tXXf56R250g
-	 90h0yv46vjQ7dWP25ciXvdiHYBRdTJJQbLnVOfN1SfH210cLAnl44pMc1CahTHfH+5
-	 kGDIag4u06zOilNpFebg8u9qHNER4bpXQAimFX36COrD1iT9fv/Ivk/iOp4Bjz8kex
-	 ljm2R4hIXscFw==
-References: <202409031358.2c34ad37-oliver.sang@intel.com>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Zizhi Wo <wozizhi@huawei.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
- linux-xfs@vger.kernel.org
-Subject: Re: [linus:master] [xfs] ca6448aed4: xfstests.xfs.556.fail
-Date: Tue, 03 Sep 2024 15:17:04 +0530
-In-reply-to: <202409031358.2c34ad37-oliver.sang@intel.com>
-Message-ID: <87cyllys5s.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1725356951; c=relaxed/simple;
+	bh=YCJtvlKwGlnH0v4fIcqZym0S/odYiTTNF/thyVRPRdE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CdZ8jFMZpz8Dx/hdnL9DCkQcT5V3bpqDyQPt6DpvmGpEuyL7XrKjNrYTiH+BvkGbOIJ4KIduBscm2LJjO3caHbaTyOTbpjinG7eePWnNXfDRVNIbJw/RYaTVrTQCCVxjSnF0K6vgpJ+3Erdcypd1KMH+4y5QTZvRN7pGOMZXBZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 6+T9Hnn8RuWjBFzMOk/HVw==
+X-CSE-MsgGUID: +E2TGmDJTgiGlym54yZ89A==
+X-IronPort-AV: E=Sophos;i="6.10,198,1719849600"; 
+   d="scan'208";a="95305435"
+From: Huang Jianan <huangjianan@xiaomi.com>
+To: Wu Bo <bo.wu@vivo.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Wu Bo <wubo.oduw@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	"linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>
+Subject: Re: [External Mail][f2fs-dev] [PATCH 05/13] f2fs: set inline tail
+ flag when create inode
+Thread-Topic: [External Mail][f2fs-dev] [PATCH 05/13] f2fs: set inline tail
+ flag when create inode
+Thread-Index: AQHa/d9TEJ0BFkkmf0yNrLcOSrFLD7JFSyMA
+Date: Tue, 3 Sep 2024 09:49:00 +0000
+Message-ID: <83bfb7d2-655e-4f3d-9bda-3f275637a3f0@xiaomi.com>
+References: <cover.1725334811.git.bo.wu@vivo.com>
+ <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
+In-Reply-To: <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <604B70C4BBC297469DA7016D8A220A7C@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-On Tue, Sep 03, 2024 at 01:18:35 PM +0800, kernel test robot wrote:
-> Hello,
->
-> kernel test robot noticed "xfstests.xfs.556.fail" on:
->
-> commit: ca6448aed4f10ad88eba79055f181eb9a589a7b3 ("xfs: Fix missing interval for missing_owner in xfs fsmap")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      431c1646e1f86b949fa3685efc50b660a364c2b6]
-> [test failed on linux-next/master 985bf40edf4343dcb04c33f58b40b4a85c1776d4]
->
-> in testcase: xfstests
-> version: xfstests-x86_64-d9423fec-1_20240826
-> with following parameters:
->
-> 	disk: 4HDD
-> 	fs: xfs
-> 	test: xfs-556
->
->
->
-> compiler: gcc-12
-> test machine: 4 threads Intel(R) Xeon(R) CPU E3-1225 v5 @ 3.30GHz (Skylake) with 16G memory
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202409031358.2c34ad37-oliver.sang@intel.com
->
-> 2024-09-01 09:27:55 export TEST_DIR=/fs/sda1
-> 2024-09-01 09:27:55 export TEST_DEV=/dev/sda1
-> 2024-09-01 09:27:55 export FSTYP=xfs
-> 2024-09-01 09:27:55 export SCRATCH_MNT=/fs/scratch
-> 2024-09-01 09:27:55 mkdir /fs/scratch -p
-> 2024-09-01 09:27:55 export SCRATCH_DEV=/dev/sda4
-> 2024-09-01 09:27:55 export SCRATCH_LOGDEV=/dev/sda2
-> 2024-09-01 09:27:55 export SCRATCH_XFS_LIST_METADATA_FIELDS=u3.sfdir3.hdr.parent.i4
-> 2024-09-01 09:27:55 export SCRATCH_XFS_LIST_FUZZ_VERBS=random
-> 2024-09-01 09:27:55 echo xfs/556
-> 2024-09-01 09:27:55 ./check xfs/556
-> FSTYP         -- xfs (debug)
-> PLATFORM      -- Linux/x86_64 lkp-skl-d06 6.11.0-rc5-00007-gca6448aed4f1 #1 SMP PREEMPT_DYNAMIC Sun Sep  1 16:52:26 CST 2024
-> MKFS_OPTIONS  -- -f /dev/sda4
-> MOUNT_OPTIONS -- /dev/sda4 /fs/scratch
->
-> xfs/556       - output mismatch (see /lkp/benchmarks/xfstests/results//xfs/556.out.bad)
->     --- tests/xfs/556.out	2024-08-26 19:09:50.000000000 +0000
->     +++ /lkp/benchmarks/xfstests/results//xfs/556.out.bad	2024-09-01 09:28:17.532120817 +0000
->     @@ -1,12 +1,21 @@
->      QA output created by 556
->      Scrub for injected media error (single threaded)
->     +Corruption: disk offset 106496: media error in unknown owner. (phase6.c line 400)
->      Unfixable Error: SCRATCH_MNT/a: media error at data offset 2FSB length 1FSB.
->      SCRATCH_MNT: unfixable errors found: 1
->     +SCRATCH_MNT: corruptions found: 1
->     +SCRATCH_MNT: Unmount and run xfs_repair.
->     ...
->     (Run 'diff -u /lkp/benchmarks/xfstests/tests/xfs/556.out /lkp/benchmarks/xfstests/results//xfs/556.out.bad'  to see the entire diff)
-> Ran: xfs/556
-> Failures: xfs/556
-> Failed 1 of 1 tests
-
-Hi,
-
-I am unable to recreate the failure reported above. I am using xfsprogs v6.9.0
-and Linux kernel v6.11-rc6 on my test system.
-
-I am using a test environment created by Kdevops. However, I have made sure
-that SCRATCH_XFS_LIST_METADATA_FIELDS and SCRATCH_XFS_LIST_FUZZ_VERBS are set
-to values mentioned in the above bug report.
-
-# uname -r
-6.11.0-rc6
-
-# xfs_repair -V
-xfs_repair version 6.9.0
-
-# ./naggy-check.sh --section xfs_reflink_modified -c 1 xfs/556
-SCRATCH_XFS_LIST_METADATA_FIELDS = u3.sfdir3.hdr.parent.i4
-SCRATCH_XFS_LIST_FUZZ_VERBS = random
-SECTION       -- xfs_reflink_modified
-RECREATING    -- xfs on /dev/loop16
-FSTYP         -- xfs (debug)
-PLATFORM      -- Linux/x86_64 xfs-reflink 6.11.0-rc6 #2 SMP PREEMPT_DYNAMIC Tue Sep  3 09:34:50 GMT 2024
-MKFS_OPTIONS  -- -f /dev/loop5
-MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /dev/loop5 /media/scratch
-
-xfs/556 6s ...  5s
-Ran: xfs/556
-Passed all 1 tests
-
-SECTION       -- xfs_reflink_modified
-=========================
-Ran: xfs/556
-Passed all 1 tests
-
-naggy-check.sh is a wrapper around xfstests' "check" script. I have modified
-it to print the values of the environment variables
-SCRATCH_XFS_LIST_METADATA_FIELDS and SCRATCH_XFS_LIST_FUZZ_VERBS.
-
--- 
-Chandan
+T24gMjAyNC85LzMgMTY6NTQsIFd1IEJvIHZpYSBMaW51eC1mMmZzLWRldmVsIHdyb3RlOg0KSGkg
+Qm8sDQo+IA0KPiBTZXQgaW5saW5lIHRhaWwgZmxhZyB0byBlbmFibGUgdGhpcyBmZWF0dXJlIHdo
+ZW4gbmV3IGlub2RlIGlzIGNyZWF0ZWQuDQo+IEluaGVyaXQgdGhlIGNvbmRpdGlvbnMgZnJvbSBp
+bmxpbmUgZGF0YS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFd1IEJvIDxiby53dUB2aXZvLmNvbT4N
+Cj4gLS0tDQo+ICAgZnMvZjJmcy9uYW1laS5jIHwgMyArKysNCj4gICAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9uYW1laS5jIGIvZnMv
+ZjJmcy9uYW1laS5jDQo+IGluZGV4IDM4YjQ3NTA0NzVkYi4uMTNjMjk1ZWExOWRlIDEwMDY0NA0K
+PiAtLS0gYS9mcy9mMmZzL25hbWVpLmMNCj4gKysrIGIvZnMvZjJmcy9uYW1laS5jDQo+IEBAIC0z
+MTUsNiArMzE1LDkgQEAgc3RhdGljIHN0cnVjdCBpbm9kZSAqZjJmc19uZXdfaW5vZGUoc3RydWN0
+IG1udF9pZG1hcCAqaWRtYXAsDQo+ICAgICAgICAgIC8qIFNob3VsZCBlbmFibGUgaW5saW5lX2Rh
+dGEgYWZ0ZXIgY29tcHJlc3Npb24gc2V0ICovDQo+ICAgICAgICAgIGlmICh0ZXN0X29wdChzYmks
+IElOTElORV9EQVRBKSAmJiBmMmZzX21heV9pbmxpbmVfZGF0YShpbm9kZSkpDQo+ICAgICAgICAg
+ICAgICAgICAgc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX0lOTElORV9EQVRBKTsNCj4gKyAgICAg
+ICAvKiBJbmhlcml0IHRoZSBjb25kaXRpb25zIGZyb20gaW5saW5lIGRhdGEgKi8NCj4gKyAgICAg
+ICBpZiAodGVzdF9vcHQoc2JpLCBJTkxJTkVfVEFJTCkgJiYgZjJmc19oYXNfaW5saW5lX2RhdGEo
+aW5vZGUpKQ0KPiArICAgICAgICAgICAgICAgc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX0lOTElO
+RV9UQUlMKTsNCg0KU2hvdWxkIGYyZnNfcG9zdF9yZWFkX3JlcXVpcmVkKCkgYmUgY2hlY2tlZCBo
+ZXJlLCBsaWtlIGlubGluZSBkYXRhPw0KDQpUaGFua3MsDQpKaWFuYW4NCg0KPiANCj4gICAgICAg
+ICAgaWYgKG5hbWUgJiYgIXRlc3Rfb3B0KHNiaSwgRElTQUJMRV9FWFRfSURFTlRJRlkpKQ0KPiAg
+ICAgICAgICAgICAgICAgIHNldF9maWxlX3RlbXBlcmF0dXJlKHNiaSwgaW5vZGUsIG5hbWUpOw0K
+PiAtLQ0KPiAyLjM1LjMNCj4gDQo+IA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18NCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4g
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4gaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbA0KDQo=
 
