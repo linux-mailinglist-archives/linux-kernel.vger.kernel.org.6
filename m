@@ -1,93 +1,144 @@
-Return-Path: <linux-kernel+bounces-312212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D199693A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573939693A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8804281368
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2FC1C20F5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FAF1CFEBD;
-	Tue,  3 Sep 2024 06:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799CB1CFEA9;
+	Tue,  3 Sep 2024 06:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SHqzcIrW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzESbfHi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAE91CF2B6;
-	Tue,  3 Sep 2024 06:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF5B1CEACD;
+	Tue,  3 Sep 2024 06:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725344779; cv=none; b=DkX6k/GafhrPfJof9hWbpYVAYJXSgv+0z6Q68v+xbUTpSUwBckp/RyIxCmMgSHbtS+bhkW0l5lxHyKR1to0cJBm3oKwPnpKrHZVQy+cGXutCEvot+aSi6uzsnLQy59zmjNFKwi+YnqeiCG//AWMVfTQziZJ4kuUFPKitRNuY7eE=
+	t=1725344872; cv=none; b=lXYewW1KJ3VLfk39uki3FQjwrUOmlqHV5smAm++3sB/wPhbsZuX07HhLWJ2HXlj+1NRYjOxtxqLdQ8jXK1z1ff0g+gid2BxCQtQ7FhuisH0U51u5uQTDFLiLGbHIP2FzfjswGSueBek11n8tnz218/1BcSt+bfFqVDfGr3M2XkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725344779; c=relaxed/simple;
-	bh=OYU3Vv6X2dt4TiWTT+E0OJJb2KwBvcbab8wH1wtnTCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ttc6fx4Dcg+2yHlfaXTJO+XaUVFNQFYqDdADAWXwxPPKI+meF6ej0Gv5ZxQejXN8yiR8qy13mzDhtF7BSGhml5tIgb1QjawL+SCF1RiQytI1hWVP7t46yDXwTOk7z6vKIPBIqOMkIMpNF/KCbKIk8RJ/kA9ZgC8NE08pTgsNzNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SHqzcIrW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47743C4CEC5;
-	Tue,  3 Sep 2024 06:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725344778;
-	bh=OYU3Vv6X2dt4TiWTT+E0OJJb2KwBvcbab8wH1wtnTCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHqzcIrW5mVA7UsW1aaBMG87uqeuRXYiezlyvOYE2XSRq9atXsjGG9HRiO2m+iYPJ
-	 aJ3UIkbHrSl6b/FYdG1FQgQIozFV1095NcqlH9N78pcgAMVu9Gpj+cue9YG161ME2W
-	 S6g9i/h3L2sluvXS1CKr2Gizc+AyNCW/TSbHhkTw=
-Date: Tue, 3 Sep 2024 08:26:15 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-	Prashanth K <quic_prashk@quicinc.com>,
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel" <opensource.kernel@vivo.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v9] usb: gadget: u_serial: Add null pointer check in
- gs_read_complete & gs_write_complete
-Message-ID: <2024090338-nutlike-oxymoron-90f0@gregkh>
-References: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1725344872; c=relaxed/simple;
+	bh=sMQ71KUx8Yfj/b5CyoYHGS+JpK7RHanY/ORvFOYgGSo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pwjc0m6blfA6rvGpJbZE968bGWEEYU/z4oaHSXy4l2LIYRmRDTwptCP4cKJIp0Ul2mj0os+p2PAVIKVGGOYXg4etwxb2MmZeiJ2kPi6hbIwz74k3s9Av3KsGPlmGsr2BSJ4/wgPsyJx1Yi99TFYlZrBiqg7+279s55QM8t8OdCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzESbfHi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482MmnT9025891;
+	Tue, 3 Sep 2024 06:27:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:mime-version:content-type; s=pp1; bh=VgrxN144iUPf7NqeoMOyzsSN98
+	GEfqKoLsawzlynxPg=; b=rzESbfHimjo981rF1eOvgpMSjsCQ2UXY78JmMhDEPZ
+	DPh07gQoAfNtgrqCnJFv+HngQ73My+guTlInZU4UAvE+Dm9dcfsYpQEIqRqoVG6I
+	obVtiqyrCd8ZtLNynhBiS1xKvLMAi/spun5PMu9Eab4stcoNMpzU0EqMEfHF9k64
+	+Lwt5vXL3GQWmcwF7+U+6eOVKzqSx/n6WbnE3sku4HNati9Ia2vVLoEPV1PxeuvG
+	3fui9eN9a0KkNJJxBS5E1cd0jLPmZSXe5AuC2X3sdunUJeNgYrgy4e73/Bna0Inl
+	PYj52ozWBoOg+tVNxtsqs4KH9vbGLWVO9WCW8G0uWdcA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41brkqmhru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 06:27:23 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4836RNUi007387;
+	Tue, 3 Sep 2024 06:27:23 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41brkqmhrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 06:27:23 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4832HPjd012052;
+	Tue, 3 Sep 2024 06:27:22 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cegpse6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 06:27:22 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4836RKVJ14483918
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Sep 2024 06:27:20 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1289B2004D;
+	Tue,  3 Sep 2024 06:27:20 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9BD9820040;
+	Tue,  3 Sep 2024 06:27:19 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  3 Sep 2024 06:27:19 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Nathan Chancellor
+ <nathan@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu,
+        jeffxu@google.com, Liam.Howlett@oracle.com,
+        linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com,
+        pedro.falcato@gmail.com, linux-um@lists.infradead.org,
+        linux-s390@vger.kernel.org,
+        Ravi Bangoria
+ <ravi.bangoria@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct
+ vm_special_mapping
+In-Reply-To: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
+	(Linus Torvalds's message of "Mon, 2 Sep 2024 14:02:56 -0700")
+References: <20240812082605.743814-1-mpe@ellerman.id.au>
+	<20240819185253.GA2333884@thelio-3990X>
+	<yt9dy149vprr.fsf@linux.ibm.com>
+	<20240902134953.e834bc2e57d36b1d3b1397e4@linux-foundation.org>
+	<CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
+Date: Tue, 03 Sep 2024 08:27:19 +0200
+Message-ID: <yt9dr0a1uu9k.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9aSqu6fFfWss73YgKp0gBlzFQVIXapXn
+X-Proofpoint-ORIG-GUID: OxhEA4e_rV3dfcm0C7DWi8uVqyGWdHzl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 mlxscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=970 bulkscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030046
 
-On Thu, Aug 29, 2024 at 11:54:39AM +0000, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
-> 
-> Considering that in some extreme cases, when the unbind operation
-> is being executed, gserial_disconnect has already cleared gser->ioport,
-> triggering a gadget reconfiguration at this time and gs_read_complete
-> gets called afterwards, which results in accessing null pointer,
-> add a null pointer check to prevent this situation.
-> 
-> Added a static spinlock to prevent gser->ioport from becoming
-> null after the newly added check.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-In looking at this further, shouldn't we just be moving around where we
-call usb_ep_disable() in gserial_disconnect()?
+> On Mon, 2 Sept 2024 at 13:49, Andrew Morton <akpm@linux-foundation.org> wrote:
+>>
+>> uprobe_clear_state() is a pretty simple low-level thing.  Side-effects
+>> seem unlikely?
+>
+> I think uprobe_clear_state() should be removed from fork.c entirely,
+> made 'static', and then we'd have
+>
+>         area->xol_mapping.close = uprobe_clear_state;
+>
+> in __create_xol_area() instead (ok, the arguments change, instead of
+> looking up "mm->uprobes_state.xol_area", it would get it as the vma
+> argument)
+>
+> That's how it should always have been, except we didn't have a close() function.
+>
+> Hmm?
 
-Can't we shut down the endpoints _BEFORE_ we set the port structures to
-NULL?  After the endpoints are stopped, then we know that there is no
-outstanding i/o possible and then we can clean up properly?
+Indeed, that's much better. I'll prepare a patch.
 
-Not to say that your change doesn't fix the race condition here, but
-cleaning up things in the proper order might be the better way as then
-there can not be any race conditions at all?
-
-Have you tried that?
-
-thanks,
-
-greg k-h
+Thanks!
 
