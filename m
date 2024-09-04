@@ -1,104 +1,89 @@
-Return-Path: <linux-kernel+bounces-315011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E92C96BC76
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:34:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1067496BC03
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17DE1C21E4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7C3284A32
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED8D1D933A;
-	Wed,  4 Sep 2024 12:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0jnbcwr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22471D88BC;
+	Wed,  4 Sep 2024 12:25:16 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488631D0491;
-	Wed,  4 Sep 2024 12:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BA91CFEC8;
+	Wed,  4 Sep 2024 12:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453213; cv=none; b=lspSCXPQ626N7UfHd6V+sgBJIlzAWA5ixnOmPQqCo0CW+Fh6LwbNuO2JwZ4Je6rv4SOHMtSxRfopmbaLkgdxuDY8IbtDjSnbQXk/AfQitffN66vZshxnyKm6G+YPD5Lzd+vsQeTxOa8y8w7JfMpcfZJnFEVW7zUGgh5TanPcRrU=
+	t=1725452716; cv=none; b=tMFy3keiweqblIGOoWf5ZsCeEJ0jNoMl71gOL69Nq9blMD7yYOmHhc5vLYQ5dLdYPMDqpMp8wIB2m6y3MdZqb3dDl/lWklD7XUcQ0PByyKeb2ghJuUyQQXuIwNU4YtwWIilDsYu2T+eLZMhyKpOnS1mIQZ4yllLoJLGg21IPaiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453213; c=relaxed/simple;
-	bh=YKDCZscyU2vQ/uLd3Ew3F0b96EzQTeTNQOivdxV+9qw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jWfpO/IYEq5nwvixTZDQkI7m3MwMFfmZfW8BrhjeXz6tL4VGAiNOZTNNZ2CwvF1JKHrdOGi6TQPqep6dnDHLe1tN7aNrz3xZpOKLJisC0y1+sCi8anfP8Ef5ocXG93plGSVWoY8pSp+cQzAE+JTJLKH1BkuwcgijzU3Hc68dVKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0jnbcwr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62E0C4CEC6;
-	Wed,  4 Sep 2024 12:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725453211;
-	bh=YKDCZscyU2vQ/uLd3Ew3F0b96EzQTeTNQOivdxV+9qw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=D0jnbcwreHF+LGgrT/u2MTlQc+X0mxwzp02dzQqwE8vqdEllSvDDnKCpf6oD/3tiN
-	 DurEWDIfWrTf4yX80idaQHAoclBhCj5/lAZoeEe0Fmchm+OdYyeiKs+NfLsk0YwKFu
-	 qpxriyGlxdasAbsmq4mdttpj9C9B7BGm1rNf1JooEmUQNq3Cdfos2KgYq6lyDMcX2k
-	 QmRksXEf4rC6IQ/BTTbUVGsZmML+xIaU2Wp5RnnSGs5bqG8uNowNjMijp6vKXYr/ta
-	 gAapOsQNuqJG4I77BFPsu6MtRIMVU9Es6jRtKAa0HUR67Nk9Ou5P/F5p9qW4zPYr4y
-	 Vdcq+DnnMudnw==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-277e6002b7dso1657182fac.1;
-        Wed, 04 Sep 2024 05:33:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcc3UmdM2JU8mIfVUkCZWZ6Ull3BIuDXbTLwQth6Fc+C4Eem86GLcmN4uRGt9bqK7XrqjsEzegLlRNSy4=@vger.kernel.org, AJvYcCWmrSfzuZPLYe0VwsjO+xyxJXUqGvKCLyNhsyQgLiaJnBTjyjcDfgWaDDfpWXGzdEzlenvvan6isOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV15vz8HVdIKsHEvj3I47ihfjpgb6S4oVUEytTtag5rCBJS8B6
-	1xRyIdeVhg39Wq+IV8oEmc/Y/0SliwIr8MoOfljGYPfrTS08S+MUZT/q0WO8SbwQmc4DsJK+Cmd
-	tAKlK+tHXJIDCwF/hVYZ0VAjsrWQ=
-X-Google-Smtp-Source: AGHT+IGU0sxnm3qPEJXMW7b58le6Sz6zJEsfDbYFrUu3U5GQqzrJJXRZV7t23N9424rvR6g9wQBMpRvdlUY9vBnlkxY=
-X-Received: by 2002:a05:6870:3d8c:b0:270:1dab:64a9 with SMTP id
- 586e51a60fabf-277c8055c7dmr14711515fac.14.1725453211209; Wed, 04 Sep 2024
- 05:33:31 -0700 (PDT)
+	s=arc-20240116; t=1725452716; c=relaxed/simple;
+	bh=fAGw/lFDUtCFK4w9/lMU7NNeTTvoDdKMReIVsqDayxA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A9ZFe5P4pr+x8Q5xg/zrMKz/XmkGpUmW1iYcarna2f/Vv20cFipiRp32iDL5VfLKJbb9z1dt322lJpWsazHbTyH2MuoSuUtR0xx5elJu+AjMZdZ434qo97zrcqnsHyKRywwCFyEzWpdwCxHmh62FC55ozGhCCpYZ4njh8l6H73E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WzMBV70NTz2Dbj6;
+	Wed,  4 Sep 2024 20:24:50 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 64D511401E9;
+	Wed,  4 Sep 2024 20:25:11 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Sep
+ 2024 20:25:10 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <jlayton@kernel.org>, <linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
+	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<lilingfeng@huaweicloud.com>, <lilingfeng3@huawei.com>
+Subject: [PATCH] nfs: fix memory leak in error path of nfs4_do_reclaim
+Date: Wed, 4 Sep 2024 20:34:57 +0800
+Message-ID: <20240904123457.3027627-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240825095353.7578-1-0xff07@gmail.com> <7ea23975329e4a22fd235cc28d365296fec47739.camel@linux.intel.com>
-In-Reply-To: <7ea23975329e4a22fd235cc28d365296fec47739.camel@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Sep 2024 14:33:20 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iW5_NcJ8wXQkuObw4nhJbViBim7uLiGz5PghMDKYybOw@mail.gmail.com>
-Message-ID: <CAJZ5v0iW5_NcJ8wXQkuObw4nhJbViBim7uLiGz5PghMDKYybOw@mail.gmail.com>
-Subject: Re: [PATCH] pm-graph: ignore sleepgraph.py artifacts
-To: todd.e.brandt@linux.intel.com, "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net, 
-	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-On Mon, Aug 26, 2024 at 10:49=E2=80=AFPM Todd Brandt
-<todd.e.brandt@linux.intel.com> wrote:
->
-> On Sun, 2024-08-25 at 17:53 +0800, Yo-Jung (Leo) Lin wrote:
-> > By default, sleepgraph.py creates suspend-{date}-{time} directories
-> > to store artifacts, or suspend-{date}-{time}-xN if the --multi option
-> > is used. Ignore those directories by adding a .gitignore file.
-> >
-> > Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
-> > ---
-> >  tools/power/pm-graph/.gitignore | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >  create mode 100644 tools/power/pm-graph/.gitignore
-> >
-> > diff --git a/tools/power/pm-graph/.gitignore b/tools/power/pm-
-> > graph/.gitignore
-> > new file mode 100644
-> > index 000000000000..37762a8a06d6
-> > --- /dev/null
-> > +++ b/tools/power/pm-graph/.gitignore
-> > @@ -0,0 +1,3 @@
-> > +# sleepgraph.py artifacts
-> > +suspend-[0-9]*-[0-9]*
-> > +suspend-[0-9]*-[0-9]*-x[0-9]*
-> This seems fine. If you run the tool inside the tools/power/pm-graph
-> folder I can see how it would be annoying to have all those output
-> directories show up in git status. (re-send with Acked-by)
->
-> Acked-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Commit c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
+nfs4_do_reclaim()") separate out the freeing of the state owners from
+nfs4_purge_state_owners() and finish it outside the rcu lock.
+However, the error path is omitted. As a result, the state owners in
+"freeme" will not be released.
+Fix it by adding freeing in the error path.
 
-Applied as 6.12 material, thanks!
+Fixes: c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in nfs4_do_reclaim()")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfs/nfs4state.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 877f682b45f2..30aba1dedaba 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1957,6 +1957,7 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
+ 				set_bit(ops->owner_flag_bit, &sp->so_flags);
+ 				nfs4_put_state_owner(sp);
+ 				status = nfs4_recovery_handle_error(clp, status);
++				nfs4_free_state_owners(&freeme);
+ 				return (status != 0) ? status : -EAGAIN;
+ 			}
+ 
+-- 
+2.31.1
+
 
