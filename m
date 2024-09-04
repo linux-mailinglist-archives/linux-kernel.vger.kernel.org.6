@@ -1,150 +1,193 @@
-Return-Path: <linux-kernel+bounces-314344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD996B217
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430D196B214
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18F31C249D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0212728945C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB8C145B37;
-	Wed,  4 Sep 2024 06:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62AA145B1B;
+	Wed,  4 Sep 2024 06:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WHUSG3RD"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAvWqOTQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626C8145A09;
-	Wed,  4 Sep 2024 06:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C12683A19;
+	Wed,  4 Sep 2024 06:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725432385; cv=none; b=VsaMEJRBoYyyg4OIkUwbIU3eJXJJAGEdNSWiroQrVrjBgLnbHnSS8uekCF00PSgHlzrbqM/GfDj4KAcoo+plSnAgcukfu6TCH0seTNtV4ADL0wfZtfWixgS0wGX2G2mXFKoNJ9Mt7FTW9l3Qr4vi5CiHGVQYc7uuRtBaTP6c/lo=
+	t=1725432376; cv=none; b=WXNfuxR6ZZE2yo0nxodJi+4HLEJGrAOuIL7FPuwg+gvGiz+UTAif8BowY/IQvGFBtkmgWW22VyaHIAAVPdPh1ObyqxZReY5LoxQuU1D73rNKPPTJxvWLDMiGPI54zDCVizhsql1QvR0UEjAIEqcZ8xnHuZ0MFReWc1mwwvi+xUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725432385; c=relaxed/simple;
-	bh=5f/PYhXt0RMma+L76lP1Tn8q8D2Khez0KEbRlwxSaFA=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=U4ozU6QO1HblHse1ckpoM1xi43WNrDFrpMUs//haYXPr/7RdqlTx3z9M82cUpmWcybxZHT0g7cIhZbyGGsHmxZ99Cs8I/RHCJ5uGwgtropdBWNNoNBkUcQPaOgHEytnrL0oaf3g5HadFajqtUeWQydLT/0RQ+H9iwvui9IxqLps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WHUSG3RD; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725432373; h=Message-ID:Subject:Date:From:To;
-	bh=Y22uid/xR/mynPf9pRoIZffXD1FEymenAoEvZ++51sg=;
-	b=WHUSG3RD0J3fmM69H75As0Sa4Wbbb+Lza4m4Jtq2AIjx8wH/zAXvY1t845g/GD/bzk0zMCJl6CBHtywmCWtaAEZsuEuI5XnSY5qB+APozpRjSpUddok9xcifoTINx7vpwRujS27QYjpH/zfOQK8E7bzKE6ZT3/HIvWyP/3g/2ac=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WEGR9Ak_1725432372)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Sep 2024 14:46:13 +0800
-Message-ID: <1725432304.274084-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v2] virtio_net: Fix mismatched buf address when unmapping for small packets
-Date: Wed, 4 Sep 2024 14:45:04 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Wenbo Li <liwenbo.martin@bytedance.com>
-Cc: virtualization@lists.linux.dev,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Wenbo Li <liwenbo.martin@bytedance.com>,
- Jiahui Cen <cenjiahui@bytedance.com>,
- Ying Fang <fangying.tommy@bytedance.com>,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com
-References: <20240904061009.90785-1-liwenbo.martin@bytedance.com>
-In-Reply-To: <20240904061009.90785-1-liwenbo.martin@bytedance.com>
+	s=arc-20240116; t=1725432376; c=relaxed/simple;
+	bh=dYOCY0yk+cwLkcXcgwp9/YV2ZgT7cPjQlCCdBTFQ3WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tom6KsUyfBKepz0h2iOqfJJYjSClo4OjUPacjgLU9+XeW1skar05/0fnR8wK4BxDcquWYksaB3kiFkn8U4iabo4AH6c7SWCl8Mjmm/lfgONg8TsmKm/E/bfGyS/xfEQ46Ed1E+vs2oo22wMkc7fqMTnJmEizgBfp665BemE4S/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAvWqOTQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2ACC4CEC2;
+	Wed,  4 Sep 2024 06:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725432375;
+	bh=dYOCY0yk+cwLkcXcgwp9/YV2ZgT7cPjQlCCdBTFQ3WA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PAvWqOTQcX2pjmA2V7X84ZPEWFpCLfcgE1cztCOtT2QP8c/H1LCx4AB46ZwmlHC6v
+	 vAub1J+4iXPh06tq55e8rCHYUOwdvvtl/HAJkMzgUzQcZy1/USYGMhDlrE+XgsYrjw
+	 +wNwRpk+MoYrpSz2UI0taSQn0dHhSdY9QLdU2NARUAcUxtivPI7MRcIbK5RfZDCQdb
+	 FsdZmzBBVDzRb1up/8FSCXYUrmZZ/VNfAvBFcXQXEZWY69VEIAnKsAFihJc3ABtCHp
+	 6qK1WFyMpFjobl3eUw2A8zKBmPY5MmAb6OFI3MZIFqi1OaRnQhZUJHNfVezE3xN0Rt
+	 Soub50vKANT/w==
+Date: Wed, 4 Sep 2024 08:46:12 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang <kevin.z.m@hotmail.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: spacemit: add support for K1 SoC
+Message-ID: <ttvqw3hncprtshhdgsnvlfopobqcxtsraxevgxqgnlt6orftkr@ktahud64cczd>
+References: <20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org>
+ <20240904-03-k1-gpio-v1-1-6072ebeecae0@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904-03-k1-gpio-v1-1-6072ebeecae0@gentoo.org>
 
-On Wed,  4 Sep 2024 14:10:09 +0800, Wenbo Li <liwenbo.martin@bytedance.com> wrote:
-> Currently, the virtio-net driver will perform a pre-dma-mapping for
-> small or mergeable RX buffer. But for small packets, a mismatched address
-> without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
-
-Will used virt_to_head_page(), so could you say more about it?
-
-	struct page *page = virt_to_head_page(buf);
-
-Thanks.
-
->
-> That will result in unsynchronized buffers when SWIOTLB is enabled, for
-> example, when running as a TDX guest.
->
-> This patch handles small and mergeable packets separately and fixes
-> the mismatched buffer address.
->
-> Changes from v1: Use ctx to get xdp_headroom.
->
-> Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling mergeable buffers")
-> Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
-> Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
-> Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
+On Wed, Sep 04, 2024 at 12:27:23AM +0000, Yixun Lan wrote:
+> The GPIO controller of K1 support basic functions as input/output,
+> all pins can be used as interrupt which route to one IRQ line,
+> trigger type can be select between rising edge, failing edge, or both.
+> There are four GPIO banks, each consisting of 32 pins.
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > ---
->  drivers/net/virtio_net.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index c6af18948..cbc3c0ae4 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -891,6 +891,23 @@ static void *virtnet_rq_get_buf(struct receive_queue *rq, u32 *len, void **ctx)
->  	return buf;
->  }
->
-> +static void *virtnet_rq_get_buf_small(struct receive_queue *rq,
-> +				      u32 *len,
-> +				      void **ctx,
-> +				      unsigned int header_offset)
-> +{
-> +	void *buf;
-> +	unsigned int xdp_headroom;
+>  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 95 ++++++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
+> new file mode 100644
+> index 0000000000000..db2e62fb452fd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
+> @@ -0,0 +1,95 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/spacemit,k1-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	buf = virtqueue_get_buf_ctx(rq->vq, len, ctx);
-> +	if (buf) {
-> +		xdp_headroom = (unsigned long)*ctx;
-> +		virtnet_rq_unmap(rq, buf + VIRTNET_RX_PAD + xdp_headroom, *len);
-> +	}
+> +title: SpacemiT K1 GPIO controller
 > +
-> +	return buf;
-> +}
+> +description: >
+
+Drop >
+
+> +  The controller's registers are organized as sets of eight 32-bit
+> +  registers with each set controlling a bank of up to 32 pins.  A single
+> +  interrupt is shared for all of the banks handled by the controller.
 > +
->  static void virtnet_rq_init_one_sg(struct receive_queue *rq, void *buf, u32 len)
->  {
->  	struct virtnet_rq_dma *dma;
-> @@ -2692,13 +2709,23 @@ static int virtnet_receive_packets(struct virtnet_info *vi,
->  	int packets = 0;
->  	void *buf;
->
-> -	if (!vi->big_packets || vi->mergeable_rx_bufs) {
-> +	if (vi->mergeable_rx_bufs) {
->  		void *ctx;
->  		while (packets < budget &&
->  		       (buf = virtnet_rq_get_buf(rq, &len, &ctx))) {
->  			receive_buf(vi, rq, buf, len, ctx, xdp_xmit, stats);
->  			packets++;
->  		}
-> +	} else if (!vi->big_packets) {
-> +		void *ctx;
-> +		unsigned int xdp_headroom = virtnet_get_headroom(vi);
-> +		unsigned int header_offset = VIRTNET_RX_PAD + xdp_headroom;
+> +maintainers:
+> +  - Yixun Lan <dlan@gentoo.org>
+
+Maintainers go before description. Use example-schema as template.
+
 > +
-> +		while (packets < budget &&
-> +		       (buf = virtnet_rq_get_buf_small(rq, &len, &ctx, header_offset))) {
-> +			receive_buf(vi, rq, buf, len, ctx, xdp_xmit, stats);
-> +			packets++;
-> +		}
->  	} else {
->  		while (packets < budget &&
->  		       (buf = virtqueue_get_buf(rq->vq, &len)) != NULL) {
-> --
-> 2.20.1
->
+> +properties:
+> +  $nodename:
+> +    pattern: '^gpio@[0-9a-f]+$'
+
+
+No, why? Drop.
+
+> +
+> +  compatible:
+> +    items:
+
+and you can drop items as well.
+
+> +      - const: spacemit,k1-gpio
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: >
+
+Drop >. Everywhere.
+
+> +      Define the base and range of the I/O address space containing
+> +      the SpacemiT K1 GPIO controller registers
+
+Redundant description, drop.
+
+> +
+> +  ranges: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: >
+> +      The first cell is the pin number (within the controller's
+> +      pin space), and the second is used for the following:
+> +      bit[0]: polarity (0 for active-high, 1 for active-low)
+
+Rather refer to standard GPIO bindings header.
+
+> +
+> +  gpio-controller: true
+> +
+> +  gpio-ranges: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      The interrupt shared by all GPIO lines for this controller.
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: gpio_mux
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the GPIO number, the second should specify
+> +      flags.  The following subset of flags is supported:
+> +      - bits[3:0] trigger type flags (no level trigger type support)
+> +        1 = low-to-high edge triggered
+> +        2 = high-to-low edge triggered
+> +      Valid combinations are 1, 2, 3
+
+Hm? No, you must use standard interrupt flags, not custom ones.
+
+> +
+> +  interrupt-controller: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - interrupts
+> +  - interrupt-names
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+
+Use consistent quotes. Either ' or ".
+
+> +
+> +additionalProperties: false
+
+Best regards,
+Krzysztof
+
 
