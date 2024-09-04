@@ -1,260 +1,141 @@
-Return-Path: <linux-kernel+bounces-315666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E5396C595
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A6996C598
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E241C2243F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3FF51C22771
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C3C1E1A03;
-	Wed,  4 Sep 2024 17:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037F21E132F;
+	Wed,  4 Sep 2024 17:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkoYEsP/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1GiFEEW"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BFD6E619;
-	Wed,  4 Sep 2024 17:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38521DEFCD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725471582; cv=none; b=lCk0xutvj5jeAzv9iUSERApyjm2rZbU+MDq7XJ6xTni/nRI7EORIkYac1Gt0NQc3cB7KhUiEV/UIsuh+iisuMTaywrh70WuQnJBng26hbJ+hWsyCD9vPYlZYaFA6V3H0P5lkJe4e1WvP+M3AnvmmTy6dzNs0+tJ44y0mpoa3GU4=
+	t=1725471679; cv=none; b=KeRgCDwpCToa+4hFcfiRkt3dfdQIEmdUR34oTsqWUmNKfIpy4O3jLv5Un4eZgO1MT8Ua92y1yIfafD+/FjP0BKMGUpj3s4eHjqfdUXgzMeP7Oxj1rWkA4RvKlJXdQnHdUzBzBMkKz+juZ3E7ExLsEzFHDt/kGZf2/lM2xY+VnG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725471582; c=relaxed/simple;
-	bh=ydYZY7v7ruTG2d3pFr0sYhTXJYpdllJL3bZ7mdEGhtc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TXeEJ5AY8CpqOAMLFxJcicaiF0tp5u0j6fdOr+POj45DEbSOzExjMgJdFGIX0zgGZtV6/OHQl1B3L4CUh1syW4ZH3gjDXsZapdGQ6/2rLg6kSEZ9NPVpm2BwQhINVJtXASBU23Ym0rehnU7LRqzORVa1bUOro8qocAjUaXAmPAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkoYEsP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4560C4CEC2;
-	Wed,  4 Sep 2024 17:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725471582;
-	bh=ydYZY7v7ruTG2d3pFr0sYhTXJYpdllJL3bZ7mdEGhtc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SkoYEsP/ap8vBwx+/K1MQOJcE2X78/ExYLoEAvAegdn6PMDtsocZl8obKE5x/Tg9r
-	 /sJXUNyUhfFAZ0t89zKv+b0vY4Jua8EBYXGo7VnqJySkH/MQ1I0SAJIGd+/ZXZhJN6
-	 T0Z5JTy6u9l1YwfRwzg8RGsDYY6fMg/2G/fwj4IVlmr9tWqG1WyjsbiN6n5Fni0ww7
-	 rR52L1f+sSpDA0CWnLthCio7KtqX8p9eLXer74ZKDigFNimFR/rknMRukTxGRJnGDv
-	 CG8Tda51OrgfwE7W8I8fWQPkXPgn393GntAzmv6OpTT1KVY1B1IOB4IJSgua0stxOm
-	 7PIEjCRytrvdw==
-Message-ID: <2ae8b2d1e2f22fba5acb88c3f12cef9716f28a62.camel@kernel.org>
-Subject: Re: [PATCH v3 03/13] nfsd: drop the ncf_cb_bmap field
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai
- Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust
- <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Olga Kornievskaia
- <okorniev@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jonathan Corbet
- <corbet@lwn.net>,  Tom Haynes <loghyr@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux NFS Mailing List
- <linux-nfs@vger.kernel.org>, Linux FS Devel
- <linux-fsdevel@vger.kernel.org>,  "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>
-Date: Wed, 04 Sep 2024 13:39:39 -0400
-In-Reply-To: <52C563DF-88D1-4AAC-B441-9B821A7B32FF@oracle.com>
-References: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
-	 <20240829-delstid-v3-3-271c60806c5d@kernel.org>
-	 <Zth6oPq1GV2iiypL@tissot.1015granger.net>
-	 <82b17019fb334973a74adf88e3eb255df4091f12.camel@kernel.org>
-	 <52C563DF-88D1-4AAC-B441-9B821A7B32FF@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725471679; c=relaxed/simple;
+	bh=UZBuD8ujlpQgbSRbizirR+La9i0Qd++C4v9xqo3Ygjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myY7uJ26MRK1y7cgjgQZDDVvSY87lBXS1mYusz9MwtwiCCVsIStOuKrX57CSP/km1AvWb7vOhIC0e14dkeecdrNKl2hKdajEo3IOAsRA2pL0MmO6cfevckHYbFlJ9B9OWf6Q28SSjphFwF1kcqly6P9jyzyFDauLZJMImoTuDzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s1GiFEEW; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f6514f23b6so21307131fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725471676; x=1726076476; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZBuD8ujlpQgbSRbizirR+La9i0Qd++C4v9xqo3Ygjg=;
+        b=s1GiFEEW3bWiqkCvbdgkAu+uHPfgit5gmMRUnrjuyZQePv2BhO5x5xLZXHtkDHbzuD
+         Ss4FH1wM7F/sBN6OmjwIch2k+PhD3dn880Q51ecD6o7w3TkxY7eE5l7fBjAy2Jx9i7AU
+         Py2GvvuNr3tBvB+DuMpT0ruCCQuDhWOlLhylJ2PFxGy4Tugegu8VgSO6ENbk3CcKheCf
+         yqVxXlwlDQh4eFnVuTnPRBoVMAoDwJBeh3sVR4bStWG0bSp31ERd/KpBrrsSZezn/yDf
+         Cmx8dnacsD2bvkS9fM0SPkogFFI4Umni+hh6XUUSCmqimLpDqCM0I/tvnOyrJJAdxkZ8
+         4M4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725471676; x=1726076476;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UZBuD8ujlpQgbSRbizirR+La9i0Qd++C4v9xqo3Ygjg=;
+        b=IBbItuC2SBfYzMgEF3zLfCQ22v4TOE4k75BxR5XlG0fnyfmZGh5ZlLndhNthTlcs45
+         IV9mhY38dSXDPWu48U3U2/NRmd7H5t/2jdz6xZh4f6ffpXo422CGKOx61dyCpSTyFp//
+         3mqR3EpWU4hmLGoqCGrF5VlOwWqzA0VjEd0NkWf0nveST4KxcwNZ3JAcHcxEgC+mmeA9
+         wpdLeFE3jZG1309vDsWQiKQzH0zfVFD66vep3GB5WZfVuawj15/afjgtK12tBig5aWgv
+         x3A1LAWoYNH6Dj3yBxn43pGMO8slnGUgR2yUea8qQtwpwJ5EOLp6v4+a+aVQlpcgAIdc
+         /r2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXTFmLIKcvgj0b4RFpCgFw+CNBnWtc2XhlMXP+pupRVDoirwEGY3TV1LRJvq0ZhWthbi/3b4xcT6qfPJ8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzazvud1fTtaDT3H+gPiDwHovvG9pswpCcYn+nXl186DSFj/QvD
+	OYOu/Sy/5MI6gTMjw5RkgCgNFxHq25DpQ5CeDtQjYw/G/x2HHwQ4MJEgeNcHHr4cvkQalyN6B8A
+	FJ1/tDUuQur2x3GtUOxgjfuDST2mjm7zbTaIH
+X-Google-Smtp-Source: AGHT+IEoDXI8FoMx8V9lgWzFfG23TZNEnZ2xUS6KrnJAvtWs0eqvlCYsIDcNRgoyvFYSEkuv8wZ+8GZJ8TUPESV3Hms=
+X-Received: by 2002:a2e:b8d6:0:b0:2ef:2ba5:d214 with SMTP id
+ 38308e7fff4ca-2f6105c4facmr208540991fa.4.1725471674645; Wed, 04 Sep 2024
+ 10:41:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240612124750.2220726-2-usamaarif642@gmail.com>
+ <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
+ <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com>
+ <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com> <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 4 Sep 2024 10:40:37 -0700
+Message-ID: <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Barry Song <21cnbao@gmail.com>
+Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
+	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
+	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-09-04 at 17:28 +0000, Chuck Lever III wrote:
->=20
-> > On Sep 4, 2024, at 12:58=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >=20
-> > On Wed, 2024-09-04 at 11:20 -0400, Chuck Lever wrote:
-> > > On Thu, Aug 29, 2024 at 09:26:41AM -0400, Jeff Layton wrote:
-> > > > This is always the same value, and in a later patch we're going to =
-need
-> > > > to set bits in WORD2. We can simplify this code and save a little s=
-pace
-> > > > in the delegation too. Just hardcode the bitmap in the callback enc=
-ode
-> > > > function.
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > OK, lurching forward on this ;-)
-> > >=20
-> > > - The first patch in v3 was applied to v6.11-rc.
-> > > - The second patch is now in nfsd-next.
-> > > - I've squashed the sixth and eighth patches into nfsd-next.
-> > >=20
-> > > I'm replying to this patch because this one seems like a step
-> > > backwards to me: the bitmap values are implementation-dependent,
-> > > and this code will eventually be automatically generated based only
-> > > on the protocol, not the local implementation. IMO, architecturally,
-> > > bitmap values should be set at the proc layer, not in the encoders.
-> > >=20
-> > > I've gone back and forth on whether to just go with it for now, but
-> > > I thought I'd mention it here to see if this change is truly
-> > > necessary for what follows. If it can't be replaced, I will suck it
-> > > up and fix it up later when this encoder is converted to an xdrgen-
-> > > manufactured one.
-> >=20
-> > It's not truly necessary, but I don't see why it's important that we
-> > keep a record of the full-blown bitmap here. The ncf_cb_bmap field is a
-> > field in the delegation record, and it has to be carried around in
-> > perpetuity. This value is always set by the server and there are only a
-> > few legit bit combinations that can be set in it.
-> >=20
-> > We certainly can keep this bitmap around, but as I said in the
-> > description, the delstid draft grows this bitmap to 3 words, and if we
-> > want to be a purists about storing a bitmap,
->=20
-> Fwiw, it isn't purism about storing the bitmap, it's
-> purism about adopting machine-generated XDR marshaling/
-> unmarshaling code. The patch adds non-marshaling logic
-> in the encoder. Either we'll have to add a way to handle
-> that in xdrgen eventually, or we'll have to exclude this
-> encoder from machine generation. (This is a ways down the
-> road, of course)
+[..]
+> > I understand the point of doing this to unblock the synchronous large
+> > folio swapin support work, but at some point we're gonna have to
+> > actually handle the cases where a large folio being swapped in is
+> > partially in the swap cache, zswap, the zeromap, etc.
+> >
+> > All these cases will need similar-ish handling, and I suspect we won't
+> > just skip swapping in large folios in all these cases.
 >
+> I agree that this is definitely the goal. `swap_read_folio()` should be a
+> dependable API that always returns reliable data, regardless of whether
+> `zeromap` or `zswap` is involved. Despite these issues, mTHP swap-in shouldn't
+> be held back. Significant efforts are underway to support large folios in
+> `zswap`, and progress is being made. Not to mention we've already allowed
+> `zeromap` to proceed, even though it doesn't support large folios.
+>
+> It's genuinely unfair to let the lack of mTHP support in `zeromap` and
+> `zswap` hold swap-in hostage.
 
-Understood. I'll note that this function works with a nfs4_delegation
-pointer too, which is not part of the protocol spec.
+Well, two points here:
 
-Once we move to autogenerated code, we will always have a hand-rolled
-"glue" layer that morphs our internal representation of these sorts of
-objects into a form that the xdrgen code requires. Storing this info as
-a flag in the delegation makes more sense to me, as the glue layer
-should massage that into the needed form.
+1. I did not say that we should block the synchronous mTHP swapin work
+for this :) I said the next item on the TODO list for mTHP swapin
+support should be handling these cases.
 
->=20
-> > then that will also
-> > require us to keep the bitmap size (in another 32-bit word), since we
-> > don't always want to set anything in the third word. That's already 24
-> > extra bits per delegation, and we'll be adding new fields for the
-> > timestamps in a later patch.
-> >=20
-> > I don't see the benefit here.
->=20
-> Understood, there's a memory scalability issue.
->=20
-> There are other ways to go about this that do not grow
-> the size of the delegation data structure, I think. For
-> instance, you could store the handful of actual valid
-> bitmap values in read-only memory, and have the proc
-> function select and reference one of them. IIRC the
-> client already does this for certain GETATTR operations.
->=20
+2. I think two things are getting conflated here. Zswap needs to
+support mTHP swapin*. Zeromap already supports mTHPs AFAICT. What is
+truly, and is outside the scope of zswap/zeromap, is being able to
+support hybrid mTHP swapin.
 
-Unfortunately, it turns out that the bitmap is a bit more complicated,
-and we don't quite do it right today. I did a more careful read of
-section 10.4.3 in RFC8881. It has this pseudocode:
+When swapping in an mTHP, the swapped entries can be on disk, in the
+swapcache, in zswap, or in the zeromap. Even if all these things
+support mTHPs individually, we essentially need support to form an
+mTHP from swap entries in different backends. That's what I meant.
+Actually if we have that, we may not really need mTHP swapin support
+in zswap, because we can just form the large folio in the swap layer
+from multiple zswap entries.
 
-    if (!modified) {
-        do CB_GETATTR for change and size;
+>
+> Nonetheless, `zeromap` and `zswap` are distinct cases. With `zeromap`, we
+> permit almost all mTHP swap-ins, except for those rare situations where
+> small folios that were swapped out happen to have contiguous and aligned
+> swap slots.
+>
+> swapcache is another quite different story, since our user scenarios begin from
+> the simplest sync io on mobile phones, we don't quite care about swapcache.
 
-        if (cc !=3D sc)
-            modified =3D TRUE;
-    } else {
-        do CB_GETATTR for size;
-    }
-
-    if (modified) {
-        sc =3D sc + 1;
-        time_modify =3D time_metadata =3D current_time;
-        update sc, time_modify, time_metadata into file's metadata;
-    }
-
-Note that if the thing is already considered to be modified, then it
-says to not request FATTR4_CHANGE. I have a related question around
-this on the IETF list too.
-
-> So, leave this patch as is, and I will deal with it
-> later when we convert the callback XDR functions.
->=20
-
-Thanks, will do.
---=20
-Jeff Layton <jlayton@kernel.org>
+Right. The reason I bring this up is as I mentioned above, there is a
+common problem of forming large folios from different sources, which
+includes the swap cache. The fact that synchronous swapin does not use
+the swapcache was a happy coincidence for you, as you can add support
+mTHP swapins without handling this case yet ;)
 
