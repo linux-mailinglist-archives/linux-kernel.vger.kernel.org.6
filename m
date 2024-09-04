@@ -1,75 +1,52 @@
-Return-Path: <linux-kernel+bounces-314675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3412296B6AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC1896B6B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A4E1F227C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC318B28A0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1A61CEE99;
-	Wed,  4 Sep 2024 09:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3P4OZcS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D71E1CEABF;
+	Wed,  4 Sep 2024 09:30:27 +0000 (UTC)
+Received: from hop.stappers.nl (hop.stappers.nl [141.105.120.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90C31CCB55;
-	Wed,  4 Sep 2024 09:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111741A727F;
+	Wed,  4 Sep 2024 09:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442192; cv=none; b=pvdcFwRiDRJVqGWmnn42oPX8jTr+NwL5HtI3FIWyU60SCIWl9qW48Nu4cUwA4BVZW6UuaGDk+UBl5nxepqUgKVutHgtNB0sqK4FdYaMevvATZyOaHcMBux0hZa02DO3xaVvWi7WDOLpRYqRLn5PPuT55wNzIp/1iTp2cpZZLtLs=
+	t=1725442226; cv=none; b=hdqbW5YE/M0pAMRv14cJlOMALo+ii1DeOf00prZx0mXd4EscVBckU7NNygi8vNYOj1vDWfqOSMT75sWpGTkIhVhZ8wHdqUxPpJpBKwOWNrEbf+bP62ZqeGpkWH1zVgai+nzUPcaiLYM9gtg9nXwrusGfT7K3vOQvHgNtjWDligk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442192; c=relaxed/simple;
-	bh=54V5tRrYnwlqE+z9YtX9ph4B2JFbbRsCj+benJAsYwI=;
+	s=arc-20240116; t=1725442226; c=relaxed/simple;
+	bh=RMPZvHEVaim0EYA6xxt6Zc8BCCA+ksqED4910RkhiLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PawGwwAAkFxn3uR40uUajnZk2AmgTcH9PElZ0WT1DqkcJ8jsnlZwlYUbApLBTTnHcLDz3Sj7D8alZAp62C1dWaqv1n0kucSdC5VOGLaJAIVB9QL+9sUXhDgdGLQa9yybwif93n/zPf+llej2d87iy541wutzEwBFz2YuM6jXeg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3P4OZcS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661DEC4CEC9;
-	Wed,  4 Sep 2024 09:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725442191;
-	bh=54V5tRrYnwlqE+z9YtX9ph4B2JFbbRsCj+benJAsYwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b3P4OZcSIc7hjw+laxcYBj+S8AnEW9jJSxdE8ThEa6t1hCN6DSSGfvwYqDFZxKRD2
-	 jjoK8Eho5TznssDQUROcxeeOPU/BYAK1KB9nsO5nWLdbE0zifFTZeDJbpvrSKkI7Ss
-	 yNzW+rC+VdhAGS0blclB2qCJ/ZNJdJs7QRmpl3QoyzYapQUzyBMcimMWH+3gVEs0mC
-	 tWq/GAFlNri3UTqQ1kUFD+YDplxEPSxKwe7vnzYS0q+0hfW8cDQtXg3NLIESmF8J0h
-	 vYuOzh4mgE4E7nAPCt0AlmaYz4oKSY0zR0HcQS4/Nq1F/wfzj9LdxdhaHg0hadtoA4
-	 PIw5M+ypS+nxw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slmL2-000000001tc-18qO;
-	Wed, 04 Sep 2024 11:30:08 +0200
-Date: Wed, 4 Sep 2024 11:30:08 +0200
-From: Johan Hovold <johan@kernel.org>
-To: manivannan.sadhasivam@linaro.org
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 2/4] PCI: dwc: Always cache the maximum link speed
- value in dw_pcie::max_link_speed
-Message-ID: <ZtgooHdex5gXh0tP@hovoldconsulting.com>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Te74jVOCyAXvwmtmmcw/pgGZhB2Z36o6kuspKtqbO10mVkTDxTiPA2Su91dhbYi1e8eKx3LRh1z3evZIKt4mBSvK5O4GtQC3nT2pliWWql7QEuccNFkJ6QADqmnpfk697GbdsuUoRW4U1xwawtRTYI3GDupTDCJVHFR3O2HEjRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stappers.nl; spf=pass smtp.mailfrom=stappers.nl; arc=none smtp.client-ip=141.105.120.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stappers.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stappers.nl
+Received: from gpm.stappers.nl (gpm.stappers.nl [82.168.249.201])
+	by hop.stappers.nl (Postfix) with ESMTP id 9137C20203;
+	Wed,  4 Sep 2024 09:30:14 +0000 (UTC)
+Received: by gpm.stappers.nl (Postfix, from userid 1000)
+	id 7470E30417C; Wed,  4 Sep 2024 11:30:13 +0200 (CEST)
+Date: Wed, 4 Sep 2024 11:30:12 +0200
+From: Geert Stappers <stappers@stappers.nl>
+To: Zigit Zo <zig@iorw.io>
+Cc: ojeda@kernel.org, bjorn3_gh@protonmail.com, richard@nod.at,
+	anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+	tglx@linutronix.de, mingo@redhat.com, nathan@kernel.org,
+	ndesaulniers@google.com, gary@garyguo.net,
+	rust-for-linux@vger.kernel.org, linux-um@lists.infradead.org,
+	llvm@lists.linux.dev, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: arch/um: use 'static' relocation model for uml
+ modules
+Message-ID: <ZtgopAHp+I2+xCIz@gpm.stappers.nl>
+References: <20240903130606.292935-1-zig@iorw.io>
+ <FD7D773099A0C7EC+20240903130606.292935-2-zig@iorw.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,81 +55,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
+In-Reply-To: <FD7D773099A0C7EC+20240903130606.292935-2-zig@iorw.io>
 
-On Wed, Sep 04, 2024 at 12:41:58PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Tue, Sep 03, 2024 at 09:06:05PM +0800, Zigit Zo wrote:
+> In the x86_64 UML, kernel modules compiled with Rust will currently
+> generate some R_X86_64_GOTPCREL relocations, which will then be rejected
+> by the kernel.
 > 
-> Currently, dw_pcie::max_link_speed has a valid value only if the controller
-> driver restricts the maximum link speed in the driver or if the platform
-> does so in the devicetree using the 'max-link-speed' property.
-> 
-> But having the maximum supported link speed of the platform would be
-> helpful for the vendor drivers to configure any link specific settings.
-> So in the case of non-valid value in dw_pcie::max_link_speed, just cache
-> the hardware default value from Link Capability register.
-> 
-> While at it, let's also remove the 'max_link_speed' argument to the
-> dw_pcie_link_set_max_speed() function since the value can be retrieved
-> within the function.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> And because of the kernel modules of UML are only got handled by the UML
+> itself, relocation model 'static' can work as expected other than 'pie'.
 > ---
->  drivers/pci/controller/dwc/pcie-designware.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 86c49ba097c6..0704853daa85 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -687,16 +687,27 @@ void dw_pcie_upconfig_setup(struct dw_pcie *pci)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_upconfig_setup);
+> diff --git a/arch/um/Makefile b/arch/um/Makefile
+> index 00b63bac5eff..b04b1d4d6dfe 100644
+> --- a/arch/um/Makefile
+> +++ b/arch/um/Makefile
+> @@ -63,7 +63,7 @@ KBUILD_CFLAGS += $(CFLAGS) $(CFLAGS-y) -D__arch_um__ \
+>  	-Din6addr_loopback=kernel_in6addr_loopback \
+>  	-Din6addr_any=kernel_in6addr_any -Dstrrchr=kernel_strrchr
 >  
-> -static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 max_link_speed)
-> +static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
->  {
->  	u32 cap, ctrl2, link_speed;
->  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> -KBUILD_RUSTFLAGS += -Crelocation-model=pie
+> +KBUILD_RUSTFLAGS_KERNEL += -Crelocation-model=pie
 >  
->  	cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
-> +
-> +	/*
-> +	 * Even if the platform doesn't want to limit the maximum link speed,
-> +	 * just cache the hardware default value so that the vendor drivers can
-> +	 * use it to do any link specific configuration.
-> +	 */
-> +	if (pci->max_link_speed < 0) {
-
-This should be 
-
-	if (pci->max_link_speed < 1) {
-
-but the patch works as-is because of the default case in the switch
-below which falls back to PCI_EXP_LNKCAP_SLS.
-
-> +		pci->max_link_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, cap);
-> +		return;
-> +	}
-> +
->  	ctrl2 = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCTL2);
->  	ctrl2 &= ~PCI_EXP_LNKCTL2_TLS;
+>  KBUILD_AFLAGS += $(ARCH_INCLUDE)
 >  
-> -	switch (pcie_link_speed[max_link_speed]) {
-> +	switch (pcie_link_speed[pci->max_link_speed]) {
->  	case PCIE_SPEED_2_5GT:
->  		link_speed = PCI_EXP_LNKCTL2_TLS_2_5GT;
->  		break;
+> -- 
 
-> @@ -1058,8 +1069,7 @@ void dw_pcie_setup(struct dw_pcie *pci)
->  {
->  	u32 val;
->  
-> -	if (pci->max_link_speed > 0)
-> -		dw_pcie_link_set_max_speed(pci, pci->max_link_speed);
-> +	dw_pcie_link_set_max_speed(pci);
+I failed to match the actual change with the commit message.  Consider
+that ignorance on my side.
 
-With the above fixed:
+I see a problem in just renaming a variable, might be my problem.  Thing
+is that removal of 'KBUILD_RUSTFLAG += ' feels wrong, hence this posting.
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+
+Groeten
+Geert Stappers
+-- 
+Silence is hard to parse
 
