@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-315443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3207696C2C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:46:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464A796C2CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646551C2495F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E7F2829BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972971DEFC0;
-	Wed,  4 Sep 2024 15:46:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F45441D;
-	Wed,  4 Sep 2024 15:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32E61DCB3F;
+	Wed,  4 Sep 2024 15:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfQeABnH"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720B71DCB1A;
+	Wed,  4 Sep 2024 15:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464774; cv=none; b=c3nB2crpCaXEI8AImoAQOBlFDP4Xbggwgi0Pne2KI88UMPO5xe/uuQolSK2glRxPz3L0gOO9y865wYlcLKTeCYFSO1eA52QXdEQeZ9Z6pxLQ36IS1rTokjLe1Hl110T7MYE/L+YQn/6HHvU618EbTDdm8aD9ouAV6aw5vsOfEQ4=
+	t=1725464863; cv=none; b=BPNAsvD5vsNy6OHmMya77BVCRD7mixuRlfjhHRrCrHhOJ4GNIH1xrpHWeO+R4dDEEOudpucGVMVnwY44eMKVcZopG3ny7/EqKHnH5+rMC8OGjIWcAUtQHC4tHFrDhV+rLAp7N1ovYcVW2DA8VaA+VRskB3JC3V+x6aDbGwWqd/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464774; c=relaxed/simple;
-	bh=rSffGdixxbC/Od72+7o2GMSwmBCx1bQlb/ZLxifB6kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7KHJW7aEs3Rmu/ieIQkG/aiLCGGVGZPLgGZTihsk98ZSriZmbbC+St0VmzYR9DXbt+uUCE82fWp0SA8DtzHt976ABXmfct5Yo5h9mf24UpKnaALv83ngu4lOR88dwyX6EbWrYGlvhh0+wfdcmv0CHw0TmWliktmbEdEO3I4Aao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E952FEC;
-	Wed,  4 Sep 2024 08:46:38 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADE7A3F73F;
-	Wed,  4 Sep 2024 08:46:10 -0700 (PDT)
-Date: Wed, 4 Sep 2024 16:46:08 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	johan@kernel.org, konradybcio@kernel.org
-Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
-Message-ID: <ZtiAwIxrsct2s24g@pluto>
-References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
- <20240904031324.2901114-3-quic_sibis@quicinc.com>
- <Zth7DZmkpOieSZEr@pluto>
- <Zth9EMydkwvJ30T0@pluto>
+	s=arc-20240116; t=1725464863; c=relaxed/simple;
+	bh=KvCmabY7LcUOGdQP/mJM8EbCz3VbQhnVpMtDBQq4W3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B1+F1acbST/VDCnDjlyp7KyU9TsE4enlZm0SyeKnOJcGQRmSTHOtL62HeixWJYqKA9jWjHm6A1vd5wgZeDFRxDUAhSjA+ges6DG6G4wwmko4p/5U+bEd6q7DdxbxlmhDAZsueIZjqYAMaJwZqGA+h7JaFuuTdsIC50vF6UoRkkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfQeABnH; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so3342219f8f.1;
+        Wed, 04 Sep 2024 08:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725464860; x=1726069660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UI3ncFFHcdlnELuJGp3NCftA6/xROBK9Lrqnz+qYtJw=;
+        b=WfQeABnHEVegBp8+hSgO3U+i3P4qZEGkyIoxhvVLUPnStYNn0Md1Iimzgy4IyZ0wd5
+         /WFRes0CQHn2jAKy3GWWBmqw4dbZGh9J8MVnzBy4o6BNH7LzGLFp4FTVRi4VbcFFLl7z
+         DMojdIwdHhMqIJInZfCbIySdO2yOxv0ooBrAarasmMqnpsDoItqAZ6m7SKQj/L833BGy
+         v0uafSmH8OjTedmDoV2GPcgq6iMg02vQWnI/z7+Fpx+fhAtI2WFsOWmw4dTiX/dXQNXm
+         DNwj3AlQpRMZ9EE4wh+1ks+A0jZrVYEwQQafebNDWU3RAhlc9PWHUG/Rs7mr7HvEjwnJ
+         LDHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725464860; x=1726069660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UI3ncFFHcdlnELuJGp3NCftA6/xROBK9Lrqnz+qYtJw=;
+        b=d1VeOJsQWCHylpNTjKJSrPAYJdv7EmURkvJNr9l9Gs3h+kRJpXDl613K0NyIjt3YQ5
+         0Kk0l8HV4cKfczUvmeDuqPfgZvIg7RyUAgARoI+PUT9GyV+sgrIBXnVFdUqLXAmUs1xY
+         v+qqvtxpS5V6eSodN3FytHm7ZxiY8jLZVRo1aRjfhzPQzmV1+YlB7XxCWypTeZPnwsFF
+         8Uwvnz6PKmTPZBWvEjcyIfBQphIeKgondbDFLoLxN1F4NKouc44SFOAv6fcrkaCmjhQf
+         A8JLYB24UvlObni/usw9m4YdAAl+EhWFkbC6NNHU8lkKXr9yH1OxDzvFyzIJdA1Uod9r
+         UK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAlsY78jqBdNpBEUdS/SJ4fDWuuSAeHfA5x9Ah0VcW4ABrP4FiLxdVlWO21EQ1Hhf/6HBPq7hl6LGx68g=@vger.kernel.org, AJvYcCVti3WQmEBY01HjWo7SSwX4Ary+gSWRxI+RwLXyVqp5aP3aTYRd14TfupdklgvhL7AMQIbrfhXB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKlBsGRZ+1K0+qBqBuaHdIfV7HmOTsh64VBqL4O96NlUXhIT8u
+	5Xklqj8E4oIKjnHkonDtFYEX7KP7HHLGRvhBK5cV+QNaRiPb2a6fHfOZWJo28GT7/UvEF8qeTeE
+	QYAWc2HXtkXLFBDv2bTEfM+ReoPw=
+X-Google-Smtp-Source: AGHT+IGmP7hsWCrfK/n6gsjKnTU2NzzTQotXfiQVbbRNqQTQ2XYB5CMxF/h3wMW8waQyayCh7zivtQmWdmrOcZTGzSE=
+X-Received: by 2002:adf:b512:0:b0:368:4910:8f49 with SMTP id
+ ffacd0b85a97d-3749b531311mr13794461f8f.12.1725464859273; Wed, 04 Sep 2024
+ 08:47:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zth9EMydkwvJ30T0@pluto>
+References: <20240902120314.508180-1-linyunsheng@huawei.com> <20240902120314.508180-4-linyunsheng@huawei.com>
+In-Reply-To: <20240902120314.508180-4-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 4 Sep 2024 08:47:03 -0700
+Message-ID: <CAKgT0UfqH0tyB0tWavkx2cE+1YhW1ZGhqg271=s8_hvSCzQkpw@mail.gmail.com>
+Subject: Re: [PATCH net-next v17 03/14] mm: page_frag: use initial zero offset
+ for page_frag_alloc_align()
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 04:30:24PM +0100, Cristian Marussi wrote:
-> On Wed, Sep 04, 2024 at 04:21:49PM +0100, Cristian Marussi wrote:
-> > On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
-> > > Ensure that the bad duplicates reported by the platform firmware doesn't
-> > > get added to the opp-tables.
-> > > 
-> > 
-> > Hi Sibi,
-> > 
-> > so if the idea is to make the code more robust when FW sends BAD
-> > duplicates, you necessarily need to properly drop opps in opp_count too.
-> > 
-> > One other option would be to just loop with xa_for_each BUT opp_count is
-> > used in a number of places...so first of all let's try drop count properly.
-> > 
-> > Can you try this patch down below, instead of your patch.
-> > If it solves, I will send a patch (after testing it a bit more :D)
-> 
-> Hold on... I sent you a diff that does not apply probably on your tree due
-> to some uncomitted local work of mine...my bad...let me resend.
-> 
+On Mon, Sep 2, 2024 at 5:09=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
+>
+> We are about to use page_frag_alloc_*() API to not just
+> allocate memory for skb->data, but also use them to do
+> the memory allocation for skb frag too. Currently the
+> implementation of page_frag in mm subsystem is running
+> the offset as a countdown rather than count-up value,
+> there may have several advantages to that as mentioned
+> in [1], but it may have some disadvantages, for example,
+> it may disable skb frag coalescing and more correct cache
+> prefetching
+>
+> We have a trade-off to make in order to have a unified
+> implementation and API for page_frag, so use a initial zero
+> offset in this patch, and the following patch will try to
+> make some optimization to avoid the disadvantages as much
+> as possible.
+>
+> 1. https://lore.kernel.org/all/f4abe71b3439b39d17a6fb2d410180f367cadf5c.c=
+amel@gmail.com/
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  mm/page_frag_cache.c | 46 ++++++++++++++++++++++----------------------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+>
 
-This one should be good...apologies
-
----8<---
-
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 4b7f1cbb9b04..bca9c6e4a3ab 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -373,7 +373,7 @@ static int iter_perf_levels_update_state(struct scmi_iterator_state *st,
- 	return 0;
- }
- 
--static inline void
-+static inline int
- process_response_opp(struct device *dev, struct perf_dom_info *dom,
- 		     struct scmi_opp *opp, unsigned int loop_idx,
- 		     const struct scmi_msg_resp_perf_describe_levels *r)
-@@ -386,12 +386,16 @@ process_response_opp(struct device *dev, struct perf_dom_info *dom,
- 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
- 
- 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
--	if (ret)
-+	if (ret) {
- 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
- 			 opp->perf, dom->info.name, ret);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
--static inline void
-+static inline int
- process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 			struct scmi_opp *opp, unsigned int loop_idx,
- 			const struct scmi_msg_resp_perf_describe_levels_v4 *r)
-@@ -404,9 +408,11 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
- 
- 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
--	if (ret)
-+	if (ret) {
- 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
- 			 opp->perf, dom->info.name, ret);
-+		return ret;
-+	}
- 
- 	/* Note that PERF v4 reports always five 32-bit words */
- 	opp->indicative_freq = le32_to_cpu(r->opp[loop_idx].indicative_freq);
-@@ -415,13 +421,21 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
- 
- 		ret = xa_insert(&dom->opps_by_idx, opp->level_index, opp,
- 				GFP_KERNEL);
--		if (ret)
-+		if (ret) {
- 			dev_warn(dev,
- 				 "Failed to add opps_by_idx at %d for %s - ret:%d\n",
- 				 opp->level_index, dom->info.name, ret);
- 
-+			/* Cleanup by_lvl too */
-+			xa_erase(&dom->opps_by_lvl, opp->perf);
-+
-+			return ret;
-+		}
-+
- 		hash_add(dom->opps_by_freq, &opp->hash, opp->indicative_freq);
- 	}
-+
-+	return 0;
- }
- 
- static int
-@@ -429,16 +443,22 @@ iter_perf_levels_process_response(const struct scmi_protocol_handle *ph,
- 				  const void *response,
- 				  struct scmi_iterator_state *st, void *priv)
- {
-+	int ret;
- 	struct scmi_opp *opp;
- 	struct scmi_perf_ipriv *p = priv;
- 
- 	opp = &p->perf_dom->opp[st->desc_index + st->loop_idx];
- 	if (PROTOCOL_REV_MAJOR(p->version) <= 0x3)
--		process_response_opp(ph->dev, p->perf_dom, opp, st->loop_idx,
--				     response);
-+		ret = process_response_opp(ph->dev, p->perf_dom, opp,
-+					   st->loop_idx, response);
- 	else
--		process_response_opp_v4(ph->dev, p->perf_dom, opp, st->loop_idx,
--					response);
-+		ret = process_response_opp_v4(ph->dev, p->perf_dom, opp,
-+					      st->loop_idx, response);
-+
-+	/* Skip BAD duplicates received from firmware */
-+	if (ret)
-+		return ret == -EBUSY ? 0 : ret;
-+
- 	p->perf_dom->opp_count++;
- 
- 	dev_dbg(ph->dev, "Level %d Power %d Latency %dus Ifreq %d Index %d\n",
---->8----
-
+Reviewed-by: Alexander Duyck <alexanderduyck@fb.com>
 
