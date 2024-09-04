@@ -1,89 +1,278 @@
-Return-Path: <linux-kernel+bounces-315002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1067496BC03
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C3D96BC7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7C3284A32
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:25:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753001C22B70
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22471D88BC;
-	Wed,  4 Sep 2024 12:25:16 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826F01D933C;
+	Wed,  4 Sep 2024 12:35:24 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BA91CFEC8;
-	Wed,  4 Sep 2024 12:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558C185935
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452716; cv=none; b=tMFy3keiweqblIGOoWf5ZsCeEJ0jNoMl71gOL69Nq9blMD7yYOmHhc5vLYQ5dLdYPMDqpMp8wIB2m6y3MdZqb3dDl/lWklD7XUcQ0PByyKeb2ghJuUyQQXuIwNU4YtwWIilDsYu2T+eLZMhyKpOnS1mIQZ4yllLoJLGg21IPaiw=
+	t=1725453323; cv=none; b=uZxspYzo+N6VrxMIZoxoErXmZtAlrwHRF6pV9X3o/4AggWNpmOFQRB7RVos0fHtLWQ3ymDfL82fxonET7B6ay6+gjw9gyTC24iS3MmnNT94qGFjYRApw2K7lo5SNUq8sxHBN3CMJ/bNmwiLPpKXg94F9ds+pMlaWv6SPrJA6ZSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452716; c=relaxed/simple;
-	bh=fAGw/lFDUtCFK4w9/lMU7NNeTTvoDdKMReIVsqDayxA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A9ZFe5P4pr+x8Q5xg/zrMKz/XmkGpUmW1iYcarna2f/Vv20cFipiRp32iDL5VfLKJbb9z1dt322lJpWsazHbTyH2MuoSuUtR0xx5elJu+AjMZdZ434qo97zrcqnsHyKRywwCFyEzWpdwCxHmh62FC55ozGhCCpYZ4njh8l6H73E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WzMBV70NTz2Dbj6;
-	Wed,  4 Sep 2024 20:24:50 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 64D511401E9;
-	Wed,  4 Sep 2024 20:25:11 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Sep
- 2024 20:25:10 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>
-CC: <jlayton@kernel.org>, <linux-nfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
-	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<lilingfeng@huaweicloud.com>, <lilingfeng3@huawei.com>
-Subject: [PATCH] nfs: fix memory leak in error path of nfs4_do_reclaim
-Date: Wed, 4 Sep 2024 20:34:57 +0800
-Message-ID: <20240904123457.3027627-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1725453323; c=relaxed/simple;
+	bh=t+gnULiEUiPPKts+uEzedNwutohl3nSJyDw2ulcoEKk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SssJoiIuZ6OVBDMKut5YlpUAk1K66DfK56mjJbeNW+QEXp5SIaBIB3fAak2ZguzxXbhcDM/5FKFFM7OnitfLucsVA00XZSJ/avTy/nc+3gMnufODZj4yf9JhI4fPIfd9r/ErDUh55DOC1P6WZiyJRzngeFe9N9bp7iPE8EOzoBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a36f1515cso553819639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:35:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725453321; x=1726058121;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mkfHEc9lmJJvVteLzBNeYlL/M/84Jk3aTacariufTS4=;
+        b=HNN3K2fTcJNctXaxsRMA7VyGllK9n3bVNBoQlYMlAJiyiewjMTrPs/kD/msvuqslmB
+         ejaZpSDcxEFbU9l5w6GO5DxLtN/sfyEEnFvSMGTDA1roEdXw1wlhUMDCuAoA7kgcSTyL
+         Lu9P85dzqky3eXxYwQY94lQzBPZM9dT8sO8RL0ajjx3DUnZI2an7wxgCimfBXudsPKM9
+         STjgUFQosR8r0WSX3L+aVGf8sZ6JPlJQdQ7fR4sniRVlOZ7W7d1gfHyW6p+Kr8qyq+Ns
+         RAYiuUwPtBE+6vFqriOnaLgY6MvanYbfgs5D13LhvBxCoO+R+vXs40jGIRfgGk989HR2
+         Ygew==
+X-Forwarded-Encrypted: i=1; AJvYcCVpaxDcSN0p6oEr/82wqtl3bZ27fZRkwNJCJ3ChwxkaZRf4SNnW+Z++aVbt7K9C7iQuwqdxQlKuYgV1trs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7IfeomPFab/gDlXMN9qDyS6RG/I2JhQX4HwoCc3avub8lT3vD
+	jUEUmqe5Z9XAQ12c8aW9bBzBJsp6tEthYP7j+euz0IBDlOpiX853vUN7HEeTlm73l5ztR/MSeiA
+	BjNWxsIIEzETa+F9LBza6Di7ZbKkgoO1iu1wMKJbNXD/UMMf+B6IIKaM=
+X-Google-Smtp-Source: AGHT+IHkvRx81+C03kHPhjTY8vxvtpp3lcHS4TYaT7Depvw6RQodJ9lgjjJDyjI/sm71l6vPbEXlPxNJFzmvJmnVO+t1/EiAVHup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+X-Received: by 2002:a05:6638:9820:b0:4c0:9a05:44c4 with SMTP id
+ 8926c6da1cb9f-4d017c4697bmr1131411173.0.1725453321412; Wed, 04 Sep 2024
+ 05:35:21 -0700 (PDT)
+Date: Wed, 04 Sep 2024 05:35:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004cb8a506214a6876@google.com>
+Subject: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in sk_filter_trim_cap
+From: syzbot <syzbot+b4bc25bfaad44df51f05@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Commit c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
-nfs4_do_reclaim()") separate out the freeing of the state owners from
-nfs4_purge_state_owners() and finish it outside the rcu lock.
-However, the error path is omitted. As a result, the state owners in
-"freeme" will not be released.
-Fix it by adding freeing in the error path.
+Hello,
 
-Fixes: c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in nfs4_do_reclaim()")
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+syzbot found the following issue on:
+
+HEAD commit:    33f339a1ba54 bpf, net: Fix a potential race in do_sock_get..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f046fb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4bc25bfaad44df51f05
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/05db6c7e2db6/disk-33f339a1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/236ebb3d5e01/vmlinux-33f339a1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/97dd5f4e883e/bzImage-33f339a1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b4bc25bfaad44df51f05@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in sk_filter_trim_cap+0x270/0xa80 net/core/filter.c:155
+Read of size 8 at addr ffff888062a0a178 by task syz.3.1323/10208
+
+CPU: 0 UID: 0 PID: 10208 Comm: syz.3.1323 Not tainted 6.11.0-rc5-syzkaller-00191-g33f339a1ba54 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ sk_filter_trim_cap+0x270/0xa80 net/core/filter.c:155
+ sk_filter include/linux/filter.h:1052 [inline]
+ sock_queue_rcv_skb_reason+0x28/0xf0 net/core/sock.c:521
+ sock_queue_rcv_skb include/net/sock.h:2376 [inline]
+ mgmt_cmd_status+0x28d/0x4d0 net/bluetooth/mgmt_util.c:156
+ cmd_status_rsp net/bluetooth/mgmt.c:1450 [inline]
+ cmd_complete_rsp+0xe7/0x150 net/bluetooth/mgmt.c:1465
+ mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
+ __mgmt_power_off+0x187/0x420 net/bluetooth/mgmt.c:9469
+ hci_dev_close_sync+0x665/0x11a0 net/bluetooth/hci_sync.c:5191
+ hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
+ hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
+ sock_do_ioctl+0x158/0x460 net/socket.c:1222
+ sock_ioctl+0x629/0x8e0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4ef0d7cef9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4ef1b48038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f4ef0f35f80 RCX: 00007f4ef0d7cef9
+RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000005
+RBP: 00007f4ef0def01e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f4ef0f35f80 R15: 00007ffef1e33f48
+ </TASK>
+
+Allocated by task 6202:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4158 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ sk_prot_alloc+0xe0/0x210 net/core/sock.c:2096
+ sk_alloc+0x38/0x370 net/core/sock.c:2149
+ bt_sock_alloc+0x3c/0x340 net/bluetooth/af_bluetooth.c:148
+ hci_sock_create+0xa1/0x190 net/bluetooth/hci_sock.c:2202
+ bt_sock_create+0x161/0x230 net/bluetooth/af_bluetooth.c:132
+ __sock_create+0x490/0x920 net/socket.c:1571
+ sock_create net/socket.c:1622 [inline]
+ __sys_socket_create net/socket.c:1659 [inline]
+ __sys_socket+0x150/0x3c0 net/socket.c:1706
+ __do_sys_socket net/socket.c:1720 [inline]
+ __se_sys_socket net/socket.c:1718 [inline]
+ __x64_sys_socket+0x7a/0x90 net/socket.c:1718
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 10210:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kfree+0x149/0x360 mm/slub.c:4594
+ sk_prot_free net/core/sock.c:2132 [inline]
+ __sk_destruct+0x479/0x5f0 net/core/sock.c:2224
+ sock_put include/net/sock.h:1884 [inline]
+ mgmt_pending_free net/bluetooth/mgmt_util.c:307 [inline]
+ mgmt_pending_remove+0x13e/0x1a0 net/bluetooth/mgmt_util.c:315
+ mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
+ mgmt_index_removed+0xe6/0x340 net/bluetooth/mgmt.c:9402
+ hci_sock_bind+0xcce/0x1150 net/bluetooth/hci_sock.c:1307
+ __sys_bind_socket net/socket.c:1833 [inline]
+ __sys_bind+0x23d/0x2f0 net/socket.c:1857
+ __do_sys_bind net/socket.c:1865 [inline]
+ __se_sys_bind net/socket.c:1863 [inline]
+ __x64_sys_bind+0x7a/0x90 net/socket.c:1863
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888062a0a000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 376 bytes inside of
+ freed 2048-byte region [ffff888062a0a000, ffff888062a0a800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x62a08
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000040 ffff88801ac42000 ffffea0000a95600 dead000000000002
+raw: 0000000000000000 0000000000080008 00000001fdffffff 0000000000000000
+head: 00fff00000000040 ffff88801ac42000 ffffea0000a95600 dead000000000002
+head: 0000000000000000 0000000000080008 00000001fdffffff 0000000000000000
+head: 00fff00000000003 ffffea00018a8201 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5235, tgid 5235 (syz-executor), ts 58768438859, free_ts 15148990809
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4177
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:605
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:674
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ inet6_ifinfo_notify+0x72/0x120 net/ipv6/addrconf.c:6162
+ addrconf_notify+0xc6b/0x1020 net/ipv6/addrconf.c:3763
+ notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
+ __dev_notify_flags+0x207/0x400
+ dev_change_flags+0xf0/0x1a0 net/core/dev.c:8915
+ do_setlink+0xcd0/0x41f0 net/core/rtnetlink.c:2900
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
+ free_contig_range+0x9e/0x160 mm/page_alloc.c:6660
+ destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x248/0x880 init/main.c:1267
+ do_initcall_level+0x157/0x210 init/main.c:1329
+ do_initcalls+0x3f/0x80 init/main.c:1345
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1578
+ kernel_init+0x1d/0x2b0 init/main.c:1467
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff888062a0a000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888062a0a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888062a0a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff888062a0a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888062a0a200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- fs/nfs/nfs4state.c | 1 +
- 1 file changed, 1 insertion(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 877f682b45f2..30aba1dedaba 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1957,6 +1957,7 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- 				set_bit(ops->owner_flag_bit, &sp->so_flags);
- 				nfs4_put_state_owner(sp);
- 				status = nfs4_recovery_handle_error(clp, status);
-+				nfs4_free_state_owners(&freeme);
- 				return (status != 0) ? status : -EAGAIN;
- 			}
- 
--- 
-2.31.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
