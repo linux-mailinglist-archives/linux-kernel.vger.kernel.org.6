@@ -1,272 +1,443 @@
-Return-Path: <linux-kernel+bounces-316083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC76F96CAE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:41:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553AE96CAF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F3CB24E09
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7996B1C2531C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2331891C6;
-	Wed,  4 Sep 2024 23:40:46 +0000 (UTC)
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BBF18453F;
+	Wed,  4 Sep 2024 23:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWR2kKt6"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D3C17ADFF;
-	Wed,  4 Sep 2024 23:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E55179958
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725493245; cv=none; b=ex/IftAaZScBxoICQbsf5KFhCiRduhbMSrdNMCp72Q0HDsIzBx9pScjPaBaKYYQXysOdcaKyyKqb5fbR5UhxrG9MW5EK6OD4uzvf0tvn8UBIzkBMjRWB1ha+p81zKkBRw9r5HWNjfUOm9mKWSRvkEr2z/2ojcsazDALS90i6Oog=
+	t=1725493458; cv=none; b=t2kFb40LDtTWeqdVjjs/Tgj8qASaXSyRKjZlxCsDzvwUlrtQyWsY4t/2z8B0vwWD1pLrRjRTtOe9McR0Azcs0yU8zIvTiqxxCetwXUfn4PutFWb8RDmZU1ymQ1BnRa3YRIflp5PxkY9t/pmV33Wab4FRs8U40w5LZiQFCQoNB/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725493245; c=relaxed/simple;
-	bh=wRmcDh7W+oWS28+XAhHv0g3d6RIaFwjNqMRSOlMlWAY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHeY8KXXmEmu+hb4IgQamJQQOtwFW55QogtLJT9d60o+wpRTYH4XOoPbN891zlBqJD/Nl5ioZ6Eb2FHzb7cBGZ6LGaBkR4sF1tb+xs9p/x07RE2+nC6smFDVQuGOnREcP+AdfKuxS+uYNxZoGxufyHNThCq9qRC5X4VnjaNMKdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+	s=arc-20240116; t=1725493458; c=relaxed/simple;
+	bh=S9w8lugChK2Nstr+XW69hyN2R2V+OC1AdTT6/hRZK9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FSTIn2SPXwEYprQYPYcLqUMBJ+7DyoogOfYMjMcInwkmcZEnn74BIe7fIqaT5ebdPQBl6IaQxKlKooBaK/aNM45eszMvc/S5ylJikwckt0f/cyZKuS6w3VnAvJPEVaJ8h2TSYVSyBFuiI5rdDsSVMyJVwxNetYVdcekRs0/r+PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWR2kKt6; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5dfaccba946so125940eaf.1;
-        Wed, 04 Sep 2024 16:40:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725493242; x=1726098042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4fd0d7fe6f6so67237e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725493455; x=1726098255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jPNdBdUCQDHHgHj5AgSA28hftNXG157gckEYtkAH7hY=;
-        b=pYfD+jbv//qBA7asSCQCBGvca+09DdTZDXOA1m46U+MUQ0OlNL2SaOjeQO/4Oo23bI
-         dT+zPa+8mk9uVSrG7bOCQmq6Uisg0OH8HKWI5urFusZ+5mrklFh5+2FYpGXRXxs3lnbz
-         4/HcE+cSuR9vUmk4sGTTeGEcjIi6pO2c5jNaRlxzVo6ZCY+QWjYgo+9RASeg5XcAGU4t
-         QfgYhbUKA9J0LHO7JoLBNZ+DSz8fopxESfd3szmNq5vQjDLH3cs773rUMRY3GTD8tEHW
-         QPRoqqY3+JtKu+LsUEGkK58EYEprPU/y3bxrKTJIAlEj7SB6UugfKqTH5YfCwTQVoo+1
-         bdBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Bw9OmoE4OjF6DHhtZsZBBDJDUL60HLHh9ja8WQLot6mrDVouFbpfkC2egvTSdasJ+dJr74hU@vger.kernel.org, AJvYcCWrAicsb2IUewGG/QGpvvM7SAazLzNxuSqyVd70Yh5mzRBxPhiEd/gT94jfsi/tx9bU7HzYx/y/KUcxMSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvpYxRtr1vTCDRwiV5Ewsdp02eYm7ujv3rYchAWlAf75tMzLDW
-	qoCbOdMLMjMbqar1t0CgJz2gcWTEFFyDgSbxtApgYz8ql65lMoo=
-X-Google-Smtp-Source: AGHT+IEEF2xs3FDoxz65k0aj+tNQ9BM5KVKyGYBQkHVxbeuJro7EX8k6xTHxPuGt6BgQgB8SCKpf3Q==
-X-Received: by 2002:a05:6358:63a8:b0:1aa:d6fe:f3fc with SMTP id e5c5f4694b2df-1b7f1b1b24fmr1962003355d.19.1725493242335;
-        Wed, 04 Sep 2024 16:40:42 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd92aaasm2206176a12.50.2024.09.04.16.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 16:40:41 -0700 (PDT)
-Date: Wed, 4 Sep 2024 16:40:41 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Joe Damato <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org, edumazet@google.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
- config values
-Message-ID: <Ztjv-dgNFwFBnXwd@mini-arch>
-References: <20240829131214.169977-1-jdamato@fastly.com>
- <20240829131214.169977-6-jdamato@fastly.com>
- <20240829153105.6b813c98@kernel.org>
- <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
- <20240830142235.352dbad5@kernel.org>
- <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+        bh=zB5UVch4ksIaA7qcUV1eGK3Oio2m7SaBWkqGsGQFfDA=;
+        b=mWR2kKt6joLKgWy8iv3EuVD1R83atpH/6b6YTvEZpdq7iHz5Q2foZSQWJ/3pxRLjGb
+         QMI1jvQNCwOp7qRwczRG2kUs1f6rCXIn+DqLpBkcZ+BIfEygod68xRWmTKPBgWs7dkip
+         k+z4ZPNl5UW0J3hOpDALNMBQZZ1en8oQVn6CcZj+5C/P/4XgRyfeFmhsSFgGnjjLTl7k
+         rwNf1rwA5t2X1ePKSTqYGBIv/02+iO4A+RqOjrhDQ8UE0QXYHlZRYKH1A79fongt0XSE
+         W3U14Txv3Cegu0NAyJJLStToWF/vEBN80HwORLwRpL70QLwp7azAHqaEdGRRs+fmNmUV
+         XAHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725493455; x=1726098255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zB5UVch4ksIaA7qcUV1eGK3Oio2m7SaBWkqGsGQFfDA=;
+        b=Uf7vp48EDPvmvvdTLZNLciSxPn+CoBYcCaFb/m1zfrWSdsgEaMDCs0Ue8ZGLQEDCt4
+         DQtJEzB8D0CU3/bRJcHLpVpyUIFbQVIALHL7r+v2Si/TSo79q1uj2B/4EMUGxeoSugXE
+         KMmxt8XGkJUNj9fom3snfOwxg4tuiD/NVWWu5VSLuDyDwG6/r5GZQtTF941i9V/dDl2W
+         Oks+N4xCEyQvgj4t744po1+8s42jK7RvBjXjC55kZzDTBCHZQ5N4FnO2Zdary5AiHEOr
+         v/p59aNKZ7syP09+pRxbdsC4svSjn8d2g2tjxHXGb8RxtKIm+vNTH53YvEElyQeD//TR
+         cyIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE92Cn/8uhmw0BpI6k8YKPE91+A8Oh/+gXe4FJzlcjJGZicqpHqieREOIdpxL/T1jJSllloD8IVImkbCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT/xbh1JyZb3TqrP9esUc5H+3eFbsUh3uR0wHDJoFIcjADWf/U
+	rSlkCkbcKKsxkE99zfqTtF9J82or8ZmjGwkHDa4CBWVuADsb7v1lYGK6nApD2sVt+6ORe7iM/0P
+	uRUZx+iuFtozxUA7Q29QGHA8wEhk=
+X-Google-Smtp-Source: AGHT+IEl7Mgtu0ZTre+YOtBOTfct0K77RB3XEeqrk62nBVuULXQYddih66G0J115d+M2qGKe2UGroXm1CxwagJCTsHw=
+X-Received: by 2002:a05:6122:168e:b0:4f5:2276:136d with SMTP id
+ 71dfb90a1353d-5009affded1mr19415526e0c.1.1725493454742; Wed, 04 Sep 2024
+ 16:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+References: <20240612124750.2220726-2-usamaarif642@gmail.com>
+ <20240904055522.2376-1-21cnbao@gmail.com> <7a91ff31-1f56-4d0c-a4a7-a305331ba97a@gmail.com>
+In-Reply-To: <7a91ff31-1f56-4d0c-a4a7-a305331ba97a@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 5 Sep 2024 11:44:03 +1200
+Message-ID: <CAGsJ_4xkbOP9UCDW8sqTeXJ-=V82CEyxbz2gEr_1BUgDwzw1_g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, chengming.zhou@linux.dev, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
+	shakeel.butt@linux.dev, willy@infradead.org, ying.huang@intel.com, 
+	yosryahmed@google.com, hanchuanhua@oppo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/02, Joe Damato wrote:
-> On Fri, Aug 30, 2024 at 02:22:35PM -0700, Jakub Kicinski wrote:
-> > On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
-> > > On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
-> > > > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
-> > > > > +      doc: Set configurable NAPI instance settings.  
-> > > > 
-> > > > We should pause and think here how configuring NAPI params should
-> > > > behave. NAPI instances are ephemeral, if you close and open the
-> > > > device (or for some drivers change any BPF or ethtool setting)
-> > > > the NAPIs may get wiped and recreated, discarding all configuration.
-> > > > 
-> > > > This is not how the sysfs API behaves, the sysfs settings on the device
-> > > > survive close. It's (weirdly?) also not how queues behave, because we
-> > > > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
-> > > > you'd think queues are as ephemeral as NAPIs if not more.
-> > > > 
-> > > > I guess we can either document this, and move on (which may be fine,
-> > > > you have more practical experience than me). Or we can add an internal
-> > > > concept of a "channel" (which perhaps maybe if you squint is what
-> > > > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
-> > > > net_device and store such config there. For simplicity of matching
-> > > > config to NAPIs we can assume drivers add NAPI instances in order. 
-> > > > If driver wants to do something more fancy we can add a variant of
-> > > > netif_napi_add() which specifies the channel/storage to use.
-> > > > 
-> > > > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
-> > > > I work with unfortunate drivers...  
-> > > 
-> > > Thanks for pointing this out. I think this is an important case to
-> > > consider. Here's how I'm thinking about it.
-> > > 
-> > > There are two cases:
-> > > 
-> > > 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
-> > > discarded and recreated, the code I added to netif_napi_add_weight
-> > > in patch 1 and 3 should take care of that case preserving how sysfs
-> > > works today, I believe. I think we are good on this case ?
-> > 
-> > Agreed.
-> > 
-> > > 2) apps using netlink to set various custom settings. This seems
-> > > like a case where a future extension can be made to add a notifier
-> > > for NAPI changes (like the netdevice notifier?).
-> > 
-> > Yes, the notifier may help, but it's a bit of a stop gap / fallback.
-> > 
-> > > If you think this is a good idea, then we'd do something like:
-> > >   1. Document that the NAPI settings are wiped when NAPIs are wiped
-> > >   2. In the future (not part of this series) a NAPI notifier is
-> > >      added
-> > >   3. User apps can then listen for NAPI create/delete events
-> > >      and update settings when a NAPI is created. It would be
-> > >      helpful, I think, for user apps to know about NAPI
-> > >      create/delete events in general because it means NAPI IDs are
-> > >      changing.
-> > > 
-> > > One could argue:
-> > > 
-> > >   When wiping/recreating a NAPI for an existing HW queue, that HW
-> > >   queue gets a new NAPI ID associated with it. User apps operating
-> > >   at this level probably care about NAPI IDs changing (as it affects
-> > >   epoll busy poll). Since the settings in this series are per-NAPI
-> > >   (and not per HW queue), the argument could be that user apps need
-> > >   to setup NAPIs when they are created and settings do not persist
-> > >   between NAPIs with different IDs even if associated with the same
-> > >   HW queue.
-> > 
-> > IDK if the fact that NAPI ID gets replaced was intentional in the first
-> > place. I would venture a guess that the person who added the IDs was
-> > working with NICs which have stable NAPI instances once the device is
-> > opened. This is, unfortunately, not universally the case.
-> > 
-> > I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
-> > on an open device. Closer we get to queue API the more dynamic the whole
-> > setup will become (read: the more often reconfigurations will happen).
+On Wed, Sep 4, 2024 at 11:14=E2=80=AFPM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 04/09/2024 06:55, Barry Song wrote:
+> > On Thu, Jun 13, 2024 at 12:48=E2=80=AFAM Usama Arif <usamaarif642@gmail=
+.com> wrote:
+> >>
+> >> Approximately 10-20% of pages to be swapped out are zero pages [1].
+> >> Rather than reading/writing these pages to flash resulting
+> >> in increased I/O and flash wear, a bitmap can be used to mark these
+> >> pages as zero at write time, and the pages can be filled at
+> >> read time if the bit corresponding to the page is set.
+> >> With this patch, NVMe writes in Meta server fleet decreased
+> >> by almost 10% with conventional swap setup (zswap disabled).
+> >>
+> >> [1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3=
+d03d1344dde9fce0@epcms5p1/
+> >>
+> >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> >> ---
+> >>  include/linux/swap.h |   1 +
+> >>  mm/page_io.c         | 114 ++++++++++++++++++++++++++++++++++++++++++=
+-
+> >>  mm/swapfile.c        |  24 ++++++++-
+> >>  3 files changed, 136 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> >> index a11c75e897ec..e88563978441 100644
+> >> --- a/include/linux/swap.h
+> >> +++ b/include/linux/swap.h
+> >> @@ -299,6 +299,7 @@ struct swap_info_struct {
+> >>         signed char     type;           /* strange name for an index *=
+/
+> >>         unsigned int    max;            /* extent of the swap_map */
+> >>         unsigned char *swap_map;        /* vmalloc'ed array of usage c=
+ounts */
+> >> +       unsigned long *zeromap;         /* vmalloc'ed bitmap to track =
+zero pages */
+> >>         struct swap_cluster_info *cluster_info; /* cluster info. Only =
+for SSD */
+> >>         struct swap_cluster_list free_clusters; /* free clusters list =
+*/
+> >>         unsigned int lowest_bit;        /* index of first free in swap=
+_map */
+> >> diff --git a/mm/page_io.c b/mm/page_io.c
+> >> index a360857cf75d..39fc3919ce15 100644
+> >> --- a/mm/page_io.c
+> >> +++ b/mm/page_io.c
+> >> @@ -172,6 +172,88 @@ int generic_swapfile_activate(struct swap_info_st=
+ruct *sis,
+> >>         goto out;
+> >>  }
+> >>
+> >> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
+> >> +{
+> >> +       unsigned long *data;
+> >> +       unsigned int pos, last_pos =3D PAGE_SIZE / sizeof(*data) - 1;
+> >> +       bool ret =3D false;
+> >> +
+> >> +       data =3D kmap_local_folio(folio, i * PAGE_SIZE);
+> >> +       if (data[last_pos])
+> >> +               goto out;
+> >> +       for (pos =3D 0; pos < PAGE_SIZE / sizeof(*data); pos++) {
+> >> +               if (data[pos])
+> >> +                       goto out;
+> >> +       }
+> >> +       ret =3D true;
+> >> +out:
+> >> +       kunmap_local(data);
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static bool is_folio_zero_filled(struct folio *folio)
+> >> +{
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> >> +               if (!is_folio_page_zero_filled(folio, i))
+> >> +                       return false;
+> >> +       }
+> >> +       return true;
+> >> +}
+> >> +
+> >> +static void folio_zero_fill(struct folio *folio)
+> >> +{
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < folio_nr_pages(folio); i++)
+> >> +               clear_highpage(folio_page(folio, i));
+> >> +}
+> >> +
+> >> +static void swap_zeromap_folio_set(struct folio *folio)
+> >> +{
+> >> +       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> >> +       swp_entry_t entry;
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> >> +               entry =3D page_swap_entry(folio_page(folio, i));
+> >> +               set_bit(swp_offset(entry), sis->zeromap);
+> >> +       }
+> >> +}
+> >> +
+> >> +static void swap_zeromap_folio_clear(struct folio *folio)
+> >> +{
+> >> +       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> >> +       swp_entry_t entry;
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> >> +               entry =3D page_swap_entry(folio_page(folio, i));
+> >> +               clear_bit(swp_offset(entry), sis->zeromap);
+> >> +       }
+> >> +}
+> >> +
+> >> +/*
+> >> + * Return the index of the first subpage which is not zero-filled
+> >> + * according to swap_info_struct->zeromap.
+> >> + * If all pages are zero-filled according to zeromap, it will return
+> >> + * folio_nr_pages(folio).
+> >> + */
+> >> +static unsigned int swap_zeromap_folio_test(struct folio *folio)
+> >> +{
+> >> +       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> >> +       swp_entry_t entry;
+> >> +       unsigned int i;
+> >> +
+> >> +       for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> >> +               entry =3D page_swap_entry(folio_page(folio, i));
+> >> +               if (!test_bit(swp_offset(entry), sis->zeromap))
+> >> +                       return i;
+> >> +       }
+> >> +       return i;
+> >> +}
+> >> +
+> >>  /*
+> >>   * We may have stale swap cache pages in memory: notice
+> >>   * them here and get rid of the unnecessary final write.
+> >> @@ -195,6 +277,13 @@ int swap_writepage(struct page *page, struct writ=
+eback_control *wbc)
+> >>                 folio_unlock(folio);
+> >>                 return ret;
+> >>         }
+> >> +
+> >> +       if (is_folio_zero_filled(folio)) {
+> >> +               swap_zeromap_folio_set(folio);
+> >> +               folio_unlock(folio);
+> >> +               return 0;
+> >> +       }
+> >> +       swap_zeromap_folio_clear(folio);
+> >>         if (zswap_store(folio)) {
+> >>                 folio_start_writeback(folio);
+> >>                 folio_unlock(folio);
+> >> @@ -426,6 +515,26 @@ static void sio_read_complete(struct kiocb *iocb,=
+ long ret)
+> >>         mempool_free(sio, sio_pool);
+> >>  }
+> >>
+> >> +static bool swap_read_folio_zeromap(struct folio *folio)
+> >> +{
+> >> +       unsigned int idx =3D swap_zeromap_folio_test(folio);
+> >> +
+> >> +       if (idx =3D=3D 0)
+> >> +               return false;
+> >> +
+> >> +       /*
+> >> +        * Swapping in a large folio that is partially in the zeromap =
+is not
+> >> +        * currently handled. Return true without marking the folio up=
+todate so
+> >> +        * that an IO error is emitted (e.g. do_swap_page() will sigbu=
+s).
+> >> +        */
+> >> +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> >> +               return true;
 > >
-> 
-> [...]
-> 
-> > > I think you have much more practical experience when it comes to
-> > > dealing with drivers, so I am happy to follow your lead on this one,
-> > > but assuming drivers will "do a thing" seems mildly scary to me with
-> > > limited driver experience.
-> > > 
-> > > My two goals with this series are:
-> > >   1. Make it possible to set these values per NAPI
-> > >   2. Unblock the IRQ suspension series by threading the suspend
-> > >      parameter through the code path carved in this series
-> > > 
-> > > So, I'm happy to proceed with this series as you prefer whether
-> > > that's documentation or "napi_storage"; I think you are probably the
-> > > best person to answer this question :)
-> > 
-> > How do you feel about making this configuration opt-in / require driver
-> > changes? What I'm thinking is that having the new "netif_napi_add()"
-> > variant (or perhaps extending netif_napi_set_irq()) to take an extra
-> > "index" parameter would make the whole thing much simpler.
-> 
-> What about extending netif_queue_set_napi instead? That function
-> takes a napi and a queue index.
-> 
-> Locally I kinda of hacked up something simple that:
->   - Allocates napi_storage in net_device in alloc_netdev_mqs
->   - Modifies netif_queue_set_napi to:
->      if (napi)
->        napi->storage = dev->napi_storage[queue_index];
-> 
-> I think I'm still missing the bit about the
-> max(rx_queues,tx_queues), though :(
-> 
-> > Index would basically be an integer 0..n, where n is the number of
-> > IRQs configured for the driver. The index of a NAPI instance would
-> > likely match the queue ID of the queue the NAPI serves.
-> 
-> Hmmm. I'm hesitant about the "number of IRQs" part. What if there
-> are NAPIs for which no IRQ is allocated ~someday~ ?
-> 
-> It seems like (I could totally be wrong) that netif_queue_set_napi
-> can be called and work and create the association even without an
-> IRQ allocated.
-> 
-> I guess the issue is mostly the queue index question above: combined
-> rx/tx vs drivers having different numbers of rx and tx queues.
-> 
-> > We can then allocate an array of "napi_configs" in net_device -
-> > like we allocate queues, the array size would be max(num_rx_queue,
-> > num_tx_queues). We just need to store a couple of ints so it will
-> > be tiny compared to queue structs, anyway.
-> > 
-> > The NAPI_SET netlink op can then work based on NAPI index rather 
-> > than the ephemeral NAPI ID. It can apply the config to all live
-> > NAPI instances with that index (of which there really should only 
-> > be one, unless driver is mid-reconfiguration somehow but even that
-> > won't cause issues, we can give multiple instances the same settings)
-> > and also store the user config in the array in net_device.
-> > 
-> > When new NAPI instance is associate with a NAPI index it should get
-> > all the config associated with that index applied.
-> > 
-> > Thoughts? Does that makes sense, and if so do you think it's an
-> > over-complication?
-> 
-> I think what you are proposing seems fine; I'm just working out the
-> implementation details and making sure I understand before sending
-> another revision.
+> > Hi Usama, Yosry,
+> >
+> > I feel the warning is wrong as we could have the case where idx=3D=3D0
+> > is not zeromap but idx=3D1 is zeromap. idx =3D=3D 0 doesn't necessarily
+> > mean we should return false.
+> >
+> > What about the below change which both fixes the warning and unblocks
+> > large folios swap-in?
+> >
+> Hi Barry,
+>
+> I remembered when resending the zeromap series about the comment Yosry ha=
+d made earlier, but checked that the mTHP swap-in was not in mm-unstable.
+> I should have checked the mailing list and commented!
+>
+> I have not tested the below diff yet (will do in a few hours). But there =
+might be a small issue with it. Have commented inline.
+>
+> > diff --git a/mm/page_io.c b/mm/page_io.c
+> > index 4bc77d1c6bfa..7d7ff7064e2b 100644
+> > --- a/mm/page_io.c
+> > +++ b/mm/page_io.c
+> > @@ -226,26 +226,6 @@ static void swap_zeromap_folio_clear(struct folio =
+*folio)
+> >       }
+> >  }
+> >
+> > -/*
+> > - * Return the index of the first subpage which is not zero-filled
+> > - * according to swap_info_struct->zeromap.
+> > - * If all pages are zero-filled according to zeromap, it will return
+> > - * folio_nr_pages(folio).
+> > - */
+> > -static unsigned int swap_zeromap_folio_test(struct folio *folio)
+> > -{
+> > -     struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> > -     swp_entry_t entry;
+> > -     unsigned int i;
+> > -
+> > -     for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> > -             entry =3D page_swap_entry(folio_page(folio, i));
+> > -             if (!test_bit(swp_offset(entry), sis->zeromap))
+> > -                     return i;
+> > -     }
+> > -     return i;
+> > -}
+> > -
+> >  /*
+> >   * We may have stale swap cache pages in memory: notice
+> >   * them here and get rid of the unnecessary final write.
+> > @@ -524,9 +504,10 @@ static void sio_read_complete(struct kiocb *iocb, =
+long ret)
+> >
+> >  static bool swap_read_folio_zeromap(struct folio *folio)
+> >  {
+> > -     unsigned int idx =3D swap_zeromap_folio_test(folio);
+> > +     unsigned int nr_pages =3D folio_nr_pages(folio);
+> > +     unsigned int nr =3D swap_zeromap_entries_count(folio->swap, nr_pa=
+ges);
+> >
+> > -     if (idx =3D=3D 0)
+> > +     if (nr =3D=3D 0)
+> >               return false;
+> >
+> >       /*
+> > @@ -534,7 +515,7 @@ static bool swap_read_folio_zeromap(struct folio *f=
+olio)
+> >        * currently handled. Return true without marking the folio uptod=
+ate so
+> >        * that an IO error is emitted (e.g. do_swap_page() will sigbus).
+> >        */
+> > -     if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> > +     if (WARN_ON_ONCE(nr < nr_pages))
+> >               return true;
+> >
+> >       folio_zero_range(folio, 0, folio_size(folio));
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index f8711ff82f84..2d59e9d89e95 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -80,6 +80,32 @@ static inline unsigned int folio_swap_flags(struct f=
+olio *folio)
+> >  {
+> >       return swp_swap_info(folio->swap)->flags;
+> >  }
+> > +
+> > +/*
+> > + * Return the number of entries which are zero-filled according to
+> > + * swap_info_struct->zeromap. It isn't precise if the return value
+> > + * is larger than 0 and smaller than nr to avoid extra iterations,
+> > + * In this case, it means entries haven't consistent zeromap.
+> > + */
+> > +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entr=
+y, int nr)
+> > +{
+> > +     struct swap_info_struct *sis =3D swp_swap_info(entry);
+> > +     unsigned long offset =3D swp_offset(entry);
+> > +     unsigned int type =3D swp_type(entry);
+> > +     unsigned int n =3D 0;
+> > +
+> > +     for (int i =3D 0; i < nr; i++) {
+> > +             entry =3D swp_entry(type, offset + i);
+> > +             if (test_bit(offset + i, sis->zeromap)) {
+>
+> Should this be if (test_bit(swp_offset(entry), sis->zeromap))
+>
 
-What if instead of an extra storage index in UAPI, we make napi_id persistent?
-Then we can keep using napi_id as a user-facing number for the configuration.
+well. i feel i have a much cheaper way to implement this, which
+can entirely iteration even in your original code:
 
-Having a stable napi_id would also be super useful for the epoll setup so you
-don't have to match old/invalid ids to the new ones on device reset.
++/*
++ * Return the number of entries which are zero-filled according to
++ * swap_info_struct->zeromap. It isn't precise if the return value
++ * is 1 for nr > 1. In this case, it means entries have inconsistent
++ * zeromap.
++ */
++static inline unsigned int swap_zeromap_entries_count(swp_entry_t
+entry, int nr)
++{
++       struct swap_info_struct *sis =3D swp_swap_info(entry);
++       unsigned long start =3D swp_offset(entry);
++       unsigned long end =3D start + nr;
++       unsigned long idx =3D 0;
++
++       idx =3D find_next_bit(sis->zeromap, end, start);
++       if (idx =3D=3D end)
++               return 0;
++       if (idx > start)
++               return 1;
++       return nr;
++}
++
 
-In the code, we can keep the same idea with napi_storage in netdev and
-ask drivers to provide storage id, but keep that id internal.
 
-The only complication with that is napi_hash_add/napi_hash_del that
-happen in netif_napi_add_weight. So for the devices that allocate
-new napi before removing the old ones (most devices?), we'd have to add
-some new netif_napi_takeover(old_napi, new_napi) to remove the
-old napi_id from the hash and reuse it in the new one.
+>
+> Also, are you going to use this in alloc_swap_folio?
+> You mentioned above that this unblocks large folios swap-in, but I don't =
+see
+> it in the diff here. I am guessing there is some change in alloc_swap_inf=
+o that
+> uses swap_zeromap_entries_count?
+>
+> Thanks
+> Usama
+>
+> > +                     if (i !=3D n)
+> > +                             return i;
+> > +                     n++;
+> > +             }
+> > +     }
+> > +
+> > +     return n;
+> > +}
+> > +
+> >  #else /* CONFIG_SWAP */
+> >  struct swap_iocb;
+> >  static inline void swap_read_folio(struct folio *folio, struct swap_io=
+cb **plug)
+> > @@ -171,6 +197,11 @@ static inline unsigned int folio_swap_flags(struct=
+ folio *folio)
+> >  {
+> >       return 0;
+> >  }
+> > +
+> > +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entr=
+y, int nr)
+> > +{
+> > +     return 0;
+> > +}
+> >  #endif /* CONFIG_SWAP */
+> >
+> >  #endif /* _MM_SWAP_H */
+> >
 
-So for mlx5, the flow would look like the following:
-
-- mlx5e_safe_switch_params
-  - mlx5e_open_channels
-    - netif_napi_add(new_napi)
-      - adds napi with 'ephemeral' napi id
-  - mlx5e_switch_priv_channels
-    - mlx5e_deactivate_priv_channels
-      - napi_disable(old_napi)
-      - netif_napi_del(old_napi) - this frees the old napi_id
-  - mlx5e_activate_priv_channels
-    - mlx5e_activate_channels
-      - mlx5e_activate_channel
-        - netif_napi_takeover(old_napi is gone, so probably take id from napi_storage?)
-	  - if napi is not hashed - safe to reuse?
-	- napi_enable
-
-This is a bit ugly because we still have random napi ids during reset, but
-is not super complicated implementation-wise. We can eventually improve
-the above by splitting netif_napi_add_weight into two steps: allocate and
-activate (to do the napi_id allocation & hashing). Thoughts?
+Thanks
+Barry
 
