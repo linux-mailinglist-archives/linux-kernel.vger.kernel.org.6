@@ -1,208 +1,125 @@
-Return-Path: <linux-kernel+bounces-314426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DADB96B302
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:37:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB2A96B2C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55C81F21A13
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:37:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C463B23BDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AB0146A9F;
-	Wed,  4 Sep 2024 07:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90256146A62;
+	Wed,  4 Sep 2024 07:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j8V7RAgw"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XmNo/ZVH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70EB824AF;
-	Wed,  4 Sep 2024 07:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53379146018
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435451; cv=none; b=err2YA3MZfwAwTZRYQRF06xCQBi+FPacDRjme0s7RqHWT2Z0cRD7N4lCGrjg35ueKfVzsm7RIAvua3bWP7JySeeyq8K+LHjupX6+5i6sBlwjU91uVm8IJGXpB7hHGkf/RSOSTBoGwj8mRMIMl3mDB8mm+xfkq301TwcVaPw2YXw=
+	t=1725434662; cv=none; b=buxG5/kP8ULrREH+U5IcszhMBt+1ylRnJR5rTIG7vDgtTtX0g0RjImv5jtuZ3OLYq3LNwpJCnVEGYSynGHeZ1vxFGF0FLbUs6Hvdm3NyfqxXgt45iYIM+W5E47f5V4eZ+pS3Zqpp2gFU9XWIx7jtqO2l6erEjr9AAfYz40H2gBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435451; c=relaxed/simple;
-	bh=SXoL0Y2uBCH4szH5JIB1/cEQ+UnjAZakw05pl633cJ0=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To:
-	 Content-Type; b=mHojj9F5JDF3etkwUEf+OyFefO9ttbSxI4MNpNS/LsyAM1OsE8Gc825X1r/eAE7obpliPd07JhBmGW7QgUwrD51Mgw64qs0KSc2oTVwufgqT8QgAj1gqyNIOJ8N3v3n7ODOlas12GQdgbm95j3O97St6FRT7L5EvUhS7Vkhqp84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j8V7RAgw; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725435445; h=Message-ID:Subject:Date:From:To:Content-Type;
-	bh=ciPN8fkQH+unZgllpAVfdRbO08g5aZIPzLBXvT9Tb5A=;
-	b=j8V7RAgwpSE4c8k6ZxXJIsGaoD1+bCwusI0u3LEjQksOKElDAg1FkEUKnr3Uh+umCEeoU5x/Xk22h/k5u0RwM+i+tQqKtQXQbV6xXI0GfzJ5HRyfyJklVRRMhnM2I5yJAtVAHMuHI1s6YE33CJvJvHSWxcCEiftp1Sey7fqdHuI=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WEGYzGb_1725435444)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Sep 2024 15:37:24 +0800
-Message-ID: <1725435002.9733856-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [External] Re: [PATCH v2] virtio_net: Fix mismatched buf address when unmapping for small packets
-Date: Wed, 4 Sep 2024 15:30:02 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: =?utf-8?b?5paH5Y2a5p2O?= <liwenbo.martin@bytedance.com>
-Cc: virtualization@lists.linux.dev,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Jiahui Cen <cenjiahui@bytedance.com>,
- Ying Fang <fangying.tommy@bytedance.com>,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com
-References: <20240904061009.90785-1-liwenbo.martin@bytedance.com>
- <1725432304.274084-1-xuanzhuo@linux.alibaba.com>
- <CABwj4+hMwUQ+=m+XyG=66e+PUbOzOvHEsQzboB17DE+3aBHA3g@mail.gmail.com>
-In-Reply-To: <CABwj4+hMwUQ+=m+XyG=66e+PUbOzOvHEsQzboB17DE+3aBHA3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1725434662; c=relaxed/simple;
+	bh=Dz6GawJBeEhbU4qgcKqn0e28Bz9wtatHn8pfUsGOP1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzveFCUpqy9GR1ukSy7FTcChb8HuG3WMtTFRTPRUy6dQqarQPH+P/JNzco+M0jQD3z8KIopQs3AOL3+4ZknTK7zEJguQshSThEDrwQX+D1/try6nV079IRZd3OkFFCbUg3FOouH46d4Niat7SqQvhFiVVIjoleoFSzPGGwJzJSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XmNo/ZVH; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725434661; x=1756970661;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Dz6GawJBeEhbU4qgcKqn0e28Bz9wtatHn8pfUsGOP1M=;
+  b=XmNo/ZVHt1sUR2mYbID8GgJmU0UPUnTxxSo336VrApCrgK8gE0TSMW+f
+   fWngvrt/gS9iXMv1RpmBY+E5Mz3WnTY8VpTxl482FVr7wN3YHdqc96O4m
+   zU5mXXvAJa2qTpf3iOiGe9sT4/Je10biB1xKvEFhagEOZzMLdXJ2F2tsW
+   66s6u5woUWWV58r5LYuUxDsqx6Ep09wck8izKwaS+WEQYQSp/R49NUL7N
+   66EGR7glDdeev87IIjgIGPduCvUu0OVX/JnCAyWHuyS2jXsiGEaTZsLu1
+   EQYkyDHhkVMVlWn52nhaAxwWwlmAq72Kk4n7mY20W4batYXsf9un2TxjR
+   Q==;
+X-CSE-ConnectionGUID: fNlDvasWQF6EeDjulPXXEg==
+X-CSE-MsgGUID: P9E07ASHRAqoVAGFRq3h0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23585957"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="23585957"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 00:24:20 -0700
+X-CSE-ConnectionGUID: 4QL/Hr+HQG6MjDIn1eQ7XQ==
+X-CSE-MsgGUID: btexMqbPQwOgtJE85Qkoeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="65240664"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 00:24:20 -0700
+Date: Wed, 4 Sep 2024 00:30:07 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Andreas Herrmann <aherrmann@suse.de>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] x86/cacheinfo: Clean out init_cache_level()
+Message-ID: <20240904073007.GA3840@ranerica-svr.sc.intel.com>
+References: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
+ <20240827051635.9114-5-ricardo.neri-calderon@linux.intel.com>
+ <20240901180911.GD4089@alberich>
+ <20240902074140.GA4179@alberich>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902074140.GA4179@alberich>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Wed, 4 Sep 2024 15:21:28 +0800, =3D?utf-8?b?5paH5Y2a5p2O?=3D <liwenbo.ma=
-rtin@bytedance.com> wrote:
-> When SWIOTLB is enabled, a DMA map will allocate a bounce buffer for real
-> DMA operations,
-> and when unmapping, SWIOTLB copies the content in the bounce buffer to the
-> driver-allocated
-> buffer (the `buf` variable). Such copy only synchronizes data in the buff=
-er
-> range, not the whole page.
-> So we should give the correct offset for DMA unmapping.
+On Mon, Sep 02, 2024 at 09:41:40AM +0200, Andreas Herrmann wrote:
+> On Sun, Sep 01, 2024 at 08:09:13PM +0200, Andreas Herrmann wrote:
+> > On Mon, Aug 26, 2024 at 10:16:35PM -0700, Ricardo Neri wrote:
+> > > init_cache_level() no longer has a purpose on x86. It no longer needs to
+> > > set num_leaves, and it never had to set num_levels, which was unnecessary
+> > > on x86.
+> > > 
+> > > Replace it with "return 0" simply to override the weak function, which
+> > > would return an error.
+> > > 
+> > > Reviewed-by: Len Brown <len.brown@intel.com>
+> > > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> > 
+> > Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
+> > Tested-by: Andreas Herrmann <aherrmann@suse.de>
+> > 
+> > Test was done with a system equipped with AMD Phenom II X6 1055T and
+> > test kernels based on v6.11-rc5-176-g20371ba12063.
+> 
+> FYI, the test consisted of booting the mainline kernel w/o and w/ your
+> patches, checking for potential new errors/warnings in kernel log and
+> checking for changes or incosistencies in information of cache
+> characteristics as reported in sysfs, and by some tools (lscpu,
+> lstopo, x86info) -- e.g. x86info does not use sysfs to gather cache
+> information for CPUs.
 
-I see.
+Thank you very much for you review and testing!
 
-But I think we should pass the "correct" buf to virtio core as the "data" by
-virtqueue_add_inbuf_ctx().
+I will post a new version with the feedback from Nikolay and Sudeep and
+your tags.
 
-In the merge mode, we pass the pointer that points to the virtnet header.
-In the small mode, we pass the pointer that points to the virtnet header - =
-offset.
-
-But this is not the only problem, we try to get the virtnet header by the b=
-uf
-inside receive_buf(before receive_small).
-
-	flags =3D ((struct virtio_net_common_hdr *)buf)->hdr.flags;
-
-So I think it is time to unify the buf that passed to the virtio core into a
-pointer pointed to the virtnet header.
-
-Thanks.
-
-
->
-> Thanks.
->
-> On Wed, Sep 4, 2024 at 2:46=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.=
-com> wrote:
-> >
-> > On Wed,  4 Sep 2024 14:10:09 +0800, Wenbo Li <liwenbo.martin@bytedance.=
-com>
-> wrote:
-> > > Currently, the virtio-net driver will perform a pre-dma-mapping for
-> > > small or mergeable RX buffer. But for small packets, a mismatched
-> address
-> > > without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
-> >
-> > Will used virt_to_head_page(), so could you say more about it?
-> >
-> >         struct page *page =3D virt_to_head_page(buf);
-> >
-> > Thanks.
-> >
-> > >
-> > > That will result in unsynchronized buffers when SWIOTLB is enabled, f=
-or
-> > > example, when running as a TDX guest.
-> > >
-> > > This patch handles small and mergeable packets separately and fixes
-> > > the mismatched buffer address.
-> > >
-> > > Changes from v1: Use ctx to get xdp_headroom.
-> > >
-> > > Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling
-> mergeable buffers")
-> > > Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
-> > > Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
-> > > Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
-> > > ---
-> > >  drivers/net/virtio_net.c | 29 ++++++++++++++++++++++++++++-
-> > >  1 file changed, 28 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > index c6af18948..cbc3c0ae4 100644
-> > > --- a/drivers/net/virtio_net.c
-> > > +++ b/drivers/net/virtio_net.c
-> > > @@ -891,6 +891,23 @@ static void *virtnet_rq_get_buf(struct
-> receive_queue *rq, u32 *len, void **ctx)
-> > >       return buf;
-> > >  }
-> > >
-> > > +static void *virtnet_rq_get_buf_small(struct receive_queue *rq,
-> > > +                                   u32 *len,
-> > > +                                   void **ctx,
-> > > +                                   unsigned int header_offset)
-> > > +{
-> > > +     void *buf;
-> > > +     unsigned int xdp_headroom;
-> > > +
-> > > +     buf =3D virtqueue_get_buf_ctx(rq->vq, len, ctx);
-> > > +     if (buf) {
-> > > +             xdp_headroom =3D (unsigned long)*ctx;
-> > > +             virtnet_rq_unmap(rq, buf + VIRTNET_RX_PAD + xdp_headroo=
-m,
-> *len);
-> > > +     }
-> > > +
-> > > +     return buf;
-> > > +}
-> > > +
-> > >  static void virtnet_rq_init_one_sg(struct receive_queue *rq, void
-> *buf, u32 len)
-> > >  {
-> > >       struct virtnet_rq_dma *dma;
-> > > @@ -2692,13 +2709,23 @@ static int virtnet_receive_packets(struct
-> virtnet_info *vi,
-> > >       int packets =3D 0;
-> > >       void *buf;
-> > >
-> > > -     if (!vi->big_packets || vi->mergeable_rx_bufs) {
-> > > +     if (vi->mergeable_rx_bufs) {
-> > >               void *ctx;
-> > >               while (packets < budget &&
-> > >                      (buf =3D virtnet_rq_get_buf(rq, &len, &ctx))) {
-> > >                       receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
-> stats);
-> > >                       packets++;
-> > >               }
-> > > +     } else if (!vi->big_packets) {
-> > > +             void *ctx;
-> > > +             unsigned int xdp_headroom =3D virtnet_get_headroom(vi);
-> > > +             unsigned int header_offset =3D VIRTNET_RX_PAD +
-> xdp_headroom;
-> > > +
-> > > +             while (packets < budget &&
-> > > +                    (buf =3D virtnet_rq_get_buf_small(rq, &len, &ctx,
-> header_offset))) {
-> > > +                     receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
-> stats);
-> > > +                     packets++;
-> > > +             }
-> > >       } else {
-> > >               while (packets < budget &&
-> > >                      (buf =3D virtqueue_get_buf(rq->vq, &len)) !=3D N=
-ULL) {
-> > > --
-> > > 2.20.1
-> > >
->
+BR,
+Ricardo
 
