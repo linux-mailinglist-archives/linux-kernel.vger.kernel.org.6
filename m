@@ -1,251 +1,192 @@
-Return-Path: <linux-kernel+bounces-315867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE37696C7E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:48:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6FE96C7F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9921F23155
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD99C2864AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7BF1E6DF9;
-	Wed,  4 Sep 2024 19:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D12F1E6DE1;
+	Wed,  4 Sep 2024 19:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OfeH11ES"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msJj4iZZ"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEA540C03;
-	Wed,  4 Sep 2024 19:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479318; cv=fail; b=t0KNzPIfdOeD4hiPIFZh6PGx5JHfrkeCGhz97kQ2MSRoWzuFpZJ1/kIE3yoZJRlFMvNaTFa3clJLneBVWkBJ0nJPKGzwm6gG+Aan9tWhT8IBebA1q+NRpfFEZ9jGDY7Xx+g409AdCU/5wvpSZtExAxZEljzr9rkbqkBOZuqUiXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479318; c=relaxed/simple;
-	bh=8LXZFt5EfxQQ/q1PH5CPTHR44adOdGZvuPZA+d711s8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=omPZak6b0oeMvJWZEf9/F8lY6QMhueog5xKvMRY3DPCxNnJ4ZUmvEwl01mqZ1VzeobjCtHmGgyRN46kwx2fwSeklIFYN2JceWNJ6cpOC3cTa6MSOgBfvq2QhtD5qSe9hiqSG67CKTlFUCS7N8tcxRFhK85UQ/FkVL0bbqbV0o3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OfeH11ES; arc=fail smtp.client-ip=40.107.92.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QGI1+GCPZLwgoBQUM5ActachixWHU69HMPBcu+37u9XXOFfpFmXfgwKziXzJ5eby6Su6YLcted3iC3qevPwM/yrkYWGCbYUfg9ontFxph0/IvuJSTgkk8PXWMMqGFIsJ2AxPqxF/JaW9/NveU1lJHhfmAB2nf7xKKS1Dm5Fp3iD6U8dcgIMz5ggips9tKRcocy69ay9+MhEEeES5UTAXFv11wWuN4PmN7jjm2IrzzaI2F5ret3NFBMSLJKZ+SRDYUCFEoqdmAOWYQ+svgxkwIJc3oGoq2edvPQTM153dy9MBmvjxOlYGz8CA1QWtLL1F0MOeQbj3qgAvIdVT19O4Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=op+7j+ot4mXqYGCk9uiBNnkra+Tx822j9uajDFeC3EA=;
- b=vYaCc8WxUWB396GjMAsWudDzqdbDW9ruW9+DBu6nebFjTdnipet1lvifqlPKgOaG6QKRFy4UE7cegf4j2LX/AgjiDvRNmd/bA5FyHwA2xobi3/4RjFPIQVeajonAGVr6JnfZIPWyxOGMKm4Ql4gSQun39qOOBc3k3LejjnB/KKTjXy+guycaq4dksg4zQlU+V8VvXqCHfzSdED0p1SlqkwyewuO3Q2cv210SrQtaJ/C3ICh/ykdoGsTLMj4GobUQuYFdnusKEA4M8s8lFJFg70k/YIcL34qD0YPYVLS5MOLrIqjFBnB91CzuAbClYs+qBzDEZZk3mPJHocECbdsTcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=op+7j+ot4mXqYGCk9uiBNnkra+Tx822j9uajDFeC3EA=;
- b=OfeH11ESOUC1dcBnPORQ1g2Z8M6cfVcbvgaJKluSWu6TaNzd+Z78dNJL134sPEMuMxhQzpzQKcL1dISbTTUyaaq7uU1J1khl7Ni4jMlnxqFG0ZuPcTPF0lXptgzBKnQDX0ME1zOsDRJYCyp+6tKdXc5vINuzsSMI6D7LFlr6d8o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
- by MN0PR12MB6176.namprd12.prod.outlook.com (2603:10b6:208:3c3::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Wed, 4 Sep
- 2024 19:48:33 +0000
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475%5]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 19:48:33 +0000
-Message-ID: <a1459350-f458-470b-a288-a92e2085f93a@amd.com>
-Date: Wed, 4 Sep 2024 14:48:30 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 00/12] PCIe TPH and cache direct injection support
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, netdev@vger.kernel.org,
- Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
- ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
- andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com,
- Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
- bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
- paul.e.luse@intel.com, jing2.liu@intel.com
-References: <20240904184911.GA340610@bhelgaas>
-Content-Language: en-US
-From: Wei Huang <wei.huang2@amd.com>
-In-Reply-To: <20240904184911.GA340610@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR16CA0044.namprd16.prod.outlook.com
- (2603:10b6:805:ca::21) To DM6PR12MB4877.namprd12.prod.outlook.com
- (2603:10b6:5:1bb::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B21940C03
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725479510; cv=none; b=Onr6ktB/LjEmXL42IZV+YDdIZoevWpHc021qXzydPCsTuMcerqNqUli+W3zuvOpdlidfoq2tNqqz2gAssJYe3ppYann4QangTPU6KfrmB7P9QkaEpYgqHTaihUum188E/HR6dpPUCdWiHa9Ab7m6I/vmavS7OEC5JfdaY8RClQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725479510; c=relaxed/simple;
+	bh=bS8UinF/guuv2EDroZyGwvbri6V9Nnlswq54TD3u3qY=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4O89+DjVFcE+c/SopJMLfKQQVZiJGYOdsceiB1dFtIB5Hr2f0fKAjmlxaaNaBIRxQwklPL6fhUm+OPbHfFgIgoUlSEVn9EuXkWEyDsEA5v/7F3KuBzKe8JJuiP4a1xCOlv1M1Vn5Un1edLz0AGMQiLu2Uw7CX0CRNe88vnYJt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msJj4iZZ; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7c1324be8easo845507a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 12:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725479508; x=1726084308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SlOmg5zgF2+yf7PiIjOBjN942jtPLLMdWv+krlSsj6A=;
+        b=msJj4iZZDo5XxG+lM4RTJTZsyHvfyhLhPtCAI4awZtssFIafzzwuLMbtkKS8fAZjAU
+         3a7bJwlKEzJsiBm/CCNIoQhdbLt/yNmqhk6vhT9Uii2m1CzQNXnP+OoRNHJWeMsp/DcV
+         KIWVti1PKKnhxl9rcrQ50GQjWXm5fUTuupTDLwCsI03lAuJWU/NH68zi7lznUifyq3U1
+         QjihSB3P/loh2Cr1l6/jUtK4P03YdVeeZqPWvogzXlgLTucS6WIDxV28xsH95lP5tUoc
+         icUSbSAdSxt4+pAQ0z5u3eqETqzHKRxLavOQCXdieWMCEznxEB5D0wEbPCxkFQiXIjJ7
+         qqwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725479508; x=1726084308;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SlOmg5zgF2+yf7PiIjOBjN942jtPLLMdWv+krlSsj6A=;
+        b=cupCAysSIMHPHhs8AYNslXx5d10J8QggzdSNUBgB7RICYMM4HST1z+lNfsIVZ92eSb
+         ef24xdhIImEvimw4WVKV6h2QYLoP2S/9urlgDshI63V59p5DytQq1pjfyJiGARyT6BI7
+         6LIyaNr82g9Iv7CmWchd4n/dULzNOExeO9xE9PwH89RHbI2F8zRautAwUd+1Wy5+ruAA
+         nXzM4pDhQswVkT1uaSYRGIPDNxBZ3t5Dxn1JsGnYJdfStc2Zv9P+ekx/l6rADZesLp9e
+         KXteS+mN+eWM2pQLBzwGoOXYA/HHIS/9IDOPVZbxJ2xjJHr93Da28Q4ZwNWFYOce50j8
+         T8fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSCE0UElGZdZH6G3qis4SXQRmQShK2xtis/CL6+wtaW1q5T21YwsH7jkwWKFgt1rsQ0VGluYclb2ifFKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnvr87wM8x3w1NpDyw0coAUT6vZd8jfGpNT+DLTRoIxQ3iQX8z
+	8epO8prXt6H67BgLWbXDjGMFEeP1Wwn5W0uF+UiTlgL9wjn+SK94
+X-Google-Smtp-Source: AGHT+IEEduUCOiywKQwIwI6xvxJTly9F9XAvRUraSNTzhT5RKwxVR3PEheBdkJTaYWes1HDYN+dOvQ==
+X-Received: by 2002:a17:90b:3007:b0:2d3:acbd:307b with SMTP id 98e67ed59e1d1-2da8ede7c4fmr5396846a91.10.1725479508281;
+        Wed, 04 Sep 2024 12:51:48 -0700 (PDT)
+Received: from DESKTOP-DUKSS9G. (c-76-133-131-165.hsd1.ca.comcast.net. [76.133.131.165])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b0fdbd8sm14040061a91.5.2024.09.04.12.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 12:51:47 -0700 (PDT)
+Message-ID: <66d8ba53.170a0220.844a7.1d81@mx.google.com>
+X-Google-Original-Message-ID: <Zti6UH2JrV727CWd@DESKTOP-DUKSS9G.>
+Date: Wed, 4 Sep 2024 12:51:44 -0700
+From: Vishal Moola <vishal.moola@gmail.com>
+To: Alex Shi <seakeel@gmail.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, minchan@kernel.org, david@redhat.com,
+	42.hyeyoo@gmail.com, nphamcs@gmail.com,
+	Dan Streetman <ddstreet@ieee.org>,
+	Seth Jennings <sjenning@redhat.com>
+Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for
+ zswap.zpool
+References: <20240806022143.3924396-1-alexs@kernel.org>
+ <20240806022311.3924442-1-alexs@kernel.org>
+ <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
+ <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
+ <20240807051754.GA428000@google.com>
+ <ZrQ9lrZKWdPR7Zfu@casper.infradead.org>
+ <20240814060354.GC8686@google.com>
+ <66ce5eed.170a0220.387c4d.276d@mx.google.com>
+ <9a6e3169-2ebd-47a5-b2e6-953a8a6730db@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4877:EE_|MN0PR12MB6176:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ad6b8ba-2c0c-4649-7649-08dccd1a8eed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VEZPLzJXWXdzRTh6VHpPQzRQNWtKbnAwM1crdytKaE1ka0RkNEhUNWRMUnY5?=
- =?utf-8?B?VllZYWU4eEllVUdWbWx4NGFKTjJFanRUTmxSLysvc3NhOWl4YmtWMDNKZEpY?=
- =?utf-8?B?WnZUQ3NUUE1tU2hiM1puVjFDZVFqTlM4WThMVDYxSWZrWC8xZTNuUDZJeFBv?=
- =?utf-8?B?MFgwMjJvVFg0MDZ4LzlnMmdDSVhLZnVHYUx1SnFXeHlScUpnc2lYdnp6dVdm?=
- =?utf-8?B?d2pGL2NGa2crYmxkQTBhUUhDZThjb2pNRHMxZDhUSmxIbGR2MGxuKzByVnll?=
- =?utf-8?B?OEl4TWpMcXduVFhXek9uVitRdUk0ZDBSNEd3VmVWS0lYK2tnbzZWVjlrRGNC?=
- =?utf-8?B?NVdmOFNYZThmdE1IWkZoZWdLYXlJa2E3T1hUemdGNVQrdWNkUzVBRFAxdUhM?=
- =?utf-8?B?VEpHNXh5RTJDbElBMjB5a2UwazYzRThLSmV4bGI2R3J6eGNSNEprRDhaNGF6?=
- =?utf-8?B?cDlFT05ZdFh4VmZrVCtzeHk3WGJINkFIbFNJelVrTkpTSDNJMHM4VFFrNTZO?=
- =?utf-8?B?SDNjZGFSWHBTWkk5eEQwRU9xYTdhcFVtWlcyVEJ4TG1ENENzMjB4Mko2VmZu?=
- =?utf-8?B?dEdvR0J2Z1JQMFJubjFleVAxZGdDWlJ4YjdXeU1GWGY3aUtYb1NWeXlPWW43?=
- =?utf-8?B?emZRbmhZZCtVUUt6ajBBNW1IUWtEcWVKZHVOd042ZU44QWpvMjRtNWpRRVZW?=
- =?utf-8?B?Z2ZWQ0hoSUNROXlIdktXemJ5cFZNUG9rK0VZUysvYXZMa3hHN3B6b0tyREI3?=
- =?utf-8?B?ekpSS1kweklKWnhIR2Jpa0REVHBCTmJrRlVWMm5uUTc4c2pvVWZHMzB2VGdE?=
- =?utf-8?B?MWpwM0V6TE1XRW5WbXkxU0QwM3ROUTlEdEg5d1A4Y3g4WFMycm50TllaSCtn?=
- =?utf-8?B?WE95VXg0ZTZER1lRY012TkFSTjdLUjVlbkpRTENzdGhOc0xoOXhpVHRMMTl6?=
- =?utf-8?B?b29NTzBJQUxZcUhWUjM2NXJ2dUQ5bFd1RmNsbmNVbjkrOU9UcTFOeHlNZU0x?=
- =?utf-8?B?c2VWaGxINVRFc1YvNUZiTjBZV0tnWUkrWXg4UWJEK2pxN1B2T2UrSG9LMlpk?=
- =?utf-8?B?anlQcWdDN01JQkR5Q2tDOWV3Ym03RHNZMHUrTXpWRk9NUlJ6cy92RDNUaUdH?=
- =?utf-8?B?OVIzSlZlNVFmZFVyL3oyM0RQREg5RXh6QmNsQ3ZWTmdGbGJyMkxOb1hwUzhO?=
- =?utf-8?B?ZklicDlNb1lxR1BBTnRuZ1daeFdQMGJQSy85YmVCWjZMNWNwNHBOZWpDeGth?=
- =?utf-8?B?SWlDYjhnNUJ0Y25XNm01L28yVjVvd1dOSEl5VHp1Ym1Ybko1UkxrRTVjd0R4?=
- =?utf-8?B?ZlRDelIyTnBJcXZ0cnpwbUFpNTk5Q2lLRFh3VlZmU0ZQWTJkeHE3ZmtZRzRM?=
- =?utf-8?B?SnJYdXEzYjA2M1V5ZDhDQ2lrNXVxZFk4QVpEU1dRV3E4c2hkdVJrMHc0UU9N?=
- =?utf-8?B?Rk1QQk9YWWZKWjYzZHdFRVlvM2xRbDdtN291SU9XcTZOaDRIUlcxK3hjak12?=
- =?utf-8?B?d1g0elI0SEVkUmJSTU1RQ1piam1qaHdPMU5yQVZja0JxSnU2NE0zTUhIYzRG?=
- =?utf-8?B?SUoxYVRPTlJUdUY1VkxmaU1wbjk5ckNmNVBSN2hBYStJSGR0VWpQMzB6V2cz?=
- =?utf-8?B?dHhXeVpjeU1ublNrZnJmcFI2NDh3RGRmYnlETHZFNkNlL281T1ZqdjZYQUl6?=
- =?utf-8?B?bXpMUWN4eGlTYkdHa043VTJEQlBuQlgxUmlvSlI5QUl0cXpvMjhVL2k5NzNM?=
- =?utf-8?B?M3lib3VNNWhqazd0SVc3ZmJWY1hyYkQrNHFFamkrM3N6UnVvakV5VlNQZWh5?=
- =?utf-8?B?N1JzK2xYL2RRNnd5MWZ0Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bndPSkRKSnQydnJRZXY1aTlBa1F6Q2l1NHh4c1ZyWWhYM1N4Vm5HVkxiNVQ4?=
- =?utf-8?B?UmpWSFc3TnJXeHZYdmdXVDVWaTJDVTlDdTBjWk9TTExjOXYwSlBoU2xaZW9t?=
- =?utf-8?B?NzYrRGtTOUlFempnYTM2YjZEU3YvZnVFVHRLdFVaVXN4VndyT2RDYVRmWDV6?=
- =?utf-8?B?K0FNcFNrVEtvNGd4Vm9aS2hoZStxT1BGV1lRTitzLzJQbG9ldWFQM0w2YmRE?=
- =?utf-8?B?SlpaQy91Um1INkc3Y0VrVDRxMzU2eVhtY3RWd2lLekFkN05TRXVMTjJIS1o2?=
- =?utf-8?B?YTErMnNNT1NhangreHVGUjJudmYyWFA2UjFKYWpYS0VRcW5BZXVoSDc2SFJz?=
- =?utf-8?B?bDdlSHNRNC9hNWl0amlOQ1lmVkNwVkk0cWcrZVZFVFhjUVpHMVFjbnQ2cW13?=
- =?utf-8?B?SDlseTdYdzFoSnpZSVh4Y2VLMzNHRHR3M0JlUmtjbUQ1dXdWbldtbjdjanFp?=
- =?utf-8?B?WFdrd3hMRk5uZm9uZkpWYmwyc3ZEZkd2c3BCVVlzdGR5cER0SmxvNkE5UEpE?=
- =?utf-8?B?dHpIUjBqaUs2S2tGZzNPWmNtUkFZQlk3UFAxUWRzZEFxelBCdEZkTnlUWDgz?=
- =?utf-8?B?cERzT0dOTEdMV0xXUkdTajk5QnhlR0ZtZkJ2QXhwVVBIMmx5SzJDNE9WR2Fx?=
- =?utf-8?B?cnZLNGpSSVNwajI3SjQ2QWpxYTZuWTI0MnQvK3hpZGNkVkFHMDZ5WjlkMUpt?=
- =?utf-8?B?VHZQNHpMNDM3dk9zdFBobjlYdEt6QkxJMm42b0EyTzlaVE8zVXcrWElUWVpS?=
- =?utf-8?B?TER5R3Y4TVlPWUVTUUVCUzZRNzcwOE5wVlQxaHUvMVdvUUpYTEJQZ1lJODVS?=
- =?utf-8?B?YW5PK3hvQWtqcXMyaXZYSmtaWkVBM0VKa3dBOFJuN2lpaFRjUTQ0MXRMVW9Z?=
- =?utf-8?B?YWxoZ2ZlK0xDZG0yZUExQ29SNVJXaGZINjdJQTdheG05ZTlHRGVhdFhxR1Jn?=
- =?utf-8?B?SnlLdUNGWVd0aDdCMVFnOVRhUHdNK1R4Vk5OZE5NeDVuRHVQRU0zalRKaElO?=
- =?utf-8?B?OTlPVlE2d0JmTmxqQ29MbWc3L090dGJlNXlTWlFVSmRONk1TRithYUZ2WWla?=
- =?utf-8?B?RmdPWEFqS3FmU1E2VnY4VnBXdHAvNGdUU3lhVHBCQi96TDRhQU1va0JsWFJP?=
- =?utf-8?B?Z2ZiM1VLTmsrUllvbGJ6cmxtbGwrWkFOdGlQS0FMTXd2ODJpTEJRK01wTm5i?=
- =?utf-8?B?SXhLeFdkK0o1czBpVkNuRWN0VG5WcGxNc1NJaTd3K3dwTnF4RHYvNUVkV0xY?=
- =?utf-8?B?SG9QOEhVUHZpTHNJOXJRVU5TTmpMNHNmNnYrWjIwYkM1N3FNdEU1VktGelcy?=
- =?utf-8?B?K2xsTFZ3UkhLSjd5YVdQUS9rN2FVQ0R6TlArd1ZabzlqTERqaTBQN2hZV1JM?=
- =?utf-8?B?T3hkZitMM1hJWUdEdkUzR01lRkZ1MmFNUzJJMWFZTDlKTWxTS283STVBeld3?=
- =?utf-8?B?TFdvMkVpb2s1cTI4R0ljU1l6QkJtLy81dGJmVWUwditCT3ZUdWF1UkJQb2Ns?=
- =?utf-8?B?a3RzOHpSZUMyK2xxam9waHJuVWlwSE1HNVNkZjJ0MFd2Q1VQdjAweHo2NlRl?=
- =?utf-8?B?NGxCenI3aGRGTEYzT1hSK1p3RTh3S2d1S2J2Rnlvcm1kcmEycjY2K0JzL0w5?=
- =?utf-8?B?ZDQzWk4vSGZPMVJ2OVVkUURPY3llVW1LN0pHVmh5Tjg4SHZCYjRGZnhUWHNi?=
- =?utf-8?B?VzJTUnRFWTJrTXN3aDh5N0pXV0p0aVpoVzBHNTYzc1hraUZGQzNScTFVa1Nm?=
- =?utf-8?B?RjNvM1NJeU42YXlwSDJSRmtIME9GQ3pkMWJ4ajFSWUpPVkRUdy9RMWRRNzgy?=
- =?utf-8?B?V0F6aWtWbG5Hd0tRTmYycXpmRHI2Y2RYbldXL3hpTUlJSGwvclcwRDVhRjdX?=
- =?utf-8?B?Rmpnb2pESVYvQmJEQklkNHlRWmRLcm9Ecm9HeWd6dHF1UjNLMEtyREF3SnBL?=
- =?utf-8?B?NEUycGR3RUs1a3NDRTN4Y0NZVkNNWTVmMnBiWWdXWVZOTTY2M2duQktERWtF?=
- =?utf-8?B?S3FVWVdqV25EbHI1bWYybGZCY2tpSGNOUGVxcjJMWDNzVFVxYlJpQ3hHUy9a?=
- =?utf-8?B?N0hGSUlEcmhaSXY1MTZYOStRMVI5TGVDemZhWHlKQUY3VUp6UXYza294K25W?=
- =?utf-8?Q?1Y8U=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ad6b8ba-2c0c-4649-7649-08dccd1a8eed
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 19:48:33.4853
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ym3J5Vqi/VY5VS7XVKrgkNKDHAtW7UTiEpq7eGGy81p2PBQCP99V5nfivDZP5rc0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6176
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a6e3169-2ebd-47a5-b2e6-953a8a6730db@gmail.com>
 
-
-
-On 9/4/24 13:49, Bjorn Helgaas wrote:
-> On Thu, Aug 22, 2024 at 03:41:08PM -0500, Wei Huang wrote:
->> Hi All,
->>
->> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint
->> devices to provide optimization hints for requests that target memory
->> space. These hints, in a format called steering tag (ST), are provided
->> in the requester's TLP headers and allow the system hardware, including
->> the Root Complex, to optimize the utilization of platform resources
->> for the requests.
->>
->> Upcoming AMD hardware implement a new Cache Injection feature that
->> leverages TPH. Cache Injection allows PCIe endpoints to inject I/O
->> Coherent DMA writes directly into an L2 within the CCX (core complex)
->> closest to the CPU core that will consume it. This technology is aimed
->> at applications requiring high performance and low latency, such as
->> networking and storage applications.
+On Thu, Aug 29, 2024 at 05:42:06PM +0800, Alex Shi wrote:
 > 
-> Thanks for this example, it's a great intro.  Suggest adding something
-> similar to a patch commit log, since the cover letter is harder to
-> find after this appears in git.
+> 
+> On 8/28/24 7:19 AM, Vishal Moola wrote:
+> > On Wed, Aug 14, 2024 at 03:03:54PM +0900, Sergey Senozhatsky wrote:
+> >> On (24/08/08 04:37), Matthew Wilcox wrote:
+> >> [..]
+> >>>> So I guess if we have something
+> >>>>
+> >>>> struct zspage {
+> >>>> 	..
+> >>>> 	struct zpdesc *first_desc;
+> >>>> 	..
+> >>>> }
+> >>>>
+> >>>> and we "chain" zpdesc-s to form a zspage, and make each of them point to
+> >>>> a corresponding struct page (memdesc -> *page), then it'll resemble current
+> >>>> zsmalloc and should work for everyone? I also assume for zspdesc-s zsmalloc
+> >>>> will need to maintain a dedicated kmem_cache?
+> >>>
+> >>> Right, we could do that.  Each memdesc has to be a multiple of 16 bytes,
+> >>> sp we'd be doing something like allocating 32 bytes for each page.
+> >>> Is there really 32 bytes of information that we want to store for
+> >>> each page?  Or could we store all of the information in (a somewhat
+> >>> larger) zspage?  Assuming we allocate 3 pages per zspage, if we allocate
+> >>> an extra 64 bytes in the zspage, we've saved 32 bytes per zspage.
+> >>
+> >> I certainly like (and appreciate) the approach that saves us
+> >> some bytes here and there.  zsmalloc page can consist of 1 to
+> >> up to CONFIG_ZSMALLOC_CHAIN_SIZE (max 16) physical pages.  I'm
+> >> trying to understand (in pseudo-C code) what does a "somewhat larger
+> >> zspage" mean.  A fixed size array (given that we know the max number
+> >> of physical pages) per-zspage?
+> > 
+> > I haven't had the opportunity to respond until now as I was on vacation.
+> > 
+> > With the current approach in a memdesc world, we would do the following:
+> > 
+> > 1) kmem_cache_alloc() every single Zpdesc
+> > 2) Allocate a memdesc/page that points to its own Zpdesc
+> > 3) Access/Track Zpdescs directly
+> > 4) Use those Zpdescs to build a Zspage
+> > 
+> > An alternative approach would move more metadata storage from a Zpdesc
+> > into a Zspage instead. That extreme would leave us with:
+> > 
+> > 1) kmem_cache_alloc() once for a Zspage
+> > 2) Allocate a memdesc/page that points to the Zspage
+> > 3) Use the Zspage to access/track its own subpages (through some magic
+> > we would have to figure out)
+> > 4) Zpdescs are just Zspages (since all the information would be in a Zspage)
+> > 
+> > IMO, we should introduce zpdescs first, then start to shift
+> > metadata from "struct zpdesc" into "struct zspage" until we no longer
+> > need "struct zpdesc". My big concern is whether or not this patchset works
+> > towards those goals. Will it make consolidating the metadata easier? And are
+> > these goals feasible (while maintaining the wins of zsmalloc)? Or should we
+> > aim to leave zsmalloc as it is currently implemented?
+> 
+> Uh, correct me if I am wrong.
+> 
+> IMHO, regarding what this patchset does, it abstracts the memory descriptor usage
+> for zswap/zram. 
 
-I'll incorporate some of these descriptions into the TPH patches where
-relevant. Additionally, I'll enhance the commit log for bnxt.c (patch
-11) with examples of the benefits.
+Sorry, I misunderstood the patchset. I thought it was creating a
+descriptor specifically for zsmalloc, when it seems like this is supposed to
+be a generic descriptor for all zpool allocators. The code comments and commit
+subjects are misleading and should be changed to reflect that.
 
-> 
->> This series introduces generic TPH support in Linux, allowing STs to be
->> retrieved and used by PCIe endpoint drivers as needed. As a
->> demonstration, it includes an example usage in the Broadcom BNXT driver.
->> When running on Broadcom NICs with the appropriate firmware, it shows
->> substantial memory bandwidth savings and better network bandwidth using
->> real-world benchmarks. This solution is vendor-neutral and implemented
->> based on industry standards (PCIe Spec and PCI FW Spec).
->>
->> V3->V4:
->>  * Rebase on top of the latest pci/next tree (tag: 6.11-rc1)
-> 
-> No need to rebase to pci/next; pci/main is where it will be applied.
-> But it currently applies cleanly to either, so no problem.
+I'm onboard for using zpdesc for zbud and z3fold as well (or we'd have to come
+up with some other plan for them as well). Once we have a plan all the
+maintainers agree on we can all be on our merry way :)
 
-Got it, will rebase to pci/main in next spin anyway.
+The questions for all the zpool allocator maintainers are:
+1) Does your allocator need the space its using in struct page (aka
+would it need a descriptor in a memdesc world)?
 
-> 
->>  * Add new API functioins to query/enable/disable TPH support
->>  * Make pcie_tph_set_st() completely independent from pcie_tph_get_cpu_st()
->>  * Rewrite bnxt.c based on new APIs
->>  * Remove documentation for now due to constantly changing API
-> 
-> I'd like to see this documentation included.  And updated if the API
-> changes, of course.
+2) Is it feasible to store the information elsewhere (outside of struct
+page)? And how much effort would that code conversion be?
 
-Will do.
+Thoughts? Seth/Dan, Vitaly/Miahoe, and Sergey?
 
-> 
->>  * Remove pci=notph, but keep pci=nostmode with better flow (Bjorn)
-> 
-> This seems backward to me.  I think "pci=notph" makes sense as a way
-> to completely disable the TPH feature in case a user trips over a
-> hardware or driver defect.
-> 
-> But "pci=nostmode" is advertised as a way to quantify the benefit of
-> Steering Tags, and that seems like it's of interest to developers but
-> not users.
-> 
-> So my advice would be to keep "pci=notph" and drop "pci=nostmode".
-
-OK, I will replace the "nostmode" patch with "notph" in V5.
-
-> 
-> Bjorn
+> The descriptor still overlays the struct page; nothing has changed
+> in that regard. What this patchset accomplishes is the use of folios in the guts
+> to save some code size, and the introduction of a new concept, zpdesc. 
+> This patchset is just an initial step; it does not bias the potential changes to 
+> kmem_alloc or larger zspage modifications. In fact, both approaches require this
+> fundamental abstract concept: zpdesc. 
 
