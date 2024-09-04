@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-315340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B41596C14B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9FF96C14A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170F9B23BA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D581F287CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024AB1DC052;
-	Wed,  4 Sep 2024 14:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015541DC181;
+	Wed,  4 Sep 2024 14:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OW/LO7mC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PRzaQM5+"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uueR4Mz1"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DAF1EB44;
-	Wed,  4 Sep 2024 14:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61091CCEFC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461565; cv=none; b=hi17NmVB5e3kE+YahPMF6Lsf8HEqXyrRmoh/s0DFfrOLqpkcIaFlD1r7FPSqPnU2u2xzjAwa5NL6uEujHIhW0p/aRZnEudPevcVQ2RehKhHte2zVoVT93Bd9oZ0ctWKMAXbbt7gt286ptPZkVGz1B1UU5fK16jhGjiOuwAe8dDo=
+	t=1725461566; cv=none; b=bN28VFmxMBSZvJVsB8kRGnlA0D9tE5a7M/fiyv6GpXb9qluSa8iuM4lNaQ40qI7b5sKN+w2h94UNlCCoR5/CTvtah2HWM+8Pv0UcIBgsm5LrZnGo3Dk3+7Sk33loEGd7MheMLPAlFTXMcQaocboWQ/Sb6Yh7WCi+ASIL84hLJK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461565; c=relaxed/simple;
-	bh=oDHD6tP/Jwhr53bRg8Qr0nBLa5o5GvZtmAPtrBKF3zQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=a4ler+2KPCRpxxL4Q4v2diPO0rQWNKEZihfmz47FZMYP0vOyaeXwTX1dJaxx3lm032ut0VgtzHihyDhiLPf9EI1M/i32H4NBv6ZbMYU6ofwUmYPCnD62w1efa865xsPl1Qne9G3D5sUhgElbfPo9Egq8t//D9F0pkcAZB0WDWTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OW/LO7mC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PRzaQM5+; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DBAC3114019A;
-	Wed,  4 Sep 2024 10:52:42 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Wed, 04 Sep 2024 10:52:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725461562;
-	 x=1725547962; bh=GMX/FHb1NQd5lg5/NpfA0ULYpIijReg7t7hsHu+fouM=; b=
-	OW/LO7mC2lppB30DwzXZMH6lCAiLIyJWLwTJ8WLyc+YHWV0oTdfNn4lcUoFVo7UY
-	9pAKcQyXorI/p55OmQQ43MuHV4CPFsIRG89uUXD0Fi320wNBlEKLPWB8SaS3j7Ur
-	OL2WLCu5iDGAwFVAdwLAAzLhn+eFHkbDTRDvoI66AUoLz6kSZPlgrt+apWZMRtOt
-	eZ7Vcdil8475qdV8v1uXKe0S31rfbNaXPSWF+2lBvH8zxX1Sq7j7XqB1X598LD5b
-	Q5HP2jiSjVdvM+5CQg7w/5WHBbAFU9ZMc2b1B7FV+GoQ8KiThnSWxYKGDaEqcdUH
-	qK807tjfVn8jH1VbOaZx7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725461562; x=
-	1725547962; bh=GMX/FHb1NQd5lg5/NpfA0ULYpIijReg7t7hsHu+fouM=; b=P
-	RzaQM5+yNXaGypCnpneCASFBgjYrzkXmPGYBFr8AaDnbyojCg6tvt18W5dbb4LJY
-	wYTOK6bot/ttO93zl45SBmDQ1k560WZYaKEDMsUktXiaP2G6W2lw8z13PwVXHQGT
-	0O+zoVyPzaI1bBWGnAOxqcmaBXKF1yKqsiMvipoXXl/nFCh4/Z6KI0FQbuRFD1kH
-	S6o/to8Yzey+Olg6mt28KJ3HqlRKUtjv9U6N94n5Cz5jyX8IMJ4Adb0GHNHqOr43
-	+CSW8HfbKG/XhK+M9Mqe2ysZlDPHVWwvYohTnBrXRpyVwPRHsGnoNuIqqovx0tt+
-	K+4hVKBMyh8moJTR9QuPw==
-X-ME-Sender: <xms:OXTYZq4p12hdvbKMhytFVAkAWVkaZ-3pDuze04UleHAP6U-sPfIaxA>
-    <xme:OXTYZj4vbYuz9g7x3ukxtnTvqqwzVuhxSsmZ7lku3BkeCriAW5YZfsuqtDqrJjZ7n
-    b9idb6uLQf308k97kY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedgkeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghp
-    thhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtph
-    htthhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdp
-    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnph
-    highhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgu
-    mhhishdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:OXTYZpcpd744LuEDKHGk0abtZSOZK17OJzsvZKCLGcNddTrdq5AFYw>
-    <xmx:OnTYZnLLMbam6f8AEIcQNBoDHWuPpL-NXZxWSrdukyVqRGvUK4WHSQ>
-    <xmx:OnTYZuLPV_Vu4_l2eLKyoTljsr5RjzWmpH-CJCKYHpzrAVZwBuUW0Q>
-    <xmx:OnTYZowrZ3zP8_NQwz6P2slz9eBbSJPRTeMDUG6ZS_GLk1OrFCGiNw>
-    <xmx:OnTYZi9oYTCa-t8HSSSwXFRu_qt3ZdCI77aJ8vx8moNPqqLSy6X-B-9L>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CA8302220083; Wed,  4 Sep 2024 10:52:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725461566; c=relaxed/simple;
+	bh=voyOYZWjEblOB0Gzb74raxPK2rOaJWiesmUXjO3gSkg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=RLhl5t+LAn7JqKHD+dCjnKbvXor5L/6n+Xj/PEgZGGoU+lISiFLxhJP8s2kFDnpJJIj7NcKKx//ZPjL14ElcWamV3008qcNJd07UYrLEtpPWPv612uSeSSZLC1Nby6C1Cvzfl20Qs2Oz8mhzVMwfXWC9qp8gLnQny55/rjFWGHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uueR4Mz1; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36830a54b34so180244f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725461563; x=1726066363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MbOpSXNYVcQhcvwtIzrMQlGRTGRRC7rPZsCeaAArmmk=;
+        b=uueR4Mz1EAuhchCywMREh9ObqwL84wQka+M91Dz+Z5l77L27X0MhrvHRwzoMleXUHf
+         ESRleDBaHs2pdZXXT1v5twGoNq2d7bJp91kAyFGMdu6udaoY/sz4zxISHYHwvL1E1sWU
+         SQRYXP2IpU+Z4jbKn5swCUBxNZkvwzG9s9sNipeARsf/i3LiDKBXYj0i5cp7DRWwlREw
+         5UITDOxuiSvrAfdj3vLAxQMondxH/Lgu8jM4urGcHkRamcvHRqc/xHc0sq2JCaD121HA
+         cqlEK1PmuJDE4h6ouDg4Ke45lziZCfDArPxWXT2vBUAiFkzLsLWA/ySDvWIwYremnnn0
+         JbMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725461563; x=1726066363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MbOpSXNYVcQhcvwtIzrMQlGRTGRRC7rPZsCeaAArmmk=;
+        b=T9PssrEwe2vppGjeoqFydBsL054U2Buw63/TZC+iH06+/1CEbHBejwyRXmA0YoLgUq
+         w8lz9GLSlEFpTefQir8pU/XGzhYXM1RoJxeHEhRwzR3Tx8V8kCUI2H0S9FJxx/LREsSr
+         uEfzO2yu+5U1NXFsImzZ5FknD1TGEN5IPfJu/KVZEcwgLLFt+UU+iMI2R1jsua00fyke
+         5+hENzJY9BUA82fVhZou3UZd6UiPDHvMNty4PqPDNFXkHVLyuUW0XSCub7Q1aaGr2xzt
+         qK3EOy1C3PXqu51vPb7l2Iv4Rf7uyL9skl/q2r0x0dnUdx8jcWiv03DjTQm5SckPWBS4
+         hmVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKkz4Gyg+oXoP7zi4SQFm7SwACcLxsC+8913IA5n6OBEl1uukn0IoZwRvKsj2Icv6mM0nK803eMTg+xY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHrNa7Z4nVzeDWYrGQERJ0A3fMXPDIMKOHWwl34elAbEMNZJNY
+	QIYk0C4y0GoSCcqZ0nEkSacMblktxnPr3r2vfeWEzvB1RzeO64bH6u3DMnqFJRvdo8e0NeXUvGe
+	J
+X-Google-Smtp-Source: AGHT+IFigIDgeK0AYS1NHvcazhvwSBWTvpXPKjRSJmmszC2cebhtjsf44CObPbChB6ovhvnuWTp5LA==
+X-Received: by 2002:a5d:64c8:0:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-374c800df1amr4487507f8f.1.1725461562709;
+        Wed, 04 Sep 2024 07:52:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c03595fcsm11963357f8f.98.2024.09.04.07.52.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:52:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soundwire: stream: Revert "soundwire: stream: fix programming slave ports for non-continous port maps"
+Date: Wed,  4 Sep 2024 16:52:28 +0200
+Message-ID: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Sep 2024 14:52:21 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
-Message-Id: <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
-In-Reply-To: <20240903151437.1002990-4-vincenzo.frascino@arm.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-4-vincenzo.frascino@arm.com>
-Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024, at 15:14, Vincenzo Frascino wrote:
+This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
+breaks codecs using non-continuous masks in source and sink ports.  The
+commit missed the point that port numbers are not used as indices for
+iterating over prop.sink_ports or prop.source_ports.
 
-> diff --git a/arch/x86/include/asm/vdso/page.h b/arch/x86/include/asm/vdso/page.h
-> new file mode 100644
-> index 000000000000..b0af8fbef27c
-> --- /dev/null
-> +++ b/arch/x86/include/asm/vdso/page.h
-> @@ -0,0 +1,15 @@
-> +
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_VDSO_PAGE_H
-> +#define __ASM_VDSO_PAGE_H
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <asm/page_types.h>
-> +
-> +#define VDSO_PAGE_MASK	PAGE_MASK
-> +#define VDSO_PAGE_SIZE	PAGE_SIZE
-> +
-> +#endif /* !__ASSEMBLY__ */
-> +
-> +#endif /* __ASM_VDSO_PAGE_H */
+Soundwire core and existing codecs expect that the array passed as
+prop.sink_ports and prop.source_ports is continuous.  The port mask still
+might be non-continuous, but that's unrelated.
 
-I don't get this one: the x86 asm/page_types.h still includes other
-headers outside of the vdso namespace, but you seem to only need these
-two definitions that are the same across everything.
+Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Why not put PAGE_MASK and PAGE_SIZE into a global vdso/page.h
-header? I did spend a lot of time a few months ago ensuring that
-we can have a single definition for all architectures based on
-CONFIG_PAGE_SHIFT, so all the extra copies should just go away.
+---
 
-       Arnd
+I will need to fix my codec drivers, but that's independent.
+---
+ drivers/soundwire/stream.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index f275143d7b18..7aa4900dcf31 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
+ 					    unsigned int port_num)
+ {
+ 	struct sdw_dpn_prop *dpn_prop;
+-	unsigned long mask;
++	u8 num_ports;
+ 	int i;
+ 
+ 	if (direction == SDW_DATA_DIR_TX) {
+-		mask = slave->prop.source_ports;
++		num_ports = hweight32(slave->prop.source_ports);
+ 		dpn_prop = slave->prop.src_dpn_prop;
+ 	} else {
+-		mask = slave->prop.sink_ports;
++		num_ports = hweight32(slave->prop.sink_ports);
+ 		dpn_prop = slave->prop.sink_dpn_prop;
+ 	}
+ 
+-	for_each_set_bit(i, &mask, 32) {
++	for (i = 0; i < num_ports; i++) {
+ 		if (dpn_prop[i].num == port_num)
+ 			return &dpn_prop[i];
+ 	}
+-- 
+2.43.0
+
 
