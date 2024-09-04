@@ -1,197 +1,134 @@
-Return-Path: <linux-kernel+bounces-315779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B6496C6D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:53:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A73596C6D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE091C22548
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7CFA1F22E98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9561E202C;
-	Wed,  4 Sep 2024 18:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B51E201B;
+	Wed,  4 Sep 2024 18:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFNULMYb"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="I1V7lquB"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AC25E093;
-	Wed,  4 Sep 2024 18:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10B71CCB5C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476018; cv=none; b=bWbhVrc1Rx76jCp8ZKY816pTrkEBZzwRJLWa7t4HGWqZMDhF8v+AJZieEDuVHtRatLHNmF2p9OdeaYnnYUE3DX5X0kV59erijN4vlNwyo/Ps4dPZxXP1Rx0qwDqV0pbEsP+LH4fM5/kJHU8VaGsbopBDHD72ZWBMAekeAm3JLZQ=
+	t=1725476032; cv=none; b=gjA3LBnOFRwtSJyFDU2Bv+SKgXZZGvjNgWtbkOnpLimexDChyGW3U21CXYAoamF39rm88Jg1Gk78fhc26uKvZQlotCFPhLKGPRF7c1CTpz/V1ak0qvMqN5rG8qdOU68S+BR28O3KEoeutPDufFw7B6WUTn0JSPAZX5dtfiNFxvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476018; c=relaxed/simple;
-	bh=RJrRVEzXJI+a2hn4R12i9beqrn2sI0QMEqHi0DdYtuw=;
+	s=arc-20240116; t=1725476032; c=relaxed/simple;
+	bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuexJcdpjFxwpl2oOaCkgVodcOySpuKU8O/gj0qb7uJIkud/ANHudeV0a3pd5MK846VKR6UvLxy5IwJ3ZhVaDPLsgRnOA9sr+G5gYLs2R8aJ/+uvfrNP/2oH+NpBAKClTkbaesDu93a8vo+zo1O1ucu5ie1j+ffHIx9qYxMvxEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFNULMYb; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7141e20e31cso5663535b3a.3;
-        Wed, 04 Sep 2024 11:53:37 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=avkeqYgUuil8qISf3j4fTUQhp5pZhfyIgGDhDWXVmEhUumctocU3iFr6zPGtyMWIHFwIDr1PraSnq3qa4t3Nmz5TP4sZS72HQBh4Lhn70SF4hooXzNMQmMIjkvaZQm/DoWJ2VOiIgRnNbPENjhFzoAgxoWCTsatpiiFyf9aQ5bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=I1V7lquB; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7c6aee8e8daso4958353a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725476017; x=1726080817; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725476030; x=1726080830; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/gJPDkA5vMIX2hQfZSOSL3Y4ECKZQBcfE6QNlOXBXO4=;
-        b=VFNULMYbt9O9cT7CNk7cxJGMKmGMScxuPL0C4YETmR2JbfPvIowVanBtWmsPQlY3It
-         ewcA7j3jZkaF1C+svRWd7XWM1dX+jVEK986a3lJjohpn4jWyMB4yo7J8MI5JSVPF2g4M
-         EX/BEE5OPwlQ3DD3cOvGKKdQSBxmfhxvSNfj9hcysV2+sMb3tIGyRlO5zR6GxgNQhmyj
-         8XrhHCVmHQmwKM5GkOTG3leycwYM5FsNYq5frPpteBXYYjVcJVsCsRYTVbVQ95yFuAZI
-         9mB6DJvAS1r2QPhQoXvVNUll3cJj5zowihyL3gal5uL4e+4+Dl+ydc/FZAJ+J4VjnXAe
-         WE4g==
+        bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
+        b=I1V7lquBIV1tuMbzWo1Rmr78uwgd64Cz90/LN5ociO6ZEW/Wqw8V1kSNDjHwc1SQrl
+         gBaI66alz16WK+pvTbrtual3WbJtpGuczxNRYdc1gLcuOrMZ4usss1N5f7NdK8JHnD2p
+         F0XUwhgMpxkeLvZRW8Uzgt0KvOaFvkDxTAi68bTiJhkqBH+yK8paVuDHYd72QvNHI6kY
+         nwO80rF+Oxe0S7e2FzsxLeUgvXejLVpZZJVNZGqiQ+eQ9RCbCRxo2YOrTrYuADPwYNeo
+         UMBDEP1bCuHsTMQKOvPWkizZfCYV9cQhfOEuy7O2CfqqeC+9S4/t4PFaZ6WN6eBloGGM
+         W2FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725476017; x=1726080817;
+        d=1e100.net; s=20230601; t=1725476030; x=1726080830;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/gJPDkA5vMIX2hQfZSOSL3Y4ECKZQBcfE6QNlOXBXO4=;
-        b=i/li5/jUPiTbyxTzRVQzZHnf06GZtKVGECwgLg4COkmZySO/V47hTte+Ww3/JoEqS7
-         C7nG5Sbsl1VuxqQJmxW7JmPgWmWOLSs4EUx2jIBIOojkWpT2a+caH+RwYM5zkUVsEqbu
-         88smQlYWoumYQ+z/7K6erlgt0pmIxTbM7WCLoSlCPycSF0mI92gd8eSRdKiE6QLsoixh
-         tOobCc7HeovpeTF4noB1fCM1xaVtybt1QR6lymF46cVxBLYSaCpskkaXPBhroB6753dz
-         KVCpDoc2u9i7i4k8O1Z4hIoG41vyxVf+NAZo3i6+sBZsMk/YzNdUSF4xmSvSm+gFyHGL
-         FRQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhyTzJW65sS9MtLpSOq1yN84HOu8w1InXKWhBmXKbEJNWEqavxJQrIuQf49A9an/m6Od7Ld8CiWdmmKUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhwRj1Ikyka+mLUP3JemJMORrmM2duQNzTt2Atd+FQbHj9fz6U
-	74OA34HyuxMatWxsBVxl1OD2/SjkJ6A2ueTKbO0tUL9TEB+oUI0cXrP+sQ==
-X-Google-Smtp-Source: AGHT+IH17PXzrEmXUfH2jzHD3x2FT83SYKbBTkBMHlhF1erEIvc8Us0jX1lbIScsjNmYd5/fEQoGVw==
-X-Received: by 2002:a05:6a00:1143:b0:714:200a:627e with SMTP id d2e1a72fcca58-7173cfbe0bfmr16924195b3a.19.1725476016422;
-        Wed, 04 Sep 2024 11:53:36 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178b5660adsm106378b3a.89.2024.09.04.11.53.35
+        bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
+        b=bnBRFv3DxuZWqFudqTPf8SpEMyMTiNsHftOgr6eiQuBxtLT4KxwsZ1Q3O8BCvinvog
+         UCl204L2GDhiyhbiDMNBjM/QHyM2OSFt0hyqEZn5eHlpdbV5mc/As4heRlNA3blUdmKx
+         9P0eLXVcsQjZBR0O55x104DA+76fKvci3BMqZZnZcYXY8iiTuxPeVBuOOel4L+D/9kq9
+         CDKdX5Rqdv1Ne3ICehcn+ndScboVDopJcg+REyUFnKFxzq+jVR/gF/6G942Z4WYXIQWe
+         ILVL7mwSlUvcHug+eB9FNTQ7D5ZLQ6+JIcgKrIm/v1XKEF5g4VRk7aaMjLCrQdr+NSLg
+         aYGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgEyw1HZ2GDZvj+RoSLkjcJ3BZynKHmD6FRzXRmvD8D8c9n20qtWLlVMnu8dF8gmLlBir3tEFzDirXFu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypDNsnixnJI3WGUWErRE0cO2foRaW/mi0OCxqfHfGjsxnYJtuz
+	YCVviPOHUh/9PzIkDnXkJo8OoBOEvudYu4zEdZneTwctvOKwG+yUxOWSG7wVpjc=
+X-Google-Smtp-Source: AGHT+IE2IsoC0LRmiLcI1CkvV1DU3vw4DUJdyqp6MID1n1cX+56uyYB7jBo1wGGq/wkl04oTY4Plng==
+X-Received: by 2002:a05:6a21:318b:b0:1ce:cbcf:aaa9 with SMTP id adf61e73a8af0-1cecdfdea62mr20770394637.36.1725476029832;
+        Wed, 04 Sep 2024 11:53:49 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778522979sm1947597b3a.30.2024.09.04.11.53.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:53:35 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:53:32 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-input@vger.kernel.org,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Ville Syrjala <syrjala@sci.fi>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Andrey Moiseev <o2g.org.ru@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/22] Input: iqs269a - use guard notation when acquiring
- mutex
-Message-ID: <ZtisrIt5MdJhuwD_@google.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044756.1047629-1-dmitry.torokhov@gmail.com>
- <9cc5b106-88dc-4539-b831-3cc6cb3ef860@gmail.com>
- <ZtilRLKICDSXKyEp@google.com>
- <818a1972-2862-460c-89b7-476ac0680db7@gmail.com>
+        Wed, 04 Sep 2024 11:53:49 -0700 (PDT)
+Date: Wed, 4 Sep 2024 11:53:45 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 2/3] mm: Pass vm_flags to generic_get_unmapped_area()
+Message-ID: <ZtisuRySfREHjnN/@debug.ba.rivosinc.com>
+References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
+ <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <818a1972-2862-460c-89b7-476ac0680db7@gmail.com>
+In-Reply-To: <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
 
-On Wed, Sep 04, 2024 at 08:41:30PM +0200, Javier Carrasco wrote:
-> On 04/09/2024 20:21, Dmitry Torokhov wrote:
-> > Hi Javier,
-> > 
-> > On Wed, Sep 04, 2024 at 03:53:40PM +0200, Javier Carrasco wrote:
-> >> On 04/09/2024 06:47, Dmitry Torokhov wrote:
-> >>> Using guard notation makes the code more compact and error handling
-> >>> more robust by ensuring that mutexes are released in all code paths
-> >>> when control leaves critical section.
-> >>>
-> >>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>> ---
-> >>>  drivers/input/misc/iqs269a.c | 46 +++++++++++++-----------------------
-> >>>  1 file changed, 16 insertions(+), 30 deletions(-)
-> >>>
-> >>> diff --git a/drivers/input/misc/iqs269a.c b/drivers/input/misc/iqs269a.c
-> >>> index 843f8a3f3410..c34d847fa4af 100644
-> >>> --- a/drivers/input/misc/iqs269a.c
-> >>> +++ b/drivers/input/misc/iqs269a.c
-> >>
-> >> ...
-> >>
-> >>> @@ -453,9 +449,9 @@ static int iqs269_ati_base_get(struct iqs269_private *iqs269,
-> >>>  	if (ch_num >= IQS269_NUM_CH)
-> >>>  		return -EINVAL;
-> >>>  
-> >>> -	mutex_lock(&iqs269->lock);
-> >>> +	guard(mutex)(&iqs269->lock);
-> >>> +
-> >>>  	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
-> >>
-> >> maybe scoped_guard() to keep the scope of the mutex as it used to be?
-> > 
-> > Thank you for looking over patches.
-> > 
-> > It is just a few computations extra, so I decided not to use
-> > scoped_guard(). Note that original code was forced to release mutex
-> > early to avoid having to unlock it in all switch branches.
-> > 
-> >>
-> >>> -	mutex_unlock(&iqs269->lock);
-> >>>  
-> >>>  	switch (engine_b & IQS269_CHx_ENG_B_ATI_BASE_MASK) {
-> >>>  	case IQS269_CHx_ENG_B_ATI_BASE_75:
-> >>> @@ -491,7 +487,7 @@ static int iqs269_ati_target_set(struct iqs269_private *iqs269,
-> >>>  	if (target > IQS269_CHx_ENG_B_ATI_TARGET_MAX)
-> >>>  		return -EINVAL;
-> >>>  
-> >>> -	mutex_lock(&iqs269->lock);
-> >>> +	guard(mutex)(&iqs269->lock);
-> >>>  
-> >>>  	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
-> >>>  
-> >>> @@ -501,8 +497,6 @@ static int iqs269_ati_target_set(struct iqs269_private *iqs269,
-> >>>  	ch_reg[ch_num].engine_b = cpu_to_be16(engine_b);
-> >>>  	iqs269->ati_current = false;
-> >>>  
-> >>> -	mutex_unlock(&iqs269->lock);
-> >>> -
-> >>>  	return 0;
-> >>>  }
-> >>>  
-> >>> @@ -515,10 +509,9 @@ static int iqs269_ati_target_get(struct iqs269_private *iqs269,
-> >>>  	if (ch_num >= IQS269_NUM_CH)
-> >>>  		return -EINVAL;
-> >>>  
-> >>> -	mutex_lock(&iqs269->lock);
-> >>> -	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
-> >>> -	mutex_unlock(&iqs269->lock);
-> >>> +	guard(mutex)(&iqs269->lock);
-> >>
-> >> same here?
-> >>
-> >>>  
-> >>> +	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
-> >>>  	*target = (engine_b & IQS269_CHx_ENG_B_ATI_TARGET_MASK) * 32;
-> > 
-> > Same here, calculating the line above will take no time at all...
-> > 
-> > Thanks.
-> > 
-> 
-> As you pointed out, in reality the extra locked instructions will not
-> make any difference. But as the conversion added instructions to be
-> locked by the mutex without mentioning it, I thought it should be either
-> left as it used to be with scoped_guard(), or explicitly mentioned in
-> the description.
-> 
-> No strong feelings against it, but out of curiosity, why would you
-> rather use guard()? I think scoped_guard() is a better way to
-> self-document what has to be accessed via mutex, and what not.
+On Mon, Sep 02, 2024 at 08:08:14PM +0100, Mark Brown wrote:
+>In preparation for using vm_flags to ensure guard pages for shadow stacks
+>supply them as an argument to generic_get_unmapped_area(). The only user
+>outside of the core code is the PowerPC book3s64 implementation which is
+>trivially wrapping the generic implementation in the radix_enabled() case.
+>
+>Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Simply less indentation ;) and in this driver uniformity with for example
-iqs269_ati_target_set() where critical section does indeed extend to the
-whole function.
+Reviewed-by: Deepak Gupta <debug@rivosinc.com>
 
-Not super strong arguments either.
-
--- 
-Dmitry
 
