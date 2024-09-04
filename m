@@ -1,202 +1,124 @@
-Return-Path: <linux-kernel+bounces-314958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CDB96BB89
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:05:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA09796BB87
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188011C22B98
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837671F23151
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024731D6DDE;
-	Wed,  4 Sep 2024 12:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F420A1D67AA;
+	Wed,  4 Sep 2024 12:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e89vgAAo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="On7ShQON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585C51D67B1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D8F84A21;
+	Wed,  4 Sep 2024 12:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451534; cv=none; b=h+hucV58c9SIWLBw1jbIOjFWdGiWi3oWwNqp4v8LCxIJm2ycLi2p7uJNygqTE8+oQa3NY/l0fjOAYGKXFl84WjDNANKYs0DkqCU8yF4gbZPpNjZPhCRzJgi8XS3HBB7xHBI7GMk2gKdG7uNy2EJ7sPmPafC+9YeG+7LSscySRJU=
+	t=1725451512; cv=none; b=qz2A64d7dzcdR55PJjh9WZDua4GfLqTCE2msU4GsPNaXN2+Ok9S7MIpjtSityLfmzCpFjNIo2+QwjT5AqG8JuaAoEzEw69cMz/QEId6PQenobczvIuhsoyeIspPcy+1A+EyJyLKjRP+dMM3L+0VC2syMikyqax+OdpDIfX9S3Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451534; c=relaxed/simple;
-	bh=uMxnbCBq+HbYovLNg/Dum1eEjvxvG1ArFr5Nf8f1zwM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=udaJKqrXqUn5+x2Rkv+jlcOfx7oeMAhg7fgu3udg/s5vEpjzMZbjsoS3WvODWkZuJa7vc5+h1BgNcT2Sk7XdopW0MLzusGl+hyZSi9r8Llj4WB8aXxA3Jn5UKmFU3VJ/g7Uxk98bUwqC3VbZPDnp7I5a7R5v5oj8sUVCekIVXPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e89vgAAo; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725451532; x=1756987532;
-  h=date:from:to:cc:subject:message-id;
-  bh=uMxnbCBq+HbYovLNg/Dum1eEjvxvG1ArFr5Nf8f1zwM=;
-  b=e89vgAAoTGyegKiN0M8i5kcPhhRPtnTRG+y1Aas0DtpdqvyfVeReUF+l
-   G6Ew78EAadEUJ3rQT0RmQ8ZHcZPwzmpLepcAU8k9ut+xZGl4FVwTrGfkI
-   vhHInnqV5MD1crbhW8b/yiw2VIqLWghVQ1oIgvS3soRvHQw94LwxkZxxL
-   8pfZKtslvCBHr9pghMIwlGnshL8uySAstmGP91dafZhfjwev+NQTuR3hx
-   TAXIgThiEc6JOr2d9J0Uct+hyxfDj8+Scfc2U1x8bMu/OwUunxRf4BEvw
-   29AwV/mS+jViYMWC8QvRF4sHV6soQFz81wnewsdjBYCFVvFlhkJPNf48B
-   g==;
-X-CSE-ConnectionGUID: U7fEbyraSSiVOeMDTnGwaQ==
-X-CSE-MsgGUID: sG0az+wDSoKDhC4VWbfb3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41605191"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="41605191"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:05:12 -0700
-X-CSE-ConnectionGUID: B0Nyq5tpRt6Ou19tJ8qukw==
-X-CSE-MsgGUID: yMQIVpKKSH2D7nW1YZ9a5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65589842"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 04 Sep 2024 05:05:11 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slol3-0007xF-1B;
-	Wed, 04 Sep 2024 12:05:09 +0000
-Date: Wed, 04 Sep 2024 20:04:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.08.31a] BUILD SUCCESS
- 01c732e108f6ea51e1660ad6bd59fff36e653ddb
-Message-ID: <202409042024.iSdLaNQm-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725451512; c=relaxed/simple;
+	bh=Ew+Isg/8eV7d4ccQHBgEBJbQqw5N9Qx5hh27gZJqL1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcTbGAlhhwN2mK3fH09CJBh/7+cqfCk6smksKSf7gS5Jw+poHnjW8/Xii77OscXAESTG4GB7LlCPT/UxTD+gKFFeQTGPkvxLUIISJpCCilsrZYcOGAtsS2kPbcQxIhllI69KaeJrM9f3n0eVIYUEfy+VEEMqLfo66qj7lgAXg7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=On7ShQON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05D7C4CEC2;
+	Wed,  4 Sep 2024 12:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725451511;
+	bh=Ew+Isg/8eV7d4ccQHBgEBJbQqw5N9Qx5hh27gZJqL1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=On7ShQONg3QFun4tSzq3jLuojeGW8QbyPLT47x8Gd5tzULqq4AMycrOnh7VY7nJUJ
+	 TvqZNRJh6EeXUHrpvhzlDg1yq/ySSrFZQ56Gy7N66xP+k9esiHI6rC4Iedkgj5tM3y
+	 5L3IRPXRqE5LyJN4+8CWCiaVU0LNxZCE+4ZFjEyKh7yZDlqKWjgHJdcE0Bw/ltyh8Y
+	 4meZ6v++H4gauq8o9ZZ532RazQHHbYs2q4v0lfu/G7uAHCGR2aLe6MwaCHI0XTIHb6
+	 fWb4IptbFM6T+ZLhoKb0t3D1kyB3VHPq1kI+A+Y/y1o4MTfa/a/Yfc1N5gIFA+um+D
+	 7RqLN+A32XPXw==
+Date: Wed, 4 Sep 2024 13:05:06 +0100
+From: Will Deacon <will@kernel.org>
+To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Theodore Ts'o <tytso@mit.edu>,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, ardb@kernel.org
+Subject: Re: [PATCH v5 0/2] arm64: Implement getrandom() in vDSO
+Message-ID: <20240904120504.GB13550@willie-the-truck>
+References: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.31a
-branch HEAD: 01c732e108f6ea51e1660ad6bd59fff36e653ddb  squash! srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
++Ard as he had helpful comments on the previous version.
 
-elapsed time: 1223m
-
-configs tested: 110
-configs skipped: 4
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                        neponset_defconfig   gcc-14.1.0
-arm                         socfpga_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                             alldefconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240904   gcc-12
-i386         buildonly-randconfig-002-20240904   gcc-12
-i386         buildonly-randconfig-003-20240904   gcc-12
-i386         buildonly-randconfig-004-20240904   gcc-12
-i386         buildonly-randconfig-005-20240904   gcc-12
-i386         buildonly-randconfig-006-20240904   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240904   gcc-12
-i386                  randconfig-002-20240904   gcc-12
-i386                  randconfig-004-20240904   gcc-12
-i386                  randconfig-005-20240904   gcc-12
-i386                  randconfig-006-20240904   gcc-12
-i386                  randconfig-011-20240904   gcc-12
-i386                  randconfig-012-20240904   gcc-12
-i386                  randconfig-013-20240904   gcc-12
-i386                  randconfig-014-20240904   gcc-12
-i386                  randconfig-015-20240904   gcc-12
-i386                  randconfig-016-20240904   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                          multi_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                           gcw0_defconfig   gcc-14.1.0
-mips                           ip28_defconfig   gcc-14.1.0
-mips                           jazz_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-openrisc                 simple_smp_defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                     akebono_defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      ep88xc_defconfig   gcc-14.1.0
-powerpc                          g5_defconfig   gcc-14.1.0
-powerpc                    ge_imp3a_defconfig   gcc-14.1.0
-powerpc                 xes_mpc85xx_defconfig   gcc-14.1.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-s390                                defconfig   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                          sdk7786_defconfig   gcc-14.1.0
-sh                           se7724_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc32_defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Tue, Sep 03, 2024 at 12:09:15PM +0000, Adhemerval Zanella wrote:
+> Implement stack-less ChaCha20 and wire it with the generic vDSO
+> getrandom code.  The first patch is Mark's fix to the alternatives
+> system in the vDSO, while the the second is the actual vDSO work.
+> 
+> Changes from v4:
+> - Improve BE handling.
+> 
+> Changes from v3:
+> - Use alternative_has_cap_likely instead of ALTERNATIVE.
+> - Header/include and comment fixups.
+> 
+> Changes from v2:
+> - Refactor Makefile to use same flags for vgettimeofday and
+>   vgetrandom.
+> - Removed rodata usage and fixed BE on vgetrandom-chacha.S.
+> 
+> Changes from v1:
+> - Fixed style issues and typos.
+> - Added fallback for systems without NEON support.
+> - Avoid use of non-volatile vector registers in neon chacha20.
+> - Use c-getrandom-y for vgetrandom.c.
+> - Fixed TIMENS vdso_rnd_data access.
+> 
+> Adhemerval Zanella (1):
+>   arm64: vdso: wire up getrandom() vDSO implementation
+> 
+> Mark Rutland (1):
+>   arm64: alternative: make alternative_has_cap_likely() VDSO compatible
+> 
+>  arch/arm64/Kconfig                          |   1 +
+>  arch/arm64/include/asm/alternative-macros.h |   4 +
+>  arch/arm64/include/asm/mman.h               |   6 +-
+>  arch/arm64/include/asm/vdso.h               |   6 +
+>  arch/arm64/include/asm/vdso/getrandom.h     |  50 ++++++
+>  arch/arm64/include/asm/vdso/vsyscall.h      |  10 ++
+>  arch/arm64/kernel/vdso.c                    |   6 -
+>  arch/arm64/kernel/vdso/Makefile             |  25 ++-
+>  arch/arm64/kernel/vdso/vdso                 |   1 +
+>  arch/arm64/kernel/vdso/vdso.lds.S           |   4 +
+>  arch/arm64/kernel/vdso/vgetrandom-chacha.S  | 172 ++++++++++++++++++++
+>  arch/arm64/kernel/vdso/vgetrandom.c         |  15 ++
+>  tools/arch/arm64/vdso                       |   1 +
+>  tools/include/linux/compiler.h              |   4 +
+>  tools/testing/selftests/vDSO/Makefile       |   3 +-
+>  15 files changed, 292 insertions(+), 16 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
+>  create mode 120000 arch/arm64/kernel/vdso/vdso
+>  create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
+>  create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
+>  create mode 120000 tools/arch/arm64/vdso
+> 
+> -- 
+> 2.43.0
+> 
 
