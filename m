@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-314783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A7096B882
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D3496B885
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7CF1F20626
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2421F219BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958271CF7C0;
-	Wed,  4 Sep 2024 10:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142F81CF7AA;
+	Wed,  4 Sep 2024 10:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lH6DAcOP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UoZXk6U9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lH6DAcOP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UoZXk6U9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApYbdXhc"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0869884A40;
-	Wed,  4 Sep 2024 10:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90E1372;
+	Wed,  4 Sep 2024 10:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445754; cv=none; b=GDjU/bMKWhhLzaKRMSuJYEyxfpD1wD8kbGHkahSgpzrmNnDsXUK8+O2JWwSsOmsL91kEQgKgeCnzWp9DzYe6OaORzkEC9QY6+dC+ZVUh1sYzTveQ5GNiiB0OVMKuCNjP/ds6opfj3POcrNIojRD/qFURZbTLY1BJghfv136AHbw=
+	t=1725445772; cv=none; b=RufJc6N6CHUl5FwTc/wMmoNo7KUTequxjgWqU9aNXMSGtp3FmXbsdRhZI/GGdB3uA2fgjW/u27vUzKK9jppXAIR5m/CR05bugPURvRqaiXyUCGpvOnRWWCzAW3kZvzsr9mRxkk+22lOiMZmmaJAp1N/qRAOI3iPXfP8C/FusFuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445754; c=relaxed/simple;
-	bh=UxVLT41D/DO8Tmt0NUgmBkXwDFhkN43lzVhTOheqQCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foOmIGU/2XQUpuRRdBEiTJRCSVkpaQVfrGaxmUhwHIzPKtZEEyHPxuINX40HQhf1cOe5P7nJ8ueZJXQf3uOl+MkYHm2AhGsukI+iMH+aTQM73pEp2Axo++SQ1cGFDHgsXHxY0sE+wel8kKkWzBNw2Lg1km3KMzSY+NfdGt+Euek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lH6DAcOP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UoZXk6U9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lH6DAcOP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UoZXk6U9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 63DE6219E7;
-	Wed,  4 Sep 2024 10:29:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7xhHVm+kdMC0oAYtRNcHPjyGbTsP+Y7XDoyhfNSttUY=;
-	b=lH6DAcOPglDdnmDGaGkooj+UE+lmw+NHnqAKy4nGoDGGAWW6P5TxpQxAM4X8lQT6qA0UXB
-	CXFoOglBdr3ELsHYtJcJ3bginDZv9MsMihslrJ/FUVtWtZCiCZ20M/quOhmJO02hFDS36Q
-	wte+7nHFiY1qAPo5a0hmw29rlT++zOQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445751;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7xhHVm+kdMC0oAYtRNcHPjyGbTsP+Y7XDoyhfNSttUY=;
-	b=UoZXk6U9VmiF0cI+gcC90wwBE4xHThfowUk5HG/MxBeyEJpEmP6yeWLm7J57DcWSbB97E5
-	1qRHkjlRoSULUmDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725445751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7xhHVm+kdMC0oAYtRNcHPjyGbTsP+Y7XDoyhfNSttUY=;
-	b=lH6DAcOPglDdnmDGaGkooj+UE+lmw+NHnqAKy4nGoDGGAWW6P5TxpQxAM4X8lQT6qA0UXB
-	CXFoOglBdr3ELsHYtJcJ3bginDZv9MsMihslrJ/FUVtWtZCiCZ20M/quOhmJO02hFDS36Q
-	wte+7nHFiY1qAPo5a0hmw29rlT++zOQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725445751;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7xhHVm+kdMC0oAYtRNcHPjyGbTsP+Y7XDoyhfNSttUY=;
-	b=UoZXk6U9VmiF0cI+gcC90wwBE4xHThfowUk5HG/MxBeyEJpEmP6yeWLm7J57DcWSbB97E5
-	1qRHkjlRoSULUmDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 57E24139D2;
-	Wed,  4 Sep 2024 10:29:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gg9yFXc22GaHKQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:29:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0FCB0A0968; Wed,  4 Sep 2024 12:28:56 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:28:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 11/12] ext4: drop ext4_es_is_delonly()
-Message-ID: <20240904102856.c3t57ftmjtz4h3w7@quack3>
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
- <20240813123452.2824659-12-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1725445772; c=relaxed/simple;
+	bh=WESWS6SFM3t62aROJYgTyzZWIaghXHWlfb72zgAZ7aM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3UuD9gEVwcKVw1GY+L3/+p/ghZ/fwU5TpmI+6ApC9p7HU9ljF/s0yuPmD1LYAG+BqJldjwwkgPPyxVjimiJ7sxkG/MzkgomhNPk/oZwGFEndcOvH9Ma76Y8aylXcnOPH7nPrwPs4qWaKgkNuIZ48nTsoXi9oSgxvH/q2v7tpNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ApYbdXhc; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533de5a88f8so6559801e87.3;
+        Wed, 04 Sep 2024 03:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725445769; x=1726050569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/Tmvx+WxBWtbnthaV/pa6veShIONRZAzv3Z9JQuzD8=;
+        b=ApYbdXhc1jZf91vwfhl3ppyBlpSLhA1pC4CwcSXx6tfPMvcsIgWdVpk4+TB/UDsm0d
+         Ud1RBaaZWS/dy+DssAJBsyKqHG4JJfWp9Orn/GQLVaCvKrUTW93rFts5TyJOXqi4Qeja
+         VIWKB1yguVtZrf+QZxQgA/ILzH/SmojENcSW6giM+DiWYNjnzFyM7BZ/FyiUToHUEnDk
+         TIszBZqFgUH4QhW21vUfZdv2fhx99mEwVPvE1M8YSvEk1VH5YR6pJk1R5+SmfVxR+Ozj
+         3TiPnkXf6n8khn2VlX2/9E+bu+neuKGV5tBZhW3sOfwY/rbdaOX0mAHCazDZ2b4hgRcd
+         I9hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725445769; x=1726050569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/Tmvx+WxBWtbnthaV/pa6veShIONRZAzv3Z9JQuzD8=;
+        b=gNQti7/J0NkZDpUmzuIdKqOUClaEV5v0fAskAOomVe82iVOxfWhu7rt2tiZdv9osfR
+         XFScZyNrBGgknyKGoFinAuXde4lq+fmRQ4Xze2Q5DFTZAQy83q6GBvfuK6UFgyA6NYwZ
+         +eU/OVevYaJ2UaPh27ATZCQuz3J2E0qOZp8JwJp/+DgDHrrPazC/hUUj/SZejF3LdMJq
+         FA61M+F7RqaeRHOGslAPpblJj1blCf0dSsXrvONRyDlld5mrJVAJupzX1Kg8tCH5/5X/
+         L0b1gBwc2jCJZJethIwg7RkeDlh735NOAIa5Jrc0UBr1OrYQy5tzeAHWpBMwfL2VW951
+         2wFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkyW1xpt0y/mtme8nM3AHaUopPiWt3YjR/pRbhcNNkyxN+2H+T25x5xTCovjn6xHdklSaTlL07SFcoHi+t@vger.kernel.org, AJvYcCW1m2CfC3FqNpsIg2YebPESTp3EKlo7G1qzrYe2pY9fZzKPjGFSisZbCVJyT9kPy0EoT9sNhe8uNiBG@vger.kernel.org, AJvYcCWIPhSqMG7LNlb/fakTO7f6goDAdD9IDXQuLCukdbbGWCQgiksljA3QIG/O1Y5tHuaa5/qKvRC2KegE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQwTHSifOhejiDVSQBQ2YT32/4IQEkrLECELTE1M5oENq9qCdK
+	aSw6vQWQ0JQxvwzkKZcVKbiEq8EWmlb94dPjJos4VBMOgLDHQI0a
+X-Google-Smtp-Source: AGHT+IHN4NICXwhoNEGwHHFHDZb1kvJDi9A42mZMIDtarOvCZTzHjFVzZokkRcwYynH5aZMHGvgdIA==
+X-Received: by 2002:a05:6512:1088:b0:533:482f:afbe with SMTP id 2adb3069b0e04-53546b23dfemr12010523e87.24.1725445767884;
+        Wed, 04 Sep 2024 03:29:27 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:2f85:317:e13:c18])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891dbf2csm778958466b.186.2024.09.04.03.29.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:29:27 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 4 Sep 2024 12:29:25 +0200
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v5 7/7] iio: pressure: bmp280: Move bmp085 interrupt to
+ new configuration
+Message-ID: <20240904102925.GC44250@vamoiridPC>
+References: <20240902184222.24874-1-vassilisamir@gmail.com>
+ <20240902184222.24874-8-vassilisamir@gmail.com>
+ <Ztcfs3Pvy9tzIFNm@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,176 +91,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813123452.2824659-12-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+In-Reply-To: <Ztcfs3Pvy9tzIFNm@smile.fi.intel.com>
 
-On Tue 13-08-24 20:34:51, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Sep 03, 2024 at 05:39:47PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 02, 2024 at 08:42:22PM +0200, Vasileios Amoiridis wrote:
+> > This commit intends to add the old BMP085 sensor to the new IRQ interface
+> > of the driver for consistence. No functional changes intended.
+> > 
+> > The BMP085 sensor is equivalent with the BMP180 with the only difference of
+> > BMP085 having an extra interrupt pin to inform about an End of Conversion.
 > 
-> Since we don't add delayed flag in unwritten extents, so there is no
-> difference between ext4_es_is_delayed() and ext4_es_is_delonly(),
-> just drop ext4_es_is_delonly().
+> This one also LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Looks good. Feel free to add:
+Thanks a lot for this!
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents_status.c | 18 +++++++++---------
->  fs/ext4/extents_status.h |  5 -----
->  fs/ext4/inode.c          |  4 ++--
->  3 files changed, 11 insertions(+), 16 deletions(-)
+> ...
 > 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index b372b98af366..68c47ecc01a5 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -558,8 +558,8 @@ static int ext4_es_can_be_merged(struct extent_status *es1,
->  	if (ext4_es_is_hole(es1))
->  		return 1;
->  
-> -	/* we need to check delayed extent is without unwritten status */
-> -	if (ext4_es_is_delayed(es1) && !ext4_es_is_unwritten(es1))
-> +	/* we need to check delayed extent */
-> +	if (ext4_es_is_delayed(es1))
->  		return 1;
->  
->  	return 0;
-> @@ -1135,7 +1135,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	ext4_lblk_t i, end, nclu;
->  
-> -	if (!ext4_es_is_delonly(es))
-> +	if (!ext4_es_is_delayed(es))
->  		return;
->  
->  	WARN_ON(len <= 0);
-> @@ -1285,7 +1285,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  		es = rc->left_es;
->  		while (es && ext4_es_end(es) >=
->  		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
-> -			if (ext4_es_is_delonly(es)) {
-> +			if (ext4_es_is_delayed(es)) {
->  				rc->ndelonly--;
->  				left_delonly = true;
->  				break;
-> @@ -1305,7 +1305,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  			}
->  			while (es && es->es_lblk <=
->  			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
-> -				if (ext4_es_is_delonly(es)) {
-> +				if (ext4_es_is_delayed(es)) {
->  					rc->ndelonly--;
->  					right_delonly = true;
->  					break;
-> @@ -2226,7 +2226,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  	if (EXT4_B2C(sbi, lblk) == EXT4_B2C(sbi, end)) {
->  		first = EXT4_LBLK_CMASK(sbi, lblk);
->  		if (first != lblk)
-> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						first, lblk - 1);
->  		if (f_del) {
->  			ret = __insert_pending(inode, first, prealloc);
-> @@ -2238,7 +2238,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			       sbi->s_cluster_ratio - 1;
->  			if (last != end)
->  				l_del = __es_scan_range(inode,
-> -							&ext4_es_is_delonly,
-> +							&ext4_es_is_delayed,
->  							end + 1, last);
->  			if (l_del) {
->  				ret = __insert_pending(inode, last, prealloc);
-> @@ -2251,7 +2251,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  	} else {
->  		first = EXT4_LBLK_CMASK(sbi, lblk);
->  		if (first != lblk)
-> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						first, lblk - 1);
->  		if (f_del) {
->  			ret = __insert_pending(inode, first, prealloc);
-> @@ -2263,7 +2263,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  
->  		last = EXT4_LBLK_CMASK(sbi, end) + sbi->s_cluster_ratio - 1;
->  		if (last != end)
-> -			l_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			l_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						end + 1, last);
->  		if (l_del) {
->  			ret = __insert_pending(inode, last, prealloc);
-> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-> index 7d7af642f7b2..4424232de298 100644
-> --- a/fs/ext4/extents_status.h
-> +++ b/fs/ext4/extents_status.h
-> @@ -190,11 +190,6 @@ static inline int ext4_es_is_mapped(struct extent_status *es)
->  	return (ext4_es_is_written(es) || ext4_es_is_unwritten(es));
->  }
->  
-> -static inline int ext4_es_is_delonly(struct extent_status *es)
-> -{
-> -	return (ext4_es_is_delayed(es) && !ext4_es_is_unwritten(es));
-> -}
-> -
->  static inline void ext4_es_set_referenced(struct extent_status *es)
->  {
->  	es->es_pblk |= ((ext4_fsblk_t)EXTENT_STATUS_REFERENCED) << ES_SHIFT;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 2fa13e9e78bc..bdf466d5a8d4 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1645,7 +1645,7 @@ static int ext4_clu_alloc_state(struct inode *inode, ext4_lblk_t lblk)
->  	int ret;
->  
->  	/* Has delalloc reservation? */
-> -	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
-> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delayed, lblk))
->  		return 1;
->  
->  	/* Already been allocated? */
-> @@ -1766,7 +1766,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
->  		 * Delayed extent could be allocated by fallocate.
->  		 * So we need to check it.
->  		 */
-> -		if (ext4_es_is_delonly(&es)) {
-> +		if (ext4_es_is_delayed(&es)) {
->  			map->m_flags |= EXT4_MAP_DELAYED;
->  			return 0;
->  		}
+> > -	int ret;
+> > +	int ret, irq;
+> 
+> I'm not fan of such a churn, meaning a new variable just on the new line to
+> make diff less noisy, but it's not a big deal at all.
+> 
+
+I understand why, but at some point someone else would have come and make
+a new commit probably with "organise/cleanup variable assignments"...
+
 > -- 
-> 2.39.2
+> With Best Regards,
+> Andy Shevchenko
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+
+Cheers,
+Vasilis
 
