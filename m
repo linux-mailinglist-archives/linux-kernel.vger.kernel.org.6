@@ -1,146 +1,119 @@
-Return-Path: <linux-kernel+bounces-314813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E5996B966
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4B796B96C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242CE282962
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:56:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9162834DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4951D048F;
-	Wed,  4 Sep 2024 10:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826551D1722;
+	Wed,  4 Sep 2024 10:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yU3R7Tst"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBk2v8Q8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEA91D0147
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94F01D0DE9;
+	Wed,  4 Sep 2024 10:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725447341; cv=none; b=Zxl3pYzTydd0gZKT5bIx4amtQKpHyLxPtzUUkrhkxQdd+Tjhg44rm0MfkL7ISIDsB6+Bnwycb1cp9QRuemq63MvYSLqm7KGWx0V4yzGmrlKcPNeWS/1GOmSj3eASfyYyqEaMn5oEi471R46t01F3hSVPWkgX5V6hRU5953U5w+0=
+	t=1725447350; cv=none; b=c0Et0CA/DYONDpPHbh9UQr1E3YOflrnl4szJbHV9SQtfcrHd88312bDn8b9W+oCJTDXiIO5uJA/cSZLmbHH4ObB5kud+xNv3QRcvH11O2WmGs/7eHyVyeov8ZXovCNEIIN0aol97Ml0wr1bAPkby56BwmCuNxUlgiQZGK/0T/O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725447341; c=relaxed/simple;
-	bh=cOKW7NUKZZI6Wp4SVULd/68D6NarWm5qu7B4EWb1yQ0=;
+	s=arc-20240116; t=1725447350; c=relaxed/simple;
+	bh=bVbwBNlUCn1Mozs48iwcFEpHsGMsbP0mnm+mcKhC+E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1CDXha4Ss1+u+YX7GvtJdKUWZZ271Togs3VFtK83J9l6FzM1vF0gzRTc0Xv9WJI8mmjvcoNHbWZi4DSi2Ih7BisaHzFeau2Ince+9u1EvZukMwiVCMiZHzCOSZhF5lun1gODKZ4hfSVb69pGGO0wLPcm0zE4Rk+HnbucU0ccac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yU3R7Tst; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f50966c469so73481141fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725447338; x=1726052138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+7OAyLujGbFYszTADm1Fbnglj5tVVPCg8cnH8d6UNw=;
-        b=yU3R7TstScONgqbu0F9jaQG+Pp1iizzmQ4b/9+4XQi+EQ+/n33Kuk0tdjtBzeBl8Ih
-         ky2HWUkw1g/cqlsL1KgTxb4Wzut20NCZT+hXtIIeW3yUFVLS7Da4DqTM4KfE8k2/4nwH
-         ZsKZ4PHwf0hBRk+XegCVyBhd7LTTYGEFM9PxLSQDATy+kuLekYAXqJHq69k1zMk/QVGO
-         cMJkfw2Nnb+M8ge1dcW4UsLSB1E7Tv2xxjGJ3JxfTYCCCKWgI4tpS3FbwnUzJ5oaMRmK
-         kcc9b+Zfkv+xZ+ScnEnSHUGa6RGpek/QqCrErjOo8IM4zEUEbfKxMi0gTl07DS7XQA9L
-         BmAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725447338; x=1726052138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1+7OAyLujGbFYszTADm1Fbnglj5tVVPCg8cnH8d6UNw=;
-        b=JmR3/mm92xXcjPkQzTL1klZQX97D782nvJPkWT+BKEgluQluVw6nfeG2N+o3GKEhYU
-         UQip2tnnLKqJZgkiEyOJabcTdxPhs4WLyepjkNacuBtINVqOGS4vKsF9IdkdY4Pvqfhv
-         rFI/BSplk6yFIi5giqlub4uDqbzUNxibDV/v2NKk8OgfGZD6ADAHUxNZLTpsOL5vU8dh
-         ut3JENbQNJFgT8I/cm8LV/BfMqaewgH2JtPHUNymSKXTaU2pBy++xykUQhWRXkYQD4kM
-         TUf9sZmcQqqUo4prmiohdn5wn6pz6W9WgFZWt7jYtG6UTZIK+wDgQWHdTbBsiIaciEUC
-         JoYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNEscg9POBzkJ2R5sz2+0BzW9XnAM/sFDM0wlWcsR69yvPoXan0WZg3LWELIRI/9N7AytUWOzIQX10o/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVSdEhh690RWVGgWGz3hTnJi7dNZoZs3D5mS+bCdNGd3nrAaIn
-	JxwFX3PM4tJvkYhkM/p4ZlR35Bbc1ke/47Jq0wS+qUdtmfQbc6SiV6xmP1dtEVo=
-X-Google-Smtp-Source: AGHT+IFE66IwvXATV2zxxNEOIEdbkl9lbKAFhzct/n7RvYANLBHuO6JOsOi5ySMCjoe65faREHS88Q==
-X-Received: by 2002:a05:651c:220a:b0:2f0:20cd:35fc with SMTP id 38308e7fff4ca-2f62902e264mr101506221fa.7.1725447336786;
-        Wed, 04 Sep 2024 03:55:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f6151881dcsm25498841fa.124.2024.09.04.03.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 03:55:36 -0700 (PDT)
-Date: Wed, 4 Sep 2024 13:55:34 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
-	Xin Liu <quic_liuxin@quicinc.com>
-Subject: Re: [PATCH 03/19] dt-bindings: phy: Add QMP UFS PHY comptible for
- QCS8300
-Message-ID: <e7qsuk3xoqgywubrkejoy3dztae2comlfn3mu6t226mvfvpfof@mlnj5s2xcsjf>
-References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
- <20240904-qcs8300_initial_dtsi-v1-3-d0ea9afdc007@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxYI4eskS5b5LvzRiwQtRfR1a4yL7/WIuhNAVcjnIRROCHB01vGYsQIXfdlHICY3e3pSwDJwNrFphy8V4DPZzI8JnOsqYmVss5I0ZyFFLaHAeDndNO6/tRMSYo2hlJnTt1EExlvkNPh864pSK2lehrITWj1+Vs9plsj/r3orw1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBk2v8Q8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BBE2C4CEC2;
+	Wed,  4 Sep 2024 10:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725447350;
+	bh=bVbwBNlUCn1Mozs48iwcFEpHsGMsbP0mnm+mcKhC+E0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lBk2v8Q847hEM6DY5AhBghHFHzPzZDYp4wSwGZ5s7HAnte1JoQkoQLPI2KVCFUd3L
+	 ICAH0DSlRHjutsgVEH4IFqVbBngiGpUai/7ZXUSFKNw59ejx+1SzDHdXPfSiHvtGvU
+	 K1WOoNfcXix5H+qz2o4ClVNyMMFyEnci05Ri4yVmJIGd1mbN7jAYJ9w28x+9df+m8W
+	 io0TFXM6n8dEe17yuwRZ9zbMY++BiFM4Vg75UHhQnk62QEIsJrLupdkjMnXCWvNoH6
+	 hxmO5r4vmMrzyLJPFRw++NQabx1DBxGvyHcZidKsFdsIRmOVuXIGwLK43W/lL5Wq6a
+	 gEQaf/W8HEqqg==
+Date: Wed, 4 Sep 2024 11:55:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
+	thevlad@meta.com, max@kutsevol.com
+Subject: Re: [PATCH net-next 2/9] net: netconsole: split send_ext_msg_udp()
+ function
+Message-ID: <20240904105545.GO4792@kernel.org>
+References: <20240903140757.2802765-1-leitao@debian.org>
+ <20240903140757.2802765-3-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-3-d0ea9afdc007@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903140757.2802765-3-leitao@debian.org>
 
-On Wed, Sep 04, 2024 at 04:33:44PM GMT, Jingyi Wang wrote:
-> From: Xin Liu <quic_liuxin@quicinc.com>
+On Tue, Sep 03, 2024 at 07:07:45AM -0700, Breno Leitao wrote:
+> The send_ext_msg_udp() function has become quite large, currently
+> spanning 102 lines. Its complexity, along with extensive pointer and
+> offset manipulation, makes it difficult to read and error-prone.
 > 
-> Document the QMP UFS PHY compatible for QCS8300 to support physical
-> layer functionality for USB found on the SoC.
+> The function has evolved over time, and it’s now due for a refactor.
+> 
+> To improve readability and maintainability, isolate the case where no
+> message fragmentation occurs into a separate function, into a new
+> send_msg_no_fragmentation() function. This scenario covers about 95% of
+> the messages.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-So this is talking about USB, but the patch changes UFS. Please adjust.
+Thanks,
 
-> 
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
-> index f9cfbd0b2de6..a3540f7a8ef8 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
-> @@ -18,6 +18,7 @@ properties:
->      enum:
->        - qcom,msm8996-qmp-ufs-phy
->        - qcom,msm8998-qmp-ufs-phy
-> +      - qcom,qcs8300-qmp-ufs-phy
->        - qcom,sa8775p-qmp-ufs-phy
->        - qcom,sc7180-qmp-ufs-phy
->        - qcom,sc7280-qmp-ufs-phy
-> @@ -85,6 +86,7 @@ allOf:
->            contains:
->              enum:
->                - qcom,msm8998-qmp-ufs-phy
-> +              - qcom,qcs8300-qmp-ufs-phy
->                - qcom,sa8775p-qmp-ufs-phy
->                - qcom,sc7180-qmp-ufs-phy
->                - qcom,sc7280-qmp-ufs-phy
-> 
+The nit below aside this looks good to me.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+> @@ -1090,23 +1116,8 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
+>  		release_len = strlen(release) + 1;
+>  	}
+>  
+> -	if (msg_len + release_len + userdata_len <= MAX_PRINT_CHUNK) {
+> -		/* No fragmentation needed */
+> -		if (nt->release) {
+> -			scnprintf(buf, MAX_PRINT_CHUNK, "%s,%s", release, msg);
+> -			msg_len += release_len;
+> -		} else {
+> -			memcpy(buf, msg, msg_len);
+> -		}
+> -
+> -		if (userdata)
+> -			msg_len += scnprintf(&buf[msg_len],
+> -					     MAX_PRINT_CHUNK - msg_len,
+> -					     "%s", userdata);
+> -
+> -		netpoll_send_udp(&nt->np, buf, msg_len);
+> -		return;
+> -	}
+> +	if (msg_len + release_len + userdata_len <= MAX_PRINT_CHUNK)
+> +		return send_msg_no_fragmentation(nt, msg, userdata, msg_len, release_len);
+
+nit: This appears to be fixed in the following patch,
+     but the above line could be wrapped here.
+
+>  
+>  	/* need to insert extra header fields, detect header and body */
+>  	header = msg;
 > -- 
-> 2.25.1
+> 2.43.5
 > 
-
--- 
-With best wishes
-Dmitry
 
