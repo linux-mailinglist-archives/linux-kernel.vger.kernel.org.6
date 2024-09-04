@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-314190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A13496AFE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BBD96AFD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4806728649E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAFED1F217F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC948172A;
-	Wed,  4 Sep 2024 04:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30E281AB6;
+	Wed,  4 Sep 2024 04:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NWPFdv9N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3C3co6v"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC68B18C36
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 04:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A6143152;
+	Wed,  4 Sep 2024 04:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725424414; cv=none; b=b7tpWNv7X27YNJJWeA5/oTmBm5iW7rIXIlXEDFrqQVU8tX6fGHWRR6jfo6gG2BiltmIh45Q3zSJXUXKmJ2duQniDTp8AB0Z4t2cxcT22nulmCSU5kys/Pt507rqZ2UoL0SMxHUkcccWVO6p1rLEkrvFSeuB21oM1IhLYXiBa4+s=
+	t=1725424277; cv=none; b=kHc9yKisnztOJOlpx7+YQWmqWvgLBVmFHC3CUuqb01BFDKekn5TnJsiooATlXkvkg0w09XFf9aLUYdHaMrgiEB2uEBEQChP5iJPQZwLnZCGLyu1H1EbR5X7IRsuwLPBT3E3T4R08PY9ZcnPRidM1ai7RMoneCwKrp64wfu+Be80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725424414; c=relaxed/simple;
-	bh=N7+Tit0TKYpEJm5NWnVhw9St9WnsK2y8w4W1tDwOzas=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ljEIJ/9U9kpWCVM1Qgek14p/4lc/DplfUmy6atVP78RTFIihA8OHhXeDaSuE1sOheSwQgRigFZtDVxNfYBHLp360JWK92awCDIMUnR1KLP6HfqUDlfBTPt5NKEP2jt/WK2esuGBHD5iXgncY0pgqUlClys4bd3AHHfikXvb3B+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NWPFdv9N; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725424412; x=1756960412;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=N7+Tit0TKYpEJm5NWnVhw9St9WnsK2y8w4W1tDwOzas=;
-  b=NWPFdv9NXNQHIpFyYVhidtCQhzFTmRDQxWbvjYvVaXM6tX3Yjo/zRemu
-   XHDKFxMOjGpzcg3hfpCSbFmX9DoXeW4Wc93rBLR7g40st48DGxw4DoezO
-   tQcIYRcYJWs1eKec0nNd5AhNKg9fNDQHqr/Oinv4NgDK4KH9uQf18JmGu
-   eWwY0/m+bUy2lvKJvB7C9V3qqrXo0hoDXvf1t8cs3+esmuBNLGsysdvRs
-   n+eps/3caAtmeeRg29v7laBCIJWjYlUGRvdsiEv2ZB+L0z+t0Oc3PHFLt
-   L372VLrtDV7c+iTEDMF6xaI4KyVfQrTgu153eB6dD6wuHNtxYgjmk5EUD
-   g==;
-X-CSE-ConnectionGUID: XloQ9JNNRtqTRFfNScvC3A==
-X-CSE-MsgGUID: c6Xt5MmxSROk+8FZP+PJ1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23570847"
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="23570847"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 21:31:49 -0700
-X-CSE-ConnectionGUID: ktrIdsbqS8CtjZzr5qJnjw==
-X-CSE-MsgGUID: EMV9DTSlSeKucy5upaZ7PA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="64784147"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 03 Sep 2024 21:31:48 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slhgI-0007Xl-0y;
-	Wed, 04 Sep 2024 04:31:46 +0000
-Date: Wed, 4 Sep 2024 12:30:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: arm-linux-gnueabi-ld:
- drivers/net/dsa/realtek/rtl8366rb.c:980:undefined reference to
- `devm_led_classdev_register_ext'
-Message-ID: <202409041221.YNEn6wcn-lkp@intel.com>
+	s=arc-20240116; t=1725424277; c=relaxed/simple;
+	bh=wEgSwE4JomOzrqQzVP6mUd3/U3sdbpZiT/uDtQD7yKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V2ReL5m9Z7+NfOCoPIoIJ3XQLouWM8641oh+Ibu6tmLx8o15mLAVzFP9ahTaoZcX6R/qfpQBXfnYStD+rI26ZIM88kq7BnrB7ZO7bi82ipGQgO44KkQnSpjK291vUUOSgb4GkUX/UGN5R+3uRi3dzpEEq0qRjffXFKtGcZwSsFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3C3co6v; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d4ed6158bcso1321192a12.1;
+        Tue, 03 Sep 2024 21:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725424274; x=1726029074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZC2VeYSPSoVy3q3YHFnRw4GnwqgM66ZmBKtWVOZ2wQM=;
+        b=c3C3co6v0vSMY+06zIK4bUajU88C4PDaFqx/RaWWSH5G6h6vZKJTGXcHKIqb9UVvyu
+         4hRU6V7jmo6MMQ3rSham1OnsFhrakdoFe5IPMTFoO9AXDjlf2+k7FxlhqhOxICsIAFf5
+         TvIA1nPjuCvq6qVzgLAEd/hmuZVMW3y5PSyfZnsRmFqeBJjVzL5HS0zMrxT1SZ366X6o
+         PNm/b/ZBMTK6uK2c9lwIchRsS8Yh8G3QRm5Lsb0AutGY0SA8NG8bGRRaIwUMikN1a5Nz
+         ZmCm/FqRY5uxzCRFM6Q6FmfaebpU8XC5lq3EcqhHbFRs0uDPWSJtkasNu+BLUwjSKvHF
+         VKfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725424274; x=1726029074;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZC2VeYSPSoVy3q3YHFnRw4GnwqgM66ZmBKtWVOZ2wQM=;
+        b=rOWlfk8tTJAM+Y5kZkeNg4/y+iHcUozNkuc3GZJr9dro7wQs3ijTUpP6zT8vyV5+3U
+         R7FmQGfIgjx6noOiFaIkJyY4+udxVTw8rN9KO4ojyLz+eLZ9e3BzNUMPS+iiGSHyX2ny
+         vIYro+qnSrsN+toRiYomvKCE2QTt5kRMHcjkMpVfcAiOPz5wUAKmBB0ZxnqwMpHP+lIY
+         HjTHtE4e3/Wfcib749ecv5lMbt9w55yohSCCMY5kCw3ioFSgo9iaHuz2UvcM4p/BpQpm
+         C5CMWqzJmtr456/oowUs0yhePaJRMcju1ThS+BFreUucbj27nnakbAmwd3cMM53Q+yzf
+         7d+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUrxab4R6ZbBv0qQw4+VCG4g9pqEJDCYJmqIz5Os2CC82YLcOUMI0hGLOPsZ7+RpGMjpmBuD0MCpGP6vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxqLGKYmiJcc1oFZsky+gPUkKsYIneJ0WWbwDfFwNb/Cj9uNvz
+	3T5gWSdyRIrPvKekmI+QSrwHHiaAKu8e/okD+Z0/FViq1IUWEiF81jm28w==
+X-Google-Smtp-Source: AGHT+IGTOIBw7HgMRxBMWldPqddrIfjXO0/hS4KJdsaRosTqs80U6MOaMs5JtEcJGuUSIuLGwzXylA==
+X-Received: by 2002:a17:903:1d2:b0:206:aa2e:6d1f with SMTP id d9443c01a7336-206aa2e7235mr39491265ad.46.1725424274316;
+        Tue, 03 Sep 2024 21:31:14 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:e682:e3dc:908:eef0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea392e3sm5503555ad.135.2024.09.03.21.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 21:31:14 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: Erick Archer <erick.archer@outlook.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] Convert joystick drivers to use new cleanup facilities
+Date: Tue,  3 Sep 2024 21:30:57 -0700
+Message-ID: <20240904043104.1030257-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   88fac17500f4ea49c7bac136cf1b27e7b9980075
-commit: 32d617005475a71ebcc4ec8b2791e8d1481e9a10 net: dsa: realtek: add LED drivers for rtl8366rb
-date:   4 months ago
-config: arm-randconfig-r062-20240812 (https://download.01.org/0day-ci/archive/20240904/202409041221.YNEn6wcn-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409041221.YNEn6wcn-lkp@intel.com/reproduce)
+Hi,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409041221.YNEn6wcn-lkp@intel.com/
+This series converts drivers found in drivers/input/keyboard to use new
+__free() and guard() cleanup facilities that simplify the code and
+ensure that all resources are released appropriately.
 
-All errors (new ones prefixed by >>):
+Thanks!
 
-   arm-linux-gnueabi-ld: drivers/net/dsa/realtek/rtl8366rb.o: in function `rtl8366rb_setup_led':
-   drivers/net/dsa/realtek/rtl8366rb.c:953:(.text.unlikely+0x6ac): undefined reference to `led_init_default_state_get'
->> arm-linux-gnueabi-ld: drivers/net/dsa/realtek/rtl8366rb.c:980:(.text.unlikely+0x850): undefined reference to `devm_led_classdev_register_ext'
+Dmitry Torokhov (6):
+  Input: db9 - use guard notation when acquiring mutex
+  Input: gamecon - use guard notation when acquiring mutex
+  Input: iforce - use guard notation when acquiring mutex and spinlock
+  Input: n64joy - use guard notation when acquiring mutex
+  Input: turbografx - use guard notation when acquiring mutex
+  Input: xpad - use guard notation when acquiring mutex and spinlock
+
+ drivers/input/joystick/db9.c                  | 30 +++---
+ drivers/input/joystick/gamecon.c              | 22 ++---
+ drivers/input/joystick/iforce/iforce-ff.c     | 48 +++++----
+ .../input/joystick/iforce/iforce-packets.c    | 57 +++++------
+ drivers/input/joystick/iforce/iforce-serio.c  | 36 +++----
+ drivers/input/joystick/iforce/iforce-usb.c    | 13 ++-
+ drivers/input/joystick/n64joy.c               | 35 +++----
+ drivers/input/joystick/turbografx.c           | 22 ++---
+ drivers/input/joystick/xpad.c                 | 99 +++++++------------
+ 9 files changed, 152 insertions(+), 210 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dmitry
 
