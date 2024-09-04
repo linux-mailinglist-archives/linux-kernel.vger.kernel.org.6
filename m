@@ -1,73 +1,52 @@
-Return-Path: <linux-kernel+bounces-315792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757AA96C708
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:03:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A28496C70D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81021C22F59
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B981F23DDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436DE13DDCD;
-	Wed,  4 Sep 2024 19:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3B61422D5;
+	Wed,  4 Sep 2024 19:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ywgeqhmx"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="G7TwooNM"
+Received: from mx08lb.world4you.com (mx08lb.world4you.com [81.19.149.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0911313D61D;
-	Wed,  4 Sep 2024 19:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97D313E409;
+	Wed,  4 Sep 2024 19:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476618; cv=none; b=lNogE56UtWhxJACufPOHvKnoCLwiNsGnH52zMxyYpdPVTV+EtdGMnZsCIhIOM8Z/pLQmZHtB2Gfta3U0KBSGxWB0mPCDGAkX1SrlllffaeUgIUaF9t4vqKE9CvEh2mbmkfDzL1Lu6bvNfB/srSN4bj2nhEmYEec4YyV5cng7Zck=
+	t=1725476735; cv=none; b=QP3NJSFX6kixpIrBvdQEuwIaiGe0tpWhL+rY6nQMpjbFCAbDmdeZCo2Y67KlRZA6kEASy9QikZFyGDCwAtgOdDrBon2roOCf12swPx2499zlISzpT7bDfyUUwqGk363Ew+XyEOD0D+Y4ufg+whApQ364Wi0LoN04RoYE+IuFvDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476618; c=relaxed/simple;
-	bh=yAT8a9Q7jclre9eYolMiSk/ZLXfIdIkUokiVaYj4HII=;
+	s=arc-20240116; t=1725476735; c=relaxed/simple;
+	bh=udAqtoaRC/SZRiVlHYjDz69dZCVfDadiSZvuLLCKLt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SsCxynZMGsH/KiSLVpkrJ4UCnMaYwiEPxwXpeqW9APuASRu91gh+eVlAKuYCq3f+4OY/P7sTjFFXOnQT4fXWfXO5APy63KYsWdxbKtxCpeHAJApCZboBP0Qw9nPvIUf9qfDJTQh14h5df8A3gHAEhP9f+P7LBYiEjcL+mBcQTHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ywgeqhmx; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a869332c2c2so198050366b.0;
-        Wed, 04 Sep 2024 12:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725476615; x=1726081415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=szFtxgewi3Mq4G6bvUltwe1shiFypazXnx5Zk6Fu5rQ=;
-        b=Ywgeqhmxlz5/lDdvwnY8ncJGUa+MAu7ArB849I2s8LwIrPlmVPF6sD4OppLKZuH4Rc
-         UTtf37nid6Z7BfHDARpV7jNnzMYlS6eg1cs5rTHdF5jccVFLmONaYj+bS5EXVzJk4+JQ
-         vwDEen7p03e13+q95+e2uFFKatSwpuTqLn4GTFx3nEfo32aEMNlHcKVQ1SbWGwkw4qBA
-         MqXvoMciQEA6M08OtFKEpzcqUUVeFPN1V7ZOZr1KwKBPyaJWYp0sxZUm9JYAMl2FnTmb
-         mnPPfM5lkTMny/GLQzSKJID5WItkpM8Z8wNqQ/ARnj2QWoDPULJLnIPrMOVbiRLYRG6L
-         IB1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725476615; x=1726081415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=szFtxgewi3Mq4G6bvUltwe1shiFypazXnx5Zk6Fu5rQ=;
-        b=ceKX/uXcmEJWfM8TfVfg+tmCQnNsmsY6odBFmzQJYZxrarLxDCTmEi47IhMAVh3uc0
-         atBuB78ccU9Ntt12aUcgDDa5h27xaiZ537wnoG6ld/9jipCUOhGoeRqQjckX3+QhCOyf
-         Dz6HbOxYvUZKviN4+KS5TiQIy14kc4LpLKOHqywDWbqk7XL1xAki++pMq27hWwYHcxXB
-         J/4rdYNF8ghV4eAxzKW+B6rvyWP3aJ194j2YpyZNt69krGzIRuT71UQHy8VsV4RiDhWp
-         Q+e6j4MeYsY8SUCme38Bom8b1jw43rDDon4nDh+1NncGGHpYfRCAy29XBJHKRa8eLSkN
-         jJEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVm/d+/rvNLs8RAuWfY7ZAb6IGBv8Cvh1l/OYxFWRHz+fsHFzx/3PPwiWzIYNJvQmoz5iDO664Y2huR9g==@vger.kernel.org, AJvYcCWs4QnNGSw7wfI7P9bADM5nJGcaS66o7/HQxpnVcbcDScJ2zfQ2A67ufHlWYdwLCvTs9qm7iXEzKY6QsJuK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQvSSMnXMqgAAECLlDC6DTSSmcr4FizCYeS166uYV+UdLSyeLN
-	oE7rUFFYqgZoz4kr1/3AiZjpa6XcvU1ZizrEFpEjU+1X7JuYWqV7
-X-Google-Smtp-Source: AGHT+IGno6GnieACYAoc4nRRKzJHQPyYDPcueFLc14Kpp7aDQDQ8w8v60YCOfnrUcdNtTlJyrNEoDA==
-X-Received: by 2002:a17:907:2d8e:b0:a6f:996f:23ea with SMTP id a640c23a62f3a-a8a430adb51mr366814666b.15.1725476615163;
-        Wed, 04 Sep 2024 12:03:35 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623e286dsm24342066b.211.2024.09.04.12.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:03:34 -0700 (PDT)
-Message-ID: <225a9ea6-bc40-4c7c-a8dd-1db7649eaace@gmail.com>
-Date: Wed, 4 Sep 2024 21:03:33 +0200
+	 In-Reply-To:Content-Type; b=tSk957pFCiswFXn5+XOjnMal0KZpn57o3xDLWH608vqPgFupjSJLfWjtLM9BO6i/Pbzd6E2odOInSXjX/ALYZWOzKC3H9TgBEL2l96FSEjJOghWvB3xJatPPxqBiX3RczbGDo4qnQRkxoXTp4UZBBefTO+s5dhSGy6ZUSML+mFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=G7TwooNM; arc=none smtp.client-ip=81.19.149.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AxYohhgnAu4PLvnfed/ve57jItrbBbytOljsqVlPTm4=; b=G7TwooNMRe5YbP3u+Am0TZsMz+
+	ZCiWlKD+st6VQa/hKSSohSjtzDf5VOdm3xmwm0OF0yvtyXWuvt//VmDpdeT86X0s3xPuco/VTXMVz
+	9OboDqQG3a+spkUUlKrZmrLTrb4u+BnlD+y+zR6b5zy9lylBImVmY5zkRsVer7llw5sQ=;
+Received: from [88.117.52.244] (helo=[10.0.0.160])
+	by mx08lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1slvJj-0003Rb-1n;
+	Wed, 04 Sep 2024 21:05:23 +0200
+Message-ID: <beffd557-7e58-4841-a930-03c271d243a2@engleder-embedded.com>
+Date: Wed, 4 Sep 2024 21:05:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,88 +54,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/22] Input: kxtj9 - use guard notation when acquiring
- mutex/disabling irq
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- Ville Syrjala <syrjala@sci.fi>,
- Support Opensource <support.opensource@diasemi.com>,
- Eddie James <eajames@linux.ibm.com>, Andrey Moiseev <o2g.org.ru@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>, Jeff LaBundy <jeff@labundy.com>,
- linux-kernel@vger.kernel.org,
- Javier Carrasco Cruz <javier.carrasco.cruz@gmail.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044244.1042174-7-dmitry.torokhov@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240904044244.1042174-7-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next v2] net: mana: Improve mana_set_channels() in low
+ mem conditions
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
+ Simon Horman <horms@kernel.org>, Konstantin Taranov
+ <kotaranov@microsoft.com>,
+ Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+ Erick Archer <erick.archer@outlook.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Shradha Gupta <shradhagupta@microsoft.com>
+References: <1725248734-21760-1-git-send-email-shradhagupta@linux.microsoft.com>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <1725248734-21760-1-git-send-email-shradhagupta@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-On 04/09/2024 06:42, Dmitry Torokhov wrote:
-> Using guard notation makes the code more compact and error handling
-> more robust by ensuring that mutexes are released and interrupts are
-> re-enabled in all code paths when control leaves critical section.
+On 02.09.24 05:45, Shradha Gupta wrote:
+> The mana_set_channels() function requires detaching the mana
+> driver and reattaching it with changed channel values.
+> During this operation if the system is low on memory, the reattach
+> might fail, causing the network device being down.
+> To avoid this we pre-allocate buffers at the beginning of set operation,
+> to prevent complete network loss
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 > ---
->  drivers/input/misc/kxtj9.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/input/misc/kxtj9.c b/drivers/input/misc/kxtj9.c
-> index 837682cb2a7d..c6146bcee9f9 100644
-> --- a/drivers/input/misc/kxtj9.c
-> +++ b/drivers/input/misc/kxtj9.c
-> @@ -314,9 +314,8 @@ static ssize_t kxtj9_set_poll(struct device *dev, struct device_attribute *attr,
->  		return error;
->  
->  	/* Lock the device to prevent races with open/close (and itself) */
-> -	mutex_lock(&input_dev->mutex);
-> -
-> -	disable_irq(client->irq);
-> +	guard(mutex)(&input_dev->mutex);
-> +	guard(disable_irq)(&client->irq);
->  
->  	/*
->  	 * Set current interval to the greater of the minimum interval or
-> @@ -326,9 +325,6 @@ static ssize_t kxtj9_set_poll(struct device *dev, struct device_attribute *attr,
->  
->  	kxtj9_update_odr(tj9, tj9->last_poll_interval);
->  
-> -	enable_irq(client->irq);
-> -	mutex_unlock(&input_dev->mutex);
-> -
->  	return count;
->  }
->  
-> @@ -504,12 +500,11 @@ static int kxtj9_suspend(struct device *dev)
->  	struct kxtj9_data *tj9 = i2c_get_clientdata(client);
->  	struct input_dev *input_dev = tj9->input_dev;
->  
-> -	mutex_lock(&input_dev->mutex);
-> +	guard(mutex)(&input_dev->mutex);
->  
->  	if (input_device_enabled(input_dev))
->  		kxtj9_disable(tj9);
->  
-> -	mutex_unlock(&input_dev->mutex);
->  	return 0;
->  }
->  
-> @@ -519,12 +514,11 @@ static int kxtj9_resume(struct device *dev)
->  	struct kxtj9_data *tj9 = i2c_get_clientdata(client);
->  	struct input_dev *input_dev = tj9->input_dev;
->  
-> -	mutex_lock(&input_dev->mutex);
-> +	guard(mutex)(&input_dev->mutex);
->  
->  	if (input_device_enabled(input_dev))
->  		kxtj9_enable(tj9);
->  
-> -	mutex_unlock(&input_dev->mutex);
->  	return 0;
->  }
->  
+>   Changes in v2
+>   * Pass num_queues as argument in mana_pre_alloc_rxbufs()
+> ---
+>   drivers/net/ethernet/microsoft/mana/mana_en.c |  6 ++--
+>   .../ethernet/microsoft/mana/mana_ethtool.c    | 28 ++++++++++---------
+>   include/net/mana/mana.h                       |  2 +-
+>   3 files changed, 19 insertions(+), 17 deletions(-)
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Looks better now with the argument for the queue number.
+
+Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
 
