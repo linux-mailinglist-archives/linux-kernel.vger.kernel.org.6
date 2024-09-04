@@ -1,209 +1,113 @@
-Return-Path: <linux-kernel+bounces-314895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C9896BAAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:30:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5894D96BAAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EF31F22DE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16734282E71
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4E91D2225;
-	Wed,  4 Sep 2024 11:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC81B1D220E;
+	Wed,  4 Sep 2024 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDo+i+OD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlOlmIXI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791DE1CF7A6;
-	Wed,  4 Sep 2024 11:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA20192586;
+	Wed,  4 Sep 2024 11:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449375; cv=none; b=lpuTWFUm31xw7VjaDUrKYzXzPSTRwzQo3OtYKOMroT5rSu2Uj7F0BRZeDTrn+jRYYjZ28Is3bQWPh0o8dYORhi2PUlSLTG8+oyciAm5fBQ/8cxQhG9AgulOTSLfT4BuEqy4gZqiQIckceVaM6h1o3Y9O37oWL8Tp8nQ2sN6WFB4=
+	t=1725449375; cv=none; b=pbDjJoC3yxLVBEoBpDNt65YJfejWnncqW+eN6A+A2r5VdE4N+mjoFQ705e9EMRg19TrzD5WptXd6v2Y1vQ6bXaS4NPOLXa4mhZxds8K90FOwWEntkSdIoUNLhM+6HBTEg6/GW+73059e4Doyl1ZmIl3rMK7/VTirGip1RpXts2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725449375; c=relaxed/simple;
-	bh=wDbZjpbh7d5SMohBU9tM7AEFFdcqXfex4l2JBIWINjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aJWrRS2S3ZeMeEXew5RuFoATNy00blOK4lDgXuQ4wn5UnuIESKDhcTqiIYFTfTFLljdIw6UhxHfbzQtTD+CsWhVQiwTimsm6LA6tiEvfvYY+IHBebPJQa2nGpaD0A9T+dDrYDuePZrNhCWwzFsbE5fxQxfxgkKPWcsI8q3EKVcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDo+i+OD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF39FC4CED1;
-	Wed,  4 Sep 2024 11:29:34 +0000 (UTC)
+	bh=IbTO/VrN9chRHIbadlaqKaZrqY35Ivbs3FjR5xZuAkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lvxPbgSmECfxAgpEUadbyDEZybTXkv4hbWzuk+babHyswKJWNL0eIngGG29ynyFKZ+nneUIpdh1HYr7WvCTpX7p2k1c2IjOL4lBoBuFAKHS3MPHcTEmSbLcaXiy6khInqRVGV9nYz9aVvTJlfqCp6spywVZ0b31lSKWC04Y1Jiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlOlmIXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BB6C4CEC2;
+	Wed,  4 Sep 2024 11:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725449375;
-	bh=wDbZjpbh7d5SMohBU9tM7AEFFdcqXfex4l2JBIWINjE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uDo+i+OD7YcZQkH4Kf1blwRPvQN7ltIZ/3WWJnFJPWLnazkXlpoRoOPq66Epj1o7P
-	 einOJeuiFQ00o/ndcc37yiEuTRjrdlq9dnlSaWHfW3GD0UvmvY4zF0xWc+OoirBUBQ
-	 GiIhXD3qWLfSO2H2+Q47iWquktQQFayzDT0TY1TVp/Uo0cL7M9ndkIpJMS41QczNis
-	 gOWUXYOWVSLJQl+mgRSzLsshjsjCeJtUf3hbg10YqheaHxw8efFGXdhvWoUFl9GHvQ
-	 izzP9PBZgpvcHY705zblTbu1QHjk8PG+fVg+AD3OK4N/s+nVbcMVSWTB1cIcMRVYv7
-	 G419Me+McWxfg==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27045e54272so2907678fac.0;
-        Wed, 04 Sep 2024 04:29:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6ui9aDv9c99WacbGPK6O20dUOiUQzrJ0ZgMt+JbcueqNdPMht/so6Axw0/3cwT6KTvOuIOJnoOeMcvKc=@vger.kernel.org, AJvYcCViG49XcJViviSebdjPh+pCgaTq1CzsbkTKjsKKwm0hu6F9o7CI3NlA7VtDrEOhhl7qlbbdEaUVo3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/jtKXhWEGAyLyrS7PRyr5fGeLOE7AG4eU+JZD10muY/VG5B7D
-	J5JHkdUfDLJEwmpvAyoVarAhVv69pEAZPrClg0e8H5O92fBhU6I6Utlb8aHoPBNBFlNuRPZKxGn
-	QoKuQg/GdpDeEC36bCjlfHts8V/c=
-X-Google-Smtp-Source: AGHT+IFtcZkT9cYGlrZKkEBlTZjui+UE/KUyYk1iXSUfbJVI6UUv55LSXDlRPs6qeRksifDC2A1cH3pEyDoKGzCMCiM=
-X-Received: by 2002:a05:6870:5cc7:b0:270:64ed:c125 with SMTP id
- 586e51a60fabf-277c804bc6bmr15834642fac.16.1725449374219; Wed, 04 Sep 2024
- 04:29:34 -0700 (PDT)
+	s=k20201202; t=1725449374;
+	bh=IbTO/VrN9chRHIbadlaqKaZrqY35Ivbs3FjR5xZuAkE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GlOlmIXI5IRmIy4MvvV51X9PeO9cBBWw1dSsdJ/A/fZNZVyUAKv8lOYlcImwOzgaQ
+	 oA7h4heWcFj2VsAb7QD6shcmnfi9Ou3EPTo4lkQU3A+XeUht+OOqFcv+0p9CDQNMKo
+	 bx802WS9+9vAMg5qThbA9bOklo8qz4px1Q1fMqgEC5ceZRM+JJ6zO0Ni0RojPJDADl
+	 VeZCfzxoUgjtHaMcubBlxXAp2vBRsgYQq6WW0OQ2UkIqbQDHoxr2Rwf/LXI+1xZSZc
+	 bV3khTAcZq1DkkjOvIp92b58eljiGp5h124ERqsM+PWfSqGEoU2XS3cpHSWwBoqf1g
+	 EZfQ9Y9s5yjhg==
+Message-ID: <d482dca4-e61b-4a94-887b-d14422243929@kernel.org>
+Date: Wed, 4 Sep 2024 13:29:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3310447.aeNJFYEL58@rjwysocki.net> <1979653.PYKUYFuaPT@rjwysocki.net>
- <20240904063915.GA3674@ranerica-svr.sc.intel.com>
-In-Reply-To: <20240904063915.GA3674@ranerica-svr.sc.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Sep 2024 13:29:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h+kvT061n442G2Q4gyRzS_fj4yROTD-1APYvK2K4tagw@mail.gmail.com>
-Message-ID: <CAJZ5v0h+kvT061n442G2Q4gyRzS_fj4yROTD-1APYvK2K4tagw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity
- on hybrid systems
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+To: Johan Hovold <johan@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+ linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ konradybcio@kernel.org
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-2-quic_sibis@quicinc.com>
+ <ZtgFj1y5ggipgEOS@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <ZtgFj1y5ggipgEOS@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 4, 2024 at 8:33=E2=80=AFAM Ricardo Neri
-<ricardo.neri-calderon@linux.intel.com> wrote:
->
-> On Wed, Aug 28, 2024 at 01:48:10PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Make intel_pstate use the HWP_HIGHEST_PERF values from
-> > MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
-> > via the previously introduced arch_set_cpu_capacity() on hybrid
-> > systems without SMT.
-> >
-> > Setting asymmetric CPU capacity is generally necessary to allow the
-> > scheduler to compute task sizes in a consistent way across all CPUs
-> > in a system where they differ by capacity.  That, in turn, should help
-> > to improve scheduling decisions.  It is also necessary for the scheduti=
-l
-> > cpufreq governor to operate as expected on hybrid systems where tasks
-> > migrate between CPUs of different capacities.
-> >
-> > The underlying observation is that intel_pstate already uses
-> > MSR_HWP_CAPABILITIES to get CPU performance information which is
-> > exposed by it via sysfs and CPU performance scaling is based on it.
-> > Thus using this information for setting asymmetric CPU capacity is
-> > consistent with what the driver has been doing already.  Moreover,
-> > HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
-> > both the instructions-per-cycle (IPC) factor and the maximum turbo
-> > frequency and the units in which that value is expressed are the same
-> > for all CPUs in the system, so the maximum capacity ratio between two
-> > CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
-> > values.  Of course, in principle that capacity ratio need not be
-> > directly applicable at lower frequencies, so using it for providing the
-> > asymmetric CPU capacity information to the scheduler is a rough
-> > approximation, but it is as good as it gets.  Also, measurements
-> > indicate that this approximation is not too bad in practice.
-> >
-> > If the given system is hybrid and non-SMT, the new code disables ITMT
-> > support in the scheduler (because it may get in the way of asymmetric C=
-PU
-> > capacity code in the scheduler that automatically gets enabled by setti=
-ng
-> > asymmetric CPU capacity) after initializing all online CPUs and finds
-> > the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
-> > capacity number for each (online) CPU by dividing the product of its
-> > HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PE=
-RF.
-> >
-> > When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
-> > and if it is the one with the maximum HWP_HIGHEST_PERF value, the
-> > capacity numbers for all of the other online CPUs are recomputed.  This
-> > also takes care of a cleanup during driver operation mode changes.
-> >
-> > Analogously, when a new CPU goes online, its capacity number is updated
-> > and if its HWP_HIGHEST_PERF value is greater than the current maximum
-> > one, the capacity numbers for all of the other online CPUs are
-> > recomputed.
-> >
-> > The case when the driver is notified of a CPU capacity change, either
-> > through the HWP interrupt or through an ACPI notification, is handled
-> > similarly to the CPU online case above, except that if the target CPU
-> > is the current highest-capacity one and its capacity is reduced, the
-> > capacity numbers for all of the other online CPUs need to be recomputed
-> > either.
-> >
-> > If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
-> > capacity information is computed from scratch to reflect the new turbo
-> > status.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> A few minor comments below...
->
-> FWIW,
->
-> Reviewed-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com> # scale i=
-nvariance
->
-> [...]
->
-> > +
-> > +static void hybrid_init_cpu_scaling(void)
->
-> Maybe renaming hybrid_init_cpu_scaling() as hybrid_init_cpu_capacity_scal=
-ing(),
-> __hybrid_init_cpu_scaling() as __hybrid_init_cpu_capacity_scaling(), and
-> hybrid_update_cpu_scaling() as hybrid_update_cpu_capacity_scaling()?
->
-> It would make the code easier to read.
+On 4.09.2024 9:00 AM, Johan Hovold wrote:
+> On Wed, Sep 04, 2024 at 08:43:23AM +0530, Sibi Sankar wrote:
+>> Currently the perf and powercap protocol relies on the protocol domain
+>> attributes, which just ensures that one fastchannel per domain, before
+>> instantiating fastchannels for all possible message-ids. Fix this by
+>> ensuring that each message-id supports fastchannel before initialization.
+> 
+> Please include the warnings that I reported seeing on x1e80100 and that
+> this patch suppresses to the commit message:
+> 
+> arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+> arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+> arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+>  
+>> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+> 
+> And add:
+> 
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Link: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> 
+> (or use Closes: if you prefer).
+> 
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> ---
+>>
+>> v1:
+>> * add missing MSG_SUPPORTS_FASTCHANNEL definition.
+> 
+> Unfortunately, this patch breaks resume from suspend on the x1e80100 crd:
+> 
+>         [   26.919676] CPU4: Booted secondary processor 0x0000010000 [0x511f0011]
+>         [   26.960607] arm-scmi firmware:scmi: timed out in resp(caller: do_xfer+0x164/0x568)
+>         [   26.987142] cpufreq: cpufreq_online: ->get() failed
+> 
+> and then the machine hangs (mostly, I saw an nvme timeout message after a
+> while).
+> 
+> Make sure you test suspend as well as some of the warnings I reported
+> only show up during suspend.
 
-Sure, if that helps.
+Eh it looks like PERF_LEVEL_GET (msgid 8) requires the use of FC, but
+the firmware fails to inform us about it through BIT(0) in attrs..
 
-> > +{
-> > +     bool disable_itmt =3D false;
-> > +
-> > +     mutex_lock(&hybrid_capacity_lock);
-> > +
-> > +     /*
-> > +      * If hybrid_max_perf_cpu is set at this point, the hybrid CPU ca=
-pacity
-> > +      * scaling has been enabled already and the driver is just changi=
-ng the
-> > +      * operation mode.
-> > +      */
-> > +     if (hybrid_max_perf_cpu) {
-> > +             __hybrid_init_cpu_scaling();
-> > +             goto unlock;
-> > +     }
-> > +
-> > +     /*
-> > +      * On hybrid systems, use asym capacity instead of ITMT, but beca=
-use
-> > +      * the capacity of SMT threads is not deterministic even approxim=
-ately,
-> > +      * do not do that when SMT is in use.
-> > +      */
-> > +     if (hwp_is_hybrid && !sched_smt_active() && arch_enable_hybrid_ca=
-pacity_scale()) {
-> > +             __hybrid_init_cpu_scaling();
-> > +             disable_itmt =3D true;
-> > +     }
-> > +
-> > +unlock:
-> > +     mutex_unlock(&hybrid_capacity_lock);
-> > +
-> > +     if (disable_itmt)
-> > +             sched_clear_itmt_support();
->
-> It may be worth adding a comment here saying that the sched domains will
-> rebuilt to disable asym packing and enable asym capacity.
-
-Won't hurt I suppose.
+Konrad
 
