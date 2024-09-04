@@ -1,206 +1,224 @@
-Return-Path: <linux-kernel+bounces-316065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4199796CAB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:10:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C2C96CABF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1D641F2859C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:10:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56B0DB23DB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1D717ADFF;
-	Wed,  4 Sep 2024 23:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACD317BEB0;
+	Wed,  4 Sep 2024 23:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItZf545u"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="M5NBdb9Z"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626BF79E1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8E447F4D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725491444; cv=none; b=NEyTEfqIv5/EUuqR2YREBb7Lzx/7jm5vVS1Irik5srzKQOmuxFqrdBpawHf7gBlYrg3WD0D2q0spkAtJPAFd2+y7jxVeEi7PwZOkkwYdZN96kGkWKFKKcnljX4BBZXs1XHMTJBqPztAEQZl1wFIyOCTO1I+aM6gwiM97ByyRQYM=
+	t=1725492053; cv=none; b=ujsWga4MbfLWH3IxhmLb08mhcS28vg0TxWh8JZ5BIcPbuT1L46PHDLkFdQdyyLSCkscguZMtOc+3iz+Q3FoSWGm3a5nFSR3oeFEgF9uurLhlOBx+jh+XUFPy9MdwXORdsJNSgvSQiX8pcuBWNNx99S4vgh9YazpU1xmQTvxC144=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725491444; c=relaxed/simple;
-	bh=I2QkPlHDUFNVxGS1eT5zUO4WTAFZlS+EmobYRmoYUlg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSGuCCGN0hv5sV5uu8vKWT/UnTjxm+t65EjfSi0+ORHMRWCF2wdUH9LdkSs5mIEJN9Ljs7QSiZ1n44wvPvGSj6H6Gg197KJUG8ZG+Dt8ZqKjAaonjn2zT1DvqhsIgkkFXWwfmpgbHTiAOc5491WRMbDJqG/RwZOly+l9KkqUx5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItZf545u; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4fd01340753so57882e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:10:42 -0700 (PDT)
+	s=arc-20240116; t=1725492053; c=relaxed/simple;
+	bh=HcFDd0H7LbXYeh37GMtCsBrIu9ps3lCC8dBP2ltvvaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuTKDdMqit3sfuScmAScL8KA163fTy1upvrSS8b3gluQKRhORGtySBYwcVi24n/oLP7mhkF2F8qFge6XGRJHkUTj6yN6wJl9HY7oe+1LBn6G8dmF6qsplufE7560CdWyIlquKRKyoKVxPyUKDf6lCx6KPzY1ke04kldIHFOXtuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=M5NBdb9Z; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20688fbaeafso2035965ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725491441; x=1726096241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oAn3JxDFP21r4YFSVaV3PAOM9PQK/tnDHy5YesZx4b0=;
-        b=ItZf545uIqDH0Bj5xV9j5xe3V3gXBqfEOhHgQ1iTbHsNRh9D6DXF8kIPlyIoqZQeXf
-         N140W4DHLNV++yh19roj2IBkv+cSzGmvQMg/dL22rIQ5NKBqO6/nl2C7SIB+vWezJzZZ
-         wbdBTGg0DkIjhtg4P1ZLDtvsXotN+Gi0hT6wMwlVkrRER2qXLlylyULVQtpCVTGp0jUn
-         Sd0RLa9F1FGQ2s7JckMgnG78MX9yZzl/Ni4rNto45FxGCVRnm+pUlK104z40QHQTqgQ6
-         ww2YtPMt2F1k2EKKFkZ3Yq//F4CgtNFcYyGNnGBjcb4xwq46eLUMXbKDsbK8eebTJrUt
-         HfGw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725492051; x=1726096851; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
+        b=M5NBdb9ZRMVOuNdm1cYWlIuWFNz2HjY1Niy778nwKHMGzF7Z3Gnl0WAuqfe0TiUDYk
+         8FPfgrwkzS4aUYys9V/buq4fnLizE8agDhv724tTOxI8lZdl5LMoRSBS5GLwNJUQxKC/
+         9l6zeO8l6hDUCbnDnVnqy1Azsyii9VfF3N+oAI6RZ73RfL+wZJ3Ye5CAUMR104Rj+on/
+         MaN/eUft78Me+0VGq6doiZTglZGrI6YQ72QwbqRYb5J8vxfdmhUuW9xnw4dByK9D9XlS
+         G5GwhHlv3uecQHeT+HqOeOyqbNrIqA8zFyjt16z1RncXiy2WUq4ux+rZNEFhdboWF7qT
+         nHeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725491441; x=1726096241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oAn3JxDFP21r4YFSVaV3PAOM9PQK/tnDHy5YesZx4b0=;
-        b=cjTwhyfMoNLatdluMP1o/fDDFxWHITnEcI8d6yh5XaqWl2TonrwEwFHaHcczNv0BO8
-         cvQ8WuA+1Yao96lBw7buokRjR9YM7VCIdINxVOvMFf6HuQBdiw7jjsTpQeYn2nTe5h86
-         l5qUCRbNzEuTsLePNH0613rPIkDl1VWh7UQ44eNGu6zKKVSwa2vc1Cur/Y5gxJ5aTtrj
-         bIW4RcZPAqpP39KGRVTjA8aykXLHxwltrj25kP/pGeefMG27tX79h5iDi6+HQBwQy7MW
-         TbgicXdLjGUj3mw7ii5kYIL4y8wj1Qv41cFsy0hxuvF2ZA24/pGd9dsSoCiJFfeiCZ0O
-         NuhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX23MbwARhq32B4+aobCAkkEZy4BIpj5xFmasVUVuvEvVophrc58SfRG1iNVA3z7iPMfoXlCn06LYfLcBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEN+ZeDT9b6eqV5meSaHcKC1wI6ZPVHpc2h0hibNO570KOM51F
-	zbptFf43/3moPfy1pzzxbhX/1FlxMYQz+wzNomRLP9mTYqBpmCJQFBVwlm4VXu5l3GldecxKe2q
-	TgjgaTDm9CB0F14CrfSGix8LZSMs=
-X-Google-Smtp-Source: AGHT+IF0nxgkJPT1EowO940ec9V3dG6+UpfFlus+7DDGlDtsdpQ3GiO+IzEIUUDE4WmYDd3XylSpIn26qPRbYxqarMQ=
-X-Received: by 2002:a05:6122:20a1:b0:4f5:2276:1366 with SMTP id
- 71dfb90a1353d-4ffe4a58f0dmr21580879e0c.3.1725491441030; Wed, 04 Sep 2024
- 16:10:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725492051; x=1726096851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=do2YRTOoj9GnwWoBDgk0QrUSNsuLuq0vS4jyF1HXMKE=;
+        b=J58GZu5Sq3d5XndoFP/6kn2w8js9bmNzSc1vHjMrcrkxUAfEs2fplaCpnPJFCHHZXn
+         5YjyBdBBBi54LDMLnAKg6lRbOpyLdVuRLg9M+kpLTCdLapUaObXFXQRQ6MWSMI7vGP7d
+         XspSO5xLITmhy00Ga0rXgLjOsB6hDcccyt0m1TWKFEikuRsMx5nOliOhD4zM84GnDJVV
+         fG8Vj8ipTpcQH7mGwFRXQBkweg3XkGtIR5JTpIPEpnc2NXh8mUt7XC3hCLOxKfmQkiSq
+         8pqloNwkrQtUdY65XTOxG5t6Zs7hZqlGK2hQSAb6Y0iqeFEYlU7Pe5uIJoVuq0GVJZZW
+         v7rw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPFachFTlT3k1SlunwIDcA0oqnDBMnxmN/ryzGN5EU9EUJSGguJLDJIGGghuib956taWnknhswEsTfVME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFwKqr0DGtpwcOzn7NjUzf95sPInp3rTACrD6f6QyAF+OHfTNX
+	NRu4UTXYNRyIvu65MuzTKolYQ2+w5I3j2cykzkKxIUVpukV77Ra6fogf5UAf4Wo=
+X-Google-Smtp-Source: AGHT+IHuT2/JPIf3XtWre+GFOUJzFurrIT8snqejnQfLJC9H3VrO6JyW0vpwKFJUAdmNu27h3XvCUQ==
+X-Received: by 2002:a17:902:e752:b0:1fb:701b:7298 with SMTP id d9443c01a7336-205841ba17emr139292085ad.32.1725492051426;
+        Wed, 04 Sep 2024 16:20:51 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206b2147b49sm16857895ad.251.2024.09.04.16.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 16:20:50 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1slzIu-000uGZ-1V;
+	Thu, 05 Sep 2024 09:20:48 +1000
+Date: Thu, 5 Sep 2024 09:20:48 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZtjrUI+oqqABJL2j@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
- <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
- <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
- <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
- <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
- <CAJD7tkaXvm95mRH04OX0KJtiBuTaaDyyJQirbAjUV0B+DjaWJA@mail.gmail.com> <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com>
-In-Reply-To: <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 5 Sep 2024 11:10:29 +1200
-Message-ID: <CAGsJ_4yX7xmyDokYgc_H7MaxcOptcLeQs-SB1O22bSRHFdvVhQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
-	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
-	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
-	ying.huang@intel.com, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87frqf2smy.fsf@gmail.com>
 
-On Thu, Sep 5, 2024 at 9:30=E2=80=AFAM Usama Arif <usamaarif642@gmail.com> =
-wrote:
->
->
->
-> On 03/09/2024 23:05, Yosry Ahmed wrote:
-> > On Tue, Sep 3, 2024 at 2:36=E2=80=AFPM Barry Song <21cnbao@gmail.com> w=
-rote:
-> >>
-> >> On Wed, Sep 4, 2024 at 8:08=E2=80=AFAM Andrew Morton <akpm@linux-found=
-ation.org> wrote:
-> >>>
-> >>> On Tue, 3 Sep 2024 11:38:37 -0700 Yosry Ahmed <yosryahmed@google.com>=
- wrote:
-> >>>
-> >>>>> [   39.157954] RBP: 0000000000000000 R08: 0000000000000000 R09: 000=
-0000000000007
-> >>>>> [   39.158288] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
-0000000000001
-> >>>>> [   39.158634] R13: 0000000000002b9a R14: 0000000000000000 R15: 000=
-07ffd619d5518
-> >>>>> [   39.158998]  </TASK>
-> >>>>> [   39.159226] ---[ end trace 0000000000000000 ]---
-> >>>>>
-> >>>>> After reverting this or Usama's "mm: store zero pages to be swapped
-> >>>>> out in a bitmap", the problem is gone. I think these two patches ma=
-y
-> >>>>> have some conflict that needs to be resolved.
-> >>>>
-> >>>> Yup. I saw this conflict coming and specifically asked for this
-> >>>> warning to be added in Usama's patch to catch it [1]. It served its
-> >>>> purpose.
-> >>>>
-> >>>> Usama's patch does not handle large folio swapin, because at the tim=
-e
-> >>>> it was written we didn't have it. We expected Usama's series to land
-> >>>> sooner than this one, so the warning was to make sure that this seri=
-es
-> >>>> handles large folio swapin in the zeromap code. Now that they are bo=
-th
-> >>>> in mm-unstable, we are gonna have to figure this out.
-> >>>>
-> >>>> I suspect Usama's patches are closer to land so it's better to handl=
-e
-> >>>> this in this series, but I will leave it up to Usama and
-> >>>> Chuanhua/Barry to figure this out :)
-> >>
-> >> I believe handling this in swap-in might violate layer separation.
-> >> `swap_read_folio()` should be a reliable API to call, regardless of
-> >> whether `zeromap` is present. Therefore, the fix should likely be
-> >> within `zeromap` but not this `swap-in`. I=E2=80=99ll take a look at t=
-his with
-> >> Usama :-)
+On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+> John Garry <john.g.garry@oracle.com> writes:
+> 
+> > This series is being spun off the block atomic writes for xfs
+> > series at [0].
 > >
-> > I meant handling it within this series to avoid blocking Usama
-> > patches, not within this code. Thanks for taking a look, I am sure you
-> > and Usama will figure out the best way forward :)
+> > That series got too big.
+> >
+> > The actual forcealign patches are roughly the same in this
+> > series.
+> >
+> > Why forcealign?  In some scenarios to may be required to
+> > guarantee extent alignment and granularity.
+> >
+> > For example, for atomic writes, the maximum atomic write unit
+> > size would be limited at the extent alignment and granularity,
+> > guaranteeing that an atomic write would not span data present in
+> > multiple extents.
+> >
+> > forcealign may be useful as a performance tuning optimization in
+> > other scenarios.
+> >
+> > I decided not to support forcealign for RT devices here.
+> > Initially I thought that it would be quite simple of implement.
+> > However, I discovered through much testing and subsequent debug
+> > that this was not true, so I decided to defer support to
+> > later.
+> >
+> > Early development xfsprogs support is at:
+> > https://github.com/johnpgarry/xfsprogs-dev/commits/atomic-writes/
+> >
+> 
+> Hi John,
+> 
+> Thanks for your continued work on atomic write.  I went over the
+> XFS patch series and this is my understanding + some queries.
+> Could you please help with these.
+
+Hi Ritesh - to make it easier for everyone to read and reply to you
+emails, can you please word wrap the text at 72 columns?
+
+> 1. As I understand XFS untorn atomic write support is built on top
+> of FORCEALIGN feature (which this series is adding) which in turn
+> uses extsize hint feature underneath.
+
+Yes.
+
+>    Now extsize hint mainly controls the alignment of both
+>    "physical start" & "logical start" offset and extent length,
+>    correct?
+
+Yes.
+
+>    This is done using args->alignment for start aand
+>    args->prod/mode variables for extent length. Correct?
+
+Yes.
+
+>    - If say we are not able to allocate an aligned physical start?
+>    Then since extsize is just a hint we go ahead with whatever
+>    best available extent is right?
+
+No. The definition of "forced alignment" is that we guarantee
+aligned allocation to the extent size hint. i.e the extent size hint
+is not a hint anymore - it defines the alignment we are guaranteeing
+allocation will achieve.
+
+hence if we can't align the extent to the alignment provided, we
+fail the alignment.
+
+>    - also extsize looks to be only providing allocation side of hints. (not de-allocation). Correct?
+
+No. See the use of xfs_inode_alloc_unitsize() in all the places
+where we free space. Forced alignment extends this function to
+return the extent size, not the block size.
+
+> 2. If say there is an append write i.e. the allocation is needed
+> to be done at EOF. Then we try for an exact bno (from eof block)
+> and aligned extent length, right?
+
+Yes. This works because the previous extent is exactly aligned,
+hence a contiguous allocation will continue to be correctly aligned
+due to the forced alignment constraints.
+
+>    i.e. xfs_bmap_btalloc_filestreams() ->
+>    xfs_bmap_btalloc_at_eof(ap, args); If it is not available then
+>    we try for nearby bno xfs_alloc_vextent_near_bno(args, target)
+>    and similar...
+
+yes, that's just the normal aligned allocation fallback path when
+exact allocation fails.
+
+> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+> (by using extsize hint) and de-allocation to happen _only_ in
+> extsize chunks.
 >
-> Hi Barry and Yosry,
->
-> Is the best (and quickest) way forward to have a v8 of this with
-> https://lore.kernel.org/all/20240904055522.2376-1-21cnbao@gmail.com/
-> as the first patch, and using swap_zeromap_entries_count in alloc_swap_fo=
-lio
-> in this support large folios swap-in patch?
+>    i.e. forcealign mandates -
+>    - the logical and physical start offset should be aligned as
+>    per args->alignment
+>    - extent length be aligned as per args->prod/mod.
+>      If above two cannot be satisfied then return -ENOSPC.
 
-Yes, Usama. i can actually do a check:
+Yes.
 
-zeromap_cnt =3D swap_zeromap_entries_count(entry, nr);
+> 
+>    - Does the unmapping of extents also only happens in extsize
+>    chunks (with forcealign)?
 
-/* swap_read_folio() can handle inconsistent zeromap in multiple entries */
-if (zeromap_cnt > 0 && zeromap_cnt < nr)
-       try next order;
+Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+aligning the fsbno ranges to be unmapped.
 
-On the other hand, if you read the code of zRAM, you will find zRAM has
-exactly the same mechanism as zeromap but zRAM can even do more
-by same_pages filled. since zRAM does the job in swapfile layer, there
-is no this kind of consistency issue like zeromap.
+Remember, force align requires both logical file offset and
+physical block number to be correctly aligned, so unmap alignment
+has to be set up correctly at file offset level before we even know
+what extents underly the file range we need to unmap....
 
-So I feel for zRAM case, we don't need zeromap at all as there are duplicat=
-ed
-efforts while I really appreciate your job which can benefit all swapfiles.
-i mean, zRAM has the ability to check "zero"(and also non-zero but same
-content). after zeromap checks zeromap, zRAM will check again:
+>      If the start or end of the extent which needs unmapping is
+>      unaligned then we convert that extent to unwritten and skip,
+>      is it? (__xfs_bunmapi())
 
-static int zram_write_page(struct zram *zram, struct page *page, u32 index)
-{
-       ...
+The high level code should be aligning the start and end of the
+file range to be removed via xfs_inode_alloc_unitsize(). Hence 
+the low level __xfs_bunmapi() code shouldn't ever be encountering
+unaligned unmaps on force-aligned inodes.
 
-        if (page_same_filled(mem, &element)) {
-                kunmap_local(mem);
-                /* Free memory associated with this sector now. */
-                flags =3D ZRAM_SAME;
-                atomic64_inc(&zram->stats.same_pages);
-                goto out;
-        }
-        ...
-}
-
-So it seems that zeromap might slightly impact my zRAM use case. I'm not
-blaming you, just pointing out that there might be some overlap in effort
-here :-)
-
->
-> Thanks,
-> Usama
-
-Thanks
-Barry
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
