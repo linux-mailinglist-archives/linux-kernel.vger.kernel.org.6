@@ -1,237 +1,190 @@
-Return-Path: <linux-kernel+bounces-314872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F091B96BA3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6FF96BA2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50F2CB210A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A520E1F2205C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AAF1D9D72;
-	Wed,  4 Sep 2024 11:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5421D0496;
+	Wed,  4 Sep 2024 11:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xd1WrY4f"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C5AA6T4m"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2056.outbound.protection.outlook.com [40.107.21.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5161D47D8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8368F1D017B;
+	Wed,  4 Sep 2024 11:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448705; cv=fail; b=LYSKQ98F40ExHGDzkWH4AyUpQ82W7BZPebt4wEZqilIqNwgvXLkqa2E8K5MWRKNyJPKesRSmrS2CeazNz4FX42Z6i16WtHmNB1cOOpZaweXGhsxPPHwpgBhigqDmlpjY48KAkHPEKVMNYHppPHOtXVXEkZhJMJSxKu1pHFdtMpw=
+	t=1725448673; cv=fail; b=q93yqxTHXGzGMBbPFQ+dFAbKDv3IjLaktY8FYmUua9kyob/7mtDuFf7u4KY0z0PzsBgQhhyW6p0oGIZAP6iH4DF0RL2BN5Nx2/ph5tTkqVKUUcuvSVWFWag5kCSFIzeix9otGxnuh5fR4F0eKdR2MXy8cxeWtt8Nc++/jO59Ke0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448705; c=relaxed/simple;
-	bh=7hykKWGfzi1t3pyCYJC+q+mbR2Na7lcKefM7l1/4UGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dSc2i8JVB6h/sGrI2hLWxJWf8MeVhCQzdAu5CD87jvFxaY+btk97FwGw/6jOwwGAdyeerWXa2SEi4sZUUQbmtYYtpaeD4g4zqltY/8mL3eedvbnwjFfFQP9IuaNXJiwB61Xn4iBnB5HfYVR0+HM1PEoHb1jXtu6TZA+o5746vlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xd1WrY4f; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1725448673; c=relaxed/simple;
+	bh=63dcorRl1GooexrUpr/xKOgP+ebeNU+uTmZnKqe6pvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=a5pobGj8JPp0HPc8uM/jCAOxIfqZaeYu3ey5YAEdlXkUMYmbmrxwepDROpE5gXX4uzcAW+A5m4vOU554ArwA71K8uCcAwggZ+QYf9kaMuvZUhfSTzi7/6vOUbuowXSVysBAbMDjWFPqZEGOUXyKeC6rAw9RSH9pJ8b34THrgoog=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C5AA6T4m; arc=fail smtp.client-ip=40.107.21.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=llUmF94jffv3Typ0GfPLIpaV8DmBlMBiUBL+p2kFFWbzSdlzhZtMUsPKpc3pe2SMcIHT82eHRDrSEBOujHs9wRXmzqXhELHiNTWM8rO+xKmJqIEhRCBrrN+uWlmPK2EmWbd2LmN5p87FkKOL5kLmTH0cP8nijhQcbOYVWi3mJkR5K4sxJSzxebmCl2tAm8yi7zHw1PqXx2rvcxuzbDoN6spEh4Ej/TLeXJANi8RwG6azYZMbRj+GIKv7g3y8EbsR5GN7Mv6Zw7mRQnOTKGvBtHs3l7IJ2WLl02lQtw4mfR9MdS8xmjfoWgZvdn/nw6Guc2Ba+4qBEHBz7hGbW0qJdw==
+ b=mkTMCj3LKzBoQ6PJrleO09KY8/snZlHVTiNFUHwFJYH4fzHu1hFHvcnX4UzVNT0Z5u/WaGujFoNoI6IT2yJz2YOjmzmQiWgxj4JExd8djVqQRXQCfht0hFqjOsX/ZAYftI6ed0Xw8aelwugmWIEt5yEbfR6PyP8HZBcnrxbCRtl6Ny3vP+/L0WMHtQqeLdhoh+Sv28pwvAVWzVsqg7gHXVPvB1SFeGzvfbPadVQCjdrtmB0lH+n6J58j4mHs4bGfhHzKa9+fK3+gLAqhcc0yrtSXzPFTCDCreKkyJE64y5tNtbSKbf2fE7dpCEwuGPP55jXF7Ho0iJYZWdPMsn0JnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hy7PeCtX5IRtuVmvH9zuRWJN8//RoRAIPLmLIQ6kgnQ=;
- b=jGxJYTzuaNi2b4Nf3Q6EKirq/guT4xHsQC3kN59MQsBVJ/S1Kkh/jYR/sWocPANvS/Vg59FXzs75YrmclbfSCcMdgoUAXf8OhLih4BLwO9RG9He7FitSYLCtqK+YDAronJU8V4xZnmkUa/s+UDNaCtH6SXcjIW/QinEanb70McgCgT8BbFxMc1LMS1w3KJ1Nq0+3kqIgOCZHNdNvy7p3THOTPV4EYuxLHX9GgM7wb1yK2/deuH1oeL3WdIxW0TbpqB9afTcpIaRjo0lYWxgQi+iiIe9NBXnW/aKP2fRp365xrL+44r4D2j7bIXUiZPf6QeoPUCDxY3FE2QP63Wx3Jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=uaes94WbseF+m8qXJsa7LnSmihuQgrahx8WWOXyfTxM=;
+ b=Kh8e7JtzyJHkpvidbBLUd6mY/mKP553pd9ecjMZiQn3rLrjQmnPMPQwArAXAIeOiscIsz++Nb1SLHA2LVh+UjgPtAnqoUbyNBeWjj1SP7FRvII6Lk9+xJFVD2nnKDs03722km7F9jbsYs9umj+3qljJ+QH9ViNkZhGlU3Jtwbcq5KD6wJsUiFfmeeXlIakESlg2elbV8eT+f3aoCncNQ8lwYa5l8TcWFlJDl2U16Ep+3mzcfAOCS0vOaCLUTC6+BGHQWnpoJOyPg4UpDzcv8FzZ12jIWUuaKO7LexPrnRi8KRH6oIDdtpE41R4MledNzhmVwW6CO7n3kDCpLn9NCmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hy7PeCtX5IRtuVmvH9zuRWJN8//RoRAIPLmLIQ6kgnQ=;
- b=xd1WrY4f/vSKQslvc8LCtg8EzlvjDSsAklmQ6xsBke/5hhNd2g9simcwWbnqH9cCgHCs4eVi7vaq0ha2u2R7OEr7l6pngv6VuDyMjGuR1PTmDyBhjrtIqDGev1qufZIXAI3dpe102pTomfNL/Ls2m6Jq82uQ05UYWLhZJqm9pdw=
-Received: from BYAPR01CA0029.prod.exchangelabs.com (2603:10b6:a02:80::42) by
- CH2PR12MB4149.namprd12.prod.outlook.com (2603:10b6:610:7c::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.20; Wed, 4 Sep 2024 11:18:18 +0000
-Received: from SJ1PEPF000023D3.namprd21.prod.outlook.com
- (2603:10b6:a02:80:cafe::f5) by BYAPR01CA0029.outlook.office365.com
- (2603:10b6:a02:80::42) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.26 via Frontend
- Transport; Wed, 4 Sep 2024 11:18:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF000023D3.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7962.2 via Frontend Transport; Wed, 4 Sep 2024 11:18:17 +0000
-Received: from [10.136.43.3] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Sep
- 2024 06:18:14 -0500
-Message-ID: <62fd45f4-3324-8cdd-9ec7-bf47f95038ce@amd.com>
-Date: Wed, 4 Sep 2024 16:47:14 +0530
+ bh=uaes94WbseF+m8qXJsa7LnSmihuQgrahx8WWOXyfTxM=;
+ b=C5AA6T4mWaZEfm5ncuyFw8QLbfEZyPAMNQxldYLfMvuViitw7/fBMrJg/aMUI13b94rX9h9s/HfhHIJcL7KjDfJqi+CiYo/mU6cjptFf7hP/ij+6mbp2/4dCadH7WqhFI0TVQyB5ktb7NS+8upQybea/OHtgP5Gj6rBQc651Zvxh60J8NnAA7qPWi/youP8ykUW5r5yksmKj++X4QDaa0i9MO9O1DGy7KpXPt4IIM4tMzaX4XjAAHeB9dbXdDOa85ANQMp7r8xFLD/uehDyUEmg1bGP/JV+5QYqSgsBWnOaEeUhi06zQbuEqsL/9ZjG1OgoSUpRGMm/t7EJrT4lYgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by GV1PR04MB10607.eurprd04.prod.outlook.com (2603:10a6:150:203::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 11:17:47 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%4]) with mapi id 15.20.7918.020; Wed, 4 Sep 2024
+ 11:17:40 +0000
+From: haibo.chen@nxp.com
+To: han.xu@nxp.com,
+	yogeshgaur.83@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	singh.kuldeep87k@gmail.com,
+	hs@denx.de,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	haibo.chen@nxp.com
+Subject: [PATCH 0/6] few clean up for flexspi driver on imx8ulp and imx8mp
+Date: Wed,  4 Sep 2024 19:17:21 +0800
+Message-Id: <20240904111727.1834935-1-haibo.chen@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:4:194::6) To DU0PR04MB9496.eurprd04.prod.outlook.com
+ (2603:10a6:10:32d::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v2] sched/core: Introduce SM_IDLE and an idle re-entry
- fast-path in __schedule()
-Content-Language: en-US
-To: Vincent Guittot <vincent.guittot@linaro.org>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, <linux-kernel@vger.kernel.org>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>
-References: <20240809092240.6921-1-kprateek.nayak@amd.com>
- <CAKfTPtAnX3a+XfeCbFzNGJKiUyA2VGYowsiofetHra=ODOsYJQ@mail.gmail.com>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CAKfTPtAnX3a+XfeCbFzNGJKiUyA2VGYowsiofetHra=ODOsYJQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D3:EE_|CH2PR12MB4149:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3824eab-51c9-49d2-e351-08dcccd346d1
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|GV1PR04MB10607:EE_
+X-MS-Office365-Filtering-Correlation-Id: 823c04f0-126e-46f8-17bb-08dcccd3302b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NVNOUjY2aE9rN1l5RlhXS0dCdFBSRGpHVnlNQ1dSRVNxalAxSzcxUWpITnlx?=
- =?utf-8?B?UDNMU1UvaUJkL2Y2T2VZZTN4YTdVK21aV0l1RHRsWU9ObXMra3pTZWZmYzZp?=
- =?utf-8?B?dU9SR21wUWsxRCtYNmRQNFFYU1NDa3p3WlhkSXFEQUt6VDlRNmR0K3ZZTkNE?=
- =?utf-8?B?aTE0QVB0OUN3QVVMQ1l1VS8velBidFBBeWZYY3R1S0hRckdCSkZvZE5QOTBy?=
- =?utf-8?B?VzNlR0tpT25vMXFxaG5CY0FSYnYraWp3Tmp6Y2YvK1cxYkU3bWlHL0srb0l1?=
- =?utf-8?B?aGMrS0FKYzRidFNMMTcrRFBRUEwrWktBdy9UK1I0NVBuQnpWUStwSU1kODZC?=
- =?utf-8?B?Z3BOUWFEenB2ZzF2bjZyMWZVWHpzcHFnUlZ5Q0V0K0hyWGsvand1ZjUvdEJN?=
- =?utf-8?B?VkNzYnQxZDMydjNOZGhMalQxMGgxL1FXWTVLMlp0N1h2cWZ5N3NZM1pzTU5Y?=
- =?utf-8?B?Qm5ORC8za2cyOFVKZHFSUjl3T0ZZeDBuR0FwL3N6MmZOTGpUbzFVNXJkOFBJ?=
- =?utf-8?B?OG9CRUV5cGphM1B6K3pPTjh4bExNZklRUTVpTXlNejNTZHEwaDh0cVBFRkRI?=
- =?utf-8?B?STNXU2pieE9XNGpCRWM1Sm1MVVZsRi9JWTltZFZPaHE5TEFVMHVjMjVtM1VE?=
- =?utf-8?B?a3VxZXFkTXdsSGNiRTBnUVdmZXZuWHhpZVFGbGpvQS9xSU9lbzE1Tjdvcitq?=
- =?utf-8?B?d3QwSDRsZlRwNkFyYlpSYzZZRm5zYUhDMUtTV0MwaGJYUUtuZng1NHJpaS90?=
- =?utf-8?B?dm15azJ6L214eVcyS08xWDlhanJZQWw1dFkvekd5U2dzQkZUc0tweU9oUDBk?=
- =?utf-8?B?UnlYSkREMVBzdlJwTGxzY0ZlanNpR0Y3K0RnSEZLT24xbGlrb2FIV0JpUHJM?=
- =?utf-8?B?cTBhVmg2a0tKdEtrYXZuRytHQmNRZGV6bDZPUE5mcmpzKytLdVozSTBuTVpM?=
- =?utf-8?B?Y25DYWFtNXU5VWNhNlNKdGdZTklPbWJzVkwxZXFWWUNRdlNOVHFhWVhqb1Nx?=
- =?utf-8?B?K0xMVXZyMHZzd3RkeEhaM053OEhZeUdQVmtDNUI5WGovdEoyRmRnUWYwRTNz?=
- =?utf-8?B?QWVTU0dDck9ETlcyWU9BM3RoSG1reGVYa1h5L2VFbk5jQTkraEZHWHlsVXRz?=
- =?utf-8?B?Zksrbkh6L3Z0VlBQM1dUUjJsM1JzUTVvM3dvZDZRMHZ0em45a2FaUGo3RzNi?=
- =?utf-8?B?VUFEOVVlZHNKNzRWZFBQVVc2MWpWejZ3U041MDVsYUl0Yk9uZHdwN1loeHJM?=
- =?utf-8?B?bDRuUTN3Nkd3aDFaSlJpM1g3QVNGc0U1a2F1djBSZDV4YTkrQUJySHJMaVg2?=
- =?utf-8?B?cTh2Wm9KeWYwVjZaaGREbHdwejFBKytldW5sMmlwZ1BGMDBIU3RkQUx1QmxB?=
- =?utf-8?B?VDJ1ZDRlZjlvRHhwV2NDOUFzeE0rLzRrclJRYXZEbVAxTUxWVVBORXBES0Na?=
- =?utf-8?B?SlNrSk10R1FROFpOMEZHWWpSbXBleEF0TWVodGtUUjBpTGRzRE15WUlhWVRl?=
- =?utf-8?B?SUlBRStnV3ZQb2xXM2JIdWh6UFpXbVVRTUhFdWVGQ2V6QkM0RXFVaVRDcHJt?=
- =?utf-8?B?TzQ5T2h2R0J3Uit1Tkx0REFiVFVnV204NFdHeE9uWWl2WHg5am9sck1JekZT?=
- =?utf-8?B?R0VyeGlVbHZxN3hVclozSEU2WkMzWFdWYjBiOHRsQnBKTFdVUWIvZnJNUk5D?=
- =?utf-8?B?VnZ2UEg4L1VCK3puWERrYU81QmFaeGpveGp3MExVdVkzWU1rZUdoWmNraWNV?=
- =?utf-8?B?NCtTUjB1VWVmUTQwZEd3LzFobHRaY1Z4d2xBOVFJdXhYWGZIS1V4KzY5R3RU?=
- =?utf-8?B?a2Rxb0ZEazA3VTlGSWhMV0ZaTTRrNXY3bU95SkVCNDAvNFFsQW5GZVNiendn?=
- =?utf-8?B?cXltWTJsQWtOTlhiaFcxL3hYT2hhMTdhWEhQZ2ozMjR2M1FIUS9rSFIzQ1hJ?=
- =?utf-8?B?V0o0SEhpa2VrQmIzM3hBTWltbmhIU1JFQlV6RldDc0p5empyeFFCcGdYcW80?=
- =?utf-8?B?Wkk4S3lrQVBnPT0=?=
+	=?us-ascii?Q?A93XtteL1VaS+xTIeCKa+hmkTjgGvChE0gZdB0rag3qagnqoRqAxbkeu7BfI?=
+ =?us-ascii?Q?8rUD8+d5cqTGWHAHs04toyQC/9R6vgX0ENSTfqp9BlOGXnZZSLuGFOHOX/v8?=
+ =?us-ascii?Q?db7HmO6BmNy7jby05wrNn/nmQRbF42SHNhr2093JmjwZOeZRjih3qCg748Ld?=
+ =?us-ascii?Q?2UdccmrIQWuQUg0gUXNdgFYPMh97KygZq/ZMtkRaPhkc6tz3rB0rydOH0F1m?=
+ =?us-ascii?Q?ZqvjYCalXdJg0lEGv2sNJ8knJniyxoZwDKs2dJvtDkswYZnoDeSb591AuvHe?=
+ =?us-ascii?Q?5LGCHH1Wkh0OyCDa4fNOBeiTcsyscMPR2jgdS19K7d29rLBt76IEroK3QrpZ?=
+ =?us-ascii?Q?CnOqK4j+Aa7urkQBYgGetewL3XGvuN97K6P7ElW1cn3JL8+AWoQhZNMO7uk5?=
+ =?us-ascii?Q?zevvF7g5+Qrs8qDa6F6KLjNUATStZY+hf+auDou9wGDMaDhDSDN28HMKmWHV?=
+ =?us-ascii?Q?XPokciQlkHyorjgQrO4wfTR4eidzrgWao0gOFKyK/UwpU1PbjQS4BCJ+Pzks?=
+ =?us-ascii?Q?wXALOidxTBJSvDxMiIOhLYEu04gSMguZv1HwBaf0gzk+W8zFnIWVTe6a7Lta?=
+ =?us-ascii?Q?B+U+M5zoEyzvxn16/3hoe5ImdvbFcpBBv0QgiZ9rOGsyoZ1KvxhKNX/HhX0k?=
+ =?us-ascii?Q?J+ngS9L+rA9eXlJjflgr07dPxfSIADTO0wzqr5QXXN0siW4nTtDEvDcxzWLZ?=
+ =?us-ascii?Q?lltHJmUOJk3Lx488UY1y9HHgIXTjLyK8iZ5R+TQH6djhKhYOhXrrQIVdNAJb?=
+ =?us-ascii?Q?qobmJ1Bb8Ii35ZsrWeJ2PqqDCtgnn1qmy406blYlQEDALe3FmyLe/G9rKu7/?=
+ =?us-ascii?Q?BCPRj0k09zc6+qC2QNLu7OsFDyOvbNJmmgQ/cRK4El6UP2hMxHXXRVeMNjBW?=
+ =?us-ascii?Q?wh/vIreew3skcRV2JTOy1RpJ4Fzl0DxccEk5UShdEPg09Wlt0AT189xA8bjE?=
+ =?us-ascii?Q?WaDmIpt0/FvSC722pIC2UMGL1Rua1Egi+wvaGNaSptPBMkJHQOG/L8DIb6Wt?=
+ =?us-ascii?Q?sv93vm+eC+5rPzz+TCBP19B/TWYtM3115r7A3sKN/+cZnxvtWo7jxcEkoMq2?=
+ =?us-ascii?Q?6rQej7wKZlighREoPJsIlv5ZGDvQNrnBLMw+5A3nZzQaMGVW1dFBmOIyqqAz?=
+ =?us-ascii?Q?S5ONjBr50oAGeuALgeK/Bblx+k3eE85Xvd+OFRE2y5PaRHqLP0qGsb1nAs3q?=
+ =?us-ascii?Q?jrcydzgYZcmRFbY/LWU7F90mzNRVXssbxo6ltwn8BprLJtuVQhaW+F0NDj05?=
+ =?us-ascii?Q?Plt5p3EMwhmFrElBH+UiCyDzcdWygvv07ik0pe8Dp4VtMDIYuNF4F6pAvilb?=
+ =?us-ascii?Q?SwyTxl+MuSMgwDV4f3TJJemEGPoBcaEu5uBZEre/vcqQsNiFG55ER85Zb2tj?=
+ =?us-ascii?Q?sNvfCnZp5jRqtwuoTIlhrzR9skaLM+4K2hqnN6G/FYKr39Ss6Q=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 11:18:17.6843
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5SVKsWGoxlgvOEod3XA8+pwTWgk/T3/0nYnsXI492Rrgu81JvT/+34jUjHxs?=
+ =?us-ascii?Q?UOatEIPbUXZUFt9aMgYF4vEWcXFSNrzI5Rf+MqE/fZ6cWEj/dIyovGQTBLiL?=
+ =?us-ascii?Q?qchWKxCGsCPcJRAT6xIzmJn+RIps5pp3z0Hi16lzEJPIspDy4udo35SgcFRd?=
+ =?us-ascii?Q?eVohGGdDk+P3NvkOjM5FwFop8TzKzxK6Y6VfZU+x9DieYoTnExzVSbOq10fw?=
+ =?us-ascii?Q?VCbBcWZFPcg3jEgDCPz5fCSGf3jc0PeopDJ/QAehl8tYYVcCgG+zpxzoRIDn?=
+ =?us-ascii?Q?uOjY1t01WafT7UQvn8WQMcLWvzx2uKohnNp1ibhsRFQp05AFRZxLilXP0SCe?=
+ =?us-ascii?Q?5wuY7I4mXdr2T7z3bPR6JbHp/w75NiryFPilapXkM4//1OF6mFS1D+6fv7Vo?=
+ =?us-ascii?Q?GyBN+3pIXp6QzSVoBGlBzay54p+qV1z3I5ExT+J3oOpH9ZstgpFSTwfRPEzu?=
+ =?us-ascii?Q?a627uHB1/rMvQmwflmnrHF3SLnbJvBb5jwYKWOFuLANiV68enTdyQapYVXin?=
+ =?us-ascii?Q?QqJMaNUUoZYXSBxBUesGIaen9ITemo1t6yWmTYIp5kxMRjKLHsf+KmgArik1?=
+ =?us-ascii?Q?XO9rqkgc1mm/1Q9hsI8RpekvXOIzFwWX+gRIfWEXbfqRjG8xrM4DQ9vDxDd7?=
+ =?us-ascii?Q?n9InrxhY/ShkqTHTqSa+Z0/5cai0GHO4VC1FKwTHoRTVBDJjghA9268E965R?=
+ =?us-ascii?Q?ZhsWE7E0FqZ+ckmMXybgn6HLdf3mmnLkfhwvWEX7c3TKSCEmLRzu3LvBBY5X?=
+ =?us-ascii?Q?/BGxguRBDy0d7iGBlAiEbkXh7Uf8bWKnJTvSW8HnmsgABtqrYYIHsUxUBqyq?=
+ =?us-ascii?Q?nZP5+J5OKvYRiAWxlxdEvoSV0FZA98Ypm58PHSGRJYbTi5Z84bgfVX3Qa3LW?=
+ =?us-ascii?Q?cUsmmSguGs6PA29Gv1QUfa6TMWGKur+JNqOHO7xiOaREsFftUbBfFgHahQKY?=
+ =?us-ascii?Q?FtuD4wfBlOtiXdLUFG28NZTxuEIubscIUW+3E8khZmaLTq6Xt0CivKUARHtM?=
+ =?us-ascii?Q?eon/2vnrTdBoQ66D4/S+uKykNd7zCsbCjjg/TqcVyVr3GKjdgzOR2AEB1GPT?=
+ =?us-ascii?Q?KTcGY/nzHdU60kzChMnLKDahSisYohd5uQ1NB+0Qrmjpan8vjH7XFruCZJTE?=
+ =?us-ascii?Q?g+rlRXiTFgtBQ5jtgIz+7ZyolWkrFpr1mY8MWtajxAEVcbqSIqdRJdrjydct?=
+ =?us-ascii?Q?icJ4qh9V8Ozw2eb0W4K5uxyjnwCUfs8UlDhZn9t86bB5go1cB2WHgNrX41Eb?=
+ =?us-ascii?Q?kdRBYVYt1xDdM5Otq5T/ieEcDp/xjTDKGtRJVQvOBnxmQqULJHL6Y3sERCN4?=
+ =?us-ascii?Q?w0cuvQlaR9DA9JKSLb/jBLryOaXDlIbtqkPWXrz0lMjME2fMRPhmTUxOrmHT?=
+ =?us-ascii?Q?nJI6b0NgMIjTiDQgdGmjIB6xGmshY8bnHXnsgnbX8wQMT94d4G6g2o6fR/Jo?=
+ =?us-ascii?Q?zVbd2rXvxOVg46HNfi/hMGHoZw9MzNsbiDhR+ZXmwICUfgpAp6QwWQcZs3kM?=
+ =?us-ascii?Q?xxA/16+TbREXYb8dbBZEEmDzuEG1beaTMCjmOt2CwuHXajFfYZvcTXUhMzEp?=
+ =?us-ascii?Q?QMVxm6TnHM6DfjjPTJUNLEChBgen7sC7wvzcSJGA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 823c04f0-126e-46f8-17bb-08dcccd3302b
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 11:17:40.2374
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3824eab-51c9-49d2-e351-08dcccd346d1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D3.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4149
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I0H5lMPyOINKJkLdm8dewAyXFAl7AHe13kV+f2bT7SXuPdmqEumvYp7H4ZwxsQrNaynBNTojyp2gQX9mXpJ+zQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10607
 
-Hello Vincent,
+From: Haibo Chen <haibo.chen@nxp.com>
 
-On 9/4/2024 12:54 PM, Vincent Guittot wrote:
-> On Fri, 9 Aug 2024 at 11:22, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->>
->> From: Peter Zijlstra <peterz@infradead.org>
->>
->> Since commit b2a02fc43a1f ("smp: Optimize
->> send_call_function_single_ipi()") an idle CPU in TIF_POLLING_NRFLAG mode
->> can be pulled out of idle by setting TIF_NEED_RESCHED flag to service an
->> IPI without actually sending an interrupt. Even in cases where the IPI
->> handler does not queue a task on the idle CPU, do_idle() will call
->> __schedule() since need_resched() returns true in these cases.
->>
->> Introduce and use SM_IDLE to identify call to __schedule() from
->> schedule_idle() and shorten the idle re-entry time by skipping
->> pick_next_task() when nr_running is 0 and the previous task is the idle
->> task.
->>
->> With the SM_IDLE fast-path, the time taken to complete a fixed set of
->> IPIs using ipistorm improves noticeably. Following are the numbers
->> from a dual socket Intel Ice Lake Xeon server (2 x 32C/64T) and
->> 3rd Generation AMD EPYC system (2 x 64C/128T) (boost on, C2 disabled)
->> running ipistorm between CPU8 and CPU16:
->>
->> cmdline: insmod ipistorm.ko numipi=100000 single=1 offset=8 cpulist=8 wait=1
->>
->>     ==================================================================
->>     Test          : ipistorm (modified)
->>     Units         : Normalized runtime
->>     Interpretation: Lower is better
->>     Statistic     : AMean
->>     ======================= Intel Ice Lake Xeon ======================
->>     kernel:                              time [pct imp]
->>     tip:sched/core                       1.00 [baseline]
->>     tip:sched/core + SM_IDLE             0.80 [20.51%]
->>     ==================== 3rd Generation AMD EPYC =====================
->>     kernel:                              time [pct imp]
->>     tip:sched/core                       1.00 [baseline]
->>     tip:sched/core + SM_IDLE             0.90 [10.17%]
->>     ==================================================================
->>
->>
->> [ kprateek: Commit message, SM_RTLOCK_WAIT fix ]
->>
->> Link: https://lore.kernel.org/lkml/20240615012814.GP8774@noisy.programming.kicks-ass.net/
->> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
->> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> 
-> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+PATCH1~3 clean up the redundant imx8mp compatible string
+PATCH4~5 add support on imx8ulp. The flexspi on imx8ulp has a difference
+         with others, it only has 16 LUTs, while others all has upper to
+	 32 LUTs. so add this distinguish in the driver.
 
-Thank you for the ack.
+Haibo Chen (6):
+  dt-bindings: spi: nxp-fspi: adjust imx8mp to compatible with imx8mm
+  spi: nxp-fspi: remove the imx8mp compatible string
+  arm64: dts: imx8mp: add the compatible string for flexspi
+  dt-bindings: spi: nxp-fspi: add imx8ulp support
+  spi: fspi: add support for imx8ulp
+  arm64: dts: imx8ulp: correct the flexspi compatible string
 
-> 
->> ---
->> v1..v2:
->>
->> - Fixed SM_RTLOCK_WAIT being considered as preemption for task state
->>    change on PREEMPT_RT kernels. Since (sched_mode & SM_MASK_PREEMPT) was
->>    used in a couple of places, I decided to reuse the preempt variable.
->>    (Vincent, Peter)
->>
->> - Seperated this patch from the newidle_balance() fixes series since
->>    there are PREEMPT_RT bits that requires deeper review whereas this is
->>    an independent enhancement on its own.
-> 
-> What is the status of the other part of v1 patchset to run idle load
-> balance instead of newly idle load balance ?
-
-Just posted the series out to LKML. You can find it here
-https://lore.kernel.org/lkml/20240904111223.1035-1-kprateek.nayak@amd.com/
-
-Sorry for the delay and thank you again for the review.
+ .../devicetree/bindings/spi/spi-nxp-fspi.yaml |  3 +-
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  2 +-
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  2 +-
+ drivers/spi/spi-nxp-fspi.c                    | 55 ++++++++++++-------
+ 4 files changed, 39 insertions(+), 23 deletions(-)
 
 -- 
-Thanks and Regards,
-Prateek
+2.34.1
 
-> 
->>
->> [..snip..]
->>
 
