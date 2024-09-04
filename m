@@ -1,122 +1,190 @@
-Return-Path: <linux-kernel+bounces-314425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14D196B300
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5721196B308
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2732EB21F72
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7FA283413
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3B4146A86;
-	Wed,  4 Sep 2024 07:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905A1474C9;
+	Wed,  4 Sep 2024 07:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZb55oHw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="rfNHq06S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BiFOEq1s"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777EA824AF;
-	Wed,  4 Sep 2024 07:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90CA14659C;
+	Wed,  4 Sep 2024 07:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435425; cv=none; b=H9rjvUVWKmdROTvqMr37yLNMTM/Mo/f3CL0ffOhHx4CCFtKRx92U85bqSbAAowbqTn0uOZafvm2XeTX4uFIoqogZeyzWy4Y32QOZ92CqODEjkFYynt62DAD4XH2UpsacMpSbb/SQPP9jj2QAN0k4UcZYSqkUWIpGaniusedF3NM=
+	t=1725435509; cv=none; b=FDYdh3eSf3QPKKhzAruijVNNtB8cc5d0aiAYg8BcpNWLmo6DYLy1J5HsQCiWDs76dyoL8vpKDcvUCBxu3nJcCb30IpGF5ltHYZ3xvDotm5SDPBLhT/1tV5PoegGseJm7nR/LNk5Y8cMOFc1nZUhPiYrppC7Y/FBE/Dg4uw+k6LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435425; c=relaxed/simple;
-	bh=AfxzpX4GHl51hFDB4zqrm6o7GErc6877ymLCUd48txE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNNaIw2c2GCAUzop5gSa761vR6mDUwwCdlRQj5f7qy1KjBb2jiBWu7hVVpaPfkpCXTZCrQh1wuZctqw+L4XCIvXSz/tOpuDjDC+4RLIvbl/hj9IwIvARXBpPewcQ/BF7xeT3sJDLaHwPcdgegRJSVFNkXVm8G03sgBnzUeUWaCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZb55oHw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060FEC4CEC2;
-	Wed,  4 Sep 2024 07:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725435425;
-	bh=AfxzpX4GHl51hFDB4zqrm6o7GErc6877ymLCUd48txE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lZb55oHwrLAB5sjGQkLV4ny7WTr6hEA4VR7hczbYooL5I4DVHFqhRo6jWARP46Q/Y
-	 kE+pi17yhNvs2nA4yQIJ5pqiVFG1GxV7lHPCWigq2VhvUCn20kHxygl+wViq4/iuCd
-	 ChKTsje/b4mVqXMxHDyYfVlWUdArgh27kqE/LQh9auxEAVwFIhnbC/m7tPczdM7gyC
-	 unABFN9RTFQIcHqtLDw8oDU+5K+BWjrLaSR1mXk35ttaSztVav09tJpAUTRK5jvDkH
-	 J8e00gP3VpCgqzmGlO3+cDAkyOL2fGo9Oh8swyqZfPpwPYHsKp65rkPw4aS4FN4Ynh
-	 sBXPpQbPR7Vig==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slkZs-000000001kV-486R;
-	Wed, 04 Sep 2024 09:37:21 +0200
-Date: Wed, 4 Sep 2024 09:37:20 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
-	linux-clk@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
- at init
-Message-ID: <ZtgOMJ2fmkZO8nDG@hovoldconsulting.com>
-References: <20240828171722.1251587-1-swboyd@chromium.org>
- <20240828171722.1251587-2-swboyd@chromium.org>
- <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
- <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com>
- <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com>
- <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
- <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
+	s=arc-20240116; t=1725435509; c=relaxed/simple;
+	bh=sz6ZXnptgCPAXnQbA/qYwtmPVRCJO0RfwwN0oTEtnVE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MyFLEMH8RJc7DVnProzw3BT7FSOGNuGXAa+vAPgUKSKPNU3YqXyzxnccFpBIsCtyHjt1xlNC29MyfzhOXBzcVNUsoF7rVkyLgV8um0hDafb+O4A28oN3SgtVS3jEM4+AKYViMON1vqGZSdmXiuEM/yfhwYJfl+u9/jCY8zfQFZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=rfNHq06S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BiFOEq1s; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id CA46F138017F;
+	Wed,  4 Sep 2024 03:38:26 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Wed, 04 Sep 2024 03:38:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1725435506;
+	 x=1725521906; bh=sz6ZXnptgCPAXnQbA/qYwtmPVRCJO0RfwwN0oTEtnVE=; b=
+	rfNHq06S+/FbiJrjcoOAISVrJY1dv8k4g+acB71qeIe0yoy8tEYuiuX6duhHot0X
+	pnl4Iv+jSo1NbgXY27Sm6bOV4qZGIbsxcYq1KA6O7qp3Gv/QXwLbfO8thQJHWS3Q
+	4cLKRt7uqNAaIKrt2TBz5bcums1IZHW3zWq2AysZvWT1FXBRMTYO6Ug7R8MAVuoB
+	3rWV9jPuGkruOmjZMEU/e+2OAMc/GE9oK8kvjNfq6TMiuw5V9pqid8KdfeXQEG0s
+	Y1tdgKvxCvK0hle8lBgZUObKDBQqSNtQDQJN6p+CK2QxAVMDWch6RSMqs0CL2BEM
+	99k/hnes1guZnUoy8uSlpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725435506; x=
+	1725521906; bh=sz6ZXnptgCPAXnQbA/qYwtmPVRCJO0RfwwN0oTEtnVE=; b=B
+	iFOEq1sVqpbBj1w9LMAEZgDjMzrAxYO5IHVpeDFFhntFPf128oUA/18aSRhUV9lt
+	SjTwO1VpWlAVLcHFnIK53Uh65HRATfjliGXh4mjrwEVBt7ypXoKoq7z6ztq4VmKS
+	j9oWFRgn4sfUWeeZbX7j/P4W3nU0xEzcO4z3m0NAdClE47/ikZ0WlI1KHqSqrgiy
+	STUHs83TLL2fjm39nos9JCPme3s5LawmO/KM9/Q2AQZakvZ67FNHsfftPHcObHoz
+	MmaLCMTA2TfvqKjTLC+pmp68EZbbIoTFXuDQWfGlk09BUpDTn4jOwgURKst5b4IF
+	p5c/y86CfrkJwoV8fqdTg==
+X-ME-Sender: <xms:cA7YZpsfXod5rMH1QTlm0kTIPWxJqwPiszVY5eBC46ewJFhh3iw5CQ>
+    <xme:cA7YZifTUghUpf-WKUM0pFh-ulBKmpAalims9KaeyULKphrFiIFxxqcDgax3OHQUi
+    ywmBY4QNB45dm8KCc0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehiedguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
+    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeevueffteefkeehhfdthfel
+    feffjedvffekgfeiuedugeekgeejvedtffeiledtueenucffohhmrghinhepghhithhhuh
+    gsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
+    mhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtoh
+    epgedtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdgu
+    vgdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpd
+    hrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohep
+    rghnthhonhdrihhvrghnohhvsegtrghmsghrihgughgvghhrvgihshdrtghomhdprhgtph
+    htthhopehnihgtohhlrghssehfjhgrshhlvgdrvghupdhrtghpthhtohepghgrrhihsehg
+    rghrhihguhhordhnvghtpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilh
+    drtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtoh
+    hm
+X-ME-Proxy: <xmx:cA7YZsxJTWa516B1amj6UWURaphYpQG7A_CZANJjeHUVSV9pyNfcWg>
+    <xmx:cA7YZgMgKTSMs2eNfwkAsPGl3QfC0ElKD-WFY0SQxWw9BMzetozcJQ>
+    <xmx:cA7YZp8XTYFkwebvCNZsdfsBNO62gvaU4g82IG_p09N7BGZtG4pzAA>
+    <xmx:cA7YZgWFhnrDB95x5DNuYD5ky5Bo6vtbXwU8siGEdfpJ0b4-IAyzCQ>
+    <xmx:cg7YZu8KItrX9IUQjFOMUxdHGLKL6ymyzV556PeKCfMCW0g4shDq4p8v>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 680AD1C207BB; Wed,  4 Sep 2024 03:38:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
+Date: Wed, 04 Sep 2024 08:38:04 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@samsung.com>,
+ "Alice Ryhl" <aliceryhl@google.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Alex Shi" <alexs@kernel.org>,
+ "Yanteng Si" <siyanteng@loongson.cn>,
+ "Nick Desaulniers" <ndesaulniers@google.com>,
+ "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+ rust-for-linux@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ llvm@lists.linux.dev
+Message-Id: <a6959bc0-f0bb-425b-b3b1-3123d3b809b5@app.fastmail.com>
+In-Reply-To: 
+ <CANiq72mvTTgyTjDCWBz_kOdY1f4gopAtWxyC4P4c+Lr0YVkzLA@mail.gmail.com>
+References: <20240903-mips-rust-v1-0-0fdf0b2fd58f@flygoat.com>
+ <20240903-mips-rust-v1-3-0fdf0b2fd58f@flygoat.com>
+ <CANiq72=z1yJm-B_ie=GfueOF1qksaSD9txgFU1YQo2tZx0qQPg@mail.gmail.com>
+ <d9591a84-9a0f-4046-9b2a-437061f6882b@app.fastmail.com>
+ <CANiq72m5iFcqRU_qdUCZkoV8ayPhtQQq3TTEDRUYfMEsnNqTDg@mail.gmail.com>
+ <6f6f04d7-55b3-4714-9bcd-cb4e1ae6c86a@app.fastmail.com>
+ <CANiq72mvTTgyTjDCWBz_kOdY1f4gopAtWxyC4P4c+Lr0YVkzLA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: Enable for MIPS
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 12:55:07PM -0700, Stephen Boyd wrote:
-> Quoting Johan Hovold (2024-09-02 00:15:53)
-> > On Fri, Aug 30, 2024 at 03:29:22PM -0700, Stephen Boyd wrote:
-> > > Quoting Stephen Boyd (2024-08-29 09:34:05)
-> > 
-> > > > It sounds like it's better to make the default always park at
-> > > > registration time and special case the one or two places where that
-> > > > isn't possible, i.e. USB because it has special rate requirements. So I
-> > > > should just go back to v1 then and pile on the QUP patches.
-> > > 
-> > > I've done this now and I'll push out clk-fixes with the QUP patches.
-> > 
-> > I assumed you'd fix up all the other SoCs affected by this, but I only
-> > saw fixes for sm8550, sm8650 and x1e80100 in your fixes branch.
-> > 
-> > Just sent a corresponding fix for sc8280xp, which I've confirmed also
-> > needs this for QUP:
-> 
-> Thanks!
-> 
-> >         https://lore.kernel.org/lkml/20240902070830.8535-1-johan+linaro@kernel.org/
-> > 
-> > But what about the sm8550 USB issue? Don't the other platforms also need
-> > a corresponding fix (e.g. for when booting from USB)?
-> 
-> I don't know. Are you seeing USB host issues on other platforms with
-> shared RCG clk_ops for the USB clk? It looks inconsistent that sometimes
-> there's a USB GDSC but the shared clk ops aren't used. If nothing is
-> broken then let's work on the proper fix, which is parking RCGs when the
-> GDSC is turned off so that turning on the GDSC always works. If USB is
-> broken for you then send another patch.
 
-I haven't noticed any USB issues on the two platforms I work on and
-which both have USB GDSCs (sc8280xp and x1e80100), but then again I
-don't test USB booting regularly (if that's when the issue show up).
 
-I was hoping you would have a theory as to why things broke on sm8550 so
-that you can reason about which platforms need this, rather than have
-multiple users debug these issues and play whack-a-mole with incomplete
-fixes.
+=E5=9C=A82024=E5=B9=B49=E6=9C=883=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
+=8D=888:01=EF=BC=8CMiguel Ojeda=E5=86=99=E9=81=93=EF=BC=9A
+> On Tue, Sep 3, 2024 at 8:32=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoa=
+t.com> wrote:
+>>
+>> Ahh thanks for the elaboration.
+>
+> You're welcome!
+>
+>> However, kernel supports many ISA variants that are not defined by an=
+y rust target
+>> triple, I'm not really sure if it's appropriate to define them all in=
+ upstream.
+>
+> They need to be in upstream Rust somehow, because upstream Rust does
+> not want to stabilize `target.json` since it is too tied to LLVM (as
+> far as we have been told). Whether that is via `-Ctarget-feature`, or a
+> new `-Cglobal-target-feature`, or specific flags like `-Zfixed-x18`
+> (originally `-Ctarget-feature=3D+reserve-x18`), or (many) new target
+> triples for different combinations, or something else, it depends on
+> the case and what upstream Rust wants to do.
+>
+> That is why we should tell them what is needed, ideally in a new issue
+> in upstream Rust, and link it in
+> https://github.com/Rust-for-Linux/linux/issues/355 (please see that
+> list for similar examples).
 
-I don't see anything SoC specific about the QUP fixes and assume early
-console handover is now broken on all Qualcomm SoCs for example.
+Seems like this topic is covered by an existing issue
 
-Johan
+Reported at:
+https://github.com/rust-embedded/wg/issues/792#issuecomment-2328133517
+
+Thanks!
+>
+> I hope that explains a bit more the context.
+>
+> Cheers,
+> Miguel
+
+--=20
+- Jiaxun
 
