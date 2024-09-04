@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-314355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408D896B238
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 198C496B23A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0EB41F21DB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994C71F2378A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D40146A6C;
-	Wed,  4 Sep 2024 06:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FC21474A9;
+	Wed,  4 Sep 2024 06:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I1E/80Sb"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HoykKDGX"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2BD13B2A4;
-	Wed,  4 Sep 2024 06:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A0414600D;
+	Wed,  4 Sep 2024 06:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433174; cv=none; b=OeqsXK1X/RxywbBcEZzJbJVNiB1V98x0WVaWy9bHd8pAxW4u1xGC5m7ncaePhrTuqrQH3ckVT/fBP6WmHhjK8pm6Lc7JBiyH/sNHoar6+wu5H9UHFP4aaKsdl05hNZF7Amv1y+rMlfw1s3DF2i+nn3oGHUzQPbfwpqTifzJT2g8=
+	t=1725433175; cv=none; b=pg3A/cEWuVfyV7hd8qNp0uP11mwCNtQ4dj4mSXNXH1YOYcDAE81IOSCWEOX2oXP8mvvQb1YqfY0WTXAU/3Idqv90TZ2akGpMCykVch0n3S8PoAZf+2lg4C/FW1dOp1HX+hpvJP+GJos3K4kTYNlcBghgUSBPWhPh6JrL3J6VWNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433174; c=relaxed/simple;
-	bh=hC58jLJTDlCLylqz/wSbPfuzxRAozU8IZy2jXQXM3mc=;
+	s=arc-20240116; t=1725433175; c=relaxed/simple;
+	bh=8KArWYxDYUDJ4scCS2qRzkTqEjcZPhCddUDfLvip7hY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UhqDQvPp4x4BBdGXN9oC99THdziaFjMIBn8+NuT/75U2b4SmztEbAAMJylT28yEmgy7SPu9bV3kLGtHE/zBh2kJ88dyJNj9cU3BMosjwQp9rLNW9CzeVBTyYPp91KtABb8XAzpUbcTtbqNdGM6h74qqMikHGbfPCXjtXCFG76IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I1E/80Sb; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=bDjGXoCJQN3FxC+uFq3946naS5An5ps7N9l1N4XIoI848g/Swf4iKn6EdQd8OCZvXNznEiXjXPlO/nzuFK2eARcfRz5ML5LC4VlvS2BSpG5s44rvCeKkKlX+4RnwqqRU+v2WR79SZ7412jeYTTNhbq1za6bS2LV3ZTmNi/gxHug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HoykKDGX; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483L8dLS006681;
-	Wed, 4 Sep 2024 06:59:23 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4843La36025328;
+	Wed, 4 Sep 2024 06:59:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=uMWX5RTeccU/C
-	cqEWQfzKGoIsIuNyNyKITEFnOwaNc0=; b=I1E/80SbtDrptLdKRhoLCmXl9/pnM
-	kjKedt5+FAud60GteKwOEKRxvlrjX+NYrFmb3Q/0loXkGjNiM6vKz+p8yN2PjLkk
-	Q3rW7dgjQZJnlWlZedOcChckyvIc86DiVdP+vfbRYIVk5Ru46qnl3uhl+cb4upZ5
-	pPEpHHNEvCYSJxoiq93Nmj+R+YH9vrZzuwTcxiIHDOBOktr967iIdCP85KGnRpia
-	Fxs+am5w6u6wusbuoO/iH1WI3pleXnA2zBCjHo/lFQ2Hgi3j4E+OJsC3QX0gwUeN
-	IYhHLrh4TzNJ7lciCMeFJy3mpJAzLya3TCHEf+Cx06ArsmLb6S446QMHA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41bttyhmcx-1
+	:mime-version:content-transfer-encoding; s=pp1; bh=EHXEqHdLSqeJ3
+	iFQang+Q8/lNpfAThetnfJ7+gLtcks=; b=HoykKDGX+J8Q2s1uTMWJJSqCkie46
+	ki/v/NhDzytPM+qY83fh/VWgI6fFIuWyPu/srpP57TJ7Lt6HwTkm1F6SCPMiEXQ1
+	m2G2gOWfb4IXSIY4JN1DXsnMukBu+pGMYgnUyjMbQrKhxBx5a3bFceoK6lf7e1V6
+	EftS/BpXCVjPwNIil9DpHhAAOXeV+faUuqbXdXUNzBPa3g+vWJWmDhQcXlufnjam
+	vHyMY9rQOYK/bbva5C0dvijhKcs1+aMHrrb62yD+slqdE/uT+QaDKuS3+MWxYDE+
+	tW1lKQTwrmbt3oIIIbaPw3kc+PCWZIAKBcnv5SMUW35aHZVgfnMNnHLnA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41bttyhmd1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:23 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48456qES001535;
-	Wed, 4 Sep 2024 06:59:22 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cf0mxcm3-1
+	Wed, 04 Sep 2024 06:59:24 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4844Klx0018726;
+	Wed, 4 Sep 2024 06:59:24 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cdw16kpw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:22 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4846xKZS30933448
+	Wed, 04 Sep 2024 06:59:23 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4846xMui54133180
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Sep 2024 06:59:20 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A36A2004B;
-	Wed,  4 Sep 2024 06:59:20 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5FE4420043;
-	Wed,  4 Sep 2024 06:59:20 +0000 (GMT)
+	Wed, 4 Sep 2024 06:59:22 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EC0B22004D;
+	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CBEA92004B;
+	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  4 Sep 2024 06:59:20 +0000 (GMT)
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
 Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
-	id 37F94E0297; Wed,  4 Sep 2024 08:59:20 +0200 (CEST)
+	id 7CA82E0297; Wed,  4 Sep 2024 08:59:21 +0200 (CEST)
 From: Sven Schnelle <svens@linux.ibm.com>
 To: Steven Rostedt <rostedt@goodmis.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH 6/7] tracing: add support for function argument to graph tracer
-Date: Wed,  4 Sep 2024 08:59:00 +0200
-Message-ID: <20240904065908.1009086-7-svens@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: [PATCH 7/7] tracing: add arguments to function tracer
+Date: Wed,  4 Sep 2024 08:59:01 +0200
+Message-ID: <20240904065908.1009086-8-svens@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240904065908.1009086-1-svens@linux.ibm.com>
 References: <20240904065908.1009086-1-svens@linux.ibm.com>
@@ -89,8 +88,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _o0R60wvuriQNIEKnoAy1BMXnXC4pMJ1
-X-Proofpoint-ORIG-GUID: _o0R60wvuriQNIEKnoAy1BMXnXC4pMJ1
+X-Proofpoint-GUID: SpzfxvEkpsCFHkUWVBjuRX8ZF1AHDWdq
+X-Proofpoint-ORIG-GUID: SpzfxvEkpsCFHkUWVBjuRX8ZF1AHDWdq
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-04_04,2024-09-03_01,2024-09-02_01
@@ -100,208 +99,286 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscor
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
  definitions=main-2409040049
 
-Wire up the code to print function arguments in the function graph
-tracer. This functionality can be enabled/disabled during compile
-time by setting CONFIG_FUNCTION_TRACE_ARGS and during runtime with
-options/funcgraph-args.
+Wire up the code to print function arguments in the function tracer.
+This functionality can be enabled/disabled during compile time by
+setting CONFIG_FUNCTION_TRACE_ARGS and during runtime with
+options/func-args.
 
-Example usage:
-
-6)              | dummy_xmit [dummy](skb = 0x8887c100, dev = 0x872ca000) {
-6)              |   consume_skb(skb = 0x8887c100) {
-6)              |     skb_release_head_state(skb = 0x8887c100) {
-6)  0.178 us    |       sock_wfree(skb = 0x8887c100)
-6)  0.627 us    |     }
+        ping-689     [004] b....    77.170220: dummy_xmit(skb = 0x82904800, dev = 0x882d0000) <-dev_hard_start_xmit
 
 Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
 ---
- include/linux/ftrace.h               |  1 +
- kernel/trace/fgraph.c                |  6 ++-
- kernel/trace/trace_functions_graph.c | 74 ++++++++++++++--------------
- 3 files changed, 44 insertions(+), 37 deletions(-)
+ kernel/trace/trace.c              |  8 +++++-
+ kernel/trace/trace.h              |  4 ++-
+ kernel/trace/trace_entries.h      |  7 +++--
+ kernel/trace/trace_functions.c    | 46 +++++++++++++++++++++++++++----
+ kernel/trace/trace_irqsoff.c      |  4 +--
+ kernel/trace/trace_output.c       | 14 ++++++++--
+ kernel/trace/trace_sched_wakeup.c |  4 +--
+ 7 files changed, 71 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 56d91041ecd2..5d0ff66f8a70 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1010,6 +1010,7 @@ static inline void ftrace_init(void) { }
-  * to remove extra padding at the end.
-  */
- struct ftrace_graph_ent {
-+	struct ftrace_regs regs;
- 	unsigned long func; /* Current function */
- 	int depth;
- } __packed;
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index fa62ebfa0711..f4bb10c0aa52 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -614,7 +614,7 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
- /* If the caller does not use ftrace, call this function. */
- int function_graph_enter(unsigned long ret, unsigned long func,
- 			 unsigned long frame_pointer, unsigned long *retp,
--			struct ftrace_regs *fregs)
-+			 struct ftrace_regs *fregs)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ebe7ce2f5f4a..8118e4c8c649 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2864,7 +2864,7 @@ trace_buffer_unlock_commit_nostack(struct trace_buffer *buffer,
+ 
+ void
+ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
+-	       parent_ip, unsigned int trace_ctx)
++	       parent_ip, unsigned int trace_ctx, struct ftrace_regs *regs)
  {
- 	struct ftrace_graph_ent trace;
- 	unsigned long bitmap = 0;
-@@ -623,6 +623,10 @@ int function_graph_enter(unsigned long ret, unsigned long func,
- 
- 	trace.func = func;
- 	trace.depth = ++current->curr_ret_depth;
-+	if (IS_ENABLED(CONFIG_FUNCTION_TRACE_ARGS) && fregs)
-+		trace.regs = *fregs;
-+	else
-+		memset(&trace.regs, 0, sizeof(struct ftrace_regs));
- 
- 	offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
- 	if (offset < 0)
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 13d0387ac6a6..be0cee52944a 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -12,6 +12,8 @@
- #include <linux/interrupt.h>
- #include <linux/slab.h>
- #include <linux/fs.h>
-+#include <linux/btf.h>
-+#include <linux/bpf.h>
- 
- #include "trace.h"
- #include "trace_output.h"
-@@ -63,6 +65,9 @@ static struct tracer_opt trace_opts[] = {
- 	{ TRACER_OPT(funcgraph-retval, TRACE_GRAPH_PRINT_RETVAL) },
- 	/* Display function return value in hexadecimal format ? */
- 	{ TRACER_OPT(funcgraph-retval-hex, TRACE_GRAPH_PRINT_RETVAL_HEX) },
-+#endif
+ 	struct trace_event_call *call = &event_function;
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+@@ -2878,6 +2878,12 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
+ 	entry	= ring_buffer_event_data(event);
+ 	entry->ip			= ip;
+ 	entry->parent_ip		= parent_ip;
 +#ifdef CONFIG_FUNCTION_TRACE_ARGS
-+	{ TRACER_OPT(funcgraph-args, TRACE_GRAPH_ARGS) },
- #endif
- 	/* Include sleep time (scheduled out) between entry and return */
- 	{ TRACER_OPT(sleep-time, TRACE_GRAPH_SLEEP_TIME) },
-@@ -653,7 +658,7 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
- #define __TRACE_GRAPH_PRINT_RETVAL TRACE_GRAPH_PRINT_RETVAL
- 
- static void print_graph_retval(struct trace_seq *s, unsigned long retval,
--				bool leaf, void *func, bool hex_format)
-+			       bool hex_format)
- {
- 	unsigned long err_code = 0;
- 
-@@ -673,28 +678,17 @@ static void print_graph_retval(struct trace_seq *s, unsigned long retval,
- 		err_code = 0;
- 
- done:
--	if (leaf) {
--		if (hex_format || (err_code == 0))
--			trace_seq_printf(s, "%ps(); /* = 0x%lx */\n",
--					func, retval);
--		else
--			trace_seq_printf(s, "%ps(); /* = %ld */\n",
--					func, err_code);
--	} else {
--		if (hex_format || (err_code == 0))
--			trace_seq_printf(s, "} /* %ps = 0x%lx */\n",
--					func, retval);
--		else
--			trace_seq_printf(s, "} /* %ps = %ld */\n",
--					func, err_code);
--	}
-+	if (hex_format || (err_code == 0))
-+		trace_seq_printf(s, " /* = 0x%lx */", retval);
++	if (regs)
++		entry->regs		= *regs;
 +	else
-+		trace_seq_printf(s, " /* = %ld */", err_code);
++		memset(&entry->regs, 0, sizeof(struct ftrace_regs));
++#endif
+ 
+ 	if (!call_filter_check_discard(call, entry, buffer, event)) {
+ 		if (static_branch_unlikely(&trace_function_exports_enabled))
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index bd3e3069300e..13cf6f97f7e0 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -673,7 +673,8 @@ unsigned long trace_total_entries(struct trace_array *tr);
+ void trace_function(struct trace_array *tr,
+ 		    unsigned long ip,
+ 		    unsigned long parent_ip,
+-		    unsigned int trace_ctx);
++		    unsigned int trace_ctx,
++		    struct ftrace_regs *regs);
+ void trace_graph_function(struct trace_array *tr,
+ 		    unsigned long ip,
+ 		    unsigned long parent_ip,
+@@ -870,6 +871,7 @@ static __always_inline bool ftrace_hash_empty(struct ftrace_hash *hash)
+ #define TRACE_GRAPH_GRAPH_TIME          0x400
+ #define TRACE_GRAPH_PRINT_RETVAL        0x800
+ #define TRACE_GRAPH_PRINT_RETVAL_HEX    0x1000
++#define TRACE_GRAPH_ARGS		0x2000
+ #define TRACE_GRAPH_PRINT_FILL_SHIFT	28
+ #define TRACE_GRAPH_PRINT_FILL_MASK	(0x3 << TRACE_GRAPH_PRINT_FILL_SHIFT)
+ 
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index c47422b20908..f2021ab52da2 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -61,8 +61,11 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
+ 	TRACE_FN,
+ 
+ 	F_STRUCT(
+-		__field_fn(	unsigned long,	ip		)
+-		__field_fn(	unsigned long,	parent_ip	)
++		__field_fn(	unsigned long,		ip		)
++		__field_fn(	unsigned long,		parent_ip	)
++#ifdef CONFIG_FUNCTION_TRACE_ARGS
++		__field_struct( struct ftrace_regs,	regs		)
++#endif
+ 	),
+ 
+ 	F_printk(" %ps <-- %ps",
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..7ff651a0b45a 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -25,6 +25,9 @@ static void
+ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		    struct ftrace_ops *op, struct ftrace_regs *fregs);
+ static void
++function_args_trace_call(unsigned long ip, unsigned long parent_ip,
++			 struct ftrace_ops *op, struct ftrace_regs *fregs);
++static void
+ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 			  struct ftrace_ops *op, struct ftrace_regs *fregs);
+ static void
+@@ -42,9 +45,10 @@ enum {
+ 	TRACE_FUNC_NO_OPTS		= 0x0, /* No flags set. */
+ 	TRACE_FUNC_OPT_STACK		= 0x1,
+ 	TRACE_FUNC_OPT_NO_REPEATS	= 0x2,
++	TRACE_FUNC_OPT_ARGS		= 0x4,
+ 
+ 	/* Update this to next highest bit. */
+-	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x4
++	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x8
+ };
+ 
+ #define TRACE_FUNC_OPT_MASK	(TRACE_FUNC_OPT_HIGHEST_BIT - 1)
+@@ -114,6 +118,8 @@ static ftrace_func_t select_trace_function(u32 flags_val)
+ 	switch (flags_val & TRACE_FUNC_OPT_MASK) {
+ 	case TRACE_FUNC_NO_OPTS:
+ 		return function_trace_call;
++	case TRACE_FUNC_OPT_ARGS:
++		return function_args_trace_call;
+ 	case TRACE_FUNC_OPT_STACK:
+ 		return function_stack_trace_call;
+ 	case TRACE_FUNC_OPT_NO_REPEATS:
+@@ -198,7 +204,34 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	cpu = smp_processor_id();
+ 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
+ 	if (!atomic_read(&data->disabled))
+-		trace_function(tr, ip, parent_ip, trace_ctx);
++		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
++
++	ftrace_test_recursion_unlock(bit);
++}
++
++static void
++function_args_trace_call(unsigned long ip, unsigned long parent_ip,
++			 struct ftrace_ops *op, struct ftrace_regs *fregs)
++{
++	struct trace_array *tr = op->private;
++	struct trace_array_cpu *data;
++	unsigned int trace_ctx;
++	int bit;
++	int cpu;
++
++	if (unlikely(!tr->function_enabled))
++		return;
++
++	bit = ftrace_test_recursion_trylock(ip, parent_ip);
++	if (bit < 0)
++		return;
++
++	trace_ctx = tracing_gen_ctx();
++
++	cpu = smp_processor_id();
++	data = per_cpu_ptr(tr->array_buffer.data, cpu);
++	if (!atomic_read(&data->disabled))
++		trace_function(tr, ip, parent_ip, trace_ctx, fregs);
+ 
+ 	ftrace_test_recursion_unlock(bit);
+ }
+@@ -247,7 +280,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
+ 
+ 	if (likely(disabled == 1)) {
+ 		trace_ctx = tracing_gen_ctx_flags(flags);
+-		trace_function(tr, ip, parent_ip, trace_ctx);
++		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
+ #ifdef CONFIG_UNWINDER_FRAME_POINTER
+ 		if (ftrace_pids_enabled(op))
+ 			skip++;
+@@ -329,7 +362,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	trace_ctx = tracing_gen_ctx_flags(flags);
+ 	process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
+ 
+-	trace_function(tr, ip, parent_ip, trace_ctx);
++	trace_function(tr, ip, parent_ip, trace_ctx, NULL);
+ 
+ out:
+ 	ftrace_test_recursion_unlock(bit);
+@@ -368,7 +401,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 		trace_ctx = tracing_gen_ctx_flags(flags);
+ 		process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
+ 
+-		trace_function(tr, ip, parent_ip, trace_ctx);
++		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
+ 		__trace_stack(tr, trace_ctx, STACK_SKIP);
+ 	}
+ 
+@@ -382,6 +415,9 @@ static struct tracer_opt func_opts[] = {
+ 	{ TRACER_OPT(func_stack_trace, TRACE_FUNC_OPT_STACK) },
+ #endif
+ 	{ TRACER_OPT(func-no-repeats, TRACE_FUNC_OPT_NO_REPEATS) },
++#ifdef CONFIG_FUNCTION_TRACE_ARGS
++	{ TRACER_OPT(func-args, TRACE_FUNC_OPT_ARGS) },
++#endif
+ 	{ } /* Always set a last empty entry */
+ };
+ 
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index fce064e20570..096002c99d70 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -150,7 +150,7 @@ irqsoff_tracer_call(unsigned long ip, unsigned long parent_ip,
+ 
+ 	trace_ctx = tracing_gen_ctx_flags(flags);
+ 
+-	trace_function(tr, ip, parent_ip, trace_ctx);
++	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
+ 
+ 	atomic_dec(&data->disabled);
+ }
+@@ -278,7 +278,7 @@ __trace_function(struct trace_array *tr,
+ 	if (is_graph(tr))
+ 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
+ 	else
+-		trace_function(tr, ip, parent_ip, trace_ctx);
++		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
  }
  
  #else
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 70405c4cceb6..8fdee7b9cdba 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -1058,9 +1058,13 @@ enum print_line_t trace_nop_print(struct trace_iterator *iter, int flags,
+ }
  
- #define __TRACE_GRAPH_PRINT_RETVAL 0
+ static void print_fn_trace(struct trace_seq *s, unsigned long ip,
+-			   unsigned long parent_ip, int flags)
++			   unsigned long parent_ip,
++			   struct ftrace_regs *fregs,
++			   int flags)
+ {
+ 	seq_print_ip_sym(s, ip, flags);
++	if (fregs)
++		print_function_args(s, fregs, ip);
  
--#define print_graph_retval(_seq, _retval, _leaf, _func, _format) do {} while (0)
-+#define print_graph_retval(_seq, _retval, _format) do {} while (0)
+ 	if ((flags & TRACE_ITER_PRINT_PARENT) && parent_ip) {
+ 		trace_seq_puts(s, " <-");
+@@ -1074,10 +1078,14 @@ static enum print_line_t trace_fn_trace(struct trace_iterator *iter, int flags,
+ {
+ 	struct ftrace_entry *field;
+ 	struct trace_seq *s = &iter->seq;
++	struct ftrace_regs *fregs = NULL;
  
- #endif
+ 	trace_assign_type(field, iter->ent);
  
-@@ -741,16 +735,20 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 	/* Function */
- 	for (i = 0; i < call->depth * TRACE_GRAPH_INDENT; i++)
- 		trace_seq_putc(s, ' ');
-+	trace_seq_printf(s, "%ps", (void *)graph_ret->func);
-+	if (flags & TRACE_GRAPH_ARGS)
-+		print_function_args(s, &call->regs, graph_ret->func);
-+	else
-+		trace_seq_puts(s, "();");
+-	print_fn_trace(s, field->ip, field->parent_ip, flags);
++#if IS_ENABLED(CONFIG_FUNCTION_TRACE_ARGS)
++	fregs = &field->regs;
++#endif
++	print_fn_trace(s, field->ip, field->parent_ip, fregs, flags);
+ 	trace_seq_putc(s, '\n');
  
- 	/*
- 	 * Write out the function return value if the option function-retval is
- 	 * enabled.
- 	 */
- 	if (flags & __TRACE_GRAPH_PRINT_RETVAL)
--		print_graph_retval(s, graph_ret->retval, true, (void *)call->func,
--				!!(flags & TRACE_GRAPH_PRINT_RETVAL_HEX));
--	else
--		trace_seq_printf(s, "%ps();\n", (void *)call->func);
-+		print_graph_retval(s, graph_ret->retval,
-+				   !!(flags & TRACE_GRAPH_PRINT_RETVAL_HEX));
-+	trace_seq_printf(s, "\n");
+ 	return trace_handle_return(s);
+@@ -1742,7 +1750,7 @@ trace_func_repeats_print(struct trace_iterator *iter, int flags,
  
- 	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
- 			cpu, iter->ent->pid, flags);
-@@ -788,7 +786,12 @@ print_graph_entry_nested(struct trace_iterator *iter,
- 	for (i = 0; i < call->depth * TRACE_GRAPH_INDENT; i++)
- 		trace_seq_putc(s, ' ');
+ 	trace_assign_type(field, iter->ent);
  
--	trace_seq_printf(s, "%ps() {\n", (void *)call->func);
-+	trace_seq_printf(s, "%ps", (void *)call->func);
-+	if (flags & TRACE_GRAPH_ARGS)
-+		print_function_args(s, &call->regs, call->func);
-+	else
-+		trace_seq_puts(s, "()");
-+	trace_seq_printf(s, " {\n");
+-	print_fn_trace(s, field->ip, field->parent_ip, flags);
++	print_fn_trace(s, field->ip, field->parent_ip, NULL, flags);
+ 	trace_seq_printf(s, " (repeats: %u, last_ts:", field->count);
+ 	trace_print_time(s, iter,
+ 			 iter->ts - FUNC_REPEATS_GET_DELTA_TS(field));
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index 130ca7e7787e..39043c955761 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -224,7 +224,7 @@ wakeup_tracer_call(unsigned long ip, unsigned long parent_ip,
+ 		return;
  
- 	if (trace_seq_has_overflowed(s))
- 		return TRACE_TYPE_PARTIAL_LINE;
-@@ -1028,27 +1031,26 @@ print_graph_return(struct ftrace_graph_ret *trace, struct trace_seq *s,
- 	for (i = 0; i < trace->depth * TRACE_GRAPH_INDENT; i++)
- 		trace_seq_putc(s, ' ');
+ 	local_irq_save(flags);
+-	trace_function(tr, ip, parent_ip, trace_ctx);
++	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
+ 	local_irq_restore(flags);
  
-+	/*
-+	 * If the return function does not have a matching entry,
-+	 * then the entry was lost. Instead of just printing
-+	 * the '}' and letting the user guess what function this
-+	 * belongs to, write out the function name. Always do
-+	 * that if the funcgraph-tail option is enabled.
-+	 */
-+	if (func_match && !(flags & TRACE_GRAPH_PRINT_TAIL))
-+		trace_seq_puts(s, "}");
-+	else
-+		trace_seq_printf(s, "} /* %ps */", (void *)trace->func);
- 	/*
- 	 * Always write out the function name and its return value if the
- 	 * function-retval option is enabled.
- 	 */
- 	if (flags & __TRACE_GRAPH_PRINT_RETVAL) {
--		print_graph_retval(s, trace->retval, false, (void *)trace->func,
-+		print_graph_retval(s, trace->retval,
- 			!!(flags & TRACE_GRAPH_PRINT_RETVAL_HEX));
--	} else {
--		/*
--		 * If the return function does not have a matching entry,
--		 * then the entry was lost. Instead of just printing
--		 * the '}' and letting the user guess what function this
--		 * belongs to, write out the function name. Always do
--		 * that if the funcgraph-tail option is enabled.
--		 */
--		if (func_match && !(flags & TRACE_GRAPH_PRINT_TAIL))
--			trace_seq_puts(s, "}\n");
--		else
--			trace_seq_printf(s, "} /* %ps */\n", (void *)trace->func);
- 	}
--
-+	trace_seq_printf(s, "\n");
- 	/* Overrun */
- 	if (flags & TRACE_GRAPH_PRINT_OVERRUN)
- 		trace_seq_printf(s, " (Overruns: %u)\n",
+ 	atomic_dec(&data->disabled);
+@@ -309,7 +309,7 @@ __trace_function(struct trace_array *tr,
+ 	if (is_graph(tr))
+ 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
+ 	else
+-		trace_function(tr, ip, parent_ip, trace_ctx);
++		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
+ }
+ 
+ static int wakeup_flag_changed(struct trace_array *tr, u32 mask, int set)
 -- 
 2.43.0
 
