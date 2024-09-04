@@ -1,109 +1,202 @@
-Return-Path: <linux-kernel+bounces-314956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B255D96BB95
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CDB96BB89
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E01FB25D29
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:04:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188011C22B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDF11D67AA;
-	Wed,  4 Sep 2024 12:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024731D6DDE;
+	Wed,  4 Sep 2024 12:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6+UsZTv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e89vgAAo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2FA1CF2AB;
-	Wed,  4 Sep 2024 12:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585C51D67B1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451433; cv=none; b=IjGzkCa6qNfU/QQJsbG6XwEauzkguWSZTzR2hR2EZSWZzXjP38/tv6veChep2W7rsNfTRxbUsnAskG2/DR3Wo7W+pZpkPPXN2zaX+Q9qlIfQe723WArCMa2YVTTugjVylBrGSmcVmm5LBk0Gly5aISt3qTXGBmPn3PmrJhvvWCQ=
+	t=1725451534; cv=none; b=h+hucV58c9SIWLBw1jbIOjFWdGiWi3oWwNqp4v8LCxIJm2ycLi2p7uJNygqTE8+oQa3NY/l0fjOAYGKXFl84WjDNANKYs0DkqCU8yF4gbZPpNjZPhCRzJgi8XS3HBB7xHBI7GMk2gKdG7uNy2EJ7sPmPafC+9YeG+7LSscySRJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451433; c=relaxed/simple;
-	bh=LCT/94QGm1wjllwTWkWh7esCRxFn2wBTYFOGl5OcBCY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OobEh91JCaHIOPYo9/231SU2Gf/XOX3W+EGpPaK8Wiga96wzY82o2zx9IAnXsexJ/cIpEKvoZHatyvVmdeL3a6IhotY1Y84mBq7GT8IyvRTwBH6aZNeXsXckz1E2cedenIyDVT5hfwoPx9JR4LhvsNYXLY/GPVdtRpbdaCxbbPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6+UsZTv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0773BC4CEC2;
-	Wed,  4 Sep 2024 12:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725451433;
-	bh=LCT/94QGm1wjllwTWkWh7esCRxFn2wBTYFOGl5OcBCY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k6+UsZTvVAZnzNhiAnJn01ApNNvoZTmspo9a2PNiQlf9kSkJm6oN4Z2IKDunCb/Ed
-	 XSfDRcJ9ohu2OkTRzrhWfKUw9MWpEAllIPS49+qaWBYWKVjmXeLBPzp1dz0zeulFXX
-	 KRFUqa3V5OfWK+8xOKiKpD4gyJ5BkC5xrbbVT88m/Dp5U1I6xWCsTksVCYY28CfQkx
-	 21GUWhk9lwRW8Als9Ctm2ueAxvID5XE8x/aKOvibTlIcWFlBD+AbGVCOCMxPbMkoX6
-	 2if3w75jIzMUfjMrOmlg+OAUNvm0s+a+lTLkMSdkiLgV3iRqcXcfVyBnDNH06LEPTv
-	 1h60uxqdugrjQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Wed,  4 Sep 2024 14:03:36 +0200
-Message-ID: <20240904-vfs-fixes-65728c7717d0@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725451534; c=relaxed/simple;
+	bh=uMxnbCBq+HbYovLNg/Dum1eEjvxvG1ArFr5Nf8f1zwM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=udaJKqrXqUn5+x2Rkv+jlcOfx7oeMAhg7fgu3udg/s5vEpjzMZbjsoS3WvODWkZuJa7vc5+h1BgNcT2Sk7XdopW0MLzusGl+hyZSi9r8Llj4WB8aXxA3Jn5UKmFU3VJ/g7Uxk98bUwqC3VbZPDnp7I5a7R5v5oj8sUVCekIVXPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e89vgAAo; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725451532; x=1756987532;
+  h=date:from:to:cc:subject:message-id;
+  bh=uMxnbCBq+HbYovLNg/Dum1eEjvxvG1ArFr5Nf8f1zwM=;
+  b=e89vgAAoTGyegKiN0M8i5kcPhhRPtnTRG+y1Aas0DtpdqvyfVeReUF+l
+   G6Ew78EAadEUJ3rQT0RmQ8ZHcZPwzmpLepcAU8k9ut+xZGl4FVwTrGfkI
+   vhHInnqV5MD1crbhW8b/yiw2VIqLWghVQ1oIgvS3soRvHQw94LwxkZxxL
+   8pfZKtslvCBHr9pghMIwlGnshL8uySAstmGP91dafZhfjwev+NQTuR3hx
+   TAXIgThiEc6JOr2d9J0Uct+hyxfDj8+Scfc2U1x8bMu/OwUunxRf4BEvw
+   29AwV/mS+jViYMWC8QvRF4sHV6soQFz81wnewsdjBYCFVvFlhkJPNf48B
+   g==;
+X-CSE-ConnectionGUID: U7fEbyraSSiVOeMDTnGwaQ==
+X-CSE-MsgGUID: sG0az+wDSoKDhC4VWbfb3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41605191"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="41605191"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:05:12 -0700
+X-CSE-ConnectionGUID: B0Nyq5tpRt6Ou19tJ8qukw==
+X-CSE-MsgGUID: yMQIVpKKSH2D7nW1YZ9a5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="65589842"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 04 Sep 2024 05:05:11 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slol3-0007xF-1B;
+	Wed, 04 Sep 2024 12:05:09 +0000
+Date: Wed, 04 Sep 2024 20:04:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2024.08.31a] BUILD SUCCESS
+ 01c732e108f6ea51e1660ad6bd59fff36e653ddb
+Message-ID: <202409042024.iSdLaNQm-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1491; i=brauner@kernel.org; h=from:subject:message-id; bh=LCT/94QGm1wjllwTWkWh7esCRxFn2wBTYFOGl5OcBCY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTd8Jm3esI9gZwdgh/WM0f9j5f9cPUk+2/fm7xX+B3qN 1ewa83L7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIjzUjw5PM/t59X5wzc2J3 3Fz39dAbRp3HWtsf7Vt/Xq32yLMZasUM/30els5yXv70wIwJL5b+/J/KYqlt+y3GMFh5vjYT+/l bM9kB
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-/* Summary */
-This contains two fixes for this merge window:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.31a
+branch HEAD: 01c732e108f6ea51e1660ad6bd59fff36e653ddb  squash! srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
 
-netfs:
+elapsed time: 1223m
 
-- Ensure that fscache_cookie_lru_time is deleted when the fscache module is
-  removed to prevent UAF.
-- Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range(). Before
-  it used truncate_inode_pages_partial() which causes copy_file_range() to fail
-  on cifs.
+configs tested: 110
+configs skipped: 4
 
-/* Testing */
-Debian clang version 16.0.6 (27+b1)
-gcc (Debian 14.2.0-1) 14.2.0
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-/* Conflicts */
-No known conflicts.
+tested configs:
+alpha                             allnoconfig   gcc-14.1.0
+alpha                            allyesconfig   clang-20
+alpha                               defconfig   gcc-14.1.0
+arc                              allmodconfig   clang-20
+arc                               allnoconfig   gcc-14.1.0
+arc                              allyesconfig   clang-20
+arc                                 defconfig   gcc-14.1.0
+arm                              allmodconfig   clang-20
+arm                               allnoconfig   gcc-14.1.0
+arm                              allyesconfig   clang-20
+arm                                 defconfig   gcc-14.1.0
+arm                        neponset_defconfig   gcc-14.1.0
+arm                         socfpga_defconfig   gcc-14.1.0
+arm64                            allmodconfig   clang-20
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-14.1.0
+csky                             alldefconfig   gcc-14.1.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   gcc-14.1.0
+hexagon                          allyesconfig   clang-20
+hexagon                             defconfig   gcc-14.1.0
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                             allyesconfig   clang-18
+i386         buildonly-randconfig-001-20240904   gcc-12
+i386         buildonly-randconfig-002-20240904   gcc-12
+i386         buildonly-randconfig-003-20240904   gcc-12
+i386         buildonly-randconfig-004-20240904   gcc-12
+i386         buildonly-randconfig-005-20240904   gcc-12
+i386         buildonly-randconfig-006-20240904   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240904   gcc-12
+i386                  randconfig-002-20240904   gcc-12
+i386                  randconfig-004-20240904   gcc-12
+i386                  randconfig-005-20240904   gcc-12
+i386                  randconfig-006-20240904   gcc-12
+i386                  randconfig-011-20240904   gcc-12
+i386                  randconfig-012-20240904   gcc-12
+i386                  randconfig-013-20240904   gcc-12
+i386                  randconfig-014-20240904   gcc-12
+i386                  randconfig-015-20240904   gcc-12
+i386                  randconfig-016-20240904   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-14.1.0
+m68k                          multi_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+mips                           gcw0_defconfig   gcc-14.1.0
+mips                           ip28_defconfig   gcc-14.1.0
+mips                           jazz_defconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-14.1.0
+openrisc                          allnoconfig   clang-20
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-12
+openrisc                 simple_smp_defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   clang-20
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-12
+parisc64                            defconfig   gcc-14.1.0
+powerpc                     akebono_defconfig   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   clang-20
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                      ep88xc_defconfig   gcc-14.1.0
+powerpc                          g5_defconfig   gcc-14.1.0
+powerpc                    ge_imp3a_defconfig   gcc-14.1.0
+powerpc                 xes_mpc85xx_defconfig   gcc-14.1.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   clang-20
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-12
+s390                             allmodconfig   gcc-14.1.0
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-12
+s390                                defconfig   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-12
+sh                          sdk7786_defconfig   gcc-14.1.0
+sh                           se7724_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc                       sparc32_defconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-12
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-20
+um                               allyesconfig   clang-20
+um                                  defconfig   gcc-12
+um                             i386_defconfig   gcc-12
+um                           x86_64_defconfig   gcc-12
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   clang-18
+x86_64                                  kexec   gcc-12
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   gcc-12
+xtensa                            allnoconfig   gcc-14.1.0
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
-
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc7.fixes
-
-for you to fetch changes up to 72a6e22c604c95ddb3b10b5d3bb85b6ff4dbc34f:
-
-  fscache: delete fscache_cookie_lru_timer when fscache exits to avoid UAF (2024-09-01 10:30:25 +0200)
-
-Please consider pulling these changes from the signed vfs-6.11-rc7.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.11-rc7.fixes
-
-----------------------------------------------------------------
-Baokun Li (1):
-      fscache: delete fscache_cookie_lru_timer when fscache exits to avoid UAF
-
-David Howells (1):
-      mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-
- fs/netfs/fscache_main.c | 1 +
- mm/filemap.c            | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
