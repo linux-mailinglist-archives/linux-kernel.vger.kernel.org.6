@@ -1,100 +1,184 @@
-Return-Path: <linux-kernel+bounces-315239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADAC96BFB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FBC96BFB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A96EB26223
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:09:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241041F21DAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D4B1DA62E;
-	Wed,  4 Sep 2024 14:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12B51DB55D;
+	Wed,  4 Sep 2024 14:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="syPv7Q/2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSmvru+U"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF2B1CCEFC;
-	Wed,  4 Sep 2024 14:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABE61DB525;
+	Wed,  4 Sep 2024 14:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458959; cv=none; b=Wou6OEj6ro9f4NmxduU+M1mrPNRrB4NLQUmVLbeBSpV2aHV+/AD0ZndyJG7nceMmgfFuqGDrlHm8avW+Va8t4yyx3tB5Ef2rN8ldIwwfIMOsusDClxuKWoIPp3dFzhyJULh7y7V3AYWhWm7RhUB1G8W40fsq2W2rIcFL1LBXI9A=
+	t=1725458962; cv=none; b=nt9BmPFBm5YapeZhT70L1rNy4XQjcHhaiOVRUQ6vjoagkSgAoIkfCktZZnFi+dsiXlvOWRhnsPUzzKHhkPwIKJfh6Lz4uOG1+hhbQfXTrAjfpu5hbFAUI2Xx5ydlOB72jakAugMTwzyVAJdtxKEs3181TUt2s31VJzu7bRl8y2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458959; c=relaxed/simple;
-	bh=7JdnEjqz9jcNffdXfifGqMh2TR+LCih6AVd6xeSLJjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcLFgSBSSKHyHPFg8aGF+1PQdy47GPqRh7Qmp8NTfrYmUDLa5kUs2PeOIZohFPuyO12bZI4Jon5MM1gNpTzX2fEtdWVo7sakbY2FYx7rEMrzcYVmFt7jrWxK9bEvD/Gx7keVSLNSgH00MJycZGmB2dS9QxUG8VAQdK17DDnmWOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=syPv7Q/2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 905C3C4CEC2;
-	Wed,  4 Sep 2024 14:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725458959;
-	bh=7JdnEjqz9jcNffdXfifGqMh2TR+LCih6AVd6xeSLJjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=syPv7Q/2L4WttlPYC9pvSqSskeSiWDL60iIiI9qKHllZD+ZFXdc6xtZppGkXdnYph
-	 Qu/csyCEGVA67T2LJfuMvEk/glrURZL7PoeM8CIvb6gI++SXNEIqlmkA1C8wL8A4ac
-	 rsl2+g0npRSbGYCbVmeVjS1+4SqdfNzTsP5YOfic=
-Date: Wed, 4 Sep 2024 16:09:15 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] USB: usbtmc: prevent kernel-infoleak
-Message-ID: <2024090430-revolving-unmindful-75b7@gregkh>
-References: <000000000000a338d6062149eb22@google.com>
- <tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com>
+	s=arc-20240116; t=1725458962; c=relaxed/simple;
+	bh=h2VCT5tluuwO2ETCzmGWn5KRPdTyjkms3lWwbziv/lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HHxSzBEka/pQs1B2IYC/mXLVHCkrfDu3D4qf5QyzPmCT+c/VWvG8Zen902Tisqq9OM+YAwVfr10M8kXgZeCPJcfss29sShM4yZgSrejI+DukFAz9erUqz56O2AeOznCjhtD1TQ6K1enTMz/gkkvMqiC9ApFfhcjtK3lwuGLx62M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSmvru+U; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c3603292abso18521996d6.1;
+        Wed, 04 Sep 2024 07:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725458959; x=1726063759; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DBnNjREbFycHL4m/FJ4Jp/1aXtm04wBP4Y+JiUN5d3k=;
+        b=kSmvru+Ut880fWmxFCqmm3SgUjmOqiuyuPGkNErJ/q+JEXcrEcrd9sofqDTPFT9Zfo
+         vi2z/LH5yeXq6pEqLa6QWw4I0UUIskjcxoSwBaaQ1ONcjrrxt0YsnAiX8bOQ/LEfdm5p
+         ELBhm+XLG2M54STToBVgu2/SlOT/OIu3Lw73NlbOx4GMdc230sdGgYJvgsHkNHLIZeGn
+         dU2ymLH6EoHCspAEcnzU5ATwa66yTsf9y9DYWQ7Q2qjKK8iaB/QUfaE/UU0GyFHJrBVr
+         KgZm6FUbF6bf3SKJOWQaYL6Z7Eq4vYZowOVYUREEE4HDKqPoJWedMlTCCKQ6pA30O4/g
+         V93g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725458959; x=1726063759;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DBnNjREbFycHL4m/FJ4Jp/1aXtm04wBP4Y+JiUN5d3k=;
+        b=ZQ72D3yybHXFBAjFsSyTjQjKsu8H9r8GkSDK1Xq9e+DV6yCsCH4dGISl+JBn6Cjnny
+         N3Td4InhfFzKF7yk/crSC9Vjl2shtVDNSk1kRaTxIGli2DzXyf/ISfcH4CQT2KVwIiQK
+         6hI2gadCIXvy9DSPm4wXUR051+rE2EoUmgemtkVrEfIBM3O5awld7cNI0QWCFJ2dGSco
+         2epGbFM/pDgpxevJkf4XtobCbeUrQe9n39veQke/a8ssHXpg/fBtdufySmRKJH0VIBCm
+         jFXiHSKg9R5e0ElL00f0lqt2by9YlBkeGO/mPZFjs/5dCgyQWWXS69qRaJxtxmqPtx0H
+         114g==
+X-Forwarded-Encrypted: i=1; AJvYcCVy9xOK9rsTyfMtMwdttICQHbVevSXkklcV7xnm5JqC3GBtn5MzbZKYCoQ6jCwaxYpXWYC1FcxkU7qGRuI=@vger.kernel.org, AJvYcCWxspFopgVasHayJHaWUvTTB0JROgwDkadMil0+lfRGBEs+sgD4fkQtlGmSlteul0SXCdVawWlN3yFehv1zjZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEgonELXHyh750/0lgxR8URfxdbWnAt6GcUlokNYoI7W9rlh2U
+	Vx/L5/6nt9xeX2oGSehWW0RJ2YXApOElEcwxGBj3KECr5bWyicpR
+X-Google-Smtp-Source: AGHT+IG3CGvgAmLD0d29LbDLly51OTmvJujHY2V2VY29Luj12WBFXTdDaitxOnJu8gKy0sTPW0Bbrg==
+X-Received: by 2002:a05:6214:5c0a:b0:6c3:7030:d28a with SMTP id 6a1803df08f44-6c3c9c17453mr60613026d6.43.1725458959098;
+        Wed, 04 Sep 2024 07:09:19 -0700 (PDT)
+Received: from [10.100.121.195] ([152.193.78.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c35bd06de7sm41076296d6.17.2024.09.04.07.09.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 07:09:18 -0700 (PDT)
+Message-ID: <8be8619d-f09f-43b2-ada8-2fca2a7d8ea5@gmail.com>
+Date: Wed, 4 Sep 2024 07:09:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
+ (ETIMEDOUT)
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>, linux-wireless@vger.kernel.org,
+ ath10k@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+References: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
+Content-Language: en-US
+From: James Prestwood <prestwoj@gmail.com>
+In-Reply-To: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 09:55:43PM +0800, Edward Adam Davis wrote:
-> The syzbot reported a kernel-usb-infoleak in usbtmc_write,
-> we need to clear the structure before filling fields.
+Hi Paul,
 
-Really?
+On 9/4/24 3:45 AM, Paul Menzel wrote:
+> Dear Linux folks,
+>
+>
+> Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3 
+> (or unloading and loading the `ath10k_core`/`ath10k_pci` modules) 
+> having been connected to an AVM network:
+>
+>     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware 
+> (-110)
+>
+> Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and 
+> applied it, and the error is still there (as exepected).
+My patch won't actually fix the timeout, I just lowered the time that 
+ath10k would wait before it continued which fixed some incompatibility 
+on the AP side of things. Based on your logs though, it appears you 
+already got disconnected before the failure to remove the key...
+>
+> Can the warning be improved so the user know, which component is at 
+> fault?
+>
+>
+> Kind regards,
+>
+> Paul
+>
+>
+> [1]: 
+> https://lore.kernel.org/all/20240814164507.996303-1-prestwoj@gmail.com/
+>
+> ```
+> Sep 04 07:21:38.469669 abreu kernel: Linux version 
+> 6.11.0-rc6-00027-ga91d08fcc356 (build@bohemianrhapsody.molgen.mpg.de) 
+> (gcc (Debian 14.2.0-4) 14.2.0, GNU ld (GNU Binutils for Debian) 
+> 2.43.1) #294 SMP PREEMPT_DYNAMIC Tue Sep  3 23:01:18 CEST 2024
+> Sep 04 07:21:38.469718 abreu kernel: Command line: 
+> BOOT_IMAGE=/vmlinuz-6.11.0-rc6-00027-ga91d08fcc356 
+> root=UUID=32e29882-d94d-4a92-9ee4-4d03002bfa29 ro quiet pci=noaer 
+> mem_sleep_default=deep log_buf_len=8M cryptomgr.notests
+> […]
+> Sep 04 12:34:55.826218 abreu sudo[25874]:  pmenzel : TTY=pts/7 ; 
+> PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe ath10k_pci
+> Sep 04 12:34:55.828046 abreu sudo[25874]: pam_unix(sudo:session): 
+> session opened for user root(uid=0) by pmenzel(uid=5272)
+> Sep 04 12:34:55.869839 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq 
+> msi oper_irq_mode 2 irq_mode 0 reset_mode 0
+> Sep 04 12:34:56.005202 abreu sudo[25874]: pam_unix(sudo:session): 
+> session closed for user root
+> Sep 04 12:34:56.161706 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 
+> hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+> Sep 04 12:34:56.162591 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig 
+> debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+> Sep 04 12:34:56.163115 abreu kernel: ath10k_pci 0000:3a:00.0: firmware 
+> ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 
+> 0793bcf2
+> Sep 04 12:34:56.241683 abreu kernel: ath10k_pci 0000:3a:00.0: 
+> board_file api 2 bmi_id N/A crc32 d2863f91
+> Sep 04 12:34:56.333784 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 
+> 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+> Sep 04 12:34:56.417649 abreu kernel: ath: EEPROM regdomain: 0x6c
+> Sep 04 12:34:56.417919 abreu kernel: ath: EEPROM indicates we should 
+> expect a direct regpair map
+> Sep 04 12:34:56.418022 abreu kernel: ath: Country alpha2 being used: 00
+> Sep 04 12:34:56.418114 abreu kernel: ath: Regpair used: 0x6c
+> Sep 04 12:34:56.422440 abreu NetworkManager[610]: <info> 
+> [1725446096.4223] device (wlan0): driver supports Access Point (AP) mode
+> […]
+> Sep 04 12:35:12.042484 abreu wpa_supplicant[618]: wlp58s0: WPA: Group 
+> rekeying completed with ce:ce:1e:27:bb:e0 [GTK=CCMP]
+> Sep 04 12:35:21.800998 abreu sudo[25953]:  pmenzel : TTY=pts/7 ; 
+> PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe -r ath10k_pci
+> Sep 04 12:35:21.803733 abreu sudo[25953]: pam_unix(sudo:session): 
+> session opened for user root(uid=0) by pmenzel(uid=5272)
+> Sep 04 12:35:21.881668 abreu kernel: wlp58s0: deauthenticating from 
+> ce:ce:1e:27:bb:e0 by local choice (Reason: 3=DEAUTH_LEAVING)
+You get deauthenticated here, which then triggers the driver to remove 
+the key...
+> Sep 04 12:35:22.905717 abreu kernel: ath10k_pci 0000:3a:00.0: failed 
+> to install key for vdev 0 peer ce:ce:1e:27:bb:e0: -110
+> Sep 04 12:35:22.906604 abreu kernel: wlp58s0: failed to remove key (0, 
+> ce:ce:1e:27:bb:e0) from hardware (-110)
 
+And the removal fails. But afaict the removal failure was not the reason 
+for the disconnect.
 
-> 
-> Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
-> Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  drivers/usb/class/usbtmc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-> index 6bd9fe565385..e9ddaa9b580d 100644
-> --- a/drivers/usb/class/usbtmc.c
-> +++ b/drivers/usb/class/usbtmc.c
-> @@ -759,6 +759,7 @@ static struct urb *usbtmc_create_urb(void)
->  		usb_free_urb(urb);
->  		return NULL;
->  	}
-> +	memset(dmabuf, 0, bufsize);
-
-To do this simpler, kzmalloc() above this would be nice.
-
-But, this feels odd, where is the data leaking from?  This is used for
-both the read and write path, but where is the leak happening?  A short
-read?  If so, we need to properly truncate the buffer being sent to
-userspace and not send the unread data.  If a short write, that makes no
-sense.
-
-So this needs a bit more work, please find the real issue here and don't
-paper over the problem with "set it all to 0" like this.
-
-thanks,
-
-greg k-h
+> Sep 04 12:35:22.908927 abreu wpa_supplicant[618]: wlp58s0: 
+> CTRL-EVENT-DISCONNECTED bssid=ce:ce:1e:27:bb:e0 reason=3 
+> locally_generated=1
+> Sep 04 12:35:22.908995 abreu wpa_supplicant[618]: BSSID 
+> ce:ce:1e:27:bb:e0 ignore list count incremented to 2, ignoring for 10 
+> seconds
+> ```
 
