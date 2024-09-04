@@ -1,193 +1,112 @@
-Return-Path: <linux-kernel+bounces-315056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5FF96BD43
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:57:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA34B96BD45
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CA31F2661E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185E91C2498D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14561DA2F8;
-	Wed,  4 Sep 2024 12:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95F1D9D89;
+	Wed,  4 Sep 2024 12:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DJIu32n/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4L4ihBc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3271DA0E5;
-	Wed,  4 Sep 2024 12:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B0D1D04B8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454536; cv=none; b=tOMOryyfAD2Ct3KcY8CmiUSPtq7JmO8opVtagA2jHYDjaF3lwV+PIY6wixOp+ccPqNRBE61LSp129dbi70tvDnQhbEzDaNRt+qi7Q62Oa/N90GQ/XiVRrABevFo4QAA4glRqDDAYWeCIFt88LQ17ducNVkC+WUlqb5fFEsbT9jY=
+	t=1725454597; cv=none; b=AhUPXVmUoEmlmr9yuvG34OvMpPx4Co7sSC/caa8xsmRswNPftg/gwhshSzq3tLsLIrM6js6/68Vb+Bv8hRsQHNoai9kJ43elquE3SQLXtU2t0f27nHv4yuuSpVLyWGEUfO6nUry8MDMGYF7TkMXk+QWpLalGx2AfBEPH3mww+LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454536; c=relaxed/simple;
-	bh=YM1p2wAwDQn4XY/AvOaGNjciJYOkqpckq7xEmlNJajA=;
+	s=arc-20240116; t=1725454597; c=relaxed/simple;
+	bh=w12zITrlcS7mKMPlkOl2ZGejq1Eo5bn874xDYkUxjBU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdQf4Am3Np5lhSKiE/sDmdb2GLWKWBBpg6kGWNpbPzELoS1QWxBIA+lzs3gmogg0dTV6MptcANCRa65NN3BZv4FRI3BdTdRxzmk6p1ZQT76LeFaYYl/1IKZnoCvSIiwo3mPBpyPRq+BfSNbyFs9eGPrUy+TyyEzGyc/9IlGlhG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DJIu32n/; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725454535; x=1756990535;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=YM1p2wAwDQn4XY/AvOaGNjciJYOkqpckq7xEmlNJajA=;
-  b=DJIu32n/4ZZv0lD4hVKhWFhJyfcPH4k6SMxJIPtP6zbaCOYJWsmNDJG2
-   QgKCIYvn/LSeyxqncLLm6pHxDZb3T4omXXpfhXxjMD9vRKdUhuRpDzmYB
-   QOttQSAKUkmoJas8Ga4O9RSNcKQFMBGjJQLEaGLnSFp/4eUQnV91fRTME
-   7YSFfmvpb0TVjUVW4TsKaj6H3AImWpxzzZqVbv7mHcnM+MIi+VMuizx6m
-   CTe+318eZ/Db42VSnrc2Ea7x2JoeSmYTliQFz2gXyXhm4Yk2yOLp6sZuk
-   4RL3zDsGNYdOzOeodueE46f+1VDQBX22RFQtydZODRmrv0MHReGrYENPk
-   g==;
-X-CSE-ConnectionGUID: 249NBb+IR1uvjiIBr1xnuA==
-X-CSE-MsgGUID: r4YDOpJcSt28IfF2EPWchQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23675144"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="23675144"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:55:34 -0700
-X-CSE-ConnectionGUID: 0o1/MsxiRnO1J7hnxnpHOQ==
-X-CSE-MsgGUID: HcM9ft6WSFGTu/kKS2gFAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="95994397"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:55:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slpXl-0000000547O-2U2G;
-	Wed, 04 Sep 2024 15:55:29 +0300
-Date: Wed, 4 Sep 2024 15:55:29 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kimriver liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <ZthYwQfj3Vy6dU-S@smile.fi.intel.com>
-References: <20240904064224.2394-1-kimriver.liu@siengine.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vq7n7qk2JW+Ax0Y1HjxFqzJI7m5G7F4hj7ctcChDIiwVWWLyEoMO+tGf5Vt1LRkRZEavBPiurHHWhwyYVHg6uV0ksz79zfktilqk4ZFBJ0uVW6VejE0lpzlLX3gARPRmodlEKE6464KT/R8L8xIyzaE02UOAWgybyy5HypdMII4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4L4ihBc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725454595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Y6zLyuFowAQXUpe4yq3nH5ym9sfNZkhp6uZ2OTgfrU=;
+	b=e4L4ihBckG7kmk6LdJq6dfsI7HzIIGI5j+1JUr0WoahKUdMdw7VA5kzUsUYmfdVdiXSpyO
+	nCo/m9T56R9ODS0Rxho8R7UxNgWvH90ZBrp9+cnkP/DKrp9UGAJc/X1KB9ljUn1GuG4LZv
+	5eel5AakyyAytjoI8eoKn9WofWeouCA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-3Cjfp9NyMZSq6G0H6OWfpw-1; Wed,
+ 04 Sep 2024 08:56:31 -0400
+X-MC-Unique: 3Cjfp9NyMZSq6G0H6OWfpw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AEDDE1955DD2;
+	Wed,  4 Sep 2024 12:56:29 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.59])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F0E5195605A;
+	Wed,  4 Sep 2024 12:56:23 +0000 (UTC)
+Date: Wed, 4 Sep 2024 20:56:18 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] block: fix ordering between checking
+ QUEUE_FLAG_QUIESCED and adding requests
+Message-ID: <ZthY8prW0dZ0+Nco@fedora>
+References: <20240903081653.65613-1-songmuchun@bytedance.com>
+ <20240903081653.65613-3-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240904064224.2394-1-kimriver.liu@siengine.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240903081653.65613-3-songmuchun@bytedance.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Sep 04, 2024 at 02:42:24PM +0800, kimriver liu wrote:
-> From: "kimriver.liu" <kimriver.liu@siengine.com>
+On Tue, Sep 03, 2024 at 04:16:52PM +0800, Muchun Song wrote:
+> Supposing the following scenario.
 > 
-> Failure in normal Stop operational path
+> CPU0                                        CPU1
 > 
-> This failure happens rarely and is hard to reproduce. Debug
-> trace showed that IC_STATUS had value of 0x23 when STOP_DET
-> occurred, immediately disable ENABLE bit that can result in
-> IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
+> blk_mq_run_hw_queue()                       blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
+>     if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
+>         return                                      blk_mq_run_hw_queue()
+>     blk_mq_sched_dispatch_requests()                    if (!blk_mq_hctx_has_pending())     4) load
+>                                                            return
 > 
-> Failure in ENABLE bit is disabled path
+> The full memory barrier should be inserted between 1) and 2), as well as
+> between 3) and 4) to make sure that either CPU0 sees QUEUE_FLAG_QUIESCED is
+> cleared or CPU1 sees dispatch list or setting of bitmap of software queue.
+> Otherwise, either CPU will not re-run the hardware queue causing starvation.
 > 
-> It was observed that master is holding SCL low and the
-> IC_ENABLE is already disabled, Enable ABORT bit and
-> ENABLE bit simultaneously cannot take effect.
+> So the first solution is to 1) add a pair of memory barrier to fix the
+> problem, another solution is to 2) use hctx->queue->queue_lock to synchronize
+> QUEUE_FLAG_QUIESCED. Here, we chose 2) to fix it since memory barrier is not
+> easy to be maintained.
 > 
-> Check if the master is holding SCL low after ENABLE bit is
-> already disabled. If SCL is held low, The software can set
-> this ABORT bit only when ENABLE is already set，otherwise,
-> the controller ignores any write to ABORT bit. When the
-> abort is done, then proceed with disabling the controller.
-> 
-> These kernel logs show up whenever an I2C transaction is
-> attempted after this failure.
-> i2c_designware e95e0000.i2c: timeout in disabling adapter
-> i2c_designware e95e0000.i2c: timeout waiting for bus ready
-> 
-> The patch can be fix the controller cannot be disabled while
-> SCL is held low in ENABLE bit is already disabled.
+> Fixes: f4560ffe8cec1 ("blk-mq: use QUEUE_FLAG_QUIESCED to quiesce queue")
+> Cc: stable@vger.kernel.org
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-...
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
->  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
->  	if (abort_needed) {
-> +		if (!enable) {
-> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-> +			enable |= DW_IC_ENABLE_ENABLE;
 
-> +			usleep_range(25, 100);
-
-fsleep()
-
-And add a short comment to explain the chosen value.
-
-> +		}
-
-...
-
-> +static int i2c_dw_check_mst_activity(struct dw_i2c_dev *dev)
-> +{
-> +	u32 status = 0;
-> +	int ret = 0;
-> +
-> +	regmap_read(dev->map, DW_IC_STATUS, &status);
-> +	if (status & DW_IC_STATUS_MASTER_ACTIVITY) {
-> +		ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> +				!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> +				1100, 20000);
-> +		if (ret)
-> +			dev_err(dev->dev, "i2c mst activity not idle %d\n", ret);
-> +	}
-> +
-> +	return ret;
-
-This can be rewritten as
-
-	u32 status = 0;
-	int ret;
-
-	regmap_read(dev->map, DW_IC_STATUS, &status);
-	if (!status & DW_IC_STATUS_MASTER_ACTIVITY))
-		return 0;
-
-	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-			1100, 20000);
-	if (ret)
-		dev_err(dev->dev, "i2c mst activity not idle %d\n", ret);
-
-	return ret;
-
-> +}
-
-...
-
-> +	ret = i2c_dw_check_mst_activity(dev);
-> +	if (!ret)
-> +		__i2c_dw_disable_nowait(dev);
-
-...but looking at the usage, I think the proper is to have the above to return
-boolean. And also update the name to follow the usual pattern for boolean helpers.
-
-static bool i2c_dw_is_mst_idling(struct dw_i2c_dev *dev)
-...
-	if (i2c_dw_is_mst_idling(dev))
-		__i2c_dw_disable_nowait(dev);
-
-...
-
-Also what does the heck "mst" stand for? Please, use decrypted words in
-function names and error messages..
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+thanks,
+Ming
 
 
