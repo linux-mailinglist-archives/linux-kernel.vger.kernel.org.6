@@ -1,351 +1,187 @@
-Return-Path: <linux-kernel+bounces-315696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2A796C5E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7273296C5E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6316D1C24DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB848284332
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF871E1A22;
-	Wed,  4 Sep 2024 17:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05751E1A04;
+	Wed,  4 Sep 2024 18:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cWcdxymU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="qqQgpnx5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T3/Qllhn"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99B2AE9F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256161DFE2D;
+	Wed,  4 Sep 2024 18:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472790; cv=none; b=CzW74KLti1W+k7kvQLoruD/Eifl6+Yt5L1y7xBRuzcGrvIlhZmGF78XWfYDh997rgrg7xeFw3LfiPHMZeE98LtM/Soa8tubToELfAvTHiJBNm/nyig2HqxYEN/+bpKuWslXrKOvImye0Dq1AoBbn4Vq+bMib6VxLMlIB5fpcct4=
+	t=1725472859; cv=none; b=UmAjkjstRleJSqdkUpo147ygpZFFHPrD4jmt1GBUjF094no2/3nhVtscQfvZnAphCxNlNiLvjx2S2bDL4+YtcbvwNrdCzYo/m4ThBxLO4YI9RQ5Tcf310zBKxj6HmKpPVoIsBR5aVcBDVWzMAK4C0c9/J5wfxn3dgNXOrVPDsvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472790; c=relaxed/simple;
-	bh=LNsjyYpRLYKmaOoZYFt7a6yVFFHLKuyn19W4dBscXVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kgALiMSudjGm16Nml5o5AFfmCiJWEfipegzmf1/neSi7WIL+JvkEBqjAUpKf3Fj2Ia+pSp87XPbwihz/zBKqPlbbJTSKat/3kHJg0L/HVB4HfCUGVISfDIUzk50oO3wSyYSptb6GTdVPPl6S8P0CSUUe8CYB/Qv+8f7NCyIxgo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cWcdxymU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725472787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qsVcMtYUhB/J1lgh5WzPGIx1plvQhA+HpWBruuNcJgY=;
-	b=cWcdxymULiHxvv90gOoBI7fGAfN+3NItrq7ryjjNfHhz1FhZRX/sN55AA4giy3ZfsNQ6Bh
-	jbW71V0ZqqV2Mi9FX3Vd7j2a04UW9VDGJT5A1ZL2J2fZnmUpCL2GDp7F4cVK4lwQT281+v
-	mbipuuJZnb8GlhhO6XuuAnglXzVXk6I=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-uad-eFTZMXWagF4o9_OWBQ-1; Wed, 04 Sep 2024 13:59:46 -0400
-X-MC-Unique: uad-eFTZMXWagF4o9_OWBQ-1
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d29ba04caso3124635ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:59:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472785; x=1726077585;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qsVcMtYUhB/J1lgh5WzPGIx1plvQhA+HpWBruuNcJgY=;
-        b=Lt+ofbCnN41oTq3l8jW5z3yC6o8RkGnEDEg9JprzfVPUBgGE5e9hXQT9kDEvGE+3Pf
-         yRA6Ar10RQFYlh+GUlK/A5PXLPopu03Km8SAVdHb+uWjZJIwTVH5y87tbEJQWld/okNM
-         iQcDmypNPqHsSlsrPNAYixd0JhJkUByjbxPKEL7nvajyGnHbEV3RdGttcBjLYmX7p9Zu
-         x2ZvnboKmqOmnQ5mNAvfg0UQgUkdVSblf6aDtEwzlTlUw6m63PPXds0YReQBQAJV2aS3
-         VQzxQCMsSMUImmH7YvOxUt2qMlqkaA0xjmvBxkn6/VRuBpccytCqYmKTBK44CgxQbwwK
-         T+kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTlhaAR8vkKdE1RSvA4P/8baXy1EqmkJVPIgjetuJzEA/L2mdaXlfYdVsOVXzCxiU4hnhSiV/Ha1vhZkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhmo2PG7dtPSgbTQqZCVqC863RCUp2zAu3giRBjP3ACX5cLsNg
-	dU/uKH4G1x1bVSO7OcvQ6LtnfflYmcZP927ac6+LnKBgIzfFpS0HuvfUNQhZ3OgT/3gRdgDCNQZ
-	kSKtIQNuzNloFP/rTUvED2pkCAYhZqNRvj8VdRV+1xPv1/o/bLiHMfuQKyx6dow==
-X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17790765ab.2.1725472785447;
-        Wed, 04 Sep 2024 10:59:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8munDU2AJ7cYKC9Edk9AMUjHORmC/M9D0674ATSnT1Ii9frhidoGsJfdbmpoRrUE551PeJw==
-X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17790465ab.2.1725472784901;
-        Wed, 04 Sep 2024 10:59:44 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3b05b42dsm37367065ab.83.2024.09.04.10.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 10:59:44 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:59:42 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?UTF-8?B?V2lsY3p5xYRz?=
- =?UTF-8?B?a2k=?= <kwilczynski@kernel.org>, Damien Le Moal
- <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix might_sleep() lockdep warning in pcim_intx()
-Message-ID: <20240904115942.7ff0cfcb.alex.williamson@redhat.com>
-In-Reply-To: <20240904072541.8746-2-pstanner@redhat.com>
-References: <20240904072541.8746-2-pstanner@redhat.com>
-Organization: Red Hat
+	s=arc-20240116; t=1725472859; c=relaxed/simple;
+	bh=OFxSGvAjXNZ7ytB4MYeQGtkeD+O3f4xSW3UPNBksefU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=mz0Au2GoWpuiScowUHWp0ih4CGrmJ8mpZk/qfjJhyxLJYFO+Lf+ynPrbIAilxhyX6hMtUsRyLuYd1nfEo2oeW659HfuSj3FTRmUwvZAg7Zn7ENllSAN7yIK4Ss4utvGIB8rx15V8jWEoZtbaxdmNhMpLmWhQChlxcfyVISUCKE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=qqQgpnx5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T3/Qllhn; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 37449138021D;
+	Wed,  4 Sep 2024 14:00:56 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-02.internal (MEProxy); Wed, 04 Sep 2024 14:00:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1725472856;
+	 x=1725559256; bh=j8W5SCKmD2R4b08np+tquZ9l2yUGtvyX0ThJStovGYA=; b=
+	qqQgpnx5OYTDqNRXZuaw1y098hknUIfwEgHyKJxcLRByMeYZB3YspG0DlWZRj4+8
+	2QASCOrKtJJ6C2h0TKelO+1Jz7OdSpSKAdRXfIkphFRKA7sNi3f4M2aqy0uJtCtB
+	/6xQXJwrlaztkb2KXfR+5wCBK5nfSZ/nT82kSBYULSaORXWANlTnvc+op3cK/oE6
+	11ouu4Rzj6Xk2ip3U/5q2xeQtvlkQIhJ1ieWLRwhf2JbLu8tI2Rnnm1Das9cSczh
+	L5vKkL9Zexh404JP9Ym7zCwwBYWofQxjSxIDXv6bi2XjHeRPyFmcvPm7J1lE43cQ
+	MFKfX/YWqjwWxAaH78qBaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725472856; x=
+	1725559256; bh=j8W5SCKmD2R4b08np+tquZ9l2yUGtvyX0ThJStovGYA=; b=T
+	3/QllhntLycXOjsBG88GsrNnVkj2At0YjRQWRF6F4Jz7WIxoc0iLz9db3N9sNywn
+	mgjLYugwLWntv6wHq1ggITcWbkaqaAv2Znn0uoiGkXO1mh/NzxIM8ryLcvCoXDhy
+	ZqOcitaXOvLYC2wJ5rL9Y0Zs5fuJaTO0AdBfxlkIh3kg2+r9ksqBHxm9GzjP9iHB
+	mvsWWRRr6WxleAtznHYJ3H8R/unQOiWcGQGfFbP+i6YR6fNbgJZghw/DS8Jd4jWW
+	xKTodoUvQm65uDF/1PUbGIhG0LeROjolZjYwMMmRuls9dOkkDNiEy+hVQ/UsuQFI
+	JahD7HVrOnZs/RUNbffaA==
+X-ME-Sender: <xms:V6DYZpCB7yQyuqUNho4T5rIlN7h-6d59W2CX_hPVeAIN1_DY4e8XxQ>
+    <xme:V6DYZnimF4EiyVElbPFZerQk9h1N3u5dYX1a2Eal3yVyQiz5gRjr24C2yrxg_pIAk
+    saKH6aCuDWMcxJwWIE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedguddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhepleeutdfgueejheev
+    fffgvdfgtdelkefgteeukeejhefgfeeigeevueeileekffehnecuffhomhgrihhnpehfrh
+    gvvgguvghskhhtohhprdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
+    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhho
+    rhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrg
+    hrmhdrtghomhdprhgtphhtthhopehjrghnihdrshgrrghrihhnvghnsehinhhtvghlrdgt
+    ohhmpdhrtghpthhtohepkhgvvhhinhdrthhirghnsehinhhtvghlrdgtohhmpdhrtghpth
+    htohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrgholhhurdhluhes
+    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehiohhmmhhusehlihhsthhsrd
+    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:V6DYZkkJorRd6dWTqyBOAq0ZEF41RINmvjD0mGXgOWB9ilH-YYG0ZA>
+    <xmx:V6DYZjz2hJ_Lqq_QpQeVv-RT5cV7j0Nczz1hRdTsU9ZljuzBXaIslQ>
+    <xmx:V6DYZuSDaqSVkEdr0ZSCgITEnvwrPP6r3oa09C4g8cDhXHId52KE6w>
+    <xmx:V6DYZmac74LpCaxqsl7XCI8WJbrMGbhOEwjQMySWio5VyjK46jjx6A>
+    <xmx:WKDYZhHW-e0egGswZQfGQQ7IHEyZAHAidoVjXoXVf-FAG5QSEmZi1dZa>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7CD053C0066; Wed,  4 Sep 2024 14:00:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 04 Sep 2024 14:00:35 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Lu Baolu" <baolu.lu@linux.intel.com>, "Joerg Roedel" <joro@8bytes.org>,
+ "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
+ "Kevin Tian" <kevin.tian@intel.com>
+Cc: jani.saarinen@intel.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Message-Id: <0dc9ac00-1148-4c64-8c12-4d08a2a27429@app.fastmail.com>
+In-Reply-To: <20240904060705.90452-1-baolu.lu@linux.intel.com>
+References: <20240904060705.90452-1-baolu.lu@linux.intel.com>
+Subject: Re: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices requiring ATS
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On Wed,  4 Sep 2024 09:25:42 +0200
-Philipp Stanner <pstanner@redhat.com> wrote:
+Hi Lu,
 
-> commit 25216afc9db5 ("PCI: Add managed pcim_intx()") moved the
-> allocation step for pci_intx()'s device resource from
-> pcim_enable_device() to pcim_intx(). As before, pcim_enable_device()
-> sets pci_dev.is_managed to true; and it is never set to false again.
-> 
-> Under some circumstances it can happen that drivers share a struct
-> pci_dev. If one driver uses pcim_enable_device() and the other doesn't,
-> this causes the other driver to run into managed pcim_intx(), which will
-> try to allocate when called for the first time.
+Tested this on an X1 Carbon G12 with a kernel built form drm-tip and this patch - and was able to boot successfully with pci=noats
 
-I don't think "share" is the correct way to describe this.  The struct
-pci_dev is never shared between drivers, it's more of a lifecycle
-issue.  The struct pci_dev persists for the life of the device, but
-is_managed is relative to the driver that is currently bound to the
-device.  The issue is that the devres infrastructure doesn't clear this
-flag when the managed driver that set it releases the struct pci_dev.
+Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
-As we discussed in the other thread, this is a latent issue that has
-existed for some time, but it's only when pcim_intx() starts allocating
-memory, as introduced in the Fixes commit below, that the calling
-requirements for pcim_intx() are narrowed and become incompatible (and
-visible via lockdep) with existing drivers.
+Mark
 
-> Allocations might sleep, so calling pci_intx() while holding spinlocks
-> becomes then invalid, which causes lockdep warnings and could cause
-> deadlocks.
-> 
-> Have pcim_enable_device()'s release function, pcim_disable_device(), set
-> pci_dev.is_managed to false so that subsequent drivers using the same
-> struct pci_dev do not run implicitly into managed code.
-> 
-> Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-> Reported-by: Alex Williamson <alex.williamson@redhat.com>
-> Closes: https://lore.kernel.org/all/20240903094431.63551744.alex.williamson@redhat.com/
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+PS - note on small typo below.
+
+On Wed, Sep 4, 2024, at 2:07 AM, Lu Baolu wrote:
+> SOC-integrated devices on some platforms require their PCI ATS enabled
+> for operation when the IOMMU is in scalable mode. Those devices are
+> reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
+> field.
+>
+> The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
+> ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
+
+pci=noats
+
+> can cause a conflict, leading to boot failure, especially if the device
+> is a graphics device.
+>
+> To prevent this issue, check PCI ATS support before enumerating the IOMMU
+> devices. If any device requires PCI ATS, but PCI ATS is disabled by
+> 'pci=noats', switch the IOMMU to operate in legacy mode to ensure
+> successful booting.
+>
+> Fixes: 97f2f2c5317f ("iommu/vt-d: Enable ATS for the devices in SATC table")
+> Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12036
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
-> @Alex:
-> Please have a look whether this fixes your issue.
-
-Yes, this works for me.
-
-Tested-by: Alex Williamson <alex.williamson@redhat.com>
-
-> Might also be cool to include your lockdep warning in the commit
-> message, if you can provide that.
-
-See below.  Thanks,
-
-Alex
-
-========================================================
-WARNING: possible irq lock inversion dependency detected
-6.11.0-rc6+ #59 Tainted: G        W         
---------------------------------------------------------
-CPU 0/KVM/1537 just changed the state of lock:
-ffffa0f0cff965f0 (&vdev->irqlock){-...}-{2:2}, at:
-vfio_intx_handler+0x21/0xd0 [vfio_pci_core] but this lock took another,
-HARDIRQ-unsafe lock in the past: (fs_reclaim){+.+.}-{0:0}
-
-
-and interrupts could create inverse lock ordering between them.
-
-
-other info that might help us debug this:
- Possible interrupt unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               local_irq_disable();
-                               lock(&vdev->irqlock);
-                               lock(fs_reclaim);
-  <Interrupt>
-    lock(&vdev->irqlock);
-
- *** DEADLOCK ***
-
-1 lock held by CPU 0/KVM/1537:
- #0: ffffa0f0eaffc3b0 (&vcpu->mutex){+.+.}-{3:3}, at: kvm_vcpu_ioctl+0x86/0x9a0 [kvm]
-
-the shortest dependencies between 2nd lock and 1st lock:
- -> (fs_reclaim){+.+.}-{0:0} {
-    HARDIRQ-ON-W at:
-                      lock_acquire+0xba/0x2c0
-                      fs_reclaim_acquire+0x99/0xf0
-                      __kmalloc_node_noprof+0x93/0x470
-                      alloc_cpumask_var_node+0x21/0x30
-                      smp_prepare_cpus_common+0x90/0x140
-                      native_smp_prepare_cpus+0xa/0xc0
-                      kernel_init_freeable+0x23d/0x5a0
-                      kernel_init+0x16/0x1d0
-                      ret_from_fork+0x2d/0x50
-                      ret_from_fork_asm+0x1a/0x30
-    SOFTIRQ-ON-W at:
-                      lock_acquire+0xba/0x2c0
-                      fs_reclaim_acquire+0x99/0xf0
-                      __kmalloc_node_noprof+0x93/0x470
-                      alloc_cpumask_var_node+0x21/0x30
-                      smp_prepare_cpus_common+0x90/0x140
-                      native_smp_prepare_cpus+0xa/0xc0
-                      kernel_init_freeable+0x23d/0x5a0
-                      kernel_init+0x16/0x1d0
-                      ret_from_fork+0x2d/0x50
-                      ret_from_fork_asm+0x1a/0x30
-    INITIAL USE at:
-                     lock_acquire+0xba/0x2c0
-                     fs_reclaim_acquire+0x99/0xf0
-                     __kmalloc_node_noprof+0x93/0x470
-                     alloc_cpumask_var_node+0x21/0x30
-                     smp_prepare_cpus_common+0x90/0x140
-                     native_smp_prepare_cpus+0xa/0xc0
-                     kernel_init_freeable+0x23d/0x5a0
-                     kernel_init+0x16/0x1d0
-                     ret_from_fork+0x2d/0x50
-                     ret_from_fork_asm+0x1a/0x30
-  }
-  ... key      at: [<ffffffffb2250300>] __fs_reclaim_map+0x0/0x28
-  ... acquired at:
-   fs_reclaim_acquire+0x99/0xf0
-   __kmalloc_node_track_caller_noprof+0x8f/0x460
-   __devres_alloc_node+0x42/0x80
-   pcim_intx+0xb6/0xe0
-   pci_intx+0x67/0x80
-   __vfio_pci_intx_mask+0x70/0xe0 [vfio_pci_core]
-   vfio_pci_set_intx_mask+0x40/0x50 [vfio_pci_core]
-   vfio_pci_core_ioctl+0x74e/0xf50 [vfio_pci_core]
-   vfio_device_fops_unl_ioctl+0xa5/0x870 [vfio]
-   __x64_sys_ioctl+0x90/0xd0
-   do_syscall_64+0x8e/0x180
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
--> (&vdev->irqlock){-...}-{2:2} {
-   IN-HARDIRQ-W at:
-                    lock_acquire+0xba/0x2c0
-                    _raw_spin_lock_irqsave+0x3b/0x60
-                    vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
-                    __handle_irq_event_percpu+0x81/0x260
-                    handle_irq_event+0x34/0x70
-                    handle_fasteoi_irq+0x91/0x210
-                    __common_interrupt+0x6f/0x140
-                    common_interrupt+0xb3/0xd0
-                    asm_common_interrupt+0x22/0x40
-                    vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
-                    vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
-                    kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
-                    kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
-                    __x64_sys_ioctl+0x90/0xd0
-                    do_syscall_64+0x8e/0x180
-                    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-   INITIAL USE at:
-                   lock_acquire+0xba/0x2c0
-                   _raw_spin_lock_irqsave+0x3b/0x60
-                   __vfio_pci_intx_mask+0x30/0xe0 [vfio_pci_core]
-                   vfio_pci_set_intx_mask+0x40/0x50 [vfio_pci_core]
-                   vfio_pci_core_ioctl+0x74e/0xf50 [vfio_pci_core]
-                   vfio_device_fops_unl_ioctl+0xa5/0x870 [vfio]
-                   __x64_sys_ioctl+0x90/0xd0
-                   do_syscall_64+0x8e/0x180
-                   entry_SYSCALL_64_after_hwframe+0x76/0x7e
- }
- ... key      at: [<ffffffffc0a68800>] __key.90+0x0/0x10 [vfio_pci_core]
- ... acquired at:
-   __lock_acquire+0x9b0/0x2130
-   lock_acquire+0xba/0x2c0
-   _raw_spin_lock_irqsave+0x3b/0x60
-   vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
-   __handle_irq_event_percpu+0x81/0x260
-   handle_irq_event+0x34/0x70
-   handle_fasteoi_irq+0x91/0x210
-   __common_interrupt+0x6f/0x140
-   common_interrupt+0xb3/0xd0
-   asm_common_interrupt+0x22/0x40
-   vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
-   vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
-   kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
-   kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
-   __x64_sys_ioctl+0x90/0xd0
-   do_syscall_64+0x8e/0x180
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-
-stack backtrace:
-CPU: 4 UID: 107 PID: 1537 Comm: CPU 0/KVM Tainted: G        W          6.11.0-rc6+ #59
-Tainted: [W]=WARN
-Hardware name: HP HP ProDesk 600 G3 MT/829D, BIOS P02 Ver. 02.44 09/13/2022
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x62/0x90
- mark_lock+0x3b7/0x960
- __lock_acquire+0x9b0/0x2130
- lock_acquire+0xba/0x2c0
- ? vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
- _raw_spin_lock_irqsave+0x3b/0x60
- ? vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
- vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
- __handle_irq_event_percpu+0x81/0x260
- handle_irq_event+0x34/0x70
- handle_fasteoi_irq+0x91/0x210
- __common_interrupt+0x6f/0x140
- common_interrupt+0xb3/0xd0
- </IRQ>
- <TASK>
- asm_common_interrupt+0x22/0x40
-RIP: 0010:vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
-Code: ff ff ff 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 48 89 e5 48 83 e4 f0 6a 18 55 9c 6a 10 ff d7 <0f> 1f 00 48 89 ec 5d c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90
-RSP: 0018:ffffbc4d8231ba78 EFLAGS: 00000082
-RAX: 0000000000000240 RBX: ffffa0f0eaffc300 RCX: 0000000080000000
-RDX: ffffffff00000000 RSI: 0000000080000022 RDI: ffffffffb1000240
-RBP: ffffbc4d8231ba78 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffa0f0ea835000
-R13: ffffa0f0e0d00000 R14: ffffa0f0eaffc300 R15: 0000000000000000
- ? irq_entries_start+0x10/0x660
- vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
- kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
- ? kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
- kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
- ? find_held_lock+0x2b/0x80
- __x64_sys_ioctl+0x90/0xd0
- do_syscall_64+0x8e/0x180
- ? lockdep_hardirqs_on+0x77/0x100
- ? do_syscall_64+0x9a/0x180
- ? vmx_vcpu_put+0xf6/0x270 [kvm_intel]
- ? kvm_arch_vcpu_put+0x191/0x270 [kvm]
- ? find_held_lock+0x2b/0x80
- ? kvm_vcpu_ioctl+0x197/0x9a0 [kvm]
- ? lock_release+0x132/0x290
- ? rcu_is_watching+0xd/0x40
- ? kfree+0x231/0x360
- ? __mutex_unlock_slowpath+0x2a/0x260
- ? kvm_vcpu_ioctl+0x1a7/0x9a0 [kvm]
- ? find_held_lock+0x2b/0x80
- ? user_return_notifier_unregister+0x3c/0x70
- ? do_syscall_64+0x9a/0x180
- ? lockdep_hardirqs_on+0x77/0x100
- ? do_syscall_64+0x9a/0x180
- ? syscall_exit_to_user_mode+0x1c2/0x2b0
- ? do_syscall_64+0x9a/0x180
- ? lockdep_hardirqs_on+0x77/0x100
- ? do_syscall_64+0x9a/0x180
- ? lockdep_hardirqs_on+0x77/0x100
- ? do_syscall_64+0x9a/0x180
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7fd030fa13ed
-Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
-RSP: 002b:00007fd029bf6420 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000055b4692ec540 RCX: 00007fd030fa13ed
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000018
-RBP: 00007fd029bf6470 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd029c006c0
-R13: ffffffffffff7a90 R14: 0000000000000000 R15: 00007ffe459ab200
- </TASK>
-
+>  drivers/iommu/intel/iommu.c | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 4aa070cf56e7..8f275e046e91 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -3127,10 +3127,26 @@ int dmar_iommu_notify_scope_dev(struct 
+> dmar_pci_notify_info *info)
+>  					(void *)satc + satc->header.length,
+>  					satc->segment, satcu->devices,
+>  					satcu->devices_cnt);
+> -			if (ret > 0)
+> -				break;
+> -			else if (ret < 0)
+> +			if (ret < 0)
+>  				return ret;
+> +
+> +			if (ret > 0) {
+> +				/*
+> +				 * The device requires PCI/ATS when the IOMMU
+> +				 * works in the scalable mode. If PCI/ATS is
+> +				 * disabled using the pci=noats kernel parameter,
+> +				 * the IOMMU will default to legacy mode. Users
+> +				 * are informed of this change.
+> +				 */
+> +				if (intel_iommu_sm && satcu->atc_required &&
+> +				    !pci_ats_supported(info->dev)) {
+> +					pci_warn(info->dev,
+> +						 "PCI/ATS not supported, system working in IOMMU legacy mode\n");
+> +					intel_iommu_sm = 0;
+> +				}
+> +
+> +				break;
+> +			}
+>  		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
+>  			if (dmar_remove_dev_scope(info, satc->segment,
+>  					satcu->devices, satcu->devices_cnt))
+> -- 
+> 2.34.1
 
