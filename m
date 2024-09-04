@@ -1,271 +1,351 @@
-Return-Path: <linux-kernel+bounces-315695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627CD96C5E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2A796C5E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823601C24D84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:58:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6316D1C24DDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3741E1A24;
-	Wed,  4 Sep 2024 17:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF871E1A22;
+	Wed,  4 Sep 2024 17:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bQ2LtL3I"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cWcdxymU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC252AE9F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99B2AE9F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472710; cv=none; b=W87cy36GwOD+8ZQTqVXf2NiyABMrwlmPT0yG+7/HzWIoYDh3sl1KQcMdllpB5O6fYa0oW12QR1cN9Yx5AkRU31voJBdI1CLBjy1fNCaBdJBbV2sX+0PWdwTxs+J+yGyF3DPPMzuUxCfp9ube3TfMRIc5bmHjacWLeIWfYXa+mVw=
+	t=1725472790; cv=none; b=CzW74KLti1W+k7kvQLoruD/Eifl6+Yt5L1y7xBRuzcGrvIlhZmGF78XWfYDh997rgrg7xeFw3LfiPHMZeE98LtM/Soa8tubToELfAvTHiJBNm/nyig2HqxYEN/+bpKuWslXrKOvImye0Dq1AoBbn4Vq+bMib6VxLMlIB5fpcct4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472710; c=relaxed/simple;
-	bh=3f6HHaWqtgTlkFwvM0QQk2MvyNNwh1mfey4sr68VITc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3wPaS24i3siCnjy2ESFI+7/Xodxxrzjok0ydKJfYrl/8hiCRGBZuBfnIblV6Z8VahqE2kB02LO7w5EdAGii3XUmuRzqq406dh1krjRn4U5QJ25J3I06SNLgd5jM2P0EwboSv4tVytSuUa/ozA2ojmP4fXT5x3fQm9rytNUmNiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bQ2LtL3I; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725472700;
-	bh=3f6HHaWqtgTlkFwvM0QQk2MvyNNwh1mfey4sr68VITc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bQ2LtL3Ivc+csRW3wabmGzZ7I0QnKrdJX0MYQgTwextv+Vv0YUfxU93ZWrw3+1Byt
-	 K4ZBvXfsI9vwSLrQroSSkqhCytslcH27dH0wuVtxAIAqVZ8xQn3D2ZT6SF0OPpdEZo
-	 50cPfsi8bqCxLfLYSkKjG3bO1aCXmZNJ0TLx4Zrb36YVpgM5CF1hYLVAUErhuMOaaH
-	 hXPlPbLyrjCVoR1PJtx0NneJlu8f+Z4EvBqnKAcMdSJz7L/YxnLc/p+4Qta0vtxTN+
-	 exiLgVfa+qOJUMQkhFbBMKzZwCJtZ7do/vgyoMNR5D43dRQzeFslWevezu4giiFk8S
-	 aw9pRqJt3arVg==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DCE4817E35D9;
-	Wed,  4 Sep 2024 19:58:18 +0200 (CEST)
-Date: Wed, 4 Sep 2024 13:58:16 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	regressions@lists.linux.dev, kernelci@lists.linux.dev,
-	kernel@collabora.com
-Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default ops
-Message-ID: <7e8a6a4e-eb9e-438b-a366-f95de4e88bf8@notapiano>
-References: <cover.1721818168.git.leon@kernel.org>
- <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
- <10431dfd-ce04-4e0f-973b-c78477303c18@notapiano>
- <20240904154529.GP4026@unreal>
+	s=arc-20240116; t=1725472790; c=relaxed/simple;
+	bh=LNsjyYpRLYKmaOoZYFt7a6yVFFHLKuyn19W4dBscXVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kgALiMSudjGm16Nml5o5AFfmCiJWEfipegzmf1/neSi7WIL+JvkEBqjAUpKf3Fj2Ia+pSp87XPbwihz/zBKqPlbbJTSKat/3kHJg0L/HVB4HfCUGVISfDIUzk50oO3wSyYSptb6GTdVPPl6S8P0CSUUe8CYB/Qv+8f7NCyIxgo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cWcdxymU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725472787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsVcMtYUhB/J1lgh5WzPGIx1plvQhA+HpWBruuNcJgY=;
+	b=cWcdxymULiHxvv90gOoBI7fGAfN+3NItrq7ryjjNfHhz1FhZRX/sN55AA4giy3ZfsNQ6Bh
+	jbW71V0ZqqV2Mi9FX3Vd7j2a04UW9VDGJT5A1ZL2J2fZnmUpCL2GDp7F4cVK4lwQT281+v
+	mbipuuJZnb8GlhhO6XuuAnglXzVXk6I=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-uad-eFTZMXWagF4o9_OWBQ-1; Wed, 04 Sep 2024 13:59:46 -0400
+X-MC-Unique: uad-eFTZMXWagF4o9_OWBQ-1
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d29ba04caso3124635ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:59:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725472785; x=1726077585;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qsVcMtYUhB/J1lgh5WzPGIx1plvQhA+HpWBruuNcJgY=;
+        b=Lt+ofbCnN41oTq3l8jW5z3yC6o8RkGnEDEg9JprzfVPUBgGE5e9hXQT9kDEvGE+3Pf
+         yRA6Ar10RQFYlh+GUlK/A5PXLPopu03Km8SAVdHb+uWjZJIwTVH5y87tbEJQWld/okNM
+         iQcDmypNPqHsSlsrPNAYixd0JhJkUByjbxPKEL7nvajyGnHbEV3RdGttcBjLYmX7p9Zu
+         x2ZvnboKmqOmnQ5mNAvfg0UQgUkdVSblf6aDtEwzlTlUw6m63PPXds0YReQBQAJV2aS3
+         VQzxQCMsSMUImmH7YvOxUt2qMlqkaA0xjmvBxkn6/VRuBpccytCqYmKTBK44CgxQbwwK
+         T+kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTlhaAR8vkKdE1RSvA4P/8baXy1EqmkJVPIgjetuJzEA/L2mdaXlfYdVsOVXzCxiU4hnhSiV/Ha1vhZkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhmo2PG7dtPSgbTQqZCVqC863RCUp2zAu3giRBjP3ACX5cLsNg
+	dU/uKH4G1x1bVSO7OcvQ6LtnfflYmcZP927ac6+LnKBgIzfFpS0HuvfUNQhZ3OgT/3gRdgDCNQZ
+	kSKtIQNuzNloFP/rTUvED2pkCAYhZqNRvj8VdRV+1xPv1/o/bLiHMfuQKyx6dow==
+X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17790765ab.2.1725472785447;
+        Wed, 04 Sep 2024 10:59:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8munDU2AJ7cYKC9Edk9AMUjHORmC/M9D0674ATSnT1Ii9frhidoGsJfdbmpoRrUE551PeJw==
+X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17790465ab.2.1725472784901;
+        Wed, 04 Sep 2024 10:59:44 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3b05b42dsm37367065ab.83.2024.09.04.10.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 10:59:44 -0700 (PDT)
+Date: Wed, 4 Sep 2024 11:59:42 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?UTF-8?B?V2lsY3p5xYRz?=
+ =?UTF-8?B?a2k=?= <kwilczynski@kernel.org>, Damien Le Moal
+ <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Fix might_sleep() lockdep warning in pcim_intx()
+Message-ID: <20240904115942.7ff0cfcb.alex.williamson@redhat.com>
+In-Reply-To: <20240904072541.8746-2-pstanner@redhat.com>
+References: <20240904072541.8746-2-pstanner@redhat.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240904154529.GP4026@unreal>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 06:45:29PM +0300, Leon Romanovsky wrote:
-> On Wed, Sep 04, 2024 at 10:59:33AM -0400, Nícolas F. R. A. Prado wrote:
-> > On Wed, Jul 24, 2024 at 09:04:49PM +0300, Leon Romanovsky wrote:
-> > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> > > Most of the arch DMA ops (which often, but not always, involve
-> > > some sort of IOMMU) are using the same DMA operations, but for all
-> > > modern platforms dma-iommu implementation is really matters.
-> > > 
-> > > So let's make sure to call them directly without need to perform
-> > > function pointers dereference.
-> > > 
-> > > During system initialization, the arch can set its own DMA and in such
-> > > case, the default DMA operations will be overridden.
-> > > 
-> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > Signed-off-by: Leon Romanovsky <leon@kernel.org>
-> > > ---
-> > 
-> > Hi,
-> > 
-> > KernelCI has identified a boot regression originating from this patch. I've
-> > verified that reverting the patch fixes the issue.
-> > 
-> > Affected platforms:
-> > * sc7180-trogdor-kingoftown
-> > * sc7180-trogdor-lazor-limozeen
-> > 
-> > Relevant kernel log:
-> > 
-> > [    5.790809] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
-> > [    5.799844] Mem abort info:
-> > [    5.799846]   ESR = 0x0000000096000006
-> > [    5.808708]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [    5.808712]   SET = 0, FnV = 0
-> > [    5.808714]   EA = 0, S1PTW = 0
-> > [    5.818465]   FSC = 0x06: level 2 translation fault
-> > [    5.818468] Data abort info:
-> > [    5.818469]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-> > [    5.827063]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > [    5.827065]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > [    5.838768] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000d20bb000
-> > [    5.838771] [0000000000000040] pgd=08000000d20c1003
-> > [    5.863071] , p4d=08000000d20c1003
-> > [    5.898011] , pud=08000000d20c2003, pmd=0000000000000000
-> > [    5.898014] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-> > [    5.898016] Modules linked in: ipv6 hci_uart venus_core btqca v4l2_mem2mem btrtl qcom_spmi_adc5 sbs_battery btbcm qcom_vadc_common cros_ec_typec videobuf2_v4l2 leds_cros_ec cros_kbd_led_backlight cros_ec_chardev videodev elan_i2c videobuf2_common qcom_stats mc bluetooth coresight_stm stm_core ecdh_generic ecc pwrseq_core panel_edp icc_bwmon ath10k_snoc ath10k_core ath mac80211 phy_qcom_qmp_combo aux_bridge libarc4 coresight_replicator coresight_etm4x coresight_tmc coresight_funnel cfg80211 rfkill coresight qcom_wdt cbmem ramoops reed_solomon pwm_bl coreboot_table backlight crct10dif_ce
-> > [    5.898057] CPU: 7 UID: 0 PID: 70 Comm: kworker/u32:4 Not tainted 6.11.0-rc6-next-20240903-00003-gdfc6015d0711 #660
-> > [    5.898061] Hardware name: Google Lazor Limozeen without Touchscreen (rev5 - rev8) (DT)
-> > [    5.898062] Workqueue: events_unbound deferred_probe_work_func
-> > [    5.904227] hub 2-1:1.0: 4 ports detected
-> > [    5.906827]
-> > [    5.906828] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    5.906831] pc : dma_common_alloc_pages+0x54/0x1b4
-> > [    5.906837] lr : dma_common_alloc_pages+0x4c/0x1b4
-> > [    5.906839] sp : ffff8000807d3730
-> > [    5.906840] x29: ffff8000807d3730 x28: ffff02a7d312f880 x27: 0000000000000001
-> > [    5.906843] x26: 000000000000c000 x25: 0000000000000000 x24: 0000000000000001
-> > [    5.906845] x23: ffff02a7d23b6898 x22: 0000000000006cc0 x21: 000000000000c000
-> > [    5.906847] x20: ffff02a7858bf410 x19: fffffe0a60006000 x18: 0000000000000001
-> > [    5.906850] x17: 00000000000000d5 x16: 1fffe054f0bcc261 x15: 0000000000000001
-> > [    5.906852] x14: ffff02a7844dc680 x13: 0000000000100180 x12: dead000000000100
-> > [    5.906855] x11: dead000000000122 x10: 00000000001001ff x9 : ffff02a87f7b7b00
-> > [    5.906857] x8 : ffff02a87f7b7b00 x7 : ffff405977d6b000 x6 : ffff8000807d3310
-> > [    5.906860] x5 : ffff02a87f6b6398 x4 : 0000000000000001 x3 : ffff405977d6b000
-> > [    6.092491] x2 : ffff02a7844dc600 x1 : 0000000100000000 x0 : fffffe0a60006000
-> > [    6.099809] Call trace:
-> > [    6.102327]  dma_common_alloc_pages+0x54/0x1b4
-> > [    6.106895]  __dma_alloc_pages+0x68/0x90
-> > [    6.110921]  dma_alloc_pages+0x10/0x1c
-> > [    6.114772]  snd_dma_noncoherent_alloc+0x28/0x8c
-> > [    6.119514]  __snd_dma_alloc_pages+0x30/0x50
-> > [    6.123897]  snd_dma_alloc_dir_pages+0x40/0x80
-> > [    6.128465]  do_alloc_pages+0xb8/0x13c
-> > [    6.132315]  preallocate_pcm_pages+0x6c/0xf8
-> > [    6.132317]  preallocate_pages+0x160/0x1a4
-> > [    6.132319]  snd_pcm_set_managed_buffer_all+0x64/0xb0
-> > [    6.152964]  lpass_platform_pcm_new+0xc0/0xe8
-> > [    6.157443]  snd_soc_pcm_component_new+0x3c/0xc8
-> > [    6.162184]  soc_new_pcm+0x4fc/0x668
-> > [    6.165853]  snd_soc_bind_card+0xabc/0xbac
-> > [    6.170063]  snd_soc_register_card+0xf0/0x108
-> > [    6.174533]  devm_snd_soc_register_card+0x4c/0xa4
-> > [    6.179361]  sc7180_snd_platform_probe+0x180/0x224
-> > [    6.184285]  platform_probe+0x68/0xc0
-> > [    6.188050]  really_probe+0xbc/0x298
-> > [    6.191717]  __driver_probe_device+0x78/0x12c
-> > [    6.196186]  driver_probe_device+0x3c/0x15c
-> > [    6.200481]  __device_attach_driver+0xb8/0x134
-> > [    6.205047]  bus_for_each_drv+0x84/0xe0
-> > [    6.208985]  __device_attach+0x9c/0x188
-> > [    6.212924]  device_initial_probe+0x14/0x20
-> > [    6.217219]  bus_probe_device+0xac/0xb0
-> > [    6.221157]  deferred_probe_work_func+0x88/0xc0
-> > [    6.225810]  process_one_work+0x14c/0x28c
-> > [    6.229923]  worker_thread+0x2cc/0x3d4
-> > [    6.233773]  kthread+0x114/0x118
-> > [    6.237093]  ret_from_fork+0x10/0x20
-> > [    6.240763] Code: f9411c19 940000c9 aa0003f3 b4000460 (f9402326)
-> > [    6.247012] ---[ end trace 0000000000000000 ]---
-> > 
-> > See below for the suspicious hunk.
-> > 
-> > [..]
-> > > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> > > index 6832fd6f0796..02451e27e0b1 100644
-> > > --- a/kernel/dma/mapping.c
-> > > +++ b/kernel/dma/mapping.c
-> > [..]
-> > > @@ -611,6 +662,8 @@ static struct page *__dma_alloc_pages(struct device *dev, size_t size,
-> > >  	size = PAGE_ALIGN(size);
-> > >  	if (dma_alloc_direct(dev, ops))
-> > >  		return dma_direct_alloc_pages(dev, size, dma_handle, dir, gfp);
-> > > +	if (use_dma_iommu(dev))
-> > > +		return dma_common_alloc_pages(dev, size, dma_handle, dir, gfp);
-> > 
-> > Is this check correct? dma_common_alloc_pages uses the dma_ops, but the comment
-> > in dma_iommu said it meant that dma_ops wouldn't be used.
-> > 
-> > And similarly for dma_common_free_pages below.
-> > 
-> > >  	if (!ops->alloc_pages_op)
-> > >  		return NULL;
-> > >  	return ops->alloc_pages_op(dev, size, dma_handle, dir, gfp);
-> > > @@ -635,6 +688,8 @@ static void __dma_free_pages(struct device *dev, size_t size, struct page *page,
-> > >  	size = PAGE_ALIGN(size);
-> > >  	if (dma_alloc_direct(dev, ops))
-> > >  		dma_direct_free_pages(dev, size, page, dma_handle, dir);
-> > > +	else if (use_dma_iommu(dev))
-> > > +		dma_common_free_pages(dev, size, page, dma_handle, dir);
-> > >  	else if (ops->free_pages)
-> > >  		ops->free_pages(dev, size, page, dma_handle, dir);
-> > >  }
-> > [..]
-> > 
-> > Please add
-> > Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-> > when fixing this.
-> > 
-> > Happy to provide any other details necessary.
+On Wed,  4 Sep 2024 09:25:42 +0200
+Philipp Stanner <pstanner@redhat.com> wrote:
+
+> commit 25216afc9db5 ("PCI: Add managed pcim_intx()") moved the
+> allocation step for pci_intx()'s device resource from
+> pcim_enable_device() to pcim_intx(). As before, pcim_enable_device()
+> sets pci_dev.is_managed to true; and it is never set to false again.
 > 
-> Thanks for the report, can you try the following patch?
-> I'll prepare patch later today.
+> Under some circumstances it can happen that drivers share a struct
+> pci_dev. If one driver uses pcim_enable_device() and the other doesn't,
+> this causes the other driver to run into managed pcim_intx(), which will
+> try to allocate when called for the first time.
+
+I don't think "share" is the correct way to describe this.  The struct
+pci_dev is never shared between drivers, it's more of a lifecycle
+issue.  The struct pci_dev persists for the life of the device, but
+is_managed is relative to the driver that is currently bound to the
+device.  The issue is that the devres infrastructure doesn't clear this
+flag when the managed driver that set it releases the struct pci_dev.
+
+As we discussed in the other thread, this is a latent issue that has
+existed for some time, but it's only when pcim_intx() starts allocating
+memory, as introduced in the Fixes commit below, that the calling
+requirements for pcim_intx() are narrowed and become incompatible (and
+visible via lockdep) with existing drivers.
+
+> Allocations might sleep, so calling pci_intx() while holding spinlocks
+> becomes then invalid, which causes lockdep warnings and could cause
+> deadlocks.
 > 
-> diff --git a/kernel/dma/ops_helpers.c b/kernel/dma/ops_helpers.c
-> index af4a6ef48ce0..7e2b36cba61e 100644
-> --- a/kernel/dma/ops_helpers.c
-> +++ b/kernel/dma/ops_helpers.c
-> @@ -4,6 +4,7 @@
->   * the allocated memory contains normal pages in the direct kernel mapping.
->   */
->  #include <linux/dma-map-ops.h>
-> +#include <linux/iommu-dma.h>
->  
->  static struct page *dma_common_vaddr_to_page(void *cpu_addr)
->  {
-> @@ -70,8 +71,12 @@ struct page *dma_common_alloc_pages(struct device *dev, size_t size,
->  	if (!page)
->  		return NULL;
->  
-> -	*dma_handle = ops->map_page(dev, page, 0, size, dir,
-> -				    DMA_ATTR_SKIP_CPU_SYNC);
-> +	if (dev->dma_iommu)
-> +		*dma_handle = iommu_dma_map_page(dev, page, 0, size, dir,
-> +						 DMA_ATTR_SKIP_CPU_SYNC);
-> +	else
-> +		*dma_handle = ops->map_page(dev, page, 0, size, dir,
-> +					    DMA_ATTR_SKIP_CPU_SYNC);
->  	if (*dma_handle == DMA_MAPPING_ERROR) {
->  		dma_free_contiguous(dev, page, size);
->  		return NULL;
-> @@ -86,7 +91,10 @@ void dma_common_free_pages(struct device *dev, size_t size, struct page *page,
->  {
->  	const struct dma_map_ops *ops = get_dma_ops(dev);
->  
-> -	if (ops->unmap_page)
-> +	if (dev->dma_iommu)
-> +		iommu_dma_unmap_page(dev, dma_handle, size, dir,
-> +				     DMA_ATTR_SKIP_CPU_SYNC);
-> +	else if (ops->unmap_page)
->  		ops->unmap_page(dev, dma_handle, size, dir,
->  				DMA_ATTR_SKIP_CPU_SYNC);
->  	dma_free_contiguous(dev, page, size);
+> Have pcim_enable_device()'s release function, pcim_disable_device(), set
+> pci_dev.is_managed to false so that subsequent drivers using the same
+> struct pci_dev do not run implicitly into managed code.
+> 
+> Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+> Reported-by: Alex Williamson <alex.williamson@redhat.com>
+> Closes: https://lore.kernel.org/all/20240903094431.63551744.alex.williamson@redhat.com/
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+> @Alex:
+> Please have a look whether this fixes your issue.
 
-Hi,
+Yes, this works for me.
 
-Indeed this patch fixes the issue.
+Tested-by: Alex Williamson <alex.williamson@redhat.com>
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Might also be cool to include your lockdep warning in the commit
+> message, if you can provide that.
 
-Thanks,
-Nícolas
+See below.  Thanks,
+
+Alex
+
+========================================================
+WARNING: possible irq lock inversion dependency detected
+6.11.0-rc6+ #59 Tainted: G        W         
+--------------------------------------------------------
+CPU 0/KVM/1537 just changed the state of lock:
+ffffa0f0cff965f0 (&vdev->irqlock){-...}-{2:2}, at:
+vfio_intx_handler+0x21/0xd0 [vfio_pci_core] but this lock took another,
+HARDIRQ-unsafe lock in the past: (fs_reclaim){+.+.}-{0:0}
+
+
+and interrupts could create inverse lock ordering between them.
+
+
+other info that might help us debug this:
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               local_irq_disable();
+                               lock(&vdev->irqlock);
+                               lock(fs_reclaim);
+  <Interrupt>
+    lock(&vdev->irqlock);
+
+ *** DEADLOCK ***
+
+1 lock held by CPU 0/KVM/1537:
+ #0: ffffa0f0eaffc3b0 (&vcpu->mutex){+.+.}-{3:3}, at: kvm_vcpu_ioctl+0x86/0x9a0 [kvm]
+
+the shortest dependencies between 2nd lock and 1st lock:
+ -> (fs_reclaim){+.+.}-{0:0} {
+    HARDIRQ-ON-W at:
+                      lock_acquire+0xba/0x2c0
+                      fs_reclaim_acquire+0x99/0xf0
+                      __kmalloc_node_noprof+0x93/0x470
+                      alloc_cpumask_var_node+0x21/0x30
+                      smp_prepare_cpus_common+0x90/0x140
+                      native_smp_prepare_cpus+0xa/0xc0
+                      kernel_init_freeable+0x23d/0x5a0
+                      kernel_init+0x16/0x1d0
+                      ret_from_fork+0x2d/0x50
+                      ret_from_fork_asm+0x1a/0x30
+    SOFTIRQ-ON-W at:
+                      lock_acquire+0xba/0x2c0
+                      fs_reclaim_acquire+0x99/0xf0
+                      __kmalloc_node_noprof+0x93/0x470
+                      alloc_cpumask_var_node+0x21/0x30
+                      smp_prepare_cpus_common+0x90/0x140
+                      native_smp_prepare_cpus+0xa/0xc0
+                      kernel_init_freeable+0x23d/0x5a0
+                      kernel_init+0x16/0x1d0
+                      ret_from_fork+0x2d/0x50
+                      ret_from_fork_asm+0x1a/0x30
+    INITIAL USE at:
+                     lock_acquire+0xba/0x2c0
+                     fs_reclaim_acquire+0x99/0xf0
+                     __kmalloc_node_noprof+0x93/0x470
+                     alloc_cpumask_var_node+0x21/0x30
+                     smp_prepare_cpus_common+0x90/0x140
+                     native_smp_prepare_cpus+0xa/0xc0
+                     kernel_init_freeable+0x23d/0x5a0
+                     kernel_init+0x16/0x1d0
+                     ret_from_fork+0x2d/0x50
+                     ret_from_fork_asm+0x1a/0x30
+  }
+  ... key      at: [<ffffffffb2250300>] __fs_reclaim_map+0x0/0x28
+  ... acquired at:
+   fs_reclaim_acquire+0x99/0xf0
+   __kmalloc_node_track_caller_noprof+0x8f/0x460
+   __devres_alloc_node+0x42/0x80
+   pcim_intx+0xb6/0xe0
+   pci_intx+0x67/0x80
+   __vfio_pci_intx_mask+0x70/0xe0 [vfio_pci_core]
+   vfio_pci_set_intx_mask+0x40/0x50 [vfio_pci_core]
+   vfio_pci_core_ioctl+0x74e/0xf50 [vfio_pci_core]
+   vfio_device_fops_unl_ioctl+0xa5/0x870 [vfio]
+   __x64_sys_ioctl+0x90/0xd0
+   do_syscall_64+0x8e/0x180
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+-> (&vdev->irqlock){-...}-{2:2} {
+   IN-HARDIRQ-W at:
+                    lock_acquire+0xba/0x2c0
+                    _raw_spin_lock_irqsave+0x3b/0x60
+                    vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
+                    __handle_irq_event_percpu+0x81/0x260
+                    handle_irq_event+0x34/0x70
+                    handle_fasteoi_irq+0x91/0x210
+                    __common_interrupt+0x6f/0x140
+                    common_interrupt+0xb3/0xd0
+                    asm_common_interrupt+0x22/0x40
+                    vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
+                    vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
+                    kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
+                    kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
+                    __x64_sys_ioctl+0x90/0xd0
+                    do_syscall_64+0x8e/0x180
+                    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+   INITIAL USE at:
+                   lock_acquire+0xba/0x2c0
+                   _raw_spin_lock_irqsave+0x3b/0x60
+                   __vfio_pci_intx_mask+0x30/0xe0 [vfio_pci_core]
+                   vfio_pci_set_intx_mask+0x40/0x50 [vfio_pci_core]
+                   vfio_pci_core_ioctl+0x74e/0xf50 [vfio_pci_core]
+                   vfio_device_fops_unl_ioctl+0xa5/0x870 [vfio]
+                   __x64_sys_ioctl+0x90/0xd0
+                   do_syscall_64+0x8e/0x180
+                   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ }
+ ... key      at: [<ffffffffc0a68800>] __key.90+0x0/0x10 [vfio_pci_core]
+ ... acquired at:
+   __lock_acquire+0x9b0/0x2130
+   lock_acquire+0xba/0x2c0
+   _raw_spin_lock_irqsave+0x3b/0x60
+   vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
+   __handle_irq_event_percpu+0x81/0x260
+   handle_irq_event+0x34/0x70
+   handle_fasteoi_irq+0x91/0x210
+   __common_interrupt+0x6f/0x140
+   common_interrupt+0xb3/0xd0
+   asm_common_interrupt+0x22/0x40
+   vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
+   vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
+   kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
+   kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
+   __x64_sys_ioctl+0x90/0xd0
+   do_syscall_64+0x8e/0x180
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+
+stack backtrace:
+CPU: 4 UID: 107 PID: 1537 Comm: CPU 0/KVM Tainted: G        W          6.11.0-rc6+ #59
+Tainted: [W]=WARN
+Hardware name: HP HP ProDesk 600 G3 MT/829D, BIOS P02 Ver. 02.44 09/13/2022
+Call Trace:
+ <IRQ>
+ dump_stack_lvl+0x62/0x90
+ mark_lock+0x3b7/0x960
+ __lock_acquire+0x9b0/0x2130
+ lock_acquire+0xba/0x2c0
+ ? vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
+ _raw_spin_lock_irqsave+0x3b/0x60
+ ? vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
+ vfio_intx_handler+0x21/0xd0 [vfio_pci_core]
+ __handle_irq_event_percpu+0x81/0x260
+ handle_irq_event+0x34/0x70
+ handle_fasteoi_irq+0x91/0x210
+ __common_interrupt+0x6f/0x140
+ common_interrupt+0xb3/0xd0
+ </IRQ>
+ <TASK>
+ asm_common_interrupt+0x22/0x40
+RIP: 0010:vmx_do_interrupt_irqoff+0x10/0x20 [kvm_intel]
+Code: ff ff ff 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 48 89 e5 48 83 e4 f0 6a 18 55 9c 6a 10 ff d7 <0f> 1f 00 48 89 ec 5d c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90
+RSP: 0018:ffffbc4d8231ba78 EFLAGS: 00000082
+RAX: 0000000000000240 RBX: ffffa0f0eaffc300 RCX: 0000000080000000
+RDX: ffffffff00000000 RSI: 0000000080000022 RDI: ffffffffb1000240
+RBP: ffffbc4d8231ba78 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffa0f0ea835000
+R13: ffffa0f0e0d00000 R14: ffffa0f0eaffc300 R15: 0000000000000000
+ ? irq_entries_start+0x10/0x660
+ vmx_handle_exit_irqoff+0xc3/0x220 [kvm_intel]
+ kvm_arch_vcpu_ioctl_run+0x12e9/0x1d20 [kvm]
+ ? kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
+ kvm_vcpu_ioctl+0x239/0x9a0 [kvm]
+ ? find_held_lock+0x2b/0x80
+ __x64_sys_ioctl+0x90/0xd0
+ do_syscall_64+0x8e/0x180
+ ? lockdep_hardirqs_on+0x77/0x100
+ ? do_syscall_64+0x9a/0x180
+ ? vmx_vcpu_put+0xf6/0x270 [kvm_intel]
+ ? kvm_arch_vcpu_put+0x191/0x270 [kvm]
+ ? find_held_lock+0x2b/0x80
+ ? kvm_vcpu_ioctl+0x197/0x9a0 [kvm]
+ ? lock_release+0x132/0x290
+ ? rcu_is_watching+0xd/0x40
+ ? kfree+0x231/0x360
+ ? __mutex_unlock_slowpath+0x2a/0x260
+ ? kvm_vcpu_ioctl+0x1a7/0x9a0 [kvm]
+ ? find_held_lock+0x2b/0x80
+ ? user_return_notifier_unregister+0x3c/0x70
+ ? do_syscall_64+0x9a/0x180
+ ? lockdep_hardirqs_on+0x77/0x100
+ ? do_syscall_64+0x9a/0x180
+ ? syscall_exit_to_user_mode+0x1c2/0x2b0
+ ? do_syscall_64+0x9a/0x180
+ ? lockdep_hardirqs_on+0x77/0x100
+ ? do_syscall_64+0x9a/0x180
+ ? lockdep_hardirqs_on+0x77/0x100
+ ? do_syscall_64+0x9a/0x180
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7fd030fa13ed
+Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+RSP: 002b:00007fd029bf6420 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 000055b4692ec540 RCX: 00007fd030fa13ed
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000018
+RBP: 00007fd029bf6470 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd029c006c0
+R13: ffffffffffff7a90 R14: 0000000000000000 R15: 00007ffe459ab200
+ </TASK>
+
 
