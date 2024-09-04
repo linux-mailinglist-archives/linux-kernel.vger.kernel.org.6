@@ -1,169 +1,78 @@
-Return-Path: <linux-kernel+bounces-315949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BA196C901
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300A296C903
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBCE61C25B09
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98441F264B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39901487DD;
-	Wed,  4 Sep 2024 20:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A085148310;
+	Wed,  4 Sep 2024 20:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2UdEHPK"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVKfvekW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424AD530;
-	Wed,  4 Sep 2024 20:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6917E6;
+	Wed,  4 Sep 2024 20:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725483313; cv=none; b=nwDuJedh++bQ6nofkrTa7aVT4C6NCEgdpWFnLV7fD/UjWQyg6LfoAowpVj2epUKdOQxdHJN4RJshQkD53l4E8KN1Qlru1HZpcwKTiOG0hNwQN5HSFT5svSXQR0CqwUXSxGSlx4rkvqfz3LoUNV1d3+iYvb2KTQSFCQ4OJN6ESGM=
+	t=1725483393; cv=none; b=IPZeEoRk6trzMx/h5yyF+Fdny+7QMAitQZZ8zx8GNMGjo8Kvd/4eigpSQNPRF+FYARq1zG8Du0cHpv1EpPLXyT+IRBgfSsuCZUJUGm2A2RbyKFBacDOM0TRgKXHtGO1hVhEJ5IGNjkz7bDkuQWvKza3TtDrylcbQ+3VnEO6i2wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725483313; c=relaxed/simple;
-	bh=LQTu8sC/kulEKMETw8TubpnUEdoK4OUoYt2IduwMQPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fy0RwCqHIwJB9d6l2RNxUdxnvTD17Ap9nA+d3y9UsrJQLR9yyS7BtG/+0WUZOGFWJoLceP6rVi3xzfhOOZ71gigKkPPfxRD8WN911mMH81JJ6J8QfRLMJX/6glCPhqC3L9hphKVPKq6udY/sjXF8drOCXQGnFzw5orhfpIa4Gs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2UdEHPK; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2059204f448so801735ad.0;
-        Wed, 04 Sep 2024 13:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725483311; x=1726088111; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sqrX7xKRsiUs8X7rmIdaWp7SWBsLihp3vVeII2DVLXw=;
-        b=O2UdEHPKqCtVktDRPJSxt52yZ3idu0nFQh3dxueapYBL7pNo0Eki6clUfkBaVwaqFN
-         k4dbDrVh9GsSC8GngoOn+t6OJErBFGmUdd8ngNQVEKcyVROjZD5VJ9cA4rbR8AXse7GB
-         dNX44joj7Q4qYo9E5rhTn5t5TU7WRn6eCCwbPVTjpR1BElI7N69X8e/+qlu+Tgy9VZAO
-         E8Bfrg4GNggAMEaZioBrSUiVR8NlWfAAfI9RzF2MQ3ya+a8g0ofQeShz452F0a9iTkwM
-         TWO0WAITbsrpo+QnVGY1OVkFammlfGGeRFvP4qhP7/71lpQwREPGmzbU3NHp398JsbOW
-         Vutg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725483311; x=1726088111;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqrX7xKRsiUs8X7rmIdaWp7SWBsLihp3vVeII2DVLXw=;
-        b=qQS6d0TGjBDxqTmkRl9kOzCfWT95z4sZLkUpmsQXVAPFJXRDqDTquLirJZ3jur9P57
-         MyCCsGSJvUM/noBj/kuy6XfnNpmSvIU5HicR0H+VSmQFOFz3c1DIra3poNvzKDuD4cvq
-         K1yvlUnUbMJ4FbtYxLq9No7AjYWhlbETrsRc4x1o8IRYZnjxRF+BhwNBOlFqbHue9aMN
-         Z8SzyItPaPMNH9owXo3AfSByJHeJIqqP2cdhJiLVboHtYHOtrqaMUkf7s6Z/sFeiFDAZ
-         4UcEfIoid/e/Tt5weBuoJtFSDvR6uZj6VlCl/CiLh/VzIWMnByYKP6k8mACSdCywvmEU
-         NQYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE+4G1/rkhAGCazTL5jU96yrRvu25wJjVCnsFx2e0bhlMA5OzcHIvfoYydhVF5W/9VTuGD1lyXxvqWsio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxDoDkzm1JTNjLjCvzaE2L2LMqpvmpHGsU0rsxRp6W3+voEmHz
-	odLHMJ3XuVRfTVljI0v197U/chRdXLdafJ0zySvvDVZB1fpBDTcX
-X-Google-Smtp-Source: AGHT+IFN1IwonS31KRPHw1fKgP9hulUMBQG6IxgViZqWb3/daMJFpYfffDJkEKkxZZyCCacv3nOxtw==
-X-Received: by 2002:a17:902:c949:b0:205:5dfe:7be with SMTP id d9443c01a7336-2055dfe179fmr126258775ad.26.1725483310546;
-        Wed, 04 Sep 2024 13:55:10 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9525d6sm17598355ad.111.2024.09.04.13.55.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 13:55:10 -0700 (PDT)
-Date: Wed, 4 Sep 2024 13:55:07 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-input@vger.kernel.org,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Ville Syrjala <syrjala@sci.fi>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Andrey Moiseev <o2g.org.ru@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 20/22] Input: regulator-haptic - use guard notation when
- acquiring mutex
-Message-ID: <ZtjJKxQRRzJE0aWZ@google.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
- <3ff97fb3-27e0-496e-a8b0-0c2d69deeff2@gmail.com>
+	s=arc-20240116; t=1725483393; c=relaxed/simple;
+	bh=H5Z1lGuMmRiuMFtVKd05d+cAhGrXu1iVsn+NIbVfEhU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jGXbje9T/9WLL3eCJrRuZdyORoc99IOahAn3AsONAKuQ3B43jbzuX3VLUnfPVVmZ8yhbgbz2pNuvSnA8Opi18LJQdvOASsBxfHGrxl2AD0x87i4pkrwDlJ6pPBzXTXtahnnhBHgRUOw8vj3IGrZYvffIHH0rNCufnn6MTwk8wSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVKfvekW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313E3C4CEC2;
+	Wed,  4 Sep 2024 20:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725483393;
+	bh=H5Z1lGuMmRiuMFtVKd05d+cAhGrXu1iVsn+NIbVfEhU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=XVKfvekWDBLozmK2HWTwuctFugYUD8v4VVjh+H/z1zVAwuJCzy7VdW6uNyUMi0fGA
+	 XD+E44qxJyzEO6QiP8zVDDPGjuG2CLdB0GbycIOcUh2pD+ErXQkOKHlmnNC3O4pzhV
+	 +493SMzTjKD8vU4mZtgXlQAG7Rcx2C3mhGfjN3C0NKjkOGHinNRhr0BscaIIcebU0E
+	 jedqGyyjgXOMxqOR4+5n/FGxH+myzAi1qH0u4m2vlpSC8aUGar2ebVdEVv8FR/3zJV
+	 PUaSpl3r248hMwvIHVMT95lJJo4oZxA9OxiTHk583CLsnBhn1yaPYWhacyNMTbVwPR
+	 Rj8rL8ZeaH0Ew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341663822D30;
+	Wed,  4 Sep 2024 20:56:34 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
+References: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-04
+X-PR-Tracked-Commit-Id: 53f6619554fb1edf8d7599b560d44dbea085c730
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c763c43396883456ef57e5e78b64d3c259c4babc
+Message-Id: <172548339266.1166715.18322603051182120164.pr-tracker-bot@kernel.org>
+Date: Wed, 04 Sep 2024 20:56:32 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ff97fb3-27e0-496e-a8b0-0c2d69deeff2@gmail.com>
 
-Using guard notation makes the code more compact and error handling
-more robust by ensuring that mutexes are released in all code paths
-when control leaves critical section.
+The pull request you sent on Wed, 4 Sep 2024 15:15:18 -0400:
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-04
 
-v2: drop no linger used "error" variable in regulator_haptic_suspend()
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c763c43396883456ef57e5e78b64d3c259c4babc
 
- drivers/input/misc/regulator-haptic.c |   24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+Thank you!
 
-diff --git a/drivers/input/misc/regulator-haptic.c b/drivers/input/misc/regulator-haptic.c
-index 02f73b7c0462..3666ba6d1f30 100644
---- a/drivers/input/misc/regulator-haptic.c
-+++ b/drivers/input/misc/regulator-haptic.c
-@@ -83,12 +83,10 @@ static void regulator_haptic_work(struct work_struct *work)
- 	struct regulator_haptic *haptic = container_of(work,
- 					struct regulator_haptic, work);
- 
--	mutex_lock(&haptic->mutex);
-+	guard(mutex)(&haptic->mutex);
- 
- 	if (!haptic->suspended)
- 		regulator_haptic_set_voltage(haptic, haptic->magnitude);
--
--	mutex_unlock(&haptic->mutex);
- }
- 
- static int regulator_haptic_play_effect(struct input_dev *input, void *data,
-@@ -205,19 +203,15 @@ static int regulator_haptic_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
--	int error;
- 
--	error = mutex_lock_interruptible(&haptic->mutex);
--	if (error)
--		return error;
--
--	regulator_haptic_set_voltage(haptic, 0);
-+	scoped_guard(mutex_intr, &haptic->mutex) {
-+		regulator_haptic_set_voltage(haptic, 0);
-+		haptic->suspended = true;
- 
--	haptic->suspended = true;
--
--	mutex_unlock(&haptic->mutex);
-+		return 0;
-+	}
- 
--	return 0;
-+	return -EINTR;
- }
- 
- static int regulator_haptic_resume(struct device *dev)
-@@ -226,7 +220,7 @@ static int regulator_haptic_resume(struct device *dev)
- 	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
- 	unsigned int magnitude;
- 
--	mutex_lock(&haptic->mutex);
-+	guard(mutex)(&haptic->mutex);
- 
- 	haptic->suspended = false;
- 
-@@ -234,8 +228,6 @@ static int regulator_haptic_resume(struct device *dev)
- 	if (magnitude)
- 		regulator_haptic_set_voltage(haptic, magnitude);
- 
--	mutex_unlock(&haptic->mutex);
--
- 	return 0;
- }
- 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
