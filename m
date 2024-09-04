@@ -1,104 +1,146 @@
-Return-Path: <linux-kernel+bounces-315124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0495A96BE4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEC796BE4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1960B26EA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6221C21B12
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BB61DB925;
-	Wed,  4 Sep 2024 13:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D8D1D9356;
+	Wed,  4 Sep 2024 13:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJsZFz5c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i155sTFS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889951DB553
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907311EBFEF;
+	Wed,  4 Sep 2024 13:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456036; cv=none; b=m5hPXl0b5IIH3SU/Nt5evaWmBy/4hmi0OTaLr9zQTHlF2cYtlh6/FuJvCBZWqKG3BYxnr83/APlMNOa4x+uFzkb5A8rzsNW6/tgk9JKSYn31EQOlOkGvlKxpwE4pniuYfx3XsasaR68oHWDEYxI9DHgufzX6NWDBeQ5McdIaqqY=
+	t=1725456068; cv=none; b=tkbGP/ZmF3WtH/Wqbb+trLfBJKbS1fnEllTpMB+kLKTTPv6sycfbIXIL/NkHuDgxj0jnWkfWSIjbZYE7shgbC+aNa9Y883EpktZgCJImPiY+xWruFkkOpfEjVHMxPzQh43b2QzxIJuB951k7hvbgGtrRS5Q1I1rOEQsYo6A0hv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456036; c=relaxed/simple;
-	bh=FKTa0ccBW+t0sOOH3+Vm+CFDwDQZN6PnitaKA9ZtHh0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ftxP8ggc8klht5Z86TSw4IDZI1lVwE+oBtUmHM6P+WAqJ2G6iiBrVadlp1XJYuft9PXh+/TxkwES1NnzOsnX0aM4ocygbt+wT+kuxswvwoZpNmN+Q3clErxO0bCAqu7C63sPWmn2CZainhejAOBmJYGMGiM4aGIjs2U8hZRFH7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJsZFz5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8B8C4CEC2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:20:36 +0000 (UTC)
+	s=arc-20240116; t=1725456068; c=relaxed/simple;
+	bh=GIXKD4NV+ZGmiAM0z95gHVtIxkhK0xIhXHYtxrms8fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZiyDW6WelFSGdSzlU30gXJB+K4o8v8M4eUDY16SC45NSieklBj+h5wEDJVK9BhCQvHF9lhd5e1UtqcIraEgKCVyhOUkIAG3+RMM/oVvLnmAw5ZIqfE91Uo5XAnGpNYXw78RjVg5SiiOwFCEG4LmZ/i8EY49b8/elnSTm8qG7yTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i155sTFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 514D1C4CEC2;
+	Wed,  4 Sep 2024 13:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725456036;
-	bh=FKTa0ccBW+t0sOOH3+Vm+CFDwDQZN6PnitaKA9ZtHh0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dJsZFz5cZ2GboF7s03ho1Ecz+Yi9e8oGILj7KXJKAvMnpgwvmitKZDO7scHUmuQdz
-	 t1RpzCah7bcszWJuEd6ZqYSUZb9bw3t/GfMv2u1P34IcFB4Eg41Us0GzKNze15uu3t
-	 7BvuMVtsYHBRWhJe/F9gT0sZwBlCErfuby0YgCEo1HsJHLC6CxtTvsB6b2rm36WxKj
-	 XxBOq2Gth7+FnMXSh0HrKznHlvBykfcwtYCUmMYK3Koqxpm58JW8vJdMSaClDo4Zcq
-	 x7XDSTaSeWFrIx7mbHc7qYTEroH5/Nde5obx8LtdBWBV17eeE4q66ctsRzkKC88Hv3
-	 XdTdqRzE2nusQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533496017f8so8702758e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:20:35 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzwbfljcenCNe4zZNdmVRcJAwvIt5XoJU6jkeYLgzxS3YjYj7VM
-	kfrzdYB9cShRmmbf3vWvqp339FVM+DtC1ENzZ6OBfUT+N0zZPli4v9Q/GStg+2H2X3QmTwXycRr
-	LNg5uEx0UWfSNOK9ja0xdXhjjwQ==
-X-Google-Smtp-Source: AGHT+IHK8e4JjGyLp+znR+KIfvV/9NaWZnXWqTXb2jlvM00CsWKxewgzFAXff02IqZK/Pi+koiCWcacA6IcP4YOtYnU=
-X-Received: by 2002:ac2:4e06:0:b0:534:3cdc:dbfe with SMTP id
- 2adb3069b0e04-53546b2b9f3mr10534108e87.28.1725456034436; Wed, 04 Sep 2024
- 06:20:34 -0700 (PDT)
+	s=k20201202; t=1725456068;
+	bh=GIXKD4NV+ZGmiAM0z95gHVtIxkhK0xIhXHYtxrms8fY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=i155sTFSBENDPMqNOT2spcIh9yyL1bi87QRyDX/lgMKxjnr0pBpsZ8o1+P6ARyITU
+	 e7RXXGNqYtoQMZjuoKBTv7+Mcr9GUxMkaWhjAA85aEWVCqU5mGo2Ko34T/lwusGact
+	 snVlBK7pFrjzqoOBlJ7ZuDe5oGcHkLaGFekyLwlrjTgUqSOtnc/Z/0zqtshmO7Xnpr
+	 rNwl/aelz5gXFnzIADk4NiBwz7yefeA7Tlmt26X/OP7YjWrBfvCXPZ+N4JNWP8Et1D
+	 6wGopWEISkOaH0XWg/s93wc75EdgghpiPn453P/bv1HZQwPeD0XbWlCV/TorqsC7GS
+	 ZGJP4Zyx2istA==
+Message-ID: <08f35ef4-66ab-4581-9444-79b9eb9107fd@kernel.org>
+Date: Wed, 4 Sep 2024 15:20:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731201608.1840977-1-robh@kernel.org> <CAL_JsqLzpDC42G35TDjgQpDCJhmy6_oQxG97uut9VKdYCHi_NQ@mail.gmail.com>
- <CABb+yY1W53SJ1r1yspQpaBjMH+JPC89yBM7G9+WoewSJgjD+Mw@mail.gmail.com>
-In-Reply-To: <CABb+yY1W53SJ1r1yspQpaBjMH+JPC89yBM7G9+WoewSJgjD+Mw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 4 Sep 2024 08:20:22 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJFT1y6+LkVUOYhGqTN=1jYescxTbSFGLfu8zrO2ijLSg@mail.gmail.com>
-Message-ID: <CAL_JsqJFT1y6+LkVUOYhGqTN=1jYescxTbSFGLfu8zrO2ijLSg@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: Use of_property_match_string() instead of open-coding
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/21] dt-bindings: i2c: document support for SA8255p
+To: Nikunj Kela <quic_nkela@quicinc.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+ herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com,
+ andi.shyti@kernel.org, tglx@linutronix.de, will@kernel.org,
+ robin.murphy@arm.com, joro@8bytes.org, jassisinghbrar@gmail.com,
+ lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org,
+ thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com,
+ rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org,
+ linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ kernel@quicinc.com, quic_psodagud@quicinc.com,
+ Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-16-quic_nkela@quicinc.com>
+ <7fc1e4c3-ca09-4a0a-b072-0c4f1d21e44f@kernel.org> <ZtgSd_SLndvLLVYF@shikoro>
+ <24d4676f-4385-406d-9728-54afc3144e17@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <24d4676f-4385-406d-9728-54afc3144e17@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024 at 4:05=E2=80=AFPM Jassi Brar <jassisinghbrar@gmail.com=
-> wrote:
->
-> On Tue, Sep 3, 2024 at 2:18=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
-> >
-> > On Wed, Jul 31, 2024 at 3:16=E2=80=AFPM Rob Herring (Arm) <robh@kernel.=
-org> wrote:
-> > >
-> > > Use of_property_match_string() instead of open-coding the search. Wit=
-h
-> > > this, of_get_property() can be removed as there is no need to check f=
-or
-> > > "mbox-names" presence first.
-> > >
-> > > This is part of a larger effort to remove callers of of_get_property(=
-)
-> > > and similar functions. of_get_property() leaks the DT property data
-> > > pointer which is a problem for dynamically allocated nodes which may
-> > > be freed.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > ---
-> > >  drivers/mailbox/mailbox.c | 22 ++++++----------------
-> > >  1 file changed, 6 insertions(+), 16 deletions(-)
-> >
-> > Ping!
-> >
-> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+On 04/09/2024 14:45, Nikunj Kela wrote:
+> 
+> On 9/4/2024 12:55 AM, Wolfram Sang wrote:
+>>> Just to clarify to I2C maintainers:
+>>> This is incomplete. Missing driver changes.
+>> Thanks, Krzysztof!
+> 
+> Driver changes are going through internal review and will soon be
+> posted. For your reference, we have pushed driver changes in CodeLinaro
+> git branch(nkela/sa8255p_v6_11_rc2)  in kernel-qcom repo [1]. You can
+> take a look at the changes that are in pipeline and will follow soon.
+> 
 
-Don't need an ack, are you going to apply?
+Sorry, we are not reviewing other repos. Post patches ONLY when they are
+ready. Sending one piece without driver is not correct and it does not
+make any, absolutely any sense.
 
-Rob
+Best regards,
+Krzysztof
+
 
