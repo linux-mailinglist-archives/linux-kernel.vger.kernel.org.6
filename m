@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-315071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD1196BD86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D396BD79
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841481C24F52
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7A9280A74
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533721DA2F3;
-	Wed,  4 Sep 2024 13:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C9A1DA0EC;
+	Wed,  4 Sep 2024 12:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UW7YqvUm"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FnLGEm41"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AD81DA0F7;
-	Wed,  4 Sep 2024 13:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8173B1D9344;
+	Wed,  4 Sep 2024 12:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454904; cv=none; b=ECUPxBjrmf+bqeXr72WnpXyxk+qlUzNxDcD7XIAij3cBl2CzuMPA9XC6CV7yvftCVg0PHLUNMTvBw1Cs+A8PWTpff4RXj3lG5WMvmG3/lsJpD/0IM5fqd8f+jSTXZxWtQbsQn3M5OkVkAro9yrF2vKarf8lnBh+7/3o8N2G1RYQ=
+	t=1725454748; cv=none; b=NKs0OJUF8m6Bq03/Gt1+Rx4bYxxjlvTlJLeTthvyHz3J9Ac6AsLxpq85vvFR9MX8A1WX+B5zg1qaa+ufEdUpQVuOHvIdj3ZxmACcvgd2/wL+1bx9NWBfSbFdOrewSPsGNKtBWvHDCGuEsvXXCYvPcY8NXsrchuUM2MSX5IJU8rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454904; c=relaxed/simple;
-	bh=2mmPu6E3U48CJkFGaSnqdl8PTyiZGdtKNei8l8N2vpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdM+qIfteVJivohfMKjYUAK7eY/KX1XO7tXtZcOxyY314NSSjvl0YyiiTevoarI6EFt/9agMEpsSfj+MWvGyzSGCpcUw4cl8BtrO4P33d8WY6B6HmqwApxwkRQwccC8aeKLRF0n7l385oTN0Hif9pP+re5mROa0wYEHMNZ4aP3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UW7YqvUm; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fee6435a34so47978935ad.0;
-        Wed, 04 Sep 2024 06:01:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725454902; x=1726059702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBltWiWSywERaHxg16ZAEqaH2LpVIFn8K1A57sAsz98=;
-        b=UW7YqvUmxb6mFzbZKwn7KFkCk6Pp2bVeneAyvP24RsFGmc7omZ8MnVMC+drhBf1iv6
-         bMCS0mfSa0Ccjk5t+5OiNEw6ov4O55cVhRLoS8vvmRz453oxFHYhB5QkL8N7D5ebvPtE
-         64BDcAlfV5EFRu0OsDdewPqANaEWG9oeAiiCYscWlKeTt4cYaMcGIWc5TMb7QhkCbKYg
-         mh532JwsG/fPc7Hb/MScxzrbMoc3nWkdGXEkwUouKR3/qxojCellAriNHmWcCyuJBPHl
-         1CLukj7TJOSsAqtCT7zqEXS+rPJWyrGUPEkWQ0tMbMsGvgReSDj2QDwKy9rqxFQJMmHD
-         IY9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725454902; x=1726059702;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RBltWiWSywERaHxg16ZAEqaH2LpVIFn8K1A57sAsz98=;
-        b=gGETOqyYNZ/ajqrdp1KIo3ZrmJLFIMbRm9BVBEoofEuAc/jr3BXU8kioqmOU0tAPhY
-         nq0aLtFIjrAWQiZx7IN3sWppKgn3ztkTHIabaPPIYE6QIoXR4J4fG2wi0WwUonnULsxP
-         iIpnbx23L2V6USxEbDnCnrLICF8ECM9pZypN2ARRmDRLdPFH10qkSLoHJu+ASxmXrQ5L
-         Y3Ol8/4z0i6pmtAFodq9IKX+CqfGxBMHBh5D6rJ8GtgNJEIT259e6BA7LAVMDHRqBlTr
-         s91hIbxVFf+evod60qiYdojO5jHU6Hl+eZy5+ajSn/z+H8f/IGQhPvff1MjnPwpMBxHf
-         SMsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEHsZDX/x0+OlD0+wMblt2/GnJiR6EHAnGh4iaFRTTAu3zFo/bKvk1BO0IWj+hPA8DWNQaVU1YdJJjK/g=@vger.kernel.org, AJvYcCUN1UyN+YiFfJKBHozokUkxnvXI60adA0SZhLx0sOmSRyz7Son0CSDB9kz1uxIy/2tyU89zbvEBcQXL@vger.kernel.org, AJvYcCVRAeT27QnNe40uTyfQpBd3BTx6HOs7l5x89zPG5YMPvw8N/x+1bu5zVlWE4Imf+3RkfDQjsFO0lgnenhcs@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmhhAu1/HCbgfHZkNke/et5D7iuoVjMrxr2UUgQfwdBIkFKD80
-	AYobTw45ACPfg3OKAwyXA4FJgBDAbsBbYkUTmVygCZE7JdgeqFZL
-X-Google-Smtp-Source: AGHT+IFACE8rU4MTmISbcF4L6lzcmk1JnhTCDcrqcYjiIZ4IDpiN6kQ62qA1kr+r/u6WI25ih45p+Q==
-X-Received: by 2002:a17:902:f612:b0:201:f0c7:6a00 with SMTP id d9443c01a7336-20699b361a4mr69807395ad.53.1725454902249;
-        Wed, 04 Sep 2024 06:01:42 -0700 (PDT)
-Received: from eleanor-wkdl.. ([140.116.96.205])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea38eb3sm13147565ad.142.2024.09.04.06.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 06:01:41 -0700 (PDT)
-From: Yu-Chun Lin <eleanor15x@gmail.com>
-To: laurent.pinchart@ideasonboard.com,
-	paul.elder@ideasonboard.com,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.or,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: visitorckw@gmail.com,
-	Yu-Chun Lin <eleanor15x@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: [PATCH v3] dt-bindings: Fix various typos
-Date: Wed,  4 Sep 2024 20:58:11 +0800
-Message-ID: <20240904125812.2761993-1-eleanor15x@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725454748; c=relaxed/simple;
+	bh=cufdcsefzRbjrRxrUtSpAMqU+L+OLWENmAOh0cCRkQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k1zbbYuznnQ9h8gkHRrDQFElQOQ0rFSf+4+7oL18hfnK3qVEhOWOXUy9WMg2a9/sEeSNfcq9ELsqH8KlfxSkf/P2RfSOIzXjSsH3rGsP6BYDUHzLzm7F+Z/LiAxUNrKZe8JbilZZx6jA5Pu6Mf5YinfZziHSYlZHo4QBOPyeJj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FnLGEm41; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484AXGuD032277;
+	Wed, 4 Sep 2024 12:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IF475OtMV49GuJTorggo0x/huhW9Mbg7NQzbxMUq98k=; b=FnLGEm41Xr6krBS7
+	3FCaGBLGutcwgWVfqR7i9BmLY5JzZMSKeucWO/1x2M5jfJ28bhKDfVj5onewo76W
+	Rpfyxm9ty/QGaTs4SmxSIkMRISVEB0EmP8TTMy4NEkY4T9Nvuu3WYzHF4VUhzCFZ
+	qybZv/ohAK0a2m00ytzdFNkP9jDTosiY4zpq3zAu1txTCQ/cXn8bjkq5eTkk1cs5
+	SFaW7gFRWfTHHoeKpFYfWAwp3L2sQcPbt5gwEAdLkcQlmCMB/ThYDtopzL+uJdyx
+	R8Z4LaVUX9MdINg44X01lGp6JBFEYwtIii6xTD5bXjQknvlleRlDc+WTYJPSlRXk
+	wpFlKg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvbkjmm0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 12:58:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484CwZYo028022
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 12:58:35 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 05:58:32 -0700
+Message-ID: <9b9dfee5-5ce3-4140-9340-2001d6e0adf0@quicinc.com>
+Date: Wed, 4 Sep 2024 05:58:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/21] arm64: qcom: Introduce SA8255p Ride platform
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <glo34r35r2jqypeureu5dzoe6udkniqbma627jnv55ihfoatfu@ujvsxcsrhhdc>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <glo34r35r2jqypeureu5dzoe6udkniqbma627jnv55ihfoatfu@ujvsxcsrhhdc>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c8vZkm80WZTU8HCRdHZaM0UBp4pbnxWL
+X-Proofpoint-GUID: c8vZkm80WZTU8HCRdHZaM0UBp4pbnxWL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040098
 
-Fixed a typo in media/i2c/thine,thp7312.yaml
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
----
-v2->v3
-Corrected "interlaved" to "interleaved"
+On 9/3/2024 10:54 PM, Krzysztof Kozlowski wrote:
+> On Tue, Sep 03, 2024 at 03:02:19PM -0700, Nikunj Kela wrote:
+>> This series enables the support for SA8255p Qualcomm SoC and Ride
+>> platform. This platform uses SCMI power, reset, performance, sensor
+>> protocols for resources(e.g. clocks, regulator, interconnect, phy etc.)
+>> management. SA8255p is a virtual platforms that uses Qualcomm smc/hvc
+>> transport driver.
+>>
+>> Multiple virtual SCMI instances are being used to achieve the parallelism.
+>> SCMI platform stack runs in SMP enabled VM hence allows platform to service
+>> multiple resource requests in parallel. Each device is assigned its own
+>> dedicated SCMI channel and Tx/Rx doorbells.
+>>
+> Do not attach (thread) your patchsets to some other threads (unrelated
+> or older versions). This buries them deep in the mailbox and might
+> interfere with applying entire sets.
+>
+> It does not look like you tested the bindings, at least after quick
+> look. Please run  (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
+> Maybe you need to update your dtschema and yamllint.
+>
+> Best regards,
+> Krzysztof
 
-v1->v2
-Fixed more typos in dt-bindings files
+Will fix spaces and send v3 in separate thread. Thanks
 
-v2
-Link: https://lore.kernel.org/lkml/20240903164242.2188895-1-eleanor15x@gmail.com/
-
-I've dropped reviewed tags in v1 due to significant
-changes in v2. So it would be helpful if Laurent Pinchart
-and Kuan-Wei Chiu could review with the version.
-
- Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-index d5b930524b53..535acf2b88a9 100644
---- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-@@ -16,7 +16,7 @@ description:
-   can be connected to CMOS image sensors from various vendors, supporting both
-   MIPI CSI-2 and parallel interfaces. It can also output on either MIPI CSI-2
-   or parallel. The hardware is capable of transmitting and receiving MIPI
--  interlaved data streams with data types or multiple virtual channel
-+  interleaved data streams with data types or multiple virtual channel
-   identifiers.
- 
- allOf:
--- 
-2.43.0
 
 
