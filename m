@@ -1,211 +1,180 @@
-Return-Path: <linux-kernel+bounces-314422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3C096B2F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488BA96B2F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F1A1C23D8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7B61F25A55
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09F3146A9F;
-	Wed,  4 Sep 2024 07:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F85146A86;
+	Wed,  4 Sep 2024 07:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TKi/bj9q"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b="uvF7FEHv"
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6E313DBB6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435235; cv=none; b=SI386qYvJxWAwPumee0C0JFU7I+XUCRkWHC3tWvy35TtS76VXfyKdPUCdT0Sy5fuUs8tByl8woFnRTpGvTPAkk/JCT+P8rjcgK7ZNw2VWe6q9WqyiGowEcrK1Cv+b7G6g6ZXscPZO2OegpqdT1YrW0oZinfE8m8hMrBEaGxWHRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435235; c=relaxed/simple;
-	bh=Ke0SEKANZoASNMdKQWMnB48FavmFqej6lXz7aD+gUs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hNHI0P08yI9unzi+vtPrx7cXEm7sXLvhcyDPiqnzqG+TSmLh4eMgO6ERYpkXlk91+RTaUSLM9MrgIXaT+Q2A42jZVLPTGSnKTkU/QLLiexBpf0ka8Gm1lzdGKlG1b+FW/e6xGunb3cfXTIlZRtE+PBhSeJeGnagDsaPkwDz0o+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TKi/bj9q; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so6403752a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725435231; x=1726040031; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kySmQ0NpSqWHNg8+6rJZj9OzeWLaHHajMIIiNyf6JOU=;
-        b=TKi/bj9qbKKCBRoqmoxsfD3uj+FIBrZ1DjENNAtrAmVlOLOCqsKkWTEeYvQqdl6a3t
-         EXqpXfhLCLP9sKOLOr5w82EbX7mGESYsrzZJ+jzPBbSGKVWr9IBlBh9atvxaS7yHbGK+
-         fScj8PahIxUbI5+ztN7MkQvuiKG/aOaDJZ7rAuztFChtqfnyFh51TvyT7TMLTJhTb3uR
-         Jzf3GClMN4sq3S4NC4RtG2U/pgi8+NzQPf/jtTbHS2wdbQiBYAp9cybK8MJwKdRuXeZJ
-         bIAZTzxfv5LsNuXQTG48ku8sCIuSyudxPrSMEewC6UoKGbyTWeNca9Xg9ze/63WfvVlh
-         HUHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725435231; x=1726040031;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kySmQ0NpSqWHNg8+6rJZj9OzeWLaHHajMIIiNyf6JOU=;
-        b=abfP17cyub55fX2c0qA9dko9grZODMYX0ZBqMYwivuyVozuFYtuGa4yNlCKtiW4JAl
-         H5I128tPqp3/2XwskUykV82luaJU4g4v8p7urvXnAJczrBG8U008Kw9uxX4gmN/wS6l7
-         TaIk7jF6s9ghGFmwbZa0nwD7RjAaSW8w0wbdKEXPs09eWwsayICXCQYA/1lbayGbECdH
-         BYp/GUp2Mkie1Z7VMKLToE7+CnDbe6d+8VXfdamuf/5erpiZEmfKzR+Xzdxvt4RKCck1
-         Zz1wTcCEjk3+n9CsQZG8V69lkItjbre4N3etGujMIATSgkTFRk3Dw3evrsqNeAaHC9pD
-         77nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkAc2JfRIY8044iM2nbGVZ8m6/4dwpvF0AMLhW9lE/42ISSOFQyyGvgG02WrDWIAE0/fv/YwYatmLS6Fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHfP+GyAdNiC6G/5SbgbUjRpizFJK+k2Z712sIjlDpp8hGp3J5
-	h9OJotCWtdJGb7+Lbt2xh8fu5kJOCBmJJq7bjAxEcYYsLA2UxwuBlntnm/0wOzI=
-X-Google-Smtp-Source: AGHT+IGl05aPVJ2VVVeagU0VruOPFextWHrrfb3lApSLDF6oIkmfcuyVCehiFDjMGW4cA5W88nFnEQ==
-X-Received: by 2002:a17:907:9690:b0:a86:78fd:1df0 with SMTP id a640c23a62f3a-a8a32ed8959mr245881866b.34.1725435231164;
-        Wed, 04 Sep 2024 00:33:51 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3dbdsm771648966b.131.2024.09.04.00.33.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 00:33:50 -0700 (PDT)
-Message-ID: <6bc72d8a-c7b8-40de-b4c2-0170dde36d33@tuxon.dev>
-Date: Wed, 4 Sep 2024 10:33:49 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCD23C17;
+	Wed,  4 Sep 2024 07:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=96.47.72.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725435310; cv=pass; b=jKFoc30xM/6/nAgwoszcHULyzkYoPO50/HAmdfnIN9lF2w3YwVN0gztDNmdoRskOu8/CVbwvoms2nJcp6pyPK/r7BUjH0qnnvqsklZtvH9JL03BVEdFWvIdibe2YDYxlheUONZMKwA2Op+eu8+u8uwQEPi2jTz1Z1WMoMeJmIHI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725435310; c=relaxed/simple;
+	bh=s7G+1cU3wFHWsB8CGbBC3PlRmQZrTCS8Gt5gpjh1b4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys4go+w5gU6lu3Hu9Bmh/rykddNjQ/KiXoNZgBW3PsTRk8trWOiaRppZyYR9q5/t8d8PXhjSeP3CFP8I6tfNLkrHJlzfDHPfRbLxn1T3molQ63S/1Dw4d6jc13F2r32ns2H7pBT657b+/PWnWF3RNL4tKHSJl0dwJ3U3v+BG9mk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org; spf=pass smtp.mailfrom=freebsd.org; dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b=uvF7FEHv; arc=pass smtp.client-ip=96.47.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebsd.org
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+	by mx2.freebsd.org (Postfix) with ESMTPS id 4WzDmB3cl5z41Mm;
+	Wed,  4 Sep 2024 07:35:06 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+Received: from freefall.freebsd.org (freefall.freebsd.org [96.47.72.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "freefall.freebsd.org", Issuer "R11" (verified OK))
+	by mx1.freebsd.org (Postfix) with ESMTPS id 4WzDmB2r4Xz4FLK;
+	Wed,  4 Sep 2024 07:35:06 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+	t=1725435306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZD0avwa5MUoFI9ov7p+i7pt8IH9D8rPh/o0IcOG42vs=;
+	b=uvF7FEHvhzz9uf3fwh4REMIymiNOtxdPtlC31MlzrkS8A/AwPutDcMO3mQ/zOwuZ5Ef8zZ
+	Hzn/Ur13ba/pFambgYeclyHcvkyQVWaXem36VaJlKRlOuJiWuFL+rcaouNqpsYx7s7Ofxh
+	LzHcLjUTu+HXqQvZ7tW+aJ0g6hq76XhqcGbQ1ZRlHwFOgUotz0yCSOnBToL9EDUO/xd6Sf
+	F4wtiahLGydzkAmAYaMgRwzMYH4hgDmpMWNOaPVS1tpzb66vHj9RSpmoddz4dN0wKkTsBa
+	NA077cvVHCnsPwAOjP+RXQShWBE9NG58PttjTkMddEsrycIIRpBtYyPaZjVPNg==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1725435306; a=rsa-sha256; cv=none;
+	b=r/pwZMPKJlOmyGAdM4fBcsKiNwzYC+3CcDm1anedtKnQdEkLd+gu/lKNoYN/BBBWs8ln8b
+	LnGsqPKVrYHnB3/A3QsrbZYDN11qo4npOMYj1fqIFrV5bOQdADHWzSq3M82VDib51bbyHM
+	0Tyd0veks9nF0B+k2oIvVQxURNhSOJZt7dx6aolUSJGiJRVZurX6kDDQ5kPBwmtZq83NcV
+	H9MuZP9OGtGByCAu6HltQs62gxDY+rLDEEnXkYJzkaQjjWmUsPgeqsDEjphJF1tBtuLbFk
+	MeQ+B+1JHYplmSEVu3a8ib7sJGAF+FqwjNy3wobWwtJ2GdJ9gkLdeXZcHgEdmg==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+	s=dkim; t=1725435306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZD0avwa5MUoFI9ov7p+i7pt8IH9D8rPh/o0IcOG42vs=;
+	b=PnZh/3ptInZkoNAm6Ob+lF2xlhYwvkWQoLnEJpBZg/+MvZmYnyKoK+lGSyZq4te18daip2
+	KwVmsjTqsy+KIF2kOWQVnF9y1AzOdoq1dH8ACa0RR1DYhwAzCmjndK08tu+Nnro5stNm3a
+	NVC4uz0MXu+rmB2yCz/DEG8ljCGQOQ9t9fRS1IfVpTGAi4emNHGlieLWqxPva4byDVfLfK
+	kc6sgrT8fnPBQEougsLxxulErma2WjLmtwRBPdw3A27fDPEkG2WvQFayhKJNV8woU2PKD7
+	lg2+C9vcGE9lwZKl7pqW62XrDovh+8+iAyCR3kkJJ3cRltApfkrrI5x3O31jDw==
+Received: by freefall.freebsd.org (Postfix, from userid 1026)
+	id 4487C23F12; Wed, 04 Sep 2024 07:35:06 +0000 (UTC)
+Date: Wed, 4 Sep 2024 07:35:06 +0000
+From: Suleiman Souhlal <ssouhlal@freebsd.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"x86@kernel.org" <x86@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Frederic Weisbecker <fweisbec@gmail.com>, suleiman@google.com
+Subject: Re: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
+Message-ID: <ZtgNqv1r7S738osp@freefall.freebsd.org>
+References: <20240821095127.45d17b19@gandalf.local.home>
+ <Zs97wp2-vIRjgk-e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: get, prepare, enable a clock not in DT?
-Content-Language: en-US
-To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
- <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
- <20240828-gainfully-cringing-2f420d8882bd@thorsis.com>
- <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
- <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs97wp2-vIRjgk-e@google.com>
 
-Hi, Alexander,
-
-On 02.09.2024 11:24, Alexander Dahl wrote:
-> Hello Claudiu,
+On Wed, Aug 28, 2024 at 12:34:26PM -0700, Sean Christopherson wrote:
+> On Wed, Aug 21, 2024, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
+> > to high resolution timers with the comment:
+> > 
+> >     KVM lapic timer and tsc deadline timer based on hrtimer,
+> >     setting a leftmost node to rb tree and then do hrtimer reprogram.
+> >     If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
+> >     do nothing and then make kvm lapic timer and tsc deadline timer fail.
+> > 
+> > That was back in 2012, where hrtimer_start_range_ns() would do the
+> > reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
+> > high resolution timers disabled, this did not work. But a lot has changed
+> > in the last 12 years.
+> > 
+> > For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
+> > timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
+> > timers. There's been lots of other changes that make low res work.
+> > 
+> > I added this change to my main server that runs all my VMs (my mail
+> > server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
+> > system has been running just fine for over a month.
+> > 
+> > ChromeOS has tested this before as well, and it hasn't seen any issues with
+> > running KVM with high res timers disabled.
 > 
-> Am Sat, Aug 31, 2024 at 06:49:59PM +0300 schrieb claudiu beznea:
->> Hi, Alexander,
->>
->> On 28.08.2024 09:55, Alexander Dahl wrote:
->>> Hello Claudiu,
->>>
->>> Am Fri, Aug 23, 2024 at 05:29:44PM +0300 schrieb claudiu beznea:
->>>>
->>>>
->>>> On 20.08.2024 15:17, Alexander Dahl wrote:
->>>>> By chance: I don't have a sama7g5 based board at hand for testing.
->>>>> The datasheet says the same as for sam9x60.
->>>>> Does the nvmem_microchip_otpc driver actually work without timeout on
->>>>> sama7g5?
->>>>
->>>> Yes! This should be because system bus is clocked from MCK0 (as mentioned
->>>> in peripheral identifiers table) which is enabled by bootloader.
->>>
->>> Not sure I can follow.  Citing the SAMA7G5 datasheet section 30.4
->>> (OTPC Product Dependencies):
->>>
->>>     "The OTPC is clocked through the Power Management Controller
->>>     (PMC). The user must power on the main RC oscillator and enable
->>>     the peripheral clock of the OTPC prior to reading or writing the
->>>     OTP memory."
->>
->> I don't see this in [1]. Only:
->>
->> "The OTPC is clocked through the Power Management Controller (PMC), so the
->> programmer must first to configure the PMC."
->>
->> From this I got that it is about the MCK0 listed in table Table 8-11.
->> Peripheral Identifiers.
->>
->> [1]
->> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765A.pdf
-> 
-> Well, this seems to be an older version revision A from 03/2022.
-> I have DS60001765B (revision B) from 12/2023 and got this here (note
-> the missing 'A' in the filename):
-> 
-> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
+> Can you provide some background on why this is desirable, and what the effective
+> tradeoffs are?  Mostly so that future users have some chance of making an
+> informed decision.  Realistically, anyone running with HIGH_RES_TIMERS=n is likely
+> already aware of the tradeoffs, but it'd be nice to capture the info here.
 
-This version clearly express your findings. The unknown now is the
-"peripheral clock" that need to be enabled along with the
-main_rc_oscillator. For that you may want to play around with PMC
-Peripheral Control Register, PMC peripheral clock status register and see
-if OTPC fails to work when disabling the peripheral clock with the OTPC ID
-as there is no information about peripheral clock for OTPC in the
-peripheral identifers table.
-
-Hope this helps.
-
-Thank you,
-Claudiu Beznea
+We have found that disabling HR timers saves power without degrading
+the user experience too much.
 
 > 
-> Linked here:
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > ---
+> >  arch/x86/kvm/Kconfig | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> > index 472a1537b7a9..c65127e796a9 100644
+> > --- a/arch/x86/kvm/Kconfig
+> > +++ b/arch/x86/kvm/Kconfig
+> > @@ -19,7 +19,6 @@ if VIRTUALIZATION
+> >  
+> >  config KVM
+> >  	tristate "Kernel-based Virtual Machine (KVM) support"
+> > -	depends on HIGH_RES_TIMERS
 > 
-> https://www.microchip.com/en-us/product/sama7g54
+> I did some very basic testing and nothing exploded on me either.  So long as
+> nothing in the host catches fire, I don't see a good reason to make high resolution
+> timers a hard requirement.
 > 
-> The revision history is not very specific, it only says "Updated Power
-> Management".  Errata sheet has nothing interesting on that topic.
+> My only concern is that this could, at least in theory, result in people
+> unintentionally breaking their setups, but that seems quite unlikely.
 > 
-> We both cited what we saw in the datasheets.  Revision A has the
-> section you cited, revision B has the section I cited.
+> One thought would be to require the user to enable EXPERT in order to break the
+> HIGH_RES_TIMERS dependency.  In practice, I doubt that will be much of a deterrent
+> since (IIRC) many distros ship with EXPERT=y.  But it would at least document that
+> using KVM x86 without HIGH_RES_TIMERS may come with caveats.  E.g.
 > 
->>> Table from section 8.5 (Peripheral Clocks …) has no check mark at "PMC
->>> clock control" but indeed lists MCK0 as main system bus clock.
->>
->> This is what I was taking about.
->>
->>>  If it
->>> works on SAMA7G5 without explicitly enabling main RC oscillator, then
->>> either that clock is on accidentally, or the datasheet is wrong in the
->>> OTPC section.
->>
->> Might be.
-> 
-> I don't have a SAMA7G5 at hand.  Someone who has could test if OTPC
-> works with/without MCK0, and with/without main RC osc, all possible
-> combinations would be most helpful: with none of those, with only one,
-> only the other, both.
-> 
-> Hope we get this clock stuff sorted out?!
-> 
-> Greets
-> Alex
-> 
->>
->> Thank you,
->> Claudiu Beznea
->>
->>>
->>> Personally I find the "clocked through PMC" part in the OTPC
->>> section suspicious, because in the peripheral identifiers table OTPC
->>> has no "PMC Clock Control" mark.
->>>
->>> Not sure what's the difference between SAM9X60 and SAMA7G5 internally,
->>> though.  From a user's POV it's possible one of them requires the
->>> main RC osc, and the other does not, but currently you can't tell from
->>> the datasheets.
->>>
->>>> Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
->>>> thermal calibration packets:
->>>> https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
->>>
->>> Greets
->>> Alex
->>>
->>
+> 	depends on HIGH_RES_TIMERS || EXPERT
+
+This sounds like a good compromise.
+
+-- Suleiman
 
