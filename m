@@ -1,476 +1,220 @@
-Return-Path: <linux-kernel+bounces-315567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4F596C448
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6701496C44B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACBC2837FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F14284F8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3391E00BF;
-	Wed,  4 Sep 2024 16:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E471E0B6C;
+	Wed,  4 Sep 2024 16:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIL5LFQQ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="auer/DmO"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49107EF09;
-	Wed,  4 Sep 2024 16:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725468066; cv=none; b=COitZm4E3uY3QdwuzIkYGVxbYb6qndHtfE+jhsUJVN2SBxXd5cefn/5H306ddn0dT03KfnpApw30q9KhzrD05lvcfah5GItWR44hUxGD5GnHU9VTp82ap/SCeJZT1D9am2LsZWJN3x4vs6bYvRWJ+xbeVMPk6kb+3sTBtWfv5IY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725468066; c=relaxed/simple;
-	bh=crBcUXgESgk53/9DZImImT02wsdTaOoqug2nwijxluI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUEK6nUFWz/I+Qt5Hu9ew8Edqp45yW+ubcFb85SRLQemxon8G34XczVjQBE49gtVU7IlfIO4ujah7lkRAfALHCtwOgCobniTkfDbTVV+pkedbBNgym27hSMo9NcpDuJmKfVNgImCuxEA2qsu4HIC1woFWLEU0VLltltcT0D9ex8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIL5LFQQ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201d5af11a4so59986945ad.3;
-        Wed, 04 Sep 2024 09:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725468064; x=1726072864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/aeaKmr+BaQmmrWNAJ5MrtWLTRHH5N3x5Ie7V8/tzmk=;
-        b=nIL5LFQQOwBvPd+c6Ij83EGe0GgmvzfMdwVkf+sqk++PawAbW/hCkvVEX9pnsOjvbu
-         2J5oTIpDYoSrNX7iH/jd1cUxRKkm4W2BNAo5E+OyNRRAPygIt9iNAY4uLf0crSvknVqx
-         TdqBWMk7W3dV+1L9Ct1HzkSxnMZqeHMwe+kbbQMmKswS78TX0tCESB13dWT9hAZo4kOS
-         M951Zkx2vIqeGNyLrXS9W/P/4EAq3LOddpNHvRu/ep7r09uQh3CTBSnI6yL9/426hPqp
-         d+iWrmLC3v2baZAg4nXsqJRi1G5IrUdJqIF06D7+6CGO1PPmchundX85FDX3C8OrrLMd
-         eU9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725468064; x=1726072864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/aeaKmr+BaQmmrWNAJ5MrtWLTRHH5N3x5Ie7V8/tzmk=;
-        b=cbAcQ4/znS6RcTuYjUHanbJ4MqRSVHyEga3/VqVqW9+asagtJQg5NMw4f3OPSgA0h6
-         H760N2PwHLHaco2niGj++0ZIAReLq8Y2hsIjkMZAkN7NI/aSEbOl7W4FW3+lATrkLl58
-         R9A1pA+HKlktAglG0mqj7OK0P4n74Kdyoxlcd9rxhmHoDDFx3YopIDolgiZrkXNiLtoH
-         YMWN3+/pWMHEyxwwvgnx4trcAeotZAkLE/jgHoEDHO7nY4xpVWnbOU1tqZ3mCJkaB9CD
-         3oJjFeh0bsVS9znhTzFSUHwyd1/VVB+PSxlJ8ipi2e3gGbNXo45vpgwx8u74mI9UYm5K
-         3dcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqE8JGEVJvxoiRDt+G40BxtNrc+zL30zo2bRvN32dz1RXMAJ9J6KOQueTQqbIg48Swh1UjUb1qCHGrzMG@vger.kernel.org, AJvYcCVWYdHUPGz0PZMxsP73njQXwbZEVgd2maFFGAaDBXPYrwkvySvLjHfhKxTnZHYwMiDSEahcmR5i22KN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPM13G30iDq0YPIacVmCZ/kRoblx1FPGdxjrwrGe4au7Hgo8GH
-	CLL6ylvREgAQwVciVbH8uPhYJQIDp2IeH3bPP/JztFa9XgdX3sa5
-X-Google-Smtp-Source: AGHT+IF5Wb/jiEJKwRbb3pOTl68z8CE9cJP1u/voEdna7+dlnUNZhFwxqDtwYVCfEunG1NMCFx4Ccg==
-X-Received: by 2002:a17:902:da82:b0:206:9ab3:2ebc with SMTP id d9443c01a7336-2069ab33684mr74202075ad.47.1725468063824;
-        Wed, 04 Sep 2024 09:41:03 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea66598sm15518015ad.250.2024.09.04.09.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 09:41:03 -0700 (PDT)
-Date: Thu, 5 Sep 2024 00:40:59 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Yu-Chun Lin <eleanor15x@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	broonie@kernel.org, angelogioacchino.delregno@collabora.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [PATCH v4] dt-bindings: Fix various typos
-Message-ID: <ZtiNm6gLMQVYB+/2@visitorckw-System-Product-Name>
-References: <20240904160118.2773055-1-eleanor15x@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D51DA319;
+	Wed,  4 Sep 2024 16:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725468210; cv=fail; b=XwgeSL8Ck3rTOyAE2uTv0bNnphr94tAEab6AdyeWXWgOaEMYloYPl2ZZZEMxAAy+N3y8nIbFAI0K8Cmv5o/TPqBSNO2v8KdBjywFFxyKBTRXd9jSE0cCOG7VzZcv9LobHjNVIqIQCqnTaooLXDZcE+OxD8UQhPuPj8h1MGCfdJQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725468210; c=relaxed/simple;
+	bh=Lm4XDqVwRqryvDB1SN9wWfy4CwobKbwzRRnsHPrkkk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cubpEPw8qYGtRAsZ8YN4iSMkjf9+mzunqAJE6rvqAbyorS53RQZ1hjTvSdEi/hHUgUIxH8llG/GxqoDM+u0NA6lSWRmxehYs57T6Z8JjO1LuN8YSRc25THDP1Yt/CsMumXjK1lnB+4bpRDSiAE8ZGTyh1rhinyXvr+EQZXBi4FY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=auer/DmO; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cafzEwjfOXdPny2hjtVYmaznoDK6PsuHlV26422LKfoTu59HjSo0HRTrG/WJmI+U7KVfXvw/ZzMa4nuHkpGOWpgaL0Lp1uyDMyvVDMz2LcIKLpzBzuurZ20+ApZbiLP1vj1zW90me5IlpCMtmhEDzDP+4IE+p48EjQDlnxofaKxanCzMjtda0lkNZgRK3ePZd1ZDL2R1dmN8SZ48zj7T+9opWjLDhHWQCDPKG3tkfgHyH6BoU1+4b9r2Fm7LJBbBSaxlYo6PG4c8QICoDj6/MkRBG/xmecN6VIastEY9wZlPBF5m4ZVd7tWfTGLuAYTPH6zm0WS4K3oWOS2vy99IEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JfRPJ9xccEQ7Cfoq4bi+s3amrT5AxL1N5YgB7wLpebs=;
+ b=pAgRrbOHkf678U4yWXE6asbRg2Or50GCzIEv/vKh3O5DqM3nJU0VU74jMFC8AeV+1+DAunFWdEAxaE+0Osm9WL2BtyIw56+yZ1o5g7bXZbgi0tp+yEVO8A75GuZlAGnVr83K0Imyf5JAupwHZr1jFqw3kkVxTEe41V6vGx9XjRBbVhd+YxZMi+FQexKQpvU5M4BuNwpUPvS/srOjLUA6g7QBAUlVOm9CK7Qm6lTL6ypTrzJDleMCibCG3Go4n/mE/KKiimO4hV5+eUmo2uzHBHbDx7vLNrlQ339N95INDeVL5U5MQe8y6RusZ3tyat2fR6L1QxQTWLb3WZStG2Zs1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfRPJ9xccEQ7Cfoq4bi+s3amrT5AxL1N5YgB7wLpebs=;
+ b=auer/DmOY9SrhKF3EIglfGsiZPPcn0BcEgSB/ig638kPTfHkFR1i4Vs12ea2XI9hI51HRim+tjp8HNwKaSgur0QigH6lAqAU/v7EdVePMTsuj3HXEmiht8PtTafDFMp2NylB78HWp3D6/iyjUfFBEWalFF011xRdNvNAI70efX5fP9wA/s3V33aqJm/fbW20Z+HbGbJIMfUv3Ue7tIQQpaCIHzfKaBjlF+aPqxvSpcvQXtSaBapqe9OC0R1CDocBjmYXb7tBnYOpA54aQEHJwsHiDAv8lCgMtn6HZWcYWfBYh3X9RA2863Obvjqg8fF/FpBSAlmaUrN9B6r+I0/V+g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by SA1PR12MB9004.namprd12.prod.outlook.com (2603:10b6:806:388::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Wed, 4 Sep
+ 2024 16:43:25 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 16:43:25 +0000
+Date: Wed, 4 Sep 2024 13:43:24 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>, ankita@nvidia.com
+Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
+Message-ID: <20240904164324.GO3915968@nvidia.com>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
+ <Zs5Z0Y8kiAEe3tSE@x1n>
+ <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
+ <20240828142422.GU3773488@nvidia.com>
+ <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
+ <20240828234958.GE3773488@nvidia.com>
+ <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
+ <20240904155203.GJ3915968@nvidia.com>
+ <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
+X-ClientProxiedBy: MN2PR20CA0026.namprd20.prod.outlook.com
+ (2603:10b6:208:e8::39) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904160118.2773055-1-eleanor15x@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SA1PR12MB9004:EE_
+X-MS-Office365-Filtering-Correlation-Id: aecdc2b3-d482-4aa6-b416-08dccd00b201
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VHB1TEx1SkdDNnIxU0VRa01PeGhZUG5vK2pWSXdCRTZpK3pVaGdVUDNmam8w?=
+ =?utf-8?B?M1ZxUDJ1QXE0OWdqWW1RNzlZUTgvQ1c0cmlIMmxyUXBrbE1ZdGxJNUZHbVhw?=
+ =?utf-8?B?SWp1cW5MLzFOU1ZJa1duaitzamRDUGpJbWNUd0xsd05XajZrZ3cvM3A3V0Jm?=
+ =?utf-8?B?eHF4TDJoeU1iUERMMStseWpaRndDUitMUmxXLzdzc1h0NWlqVUc4ekNvL2h5?=
+ =?utf-8?B?RXZkd0JCWis2VUc3TWFXKzZvdnhwVTMwQUlRdEZKZkVjZlVUSXd4ZUpzU29u?=
+ =?utf-8?B?QlYrUGVwRFhCS2FTc3ViTnNFMGthQWdSeG9RT3l4TUtIeWdzKzhXZStMM0tJ?=
+ =?utf-8?B?SC9hN1FzUlloR2ZDbWJVOVc0d2k1d3RHZjFCMkhBRDN0MHlQd0R4NlgvNHNV?=
+ =?utf-8?B?OWM1VXBIRDNETVYvYUZyL0xwOWJIdUVCWDIveklnM1pxOUIrOXluaVNTLzM5?=
+ =?utf-8?B?ZVNJL1lYdjh0dVMwbDNzc2NtSHNKMDBjUHBWNWdXQ3Q1U0ZGanYyYzJ3WXMz?=
+ =?utf-8?B?N3VhWnVQRUM3ZmlDb05sdDVwVHloMnV1ZUdSaFgwaVc0SGdGb0o1VkhQOEpI?=
+ =?utf-8?B?eGxXeE9SNCtkeG54U0pRcGcrSUx0bDBvZ0V2eGhJbHlidzYrT3JpWWEwbUNv?=
+ =?utf-8?B?blpvbVUwSkM2OE5yMUl1M0JVSThaVzNtdmxrQkYvZFRoM3ErcjlZTmpzbXJk?=
+ =?utf-8?B?ZlN2bUdjQm1oQjZMbnB6di91Ulp6VEc0cERnZmZFL0xlWk02SnNFU3dmaVdp?=
+ =?utf-8?B?MkJlOSs4UjdvZ2ZVZHZvU1M5ZUVKS0tJV0c3VjcyOTB5N2ZWVGFacmhqY0dR?=
+ =?utf-8?B?RjhHS3hIQVRabjRUQXBKV3JrY1BPYU9HOXNNcmViSGJaeEdVSG1HYUFkRzdL?=
+ =?utf-8?B?V2pzUmlpMk5GNUlWVG5xcjVDT1FVQXhPNEFiSlB6ZW0ya3FCMVpzdlk5bFB2?=
+ =?utf-8?B?SHdlVXJ1ZnlVZCtkWFRoSlRIbHF3c0YvYWlHWG02ekNWTzQ0RkxXSW5IQjFs?=
+ =?utf-8?B?YzNKUHNMTVlhaG1iMnN6aDZ0Z2NyRy9FaVZHVFEvQnEwZGptVmcwSFRmTXJK?=
+ =?utf-8?B?c2haT0M4UjRINUlQMDdoTTV6TVIzVDRJNEVoWm5ZNXg3UVphSzJiK3h2Qmc0?=
+ =?utf-8?B?ZElJKzdxdm9MMy9jbHdzTzlWbk9CRkYrdlRQQ2VCQllBQTUrUmFGT3YxSHpB?=
+ =?utf-8?B?SnZ2SlNDL0tPeHdsZVFta2IwamRkL1ZjOVBaZ0RSKzR3YWJwNkZod3gzVXdv?=
+ =?utf-8?B?MjdKSGgzOEd3VndLUVc0eXlVY2dvNTZJVXhDT1VNTDZ5VnZ3bVYvaUV4V3RV?=
+ =?utf-8?B?OVNLYlByZHJOQmhxc1FyQXNFWUxkLytzR2FzWENUcW15L0NWeCtDbjFPcUJC?=
+ =?utf-8?B?L3lJcmVBckdqM20wUkk5RkhVNlVEalRoNk9oQjAzWngwdDVXdzRlMnA1bnpl?=
+ =?utf-8?B?SFhsOHNkNXFTWmVyaWtCVStYc1dZc3pVQ3R0dytmdEk1RXRXQmxTWXFuNmZK?=
+ =?utf-8?B?VDlRZUNTbDRLL0NlcUVSYTBBUVJ1TG1HNEFXNHJwcWhQUTU3VkJId3JuVkpq?=
+ =?utf-8?B?Z0twOUJRdVFGZGMwMkJyZVhGd1pERk4ycEV6WjBva3FVTktRMkxRQ2VMUTVB?=
+ =?utf-8?B?Ni82SGljalEzalBJL0lnek5KRmpNUjZYTTFyeHJucDZmSWpTVEljOUEzUU1N?=
+ =?utf-8?B?T2t2MFJNYXJ1c3l6V0lJUytVa3FPNGhtMmRzNE44Mzhtd2g3M0tHVVhZSk0z?=
+ =?utf-8?B?L3hGL2QyYXBZbk40MGFSOTdjQWN4Ujd5c0pWUDJia1d0SEUvYVhPTjQ3SnVD?=
+ =?utf-8?B?YVdxS0VmTmtxdWFsZ2NWdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckJxUlZWRjB6VkRDQjNNZE4wKzhuTllXamI2VDVyc2VTRlA5aFVvTll1ODds?=
+ =?utf-8?B?YVYrd2h1MW44bkM4M1VaaCtOdWZXKzlwa3lObkJVeGx1eG91aGhMZVVQNDZk?=
+ =?utf-8?B?Z21kM2FMWGdpWFFpdkdLYkZ6RmQ2SDJlOVpBMi9TUnhzZmRsbXdLekM0R09p?=
+ =?utf-8?B?WUlmcGs5ejh0aW5yWk10eEkzeVU5bmIzMjloOGI2WEZDRDhJNDhaREpMbXFC?=
+ =?utf-8?B?bThkdmdNMWlnM0hKZ3ROQ1BVc0NGMGIxd3FML1I0czhVb1ozSzN4QjZuQUdQ?=
+ =?utf-8?B?cmVpNFc3Z2puek9HbW1tZnJKRkc1WmZCQTc2cy9Rcmp5WkJneFBmM25oaTBw?=
+ =?utf-8?B?SnRHUHV4d0k0SGlzZENOSy9mbmVtUDBMVXFPTndaZXBQQjQrNEJVOWVSL0pB?=
+ =?utf-8?B?emMzZjY1bENCNThTZHRGM3J5Vm42dDBlbWdzUDFDV1ZoaWVOMXA0RmRUN2RR?=
+ =?utf-8?B?aXBOTzJkNFRGV0J3RjNDTnB0SSsyT1ZJVU1rd1AxdVo0SDdKc3lyOFNTOENB?=
+ =?utf-8?B?Q2hoZ0FkNWNXb29ocGorSDdGS1BVUU8zU3J2VFJWV0t1QWRYTWdkVjlMOFFv?=
+ =?utf-8?B?TmlDRy8zZE5Eb1RmeUlYUVlQaXZxVVRlUm1iWWdPTnNlQ2FoSHZ5RXNoSFIy?=
+ =?utf-8?B?K0JzYVE0Yjh0a0dVN3Via25tSGZ3ZWNDUHlIekNuMWhkbWJxR2VhOXdxY2g2?=
+ =?utf-8?B?L1V4R2thTnN2SFQ5SjZaR2JCTVJtQ2pjMGtNNnpuVGhQOVdBeURLSDBuNFhO?=
+ =?utf-8?B?R0ZVNFJOenZRd0V6ckVBZ3RkWW5IU2VDWC9mUkVuLzRaYW5JQkZocW1TcXNh?=
+ =?utf-8?B?UXc4dXBONDlHczdOeHdRdkNKZEx5WlJlNktvcVBmNXkvMEkxYTRiZGV1Zy8r?=
+ =?utf-8?B?RGVsTW9rN3Vxb0R3dHpLa29zTFBxT1Zob0htUUdieExGaHlwM21jU2NEMjJC?=
+ =?utf-8?B?cndjQlVhaVQ5UjM0SDA1Wno4clRrc2IwbWVDV1pCZmFpT1ZLNWFQb3dJNVdN?=
+ =?utf-8?B?WXdCUDdWcTVwaWNjSGZIN0JDVWxRaUtONWZpcUJYRDFSOGxZU3REL0hlVTZE?=
+ =?utf-8?B?S0RDRkkrNDh1R1pxUlBrV1VqZVd2VW9pd09QZlZONkg0VGVtQzJRRFNDNExz?=
+ =?utf-8?B?VE8ycy8vcldIY2Vxb0c1U1R1UzhBTnBWMHgrT2Q4WVhJZWFpMjJUL3R1bVBJ?=
+ =?utf-8?B?UDRtaXY1c3gxWGcrMTFmWE1lOGtHSG9QUENXTkhrcnN4SUN6NHo4MHBxVUhv?=
+ =?utf-8?B?b1BHWGJSay9URlo0V1kxUkNQMGV0OGM1bmluZ21uSk1VMjlETERCL0JpaEUv?=
+ =?utf-8?B?WUhXa1hzWFNqcng5cmJjakhMUGJwVTl0U2ozS1pnUE5BQ2NkbTNkTSt3SWFF?=
+ =?utf-8?B?ZFd2SUNNb1l4U2YyRmNqSjdoQTRaSGQvMTFCaWw3aExRb0YrKzh5ZUVURW9a?=
+ =?utf-8?B?Ym1JazgxaUVTenNYMHVxQXVVb2lUSk0vQmhBc1gxVldWVy9YMmIvLzlhUTFl?=
+ =?utf-8?B?Wll2RnlFWjcybjYyMGRYWnNLQjJHdE1JamRPVUNDSFlFeGFUNzNDbDRCR0RL?=
+ =?utf-8?B?SE01QVYrQTY1UW5MdzZZQ2x5T3dXNnBtdlNiOWQvQnJTVFJPbnZGbEdRdzU2?=
+ =?utf-8?B?Ry9maFdodDUxRUFSdDUxYmViK01US3dOOFFybUJVa2F5T2RPNTZEVEZmWmRK?=
+ =?utf-8?B?Y0YwQXJBNUUwTEwwQmZTNXVjSW1lRFFBTk1vTXF1QjE0K3J0ZTYrTVFKYVJK?=
+ =?utf-8?B?UytFaWk4R05kTDkraVhURWxhYmJyWFhwMGx4K2RGY0JtVEFQR1JKcStGZzNo?=
+ =?utf-8?B?TW1kR0VDNnFTOTFwMWJKT094eUhmeWJzcWF0TDQwRGdkenFIdzhITmVReHhO?=
+ =?utf-8?B?SFpabmVIWmh5T1VtTm53ejVJRGdRTnpvWGFRYnFqeE1tenkyV003anNLZ1ZR?=
+ =?utf-8?B?eTNPUE9KOFFLTmFPR0d4YWdIZGJoRGlnVVk5UXNjN3RMaE0yNjQyOGtHcUVB?=
+ =?utf-8?B?ZGZTSU81TUwzK29STnpHK0Y2NjdVdGE1dk1LU0htMU1HSVk0Z1h0SjZISGlu?=
+ =?utf-8?B?Sm9WU0drd004NFh4eWEyeHB6bktsZ3h3NThWMzN3ODVSWGdZVWZtVHoyelhk?=
+ =?utf-8?Q?M24utk7p8xtKGfDSC45JeqpN7?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aecdc2b3-d482-4aa6-b416-08dccd00b201
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 16:43:25.1312
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HxKieEx8/kOBAldJn1teb8FCfLxw3/7pkLEhsJ6PxNveLzLxXUX+40N40jPDYJMl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9004
 
-On Thu, Sep 05, 2024 at 12:01:18AM +0800, Yu-Chun Lin wrote:
-> Corrected several typos in Documentatin/devicetree/bindings files.
+On Wed, Sep 04, 2024 at 09:38:22AM -0700, Jiaqi Yan wrote:
+> On Wed, Sep 4, 2024 at 8:52 AM Jason Gunthorpe <jgg@nvidia.com> wrote:
+> >
+> > On Thu, Aug 29, 2024 at 12:21:39PM -0700, Jiaqi Yan wrote:
+> >
+> > > I think we still want to attempt to SIGBUS userspace, regardless of
+> > > doing unmap_mapping_range or not.
+> >
+> > IMHO we need to eliminate this path if we actually want to keep things
+> > mapped.
+> >
+> > There is no way to generate the SIGBUS without poking a 4k hole in the
+> > 1G page, as only that 4k should get SIGBUS, every other byte of the 1G
+> > is clean.
+> 
+> Ah, sorry I wasn't clear. The SIGBUS will be only for poisoned PFN;
+> clean PFNs under the same PUD/PMD for sure don't need any SIGBUS,
+> which is the whole purpose of not unmapping.
 
-Documentatin -> Documentation
-> 
-> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+You can't get a SIGBUS if the things are still mapped. This is why the
+SIGBUS flow requires poking a non-present hole around the poisoned
+memory.
 
-With the above fix:
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+So keeping things mapped at 1G also means giving up on SIGBUS.
 
-Regards,
-Kuan-Wei
-
-> ---
-> v3->v4
-> I squashed all previous version commits. 
-> 
-> v2->v3
-> Corrected "interlaved" to "interleaved"
-> 
-> v1->v2
-> Fixed more typos in dt-bindings files
-> 
-> I've dropped reviewed tags in v1 due to significant
-> changes in v2. So it would be helpful if Laurent Pinchart
-> and Kuan-Wei Chiu could review with the version.
-> 
-> v3
-> Link: https://lore.kernel.org/lkml/20240904125812.2761993-1-eleanor15x@gmail.com/
-> 
-> v2
-> Link: https://lore.kernel.org/lkml/20240903164242.2188895-1-eleanor15x@gmail.com/
-> 
-> v1
-> Link: https://lore.kernel.org/lkml/20240901133046.962263-1-eleanor15x@gmail.com/
-> 
->  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml   | 2 +-
->  Documentation/devicetree/bindings/cpu/idle-states.yaml        | 2 +-
->  Documentation/devicetree/bindings/display/lvds.yaml           | 2 +-
->  Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt     | 2 +-
->  Documentation/devicetree/bindings/iio/accel/lis302.txt        | 2 +-
->  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml  | 2 +-
->  Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml    | 2 +-
->  .../devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt    | 2 +-
->  .../devicetree/bindings/media/i2c/thine,thp7312.yaml          | 2 +-
->  .../devicetree/bindings/media/samsung,exynos4210-fimc.yaml    | 2 +-
->  Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml  | 2 +-
->  Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml    | 2 +-
->  Documentation/devicetree/bindings/mfd/twl6040.txt             | 2 +-
->  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml | 2 +-
->  Documentation/devicetree/bindings/phy/apm-xgene-phy.txt       | 2 +-
->  .../devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml     | 2 +-
->  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml      | 2 +-
->  .../devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml     | 2 +-
->  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 ++--
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 2 +-
->  .../devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml     | 2 +-
->  Documentation/devicetree/bindings/sound/everest,es8326.yaml   | 2 +-
->  Documentation/devicetree/bindings/sound/st,sta350.txt         | 2 +-
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml     | 2 +-
->  24 files changed, 25 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> index d50a60368e27..04a8c37b4aff 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
-> @@ -17,7 +17,7 @@ description: |
->    The Coresight dummy source component is for the specific coresight source
->    devices kernel don't have permission to access or configure. For some SOCs,
->    there would be Coresight source trace components on sub-processor which
-> -  are conneted to AP processor via debug bus. For these devices, a dummy driver
-> +  are connected to AP processor via debug bus. For these devices, a dummy driver
->    is needed to register them as Coresight source devices, so that paths can be
->    created in the driver. It provides Coresight API for operations on dummy
->    source devices, such as enabling and disabling them. It also provides the
-> diff --git a/Documentation/devicetree/bindings/cpu/idle-states.yaml b/Documentation/devicetree/bindings/cpu/idle-states.yaml
-> index 239480ef7c30..385b0a511652 100644
-> --- a/Documentation/devicetree/bindings/cpu/idle-states.yaml
-> +++ b/Documentation/devicetree/bindings/cpu/idle-states.yaml
-> @@ -385,7 +385,7 @@ patternProperties:
->  
->            This property is required in idle state nodes of device tree meant
->            for RISC-V systems. For more details on the suspend_type parameter
-> -          refer the SBI specifiation v0.3 (or higher) [7].
-> +          refer the SBI specification v0.3 (or higher) [7].
->  
->        local-timer-stop:
->          description:
-> diff --git a/Documentation/devicetree/bindings/display/lvds.yaml b/Documentation/devicetree/bindings/display/lvds.yaml
-> index 224db4932011..b74efbea3be2 100644
-> --- a/Documentation/devicetree/bindings/display/lvds.yaml
-> +++ b/Documentation/devicetree/bindings/display/lvds.yaml
-> @@ -16,7 +16,7 @@ maintainers:
->  description:
->    This binding extends the data mapping defined in lvds-data-mapping.yaml.
->    It supports reversing the bit order on the formats defined there in order
-> -  to accomodate for even more specialized data formats, since a variety of
-> +  to accommodate for even more specialized data formats, since a variety of
->    data formats and layouts is used to drive LVDS displays.
->  
->  properties:
-> diff --git a/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt b/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
-> index 47e477cce6d2..1f9831540c97 100644
-> --- a/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
-> +++ b/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
-> @@ -20,7 +20,7 @@ Optional properties:
->  		memcpy channels in eDMA.
->  
->  Notes:
-> -When requesting channel via ti,dra7-dma-crossbar, the DMA clinet must request
-> +When requesting channel via ti,dra7-dma-crossbar, the DMA client must request
->  the DMA event number as crossbar ID (input to the DMA crossbar).
->  
->  For ti,am335x-edma-crossbar: the meaning of parameters of dmas for clients:
-> diff --git a/Documentation/devicetree/bindings/iio/accel/lis302.txt b/Documentation/devicetree/bindings/iio/accel/lis302.txt
-> index 764e28ec1a0a..457539647f36 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/lis302.txt
-> +++ b/Documentation/devicetree/bindings/iio/accel/lis302.txt
-> @@ -36,7 +36,7 @@ Optional properties for all bus drivers:
->   - st,irq{1,2}-disable:		disable IRQ 1/2
->   - st,irq{1,2}-ff-wu-1:		raise IRQ 1/2 on FF_WU_1 condition
->   - st,irq{1,2}-ff-wu-2:		raise IRQ 1/2 on FF_WU_2 condition
-> - - st,irq{1,2}-data-ready:	raise IRQ 1/2 on data ready contition
-> + - st,irq{1,2}-data-ready:	raise IRQ 1/2 on data ready condition
->   - st,irq{1,2}-click:		raise IRQ 1/2 on click condition
->   - st,irq-open-drain:		consider IRQ lines open-drain
->   - st,irq-active-low:		make IRQ lines active low
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> index 0f4a062c9d6f..5f051c666cbe 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> @@ -60,7 +60,7 @@ properties:
->        The 4th cell is a phandle to a node describing a set of CPUs this
->        interrupt is affine to. The interrupt must be a PPI, and the node
->        pointed must be a subnode of the "ppi-partitions" subnode. For
-> -      interrupt types other than PPI or PPIs that are not partitionned,
-> +      interrupt types other than PPI or PPIs that are not partitioned,
->        this cell must be zero. See the "ppi-partitions" node description
->        below.
->  
-> diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-> index 54d6d1f08e24..17e971903ee9 100644
-> --- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-> +++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-> @@ -66,7 +66,7 @@ patternProperties:
->              IMAXled = 160000 * (592 / 600.5) * (1 / max-current-switch-number)
->            And the minimum output current formula:
->              IMINled = 3300 * (592 / 600.5) * (1 / max-current-switch-number)
-> -          where max-current-switch-number is determinated by led configuration
-> +          where max-current-switch-number is determined by led configuration
->            and depends on how leds are physically connected to the led driver.
->  
->  allOf:
-> diff --git a/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt b/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
-> index c80065a1eb97..bf0c998b8603 100644
-> --- a/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
-> @@ -24,7 +24,7 @@ Required properties:
->  		number of completion messages for which FlexRM will inject
->  		one MSI interrupt to CPU.
->  
-> -		The 3nd cell contains MSI timer value representing time for
-> +		The 3rd cell contains MSI timer value representing time for
->  		which FlexRM will wait to accumulate N completion messages
->  		where N is the value specified by 2nd cell above. If FlexRM
->  		does not get required number of completion messages in time
-> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> index 1978fbb77a6c..535acf2b88a9 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> @@ -16,7 +16,7 @@ description:
->    can be connected to CMOS image sensors from various vendors, supporting both
->    MIPI CSI-2 and parallel interfaces. It can also output on either MIPI CSI-2
->    or parallel. The hardware is capable of transmitting and receiving MIPI
-> -  interlaved data strams with data types or multiple virtual channel
-> +  interleaved data streams with data types or multiple virtual channel
->    identifiers.
->  
->  allOf:
-> diff --git a/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
-> index 271d0577a83c..2ba27b230559 100644
-> --- a/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
-> +++ b/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
-> @@ -77,7 +77,7 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint32-array
->      maxItems: 2
->      description: |
-> -      An array specyfing minimum image size in pixels at the FIMC input and
-> +      An array specifying minimum image size in pixels at the FIMC input and
->        output DMA, in the first and second cell respectively.  Default value
->        is <16 16>.
->  
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> index d381125a0a15..efee3de0d9ad 100644
-> --- a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> @@ -25,7 +25,7 @@ properties:
->      description:
->        The PMIC provides intb and errb IRQ lines. The errb IRQ line is used
->        for fatal IRQs which will cause the PMIC to shut down power outputs.
-> -      In many systems this will shut down the SoC contolling the PMIC and
-> +      In many systems this will shut down the SoC controlling the PMIC and
->        connecting/handling the errb can be omitted. However, there are cases
->        where the SoC is not powered by the PMIC or has a short time backup
->        energy to handle shutdown of critical hardware. In that case it may be
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> index bc8b5940b1c5..a4be642de33c 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> @@ -53,7 +53,7 @@ properties:
->    samsung,s2mps11-wrstbi-ground:
->      description: |
->        Indicates that WRSTBI pin of PMIC is pulled down. When the system is
-> -      suspended it will always go down thus triggerring unwanted buck warm
-> +      suspended it will always go down thus triggering unwanted buck warm
->        reset (setting buck voltages to default values).
->      type: boolean
->  
-> diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
-> index 06e9dd7a0d96..dfd8683ede0c 100644
-> --- a/Documentation/devicetree/bindings/mfd/twl6040.txt
-> +++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
-> @@ -2,7 +2,7 @@ Texas Instruments TWL6040 family
->  
->  The TWL6040s are 8-channel high quality low-power audio codecs providing audio,
->  vibra and GPO functionality on OMAP4+ platforms.
-> -They are connected ot the host processor via i2c for commands, McPDM for audio
-> +They are connected to the host processor via i2c for commands, McPDM for audio
->  data and commands.
->  
->  Required properties:
-> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> index 68c5ed111417..693ac91c5e05 100644
-> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> @@ -72,7 +72,7 @@ properties:
->      description: VDD_RFA_CMN supply regulator handle
->  
->    vddrfa0p8-supply:
-> -    description: VDD_RFA_0P8 suppply regulator handle
-> +    description: VDD_RFA_0P8 supply regulator handle
->  
->    vddrfa1p7-supply:
->      description: VDD_RFA_1P7 supply regulator handle
-> diff --git a/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt b/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
-> index e1bb12711fbf..602cf952b92b 100644
-> --- a/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
-> @@ -36,7 +36,7 @@ Optional properties:
->  			  3-tuple setting for each (up to 3) supported link
->  			  speed on the host. Range is 0 to 273000 in unit of
->  			  uV. Default is 0.
-> -- apm,tx-pre-cursor2	: 2st pre-cursor emphasis taps control. Two set of
-> +- apm,tx-pre-cursor2	: 2nd pre-cursor emphasis taps control. Two set of
->  			  3-tuple setting for each (up to 3) supported link
->  			  speed on the host. Range is 0 to 127400 in unit uV.
->  			  Default is 0x0.
-> diff --git a/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
-> index cfb3ca97f87c..cc9d0d4eeeeb 100644
-> --- a/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
-> @@ -41,7 +41,7 @@ properties:
->      description:
->        One instance of the T-PHY on MT7988 suffers from a performance
->        problem in 10GBase-R mode which needs a work-around in the driver.
-> -      This flag enables a work-around ajusting an analog phy setting and
-> +      This flag enables a work-around adjusting an analog phy setting and
->        is required for XFI Port0 of the MT7988 SoC to be in compliance with
->        the SFP specification.
->  
-> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-> index acba0720125d..423b7c4e62f2 100644
-> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-> @@ -240,7 +240,7 @@ patternProperties:
->            The force mode is used to manually switch the shared phy mode between
->            USB3 and PCIe, when USB3 phy type is selected by the consumer, and
->            force-mode is set, will cause phy's power and pipe toggled and force
-> -          phy as USB3 mode which switched from default PCIe mode. But perfer to
-> +          phy as USB3 mode which switched from default PCIe mode. But prefer to
->            use the property "mediatek,syscon-type" for newer SoCs that support it.
->          type: boolean
->  
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> index 90d79491e281..d16a543a7848 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> @@ -43,7 +43,7 @@ properties:
->  
->    qcom,tune-usb2-amplitude:
->      $ref: /schemas/types.yaml#/definitions/uint8
-> -    description: High-Speed trasmit amplitude
-> +    description: High-Speed transmit amplitude
->      minimum: 0
->      maximum: 15
->      default: 8
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> index e1eb45a9eda4..a28d77748095 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> @@ -11,7 +11,7 @@ maintainers:
->    - Alexandre TORGUE <alexandre.torgue@foss.st.com>
->  
->  description: |
-> -  STMicroelectronics's STM32 MCUs intregrate a GPIO and Pin mux/config hardware
-> +  STMicroelectronics's STM32 MCUs integrate a GPIO and Pin mux/config hardware
->    controller. It controls the input/output settings on the available pins and
->    also provides ability to multiplex and configure the output of various
->    on-chip controllers onto these pads.
-> @@ -164,7 +164,7 @@ patternProperties:
->                This macro is available here:
->                  - include/dt-bindings/pinctrl/stm32-pinfunc.h
->                Some examples of using macro:
-> -               /* GPIO A9 set as alernate function 2 */
-> +               /* GPIO A9 set as alternate function 2 */
->                 ... {
->                            pinmux = <STM32_PINMUX('A', 9, AF2)>;
->                 };
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index c5dc3c2820d7..adc6b3f36fde 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -93,7 +93,7 @@ patternProperties:
->        Each SCP core has own cache memory. The SRAM and L1TCM are shared by
->        cores. The power of cache, SRAM and L1TCM power should be enabled
->        before booting SCP cores. The size of cache, SRAM, and L1TCM are varied
-> -      on differnt SoCs.
-> +      on different SoCs.
->  
->        The SCP cores do not use an MMU, but has a set of registers to
->        control the translations between 32-bit CPU addresses into system bus
-> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-> index a5d67563cd53..29d48da81531 100644
-> --- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-> @@ -78,7 +78,7 @@ properties:
->        we use nvidia,adjust-baud-rates.
->  
->        As an example, consider there is deviation observed in TX for baud rates as listed below. 0
-> -      to 9600 has 1% deviation 9600 to 115200 2% deviation. This slight deviation is expcted and
-> +      to 9600 has 1% deviation 9600 to 115200 2% deviation. This slight deviation is expected and
->        Tegra UART is expected to handle it. Due to the issue stated above, baud rate on Tegra UART
->        should be set equal to or above deviation observed for avoiding frame errors. Property
->        should be set like this:
-> diff --git a/Documentation/devicetree/bindings/sound/everest,es8326.yaml b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
-> index 8c82d47375ec..d51431df7acf 100644
-> --- a/Documentation/devicetree/bindings/sound/everest,es8326.yaml
-> +++ b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
-> @@ -32,7 +32,7 @@ properties:
->      description: |
->        just the value of reg 57. Bit(3) decides whether the jack polarity is inverted.
->        Bit(2) decides whether the button on the headset is inverted.
-> -      Bit(1)/(0) decides the mic properity to be OMTP/CTIA or auto.
-> +      Bit(1)/(0) decides the mic property to be OMTP/CTIA or auto.
->      minimum: 0x00
->      maximum: 0x0f
->      default: 0x0f
-> diff --git a/Documentation/devicetree/bindings/sound/st,sta350.txt b/Documentation/devicetree/bindings/sound/st,sta350.txt
-> index 307398ef2317..e3d84864e0e4 100644
-> --- a/Documentation/devicetree/bindings/sound/st,sta350.txt
-> +++ b/Documentation/devicetree/bindings/sound/st,sta350.txt
-> @@ -77,7 +77,7 @@ Optional properties:
->  
->    -  st,odd-pwm-speed-mode:
->  	If present, PWM speed mode run on odd speed mode (341.3 kHz) on all
-> -	channels. If not present, normal PWM spped mode (384 kHz) will be used.
-> +	channels. If not present, normal PWM speed mode (384 kHz) will be used.
->  
->    -  st,distortion-compensation:
->  	If present, distortion compensation variable uses DCC coefficient.
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> index 72048c5a0412..f188fd6b6fbf 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> @@ -310,7 +310,7 @@ examples:
->  
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -    // Example 1 (new calbiration data: for pre v1 IP):
-> +    // Example 1 (new calibration data: for pre v1 IP):
->      thermal-sensor@4a9000 {
->          compatible = "qcom,msm8916-tsens", "qcom,tsens-v0_1";
->          reg = <0x4a9000 0x1000>, /* TM */
-> -- 
-> 2.43.0
-> 
+Jason
 
