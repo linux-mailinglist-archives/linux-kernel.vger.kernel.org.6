@@ -1,116 +1,172 @@
-Return-Path: <linux-kernel+bounces-315865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A776896C7D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A5696C7DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF741F24420
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A68E1C247E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CA81E6DE6;
-	Wed,  4 Sep 2024 19:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29B11E6DF9;
+	Wed,  4 Sep 2024 19:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWdF2DP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l4NlHtMR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A4F8286A;
-	Wed,  4 Sep 2024 19:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFC613AA2B;
+	Wed,  4 Sep 2024 19:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479167; cv=none; b=O4vvtOKLubAqedmbPeVkGQFplzL/dckNx/6VSRGVrnZ1VTs+tib/5q+w3dhJtnphxR+eyp4JDkV6NhccTi7q7TRPWGd93B9OngQGONYogLigdOlU9If6gpDP+w3d/JqfmmAnoxjg0P/HfpVfppsLPItZV6U50d3IiZtH6z9xglM=
+	t=1725479192; cv=none; b=mzDIZF9BFRlEv6ITKhNv7SlpOkQxMLb6medvfZa31ozxWlWc780Q1kwTCHlT3vu0icvghG3LGKJS572Om3Q8BbONkLFgMlpetimmSgtuLv9mluhEohrx52yGyWYQNZtXn65w+BTRNd+DdwcA8Y5MbjfDvCz41mddabR1WolPqE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479167; c=relaxed/simple;
-	bh=QQsVnSzMJu9Xy6LVYw1rcBARePRY6Cy6vZiFgsTr2ig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAZ1YyfUShMppZprvl/zzbmKLWut93j/vczrX/2PHdrkiIu0nC8quTTanK28c/rRade8dox3osmK/Yh5z/Nu4itBMOAZYUJvQPlAKIkk/XXgLCEwgrWCy1hx4hb8VOPTmlMAK5Dcu/2vgQwIIqFYTCCU4gaAFxEAfgRrDEeDjus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWdF2DP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F7FC4CEC2;
-	Wed,  4 Sep 2024 19:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725479167;
-	bh=QQsVnSzMJu9Xy6LVYw1rcBARePRY6Cy6vZiFgsTr2ig=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fWdF2DP79Oz1wDdOdNmJmEFF+B692AQZ4875Bq6z1hg1xwLqlTNY1H+XTrfXMbVpS
-	 j9sAxC7eMnwXTd3wNHvjRWj8E5hmjvAylk5hK4Gv4aeWmNf1meqTnsLuu09jxp5IQ6
-	 7M3ybSubPsXBmhx6wBiBOKJX/1fjvuOvzRpBPtiDQ+i7+l/luSJZ9/Di6SjL1Zxn8C
-	 EUvdYE0SCcmrKuzUMlV6Ukep+/CcDy//Ys7BNiUYeFzQ/QG4XV9j+jFT7/KBZiQtIZ
-	 2KtRy5wbsaVhOufckq7FbWVUG9JdrwzD3kd6eZPTewykaW7TfO2EVgPzqOO3iubl79
-	 1KjRL3qAlm8dg==
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a812b64d1cso399018385a.0;
-        Wed, 04 Sep 2024 12:46:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVB3UGXSEhMSqT2DWBxb1qhZMCyzxfw8d69McAP/6k1yeqm2SgMjBrFk0ygbeQa57Bi01oZ4+1MM3MZ@vger.kernel.org, AJvYcCVYA8bBIX/b8aM0C5JXt1OQUkhV7ek2IBNJJHiURLfxFkOxAtbmZRATEGpPNmhBuXNty5Uf8O0Lz8w=@vger.kernel.org, AJvYcCVrwtas2p0XQycjpkX02h3698vZNYUBbc8nF0D/qTMA54gR7YIX21allI0OwMT3vE6fkpO3abFywrijGJbjNhDQo++kfuCY@vger.kernel.org, AJvYcCXF+uZJHzSsg1v8nb2cxKXz6JxIrPb0a7ZUxek+Ll6EhVA5B74ogDMqOX/KkK+bH5/4QVFk233DNmpDV6fL@vger.kernel.org, AJvYcCXKEQ+E168x9AC2ZeD5b+CaFPY6PJL+M+4tqKpi6vpdCxNVbKtUE6q/vZyVV+wy94/4r099ZRuA2cetp+zn@vger.kernel.org, AJvYcCXs8fhs92FHrLWj6e5iehsAIinKM1h82+Er6ZUJRRI/iVH2GYLztpkR5qi/b3CgD5gADW8GiCKE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL3/S4AXjy+rQ/98UuvpwDDGL92HGRDQ9TTq4GS24F8m4GCSyx
-	bFJscrisnKMEpc2aQA8wVlonTF9ngiA16ihmYXvnr3XQIz91WYb2q1qLuSFAVdCLscXX890nMbS
-	og+IKDo+iQtUpgDgIElt1yb9eUIU=
-X-Google-Smtp-Source: AGHT+IEvCs/22u/q3u8HbVezM75pgSYQ+mtXLN/XwyBj7AvVgPLsxLtOdjUjVijcfKiU4aElyUiOX8rriF8t5qXs5jg=
-X-Received: by 2002:a05:622a:2610:b0:44f:d986:fe4c with SMTP id
- d75a77b69052e-4567f505b0bmr362111191cf.20.1725479166868; Wed, 04 Sep 2024
- 12:46:06 -0700 (PDT)
+	s=arc-20240116; t=1725479192; c=relaxed/simple;
+	bh=e5YRCfHcSxajoDuqX351heIe3Wzdm2U2L0IQCNWWeXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AMpCSQfFOixEFdoOYSCH0ZMu8UCDLW+yBjF7XdBqvMTEl99MEc0GP4iiWzLZnbTe4a5CO9yN2H6F9m5lk91693J+sBXSN/A7UWPlduXzgpF4o5Fl9hBkxahrvO7fFPhKXc1m4U4qK7Y2tIqtCSNEeroXNKPh7egU1lTJ/9TRXqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l4NlHtMR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484IoaCp028269;
+	Wed, 4 Sep 2024 19:46:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4L5/ijFquyhl43s4ge7n4rzdYP9Bspig+YmhsVPizDQ=; b=l4NlHtMRF8vNO7MP
+	nOQCFcFhJ2p34IS3ayCQypwnosMjNNcY1PKjL2lmN+4U6e52LGqMnttmJHnMZ6Sk
+	tprRbJDmIDPf1A7LIrtMXJkT/SLsVAIWKE/3iqWfY/mJK0AHJ7syVBy7HwXAW+3P
+	k/YsDqdmGUX0MjtBMA8Okxj9PO5NZu13f0hJ0Ptl2vb7YPPRYGPfIFl2LvbiqU+8
+	z/3WnSZ+/k+LeqBkSYJFkT5y2J8LczrwNup0TWjbkAJowbTOnPLVtW3Ul3fmLvG+
+	YrieTiYgDm999u0Y9qoZYtf9XqKdE4Z/I+6FLDV6L8kFZEZl7q8YDrmdBHeVLUXx
+	lINI9g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxuu79-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 19:46:06 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484Jk4kw023645
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 19:46:04 GMT
+Received: from [10.71.114.155] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 12:46:03 -0700
+Message-ID: <93d2eecf-ed79-41cf-b38b-ede432093aec@quicinc.com>
+Date: Wed, 4 Sep 2024 12:46:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903033011.2870608-1-yukaixiong@huawei.com> <20240903033011.2870608-12-yukaixiong@huawei.com>
-In-Reply-To: <20240903033011.2870608-12-yukaixiong@huawei.com>
-From: Anna Schumaker <anna@kernel.org>
-Date: Wed, 4 Sep 2024 15:45:49 -0400
-X-Gmail-Original-Message-ID: <CAFX2Jf=8cDNmjUBCRE-n6N9khkRRrq0ABtsX4V=j830Mi1spwQ@mail.gmail.com>
-Message-ID: <CAFX2Jf=8cDNmjUBCRE-n6N9khkRRrq0ABtsX4V=j830Mi1spwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 -next 11/15] sunrpc: use vfs_pressure_ratio() helper
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
-	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
-	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	wangkefeng.wang@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v26 30/33] ALSA: usb-audio: qcom: Use card and PCM index
+ from QMI request
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
+        <bgoswami@quicinc.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
+References: <20240829194105.1504814-1-quic_wcheng@quicinc.com>
+ <20240829194105.1504814-31-quic_wcheng@quicinc.com>
+ <f8090415-e0ae-4923-bdc8-58622623fc9d@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <f8090415-e0ae-4923-bdc8-58622623fc9d@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: r8piAAQeh2qxXzfDR-ckpRBOOeNMPYga
+X-Proofpoint-ORIG-GUID: r8piAAQeh2qxXzfDR-ckpRBOOeNMPYga
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_17,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409040149
 
-On Mon, Sep 2, 2024 at 11:31=E2=80=AFPM Kaixiong Yu <yukaixiong@huawei.com>=
- wrote:
->
-> Use vfs_pressure_ratio() to simplify code.
->
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
->  net/sunrpc/auth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> index 04534ea537c8..3d2b51d7e934 100644
-> --- a/net/sunrpc/auth.c
-> +++ b/net/sunrpc/auth.c
-> @@ -489,7 +489,7 @@ static unsigned long
->  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_contro=
-l *sc)
->
->  {
-> -       return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> +       return vfs_pressure_ratio(number_cred_unused);
+Hi Pierre,
 
-Looks fairly straightforward to me.
-
-Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-
->  }
+On 8/30/2024 2:58 AM, Pierre-Louis Bossart wrote:
 >
->  static void
-> --
-> 2.25.1
+> On 8/29/24 21:41, Wesley Cheng wrote:
+>> Utilize the card and PCM index coming from the USB QMI stream request.
+>> This field follows what is set by the ASoC USB backend, and could
+>> potentially carry information about a specific device selected through the
+>> ASoC USB backend.  The backend also has information about the last USB
+>> sound device plugged in, so it can choose to select the last device plugged
+>> in, accordingly.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  sound/usb/qcom/qc_audio_offload.c | 8 ++------
+>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+>> index 0bd533f539e4..a7ad15404fd1 100644
+>> --- a/sound/usb/qcom/qc_audio_offload.c
+>> +++ b/sound/usb/qcom/qc_audio_offload.c
+>> @@ -106,8 +106,6 @@ struct uaudio_qmi_dev {
+>>  	bool er_mapped;
+>>  	/* reference count to number of possible consumers */
+>>  	atomic_t qdev_in_use;
+>> -	/* idx to last udev card number plugged in */
+>> -	unsigned int last_card_num;
+>>  };
+>>  
+>>  struct uaudio_dev {
+>> @@ -1261,7 +1259,7 @@ static int prepare_qmi_response(struct snd_usb_substream *subs,
+>>  
+>>  	pcm_dev_num = (req_msg->usb_token & QMI_STREAM_REQ_DEV_NUM_MASK) >> 8;
+>>  	xfer_buf_len = req_msg->xfer_buff_size;
+>> -	card_num = uaudio_qdev->last_card_num;
+>> +	card_num = (req_msg->usb_token & QMI_STREAM_REQ_CARD_NUM_MASK) >> 16;
+>>  
+>>  	if (!uadev[card_num].ctrl_intf) {
+>>  		dev_err(&subs->dev->dev, "audio ctrl intf info not cached\n");
+>> @@ -1455,8 +1453,7 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
+>>  
+>>  	direction = (req_msg->usb_token & QMI_STREAM_REQ_DIRECTION);
+>>  	pcm_dev_num = (req_msg->usb_token & QMI_STREAM_REQ_DEV_NUM_MASK) >> 8;
+>> -	pcm_card_num = req_msg->enable ? uaudio_qdev->last_card_num :
+>> -				ffs(uaudio_qdev->card_slot) - 1;
+>> +	pcm_card_num = (req_msg->usb_token & QMI_STREAM_REQ_CARD_NUM_MASK) >> 16;
+>>  	if (pcm_card_num >= SNDRV_CARDS) {
+>>  		ret = -EINVAL;
+>>  		goto response;
+>> @@ -1706,7 +1703,6 @@ static void qc_usb_audio_offload_probe(struct snd_usb_audio *chip)
+>>  		sdev->card_idx = chip->card->number;
+>>  		sdev->chip_idx = chip->index;
+>>  
+>> -		uaudio_qdev->last_card_num = chip->card->number;
+>>  		snd_soc_usb_connect(usb_get_usb_backend(udev), sdev);
+>>  	}
+> This entire path seems like a bad split/merge, it removes stuff that was
+> done earlier. Also it's not clear what this has to do with 'QMI', card
+> and PCM device management is usually done at a higher level.
 >
+> not following, please be mindful of reviewer fatigue when adding such
+> changes in patch 30/33....
+
+I'll just add this as part of patch#28.  I think before I did the reordering of the series, this made a bit more sense to have as a patch on its own.  Now that the entire framework for the audio dsp to know about the card and pcm index is already done in previous patches, the plumbing is done for the qc_audio_offload to utilize the fields coming from the audio DSP, as they will carry valid values.
+
+Thanks
+
+Wesley Cheng
+
 
