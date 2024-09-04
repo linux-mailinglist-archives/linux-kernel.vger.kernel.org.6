@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-314055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA48696AE35
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F0796AE31
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BF51F258D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DDC1F21CFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1DF11C83;
-	Wed,  4 Sep 2024 02:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3742208C4;
+	Wed,  4 Sep 2024 02:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fq9OG0g4"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9284F2B9DD;
-	Wed,  4 Sep 2024 02:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mVzkO+nE"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6699D529;
+	Wed,  4 Sep 2024 02:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725415455; cv=none; b=qal3qFqa12pXj69FnFpUDUGUN9eV77R930VqM6RX128GihGN6bRY8HhqAx/McwiS7jfeCFVuM6VAo8KGyrG3nU5GYf2U7ZFFD5rudHy8LD3nVjeK9hiBu/9RtHu2IHaFJ64fb3ZEZExBD+7wTppuXLkHfrTo5C8EW1koQp7FkMU=
+	t=1725415347; cv=none; b=mK6HzH5F9an4yCZKDj7VGemdgH5KQuz3aR8f+5WVqfv1hxRpqYeThS3uQ7k29D/PENyc6yu/St1hgT7WH1Ctc95/8tC/FKUDci6T8IBFXR8amIE/9J5CY7agYKVolXKvPWm5q309QfJ2X1yAnrh38fnUYGGRSF0EttTGUFMyHv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725415455; c=relaxed/simple;
-	bh=mOLo7uxc+zyKUKVPqtsesBtnTvOj1TgvWFgKIaXT7kI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rKu3gxRg7GIb2CuIdZxyckE8wlv0h7SoxOJIPfgWRci0cTA+0F2t2AoHlDd5ws5odsT4mIVwnueeLghHresyGmBnGhp2PzVVp+0UZaVXZyDhX+9HUWlpw7tSEO0y8qaqp1+PNlaTtj84+sAXvMFFdyA334NTF/A79VoMMFrWm4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fq9OG0g4; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=R4ZezYIoiZAjq1PpNIuq4c3s3VGGQxCxeXQeazgl4sw=;
-	b=fq9OG0g4gPC8pbhz0VCTaojvpXSkOSWu4/030A8JIQ9FKps4CAi/NDFu1inK5w
-	cxUeXun3jxkUmcRgy/emuaNSKOIKK4kSvFf4fErMt3+aq/3ya2gPDW2W/OZaozqn
-	aewVTFR3aq0m+fED2/GFX8KRTIF6tVBZPM1J/L8xSbnf4=
-Received: from [10.42.116.6] (unknown [111.48.58.10])
-	by gzsmtp3 (Coremail) with SMTP id sigvCgDn1+Wiv9dmPPcjAw--.49606S2;
-	Wed, 04 Sep 2024 10:02:12 +0800 (CST)
-Message-ID: <9b0ff6b4-560f-ae7c-25e8-de349a089761@163.com>
-Date: Wed, 4 Sep 2024 10:02:09 +0800
+	s=arc-20240116; t=1725415347; c=relaxed/simple;
+	bh=B28oxwYLmJ4+vU0YbnjwVo6lSTp4OAB5sdR/64EZ3RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=l/rOpp+fkDBI6UNOu9vHy8e8MmcKK5dT2gr2ldQhBSHIuSaBcT+6oihUfGS4aRtYRhYdARCJHeLcu3yr6lo7tYP3ClfP9EoQWRp65HLklCfzDuQkRUpmCgMRNGG4ij+XHaqmfyYqdi+82A4jk3YCtPdAvXJj+B0yohvNQ6CFSBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mVzkO+nE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725415343;
+	bh=vv/ANfe5ReI4atsmhoigATXPp5eYYn2euiExp9SZns0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mVzkO+nEsVJcWO1MJq6xFyTgcqhCc8MboIbqzn0htVZvXgnSe7rMYdaN/SpEqYe4H
+	 UWJeh9YY1wubx3vuOyQt+wn4drfDzpX/2PlRZLUJIyUk60TsEexX5YbzUAWJMa1ing
+	 +ngTqbwqzBVQM3y++cN6Mx1Vbcif/U4eQGgeVed8xO7nsVwMkconbkxPUQDU+0OveT
+	 2yhWvWbwZ7aamznOhP0UO653PLdtT07htmV/zvHOs1gpNr4AUxLMHS432AOfRmxToT
+	 9gBDr63KdlwV7N5D0kmIsnEftEu0mvJOU7KW5kAD5/at3By9Ka0GlhhKQMl0ueIzvy
+	 DZVsc+4tFWFOA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz5NG2v6xz4wnt;
+	Wed,  4 Sep 2024 12:02:22 +1000 (AEST)
+Date: Wed, 4 Sep 2024 12:02:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the net-next
+ tree
+Message-ID: <20240904120221.54e6cfcb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] eventfs: fix a null pointer access in eventfs_iterate
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chi Zhiling <chizhiling@kylinos.cn>
-References: <20240829032436.2997321-1-chizhiling@163.com>
- <20240903155128.5e02e40a@gandalf.local.home>
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <20240903155128.5e02e40a@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:sigvCgDn1+Wiv9dmPPcjAw--.49606S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFWUuF15KFW7Gw43CFy7Awb_yoW5XrWrpr
-	Z7JF9xKw4xJw4I9F9av3Wqgr1Fqwn2gF4DGF1fCw1xJ398ZrnrKF9rtF4UWrWSyrW8Aayj
-	qa10ka1UC3yjqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UI2NNUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBaxBPnWV4IHkN8wABsS
+Content-Type: multipart/signed; boundary="Sig_/ymGS12FCuyBKBHULoaPTR+s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/ymGS12FCuyBKBHULoaPTR+s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/9/4 03:51, Steven Rostedt wrote:
-> On Thu, 29 Aug 2024 11:24:36 +0800
-> Chi Zhiling <chizhiling@163.com> wrote:
->
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> We found a null pointer accessing in tracefs[1], the reason is that
->> the variable 'ei_child' is set to LIST_POISON1, that means the list
->> was removed in eventfs_remove_rec. so when access the ei_child->is_freed,
->> the panic triggered.
->>
->> the linked list is protected by eventfs_mutex in eventfs_remove_rec,
-> Only writes of the link list is protected by the mutex. Reads are not.
->
->> so when we access the list of ei_child in eventfs_iterate, we also need
->> a mutex_lock in there to avoid eventfs_remove_rec modify the list.
-> Yes you hit a bug, but no this is *not* the solution!
->
->
->> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
->> ---
->>   fs/tracefs/event_inode.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
->> index 01e99e98457d..4895ed07376b 100644
->> --- a/fs/tracefs/event_inode.c
->> +++ b/fs/tracefs/event_inode.c
->> @@ -642,6 +642,7 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
->>   	/* Subtract the skipped entries above */
->>   	c -= min((unsigned int)c, (unsigned int)ei->nr_entries);
->>   
->> +	mutex_unlock(&eventfs_mutex);
-> This list is protected by SRCU (hence the name of the iterator), if you
-> need to add a mutex around it, something else is broken.
->
->>   	list_for_each_entry_srcu(ei_child, &ei->children, list,
->>   				 srcu_read_lock_held(&eventfs_srcu)) {
->>   
->> @@ -659,9 +660,12 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
->>   
->>   		ino = eventfs_dir_ino(ei_child);
->>   
->> -		if (!dir_emit(ctx, name, strlen(name), ino, DT_DIR))
->> +		if (!dir_emit(ctx, name, strlen(name), ino, DT_DIR)) {
->> +			mutex_unlock(&eventfs_mutex);
->>   			goto out_dec;
->> +		}
->>   	}
->> +	mutex_unlock(&eventfs_mutex);
->>   	ret = 1;
->>    out:
->>   	srcu_read_unlock(&eventfs_srcu, idx);
-> The real fix is:
->
-> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-> index 01e99e98457d..8705c77a9e75 100644
-> --- a/fs/tracefs/event_inode.c
-> +++ b/fs/tracefs/event_inode.c
-> @@ -862,7 +862,7 @@ static void eventfs_remove_rec(struct eventfs_inode *ei, int level)
->   	list_for_each_entry(ei_child, &ei->children, list)
->   		eventfs_remove_rec(ei_child, level + 1);
->   
-> -	list_del(&ei->list);
-> +	list_del_rcu(&ei->list);
->   	free_ei(ei);
->   }
->   
-> Can you test that and let me know if it fixes your issue. I'll just go
-> ahead and apply it as it is an obvious bug.
->
-Okay, I've tested it and I haven't seen any errors.
+Hi all,
 
+Today's linux-next merge of the bpf-next tree got a conflict in:
+
+  drivers/net/netkit.c
+
+between commit:
+
+  00d066a4d4ed ("netdev_features: convert NETIF_F_LLTX to dev->lltx")
+
+from the net-next tree and commit:
+
+  d96608794889 ("netkit: Disable netpoll support")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/netkit.c
+index 79232f5cc088,0681cf86284d..000000000000
+--- a/drivers/net/netkit.c
++++ b/drivers/net/netkit.c
+@@@ -255,7 -255,7 +255,8 @@@ static void netkit_setup(struct net_dev
+  	dev->priv_flags |=3D IFF_LIVE_ADDR_CHANGE;
+  	dev->priv_flags |=3D IFF_PHONY_HEADROOM;
+  	dev->priv_flags |=3D IFF_NO_QUEUE;
+ +	dev->lltx =3D true;
++ 	dev->priv_flags |=3D IFF_DISABLE_NETPOLL;
+ =20
+  	dev->ethtool_ops =3D &netkit_ethtool_ops;
+  	dev->netdev_ops  =3D &netkit_netdev_ops;
+
+--Sig_/ymGS12FCuyBKBHULoaPTR+s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbXv60ACgkQAVBC80lX
+0Gzw1QgAoAFlve1pnH2uAHlsjPUgltj4nXeJuQqELB77BPM6kUjTJkryOsLnm8Np
+mvTwdUfa2yjZOPcLWU3Hw/soitYW87J7B3u1K6cRb0LHG52s6A59mQGLJY2egh9t
+I2jCgnsiG1GTOUbKRJQHn8QSm5iQ8pk1tg1/075cE9cQDf8TZZjN8472seVrSVI9
+JjUla3MlqQB+Q/zf2kR3KjlhHmpDouMcLXsYUxKCibBzcgs132wZu0cK2NbT6p2i
+JNhNrgcznITr0X58of4Nxb7oeKtf58tyilDDAKYcP94kRHp5UCu2QcAEpgUNVUno
+Z8O1n//E/Pt4wg4Ss9jXO7Yfcaxihw==
+=0BeO
+-----END PGP SIGNATURE-----
+
+--Sig_/ymGS12FCuyBKBHULoaPTR+s--
 
