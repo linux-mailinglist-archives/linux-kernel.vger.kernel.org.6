@@ -1,54 +1,50 @@
-Return-Path: <linux-kernel+bounces-314455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0151696B392
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:54:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1BF96B39E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC52D1F226F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B1A1C24A63
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3E016C6B7;
-	Wed,  4 Sep 2024 07:53:24 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B786617BEB6;
+	Wed,  4 Sep 2024 07:54:48 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F3154C09;
-	Wed,  4 Sep 2024 07:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57507158A2E;
+	Wed,  4 Sep 2024 07:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436404; cv=none; b=ixfFF8pp3Ag9xgH2uJLwPh/LSP9fcYT2Cx4dkoD8h/WbJfCKRIGRalVH1Y+FjAttBPIBDif5o5zVTYL/eXmOszvbiq1Y8z8DNjD5RyczRwhYPK73YVrflzaAa5EJhQdHUc4WOm/ZxL8C8tv6B09fokVDBrXOvG19TC+4YdMP/To=
+	t=1725436488; cv=none; b=eb5KSgUNPJfOLuQ0IqB5j+joHEfB9RI9q+6aPUHfJDpnRj/qHgDathB1wjr3RXvUc00z7V98AB4ncTDLeClLqSE6aS6KOKAejyJYOmIDrdNoVemktTyYkghAmU773iihQm/6bWsPVk/3uyqWZeZXRyhxYL5khLQHUMxQNsr8ewU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436404; c=relaxed/simple;
-	bh=9YVSl3Ct5tIWYZ8sVcOucsvy4DaQHnWGMJrURp+UFVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rVHE4cNGBToVElOAGRaI4nTdOnS5p09P5UGhxoTE0GMLtxulKiasndBf7fUiDKAG6upeLDqd/3hKJM95XEHlhByq/wkamDd91z0acU3vO/WbfJ4XtFOqBMURqrfJFYuj1+DBw81wecFYYJlMjspPD++1N8w1PbYmTjCIAWTRXjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAB3f+voEdhmno8mAQ--.4888S2;
-	Wed, 04 Sep 2024 15:53:12 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	deren.wu@mediatek.com,
-	mingyen.hsieh@mediatek.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] wifi: mt76: mt7925: convert comma to semicolon
-Date: Wed,  4 Sep 2024 15:52:13 +0800
-Message-Id: <20240904075213.1352976-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1725436488; c=relaxed/simple;
+	bh=JBXg7CfQ3VIG9HLAsM4cdCYg8LEz/4+0/h6UDJ8qPWc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ac4Q9ervZiWI24Fj2V1K0tNNUbs+R94sVutw2RhKkND7KmVOHKiTaAS4MaCrFc81+EwTPiXcSKlVSDptw317XOcQWwo5fZnC6ce5uxWl1yGyZwuszyFYIVyjY/xMbtosE6fqM1TJgO0gAx2ZVQNQngOibq4ebdnysTqVxfTjOAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4847rEPP033233;
+	Wed, 4 Sep 2024 15:53:14 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WzF0z3lVBz2PHTwk;
+	Wed,  4 Sep 2024 15:46:11 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 4 Sep 2024 15:53:12 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang
+	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [PATCHv2 1/1] fs: ext4: Don't use CMA for buffer_head
+Date: Wed, 4 Sep 2024 15:53:00 +0800
+Message-ID: <20240904075300.1148836-1-zhaoyang.huang@unisoc.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,63 +53,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3f+voEdhmno8mAQ--.4888S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4ktF1xGrg_yoW8Ar4DpF
-	W8G3yjyr1UJ3Zxt3Z5XanxCFsxZan5C3WfKrZYq3s5Zw1kAF1xAFy7Ja4UJryDAFWIka12
-	gr4FqryrXw43urJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbkR67UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 4847rEPP033233
 
-Replace comma between expressions with semicolons.
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
+can not be migrated out of CMA area[1] as the jh has one cp_transaction
+pending on it because of j_free > j_max_transaction_buffers[2][3][4][5][6].
+We temporarily solve this by launching jbd2_log_do_checkpoint forcefully
+somewhere. Since journal is common mechanism to all JFSs and
+cp_transaction has a little fewer opportunity to be launched, the
+cma_alloc() could be affected under the same scenario. This patch
+would like to have buffer_head of ext4 not use CMA pages when doing
+sb_getblk.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+[1]
+crash_arm64_v8.0.4++> kmem -p|grep ffffff808f0aa150(sb->s_bdev->bd_inode->i_mapping)
+fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020 lru,private
+fffffffe03d189c0 174627000 ffffff808f0aa150        4  2 2004000000008020 lru,private
+fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2 2008000000008020 lru,private
+fffffffe03d88e40 176239000 ffffff808f0aa150        6  2 2008000000008020 lru,private
+fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2 2008000000008020 lru,private
+fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2 2008000000008020 lru,private
+fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2 2008000000008020 lru,private
+fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2 2004000000008020 lru,private
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+[2] page -> buffer_head
+crash_arm64_v8.0.4++> struct page.private fffffffe01a51c00 -x
+      private = 0xffffff802fca0c00
+
+[3] buffer_head -> journal_head
+crash_arm64_v8.0.4++> struct buffer_head.b_private 0xffffff802fca0c00
+  b_private = 0xffffff8041338e10,
+
+[4] journal_head -> b_cp_transaction
+crash_arm64_v8.0.4++> struct journal_head.b_cp_transaction 0xffffff8041338e10 -x
+  b_cp_transaction = 0xffffff80410f1900,
+
+[5] transaction_t -> journal
+crash_arm64_v8.0.4++> struct transaction_t.t_journal 0xffffff80410f1900 -x
+  t_journal = 0xffffff80e70f3000,
+
+[6] j_free & j_max_transaction_buffers
+crash_arm64_v8.0.4++> struct journal_t.j_free,j_max_transaction_buffers 0xffffff80e70f3000 -x
+  j_free = 0x3f1,
+  j_max_transaction_buffers = 0x100,
+
+Suggested-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v2: switch to use getblk_unmoveable as suggested by Theodore Ts'o
+---
+---
+ fs/ext4/inode.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-index 9dc22fbe25d3..82c5a8def344 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-@@ -2171,12 +2171,12 @@ void mt7925_mcu_bss_rlm_tlv(struct sk_buff *skb, struct mt76_phy *phy,
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 941c1c0d5c6e..a0f48840c5c1 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -869,7 +869,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
+ 	if (nowait)
+ 		return sb_find_get_block(inode->i_sb, map.m_pblk);
  
- 	tlv = mt76_connac_mcu_add_tlv(skb, UNI_BSS_INFO_RLM, sizeof(*req));
- 	req = (struct bss_rlm_tlv *)tlv;
--	req->control_channel = chandef->chan->hw_value,
--	req->center_chan = ieee80211_frequency_to_channel(freq1),
--	req->center_chan2 = ieee80211_frequency_to_channel(freq2),
--	req->tx_streams = hweight8(phy->antenna_mask),
--	req->ht_op_info = 4, /* set HT 40M allowed */
--	req->rx_streams = hweight8(phy->antenna_mask),
-+	req->control_channel = chandef->chan->hw_value;
-+	req->center_chan = ieee80211_frequency_to_channel(freq1);
-+	req->center_chan2 = ieee80211_frequency_to_channel(freq2);
-+	req->tx_streams = hweight8(phy->antenna_mask);
-+	req->ht_op_info = 4; /* set HT 40M allowed */
-+	req->rx_streams = hweight8(phy->antenna_mask);
- 	req->band = band;
- 
- 	switch (chandef->width) {
+-	bh = sb_getblk(inode->i_sb, map.m_pblk);
++	/*
++	 * Since bh could introduce extra ref count such as referred by
++	 * journal_head etc. Try to avoid using __GFP_MOVABLE here
++	 * as it may fail the migration when journal_head remains.
++	 */
++	bh = getblk_unmovable(inode->i_sb->s_bdev, map.m_pblk,
++				inode->i_sb->s_blocksize);
++
+ 	if (unlikely(!bh))
+ 		return ERR_PTR(-ENOMEM);
+ 	if (map.m_flags & EXT4_MAP_NEW) {
 -- 
 2.25.1
 
