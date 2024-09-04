@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-315789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF1B96C703
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:02:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEFF96C706
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C43C281590
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3A41C22104
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E7813C690;
-	Wed,  4 Sep 2024 19:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0D813D630;
+	Wed,  4 Sep 2024 19:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN03ldjK"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cd2h17eD"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F913213C;
-	Wed,  4 Sep 2024 19:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBDF13C69B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476545; cv=none; b=pCm8UPP9Eo7co+h3yaj2sqRIBP4bCPXqpMpNxom1IvhG5gBpeCB08GUPFgxPlfVTFsCWKnV+C2AZg/fUjZ34SYNi12bOXFSLIyNVNTN0unv+B/yxIvzBeDrW1Gq0rWtLz8UudYg4QkoxCGctMrMJhmp1QImT+ySwe0c1xyrc4vg=
+	t=1725476599; cv=none; b=UdjXIMPA6i9+vdkWrraE/YOWIRyk+at71iI1WlmXlu+Ny91P2gsq0Pn7LOcoHLJyPBaphTLHHOJzJJp/bdShQC1m/uZXEoAcqwUfJw/1RifySiL4jiYFLUDRNtDCNdY6UjiI7q8fePlBo0jv/s47kemPlWgU9uaBn0WIJZ67OtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476545; c=relaxed/simple;
-	bh=HjIWWMumuDgvU0ntwXS8HycrEl8BW4+Jtf9AtY5EUVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dy+SXxwjRMXQlyzh1VemBBLznz6xhy9Qwr14vJGGv5wafcMwCMWL4zgzUsChPpq3oim1/hwiBEdT69H1kG7UwkXvNzQ6kXkRJKPLyn42vbe+biFE8j1UukTU4bx6eubkuugSnVR33LNNa8N2EOkats1UlDGNYLIrmI9787G3zIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN03ldjK; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so4846974a12.2;
-        Wed, 04 Sep 2024 12:02:23 -0700 (PDT)
+	s=arc-20240116; t=1725476599; c=relaxed/simple;
+	bh=LwYEJo6o09T+842OUp0RbU+NfeLRXXK5UVtu56xqzNs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=edEZzY559ENp5CmcELscbS64xsteW8e22f3+3cA6QvGVuDvOIfsAkXedeLxfYxwASwto37fdAIccB8xRfKAAnYAy8NUXZfkW3Q7y8xZtLOi0/MI0xtHD1lVLJHdc/qDEDpWnfIoQdDNM9DgLwTETTJ8YdcVrEi1Vf8ypKT2stA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cd2h17eD; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2053525bd90so38789315ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 12:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725476542; x=1726081342; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tKQQy5nIVs9/+b4e20CQPjhxPiV/5+Cu9tm77K8JZuY=;
-        b=DN03ldjKW1wIX2iPIWqGz2IU5FS158Wk9W7h7xH0ZoHVAkx06Dtxolt2BNCO8+dXZN
-         ugAB43viwZqVAqmQqaRsTeK/OD2sL7YToMi8qKSLe+uL+GM26HslnlxSgqmnrNK3j0ol
-         a7maHH8pjL+XRrHpJv80rD/Ez5bjTNl5orAgqntNPwkhxHM48ZzitBHRSDfOTFfu+ITz
-         cAO3uTvucfcS4Cj5oUfFY/shQFGRju7S1jNxOCl4nLxwoPu1q0XLfP7jTziBXOuc/HYd
-         MPZdp4h+dqliNIT7CC2QUfp3RHXiP/FIWBAXa6xCExYnUgJFOHUzmEWysziWVaTCdXYW
-         k5bg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725476597; x=1726081397; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E0D7251HzR81gHX5jZCvP/igmoNgdiJeJnsoApOKoy4=;
+        b=cd2h17eDqRSDebitPAio6Rk9AF1xju2B0n3ztLI7lQFu4+IiQCf5SOlIdqKkpyIbzv
+         V/NGPnJUpycpTDhdi2P/efr4UC2G0PC18DRXJ0uP/foBaQKP293SiN2ugV51/lQkVpJW
+         PYVEwcIhEy8A3yAtWyzbV3Y09LbL9XUjrqeziPgXTr36PDNnhGJmbrHUS35CmO9ZsBX2
+         dWo0OX2DiXz1XPdyprqdg9yxdzApeTGuU/ZZdFTqbVjUnqhU5HccuY2W+ecAnZbZ7Bks
+         EHoHr5WjZgyiVal3hP7BrjxHujl623gYnv5q6kBKrztfbFYqk+mMGVV9chAc/Sj9ERWT
+         QshA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725476542; x=1726081342;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKQQy5nIVs9/+b4e20CQPjhxPiV/5+Cu9tm77K8JZuY=;
-        b=vkJkVwuBTBn6yjj0caXeGszN9Opuz+yzCeoT0zzCHlYFBtmo04D6YkwzDbuFOmtETd
-         DBbgVwpSD8uW5WuwGcWuWdcBrKtxMI++4b+tOlWDgZKI2ZoYF763fH4SWV/C/Aq/7lFx
-         I6eEE1N5QEo+8sWvFtXi6P1YOqCHh1Y+uxfHtvgzrIENQAq2tiCfi3joUhCgMmakqj5C
-         4O1eT3T3LiU6+xQkciD8g7PX/oWh6udl2nGK4RTKeYlcAQKf2GkOTdVu3Y4kV5LbDpUf
-         A0bPEgR7Kxawu0FrwoETr2v3JwAZ1jsSrbthy6TH6pK5ixOscjVlAl6KMksyAbuEYoKH
-         X8hg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+8Rz2QUjtI1qi4btNy8F1fbzky9PJGPPEISX5dhkJOtzafc/o5yvoFJqYNy0A6ud+/Yi06+n1eafMcyL0@vger.kernel.org, AJvYcCW6DzMUhiWVNo0farVY3SqRg2n7C1H/bkfzjcWGEGuEWZPmj662UZ6FT/0I486zRCrHd0ELhpd6Hpm1ag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmKRav6V6udxJgxfo267Rxa/6yUYCKEN7mV58Xj+fQshZjCtBo
-	yOFTkF1HBNMBM0eRPZuITkIMM+grNQJ2m19NOeKCD0acdz/8vX457zGI8wtE
-X-Google-Smtp-Source: AGHT+IHmQnnfzoEoyjbzkXQjjedHB8Liabp3HAVxGBB3iZ0td/jnJhv0Ellp0Buwc7/bQ3+Avku9mw==
-X-Received: by 2002:a17:907:969e:b0:a7a:ba59:3164 with SMTP id a640c23a62f3a-a8a32f9f203mr433611066b.53.1725476542084;
-        Wed, 04 Sep 2024 12:02:22 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623e56basm24197966b.220.2024.09.04.12.02.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:02:21 -0700 (PDT)
-Message-ID: <df3cc6e6-f6c2-4025-850a-3bf8449bd95d@gmail.com>
-Date: Wed, 4 Sep 2024 21:02:19 +0200
+        d=1e100.net; s=20230601; t=1725476597; x=1726081397;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E0D7251HzR81gHX5jZCvP/igmoNgdiJeJnsoApOKoy4=;
+        b=oxh0bNhPiVNxRkQQXDjEq18zq/elgwStRDu7QLbucaZ1AVITUlfxbCBdCfMhtY+Rwc
+         5wZtt6rsZg0DcV25d29ggjbbMm1Gnve34PPj/C7YdxZnh6N4gSPUZIxwwd7uqbWZjbXy
+         dvnpLFVagCJH1sVimW661KAKXcumd91uqUFwnrFH4AO0MwaTgQkdRZYURx93NJCc+bHN
+         TgdPvLPJWB8y0LfWeXKNotH/BI4vnce4RsjnvpN7ZbHRhX9beq+GU33L/pQ3Tu3GJVVx
+         QnIhTmWzszHt7RNF3IYoA0fAnomiLuFIk7wJEl049Zk+6iLVgQujQ9DyfaGW1IPaKPMM
+         2OTA==
+X-Gm-Message-State: AOJu0Yw9yTEwoYoInNlKNoEmXLgXwx2ArBPzuVb0EWMZ87s1eovGY0XM
+	15BWGHCoGge95STNzRfmFa3CJ1oxE4EbBBmQ5bpKsgf7T5yBKuVIawsF6f2BaCw=
+X-Google-Smtp-Source: AGHT+IE7VOMf3ppAq0KbmxDhvh+WfeH0HUmFNzMm+YrUzM3vrGKSTl//0B4vrQ6LzZAUQCdmrPVI7w==
+X-Received: by 2002:a17:902:f68a:b0:202:ac8:991f with SMTP id d9443c01a7336-2054bce5e85mr99689315ad.26.1725476596915;
+        Wed, 04 Sep 2024 12:03:16 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9505b7sm16755135ad.89.2024.09.04.12.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 12:03:16 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Wed, 04 Sep 2024 12:03:07 -0700
+Subject: [PATCH] fs/xattr: add *at family syscalls to common syscall.tbl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/22] Input: da7280 - use guard notation when acquiring
- mutex and spinlock
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- Ville Syrjala <syrjala@sci.fi>,
- Support Opensource <support.opensource@diasemi.com>,
- Eddie James <eajames@linux.ibm.com>, Andrey Moiseev <o2g.org.ru@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>, Jeff LaBundy <jeff@labundy.com>,
- linux-kernel@vger.kernel.org
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044244.1042174-6-dmitry.torokhov@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240904044244.1042174-6-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240904-xattr_standard_functions-v1-1-60ccfa9d41e0@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAOqu2GYC/x3MwQqEIBCA4VeJOa+gJmH7KssSpmPNxV1mLILo3
+ ZOO/+H7TxBkQoF3dwLjTkK/0sK8OohrKAsqSq3Bauv0qJ06Qq08SQ0lBU5T3kqszYgyfnB5tn0
+ fPULjf8ZMx7P+fK/rBpDMnKVqAAAA
+To: Arnd Bergmann <arnd@arndb.de>, 
+ =?utf-8?q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1009; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=LwYEJo6o09T+842OUp0RbU+NfeLRXXK5UVtu56xqzNs=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9qNda+fxC6zWv9a2W2WVlj6OhfjwAX1az3btt1fMOn8Z
+ 70EB58DHaUsDGIcDLJiiiw81xqYW+/olx0VLZsAM4eVCWQIAxenAExEOp/hf+F2fWXGtz+dK+1i
+ n8xx58iTv1R/sfdGqLx5z+Yz8jHLDRj+KUyTMlAOSm4oOHEnTPlN1bKNZYuMl+9id1N8FJrruOI
+ TMwA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On 04/09/2024 06:42, Dmitry Torokhov wrote:
-> Using guard notation makes the code more compact and error handling
-> more robust by ensuring that locks are released in all code paths
-> when control leaves critical section.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/da7280.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
-> index 1629b7ea4cbd..e4a605c6af15 100644
-> --- a/drivers/input/misc/da7280.c
-> +++ b/drivers/input/misc/da7280.c
-> @@ -1263,39 +1263,37 @@ static int da7280_suspend(struct device *dev)
->  {
->  	struct da7280_haptic *haptics = dev_get_drvdata(dev);
->  
-> -	mutex_lock(&haptics->input_dev->mutex);
-> +	guard(mutex)(&haptics->input_dev->mutex);
->  
->  	/*
->  	 * Make sure no new requests will be submitted while device is
->  	 * suspended.
->  	 */
-> -	spin_lock_irq(&haptics->input_dev->event_lock);
-> -	haptics->suspended = true;
-> -	spin_unlock_irq(&haptics->input_dev->event_lock);
-> +	scoped_guard(spinlock_irq, &haptics->input_dev->event_lock) {
-> +		haptics->suspended = true;
-> +	}
->  
->  	da7280_haptic_stop(haptics);
->  
-> -	mutex_unlock(&haptics->input_dev->mutex);
-> -
->  	return 0;
->  }
->  
->  static int da7280_resume(struct device *dev)
->  {
->  	struct da7280_haptic *haptics = dev_get_drvdata(dev);
-> -	int retval;
-> +	int error;
->  
-> -	mutex_lock(&haptics->input_dev->mutex);
-> +	guard(mutex)(&haptics->input_dev->mutex);
->  
-> -	retval = da7280_haptic_start(haptics);
-> -	if (!retval) {
-> -		spin_lock_irq(&haptics->input_dev->event_lock);
-> +	error = da7280_haptic_start(haptics);
-> +	if (error)
-> +		return error;
-> +
-> +	scoped_guard(spinlock_irq, &haptics->input_dev->event_lock) {
->  		haptics->suspended = false;
-> -		spin_unlock_irq(&haptics->input_dev->event_lock);
->  	}
->  
-> -	mutex_unlock(&haptics->input_dev->mutex);
-> -	return retval;
-> +	return 0;
->  }
->  
->  #ifdef CONFIG_OF
+Commit 6a7fb6ebe371 ("fs/xattr: add *at family syscalls") didn't add the
+syscalls to the common scripts/syscall.tbl that was also recently
+introduced in commit 4fe53bf2ba0a ("syscalls: add generic
+scripts/syscall.tbl") which a handful of architectures use.
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ scripts/syscall.tbl | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
+index 845e24eb372e..ebbdb3c42e9f 100644
+--- a/scripts/syscall.tbl
++++ b/scripts/syscall.tbl
+@@ -403,3 +403,7 @@
+ 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
+ 461	common	lsm_list_modules		sys_lsm_list_modules
+ 462	common	mseal				sys_mseal
++463	common	setxattrat			sys_setxattrat
++464	common	getxattrat			sys_getxattrat
++465	common	listxattrat			sys_listxattrat
++466	common	removexattrat			sys_removexattrat
+
+---
+base-commit: fdadd93817f124fd0ea6ef251d4a1068b7feceba
+change-id: 20240904-xattr_standard_functions-1864fb233c8e
+-- 
+- Charlie
+
 
