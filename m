@@ -1,181 +1,212 @@
-Return-Path: <linux-kernel+bounces-314741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8952296B7DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:08:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B3796B7E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2CC1C246CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3191FB25F76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382FB1CF5EB;
-	Wed,  4 Sep 2024 10:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6E51CF2BC;
+	Wed,  4 Sep 2024 10:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AiBCvM1F"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GPxaxT8+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x/ynGLZl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48F1CF2BC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC1F1CF7A3;
+	Wed,  4 Sep 2024 10:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444490; cv=none; b=bg9Fc9tp+UuE1MOv2CFfO2CrjNGAzIzN0jNz9kIJvihLVN2B/QKwO0q7t5Q2nK21sT7D+XrADVDl5yF3mW3aMHT1n3kbS/Tfqhfj9okWF6vHJ9VlV2sSQ6OUI8+12EKrCCKVhfMCNsQsc4+Q10te6UhhB8m6zLi3ZfAOflsKSyk=
+	t=1725444496; cv=none; b=Bu6aoaAFxZ5cbJ1SUTBBHtTHHcQmY4vKIq6pLsp+eOKpt9xksX8K8C6ixSwAoaU4py1E1wVQWlbtALOWUjE2CBHkH8WnyovDP/ZdtjTsuNHgBlEuocFdPjG8e6Mk/rgLcFwqx0DupxlqHrVAnv2YR8CwWtiSo73YPLeDUmILYOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444490; c=relaxed/simple;
-	bh=zio+a0ruwSHwDzq4IpOiQijKnnS41D2V7N1DIsEFam0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKZMLyRDtuFEO+iMzjNXaPce87Ym22PJi8yzphNk43LQqJPB6WfXTY6feRN/wlpdstUsa3X8BiIHAcj+Vewzu3JIZ8jMH7Na5d2dsaAaYqqMRDZ0xqdiCz+HuzGKkEPJbIfkNs8WEQTSbiWg4mz0xuO293x/tmoFF7SwG7j4eks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AiBCvM1F; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86e5e9ff05so738964766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725444486; x=1726049286; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dR1M+3gWwkz1AwnSNcxXU0EUhSSon/LIBkGrYtHf2ps=;
-        b=AiBCvM1FRYac3EnoC2V8yMOQxd39CpBMTM2EEe9Ol8wpLtSyRfdt+ewsahrA8H3Vji
-         jgZTunExehkTFcQrJWtqO5lYT46ZsWfP1rSn1eAE7D3jtx13wDayI5vGmggTmV13Fvq/
-         zajnAFZFueXuEMYzMEGXECdmpzT2HLDKe9XrzGhG361TmbPMrCGxbJsVT9MBACMlW7yW
-         9HVpSfEKOsma28RLz506Tl9GzFEP9KmTRy91VQlRJWw27GijXUvJ3px0nf/rhpaOtQO3
-         V+f4ovlCqoE/8PgBEy3LTEc58OGCDwBnT2rzGlZgZ083tf9NrcHvpgdm0LCPS3z7wQPO
-         uDQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725444486; x=1726049286;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dR1M+3gWwkz1AwnSNcxXU0EUhSSon/LIBkGrYtHf2ps=;
-        b=XgiN3PnW6rsuZRgNkGG/zf+/J9qVbSWHkTbEhn+EViyWndMOP9Cga/OuKtufZ+efUl
-         6/kUcJotFblRRyp58XP4G6oMdbpLYBthHnQD0Lryc5CwRewnKyTdrhn0Cq0Sb37SAmKN
-         Ej3TeZHKnX3QWlb19HZESz2Arzf+IiDTNO0TDrA9r5gJYI5Khl2sT7HFJ6aYw1/nHFZP
-         K3BUU2TKYH/Nhe1tstPiPfOM6cVi3erahSh0om4zxge9Ez+qijTTF+zKwZFdVJtdI5aG
-         xhtq9uRN+RENghqFKfUqtUSn2m/s9oUQfMCA/gzYPfJIlA0Ku4KPKhT0mlJFKXWWb7F2
-         kDhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmSmQk1Bi0BeI0nMlSPPxBr0PnsGB0Rj3KIAihMwLWnZHAmb1W9zzyZmZ6Ddw0WnKK6eWX16p5t33EOL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJM3A8CQZBUhOcu4JbJZxDpLd1OV+J4LpqugYKRwjmWJCYkCI9
-	2pvFY50HYMZd48sH1NJIQL0VB2KK3zL3Hd+FUPpl+yjBHzsDWhK8VeSqb1RMpkFnddkG51IRntn
-	p
-X-Google-Smtp-Source: AGHT+IHmj/JiGbJvtc5bJERYQCNjeeiYu04Tlb0ms5vEl1yROFVony/cBFRozI3jj6zAJF6Ufv17ow==
-X-Received: by 2002:a17:906:c155:b0:a86:a909:4f67 with SMTP id a640c23a62f3a-a8a32f9f1edmr272904266b.52.1725444485983;
-        Wed, 04 Sep 2024 03:08:05 -0700 (PDT)
-Received: from localhost (p5dc68f76.dip0.t-ipconnect.de. [93.198.143.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89890229b5sm795006166b.51.2024.09.04.03.08.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 03:08:05 -0700 (PDT)
-Date: Wed, 4 Sep 2024 12:08:03 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, aardelean@baylibre.com
-Subject: Re: [PATCH 4/8] pwm: Export pwm_get_state_hw
-Message-ID: <g2x7a4jmlbziciyctf5qgmcpztobvduds6psoaelnludermkjv@6nlxvbws7eo4>
-References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
- <20240815-ad7606_add_iio_backend_support-v1-4-cea3e11b1aa4@baylibre.com>
+	s=arc-20240116; t=1725444496; c=relaxed/simple;
+	bh=e1BZ8sr8PBs/oSF5RBAjsfcaORsEM2/ZHWJLHgSCRvM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=a/MkAZckIgBeeyJOOTRRrjd8prNHf+XEvgx80kE4YgRzbV1PyZnxZYgyARJZE4zZ6kwVS+zew82ZwEXehlk4+RJUPx8s1SoCUOgXrrIlXR9x3SKROje2GpYG9vB49vo+blozLJmxXtKeb/jhe+D/K3C8H2W3D6fatCvCqvDW2sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GPxaxT8+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x/ynGLZl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 04 Sep 2024 10:08:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725444492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5yGt24uZ+HrO8WzcOCxRh674oX16xpXaDeqrslQLnm8=;
+	b=GPxaxT8+Z3Gy3EKSSCxetRk2j18/Rrfryb+8NZ5OtJBZxd4jwXH9EYlw2CHYWDz76SAu5A
+	VdvtfaZkIh7fGLAGz98eprWcKKqk2lHJVFGDMC2A26nJ0obahinJ/p5GBFJuZU+uw/ExdJ
+	XAGzRURx5J93vBxbEfPbQBdHmhN1Kxg8Ams2wJdc7ku6poTQnJAIIKwFw094j/nqWvKtS8
+	SlqCSbPm4TiSs4dCfUTvJPX1ls4PVPAl3tOtUMq/FpEaktjslNrwOI2//Y1og8fQ35rJMp
+	LIeYtPW3lCKMu8WIhu+uP5C4HQ+v4sSVLGgXk208JKQmHd6RtqQL1WriJHx/ZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725444492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5yGt24uZ+HrO8WzcOCxRh674oX16xpXaDeqrslQLnm8=;
+	b=x/ynGLZltdd2GwcQsQesxFef+fgKb36Zly+a14oGeD9VZBDA6Vc4GPjJtbhtzDJdGLWSWI
+	FruuPHL9w3MYBBCw==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timers: Annotate possible non critical data race
+ of next_expiry
+Cc: syzbot+bf285fcc0a048e028118@syzkaller.appspotmail.com,
+ "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240829154305.19259-1-anna-maria@linutronix.de>
+References: <20240829154305.19259-1-anna-maria@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ufhpggxbgc5feny"
-Content-Disposition: inline
-In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-4-cea3e11b1aa4@baylibre.com>
+Message-ID: <172544449178.2215.12442072639516002840.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the timers/core branch of tip:
 
---2ufhpggxbgc5feny
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     79f8b28e85f83563c86f528b91eff19c0c4d1177
+Gitweb:        https://git.kernel.org/tip/79f8b28e85f83563c86f528b91eff19c0c4d1177
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Thu, 29 Aug 2024 17:43:05 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 04 Sep 2024 11:57:56 +02:00
 
-On Thu, Aug 15, 2024 at 12:11:58PM +0000, Guillaume Stols wrote:
-> This function can be used in some other drivers, for instance when we
-> want to retrieve the real frequency vs the one that was asked.
+timers: Annotate possible non critical data race of next_expiry
 
-I'd write:
+Global timers could be expired remotely when the target CPU is idle. After
+a remote timer expiry, the remote timer_base->next_expiry value is updated
+while holding the timer_base->lock. When the formerly idle CPU becomes
+active at the same time and checks whether timers need to expire, this
+check is done lockless as it is on the local CPU. This could lead to a data
+race, which was reported by sysbot:
 
-	For some drivers (here: the upcoming ad7606 adc driver) it's important
-	to know the actually configured PWM state. This is in general different
-	from the state returned by pwm_get_state() (i.e. the last applied state)
-	because most hardware doesn't have nano second granularity. So make
-	pwm_get_state_hw() a public function.
+  https://lore.kernel.org/r/000000000000916e55061f969e14@google.com
 
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 21fca27bb8a3..82e05ed88310 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -651,7 +651,7 @@ int pwm_apply_atomic(struct pwm_device *pwm, const st=
-ruct pwm_state *state)
->  }
->  EXPORT_SYMBOL_GPL(pwm_apply_atomic);
-> =20
-> -static int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *st=
-ate)
-> +int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *state)
->  {
->  	struct pwm_chip *chip =3D pwm->chip;
->  	const struct pwm_ops *ops =3D chip->ops;
-> @@ -685,6 +685,7 @@ static int pwm_get_state_hw(struct pwm_device *pwm, s=
-truct pwm_state *state)
-> =20
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(pwm_get_state_hw);
+When the value is read lockless but changed by the remote CPU, only two non
+critical scenarios could happen:
 
-Now that this is a public function, a kernel doc for it would be nice.
+1) The already update value is read -> everything is perfect
 
->  /**
->   * pwm_adjust_config() - adjust the current PWM config to the PWM argume=
-nts
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index fd100c27f109..d48ea3051e28 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -369,6 +369,7 @@ int pwm_apply_might_sleep(struct pwm_device *pwm, con=
-st struct pwm_state *state)
->  int pwm_apply_atomic(struct pwm_device *pwm, const struct pwm_state *sta=
-te);
->  int pwm_adjust_config(struct pwm_device *pwm);
-> =20
-> +int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *state);
+2) The old value is read -> a superfluous timer soft interrupt is raised
 
-Nitpick: pwm_get_state_hw() is defined in core.c before
-pwm_adjust_config(). Please keep this order in the header.
+The same situation could happen when enqueueing a new first pinned timer by
+a remote CPU also with non critical scenarios:
 
->  /**
->   * pwm_config() - change a PWM device configuration
->   * @pwm: PWM device
+1) The already update value is read -> everything is perfect
 
-Your patch was PGP signed, but I failed to find your key in the kernel
-key repo and on https://keys.openpgp.org. To make your signature
-actually useful, you might want to fix that.
+2) The old value is read -> when the CPU is idle, an IPI is executed
+nevertheless and when the CPU isn't idle, the updated value will be visible
+on the next tick and the timer might be late one jiffie.
 
-Best regards
-Uwe
+As this is very unlikely to happen, the overhead of doing the check under
+the lock is a way more effort, than a superfluous timer soft interrupt or a
+possible 1 jiffie delay of the timer.
 
---2ufhpggxbgc5feny
-Content-Type: application/pgp-signature; name="signature.asc"
+Document and annotate this non critical behavior in the code by using
+READ/WRITE_ONCE() pair when accessing timer_base->next_expiry.
 
------BEGIN PGP SIGNATURE-----
+Reported-by: syzbot+bf285fcc0a048e028118@syzkaller.appspotmail.com
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/all/20240829154305.19259-1-anna-maria@linutronix.de
+Closes: https://lore.kernel.org/lkml/000000000000916e55061f969e14@google.com
+---
+ kernel/time/timer.c | 42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbYMYEACgkQj4D7WH0S
-/k4+lAf/ah+hVdNth3Gbh1+IZ9TszwkpZoa2BArFKNaI6fg4kzBnP4jdK/9YoYxK
-8aV7YXMFTNLZ7B8kdZ1pQ3/gYFvHwPWiGGvMsysEnRj0TKOTw7iTSruScJq9qmMC
-WCcJf3TiVd5Jp8JRi9EDaTN5K6pz4a4nF1+8Zf0sPNhubcClQ62RrfUOwgqiYi+O
-/zsKhoQIFDrc9qX0BUwU5gK3FxgIXqNXt437y1O5X0PWAeZhnQXpyW4GbXnofQFt
-wPqjzS3DUigiDXkUWKImXXGXM5f9SERlGvWjVlqomK29NWzzXugauCfyDxVQUa+Q
-pny5/ar13n7yoHt/42iTfwc99oY0/w==
-=e96/
------END PGP SIGNATURE-----
-
---2ufhpggxbgc5feny--
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index d8eb368..311ea45 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -672,7 +672,7 @@ static void enqueue_timer(struct timer_base *base, struct timer_list *timer,
+ 		 * Set the next expiry time and kick the CPU so it
+ 		 * can reevaluate the wheel:
+ 		 */
+-		base->next_expiry = bucket_expiry;
++		WRITE_ONCE(base->next_expiry, bucket_expiry);
+ 		base->timers_pending = true;
+ 		base->next_expiry_recalc = false;
+ 		trigger_dyntick_cpu(base, timer);
+@@ -1966,7 +1966,7 @@ static void next_expiry_recalc(struct timer_base *base)
+ 		clk += adj;
+ 	}
+ 
+-	base->next_expiry = next;
++	WRITE_ONCE(base->next_expiry, next);
+ 	base->next_expiry_recalc = false;
+ 	base->timers_pending = !(next == base->clk + NEXT_TIMER_MAX_DELTA);
+ }
+@@ -2020,7 +2020,7 @@ static unsigned long next_timer_interrupt(struct timer_base *base,
+ 	 * easy comparable to find out which base holds the first pending timer.
+ 	 */
+ 	if (!base->timers_pending)
+-		base->next_expiry = basej + NEXT_TIMER_MAX_DELTA;
++		WRITE_ONCE(base->next_expiry, basej + NEXT_TIMER_MAX_DELTA);
+ 
+ 	return base->next_expiry;
+ }
+@@ -2464,8 +2464,40 @@ static void run_local_timers(void)
+ 	hrtimer_run_queues();
+ 
+ 	for (int i = 0; i < NR_BASES; i++, base++) {
+-		/* Raise the softirq only if required. */
+-		if (time_after_eq(jiffies, base->next_expiry) ||
++		/*
++		 * Raise the softirq only if required.
++		 *
++		 * timer_base::next_expiry can be written by a remote CPU while
++		 * holding the lock. If this write happens at the same time than
++		 * the lockless local read, sanity checker could complain about
++		 * data corruption.
++		 *
++		 * There are two possible situations where
++		 * timer_base::next_expiry is written by a remote CPU:
++		 *
++		 * 1. Remote CPU expires global timers of this CPU and updates
++		 * timer_base::next_expiry of BASE_GLOBAL afterwards in
++		 * next_timer_interrupt() or timer_recalc_next_expiry(). The
++		 * worst outcome is a superfluous raise of the timer softirq
++		 * when the not yet updated value is read.
++		 *
++		 * 2. A new first pinned timer is enqueued by a remote CPU
++		 * and therefore timer_base::next_expiry of BASE_LOCAL is
++		 * updated. When this update is missed, this isn't a
++		 * problem, as an IPI is executed nevertheless when the CPU
++		 * was idle before. When the CPU wasn't idle but the update
++		 * is missed, then the timer would expire one jiffie late -
++		 * bad luck.
++		 *
++		 * Those unlikely corner cases where the worst outcome is only a
++		 * one jiffie delay or a superfluous raise of the softirq are
++		 * not that expensive as doing the check always while holding
++		 * the lock.
++		 *
++		 * Possible remote writers are using WRITE_ONCE(). Local reader
++		 * uses therefore READ_ONCE().
++		 */
++		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
+ 		    (i == BASE_DEF && tmigr_requires_handle_remote())) {
+ 			raise_softirq(TIMER_SOFTIRQ);
+ 			return;
 
