@@ -1,178 +1,155 @@
-Return-Path: <linux-kernel+bounces-314297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D7F96B17A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:22:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E379196B15F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75351C21435
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344D9B20D4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBAC12E1E9;
-	Wed,  4 Sep 2024 06:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BCA12D1EA;
+	Wed,  4 Sep 2024 06:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xXTFruj1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V9uA2AbT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4273823DE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD53D6B;
+	Wed,  4 Sep 2024 06:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725430948; cv=none; b=D242e6Q6IylhIcBZgLwRDYx+oOM2beRa1/Vsg+jmnbn1urfdGeVdXBfv4WPEZT3C/IrPeksaulNGjLH8ZkzG39rhck79vI++PNJY2uy5Dkv4GfL+tuMae+1K3OzH6acXCPLJra+WkxLDWLcPDJPE6UlYk0ggxFxyFUSBaiA4quM=
+	t=1725430620; cv=none; b=dThaIcDyBfA1sN3T54ZxOF3vYQDCo7XGwEI07Dr3E97pEhjIj46mlxmc1oIAzRqNXhCHSLrQ9qtoKhkv86pqRFL1Pk+2Pht9NnurXmZaq2u7LVNqf7dFBW5bBdEGmsBl+3m2QydSjxbLAaXLRJABY8WLR13FhIKytvOjEYtq+B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725430948; c=relaxed/simple;
-	bh=FO7/eg2n+yly83LuRtxVU2WlOjHeRHJhaGPjhuvmLeQ=;
+	s=arc-20240116; t=1725430620; c=relaxed/simple;
+	bh=adNNc8DC5v9N4P7mgThkT8ETOdJZ6DtSIxX+77SKT6w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/MyQqL93qWR1ygzJ6p3creMkN0s5+UWbJnaWpOFC1cYnNDFJ7Pzd6pdodj9kRI9T/xpFLHo4XqrqT0T5s51AcXI3IkTkHgbaIVgZD9BcJpCvGivJpCR/f2eRNZhHSgW1GAIVDzJ6j3e2rhiKwjhxOdREQxrXp/I0puE1ttyzBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xXTFruj1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-206b9455460so2292755ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725430945; x=1726035745; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bvx4PCK6P/x70ytMbdp6+XNFJeNRoV9prf+YBUPPRO0=;
-        b=xXTFruj1r4hmU0+D91BUQP5CkIvyTfKBsFPI7WsQDX1Gt3cGPc7mdgDCjK/MDL5Fxf
-         MRsr3NtY67h5xePE9cFDZdCUaluXokxJegDfIs9m5OK/Mn4xwwaEBFHP976A8hP35jbB
-         mxeIcQHDl/TWK5iV6attimcbObn3mV5+K264/FOrzCf4j+QMYX4gY4eaXA5nii1/r5iX
-         Eno0dsyPmIOgQtxjRQlyq37wBIU0dKfnme8W4H0pJdCLLH6pae6ptCR/M+pXShBQDDPo
-         FeMhbOhZeL/aQUuBd6W0VLILGBlisnR2xumAwk84qQpUv14k3W8hfPqfNX0hX7kQYYtT
-         zYWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725430945; x=1726035745;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bvx4PCK6P/x70ytMbdp6+XNFJeNRoV9prf+YBUPPRO0=;
-        b=FaHDv23hLsUCgspiR7wElhkUsZBstDPVbYidXvC4QyTZM4NomVVF3fl+MeqRlX4kDX
-         YQP6Iab9ymD6Q436S5gbdF5QdVNZ5/cp8FfYx0Povxsdmd/qvskzNZ8sjpsMECLYIfx9
-         WKkaXK8bIUr7xDUewy7qEE+VfXsQWjiVAHdEvZQee3SQYCFNmz91DZl9KHRd6kpNVzFg
-         kGwgP9OEbSeP0Bnw5Mp5j8YqPhs9yPY9UGelC0grmTuq/Mzg5cxhRAdt6wkRhKv5n2Wh
-         j3Kmuwj5kVwriTEJcb7DIQfNYC6IrbeJOUzcF5SMRDmTcY2xWG6QJ0aw4YHGuVd1C5cE
-         Q9Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEIhQsSaa2Oxn1PzBfVijYDAJweJfuynbPISm24KLzh8a+ggsIIeZ+om8NwSnGIlKvAk6UTMZoXWSruG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTWCsI7iLu9/5xhAKR6Ha+sZhGkng9OoN7XmYHU0leXQWsqIVb
-	FcVRs6k5vVFkw7aDEzmQWAiKX5GTGVKPc1nSnVkW5II+edrM/ZEGWH+MEVCCcg==
-X-Google-Smtp-Source: AGHT+IFxH6Rr1LsBK8g6/owk9LowGpE1jvBIhUi6gZeytNmBAPTC6+GyIjdjZd2Lg+PefbI6Bg1K9Q==
-X-Received: by 2002:a17:902:dac1:b0:202:4bd9:aea5 with SMTP id d9443c01a7336-206b833f304mr21086275ad.14.1725430944940;
-        Tue, 03 Sep 2024 23:22:24 -0700 (PDT)
-Received: from thinkpad ([120.56.207.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea38435sm7168105ad.166.2024.09.03.23.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 23:22:24 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:52:19 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Keith Busch <kbusch@kernel.org>, nirmal.patel@linux.intel.com,
-	jonathan.derrick@linux.dev, acelan.kao@canonical.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Message-ID: <20240904062219.x7kft2l3gq4qsojc@thinkpad>
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
- <20240903042852.v7ootuenihi5wjpn@thinkpad>
- <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
- <ZtciXnbQJ88hjfDk@kbusch-mbp>
- <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=afl7TqfxVFCc5B55eFfc0fiWYz267aScI9cqqJvhanGGEODNlT93Y9lgROvcc5Y5EC4GFiTN3Y22ZKiEjBQD1yO2sMhDOk+SNdrg5205jxhqoT6OlqCHlVK6eR9+XrvQZV1S7Lc4FGUBFo2cp20pKFiV24Ut1AoYGqH5OfXpZPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V9uA2AbT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725430619; x=1756966619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=adNNc8DC5v9N4P7mgThkT8ETOdJZ6DtSIxX+77SKT6w=;
+  b=V9uA2AbTSU1hm0y/Eo9lrXwZkqYhO1qZwDeV6B9rJjsvYG6iUoeUSudW
+   xuXiv/YHeUTPpgYHEygHG+apUO/xJkbRrDqTY3RwDXn495nqtlzXXynPD
+   f3McCudOYMm9CWtBPb6VhzIib0L3Q7VR1rcn0rXh5ORSzNqDMVq+MN/VE
+   zRFZYKbJ71cN2y76f7IGng1StAmmmiTdomtOolgYUNdoBJMOn3dnHigrb
+   X0lU7Yo0/U5zWzfykp4jDwqSLAA1EsDf5w9hO7ANb/9KUiKo1jbejLYzt
+   fCa5VW5cNgZbxUWZ/c3WBUSTbAEvS/RqWV+XfbiIbXVhTzHehXnmXOB5d
+   Q==;
+X-CSE-ConnectionGUID: evcMns/pSL6ZmeZPzEqNKg==
+X-CSE-MsgGUID: vPNRXtY8Q9+PMFvGTcepqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35428328"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="35428328"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 23:16:58 -0700
+X-CSE-ConnectionGUID: DGTO71dNS/G9eYp1Is0q/A==
+X-CSE-MsgGUID: 9m9NqvrqR76nHXrymkBHQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="65679468"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 23:16:57 -0700
+Date: Tue, 3 Sep 2024 23:22:44 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Tim Chen <tim.c.chen@intel.com>
+Subject: Re: [PATCH v3 1/2] x86/sched: Add basic support for CPU capacity
+ scaling
+Message-ID: <20240904062244.GA3614@ranerica-svr.sc.intel.com>
+References: <3310447.aeNJFYEL58@rjwysocki.net>
+ <10523497.nUPlyArG6x@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+In-Reply-To: <10523497.nUPlyArG6x@rjwysocki.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
-> On Tue, Sep 3, 2024 at 10:51 PM Keith Busch <kbusch@kernel.org> wrote:
-> >
-> > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
-> > > On Tue, Sep 3, 2024 at 12:29 PM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng wrote:
-> > > > > Meteor Lake VMD has a bug that the IRQ raises before the DMA region is
-> > > > > ready, so the requested IO is considered never completed:
-> > > > > [   97.343423] nvme nvme0: I/O 259 QID 2 timeout, completion polled
-> > > > > [   97.343446] nvme nvme0: I/O 384 QID 3 timeout, completion polled
-> > > > > [   97.343459] nvme nvme0: I/O 320 QID 4 timeout, completion polled
-> > > > > [   97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion polled
-> > > > >
-> > > > > The is documented as erratum MTL016 [0]. The suggested workaround is to
-> > > > > "The VMD MSI interrupt-handler should initially perform a dummy register
-> > > > > read to the MSI initiator device prior to any writes to ensure proper
-> > > > > PCIe ordering." which essentially is adding a delay before the interrupt
-> > > > > handling.
-> > > > >
-> > > >
-> > > > Why can't you add a dummy register read instead? Adding a delay for PCIe
-> > > > ordering is not going to work always.
-> > >
-> > > This can be done too. But it can take longer than 4us delay, so I'd
-> > > like to keep it a bit faster here.
-> >
-> > An added delay is just a side effect of the read. The read flushes
-> > pending device-to-host writes, which is most likely what the errata
-> > really requires. I think Mani is right, you need to pay that register
-> > read penalty to truly fix this.
+On Wed, Aug 28, 2024 at 01:47:25PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> OK, will change the quirk to perform dummy register read.
+> In order be able to compute the sizes of tasks consistently across all
+> CPUs in a hybrid system, it is necessary to provide CPU capacity scaling
+> information to the scheduler via arch_scale_cpu_capacity().  Moreover,
+> the value returned by arch_scale_freq_capacity() for the given CPU must
+> correspond to the arch_scale_cpu_capacity() return value for it, or
+> utilization computations will be inaccurate.
 > 
-> But I am not sure which is the "MSI initiator device", is it VMD
-> controller or NVMe devices?
+> Add support for it through per-CPU variables holding the capacity and
+> maximum-to-base frequency ratio (times SCHED_CAPACITY_SCALE) that will
+> be returned by arch_scale_cpu_capacity() and used by scale_freq_tick()
+> to compute arch_freq_scale for the current CPU, respectively.
 > 
-
-'MSI initiator' should be the NVMe device. My understanding is that the
-workaround suggests reading the NVMe register from the MSI handler before doing
-any write to the device to ensures that the previous writes from the device are
-flushed.
-
-And this sounds like the workaround should be done in the NVMe driver as it has
-the knowledge of the NVMe registers. But isn't the NVMe driver already reading
-CQE status first up in the ISR?
-
-- Mani
-
-> Kai-Heng
+> In order to avoid adding measurable overhead for non-hybrid x86 systems,
+> which are the vast majority in the field, whether or not the new hybrid
+> CPU capacity scaling will be in effect is controlled by a static key.
+> This static key is set by calling arch_enable_hybrid_capacity_scale()
+> which also allocates memory for the per-CPU data and initializes it.
+> Next, arch_set_cpu_capacity() is used to set the per-CPU variables
+> mentioned above for each CPU and arch_rebuild_sched_domains() needs
+> to be called for the scheduler to realize that capacity-aware
+> scheduling can be used going forward.
 > 
-> >
-> > > > > +     /* Erratum MTL016 */
-> > > > > +     VMD_FEAT_INTERRUPT_QUIRK        = (1 << 6),
-> > > > >  };
-> > > > >
-> > > > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728 ns */
-> > > > > @@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
-> > > > >   */
-> > > > >  static DEFINE_RAW_SPINLOCK(list_lock);
-> > > > >
-> > > > > +static bool interrupt_delay;
-> > > > > +
-> > > > >  /**
-> > > > >   * struct vmd_irq - private data to map driver IRQ to the VMD shared vector
-> > > > >   * @node:    list item for parent traversal.
-> > > > > @@ -105,6 +111,7 @@ struct vmd_irq {
-> > > > >       struct vmd_irq_list     *irq;
-> > > > >       bool                    enabled;
-> > > > >       unsigned int            virq;
-> > > > > +     bool                    delay_irq;
-> > > >
-> > > > This is unused. Perhaps you wanted to use this instead of interrupt_delay?
-> > >
-> > > This is leftover, will scratch this.
-> >
-> > Maybe you should actually use it instead of making a global? The quirk
-> > says it is device specific, so no need to punish every device if it
-> > doesn't need it (unlikely as it is to see such a thing).
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v2 -> v3:
+>    * Rebase after dropping patch [1/3].
+>    * Rename arch_set_cpu_capacity() arguments.
+>    * Add empty line to arch_enable_hybrid_capacity_scale().
+>    * Declare local variables in scale_freq_tick() on one line.
+> 
+> v1 -> v2:
+>    * Replaces WARN_ON_ONCE() with WARN_ONCE() (2 places)
+>    * Fix arch_enable_hybrid_capacity_scale() return value when hybrid
+>      capacity scaling is already enabled.
+>    * Allow arch_enable_hybrid_capacity_scale() to succeed when
+>      frequency-invariance is not enabled.
+>    * Fix arch_set_cpu_capacity() kerneldoc comment
+>    * Do not disable capacity scaling in disable_freq_invariance_workfn().
+>    * Relocate arch_hybrid_cap_scale_key definition.
+> 
+> ---
 
--- 
-மணிவண்ணன் சதாசிவம்
+Only one minor comment below...
+
+FWIW:
+Reviewed-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com> # scale invariance
+
+[...]
+
+> +
+> +static struct arch_hybrid_cpu_scale __percpu *arch_cpu_scale;
+> +
+> +/**
+> + * arch_enable_hybrid_capacity_scale - Enable hybrid CPU capacity scaling
+
+This looks to me like a kernel-doc comment. The function name should have ().
+
+[...]
+> +/**
+> + * arch_set_cpu_capacity - Set scale-invariance parameters for a CPU
+
+Same here.
 
