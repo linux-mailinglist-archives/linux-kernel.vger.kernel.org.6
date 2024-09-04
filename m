@@ -1,116 +1,78 @@
-Return-Path: <linux-kernel+bounces-315784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0316196C6ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72CD96C6EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263B41C22501
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE672858E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71591E413E;
-	Wed,  4 Sep 2024 18:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74921E202D;
+	Wed,  4 Sep 2024 18:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eriXzhsA"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZOMnESg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F24B1E410D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EC881723;
+	Wed,  4 Sep 2024 18:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476121; cv=none; b=rfLtWXoPIWPqA3UuPJzd4IdErZjE89sRfHU/gLn10N7x/FYf9flxNDEY5FMPLdRz63RJycC8PLVcujmubvHwiNzGvhevec1JeJjfpQUEcbwwOl8icDZDNCHp9M9oKDHPElpmn17OPQsXKgbRQZi3JqNKXwsgt6OUEj3P/aCAB2g=
+	t=1725476261; cv=none; b=qYuOsp5FDDUnsUqP0H/cmjT/mTRHRnizQNS43YLp9AT9bWrgsr44+VDFWTHCQYvQDfE3AwGbcSpY4Jb4OBJ0m8n1/ztmjh5kinR1e6/QCLCSWZRVidlxDrdT6a+oVmqOVeUE4USebL2u1+8SDiwpHdiL9kokl/LxNgcry4wLVHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476121; c=relaxed/simple;
-	bh=XvcPlCNKOyAOcO2sDqDCAH3Ue4gDGxj5iEp625GeZWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCTnKEIWZIHnWwxDzp0UTxz8N/nQur3HD71bVzw+IFVlBBIoDVIIDuzmNN5ELTP3vJb0mnwyI4/Pem5TUvQkJpE3s4GKennx3kNFECFzhfW3xHbF0oXQo+dg3oSX8Y5EBUVzwiUjC8vnS3TWVHsyHeJyg/9UH70ioXX74M6z2Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eriXzhsA; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Sep 2024 14:55:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725476117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VN5t1C2oeejKjejG+tL9rtMscYiZsZ0/XuO7UFNOY8w=;
-	b=eriXzhsALVVtShspOtIV4NqrhZHSPMQoc/ClzxDimkxw5liPYru692WxFhqQdskN9R3gzH
-	b875RZa3YZQ94FA2zl6B4Zr3Wkhb2fauqim5MfQ/PvlZyySpa5zlDbWKHAlzK+Py9bL7Ei
-	rklKoe/tjUiAqKkXRo9qVd7w4wiPpQw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc6
-Message-ID: <fvk7vjfz4f2c2x5hxjajiwz5doxeg54owgpzob2kskkftshcoo@5sl5lu6nenyu>
-References: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
- <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
+	s=arc-20240116; t=1725476261; c=relaxed/simple;
+	bh=RFEKjnlbO6/zS3iLFxXPt8v8CwjHCNpToyy272wIq+g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DKVD7o/vc0xH3AV5Jj0DP0yFjacU4t5+tgk8/Wa/9DxwX+KMz/z+fWZBgA85Yxcm3b41Hd7f5JtDPfhJWpf7zaU+1HjLRvca6dpWHhTTAJpRrrW28izXi7AEV0ZzmttX3io0v6IuiRHjcB1yUu1Mw8PzU0ZHRhzLaMS1Ro4ZdOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZOMnESg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29AB1C4CEC2;
+	Wed,  4 Sep 2024 18:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725476261;
+	bh=RFEKjnlbO6/zS3iLFxXPt8v8CwjHCNpToyy272wIq+g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=BZOMnESguSRagCFdCjRr1IKtLijdsYQm9pnnIp80ITx4ss4m+U35cDVH/4Lz2/9yE
+	 3ZO3hmKzlHG3FuMl2Dp2XMSE/jVkwGEfeF02e3epZcFYWRuvBo6v14dZkHsiwOVtY6
+	 jpCpZbkBEoY7LNk6O5myhdd+G6mbpQnp7FPOwFhYeSjmgunB7kmXI73AqTnWk0KZYQ
+	 t4b9mdaq35tagZMagGgcbEQEYypEZ/hMEvtb36OCu32l/6Mi7fYwgkCt+hK4Bpv/rp
+	 8QuvlK8C0A+WawSvAn1V5W7PcT3JlKGSxf+GF99g8zp+ShahD/is6OsjvFZbYXZ12J
+	 psfxVF3QQ7sOg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F993822D30;
+	Wed,  4 Sep 2024 18:57:43 +0000 (UTC)
+Subject: Re: [GIT PULL] Btrfs fixes for 6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1725472780.git.dsterba@suse.com>
+References: <cover.1725472780.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-btrfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1725472780.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc6-tag
+X-PR-Tracked-Commit-Id: cd9253c23aedd61eb5ff11f37a36247cd46faf86
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1263a7bf8a0e77c6cda8f5a40509d99829216a45
+Message-Id: <172547626162.1132966.6865981355892175702.pr-tracker-bot@kernel.org>
+Date: Wed, 04 Sep 2024 18:57:41 +0000
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWknzcmc1DZ3HSB9qp4poaEO5_ViCESvQChuAaiOBdr7Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 03, 2024 at 03:53:56PM GMT, Geert Uytterhoeven wrote:
-> Hi Kent,
-> 
-> Replying here, as there is (again) no patch email to reply to to report issues.
-> 
-> noreply@ellerman.id.au is reporting several build failures[1] in linux-next:
-> 
->     fs/bcachefs/sb-members.c: In function ‘bch2_sb_member_alloc’:
->     fs/bcachefs/sb-members.c:503:2: error: a label can only be part of
-> a statement and a declaration is not a statement
->       503 |  unsigned nr_devices = max_t(unsigned, dev_idx + 1,
-> c->sb.nr_devices);
->           |  ^~~~~~~~
->     fs/bcachefs/sb-members.c:505:2: error: expected expression before ‘struct’
->       505 |  struct bch_sb_field_members_v2 *mi =
-> bch2_sb_field_get(c->disk_sb.sb, members_v2);
->           |  ^~~~~~
-> 
-> Apparently this fails with gcc-10 and older, but builds with gcc-11
-> and gcc-12.
+The pull request you sent on Wed,  4 Sep 2024 20:11:04 +0200:
 
-Thanks for the report - it's fixed now (thanks, Hongbo)
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc6-tag
 
-> The failure is due to commit 4e7795eda4459bf3 ("bcachefs:
-> bch2_sb_member_alloc()"), which is nowhere to be found on
-> lore.kernel.org.  Please stop committing private unreviewed patches
-> to linux-next, as several people have asked before.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1263a7bf8a0e77c6cda8f5a40509d99829216a45
 
-They're still in git; I'd suggest just doing a git send-email and
-tweaking the output if you want to start a review on a patch you find.
+Thank you!
 
-There's been some discussions in filesystem land about how/when we want
-patches to hit the list - I'm not a huge fan of the patch bombs that
-drown everything else out on the list, which is what it would be if I
-did mail everything.
-
-But if the email workflow is really what you want, and if it's going to
-be generating useful review (list activity is growing...), I could be
-convinced...
-
-We're getting past the "just fix all the stupid shit" phase, and my
-output is (I hope) trending toward something more stustainable, with a
-stream of more _interesting_ patches to talk about, so - yeah, it's
-starting to sound more reasonable, if that's what people want.
-
-My priority is just going to be on fostering _useful_ technical
-discussion. If the only reason you're wanting patches on the list is
-because of trivial shit automated tests can and do catch - that's not a
-win, to me. If I start posting patch series and we seem to be learning
-from it, I'll stick with it.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
