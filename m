@@ -1,52 +1,61 @@
-Return-Path: <linux-kernel+bounces-315772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0E796C6B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:49:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00A896C6BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE421C226DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEEC2837D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B71E4103;
-	Wed,  4 Sep 2024 18:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433F21E4135;
+	Wed,  4 Sep 2024 18:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bdIOm6mc"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MK0Z2LM2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A771DA319;
-	Wed,  4 Sep 2024 18:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACE41E4114;
+	Wed,  4 Sep 2024 18:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725475748; cv=none; b=qt+0Dm0A2qRXXVNSIMnvzvDywk9CJTQiCDcwPztkfvYvz6o8aSsyY7ke8T/aPa2lSGE5f0t8Cfb4lG4QGG6wT6+o3cUZXLnI3jJ5dlYpRgbcgYv/DE8+Jb/nX1oDfE+AbhBvhf353euMsvIfrygA7Db2A7TUg7oE0T1dQalrjHc=
+	t=1725475753; cv=none; b=i7d2Au7xkE2PGMhTOfEkDZVtrngBdMMfTxrkGxPP82lXODzmEO5AZmTvFqsL1XdmEvwNsIanvJjnLXk8VJwq58jiT8xej4jiM6LLKz3NcgrGntUxpRhguH2aK/QMrNhhBK8GIJRK8yhKEDauWRArFdX1GgAcrjDLevZrfi5FVm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725475748; c=relaxed/simple;
-	bh=ApmWLbLcEQSXRsPXYH3SXfjZpbujIr9o5LmOAI4rS+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C25l49v3xXiYVER1UNnS5CWslmIRjPYBOuIaeWDtP8mS8IaymbQt1Rcocm92sJpQlTRk4BXVI4mu6pe8HNzPcVRtxUQtNc1Mt542M/fDpg9gESdeBndOG6MmAsRt5ngBsR3iG+V2KF2Dj1apbt6l/jkq+5Cf7Ama1Jv1Glegsow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bdIOm6mc; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725475741;
-	bh=ApmWLbLcEQSXRsPXYH3SXfjZpbujIr9o5LmOAI4rS+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bdIOm6mczsOIIwRmDhQ6HYRAOALg+RsD4kqLDGeXDmJUXNmaUORY4m4y/Z327hivs
-	 gWrpmTk+YHvblVYvVizcpQZHlVNj82Vrav0yq0VEHtfJBm6svSP+obypUySqQ+kPSc
-	 3WJiT/72um3LCZbQBxdC0AyY8lbK2mCPRuA/tJ+A=
-Date: Wed, 4 Sep 2024 20:49:01 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 14/23] initrd: mark initrd support as deprecated
-Message-ID: <70ab2c0f-ca6b-441a-8d28-8597724e4013@t-8ch.de>
-References: <20200714190427.4332-1-hch@lst.de>
- <20200714190427.4332-15-hch@lst.de>
+	s=arc-20240116; t=1725475753; c=relaxed/simple;
+	bh=NVJy7a9hzOZfICfnRGCKRFnKJQ0Sx2x47tJN20jKhus=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AqqzVrdqioJlw8kriynTgKAlKRhfjFkJtK1zQ9wjDQ9/gbw5cW2C5wB+MP6hjfgdo0An0Cluk/0w8R1/sM7O1qVCCnwMM493n1EAAModyldhzlmPkjAyzSAiqRK22RmZCsUwWxo4MGOJ5+mCprWLTPWYV7fPdM2UUVrLlor895k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MK0Z2LM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F56EC4CEC2;
+	Wed,  4 Sep 2024 18:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725475753;
+	bh=NVJy7a9hzOZfICfnRGCKRFnKJQ0Sx2x47tJN20jKhus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MK0Z2LM2sEoLcQactCH04EZbfL3YQrPNmkMnQfRli1kjLn19utVIF5SsnOIfLLdD9
+	 YuV6PtJudoDvx/I3pUM3R/c1xlDZDEmRpSifttS4E0xURO48r05aPPdhzOaK6RkD9B
+	 auJRS4e0+nQ4mqmac2i9k0v1XRyxq0//h6KwvM5VXVVuBatIwODFTJkSm3Y/TbkIWq
+	 dxZ4H/vuJt1/5YdH7JXlDLWmGmjWr1PZ8LizWsOD3cRruvZy4H7Uxwzt3wL5YdhhUk
+	 Dd98E9B8UkavLodhAvshLgKygAu488ry8gDMUzDHmibWbqqYMkerAlXVuHDxemmaMt
+	 2DruypS2JYrwA==
+Date: Wed, 4 Sep 2024 13:49:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
+	jing2.liu@intel.com
+Subject: Re: [PATCH V4 00/12] PCIe TPH and cache direct injection support
+Message-ID: <20240904184911.GA340610@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,39 +64,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200714190427.4332-15-hch@lst.de>
+In-Reply-To: <20240822204120.3634-1-wei.huang2@amd.com>
 
-Hi,
-
-On 2020-07-14 21:04:18+0000, Christoph Hellwig wrote:
-> The classic initial ramdisk has been replaced by the much more
-> flexible and efficient initramfs a long time.  Warn about it being
-> removed soon.
+On Thu, Aug 22, 2024 at 03:41:08PM -0500, Wei Huang wrote:
+> Hi All,
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  init/do_mounts_initrd.c | 2 ++
->  1 file changed, 2 insertions(+)
+> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint
+> devices to provide optimization hints for requests that target memory
+> space. These hints, in a format called steering tag (ST), are provided
+> in the requester's TLP headers and allow the system hardware, including
+> the Root Complex, to optimize the utilization of platform resources
+> for the requests.
 > 
-> diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-> index 57ad5b2da8f5f5..e08669187d63be 100644
-> --- a/init/do_mounts_initrd.c
-> +++ b/init/do_mounts_initrd.c
-> @@ -75,6 +75,8 @@ static void __init handle_initrd(void)
->  	extern char *envp_init[];
->  	int error;
->  
-> +	pr_warn("using deprecated initrd support, will be removed in 2021.\n");
-> +
+> Upcoming AMD hardware implement a new Cache Injection feature that
+> leverages TPH. Cache Injection allows PCIe endpoints to inject I/O
+> Coherent DMA writes directly into an L2 within the CCX (core complex)
+> closest to the CPU core that will consume it. This technology is aimed
+> at applications requiring high performance and low latency, such as
+> networking and storage applications.
 
-I stumbled upon this today.
-Apparently the "soon" never happened in 2021.
+Thanks for this example, it's a great intro.  Suggest adding something
+similar to a patch commit log, since the cover letter is harder to
+find after this appears in git.
 
-If this is still meant to happen I can send a series to remove it.
+> This series introduces generic TPH support in Linux, allowing STs to be
+> retrieved and used by PCIe endpoint drivers as needed. As a
+> demonstration, it includes an example usage in the Broadcom BNXT driver.
+> When running on Broadcom NICs with the appropriate firmware, it shows
+> substantial memory bandwidth savings and better network bandwidth using
+> real-world benchmarks. This solution is vendor-neutral and implemented
+> based on industry standards (PCIe Spec and PCI FW Spec).
+> 
+> V3->V4:
+>  * Rebase on top of the latest pci/next tree (tag: 6.11-rc1)
 
->  	real_root_dev = new_encode_dev(ROOT_DEV);
->  	create_dev("/dev/root.old", Root_RAM0);
->  	/* mount initrd on rootfs' /root */
-> -- 
-> 2.27.0
+No need to rebase to pci/next; pci/main is where it will be applied.
+But it currently applies cleanly to either, so no problem.
+
+>  * Add new API functioins to query/enable/disable TPH support
+>  * Make pcie_tph_set_st() completely independent from pcie_tph_get_cpu_st()
+>  * Rewrite bnxt.c based on new APIs
+>  * Remove documentation for now due to constantly changing API
+
+I'd like to see this documentation included.  And updated if the API
+changes, of course.
+
+>  * Remove pci=notph, but keep pci=nostmode with better flow (Bjorn)
+
+This seems backward to me.  I think "pci=notph" makes sense as a way
+to completely disable the TPH feature in case a user trips over a
+hardware or driver defect.
+
+But "pci=nostmode" is advertised as a way to quantify the benefit of
+Steering Tags, and that seems like it's of interest to developers but
+not users.
+
+So my advice would be to keep "pci=notph" and drop "pci=nostmode".
+
+Bjorn
 
