@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-315781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A73596C6D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:54:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D5F96C6D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7CFA1F22E98
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:54:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2847B1C221B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B51E201B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BD21E4122;
 	Wed,  4 Sep 2024 18:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="I1V7lquB"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9++7HD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10B71CCB5C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC4C1E2030;
+	Wed,  4 Sep 2024 18:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476032; cv=none; b=gjA3LBnOFRwtSJyFDU2Bv+SKgXZZGvjNgWtbkOnpLimexDChyGW3U21CXYAoamF39rm88Jg1Gk78fhc26uKvZQlotCFPhLKGPRF7c1CTpz/V1ak0qvMqN5rG8qdOU68S+BR28O3KEoeutPDufFw7B6WUTn0JSPAZX5dtfiNFxvY=
+	t=1725476031; cv=none; b=rlrjYhjO5lHqa2GR3oLzvUeIt1Ur5RCvHrDdGGFXmXwSTfY+a4nU7I+uFfRTVoJGQcxG6cjEMPVrgHc5pamhtHz3qGYxHhtXpcnjg+23NDWnNDkZxqeUVpgArYm2Uri7ZF8rATkuiYvYbu1XjnO0HjeOic8g79+RnG8NIOzHYTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476032; c=relaxed/simple;
-	bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avkeqYgUuil8qISf3j4fTUQhp5pZhfyIgGDhDWXVmEhUumctocU3iFr6zPGtyMWIHFwIDr1PraSnq3qa4t3Nmz5TP4sZS72HQBh4Lhn70SF4hooXzNMQmMIjkvaZQm/DoWJ2VOiIgRnNbPENjhFzoAgxoWCTsatpiiFyf9aQ5bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=I1V7lquB; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7c6aee8e8daso4958353a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725476030; x=1726080830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
-        b=I1V7lquBIV1tuMbzWo1Rmr78uwgd64Cz90/LN5ociO6ZEW/Wqw8V1kSNDjHwc1SQrl
-         gBaI66alz16WK+pvTbrtual3WbJtpGuczxNRYdc1gLcuOrMZ4usss1N5f7NdK8JHnD2p
-         F0XUwhgMpxkeLvZRW8Uzgt0KvOaFvkDxTAi68bTiJhkqBH+yK8paVuDHYd72QvNHI6kY
-         nwO80rF+Oxe0S7e2FzsxLeUgvXejLVpZZJVNZGqiQ+eQ9RCbCRxo2YOrTrYuADPwYNeo
-         UMBDEP1bCuHsTMQKOvPWkizZfCYV9cQhfOEuy7O2CfqqeC+9S4/t4PFaZ6WN6eBloGGM
-         W2FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725476030; x=1726080830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s92rW/1gEQr3xvJKMRwsWt6P8BZ8Funj1rbavwH4oWQ=;
-        b=bnBRFv3DxuZWqFudqTPf8SpEMyMTiNsHftOgr6eiQuBxtLT4KxwsZ1Q3O8BCvinvog
-         UCl204L2GDhiyhbiDMNBjM/QHyM2OSFt0hyqEZn5eHlpdbV5mc/As4heRlNA3blUdmKx
-         9P0eLXVcsQjZBR0O55x104DA+76fKvci3BMqZZnZcYXY8iiTuxPeVBuOOel4L+D/9kq9
-         CDKdX5Rqdv1Ne3ICehcn+ndScboVDopJcg+REyUFnKFxzq+jVR/gF/6G942Z4WYXIQWe
-         ILVL7mwSlUvcHug+eB9FNTQ7D5ZLQ6+JIcgKrIm/v1XKEF5g4VRk7aaMjLCrQdr+NSLg
-         aYGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgEyw1HZ2GDZvj+RoSLkjcJ3BZynKHmD6FRzXRmvD8D8c9n20qtWLlVMnu8dF8gmLlBir3tEFzDirXFu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypDNsnixnJI3WGUWErRE0cO2foRaW/mi0OCxqfHfGjsxnYJtuz
-	YCVviPOHUh/9PzIkDnXkJo8OoBOEvudYu4zEdZneTwctvOKwG+yUxOWSG7wVpjc=
-X-Google-Smtp-Source: AGHT+IE2IsoC0LRmiLcI1CkvV1DU3vw4DUJdyqp6MID1n1cX+56uyYB7jBo1wGGq/wkl04oTY4Plng==
-X-Received: by 2002:a05:6a21:318b:b0:1ce:cbcf:aaa9 with SMTP id adf61e73a8af0-1cecdfdea62mr20770394637.36.1725476029832;
-        Wed, 04 Sep 2024 11:53:49 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778522979sm1947597b3a.30.2024.09.04.11.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:53:49 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:53:45 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
+	s=arc-20240116; t=1725476031; c=relaxed/simple;
+	bh=ZyWhLw4ApKJ6BVYnqT3bEhboNLe38GAOo0b4rfv/LQg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TK6bNYBKHiAnQsV5gjFARDepdUxwvlg3gZ0YykIoVN49MIdW/Dt4JkNG68dPgEQ5QD/286dxY37u+jBcoqMb7r95b6OiAuQ5vzk/VccMqsR3XXqoOVrBdRdm03ZCaYK3KByM+/Vykc8yJMEmw+lyBztfGbac9ugVywEuBNR/0ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9++7HD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5684EC4CEC2;
+	Wed,  4 Sep 2024 18:53:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725476031;
+	bh=ZyWhLw4ApKJ6BVYnqT3bEhboNLe38GAOo0b4rfv/LQg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s9++7HD4xuofSkpTB7Lex8Upjmfu5WKtbxCdaUE5syTHIM0JBkU0pZ26j4EZ0t43K
+	 CDV2gomWDmyBSBt66PLfewvNbzWmpGEVF2I6xcs8xc12vwN7VWbLbqlk0ytsgSjYXH
+	 OQBdDDNZX2PExIcgvqUi/rdsVSq+MSiJfZziz8b5i/b8Q2gl20dkTyVxr2o7oMMn8L
+	 sjlIkRp3RGagRXNMleehSjxcwU108OPsiJx8L6L8w+9Ca4XXD6k6Mix7++TmUjfs4p
+	 Da3pPntUIgLzXz9rE5OY7WdjmveM7mC2Qm3U6D7t204XKb+FF6nCvwpvlDleFojE+9
+	 R3ObSCtYSDPOA==
+From: SeongJae Park <sj@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: SeongJae Park <sj@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 2/3] mm: Pass vm_flags to generic_get_unmapped_area()
-Message-ID: <ZtisuRySfREHjnN/@debug.ba.rivosinc.com>
-References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
- <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
+	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/damon/tests/vaddr-kunit: init maple tree without MT_FLAGS_LOCK_EXTERN
+Date: Wed,  4 Sep 2024 11:53:47 -0700
+Message-Id: <20240904185347.2253-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <34f3e9bd-9323-43cc-8371-00d8847d8664@roeck-us.net>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 08:08:14PM +0100, Mark Brown wrote:
->In preparation for using vm_flags to ensure guard pages for shadow stacks
->supply them as an argument to generic_get_unmapped_area(). The only user
->outside of the core code is the PowerPC book3s64 implementation which is
->trivially wrapping the generic implementation in the radix_enabled() case.
->
->Signed-off-by: Mark Brown <broonie@kernel.org>
+On Wed, 4 Sep 2024 11:41:28 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
 
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> On 9/4/24 10:29, SeongJae Park wrote:
+> > damon_test_three_regions_in_vmas() initializes a maple tree with
+> > MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
+> > mt_lock of the maple tree will not be used.  And therefore the maple
+> > tree initialization code skips initialization of the mt_lock.  However,
+> > __link_vmas(), which adds vmas for test to the maple tree, uses the
+> > mt_lock.  In other words, the uninitialized spinlock is used.  The
+> > problem becomes clear when spinlock debugging is turned on, since it
+> > reports spinlock bad magic bug.
+> > 
+> > Fix the issue by excluding MT_FLAGS_LOCK_EXTERN from the maple tree
+> > initialization flags.  Note that we don't use empty flags to make it
+> > further similar to the usage of mm maple tree, and to be prepared for
+> > possible future changes, as suggested by Liam.
+> > 
+> > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
+> > Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
+> > Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > ---
+> > Changes from v1
+> > (https://lore.kernel.org/20240904004534.1189-1-sj@kernel.org)
+> > - Keep lock usage and update the initialization flags (Liam)
+> 
+> Not sure I understand how this is better. Is the resulting rcu warning
+> considered to be irrelevant or a separate problem ?
 
+I believe it's a separate potential problem (warning) that deserves a look.
+Meanwhile, this patch is fixing an issue that is definitely a bug, so better to
+fix right now, imho.
+
+
+Thanks,
+SJ
+
+[...]
 
