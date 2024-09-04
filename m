@@ -1,108 +1,171 @@
-Return-Path: <linux-kernel+bounces-316058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AB396CA96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0832B96CAA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7951C22266
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD4D1C225B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA61779AB;
-	Wed,  4 Sep 2024 22:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACB917A58C;
+	Wed,  4 Sep 2024 22:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IC9N4otR"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="ECsPNRE/"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA41383A3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4EC383A3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725490167; cv=none; b=qTfO0xq2qxT6Yy61IYiKfgcVa/o1kA/8R2ZftUYxlgXnpPykRS2z5rivkTn1jICaE6OdAuxtz1r0crbzIcZwM1psjMmUxiDafmybBWIZq7tGfuRWw9c/g+rfp0vUQ21lSnjtm2UeQwrKjrvciTajbpMozALVC0reSHJwl/qhfQ0=
+	t=1725490570; cv=none; b=EA3+hDJ4l5P0cLOqKPgOLt47hlvaOrdGhWxkb4j4sQHDmWTJNzKgDesd9gnX9Ws72mdCnFG5uwj3os0dhYxW6eZsO7xwYnHOD9lVzNGm24PyjJS6VrSbns0tK/etja3+IwclEWJGP6c+zEpMEDDMdnA+ytX9G2vrStAIeZ/mSdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725490167; c=relaxed/simple;
-	bh=jmw/WoF+sMtgKd5g54QLssILzP8E4zWxN4BoO369wQw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c9y5WzclCBEvHc+JNXT8YOTwf0KM3U1aWLy7lMIf6TduU2OSLhnHgqD8mDIXyrZjRGcC5UrbJYriXMGi/8pxJKFwEGuVFtZeMDAxF6fGipUunR25fyTIzbIplD2aKcIRNerHU/Vi86ECfFfIDt1yBhx7ID1XRx/S++sokD0ACqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IC9N4otR; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d2159ebf3dso205922a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:49:25 -0700 (PDT)
+	s=arc-20240116; t=1725490570; c=relaxed/simple;
+	bh=szdO1vb9faSGYA2Jc6crUSmefcYSz1qzFB4PGRjDfLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ri9d8Iyd6MI/lxU7TOBP7eRZUJUYjeO/AUHE2Z0QfGOlxkPHmDLROCXO9ePZ2CT1HbAg2t5pF0fh/KvYzRWTh/d0zqOR1G7nTTPU6mjnmffJcGylj7tzW9mgCu/flJj1Z6sy8SbaV6zhXNbwvLCd8Lp1BmOwqAS/1hjxnWvGk2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=ECsPNRE/; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71446767885so14035b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725490165; x=1726094965; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AfjMWL7qSHtmE1rmU7GUtTr0KNqRvj4ny0P55ZezMaI=;
-        b=IC9N4otRLJ4DkodH0aTynZHECIIfv1gJMaPj6coIYulx5hQauFgqvvr/jUGhhOWTI9
-         qWR0XLuHotxA+f5IgyyA78G/3DaQxwtErBsJYapZQJusK4nZ9eKNGo0EaDDljupVgygZ
-         pca+rzhUnxrrS9y5qKnxq0a3AgfV5PTIBtDpmv/qeDuDFiT/Kb32+NrqFOIFQZzMON/z
-         Xp16iGR5amMbLcae5uB1ZJ1bLJE58ecP/++b09iqAEdZQadqI+2L+inatg7n/ue1huop
-         15cc+EN1wksLULKm14+8tMYN05hrVVLXZA2L64YFOuLExVZwXk2YA6yatdy5K8mmC8Ne
-         Cz6A==
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1725490568; x=1726095368; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=35/vvYnjYcTahPnX2Ak6JC2o1aEV4aWjtE37kGrVzrs=;
+        b=ECsPNRE/8hQBTF+pxD/HcZGtcGCuYJhWLC3JL/GO5t9dx8wU0Vf8TgAIlJrZL02lA7
+         Gp/0Gj+ZPjJu7nHPYn7cmlKOqCaIpRqb4LS9zChNvYrndQTPvygI2DN8hTNCgaefCJRs
+         ILx7j4HVo2DMUlMWt6VLRVl59tpWrOWuerxFRIwsodZTU9tuNDvU9fmj8AZ6cbOiT4IE
+         8HJXp50UF+MiFqUhX0rrPaIEfo39D+hxA3NgC+VS+nX686EcGcb6gNqReiEBJxLLk9vw
+         +/8xef0zDRn/WlLlWgIWsF/rO+LOxyO5isdEu6jM/CU+mLOInGvFO6SBaNRVAqLsJpwx
+         c2DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725490165; x=1726094965;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AfjMWL7qSHtmE1rmU7GUtTr0KNqRvj4ny0P55ZezMaI=;
-        b=qlxqvn2PdKVM1Q0elS+O5GRTDbZt8bGcvZtVCyRplv4tzOR5cZ6yQwUyvE/fL1rz67
-         gXUJHTH0l61DrNpsgyOR+tCYN+f13EZ6EnxUAnblu41QNs5GgVkxCOkBf4Sg0l18QquL
-         Pb+2NYyvV1M4tgE3hwRa7sK4kXpgZ4Or7Ga8Y5PeHXhhE8e6NMW0OmvYrEu7zrq6wJMP
-         ZiItPQvO0F0dT+UQ0vO0zPZavSQjsDYF+zgyrpUc/2y1wFUeWr+NuVduYXG64H8JRpf+
-         7LtRWsGObKQ0FpXJBtyx9dk39wQGUFf93vMsUcVYQf06ZklWSj6vXO2wRJuoXG8HwQYe
-         vhig==
-X-Forwarded-Encrypted: i=1; AJvYcCWAwUqIk39YaedLA8JXC8AsiklKvB5pqC5Lgo0ExQAqTjjZf3l0GLGm5hIFW0soZJfyK/+pB0Bx29OQg28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIPRo78MFV0TqlXjMC+YcSVb/MCKQezUvErYyhDVsrG5DXKVDF
-	v3ZuuUPclcC/eGPjVOnRcW3G9aa99I9hOT8GQb3WnEG19Vk351sB/cZhwSD41CjsuCIuCba+I4U
-	m1A==
-X-Google-Smtp-Source: AGHT+IGxB0koQk+4DjbniMid//s+el+4YQz2SWzY87trrY9JIa/Nx1bMlTC4pMlfqu9yuRVU/vSNoPRCjB8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2352:b0:205:799f:124f with SMTP id
- d9443c01a7336-205799f1586mr8750175ad.5.1725490165129; Wed, 04 Sep 2024
- 15:49:25 -0700 (PDT)
-Date: Wed, 4 Sep 2024 15:49:23 -0700
-In-Reply-To: <20240904210830.GA1229985@thelio-3990X>
+        d=1e100.net; s=20230601; t=1725490568; x=1726095368;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=35/vvYnjYcTahPnX2Ak6JC2o1aEV4aWjtE37kGrVzrs=;
+        b=bPx3d8T/uCUeVwWbqVb3xDqCXW3LA+UzJKRPWfTCcnRZKl451ugwaWGkimPgykc7Ud
+         9Du4hUp0jPxd0KYlb/tYtPLuXFxGgvJv96MJG/Twm0jSBD51d+MfNtu9e3mt8UQdjPfi
+         sOuzDsEFWQlm+L+ic9Sd08C6UWUjcebSgw7DOnqnn8PevGRe9ijdWKQWgoMIUBZcT/+b
+         Fq36NqLdWtd52cICG8Kx7geZUougFxt/6lqpX4xyVzR2jlsy3hLxwJqr7WsEzG1rxfsS
+         /E5mJ+geaGQFGsUyf9XH+FAEM6/B4yK8JBiBszW0U2CUOefUayg9/b3Pq/9HHAcdpjbd
+         BW5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWauIBP/Tlbuk9CD5rjoNiR5cnGFS1jhPulMkTk5NjCsU8ee4NssWT0xmQ6sn1cSzcnVbiKI2Nd5T6XLEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1vb2xhusxTsQmyKHdv5VasW02fOwmmKJhEnCA2THQtei7cpsv
+	AT9b1AsDyXOTq0fE7ViTRqnKbbC8SYRb0e2B0eauY4RUHSZeRUxvg5MsnfVajYE=
+X-Google-Smtp-Source: AGHT+IGJMJTzWYcjGTZbRrQ6IDaoYzbHR/wGLI0wH+MKCl8eX8iKTnn29gVdjQTwsOFAi2AC/JBGeg==
+X-Received: by 2002:a17:902:f545:b0:206:b618:1d8f with SMTP id d9443c01a7336-206b6182580mr23287495ad.11.1725490567622;
+        Wed, 04 Sep 2024 15:56:07 -0700 (PDT)
+Received: from telecaster.dhcp.thefacebook.com ([2620:10d:c090:500::4:761e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9525cbsm18305395ad.99.2024.09.04.15.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 15:56:07 -0700 (PDT)
+Date: Wed, 4 Sep 2024 15:56:04 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	"Christopher M. Riedl" <cmr@bluescreens.de>,
+	Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-um@lists.infradead.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: make copy_to_kernel_nofault() not fault on user
+ addresses
+Message-ID: <ZtjlhFbeFZtxzmTb@telecaster.dhcp.thefacebook.com>
+References: <cover.1725223574.git.osandov@fb.com>
+ <f0e171cbae576758d9387cee374dd65088e75b07.1725223574.git.osandov@fb.com>
+ <64e74f4d-948d-442e-9810-69907915401c@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240720000138.3027780-1-seanjc@google.com> <20240720000138.3027780-2-seanjc@google.com>
- <20240904210830.GA1229985@thelio-3990X>
-Message-ID: <Ztjj8xrWMzzrlbtM@google.com>
-Subject: Re: [PATCH 1/6] KVM: nVMX: Get to-be-acknowledge IRQ for nested
- VM-Exit at injection site
-From: Sean Christopherson <seanjc@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Zeng Guang <guang.zeng@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64e74f4d-948d-442e-9810-69907915401c@csgroup.eu>
 
-On Wed, Sep 04, 2024, Nathan Chancellor wrote:
-> I bisected (log below) an issue with starting a nested guest that
-> appears on two of my newer Intel test machines (but not a somewhat old
-> laptop) when this change as commit 6f373f4d941b ("KVM: nVMX: Get
-> to-be-acknowledge IRQ for nested VM-Exit at injection site") in -next is
-> present in the host kernel.
+On Wed, Sep 04, 2024 at 09:50:56AM +0200, Christophe Leroy wrote:
+> Hi,
 > 
-> I start a virtual machine with a full distribution using QEMU then start
-> a nested virtual machine using QEMU with the same kernel and a much
-> simpler Buildroot initrd, just to test the ability to run a nested
-> guest. After this change, starting a nested guest results in no output
-> from the nested guest and eventually the first guest restarts, sometimes
-> printing a lockup message that appears to be caused from qemu-system-x86
+> Le 02/09/2024 à 07:31, Omar Sandoval a écrit :
+> > [Vous ne recevez pas souvent de courriers de osandov@osandov.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> > 
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > I found that on x86, copy_to_kernel_nofault() still faults on addresses
+> > outside of the kernel address range (including NULL):
+> > 
+> >    # echo ttyS0 > /sys/module/kgdboc/parameters/kgdboc
+> >    # echo g > /proc/sysrq-trigger
+> >    ...
+> >    [15]kdb> mm 0 1234
+> >    [   94.652476] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> ...
+> > 
+> > Note that copy_to_kernel_nofault() uses pagefault_disable(), but it
+> > still faults. This is because with Supervisor Mode Access Prevention
+> > (SMAP) enabled, do_user_addr_fault() Oopses on a fault for a user
+> > address from kernel space _before_ checking faulthandler_disabled().
+> > 
+> > copy_from_kernel_nofault() avoids this by checking that the address is
+> > in the kernel before doing the actual memory access. Do the same in
+> > copy_to_kernel_nofault() so that we get an error as expected:
+> > 
+> >    # echo ttyS0 > /sys/module/kgdboc/parameters/kgdboc
+> >    # echo g > /proc/sysrq-trigger
+> >    ...
+> >    [17]kdb> mm 0 1234
+> >    kdb_putarea_size: Bad address 0x0
+> >    diag: -21: Invalid address
+> > 
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > ---
+> >   mm/maccess.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/mm/maccess.c b/mm/maccess.c
+> > index 72e9c03ea37f..d67dee51a1cc 100644
+> > --- a/mm/maccess.c
+> > +++ b/mm/maccess.c
+> > @@ -61,6 +61,9 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+> >          if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
+> >                  align = (unsigned long)dst | (unsigned long)src;
+> > 
+> > +       if (!copy_kernel_nofault_allowed(dst, size))
+> > +               return -ERANGE;
+> > +
+> >          pagefault_disable();
+> >          if (!(align & 7))
+> >                  copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
+> > --
+> > 2.46.0
+> > 
+> 
+> This patch leads to the following errors on ppc64le_defconfig:
+> 
+> [    2.423930][    T1] Running code patching self-tests ...
+> [    2.428912][    T1] code-patching: test failed at line 395
+> [    2.429085][    T1] code-patching: test failed at line 398
+> [    2.429561][    T1] code-patching: test failed at line 432
+> [    2.429679][    T1] code-patching: test failed at line 435
+> 
+> This seems to be linked to commit c28c15b6d28a ("powerpc/code-patching: Use
+> temporary mm for Radix MMU"), copy_from_kernel_nofault_allowed() returns
+> false for the patching area.
 
-*sigh*
+Thanks for testing. This patch isn't worth the trouble, so we can drop
+it.
 
-It's not you, it's me.
-
-I just bisected hangs in my nested setup to this same commit.  Apparently, I
-completely and utterly failed at testing.
-
-There isn't that much going on here, so knock wood, getting a root cause shouldn't
-be terribly difficult.
+Thanks,
+Omar
 
