@@ -1,251 +1,177 @@
-Return-Path: <linux-kernel+bounces-315018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E9196BC94
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 816C096BC9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEBF51C21652
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:39:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4126A1C2193F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA861D9340;
-	Wed,  4 Sep 2024 12:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5071D9350;
+	Wed,  4 Sep 2024 12:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hDGncRrm"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XWRTP3xp"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237B91CC885;
-	Wed,  4 Sep 2024 12:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1142B1CF5F5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453555; cv=none; b=BRahY5y59EW30PCUMXkRgjqXmlZ01jptWPG6dxALQNHfaD1u4mkbdeZLSHztgFdY+PteQORUPUBNwaa7kwZohaxP8p/qykYJYTmT07huOo2z1kd9OrmPG11OsqwRac/omISd28UaxFw+dOU/DB3EwzHOfzFyKWuBRPABl0OGANw=
+	t=1725453678; cv=none; b=e95StmEThZf7yn2g8MvO+XmXaHt9T5PFxzIp7vFM9XwR25ZFcG7fchKNvMoaH/34H9NFk0jj+9Xx7FOSL0SLeetjpKcqRuV+EJsWAyMTkQsj8lz7Hgr1BjGR7ydkBJyITvfmc+UhfAM5OEA0+uOEFkvV82ZvKzJGop0V/EFw0EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453555; c=relaxed/simple;
-	bh=SmN1v30KDRqP4hgPOi6Zg2+R4CMbr3KihUxWnH4DkP4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EtA4C5IerSinuJdtbmVhSNAW/cnPpTKuS5jGOEUXr9KDWDpHwiMi/Q54bdv/dyWBkFHmccOtqzPgPw3+hsN+JXzX3EWap47HAYp6qJnO5P3kVVNkbzTvC17/WBqdrumpgLebuxzJ32o0SUtGBy/QiMMxFYyqf47V/WuyNHuRTD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hDGncRrm; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a6d2d6da6aba11ef8593d301e5c8a9c0-20240904
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=aO9ZiOlbToA5gahsBzJeseLep5Ro0Hb56Y6urVLbIqI=;
-	b=hDGncRrm7b8ky/s7h1UVMV51Sl30en+lDozdiYCeT1ZOuo/3Wt7jbsVhy4cYsNLSvap3+Uu15ojDoBBq61BDhlla5jTZgzLK2YPqn4God2+1dUTNnP8SXnGx/eqggmZ9u5zLZfWFhZJCrlvWXKx/++l1SrUg9xKRfdGVb6RZNB4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:ebbb3374-7dae-48ff-9de7-1d403c73abcb,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:547470bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: a6d2d6da6aba11ef8593d301e5c8a9c0-20240904
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-	(envelope-from <chunhui.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 888197126; Wed, 04 Sep 2024 20:38:56 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 4 Sep 2024 20:38:58 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 4 Sep 2024 20:38:57 +0800
-From: Chunhui Li <chunhui.li@mediatek.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<wsd_upstream@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>, kernel
- test robot <lkp@intel.com>, Xion Wang <xion.wang@mediatek.com>
-Subject: [PATCH v2] module: abort module loading when sysfs setup suffer errors
-Date: Wed, 4 Sep 2024 20:41:07 +0800
-Message-ID: <20240904124108.20444-1-chunhui.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725453678; c=relaxed/simple;
+	bh=1UISgvlWcv2Y7+TxNQcrzQtP8EfA+ViBiYZQ6iNHTfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zl3jUpDRzyIxAzvVioa96N0y5CV11sFkbRnx1RkecRXdlnn+9GekZUen7ZVlAoxr4CCss2TVabe3vdrofTpFj/6gxHRnekX3TwxbhLPK6yhVFYDFzXvg4iEIf02ZpLqlLyMj1e2hgbiahP9DOxVoI78Hq1oKvqpgIOem1uxiUVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XWRTP3xp; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82a29c11e1cso215933039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725453676; x=1726058476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qcq1FEBxbDWBsgRl9Is3K+I7b8WqhaMddxDrtzjKeh4=;
+        b=XWRTP3xpjnxCaL/kXZFPEpzYXiETBamAyfeQVmZu0JDZmIwgIVHa7zH07XfdamXfYt
+         YQ/9EiFm8+TIsRjTsjynbKZZjyW04ktmwiu1Xh+sbJE+3/vbXozqEmLNZTUXYXd6gn0c
+         iu/sBIfbWIRutqu2p0xCMhs/N205TviFv49Z4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725453676; x=1726058476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qcq1FEBxbDWBsgRl9Is3K+I7b8WqhaMddxDrtzjKeh4=;
+        b=v1HisibJkW/8tu2HtWsYlS4J/ufETwSOysWMdy8wD7YpXrmCrVNynBWBUdbgRg+D6P
+         ilj2zOFu/gVPD9m6sv+MwcuIcX8GcND+TDx653G8Tjv5Ql8ObN9qY6X+JjmoDZ71L5bG
+         mh6VTXOM5wkbe97mNyi3CtnPPL+tczZ2Uhqva0zZA09JQWIypHeerJzAqs/k0hPZVyXy
+         hnXifvDyJERjOUe8eMensv8B64YAPsjbXetfGpii1EtguXjDSPlNq1yR9MbsNZvJdAHr
+         f5rkZQhCq1tGD4qayxZsrFlVblzAmqOTNQeH3U0y1aj4S0FTmdM3/XKFhQpgEMngABBX
+         5dXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2BHQ7Vjfe8qF5EPf0lJV7/OmwPKzlDGyw06cFdFPc/8lukZSvL67GCTGM7VLctjS4uAPLwamlX5T6WuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYrkeZpwgHHmk/Hwk9FCcI9bH1OAhm+WBeNeoiquUW+UKpZ+bs
+	gdEflWkrHIHORWRkIG0bpYeyBG/atv+nRAEFFMnpEseRScFDIgOe0esEIJy7Ktw=
+X-Google-Smtp-Source: AGHT+IFSTJiOA1xhZqwjBQpQ3S0Ug1iDsLyH/VoJmMKqMb92HEU0RD9+LXZdHya9APtp2pz3k3Stjg==
+X-Received: by 2002:a05:6602:1609:b0:824:d9d1:e67b with SMTP id ca18e2360f4ac-82a3428cd59mr1922511739f.8.1725453676078;
+        Wed, 04 Sep 2024 05:41:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2dcd722sm3160524173.27.2024.09.04.05.41.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 05:41:15 -0700 (PDT)
+Message-ID: <ab9e3727-9978-4a30-8bff-e366fa5defc1@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 06:41:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add SWIG Bindings to libcpupower
+To: "John B. Wyatt IV" <jwyatt@redhat.com>
+Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
+ Shuah Khan <shuah@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Arnaldo Melo <acme@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "John B. Wyatt IV" <sageofredondo@gmail.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240827062438.71809-1-jwyatt@redhat.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240827062438.71809-1-jwyatt@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When insmod a kernel module, if fails in add_notes_attrs or
-add_sysfs_attrs such as memory allocation fail, mod_sysfs_setup
-will still return success, but we can't access user interface
-on android device.
+On 8/27/24 00:24, John B. Wyatt IV wrote:
+> SWIG is a tool packaged in Fedora and other distros that can generate
+> bindings from C and C++ code for several languages including Python,
+> Perl, and Go. Providing bindings for scripting languages is a common feature
+> to make use of libraries more accessible to more users and programs. My team
+> specifically wants to expand the features of rteval. rteval is a Python program
+> used to measure real time performance. We wanted to test the effect of enabling
+> some levels of idle-stat to see how it affects latency, and didn't want to
+> reinvent the wheel. Since SWIG requires the .o files created by libcpupower at
+> compilation it makes sense to include this in the cpupower directory so that
+> others can make use of them.
+> 
+> The V2 of this patchset includes:
+> * the full definition of libcpupower headers that is needed for the bindings
+> * dummy implementation in C of a function listed in the header of libcpupower
+> (requested by Shuah Khan)
+> * test_raw_pylibcpupower.py demonstrates an example of using the bindings
+> * adding myself and John Kacur to the cpupower section of the maintainers file
+> (requested by Shuah Khan)
+> * addressed review comments about doc, makefile, and maintainers file
+> * small style and other fixes
+> 
+> The name raw_pylibcpupower is used because a wrapper `pylibcpupower` may be
+> needed to make the bindings more 'pythonic' in the future. The bindings folder
+> is used because Go or Perl bindings may be useful for other users in the
+> future.
+> 
+> Note that while SWIG itself is GPL v3+ licensed; the resulting output, the
+> bindings code, has the same license as the .o files used to generate the
+> bindings (GPL v2 only). Please see
+> https://swig.org/legal.html
+> and
+> https://lore.kernel.org/linux-pm/Zqv9BOjxLAgyNP5B@hatbackup/#t
+> for more details on the license.
+> 
+> Sincerely,
+> John Wyatt
+> Software Engineer, Core Kernel
+> Red Hat
+> 
+> John B. Wyatt IV (4):
+>    Add SWIG bindings files for libcpupower
+>    Implement dummy function for SWIG to accept the full library
+>      definitions
+>    Include test_raw_pylibcpupower.py
+>    MAINTAINERS: Add Maintainers for SWIG Python bindings
+> 
+>   MAINTAINERS                                   |   3 +
+>   .../power/cpupower/bindings/python/.gitignore |   8 +
+>   tools/power/cpupower/bindings/python/Makefile |  31 +++
+>   tools/power/cpupower/bindings/python/README   |  59 +++++
+>   .../bindings/python/raw_pylibcpupower.i       | 247 ++++++++++++++++++
+>   .../bindings/python/test_raw_pylibcpupower.py |  42 +++
+>   tools/power/cpupower/lib/powercap.c           |   8 +
+>   7 files changed, 398 insertions(+)
+>   create mode 100644 tools/power/cpupower/bindings/python/.gitignore
+>   create mode 100644 tools/power/cpupower/bindings/python/Makefile
+>   create mode 100644 tools/power/cpupower/bindings/python/README
+>   create mode 100644 tools/power/cpupower/bindings/python/raw_pylibcpupower.i
+>   create mode 100755 tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
+> 
 
-Patch for make mod_sysfs_setup can check the error of
-add_notes_attrs and add_sysfs_attrs.
+Couple of things to address:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409010016.3XIFSmRA-lkp@intel.com/
-Signed-off-by: Xion Wang <xion.wang@mediatek.com>
-Signed-off-by: Chunhui Li <chunhui.li@mediatek.com>
----
- kernel/module/sysfs.c | 53 +++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 17 deletions(-)
+1. I noticed none of the patches have the subsystem prefix:
+   pm:cpupower is the right prefix for patch subject for all
+   the patches except the MAINTAINERS file
 
-diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
-index 26efe1305c12..61a3547e56f9 100644
---- a/kernel/module/sysfs.c
-+++ b/kernel/module/sysfs.c
-@@ -69,12 +69,13 @@ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
- 	kfree(sect_attrs);
- }
- 
--static void add_sect_attrs(struct module *mod, const struct load_info *info)
-+static int add_sect_attrs(struct module *mod, const struct load_info *info)
- {
- 	unsigned int nloaded = 0, i, size[2];
- 	struct module_sect_attrs *sect_attrs;
- 	struct module_sect_attr *sattr;
- 	struct bin_attribute **gattr;
-+	int ret;
- 
- 	/* Count loaded sections and allocate structures */
- 	for (i = 0; i < info->hdr->e_shnum; i++)
-@@ -85,7 +86,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.bin_attrs[0]);
- 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
- 	if (!sect_attrs)
--		return;
-+		return -ENOMEM;
- 
- 	/* Setup section attributes. */
- 	sect_attrs->grp.name = "sections";
-@@ -103,8 +104,10 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 		sattr->address = sec->sh_addr;
- 		sattr->battr.attr.name =
- 			kstrdup(info->secstrings + sec->sh_name, GFP_KERNEL);
--		if (!sattr->battr.attr.name)
-+		if (!sattr->battr.attr.name) {
-+			ret = -ENOMEM;
- 			goto out;
-+		}
- 		sect_attrs->nsections++;
- 		sattr->battr.read = module_sect_read;
- 		sattr->battr.size = MODULE_SECT_READ_SIZE;
-@@ -113,13 +116,15 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	}
- 	*gattr = NULL;
- 
--	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp))
-+	ret = sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp);
-+	if (ret)
- 		goto out;
- 
- 	mod->sect_attrs = sect_attrs;
--	return;
-+	return 0;
- out:
- 	free_sect_attrs(sect_attrs);
-+	return ret;
- }
- 
- static void remove_sect_attrs(struct module *mod)
-@@ -158,11 +163,12 @@ static void free_notes_attrs(struct module_notes_attrs *notes_attrs,
- 	kfree(notes_attrs);
- }
- 
--static void add_notes_attrs(struct module *mod, const struct load_info *info)
-+static int add_notes_attrs(struct module *mod, const struct load_info *info)
- {
- 	unsigned int notes, loaded, i;
- 	struct module_notes_attrs *notes_attrs;
- 	struct bin_attribute *nattr;
-+	int ret;
- 
- 	/* failed to create section attributes, so can't create notes */
- 	if (!mod->sect_attrs)
-@@ -176,12 +182,12 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
- 			++notes;
- 
- 	if (notes == 0)
--		return;
-+		return 0;
- 
- 	notes_attrs = kzalloc(struct_size(notes_attrs, attrs, notes),
- 			      GFP_KERNEL);
- 	if (!notes_attrs)
--		return;
-+		return -ENOMEM;
- 
- 	notes_attrs->notes = notes;
- 	nattr = &notes_attrs->attrs[0];
-@@ -201,19 +207,23 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
- 	}
- 
- 	notes_attrs->dir = kobject_create_and_add("notes", &mod->mkobj.kobj);
--	if (!notes_attrs->dir)
-+	if (!notes_attrs->dir) {
-+		ret = -ENOMEM;
- 		goto out;
-+	}
- 
--	for (i = 0; i < notes; ++i)
--		if (sysfs_create_bin_file(notes_attrs->dir,
--					  &notes_attrs->attrs[i]))
-+	for (i = 0; i < notes; ++i) {
-+		ret = sysfs_create_bin_file(notes_attrs->dir, &notes_attrs->attrs[i]);
-+		if (ret)
- 			goto out;
-+	}
- 
- 	mod->notes_attrs = notes_attrs;
--	return;
-+	return 0;
- 
- out:
- 	free_notes_attrs(notes_attrs, i);
-+	return ret;
- }
- 
- static void remove_notes_attrs(struct module *mod)
-@@ -223,9 +233,9 @@ static void remove_notes_attrs(struct module *mod)
- }
- 
- #else /* !CONFIG_KALLSYMS */
--static inline void add_sect_attrs(struct module *mod, const struct load_info *info) { }
-+static inline int add_sect_attrs(struct module *mod, const struct load_info *info) { }
- static inline void remove_sect_attrs(struct module *mod) { }
--static inline void add_notes_attrs(struct module *mod, const struct load_info *info) { }
-+static inline int add_notes_attrs(struct module *mod, const struct load_info *info) { }
- static inline void remove_notes_attrs(struct module *mod) { }
- #endif /* CONFIG_KALLSYMS */
- 
-@@ -385,11 +395,20 @@ int mod_sysfs_setup(struct module *mod,
- 	if (err)
- 		goto out_unreg_modinfo_attrs;
- 
--	add_sect_attrs(mod, info);
--	add_notes_attrs(mod, info);
-+	err = add_sect_attrs(mod, info);
-+	if (err)
-+		goto out_del_usage_links;
-+
-+	err = add_notes_attrs(mod, info);
-+	if (err)
-+		goto out_unreg_sect_attrs;
- 
- 	return 0;
- 
-+out_unreg_sect_attrs:
-+	remove_sect_attrs(mod);
-+out_del_usage_links:
-+	del_usage_links(mod);
- out_unreg_modinfo_attrs:
- 	module_remove_modinfo_attrs(mod, -1);
- out_unreg_param:
--- 
-2.45.2
+I will pull the fix  "Implement dummy function for SWIG to accept
+the full library" Patch 2 in your series.
 
+I want this subject changed to just fix as it is a problem irrespective
+of SWIG - we have a missing function. Subject would be as follows:
+
+""pm:cpupower: Add missing powercap_set_enabled() stub function"
+
+Make this the first patch in the series. I will send this up for
+Linux 6.11-rc7 or Linux 6.12-rc1
+
+Depending on how the timelines for merge window work, expect the
+series to land in Linux 6.13-rc1. I would prefer to delay it anyway
+so we can get some soaking in next.
+
+thanks,
+-- Shuah
 
