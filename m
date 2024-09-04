@@ -1,209 +1,74 @@
-Return-Path: <linux-kernel+bounces-315262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDEF96C01D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE1996C028
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB2C28CACA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0862A28D8BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698A11DCB07;
-	Wed,  4 Sep 2024 14:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="ADmuRmyR"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5244F1DFE21;
+	Wed,  4 Sep 2024 14:20:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAF01DA2E0;
-	Wed,  4 Sep 2024 14:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459544; cv=pass; b=JcRHWa9MzjbZv8RB9KAVDsUJBWG5mQt8gk574/n7KcWCkWf8K2hwA6mUN9YI42vopqrFWa21TwrK+ZrGPcfHe95myRASBqBEPvVHVpXlXia2oIuGpUn3c659K73aQSB8wejR/LAS+MGXJy5+9tx5cfL1RzNn1BVBUca8fLGepwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459544; c=relaxed/simple;
-	bh=uU7gMuNDVjC+V3qMSXEmiadluh61s2DpRze3K37Z3Gk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MAHLbIMLAG9GTcjk7meas2tgEryEyD//PohcwQFfocd8Cd/EvaMLhCPYnGM4pbIq+h/TPC4cZd4FXKlzo3IugoInZwReRXLymznknDQi1Nfwo4NN0Rl7fM254QYU/XsGa8ruG6jycSZswRohKZQbaS9dwi9uRe4j5scN3TlW+zs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=ADmuRmyR; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725459526; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bhWJVVBbEcTjCy8Y1IwhWSJNggeRmhEhex4xMRAezmIOYXfrw8oolU+JIS9r3bRLDNTeaFC+UZYA7drUxXI0GIhaSkEGGwEzFZszBKj1WnGB0/f+w4WXWklyS3w8s/rVkEgrvEA408pA8HVYpBtzNg+ftUdXUwRW378lJUPoqeE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725459526; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NrB5Eis6keev0BLIO3EvM0mmuwnm+jdjAUtFc7Pc2Yk=; 
-	b=edbKMlbnBz9R3UY38BNfoyQyJGOaVw8tue1lD4lCtk0qRVOsIa5bACvHjsOGGHoV87jFME9HNZp100C6MNW7vWdkRw72+0bEpBzfkqsK+2D5UZCaMlR6nyE1Gmb93nMOXWhykJVFhtEWdUyMmxR6+hgp7oMFIrUWF+a7dZTz66M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725459526;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=NrB5Eis6keev0BLIO3EvM0mmuwnm+jdjAUtFc7Pc2Yk=;
-	b=ADmuRmyRo5liqlhTpyz9i74G+rFRwi36HUcDvnXsYfq0cGScUXbfntRbFaU2ekzv
-	cdZzO2MXuGArsnWbfDZAvETvsSr6BGOo6v+VDQXQdR+10FsicsIpiCl1RctOsUVOuIS
-	PwqWnyvxhEF2n/p8wanNhb/7Jq3yrj+l+7f7g9fg=
-Received: by mx.zohomail.com with SMTPS id 1725459523885377.12512494542716;
-	Wed, 4 Sep 2024 07:18:43 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
-Date: Wed, 04 Sep 2024 10:20:44 -0400
-Message-ID: <1896150.tdWV9SEqCh@trenzalore>
-In-Reply-To: <0d4d40cc-9885-4933-a6d6-933e4705a68c@linaro.org>
-References:
- <20240903145615.9302-1-detlev.casanova@collabora.com>
- <6077666.lOV4Wx5bFT@trenzalore>
- <0d4d40cc-9885-4933-a6d6-933e4705a68c@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F181DB949;
+	Wed,  4 Sep 2024 14:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725459605; cv=none; b=jenm7Xb/kBMXXgtsaiTCk260baZSgD26/VD/HBdr2VKP7sXX8DJIN0llx/P5pyKO+rC3Am1qDsCZDxg1CBE6FVDASDmdKXQg3SvxbeVYsnjW8YtN7HxCjVq8hdoyAoSi8ueSXxTZanN45ADZg6EVlF4sC6rCYb1oUvV3AGb5bcA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725459605; c=relaxed/simple;
+	bh=+n89Dd/XB0RwWJq3kRUYqqmo+cbkW6057PytnvWj7rY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dQlwxL4XwxD/gOUjhTh4BEOMF6sppgsT1E3gAfkTaBDUyRBE/xFW//jV7QoFycbGLG53+6myFVJykwJpPAgC+Mbcv29ZZ1n4xhygfw3orf3TqI5pmcpvu+XEx7SalJ40NCM3oanu1QmYVBbJ3niRIPOvDrCYjODbc9HlgIidaM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D60C4CEC2;
+	Wed,  4 Sep 2024 14:20:03 +0000 (UTC)
+Date: Wed, 4 Sep 2024 10:21:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240904102104.6f2a35af@gandalf.local.home>
+In-Reply-To: <CAP4=nvRfkZ2CEbFv+MFBXikZ_p2K-1uucgkdgp27JeTxe58qhw@mail.gmail.com>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240823125426.404f2705@gandalf.local.home>
+	<20240823145211.34ccda61@gandalf.local.home>
+	<CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+	<20240826132620.1618d201@gandalf.local.home>
+	<CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
+	<CAP4=nvRfkZ2CEbFv+MFBXikZ_p2K-1uucgkdgp27JeTxe58qhw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, 4 September 2024 09:02:40 EDT Krzysztof Kozlowski wrote:
-> On 04/09/2024 14:56, Detlev Casanova wrote:
-> > On Wednesday, 4 September 2024 02:00:27 EDT Krzysztof Kozlowski wrote:
-> >> On Tue, Sep 03, 2024 at 10:51:36AM -0400, Detlev Casanova wrote:
-> >>> The device is compatible with rk3588, so add an entry for the 2
-> >>> compatibles together.
-> >>> 
-> >>> The rk3576 device has a power-domain that needs to be on for the eMMC to
-> >>> be used. Add it as a requirement.
-> >>> 
-> >>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> 
-> >> NAK
-> >> 
-> >> Drop fake tag. It is impossible to receive a review-tag from me on THE
-> >> FIRST version.  I almost never provide reviews out of mailing lists.
-> >> 
-> >> And since there is no changelog here and no versioning, this obviously
-> >> is not v2 or v3.
-> > 
-> > That's because the patch was from another patchset[0]. Only this patch
-> > needed a rebase on the mmc tree, so I sent it separately. You reviewed it
-> > here [1].
-> > 
-> > [0]:
-> > https://lore.kernel.org/all/010201919989e3de-60b56341-85e0-4869-89d1-3624
-> > 07c4f2ec-000000@eu-west-1.amazonses.com/ [1]:
-> > https://lore.kernel.org/all/m5ua5jnbv4u36glqt2qrps35asuqfycxedgjrfhodi5bv
-> > s2r2h@xvy4qxt4gx74/
-> Hm, ok, changelog should explained this and the versioning should
-> continue, including history of this patch.
+On Tue, 3 Sep 2024 14:47:42 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
 
-Sorry about that, I'll send a v4 after this one with the corresponding 
-changelog then.
+> I suggest using the workaround suggested in
+> https://lore.kernel.org/linux-trace-kernel/20240823125426.404f2705@gandalf.local.home
+> for the time being. Together with the patch that adds locks around
+> stopping the threads
+> (https://patchwork.kernel.org/project/linux-trace-kernel/patch/20240823102816.5e55753b@gandalf.local.home/),
+> this should prevent the kernel panic at least until we have a solution
+> for the race itself.
 
-> >>> ---
-> >>> 
-> >>>  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 34 ++++++++++++++-----
-> >>>  1 file changed, 26 insertions(+), 8 deletions(-)
-> >>> 
-> >>> diff --git
-> >>> a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> >>> b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml index
-> >>> 80d50178d2e3..84a667f0c526 100644
-> >>> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> >>> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> >>> 
-> >>> @@ -12,14 +12,18 @@ maintainers:
-> >>>  properties:
-> >>>    compatible:
-> >>> -    enum:
-> >>> -      - rockchip,rk3568-dwcmshc
-> >>> -      - rockchip,rk3588-dwcmshc
-> >>> -      - snps,dwcmshc-sdhci
-> >>> -      - sophgo,cv1800b-dwcmshc
-> >>> -      - sophgo,sg2002-dwcmshc
-> >>> -      - sophgo,sg2042-dwcmshc
-> >>> -      - thead,th1520-dwcmshc
-> >>> +    oneOf:
-> >>> +      - items:
-> >>> +          - const: rockchip,rk3576-dwcmshc
-> >>> +          - const: rockchip,rk3588-dwcmshc
-> >>> +      - enum:
-> >>> +          - rockchip,rk3568-dwcmshc
-> >>> +          - rockchip,rk3588-dwcmshc
-> >>> +          - snps,dwcmshc-sdhci
-> >>> +          - sophgo,cv1800b-dwcmshc
-> >>> +          - sophgo,sg2002-dwcmshc
-> >>> +          - sophgo,sg2042-dwcmshc
-> >>> +          - thead,th1520-dwcmshc
-> >>> 
-> >>>    reg:
-> >>>      maxItems: 1
-> >>> 
-> >>> @@ -35,6 +39,9 @@ properties:
-> >>>      minItems: 1
-> >>>      maxItems: 5
-> >>> 
-> >>> +  power-domains:
-> >>> +    maxItems: 1
-> >>> +
-> >>> 
-> >>>    resets:
-> >>>      maxItems: 5
-> >>> 
-> >>> @@ -97,6 +104,17 @@ allOf:
-> >>>              - const: block
-> >>>              - const: timer
-> >>> 
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          contains:
-> >>> +            const: rockchip,rk3576-dwcmshc
-> >>> +
-> >>> +    then:
-> >>> +      properties:
-> >>> +        power-domains:
-> >>> +          minItems: 1
-> >> 
-> >> Why minItems? This does not look right. I don't get what you are trying
-> >> to say here.
-> > 
-> > I'm saying that for the rockchip,rk3576-dwcmshc compatible, 1 power-domain
-> > node has to be set.
-> 
-> The top-level property already says this. You need to disallow it for
-> other variants (:false).
+When running my tests, the second one would end up deadlocking and
+triggering lockdep. I found a way to do basically the same thing with a
+cpumask and no added locking. I'm currently testing it and will be sending
+out a patch later today (if it passes the tests).
 
-Ok, something like this:
-
-allOf:
-  - if:
-      properties:
-        compatible:
-          contains:
-            const: rockchip,rk3576-dwcmshc
-
-    then:
-      required:
-        - power-domains
-
-    else:
-      properties:
-        power-domains: false
-
-Detlev.
-
-
-
+-- Steve
 
