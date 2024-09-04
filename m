@@ -1,256 +1,132 @@
-Return-Path: <linux-kernel+bounces-315294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234DC96C094
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:32:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E862996C089
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A7A1C2281E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76BA32896C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E881DC759;
-	Wed,  4 Sep 2024 14:31:03 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3E91DB937;
+	Wed,  4 Sep 2024 14:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EK6m47HZ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4D31DC078
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0F1DA2F1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460263; cv=none; b=kIA/tZdMcbP+Wyh1LJ7+Zy9/ARuR9SyVKy0+HrZ/rDoilq3zQTCgVfvDa94qGd/Syc5WhwwJ+mSdFYFu+QXRcSj+a4vPboGddAJVWMouaW2ruhwfP2zx/p3VBEfU6XwTo1CDdpSQQ+40Y/oMSSmcBp2/WnygywQFBAl587tKtQc=
+	t=1725460255; cv=none; b=GHdoc4ns8RFV/GpqGVKCEwG184ymfOxT1fadiLO2ADOUtKjs81vs9m57BjjE7XtwzOJvYJRDO9qFHWQJedhujBBQZUXxCjJnXIWgrg2WFJqeOGyuJ5RhHy3wtCqeCkUDRJjYLJAJRvhQZTgWpIoKXiRBoCW/j3r0A7kUioXuW2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460263; c=relaxed/simple;
-	bh=IHJiZt3d3WP1/U0rfOhft2OuptnfKHxTsCu5JXAwzBY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=apkr000QKQ4i6t4lfUCDSmahfp5OowwaTqhXMiVgyEnOebB3QPjYib3S4B+rEtZ6b2qqun2dRgrX33vpND+xf2mCoAeU7iLZmdaV6XWp/cnoJY8G4rUstBcgvXHlvvoJ6MMLWr5l4vqy+VZLkUw0RL+BLnWLW0iM3bmnm6Cfa0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ef52:68c5:eac1:f6b5])
-	by albert.telenet-ops.be with cmsmtp
-	id 8EWv2D00D3m5in106EWvSN; Wed, 04 Sep 2024 16:30:57 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slr24-0028JW-Jx;
-	Wed, 04 Sep 2024 16:30:55 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slr27-004MyM-BS;
-	Wed, 04 Sep 2024 16:30:55 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] pmdomain: core: Reduce debug summary table width
-Date: Wed,  4 Sep 2024 16:30:48 +0200
-Message-Id: <f8e1821364b6d5d11350447c128f6d2b470f33fe.1725459707.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725459707.git.geert+renesas@glider.be>
-References: <cover.1725459707.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1725460255; c=relaxed/simple;
+	bh=+ZXu6meYUp2emnk1pUEFpHVRsMcDsWR9d9edP3JL+tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlF7Ubf2qetELejTPJUx5vmCETLXBTrXXs5Y/MOUC97tIimmO5bJbl7j2bV5vam1geeHJRQ2InPp5+lvnOS6G4o0bJHz8h+qrXRBA3ZVNbEvuqa5irUt44kClAqbUnrhpoMEAETOGRp14xX1IVIT9iKGFao72KDe0DTF7bzx78g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EK6m47HZ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a81bd549eso613162266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725460252; x=1726065052; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
+        b=EK6m47HZAyHgIrhryObg0UtFiQrm6tdnwPgHZ5pMSgAmtRt3Pt7IBgyJ5zD31UMF6T
+         7qLWVlQ1PUobHBeqlhByfSoZ1ps4Zzhve0rsDaOTcJKq8wuodsLqUUfb9jDJwbO7KxDO
+         MkiV78wAQHf5p0+oqa00nbHa1N+zmmXBBRdCjTQ34f7J+2TAeiHi36RnJ82VbhOKBXLa
+         8kNJC5wssnJFt+ZgRIbyAX0GFyRlmimAMnuKjGeOeMGzmua+cm5VlSt8NmDkWXu7oCeY
+         gleAH4VphEPkctfggHZVn3FRuxK4yHtOiUMcJw/2cBZG41sfK2TVUAYuo/5Z1z1Ii1Bb
+         kc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725460252; x=1726065052;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mj+3ddf2T3OL11MVG0wgLWW55Rk8MJvA3KeiKNlFbs=;
+        b=MVRLi2yMAzUwo8QdEWFWQR2Nb0UMNIhNpyQKJbxur/d/onH+MbeoFEbl5Jx3z0DGDx
+         +JEpCnlKlm4sALKORqpgEqOXZZ1eWqCqj1+AUgSwt1b7lVB9LnE9Ca7XpgyLXVoHHD4H
+         JQeA8ixNHo4uob5wPLvRr4XLSnXXhk9V5dgAV2u+Fz18trUgsbehdm32mSMRVUqYJ0JO
+         eCby00kIG5ME3Qap6XAisHuvnlqW5fHvlwuGGARIIgIfcvczVcSL2iOriYCA0aNN3XgN
+         DyI4C6bampsJAaMUuXsh1b+y8sgNIXdM9PdOETLvYPQ9a5CuARWCWLnYWl/L3y9ygzxl
+         fTEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmxsFEsfwW3REP+xgMz0doRR0ip3Pt7fs0AscCgPQq1v+1jorwzrhZH1KEpK/riicy7QLb7bxrpRZiZxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhNEUDB4xD6RE72h0ks9xpF85dlT9DN0f1rC03KcZVARvERHcZ
+	/n8+kcsN0dmX4UUy8rSzRQGsls/Nr3mDg3LTdRXXDYevVwxq3if4llZKoSO5nNYqriOPC0ON/i+
+	D
+X-Google-Smtp-Source: AGHT+IFMOIxyP6G+sV9SFwQbLa7RzZxnlSRsBYqqYkhtUdWNAPfVNmkYr+B0Ioi6gh+avo5V5Q6aYQ==
+X-Received: by 2002:a17:907:7206:b0:a89:9a9d:4e13 with SMTP id a640c23a62f3a-a8a1d56efbdmr693848266b.56.1725460251935;
+        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3ceasm810608566b.115.2024.09.04.07.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:30:51 -0700 (PDT)
+Date: Wed, 4 Sep 2024 16:30:50 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH printk v6 00/17] add threaded printing + the rest
+Message-ID: <ZthvGoJE26dOtsLm@pathway.suse.cz>
+References: <20240904120536.115780-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904120536.115780-1-john.ogness@linutronix.de>
 
-Commit 9094e53ff5c86ebe ("pmdomain: core: Use dev_name() instead of
-kobject_get_path() in debugfs") severely shortened the names of devices
-in a PM Domain.  Now the most common format[1] consists of a 32-bit
-unit-address (8 characters), followed by a dot and a node name (20
-characters for "air-pollution-sensor" and "interrupt-controller", which
-are the longest generic node names documented in the Devicetree
-Specification), for a typical maximum of 29 characters.
+On Wed 2024-09-04 14:11:19, John Ogness wrote:
+> Hi,
+> 
+> This is v6 of a series to implement threaded console printing
+> as well as some other minor pieces (such as proc and sysfs
+> recognition of nbcon consoles). v5 is here [0].
+> 
+> For information about the motivation of the nbcon consoles,
+> please read the cover letter of the original v1 [1].
+> 
+> This series provides the remaining pieces of the printk
+> rework. All other components are either already mainline or are
+> currently in linux-next. In particular this series does:
+> 
+> - Implement dedicated printing threads per nbcon console.
+> 
+> - Implement forced threading of legacy consoles for PREEMPT_RT.
+> 
+> - Implement nbcon support for proc and sysfs console-related
+>   files.
+> 
+> - Provide a new helper function nbcon_reacquire_nobuf() to
+>   allow nbcon console drivers to reacquire ownership.
+> 
+> Note that this series does *not* provide an nbcon console
+> driver. That will come in a follow-up series.
 
-This offers a good opportunity to reduce the table width of the debug
-summary:
-  - Reduce the device name field width from 50 to 30 characters, which
-    matches the PM Domain name width,
-  - Reduce the large inter-column space between the "performance" and
-    "managed by" columns.
+JFYI, the patchset has been committed into printk/linux.git,
+branch rework/threaded-printk.
 
-Visual impact:
-  - The "performance" column now starts at a position that is a
-    multiple of 16, just like the "status" and "children" columns,
-  - All of the "/device", "runtime status", and "managed by" columns are
-    now indented 4 characters more than the columns right above them,
-  - Everything fits in (one less than) 80 characters again ;-)
+I am not completely sure if we add this early enough for 6.12.
+On one hand, the patchset should not change the handling of legacy
+consoles and it does not add any nbcon console. But it touches
+many code paths where we decide how to flush the consoles
+and could imagine doing "ugly" mistakes there.
 
-[1] Note that some device names (e.g. TI AM335x interconnect target
-    modules) do not follow this convention, and may be much longer, but
-    these didn't fit in the old 50-character column width either.
+OK, let's see how it works in linux-next in the following days.
+There is still time to catch problems and make the decision.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-On the Koelsch development board with an R-Car M2-W SoC, the contents of
-/sys/kernel/debug/pm_genpd/pm_genpd_summary change from:
-
-    domain                          status          children                           performance
-        /device                                             runtime status                           managed by
-    ------------------------------------------------------------------------------------------------------------
-    clock-controller                on                                                 0
-    sgx                             off-0                                              0
-    sh-4a                           off-0                                              0
-    ca15-cpu1                       on                                                 0
-    ca15-cpu0                       on                                                 0
-    ca15-scu                        on                                                 0
-                                                    ca15-cpu0, ca15-cpu1
-    always-on                       on                                                 0
-                                                    ca15-scu, sh-4a, sgx
-        e60b0000.i2c                                        suspended                  0                  SW
-        ffca0000.timer                                      suspended                  0                  SW
-        e6590100.usb-phy-controller                         unsupported                0                  SW
-        e6050000.gpio                                       suspended                  0                  SW
-        e6051000.gpio                                       suspended                  0                  SW
-        e6052000.gpio                                       active                     0                  SW
-        e6053000.gpio                                       active                     0                  SW
-        e6054000.gpio                                       suspended                  0                  SW
-        e6055000.gpio                                       active                     0                  SW
-        e6055400.gpio                                       active                     0                  SW
-        e6055800.gpio                                       active                     0                  SW
-        ee090000.pci                                        active                     0                  SW
-        ee0d0000.pci                                        active                     0                  SW
-        e6700000.dma-controller                             active                     0                  SW
-        e6720000.dma-controller                             active                     0                  SW
-        ec700000.dma-controller                             suspended                  0                  SW
-        ec720000.dma-controller                             suspended                  0                  SW
-        e65a0000.dma-controller                             suspended                  0                  SW
-        e65b0000.dma-controller                             suspended                  0                  SW
-        e6e60000.serial                                     active                     0                  SW
-        e6e68000.serial                                     active                     0                  SW
-        ee300000.sata                                       active                     0                  SW
-        e6b10000.spi                                        suspended                  0                  SW
-        e6e20000.spi                                        suspended                  0                  SW
-        e6518000.i2c                                        suspended                  0                  SW
-        e6530000.i2c                                        suspended                  0                  SW
-        e6520000.i2c                                        suspended                  0                  SW
-        e61f0000.thermal                                    active                     0                  SW
-        ec500000.sound                                      suspended                  0                  SW
-        e61c0000.interrupt-controller                       active                     0                  SW
-        ee700000.ethernet                                   active                     0                  SW
-        ee100000.mmc                                        suspended                  0                  SW
-        ee140000.mmc                                        suspended                  0                  SW
-        ee160000.mmc                                        suspended                  0                  SW
-
-to:
-
-    domain                          status          children        performance
-        /device                         runtime status                  managed by
-    ------------------------------------------------------------------------------
-    clock-controller                on                              0
-    sgx                             off-0                           0
-    sh-4a                           off-0                           0
-    ca15-cpu1                       on                              0
-    ca15-cpu0                       on                              0
-    ca15-scu                        on                              0
-                                                    ca15-cpu0, ca15-cpu1
-    always-on                       on                              0
-                                                    ca15-scu, sh-4a, sgx
-        e60b0000.i2c                    suspended                   0           SW
-        ffca0000.timer                  suspended                   0           SW
-        e6590100.usb-phy-controller     unsupported                 0           SW
-        e6050000.gpio                   suspended                   0           SW
-        e6051000.gpio                   suspended                   0           SW
-        e6052000.gpio                   active                      0           SW
-        e6053000.gpio                   active                      0           SW
-        e6054000.gpio                   suspended                   0           SW
-        e6055000.gpio                   active                      0           SW
-        e6055400.gpio                   active                      0           SW
-        e6055800.gpio                   active                      0           SW
-        ee090000.pci                    active                      0           SW
-        ee0d0000.pci                    active                      0           SW
-        e6700000.dma-controller         active                      0           SW
-        e6720000.dma-controller         active                      0           SW
-        ec700000.dma-controller         suspended                   0           SW
-        ec720000.dma-controller         suspended                   0           SW
-        e65a0000.dma-controller         suspended                   0           SW
-        e65b0000.dma-controller         suspended                   0           SW
-        e6e60000.serial                 active                      0           SW
-        e6e68000.serial                 active                      0           SW
-        ee300000.sata                   active                      0           SW
-        e6b10000.spi                    suspended                   0           SW
-        e6e20000.spi                    suspended                   0           SW
-        e6518000.i2c                    suspended                   0           SW
-        e6530000.i2c                    suspended                   0           SW
-        e6520000.i2c                    suspended                   0           SW
-        e61f0000.thermal                active                      0           SW
-        ec500000.sound                  suspended                   0           SW
-        e61c0000.interrupt-controller   active                      0           SW
-        ee700000.ethernet               active                      0           SW
-        ee100000.mmc                    suspended                   0           SW
-        ee140000.mmc                    suspended                   0           SW
-        ee160000.mmc                    suspended                   0           SW
----
- drivers/pmdomain/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index 2233daaa4168be14..2c51de5d58372d3d 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -3308,7 +3308,7 @@ static void rtpm_status_str(struct seq_file *s, struct device *dev)
- 	else
- 		WARN_ON(1);
- 
--	seq_printf(s, "%-25s  ", p);
-+	seq_printf(s, "%-26s  ", p);
- }
- 
- static void perf_status_str(struct seq_file *s, struct device *dev)
-@@ -3326,7 +3326,7 @@ static void mode_status_str(struct seq_file *s, struct device *dev)
- 
- 	gpd_data = to_gpd_data(dev->power.subsys_data->domain_data);
- 
--	seq_printf(s, "%9s", gpd_data->hw_mode ? "HW" : "SW");
-+	seq_printf(s, "%2s", gpd_data->hw_mode ? "HW" : "SW");
- }
- 
- static int genpd_summary_one(struct seq_file *s,
-@@ -3353,7 +3353,7 @@ static int genpd_summary_one(struct seq_file *s,
- 	else
- 		snprintf(state, sizeof(state), "%s",
- 			 status_lookup[genpd->status]);
--	seq_printf(s, "%-30s  %-49s  %u", genpd->name, state, genpd->performance_state);
-+	seq_printf(s, "%-30s  %-30s  %u", genpd->name, state, genpd->performance_state);
- 
- 	/*
- 	 * Modifications on the list require holding locks on both
-@@ -3369,7 +3369,7 @@ static int genpd_summary_one(struct seq_file *s,
- 	}
- 
- 	list_for_each_entry(pm_data, &genpd->dev_list, list_node) {
--		seq_printf(s, "\n    %-50s  ", dev_name(pm_data->dev));
-+		seq_printf(s, "\n    %-30s  ", dev_name(pm_data->dev));
- 		rtpm_status_str(s, pm_data->dev);
- 		perf_status_str(s, pm_data->dev);
- 		mode_status_str(s, pm_data->dev);
-@@ -3387,9 +3387,9 @@ static int summary_show(struct seq_file *s, void *data)
- 	struct generic_pm_domain *genpd;
- 	int ret = 0;
- 
--	seq_puts(s, "domain                          status          children                           performance\n");
--	seq_puts(s, "    /device                                             runtime status                           managed by\n");
--	seq_puts(s, "------------------------------------------------------------------------------------------------------------\n");
-+	seq_puts(s, "domain                          status          children        performance\n");
-+	seq_puts(s, "    /device                         runtime status                  managed by\n");
-+	seq_puts(s, "------------------------------------------------------------------------------\n");
- 
- 	ret = mutex_lock_interruptible(&gpd_list_lock);
- 	if (ret)
--- 
-2.34.1
-
+Best Regards,
+Petr
 
