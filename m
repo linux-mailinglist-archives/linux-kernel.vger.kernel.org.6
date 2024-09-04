@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-314596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40FA96B597
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD6296B589
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1ECBB2ABD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF7C282797
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC911CCB32;
-	Wed,  4 Sep 2024 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mNgjL4xX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z80Zsp6N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3AB19B3C3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6761CCED8;
+	Wed,  4 Sep 2024 08:52:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CD81CC8AD;
+	Wed,  4 Sep 2024 08:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725439902; cv=none; b=cVErhPtiIrYhknxKxYG+U94p4ru1+NwDjKO1NdFTI5YZu2tz9/K9QGztUY66Mmrfi4RN3HMJhe32uqSmmC9wjHZWxSuFpFBC7gYeczLL0XRSIHwXmAlV7FKQNFEoxxWI2SWBtigNSp7XrKn8bTXPtDBsHoqzYpht0LypPucRtm4=
+	t=1725439952; cv=none; b=g8xO0Z5hW4TZQ8F00kkqCcEj40hf6lwzKvi8jyGgyXEF0Ps5Cgyq38uKSaSWjWD9fd2cf+kBl3lVRJO3kwiEQ4h7O5Md936kLXRz+z8uGdif2YXYrlE54ld3Ge59PUcntyLo7LmzdtdtTSSdb07m4r8vhVl1AxBnqBbXdRl9dgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725439902; c=relaxed/simple;
-	bh=xItcBebj3wGmhjdqv7kNE4ij6DE+ql5r8xq17d800AA=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iWY4bhpv4YbJD9XGnfpuOD8CZFbyGmDeDdIZ+ukrMaAOvO2cpnwHDeWzEeI8cGAkNqeiZB5SvZQOgY83VmwHr6RpAN6IDAbq5/bFx3Xv7c5PMdkdtMVCF7QbujT3dcm2kzpB16+wohr8Gtf6BYuboCmoIyaflPfw5BzCBxK5t+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mNgjL4xX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z80Zsp6N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725439898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tKCdHSjhCME+F7lToIanxa7EnLXm8trg0dBMKY0LP4A=;
-	b=mNgjL4xXL6AxYPjP5o83PXsU7CQweu9UvQdsDz8h0c3UoXXN8Wvg0tY46nyH0wEn1WqVeQ
-	qrZL3mV/3yJu2Or5i0ZZh+PwoJB1fuN5x8rtiCltOSnavlW4nkmnxXqGztXaqPKCURGp1G
-	vizVIodWkOFqxzvjHjLSqXaxR7+P+pxTSCnQE1nzcuIGBKrNg7h0BKWekTmsWOVAndfaLm
-	uqlRbpNEvN7Uw9njc8lEmgwv8sbUhZis7Akhz3qO12hyrx6rmSnTCET0lWLVFrwOA95HcF
-	lNpbHfT4t0j3JAzL6U+z3bg3m+ArrVB+O+bjieTuL9NUr076HZs/3R8Ptn9U+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725439898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tKCdHSjhCME+F7lToIanxa7EnLXm8trg0dBMKY0LP4A=;
-	b=z80Zsp6NGa5aYKPGL6LRZP52UAMfwNvF/uQlSozOfZTIXWnypGvl9Pwign2gWWYwWqmTqI
-	ayfQzr1Jm/iRRnAQ==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH] static_call: Handle module init failure correctly in
- static_call_del_module()
-In-Reply-To: <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
-References: <87cylj7v6x.ffs@tglx>
- <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
-Date: Wed, 04 Sep 2024 10:51:38 +0200
-Message-ID: <877cbr7qed.ffs@tglx>
+	s=arc-20240116; t=1725439952; c=relaxed/simple;
+	bh=IvkSCBt+3+2VjlsISB6I1MkJWO67OCf7/ELVtxu1nT8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kqVAJbQcs2cDzy4FGPOi91ue6Nan7z8LAQdPMKl58VFaNKMQimTaPgy6UUzK2XoD5nbVdokyv4hONGELP+xhrBDWCUfR5+TZsj8KNY/iqpZMXSsYuHkfDIEAfn05SSK0FtIPOZhXqmc0mdyNXCTvS9U/5+hZ6cY0O7f/HzPlSco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8BxmprFH9hmkRYqAA--.44894S3;
+	Wed, 04 Sep 2024 16:52:21 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front2 (Coremail) with SMTP id qciowMCxH8bDH9hmi64FAA--.16454S2;
+	Wed, 04 Sep 2024 16:52:20 +0800 (CST)
+Subject: Re: [PATCH V3 1/2] dt-bindings: EDAC for ls3a5000 memory controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ chenhuacai@kernel.org, linux-edac@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
+ bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+ rric@kernel.org, loongarch@lists.linux.dev
+References: <20240903114714.11428-1-zhaoqunqin@loongson.cn>
+ <20240903114714.11428-2-zhaoqunqin@loongson.cn>
+ <c901ff6b-2e4d-4dd1-82da-e2e3d5db7988@kernel.org>
+ <32aded46-86ce-59cf-e8b4-2621c0dd9ebe@loongson.cn>
+ <c1508929-2e44-497d-b54a-285a3e74ba2d@kernel.org>
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Message-ID: <3beb1cf3-c033-bdec-7d38-f43889d4dc2c@loongson.cn>
+Date: Wed, 4 Sep 2024 16:51:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c1508929-2e44-497d-b54a-285a3e74ba2d@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qciowMCxH8bDH9hmi64FAA--.16454S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4Uuw4DCF45XFW5ZFW7WrX_yoWDJwb_Kw
+	4YywnruwnFya4kGFsxJF4xJryvqw4UtrWUur1kXr1Fqw1FqFZrZr4rK34fZw15JFW3WFnr
+	CFZrWFWkCr9xuosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
+	6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jruc_UUU
+	UU=
 
-On Wed, Sep 04 2024 at 16:03, Jinjie Ruan wrote:
-> On 2024/9/4 15:08, Thomas Gleixner wrote:
->> So the check must be:
->>=20
->> 	if (!static_call_key_has_mods(key))
->>         	break;
+
+在 2024/9/4 下午1:51, Krzysztof Kozlowski 写道:
+> On 04/09/2024 03:15, Zhao Qunqin wrote:
+>> 在 2024/9/3 下午8:29, Krzysztof Kozlowski 写道:
+>>> On 03/09/2024 13:47, Zhao Qunqin wrote:
+>>>> add device tree bindings for ls3a5000 EDAC driver.
+>>>>
+>>>> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+>>> So no improvements? No changes? Why do you send the same?
+>> I'm sorry,  I thought if you hadn't raised any issues with the previous
+>> version of dt binding, I wouldn't need to make any changes.
+>>
+>> For this version of the patch, I only changed the driver.
+> So what changed? Where is the changelog? Where is the tag? Did you get one?
 >
-> Hi, Thomas,
+> Did you read submitting patches document?
+
+My apologies! I must have missed a part of the content in the document, 
+please forgive me for wasting your time.
+
+Will add tag and changelog in  patch v4.
+
+Thank you very much for taking the time to review.
+
+
+Best regards,
+
+Zhao Qunqin.
+
 >
-> with this patch, the issue not occurs again=EF=BC=8C
->
-> but there are some memory leak here same to the following problem:
+> Best regards,
+> Krzysztof
 
-That has absolutely nothing to do with static calls and the memory
-allocation failure case there.
-
-The module passed all preparatory steps, otherwise it would not be able
-to create a kmem_cache from the module init() function:
-
-     kmem_cache_create+0x11/0x20
-     do_one_initcall+0xdc/0x550
-     do_init_module+0x241/0x630
-
-amdgpu_init()
-
-	r =3D amdgpu_sync_init();
-	if (r)
-		goto error_sync;
-
-	r =3D amdgpu_fence_slab_init();
-	if (r)
-		goto error_fence;
-
-        <SNIP>
-=20=20=20=20=20=20=20=20
-	return pci_register_driver(&amdgpu_kms_pci_driver);
-
-error_fence:
-	amdgpu_sync_fini();
-error_sync:
-        return r;
-
-Can you spot the problem?
-
-Thanks,
-
-        tglx
 
