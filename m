@@ -1,93 +1,56 @@
-Return-Path: <linux-kernel+bounces-314579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320E896B555
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF5696B553
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C72DB251AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CC31F25E88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64AD1CE710;
-	Wed,  4 Sep 2024 08:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="StYn44fm"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789301D049A;
+	Wed,  4 Sep 2024 08:42:06 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F971D0DE1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE39A1CCEDE;
+	Wed,  4 Sep 2024 08:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725439338; cv=none; b=l8GeGsSF5OZLSRyPcPUf6YLaG2LYpGHT+Ukxk7/gXVU3RYTTI3Rb+GcF80aAPayotluutCu93djYziok5vjplM1G8tCw3aKn5/7pYlCRNd4/1KNpg4E/aGVaovQks4yl5Ksgcam7iNNJqEJzoOvMHlZudGirMmEbXCj/8fkRhBs=
+	t=1725439326; cv=none; b=HuHZ1DUbRzLoGVa65P0dikI8x1PtvsOoL2dTbS0TqhL+JW9bu+GOQ/TnGkJPdWHrsMv3BL1pM7XdQ4hW1ilE7hrVmWDYo+nJDxMRN08U3ZAh0OWfWKAaDxpfY+bxVGc85fyNUdvMJoc+8HcsLxQEtHv8J7rQNl7CT24YS7bs+C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725439338; c=relaxed/simple;
-	bh=8AzoJE8l7/0rgAUJHjuIMB0gJiKomtVvJS2dRHBDsH8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f21m5StnWCWl/QKS8IX05YqkcTXjko+nMIiTVbh8hHaRlr12VSxWHS+lagIUfgOpQcakwcMeJ1zxT/KHXIiPu0nHxD8ZX00TrjD7c1yjOlhrwQKmCQ3JylykGQKvj68Hk3oPrNURGH+FOdTrJE2OYKySXM0+Kg23bOONnTYsEDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=StYn44fm; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20551eeba95so27654975ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1725439336; x=1726044136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ylbiZHnndQyBxRrEPbsYoqCd5Ue19pmhRhZr0okk+70=;
-        b=StYn44fmgOEupfxYXUiRKwXo7Mnkef9gc/TMa31YkVOq0QqwcEDAcqRAgxfN3Z5Aw6
-         QKOZJ6eK4MQIUqWMmiDPrbMHDsdYFUlDLwJKt5fJ4GT3u/xWlUHm6xdSxcurS7UpQnWH
-         8UaBZa7764uoXRkD/uz8hc0ld+maAbYICvWWyswRJ5Hgq7lJRAFOJcTT6ftaHl+XOJKG
-         czK8XJPdlBXRYttavgvnSmfKb14jHp/BfDjgeAZbDgVfUVu6sHI61gap9XkuIFW26BsA
-         orvpTSifteOrw57BbcRL+2Xp9gxdgp3nSHGY8ztoPqbw+swZUSCVNjTDXueF6R7vnkKN
-         eZ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725439336; x=1726044136;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ylbiZHnndQyBxRrEPbsYoqCd5Ue19pmhRhZr0okk+70=;
-        b=ncvzdEopC1drGGxx67mcaOcBR6T5R5slXzCvp6sJX1tFoGbWPbCXs259zI3vel4Fm9
-         m7asLnow1CehbXWuSMWekzPhY1iSLW1xUPq5ISM//n4Na2jmKv04NTsWHRkLJ2eDtzHW
-         VcEE+csfxqt/D09AapSmki0nnv6D9tN1rBM5VunxonrB49xTNyQC/+n5oCuHet8xyuFv
-         XIOKdIoQT+lnZvaS5OKDhnFLW6OW6grSYu1Y+JPcSe05f1MOR146FrOQ4Vz+mL8wl/pV
-         Yg9gnBQeqdjST2DDToWpE3vKbGQUM2mB6YOOVIbYk+jn9OMRMbrWK/EDvC0uPv3LxvOX
-         DNNQ==
-X-Gm-Message-State: AOJu0YxqPC3tl9lFBEf5DAxHroAr6URhgZ44zN0S4aZqXxBzAD90XjkB
-	vVG4/Q94jgxlGUA+Oup99rC6roahlOg/gCIZr0WaJOHQsiZ0UAlAqUEK2PySNEw=
-X-Google-Smtp-Source: AGHT+IGRRbNTDVHBE5FEDByUohEYiQ4MupDiF5X1fYOKyMaX8J1f74Xy7lHxJ4SbBUityp3jftUwsg==
-X-Received: by 2002:a17:902:e848:b0:206:c43f:7896 with SMTP id d9443c01a7336-206c43f8dd5mr2410565ad.21.1725439336115;
-        Wed, 04 Sep 2024 01:42:16 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae95a51csm9414045ad.117.2024.09.04.01.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 01:42:15 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org,
-	vishal.moola@gmail.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v3 14/14] mm: khugepaged: retract_page_tables() use pte_offset_map_rw_nolock()
-Date: Wed,  4 Sep 2024 16:40:22 +0800
-Message-Id: <20240904084022.32728-15-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
-References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1725439326; c=relaxed/simple;
+	bh=hbucqT7xCHO0ItaLmkrTPjZfpqSkgjRw0JD7uTbqBqU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pUo6YpZcs8Lqj55KmohlU6oWHL8hiKXaLEyxucJyxf7+/UkE82MajvnPreOK5wkFfeWyRRrugFkHNFyjcUfN3lct2oOdbYYDkDfd7K+ZrGnEzfcVyeIz4U6zQtlf4qxwcMLYF0SZwDHmZj/NSVKzHnRaqh0502Y33K2HYeGahIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACHaupIHdhmYuUoAQ--.4628S2;
+	Wed, 04 Sep 2024 16:41:44 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: ecree.xilinx@gmail.com,
+	habetsm.xilinx@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	richardcochran@gmail.com,
+	vladimir.oltean@nxp.com,
+	shannon.nelson@amd.com,
+	wintera@linux.ibm.com,
+	kory.maincent@bootlin.com,
+	alex.austin@amd.com
+Cc: netdev@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next] sfc/siena: Convert comma to semicolon
+Date: Wed,  4 Sep 2024 16:40:34 +0800
+Message-Id: <20240904084034.1353404-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,56 +58,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHaupIHdhmYuUoAQ--.4628S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoW8Jry3p3
+	y5Aryv9FWxJa97J3WfXan5uF9Iva1YgF9xCF1Sy34rZas5trn2q3yvgay5Zrn0yr40ya15
+	Ar1FvrWSgF98CaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	W0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
+	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+	7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRTE_NUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-In retract_page_tables(), we may modify the pmd entry after acquiring the
-pml and ptl, so we should also check whether the pmd entry is stable.
-Using pte_offset_map_rw_nolock() + pmd_same() to do it.
+Replace comma between expressions with semicolons.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
+
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- mm/khugepaged.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/sfc/siena/ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index a117d35f33aee..318cc3eefb040 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1724,6 +1724,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
- 		spinlock_t *pml;
- 		spinlock_t *ptl;
- 		bool skipped_uffd = false;
-+		pte_t *pte;
+diff --git a/drivers/net/ethernet/sfc/siena/ptp.c b/drivers/net/ethernet/sfc/siena/ptp.c
+index c473a4b6dd44..85005196b4c5 100644
+--- a/drivers/net/ethernet/sfc/siena/ptp.c
++++ b/drivers/net/ethernet/sfc/siena/ptp.c
+@@ -897,7 +897,7 @@ static void efx_ptp_read_timeset(MCDI_DECLARE_STRUCT_PTR(data),
+ 	timeset->host_start = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTSTART);
+ 	timeset->major = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_MAJOR);
+ 	timeset->minor = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_MINOR);
+-	timeset->host_end = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTEND),
++	timeset->host_end = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTEND);
+ 	timeset->wait = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_WAITNS);
  
- 		/*
- 		 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
-@@ -1759,11 +1760,25 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
- 					addr, addr + HPAGE_PMD_SIZE);
- 		mmu_notifier_invalidate_range_start(&range);
- 
-+		pte = pte_offset_map_rw_nolock(mm, pmd, addr, &pgt_pmd, &ptl);
-+		if (!pte) {
-+			mmu_notifier_invalidate_range_end(&range);
-+			continue;
-+		}
-+
- 		pml = pmd_lock(mm, pmd);
--		ptl = pte_lockptr(mm, pmd);
- 		if (ptl != pml)
- 			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
- 
-+		if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
-+			pte_unmap_unlock(pte, ptl);
-+			if (ptl != pml)
-+				spin_unlock(pml);
-+			mmu_notifier_invalidate_range_end(&range);
-+			continue;
-+		}
-+		pte_unmap(pte);
-+
- 		/*
- 		 * Huge page lock is still held, so normally the page table
- 		 * must remain empty; and we have already skipped anon_vma
+ 	/* Ignore seconds */
 -- 
-2.20.1
+2.25.1
 
 
