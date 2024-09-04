@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-315950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300A296C903
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:56:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0169396C907
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98441F264B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3852283E0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A085148310;
-	Wed,  4 Sep 2024 20:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C672148850;
+	Wed,  4 Sep 2024 20:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVKfvekW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sejuKX8o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6917E6;
-	Wed,  4 Sep 2024 20:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C401F146A79;
+	Wed,  4 Sep 2024 20:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725483393; cv=none; b=IPZeEoRk6trzMx/h5yyF+Fdny+7QMAitQZZ8zx8GNMGjo8Kvd/4eigpSQNPRF+FYARq1zG8Du0cHpv1EpPLXyT+IRBgfSsuCZUJUGm2A2RbyKFBacDOM0TRgKXHtGO1hVhEJ5IGNjkz7bDkuQWvKza3TtDrylcbQ+3VnEO6i2wA=
+	t=1725483410; cv=none; b=XNBeO/SVpI0/6wm/UuxPTzbK8TKFZd0QRrbKLTCklH0L3Tq8igbW6hWsoHjriaxXhG4WV4dPkywpJpGnTuHEQwRup+xesNdwWb8wreJ0DDYoHBWULRiRDBKckx0zgyutUp/5WIc6CGKQRdua0O6xtPaYI5JauP2Z/E78SfRFBaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725483393; c=relaxed/simple;
-	bh=H5Z1lGuMmRiuMFtVKd05d+cAhGrXu1iVsn+NIbVfEhU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jGXbje9T/9WLL3eCJrRuZdyORoc99IOahAn3AsONAKuQ3B43jbzuX3VLUnfPVVmZ8yhbgbz2pNuvSnA8Opi18LJQdvOASsBxfHGrxl2AD0x87i4pkrwDlJ6pPBzXTXtahnnhBHgRUOw8vj3IGrZYvffIHH0rNCufnn6MTwk8wSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVKfvekW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313E3C4CEC2;
-	Wed,  4 Sep 2024 20:56:32 +0000 (UTC)
+	s=arc-20240116; t=1725483410; c=relaxed/simple;
+	bh=ClR4OguZqjgD0a6zLxgiWicsv8WlX2RtmMFEul90H0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhRpbezzJqJZOXCPD6RckSEN0lM0s4tcy1lv3xKtFa+uLs19A2wZhwg4aaCdlaTT6Jpa89DNbdgBMOycrcGBaqxjBNwhOSPpq/Rg/g7YW4JEkEtavt4aW8QlapiS4vnTiaEEL9DTwv61XMqhKub98xVvEcNkw+TbeZZRkg5CqSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sejuKX8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87BFC4CEC2;
+	Wed,  4 Sep 2024 20:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725483393;
-	bh=H5Z1lGuMmRiuMFtVKd05d+cAhGrXu1iVsn+NIbVfEhU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XVKfvekWDBLozmK2HWTwuctFugYUD8v4VVjh+H/z1zVAwuJCzy7VdW6uNyUMi0fGA
-	 XD+E44qxJyzEO6QiP8zVDDPGjuG2CLdB0GbycIOcUh2pD+ErXQkOKHlmnNC3O4pzhV
-	 +493SMzTjKD8vU4mZtgXlQAG7Rcx2C3mhGfjN3C0NKjkOGHinNRhr0BscaIIcebU0E
-	 jedqGyyjgXOMxqOR4+5n/FGxH+myzAi1qH0u4m2vlpSC8aUGar2ebVdEVv8FR/3zJV
-	 PUaSpl3r248hMwvIHVMT95lJJo4oZxA9OxiTHk583CLsnBhn1yaPYWhacyNMTbVwPR
-	 Rj8rL8ZeaH0Ew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341663822D30;
-	Wed,  4 Sep 2024 20:56:34 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
-References: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <45wxyfvbqm76vqbdjkasy3a4pxtbnza5qiukvcougseosx4qnt@uqosw6rkccxi>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-04
-X-PR-Tracked-Commit-Id: 53f6619554fb1edf8d7599b560d44dbea085c730
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c763c43396883456ef57e5e78b64d3c259c4babc
-Message-Id: <172548339266.1166715.18322603051182120164.pr-tracker-bot@kernel.org>
-Date: Wed, 04 Sep 2024 20:56:32 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1725483410;
+	bh=ClR4OguZqjgD0a6zLxgiWicsv8WlX2RtmMFEul90H0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sejuKX8o1CnnV9DTmEWu+PWGchsAIgOFc4wewuD+QgNeXYNqm3Dd5Zo9nja1TS2YN
+	 Yw2DQD2g5lkJNh1MYmOfUF7qTKn/sDxonCVrSMkmAae8u9fVXRp/p+8ybHoz6Dkux8
+	 oFXnSaXHd6gcTN1Uvl6+A7ZCYT5jrrNI3nhH4Ukv+RESjfO/mjhE9+DXWqO1jwPasw
+	 BVxvl7pqV8gGIN5SoUBwKiNl4C8ZpufKrvEGfR2VdznT1jyL716xE0pccrm2a756Od
+	 rqJx5Ru4oEaVopjY2cPVukeUB1pBVFazv/d4EKNkk2wVOeq+y4sYPueV+RlIamMw9E
+	 vDJwiF3S7A12A==
+Date: Wed, 4 Sep 2024 15:56:47 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, bp@alien8.de, tony.luck@intel.com, 
+	mchehab@kernel.org, rric@kernel.org, konradybcio@kernel.org, quic_sibis@quicinc.com, 
+	abel.vesa@linaro.org, linux-arm-msm@vger.kernel.org, linux-edac@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC/qcom: Make irq configuration optional
+Message-ID: <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
+References: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
 
-The pull request you sent on Wed, 4 Sep 2024 15:15:18 -0400:
+On Tue, Sep 03, 2024 at 03:45:10PM GMT, Rajendra Nayak wrote:
+> On most modern qualcomm SoCs, the configuration necessary to enable the
+> Tag/Data RAM related irqs being propagated to the SoC irq controller is
+> already done in firmware (in DSF or 'DDR System Firmware')
+> 
+> On some like the x1e80100, these registers aren't even accesible to the
+> kernel causing a crash when edac device is probed.
+> 
+> Hence, make the irq configuration optional in the driver and mark x1e80100
+> as the SoC on which this should be avoided.
+> 
+> Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+> Reported-by: Bjorn Andersson <andersson@kernel.org>
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-04
+Mani, would you like me to pick this through the qcom tree?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c763c43396883456ef57e5e78b64d3c259c4babc
+Regards,
+Bjorn
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> ---
+> v2: 
+> Minor typo fixed in changelog
+> 
+>  drivers/edac/qcom_edac.c           | 8 +++++---
+>  drivers/soc/qcom/llcc-qcom.c       | 3 +++
+>  include/linux/soc/qcom/llcc-qcom.h | 2 ++
+>  3 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+> index d3cd4cc54ace..96611ca09ac5 100644
+> --- a/drivers/edac/qcom_edac.c
+> +++ b/drivers/edac/qcom_edac.c
+> @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
+>  	int ecc_irq;
+>  	int rc;
+>  
+> -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> -	if (rc)
+> -		return rc;
+> +	if (!llcc_driv_data->ecc_irq_configured) {
+> +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> +		if (rc)
+> +			return rc;
+> +	}
+>  
+>  	/* Allocate edac control info */
+>  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 8fa4ffd3a9b5..b1c0ae9991d6 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -139,6 +139,7 @@ struct qcom_llcc_config {
+>  	int size;
+>  	bool need_llcc_cfg;
+>  	bool no_edac;
+> +	bool irq_configured;
+>  };
+>  
+>  struct qcom_sct_config {
+> @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+>  		.need_llcc_cfg	= true,
+>  		.reg_offset	= llcc_v2_1_reg_offset,
+>  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+> +		.irq_configured = true,
+>  	},
+>  };
+>  
+> @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  	drv_data->cfg = llcc_cfg;
+>  	drv_data->cfg_size = sz;
+>  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
+> +	drv_data->ecc_irq_configured = cfg->irq_configured;
+>  	mutex_init(&drv_data->lock);
+>  	platform_set_drvdata(pdev, drv_data);
+>  
+> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+> index 9e9f528b1370..acad1f4cf854 100644
+> --- a/include/linux/soc/qcom/llcc-qcom.h
+> +++ b/include/linux/soc/qcom/llcc-qcom.h
+> @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
+>   * @num_banks: Number of llcc banks
+>   * @bitmap: Bit map to track the active slice ids
+>   * @ecc_irq: interrupt for llcc cache error detection and reporting
+> + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
+>   * @version: Indicates the LLCC version
+>   */
+>  struct llcc_drv_data {
+> @@ -139,6 +140,7 @@ struct llcc_drv_data {
+>  	u32 num_banks;
+>  	unsigned long *bitmap;
+>  	int ecc_irq;
+> +	bool ecc_irq_configured;
+>  	u32 version;
+>  };
+>  
+> -- 
+> 2.34.1
+> 
 
