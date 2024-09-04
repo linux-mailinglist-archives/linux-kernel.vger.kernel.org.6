@@ -1,158 +1,176 @@
-Return-Path: <linux-kernel+bounces-315723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E6096C63C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD76796C63F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C60285E6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518C31F25C9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313F21E2008;
-	Wed,  4 Sep 2024 18:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB431E1A30;
+	Wed,  4 Sep 2024 18:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fUL/jMwR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cgrp5k09"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A0D1DC1A2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23091DA319;
+	Wed,  4 Sep 2024 18:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725474106; cv=none; b=nrCym+TcwlodUgypjma3fzq/5AygP5Qi9Hq00QjW+RA8rtyqXb7xOlkn+iwFOVVZu00ihADf+DxrIqfqDbqmw7OooD6siJ9SUIvv6eL4WF+NVyapeK7JONTSY1znTwwYV27/A7EcC2QzouulD++o1DMOtJ+8HYXnb8n5TNwjL3g=
+	t=1725474122; cv=none; b=DOcwgpD+Wc6hejdd+kp+DUpEpY7YryFtmWXEuC0Q4UW3gkxREZcLHTt1enk0+oTBWoX9HvrggY0gzQGBXSL24TK1V0ZoRcLJYlKxGP+RJlHvDU23V7nGanaRmMFnvpHvbhN9suVDamCRchHBjzu+BU7qVLrAPRMh4n73rI1loOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725474106; c=relaxed/simple;
-	bh=zdL/LzjlEW0mFJYDtvzs5usFXQ1tNMz5mBn3uONMuds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n1XGDfCe0JwFyqiaqGUdtg2hahu/D7OlOwnJEv4uCiRJguKgOe2H/FqLXzcTaLhq2V7b4IDREBUAjEL+HTnZ5sjcYYdeqJqJSpeGADDk0LPrQf8EbWYrb/phBRIh9iiAmpFovosCqYehkfLn/Ii0+4Vaz4gtNiX0gQmkPZsYAqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fUL/jMwR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725474104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NM9oFEc8UiVyv381Cv8nBEcn00Qnvr9uFfx5c4jzXmk=;
-	b=fUL/jMwRd5ZmgLDWR5w1TjpzLrvQ9Ubzz/dKjEJEvYnX74pOFKItzz5YiM/zu2KL71jlXw
-	O7AKg6OQVSk3uJQwNViup7TdEemxv0d7OJshEh9FUWkEOSLv7DI2NXHRcPpAr9ELOWNDlt
-	UhGrLJkfrkYemEKhw0lYrvVa6HlB+XU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-fr2WtASgNbWxfLhjNOQHsA-1; Wed, 04 Sep 2024 14:21:40 -0400
-X-MC-Unique: fr2WtASgNbWxfLhjNOQHsA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c260907f5bso2483628a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:21:40 -0700 (PDT)
+	s=arc-20240116; t=1725474122; c=relaxed/simple;
+	bh=A0faNTxkiMzBYmuTTN0ZzLV4veAU5OaMV1hnDsvBwIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YwFihvusEnxmQFKCD0rq6K3yTvzhZNAeZLa8sws6YbLzZU74YQiHzX6//4CmXwNpRk5Fm7JRadrJgQaH85CpVuRjEyynKvUK8AnCNcXDNw2iZwiceeMnVTHl+XFXOLnt6S0/3IC4o4vPESJJ0yLzvIZeg7Svp50GZHj+wM6TzoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cgrp5k09; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso885025a91.2;
+        Wed, 04 Sep 2024 11:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725474120; x=1726078920; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bJpc+ZEMX6jhpZEWdLE1bD6DvQQdbuNOMH/8jm0J4lw=;
+        b=Cgrp5k09+134eXLgAXjny4woJDAtj7r9RCLZIyYswD5xS5rwT1THmfa9evMA0rolAk
+         ZLXrJi//mux///zJE49u2nAX4btRySZAUbEZmdJodKu4OJgBTaiaCtXWMPUPBdynBMyk
+         +pYS3iBvL6Pguk6f3+wIT9CquCnoKP748DQgXNYyZjJAVKCVkj5sKaOGwscZEVSVOxXA
+         mfoInZ9XDHJtlhm2q0l+jvZOLuSs5/6Cx4/U2jNM6AdHgcnpQvrEi03r/3j7rbdEwDVm
+         9SdKz9zQCrqcC7omDxKRQOtz90xkYZpEmC6uFQebb+CHbxQ7JXStqHyL8+BM8CgXl1F2
+         Xqww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725474099; x=1726078899;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NM9oFEc8UiVyv381Cv8nBEcn00Qnvr9uFfx5c4jzXmk=;
-        b=hCxMxPQAzD9gZF7bhEHPENCYx/IE8dammkY6KrnOEMjOk+4UrS9/tmhQZXSa91/A7v
-         iZtBn3uLF5nxjcF1usCD6p+R8YHzCyJ5HAgHakZCWJWkEPr2kfveTJGVMViQvg/uKe7P
-         IBrgpIbhpc7FYcL0VmUXMBf28HGbnTz0ZtllF2YXIQqdmtoTlKY557lhxrpgvqZ+nXwf
-         kqknVLzoJUhjVZeUwytB5+65rpV+WGvRViucd/u53uL8f9Ycd9KUNTMlvdFvDyEsd3j3
-         9c79xRTm2wWX6gOTYYbWnftkXtwu6h8+wX65M4UBQRgkmFA6mq+o9oEIIaX/mxlyshSi
-         50tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvX1ollQ9Ov6/dhEyRfeKAviThLBb83L6p6OtROit02VXMMsTqgIzgZcJYfBtmtNDpKIhpFXi0NakSAVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDJQKm9tY+3PKhK/mCLuG824lNIz9icbDHX3i9v6XPgMoCavZ
-	S/Up+NUymL3t8tUiq64219KJhw0lW2knYCRqLHmekiAN9pJqC7AH/fsPVPsdHpyaOicUfJK94FG
-	33L3W/W24duP/xIJmUWTfFb1aN8IcMoxYnErnw7AcnRywWPD/4H1DZYpq4wNrAw==
-X-Received: by 2002:a17:907:9495:b0:a86:97e5:8d4e with SMTP id a640c23a62f3a-a8a1d2c8600mr668060166b.23.1725474099680;
-        Wed, 04 Sep 2024 11:21:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnkq/Or86Xk1uFga4JK0hoM5tphs0VBsX/+HBCClglLDo/I8UIpOHiN4idr4Nb8kvVk2qCWg==
-X-Received: by 2002:a17:907:9495:b0:a86:97e5:8d4e with SMTP id a640c23a62f3a-a8a1d2c8600mr668057666b.23.1725474099226;
-        Wed, 04 Sep 2024 11:21:39 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62045e44sm21528266b.78.2024.09.04.11.21.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 11:21:38 -0700 (PDT)
-Message-ID: <f14605cb-5bcd-4565-a02f-4b19dc1c8e25@redhat.com>
-Date: Wed, 4 Sep 2024 20:21:37 +0200
+        d=1e100.net; s=20230601; t=1725474120; x=1726078920;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bJpc+ZEMX6jhpZEWdLE1bD6DvQQdbuNOMH/8jm0J4lw=;
+        b=hy3mvK9kB0HCSeArA8ZPltCVnrsc3eLtwNUTjihGnmvEmgrCY4jKvV005KWDv6TsOY
+         SQb/NI3g2qzLRLDCwgbIXrXMbiZq8zJLxhttx030AjWXJQ1VKYRFrEvwkqNqgZCCC5oW
+         WwLHmSsiVwKneLdvlPyTn4djfPM65kY+mTuOD/meWPZ0mfBx2beBDZ+3dHONKYOgRRU3
+         PQMps155YWmXer/7a7FpFf9SwcIVteJ5FMAtpICf4MT2h++UAdpAPL3u0PDLw7oHzgNo
+         ZqvLDJgxEoRRfhxk5ON/KP1jpZCC2w8W5fwyUu6sNKlq9mJ0U6FK7hzcSkCBiRMK1hDT
+         +kCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLmX5d6iZye9AtW8j6kTAlKHiDmE67+f4GvJu2JccP8bD4if4BVCaIWFPfSTcenzBrHj0rxRpfhxDXEMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP9fFLszJ2KA+fDIsLtSISDxJIup3sWSg/9Q6747IYF+4S/c5u
+	3xyOr7WBBus0i4S/4b6Ya+XTnJ/tOL3eLmYXuKcUmU5eOF916lz2
+X-Google-Smtp-Source: AGHT+IFphHoOiRbLa07D7e0spLfqWeZxZAUZ4YyltwytzvEzrp1ktg5YzCRb0xvYK4QxHCbVnrdIzg==
+X-Received: by 2002:a17:90b:1c90:b0:2d1:bf48:e767 with SMTP id 98e67ed59e1d1-2d856392068mr20847722a91.29.1725474119722;
+        Wed, 04 Sep 2024 11:21:59 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2da7224197asm3552274a91.31.2024.09.04.11.21.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 11:21:59 -0700 (PDT)
+Date: Wed, 4 Sep 2024 11:21:56 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/22] Input: iqs269a - use guard notation when acquiring
+ mutex
+Message-ID: <ZtilRLKICDSXKyEp@google.com>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044756.1047629-1-dmitry.torokhov@gmail.com>
+ <9cc5b106-88dc-4539-b831-3cc6cb3ef860@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/platform/geode: switch GPIO buttons and LEDs to
- software properties
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, Mark Gross <mgross@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-geode@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZsV6MNS_tUPPSffJ@google.com>
- <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
- <595fe328-b226-4db5-a424-bf07ad1890b4@redhat.com>
- <20240904132104.GDZthewNjCZ4iLgEoD@fat_crate.local>
- <57bbca66-4d84-46c1-a638-1347ee6a222a@redhat.com>
- <ZtijvdOiA-RF_2RO@google.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZtijvdOiA-RF_2RO@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9cc5b106-88dc-4539-b831-3cc6cb3ef860@gmail.com>
 
-Hi Dmitry,
+Hi Javier,
 
-On 9/4/24 8:15 PM, Dmitry Torokhov wrote:
-> On Wed, Sep 04, 2024 at 06:01:30PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 9/4/24 3:21 PM, Borislav Petkov wrote:
->>> On Wed, Sep 04, 2024 at 03:02:17PM +0200, Hans de Goede wrote:
->>>> Or I can merge it through platform-drivers-x86.git/for-next
->>>> with an ack from one of the x86 maintainers.
->>>
->>> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
->>
->>
->> Thank you.
->>
->> I've applied this patch to my review-hans branch now:
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
->>
->> Note it will show up in my review-hans branch once I've pushed my
->> local branch there, which might take a while.
->>
->> Once I've run some tests on this branch the patches there will be
->> added to the platform-drivers-x86/for-next branch and eventually
->> will be included in the pdx86 pull-request to Linus for the next
->> merge-window.
+On Wed, Sep 04, 2024 at 03:53:40PM +0200, Javier Carrasco wrote:
+> On 04/09/2024 06:47, Dmitry Torokhov wrote:
+> > Using guard notation makes the code more compact and error handling
+> > more robust by ensuring that mutexes are released in all code paths
+> > when control leaves critical section.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/misc/iqs269a.c | 46 +++++++++++++-----------------------
+> >  1 file changed, 16 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/drivers/input/misc/iqs269a.c b/drivers/input/misc/iqs269a.c
+> > index 843f8a3f3410..c34d847fa4af 100644
+> > --- a/drivers/input/misc/iqs269a.c
+> > +++ b/drivers/input/misc/iqs269a.c
 > 
-> Hans, could you squash the following bit into the original patch please:
-
-Ah right, I think I remember a lkp report about this, thank you.
-
-I've squashed this in now.
-
-Thanks & Regards,
-
-Hans
-
-
-
-
-> diff --git a/arch/x86/platform/geode/geode-common.c b/arch/x86/platform/geode/geode-common.c
-> index 8f365388cfbb..d35aaf3e76a0 100644
-> --- a/arch/x86/platform/geode/geode-common.c
-> +++ b/arch/x86/platform/geode/geode-common.c
-> @@ -14,7 +14,7 @@
->  
->  #include "geode-common.h"
->  
-> -const struct software_node geode_gpiochip_node = {
-> +static const struct software_node geode_gpiochip_node = {
->  	.name = "cs5535-gpio",
->  };
->  
+> ...
 > 
+> > @@ -453,9 +449,9 @@ static int iqs269_ati_base_get(struct iqs269_private *iqs269,
+> >  	if (ch_num >= IQS269_NUM_CH)
+> >  		return -EINVAL;
+> >  
+> > -	mutex_lock(&iqs269->lock);
+> > +	guard(mutex)(&iqs269->lock);
+> > +
+> >  	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
+> 
+> maybe scoped_guard() to keep the scope of the mutex as it used to be?
 
+Thank you for looking over patches.
+
+It is just a few computations extra, so I decided not to use
+scoped_guard(). Note that original code was forced to release mutex
+early to avoid having to unlock it in all switch branches.
+
+> 
+> > -	mutex_unlock(&iqs269->lock);
+> >  
+> >  	switch (engine_b & IQS269_CHx_ENG_B_ATI_BASE_MASK) {
+> >  	case IQS269_CHx_ENG_B_ATI_BASE_75:
+> > @@ -491,7 +487,7 @@ static int iqs269_ati_target_set(struct iqs269_private *iqs269,
+> >  	if (target > IQS269_CHx_ENG_B_ATI_TARGET_MAX)
+> >  		return -EINVAL;
+> >  
+> > -	mutex_lock(&iqs269->lock);
+> > +	guard(mutex)(&iqs269->lock);
+> >  
+> >  	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
+> >  
+> > @@ -501,8 +497,6 @@ static int iqs269_ati_target_set(struct iqs269_private *iqs269,
+> >  	ch_reg[ch_num].engine_b = cpu_to_be16(engine_b);
+> >  	iqs269->ati_current = false;
+> >  
+> > -	mutex_unlock(&iqs269->lock);
+> > -
+> >  	return 0;
+> >  }
+> >  
+> > @@ -515,10 +509,9 @@ static int iqs269_ati_target_get(struct iqs269_private *iqs269,
+> >  	if (ch_num >= IQS269_NUM_CH)
+> >  		return -EINVAL;
+> >  
+> > -	mutex_lock(&iqs269->lock);
+> > -	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
+> > -	mutex_unlock(&iqs269->lock);
+> > +	guard(mutex)(&iqs269->lock);
+> 
+> same here?
+> 
+> >  
+> > +	engine_b = be16_to_cpu(ch_reg[ch_num].engine_b);
+> >  	*target = (engine_b & IQS269_CHx_ENG_B_ATI_TARGET_MASK) * 32;
+
+Same here, calculating the line above will take no time at all...
+
+Thanks.
+
+-- 
+Dmitry
 
