@@ -1,249 +1,113 @@
-Return-Path: <linux-kernel+bounces-314785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4967496B886
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8113896B88B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8081F23D7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43931C22EC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C771CF7A3;
-	Wed,  4 Sep 2024 10:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A0A1CF7B7;
+	Wed,  4 Sep 2024 10:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S38fUNnl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PY7vWZlk"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729F1CF5F1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311F71CEEA7;
+	Wed,  4 Sep 2024 10:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445799; cv=none; b=MHPXFuwya0NiBs1lmOth/8PoCgaVVmZmpCbaDVkZ4UwEfIoYxYNMAga9SsWnE4LCL/F3eygMllDZqSU+bLgKwVqBKztvbtm0cuslsQEJOVlpLNoc+pj2S4whJcGagn4jHGHh60BR2xIuHONKuJKdVI7AKDVBnoG9pQ3YGiYPeaI=
+	t=1725445802; cv=none; b=WhEQs7vVw9SknQPEUOJhRkTg7LuZaXSzL2BoMgKW+62rJVY1yUqzffPSVdElsgXw1SJyBPyTiuvJmXST2Gw2F8jMRhjhUZJC4cwwFTcSOGnxDBY+ixMYIl9ROXsy8PKtmLYQ09B2J7iGA33AxNhPsYOG6zc/2l/195iLwbwPd8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445799; c=relaxed/simple;
-	bh=5ccVo0M8G8DfgB8Dycrbx+Cre/7FshqpQSieO5gAf8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F/iboVEoyF4hz1V1I0RoxPcv2X6NBG+dBPQL4RyI9fFVAs4zgHmi7UccyR+Xzj+0KHUk0T1fdNafD5gU0M/pYyaIuYk7k70BgtkYsrLBaDzZq4zPql8ACVvOmTKvyTkxWE92MgGdHHU4PKotafNcRAPmWLB5ReMuYd40BNDWHkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S38fUNnl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725445796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GjvrxlJE8EJ7TRDwR1pXnt1cZcb/OYfz99rwQ0Yh7zs=;
-	b=S38fUNnlaJ1mk2ofsB66yFuffHB7tyERArbN5GfQ2dB06AFN5JZFcIdZ2mhUpsNYfrwHP9
-	l9OKn6W1Dbk7UQeyJA6WuYGqcqURiAY6sA1Y+wYgNbPNeWL4uzkLNoVd9hsecuegSD5JuH
-	saouQSAihf+4cQ9bI0Fer+PJjMpGuMg=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-krEYucr5PiG_pkgA8q6GUA-1; Wed, 04 Sep 2024 06:29:54 -0400
-X-MC-Unique: krEYucr5PiG_pkgA8q6GUA-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c250f3b18aso523732a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:29:54 -0700 (PDT)
+	s=arc-20240116; t=1725445802; c=relaxed/simple;
+	bh=njGhOVEqs2VZKM3uyKmQ88RTiGLqN04rQTuxJVN0iPI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P8SVLJLoRQwWgHkiq+dLzwJNApb0Jv703N6NPTZBdp9MAsbbCDfkbdXCx4u56Akf/PjCeoNJc64VSaItyZtYaIekk8KlYFZjPX467jASPP1cblGlmSjsvk2RqYF0yxoHsRSHU/ZL2uxSPytgu1vC6vWmQ/FS0RvU8s6o3pf3rzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PY7vWZlk; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3c34e3c39so546856a12.2;
+        Wed, 04 Sep 2024 03:29:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725445798; x=1726050598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nihBU/J39u74mRlIxma9Q/V3h+KUj+7kdXU2a336JmA=;
+        b=PY7vWZlk+ly0HFBSXpDDednPEWf/Xs+74MgPMuDf7pQf5R31zR4zquE5OwrErskHfJ
+         3dFH7b2tttpb/6HmxVNY/YGvdc9PceAJm9DjFPE1/qq1Y+R+kqvjsobWInLlVU18QPl+
+         VTHp8VIKiApJNCUsa1TunqlENiizNNr3OFqQZO8n13w8ZwAbTRdTMe0A0fxtln0HxW5t
+         KLpszyvIygODxOlfZq+JIM86IrXUY8aMnpZ3h/pBe2r6+eppfIg/VEF8racxyntek0CF
+         WXkcGmMdQNnoohKb1kCXwGnaDbgMWyW36zdJ6IFt3bxYTO4McBAXA+mCoh0MJaIea5jE
+         xcMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725445794; x=1726050594;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GjvrxlJE8EJ7TRDwR1pXnt1cZcb/OYfz99rwQ0Yh7zs=;
-        b=XP4nojg5OrcVPUkdAMFADfbVbhmBRU2RTYddooGaSxcCbQZS/dwC6Zy0FY4P+uKBId
-         SXIWN5FUn+1zNjIDQZwDx7uqzv8Yh2ol5ZRQ7bafWtaNbwiLGiz8WvcuhBaVL+dlwVrD
-         A8UiUn6ThI1FAjbQgKVVyxtNhR1OYoxT5kbntIKx5b+ybUVjLFG3wbIlRbs0wfi5nStV
-         rq3zq2itlytU5TnFxq5zl/54wjoegdoyhU9MgthjhEeZlqK7AcobhIeysHthr0Qye2Ir
-         CdsEPEfLrhzuyOGxLc7r3r64pwjNvU3ons9CF4fbZk0+/gxxjXpIAuCD+4E7NHqCFph0
-         pJ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVlbIjbyFX/JSvBH77d8N3r+8GzNrUUhxCYVfDrOMYwQVBJgokdEqTCgW0EmdiKtI4dMt+fDjYCk9Z26I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWixtElDm/HedCVTYfzT8DnRI1d7VfXfCl9a5YzcGDcZrMCrA6
-	iAl70wvcFosPNCD717yFc6BRhZTTfFP9dyp/NKusWKR2xPFNa7e9dDI+hfo9nqgSVMiL3ZHQ7li
-	tVCVxltsNGOAP35BEVzNFCJ3P1Lw0E+UIi3Thj6MukbQ4oRlxXvB0l9WrV8J68A==
-X-Received: by 2002:a05:6402:1ec5:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5c2caf22be6mr1560632a12.27.1725445793469;
-        Wed, 04 Sep 2024 03:29:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlfGqHgiFwjp/Ap4TY3x8/1uxKWyFR9NEI0cj9enurEW6F7gDBRXOrJY/rHX0K4XiDL+Ug+g==
-X-Received: by 2002:a05:6402:1ec5:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5c2caf22be6mr1560599a12.27.1725445792849;
-        Wed, 04 Sep 2024 03:29:52 -0700 (PDT)
-Received: from [192.168.10.3] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c250edd2e3sm4341769a12.27.2024.09.04.03.29.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 03:29:51 -0700 (PDT)
-Message-ID: <25ca73c9-e4ba-4a95-82c8-0d6cf8d0ff78@redhat.com>
-Date: Wed, 4 Sep 2024 12:29:47 +0200
+        d=1e100.net; s=20230601; t=1725445798; x=1726050598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nihBU/J39u74mRlIxma9Q/V3h+KUj+7kdXU2a336JmA=;
+        b=w0/OP11+3LAdpss1cS3v5+Fh1R14z2o9qMLdjYTCsdrweY1hG9b2yupvQ1jgLNnA9j
+         CtPj0oZXbNPceaRLDDijfb0tOqbEum4P+IxxpQOYnJp6bLxAjD5wkN4Q6G/bI6OJpuc7
+         5koZr/UqN/hnMtdtieF5b961q/XeSWqqIWUIpEqH6QLRE/k1zGVL8cYTYNLn/mkKGObu
+         LRhqajWcPVFy3gjexkCbqrTAUt2e3OqmHaPrVpU8L/EOrM5R3PcHRRlawCE22NPRhr+W
+         LA6wU9kTohkpJZTrCrZuj1TX2SqZ3kOdn8dmOPTeaGEv58/HnjYhB+Vp3kxITK6WcNlt
+         U7Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQUIYGZ3/iVBJP2zoiflAtwz37W3LdUKJxIdF8PuSQzLmw7Lu0URnJyys9KLB7DYKXjqxe7kqhyjW+BI8x@vger.kernel.org, AJvYcCWDUjHq/gjcWDWwWywdLpsTzt0oZ0g/+3efPoz9gJKwjSsnoyHKS1aqL2iEOSoZLOyR57ctmNdT3hiz@vger.kernel.org, AJvYcCXu0F4yOsI/G4VfmhhsDkU2EGRC2F1MfqeiW6oDCxifBldJymBoPYoOzOxeEZ02OMpTo4l9yHOaWkpW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHknziIxakRz55BOmZny/eNd4AS+bwi17qcmSsXMcuVXm6bLn1
+	dcu+8/2L3dI8zyvKMc5L+dPOWvuSEzCsn8s1TRC29tuM15sp6+0V
+X-Google-Smtp-Source: AGHT+IGP9esbSOn/3d7EfoywFr2wYtF4EOUSVynakrKbTMZYY6Eo65iN6z1a3fexsUAAv8j9yMP+5A==
+X-Received: by 2002:a05:6402:5212:b0:5be:eb19:ee56 with SMTP id 4fb4d7f45d1cf-5c24377aa7emr9129464a12.24.1725445797557;
+        Wed, 04 Sep 2024 03:29:57 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:2f85:317:e13:c18])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccff17sm7349081a12.73.2024.09.04.03.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:29:57 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 4 Sep 2024 12:29:55 +0200
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v5 0/7] pressure: bmp280: Minor cleanup and interrupt
+ support
+Message-ID: <20240904102955.GD44250@vamoiridPC>
+References: <20240902184222.24874-1-vassilisamir@gmail.com>
+ <ZtcfCVcV_1hCVp7N@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/sev: Fix host kdump support for SNP
-To: "Kalra, Ashish" <ashish.kalra@amd.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, thomas.lendacky@amd.com,
- michael.roth@amd.com, kexec@lists.infradead.org, linux-coco@lists.linux.dev
-References: <20240903191033.28365-1-Ashish.Kalra@amd.com>
- <ZtdpDwT8S_llR9Zn@google.com> <fbde9567-d235-459b-a80b-b2dbaf9d1acb@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <fbde9567-d235-459b-a80b-b2dbaf9d1acb@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtcfCVcV_1hCVp7N@smile.fi.intel.com>
 
-On 9/4/24 00:58, Kalra, Ashish wrote:
-> The issue here is that panic path will ensure that all (other) CPUs
-> have been shutdown via NMI by checking that they have executed the
-> NMI shutdown callback.
+On Tue, Sep 03, 2024 at 05:36:57PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 02, 2024 at 08:42:15PM +0200, Vasileios Amoiridis wrote:
+> > Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
 > 
-> But the above synchronization is specifically required for SNP case,
-> as we don't want to execute the SNP_DECOMMISSION command (to destroy
-> SNP guest context) while one or more CPUs are still in the NMI VMEXIT
-> path and still in the process of saving the vCPU state (and still
-> modifying SNP guest context?) during this VMEXIT path. Therefore, we
-> ensure that all the CPUs have saved the vCPU state and entered NMI
-> context before issuing SNP_DECOMMISSION. The point is that this is a
-> specific SNP requirement (and that's why this specific handling in
-> sev_emergency_disable()) and i don't know how we will be able to
-> enforce it in the generic panic path ?
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> for the patches 1,2, and 3.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
-I think a simple way to do this is to _first_ kick out other
-CPUs through NMI, and then the one that is executing
-emergency_reboot_disable_virtualization().  This also makes
-emergency_reboot_disable_virtualization() and
-native_machine_crash_shutdown() more similar, in that
-the latter already stops other CPUs before disabling
-virtualization on the one that orchestrates the shutdown.
+Thank you very much for the reviews Andy.
 
-Something like (incomplete, it has to also add the bool argument
-to cpu_emergency_virt_callback and the actual callbacks):
-
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index 340af8155658..3df25fbe969d 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -111,7 +111,7 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
-  
-  	crash_smp_send_stop();
-  
--	cpu_emergency_disable_virtualization();
-+	cpu_emergency_disable_virtualization(true);
-  
-  	/*
-  	 * Disable Intel PT to stop its logging
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 0e0a4cf6b5eb..7a86ec786987 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -558,7 +558,7 @@ EXPORT_SYMBOL_GPL(cpu_emergency_unregister_virt_callback);
-   * reboot.  VMX blocks INIT if the CPU is post-VMXON, and SVM blocks INIT if
-   * GIF=0, i.e. if the crash occurred between CLGI and STGI.
-   */
--void cpu_emergency_disable_virtualization(void)
-+void cpu_emergency_disable_virtualization(bool last)
-  {
-  	cpu_emergency_virt_cb *callback;
-  
-@@ -572,7 +572,7 @@ void cpu_emergency_disable_virtualization(void)
-  	rcu_read_lock();
-  	callback = rcu_dereference(cpu_emergency_virt_callback);
-  	if (callback)
--		callback();
-+		callback(last);
-  	rcu_read_unlock();
-  }
-  
-@@ -591,11 +591,11 @@ static void emergency_reboot_disable_virtualization(void)
-  	 * other CPUs may have virtualization enabled.
-  	 */
-  	if (rcu_access_pointer(cpu_emergency_virt_callback)) {
--		/* Safely force _this_ CPU out of VMX/SVM operation. */
--		cpu_emergency_disable_virtualization();
--
-  		/* Disable VMX/SVM and halt on other CPUs. */
-  		nmi_shootdown_cpus_on_restart();
-+
-+		/* Safely force _this_ CPU out of VMX/SVM operation. */
-+		cpu_emergency_disable_virtualization(true);
-  	}
-  }
-  #else
-@@ -877,7 +877,7 @@ static int crash_nmi_callback(unsigned int val, struct pt_regs *regs)
-  	 * Prepare the CPU for reboot _after_ invoking the callback so that the
-  	 * callback can safely use virtualization instructions, e.g. VMCLEAR.
-  	 */
--	cpu_emergency_disable_virtualization();
-+	cpu_emergency_disable_virtualization(false);
-  
-  	atomic_dec(&waiting_for_crash_ipi);
-  
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index 18266cc3d98c..9a863348d1a7 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -124,7 +124,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
-  	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
-  		return NMI_HANDLED;
-  
--	cpu_emergency_disable_virtualization();
-+	cpu_emergency_disable_virtualization(false);
-  	stop_this_cpu(NULL);
-  
-  	return NMI_HANDLED;
-@@ -136,7 +136,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
-  DEFINE_IDTENTRY_SYSVEC(sysvec_reboot)
-  {
-  	apic_eoi();
--	cpu_emergency_disable_virtualization();
-+	cpu_emergency_disable_virtualization(false);
-  	stop_this_cpu(NULL);
-  }
-  
-
-And then a second patch adds sev_emergency_disable() and only
-executes it if last == true.
-
-Paolo
-
+Cheers,
+Vasilis
 
