@@ -1,115 +1,98 @@
-Return-Path: <linux-kernel+bounces-315125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B7596BE3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:21:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A8D96BE4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 766171C22724
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413CA286ECB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD411DB942;
-	Wed,  4 Sep 2024 13:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6DA1DAC4D;
+	Wed,  4 Sep 2024 13:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoytOfnP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DtgkYAA3"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77291DB553;
-	Wed,  4 Sep 2024 13:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4081EBFEF;
+	Wed,  4 Sep 2024 13:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456039; cv=none; b=NlTG2J2JXwvk93Q2Tiknot+adIODuDh91bstEv5+p43TyW2eaX80/dkBEmXl66cOVav6O9xn+qoOfSWM7L+FGvQV6Nu03vy9lHDrgP0Eufn0DcpJIGyIb7zpOUoTGFhvUO3t3EM+cFTzNOjtQ5zL0thsMxxh2wYL4kDzm5+7vIg=
+	t=1725456087; cv=none; b=QtiKPASGc//kpvjMYyeb9uJ3Q4Aa9cz76LgFQm+GzQFnCMTDPtwNDS9ZzDTHPKTS5kfQoiKCMGiLLQ+YB+wsTVmuJ2VG6d1Entz2shM91bd5S6gHJxa9PcTNB5F0hQiB4ho9KaBcIsysa8ORcDXxHsq1kqTeY0ZJja9r14Y/QsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456039; c=relaxed/simple;
-	bh=wXXMkNPHzyiaoOtekDBMY5Ahv9yc6m0RbCrnPUk2Y48=;
+	s=arc-20240116; t=1725456087; c=relaxed/simple;
+	bh=oEeQNltNgjxKhow6HcJUXN0SYC1LORzvBksc0cWLbyY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fz1Uh4vdlQs6y/6rdGI590giTuzzpNPTPUvqW+HHYMwT2h5+uIf+PVZ7sCsgYwmdWGFuq+WZWAu5apYxxSuFn9yye4segn5PQho8LaDPFO4PB9tiXMZyhndXfFEQ90eBtzDFWXV/U+rjdO0Yb6MsebK+aSr3B5ZgueirKCMPp1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoytOfnP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC1DC4CEC3;
-	Wed,  4 Sep 2024 13:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725456038;
-	bh=wXXMkNPHzyiaoOtekDBMY5Ahv9yc6m0RbCrnPUk2Y48=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqOiZV7OemlPsMhYIy4XQaeAGYJZTroCUVJEWbJIE/VoSe/rH3boUGMnvP0xgHgV4c0G1tmbJqziYoIK02RlyBH5DRz7WyTOnOHn0nbVOO09xM5wiPwCTapIxD3ZzyUyyMuzOBotftfDROzZcpAM8WzNIF4yaAyJ0w7obn2S6sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DtgkYAA3; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7482740E0198;
+	Wed,  4 Sep 2024 13:21:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SiFbzFeFtBJU; Wed,  4 Sep 2024 13:21:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725456077; bh=WRZcIeYa6jCDNU/B+Vyy4I0mAe3Ini8FS1LRPSG2p/I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OoytOfnPEfjkfIWoq07kolMUKOWCvfzVkVFXNgfirnWMZYWj9JpFbkzzcHGbCpMM8
-	 /IsE8vEtWed8ziutxbztS6VC5Z75s2lthQGgL9sO24VwGGKbU/2QI8Sdk0EuALQRDO
-	 Jb6iPMfchDkL6xeLk4a/SAeH9Qhe9GIViu233u1ey6fASYZQPQgOgxO4Vb3kIAUZlb
-	 PK8v/PdmPEqr5yIqAYhNAkLQ8coALLSXBGaYxmURSqpRbLUwFooDwanYnb5QA0YVYx
-	 n4pyqBWj0ee9Pbr9yJGyGUP6Jjjh8nQGCoSNcXcXSFQCu4/FC9M2N6ido6UvsnOs/5
-	 FM4fJrOnrJnsA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slpwN-000000005Jx-3581;
-	Wed, 04 Sep 2024 15:20:55 +0200
-Date: Wed, 4 Sep 2024 15:20:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <Zthet0QqChgGWJAe@hovoldconsulting.com>
-References: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
- <20240829-x1e80100-ps8830-v1-2-bcc4790b1d45@linaro.org>
- <Zta6cBq881Ju7r7H@hovoldconsulting.com>
+	b=DtgkYAA350xmnkzA4ypnuXPtsCNOQcme/hSsAcrZZD9yK6Nnv65RN0A7gxFXIf1Ej
+	 ZyKZnxaGY5EUHg0hqWnImzVt5ISWtdgYlyUZMwDjprLU1IfApaSJZKvir6RlW7GIP7
+	 KL4Al1lO/3fEcI7JkYj+rhsPX70S3eZ4VTB3zKRix6qeXBuWt9uFPdY8zVju/heCDV
+	 rS5G+Gw/kcO4vKUjivtf2SDFh/+qDSiOErk71JkrvGelXJZz2lNw9xhol/6oCY+uQQ
+	 e42L0eRv7e0ta7US7nNo4/U4mGXqqw7ln0wvAtUh8X/Hbkv3i+NxW4kVaHj/H5//Kc
+	 EhSQJCTCUFMizzEcWsB1QHKKFJK5+nLTT624ZqZ18P9bRcYa5MSUOicIKGaESxg7ir
+	 jS2wm1edgQ/ES51noKu8sRpe+mjirgQ96SV+C5ZGHjTs0Zax3vl00dARwvdegJndGm
+	 lNiMIXMl1Dme3gTX8iHsBRO0DtpIutAn14MZTlX0KkI9yiEzvlDr/w0o1xnjROkSaj
+	 vGQ1uhu2c9DSHOtYklkRxcWap5qgThZLOXS1P1eQpRtpeJHgu2EySD55RhypQFUQpH
+	 39Ijy5+OJTtKqrPWldlG7pyJE21OsdGyIq4QpVzWqRgtR6nuIwwfnCE5vd4Pby9Yl+
+	 QrUlT72oOMwCmH8BHW4KNn6w=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 664BB40E0185;
+	Wed,  4 Sep 2024 13:21:09 +0000 (UTC)
+Date: Wed, 4 Sep 2024 15:21:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Gross <mgross@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-geode@lists.infradead.org,
+	platform-driver-x86@vger.kernel.org, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/platform/geode: switch GPIO buttons and LEDs to
+ software properties
+Message-ID: <20240904132104.GDZthewNjCZ4iLgEoD@fat_crate.local>
+References: <ZsV6MNS_tUPPSffJ@google.com>
+ <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
+ <595fe328-b226-4db5-a424-bf07ad1890b4@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zta6cBq881Ju7r7H@hovoldconsulting.com>
+In-Reply-To: <595fe328-b226-4db5-a424-bf07ad1890b4@redhat.com>
 
-On Tue, Sep 03, 2024 at 09:27:45AM +0200, Johan Hovold wrote:
-> On Thu, Aug 29, 2024 at 09:44:26PM +0300, Abel Vesa wrote:
-> > The Parade PS8830 is a Type-C muti-protocol retimer controlled over I2C.
-> > It provides both altmode and orientation handling.
-> > 
-> > Add a driver with support for the following modes:
-> >  - DP 4lanes
-> >  - USB3
-> >  - DP 2lanes + USB3
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+On Wed, Sep 04, 2024 at 03:02:17PM +0200, Hans de Goede wrote:
+> Or I can merge it through platform-drivers-x86.git/for-next
+> with an ack from one of the x86 maintainers.
 
-> > +	retimer->supplies[0].supply = "vdd33";
-> > +	retimer->supplies[1].supply = "vdd18";
-> > +	retimer->supplies[2].supply = "vdd15";
-> 
-> vdd115?
-> 
-> > +	retimer->supplies[3].supply = "vcc";
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-I took a look at the schematics and it seems like all but one of the
-above supply names are wrong and that some are missing. "vcc" also does
-not exist in either the binding or dt patches you sent separately.
+-- 
+Regards/Gruss,
+    Boris.
 
-From what I can tell the supplies are:
-
-	vdd		1.15 V
-	vdd33		3.3 V
-	vdd33_cap	3.3 V
-	vddat		1.15 V
-	vddar		1.15 V
-	vddio		1.8 V
-
-Also, have you checked that there are no ordering constraints between
-the supplies?
-
-Johan
+https://people.kernel.org/tglx/notes-about-netiquette
 
