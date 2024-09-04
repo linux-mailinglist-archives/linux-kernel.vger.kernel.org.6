@@ -1,175 +1,137 @@
-Return-Path: <linux-kernel+bounces-315906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BF096C8A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:37:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD8A96C8AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7415A1F28574
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356ED1F25B91
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66B148FF5;
-	Wed,  4 Sep 2024 20:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D340D14884D;
+	Wed,  4 Sep 2024 20:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I6ckhaKT"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hDyX45ku"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B25F14830C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF52C1EBFEC;
+	Wed,  4 Sep 2024 20:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725482233; cv=none; b=mKifjDD5EqcD9UY8mHv2vqLc0nJwb7rZ/nHJzrUNjbPJEqyh6vn9glXqlpFmOvGke+TwOa+6LyxQHtRzYj58I1JKqOcyH5GafaPUoje6jumGhYWcsSYAGwfqChQ12fk1KUhR7sGnrSp442Z31P0xqSvSQy780Gtu21+dxs6TlTc=
+	t=1725482309; cv=none; b=FJzaaRaM7GrjGW2FviAU7E/uRfz21E/yLEZ33/Z+OmB0jxCqfkuvMsfPvxzEnj0RLQUpO43lwg/TsWjiw6aMf16QgJeTFwhfuKcj4WoxKguEKxL8yZUrYctypPt+IZL+c/4CwntGhBoTqvvgdGGURBLTOgYzDtH8316Lm455gTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725482233; c=relaxed/simple;
-	bh=yQwnYD19n1xUXU4dbty3ehLdSGl/V3zWXm5EKMRaIf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uP/JiwrGSWvvmQAce4YetJH1D7UXQUOXCIXe4h1QHy790tmVEg+eTi9Ari3lkc3cVPlqn0jBz8ZPTJLr+Dov8jHYVjG6fbR3u/sT44skzf+Y4P5cIYVTXo13oB+RqrOF6FgSVke03j+C4eZdZ1rpafMvOTZ5vtMYuCtEd8REtGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I6ckhaKT; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c49c9018ebso65679727b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 13:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725482230; x=1726087030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+uSNgAoLeuNZ3XWdQeqcMJZ932reV/H1BZ/60TxYWNg=;
-        b=I6ckhaKTHN86Qd0oxsBHDCuvEwxZ+gt388yVPW9pXcoJY4vYyPXXZiONw/+vnLSVnB
-         rpL0lytcQ2cK61+dSKQlwG0gjAU4tc3xOhEJ8WaFOcRgE9ApVHV/XqqtJJO761YMuCUS
-         wJ56hIZ9BkXC8yy0j64OWUGHh9WGXywwrUeepl4rl9MCtPWist6N2OjFOul+g5dIhAYd
-         0UK/Z+8/eznXHOtkh/XYPRGVoh/WKIMOPnxq60cZ85FsKkkBKDSeRq5miz9shOAUvW+T
-         RHoVYGzFtDLa4NzNDWAS1Mjte4nfrHUn/at1AkkEopftDKcxE+qXB8Az5IXEdSsMBJjz
-         W4Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725482230; x=1726087030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+uSNgAoLeuNZ3XWdQeqcMJZ932reV/H1BZ/60TxYWNg=;
-        b=AFRksLqDsqOwmp7gr7wEhUsIlDSi8ei7MohZPNYYRLIvtnRG1V8n3ZgB60mtargHCN
-         XNKhqi2WLjQHXSUbKW+z6ufP/gwgDHa9wju6Ve90l6wWRMkTuJ/oMfQF7JNxv4BSxEbd
-         fG49HcNcMd9pDz6UQ4hOuDCa720nbblrGQF9TtR3eGXZLSySyVoFvJ4h8zmRxaexgMFr
-         0rqzw/eIznPMxjORvyXc6prXD+JOphEpDjrotePxzz9Sk6IvUtBM3lkJW9Yd7ILgT7KV
-         064GKR3IE8TIyB6zGsksYL06BEFAErWxLCk//0DGz7djsiftgkzMJTiYUcXJJkcri0St
-         cqsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrUdoG9UMzWaCTGOkk6QIzJr49SY8Yz1aktA7qODohrRVhV2ENX3RSWgcGXSA2rsEZCHistRM+OPseERQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzajEGwJ4I23PtiyAyxF6smyFeKUUh+uFMnh9Y/15ayp61gRIA+
-	6AreaHBL1goIGg8GWuytQ2h+C3EkmjNIhjkIn8fsCf2e6Whd+R5trH9r02I0n5buVYWqzbXDqyD
-	sSqGs5noy0SfDchMsE/P7aAeO0Jo8IQ4zdkQN
-X-Google-Smtp-Source: AGHT+IG9r5awwLWDaSa/SS1wlz6GDBVERagOH9s3xymO+3hCHtxHEKujYrlOkzwl7hougrLaBBg55clsy/6UTBUp4qs=
-X-Received: by 2002:a05:690c:4589:b0:6d4:f41d:de2f with SMTP id
- 00721157ae682-6d4f42d2475mr143212667b3.39.1725482230428; Wed, 04 Sep 2024
- 13:37:10 -0700 (PDT)
+	s=arc-20240116; t=1725482309; c=relaxed/simple;
+	bh=fb++RZOclHuyJv8Cvo2Mncb1oUjSopSg8sCCDhGKtZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fILsp3h+VhRSNPG8+ChyhXgTiteXzDoREep1T9FZNnTCstqWAJEV2lou17A6pnbvG+JLGBbwut2l/shu/RV+hChj+E6dJ0sourHck7pRu528zDS8wCryXIaBSSh0pwHw1aQYqDrCgTO+syH5B+rmScA6LTM9l9iqPDiY/43v27k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hDyX45ku; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0D16A1BF203;
+	Wed,  4 Sep 2024 20:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725482304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eIswLtOfZtf2hkYmMprySdT0sIt7a6+fv7isRSExRY8=;
+	b=hDyX45kuNseqYmR1xNb2I+QSwtW32sZzTAu0n79JH5zh02JZAigAOLaZ6wAMwC45sdsXEF
+	l2z6nfx3DR08UlCNKXOo8yAViMitC0yih7g0juMcxUVT2h0QuSxznqa1PL5NpDOqgeZl0a
+	i+PnbUUINAUJ/LBLMyJ5Z58fIhm1pPqQjBZo6Q9Vn914dTZVAdpdzwF2hOrvQS+zA0k9fD
+	Nq+ESIaGYc8rr+6wW/h1AjD8NjzWLPlhxEbFgBzmORdpLgNR/l8vaQ9kjtIdwkNyo6Mibn
+	Tb+MFIntj8BKRvubKT+31bHe193VEBveBrBON6ZPh7GDBlon9bcmlMRpw3k7mw==
+Message-ID: <b0849f3a-ddd3-4e6a-9f1f-1c5c9ab3e613@bootlin.com>
+Date: Wed, 4 Sep 2024 22:38:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830003411.16818-2-casey@schaufler-ca.com>
- <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com> <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
- <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com> <93952b9f-2e40-42fc-9a61-749b9c8ee306@schaufler-ca.com>
-In-Reply-To: <93952b9f-2e40-42fc-9a61-749b9c8ee306@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 4 Sep 2024 16:36:59 -0400
-Message-ID: <CAHC9VhTwYftY4nLauF8A9AOawAGKdU-+TGoVfM7Paf23x1Vm8w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	apparmor@lists.ubuntu.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
+ CV1800B SARADC
+To: Jonathan Cameron <jic23@kernel.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
+ <20240829-sg2002-adc-v5-2-aacb381e869b@bootlin.com>
+ <ZtYh6xUcP8zo3xMj@surfacebook.localdomain>
+ <20240903200526.0734945b@jic23-huawei>
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Content-Language: fr, en-US
+In-Reply-To: <20240903200526.0734945b@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Wed, Sep 4, 2024 at 4:28=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 9/4/2024 1:00 PM, Paul Moore wrote:
-> > On Tue, Sep 3, 2024 at 8:53=E2=80=AFPM Casey Schaufler <casey@schaufler=
--ca.com> wrote:
-> >> On 9/3/2024 5:18 PM, Paul Moore wrote:
-> >>> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > ..
-> >
-> >>>> +/*
-> >>>> + * Data exported by the security modules
-> >>>> + */
-> >>>> +struct lsmblob {
-> >>>> +    struct lsmblob_selinux selinux;
-> >>>> +    struct lsmblob_smack smack;
-> >>>> +    struct lsmblob_apparmor apparmor;
-> >>>> +    struct lsmblob_bpf bpf;
-> >>>> +    struct lsmblob_scaffold scaffold;
-> >>>> +};
-> >>> Warning, top shelf bikeshedding follows ...
-> >> Not unexpected. :)
-> >>
-> >>> I believe that historically when we've talked about the "LSM blob" we=
-'ve
-> >>> usually been referring to the opaque buffers used to store LSM state =
-that
-> >>> we attach to a number of kernel structs using the `void *security` fi=
-eld.
-> >>>
-> >>> At least that is what I think of when I read "struct lsmblob", and I'=
-d
-> >>> like to get ahead of the potential confusion while we still can.
-> >>>
-> >>> Casey, I'm sure you're priority is simply getting this merged and you
-> >>> likely care very little about the name (as long as it isn't too horri=
-ble),
-> >> I would reject lsmlatefordinner out of hand.
-> > Fair enough :)
-> >
-> >>> but what about "lsm_ref"?  Other ideas are most definitely welcome.
-> >> I'm not a fan of the underscore, and ref seems to imply memory managem=
-ent.
-> >> How about "struct lsmsecid", which is a nod to the past "u32 secid"?
-> >> Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
-> >> I could live with "struct lsmref", I suppose, although it pulls me tow=
-ard
-> >> "struct lsmreference", which is a bit long.
-> > For what it's worth, I do agree that "ref" is annoyingly similar to a
-> > reference counter, I don't love it here, but I'm having a hard time
-> > coming up with something appropriate.
-> >
-> > I also tend to like the underscore, at least in the struct name, as it
-> > matches well with the "lsm_ctx" struct we have as part of the UAPI.
-> > When we use the struct name in function names, feel free to drop the
-> > underscore, for example: "lsm_foo" -> "security_get_lsmfoo()".
-> >
-> > My first thought was for something like "lsmid" (ignoring the
-> > underscore debate), but we already have the LSM_ID_XXX defines which
-> > are something entirely different and I felt like we would be trading
-> > one source of confusion for another.  There is a similar problem with
-> > the LSM_ATTR_XXX defines.
-> >
-> > We also already have a "lsm_ctx" struct which sort of rules out
-> > "lsmctx" for what are hopefully obvious reasons.
-> >
-> > I'd also like to avoid anything involving "secid" or "secctx" simply
-> > because the whole point of this struct is to move past the idea of a
-> > single integer or string representing all of the LSM properties for an
-> > entity.
-> >
-> > I can understand "lsm_data", but that is more ambiguous than I would li=
-ke.
-> >
-> > What about "lsm_prop" or "lsm_cred"?
->
-> If we ever do the same sort of thing for the existing blobs we're
-> going to need to have lsm_cred for the cred blob, so I shan't use
-> it here. I can live with lsm_prop, which shouldn't confuse too many
-> developers. We can start saying "property" in place of secid, which
-> would be a good thing.
+Hello, thank you for these fixes, I just wanted to add something below.
 
-Works for me, thanks Casey.
+Le 03/09/2024 à 9:05 PM, Jonathan Cameron a écrit :
+> On Mon, 2 Sep 2024 23:36:59 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> 
+>> Thu, Aug 29, 2024 at 02:31:51PM +0200, Thomas Bonnefille kirjoitti:
+>>> This adds a driver for the Sophgo CV1800B SARADC.
 
---=20
-paul-moore.com
+...
+
+>>> +		init_completion(&saradc->completion);
+>>> +		ret = devm_request_irq(&pdev->dev, saradc->irq,
+>>> +				       cv1800b_adc_interrupt_handler, 0,
+>>> +				       dev_name(&pdev->dev), saradc);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +
+>>> +		writel(1, saradc->regs + CV1800B_ADC_INTR_EN_REG);
+>>
+>> BIT(0)
+> 
+> Maybe on that - would need to compare with datasheet to know how it's
+> described. In theory that might not be a mask.
+
+Indeed, in this case "CV1800B_ADC_INTR_EN_REG" is the register that 
+enables the interrupts.
+So here what I dis is to set this register to 1 (ON).
+
+> 
+>>
+>>> +	}
+>>> +
+>>> +	ret = devm_mutex_init(&pdev->dev, &saradc->lock);
+>>> +	if (ret)
+>>> +		return ret;
+>>
+>> + blank line?
+> That one I'd done already.
+> Anyhow tweaked and pushed out again.
+> 
+> 
+> Jonathan
+> 
+>>
+>>> +	writel(FIELD_PREP(CV1800B_MASK_STARTUP_CYCLE, 15) |
+>>> +	       FIELD_PREP(CV1800B_MASK_SAMPLE_WINDOW, 15) |
+>>> +	       FIELD_PREP(CV1800B_MASK_CLKDIV, 1) |
+>>> +	       FIELD_PREP(CV1800B_MASK_COMPARE_CYCLE, 15),
+>>> +	       saradc->regs + CV1800B_ADC_CYC_SET_REG);
+>>> +
+>>> +	return devm_iio_device_register(&pdev->dev, indio_dev);
+>>> +}
+>>
+> 
+Thomas
 
