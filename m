@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-315341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9FF96C14A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9790496C194
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D581F287CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502A228BC19
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015541DC181;
-	Wed,  4 Sep 2024 14:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA7E1DC19B;
+	Wed,  4 Sep 2024 15:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uueR4Mz1"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xq1+/M09"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61091CCEFC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EB1DA2FE;
+	Wed,  4 Sep 2024 15:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461566; cv=none; b=bN28VFmxMBSZvJVsB8kRGnlA0D9tE5a7M/fiyv6GpXb9qluSa8iuM4lNaQ40qI7b5sKN+w2h94UNlCCoR5/CTvtah2HWM+8Pv0UcIBgsm5LrZnGo3Dk3+7Sk33loEGd7MheMLPAlFTXMcQaocboWQ/Sb6Yh7WCi+ASIL84hLJK0=
+	t=1725462031; cv=none; b=llQjJ0DT49YzP8Zf7lOlNXJrRiIqOlKxj235AhRip+FlKyOQ1oJUS8wg288omNjRB092OzhozJYQlpeoVtlozTsvXyY48YvkdJVdHD/jg5Z+p9Gxv7kYJS7aTbTfzvfYesLnRVsnL8Gxnp1tppYUB2g9VocGBv+qaa7a/E+QlZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461566; c=relaxed/simple;
-	bh=voyOYZWjEblOB0Gzb74raxPK2rOaJWiesmUXjO3gSkg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=RLhl5t+LAn7JqKHD+dCjnKbvXor5L/6n+Xj/PEgZGGoU+lISiFLxhJP8s2kFDnpJJIj7NcKKx//ZPjL14ElcWamV3008qcNJd07UYrLEtpPWPv612uSeSSZLC1Nby6C1Cvzfl20Qs2Oz8mhzVMwfXWC9qp8gLnQny55/rjFWGHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uueR4Mz1; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36830a54b34so180244f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725461563; x=1726066363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbOpSXNYVcQhcvwtIzrMQlGRTGRRC7rPZsCeaAArmmk=;
-        b=uueR4Mz1EAuhchCywMREh9ObqwL84wQka+M91Dz+Z5l77L27X0MhrvHRwzoMleXUHf
-         ESRleDBaHs2pdZXXT1v5twGoNq2d7bJp91kAyFGMdu6udaoY/sz4zxISHYHwvL1E1sWU
-         SQRYXP2IpU+Z4jbKn5swCUBxNZkvwzG9s9sNipeARsf/i3LiDKBXYj0i5cp7DRWwlREw
-         5UITDOxuiSvrAfdj3vLAxQMondxH/Lgu8jM4urGcHkRamcvHRqc/xHc0sq2JCaD121HA
-         cqlEK1PmuJDE4h6ouDg4Ke45lziZCfDArPxWXT2vBUAiFkzLsLWA/ySDvWIwYremnnn0
-         JbMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725461563; x=1726066363;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbOpSXNYVcQhcvwtIzrMQlGRTGRRC7rPZsCeaAArmmk=;
-        b=T9PssrEwe2vppGjeoqFydBsL054U2Buw63/TZC+iH06+/1CEbHBejwyRXmA0YoLgUq
-         w8lz9GLSlEFpTefQir8pU/XGzhYXM1RoJxeHEhRwzR3Tx8V8kCUI2H0S9FJxx/LREsSr
-         uEfzO2yu+5U1NXFsImzZ5FknD1TGEN5IPfJu/KVZEcwgLLFt+UU+iMI2R1jsua00fyke
-         5+hENzJY9BUA82fVhZou3UZd6UiPDHvMNty4PqPDNFXkHVLyuUW0XSCub7Q1aaGr2xzt
-         qK3EOy1C3PXqu51vPb7l2Iv4Rf7uyL9skl/q2r0x0dnUdx8jcWiv03DjTQm5SckPWBS4
-         hmVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKkz4Gyg+oXoP7zi4SQFm7SwACcLxsC+8913IA5n6OBEl1uukn0IoZwRvKsj2Icv6mM0nK803eMTg+xY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHrNa7Z4nVzeDWYrGQERJ0A3fMXPDIMKOHWwl34elAbEMNZJNY
-	QIYk0C4y0GoSCcqZ0nEkSacMblktxnPr3r2vfeWEzvB1RzeO64bH6u3DMnqFJRvdo8e0NeXUvGe
-	J
-X-Google-Smtp-Source: AGHT+IFigIDgeK0AYS1NHvcazhvwSBWTvpXPKjRSJmmszC2cebhtjsf44CObPbChB6ovhvnuWTp5LA==
-X-Received: by 2002:a5d:64c8:0:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-374c800df1amr4487507f8f.1.1725461562709;
-        Wed, 04 Sep 2024 07:52:42 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c03595fcsm11963357f8f.98.2024.09.04.07.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:52:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] soundwire: stream: Revert "soundwire: stream: fix programming slave ports for non-continous port maps"
-Date: Wed,  4 Sep 2024 16:52:28 +0200
-Message-ID: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725462031; c=relaxed/simple;
+	bh=zW4e45CB60Z3HQ+n2e3GFwm04wI38LW0ND8LG2idp9w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X4AFkf1pPM5Gahan6I9d3hpcsAlzGidYhPdHzW86NGhfeO6wQZk5EcaDiLOtg6rkFrRRJXZoVmxxGUrob2l/BPkdPfzdlej9z1acgsgVi2ko6wxB/jKzMczsHTVInWApPhO5Ob1NIgQUcE5HGjfd4GerztHt6uFvmzDNMd0nQZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xq1+/M09; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484BRIhx000324;
+	Wed, 4 Sep 2024 17:00:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	selector1; bh=rcWgdV/egi7FK/6UdgKIDWLx60pHLS+ExR89ETmusZA=; b=xq
+	1+/M09qIBAgmqEbcwemTBS5KkPChFLlgk8aV1yWOCF/CuBR7XrdjMrXL69IVbzmM
+	zRwUiAEUG2PfgMnDXCLlo7Sr1sNfM8EDgrqUmxFGcByZCD0hFItikxfUD3zqkfVk
+	LwNzMw6MbE6N9tVsQ3yfQ5To5MWwpjlxutc92fEWt9/q+Yg7QvbRbAGcnUVfN/Ox
+	bXNSqeybDadO70m4ZRWZtBTWIHxL38eaGuDFiFQ9btma2TtR27MtwjpTf/MED8Ay
+	vjBtQ+7e7GTCygm89tluW3yLHo1O9YwU63KCbJCFIIQ8DFC67JsEoVG3VMLwbpEw
+	ABDfev8H2I4nlGisg+Jw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41bt2d9qv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 17:00:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8868940053;
+	Wed,  4 Sep 2024 16:58:49 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AED4E2828CD;
+	Wed,  4 Sep 2024 16:53:01 +0200 (CEST)
+Received: from localhost (10.130.72.242) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 4 Sep
+ 2024 16:53:01 +0200
+From: Sylvain Petinot <sylvain.petinot@foss.st.com>
+To: <benjamin.mugnier@foss.st.com>, <sylvain.petinot@foss.st.com>,
+        <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <sakari.ailus@linux.intel.com>
+CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tomm.merciai@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v3 0/2] media: Add driver for ST VD56G3 camera sensor
+Date: Wed, 4 Sep 2024 16:52:36 +0200
+Message-ID: <20240904145238.21099-1-sylvain.petinot@foss.st.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_12,2024-09-04_01,2024-09-02_01
 
-This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
-breaks codecs using non-continuous masks in source and sink ports.  The
-commit missed the point that port numbers are not used as indices for
-iterating over prop.sink_ports or prop.source_ports.
+Hello,
 
-Soundwire core and existing codecs expect that the array passed as
-prop.sink_ports and prop.source_ports is continuous.  The port mask still
-might be non-continuous, but that's unrelated.
+This serie adds support for STMicroelectronics VD56G3 camera sensor.
+This is a 1.5M pixel global shutter camera available in both Mono (VD56G3) and
+colour (VD66GY) variants.
 
-Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
-Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The following features are supported:
+- Auto exposure with expo bias or
+- Manual exposure with analog / digital gain
+- H/V flip
+- vblank/hblank/link freq
+- Test pattern
+- Supported resolutions in both raw8/raw10 :
+   - 1124x1364
+   - 1120x1360
+   - 1024x1280
+   - 1024x768
+   - 768x1024
+   - 720x1280
+   - 640x480
+   - 480x640
+   - 320x240
+
+This driver supports coldstart parameters for internal AE feature.
+To make it work, the driver save gain/expo values in ctrl's cur.val during
+poweroff phase. This implementation transgress V4L2 rules... Any advice to make
+it proper would be greatly appreciated.
+
+Driver tested on RB5 and RPI (with and without libcamera) for V1. V2 and V3
+mainly tested on RPI.
 
 ---
 
-I will need to fix my codec drivers, but that's independent.
----
- drivers/soundwire/stream.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+v2 -> v3:
+- driver: Unify PM vd56g3_resume/suspend functions with vd56g3_power_on/off
+- driver: Add v4l2_fwnode ctrls parse and addition
+- driver: Exposure is bounded by a minimum number of lines
+- driver: Minor improvements while handling return values
+- driver: Move to __pm_runtime_put_autosuspend()
+- driver: Follow rules and convention for driver naming
+- dt-bindings: Improve st-leds description
+- dt-bindings: Add missing additionnalProperties on 'port'
+- dt-bindings: vd56g3 is a video-interface-device type of device 
+- dt-bindings: Follow rules and convention for bindings naming
 
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index f275143d7b18..7aa4900dcf31 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
- 					    unsigned int port_num)
- {
- 	struct sdw_dpn_prop *dpn_prop;
--	unsigned long mask;
-+	u8 num_ports;
- 	int i;
- 
- 	if (direction == SDW_DATA_DIR_TX) {
--		mask = slave->prop.source_ports;
-+		num_ports = hweight32(slave->prop.source_ports);
- 		dpn_prop = slave->prop.src_dpn_prop;
- 	} else {
--		mask = slave->prop.sink_ports;
-+		num_ports = hweight32(slave->prop.sink_ports);
- 		dpn_prop = slave->prop.sink_dpn_prop;
- 	}
- 
--	for_each_set_bit(i, &mask, 32) {
-+	for (i = 0; i < num_ports; i++) {
- 		if (dpn_prop[i].num == port_num)
- 			return &dpn_prop[i];
- 	}
+v1 -> v2:
+- driver: Drop VD56G3_NUM_SUPPLIES
+- driver: Rename 'ext_clock' to 'xclk_freq'
+- driver: Make use of 'container_of_const' instead of 'container_of'
+- driver: Drop usage of WARN()
+- driver: Move a few variables to unsigned int
+- driver: Add defines for the different Cut revisions
+- driver: Replace dev_warn() by dev_err() in situation we're returning errors
+- driver: Ensure sensor has dedicated 3.5ms to boot after reset
+- driver: Take into account return value of __v4l2_ctrl_modify_range() and
+  __v4l2_ctrl_s_ctrl() functions
+- driver: Merge vd56g3_power_on() and vd56g3_boot()
+- dt-bindings: Lowercase power supply names
+- dt-bindings: Drop clock-lanes property
+- dt-bindings: Drop unecessary 'items' contraint for lane-polarities
+- dt-bindings: Drop unused labels
+
+Sylvain Petinot (2):
+  media: dt-bindings: Add ST VD56G3 camera sensor
+  media: i2c: Add driver for ST VD56G3 camera sensor
+
+ .../bindings/media/i2c/st,vd56g3.yaml         |  139 ++
+ MAINTAINERS                                   |    9 +
+ drivers/media/i2c/Kconfig                     |   11 +
+ drivers/media/i2c/Makefile                    |    1 +
+ drivers/media/i2c/vd56g3.c                    | 1599 +++++++++++++++++
+ 5 files changed, 1759 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
+ create mode 100644 drivers/media/i2c/vd56g3.c
+
 -- 
-2.43.0
+2.17.1
 
 
