@@ -1,204 +1,160 @@
-Return-Path: <linux-kernel+bounces-315421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C560A96C291
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C16C96C292
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040E11C22905
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED681F2664B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8291DEFDA;
-	Wed,  4 Sep 2024 15:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1015A4205D;
+	Wed,  4 Sep 2024 15:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="kDZ1p/+j"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAAJR3cx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B3A1DCB10
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6775D1DA63A;
+	Wed,  4 Sep 2024 15:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464082; cv=none; b=uvTgr6mwlSzoI3Rr7GdDvh0wxi4sjFdkVl3CseL+JAP5TkmqoCtYUBCvIgP05WhM2gKYabEndlHjJ/JsPH/wPuppTnoP8VbsqhmDAqXlWyKtdVy3oQ5N652jZENsCkw50bNauqGze6NCvCYkbSvDKmJipP/rscTDyKiKoMB++bw=
+	t=1725464085; cv=none; b=MLe0OcpcIlW+zhkrskPV2VolWWsxw++vdKp7TQCEXe68maR1OpkvRLItcntDmHLJmkDu3BRua9x0NDzJMVFTIeEByGGGpmq4v81jmtDMopDA5ExCdCseRBKktcnWGjbUiPR9i3X8/sbqgJAAT5e1OpgGASaI2E+X7qUu0noE73I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464082; c=relaxed/simple;
-	bh=ZU9vZwT89o1iKio4bN3J8NlZEc9NScXwgl8b1nfNZec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jOPqlKCc514jbU/c2HfCgeJyRFh7MRaBD2OqiS0Lf4HsgQG7GkDdEWJ3KOkIxcKiQRh7Sqd+RtvW5VaYEfQ/JvR37hHkrr/p5sww35/hL/2flZK7HVzmxVtkJERnPps9OnvY02hlZ0EgpBEArvCYeWpbfER4LVc30zWVCNsxt+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=kDZ1p/+j; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7176645e4daso2221110b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:34:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725464079; x=1726068879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aH+KdHQTY7QVJ226D5GvmxgS7Q6HRq/bVnsBLH7x4nk=;
-        b=kDZ1p/+jndsutOn+DyPpHfX93BJqpUbTc5fvhERCmQZmZqER6UgoNYjOpGUeB1CgRc
-         NuoR+UNCBM8TFeLT7Z8V12WtfnZtuYEU2SSgKO//sX93kpdTNymh4vop+Cfsx0XjdIC6
-         WyJFQtEg4UtvHPWL3rUZawpA3xIOfd1NDN3aI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725464079; x=1726068879;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aH+KdHQTY7QVJ226D5GvmxgS7Q6HRq/bVnsBLH7x4nk=;
-        b=pgN8cncr1/eC6opu21GshiOOnHWq49SEBo72Ph8Kwd/7KFzqmT+svrkLIRooCIoEcF
-         l3nXKSzc3YBsp+JFLKgJYrtphoCUbA5KAJqDlpL86fQeei/khhvmXJeaC7MkAYN42Kqm
-         mEl/uqgN1MjG+QzL2xLlUg46Oywvj/Yc8S9kQEF6QzaWAViFAN9g/qoae5Z4bZKlKOSA
-         BySrYlToEalXO9b8B5gZRy+JFDRfVvQ1a5SNTzS3spxzOJLqyi8tRAYA6jHOXsiSUK1c
-         VEU4xr6WA5SJ0594Fr+8+4rQRiIFzeCSEZ3/9R3AWsm23RTQAaC2z65btV7uLZLb3QgT
-         N5Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpZrtuWtn1Yzti4IzFyOJLj+EJ1a/00XGHOU+gpEAZdrQpImJDdmjT2qEhVgxYJr4bVpK2gy/T8jHv6E4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNQxLYMunprQEu1gSPKUI+satUSoGR6O0avw1e7wCfPXnF0Zf5
-	udbvKQNwdZF/fl9uNDlas5OrFXmWWNayh7ut3CRNbyBq5jn+Nj+yquOY+44n91U=
-X-Google-Smtp-Source: AGHT+IEL2LW4TA+CxU0CaYqbUrt/kpk0xSA3do08Wcc3MJwhwvpPcxzBoLhGzc/ghR+S5yCYdwHzwg==
-X-Received: by 2002:a05:6a00:3a1a:b0:702:3e36:b7c4 with SMTP id d2e1a72fcca58-7173fa0aae2mr14542401b3a.5.1725464078961;
-        Wed, 04 Sep 2024 08:34:38 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778533261sm1748028b3a.71.2024.09.04.08.34.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:34:38 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Breno Leitao <leitao@debian.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jamie Bainbridge <jamie.bainbridge@gmail.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v2] net: napi: Prevent overflow of napi_defer_hard_irqs
-Date: Wed,  4 Sep 2024 15:34:30 +0000
-Message-Id: <20240904153431.307932-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725464085; c=relaxed/simple;
+	bh=5rjogA+IPNpv3Q2rnXJqD03vvnleraaCLdUQNMypHv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQD8kY+PPg67USZ1HvVn6OX1VvwoMFzIXIPb8arRKGS0EkzwMH4B2N7OG7+mwDwFbFzOhnMkaJcaKa4DLuxrHpGQUrnfPasgvH2yLHWyOnW1n9AGUZ4VNspAuJqSraYLdvbycRqtxFAhd+t8mVo4l5APAo1T2dK4ikEWbczIeR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAAJR3cx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F62C4CEC3;
+	Wed,  4 Sep 2024 15:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725464084;
+	bh=5rjogA+IPNpv3Q2rnXJqD03vvnleraaCLdUQNMypHv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mAAJR3cxNrSEnMGt2JIWtjueuIlAJFLOMYXjFJC+CRxXRodEFlqmi2xa1oG5zAa6I
+	 fZRqEEaW2ofZlTn2gY7MC3IEXlCsbcQfjBCbYMpRQY7RTdxjFKgjofm39QJPKxxv/H
+	 CmKgOhDdvxbTLlfP4RLqJA5yL1t6e2tEcI6emJuvTfTaUnMURw61BjOPpGfajI/bOK
+	 Pk9KChYCmvtHJbRNuWhKhiTasoDnK3kPyK0E/52gEgTU/LDVEY07aCZUlnYrKXDsH1
+	 zqRPhC1SwsYRnuBKALwVx1dsOC8tBdTOsKpKIJ5XmPersVoR6Ch0ayES1R4G1LbExN
+	 wWAWJvIE2pQ5g==
+Date: Wed, 4 Sep 2024 12:34:36 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf mem record not getting the mem_load_aux events by default
+Message-ID: <Zth-DBdaSXodeFqn@x1>
+References: <Zthu81fA3kLC2CS2@x1>
+ <e848ad7b-bc9d-4eca-8918-0dd5a67c347e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e848ad7b-bc9d-4eca-8918-0dd5a67c347e@linux.intel.com>
 
-In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-napi_defer_irqs was added to net_device and napi_defer_irqs_count was
-added to napi_struct, both as type int.
+On Wed, Sep 04, 2024 at 11:20:57AM -0400, Liang, Kan wrote:
+> 
+> 
+> On 2024-09-04 10:30 a.m., Arnaldo Carvalho de Melo wrote:
+> > Hi Kan,
+> > 
+> > Recently I presented about 'perf mem record' and found that I had use
+> > 'perf record' directly as 'perf mem record' on a Intel Hybrid system
+> > wasn't selecting the required aux event:
+> > 
+> >   http://vger.kernel.org/~acme/prez/lsfmm-bpf-2024/#/19
+> > 
+> > The previous slides show the problem and the one above shows what worked
+> > for me.
+> > 
+> > I saw this while trying to fix that:
+> > 
+> > Author: Kan Liang <kan.liang@linux.intel.com>
+> > commit abbdd79b786e036e60f01b7907977943ebe7a74d
+> > Date:   Tue Jan 23 10:50:32 2024 -0800
+> > 
+> >     perf mem: Clean up perf_mem_events__name()
+> >     
+> >     Introduce a generic perf_mem_events__name(). Remove the ARCH-specific
+> >     one.
+> >     
+> >     The mem_load events may have a different format. Add ldlat and aux_event
+> >     in the struct perf_mem_event to indicate the format and the extra aux
+> >     event.
+> >     
+> >     Add perf_mem_events_intel_aux[] to support the extra mem_load_aux event.
+> >     
+> >     Rename perf_mem_events__name to perf_pmu__mem_events_name.
+> > 
+> > --------------------------´
+> > 
+> > So there are provisions for selecting the right events, but it doesn't
+> > seem to be working when I tried, can you take a look at what I describe
+> > on those slides and see what am I doing wrong?
+> > 
+> 
+> If I understand the example in the slides correctly, the issue is that
+> no mem events from big core are selected when running perf mem record,
+> rather than wrong mem events are selected.
+> 
+> I don't see an obvious issue. That looks like a regression of the perf
+> mem record. I will find a Alder Lake or Raptor Lake to take a deep look.
 
-This value never goes below zero, so there is not reason for it to be a
-signed int. Change the type for both from int to u32, and add an
-overflow check to sysfs to limit the value to S32_MAX.
+My expectation was for whatever is needed for having those events to be
+put in place, like I did manually, and indeed, limiting it to cpu_core:
 
-The limit of S32_MAX was chosen because the practical limit before this
-patch was S32_MAX (anything larger was an overflow) and thus there are
-no behavioral changes introduced. If the extra bit is needed in the
-future, the limit can be raised.
+taskset -c 0 \
+  perf record --weight --data \
+              --event '{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/P}:S' \
+	      --event cpu_core/mem-stores/ find / > /dev/null
 
-Before this patch:
+I.e. lots of boilerplate for using 'perf mem record', we should at least
+have some sort of warning about the 'perf mem record' experience having
+to be restricted to workloads running on PMUs where it can take place,
+perhaps making 'perf mem record' to restrict the CPUs used for a session
+to be the ones with the needed resources... and we have that already:
 
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-$ cat /sys/class/net/eth4/napi_defer_hard_irqs
--2147483647
+root@number:~# perf mem record sleep 1
+Memory events are enabled on a subset of CPUs: 16-27
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.032 MB perf.data ]
+root@number:~#
 
-After this patch:
+But...
 
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-bash: line 0: echo: write error: Numerical result out of range
+root@number:~# perf evlist
+cpu_atom/mem-loads,ldlat=30/P
+cpu_atom/mem-stores/P
+dummy:u
+root@number:~# perf evlist -v
+cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, enable_on_exec: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, enable_on_exec: 1, precise_ip: 3, sample_id_all: 1
+dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+root@number:~# 
 
-Similarly, /sys/class/net/XXXXX/tx_queue_len is defined as unsigned:
+It is not setting up the required
 
-include/linux/netdevice.h:      unsigned int            tx_queue_len;
+  --event '{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/P}:S'
 
-And has an overflow check:
+part, right?
 
-dev_change_tx_queue_len(..., unsigned long new_len):
+To make this more useful perhaps we should, in addition to warning that
+is running just on those CPUs, when we specify a workload (sleep 1) in
+the above case, limit that workload to that set of CPUs so that we can
+get those mem events on all of the workload runtime?
 
-  if (new_len != (unsigned int)new_len)
-          return -ERANGE;
+We would just add a new warning for that behaviour, etc.
 
-Cc: Eric Dumazet <edumazet@google.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- Documentation/networking/net_cachelines/net_device.rst | 2 +-
- include/linux/netdevice.h                              | 4 ++--
- net/core/net-sysfs.c                                   | 6 +++++-
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
-index a0e0fab8161a..615baddb398c 100644
---- a/Documentation/networking/net_cachelines/net_device.rst
-+++ b/Documentation/networking/net_cachelines/net_device.rst
-@@ -98,7 +98,7 @@ unsigned_int                        num_rx_queues
- unsigned_int                        real_num_rx_queues      -                   read_mostly         get_rps_cpu
- struct_bpf_prog*                    xdp_prog                -                   read_mostly         netif_elide_gro()
- unsigned_long                       gro_flush_timeout       -                   read_mostly         napi_complete_done
--int                                 napi_defer_hard_irqs    -                   read_mostly         napi_complete_done
-+u32                                 napi_defer_hard_irqs    -                   read_mostly         napi_complete_done
- unsigned_int                        gro_max_size            -                   read_mostly         skb_gro_receive
- unsigned_int                        gro_ipv4_max_size       -                   read_mostly         skb_gro_receive
- rx_handler_func_t*                  rx_handler              read_mostly         -                   __netif_receive_skb_core
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index fce70990b209..971a24a2d117 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -356,7 +356,7 @@ struct napi_struct {
- 
- 	unsigned long		state;
- 	int			weight;
--	int			defer_hard_irqs_count;
-+	u32			defer_hard_irqs_count;
- 	unsigned long		gro_bitmask;
- 	int			(*poll)(struct napi_struct *, int);
- #ifdef CONFIG_NETPOLL
-@@ -2065,7 +2065,7 @@ struct net_device {
- 	unsigned int		real_num_rx_queues;
- 	struct netdev_rx_queue	*_rx;
- 	unsigned long		gro_flush_timeout;
--	int			napi_defer_hard_irqs;
-+	u32			napi_defer_hard_irqs;
- 	unsigned int		gro_max_size;
- 	unsigned int		gro_ipv4_max_size;
- 	rx_handler_func_t __rcu	*rx_handler;
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 444f23e74f8e..b34d731524d5 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -32,6 +32,7 @@
- #ifdef CONFIG_SYSFS
- static const char fmt_hex[] = "%#x\n";
- static const char fmt_dec[] = "%d\n";
-+static const char fmt_uint[] = "%u\n";
- static const char fmt_ulong[] = "%lu\n";
- static const char fmt_u64[] = "%llu\n";
- 
-@@ -425,6 +426,9 @@ NETDEVICE_SHOW_RW(gro_flush_timeout, fmt_ulong);
- 
- static int change_napi_defer_hard_irqs(struct net_device *dev, unsigned long val)
- {
-+	if (val > S32_MAX)
-+		return -ERANGE;
-+
- 	WRITE_ONCE(dev->napi_defer_hard_irqs, val);
- 	return 0;
- }
-@@ -438,7 +442,7 @@ static ssize_t napi_defer_hard_irqs_store(struct device *dev,
- 
- 	return netdev_store(dev, attr, buf, len, change_napi_defer_hard_irqs);
- }
--NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
-+NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_uint);
- 
- static ssize_t ifalias_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t len)
--- 
-2.25.1
-
+- Arnaldo
 
