@@ -1,148 +1,70 @@
-Return-Path: <linux-kernel+bounces-315281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F9096C065
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:27:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D5296C067
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99801C20E5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14F21C2254A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9412C1DC1BB;
-	Wed,  4 Sep 2024 14:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82271DC05B;
+	Wed,  4 Sep 2024 14:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBozVtzi"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SBVJG8bu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30031DC198;
-	Wed,  4 Sep 2024 14:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0261DC049;
+	Wed,  4 Sep 2024 14:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459962; cv=none; b=qFTbWHbw8Gu8ddYKUm/6dtmqU5T9urHwMEmC+wmeXpTXRO0rd2pEMf3lCqhRCKGGYMYABQMr+0RfOOPU+TjrwKik9CG0iC+Y83jHyvAMpDKJrYZdl9QEH7S1MMjGNYTwgwT2Em5HegJhNhNgGZmWUkfziX2z6EDGLmkbhvpd/Jo=
+	t=1725459970; cv=none; b=HfgayF5N/ub5ao0q8pO4xujV2ysmzZLRUlJZdwvQ6iUVN/hFW/epq+LR2EhjRhoelBqaTcq7W7nLOjnloOAobOdUCJx5EAsb6OaoRHetddeTG8/6ie9ibokSIa7K4gsSK4IUPCJ2BDhXSx1rnIfVsEqUOI177OUh8vhte0lZOD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459962; c=relaxed/simple;
-	bh=IWU/5vUW/co70eztiWwvLMjG3Rr6wvuy04MQhdILmFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jmcv51kUDmflYC2vLXh2G5MH27i4Vic8/2RW7ajCPLPaWUo6EpjGi28NGXevlF571sGScRsOomcb7NxOZrSmzKNmWtoXUUrznXqFmA2GaaT54rcEUe9iDN99Rw93MMDNbRBSG4oCcTtZ+6YK1hzvXAbNl1cK/x7IEkk6y5wxyjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBozVtzi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C796C4CEC2;
-	Wed,  4 Sep 2024 14:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725459961;
-	bh=IWU/5vUW/co70eztiWwvLMjG3Rr6wvuy04MQhdILmFA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lBozVtzive0diJ/t/qMDqf/mXXvlmnA48DTrNJYvgqkkbvffLerAvZYhyJvTePFhk
-	 rEmHm7FOfnp/RPbgt2CjTfvjbo1ulSeo5lrRCgTItSDJJLClmBzLChD60UPa4ni6X+
-	 g2b7SX3kjvpIvtDZIEkTS+cjlMOlVmyM+12QjqKZ8MtEUF2MK3eyzmZ0zf8mK57WWe
-	 IGIt/RMejt6+0z1cp0+XsWUXcQ6A6+8kLiPH7SmOG15431iiOT3oMc7xGIurMG+yhg
-	 g7T8FQsJ7vsMh/UlIDJdCejRwBC76xGC+abrjn2QpSwwSGyS0TX540deIU1DhENHjQ
-	 USM/q+fF0Lvdw==
-Message-ID: <26d8ecbe-0d85-4be2-a142-861088e43918@kernel.org>
-Date: Wed, 4 Sep 2024 16:25:54 +0200
+	s=arc-20240116; t=1725459970; c=relaxed/simple;
+	bh=rrhYaamXW46ZA8J1vfl8UZPveYwzIsw/ibTYbzfoa4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pXNqgRCfuEGrQFuLMySBi761ft9blG9zMp41lUlYAmNIuBPQz2Bzwr8fcdPll02bsYLe/YbKKhzFWmOuyyGd2ywofX3t80WWZZEAOBFWg5yM5ax/avCQNVeLXo94VGEpTCNSnMFJ1o67xGnyEDoKYxKbpaM2v1TYmyxtwEgNySw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SBVJG8bu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293ADC4CEC2;
+	Wed,  4 Sep 2024 14:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725459969;
+	bh=rrhYaamXW46ZA8J1vfl8UZPveYwzIsw/ibTYbzfoa4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SBVJG8buCkTtJGLpLYQk7e4EXklcg3IjAoJ0WMUG8cAYnVNqIi4Fi+D0D4xiX0aVQ
+	 RyUXe1ApNkWoOar0Q+HV5cE4g0cJ3nfjWkTfLbXpiJA1WSaiUiELBa98qRrXVB3AMY
+	 QeOqd3eDbx65bIGS4yRcpRnJDNGkQi/H/n3mOUvc=
+Date: Wed, 4 Sep 2024 16:26:06 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Shivani Agarwal <shivani.agarwal@broadcom.com>
+Cc: stable@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
+	chenyuwen <yuwen.chen@xjmz.com>, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH v6.1] f2fs: fix to truncate preallocated blocks in
+ f2fs_file_open()
+Message-ID: <2024090457-frosted-snowdrift-5483@gregkh>
+References: <20240902092616.5249-1-shivani.agarwal@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
-References: <20240903145615.9302-1-detlev.casanova@collabora.com>
- <6077666.lOV4Wx5bFT@trenzalore>
- <0d4d40cc-9885-4933-a6d6-933e4705a68c@linaro.org>
- <1896150.tdWV9SEqCh@trenzalore>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1896150.tdWV9SEqCh@trenzalore>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902092616.5249-1-shivani.agarwal@broadcom.com>
 
-On 04/09/2024 16:20, Detlev Casanova wrote:
->>>>> +      properties:
->>>>> +        power-domains:
->>>>> +          minItems: 1
->>>>
->>>> Why minItems? This does not look right. I don't get what you are trying
->>>> to say here.
->>>
->>> I'm saying that for the rockchip,rk3576-dwcmshc compatible, 1 power-domain
->>> node has to be set.
->>
->> The top-level property already says this. You need to disallow it for
->> other variants (:false).
+On Mon, Sep 02, 2024 at 02:26:16AM -0700, Shivani Agarwal wrote:
+> From: Chao Yu <chao@kernel.org>
 > 
-> Ok, something like this:
-> 
-> allOf:
->   - if:
->       properties:
->         compatible:
->           contains:
->             const: rockchip,rk3576-dwcmshc
-> 
->     then:
->       required:
->         - power-domains
-> 
->     else:
->       properties:
->         power-domains: false
+> [ Upstream commit 298b1e4182d657c3e388adcc29477904e9600ed5 ]
 
-Yes, if they are required. Otherwise use "if: not:" and just disallow them.
+Now qeued up, thanks.
 
-Best regards,
-Krzysztof
-
+greg k-h
 
