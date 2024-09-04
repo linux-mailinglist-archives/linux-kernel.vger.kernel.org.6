@@ -1,130 +1,174 @@
-Return-Path: <linux-kernel+bounces-315587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEE296C480
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 057C996C4B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADD511F25B6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A81F25EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9331E0B8F;
-	Wed,  4 Sep 2024 16:56:40 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92001E0B88;
+	Wed,  4 Sep 2024 17:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTaxHHza"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45AE4778C;
-	Wed,  4 Sep 2024 16:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66B31DA31D;
+	Wed,  4 Sep 2024 17:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469000; cv=none; b=q177mAh38Fhx1vB7r0tplY+sJ3fPg9Axh7cTK749+ibV6dvPxafYRun6be4Rpkqjf7GYe/0KeLT7cqzBZnW3BG/U2pYnaUc3qtoaQzJWKnWCarpXb3HxZpUIT7HUQTXLcRrW/45AakVA7zXm8DOuJe4exLcZIPMpTqM/BSWdU7w=
+	t=1725469429; cv=none; b=ZIydnDbmKnJa6Hw5ITRylyhl9bqSOoqXFiRfVHWgqypY5I4StwDlD5jFIrdEPi6jhEHcVY8WXRPQcUJ9tr5GNqi9b0QIdQRCsq0DTsTwWG9wn+zl2SVSiHIUOmmwnukTyw1TJkmmF6HOMuYFx2mR2LTzpN5inh4kR4LY4lfi2JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469000; c=relaxed/simple;
-	bh=R3p88TseIIEU6PDnnA8E0S+vB/2n7XxrZwfCGfhYxRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ol2y2e8edDe5TLLsn/uqXm5DjB3CI16vn0ue3qcXlIJR/3Z4Om33InqSzkrFAIW4SvMsAPjQTL66gRsZommABZZ4eyCJ42I6xD3pUD9/Fj9MiwvJpgWABSIlLEwyALGoaAWJvXdb2lBKcfZM/M1Iwe2IUDYIYq7j87pAnCeWgdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzTD43dS3z9sSC;
-	Wed,  4 Sep 2024 18:56:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id nZyS882MMwzh; Wed,  4 Sep 2024 18:56:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzTD42jdmz9sS7;
-	Wed,  4 Sep 2024 18:56:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4B2068B77A;
-	Wed,  4 Sep 2024 18:56:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id RPtdGw1i-ycG; Wed,  4 Sep 2024 18:56:36 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 78B008B778;
-	Wed,  4 Sep 2024 18:56:35 +0200 (CEST)
-Message-ID: <710f9663-e99c-40e2-9c0e-2f5e6e854653@csgroup.eu>
-Date: Wed, 4 Sep 2024 18:56:35 +0200
+	s=arc-20240116; t=1725469429; c=relaxed/simple;
+	bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IyFhX/BtuSqRowXLEQXdJR6nr0b5gXAT6wOCu/35oSuNbB5BUoB5i/A3MzufNHb4NPIuHT7LIox+UqLgxldamk8CuL/cs5u9zC0yUyyCz4SsPMrgYQ8ZI3a8SeK7Dgnr/cC31YhryLDJMMpMtbkfJv4Iyn9RQXSEUrFs4LRTl/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTaxHHza; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDBEC4CEC2;
+	Wed,  4 Sep 2024 17:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725469428;
+	bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FTaxHHzaSOfcI3YLDnf/RnK9wC9qPyShM2HHxP3ePgjXB4NzyW2MkLMNNnsY+7v4Z
+	 1BqEDPvdwMr5k02sgsmIGDZzMKjOcEsh9tA142jKOFo1P8ZjN/n52sA4C0wtgY18zF
+	 5V5febs0O1ZTA3zWdh8wxr3emx0HgY+VfvCXQQ0XFPkideKAHE4KMLxvNDMJwttmeP
+	 APk3LE8irqsbcVBm3HqujP64qpo/YdVuUUvJohvWjWIzT6T3qn8/4A85zZhTf7Ye/F
+	 2jIlctaoy6DYrQlGVrAcChy6U0YmO9LTnt160G1xK9EBP6+2LceZefaqQEqp7fNoYI
+	 FD/7ShoBEL8oQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/3] mm: Care about shadow stack guard gap when getting
+ an unmapped area
+Date: Wed, 04 Sep 2024 17:57:58 +0100
+Message-Id: <20240904-mm-generic-shadow-stack-guard-v2-0-a46b8b6dc0ed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] x86: vdso: Introduce asm/vdso/mman.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-2-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240903151437.1002990-2-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJeR2GYC/4XNQQ6CMBCF4auQrh1TWknAlfcwLEpnLA3Skimih
+ nB3Kx7A5f+S+WYVidhTEudiFUyLTz6GHOpQCNub4Ag85hZKqpOstYRxBEchH1lIvcH4hDQbO4B
+ 7GEaoOlt1NUpqKhTZmJhu/rX71zZ379Mc+b2/W8rv+pMbqf7ISwkSGmPR6LrTiPoyEAe6HyM70
+ W7b9gEGbzW4ywAAAA==
+To: Richard Henderson <richard.henderson@linaro.org>, 
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+ Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
+ Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, 
+ Max Filippov <jcmvbkbc@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+ "Liam R. Howlett" <Liam.Howlett@Oracle.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Rick Edgecombe <rick.p.edgecombe@intel.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3075; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm2JLn9sSIWk3S99ZcZ0LBwVX5IdsXF8juyr4Cy5E1
+ KFq4s/aJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtiS5wAKCRAk1otyXVSH0LHiB/
+ 9nkgQUOVTlUbAmWo/1GWPj3aVUvDcv0pj9B7z3NcU9N9R9JzbgMMFLrWdQk5jwpTGfHHXkRNANVuvF
+ yKig8+IRVvSpGuFpKpsLmegPvrQX1McoVCR659thVX2oLIf6wpdg0LRsBXocswHT36RDNsVfpdTsJM
+ X1S72+e1Jt9HIYt4so8I0Zdga/Mt9VqrIg4QrfUtNDzNMYv7a8/AtVY7saHIjeiEwSOdKShaIlDBPV
+ aMyaeN6XQhDtvIJQopnxBZsr+uDpt9WM/iq/kDuIa1U6F5kpoObcPaMG4EfjQ3fobknmo/jMH0lBSh
+ O0wNT8iXCGWSoD2Q3fN3Rp0pOZQAOP
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+As covered in the commit log for c44357c2e76b ("x86/mm: care about shadow
+stack guard gap during placement") our current mmap() implementation does
+not take care to ensure that a new mapping isn't placed with existing
+mappings inside it's own guard gaps. This is particularly important for
+shadow stacks since if two shadow stacks end up getting placed adjacent to
+each other then they can overflow into each other which weakens the
+protection offered by the feature.
 
+On x86 there is a custom arch_get_unmapped_area() which was updated by the
+above commit to cover this case by specifying a start_gap for allocations
+with VM_SHADOW_STACK. Both arm64 and RISC-V have equivalent features and
+use the generic implementation of arch_get_unmapped_area() so let's make
+the equivalent change there so they also don't get shadow stack pages
+placed without guard pages. The arm64 and RISC-V shadow stack
+implementations are currently on the list:
 
-Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
-> 
-> Introduce asm/vdso/mman.h to make sure that the generic library
-> uses only the allowed namespace.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   arch/x86/include/asm/vdso/mman.h | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
->   create mode 100644 arch/x86/include/asm/vdso/mman.h
-> 
-> diff --git a/arch/x86/include/asm/vdso/mman.h b/arch/x86/include/asm/vdso/mman.h
-> new file mode 100644
-> index 000000000000..4c936c9d11ab
-> --- /dev/null
-> +++ b/arch/x86/include/asm/vdso/mman.h
-> @@ -0,0 +1,15 @@
-> +
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_VDSO_MMAN_H
-> +#define __ASM_VDSO_MMAN_H
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <uapi/linux/mman.h>
-> +
-> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
-> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
+   https://lore.kernel.org/r/20240829-arm64-gcs-v12-0-42fec94743
+   https://lore.kernel.org/lkml/20240403234054.2020347-1-debug@rivosinc.com/
 
-I still can't see the benefit of duplicating those two defines in every 
-arch.
+Given the addition of the use of vm_flags in the generic implementation
+we also simplify the set of possibilities that have to be dealt with in
+the core code by making arch_get_unmapped_area() take vm_flags as
+standard. This is a bit invasive since the prototype change touches
+quite a few architectures but since the parameter is ignored the change
+is straightforward, the simplification for the generic code seems worth
+it.
 
-I understand your point that some arch might in the future want to use 
-different flags, but unless we already have one such architecture in 
-mind we shouldn't make things more complicated than needed.
+Changes in v2:
+- Add comment to stack_guard_placement()
+- Build fixes for xtensa and MIPS.
+- Link to v1: https://lore.kernel.org/r/20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org
 
-In case such an architecture is already identified it should be said in 
-the commit message
+---
+Mark Brown (3):
+      mm: Make arch_get_unmapped_area() take vm_flags by default
+      mm: Pass vm_flags to generic_get_unmapped_area()
+      mm: Care about shadow stack guard gap when getting an unmapped area
 
-> +
-> +#endif /* !__ASSEMBLY__ */
-> +
-> +#endif /* __ASM_VDSO_MMAN_H */
+ arch/alpha/kernel/osf_sys.c       |  2 +-
+ arch/arc/mm/mmap.c                |  3 ++-
+ arch/arm/mm/mmap.c                |  7 ++---
+ arch/csky/abiv1/mmap.c            |  3 ++-
+ arch/loongarch/mm/mmap.c          |  5 ++--
+ arch/mips/mm/mmap.c               |  5 ++--
+ arch/parisc/kernel/sys_parisc.c   |  5 ++--
+ arch/parisc/mm/hugetlbpage.c      |  2 +-
+ arch/powerpc/mm/book3s64/slice.c  | 10 ++++---
+ arch/s390/mm/mmap.c               |  4 +--
+ arch/sh/mm/mmap.c                 |  5 ++--
+ arch/sparc/kernel/sys_sparc_32.c  |  2 +-
+ arch/sparc/kernel/sys_sparc_64.c  |  4 +--
+ arch/x86/include/asm/pgtable_64.h |  1 -
+ arch/x86/kernel/sys_x86_64.c      | 21 +++------------
+ arch/xtensa/kernel/syscall.c      |  3 ++-
+ include/linux/sched/mm.h          | 27 +++++++------------
+ mm/mmap.c                         | 55 +++++++++++++++++++--------------------
+ 18 files changed, 75 insertions(+), 89 deletions(-)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240830-mm-generic-shadow-stack-guard-5bc5b8d0e95d
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
