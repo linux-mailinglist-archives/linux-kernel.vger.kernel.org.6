@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-314395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD92F96B2AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:18:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C0D96B2AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61D77B241EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4628228415C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7254130ADA;
-	Wed,  4 Sep 2024 07:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E189B145FE8;
+	Wed,  4 Sep 2024 07:20:19 +0000 (UTC)
 Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6786B4A28;
-	Wed,  4 Sep 2024 07:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04D56BFA3;
+	Wed,  4 Sep 2024 07:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725434316; cv=none; b=DGsE1i1wI1zEXvvHr8A7XkfxnZonaN3DcYqIPG59GYIod9hY2qdkBd6NYFT4e1vMe2XHEYZug2UTBLsDhTwfTsaOgEYhmb8ewqi/R0g7Uu8aHwo/ClCAu611E/gd8u0/JgJhHBAjWZetLrP+iiU4oQZ6G9z34lGtl52gs2ShW4M=
+	t=1725434419; cv=none; b=qnPFB/QBNkv+8dVP77yud/AuBOp7ShNbpzIQIo3nChrBdovZpep/i/NzMn3W/TkzV4EmD2/b4XS7SlSNH5hOnrLgLXQ/+1kG0I2GVYMLSaHBkmpcybB4Q21yVhzTprOC5CPMWkjVESiUw7stTlBKr6UkE4s4cKAMjyT91hDKSB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725434316; c=relaxed/simple;
+	s=arc-20240116; t=1725434419; c=relaxed/simple;
 	bh=2iTGxmMVH5VUA5RDc42DEOgj73k0zWC3IueoJohCP0Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FudiixgVu2um99lc1aQlT/R96uNHIz0u/WdrVebZau79NmfiVLKEA3sRmncwh1AKMIb8wSJGZhRtaqN8weax3OOeBMvCy7R0h05dhiC78dYGEqGvk5X3kyxmbHh0a4rtSk/G729fiZFzjrg9XSJqaGZeazjaHwtVZ1/95liotPY=
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GImQrwtvfl2JYsgHlX8q7+6bb6zxDMmvAtqjnFYtd7MrS0WL7saCPsMYZhlSGrYlIN7CMIUlYwmR9rl77TDQkeE+M2tbG19pP3m2hr6fC+CyxT011i9ii2HCoJnNwuhC9N05QKf837Iu+rVH7YZkQYK7V2wCgbqhnz1Z/ybcBGI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Received: from droid02-cd.amlogic.com (10.98.11.201) by mail-sh.amlogic.com
  (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Wed, 4 Sep 2024
- 15:18:22 +0800
+ 15:20:14 +0800
 From: <chuan.liu@amlogic.com>
-To: <chuan.liu@amlogic.com>
+To: <chuan.liu@amlogic.com>, <xianwei.zhao@amlogic.com>
 CC: <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 Subject: [PATCH 1/5] clk: meson: Fix an issue with inaccurate hifi_pll frequency
-Date: Wed, 4 Sep 2024 15:18:16 +0800
-Message-ID: <20240904071817.489245-1-chuan.liu@amlogic.com>
+Date: Wed, 4 Sep 2024 15:20:13 +0800
+Message-ID: <20240904072013.517905-1-chuan.liu@amlogic.com>
 X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
