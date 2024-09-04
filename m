@@ -1,102 +1,190 @@
-Return-Path: <linux-kernel+bounces-316017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C63E96C9E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A6496CA08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2958C289C57
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE4528A237
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C5E176242;
-	Wed,  4 Sep 2024 21:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6209D15E5D3;
+	Wed,  4 Sep 2024 22:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJqIymxa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ATDnluL3"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456AB153812;
-	Wed,  4 Sep 2024 21:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8287113CA8A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725487039; cv=none; b=qBeE6sZ4UwZcjDuPlWsEvcxWJRyoX+itENxpHucV0RD8Dz/Vmok+RZTaPrptuF5rXXDU19gRexL+hIbwhLrZMKuNCdlJnGLW2eE3r4nUvSy30uKpc7dG70lPzz2ELP5D6vqaFGd9c9XkRQTXGys0/jIVpsDRqEPKv1rLNUclDio=
+	t=1725487331; cv=none; b=FNXD4UQFRh0eBSjmWgwWMoYhZmn0XmDtJd+U97XJtGQEHERf65h4GxNWZh4c4RFWUngZ66sO9sRIK/WGPCOhVY6xz/uQM5hzYvEpsKsL9Mlrz9wh+vT07dsxR8tvZsE3RnQOO+xt2GDpZo3MEJ+3+T5fJmFwcPcL/rfOzLa7/kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725487039; c=relaxed/simple;
-	bh=pWXLQi9HAt8TD80TUlEHOmmJNEUgzTpEdEY+qoZNg50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o0YKnLFBumDlFymt7LolOBxGL1r/zNg3DxaHCprC2YwphvMN+U8jo/MYC4N8bIrlRf4rM+8O08yxwdVaTpWgBNfeW7+0vZljOIEry01cbFZSmP0JLDYQ3JWnFCqdCBbwfeuK7Of6m28K78d7ttIMlssgn/72zQCUoFAgNp3SBUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJqIymxa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872F2C4CEC2;
-	Wed,  4 Sep 2024 21:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725487038;
-	bh=pWXLQi9HAt8TD80TUlEHOmmJNEUgzTpEdEY+qoZNg50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJqIymxabVXbkQOwXq1ziARBYNlHVYEIFli6ezCLTtQrYsHGxeQrfzuEJP7L+0jO5
-	 1jIhVy48y1lwsSAfHq/hqW25vx1lgq8mKIeLehVcFHqN0ymW+XYuxp+FVtBW4nyRSC
-	 RYTuCETJEcvECcAzL5d5yHdIDKhUSge0OavrwZX/ff5Cxt9MUc4CthlKewvTriKquR
-	 4SsXDQtyiKMs8pCn9D3+EHlAj+yhQZfObGPNduqHFxFclpM7srQ4ZAvbJpvTyYSxb3
-	 dAGY63EZ6Pe7qlSZryCoaEcOHcaCWRgCrFCp2YwTLBFHUHnw5Nag9B8ZonPLerT2Co
-	 IqHU+CvNgoAXw==
-Date: Wed, 4 Sep 2024 16:57:17 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Saravana Kannan <saravanak@google.com>, Shuah Khan <shuah@kernel.org>,
-	kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kselftest: dt: Ignore nodes that have ancestors
- disabled
-Message-ID: <20240904215717.GA3398497-robh@kernel.org>
-References: <20240729-dt-kselftest-parent-disabled-v2-1-d7a001c4930d@collabora.com>
+	s=arc-20240116; t=1725487331; c=relaxed/simple;
+	bh=mfP2MugdJrOVES2m26Q+kF/3uOuj6ILICQIOU4++hZA=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=VchKb8WqOmOiHipajOOSqNoP1Sy2FA+bbaCi6WhGhADb12UbJR1c2/8GDAqSe6tSacTPBSjxS3iHjhgjWV3eXmomTnl8Q/U4XhS+35g3cwTQY+1qGnF7gO5d4uwgLuGLWSCKvWB3aOKkuyuhwmET747/X86CzcuFSKmksbsfOH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ATDnluL3; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a76faa6f5so2606139f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725487327; x=1726092127; darn=vger.kernel.org;
+        h=subject:from:cc:to:content-language:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7fWh6Nr535svbXE8LjWgX0vFySt81kemsy1ZoWE5KQ=;
+        b=ATDnluL3w8jg7PV7V4agqmU+XAe3fkwG+66BryH/V2xBtlsKEykhx+4WvGViuHTtvA
+         W7ert9lOd802k7k6orgmRta9hmw0f6z5K3W4avPv2ulXKiBPAOWrA3Tj2NCqiXRPBpMV
+         jxQIxX4rwhwA+HBAW3UYvpjG+IRmP00obRVTc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725487327; x=1726092127;
+        h=subject:from:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A7fWh6Nr535svbXE8LjWgX0vFySt81kemsy1ZoWE5KQ=;
+        b=mZJPhnJPkUpCXx7ok3VGAYcEhscUQ54nJ+GE3rkHLE2q94CVwgPeateFW/LfCtwYke
+         uGb/j/NQD01wHThBWnQ0oBXNNenkz/NscmYR71G5tPLQFahgwwV5iS4LoJszMCbBm/dv
+         v8fAf+qYHRnPUSiPQBI2Ce7wobANzoszttEcMIq0aoQZQhOY8+zZxaSvAPMDnzcZ+PuO
+         ISWbcQ8Or9AgvsFU7vAtxG94dWWw6M4cRau8TKpjcWEf6aBpbiLK5q/cWF+N/ZJaYaJS
+         HFAdyFeDAa81N8STE6hQbb+c5Ei1hIqhArXERt5XR3go3o67RHlHcgUSTG0KgnlEUlKQ
+         Ow/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWSfwsZMKWFZ7sf6swmZTWcI0w3cIZ9xhunbVVKu3kIACEBFjXZq3gb4G1Nw9qEjtCaMBI3Lc4mrQUzUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvIdTZ932Rhjd9mwXARkM4z2dJHVswMnTvS/jaxFxMgmjUcFBk
+	MlCqWQM0Mv3b+eOs/eJdnVcrXi+OxTumIs8Wi+kOKwY33mZbkAqfz6tGeaI7xY8aNfdzFYnQUqH
+	/
+X-Google-Smtp-Source: AGHT+IExA2/nC/kqatN5O9Jm1D0CL+IoUAf1shwfQkUHmNXOLmUB9Waz4VdhSGlmlSlaN8UhNkTFWg==
+X-Received: by 2002:a05:6602:6410:b0:82a:2053:e715 with SMTP id ca18e2360f4ac-82a36f448c5mr1755806339f.14.1725487327445;
+        Wed, 04 Sep 2024 15:02:07 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e17177sm3269449173.78.2024.09.04.15.02.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 15:02:07 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------OnVhVSukisMPZgdyzfBtoDqk"
+Message-ID: <a226a5ab-b30f-47a8-825b-2ee073cbe28a@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 16:02:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240729-dt-kselftest-parent-disabled-v2-1-d7a001c4930d@collabora.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Renninger <trenn@suse.com>, Thomas Renninger <trenn@suse.de>
+From: Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] cpupower update for Linux 6.12-rc1
 
-On Mon, Jul 29, 2024 at 04:56:02PM -0400, Nícolas F. R. A. Prado wrote:
-> Filter out nodes that have one of its ancestors disabled as they aren't
-> expected to probe.
-> 
-> This removes the following false-positive failures on the
-> sc7180-trogdor-lazor-limozeen-nots-r5 platform:
-> 
-> /soc@0/geniqup@8c0000/i2c@894000/proximity@28
-> /soc@0/geniqup@ac0000/spi@a90000/ec@0
-> /soc@0/remoteproc@62400000/glink-edge/apr
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@3
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@4
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@4/clock-controller
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@4/dais
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@7
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@7/dais
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@8
-> /soc@0/remoteproc@62400000/glink-edge/apr/service@8/routing
-> /soc@0/remoteproc@62400000/glink-edge/fastrpc
-> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@3
-> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@4
-> /soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@5
-> /soc@0/spmi@c440000/pmic@0/pon@800/pwrkey
-> 
-> Fixes: 14571ab1ad21 ("kselftest: Add new test for detecting unprobed Devicetree devices")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> Changes in v2:
-> - Rebased on v6.11-rc1
-> - Link to v1: https://lore.kernel.org/r/20240619-dt-kselftest-parent-disabled-v1-1-b8f7a8778906@collabora.com
-> ---
->  tools/testing/selftests/dt/test_unprobed_devices.sh | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+This is a multi-part message in MIME format.
+--------------OnVhVSukisMPZgdyzfBtoDqk
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Applied. Sorry for missing this.
+Hi Rafael,
 
-Rob
+Please pull the following cpupower update for Linux 6.12-rc1.
+
+This cpupower update for Linux 6.12-rc1 consists of an enhancement
+to cpuidle tool to display the residency value of cpuidle states.
+This addition provides a clearer and more detailed view of idle
+state information when using cpuidle-info.
+
+diff is attached.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.12-rc1
+
+for you to fetch changes up to 76fb981ad6774b82f06703c896b492c8659b543b:
+
+   tools/cpupower: display residency value in idle-info (2024-08-09 10:32:33 -0600)
+
+----------------------------------------------------------------
+linux-cpupower-6.12-rc1
+
+This cpupower update for Linux 6.12-rc1 consists of an enhancement
+to cpuidle tool to display the residency value of cpuidle states.
+This addition provides a clearer and more detailed view of idle
+state information when using cpuidle-info.
+
+----------------------------------------------------------------
+Aboorva Devarajan (1):
+       tools/cpupower: display residency value in idle-info
+
+  tools/power/cpupower/lib/cpuidle.c        | 8 ++++++++
+  tools/power/cpupower/lib/cpuidle.h        | 2 ++
+  tools/power/cpupower/utils/cpuidle-info.c | 4 ++++
+  3 files changed, 14 insertions(+)
+----------------------------------------------------------------
+--------------OnVhVSukisMPZgdyzfBtoDqk
+Content-Type: text/x-patch; charset=UTF-8; name="linux-cpupower-6.12-rc1.diff"
+Content-Disposition: attachment; filename="linux-cpupower-6.12-rc1.diff"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2xpYi9jcHVpZGxlLmMgYi90b29s
+cy9wb3dlci9jcHVwb3dlci9saWIvY3B1aWRsZS5jCmluZGV4IDQ3OWM1OTcxYWE2ZC4uMGVj
+YWMwMDkyNzNjIDEwMDY0NAotLS0gYS90b29scy9wb3dlci9jcHVwb3dlci9saWIvY3B1aWRs
+ZS5jCisrKyBiL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2xpYi9jcHVpZGxlLmMKQEAgLTExNiw2
+ICsxMTYsNyBAQCBlbnVtIGlkbGVzdGF0ZV92YWx1ZSB7CiAJSURMRVNUQVRFX1VTQUdFLAog
+CUlETEVTVEFURV9QT1dFUiwKIAlJRExFU1RBVEVfTEFURU5DWSwKKwlJRExFU1RBVEVfUkVT
+SURFTkNZLAogCUlETEVTVEFURV9USU1FLAogCUlETEVTVEFURV9ESVNBQkxFLAogCU1BWF9J
+RExFU1RBVEVfVkFMVUVfRklMRVMKQEAgLTEyNSw2ICsxMjYsNyBAQCBzdGF0aWMgY29uc3Qg
+Y2hhciAqaWRsZXN0YXRlX3ZhbHVlX2ZpbGVzW01BWF9JRExFU1RBVEVfVkFMVUVfRklMRVNd
+ID0gewogCVtJRExFU1RBVEVfVVNBR0VdID0gInVzYWdlIiwKIAlbSURMRVNUQVRFX1BPV0VS
+XSA9ICJwb3dlciIsCiAJW0lETEVTVEFURV9MQVRFTkNZXSA9ICJsYXRlbmN5IiwKKwlbSURM
+RVNUQVRFX1JFU0lERU5DWV0gPSAicmVzaWRlbmN5IiwKIAlbSURMRVNUQVRFX1RJTUVdICA9
+ICJ0aW1lIiwKIAlbSURMRVNUQVRFX0RJU0FCTEVdICA9ICJkaXNhYmxlIiwKIH07CkBAIC0y
+NTQsNiArMjU2LDEyIEBAIHVuc2lnbmVkIGxvbmcgY3B1aWRsZV9zdGF0ZV9sYXRlbmN5KHVu
+c2lnbmVkIGludCBjcHUsCiAJcmV0dXJuIGNwdWlkbGVfc3RhdGVfZ2V0X29uZV92YWx1ZShj
+cHUsIGlkbGVzdGF0ZSwgSURMRVNUQVRFX0xBVEVOQ1kpOwogfQogCit1bnNpZ25lZCBsb25n
+IGNwdWlkbGVfc3RhdGVfcmVzaWRlbmN5KHVuc2lnbmVkIGludCBjcHUsCisJCQkJCSAgdW5z
+aWduZWQgaW50IGlkbGVzdGF0ZSkKK3sKKwlyZXR1cm4gY3B1aWRsZV9zdGF0ZV9nZXRfb25l
+X3ZhbHVlKGNwdSwgaWRsZXN0YXRlLCBJRExFU1RBVEVfUkVTSURFTkNZKTsKK30KKwogdW5z
+aWduZWQgbG9uZyBjcHVpZGxlX3N0YXRlX3VzYWdlKHVuc2lnbmVkIGludCBjcHUsCiAJCQkJ
+CXVuc2lnbmVkIGludCBpZGxlc3RhdGUpCiB7CmRpZmYgLS1naXQgYS90b29scy9wb3dlci9j
+cHVwb3dlci9saWIvY3B1aWRsZS5oIGIvdG9vbHMvcG93ZXIvY3B1cG93ZXIvbGliL2NwdWlk
+bGUuaAppbmRleCAyZTEwZmVhZDJlMWUuLjJhYjQwNGQ0MDI1OSAxMDA2NDQKLS0tIGEvdG9v
+bHMvcG93ZXIvY3B1cG93ZXIvbGliL2NwdWlkbGUuaAorKysgYi90b29scy9wb3dlci9jcHVw
+b3dlci9saWIvY3B1aWRsZS5oCkBAIC04LDYgKzgsOCBAQCBpbnQgY3B1aWRsZV9zdGF0ZV9k
+aXNhYmxlKHVuc2lnbmVkIGludCBjcHUsIHVuc2lnbmVkIGludCBpZGxlc3RhdGUsCiAJCQkJ
+ICAgdW5zaWduZWQgaW50IGRpc2FibGUpOwogdW5zaWduZWQgbG9uZyBjcHVpZGxlX3N0YXRl
+X2xhdGVuY3kodW5zaWduZWQgaW50IGNwdSwKIAkJCQkJCXVuc2lnbmVkIGludCBpZGxlc3Rh
+dGUpOwordW5zaWduZWQgbG9uZyBjcHVpZGxlX3N0YXRlX3Jlc2lkZW5jeSh1bnNpZ25lZCBp
+bnQgY3B1LAorCQkJCQkJdW5zaWduZWQgaW50IGlkbGVzdGF0ZSk7CiB1bnNpZ25lZCBsb25n
+IGNwdWlkbGVfc3RhdGVfdXNhZ2UodW5zaWduZWQgaW50IGNwdSwKIAkJCQkJdW5zaWduZWQg
+aW50IGlkbGVzdGF0ZSk7CiB1bnNpZ25lZCBsb25nIGxvbmcgY3B1aWRsZV9zdGF0ZV90aW1l
+KHVuc2lnbmVkIGludCBjcHUsCmRpZmYgLS1naXQgYS90b29scy9wb3dlci9jcHVwb3dlci91
+dGlscy9jcHVpZGxlLWluZm8uYyBiL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL3V0aWxzL2NwdWlk
+bGUtaW5mby5jCmluZGV4IDQ0MTI2YTg3ZmE3YS4uZTBkMTdmMGRlM2ZlIDEwMDY0NAotLS0g
+YS90b29scy9wb3dlci9jcHVwb3dlci91dGlscy9jcHVpZGxlLWluZm8uYworKysgYi90b29s
+cy9wb3dlci9jcHVwb3dlci91dGlscy9jcHVpZGxlLWluZm8uYwpAQCAtNjQsNiArNjQsOCBA
+QCBzdGF0aWMgdm9pZCBjcHVpZGxlX2NwdV9vdXRwdXQodW5zaWduZWQgaW50IGNwdSwgaW50
+IHZlcmJvc2UpCiAKIAkJcHJpbnRmKF8oIkxhdGVuY3k6ICVsdVxuIiksCiAJCSAgICAgICBj
+cHVpZGxlX3N0YXRlX2xhdGVuY3koY3B1LCBpZGxlc3RhdGUpKTsKKwkJcHJpbnRmKF8oIlJl
+c2lkZW5jeTogJWx1XG4iKSwKKwkJICAgICAgIGNwdWlkbGVfc3RhdGVfcmVzaWRlbmN5KGNw
+dSwgaWRsZXN0YXRlKSk7CiAJCXByaW50ZihfKCJVc2FnZTogJWx1XG4iKSwKIAkJICAgICAg
+IGNwdWlkbGVfc3RhdGVfdXNhZ2UoY3B1LCBpZGxlc3RhdGUpKTsKIAkJcHJpbnRmKF8oIkR1
+cmF0aW9uOiAlbGx1XG4iKSwKQEAgLTExNSw2ICsxMTcsOCBAQCBzdGF0aWMgdm9pZCBwcm9j
+X2NwdWlkbGVfY3B1X291dHB1dCh1bnNpZ25lZCBpbnQgY3B1KQogCQlwcmludGYoXygicHJv
+bW90aW9uWy0tXSBkZW1vdGlvblstLV0gIikpOwogCQlwcmludGYoXygibGF0ZW5jeVslMDNs
+dV0gIiksCiAJCSAgICAgICBjcHVpZGxlX3N0YXRlX2xhdGVuY3koY3B1LCBjc3RhdGUpKTsK
+KwkJcHJpbnRmKF8oInJlc2lkZW5jeVslMDVsdV0gIiksCisJCSAgICAgICBjcHVpZGxlX3N0
+YXRlX3Jlc2lkZW5jeShjcHUsIGNzdGF0ZSkpOwogCQlwcmludGYoXygidXNhZ2VbJTA4bHVd
+ICIpLAogCQkgICAgICAgY3B1aWRsZV9zdGF0ZV91c2FnZShjcHUsIGNzdGF0ZSkpOwogCQlw
+cmludGYoXygiZHVyYXRpb25bJTAyMEx1XSBcbiIpLAo=
+
+--------------OnVhVSukisMPZgdyzfBtoDqk--
 
