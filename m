@@ -1,63 +1,93 @@
-Return-Path: <linux-kernel+bounces-315357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E1896C188
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:59:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEFC96C1A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2D41C20E2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2541B2D000
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9A91DC1A2;
-	Wed,  4 Sep 2024 14:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A451DCB02;
+	Wed,  4 Sep 2024 14:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgcM3t41"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SACRSE7R"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEBB1DC05F;
-	Wed,  4 Sep 2024 14:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB1A1DC05F;
+	Wed,  4 Sep 2024 14:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461907; cv=none; b=A/P7yayBtXwClwDrxc/nOGWmbhF/xIkudvi2E2X3KRRklRNV57s6aVTbIO05XElMOkYRqsu20XX1tTVIhjqn2pHJ/nfgIzPrYUUww7LpmxcX5gen6k7DA4cG5bSQIL17AI/mG9M7GezMOYNbZfT1PHfyYZ4Fk9zhdHikkG3tdHo=
+	t=1725461924; cv=none; b=V32oowyOB9DbUggtMOyuRLoui4vDdfF/uv511oDrfKmHazpBhzUsNFWUEDcAxEqYwXX0+4ipFKPp/YMctpq7rR5314urQlq3DjjO5JXkJJwLkZGMtu+7vHBDf/k4rx99ILRu2GJOB0bXM3hwmq1zkM300GUBcK/y8TnG43/iYGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461907; c=relaxed/simple;
-	bh=UQnaAY6AWhM20C0iIDyykUuqjm6xEAysthXGZe2Wos4=;
+	s=arc-20240116; t=1725461924; c=relaxed/simple;
+	bh=ul6VV4JjxH0XxP4Hhv6qq03d2y4Xr1eVllPyVW6Vt2k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+mDvcg6qpIC5OJcB9oanofwlREb16/P1LKwNu1RU1w+IsSiFZ1gmBHkf2rTQeUs3cgaFHfMdhrErhJX00bTADF2VpEiyQyL6ht12Gzy0+3yNOd/rH1coWVid4Qb8lhyY5Lagto/GUQLwVpoBfwvhzqdY69fS2lDOHUW2mYMnnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgcM3t41; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F71C4CEC2;
-	Wed,  4 Sep 2024 14:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725461907;
-	bh=UQnaAY6AWhM20C0iIDyykUuqjm6xEAysthXGZe2Wos4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QgcM3t41c0e2L97gdbL3uR6WCSplPsdOCaVX2IOGW0VTzUTMQmcogvAfF0xnP9t/j
-	 qGRPURbXva4htrayPRZU5b9gms2oVZctYwCSJRB0PMOPIBrpnmiOSrq22tC4/z78C3
-	 JqpJkSkR4rQZv8yOGv98P2DvB/xAeprr7/agV8DDjr9ggQQVJ9qWSe/bjPSCrYtZwV
-	 Jl0l1kOLkkHTw/OaHnfi2YHrLSTwWDD/FUlOy/VZ3eCzJZqaWpHL6kOqEJLjbK9Igp
-	 Z+K2GVtUyQpzVhMC5lnEQuD1HEbbQY/Y1RfZmS5jWMpkNuoq1bnhGQf3i1EONhqo7w
-	 WzRLxvCui0gcw==
-Date: Wed, 4 Sep 2024 09:58:26 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: linux-mtd@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-	Enric Balletbo i Serra <eballetbo@gmail.com>, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Weinberger <richard@nod.at>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] dt-bindings: mtd: ti, gpmc-nand: support partitions
- node
-Message-ID: <172546190582.2558699.15930679272303980998.robh@kernel.org>
-References: <20240903-gpmc-dtb-v2-1-8046c1915b96@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNM5gsXc1KQjBF0SxwoAbC0FXhtuqdq9F2J7SG11tjKFX8EJcPLWgbBqYf0+lS4VTCcqid+Fl4sdckVqZnCNATLsn3G4bYV5QAJaAdyz6jMr9aEGzKszJrb0N+DqzTzF+OETs9WaCHCB3GPn6WLbOaWCEYEBGb9z7LLVl0LiM1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SACRSE7R; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86753ac89bso31661066b.0;
+        Wed, 04 Sep 2024 07:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725461921; x=1726066721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyHRUbS96LQJMnxC77/pMoO0AXemk+GGLf2OYY2VbUE=;
+        b=SACRSE7ReCgTFpa1yOZue9YSUKkh8mH5Oukf6EPx4p8sGfjaFUjrg3Z21h40K6yQai
+         0ubFRbPKz6IWR1Fe1DKOm9xzgD8Wcsic9hZ6Ltm0+UKj7318zigG1aiCl2Y9c2xyXfuL
+         O9ug1AVVbFFMIS7B/t4QwvLqCBfyURKxc5BSKp2AKGF7tDUjIYq5e2jjLYF9zUNqVUBu
+         i93qLAcMOAS34ElJfZ6PPYB6CqEsiwTxSmELKS81Zh2QuuJTCnL+0NypXgb02AnatToo
+         jrJEVWWLBQKMKQZ8o8zs+bGhBz1aFSbnbpFIaDgd5ysDYs5E1Ax3q/YhXMuZzaQwY++x
+         8PcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725461921; x=1726066721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nyHRUbS96LQJMnxC77/pMoO0AXemk+GGLf2OYY2VbUE=;
+        b=pQ2j7c2u/pW1Gc0U0dQtB6tLUztmfeD1RFvvBnKSgZD41ESsPxI57pYt8RvyO6EgsL
+         2KS3rTPbiKym+JjeeqdnLm4+MXbszLYqWdNRWD96kUgceWP4ymlKPgql+9nueRbdUec4
+         gR+9SToALHrmb6rpYVGlg86suqhLt+tuENTgUIJcNbyaJ7hO0OWIpg0iU760IhgkEILj
+         kwoy1iHAmjfuAVq9DZ0oOFDv+h46ASfTQ5inEvPHxxmauXy2wzSHc3jWq04OlpfXBwbK
+         rUMUyeAH76084+49m5alLv5AiuqwpCnTwlSkIENvONy6Y2O/+m/W6AwYkYcANNqdsz32
+         z2ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXB2AK26ectVKjvBZxYIWtYsAywsURiYlJyLRPEiiBmHmiHhzzJ1eTpEywXyEXOmWDMuoOBd5bRn7JGxSc=@vger.kernel.org, AJvYcCXfD7QaCWqmIU8N9G72cdJZqzAsBXDegOjO9R0NmqXK0Y4oGR8QHkDKk4R/n6DotsYLv4OdBCFc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5AYiSOchIxv69ws4Tz/gJlhHVkjWBuOt9zvzaQbntFDsZKeDU
+	ykNxkCStX8Q1WGoOVoCePdDK3DRNYrs8kZizIkut4Ue+w08Fhh6R
+X-Google-Smtp-Source: AGHT+IF9fNPAMV3rkGRPbruFXWJ88SAxEy28gAk+8MFg+kx8FVMQrf0q3A1TSlP9jRdQelWzVhiB+g==
+X-Received: by 2002:a17:907:3e92:b0:a80:a37f:c303 with SMTP id a640c23a62f3a-a89a357825bmr653597266b.4.1725461921263;
+        Wed, 04 Sep 2024 07:58:41 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d041sm1984566b.132.2024.09.04.07.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:58:40 -0700 (PDT)
+Date: Wed, 4 Sep 2024 17:58:37 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net-next v7 3/7] net: stmmac: refactor FPE verification
+ process
+Message-ID: <20240904145837.wh7tdrffsiqpot22@skbuf>
+References: <cover.1725441317.git.0x1207@gmail.com>
+ <cover.1725441317.git.0x1207@gmail.com>
+ <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
+ <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,28 +96,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903-gpmc-dtb-v2-1-8046c1915b96@kernel.org>
+In-Reply-To: <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
+ <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
 
+On Wed, Sep 04, 2024 at 05:21:18PM +0800, Furong Xu wrote:
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 3072ad33b105..e2f933353f40 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -969,17 +969,30 @@ static void stmmac_mac_config(struct phylink_config *config, unsigned int mode,
+>  static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+>  {
+>  	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
+> -	enum stmmac_fpe_state *lo_state = &fpe_cfg->lo_fpe_state;
+> -	enum stmmac_fpe_state *lp_state = &fpe_cfg->lp_fpe_state;
+> -	bool *hs_enable = &fpe_cfg->hs_enable;
+> +	unsigned long flags;
+>  
+> -	if (is_up && *hs_enable) {
+> -		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
+> -					MPACKET_VERIFY);
+> +	del_timer_sync(&fpe_cfg->verify_timer);
 
-On Tue, 03 Sep 2024 19:29:57 +0300, Roger Quadros wrote:
-> Allow fixed-partitions to be specified through a partitions
-> node.
-> 
-> Fixes the below dtbs_check warning:
-> 
-> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: nand@0,0: Unevaluated properties are not allowed ('partitions' was unexpected)
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
-> ---
-> Changes in v2:
-> - reference mtd.yaml for standard mtd properties like partition as
->   suggested by Rob Herring.
-> - Link to v1: https://lore.kernel.org/r/20240830-gpmc-dtb-v1-1-792cac1ef3cc@kernel.org
-> ---
->  Documentation/devicetree/bindings/mtd/ti,gpmc-nand.yaml | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
+Interesting comments in include/linux/timer.h:
+ * Do not use in new code. Use timer_delete_sync() instead.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Also, interesting comment in the timer_delete_sync() kernel-doc:
+ Callers must prevent restarting of the timer, otherwise this function is meaningless.
 
+I don't think you have any restart prevention mechanism. So between the
+timer deletion and the spin_lock_irqsave(), another thread has enough
+time to acquire fpe_cfg->lock first, and run stmmac_fpe_verify_timer_arm().
 
