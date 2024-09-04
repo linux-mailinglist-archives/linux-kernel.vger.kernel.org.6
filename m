@@ -1,236 +1,154 @@
-Return-Path: <linux-kernel+bounces-314878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C9D96BA66
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F6896BA74
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA082812F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6C8282F7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8349C1DB921;
-	Wed,  4 Sep 2024 11:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B481D0161;
+	Wed,  4 Sep 2024 11:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QpCutlmt"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RUQZoTLu"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E121D1F5B;
-	Wed,  4 Sep 2024 11:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D821D0167;
+	Wed,  4 Sep 2024 11:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448786; cv=none; b=gmqFxEiyhRK8oPcbOwiU2dVwyjURjvh5+V6NHi7++w0+vlfeKp8HzTZM9uH3WFIXwZUrb5lrueuqGLXaM/xw4hy+ovTW/cjFhai9xG6xweu991JTt4jXHhUbmXGKAdMD5/VbsJK3t1S8X0CHeUgBn0byz264tN8DE12WnQl/HO4=
+	t=1725448838; cv=none; b=eBkSI5mg1DfR1P+OaMoViGNi+pDHGmlQxplcIDzcxEOcMEn0JXf2xa/inXoD1Yl07vD1zMAxruB8jrCiM9x/EJXB9ds0Y+ZAOr731cmibHlzmA+6mn+AbQQ4+EsVT05YjBTe+qz5kECl3tNpt6t0twO1lX9HacxHWQbVH93CA5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448786; c=relaxed/simple;
-	bh=ldQ0outL4QKLwryuC/LIt5eVxQJHAdWhRM3fm421H80=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KhvgczaN9zV6NGWhl0KSoxteIgYKh/krufey2KC5IYu8ncFnNKxmVhDs8qdvS9S0HtZB359AzwrCYmv0vssm+xyLSzoAbJQA/cDQ7O2JnlUayEipXl8/Vgd/QhIbyoPBiwHGAxyCBwydl0zn2G+ckCxnalGX+qtALee3xdq6DdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QpCutlmt; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFF741667;
-	Wed,  4 Sep 2024 13:18:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725448707;
-	bh=ldQ0outL4QKLwryuC/LIt5eVxQJHAdWhRM3fm421H80=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QpCutlmt1xgUwjUGOCQVvDLpiTzz68H4+zRrdi+Q3E0EC4L72NUM/FhxVyu/qQexL
-	 Jc1/hkO0/2tmZoa9srWrmnYp9uxtsk9UyIW/Vj7YPKYEzxLhbY7K3mhnVrvk9KKdw0
-	 2Xhukyxq5RBY9cvw/8XQUtNy63zZR2epGu78Nt9E=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 04 Sep 2024 14:19:12 +0300
-Subject: [PATCH v4 4/4] media: admin-guide: Document the Raspberry Pi CFE
- (rp1-cfe)
+	s=arc-20240116; t=1725448838; c=relaxed/simple;
+	bh=/p67161pq4mFVbBAVqpn+WmmAOac3AJuuOBsiT98BCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U/mg7uAnAq07LWxu3J0vOKttOZxBYi0mMrF1S2TMVSBBqajO+BxbtGAIEIF805NEhRzP65wsniKdmC4RQXgid1yO8ugTEEDzvDmjid+wEg/kOYFBnAzpT49Zc5m+BOSMP8J96PMgt/1qHo98n5RL52ITTk9tLhPLLlo/ujlBLzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RUQZoTLu; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 484BKIsb002952;
+	Wed, 4 Sep 2024 06:20:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725448818;
+	bh=2JE8yXmqVX5IfjYueX0kdENmSWkRL9BydcoG+TvETAQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RUQZoTLu8dUpEGshxZDCyjESQyGqE+tLIArQSwQ5H/I5KMYfg7w3l4w7AhFhkqFWV
+	 zm93GYs5NXdlDagjilxaniEzz9VJf8sa6mAx8FKf/m8sIUcaCOICEBMozOWIxrKM4b
+	 KgLjLP8S1/IqtfhtP2ZdCL7L3EwmgMbbtldUlFvc=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484BKICn052628;
+	Wed, 4 Sep 2024 06:20:18 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Sep 2024 06:20:18 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Sep 2024 06:20:18 -0500
+Received: from [10.250.149.209] ([10.250.149.209])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484BKFLo106649;
+	Wed, 4 Sep 2024 06:20:15 -0500
+Message-ID: <40ad98dd-6a1d-4619-9732-459ca837468e@ti.com>
+Date: Wed, 4 Sep 2024 16:50:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] remoteproc: k3-r5: Delay notification of wakeup event
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240820105004.2788327-1-b-padhi@ti.com>
+ <522affaa-47ad-4834-be3c-acdd04902821@ti.com>
+ <CANLsYkzfpO4dcF=xkfZRo8ekCOzyNwvjHkwu8t5T58B2hV8-AQ@mail.gmail.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <CANLsYkzfpO4dcF=xkfZRo8ekCOzyNwvjHkwu8t5T58B2hV8-AQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-rp1-cfe-v4-4-f1b5b3d69c81@ideasonboard.com>
-References: <20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com>
-In-Reply-To: <20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, 
- Naushir Patuck <naush@raspberrypi.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6375;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=ldQ0outL4QKLwryuC/LIt5eVxQJHAdWhRM3fm421H80=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBm2EJES1LdfUszMvchzvm+GMvfWmS7d4n9Sy5+I
- pTCILBELBaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZthCRAAKCRD6PaqMvJYe
- 9X3/D/9K21Z2vx7Gl2+IuakDPfT6CClfYMu1w3SioxKx17J7OfpXt1yK1O3ACI4KhhQnpc74mMF
- 6RM8lvGujL0GJexuAKcO4y5An+XTJ77E5hejnPFy1cTToNkCM3NVuxdhbE30XY2c0QZ1vfzmezB
- rUxCBBaV49lsSfYy+fZbbtCAq4EU1EkoVIzF1iXf37I94X1MlDvREuYmXoo492I3Rr5DBNHDpKY
- H3ZJD+vCCib8x1YguyOLPGb+zi51r97SM9GwU71/E+RRFM01OdnNflNZ1RGq7Mjf5ZuWTU9J7jB
- awotjqKhsy5HJxBPIcJznOw6qPq1Dkvqf9grQ7hNbpzlmwzBrsIPn4kGFVCma6PjxVra/CUg4Gz
- XuJPLTwZhVQZIEWLzoixoqswcYB3/OFp56Mj3K2ddnzscrsRY+I+vX5hMyO/2w4rxPkv6OomGR5
- hrFvfLcHpY0B0cJFo2AvkHTQ/DumlG+L5zj+FZzA1mvfyPpNBJtgDF66Wp8W6WfilRfrzBoyhAm
- 6GfTlW79VIcg/6rShAyL6yteeeuATPjxUHMjKiPl2oP5LEtir0OsZ26nKO09PCuyTExUcxQKlmJ
- cEqesBswmfo45a02tgxNEnc+KsBmFPgNPfiKDswvndVZ7TtSw50RYeAIUqsLhAk+2v9R5HBTc8R
- KCnNJ4h7X6I1fzw==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add documentation for rp1-cfe driver.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- .../admin-guide/media/raspberrypi-rp1-cfe.dot      | 27 ++++++++
- .../admin-guide/media/raspberrypi-rp1-cfe.rst      | 78 ++++++++++++++++++++++
- Documentation/admin-guide/media/v4l-drivers.rst    |  1 +
- 3 files changed, 106 insertions(+)
+On 03-09-2024 20:02, Mathieu Poirier wrote:
+> On Tue, 3 Sept 2024 at 04:15, Beleswar Prasad Padhi <b-padhi@ti.com> wrote:
+>> Hi Mathieu,
+>>
+>> On 20-08-2024 16:20, Beleswar Padhi wrote:
+>>> From: Udit Kumar <u-kumar1@ti.com>
+>>>
+>>> Few times, core1 was scheduled to boot first before core0, which leads
+>>> to error:
+>>>
+>>> 'k3_r5_rproc_start: can not start core 1 before core 0'.
+>>>
+>>> This was happening due to some scheduling between prepare and start
+>>> callback. The probe function waits for event, which is getting
+>>> triggered by prepare callback. To avoid above condition move event
+>>> trigger to start instead of prepare callback.
+>>>
+>>> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+>>
+>> Please put this patch on hold. I have some additional changelog that
+>> should go in v3.
+>>
+> I applied this patch a couple of weeks ago - are those changes to the
+> code?  If so please send another patch on top of rproc-next.
 
-diff --git a/Documentation/admin-guide/media/raspberrypi-rp1-cfe.dot b/Documentation/admin-guide/media/raspberrypi-rp1-cfe.dot
-new file mode 100644
-index 000000000000..7717f2291049
---- /dev/null
-+++ b/Documentation/admin-guide/media/raspberrypi-rp1-cfe.dot
-@@ -0,0 +1,27 @@
-+digraph board {
-+	rankdir=TB
-+	n00000001 [label="{{<port0> 0} | csi2\n/dev/v4l-subdev0 | {<port1> 1 | <port2> 2 | <port3> 3 | <port4> 4}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000001:port1 -> n00000011 [style=dashed]
-+	n00000001:port1 -> n00000007:port0
-+	n00000001:port2 -> n00000015
-+	n00000001:port2 -> n00000007:port0 [style=dashed]
-+	n00000001:port3 -> n00000019 [style=dashed]
-+	n00000001:port3 -> n00000007:port0 [style=dashed]
-+	n00000001:port4 -> n0000001d [style=dashed]
-+	n00000001:port4 -> n00000007:port0 [style=dashed]
-+	n00000007 [label="{{<port0> 0 | <port1> 1} | pisp-fe\n/dev/v4l-subdev1 | {<port2> 2 | <port3> 3 | <port4> 4}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000007:port2 -> n00000021
-+	n00000007:port3 -> n00000025 [style=dashed]
-+	n00000007:port4 -> n00000029
-+	n0000000d [label="{imx219 6-0010\n/dev/v4l-subdev2 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000d:port0 -> n00000001:port0 [style=bold]
-+	n00000011 [label="rp1-cfe-csi2-ch0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-+	n00000015 [label="rp1-cfe-csi2-ch1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-+	n00000019 [label="rp1-cfe-csi2-ch2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-+	n0000001d [label="rp1-cfe-csi2-ch3\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-+	n00000021 [label="rp1-cfe-fe-image0\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
-+	n00000025 [label="rp1-cfe-fe-image1\n/dev/video5", shape=box, style=filled, fillcolor=yellow]
-+	n00000029 [label="rp1-cfe-fe-stats\n/dev/video6", shape=box, style=filled, fillcolor=yellow]
-+	n0000002d [label="rp1-cfe-fe-config\n/dev/video7", shape=box, style=filled, fillcolor=yellow]
-+	n0000002d -> n00000007:port1
-+}
-diff --git a/Documentation/admin-guide/media/raspberrypi-rp1-cfe.rst b/Documentation/admin-guide/media/raspberrypi-rp1-cfe.rst
-new file mode 100644
-index 000000000000..668d978a9875
---- /dev/null
-+++ b/Documentation/admin-guide/media/raspberrypi-rp1-cfe.rst
-@@ -0,0 +1,78 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================================
-+Raspberry Pi PiSP Camera Front End (rp1-cfe)
-+============================================
-+
-+The PiSP Camera Front End
-+=========================
-+
-+The PiSP Camera Front End (CFE) is a module which combines a CSI-2 receiver with
-+a simple ISP, called the Front End (FE).
-+
-+The CFE has four DMA engines and can write frames from four separate streams
-+received from the CSI-2 to the memory. One of those streams can also be routed
-+directly to the FE, which can do minimal image processing, write two versions
-+(e.g. non-scaled and downscaled versions) of the received frames to memory and
-+provide statistics of the received frames.
-+
-+The FE registers are documented in the `Raspberry Pi Image Signal Processor
-+(ISP) Specification document
-+<https://datasheets.raspberrypi.com/camera/raspberry-pi-image-signal-processor-specification.pdf>`_,
-+and example code for FE can be found in `libpisp
-+<https://github.com/raspberrypi/libpisp>`_.
-+
-+The rp1-cfe driver
-+==================
-+
-+The Raspberry Pi PiSP Camera Front End (rp1-cfe) driver is located under
-+drivers/media/platform/raspberrypi/rp1-cfe. It uses the `V4L2 API` to register
-+a number of video capture and output devices, the `V4L2 subdev API` to register
-+subdevices for the CSI-2 received and the FE that connects the video devices in
-+a single media graph realized using the `Media Controller (MC) API`.
-+
-+The media topology registered by the `rp1-cfe` driver, in this particular
-+example connected to an imx219 sensor, is the following one:
-+
-+.. _rp1-cfe-topology:
-+
-+.. kernel-figure:: raspberrypi-rp1-cfe.dot
-+    :alt:   Diagram of an example media pipeline topology
-+    :align: center
-+
-+The media graph contains the following video device nodes:
-+
-+- rp1-cfe-csi2-ch0: capture device for the first CSI-2 stream
-+- rp1-cfe-csi2-ch1: capture device for the second CSI-2 stream
-+- rp1-cfe-csi2-ch2: capture device for the third CSI-2 stream
-+- rp1-cfe-csi2-ch3: capture device for the fourth CSI-2 stream
-+- rp1-cfe-fe-image0: capture device for the first FE output
-+- rp1-cfe-fe-image1: capture device for the second FE output
-+- rp1-cfe-fe-stats: capture device for the FE statistics
-+- rp1-cfe-fe-config: output device for FE configuration
-+
-+rp1-cfe-csi2-chX
-+----------------
-+
-+The rp1-cfe-csi2-chX capture devices are normal V4L2 capture devices which
-+can be used to capture video frames or metadata received from the CSI-2.
-+
-+rp1-cfe-fe-image0, rp1-cfe-fe-image1
-+------------------------------------
-+
-+The rp1-cfe-fe-image0 and rp1-cfe-fe-image1 capture devices are used to write
-+the processed frames to memory.
-+
-+rp1-cfe-fe-stats
-+----------------
-+
-+The format of the FE statistics buffer is defined by
-+:c:type:`pisp_statistics` C structure and the meaning of each parameter is
-+described in the `PiSP specification` document.
-+
-+rp1-cfe-fe-config
-+-----------------
-+
-+The format of the FE configuration buffer is defined by
-+:c:type:`pisp_fe_config` C structure and the meaning of each parameter is
-+described in the `PiSP specification` document.
-diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
-index b6af448b9fe9..61da154e079a 100644
---- a/Documentation/admin-guide/media/v4l-drivers.rst
-+++ b/Documentation/admin-guide/media/v4l-drivers.rst
-@@ -26,6 +26,7 @@ Video4Linux (V4L) driver-specific documentation
- 	raspberrypi-pisp-be
- 	rcar-fdp1
- 	rkisp1
-+	raspberrypi-rp1-cfe
- 	saa7134
- 	si470x
- 	si4713
 
--- 
-2.43.0
+Understood. Those are code changes, I will post another patch series for 
+the same.
 
+Thanks,
+Beleswar
+
+>
+>> Thanks,
+>> Beleswar
+>>
+>>> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+>>> [ Applied wakeup event trigger only for Split-Mode booted rprocs ]
+>>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>>> ---
+>>> v2: Changelog:
+>>> * Mathieu
+>>> 1) Rebased changes on top of -next-20240820 tag.
+>>>
+>>> Link to v1:
+>>> https://lore.kernel.org/all/20240809060132.308642-1-b-padhi@ti.com/
+>>>
+>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
+>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> index 8a63a9360c0f..e61e53381abc 100644
+>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>> @@ -469,8 +469,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>>>                        ret);
+>>>                return ret;
+>>>        }
+>>> -     core->released_from_reset = true;
+>>> -     wake_up_interruptible(&cluster->core_transition);
+>>>
+>>>        /*
+>>>         * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+>>> @@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>>>                ret = k3_r5_core_run(core);
+>>>                if (ret)
+>>>                        return ret;
+>>> +
+>>> +             core->released_from_reset = true;
+>>> +             wake_up_interruptible(&cluster->core_transition);
+>>>        }
+>>>
+>>>        return 0;
 
