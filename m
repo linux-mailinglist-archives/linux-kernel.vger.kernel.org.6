@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-314235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777C796B04D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:07:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F2796B04F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0D01F25C6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689C11C20F01
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5597912E1E0;
-	Wed,  4 Sep 2024 05:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0169884A36;
+	Wed,  4 Sep 2024 05:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y5WQIo0l"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k2FicxHS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5781C12C552
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 05:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DE84A21;
+	Wed,  4 Sep 2024 05:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426385; cv=none; b=XFneVa5yQxwX+XH/xBbh6T1f/TbnW4U+rnGuoMWIdh41icy7gyijQVh77pAIW6xhUZ4KdD6PBfHFkVjDsHb05/pTineYKZRRmCv6wlHXFyYFR3Fc4Umstne170BJib9YcEnCoIfJfyCJHeO12FSth7aLZR6DceKuxCuM3xEvPpM=
+	t=1725426395; cv=none; b=rVavdK/NvQr7ZwfK1zy4XE0nzFd4KScyYS44Ckx03FDk7gZI4623iaeOKuW4CE3ZJwFNdRFqqUTRdZTt4sMoR7lAjmYUnfYxFWgCPG45BfqC/4vuSpy0uc0dcDvWyIggbondU8nWER3MPdT0sSSUq43BMSUwivj/gPleu3njaTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426385; c=relaxed/simple;
-	bh=Zzp47YpjJrlq/7aNuFnEG/sx74AzSK2oA4jiAlYD1m4=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=MwpmXkP1xqc+QLGNEJHwJcR5ZxRcOcUDRwuNpkB6c9jpHEq3PjEaWkvt+DeqVGbFW9ue+W1iKra2mG3qXUFYyC6fcXse5G1wi8NuQnjn1KRSDtjNyEUC8t4Fzg7qfsMLXoVm70Sikg6xclu/R78qE1CmvXV6bZF+V3PtlyREzVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y5WQIo0l; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1ab008280aso5754662276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 22:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725426383; x=1726031183; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J5+jy8suatSYU8agZ+1zFUqOrIedBbY+ji9A0DmCUwg=;
-        b=Y5WQIo0lY+umlt4tq80jGYjTnjcRkTn6c11ahLAX+KX6r3xkd2cOiEFc0s8TcpiZ+k
-         MXSK1hRk1j901wD+veDRuy/sX0DrSCKC7enkqiNwKfqP6QjJ7SWAQ/8rUscZYohhpXxR
-         rGhA52tBIiSVh0F5plo8ZG3UgL0HdH6SesJ1u1Na9n5pYDX+u5vPU9G253VI/rrNpQDP
-         QBkWocqRhMkXHhBzwzoaEej8DombiTwf9JZl+Y46dxQoaYFBTdCOYCYPyqeEqrtlLaPL
-         Nzmfcson0lKdioHhf9S1WhhFQ8EEsMN1LeW1FUnW41BA08B1tqtSlC9PWjSGngbHp1yq
-         DRgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725426383; x=1726031183;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J5+jy8suatSYU8agZ+1zFUqOrIedBbY+ji9A0DmCUwg=;
-        b=DV7JOqLfdocNs/J7/Fp0keJA4upRj3s1huhlAwGRscKVC5ZrhEAkFMZVGjBi81EVJm
-         xqPNlwFxccLL6E7g0GqOAuTPFFpGpeWMyWqJsez2W6gidh0U0TT8Kb3ZipZCkattoqub
-         /4lsOFxW920E1nvUgRL8MqJVfJ0taqAhx/7o1Woxf4vSQ84MoXWHsaWm60gl4+Mn5tzO
-         +MYSdNKBxdUgBgW8N3Swdve+NNEyQrCBt1HOlX5153pNEUNRhRsMHHuUULqlYwNXT+q/
-         fsVRtdsj0ZJ9bPEhmg+w3ni7RdEPtoCGPUZQXtOHzmUVBp/7k5ZCLKX20qV6MpfBTG2H
-         Cj3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvyCQnRQKgG7+lRF7tVcrYcHGAm71PPk5b00TdpqOEhOuNA0vjMtF+ZUrryiA5Bh5wYbXw/nvsu+Pt9ZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ9hjDrVDHaOSZQYIdRwOj+hJ77QubRO4jxjXAX/cNd+5w0zSX
-	3nFn/witNaNwalNtbVqx+xipNUj5BtX1U+lb4iPwSj4hGSPVMpz/amSQupk065dsGy+hARV6ZkK
-	Lz3u02A==
-X-Google-Smtp-Source: AGHT+IGGPVF71/v8Ly5msG6tRUJzPuQAIOn9/kjoP6sROxK81r4wDL5JgHaT37QF84+IbQDEH5PUBL+bgQfp
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:c48b:5e3:a63c:2d09])
- (user=irogers job=sendgmr) by 2002:a25:e910:0:b0:e11:7039:ff92 with SMTP id
- 3f1490d57ef6-e1a7a3e8384mr26722276.11.1725426383309; Tue, 03 Sep 2024
- 22:06:23 -0700 (PDT)
-Date: Tue,  3 Sep 2024 22:06:06 -0700
-In-Reply-To: <20240904050606.752788-1-irogers@google.com>
-Message-Id: <20240904050606.752788-7-irogers@google.com>
+	s=arc-20240116; t=1725426395; c=relaxed/simple;
+	bh=h5yQBYDg69bRJu++2q14/L1RZeItXGC/rllTsxzzdoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNMraQU/n5w2ZDor1e1WLVc+8fG3QfaTAQC//65drFXFfG7kY3+sP8BAUquMSjMEodKFr3q1bC6tMPS2XgE/UBEXLhEqWm/psNS+WxGlpFlvMIchePN98lACC22s8vWa9w8UGgA63uBfJRF67aFvW7hscioP8MlDsr5SFXUsqcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k2FicxHS; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725426394; x=1756962394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h5yQBYDg69bRJu++2q14/L1RZeItXGC/rllTsxzzdoM=;
+  b=k2FicxHS3fB+zVaO6Kpmtt537GenKBB/fN3K/Snm6oTG7KU6C0CuHvCg
+   XRly88+BLxwerc33AjLYif9eG390l6WXtIOVpHIi3hoRx3Q6oYFL1pEIE
+   oFCrn2dJ86MVDTOjTuWC5Zk6jbM77txBCaKrMClD0oNvhAX6GZknh2mYz
+   BIDjvhYYufP8vDb/U4Si+FbOyV7IuIyL5DCQ/qP6GolKtnMEFhTZ3/rem
+   ZPljOw80alCKg8nKi+2BKD4khw4PKEo28FA7x/cSw4bM/XEAr/1laZylr
+   fOYTdKmw5VKNNOQ4gFKhtiNN5Cxnw7MH5OLYF3O6tTRJJgOZfCRmso5R9
+   A==;
+X-CSE-ConnectionGUID: ubwq/8sMT2q1zEufPancOg==
+X-CSE-MsgGUID: 1c0QB6dkQc6LA2fAQf37kA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24172490"
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="24172490"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 22:06:33 -0700
+X-CSE-ConnectionGUID: Qxzc6O2PQNenq2ZOeBau4g==
+X-CSE-MsgGUID: TCa2Jf3cStGH6mDjMxSLoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="95944123"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 03 Sep 2024 22:06:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id F188C128; Wed, 04 Sep 2024 08:06:30 +0300 (EEST)
+Date: Wed, 4 Sep 2024 08:06:30 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Replace ifdeffery by
+ pm_sleep_ptr() macro
+Message-ID: <20240904050630.GC1532424@black.fi.intel.com>
+References: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
+ <20240903170752.3564538-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904050606.752788-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Subject: [PATCH v2 6/6] perf test: Make watchpoint data 32-bits on i386
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
-	John Garry <john.g.garry@oracle.com>, Junhao He <hejunhao3@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903170752.3564538-3-andriy.shevchenko@linux.intel.com>
 
-i386 only supports watchpoints up to size 4, 8 bytes causes extra
-counts and test failures.
+On Tue, Sep 03, 2024 at 08:04:50PM +0300, Andy Shevchenko wrote:
+> Explicit ifdeffery is ugly and theoretically might be not synchronised
+> with the rest of functions that are assigned via pm_sleep_ptr() macro.
+> Replace ifdeffery by pm_sleep_ptr() macro to improve this.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-baytrail.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> index 4533c4d0a9e7..7aa0ddca7a59 100644
+> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
+> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> @@ -1514,13 +1514,6 @@ static int byt_gpio_probe(struct intel_pinctrl *vg)
+>  	gc->parent	= vg->dev;
+>  	gc->ngpio	= vg->soc->npins;
+>  
+> -#ifdef CONFIG_PM_SLEEP
+> -	vg->context.pads = devm_kcalloc(vg->dev, gc->ngpio, sizeof(*vg->context.pads),
+> -					GFP_KERNEL);
+> -	if (!vg->context.pads)
+> -		return -ENOMEM;
+> -#endif
+> -
+>  	/* set up interrupts  */
+>  	irq = platform_get_irq_optional(pdev, 0);
+>  	if (irq > 0) {
+> @@ -1581,6 +1574,16 @@ static const struct acpi_device_id byt_gpio_acpi_match[] = {
+>  	{ }
+>  };
+>  
+> +static int byt_pinctrl_pm_init(struct intel_pinctrl *vg)
+> +{
+> +	vg->context.pads = devm_kcalloc(vg->dev, vg->soc->npins,
+> +					sizeof(*vg->context.pads), GFP_KERNEL);
+> +	if (!vg->context.pads)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+>  static int byt_pinctrl_probe(struct platform_device *pdev)
+>  {
+>  	const struct intel_pinctrl_soc_data *soc_data;
+> @@ -1603,6 +1606,10 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	ret = pm_sleep_ptr(byt_pinctrl_pm_init) ? byt_pinctrl_pm_init(vg) : 0;
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/wp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Same here.
 
-diff --git a/tools/perf/tests/wp.c b/tools/perf/tests/wp.c
-index cc8719609b19..6c178985e37f 100644
---- a/tools/perf/tests/wp.c
-+++ b/tools/perf/tests/wp.c
-@@ -20,7 +20,12 @@ do {                                            \
- 	TEST_ASSERT_VAL(text, count == val);    \
- } while (0)
- 
-+#ifdef __i386__
-+/* Only breakpoint length less-than 8 has hardware support on i386. */
-+volatile u32 data1;
-+#else
- volatile u64 data1;
-+#endif
- volatile u8 data2[3];
- 
- #ifndef __s390x__
--- 
-2.46.0.469.g59c65b2a67-goog
-
+> +	if (ret)
+> +		return ret;
+> +
+>  	vg->pctldesc		= byt_pinctrl_desc;
+>  	vg->pctldesc.name	= dev_name(dev);
+>  	vg->pctldesc.pins	= vg->soc->pins;
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
 
