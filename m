@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-314045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F68896AE1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2353896AE1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520681C24684
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88551F25A27
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FA5FC12;
-	Wed,  4 Sep 2024 01:50:22 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317C41BC2A;
+	Wed,  4 Sep 2024 01:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsadccl/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B5A3211;
-	Wed,  4 Sep 2024 01:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D6A3211;
+	Wed,  4 Sep 2024 01:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725414622; cv=none; b=GnHSBwi5yU5ejisVhKdPzESwtupsRlnoGiUub7t3SfIaH2aNTsv8VMosgsI4JT4tcWzd9G6QXeTihX4PP7yMYeGL7ZY3Cxc/kc9BZWRik4inChxJacxXWrkjMHnlIF7buzRY1Ol5VAyAtfz2QImfOQ+3mr2vv4Gahq8Zl69VnJM=
+	t=1725414608; cv=none; b=P/ngmW3zT49Xqd2PnAeBwkh+ve5BVICmDE1NTYJJdge74KefuwVaHAus5pnukVrZSS2SSLiCWPVFgajGbLhQmUgfgv7Maiu2IiHL7mIEzJCKeaKEm22D8AYgHVw20feYYaYE8TzUddHTEotVZfuAFLz1TJFNODzCZo2g5GsHyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725414622; c=relaxed/simple;
-	bh=84VRkPJTtA9jez+1Ca+HJo77sFU4+bGKeT4ApDxyVVY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CHAqtRhAZItXxSB1jiLoEhSl9AO8ggIyaBGt62n3tLFibYdRWgxHn0Tv29WKmECIEiCtLzoPCwKJNy/V3R8bYTwkD+f60+5Y55aqjHSSgk0MDoK1yQistb3262XxtoEd+bsAGbab/TV+IPypkaKXCc7Gmvn4Gb+8Z8REEjleZo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAB3f3_WvNdm9sn1AA--.50551S2;
-	Wed, 04 Sep 2024 09:50:14 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: richardcochran@gmail.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
-Date: Wed,  4 Sep 2024 09:50:03 +0800
-Message-Id: <20240904015003.1065872-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725414608; c=relaxed/simple;
+	bh=4AQxlfwksI8M0lXuPBfgDWfUUeO7Xwm6/Q69FGEDaqE=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Bf07VAvSoWJ+nAeiW8MfCQS4ADKdpvknOTWLeIM8dFcLjGGXZAONCiXaRg7qZNZ2BiKBX2f3e3TFVIpfhMebThfTvG/O8+fTMhxTGCR3iI+i/Qg1FonPxKcOSLwCsAI0s53+Zpasrty0f5gmxRpP7ePt9KgKuoto+FQ0/NAIxqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsadccl/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853F8C4CEC4;
+	Wed,  4 Sep 2024 01:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725414607;
+	bh=4AQxlfwksI8M0lXuPBfgDWfUUeO7Xwm6/Q69FGEDaqE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=jsadccl/9E+PbXaq+qBmbPd7/PjPSWuCGCCzZgXrCdzxotTCt+t4Jh4/bmoJd9CVw
+	 H8TFVkWCnT6PO3N5msofWRplIEzvDa/Eg5k4rOBS65A+0zhdG8IyexgNbEl8PJPjw+
+	 IPqvsG8xcWU4KoDxTm0aKsnESTEtPBfW/2JJhC2yZ7oNtXlbcdYda/gKsGnl9kjiks
+	 zYIezEibBc9qTHTav6i6r2l9PCUv9D8lgvmxWdNEEHSR/qOB+sf1qlb4hUUhVYAkeY
+	 sRh9O478wwJmKVRY2p7fE4R/AvzwSGarhGRI5N4ZYyVZuwxFz3ZGhNiy/K7VPANfL9
+	 HopuyFoAQZ++g==
+Date: Tue, 03 Sep 2024 20:50:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAB3f3_WvNdm9sn1AA--.50551S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4kZF4UCFg_yoW8Jw1Upr
-	yqya9Iyr4ktFWjva9rKanxXry5Wan3W3yxJrW5twnIy3W0yF17Zr1Fkr15ArZ8W3y8KrWx
-	Ar1xAryjyF4Fv3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-	GVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
-	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJbIYCTnIWIevJa73UjIFyTuYvjfUbuWlDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: devicetree@vger.kernel.org, cristian.marussi@arm.com, 
+ rui.zhang@intel.com, linux-spi@vger.kernel.org, lee@kernel.org, 
+ krzk+dt@kernel.org, will@kernel.org, linux-arm-msm@vger.kernel.org, 
+ linus.walleij@linaro.org, joro@8bytes.org, linux-kernel@vger.kernel.org, 
+ robin.murphy@arm.com, quic_psodagud@quicinc.com, conor+dt@kernel.org, 
+ kernel@quicinc.com, sudeep.holla@arm.com, linux-serial@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, herbert@gondor.apana.org.au, 
+ konradybcio@kernel.org, jassisinghbrar@gmail.com, 
+ linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, andersson@kernel.org, 
+ lukasz.luba@arm.com, iommu@lists.linux.dev, linux-watchdog@vger.kernel.org, 
+ broonie@kernel.org, rafael@kernel.org, davem@davemloft.net, 
+ arm-scmi@vger.kernel.org, thara.gopinath@gmail.com, viresh.kumar@linaro.org, 
+ linux@roeck-us.net, amitk@kernel.org, wim@linux-watchdog.org, 
+ andi.shyti@kernel.org, linux-arm-kernel@lists.infradead.org, 
+ tglx@linutronix.de, linux-crypto@vger.kernel.org
+In-Reply-To: <20240903220240.2594102-14-quic_nkela@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-14-quic_nkela@quicinc.com>
+Message-Id: <172541460656.3237041.12121704663662726692.robh@kernel.org>
+Subject: Re: [PATCH v2 13/21] dt-bindings: pinctrl: Add SA8255p TLMM
 
-Replace comma between expressions with semicolons.
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+On Tue, 03 Sep 2024 15:02:32 -0700, Nikunj Kela wrote:
+> Add compatible for TLMM block representing support on SA8255p.
+> 
+> SA8255p uses the same TLMM block as SA8775p however the ownership
+> of pins are split between Firmware VM and Linux VM on SA8255p. For
+> example, pins used by UART are owned and configured by Firmware VM
+> while pins used by ethernet are owned and configured by Linux VM.
+> Therefore, adding a sa8255p specific compatible to mark the difference.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
+>  .../devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml    | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
-Changelog:
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:22:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:23:11: [warning] wrong indentation: expected 12 but found 10 (indentation)
+./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:26:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
-v1 -> v2:
+dtschema/dtc warnings/errors:
 
-1. Update commit message.
----
- drivers/ptp/ptp_idt82p33.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+doc reference errors (make refcheckdocs):
 
-diff --git a/drivers/ptp/ptp_idt82p33.c b/drivers/ptp/ptp_idt82p33.c
-index 92bb42c43fb2..d5732490ed9d 100644
---- a/drivers/ptp/ptp_idt82p33.c
-+++ b/drivers/ptp/ptp_idt82p33.c
-@@ -1171,10 +1171,10 @@ static void idt82p33_caps_init(u32 index, struct ptp_clock_info *caps,
- 	caps->owner = THIS_MODULE;
- 	caps->max_adj = DCO_MAX_PPB;
- 	caps->n_per_out = MAX_PER_OUT;
--	caps->n_ext_ts = MAX_PHC_PLL,
--	caps->n_pins = max_pins,
--	caps->adjphase = idt82p33_adjwritephase,
--	caps->getmaxphase = idt82p33_getmaxphase,
-+	caps->n_ext_ts = MAX_PHC_PLL;
-+	caps->n_pins = max_pins;
-+	caps->adjphase = idt82p33_adjwritephase;
-+	caps->getmaxphase = idt82p33_getmaxphase;
- 	caps->adjfine = idt82p33_adjfine;
- 	caps->adjtime = idt82p33_adjtime;
- 	caps->gettime64 = idt82p33_gettime;
--- 
-2.25.1
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240903220240.2594102-14-quic_nkela@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
