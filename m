@@ -1,185 +1,155 @@
-Return-Path: <linux-kernel+bounces-314630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C93696B60B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:09:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C50A96B611
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A2F1F22A4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2AB1F25B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDCA1CC17A;
-	Wed,  4 Sep 2024 09:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177F11CCB5A;
+	Wed,  4 Sep 2024 09:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QyoyVeJZ"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B0KoNA7I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+6sRqbEO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C4219B3F6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54E31CC89C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725440944; cv=none; b=gF0Sv0j9WlPqGcWhFiDuAkPlLN9kwqXQ9rx4nWjHV+cTUvU+j3cjoQQfFG3xaEDB8K1trUJGu2eF85X9OqlI9WtMeuzCAlMUHOp0dCBp/OchaxwqOxfcgdVxPIUWMr8RDBKD9tc4afgSs2GZW+rQZVhsXInCYD+Ret/7o25yRVk=
+	t=1725440951; cv=none; b=ljj/eojV8XPWay6kRnOAQB9yxImbtgTG5x7N8rjK1cDADbKUaUrkSj9v1SD1r0figNE3bX9b6HnPk3B+rFPAkVU+2+YwyJL6/hgxuiMN2KVffSnSCtZYjeuCBWity+bLZUbqTV2FOUSOJmKPz5vdYBcJDHYOVymvkSbaGclHOP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725440944; c=relaxed/simple;
-	bh=PlJdXfCl7z5GITdFrA3sDKLcDG9iFjX/X4c3rw7NHVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sCR9EmddUPctDJXUze4izfQHyWTo8HtdjGKb9z8jseIKcVhItjU56yC8XqLWBpzskbrpaySSAGIid6j0fxGsqzjQrZZf55n+9zJnxYSnb/ND7JI2CdkEMg/FM6BpD5jG3JvyCcXWBgpSonqjiHMSXRzBaWlf6Rzbkou8pyZKzpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QyoyVeJZ; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-277e6002b7dso1555779fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 02:09:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725440942; x=1726045742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7eCTU1AOHaUUwMtmGS3dOCXqi4sZOm3TtWxsQHb+32g=;
-        b=QyoyVeJZFgvY+jHHdyS35CNBePkg/4Sn2h3v65Oo2k3SCDhqK4UKyQQcUTwWHGUVTj
-         684MojfaEAZwIIly91Y30o9lnn5Mtyy80fHAG7rDysEJ5I/2NjbumxBfix3E0A7vRlIy
-         Et9jHNlBqldprvj8ZGJ4hO0VCrRLkxtgyyKJ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725440942; x=1726045742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7eCTU1AOHaUUwMtmGS3dOCXqi4sZOm3TtWxsQHb+32g=;
-        b=nWkUHG1xwFFjKVp2a2WlqhSmj90JQW5wxhUptlt5Rc3lG1g6CEp56sHW045pqtNB6s
-         97lcpE8ILK+DCuDwJBopat+byYoidjIugv48Z6gTBTW5XbPi2f7kELI30fXQOegfQTDd
-         h8766a20LNRLQ9hBRyW6QbrNofnSdu5avO73wZEh3vIx7ow/Ydg6Y5xH9MJyuPIn7NOP
-         UFgvGZ0pXnl/wyOtD9sywaHin7kxtXY/EBdnygK9OtMkI9yACsPyF58kgK+EOS6Acmov
-         WW4pGQrvc0OiY1BbNSpDp9BJl1nKIwPN1g8Hw7/Uq13goGaQKEPNnXTnWxRd5s46+UdV
-         Gf2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXxb+PVTjzxtpUltkrbxxig7lUuZOEm4j+6e47Lv3azD5a+YAKFRdulTja44NEUhxI5T2FN5WBgbAQB70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxooIEu7qJNKit6gp9DpCnlkIxTdJvHoqhicIrZf6EM/ZjygBmu
-	96tkiNl0iO02bM56WPFLzACtDp2jcyyAVttYQWWytBH95WG1XMg42iVQmAnWhg==
-X-Google-Smtp-Source: AGHT+IEuKwdsL6Brf++PqlqKCm8Wb2D1A/dk6x7le3ZX0A36iHJ+V6NVDFzn0XXFrxLbntFKkyBZKQ==
-X-Received: by 2002:a05:6870:390a:b0:25d:e3d:b441 with SMTP id 586e51a60fabf-277c81ed3a6mr14723563fac.40.1725440941752;
-        Wed, 04 Sep 2024 02:09:01 -0700 (PDT)
-Received: from shivania.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177859aa50sm1206994b3a.175.2024.09.04.02.08.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 02:09:01 -0700 (PDT)
-From: Shivani Agarwal <shivani.agarwal@broadcom.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	Breno Leitao <leitao@debian.org>,
-	Heng Qi <hengqi@linux.alibaba.com>,
-	Sasha Levin <sashal@kernel.org>,
-	Shivani Agarwal <shivani.agarwal@broadcom.com>
-Subject: [PATCH v4.19-v5.10] virtio_net: Fix napi_skb_cache_put warning
-Date: Wed,  4 Sep 2024 02:08:53 -0700
-Message-Id: <20240904090853.15187-1-shivani.agarwal@broadcom.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725440951; c=relaxed/simple;
+	bh=LoKx0oaCUTXH3B+1AUszpMqORUwiEB7WE+BQRHfoaIc=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CfVis2HQoy4rOVgsfXtguqcV9fNGaXw0/klzaXFxmougkYNO5iQ5F5EOIAf+kWY6+hnCzqngCnWpW3jmO90+dDZSXYYwxkZaHJup+wUQLtg/SkY8JbFcvswTCp+qwwupYRk6c7o6hloiVZzBYpp40w5ChW8NM6OHKKHpPdLvbqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B0KoNA7I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+6sRqbEO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725440948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLtYYDfEOf4gZfiXkvhWBoDh0abmzZ5+yYCKTxZk0VM=;
+	b=B0KoNA7IlisQuJtKFWDTg3ysJf9hroW97dY/zktfuzKmWALrlqoZguvtygH6gZYMxun1DS
+	c9wTP5v/9bPa8/Hf1NTEtZKR3xSievExIJONKQHOWHWOFyDMQBGlmpoIGTucNGuOXkyT3X
+	q6eM5aXcKICmSMI99qX5Tm9OLpgsONgFN7j+7A4lTocjgApazlc2NvpfkYZj0A2ofCvi7r
+	kRPSp+MblnYWtHB2VrA1UMAxuNI8witoHY9ZhVGeW06PZjWu9y8naXVD0A2oWFVPgmlNFK
+	fykXMr2BSmv0qNKwgqFDFcS6/H4N4hmQ+uXjsv7BBMhusK5++bRoUbV01724Bw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725440948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLtYYDfEOf4gZfiXkvhWBoDh0abmzZ5+yYCKTxZk0VM=;
+	b=+6sRqbEOoBql5POIt6NQc8vmo2+lDcFgFnjhjnIoBhSEQ3Q71LoIbb0GTmrT/w7lxGXLBD
+	B5fwKhvHNCsFLbDw==
+To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: [PATCH v2] static_call: Handle module init failure correctly in
+ static_call_del_module()
+In-Reply-To: <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
+References: <87cylj7v6x.ffs@tglx>
+ <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
+Date: Wed, 04 Sep 2024 11:09:07 +0200
+Message-ID: <87zfon6b0s.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Breno Leitao <leitao@debian.org>
+Module insertion invokes static_call_add_module() to initialize the static
+calls in a module. static_call_add_module() invokes __static_call_init(),
+which allocates a struct static_call_mod to either encapsulate the built-in
+static call sites of the associated key into it so further modules can be
+added or to append the module to the module chain.
 
-[ Upstream commit f8321fa75102246d7415a6af441872f6637c93ab ]
+If that allocation fails the function returns with an error code and the
+module core invokes static_call_del_module() to clean up eventually added
+static_call_mod entries.
 
-After the commit bdacf3e34945 ("net: Use nested-BH locking for
-napi_alloc_cache.") was merged, the following warning began to appear:
+This works correctly, when all keys used by the module were converted over
+to a module chain before the failure. If not then static_call_del_module()
+causes a #GP as it blindly assumes that key::mods points to a valid struct
+static_call_mod.
 
-	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
+The problem is that key::mods is not a individual struct member of struct
+static_call_key, it's part of a union to save space:
 
-	  __warn+0x12f/0x340
-	  napi_skb_cache_put+0x82/0x4b0
-	  napi_skb_cache_put+0x82/0x4b0
-	  report_bug+0x165/0x370
-	  handle_bug+0x3d/0x80
-	  exc_invalid_op+0x1a/0x50
-	  asm_exc_invalid_op+0x1a/0x20
-	  __free_old_xmit+0x1c8/0x510
-	  napi_skb_cache_put+0x82/0x4b0
-	  __free_old_xmit+0x1c8/0x510
-	  __free_old_xmit+0x1c8/0x510
-	  __pfx___free_old_xmit+0x10/0x10
+        union {
+                /* bit 0: 0 = mods, 1 = sites */
+                unsigned long type;
+                struct static_call_mod *mods;
+                struct static_call_site *sites;
+	};
 
-The issue arises because virtio is assuming it's running in NAPI context
-even when it's not, such as in the netpoll case.
+key::sites is a pointer to the list of built-in usage sites of the static
+call. The type of the pointer is differentiated by bit 0. A mods pointer
+has the bit clear, the sites pointer has the bit set.
 
-To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
-is available. Same for virtnet_poll_cleantx(), which always assumed that
-it was in a NAPI context.
+As static_call_del_module() blidly assumes that the pointer is a valid
+static_call_mod type, it fails to check for this failure case and
+dereferences the pointer to the list of built-in call sites, which is
+obviously bogus.
 
-Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
-Link: https://patch.msgid.link/20240712115325.54175-1-leitao@debian.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[Shivani: Modified to apply on v4.19.y-v5.10.y]
-Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+Cure it by checking whether the key has a sites or a mods pointer. 
+
+If it's a sites pointer then the key is not to be touched. As the sites are
+walked in the same order as in __static_call_init() the site walk can be
+terminated because all subsequent sites have not been touched by the init
+code due to the error exit.
+
+If it was converted before the allocation fail, then the inner loop which
+searches for a module match will find nothing.
+
+A fail in the second allocation in __static_call_init() is harmless and
+does not require special treatment. The first allocation succeeded and
+converted the key to a module chain. That first entry has mod::mod == NULL
+and mod::next == NULL, so the inner loop of static_call_del_module() will
+neither find a module match nor a module chain. The next site in the walk
+was either already converted, but can't match the module, or it will exit
+the outer loop because it has a static_call_site pointer and not a
+static_call_mod pointer.
+
+Fixes: 9183c3f9ed71 ("static_call: Add inline static call infrastructure")
+Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com
 ---
- drivers/net/virtio_net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+V2: Use static_call_key_has_mods() instead
+---
+ kernel/static_call_inline.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index f7ed99561..99dea89b2 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1497,7 +1497,7 @@ static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
- 		return false;
- }
+--- a/kernel/static_call_inline.c
++++ b/kernel/static_call_inline.c
+@@ -411,6 +411,17 @@ static void static_call_del_module(struc
  
--static void virtnet_poll_cleantx(struct receive_queue *rq)
-+static void virtnet_poll_cleantx(struct receive_queue *rq, int budget)
- {
- 	struct virtnet_info *vi = rq->vq->vdev->priv;
- 	unsigned int index = vq2rxq(rq->vq);
-@@ -1508,7 +1508,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
- 		return;
+ 	for (site = start; site < stop; site++) {
+ 		key = static_call_key(site);
++
++		/*
++		 * If the key was not updated due to a memory allocation
++		 * failure in __static_call_init() then treating key::sites
++		 * as key::mods in the code below would cause random memory
++		 * access and #GP. In that case all subsequent sites have
++		 * not been touched either, so stop iterating.
++		 */
++		if (!static_call_key_has_mods(key))
++			break;
++
+ 		if (key == prev_key)
+ 			continue;
  
- 	if (__netif_tx_trylock(txq)) {
--		free_old_xmit_skbs(sq, true);
-+		free_old_xmit_skbs(sq, !!budget);
- 		__netif_tx_unlock(txq);
- 	}
- 
-@@ -1525,7 +1525,7 @@ static int virtnet_poll(struct napi_struct *napi, int budget)
- 	unsigned int received;
- 	unsigned int xdp_xmit = 0;
- 
--	virtnet_poll_cleantx(rq);
-+	virtnet_poll_cleantx(rq, budget);
- 
- 	received = virtnet_receive(rq, budget, &xdp_xmit);
- 
-@@ -1598,7 +1598,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
- 	txq = netdev_get_tx_queue(vi->dev, index);
- 	__netif_tx_lock(txq, raw_smp_processor_id());
- 	virtqueue_disable_cb(sq->vq);
--	free_old_xmit_skbs(sq, true);
-+	free_old_xmit_skbs(sq, !!budget);
- 
- 	opaque = virtqueue_enable_cb_prepare(sq->vq);
- 
--- 
-2.39.4
-
 
