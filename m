@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-314890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100F096BAA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D33B596BAA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D521C20D90
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11AD61C22ADA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C59A1D0167;
-	Wed,  4 Sep 2024 11:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16A1D0DCF;
+	Wed,  4 Sep 2024 11:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/0NgyCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LpLfIYGx"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFD81CFEA6;
-	Wed,  4 Sep 2024 11:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8221D04AA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449326; cv=none; b=Dp7LytLkglS70GOBdYNyUH4FeM8BAK63sIB1YQOQQQ/Z/nakNm252yEdedL7nNn9gP8+GHltLiyDNPtzEyQZH5eEs5xIULcDV6oeHJD6L4gUj4nsVMAY0K2HRNvQID5/DgpKl62wbxzKkPqszSrOju080L0ud3iEi5D/zWQud7k=
+	t=1725449353; cv=none; b=IwqKGOGpkP9mQ9rTw/itCkhAIBcFNJXqvxWEky7xX6qwHxwdeIuqy0HTEiMfscXbNLn/EYh0JyFzb01YVmk4aqnBeQslw93bePqDvLL3oDL9IpXYOHEnrsQRO5Np4dT40eJGGcAyD+vWwWUwIqmSXYT5QDUL6CTS5djnkio0K7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449326; c=relaxed/simple;
-	bh=sBaohaHZUVaZLsgiNkQ8gEp7Ytnh/9Nn7T7uDa7q45s=;
+	s=arc-20240116; t=1725449353; c=relaxed/simple;
+	bh=gXsUyKWX4eqG122FiUepNnh81SKVQrwhRAm8zyF53+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2MNFBgGj4W0VgkRJyPPQCOqnkVP2+oTpcZSychs2YXUzDi61VH+tNXrFqKnr7aUUPHWiHxdl7wXXoqYtiS1UAeweQeFoddlcXlZE7lGYCwQROLumyrvHwl8ViRwEMhBPudMSRAa+yV7Lkv43l0YLdCeIuzFU7hn6mlP1X/SXXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/0NgyCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319DBC4CEC6;
-	Wed,  4 Sep 2024 11:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725449325;
-	bh=sBaohaHZUVaZLsgiNkQ8gEp7Ytnh/9Nn7T7uDa7q45s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n/0NgyCjbvwCKxPDSP997qRKHOffv5uGdJzlkylZwUvTMaS2b/COWSDIxNpTlHbvX
-	 j3OkD+/E1ybTrkoLCAHUPFQsxBFNFQBgomPENThbNhRaiNBcG0Y4/D88Xqsy1ZIQ5e
-	 Wtl8SBoQgdMiJfOd91gZMsRSi7Oqv+M+WGbcwMNkLnr2+NiswtYvCIDmaNdXZsVO7e
-	 YiXayvueqYJJ0ZkrJ+IBBrtn0I6Lj1VxWCb34NJiOfATrwTP9zhYDv0o8xQgUXtG+k
-	 VstogmmQ1BlvO5HeIYLwPG3X6OvSIwBwuk3tJEYZYylbFNbZR1K0dp3WAsyUc5Cag6
-	 1YTpsegRDCi4g==
-Message-ID: <82062793-1fa3-4384-9861-38dcc2e49e92@kernel.org>
-Date: Wed, 4 Sep 2024 13:28:39 +0200
+	 In-Reply-To:Content-Type; b=SFbHyj3LhaCobMu4BWbBhq8VRIELJs1EQu1Li6emQY6hrWwbSyPNdscVRrtLOcntWylCzp6+YhxYr6ai8+WTTkzhoY4g50cWQrCF/Wo+ThHZo4NZAUYppNLH+qmK0fIgKcT46NWgJxlBWPaBjTEHgbYxFTltHDS1uEQNTK3cfFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LpLfIYGx; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 349C8C000C;
+	Wed,  4 Sep 2024 11:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725449348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WydPZP7NPAakT9XUYDlnXK7eOUzTvx6eQKKMASqspTA=;
+	b=LpLfIYGx7X/MXTsan9nOxCKtJzrhkPpo3Bpz54ov7ed/Gi1k0j0dQKT9PPQhuA2xfv06Pg
+	fpzKjn08WRFgIrM6Picz7zMqr7cIwLTPvyuGpj3hDdPe1GJl+0oTlzJMXxpLrfY6zmI8mF
+	a7DSs1TM/p6eZrSguUUNgB5tMxvE+jz/aW9UKg0jvktspEbGRlZX2hOW1mUFVAYqiMi8eh
+	4+joFENOO9PJ5Nx/JaPDO64EfjKWHEPo74A1UY5xaea9ncTN0yKcIiRcxWL/i1CGeRrAbb
+	r2MfxVYGpCaMOP11udloXOfq8UJD5a1qjNqv6DPzyEaejDXUYWPCKhiomfpjlA==
+Message-ID: <c8a82583-5570-4286-9f1b-00a2717bae4b@bootlin.com>
+Date: Wed, 4 Sep 2024 13:29:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,92 +53,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] media: dt-bindings: media: camss: Add
- qcom,sc7280-camss binding
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- cros-qcom-dts-watchers@chromium.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Suresh Vankadara <quic_svankada@quicinc.com>,
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
- <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-1-b18ddcd7d9df@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] mux: add mux_chip_resume() function
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
+ theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com>
+ <20240613-mux-mmio-resume-support-v1-1-4525bf56024a@bootlin.com>
+ <94069d56-0981-2d69-65c2-901a05758806@axentia.se>
+ <f5067055-1470-4386-8839-b4ec2527872e@bootlin.com>
+ <4cf89e3d-7164-67b5-0a3c-9e8e4df274eb@axentia.se>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-1-b18ddcd7d9df@quicinc.com>
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <4cf89e3d-7164-67b5-0a3c-9e8e4df274eb@axentia.se>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On 04/09/2024 13:10, Vikram Sharma wrote:
-> Add bindings for qcom,sc7280-camss to support the camera subsystem
-> on the SC7280 platform.
+On 9/4/24 11:32, Peter Rosin wrote:
+> Hi!
 > 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->  .../bindings/media/qcom,sc7280-camss.yaml          | 441 +++++++++++++++++++++
->  1 file changed, 441 insertions(+)
+> 2024-09-04 at 11:18, Thomas Richard wrote:
+>> On 9/3/24 15:22, Peter Rosin wrote:
+>>> Hi!
+>>>
+>>> Sorry for being unresponsive. And for first writing this in the older v4
+>>> thread instead of here.
+>>>
+>>> 2024-06-13 at 15:07, Thomas Richard wrote:
+>>>> The mux_chip_resume() function restores a mux_chip using the cached state
+>>>> of each mux.
+>>>>
+>>>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+>>>> ---
+>>>>  drivers/mux/core.c         | 29 +++++++++++++++++++++++++++++
+>>>>  include/linux/mux/driver.h |  1 +
+>>>>  2 files changed, 30 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+>>>> index 78c0022697ec..0858cacae845 100644
+>>>> --- a/drivers/mux/core.c
+>>>> +++ b/drivers/mux/core.c
+>>>> @@ -215,6 +215,35 @@ void mux_chip_free(struct mux_chip *mux_chip)
+>>>>  }
+>>>>  EXPORT_SYMBOL_GPL(mux_chip_free);
+>>>>  
+>>>> +/**
+>>>> + * mux_chip_resume() - restores the mux-chip state
+>>>> + * @mux_chip: The mux-chip to resume.
+>>>> + *
+>>>> + * Restores the mux-chip state.
+>>>> + *
+>>>> + * Return: Zero on success or a negative errno on error.
+>>>> + */
+>>>> +int mux_chip_resume(struct mux_chip *mux_chip)
+>>>> +{
+>>>> +	int ret, i;
+>>>> +
+>>>> +	for (i = 0; i < mux_chip->controllers; ++i) {
+>>>> +		struct mux_control *mux = &mux_chip->mux[i];
+>>>> +
+>>>> +		if (mux->cached_state == MUX_CACHE_UNKNOWN)
+>>>> +			continue;
+>>>> +
+>>>> +		ret = mux_control_set(mux, mux->cached_state);
+>>>
+>>> mux_control_set() is an internal helper. It is called from
+>>> __mux_control_select() and mux_control_deselect() (and on init...)
+>>>
+>>> In all those cases, there is no race to reach the mux_control_set()
+>>> function, by means of the mux->lock semaphore (or the mux not being
+>>> "published" yet).
+>>>
+>>> I fail to see how resume is safe when mux->lock is ignored?
+>>
+>> I think I should use mux_control_select() to use the lock.
+>> If I ignore the lock, I could have a cache coherence issue.
+>>
+>> I'll send a new version which use mux_control_select().
+>> But if I use mux_control_select(), I have to clean the cache before to
+>> call it, if not nothing happen [1].
+>>
+>> [1]
+>> https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/mux/core.c#L319
+> 
+> No, calling mux_control_select() in resume context is not an
+> option IIUC. That would dead-lock if there is a long-time client
+> who has locked the mux in some desired state.
 
-Why do you send the same patch? No versioning, no changelog. Please
-implement feedback from previous submissions, then send new version.
-Everything is explained in submitting-patches document.
+Yes, I didn't thought about it.
 
-Best regards,
-Krzysztof
+> 
+> I see no trivial solution to integrate suspend/resume, and do
+> not have enough time to think about what a working solutions
+> would look like. Sorry.
+> 
+
+We maybe have a solution.
+Please let me know if it's relevant or not for you:
+
+- Add a get operation in struct mux_control_ops.
+
+- Implement mux_chip_suspend() which reads the state of each mux using
+the get operation, and store it in a hardware_state variable (stored in
+the mux_control struct).
+
+- The mux_chip_resume uses the hardware_state value to restore all muxes
+using mux_control_set().
+So if a mux is locked with a long delay, there is no dead-lock.
+
+- If the get operation is not defined, mux_chip_suspend() and
+mux_chip_resume() do nothing (maybe a warning or info message could be
+useful).
+
+Regards,
+
+Thomas
+
+
+
 
 
