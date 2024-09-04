@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-315269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F5496C037
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE196C038
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B6F1C250CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0E81F20F9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18AA1E0B78;
-	Wed,  4 Sep 2024 14:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF61E0B8C;
+	Wed,  4 Sep 2024 14:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HgfWwr99"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fH8uktNw"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD821E0B62;
-	Wed,  4 Sep 2024 14:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4301E0B6F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459652; cv=none; b=IVcWfuJ7itkbP/ckS+OJrL9z910O/rdAIW8pndJZg9rXrelatzASuxpj10EJZzAduhAy5MEyW9scbCaNB5p6BEzE6A87Mh6GhFablz6X+UmQbWgz/9EIQpw47yWXDF2wW754g29qO9iyc4AScbELn/4ES3oP9cEZS7vI5vcDGkI=
+	t=1725459654; cv=none; b=ZmjBzq/KxA5nbn2aEQgGIb67ms4pNeJkmq1qMoVjAo0hnsKCf6ajE6hYsqHVM3Poeb7jzrQs8PHHFBdlUx4/JhzgULU+awWNI352E09kisFYyllqGIFNThpHVrGPij5p0P7QMF9fzg3QYihLbU+SHh01E1PNVKjb6heato2pDe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459652; c=relaxed/simple;
-	bh=ITsGfugUMr9puQDBp+P640F9MZXA6jU3xRcO2/5S338=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jcBmNp0qI/5C3ZiuEAFsQNpCUdS9HC3W/UHfrXcln7djDQsPJJpgMEHPoQwa+ScbpUrytAy3EN3TJ4S+NdBGqh2kGgPNM04ZMFj4BgEeD3YzZ0y5BCdfSR3UJ7WSwbNGStDQw4Scnl907hxW5fdY2Ii6gd5w1KfeCbk3zRR/dMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HgfWwr99; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484EI96p010431;
-	Wed, 4 Sep 2024 14:20:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QrG8p65E5bnLIK8DqDLKFxiZpnW4MlFd9WmsAYCwB1g=; b=HgfWwr99jDPAjR0t
-	ZhNnb5mln0c6N91jxUTxFqlVES6PtmsYOao451NUE558th3hxETCwkvBzWxC+6Tf
-	o4xywlcGul42t0QThCOFIqPuUEjeJjCQUl6Q2oc2Ocy5lCacgQO0OkrymJaoD3Oz
-	CtHABsC5OEl4nPD5bAMOFvq/iHfH8yE4GcU75rIXrZIJuYupa1QrTr5WewDmo2Ng
-	3CQJOHve+rRrLP9lIRTtcE9FA+ouCNQy1nsvhF2SzstMVRFi0PGt3AmaCtY4XKmm
-	WwvlfAMWN/NHNpFnieP8zKNfqjfwRU6E77S6wFjZo+L+vNYkQc2l98gabPScj7Xu
-	LzK6Bg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrhenu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 14:20:45 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484EKitx020748
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 14:20:44 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 07:20:39 -0700
-Message-ID: <7fb34b98-7bc0-43fb-a6e7-dee073fed317@quicinc.com>
-Date: Wed, 4 Sep 2024 22:20:36 +0800
+	s=arc-20240116; t=1725459654; c=relaxed/simple;
+	bh=qh7QzeNn1e5Pk2/QDNUNqCqsQHNRY5IQduu9qiuqNVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+mzRzgANJYbfQThQX/Fb742hF3ZjkHzA32OMlcAiAYiWdzg9gPD2x1uWXB2an3OyTR7WG6GeyMmxuEGQSyhObWwh4fvf+N2xDBt9z+vFdV9jvD2bIrPZWQw5vIm3GhfrRdMowvC5cDwT1GXQK/tEbNECN4ZJVvlm/1qnWoHkFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fH8uktNw; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37747c1d928so607771f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725459651; x=1726064451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XEaydlTYxgFPTPFEB0dzIiGoTyUBH5i3vydc6ziFKbI=;
+        b=fH8uktNwi6E7p2O2jN/AYsnQn7gxQTDAkXMTryAysQtsIRGz2iXLv3KzlsvSLaEePS
+         gWCiduWGRYl3Jjjn1n3oRYwg2+MrFKA7X9SWg7ERxxgO3x6DYKCP7Y0ykZn38jUlLEzm
+         wxne7Y/2p9tdxDrNfEd7oOfY0DowyyE4og6pT3UGlWXqzsvu0UJnqtdQ6iVSI+9CvBso
+         ygE45aj+m+vViv56amAJvXQyrdpc2zPKwyZdgKxIX66RlaJmfBWSCrPboZnPOnf0e4t5
+         PC7YxymNhoe2vjeMcgUuHCsF64sqqfLZY9evgzBRgZ7BZnbJXCzYg55pNxKe96I/lbcR
+         uVKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725459651; x=1726064451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XEaydlTYxgFPTPFEB0dzIiGoTyUBH5i3vydc6ziFKbI=;
+        b=rKSVEm2pFqrgstentBHofZiAqKBIK+oeV0dDr/F6vxPqn2kSDmsnMkhCi9Of8qKBsu
+         0ti0CmrGTHMljyAUEhcXCnRXhrDuiYf7tVBK40qFakqFFzEWEaqlzgY2UPuI0ghKpt+x
+         6rOmB4lJVsS6BO3SWsDg8p/KoYFD8q5hUqUQXyO55/Vu9oTXUF9RUWwHsQtANXzH/F7b
+         v2XLNMY0CE99hv7JRboGOmaU5enPVn+tnP/1phjtLbxgtq5NWVqVrLYA8l9x+wHmLEnx
+         QFERlKEMj+AE3Zx1HjO2V+SJP7ajoEVnU88k/+VVnPQeX74AZOmi9/CJD2xeAyAqT+Jd
+         sXDQ==
+X-Gm-Message-State: AOJu0Yxh+aMzuK58YjYeUlZC4XDX0I5Ysqog5kLaLA4Xfo3+IlHyJrhh
+	bfxSghzlU8ubx8+iabnBXP/bgZvFhnwkcOFLomkgCBpWzZRMKB8savto6LTayxI=
+X-Google-Smtp-Source: AGHT+IFvu23YtmgmJJOspMRG+OZzhhFnyd0zrYzvQFOKRrEcNpovBjG71JDZ6FXxaqiyKIbVMYTcMQ==
+X-Received: by 2002:adf:e592:0:b0:371:8c19:f5e6 with SMTP id ffacd0b85a97d-374bf1c95d5mr10916746f8f.40.1725459650472;
+        Wed, 04 Sep 2024 07:20:50 -0700 (PDT)
+Received: from localhost (189-18-187-19.dsl.telesp.net.br. [189.18.187.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea3550esm14128085ad.124.2024.09.04.07.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:20:50 -0700 (PDT)
+Date: Wed, 4 Sep 2024 11:20:43 -0300
+From: "Ricardo B. Marliere" <ricardo.marliere@suse.com>
+To: Stuart Yoder <stuyoder@gmail.com>, 
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>, Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] bus: fsl-mc: constify the struct device_type usage
+Message-ID: <gbwslua37jhptbwb2siui7jsdhyibfxvhkze7yxy4rra7jgdcb@btm7hfsbahwi>
+References: <20240904-class_cleanup-fsl-mc-bus-v2-1-83fa25cbdc68@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] media: qcom: camss: csiphy: Add an init callback to
- CSI PHY devices
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-5-quic_depengs@quicinc.com>
- <3cdd7101-ae8c-45c9-9695-f7f4202d1edb@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <3cdd7101-ae8c-45c9-9695-f7f4202d1edb@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zWSgH0K4kaVarHKiZTAVX6klUesY9va3
-X-Proofpoint-ORIG-GUID: zWSgH0K4kaVarHKiZTAVX6klUesY9va3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_11,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=950 priorityscore=1501
- spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040108
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904-class_cleanup-fsl-mc-bus-v2-1-83fa25cbdc68@suse.com>
 
-Hi Bryan,
-
-On 8/19/2024 8:17 AM, Vladimir Zapolskiy wrote:
-> On 8/12/24 17:41, Depeng Shao wrote:
->> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
-> I've already expressed concerns about a necessity of this function, 
-> since it
-> adds runtime burden of work, which can be successfully done at compile 
-> time,
-> but okay...
+On  4 Sep 24 11:17, Ricardo B. Marliere wrote:
+> Since commit aed65af1cc2f ("drivers: make device_type const"), the driver
+> core can properly handle constant struct device_type. Move all the
+> device_type variables used in the bus to be constant structures as well,
+> placing it into read-only memory which can not be modified at runtime.
 > 
-> Since it is needed for 3PH case only, it may make sense to remove it 
-> from 2PH
-> and call it here conditionally like
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Ricardo B. Marliere <ricardo.marliere@suse.com>
+> ---
+> v1->v2:
+> - Added missing specifiers regarding:
+> https://lore.kernel.org/oe-kbuild-all/202403091124.VOzGG1lj-lkp@intel.com/
+> https://lore.kernel.org/oe-kbuild-all/202403090918.89zrHUF2-lkp@intel.com/
+> https://lore.kernel.org/oe-kbuild-all/202409041701.8NfSraMa-lkp@intel.com/
 > 
->      if (csiphy->res->hw_ops->init)
->          ret = csiphy->res->hw_ops->init(csiphy);
-> 
-> But it's up to you, I hope the callback will be removed in short future.
-> 
+> v1: https://lore.kernel.org/all/20240309-device_cleanup-gregkh-v1-1-8ca586ef17ba@marliere.net/
 
-Could you please comment on if it is fine to remove the init from 2PH 
-driver?
+Actually, v1 is at:
+https://lore.kernel.org/all/20240219-device_cleanup-fsl-mc-v1-1-d206b8b90f2b@marliere.net/
 
-
-Thanks,
-Depeng
 
