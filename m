@@ -1,222 +1,120 @@
-Return-Path: <linux-kernel+bounces-314483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D8D96B3E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8520C96B3EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367DC1C230A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77F71C23876
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D6A17BECC;
-	Wed,  4 Sep 2024 08:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D951017BEB0;
+	Wed,  4 Sep 2024 08:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ig3y8/M8"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rbap1gwj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F7F52F70;
-	Wed,  4 Sep 2024 08:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F108F52F70;
+	Wed,  4 Sep 2024 08:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437274; cv=none; b=XmMAv8Bgx35YHjz61WxoAZCVoFwIM72PMvKEnbWOTfYpQtaSyDZvqt6hQ9wMG8gRSHQJDcHN+ipuT83kNnNS+i286T1FcdtpWI+qc1OoQO9O4zE9UeJrhFt2Hk+P0lhIIXr08ifEUcEweLGLJyib373Fd3A766fceO+nqq77JIA=
+	t=1725437326; cv=none; b=oRMj/juFZNKZW00KMu6mi0aeOUawPSoWgf8A5t0PcFYNDAo6wxcUJETkH8g9oYu362eVSwtMWmmwxSS4c32H1lUGFLbS9gzFK2iATS27+qR7JwNWjNtEqBt5JZN7Fi9jUp1LGcS/PzSslM0pbOVvc+qr4xLpd7uCjm6j/EmRsdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437274; c=relaxed/simple;
-	bh=yIZHX3eBXK8zzAS3yQQPOB9+lqHIWH64eVUUSWwPUX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B2RL1iEQuN1pq8h5PpBumKIxednNn+SsEhuf/AUf8zv8xHyyWu/O3VoNbI+lRtNTCjkM2IDwB+xejJK1bRc9S1qvyIJztewjNMz5u08EzdDynvCiof2BhJYhYB8DrciwulKUr4vPE9c+JdFTSdrjQjnH1DH82UrrcFcfKBRU8xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ig3y8/M8; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725437270;
-	bh=yIZHX3eBXK8zzAS3yQQPOB9+lqHIWH64eVUUSWwPUX8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ig3y8/M8mLHuyDuF26oOvQqp19c7SrU7XkCJbJXqFPRD4jMtxnr8Qld/yQDpuxicC
-	 nDMX6UmM5D9mo1Fv6pFcLBv6Bz67hns/sfYHF3MDCA5YmL3WMZskfyMq0CWYTZaRMH
-	 I0BgkkuMIdyoWj8mpKMAfYje8wFeEgkJZzcTCP3YPl8HTXp6wXWrVuV//cLN9lcbae
-	 rCHquOB6EHHfNToZh/TxKMxWPGjhLn9UD1Ataw5jZSr114kZT3dacZJ2M3tx7xw6FA
-	 rZm2D347GVeopyRsmv3LPsTi56GDUuBq+9HCj/GuFb62+RaKtAA3Uh4VH1O6ovBvu1
-	 hwqf0xtxdKofQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 60C7A17E0F95;
-	Wed,  4 Sep 2024 10:07:50 +0200 (CEST)
-Date: Wed, 4 Sep 2024 10:07:43 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 4/4] drm/panthor: add sysfs knob for enabling job
- profiling
-Message-ID: <20240904100743.225f1837@collabora.com>
-In-Reply-To: <20240903202541.430225-5-adrian.larumbe@collabora.com>
-References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
-	<20240903202541.430225-5-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725437326; c=relaxed/simple;
+	bh=60XKJBFQrNzMhkirdD2qis5gFKmyYkDScKZTst23+Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zbc5SoMp49EUkbV0/bm6tFhsMkXAfJopOGMAKOGrsBtGWRi7D8UKRHxOBcZ+EpSBZqQNkgehaEvUxxHyjWjozEMrzeB+oYGD/0yTybhwtyye1eUN0fiYPnJSWljCMXv0nAWhLCa/TvmF04Q82FY91GddYLfdK7Hh194aHKoZSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rbap1gwj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jda6kdkrlX1mijI27UzNrN49mCGupQmlGIn58DXJZPU=; b=Rbap1gwjxDKmEX54KIL3907rSS
+	tgC+gEqNWP6z7ut4FcRHXo9cnC6hsj3Jt0b/TfKgQIhfTjy14GvIpW1KUkDtWqKRLjzHZQPkec6hQ
+	QujMs7A9bnDzrPfSKrzUG/CgqQFA1V+15ShZuqjp1hZLAQ8avDvTwtAefVBHkAaqK2M2ezR+Q83Ro
+	EeytOF9clvS/T6qsaDsiTcmu6Jr7p/fPWDaC7KwUF3AeAsKVOEKLpOZ7WfaArR/C4mrI99+Lhtocu
+	HJPdLLQU4TekVx7yfy9tMCwVMhC+JMO/1XrB83oqLRz6Di8V/VyRY5Sbyp2b+iSueDaSWZ2QwQMrp
+	AqQQrB3w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sll4D-00000000Xr3-1PmP;
+	Wed, 04 Sep 2024 08:08:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3CB97300642; Wed,  4 Sep 2024 10:08:42 +0200 (CEST)
+Date: Wed, 4 Sep 2024 10:08:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
+ entries
+Message-ID: <20240904080842.GE4723@noisy.programming.kicks-ass.net>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
+ <20240903082909.GP4723@noisy.programming.kicks-ass.net>
+ <20240904042829.tkcpql65cxgzvhpx@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904042829.tkcpql65cxgzvhpx@treble>
 
-On Tue,  3 Sep 2024 21:25:38 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Tue, Sep 03, 2024 at 09:28:29PM -0700, Josh Poimboeuf wrote:
+> On Tue, Sep 03, 2024 at 10:29:09AM +0200, Peter Zijlstra wrote:
+> > On Mon, Sep 02, 2024 at 09:00:11PM -0700, Josh Poimboeuf wrote:
+> > > Create a symbol for each special section entry.  This helps objtool
+> > > extract needed entries.
+> > 
+> > A little more explanation would be nice,..
+> 
+> Indeed!
+> 
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> Subject: [PATCH] x86/alternative: Create symbols for special section entries
+> 
+> The kernel has a myriad of special sections including __bug_table,
+> .altinstructions, etc.  Each has its own distinct format, though each is
+> more or less an array of structs or pointers.
+> 
+> When creating a livepatch module, objtool extracts a subset of functions
+> out of the original object file and into a new one.  For that to work
+> properly, it also needs to extract a subset of each special section's
+> entries.  Specifically, it should only extract those entries which
+> reference the extracted functions.
+> 
+> One way to achieve that would be to hardcode intimate knowledge about
+> each special section and its entry sizes.  That's less than ideal,
+> especially for cases like .altinstr_replacement which has variable-sized
+> "structs" which are described by another section.
+> 
+> Take a more generic approach: for the "array of structs" style sections,
+> annotate each struct entry with a symbol containing the entry.  This
+> makes it easy for tooling to parse the data and avoids the fragility of
+> hardcoding section details.
+> 
+> (For the "array of pointers" style sections, no symbol is needed, as the
+> format is already self-evident.)
 
-> This commit introduces a DRM device sysfs attribute that lets UM control
-> the job accounting status in the device. The knob variable had been broug=
-ht
-> in as part of a previous commit, but now we're able to fix it manually.
->=20
-> As sysfs files are part of a driver's uAPI, describe its legitimate input
-> values and output format in a documentation file.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  Documentation/gpu/panthor.rst         | 46 +++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_drv.c | 39 +++++++++++++++++++++++
->  2 files changed, 85 insertions(+)
->  create mode 100644 Documentation/gpu/panthor.rst
->=20
-> diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
-> new file mode 100644
-> index 000000000000..cbf5c4429a2d
-> --- /dev/null
-> +++ b/Documentation/gpu/panthor.rst
-> @@ -0,0 +1,46 @@
-> +.. SPDX-License-Identifier: GPL-2.0+
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> + drm/Panthor CSF driver
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> +
-> +.. _panfrost-usage-stats:
-> +
-> +Panthor DRM client usage stats implementation
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The drm/Panthor driver implements the DRM client usage stats specificati=
-on as
-> +documented in :ref:`drm-client-usage-stats`.
-> +
-> +Example of the output showing the implemented key value pairs and entire=
-ty of
-> +the currently possible format options:
-> +
-> +::
-> +     pos:    0
-> +     flags:  02400002
-> +     mnt_id: 29
-> +     ino:    491
-> +     drm-driver:     panthor
-> +     drm-client-id:  10
-> +     drm-engine-panthor:     111110952750 ns
-> +     drm-cycles-panthor:     94439687187
-> +     drm-maxfreq-panthor:    1000000000 Hz
-> +     drm-curfreq-panthor:    1000000000 Hz
-> +     drm-total-memory:       16480 KiB
-> +     drm-shared-memory:      0
-> +     drm-active-memory:      16200 KiB
-> +     drm-resident-memory:    16480 KiB
-> +     drm-purgeable-memory:   0
-> +
-> +Possible `drm-engine-` key names are: `panthor`.
-> +`drm-curfreq-` values convey the current operating frequency for that en=
-gine.
-> +
-> +Users must bear in mind that engine and cycle sampling are disabled by d=
-efault,
-> +because of power saving concerns. `fdinfo` users and benchmark applicati=
-ons which
-> +query the fdinfo file must make sure to toggle the job profiling status =
-of the
-> +driver by writing into the appropriate sysfs node::
-> +
-> +    echo <N> > /sys/bus/platform/drivers/panthor/[a-f0-9]*.gpu/profiling
-> +
-> +Where `N` is a bit mask where cycle and timestamp sampling are respectiv=
-ely
-> +enabled by the first and second bits.
+(so someone went and touched a ton of the alternative code recently,
+this is going to need a rebase)
 
-This should probably be documented in
-Documentation/ABI/testing/sysfs-driver-panthor too.
-
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
-hor/panthor_drv.c
-> index e18838754963..26475db96c41 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1450,6 +1450,44 @@ static void panthor_remove(struct platform_device =
-*pdev)
->  	panthor_device_unplug(ptdev);
->  }
-> =20
-> +static ssize_t profiling_show(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      char *buf)
-> +{
-> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
-> +
-> +	return sysfs_emit(buf, "%d\n", ptdev->profile_mask);
-> +}
-> +
-> +static ssize_t profiling_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf, size_t len)
-> +{
-> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
-> +	u32 value;
-> +	int err;
-> +
-> +	err =3D kstrtou32(buf, 0, &value);
-> +	if (err)
-> +		return err;
-> +
-> +	if ((value & ~PANTHOR_DEVICE_PROFILING_ALL) !=3D 0)
-> +		return -EINVAL;
-> +
-> +	ptdev->profile_mask =3D value;
-> +
-> +	return len;
-> +}
-> +
-> +static DEVICE_ATTR_RW(profiling);
-> +
-> +static struct attribute *panthor_attrs[] =3D {
-> +	&dev_attr_profiling.attr,
-> +	NULL,
-> +};
-> +
-> +ATTRIBUTE_GROUPS(panthor);
-> +
->  static const struct of_device_id dt_match[] =3D {
->  	{ .compatible =3D "rockchip,rk3588-mali" },
->  	{ .compatible =3D "arm,mali-valhall-csf" },
-> @@ -1469,6 +1507,7 @@ static struct platform_driver panthor_driver =3D {
->  		.name =3D "panthor",
->  		.pm =3D pm_ptr(&panthor_pm_ops),
->  		.of_match_table =3D dt_match,
-> +		.dev_groups =3D panthor_groups,
->  	},
->  };
-> =20
+This generates a metric ton of symbols and I'm not seeing you touch
+kallsyms.c, do we want to explicitly drop these from a --all-symbols
+build? I don't think it makes sense to have them in the final image,
+right?
 
 
