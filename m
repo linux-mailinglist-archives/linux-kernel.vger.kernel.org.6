@@ -1,148 +1,200 @@
-Return-Path: <linux-kernel+bounces-315626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E6696C519
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:17:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E92E96C51E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81F25B21AA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13F61C21AEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD6F1E0B74;
-	Wed,  4 Sep 2024 17:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XCUaIlk0"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57DF1E0B70;
+	Wed,  4 Sep 2024 17:17:34 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FA35EE8D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76C35473E;
+	Wed,  4 Sep 2024 17:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470239; cv=none; b=lybRSi2UlLoSazjR9ofVQbJJl5c4C+R+yYi4efjLfAPgeFKJx/OFUskaRvKKiMjhjGoBSEHmbzEpOapFnOFU5BGNRennQ7hDFO+0YL7fo+LWCdLe7dtVo0Uk1oPcao0o2wCLPo/YsGj/QM1pXxBJZFChkvsYK9eiSBr6yU2iAlY=
+	t=1725470254; cv=none; b=T3+XvUR6hb7V8EcRlmZ9wlUUSAg+TzKSzK+omS8+8mecKczM9IcwhSk+xDGSvYEJ0jJKPz0AgUrgr7dwVniVoOSXRsYNthphqqGD8iDRXP4Xve/lvMWzHx0DZB3uzs56P9UEtLQ+mBhtEaiPuRJOVHyErofFP5hDI3MmQEKNnV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470239; c=relaxed/simple;
-	bh=t65s4nNcRGc9mCe7+o0bYGJaz4sl89r+MRqyyhR0kno=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WFm++diabmzULjaJGWCOc+gzXNQfPwxYFm3NMCYTjBPT2R9w3a6UdTQC8F44h7Mh3cvKsBTL3ckDfOOgAl4KRzJXmFS80eVCai5P43niJO6yQ3W0PMk4WmFS0BBBwmpSWqbmve/jUPWLMbCC7JGGVaeWkLW/da++InFvt12DCw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XCUaIlk0; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c354415c19so24377226d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725470236; x=1726075036; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3OSNlGLBd8NLSWyCnfTJEaUwWihfhoQwqRJWu1zx2FI=;
-        b=XCUaIlk0mzow+kummcayugnMkOW5VeKhZXrVw2IwmWHNiZcLHkjXNZOEmny6FWwh1H
-         JO+DORkk9OAAKrybo0ZlXGYVukWOzufp8l4ujYAHNEvSi8Xv04ED7/cC0WTiUEBHBCJi
-         WjsFc3vv0waUyI48S7NEWwz1AtfnPfe6cP+Yw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725470236; x=1726075036;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OSNlGLBd8NLSWyCnfTJEaUwWihfhoQwqRJWu1zx2FI=;
-        b=mIncs62KhaMbjY+KKqAiJ7QfbwktB56iKMz3Kb9DNmpQfGcyEWppqs1zGl/gr3xaPx
-         aakwFpBAsS+U2YdZVv4rEJLMo/kIoQcGzB4W+FqFuleOP5Yn26kFbspCSq34hvrtvVtt
-         YkhiTAULg9KFEWaT1Xexaa+380fU3w02ZqsCGWbxuNCjW7LBMevCiLPbscnvpMrXqSvV
-         cckE4UBgY/wys5dyDyNyM3wQy/wbAvbKM2x3yd5oSRzMcS9BH+Rw+HOHnTgDy3uVAVI9
-         pXV0d5r2Rv9/siEcn9etuP5tnzuKqxXpPsiuZR92l0XDcNBpb22pIqs9owBbz8I0vsmj
-         Vw/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVa3XbIqbbLpuSskSEy40v1Njgo07wfwj1Z/7jDjqYpJPxyWWjVISPJoQRC4U+QY+ddkWnNqlVBVkjtlAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWyKj9ZoG8B4DIoVY0mwNNweoC2z7d1sG5cE38QAha94R1fGLg
-	11Yke6Jyxh0S9MencPyQDr8iQnw1mjm0rMOjMt6tFXqHjPnK2N5RAsh0bofjSEsziXewhfwBLwL
-	MxLXKn6AbSewS0yYLjsQJ/LoZzm6rnWNVv5Yn
-X-Google-Smtp-Source: AGHT+IEVE/zja0Ta9Tz96mzKz/L550YBB+VoIesNmcQXcpg7Z7ieAwebVwSfXt2IZeQcblS1lNC8BSuXnTTjD/SJFRM=
-X-Received: by 2002:a05:6214:3104:b0:6c3:5f8f:2745 with SMTP id
- 6a1803df08f44-6c510a93bc4mr62896466d6.27.1725470236496; Wed, 04 Sep 2024
- 10:17:16 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 4 Sep 2024 13:17:15 -0400
+	s=arc-20240116; t=1725470254; c=relaxed/simple;
+	bh=X4/4PpYe9Wm0Hy9XexLX1Fk65/zF/vpp8G89yVAXhz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kJEXVqw9Jv96/QTPTcwykB91RcaV4Ic/rxqVdEGTH7j1Kpe0FTQbjsoOtewAfzA77nwVa6k4p9e3s1f/ZIa4rhsewAWtlVDa26sOd1BFa1t9Y4uHEI8LfkBDoJZ74xi5IHdX3C9q0ekE8rRMFLYdL61Eukb9ubgIsqJ+IElUzPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WzThB6wRTz9sST;
+	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 23q8UjPNxB-l; Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzThB5g1Yz9sSS;
+	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id AC51E8B77A;
+	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id paQV1BysDOD5; Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
+Received: from [192.168.234.246] (unknown [192.168.234.246])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C71548B778;
+	Wed,  4 Sep 2024 19:17:29 +0200 (CEST)
+Message-ID: <b78eab34-61f5-4c9e-b080-d2524cd30eb8@csgroup.eu>
+Date: Wed, 4 Sep 2024 19:17:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZthaCQel2aHhyIu4@smile.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-7-swboyd@chromium.org>
- <ZtWjEudmlR51zkU9@smile.fi.intel.com> <CAE-0n51eSxxvnJXwnfPrXx1=rei=8OGGEtCAgw6nhCktZ0iQDw@mail.gmail.com>
- <ZthaCQel2aHhyIu4@smile.fi.intel.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 4 Sep 2024 13:17:15 -0400
-Message-ID: <CAE-0n52PxnSMGn3TVt3iiq_3Bimnd4JPoeZ1F6XB1o4itiykUQ@mail.gmail.com>
-Subject: Re: [PATCH v4 06/18] drm/bridge: aux-hpd: Support USB Type-C DP
- altmodes via DRM lane assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] vdso: Split linux/minmax.h
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-6-vincenzo.frascino@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240903151437.1002990-6-vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Quoting Andy Shevchenko (2024-09-04 06:00:57)
-> On Tue, Sep 03, 2024 at 06:20:14PM -0400, Stephen Boyd wrote:
-> > Quoting Andy Shevchenko (2024-09-02 04:35:46)
-> > > On Sat, Aug 31, 2024 at 09:06:44PM -0700, Stephen Boyd wrote:
->
-> > > > +     adev->dev.of_node = of_node_get(parent->of_node);
-> > >
-> > > device_set_node() ?
-> >
-> > Or device_set_of_node_from_dev()?
->
-> This is quite unclear to me. The second one bumps the reference count IIRC
-> for no reason (in usual cases). Also only few drivers use that, I would hear
-> what OF people can tell about this API and its usage scope.
 
-Sure, but to be equivalent to the existing code from which this has been
-copied it should use device_set_of_node_from_dev(). Seems fine to just
-use that.
 
-> > > > +static int dp_lane_to_typec_lane(enum dp_lane lane)
-> > > > +{
-> > > > +     switch (lane) {
-> > > > +     case DP_ML0:
-> > > > +             return USB_SSTX2;
-> > > > +     case DP_ML1:
-> > > > +             return USB_SSRX2;
-> > > > +     case DP_ML2:
-> > > > +             return USB_SSTX1;
-> > > > +     case DP_ML3:
-> > > > +             return USB_SSRX1;
-> > > > +     }
-> > >
-> > > > +     return -EINVAL;
-> > >
-> > > Hmm... This can be simply made as default case.
-> >
-> > And then the enum is always "covered" and the compiler doesn't complain
-> > about missing cases (I don't think we have -Wswitch-enum)? Seems worse.
->
-> Hmm... You mean if I remove one of the above cases I will get the warning?
->
+Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+> The VDSO implementation includes headers from outside of the
+> vdso/ namespace.
+> 
+> Split linux/minmax.h to make sure that the generic library
+> uses only the allowed namespace.
 
-Yes.
+It is probably easier to just don't use min_t() in VDSO. Can be open 
+coded without impeeding readability.
+
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>   include/linux/minmax.h | 28 +---------------------------
+>   include/vdso/minmax.h  | 38 ++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 39 insertions(+), 27 deletions(-)
+>   create mode 100644 include/vdso/minmax.h
+> 
+> diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+> index 98008dd92153..846e3fa65c96 100644
+> --- a/include/linux/minmax.h
+> +++ b/include/linux/minmax.h
+> @@ -6,6 +6,7 @@
+>   #include <linux/compiler.h>
+>   #include <linux/const.h>
+>   #include <linux/types.h>
+> +#include <vdso/minmax.h>
+>   
+>   /*
+>    * min()/max()/clamp() macros must accomplish three things:
+> @@ -84,17 +85,6 @@
+>   #define __types_ok3(x,y,z,ux,uy,uz) \
+>   	(__sign_use(x,ux) & __sign_use(y,uy) & __sign_use(z,uz))
+>   
+> -#define __cmp_op_min <
+> -#define __cmp_op_max >
+> -
+> -#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
+> -
+> -#define __cmp_once_unique(op, type, x, y, ux, uy) \
+> -	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+> -
+> -#define __cmp_once(op, type, x, y) \
+> -	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+> -
+>   #define __careful_cmp_once(op, x, y, ux, uy) ({		\
+>   	__auto_type ux = (x); __auto_type uy = (y);	\
+>   	BUILD_BUG_ON_MSG(!__types_ok(x,y,ux,uy),	\
+> @@ -204,22 +194,6 @@
+>    * Or not use min/max/clamp at all, of course.
+>    */
+>   
+> -/**
+> - * min_t - return minimum of two values, using the specified type
+> - * @type: data type to use
+> - * @x: first value
+> - * @y: second value
+> - */
+> -#define min_t(type, x, y) __cmp_once(min, type, x, y)
+> -
+> -/**
+> - * max_t - return maximum of two values, using the specified type
+> - * @type: data type to use
+> - * @x: first value
+> - * @y: second value
+> - */
+> -#define max_t(type, x, y) __cmp_once(max, type, x, y)
+> -
+>   /*
+>    * Do not check the array parameter using __must_be_array().
+>    * In the following legit use-case where the "array" passed is a simple pointer,
+> diff --git a/include/vdso/minmax.h b/include/vdso/minmax.h
+> new file mode 100644
+> index 000000000000..26724f34c513
+> --- /dev/null
+> +++ b/include/vdso/minmax.h
+> @@ -0,0 +1,38 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __VDSO_MINMAX_H
+> +#define __VDSO_MINMAX_H
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <linux/compiler.h>
+> +
+> +#define __cmp_op_min <
+> +#define __cmp_op_max >
+> +
+> +#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
+> +
+> +#define __cmp_once_unique(op, type, x, y, ux, uy) \
+> +	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+> +
+> +#define __cmp_once(op, type, x, y) \
+> +	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+> +
+> +/**
+> + * min_t - return minimum of two values, using the specified type
+> + * @type: data type to use
+> + * @x: first value
+> + * @y: second value
+> + */
+> +#define min_t(type, x, y) __cmp_once(min, type, x, y)
+> +
+> +/**
+> + * max_t - return maximum of two values, using the specified type
+> + * @type: data type to use
+> + * @x: first value
+> + * @y: second value
+> + */
+> +#define max_t(type, x, y) __cmp_once(max, type, x, y)
+> +
+> +#endif /* !__ASSEMBLY__ */
+> +
+> +#endif /* __VDSO_MINMAX_H */
 
