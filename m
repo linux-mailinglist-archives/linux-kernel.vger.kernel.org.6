@@ -1,190 +1,133 @@
-Return-Path: <linux-kernel+bounces-314802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E1E96B938
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3930796B955
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C4A7B247DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE2F2811DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0191D0147;
-	Wed,  4 Sep 2024 10:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231B81D016A;
+	Wed,  4 Sep 2024 10:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nCv3HGcu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AjO+zJcz"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4611865F0;
-	Wed,  4 Sep 2024 10:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A29D1CF280;
+	Wed,  4 Sep 2024 10:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725446972; cv=none; b=C5juyK3X6zZb/wr83WJvGLvEbBKqSHyk1GMZVdQi2PeW7uSkLo/sITOGaNnsw8OBdKj+0jY9IovWHrOGcZXSN7SQXgOPWdoMymWDrFpHfFJS6oK1AG65EOxWGowEl5KUjnOzHY+oif1TWngUZZn2tVcCJ4xqBvEGGoMqYBSx+x4=
+	t=1725447214; cv=none; b=kRfmvcawTgIV2u0H/lzMhk5cSu+I+1EHSyPk93vPgngVeCqFbaDPqVzplA4hFe/WZZ6Jy6KnfJBv3dLfSrQaYjYPMaFWnG/0QCj6ZmvgBuIaJs5KaUJK8oDWTrszcUL07WRitfatoIsZX5GtIVYPtANj5TlIXvyMeJWdoBCG4zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725446972; c=relaxed/simple;
-	bh=0ijP+pVmbADabEuDyLRkpzrf3oC7O0FWuy5uCaOr28w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XblxuVXS6qcPEB4V0cWTplOgFkg8GowqtX9iWmnz6SsP+8Qb7zd/whDiW72Sfn8DVk/rHIY2yTVXDk+kZa0AF/TSL+W0bqp7apoi+/uwgkRRspsIs19tUC/QjSJPrIrhTuLGbDliVe4W6yIcwWq0dQOCbAskyi6zgWl2Vyhhl/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nCv3HGcu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4849h0Cb027357;
-	Wed, 4 Sep 2024 10:49:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O98drQdkSode7+dkoFVrCnCB9AJPpOKGVsLRbhcDHbM=; b=nCv3HGcuEuQ5MVZ0
-	tjkiNhZftb32t6TpxlT7Yf4EYjLTqevForavP4tXAkDhNEJDc3uMLI90MSH3r8aP
-	0ioCg0lUgdvjKjGcMoqkTGzu3AXP1+0i36Nohf+4nLTVGtMryqFcGmKl4prHZToC
-	LTtzaOg4YDzPrkSu6L0QUgWcUbodJQmJxdWDW4nNrEiqln0VC4Gb0ejDQLrjl1Ft
-	ZjHET3JtgjwNtbsW5naDCwXM7E3LyLiM0ej9299h6CSGpXh6MfEtPspbvTGv7jsS
-	HFinAwl9hUPcpvkoc9hJgpUM0/Saly82gCkDFqAp8LG4RXVSSOw/ONStucM64x51
-	Yt6ujQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt672j4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 10:49:22 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484AnLZn000395
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 10:49:21 GMT
-Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 03:49:14 -0700
-Message-ID: <b016abbb-7214-4892-b1d2-1bf3ba1b7560@quicinc.com>
-Date: Wed, 4 Sep 2024 16:19:12 +0530
+	s=arc-20240116; t=1725447214; c=relaxed/simple;
+	bh=IAvCk1yjCPWRHhJhJZGE3McWze1Xp4mYQh62iJBq51I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bxLUr67GnHaY9s64bapNMdvk5HhaCQmYieh8bCHRoQtyImK+M8Omj7XFCjMb++dfmt/qH1FDS4x+K1LU0DvluTAS38NTjkcpYfATr6JMFFo4DegPn8zj2DDfGT3KwLCj5SLIAQGRphQmSDsNihoTjZLpjo23Zl3VUNBhMSH6OgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AjO+zJcz; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay8-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::228])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id C278EC37F8;
+	Wed,  4 Sep 2024 10:49:59 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 805841BF206;
+	Wed,  4 Sep 2024 10:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725446992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OlQwp//l7+YMqCwEc62IbsKJVaVaIN0kbujxzcaSERM=;
+	b=AjO+zJczyrIU9K82FhJ8IfAofM+yJtFx1/tB0Usq8CuxFJmN/lqMvG7f4uaUqRzzKIg32Y
+	072cQqb2AYT+TcGFLby8CWj4hKXnCXptPUgIIXJ1a8KYaP8UNSiIFSV52DXfCMuy7V8Jbd
+	67ZvV/uH0AlmbJ81czvB2WNIuDTpqwhNrOm2OUUojHecup2yvlEtUGdmNT6GUyJd3JihgY
+	GjBlIAQUEwsCJoElvHxaqzCoGfd5HvX/ZgCtb3r5sM9HKrd/Y1q+k3RXuoL3bUPtv+xFt6
+	RCfqul/llDwO58QjXYaEAQJF0+rROiGIUJskuUOfy9c8UGZN1Z7qFCCkeJHrCA==
+Date: Wed, 4 Sep 2024 12:49:49 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
+ Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next v2 7/7] net: ethernet: fs_enet: phylink
+ conversion
+Message-ID: <20240904124949.563f1343@fedora.home>
+In-Reply-To: <20240902185543.48d91e87@kernel.org>
+References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
+	<20240829161531.610874-8-maxime.chevallier@bootlin.com>
+	<20240902185543.48d91e87@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: dwc3: gadget: Refine the logic for resizing Tx
- FIFOs
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jing Leng
-	<jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
-        Jack Pham
-	<quic_jackp@quicinc.com>,
-        "kernel@quicinc.com" <kernel@quicinc.com>,
-        "Wesley
- Cheng" <quic_wcheng@quicinc.com>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>,
-        Vijayavardhan Vennapusa
-	<quic_vvreddy@quicinc.com>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240903132917.603-1-quic_akakum@quicinc.com>
- <20240903221055.s4gu6actfbrkonmr@synopsys.com>
-Content-Language: en-US
-From: AKASH KUMAR <quic_akakum@quicinc.com>
-In-Reply-To: <20240903221055.s4gu6actfbrkonmr@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: R4vkwNhuaDIAm_x4aCxkuzty1zm6Uir0
-X-Proofpoint-GUID: R4vkwNhuaDIAm_x4aCxkuzty1zm6Uir0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_09,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040081
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Thinh,
+Hi Jakub,
 
-On 9/4/2024 3:41 AM, Thinh Nguyen wrote:
-> On Tue, Sep 03, 2024, Akash Kumar wrote:
->> The current logic is rigid, setting num_fifos to fixed values:
->>
->> 3 for any maxburst greater than 1.
->> tx_fifo_resize_max_num for maxburst greater than 6.
->> Additionally, it did not differentiate much between bulk and
->> isochronous transfers, applying similar logic to both.
->>
->> The new logic is more dynamic and tailored to the specific needs of
->> bulk and isochronous transfers:
->>
->> Bulk Transfers: Ensures that num_fifos is optimized by considering
->> both the maxburst value and the maximum allowed number of FIFOs.
->>
->> Isochronous Transfers: Ensures that num_fifos is sufficient by
->> considering the maxburst value and the maximum packet multiplier.
->>
->> This change aims to optimize the allocation of Tx FIFOs for both bulk
->> and isochronous endpoints, potentially improving data transfer
->> efficiency and overall performance.
->> It also enhances support for all use cases, which can be tweaked
->> with DT parameters and the endpoint’s maxburst and maxpacket.
->>
->> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
->> ---
->> Changes for v2:
->> Redefine logic for resizing tx fifos.
->>
->> Changes for v1:
->> Added additional condition to allocate tx fifo for hs isoc eps,
->> keeping the other resize logic same.
->> ---
->>   drivers/usb/dwc3/gadget.c | 15 ++++++---------
->>   1 file changed, 6 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->> index 89fc690fdf34..49809a931104 100644
->> --- a/drivers/usb/dwc3/gadget.c
->> +++ b/drivers/usb/dwc3/gadget.c
->> @@ -778,15 +778,12 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
->>   
->>   	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
->>   
->> -	if ((dep->endpoint.maxburst > 1 &&
->> -	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
->> -	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
->> -		num_fifos = 3;
->> -
->> -	if (dep->endpoint.maxburst > 6 &&
->> -	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
->> -	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
->> -		num_fifos = dwc->tx_fifo_resize_max_num;
->> +	if (usb_endpoint_xfer_bulk(dep->endpoint.desc))
->> +		num_fifos = min_t(unsigned int, dep->endpoint.maxburst + 1,
->> +				  dwc->tx_fifo_resize_max_num);
->> +	if (usb_endpoint_xfer_isoc(dep->endpoint.desc))
->> +		num_fifos = max_t(unsigned int, dep->endpoint.maxburst,
->> +				  usb_endpoint_maxp_mult(dep->endpoint.desc));
-> No. Don't mix usb_endpoint_maxp_mult with maxburst like this. Check base
-> on operating speed. Also, now you're ignoring tx_fifo_resize_max_num for
-> isoc.
-Sure will add separate check based on speed.
+On Mon, 2 Sep 2024 18:55:43 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-We have to support three versions of CAM support through same dt and image
-SS/SS+ capable cam which needs 10k fifo
-HS cams which needs 3K
-multi UVC cams which needs 1k and 2k fifo
+> On Thu, 29 Aug 2024 18:15:30 +0200 Maxime Chevallier wrote:
+> > @@ -582,15 +591,12 @@ static void fs_timeout_work(struct work_struct *work)
+> >  
+> >  	dev->stats.tx_errors++;
+> >  
+> > -	spin_lock_irqsave(&fep->lock, flags);
+> > -
+> > -	if (dev->flags & IFF_UP) {
+> > -		phy_stop(dev->phydev);
+> > -		(*fep->ops->stop)(dev);
+> > -		(*fep->ops->restart)(dev);
+> > -	}
+> > +	rtnl_lock();  
+> 
+> so we take rtnl_lock here..
+> 
+> > +	phylink_stop(fep->phylink);
+> > +	phylink_start(fep->phylink);
+> > +	rtnl_unlock();
+> >  
+> > -	phy_start(dev->phydev);
+> > +	spin_lock_irqsave(&fep->lock, flags);
+> >  	wake = fep->tx_free >= MAX_SKB_FRAGS &&
+> >  	       !(CBDR_SC(fep->cur_tx) & BD_ENET_TX_READY);
+> >  	spin_unlock_irqrestore(&fep->lock, flags);  
+> 
+> > @@ -717,19 +686,18 @@ static int fs_enet_close(struct net_device *dev)
+> >  	unsigned long flags;
+> >  
+> >  	netif_stop_queue(dev);
+> > -	netif_carrier_off(dev);
+> >  	napi_disable(&fep->napi);
+> >  	cancel_work_sync(&fep->timeout_work);  
+> 
+> ..and cancel_work_sync() under rtnl_lock here?
+> 
+> IDK if removing the the "dev->flags & IFF_UP" check counts as
+> meaningfully making it worse, but we're going in the wrong direction.
+> The _sync() has to go, and the timeout work needs to check if device
+> has been closed under rtnl_lock ?
 
-Putting any dependency with tx_fifo_resize_max_num, we can't achieve 1k 
-and 10K,
-it has to be decided by maxbursts itself which user can configure.
-All uvc gadget applications supports configurable maxburst which they 
-use while opening,
-so it should be better for isoc eps to decide fifo based on maxbursts.
+Arg that's true, I didn't consider that call path at all... Sorry about
+that, I'll indeed rework that to address this deadlock waiting to
+happen.
 
 Thanks,
-Akash
 
+Maxime
 
