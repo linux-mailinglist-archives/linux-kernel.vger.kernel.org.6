@@ -1,256 +1,113 @@
-Return-Path: <linux-kernel+bounces-314533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25D796B49D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4C96B49F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C630D1C21C1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1773F1F29252
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BA41CC162;
-	Wed,  4 Sep 2024 08:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F281CB53D;
+	Wed,  4 Sep 2024 08:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AEbkVfIg"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eGVbKqY1"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7721CB31D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFF81917DF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438779; cv=none; b=WIiZbSK5TPEJmAGaq1z/mis8AMM/Gyj542nE75RpU7iLxUqhX9iHWkP7U0t6NyhFW9n6p17e9aUuw0HuNaYMTFXoLrH14UjOd1p75vrCuHe0Ar77FbUoNVOrR0xUhuqNr/AZCmNP3bYxEmlonUq8bBtY1Lz9n3i9vlICWwTl2Lo=
+	t=1725438801; cv=none; b=tBzEb5vGkmMGzXQ54n5CgDAlVa0smu0FmDmzA6BuObzjMwhrnBhGOPtXXYr2DjSJUVHTJiayxwRmFcywzo4pye+SSKC0QkA4rZKGrP6T8/VIuWwuGntkMHvoKxk/LLyWb7XMA03hEy7XMsMJJr2sxSaLpWxs2K1/zWV5P0LG7Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438779; c=relaxed/simple;
-	bh=Xv0p+AJofBlCcpb3u4bgKBZYMhgzStHTHgFTPhmw1pE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmYj1L5cSi3PjSGnMHbYZHCysZXM8BKtD42qDv2pErqv/tdQP1BPizJeqkdxi5ckHn+7WBx2b+8ajUWo+kAj3U+0SWUiLK7lljsbb4RLgDZ2zo8BZhlD4lIYi/vhmHb3joae1QQ21AdhuGC4iANAvop0wnkStu/fZDKBU4u6Si0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AEbkVfIg; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a86984e035aso770925166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725438775; x=1726043575; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=czuWwJfvtYwCI1yRbL1xXo5MWTUEx5+lgQqq8jdG4Bg=;
-        b=AEbkVfIgg41Etbmw1+4g5J0R5NmCwhfHwx23LU+LzIEk7m0E4mAqRG6jgZUsJFamgn
-         L+mOk9hNx0oQ8wypBYKuu6KvJCMQGWXUKkxULYzmg6o+0VJn5HTHqJRjekkFYxaLKCM1
-         hLG3RbpQ8/4y82I5tH9ONW8PpzQBn7JJW29XPtChfemnXe+ahNuXwfis2VOB7/rcd88v
-         gqNZXb93EJtHOyCG1yq4LzDFuRyfnmvZ86A9xDX+0TVqOXBU+g2NO5L6cpgwclT3eLmr
-         63KsmC6AVXKiuwwyi6gSHvZ7Rr9UV4fzYskeuZRaHhHpKlmeZ9yd2LgRDp1ZxKFCjV49
-         tt5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725438775; x=1726043575;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=czuWwJfvtYwCI1yRbL1xXo5MWTUEx5+lgQqq8jdG4Bg=;
-        b=GmqqCP122TFPyIB2fs02V+wimANs+0+PjK8Qh+D6pV0smdrFsZfU3j+99MGESoaC7E
-         0/4wCDMy66DXc9JTcjDP0h39CCiwNKeaXvreyxbt/lO0094rOohvTRIBIM9O6xjWFNZP
-         gCV3VvlT/PRy3PTvcVTnHUcdaYBdthd7ivz3t7BQncks97ipFlokhVrjlgAQv+ZItU3W
-         FbWvd18gK7TGAs+458Vva5rzAYWHM5OjxbtzBlemD34mxqvyW30rKwIXYmOFFZ6SBQOz
-         cROlXwnYrVUXV13E1WWx7uiGW1IVHVxsHvwrhOa0L2Jk8j3KnHMheJsTmV3hcP6uVNfN
-         GqYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS3iyag3wJYMPrXF4rWbTQIwZ0vFVAiheXiI/RP3OnSCaWDsOIpljimsIR7NkFx4cJLWszvfWWBak9SNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyALSX3/8uPI4pbSDcG0nVh9RdNMF89pMbwSW1rUiK/g6NSk/9Z
-	DmbJJYJQDJQuBvl5L7hJQKJFuvHCp5hJVesV6LGTW+MwuxbcLMlbEQAXcW3bPMo=
-X-Google-Smtp-Source: AGHT+IFsYrIc/8V6Dd0Wb4ac4K3yCfFqAZyqP0j4It4wu1Ti01Hf/Xj9KyshDVwvjUwn7G7BVIArrg==
-X-Received: by 2002:a17:907:1c94:b0:a7a:b643:654f with SMTP id a640c23a62f3a-a89a358274emr1229334866b.15.1725438774327;
-        Wed, 04 Sep 2024 01:32:54 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a3d3177basm69728966b.64.2024.09.04.01.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 01:32:53 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 4 Sep 2024 10:33:02 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZtgbPtYXu0yOieou@apocalypse>
-References: <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
- <ZtChPt4cD8PzfEkF@apocalypse>
- <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
- <Ztc2DadAnxLIYFj-@apocalypse>
- <CAL_Jsq+mpVEDthuViQZ6T7tDQ_krgxYSQ0Qg1pBMNW8Kpr+Qcw@mail.gmail.com>
+	s=arc-20240116; t=1725438801; c=relaxed/simple;
+	bh=boAOEMCSocyxTuJmJQuOFNET1Pgfg6ztfmjcoE8YGoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fLzhgNwQIT4fWnoujsg7CKJ9kW+Lcf2dK3fvhWjqGH09DrFDlM5UNAE41hQmr7tMRbFdguBUHiesNra2RUyEnEjD5yW6rdPOCOEe1JMM8T6DayqBn3dktShYUu/7+c4cAxqNj2p2yW8KhvCbvAwtMKJkGHX06uc3s8GCVvb4zg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eGVbKqY1; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6A26AE0002;
+	Wed,  4 Sep 2024 08:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725438797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TUGv9wHevgRZb5cc15QcdSSIcNgojKzy+jo82zKMyNc=;
+	b=eGVbKqY1J+/gbeDzfyyEbvjwQtZ/8Gz6/IvBdLy9Z7ZMyo/3mmyPyiQYv+f7P0fCtK50AL
+	ji6uVTvvZ8lZPOjkb8l9US43KD7pugQf+XszbkD2i73SKjZsy3DIuETg2t0ry/4CmFyQRq
+	aOFJl1rYEQ3v4xXsLClVU/Qvev41Dklh/Zi7lJl31HcrTz9tytd8d6xGS2rUP1ZqajP2bP
+	czUUX6rmfRRlnk7QK5ndVnndzHCG2v0w4xvzSNJzEKvAxI3EfD6Wd45jS1B6dIAXe0o+Aj
+	g7IO5Tmm9H9cc91OU5zUkSkwPBLhf97o6taIa+QkbuBk5rx5j7h86NNoZgq6AQ==
+Date: Wed, 4 Sep 2024 10:33:13 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>
+Subject: Re: [PATCH] soc: fsl: cpm1: qmc: Fix dependency on fsl_soc.h
+Message-ID: <20240904103313.21aed2de@bootlin.com>
+In-Reply-To: <fcca0369d0bcd527aa77bccdfc0894faa029cead.1725431771.git.christophe.leroy@csgroup.eu>
+References: <fcca0369d0bcd527aa77bccdfc0894faa029cead.1725431771.git.christophe.leroy@csgroup.eu>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+mpVEDthuViQZ6T7tDQ_krgxYSQ0Qg1pBMNW8Kpr+Qcw@mail.gmail.com>
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Rob,
+Hi Christophe,
 
-On 13:46 Tue 03 Sep     , Rob Herring wrote:
-> On Tue, Sep 3, 2024 at 11:15 AM Andrea della Porta
-> <andrea.porta@suse.com> wrote:
-> >
-> > Hi Rob,
-> >
-> > On 14:37 Fri 30 Aug     , Rob Herring wrote:
-> > > On Thu, Aug 29, 2024 at 11:26 AM Andrea della Porta
-> > > <andrea.porta@suse.com> wrote:
-> > > >
-> > > > Hi Rob,
-> > > >
-> >
-> > ...
-> >
-> > >
-> > > I think simple-bus where you have it is fine. It is really 1 level up
-> > > that needs to be specified. Basically something that's referenced from
-> > > the specific PCI device's schema (e.g. the RP1 schema (which you are
-> > > missing)).
-> > >
-> > > That schema needs to roughly look like this:
-> > >
-> > > properties:
-> > >   "#address-cells":
-> > >     const: 3
-> > >   "#size-cells":
-> > >     const: 2
-> > >   ranges:
-> > >     minItems: 1
-> > >     maxItems: 6
-> > >     items:
-> > >       additionalItems: true
-> > >       items:
-> > >         - maximum: 5  # The BAR number
-> > >         - const: 0
-> > >         - const: 0
-> > >         - # TODO: valid PCI memory flags
-> > >
-> > > patternProperties:
-> > >   "^bar-bus@[0-5]$":
-> > >     type: object
-> > >     additionalProperties: true
-> > >     properties:
-> > >       compatible:
-> > >         const: simple-bus
-> > >       ranges: true
-> > >
-> >
-> > Hmmm.. not sure how this is going to work. The PCI device (RP1) will
-> > havei, at runtime, a compatible like this:
-> >
-> > compatible = "pci1de4,1\0pciclass,0200000\0pciclass,0200";
-> >
-> > that is basically generated automatically by the OF framework. So, in the
-> > schema you proposed above, I can put something like:
-> >
-> > properties:
-> >   compatible:
-> >     contains:
-> >       pattern: '^pci1de4,1'
-> 
-> No, it should be like this:
-> 
-> compatible:
->   items:
->     - const: pci1de4,1
->     - const: pciclass,0200000
->     - const: pciclass,0200
-> 
-> or
-> 
-> compatible:
->   addtionalItems: true
->   maxItems: 3
->   items:
->     - const: pci1de4,1
->
+On Wed,  4 Sep 2024 09:51:09 +0200
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-Ack.
- 
+> QMC driver requires fsl_soc.h to use function get_immrbase().
+> This header is provided by powerpc architecture and the functions
+> it declares are defined only when FSL_SOC is selected.
 > 
-> Alternatively, we could instead only generate 'pciclass' compatibles
-> for bridge nodes. The reason being that being an ethernet controller
-> doesn't really tell us anything. There's no standard interface
-> associated with that class.
+> Today the dependency is the following:
+> 
+> 	depends on CPM1 || QUICC_ENGINE || \
+> 		   (FSL_SOC && (CPM || QUICC_ENGINE) && COMPILE_TEST)
+> 
+> This dependency tentatively ensure that FSL_SOC is there when doing a
+> COMPILE_TEST.
+> 
+> CPM1 is only selected by PPC_8xx and cannot be selected manually.
+> CPM1 selects FSL_SOC
+> 
+> QUICC_ENGINE on the other hand can be selected by ARM or ARM64 which
+> doesn't select FSL_SOC. QUICC_ENGINE can also be selected with just
+> COMPILE_TEST.
+> 
+> It is therefore possible to end up with CPM_QMC selected
+> without FSL_SOC.
+> 
+> So fix it by making it depend on FSL_SOC at all time.
+> 
+> The rest of the above dependency is the same as the one for CPM_TSA on
+> which CPM_QMC also depends, so it can go away, leaving only a simple
+> dependency on FSL_SOC.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/lkml/20240904104859.020fe3a9@canb.auug.org.au/
+> Fixes: 8655b76b7004 ("soc: fsl: cpm1: qmc: Handle QUICC Engine (QE) soft-qmc firmware")
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-I'd avoid this one, since the class is not representative in this case. RP1
-is an MFD and not an Ethernet controller. Also, it would prevent other similar
-PCI devices with differnt class from using this schema.
+Thanks for this patch!
 
-> 
-> > or maybe I could omit the compatible entirely, like in:
-> 
-> No.
-> 
-> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-iommu.yaml
-> 
-> That's not a device node, but just part of pci-host-bridge.yaml.
-> 
-> > that seems to refer to generic compatible values.
-> > In both cases though, I don't see how these binding could work with
-> > make dt_binding_check, since there's no compatible known at compile
-> > time (for the first approach), or no compatible at all (the second
-> > approach).
-> > Is it intended only as a loose documentation?
-> 
-> No, schemas define exactly what a binding can and can't contain. But
-> they are divided into device schemas and common schemas. The latter
-> are incomplete and are included by the former. Generally, "compatible"
-> goes in device schemas.
+Acked-by: Herve Codina <herve.codina@bootlin.com>
 
-Ack.
-
-> 
-> > Or are you proposing that for a future new bus (hence with a new, specific,
-> > compatible) that could be described by the schema above?
-> 
-> The above schema would be the common schema included by a RP1 schema,
-> LAN966x schema, or any other device doing the same thing.
-
-Many thanks, I believe I've got it now :)
-
-Cheers,
-Andrea
-
-> Rob
+Best regards,
+Hervé
 
