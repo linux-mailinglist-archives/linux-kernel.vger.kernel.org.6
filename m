@@ -1,137 +1,149 @@
-Return-Path: <linux-kernel+bounces-315194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AAF96BF11
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:50:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B49296BF2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8981F255FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56782894D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C621DA108;
-	Wed,  4 Sep 2024 13:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FC31DB950;
+	Wed,  4 Sep 2024 13:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ILdZ3wS6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Er536IWs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF811D88BF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75701DA609;
+	Wed,  4 Sep 2024 13:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457855; cv=none; b=IEZp+/+0Q2H0KZwMnct9ii8e0AWytZm60qtBSKD8IgJOKlPPaL8mnF8+x64zW7IkwUsdHowkOcZOCf3EnYbuzyqry8p2tTsIaL5UGJRkqGd3dN2zvZX/FVpkgL9iSmi6ca2K8wm3Yi8lLXEqu/cXPvB7h7XFSn+0xHc1dS5Wv4E=
+	t=1725458107; cv=none; b=Un927oJ5gHTYls8+4sv7ybnc7mxButdQ4Ln9EQYdJgxvVNTod77eZS8YdYRRE1GmpNa68J5C2ew1Z8bT0oLJFJPSeOv1FE++kp7AtpNgcb7nLEkxGmjFKLchwGQ9zVIHF+s1Zd3qYdUGUDlPKtzMM8VvpBSTXpdXH+PkqoYXlS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457855; c=relaxed/simple;
-	bh=uWrtz3g6TxgzckFRZ4YDiY+UV6EL+/VQKjQ9NqC5RB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JqHODjlbTLs6rpMLhT82XgEGK9MwxBb0cBeCC2xrKlUKVjaFvTFIPNUZ5bqICVFsyV6UN5Ryl5aX/Lsaqv7H98dsBYjiKVnrWk9s8yx39qNkkJLcTotmblQhlvIKy2ho3Mt3GNbSpgCaCeeVG96LZ4ehRAOFe9ndyEDhe1dFM3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ILdZ3wS6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725457852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YEl6UcNWySWixJDtk3OBM+nYtD0bKQYmS/w9a5H5Rf8=;
-	b=ILdZ3wS6XTRwCR672zwNKIAsPj+wh0iZFF07AUmot/1Hi4wd8yxEYX4ezvjC4zOAx7QU5V
-	Y2pnwo/k39HdD2ymkVSqheMVYCxYwbE4WmxlakYoY6nAgs8JG35LLO+4GY5N3dRdkjjs36
-	NLEP+TfWDopGCbTKnyGmRv45AAAnD0Y=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-e_9B40lyMieiF8Az2Ti6rw-1; Wed,
- 04 Sep 2024 09:50:45 -0400
-X-MC-Unique: e_9B40lyMieiF8Az2Ti6rw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E44A1953945;
-	Wed,  4 Sep 2024 13:50:42 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.194.141])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6A77E300019A;
-	Wed,  4 Sep 2024 13:50:37 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-um@lists.infradead.org,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH] um: kunit: resolve missing prototypes warning
-Date: Wed,  4 Sep 2024 15:50:19 +0200
-Message-ID: <20240904135019.200756-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1725458107; c=relaxed/simple;
+	bh=Pw09EoXu7B/k/Ba1l1esGop2w51rj9+9eY060VZllXE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BsTCY5iyytnYfNcrWQCJCLXaE26VXb+39rVk+ddQ3HTcI4UBpKpAbEU31qqmbVGgNGfLS39rnj/HBbyRKTIfJEVIs8UlaexjOIv8ieYSmcAlibR9Msq1xeSXmC20kVsN5y97rSyeR/TANPn8lGmY8HvnDnd6A9UwS7W5zOg2FtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Er536IWs; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725458106; x=1756994106;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Pw09EoXu7B/k/Ba1l1esGop2w51rj9+9eY060VZllXE=;
+  b=Er536IWsgYqIeubJ+lFtagXAuLyRki9fi/NbPTgIMMCBYdHljM16WBBI
+   HhgqjzJ8wOLoVjDLC21iYZdXwgc3JGViHyUzo1cXH/yDBPYItUcRsCILd
+   nAquWlF5DQkcEYTLvTeKv4wtUEB6MCl6t2GVXM5kaLeEGN6bLLvFYgoq8
+   ZqC+oSID1hiDPOeQsCl3KWQaYb7mNTLCyPZdY5NWHhlz498c8sveRNanG
+   P7v3+q8mpCm1rEsI6KYi5LteR3hZiu0d1gtmaKafzrhYV5l+KtPQ+WGqd
+   E5FSu+yXF2X4KVSxuUgekNreSvuZbVbMJs0r2sAj+fc0Gd8BNgtreSxmP
+   g==;
+X-CSE-ConnectionGUID: H+lnth23R8OYMSoQIwavyw==
+X-CSE-MsgGUID: nFEJ+QZRQMOOe0StCOHucA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="49524852"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="49524852"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:55:05 -0700
+X-CSE-ConnectionGUID: 2aKm/M8WTTKUAOjIZtU3qA==
+X-CSE-MsgGUID: KVNsQYM+T0q2bJdw8VZCbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="70155632"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by orviesa004.jf.intel.com with ESMTP; 04 Sep 2024 06:55:02 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: netdev@vger.kernel.org
+Cc: donald.hunter@gmail.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	jiri@resnulli.us,
+	jacob.e.keller@intel.com,
+	liuhangbin@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net v2] tools/net/ynl: fix cli.py --subscribe feature
+Date: Wed,  4 Sep 2024 15:50:34 +0200
+Message-Id: <20240904135034.316033-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-While building for KUnit with default settings, the build is generating
-the following compilation warnings.
+Execution of command:
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml /
+	--subscribe "monitor" --sleep 10
+fails with:
+  File "/repo/./tools/net/ynl/cli.py", line 109, in main
+    ynl.check_ntf()
+  File "/repo/tools/net/ynl/lib/ynl.py", line 924, in check_ntf
+    op = self.rsp_by_value[nl_msg.cmd()]
+KeyError: 19
 
-```
-$ make ARCH=um O=.kunit --jobs=16
-../lib/iomap.c:156:5: warning: no previous prototype for
-‘ioread64_lo_hi’ [-Wmissing-prototypes]
-  156 | u64 ioread64_lo_hi(const void __iomem *addr)
-      |     ^~~~~~~~~~~~~~
-[...]
-```
+Parsing Generic Netlink notification messages performs lookup for op in
+the message. The message was not yet decoded, and is not yet considered
+GenlMsg, thus msg.cmd() returns Generic Netlink family id (19) instead of
+proper notification command id (i.e.: DPLL_CMD_PIN_CHANGE_NTF=13).
 
-The warning happens because the prototypes are defined in
-`asm-generic/iomap.h` only when `readq` and `writeq` are defined.
-For UM, those function get some default definitions but are currently
-defined _after_ the prototypes for `ioread64*`/`iowrite64*` functions.
-Moving the inclusion of `asm-generic/iomap.h` fixes it.
+Allow the op to be obtained within NetlinkProtocol.decode(..) itself if the
+op was not passed to the decode function, thus allow parsing of Generic
+Netlink notifications without causing the failure.
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Suggested-by: Donald Hunter <donald.hunter@gmail.com>
+Link: https://lore.kernel.org/netdev/m2le0n5xpn.fsf@gmail.com/
+Fixes: 0a966d606c68 ("tools/net/ynl: Fix extack decoding for directional ops")
+Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 ---
- include/asm-generic/io.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+v2:
+- use ynl.rsp_by_value[] within decode(..) instead of passing additional
+  argument from the caller function
+---
+ tools/net/ynl/lib/ynl.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index 80de699bf6af..0b02c8e38f20 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -13,10 +13,6 @@
- #include <linux/types.h>
- #include <linux/instruction_pointer.h>
+diff --git a/tools/net/ynl/lib/ynl.py b/tools/net/ynl/lib/ynl.py
+index d42c1d605969..c22c22bf2cb7 100644
+--- a/tools/net/ynl/lib/ynl.py
++++ b/tools/net/ynl/lib/ynl.py
+@@ -388,6 +388,8 @@ class NetlinkProtocol:
  
--#ifdef CONFIG_GENERIC_IOMAP
--#include <asm-generic/iomap.h>
--#endif
--
- #include <asm/mmiowb.h>
- #include <asm-generic/pci_iomap.h>
+     def decode(self, ynl, nl_msg, op):
+         msg = self._decode(nl_msg)
++        if op is None:
++            op = ynl.rsp_by_value[msg.cmd()]
+         fixed_header_size = ynl._struct_size(op.fixed_header)
+         msg.raw_attrs = NlAttrs(msg.raw, fixed_header_size)
+         return msg
+@@ -921,8 +923,7 @@ class YnlFamily(SpecFamily):
+                     print("Netlink done while checking for ntf!?")
+                     continue
  
-@@ -295,6 +291,10 @@ static inline void writeq(u64 value, volatile void __iomem *addr)
- #endif
- #endif /* CONFIG_64BIT */
+-                op = self.rsp_by_value[nl_msg.cmd()]
+-                decoded = self.nlproto.decode(self, nl_msg, op)
++                decoded = self.nlproto.decode(self, nl_msg, None)
+                 if decoded.cmd() not in self.async_msg_ids:
+                     print("Unexpected msg id done while checking for ntf", decoded)
+                     continue
+@@ -980,7 +981,7 @@ class YnlFamily(SpecFamily):
+                     if nl_msg.extack:
+                         self._decode_extack(req_msg, op, nl_msg.extack)
+                 else:
+-                    op = self.rsp_by_value[nl_msg.cmd()]
++                    op = None
+                     req_flags = []
  
-+#ifdef CONFIG_GENERIC_IOMAP
-+#include <asm-generic/iomap.h>
-+#endif
-+
- /*
-  * {read,write}{b,w,l,q}_relaxed() are like the regular version, but
-  * are not guaranteed to provide ordering against spinlocks or memory
-
-base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+                 if nl_msg.error:
 -- 
-2.46.0
+2.38.1
 
 
