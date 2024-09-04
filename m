@@ -1,358 +1,126 @@
-Return-Path: <linux-kernel+bounces-315097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79F396BDE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C5D96BDD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7971F21D17
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF0B286021
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F061E1302;
-	Wed,  4 Sep 2024 13:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294571DA2ED;
+	Wed,  4 Sep 2024 13:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RnDuoUNC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tv5aATDo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RNJvI3GW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7FC1DFE0F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BA41DA317
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725455144; cv=none; b=MSOrTIvaXIo+dXseZhGvmf1QTUiUCMlP4nI7Zv7aPEsByh0Wcwwg8TnRgPhihxCd9sQ6n+rFftDI7+3/u3YlsF2UpQVmixM4Y16wAGLJiM/8fHWIS838Hy5O6/VpAWGWZfrLshc1V3xYLF8NPVfiWL13P36fvsxSIUhlvS+CP2k=
+	t=1725455134; cv=none; b=jpFO9Gv7XdR40NpNSliOjA7VaTnGg92WpZj47rOMOpUjQu0SxiHoRk9jKPQPOEEXsYnf9vzv5lEBtMo4tmEd0+mnxQaOZUG377MkiTYvzbDSv7RIAwMzzgsAdpDLMAv+fb4WDQId6GCZeNiJLuLp1NQfbzkH5mZv3rPYt4Nrug8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725455144; c=relaxed/simple;
-	bh=MnkTO+SoXn9ALpaHKD0yv6agPOoMrHkkYtt8oXOQSeI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RAQBKSUQPZBz9NHbMVF6ollC9Sxdovlfw5PGDpNOGV/5Wzq1RwjAdbQMmucqk0SdwojXQQx2VU1Y3iZg316WiZnCHo9FTNVwG9MRZJwHVtSWusVbCevMJEL9Uh5mRbtUs/Dogn2EhWXS6n3XI4JVexIaRvWAMrGTpOhZ3l9bAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RnDuoUNC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tv5aATDo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725455140;
+	s=arc-20240116; t=1725455134; c=relaxed/simple;
+	bh=Qog4/ckP5IwmWdw4kRSCmvkd/PPxpvrlQLCc7SpaTZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxE9i71uLDiZZhq3UfWXOckvL8OEeK4DxryDJBOfU0x5mPvHJ2s5FnTkxzg7n4qNemkLj2mjM2VWbG1V6kyWixuhVbK5mSImAtWtJPgF0BZa69T4ZLhIW1A9whLuMA7O9yVrA0yXch3XnkHpVJeYei+gxOOEmMo4fGOaSiGJvY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RNJvI3GW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725455131;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vaCS8Wy4nmdabahzumttPewmZzyJlsqugb8Ai6FeVCc=;
-	b=RnDuoUNC1qnfSLHxaZjrP1s54UbHEGEfFQ+Ae8H4Jr9k/DcbAmZDB7YqnpXvwUeDi9DIRo
-	/ljYnwY5w2LwDnw7aDxutw1rhGyAIK00eHJLq5jx7n+I+S6McC2gwi+0429OI0E+eVzdyp
-	+qYQymg8i2+GZ5kyZjUsoJurpVmGDOfRTkE+IExuolVyEh/U/sSZHq5wrRtH6+810yS1kJ
-	lg9++TjW1rWKKKvHF/veqOVMTT6u3wtu5KmthS4Twd71ZvxU8CZC6QKO031k0yIbTbHY8L
-	esyUqK/WvKobBSo9ueFdAPz3O4U07LwrpodppJnhh0S9NGvW/cCbl30B1mqmTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725455140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vaCS8Wy4nmdabahzumttPewmZzyJlsqugb8Ai6FeVCc=;
-	b=tv5aATDot9gdwZmFekQEaNMeLadVkLZCKDFHuZuHtX2v2cFZJJzwRGiCPt5CfgCtuzPq/g
-	0XB+D9u08+x+bOBg==
-Date: Wed, 04 Sep 2024 15:05:05 +0200
-Subject: [PATCH 15/15] timers/Documentation: Cleanup delay/sleep
- documentation
+	bh=Pc2eaZ47WJ4Q9gCOeP10UryjXtcCatn1vVORikLChL8=;
+	b=RNJvI3GWRCtE2ArXPDKaRYm7PW1aJZIIgE3yoKg7HX1dOqmOJOHEkfBTxyUu/ACNQeXroh
+	JukCHieP5Ub/xgSs2L9IPk5Io9pt9JPXpNkROZc8AmHhCPjSX0aISCg9SS4KOvoHbX0uaq
+	neia4fVI/NzFM0TYwZY3tpzzD/Lnu5M=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-1Vi-fdInO5yJD7GXg2_t2w-1; Wed, 04 Sep 2024 09:05:30 -0400
+X-MC-Unique: 1Vi-fdInO5yJD7GXg2_t2w-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a86824d2d12so561582366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:05:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725455129; x=1726059929;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pc2eaZ47WJ4Q9gCOeP10UryjXtcCatn1vVORikLChL8=;
+        b=sYfTbM6boySCT+k2eypreIXHByaOUhcOg4P25Kfj7Oo0t61X1wjEPB/Gxg+2LyJL88
+         oU94VydZj8nwBdDi8FfTh9upMBhtHZ0y7hBMRVNfBin3vHh2ONBswB3Zy5LarciViRGw
+         7N+wTKkrHt4b8sPhix/TyQzmmTkgrc3ClSh9+aHd07crb4uBq975F3szsokLE1pICCyh
+         H4xCl/grsCWJvirFxU+CbJ7HZR0fLhZp502JdGxR/UasKeBH1UNf45eahZmkIRB970TN
+         LnN8NLBRz035VqJaCoLKEG1SRW+bVMPRX8aN09ck5e6ZitPkZTeFYLqhbLRVg09wV2LL
+         FT3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVbsmQmR17b0SWC5yDIUJwGOmCcWBF/joFOZgK+zDBfbKfQH4XJ9IzT21IOT+9BS/4wCS3j71f9kryfTO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOC/MVQl/IH1NTd9QevToFmJE9TWFbOmykAkWAr/mpCw4M7348
+	i2Lyx+BJcbyaLxuDMqVJqpQA9hMybok3i2kyqIuLf+aITXetBHWXy6wmj9b4ShAJk/dMQ4zHg5W
+	TQ8oITwrywpLyJmPgxKh2SuWaXZf7/ePWb3nq3EevXL4we4h1b6rM50OBkDbiag==
+X-Received: by 2002:a17:906:6a1e:b0:a86:83f8:f5a2 with SMTP id a640c23a62f3a-a89b94cef24mr1223955066b.19.1725455129533;
+        Wed, 04 Sep 2024 06:05:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnOy/z2jyGJKjbXW7jRf8OvhsAv1mCemghSG6D9ZH9zkIUKoN0rHZO5VxuCCYQ+Z62Be36yw==
+X-Received: by 2002:a17:906:6a1e:b0:a86:83f8:f5a2 with SMTP id a640c23a62f3a-a89b94cef24mr1223950166b.19.1725455128993;
+        Wed, 04 Sep 2024 06:05:28 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb61fsm821951966b.10.2024.09.04.06.05.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 06:05:28 -0700 (PDT)
+Message-ID: <ce292f51-b327-4f22-af22-bb6ed3d87d51@redhat.com>
+Date: Wed, 4 Sep 2024 15:05:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] platform/x86: int3472: A few cleanups
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Scally <djrscally@gmail.com>
+References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
+ <ZtWRGgb-ZsLp25np@smile.fi.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZtWRGgb-ZsLp25np@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-devel-anna-maria-b4-timers-flseep-v1-15-e98760256370@linutronix.de>
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-The documentation which tries to give advises how to properly inserting
-delays or sleeps is outdated. The file name is 'timers-howto.rst' which
-might be missleading as it is only about delay and sleep mechanisms and not
-how to use timers.
+Hi,
 
-Update the documentation by integrating the important parts from the
-related function descriptions and move it all into a self explaining file
-with the name "delay_sleep_functions.rst".
+On 9/2/24 12:19 PM, Andy Shevchenko wrote:
+> On Thu, Aug 22, 2024 at 04:05:37PM +0300, Andy Shevchenko wrote:
+>> A few cleanups to the driver. It includes an amendment to
+>> dev_err_probe() to ignore 0 error code. The patches 1 and 2 are
+>> dependent, while patches 2 and 3 may be applied in any order.
+>>
+>> Assumed to go via PDx86 tree if no objections to the code.
+> 
+> Ilpo, Hans, the patches 3 and 4 are independent from 1&2 and may be applied
+> separately, if you have no objections.
 
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
----
- Documentation/timers/delay_sleep_functions.rst | 122 +++++++++++++++++++++++++
- Documentation/timers/index.rst                 |   2 +-
- Documentation/timers/timers-howto.rst          | 115 -----------------------
- 3 files changed, 123 insertions(+), 116 deletions(-)
+I've applied patches 3 and 4 to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+now.
 
-diff --git a/Documentation/timers/delay_sleep_functions.rst b/Documentation/timers/delay_sleep_functions.rst
-new file mode 100644
-index 000000000000..05d7c3c8fbe8
---- /dev/null
-+++ b/Documentation/timers/delay_sleep_functions.rst
-@@ -0,0 +1,122 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Delay and sleep mechanisms
-+==========================
-+
-+This document seeks to answer the common question: "What is the
-+RightWay (TM) to insert a delay?"
-+
-+This question is most often faced by driver writers who have to
-+deal with hardware delays and who may not be the most intimately
-+familiar with the inner workings of the Linux Kernel.
-+
-+The following table gives a rough overview about the existing function
-+'families' and their limitations. This overview table does not replace the
-+reading of the function description before usage!
-+
-+.. list-table::
-+   :widths: 20 20 20 20 20
-+   :header-rows: 2
-+
-+   * -
-+     - `*delay()`
-+     - `usleep_range*()`
-+     - `*sleep()`
-+     - `fsleep()`
-+   * -
-+     - busy-wait loop
-+     - hrtimers based
-+     - timer list timers based
-+     - combines the others
-+   * - Usage in atomic Context
-+     - yes
-+     - no
-+     - no
-+     - no
-+   * - precise on "short intervals"
-+     - yes
-+     - yes
-+     - depends
-+     - yes
-+   * - precise on "long intervals"
-+     - Do not use!
-+     - yes
-+     - max 12.5% slack
-+     - yes
-+   * - interruptible variant
-+     - no
-+     - yes
-+     - yes
-+     - no
-+
-+A generic advice for non atomic contexts could be:
-+
-+#. Use `fsleep()` whenever unsure (as it combines all the advantages of the
-+   others)
-+#. Use `*sleep()` whenever possible
-+#. Use `usleep_range*()` whenever accuracy of `*sleep()` is not sufficient
-+#. Use `*delay()` for very, very short delays
-+
-+Find some more detailed information about the function 'families' in the next
-+sections.
-+
-+`*delay()` family of functions
-+------------------------------
-+
-+These functions use the jiffy estimation of clock speed and will busy wait for
-+enough loop cycles to achieve the desired delay. udelay() is the basic
-+implementation and ndelay() as well as mdelay() are variants.
-+
-+These functions are mainly used to add a delay in atomic context. Please make
-+sure to ask yourself before adding a delay in atomic context: Is this really
-+required?
-+
-+.. kernel-doc:: include/asm-generic/delay.h
-+	:identifiers: udelay ndelay
-+
-+.. kernel-doc:: include/linux/delay.h
-+	:identifiers: mdelay
-+
-+
-+`usleep_range*()` and `*sleep()` family of functions
-+----------------------------------------------------
-+
-+These functions uses hrtimers or timer list timers to provide the requested
-+sleeping duration. For a decision which function is the right one to use, take
-+some basic information into account:
-+
-+#. hrtimers are more expensive as they are using an rb-tree (instead of hashing)
-+#. hrtimers are more expensive when the requested sleeping duration is the first
-+   timer which means real hardware has to be programmed
-+#. timer list timers always providing some sort of slack as they are jiffy
-+   based
-+
-+The generic advice is repeated here:
-+
-+#. Use `fsleep()` whenever unsure (as it combines all the advantages of the
-+   others)
-+#. Use `*sleep()` whenever possible
-+#. Use `usleep_range*()` whenever accuracy of `*sleep()` is not sufficient
-+
-+First check fsleep() function description and to learn more about accuracy,
-+please check msleep() function description.
-+
-+
-+`usleep_range*()`
-+~~~~~~~~~~~~~~~~~
-+
-+.. kernel-doc:: include/linux/delay.h
-+	:identifiers: usleep_range usleep_range_idle
-+
-+.. kernel-doc:: kernel/time/sleep_timeout.c
-+	:identifiers: usleep_range_state
-+
-+
-+`*sleep()`
-+~~~~~~~~~~
-+
-+.. kernel-doc:: kernel/time/sleep_timeout.c
-+       :identifiers: msleep msleep_interruptible
-+
-+.. kernel-doc:: include/linux/delay.h
-+	:identifiers: ssleep fsleep
-diff --git a/Documentation/timers/index.rst b/Documentation/timers/index.rst
-index 983f91f8f023..4e88116e4dcf 100644
---- a/Documentation/timers/index.rst
-+++ b/Documentation/timers/index.rst
-@@ -12,7 +12,7 @@ Timers
-     hrtimers
-     no_hz
-     timekeeping
--    timers-howto
-+    delay_sleep_functions
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/timers/timers-howto.rst b/Documentation/timers/timers-howto.rst
-deleted file mode 100644
-index ef7a4652ccc9..000000000000
---- a/Documentation/timers/timers-howto.rst
-+++ /dev/null
-@@ -1,115 +0,0 @@
--===================================================================
--delays - Information on the various kernel delay / sleep mechanisms
--===================================================================
--
--This document seeks to answer the common question: "What is the
--RightWay (TM) to insert a delay?"
--
--This question is most often faced by driver writers who have to
--deal with hardware delays and who may not be the most intimately
--familiar with the inner workings of the Linux Kernel.
--
--
--Inserting Delays
------------------
--
--The first, and most important, question you need to ask is "Is my
--code in an atomic context?"  This should be followed closely by "Does
--it really need to delay in atomic context?" If so...
--
--ATOMIC CONTEXT:
--	You must use the `*delay` family of functions. These
--	functions use the jiffy estimation of clock speed
--	and will busy wait for enough loop cycles to achieve
--	the desired delay:
--
--	ndelay(unsigned long nsecs)
--	udelay(unsigned long usecs)
--	mdelay(unsigned long msecs)
--
--	udelay is the generally preferred API; ndelay-level
--	precision may not actually exist on many non-PC devices.
--
--	mdelay is macro wrapper around udelay, to account for
--	possible overflow when passing large arguments to udelay.
--	In general, use of mdelay is discouraged and code should
--	be refactored to allow for the use of msleep.
--
--NON-ATOMIC CONTEXT:
--	You should use the `*sleep[_range]` family of functions.
--	There are a few more options here, while any of them may
--	work correctly, using the "right" sleep function will
--	help the scheduler, power management, and just make your
--	driver better :)
--
--	-- Backed by busy-wait loop:
--
--		udelay(unsigned long usecs)
--
--	-- Backed by hrtimers:
--
--		usleep_range(unsigned long min, unsigned long max)
--
--	-- Backed by jiffies / legacy_timers
--
--		msleep(unsigned long msecs)
--		msleep_interruptible(unsigned long msecs)
--
--	Unlike the `*delay` family, the underlying mechanism
--	driving each of these calls varies, thus there are
--	quirks you should be aware of.
--
--
--	SLEEPING FOR "A FEW" USECS ( < ~10us? ):
--		* Use udelay
--
--		- Why not usleep?
--			On slower systems, (embedded, OR perhaps a speed-
--			stepped PC!) the overhead of setting up the hrtimers
--			for usleep *may* not be worth it. Such an evaluation
--			will obviously depend on your specific situation, but
--			it is something to be aware of.
--
--	SLEEPING FOR ~USECS OR SMALL MSECS ( 10us - 20ms):
--		* Use usleep_range
--
--		- Why not msleep for (1ms - 20ms)?
--			Explained originally here:
--				https://lore.kernel.org/r/15327.1186166232@lwn.net
--
--			msleep(1~20) may not do what the caller intends, and
--			will often sleep longer (~20 ms actual sleep for any
--			value given in the 1~20ms range). In many cases this
--			is not the desired behavior.
--
--		- Why is there no "usleep" / What is a good range?
--			Since usleep_range is built on top of hrtimers, the
--			wakeup will be very precise (ish), thus a simple
--			usleep function would likely introduce a large number
--			of undesired interrupts.
--
--			With the introduction of a range, the scheduler is
--			free to coalesce your wakeup with any other wakeup
--			that may have happened for other reasons, or at the
--			worst case, fire an interrupt for your upper bound.
--
--			The larger a range you supply, the greater a chance
--			that you will not trigger an interrupt; this should
--			be balanced with what is an acceptable upper bound on
--			delay / performance for your specific code path. Exact
--			tolerances here are very situation specific, thus it
--			is left to the caller to determine a reasonable range.
--
--	SLEEPING FOR LARGER MSECS ( 10ms+ )
--		* Use msleep or possibly msleep_interruptible
--
--		- What's the difference?
--			msleep sets the current task to TASK_UNINTERRUPTIBLE
--			whereas msleep_interruptible sets the current task to
--			TASK_INTERRUPTIBLE before scheduling the sleep. In
--			short, the difference is whether the sleep can be ended
--			early by a signal. In general, just use msleep unless
--			you know you have a need for the interruptible variant.
--
--	FLEXIBLE SLEEPING (any delay, uninterruptible)
--		* Use fsleep
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
 
--- 
-2.39.2
+Regards,
+
+Hans
+
 
 
