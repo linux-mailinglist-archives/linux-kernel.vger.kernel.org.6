@@ -1,197 +1,234 @@
-Return-Path: <linux-kernel+bounces-315053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0015A96BD39
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:56:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20BD96BD50
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814741F24633
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284F1B26BE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6451DA108;
-	Wed,  4 Sep 2024 12:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D95C1DA618;
+	Wed,  4 Sep 2024 12:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6AmiEMz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MqhyQPbl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F411DA102;
-	Wed,  4 Sep 2024 12:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117751DA112;
+	Wed,  4 Sep 2024 12:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454460; cv=none; b=UqZvSzfUaQh0SSSET4Xt30HpmFDIF5HVtIWUS5fJzSNIYOvZOe3ib4HbtfcHvsmiwnyxMNfxxGv5oGj888QJ41sVSSvZWwArdxAxlLzJVt+ZnSYOH643fOZ68O1zL+taSP4xVLBDC49Zjr4utwZ8vW3cckEgJpSTpzraHEyVHkM=
+	t=1725454601; cv=none; b=m3ttWSZic1s7ltQHws/t7omzd8rBHVAQrXugqq44SeiRoYuOE4RT5g/HTHzX8Zq1G/7PE6wnw8+/nGvChM1Luhe/5a3cgz0OuNQ7wucvlrX+zq8PEDHMQcIZKzbv0MVIBl2BUavTYrtB/jUjZvSosr/Gn0Y1cdTI0hFOjet1dCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454460; c=relaxed/simple;
-	bh=7n0HW1ku8m0qS9mQNKzVpudzf5X0oCBJHVMHUxY77Bo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=g0hnLm1fCTL6KjHJp0EUpESRgs20Ww8NUL+vKuv/M5yRb0O02raYe+PiR5RsvZAtgf69Fnc9Aq4YkT9HQFwge5Cyju5vWq8tFmcuVYGdKDfbzPpw8xe8a/KhwAEiD4Sf3/YgXYDSIdmtioXKrYxU4bJinkNelDDRcGrZoOnLcb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6AmiEMz; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725454458; x=1756990458;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=7n0HW1ku8m0qS9mQNKzVpudzf5X0oCBJHVMHUxY77Bo=;
-  b=d6AmiEMzaArdRsXk8aXDsi+3C3nsVGV1nW+JqTQeLR0vO6eoRvlaICyM
-   DRA4z/M5zd8e4IXv+9g4V2WO9py2/pgzwnx2uHM8BtUCEu5n8u7ewmi1T
-   At+kPpltuH70LXMKc/zf32pew5qnyHd4GEqb+RRVdeKd1Q22zH1gHWLJ3
-   Rqvi7nOppSyZwEleVJ3NMttwhkXKpProlEvPOYuM0Q/cVbn0IB4rFv9Pr
-   HT09yWZRfEyspgL62Arp9r6QVUzoRxCRGMyMEik7AsKKtkztAOnzoKToT
-   pQSfutwmzwyEC2PP6kVAq3bXUn3oLguatlJou57Y/fmck+z5Q3qfG1jxI
-   w==;
-X-CSE-ConnectionGUID: F3YFjhbXTFObePSdLSdeRw==
-X-CSE-MsgGUID: +7OW0YwNT+KMZMAtXL5hrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35500035"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="35500035"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:54:17 -0700
-X-CSE-ConnectionGUID: zQ6bjgPeTYiB1EaCyrqWqw==
-X-CSE-MsgGUID: vhu3W/l2QASSq8P7R9u9rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65250961"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.156])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:54:14 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 4 Sep 2024 15:54:10 +0300 (EEST)
-To: Shuah Khan <skhan@linuxfoundation.org>
-cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-    Shuah Khan <shuah@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
-    Fenghua Yu <fenghua.yu@intel.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>
-Subject: Re: [PATCH v4 0/4] selftests: Fix cpuid / vendor checking build
- issues
-In-Reply-To: <b4b7147f-64cf-4244-a896-07a88f08d0f1@linuxfoundation.org>
-Message-ID: <d8ffc136-876b-db3f-fc87-a1442e53a451@linux.intel.com>
-References: <20240903144528.46811-1-ilpo.jarvinen@linux.intel.com> <eadb7bc7-a093-4229-90f0-88b730087666@linuxfoundation.org> <d2a4ca5c-3352-e570-687c-9d7ec90dbe33@linux.intel.com> <b4b7147f-64cf-4244-a896-07a88f08d0f1@linuxfoundation.org>
+	s=arc-20240116; t=1725454601; c=relaxed/simple;
+	bh=Fcd0kIv4uj2fI5afUr2RryCvVF7W3IzIfmNvA2+jmSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X4wwW5X5Cge1/d5tGIUHdY6KNUiB6JwqzCOPtqK7Frim8jHHpfoeL6I2Z7h3YnvsYJgsILaOJhFVS0d8FjTIjgkQ0levhIc1j4S72BzGN5mbnCqp0Se+As0WM0o7Of0lFY/H9ddpH00Lq+B7Ky/CI5mD+0AcREtJM4hjUDIoY4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MqhyQPbl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4844XgV2010124;
+	Wed, 4 Sep 2024 12:54:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hTdFOttdYDceHeWEwHYIPqera0Ca+5hH3pwRFvVQhUs=; b=MqhyQPblpBCItf6E
+	F5eJU5+fJp0dvplmcAa1JYnV4h2rq+wNi4cAjq07XtE6vv102eNt/ZGGI0P8PSsX
+	+5X3caWCRtrwpjgehCsANP4GA41O7PC0bS+cMfXBZL3d3OQuXS0RYT9dxjpAOJ9q
+	jkq68VAnXkSOyc8wCSACk2TcVSHlMTWNVEIAFrMwLlQxCMPpWkaR9oW3MSTzKZDQ
+	hKCcCQ+ne+IqqLX1VVW/ZIOHYC1diBAQlREqQpPOfituMNokmpYetolAB7HD9qxi
+	zFG40BkNGrMw55BIK+TOFFzV96J9Q+oYjE8nRE5sL90pkBe85lga6MUaZ5McF7ho
+	RKoBsQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrh77f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 12:54:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484CsIFG002879
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 12:54:18 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 05:54:14 -0700
+Message-ID: <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
+Date: Wed, 4 Sep 2024 05:54:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1103726541-1725453948=:1078"
-Content-ID: <4f3725b3-8dee-ec78-c7eb-39fd72a4d8b2@linux.intel.com>
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1103726541-1725453948=:1078
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <a15f53e5-8ea7-8adf-2573-ac31a10dcaf1@linux.intel.com>
-
-On Wed, 4 Sep 2024, Shuah Khan wrote:
-
-> On 9/4/24 06:18, Ilpo J=E4rvinen wrote:
-> > On Tue, 3 Sep 2024, Shuah Khan wrote:
-> >=20
-> > > On 9/3/24 08:45, Ilpo J=E4rvinen wrote:
-> > > > This series first generalizes resctrl selftest non-contiguous CAT c=
-heck
-> > > > to not assume non-AMD vendor implies Intel. Second, it improves
-> > > > selftests such that the use of __cpuid_count() does not lead into a
-> > > > build failure (happens at least on ARM).
-> > > >=20
-> > > > While ARM does not currently support resctrl features, there's an
-> > > > ongoing work to enable resctrl support also for it on the kernel si=
-de.
-> > > > In any case, a common header such as kselftest.h should have a prop=
-er
-> > > > fallback in place for what it provides, thus it seems justified to =
-fix
-> > > > this common level problem on the common level rather than e.g.
-> > > > disabling build for resctrl selftest for archs lacking resctrl supp=
-ort.
-> > > >=20
-> > > > I've dropped reviewed and tested by tags from the last patch in v3 =
-due
-> > > > to major changes into the makefile logic. So it would be helpful if
-> > > > Muhammad could retest with this version.
-> > > >=20
-> > > > Acquiring ARCH in lib.mk will likely allow some cleanup into some
-> > > > subdirectory makefiles but that is left as future work because this
-> > > > series focuses in fixing cpuid/build.
-> > >=20
-> > > >=20
-> > > > v4:
-> > > > - New patch to reorder x86 selftest makefile to avoid clobbering CF=
-LAGS
-> > > >     (would cause __cpuid_count() related build fail otherwise)
-> > > >=20
-> > > I don't like the way this patch series is mushrooming. I am not
-> > > convinced that changes to lib.mk and x86 Makefile are necessary.
-> >=20
-> > I didn't like it either what I found from the various makefiles. I thin=
-k
-> > there are many things done which conflict with what lib.mk seems to try=
- to
-> > do.
-> >=20
->=20
-> Some of it by desig. lib.mk offers framework for common things. There
-> are provisions to override like in the case of x86, powerpc. lib.mk
-> tries to be flexible as well.
->=20
-> > I tried to ask in the first submission what test I should use in the
-> > header file as I'm not very familiar with how arch specific is done in
-> > userspace in the first place nor how it should be done within kselftest
-> > framework.
-> >=20
->=20
-> Thoughts on cpuid:
->=20
-> - It is x86 specific. Moving this to kselftest.h was done to avoid
->   duplicate. However now we are running into arm64/arm compile
->   errors due to this which need addressing one way or the other.
->=20
-> I have some ideas on how to solve this - but I need answers to
-> the following questions.
->=20
-> This is a question for you and Usama.
->=20
-> - Does resctrl run on arm64/arm and what's the output?
-> - Can all other tests in resctrl other tests except
->   noncont_cat_run_test?
-> - If so send me the output.
-
-Hi Shuah,
-
-As mentioned in my coverletter above, resctrl does not currently support=20
-arm but there's an ongoing work to add arm support. On kernel side it=20
-requires major refactoring to move non-arch specific stuff out from=20
-arch/x86 so has (predictably) taken long time.
-
-The resctrl selftests are mostly written in arch independent way (*) but=20
-there's also a way to limit a test only to CPUs from a particular vendor.
-And now this noncont_cat_run_test needs to use cpuid only on Intel CPUs=20
-(to read the supported flag), it's not needed even on AMD CPUs as they=20
-always support non-contiguous CAT bitmask.
-
-So to summarize, it would be possible to disable resctrl test for non-x86=
-=20
-but it does not address the underlying problem with cpuid which will just=
-=20
-come back later I think.
-
-Alternatively, if there's some a good way in C code to do ifdeffery around=
-=20
-that cpuid call, I could make that too, but I need to know which symbol to=
-=20
-use for that ifdef.
-
-(*) The cache topology may make some selftest unusable on new archs but=20
-not the selftest code itself.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
+ SA8255p
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-18-quic_nkela@quicinc.com>
+ <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1Hp_omeLx4zuoXLFAXoqUzJqKcCgxAme
+X-Proofpoint-ORIG-GUID: 1Hp_omeLx4zuoXLFAXoqUzJqKcCgxAme
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040097
 
 
---=20
- i.
---8323328-1103726541-1725453948=:1078--
+On 9/3/2024 11:36 PM, Krzysztof Kozlowski wrote:
+> On Tue, Sep 03, 2024 at 03:02:36PM -0700, Nikunj Kela wrote:
+>> Add compatibles representing UART support on SA8255p.
+>>
+>> Clocks and interconnects are being configured in the firmware VM
+>> on SA8255p platform, therefore making them optional.
+>>
+>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>  .../serial/qcom,serial-geni-qcom.yaml         | 53 ++++++++++++++++---
+>>  1 file changed, 47 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> index dd33794b3534..b63c984684f3 100644
+>> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> @@ -10,14 +10,13 @@ maintainers:
+>>    - Andy Gross <agross@kernel.org>
+>>    - Bjorn Andersson <bjorn.andersson@linaro.org>
+>>  
+>> -allOf:
+>> -  - $ref: /schemas/serial/serial.yaml#
+>> -
+>>  properties:
+>>    compatible:
+>>      enum:
+>>        - qcom,geni-uart
+>>        - qcom,geni-debug-uart
+>> +      - qcom,sa8255p-geni-uart
+>> +      - qcom,sa8255p-geni-debug-uart
+> Why devices are not compatible? What changed in programming model?
+
+The cover-letter explains what is changed for devices in this platform.
+I will add the description in this patch too.
+
+
+>
+>>  
+>>    clocks:
+>>      maxItems: 1
+>> @@ -51,18 +50,49 @@ properties:
+>>        - const: sleep
+>>  
+>>    power-domains:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  power-domain-names:
+> This does not match power-domains anymore.
+
+Single power domain doesn't need to use power-domain-names binding as it
+is not needed however for multiple(in this case 2), you need to provide
+names. I will add this property to if block and only keep maxItems here.
+
+
+>
+>> +    items:
+>> +      - const: power
+>> +      - const: perf
+>>  
+>>    reg:
+>>      maxItems: 1
+>>  
+>>  required:
+>>    - compatible
+>> -  - clocks
+>> -  - clock-names
+>>    - interrupts
+>>    - reg
+>>  
+>> +allOf:
+>> +  - $ref: /schemas/serial/serial.yaml#
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,sa8255p-geni-uart
+>> +              - qcom,sa8255p-geni-debug-uart
+>> +    then:
+>> +      required:
+>> +        - power-domains
+>> +        - power-domain-names
+>> +
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 2
+>> +
+>> +    else:
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>> +
+>> +      properties:
+>> +        power-domains:
+>> +          maxItems: 1
+>> +
+>>  unevaluatedProperties: false
+>>  
+>>  examples:
+>> @@ -83,4 +113,15 @@ examples:
+>>                          <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_QUP_0 0>;
+>>          interconnect-names = "qup-core", "qup-config";
+>>      };
+>> +
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    serial@990000 {
+>> +        compatible = "qcom,sa8255p-geni-uart";
+>> +        reg = <0x990000 0x4000>;
+>> +        interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
+>> +        power-domains = <&scmi11_pd 4>, <&scmi11_dvfs 4>;
+>> +        power-domain-names = "power", "perf";
+>> +    };
+>>  ...
+>> -- 
+>> 2.34.1
+>>
 
