@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-315367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC8496C1CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E1196C1B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE703B2B905
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7E528ED5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0341B1DC75A;
-	Wed,  4 Sep 2024 15:03:43 +0000 (UTC)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8321DCB0D;
+	Wed,  4 Sep 2024 15:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PoIPdwmt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506761DA608;
-	Wed,  4 Sep 2024 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0081DA10D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462222; cv=none; b=scPgffH53yZHElvIacTzv/pB+MjdpJ2zYau+bKe7Toz3mwYatF08VDvEyVWke1u37CGDB7UbR/61p0o3Xhy6aozsGkPmDEBKuwemjeq1skAeNIWQgQ8JldiVYfswtrn4qOp7bXFn/86KAurAYyaaDWuDY9kI6JwaZoTpN3aGfjo=
+	t=1725462243; cv=none; b=OF8OTqsAIvdBggAUEc0vpQzwuiCnbTz2HXCCVNQiPHtzEfe5+rNndoNL6ouVdyeaH6LPzoghNvSqx3DcoZtVzC8HR6D9YyWlSahe1cARPrTHXFZXiGx0u2qM9ZayRuJz3wmjHfTlA7or7TnrJAm5IfdOmik2vB8c8jL0YStFu9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462222; c=relaxed/simple;
-	bh=oAtw8QLJTfDJtAImTRmUn59QUaqixqWWWJkpAI+DRXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyOuVNQmP3MYTZkhpJE/YyBFYHAeXXvNVKrNh1+Rz0zKJEdP22UaC1xQ3b9E/+NlYf7zGQE5s/CgmREQ844tJD99/AH4JB5t6HRix4sEKpp5fEwE+rtFCHOMDv6h0aBFB3gTHMrbtWGx5k9eSWewGbT23LMdRin4V+mw5XohtTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1215290a12.2;
-        Wed, 04 Sep 2024 08:03:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725462221; x=1726067021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hOC7waCCkQoMQkhqz0PBH9fJGvLRMTZyncgnFWYy3E0=;
-        b=IOpwmYhsP7BkOU8JwhAVZDmdvr7XICnXXPxOsrkRGN0heZh9kFbqBEJlmwOs7zaT3Y
-         q4sVQk5/XF157+DMrjR841Zvv+KL9bHXvL4XUXVOwcL4dlXT9b3ejmM+0ewWEvyhwiQD
-         LFUkv/J8fsdEQZsBVuJjPm0GeY8HxVREOnQlD1tviGqhna/7U0h93uLnDIgOVhirb144
-         15CWb/u00VhT9wM+vTmmXmKPQh9EDJmtQKIzPclIXbQ5Wq+VXqeRlZdxOFDiTQmQ5cKL
-         gVm3wqfTj2+fKfV/FJQh4ymXAsrqQavvDZD2am8nLCdaXKnXieFfqIvEpSeC3BM05g7O
-         llEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEhlXWjuIL2ayDC4Ot6JXXyd9vhQJYpMv3OwRUHDies6GqvAmfZd/4rwpc6d4q6OI4AtkXUcsFDKGd@vger.kernel.org, AJvYcCVqqEMCRlhJt219RfpddcAFHKN7vI1kuBGVArxFKgdjsaIwiKKZUjzyFJNHXgGfn+s4MLekdZuaA+d1@vger.kernel.org, AJvYcCXmhxnzd4qgtineSk9fyIAOlcAYmvV2wrtQzLQpxJnkfBtcpEQXkxGbHi9dSdpmRM7y0K2YwgEFl9Od+mXg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnmfUgM10ZECj4lttJ0GTtg8uBP44p/P/S86AoDFp/o0D1YQ+x
-	/4V62qSlzzlKtJpQXMvMUBtFjf13ku6XwydJIXQWKWoKauWVyJYU
-X-Google-Smtp-Source: AGHT+IHyKUc0x9KM8r7gfcsXlK+gsn4eBpyS8muEMq8I3FrEpz0HjjpC7yuRyiiRAMxAoDlUNTSa1g==
-X-Received: by 2002:a05:6a21:4603:b0:1cc:e500:5f30 with SMTP id adf61e73a8af0-1cece517cd4mr15437085637.24.1725462220519;
-        Wed, 04 Sep 2024 08:03:40 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8cccfsm1774651a12.22.2024.09.04.08.03.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:03:40 -0700 (PDT)
-Date: Thu, 5 Sep 2024 00:03:38 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/1] dt-bindings: PCI: layerscape-pci: Fix property
- 'fsl,pcie-scfg' type
-Message-ID: <20240904150338.GD3032973@rocinante>
-References: <20240701221612.2112668-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1725462243; c=relaxed/simple;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NE+zlsTmE6q99TOFI/5W9jMwxu1CbO0vjeF/ZXhkQerorgsphlufgyeGXehupMIVS3dHV4q5rJxm5oQvQFe7ab01K0xdntJ2NMTY+IiqShomWYYp9HuQG+o0ZmA+89A97wj/Wp+AKIKV4tdEvQzDvo44GVECTTrP7uuFhiCcAxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PoIPdwmt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725462240;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	b=PoIPdwmtQC9x1sxBiRAGhGJXqpdTHfkAK7nJA/f6PwCOhb6oWW4NS/1FpsmkvyEeaIL0uG
+	hwqhkoaJQtC6czYKFV/PKYY4jQ7fHOteJPjEyyBAV9KwLUDLns8epzTvYxHFK/mXJnHLw6
+	9g8UpfIMxcJq8HjREnq/2JqNjhGLe90=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-BCdAfi9BNyOJcJCcVTiTfA-1; Wed,
+ 04 Sep 2024 11:03:57 -0400
+X-MC-Unique: BCdAfi9BNyOJcJCcVTiTfA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC6E219560BD;
+	Wed,  4 Sep 2024 15:03:52 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C2A273000239;
+	Wed,  4 Sep 2024 15:03:47 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chao Gao <chao.gao@intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Farrah Chen <farrah.chen@intel.com>
+Subject: Re: [PATCH v4 00/10] KVM: Register cpuhp/syscore callbacks when enabling virt
+Date: Wed,  4 Sep 2024 11:03:44 -0400
+Message-ID: <20240904150344.177870-1-pbonzini@redhat.com>
+In-Reply-To: <20240830043600.127750-1-seanjc@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701221612.2112668-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hello,
+Queued, thanks.
 
-> fsl,pcie-scfg actually need an argument when there are more than one PCIe
-> instances. Change it to phandle-array and use items to describe each field
-> means.
-> 
-> Fix below warning.
-> 
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: pcie@3400000: fsl,pcie-scfg:0: [22, 0] is too long
->         from schema $id: http://devicetree.org/schemas/pci/fsl,layerscape-pcie.yaml#
+Paolo
 
-Applied to dt-bindings, thank you!
 
-[1/1] dt-bindings: PCI: layerscape-pci: Change property 'fsl,pcie-scfg' type
-      https://git.kernel.org/pci/pci/c/f66b63ef10d6
-
-	Krzysztof
 
