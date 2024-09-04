@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-315745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C1696C675
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775FA96C67A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA020B241CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:30:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235CA1F22E74
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0DC1E4115;
-	Wed,  4 Sep 2024 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C551E133A;
+	Wed,  4 Sep 2024 18:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ih7DV+zp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enJ88dFg"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B091E203D;
-	Wed,  4 Sep 2024 18:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB9E2AD02;
+	Wed,  4 Sep 2024 18:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725474599; cv=none; b=G9FQFlILrL2CY/5qEuv7Yt/ICC0zpKWEU6eauYfvmT4Ry2DiwnterMad/kp6Oh4+QLIM8joOeV6KmWSq1yMqfZg4cHpsErgEQb88rzQkTkYSqaSakG83ZSBL3gm/6bpH0ntz5uChOpt1qIFDT0CD/WyeGoP/ImvfPbN4DwzRC+E=
+	t=1725474684; cv=none; b=UZ88hn8VwxgCn4T+xOVFe7tD0zQjtzq+8FhN3d8qegesVFe3s2scFxuSPeL+LBrCwV59kAh+/8SWyOglTB/5dZ7JwuODanO/5587o4hAZC+KgoaXs9gF3aPSw7k7v+afMInye8iyLM7t06LTwQK7IIYCPwTrDT1AsILS3pQvLl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725474599; c=relaxed/simple;
-	bh=3osTPUwTmGcKwPH//xm+7vmLa4zw4IUoIj5wosRXRz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fHf0xXbLd4PFm8GHCIpv3L2EUslArZdhMOI7y8jku+DKpqYOmrd01yxlHEPi07nMuBaYC/+D4EEpGiUeImC2SJADlItjQL0jNQ65THWA++gExFMQizp2/P6UjnyuDRAYzEFGUN6Mu2KHrAxzS/gAVdFGp1l1zWOMLKQsMmIjp14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ih7DV+zp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DCACC4CEC6;
-	Wed,  4 Sep 2024 18:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725474599;
-	bh=3osTPUwTmGcKwPH//xm+7vmLa4zw4IUoIj5wosRXRz8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ih7DV+zpB9TOtau5uTgvSF3mLuNm286RYOZhYn8xv0aC59XfUJMNiHPNE7a5OSTfC
-	 +c7sugu3Gp4ProSoUZmnzAZ2wSvT89khm8HKvsdfRedjlpwrlG7QEd5zNOkYwCyOpL
-	 zWcSTJaCtSk4EmnJvF0HVEfAFxwR/qcqGDTJCYCXWpSCWzioQ0qw7c1S0PcnLnsFen
-	 eej7v5viNV5x2dm5diii+e+PHrLoUPesbwU+zBOVE00K0M/DUNJ8+oGIzaQaX+Lltm
-	 nivJFQ0yV8CptgeVIko+jJHy9itRq2d+Tq7zVgq2zwPg5nLMDWu1NajMJTouQDAJBp
-	 9BW8ud+/G311g==
-Date: Wed, 4 Sep 2024 11:29:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>, John Fastabend
- <john.fastabend@gmail.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
- "Martin KaFai Lau" <martin.lau@linux.dev>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS
- frames
-Message-ID: <20240904112957.3aaaa734@kernel.org>
-In-Reply-To: <03634fe4-8c2f-432e-ae6e-08928d167b1f@intel.com>
-References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
-	<20240903135158.7031a3ab@kernel.org>
-	<f23131c1-aae2-4c04-a60e-801ed1970be8@intel.com>
-	<20240904075041.2467995c@kernel.org>
-	<03634fe4-8c2f-432e-ae6e-08928d167b1f@intel.com>
+	s=arc-20240116; t=1725474684; c=relaxed/simple;
+	bh=cqZTeCKtiWRNmN3gcAtdrz7XjCzXiplabvraNaLf8FE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPfya0E5xc4iZ7vlfAAtmS4nPwmCuVDRssL6i/6HZbzwbKWPoZEypk4j/E204K09Z35WIGQAivegnIuw5MyJcV4XfA0yOJiWEekUy9yqzGzT9Ute0/fNyiVFynQd3mDwPfAgVaUkiHz9D5v/5ebChHQ2OOdENiFJ3xK25u2ySJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enJ88dFg; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533496017f8so9131585e87.0;
+        Wed, 04 Sep 2024 11:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725474681; x=1726079481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqZTeCKtiWRNmN3gcAtdrz7XjCzXiplabvraNaLf8FE=;
+        b=enJ88dFg5uaMgJMx+c0QcHEzpcahrmREoEiOTxtwKFw5m5PU1moGtpnuyoNK5kCJT8
+         B9dlg5mvEip8wIASvmq6x1zSU3FKhsh8k8N7FL9Yn+8BS/xJT83AodfedIq7szgGNgAq
+         7LhuOidCAS+2OlZRE3M2Pb9XuCkf8X7K+QNbaeIwOa1y9HKathKvIft+SiMTjOxkJI5R
+         npDXSkSSVa2Rxxp9NI13nG6MRQLrAsZZjfbDctCr4DIm8DLhqWClMPlWmYGtiOypjBom
+         t9jUrwb/w1MddR7SxMD6gDefI5b1EidC6CS28llGWCFSWWJzFOY6W6+w90eONS9PFh6a
+         uMrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725474681; x=1726079481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cqZTeCKtiWRNmN3gcAtdrz7XjCzXiplabvraNaLf8FE=;
+        b=UAbnAa1sTCSCX5qkdD6vilwMWsZsvFatyFwX+uPVVEUln9KLLUJlAQyR1QusZcVucn
+         hZWOIatxTVIu07UUnJg81wpZbFuaSn7hsnBHs9Z7vGvrO3xyQXJ+NZtb/0hC5CRWpBBw
+         hwP2Q3MFS3U6J2GSADFCoVW9JAuCT09/hyprVEpkAfgo2/QoA/mhQ6iuFCKPwBiOsJa4
+         caTEcRsXH6FFPf8CVWl35FmutaG5XVTR1ZYEurNxg9RJO2a8rOuHI4eu7oIXReKnCVro
+         mOY2mgUnc5wnIS6933DbxbxiLih2Q6w/DdAyrldEd/P/s0FFwzZ7GA3ouigHjQsH9Ue2
+         hrHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwp38OaigefazEBWN0QJyA7lFBEgavJBfPab1k47NVZx9oRgkQYZ5Z3GcKzRtUKGTr9KM18VKXxwHIur/B@vger.kernel.org, AJvYcCWAO1W3IQBLZ8OVHPoSyFkSaNfR1j2UGN4cFvVkaqja3oCgituYLETESOkDKZRX12fkyU2EdCNso1aQ@vger.kernel.org, AJvYcCWFzqg0CJVk3RQvyyh0vTr+JZzZKeSWdKdaHx5pqvterVMxs9RV2Mdwm4uPaCMBqCJEyNd/sWKjW+d4@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMHY04m2OF16ah/9375ZegzTaAFByp6L8CCew+mFok7Wefb03
+	M2Ftog81OUClST3y7AbGDCQBFmTuAa5aX+vKMEn56jn3AIIas6ICDewrX8fStT4nMdEkYdLWUDi
+	HVTZY0bnvBd/TnM6a9hE8Todvl5w=
+X-Google-Smtp-Source: AGHT+IFPTDmBPzfMHi+JBca0iBl6QnzPcfCv2Mi+TGhi7mW9W3f/6R0U2aXmin1rHR0zhBgKT/q01r6RE4rYphIlEjY=
+X-Received: by 2002:a05:6512:159a:b0:52c:e047:5c38 with SMTP id
+ 2adb3069b0e04-53546b0401cmr12698659e87.15.1725474680916; Wed, 04 Sep 2024
+ 11:31:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240904-imx-se-if-v7-0-5afd2ab74264@nxp.com> <Zth7LdsV/KbjzB2b@lizhi-Precision-Tower-5810>
+ <AM9PR04MB86049FFFCBB357E3BC1E4C90959C2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+In-Reply-To: <AM9PR04MB86049FFFCBB357E3BC1E4C90959C2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 4 Sep 2024 15:31:09 -0300
+Message-ID: <CAOMZO5DdujNkL91+8tzO2VzS20ipRGDCyzo8ppa0A33V0ZvabA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] Changes in v7:
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 4 Sep 2024 17:13:59 +0200 Alexander Lobakin wrote:
-> >> I could say that gro_cells also "abuses" NAPI the same way, don't you
-> >> think?  
-> > 
-> > "same way"? :] Does it allocate a fake netdev, use NAPI as a threading
-> > abstraction or add extra fields to napi_struct ?   
-> 
-> Wait wait wait, you said "NAPI IRQ related logics doesn't fit here". I
-> could say the same for gro_cells -- IRQ related NAPI logics doesn't fit
-> there. gro_cells is an SW abstraction.
+On Wed, Sep 4, 2024 at 1:09=E2=80=AFPM Pankaj Gupta <pankaj.gupta@nxp.com> =
+wrote:
 
-Yes, that 1/4th of my complaint does indeed apply :)
+> Thanks for pointing it out. Will ensure not to repeat it.
 
-> A fake netdev is used by multiple drivers to use GRO, you know that
-> (popular for wireless drivers). They also conflict with the queue config
-> effort.
+Please trim your replies.
 
-And it did cause us some issues when changing netdev_priv() already.
+Your email had 341 lines and your response was on a single line.
+
+Please remove unneeded noise in your replies.
 
