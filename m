@@ -1,115 +1,153 @@
-Return-Path: <linux-kernel+bounces-315625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C39596C513
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:16:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E91D96C50C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A901F28040
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C171F27082
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0CF1E1329;
-	Wed,  4 Sep 2024 17:16:05 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1895B1E1326;
+	Wed,  4 Sep 2024 17:15:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E994778C;
-	Wed,  4 Sep 2024 17:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB075473E;
+	Wed,  4 Sep 2024 17:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470165; cv=none; b=UFCu49CjS7kL7B5cspYhwYp0Fv4SF6UoTkjxNggQXjaVR3aLplMTwUdKSwqjtorS6ILwesK8uavQt+qwQGr+ajJ7z6LwXmX0QLKJtSfWgBQvVq/zySsiORV0DSH+eLgGeqFgLLM8TBswg38Wgbd4Pwx5OZd73oresNcicmdP4fM=
+	t=1725470105; cv=none; b=WHYV/rRPbkdNuiw/J/pVzU89r6IvalO9q4Wp6XS9z1Qem4cmm/BD5yEpWLaqd3CxiwQw97MtW+o0kSyFpdlTrvolgiGhiobB6+OF3Yp1uwRhu91XAPHZeNKSUxSUUFA7LizWF0SDLK+IyxnN4BZ0Bvxik2QNeIH2aXAOqbeUOME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470165; c=relaxed/simple;
-	bh=V408MGszR6stCuOm2vHpxLFAvJQGjhmfwtip5sBRLwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWv86Knku2HgJilssdn248q2Yn7zUJw8P/gJLS8/FKVSGZIGlM3R/IbU+vHvBIb779F7yBJCI8AhMAMUpAXSWPsKfcVScCAKiFMkeBTmv7Ld6libXLYtQ3kyr/vYrMFRDONShFv6uBvPgKkOsJu568XnmkdWuCFB2w2MsCgs6lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzTfT3pr0z9sSR;
-	Wed,  4 Sep 2024 19:16:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id GSl8nyLD9Yp4; Wed,  4 Sep 2024 19:16:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzTfT2zkkz9sSL;
-	Wed,  4 Sep 2024 19:16:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4CC8D8B77A;
-	Wed,  4 Sep 2024 19:16:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Sz6eTSkdAY9Q; Wed,  4 Sep 2024 19:16:01 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 65F888B778;
-	Wed,  4 Sep 2024 19:16:00 +0200 (CEST)
-Message-ID: <18bcf426-b0a8-486b-b9f7-8418d401bb70@csgroup.eu>
-Date: Wed, 4 Sep 2024 19:16:00 +0200
+	s=arc-20240116; t=1725470105; c=relaxed/simple;
+	bh=WXX99lYD5/7c6VvvhRk7VCCx4T+WmmOiVcRuUHvmp9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rw0l+52JQ9dSsdxs1IdJC7dcKhXqoNADj3AeVnR8cp4/06zPqA5McLX+ZxVFG0Knn1IVTQqS/JSdbkVA1CbikWgFikCFCnXjdqm0nt+TFtFcWUFzB1eULjw/FMXZPQ5pb8wHAXVCzuCzLnyv1/QOBQD2kqgDJVRB/0lvx5VX3+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3504C4CEC9;
+	Wed,  4 Sep 2024 17:15:04 +0000 (UTC)
+Date: Wed, 4 Sep 2024 13:16:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH] eventfs: Use list_del_rcu() for SRCU protected list
+ variable
+Message-ID: <20240904131605.640d42b1@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] vdso: Introduce vdso/page.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-5-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240903151437.1002990-5-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+From: Steven Rostedt <rostedt@goodmis.org>
 
+Chi Zhiling reported:
 
-Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
-> 
-> Introduce vdso/page.h to make sure that the generic library
-> uses only the allowed namespace.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   include/vdso/page.h | 7 +++++++
->   1 file changed, 7 insertions(+)
->   create mode 100644 include/vdso/page.h
-> 
-> diff --git a/include/vdso/page.h b/include/vdso/page.h
-> new file mode 100644
-> index 000000000000..f18e304941cb
-> --- /dev/null
-> +++ b/include/vdso/page.h
-> @@ -0,0 +1,7 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_PAGE_H
-> +#define __VDSO_PAGE_H
-> +
-> +#include <asm/vdso/page.h>
+  We found a null pointer accessing in tracefs[1], the reason is that the
+  variable 'ei_child' is set to LIST_POISON1, that means the list was
+  removed in eventfs_remove_rec. so when access the ei_child->is_freed, the
+  panic triggered.
 
-I can't see the benefit of that, the generic library can directly 
-include asm/vdso/page.h
+  by the way, the following script can reproduce this panic
 
-> +
-> +#endif	/* __VDSO_PAGE_H */
+  loop1 (){
+      while true
+      do
+          echo "p:kp submit_bio" > /sys/kernel/debug/tracing/kprobe_events
+          echo "" > /sys/kernel/debug/tracing/kprobe_events
+      done
+  }
+  loop2 (){
+      while true
+      do
+          tree /sys/kernel/debug/tracing/events/kprobes/
+      done
+  }
+  loop1 &
+  loop2
+
+  [1]:
+  [ 1147.959632][T17331] Unable to handle kernel paging request at virtual address dead000000000150
+  [ 1147.968239][T17331] Mem abort info:
+  [ 1147.971739][T17331]   ESR = 0x0000000096000004
+  [ 1147.976172][T17331]   EC = 0x25: DABT (current EL), IL = 32 bits
+  [ 1147.982171][T17331]   SET = 0, FnV = 0
+  [ 1147.985906][T17331]   EA = 0, S1PTW = 0
+  [ 1147.989734][T17331]   FSC = 0x04: level 0 translation fault
+  [ 1147.995292][T17331] Data abort info:
+  [ 1147.998858][T17331]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  [ 1148.005023][T17331]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  [ 1148.010759][T17331]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+  [ 1148.016752][T17331] [dead000000000150] address between user and kernel address ranges
+  [ 1148.024571][T17331] Internal error: Oops: 0000000096000004 [#1] SMP
+  [ 1148.030825][T17331] Modules linked in: team_mode_loadbalance team nlmon act_gact cls_flower sch_ingress bonding tls macvlan dummy ib_core bridge stp llc veth amdgpu amdxcp mfd_core gpu_sched drm_exec drm_buddy radeon crct10dif_ce video drm_suballoc_helper ghash_ce drm_ttm_helper sha2_ce ttm sha256_arm64 i2c_algo_bit sha1_ce sbsa_gwdt cp210x drm_display_helper cec sr_mod cdrom drm_kms_helper binfmt_misc sg loop fuse drm dm_mod nfnetlink ip_tables autofs4 [last unloaded: tls]
+  [ 1148.072808][T17331] CPU: 3 PID: 17331 Comm: ls Tainted: G        W         ------- ----  6.6.43 #2
+  [ 1148.081751][T17331] Source Version: 21b3b386e948bedd29369af66f3e98ab01b1c650
+  [ 1148.088783][T17331] Hardware name: Greatwall GW-001M1A-FTF/GW-001M1A-FTF, BIOS KunLun BIOS V4.0 07/16/2020
+  [ 1148.098419][T17331] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+  [ 1148.106060][T17331] pc : eventfs_iterate+0x2c0/0x398
+  [ 1148.111017][T17331] lr : eventfs_iterate+0x2fc/0x398
+  [ 1148.115969][T17331] sp : ffff80008d56bbd0
+  [ 1148.119964][T17331] x29: ffff80008d56bbf0 x28: ffff001ff5be2600 x27: 0000000000000000
+  [ 1148.127781][T17331] x26: ffff001ff52ca4e0 x25: 0000000000009977 x24: dead000000000100
+  [ 1148.135598][T17331] x23: 0000000000000000 x22: 000000000000000b x21: ffff800082645f10
+  [ 1148.143415][T17331] x20: ffff001fddf87c70 x19: ffff80008d56bc90 x18: 0000000000000000
+  [ 1148.151231][T17331] x17: 0000000000000000 x16: 0000000000000000 x15: ffff001ff52ca4e0
+  [ 1148.159048][T17331] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+  [ 1148.166864][T17331] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff8000804391d0
+  [ 1148.174680][T17331] x8 : 0000000180000000 x7 : 0000000000000018 x6 : 0000aaab04b92862
+  [ 1148.182498][T17331] x5 : 0000aaab04b92862 x4 : 0000000080000000 x3 : 0000000000000068
+  [ 1148.190314][T17331] x2 : 000000000000000f x1 : 0000000000007ea8 x0 : 0000000000000001
+  [ 1148.198131][T17331] Call trace:
+  [ 1148.201259][T17331]  eventfs_iterate+0x2c0/0x398
+  [ 1148.205864][T17331]  iterate_dir+0x98/0x188
+  [ 1148.210036][T17331]  __arm64_sys_getdents64+0x78/0x160
+  [ 1148.215161][T17331]  invoke_syscall+0x78/0x108
+  [ 1148.219593][T17331]  el0_svc_common.constprop.0+0x48/0xf0
+  [ 1148.224977][T17331]  do_el0_svc+0x24/0x38
+  [ 1148.228974][T17331]  el0_svc+0x40/0x168
+  [ 1148.232798][T17331]  el0t_64_sync_handler+0x120/0x130
+  [ 1148.237836][T17331]  el0t_64_sync+0x1a4/0x1a8
+  [ 1148.242182][T17331] Code: 54ffff6c f9400676 910006d6 f9000676 (b9405300)
+  [ 1148.248955][T17331] ---[ end trace 0000000000000000 ]---
+
+The issue is that list_del() is used on an SRCU protected list variable
+before the synchronization occurs. This can poison the list pointers while
+there is a reader iterating the list.
+
+This is simply fixed by using list_del_rcu() that is specifically made for
+this purpose.
+
+Cc: stable@vger.kernel.org
+Fixes: 43aa6f97c2d03 ("eventfs: Get rid of dentry pointers without refcounts")
+Reported-by: Chi Zhiling <chizhiling@kylinos.cn>
+Tested-by: Chi Zhiling <chizhiling@kylinos.cn>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ fs/tracefs/event_inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index 01e99e98457d..8705c77a9e75 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -862,7 +862,7 @@ static void eventfs_remove_rec(struct eventfs_inode *ei, int level)
+ 	list_for_each_entry(ei_child, &ei->children, list)
+ 		eventfs_remove_rec(ei_child, level + 1);
+ 
+-	list_del(&ei->list);
++	list_del_rcu(&ei->list);
+ 	free_ei(ei);
+ }
+ 
+-- 
+2.43.0
+
 
