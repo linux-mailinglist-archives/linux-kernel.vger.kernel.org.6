@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-315489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1253A96C340
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112D796C342
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D261C20FAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AE11F28FF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B697B1DFE33;
-	Wed,  4 Sep 2024 15:59:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C581DB94D;
-	Wed,  4 Sep 2024 15:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6A11E009C;
+	Wed,  4 Sep 2024 16:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLBJkvHU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EAC1CC16B;
+	Wed,  4 Sep 2024 16:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465594; cv=none; b=I7TygJ2SPtGzTOWWqsGvaP8UnIo/P+zmZMp7YdEJA7IqTPEYkGJnQ4t1sGGq+As8infcd9gLKffFZ38dujC4VbMgAYVjSu9hi3x6bD1Iiz/o4SN7dKnvdVEZJvhuE4+0O4cdxyFEdTu9aboD6aGDvqMfVFU3XWP6CPXt89dd/Dc=
+	t=1725465618; cv=none; b=tRukRXcwGzoLTpTt8T+Ji4i3K7Gc+FFP3JRsjBX4c/BMAUNv1iWgcwuaaJ41RqXPylEKAIK/8oEPV6VYmUV04m8fhhxJ7KSARf8P9r1JgV+yc1Rsv56wf5MAgLIwp5VY0HWAG+J7hlZ/x5SyrYZ7wSyd/Ff9hV7pAIWUk+Ms2W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465594; c=relaxed/simple;
-	bh=MMEPNHTHKxiotFQk//EZ58z8HAfAg7MEpXl9vneAPsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCp555uOTN6xi8Wtmnqd/gXDfEQsroiBW3Chc1Ws9rbtubePOv2emppLoV5rIwX83eaGBaiyWmn+EAOptVUgkowinJldOaYaEjSQc37P29AxsbLYdrZSJNGxLVyQHbprkT9lzxk0m0BR233oGelagnM5w8kCR1ANm3MwwXqIh/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D8F9FEC;
-	Wed,  4 Sep 2024 09:00:18 -0700 (PDT)
-Received: from [10.57.75.163] (unknown [10.57.75.163])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 671763F73B;
-	Wed,  4 Sep 2024 08:59:47 -0700 (PDT)
-Message-ID: <95d8bdc8-95f2-4694-aa9c-b73811ecd1ad@arm.com>
-Date: Wed, 4 Sep 2024 16:59:45 +0100
+	s=arc-20240116; t=1725465618; c=relaxed/simple;
+	bh=+3ODXSLmDXmWE0Ypt5vkmq+M5qRPpQx/U46X36rcq6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFlT6D7KKtORsDnk2ItzuQpRJAtFBLAtpW88TgBM4Db7so240m9CC26J3GKQ3jbyGn9up6Kvx9C89X1PFvC/q6BDPoPnBnMVrKgVpvSM1DsSYnN2GqjPdMEUb3CxyCro49P9HvHHvJd0VnleMa938ccTA6d2zDLzIx/ZV0XPNxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLBJkvHU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67112C4CEC2;
+	Wed,  4 Sep 2024 16:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725465618;
+	bh=+3ODXSLmDXmWE0Ypt5vkmq+M5qRPpQx/U46X36rcq6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jLBJkvHUdvFupnyBSORH/jGNmc8W9/8wB3/moIQx4AafTtbF9vBgYDvRZ+eMEua5/
+	 2wOa+vKlqq3glynWxmtkmAFye0YHfbWiKiHeSDz8yROklkX8N7+iJcOGXckG00khqb
+	 4a+wEGPx3MtcVXvvAJeixpSJHx6mlM/huyZH5Vyn5rLkBS77N7E5z45ZV/54SzRVhZ
+	 fD+OSxaLKffk62PNnko/OXcPCWPNOBNq5eHl1HrmhckZvQYSgLtCk1nNj7yjmHJOzY
+	 2l8nQRrZzfQuz7fZjUECUwTwT2BEFQTA2KUpP9tnK3djhjvzPpN1jF6lPESD7B5Cyi
+	 KMpOq3DDvIOkQ==
+Date: Wed, 4 Sep 2024 17:00:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Ariane Keller <ariane.keller@tik.ee.ethz.ch>,
+	linux-kernel@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andy Chiu <andy.chiu@sifive.com>
+Subject: Re: [PATCH net] net: xilinx: axienet: Fix IRQ coalescing packet
+ count overflow
+Message-ID: <20240904160013.GX4792@kernel.org>
+References: <20240903180059.4134461-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 21/43] arm64: RME: Runtime faulting of memory
-To: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-22-steven.price@arm.com>
- <20240904144821.GA223966@myrica>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240904144821.GA223966@myrica>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903180059.4134461-1-sean.anderson@linux.dev>
 
-On 04/09/2024 15:48, Jean-Philippe Brucker wrote:
-> On Wed, Aug 21, 2024 at 04:38:22PM +0100, Steven Price wrote:
->> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
->> index 2c4e28b457be..337b3dd1e00c 100644
->> --- a/arch/arm64/kvm/rme.c
->> +++ b/arch/arm64/kvm/rme.c
->> @@ -627,6 +627,181 @@ static int fold_rtt(struct realm *realm, unsigned long addr, int level)
->>  	return 0;
->>  }
->>  
->> +static phys_addr_t rtt_get_phys(struct realm *realm, struct rtt_entry *rtt)
->> +{
->> +	bool lpa2 = realm->params->flags & RMI_REALM_PARAM_FLAG_LPA2;
+On Tue, Sep 03, 2024 at 02:00:59PM -0400, Sean Anderson wrote:
+> If coalesce_count is greater than 255 it will not fit in the register and
+> will overflow. Clamp it to 255 for more-predictable results.
+
+Hi Sean,
+
+Can this occur in practice?
+
 > 
-> At this point realm->params is NULL, cleared by kvm_create_realm()
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
 
-Ah, indeed so. Also LPA2 isn't yet supported (we have no way of setting
-that flag).
+nit: I think it is usual for the order of these tags to be reversed.
 
-Since this code is only called for block mappings (also not yet
-supported) that explains why I've never seen the issue.
-
-Thanks,
-Steve
-
-> Thanks,
-> Jean
+> ---
 > 
->> +
->> +	if (lpa2)
->> +		return rtt->desc & GENMASK(49, 12);
->> +	return rtt->desc & GENMASK(47, 12);
->> +}
->> +
->> +int realm_map_protected(struct realm *realm,
->> +			unsigned long base_ipa,
->> +			struct page *dst_page,
->> +			unsigned long map_size,
->> +			struct kvm_mmu_memory_cache *memcache)
->> +{
->> +	phys_addr_t dst_phys = page_to_phys(dst_page);
->> +	phys_addr_t rd = virt_to_phys(realm->rd);
->> +	unsigned long phys = dst_phys;
->> +	unsigned long ipa = base_ipa;
->> +	unsigned long size;
->> +	int map_level;
->> +	int ret = 0;
->> +
->> +	if (WARN_ON(!IS_ALIGNED(ipa, map_size)))
->> +		return -EINVAL;
->> +
->> +	switch (map_size) {
->> +	case PAGE_SIZE:
->> +		map_level = 3;
->> +		break;
->> +	case RME_L2_BLOCK_SIZE:
->> +		map_level = 2;
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (map_level < RME_RTT_MAX_LEVEL) {
->> +		/*
->> +		 * A temporary RTT is needed during the map, precreate it,
->> +		 * however if there is an error (e.g. missing parent tables)
->> +		 * this will be handled below.
->> +		 */
->> +		realm_create_rtt_levels(realm, ipa, map_level,
->> +					RME_RTT_MAX_LEVEL, memcache);
->> +	}
->> +
->> +	for (size = 0; size < map_size; size += PAGE_SIZE) {
->> +		if (rmi_granule_delegate(phys)) {
->> +			struct rtt_entry rtt;
->> +
->> +			/*
->> +			 * It's possible we raced with another VCPU on the same
->> +			 * fault. If the entry exists and matches then exit
->> +			 * early and assume the other VCPU will handle the
->> +			 * mapping.
->> +			 */
->> +			if (rmi_rtt_read_entry(rd, ipa, RME_RTT_MAX_LEVEL, &rtt))
->> +				goto err;
->> +
->> +			/*
->> +			 * FIXME: For a block mapping this could race at level
->> +			 * 2 or 3... currently we don't support block mappings
->> +			 */
->> +			if (WARN_ON((rtt.walk_level != RME_RTT_MAX_LEVEL ||
->> +				     rtt.state != RMI_ASSIGNED ||
->> +				     rtt_get_phys(realm, &rtt) != phys))) {
+>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index 9aeb7b9f3ae4..5f27fc1c4375 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -252,7 +252,8 @@ static u32 axienet_usec_to_timer(struct axienet_local *lp, u32 coalesce_usec)
+>  static void axienet_dma_start(struct axienet_local *lp)
+>  {
+>  	/* Start updating the Rx channel control register */
+> -	lp->rx_dma_cr = (lp->coalesce_count_rx << XAXIDMA_COALESCE_SHIFT) |
+> +	lp->rx_dma_cr = (min(lp->coalesce_count_rx, 255) <<
+> +			 XAXIDMA_COALESCE_SHIFT) |
+>  			XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
 
+nit: it would be nice to avoid using a naked 255 here.
+     Perhaps: #define XAXIDMA_COALESCE_MAX 0xff
+
+>  	/* Only set interrupt delay timer if not generating an interrupt on
+>  	 * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
+> @@ -264,7 +265,8 @@ static void axienet_dma_start(struct axienet_local *lp)
+>  	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
+>  
+>  	/* Start updating the Tx channel control register */
+> -	lp->tx_dma_cr = (lp->coalesce_count_tx << XAXIDMA_COALESCE_SHIFT) |
+> +	lp->tx_dma_cr = (min(lp->coalesce_count_tx, 255) <<
+> +			 XAXIDMA_COALESCE_SHIFT) |
+>  			XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
+>  	/* Only set interrupt delay timer if not generating an interrupt on
+>  	 * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
+> -- 
+> 2.35.1.1320.gc452695387.dirty
+> 
+> 
 
