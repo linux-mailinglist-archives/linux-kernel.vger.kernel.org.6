@@ -1,138 +1,192 @@
-Return-Path: <linux-kernel+bounces-315196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4529596BF1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:54:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B12696BF1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB63B24CBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF48F1C21FE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ABE1D58B9;
-	Wed,  4 Sep 2024 13:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98641DA301;
+	Wed,  4 Sep 2024 13:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hS+jiD42"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HptEWlm3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312441DA108
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C707B1DB53E;
+	Wed,  4 Sep 2024 13:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458011; cv=none; b=qxarBj4T1taMZLk8mrRcl3PJwRzxO6SVEgJRfKn6mi0wb6OVBCyf8cWFNSNP4aSfP1vvJbClGWCF5AMbdm2ix+ditvjvvoNUO5JCUekdU70vRnDOGJayYF1RtQvsA0uqbYwWUd33+5zA14LcN8QYHUL5agY+KRlywVWN0iFnTbA=
+	t=1725458020; cv=none; b=OgXl/iYcndAzOG6jdH/UJcywrhovt9b6cyEel4vskmW0NRDbEOh0C//TDuSqQs4YxerT3YzvXznIO86nR6xTScXOySvW/J7GCeFoEHQrkqLr0eMd6eqN1bAIvCOkPB/t99bXNg2I65b1Jq0ZKVitZMpD5OVQRg2ELn7bDr9PpXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458011; c=relaxed/simple;
-	bh=bCCy75tHcqfvZeyJUrW++3GDyn/NtOzf4apKrtPuliU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VeDMTLd6+imt1avLTxEN5VCQ7Z3vREgMv9URl22pH+LPR90kpfqlLIR5dp73W+T7L6WTJHSsxOb+9qtuNrKFaEcpHnMocN60Qj8PsDPB+Be/hack67o3YuOOo6GmWMQff4wLz16x1GoDdQK5uJs3MxSB4HFs954Bp9lKiqkVRdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hS+jiD42; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a043390030so1382945ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725458009; x=1726062809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r7kTLsJyk/MZC3WNMNI51yi9z/rphbSOOoUjCA8uaQU=;
-        b=hS+jiD42ovTUTXrGPKwMNlHJK4jmIQJHFnWuOci2WN+EtaiEsn9EgDSJSbAcN9hiit
-         tP+zPzXU7/cOtUaXqvlYcKF1Y6jyvyEOdpbpuid/NM1kUbNyoQx2nXGmkWQMO6lTfeP/
-         EIv3RjTyOXtDeKvae6MfJgcit22cIkOYnSGqwh4ZDthm//yc8Rb0v4qIehsz0W1GjI8C
-         PC7ann68RESdFHynVlWlWSEGrGQ9BdO2CYlWXsAZDeVSt1+N21+AwRZ5fTytNJntWNyd
-         OXtRihc+bJ7WijOX6PbFyGqeivUxq4QxePjTPBjMWdZzK3nXYEC7vOARZjFpXEFl74ea
-         e/Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725458009; x=1726062809;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7kTLsJyk/MZC3WNMNI51yi9z/rphbSOOoUjCA8uaQU=;
-        b=AQSnY7EiSuWUx6pTqtzB6QMC/xVa+VevgJAhd3LhxEPWwoeY5ixkV7FDHNaCqKvWva
-         eBrjuFaBAcNZwXNfeJQBAxLYsfZ7AQkqioykN4TjfBDxMpVxXweYbg3i3Riw6wj3uXlE
-         gbzPTfjDGD0GNZgDDOafpIQh1gqnL5vJ7BTBPktAiIJbqp85QDqAlKyfYYEtQekebvoZ
-         RyqQsCtlcGF060bNpXp77CTnd2xnGoogeJ3THB8qMyAYiNIQWS+FrKHZh119Rb2XNLbt
-         hjs7QSPc51wGg5pXwvxKsgXHyaPytCW84WYakPIvHPnA05SZyiR5PPlYqnFLw00vGGdT
-         FTwA==
-X-Forwarded-Encrypted: i=1; AJvYcCV19S3i8JoVSLpDsndnVA2h89JL5xF4ov/BcagLAMSNtPg/BBqPet9vdwsqPfL7IUJfB693DF/qRU5OhUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0TrO+8+FZP/jD9iJXN3ywRE47d7IAgexhAcoclqV8Qgon6oZw
-	WYWYEylQOTXjhUjgp5ORIl1Cbi5cnQmrGD733KICVR5qpjE35aDVjNFRl1ICRP1SFimqNeVKbAv
-	k
-X-Google-Smtp-Source: AGHT+IFbfJF6J1NLerOOEjFSrOLoyu7FtfSqVr0k9qMXD7kZr+v8XYpOfZHf8UT9kcO7HZL9AquDwQ==
-X-Received: by 2002:a05:6e02:160e:b0:382:64d9:1cba with SMTP id e9e14a558f8ab-39f4f55f3d9mr163683405ab.19.1725458009221;
-        Wed, 04 Sep 2024 06:53:29 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d06a1c5cdesm5424173.81.2024.09.04.06.53.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:53:28 -0700 (PDT)
-Message-ID: <850a38fb-79dc-420e-ad85-1a0168f9e63d@kernel.dk>
-Date: Wed, 4 Sep 2024 07:53:27 -0600
+	s=arc-20240116; t=1725458020; c=relaxed/simple;
+	bh=IrZ7cqUQ/rV3TjzeCgtYwOAMGS511YXRIN78hNIahso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EN0hZDZCc5tXt3J2CYdQqWKd7r3Pr4Dvxyqp9oXxrlwy/4WtSG7RUL6XLnUffKqFIn18wqc9ZWNk01azY0f2RWpji2DeKU9z+4T7rMuzqzhUhaqfy1Rnq1zHfiXGqMYFhlgohGRCpVBsmO+ZjQ86uKTqH4cwt/eVXahiqTMun8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HptEWlm3; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725458019; x=1756994019;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IrZ7cqUQ/rV3TjzeCgtYwOAMGS511YXRIN78hNIahso=;
+  b=HptEWlm3zqmmEQs/7V1hm4OF3hWBlUxM5DGP1k7OpjqyMwrR4O3je4G/
+   X3escZqcD+MvmtMtzgCnBIGG8ztaxTeE6SBmS/hNxNSW1KFzy4QTi+fsR
+   c184D8Bo8Kax8XFHcm4bgWCvP+z7E0JGz+cX5uhb2Q13Csb/qsDEgd6S/
+   OO02NiC3POFQhw1lmEVtrVdkfHkRHKlbtFyGIaAT1Gf8PLOJN0RRJomCa
+   JypDiQn0QJurvzFW8WLx5RPimT6fq3AMXsoE17QBc1MjKm+BKgm7zJjHy
+   lU0oITppCulam+YDjezeRHB6miK9oGJUga6oh8dB2GGOW+BtOPIYBT+96
+   w==;
+X-CSE-ConnectionGUID: rvSWWMr0TvKTRMN1X4QdmA==
+X-CSE-MsgGUID: aJvU4W1aTMmdAWoJFq+0xw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="41619643"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="41619643"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:53:37 -0700
+X-CSE-ConnectionGUID: j610Y+0US6q4B+XEa1zMhw==
+X-CSE-MsgGUID: bvEv6kCCSCmYTMkuy16joQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="64946038"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:53:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slqRu-0000000553f-1ICw;
+	Wed, 04 Sep 2024 16:53:30 +0300
+Date: Wed, 4 Sep 2024 16:53:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
+Message-ID: <ZthmWoJbjrEmzOzu@smile.fi.intel.com>
+References: <20240904090016.2841572-1-wenst@chromium.org>
+ <20240904090016.2841572-10-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
- merging
-To: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, tj@kernel.org,
- josef@toxicpanda.com, paolo.valente@unimore.it, mauro.andreolini@unimore.it,
- avanzini.arianna@gmail.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
- <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
- <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904090016.2841572-10-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 9/3/24 7:32 PM, Yu Kuai wrote:
-> Hi,
+On Wed, Sep 04, 2024 at 05:00:11PM +0800, Chen-Yu Tsai wrote:
+> This adds regulator management to the I2C OF component prober.
+> Components that the prober intends to probe likely require their
+> regulator supplies be enabled, and GPIOs be toggled to enable them or
+> bring them out of reset before they will respond to probe attempts.
+> GPIOs will be handled in the next patch.
 > 
-> 在 2024/09/03 23:51, Jens Axboe 写道:
->> On 9/2/24 7:03 AM, Yu Kuai wrote:
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> Our syzkaller report a UAF problem(details in patch 1), however it can't
->>> be reporduced. And this set are some corner cases fix that might be
->>> related, and they are found by code review.
->>>
->>> Yu Kuai (4):
->>>    block, bfq: fix possible UAF for bfqq->bic with merge chain
->>>    block, bfq: choose the last bfqq from merge chain in
->>>      bfq_setup_cooperator()
->>>    block, bfq: don't break merge chain in bfq_split_bfqq()
->>>    block, bfq: use bfq_reassign_last_bfqq() in bfq_bfqq_move()
->>>
->>>   block/bfq-cgroup.c  |  7 +------
->>>   block/bfq-iosched.c | 17 +++++++++++------
->>>   block/bfq-iosched.h |  2 ++
->>>   3 files changed, 14 insertions(+), 12 deletions(-)
->>
->> BFQ is effectively unmaintained, and has been for quite a while at
->> this point. I'll apply these, thanks for looking into it, but I think we
->> should move BFQ to an unmaintained state at this point.
+> Without specific knowledge of each component's resource names or
+> power sequencing requirements, the prober can only enable the
+> regulator supplies all at once, and toggle the GPIOs all at once.
+> Luckily, reset pins tend to be active low, while enable pins tend to
+> be active high, so setting the raw status of all GPIO pins to high
+> should work. The wait time before and after resources are enabled
+> are collected from existing drivers and device trees.
 > 
-> Sorry to hear that, we would be willing to take on the responsibility of
-> maintaining this code, please let me know if there are any specific
-> guidelines or processes we should follow. We do have customers are using
-> bfq in downstream kernels, and we are still running lots of test for
-> bfq.
+> The prober collects resources from all possible components and enables
+> them together, instead of enabling resources and probing each component
+> one by one. The latter approach does not provide any boot time benefits
+> over simply enabling each component and letting each driver probe
+> sequentially.
+> 
+> The prober will also deduplicate the resources, since on a component
+> swap out or co-layout design, the resources are always the same.
+> While duplicate regulator supplies won't cause much issue, shared
+> GPIOs don't work reliably, especially with other drivers. For the
+> same reason, the prober will release the GPIOs before the successfully
+> probed component is actually enabled.
 
-Most important is just reviewing fixes and tending to bug reports, and
-then collecting those fixes and sending them out to the list+me for
-inclusion. Not much more needs to happen, this series is a good example
-of it.
+...
+
+> +static int i2c_of_probe_get_regulators(struct device *dev, struct device_node *node,
+> +				       struct i2c_of_probe_data *data)
+> +{
+> +	struct regulator_bulk_data *tmp, *new_regulators;
+> +	int ret;
+> +
+> +	ret = of_regulator_bulk_get_all(dev, node, &tmp);
+> +	if (ret < 0) {
+> +		return ret;
+> +	} else if (ret == 0) {
+> +		/*
+> +		 * It's entirely possible for a device node to not have
+> +		 * regulator supplies. While it doesn't make sense from
+> +		 * a hardware perspective, the supplies could be always
+> +		 * on or otherwise not modeled in the device tree, but
+> +		 * the device would still work.
+> +		 */
+> +		return ret;
+> +	}
+
+	if (ret < 0)
+		return ret;
+
+	/*
+	 * It's entirely possible for a device node to not have regulator
+	 * supplies. While it doesn't make sense from a hardware perspective,
+	 * the supplies could be always on or otherwise not modeled in
+	 * the device tree, but the device would still work.
+	 */
+	if (ret == 0)
+		return ret;
+
+> +	if (!data->regulators) {
+> +		data->regulators = tmp;
+> +		data->regulators_num = ret;
+> +		return ret;
+> +	};
+> +
+> +	new_regulators = krealloc_array(data->regulators, (data->regulators_num + ret),
+
+Redundant parentheses.
+
+> +					sizeof(*tmp), GFP_KERNEL);
+> +	if (!new_regulators) {
+> +		regulator_bulk_free(ret, tmp);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	data->regulators = new_regulators;
+> +	memcpy(&data->regulators[data->regulators_num], tmp, sizeof(*tmp) * ret);
+
+Shouldn't be the size calculated based on the size of the destination?
+
+> +	data->regulators_num += ret;
+> +
+> +	return ret;
+> +}
+
+...
+
+As I said earlier my main concern is that timeout heuristic which seems fragile.
+But I have no ideas to propose, leave this to others to comment on / think about.
 
 -- 
-Jens Axboe
+With Best Regards,
+Andy Shevchenko
 
 
 
