@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-314485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495EE96B3ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:09:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449EC96B3F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA097B23CF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:09:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F393B283D49
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF67017C985;
-	Wed,  4 Sep 2024 08:09:33 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9A717C9AD;
+	Wed,  4 Sep 2024 08:12:53 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC28155735;
-	Wed,  4 Sep 2024 08:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA1783CC8;
+	Wed,  4 Sep 2024 08:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437373; cv=none; b=MZG0OwdwmV7a7teGvzX7kKQpINJ+ckC682sECpKBvdsRu2fNhQPyXJJC6A2unf8cZLwgu7BeJIn9ve4JE2vlmy4RD81aHWM8Byuk28mQyTArxkSImnTzCL2uQ2b3D2C52E6IbZBiK303skiXFLoqsjR3D5SZOqv78SRM8PYpEhc=
+	t=1725437573; cv=none; b=D75olnDBRhfcPYsmkfPuhnZxXA1IYZ3ULdYugy7VQpiZcKpPYRXQ70qXxu8VSD1tK4Xw/B0Af8qNnyVO6w5noX4rOD5zI6m+qF1bZm1Ymf5TV3Pkex4aQhi2E8DM7sk6H93JRp3zn7Vm7GkZzSP64TFtS8pWoKVahG2/dXGhfSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437373; c=relaxed/simple;
-	bh=KY99IEVaWZ+f1T7u1eXXvb4Hi2LMioMrpkFaFZpmETc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XA19uNOGYrnvbPl7oJJoeR1fG+5sCsd4ATe47tSjV0hiVNbaaU+tVSAR9/Ty7QMRKt4rEPa+Y9EqqVtdPFF+pxsCkNFf8JkDiceakD3sbA0KlIWSJ3i9HJdBUa7+cip+ZaubyqTZ9env0SD4ldl5JquOJIVTE8VntnghCYCepTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAAX++qwFdhmk1UnAQ--.4786S2;
-	Wed, 04 Sep 2024 16:09:20 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: irusskikh@marvell.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH net-next] net: atlantic: convert comma to semicolon
-Date: Wed,  4 Sep 2024 16:08:45 +0800
-Message-Id: <20240904080845.1353144-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725437573; c=relaxed/simple;
+	bh=65cQQU+M2UnU5X6Ms72kWMCyjT6kucVE8wcCMX9suS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bhmWsOhhMVKaKp7QEsKm4tTg9dwxKIk2u3vxQpf4uIosAfaA6JhIHa2OAwKh6GGsdFIzAe66WZ4Zeky3+VukYIkcVrnV5s5V9YYbrZOhgJoi77F9smFczaP0dGJ8nKaLd/WidHjV2jTRIZwRuYOuB2CATTTEn2pJAut2MeU5JZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e17c1881a52so331758276.0;
+        Wed, 04 Sep 2024 01:12:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725437569; x=1726042369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mclf5cWZ7doo82bxSJ1tInXWyUxki/hxkifyVYswtWM=;
+        b=F4mpiC22ZpflfuiiM4/lXrLRY7OTfbMPuyK0m02iXhQ12pQ09GBA2LOn/QR7SiD2tM
+         v9WzaavnTELgxXj8HS0or7kb9dDQoPKlTSTs6R0GpPGFqsi89HrQepYPvvhieCuQBySq
+         pwwRN3iLShnrbvKJ6RX4KNNP387/6QfKB/0k+OEO0nFn+rrBMaRd4/SFzCW1pLSjrA/N
+         OfS1vOWLNN2F8taVa4oKLequnpBVAV1y3FboDpE3vj2q1fkJ/YNqqcRk8FIuSw1zSIxU
+         gSFgi7997Z3YR4L9zNaOAEITd7OBG93mTD/ClYPUtRzIRlm1oeZk0vEP4sB7/OXDR7JW
+         6PPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNxlvzZLvtMI4bLAO4xhamq08x3Bjy/r4N/DeulADzx5+JcgeqzLhD/+0WGT++62PTP3rFSoJKF9XXlg==@vger.kernel.org, AJvYcCWDE65JwsnppsfM4k3wi5gvzxl8wtGPy6zkNXUmIO863pWx1QO/P8ORvdCkwNHANDoEMs+Foc9w37w10Drk@vger.kernel.org, AJvYcCWgylu+nNOq02xF+2JTjgImOeTuiFzX2kWbMLFMg40P131T+/PBjjaavvOO71PEb4tJyXWMEvqxpuCrDQnm@vger.kernel.org, AJvYcCXh6mf9foRHjZUC+DUDvg9YDZGOj7aApDL/pxwKmYpcgI9jwWb4qVPTO4nvFiR+xFLJtazQ/cwLiOQvh+496PU=@vger.kernel.org, AJvYcCXkFkvc+fMzuGhZfWVKjOTHuo8ab+gQJLKVcBS9arUbL/hwlonUwO5sopuAFU0ZKyZxVU+SEMZli8wvlmy2S7v8/Ejk@vger.kernel.org, AJvYcCXsb3RVq/rBMfBpJ8b3Zmdb9Nv3Hg+T8UJhGmy6l2a8snoyyrOPIrNrlrGcIW/ecntlskFSv4qac2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztjeZBgIp1axkogJpgPacomNq9zUREAnHhHDLd4sbZwPPwcb8J
+	bgWe2fEPWfavTxiXfpXyo7r+sVNjjjiOmcSeeL7LX7kBMbm5YuCeQ0q4PKNu
+X-Google-Smtp-Source: AGHT+IGRFCsdqQLGpdas9pt7jPkVnbSeR+ActkhCb/ltZa/ps8gT/D14Xk053ij4LbbTQow/uahxRQ==
+X-Received: by 2002:a05:6902:2d02:b0:e1a:7333:d63a with SMTP id 3f1490d57ef6-e1d10553609mr888235276.5.1725437569256;
+        Wed, 04 Sep 2024 01:12:49 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a62361829sm2600860276.0.2024.09.04.01.12.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 01:12:47 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6cdae28014dso3826967b3.1;
+        Wed, 04 Sep 2024 01:12:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwL81FgK9JRh5pGD2eupah9vvwSMLkHqUB7WGFq0O2XSAXp538ew5KXLLW1aqsTqrcEH3lRAzN2YNIIV7u@vger.kernel.org, AJvYcCW66kLPAwy2Rmhr5/0YhI2bG91A/CKCp1kj/tRUjIPp3r3U+zyjuqQhfwW8nYmS+OMb1cNfpAJMW9QPWw==@vger.kernel.org, AJvYcCWDIaxAZtHjy8TPJRNZEwuzAredARe01SEguBiy4AcPmxiMDPjrNGIcfbq2LswyTsnraxEDrMJTmD4ovOsi@vger.kernel.org, AJvYcCWpnwnRTKnPDhGt1ESxmxfhXCPVAd88MFLKqXW1K7/F6Pqqe7LKbRxjqOYO6U9uevQYTUau10iAgOQ=@vger.kernel.org, AJvYcCWqi9RGEnR1cwWYA5mVB9aLjD+YRRxGrmO1jsYQkA1Dt6iCQi5r5DaPAl+Z/XcI301hOYR4mMFKmZqHuDBavSY=@vger.kernel.org, AJvYcCXwmOUKuPi7uTUBiV3kNhozGqG07S/DIEPCHCvdz2Kv+/ckAh2w47HjEeBKZArXR9LsvR+lmK7A5p4B5ylfvSjHE9m/@vger.kernel.org
+X-Received: by 2002:a05:690c:680b:b0:664:74cd:5548 with SMTP id
+ 00721157ae682-6db25f47819mr8680237b3.1.1725437566641; Wed, 04 Sep 2024
+ 01:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAX++qwFdhmk1UnAQ--.4786S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoW8JF1Dpr
-	W2ga4qgr4xZ3y8Ga1YqFW8AFnIqan7trWrKry5G34FvFn0yF1xJry5tF9Fkrn5XFZYkF13
-	Kr4jvFWxJa95AFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
-	xVWUtVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfU5l1vDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240903-mips-rust-v1-0-0fdf0b2fd58f@flygoat.com> <20240903-mips-rust-v1-2-0fdf0b2fd58f@flygoat.com>
+In-Reply-To: <20240903-mips-rust-v1-2-0fdf0b2fd58f@flygoat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Sep 2024 10:12:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXC0ZBJibi=60VVG5mW1rwz=VgWxduph7SUxA4uyL5Mvw@mail.gmail.com>
+Message-ID: <CAMuHMdXC0ZBJibi=60VVG5mW1rwz=VgWxduph7SUxA4uyL5Mvw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] MIPS: Rename mips_instruction type to workaround
+ bindgen issue
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace comma between expressions with semicolons.
+Hi Jiaxun,
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+Thanks for your patch!
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+On Tue, Sep 3, 2024 at 7:15=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.com=
+> wrote:
+> We have a union and a type both named after mips_instruction,
+> rust bindgen is not happy with this kind of naming alias.
+>
+> Given that union mips_instruction is a part of UAPI, the only
+> thing we can do is to rename mips_instruction type.
+>
+> Rename it as mips_insn, which is not conflicting with anything
+> and fits the name of header.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/net/ethernet/aquantia/atlantic/aq_ring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Nit: the header is called inst.h, not insn.h.
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-index f7433abd6591..f21de0c21e52 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-@@ -557,7 +557,7 @@ static int __aq_ring_rx_clean(struct aq_ring_s *self, struct napi_struct *napi,
- 				}
- 
- 				frag_cnt++;
--				next_ = buff_->next,
-+				next_ = buff_->next;
- 				buff_ = &self->buff_ring[next_];
- 				is_rsc_completed =
- 					aq_ring_dx_in_range(self->sw_head,
-@@ -583,7 +583,7 @@ static int __aq_ring_rx_clean(struct aq_ring_s *self, struct napi_struct *napi,
- 						err = -EIO;
- 						goto err_exit;
- 					}
--					next_ = buff_->next,
-+					next_ = buff_->next;
- 					buff_ = &self->buff_ring[next_];
- 
- 					buff_->is_cleaned = true;
--- 
-2.25.1
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/mips/include/asm/dsemul.h |  2 +-
+>  arch/mips/include/asm/inst.h   |  6 +++---
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
