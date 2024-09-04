@@ -1,171 +1,235 @@
-Return-Path: <linux-kernel+bounces-315476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E796C31C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB3396C320
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301571C20A2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:57:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B2A1C2138B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FF51E0B93;
-	Wed,  4 Sep 2024 15:52:40 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27811E1A2F;
+	Wed,  4 Sep 2024 15:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PnaoG7LJ"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C010286A8;
-	Wed,  4 Sep 2024 15:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBFF1E0B95
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465159; cv=none; b=rmXe7UBjhEpDU3UPVGyJO+i6AyuvbMZYOyiaEF4sNIVj45CbKocWPL7SD26VLaebSmD/x3dqaQs3nZjwBW77jpjzrLqjZxN2QahybILXTjxohvTiBSHZsQU8e/mDjotYgSSa+V9T2zQVmqEMmmzgh5Fg7dJrw+2AlijRn4VNnI0=
+	t=1725465164; cv=none; b=M9CSZOsJgmrMDU9f6hHsX2mHba4+ErizRdKuDMCdNneBl9L52AVpi+gkYjxxAqIYkGMykr9YHSjP7+5W7+CIB3v4oANn1loQAZJFRz3L1wKfRWBJCHneYYSMcd2+NgmKqV0CYMUc+X58SqgFdgijXuLYXVmBlhItc23dqAJPu70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465159; c=relaxed/simple;
-	bh=lUY77zhKCX1hCMrkL0mkbTJCo8TnHEqNmN62M8lSMYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EIGFIOhS/QscUMQTV5E/hceNMR6g1yNbk/Sh34CCQl+S2p/g5U3veqw8qW3+yBzO02sz5Supehu6cpQT19pN/MciR2mDqRXBStZ3nQx3H8UapHJRMyuLRX3keKniSOEzE83Scfs7wicfUruOF+iFMJZ+0hv8N3yfiUiK+osIRCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4668944a91.2;
-        Wed, 04 Sep 2024 08:52:38 -0700 (PDT)
+	s=arc-20240116; t=1725465164; c=relaxed/simple;
+	bh=KygQNf3+cuF9gbs3HDkBg3xT8j1Jn6935u8ekoom8lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZN0PFW1kcFazHQKf/Dv2yd1XmusbdqwsYIEkCVKg8SiCtx0Rh9aTbKjm6Sw3RHo49CvsY7qHlddo8g6XdV9BPaIg9bQE0/And7P0ud3sDZPtYwuUhr7vJAqdx9Hz4j3I5mcqoM7XCjkF8x2R2XTuHH00aacwivhO22gABNmy6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PnaoG7LJ; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2054feabfc3so35485035ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725465161; x=1726069961; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OI8jsgdgqnkbWWLEKVkCt2Ik5LT6LWIsO1U3amJG1/s=;
+        b=PnaoG7LJeIC+Vs4jqgXz4KpTBtW6dOH+tJXxJC93nXJA9zxe+PyxcmFCsUNarMzjY0
+         n/aw8R07RJNwDq/jido9HIhZOTkPpbwaSCqjpSSwizg0ziDB/XL2fBdPPOOSz3zrm6xt
+         6+2sxmgHPVFfmN2gAWG5PR4Bf/M1sWNhSavemKot21wNdIjmoD35eHC55w4pfDm6IUXk
+         UGSQEupobH17xrslYmMhJLmJQ0Ucmy/CNE+Vma1ncoLomaDxXoYbcaGEX7wORgLmUxIi
+         inijrXZlfL0aPpVwsZ2aGSUMkzRCpptFGBkhQ6g5a0hdu726oOyPwS9hCuTA03yUU1hv
+         b+AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725465157; x=1726069957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRpCSa2dicAy71ZoCq3WWsHgrn4GYp+rcy53dep9/Ss=;
-        b=mNqx5ks8IB/S6A4LS3E0Dv/iwzUE7t3VzXDxnbSFst28b/rGqgmCLJR5VLVNKBoAvU
-         wduvbBZzgXKulo/SYYv0yjGQhyrbZkeagr02VUVBO3CQ4lqxnHB+Ku8psfj78vcb7pwg
-         7OY/Lj4koy5dLqWkbvyIDf7xiE48vq3YX5aj0Usf9eHx9P7jA/4Pjt7tzU+hGHZUovjT
-         ZCSscXSsxLae3SYGVH+NrdyetHEA9sVsBlLn+/7ghv70ysTZfXtUYZUW7XQSQGh1Vz47
-         xWYdu3frUpeVmEvWbQaKW2lL6tKconZqfwJ48wuHXV0e8KKHaFj09ulsVD8/5jZDA3T1
-         L7uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgJUKLYmWu0s/0Apv7UMe8Np3CYGzWqN3nYFJ1LDm//lQccblY3BfAj18RrJCfCCO3rpOZzUsJMXEa+vk=@vger.kernel.org, AJvYcCWcZy8k7qlS6rXFvecbQwPX93zokNDest4HnlOHwQ+TBmyCq7nnhVYgM9kMfmNznGIVoiUyrnUIPGVa4f555NYqTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6NPRo4274hrYV07gmsJCcq+bZSeOLWO1gmGu8nuOasU/mrudr
-	R48LMvrNlweY8q8q7D2zgPJv5WLGBD/xOeto5dnS6bt7skcpIUbWMWei7MUsvbWLXVwpW4M59WK
-	i111SVzhIUWm1+/2OoP0KsZazTBM=
-X-Google-Smtp-Source: AGHT+IFX3MHyKkqzSL4Emt9nWckQqcoksiFJEqtX0Xv0KCxrxnSGvAy2zifePpZa0h15Uh8crIIJBtsc6riF/sEMqVI=
-X-Received: by 2002:a17:90b:c12:b0:2d3:b49f:ace3 with SMTP id
- 98e67ed59e1d1-2d85638576dmr21007154a91.28.1725465157361; Wed, 04 Sep 2024
- 08:52:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725465161; x=1726069961;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OI8jsgdgqnkbWWLEKVkCt2Ik5LT6LWIsO1U3amJG1/s=;
+        b=uODMmMMOv3i9KqMUWl+A+eddllJdnejmevAO2NVPfRD8jASdHhxFXrdqFDExkM9Usn
+         uSjeDZ1CgQKHthOtSF45EQsj+WIA5nCdzGcw5ib3kBk5g520NZ2eF0R70j1L1q32JyKH
+         8/8PgxDB6lZEvVi9ieHWCYxM7sMYlYEDV+jHC7tR/BQbD/KugowrQ2fsEJoB/AuXh2FU
+         CQRzfGJ6ok1oUloACt8wrPcM4JLA14snj42Xkx+I15+GH+BQsAdlBd1xGVBl/sDao7r+
+         Hb5vFWJ8bvCFZk9f/By/dzu025Jq34Y8l3A9NqndZNcoFCrdb4AFM3WjoRQMK+LfXCW9
+         ZWaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVDr0T7mk4zcMowQsPHHRJSPM2AkdLN6CCCj2TlLZC/6BWN5+A6kr98Fwqk8zZkrs3AxR5+xYZ61byzpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyos8gOLGKEzxDMzZQ8saWetez26q1aQP56nSIlwtw1pUmW01hL
+	SqIVH0zEnrgK7VX18xUekj+rmCDEVU7tEH3Zw9RIAeubLSfalAG7aVp25daxqQ==
+X-Google-Smtp-Source: AGHT+IHGBNBoglCNHpz+D7sGeP/HKxiS/0D+eictU65nCi8V3pgHa+1MnnTJSobiRrpdR96hXD+x3Q==
+X-Received: by 2002:a17:902:da81:b0:206:8db4:481b with SMTP id d9443c01a7336-2068db45e50mr102338205ad.32.1725465161425;
+        Wed, 04 Sep 2024 08:52:41 -0700 (PDT)
+Received: from thinkpad ([120.60.128.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea37ae2sm15212725ad.173.2024.09.04.08.52.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 08:52:41 -0700 (PDT)
+Date: Wed, 4 Sep 2024 21:22:33 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Johan Hovold <johan@kernel.org>,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v6 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
+Message-ID: <20240904155233.zm3m6x3wvco35g6t@thinkpad>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
+ <20240904-pci-qcom-gen4-stability-v6-3-ec39f7ae3f62@linaro.org>
+ <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904064131.2377873-1-namhyung@kernel.org> <20240904064131.2377873-8-namhyung@kernel.org>
- <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org> <251acd21-7d0d-451c-b581-cdb74b4096ed@linaro.org>
-In-Reply-To: <251acd21-7d0d-451c-b581-cdb74b4096ed@linaro.org>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 4 Sep 2024 08:52:24 -0700
-Message-ID: <CAM9d7cgAuYwh+zaEAa3v6V86=6bWgsDpN_LM75OM3JkJ=ZQvaQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] perf tools: Add fallback for exclude_guest
-To: James Clark <james.clark@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>, 
-	Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
 
-Hello James,
+On Wed, Sep 04, 2024 at 11:39:09AM +0200, Johan Hovold wrote:
+> On Wed, Sep 04, 2024 at 12:41:59PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> > 
+> > During high data transmission rates such as 16.0 GT/s, there is an
+> > increased risk of signal loss due to poor channel quality and interference.
+> > This can impact receiver's ability to capture signals accurately. Hence,
+> > signal compensation is achieved through appropriate lane equalization
+> > settings at both transmitter and receiver. This will result in increased
+> > PCIe signal strength.
+> > 
+> > Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > [mani: dropped the code refactoring and minor changes]
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>  
+> > +#define GEN3_EQ_CONTROL_OFF			0x8a8
+> 
+> Nit: uppercase hex since that's what is used for the other offsets
+> 
+> > +#define GEN3_EQ_CONTROL_OFF_FB_MODE		GENMASK(3, 0)
+> > +#define GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE	BIT(4)
+> > +#define GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC	GENMASK(23, 8)
+> > +#define GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL	BIT(24)
+> > +
+> > +#define GEN3_EQ_FB_MODE_DIR_CHANGE_OFF          0x8ac
+> 
+> Nit: odd indentation uses spaces, uppercase
+> 
+> > +#define GEN3_EQ_FMDC_T_MIN_PHASE23		GENMASK(4, 0)
+> > +#define GEN3_EQ_FMDC_N_EVALS			GENMASK(9, 5)
+> > +#define GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA	GENMASK(13, 10)
+> > +#define GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA	GENMASK(17, 14)
+> > +
+> >  #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
+> >  #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
+> >  
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> > new file mode 100644
+> > index 000000000000..dc7d93db9dc5
+> > --- /dev/null
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> > @@ -0,0 +1,45 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +
+> > +#include <linux/pci.h>
+> > +
+> > +#include "pcie-designware.h"
+> > +#include "pcie-qcom-common.h"
+> > +
+> > +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
+> > +{
+> > +	u32 reg;
+> > +
+> > +	/*
+> > +	 * GEN3_RELATED_OFF register is repurposed to apply equalization
+> > +	 * settings at various data transmission rates through registers namely
+> > +	 * GEN3_EQ_*. RATE_SHADOW_SEL bit field of GEN3_RELATED_OFF determines
+> > +	 * data rate for which this equalization settings are applied.
+> 
+> *The* RATE_SHADOW_SEL bit field
+> 
+> *the* data rate
+> 
+> s/this/these/
+> 
+> > +	 */
+> > +	reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+> > +	reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+> > +	reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+> > +	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0x1);
+> 
+> How does 0x1 map to gen4/16 GT?
+> 
 
-On Wed, Sep 4, 2024 at 6:36=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
->
->
->
-> On 04/09/2024 2:28 pm, James Clark wrote:
-> >
-> >
-> > On 04/09/2024 7:41 am, Namhyung Kim wrote:
-> >> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUP=
-P
-> >> if not.  Let's add a fallback so that it can work with default events.
-> >>
-> >> Cc: Mark Rutland <mark.rutland@arm.com>
-> >> Cc: James Clark <james.clark@linaro.org>
-> >> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> >> ---
-> >>   tools/perf/util/evsel.c | 21 +++++++++++++++++++++
-> >>   1 file changed, 21 insertions(+)
-> >>
-> >> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> >> index 0de0a72947db3f10..8c4d70f7b2f5b880 100644
-> >> --- a/tools/perf/util/evsel.c
-> >> +++ b/tools/perf/util/evsel.c
-> >> @@ -3400,6 +3400,27 @@ bool evsel__fallback(struct evsel *evsel,
-> >> struct target *target, int err,
-> >>                 "to fall back to excluding hypervisor samples",
-> >> paranoid);
-> >>           evsel->core.attr.exclude_hv =3D 1;
-> >> +        return true;
-> >> +    } else if (err =3D=3D EOPNOTSUPP && !evsel->core.attr.exclude_gue=
-st &&
-> >> +           !evsel->exclude_GH) {
-> >> +        const char *name =3D evsel__name(evsel);
-> >> +        char *new_name;
-> >> +        const char *sep =3D ":";
-> >> +
-> >> +        /* Is there already the separator in the name. */
-> >> +        if (strchr(name, '/') ||
-> >> +            (strchr(name, ':') && !evsel->is_libpfm_event))
-> >> +            sep =3D "";
-> >> +
-> >> +        if (asprintf(&new_name, "%s%su", name, sep) < 0)
-> >> +            return false;
-> >> +
-> >> +        free(evsel->name);
-> >> +        evsel->name =3D new_name;
-> >> +        /* Apple M1 requires exclude_guest */
-> >> +        scnprintf(msg, msgsize, "trying to fall back to excluding
-> >> guest samples");
-> >> +        evsel->core.attr.exclude_guest =3D 1;
-> >> +
-> >>           return true;
-> >>       }
-> >
-> > Not sure if this is working, for some reason it doesn't try the
-> > fallback. With exclude guest made mandatory in the Arm PMU, then:
-> >
->
-> Looks like you change this, but it's not obvious why the stat behavior
-> is different to perf record anyway:
+I need inputs from Shashank here as I don't know the answer.
 
-Right, I think we should consolidate the open code to be used by
-both perf record and perf stat.  I'll reorder my patchset to have
-exclude_guest fallback first.
+- Mani
 
-Anyway thanks for the test and the fix.  With this, perf stat and
-perf record work well on your setup?
+> > +	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
+> > +
+> > +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
+> > +	reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
+> > +		GEN3_EQ_FMDC_N_EVALS |
+> > +		GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
+> > +		GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
+> > +	reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
+> > +		FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
+> > +		FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
+> > +		FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
+> > +	dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
+> > +
+> > +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+> > +	reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
+> > +		GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
+> > +		GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
+> > +		GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
+> > +	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+> > +}
+> > +EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> > new file mode 100644
+> > index 000000000000..259e04b7bdf9
+> > --- /dev/null
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> > @@ -0,0 +1,8 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +
+> > +#include "pcie-designware.h"
+> 
+> You only need a forward declaration:
+> 
+> 	struct dw_pcie;
+> 
+> > +
+> > +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
+> 
+> Compile guard still missing.
+> 
+> Johan
 
-Thanks,
-Namhyung
-
->
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 8b9889873d3e..6f2ee3032f5f 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -639,7 +639,7 @@ static enum counter_recovery
-> stat_handle_error(struct evsel *counter)
->           * (behavior changed with commit b0a873e).
->           */
->          if (errno =3D=3D EINVAL || errno =3D=3D ENOSYS ||
-> -           errno =3D=3D ENOENT || errno =3D=3D EOPNOTSUPP ||
-> +           errno =3D=3D ENOENT ||
->              errno =3D=3D ENXIO) {
->                  if (verbose > 0)
->                          ui__warning("%s event is not supported by the
-> kernel.\n",
->
->
+-- 
+மணிவண்ணன் சதாசிவம்
 
