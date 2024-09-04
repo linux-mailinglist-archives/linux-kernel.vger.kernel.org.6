@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-315109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37B396BE04
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:16:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C6796BE01
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2451F21461
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:16:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2808E1C24DD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0CB1D094F;
-	Wed,  4 Sep 2024 13:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BE41E892;
+	Wed,  4 Sep 2024 13:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cwfg2u2o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB442139D;
-	Wed,  4 Sep 2024 13:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="gZOf8lSC"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E347D139D;
+	Wed,  4 Sep 2024 13:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725455775; cv=none; b=CpBZWke0h3hvx37dyPyuLitJZQGr+yo4s794P8rQaPtkejfLZXxhOJHk4r2EWVCmWOU/+o2R3QAqpdWm75ZsOkxs9xJHbUlVqEtU9X9b4FURHq5WF0QMncPsY7s5hdLIbLFSKRtRs0w4fYfek5DyhcxOGjgVVE0vWkXbgR9Z0Co=
+	t=1725455720; cv=none; b=iMAjCmLLsC9p2QUqdQWDGHDrGIvm083iNdFHx3BhlAC8vzii/30pMJ5/+4ShPa4ZFcr/VJnO2PlWeh9tUS0YgjSzx5Rwp4bF3ginVJBS/qLtKFGyRgUmzYpc1+TVGLmWdA9BggUY/Vn1siwz/6YUTKXDrn+n+dZ55se9QYX37gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725455775; c=relaxed/simple;
-	bh=5RTrK2A/7XPuuwlK3ZUuX4mnuUZD8sPxcvFgKwNLL/4=;
+	s=arc-20240116; t=1725455720; c=relaxed/simple;
+	bh=pTgZWhjZ/86Doose5uhGdxVqjDzd34gHHV0kELUYcrs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL+gmABf3BXluEe+tbuxDe5xqqzwMWuNi+JOcfbO1NBQrk2R7e4QTsp4XKkTaSVfN32E4deMBJKK8lTDqh9wzxjWvmmKn6xi4rJZH202Qvlz3FPLpWWHlT/uRPFfwUZkdOq3z1XuonDRgKhZH3bfa73nv1O+76UpQfjTlNp6rA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cwfg2u2o; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725455774; x=1756991774;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5RTrK2A/7XPuuwlK3ZUuX4mnuUZD8sPxcvFgKwNLL/4=;
-  b=Cwfg2u2oVY6Tg7VeQTxgj0+Zxhiz83qbGywEOMh6OotZMrlVJDmEokcr
-   LYN50fTa5cjoL8b52kvB57paIII+mtCKdGCdNbJnnpylr4r2R6k4nlDvv
-   VppI7FZ7Kbh5OvR5EvnVvHcJe0GnB6CamYxNtgDLC2unXKJ+cL3eLFSp6
-   oVz19oyylJGLEKyc4OK5CvmYhNEAj6VPfski9PoT79iqKJBw35ZONE6mA
-   diNPhZ70FAGGeXmgpfYCYxCiR4gCGe66wmj6HR51Eh4l6Md8jWOpXiJvu
-   fS+dVIZfiVCwWDGdg7yOt8EryctRx+EZIRS62Urfhga/QxuGKZLq+NSlG
-   A==;
-X-CSE-ConnectionGUID: lVD2znsTQWC4DCGm9MECOw==
-X-CSE-MsgGUID: 0wp7A65JR9SX5uC3iu8wbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="35275474"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="35275474"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:15:23 -0700
-X-CSE-ConnectionGUID: VaOsEGIpSXuEKg1mjvoXOg==
-X-CSE-MsgGUID: aTQ1ZcVKQp+mUqWGC6vE7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65608995"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:15:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slpqe-000000054Q5-02f2;
-	Wed, 04 Sep 2024 16:15:00 +0300
-Date: Wed, 4 Sep 2024 16:14:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 03/12] regulator: Move OF-specific regulator lookup
- code to of_regulator.c
-Message-ID: <ZthdU6UGlM75GJVj@smile.fi.intel.com>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-4-wenst@chromium.org>
- <ZthcBpx8WFIvsrJj@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcqcAjDsixs9xUHRhSYLAm5lwul2fCPX9N5NQh5IzGEOjkUsqfF3jK7/HZ35JAQtpLXReEyBNqEJCEk4cmWVFqp6PFWpNfNgLuuRAOTxP4PFHP23LhFaLgxxxZlbl4rI2BDxY4i2BYfGUt1L9jHp8NrIi0x67TEq7DvmMGB46JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=gZOf8lSC; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe1f47.dip0.t-ipconnect.de [79.254.31.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id D6AA02886F9;
+	Wed,  4 Sep 2024 15:15:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1725455717;
+	bh=pTgZWhjZ/86Doose5uhGdxVqjDzd34gHHV0kELUYcrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gZOf8lSCP0zA++WRL2wLlfgrkHicAcoM3dtjjAMF4qlU/QZ5t8KSt9z5qlORyrl9I
+	 3X+ajhN+lSrC9s0lW7qoYkX2oknB+l88Ta+gfboex5i/3GeUi0lUlo/gnBRU0C/6/X
+	 LK/JDdCIB/OhFJRCuiHqpVeWrPgPqMQZ84pH+qPkGPhLoeesyAmQ7ut9TJ1euVtzKv
+	 AJiOQKeG3J+YIb0te5KaN/PIT3SD5qqOfF1T5i0P6T5bDQ/Zn1KS6WhUx03sjSYazm
+	 lRAR4YhYlnbkZBe9moPKttdH2On3JATltTguHY+VXCHwYN3/vpJZ5KxRrIwPlJQWXf
+	 RAOdTMHXRRBbA==
+Date: Wed, 4 Sep 2024 15:15:16 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Vasant Hegde <vasant.hegde@amd.com>, linux-doc@vger.kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH] iommu/amd: Add parameter to limit V1 page-sizes to 4 KiB
+Message-ID: <ZthdZElA6KEMtYxt@8bytes.org>
+References: <20240904125946.4677-1-joro@8bytes.org>
+ <20240904130329.GC3915968@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,54 +64,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZthcBpx8WFIvsrJj@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240904130329.GC3915968@nvidia.com>
 
-On Wed, Sep 04, 2024 at 04:09:26PM +0300, Andy Shevchenko wrote:
-> On Wed, Sep 04, 2024 at 05:00:05PM +0800, Chen-Yu Tsai wrote:
+On Wed, Sep 04, 2024 at 10:03:29AM -0300, Jason Gunthorpe wrote:
+> Why is this a kernel command line? Surely it should be negotiated
+> automaticaly with capability registers or ACPI like everone else does
+> if there is something functionally wrong with the vIOMMU??
 
-> > +static struct device_node *of_get_child_regulator(struct device_node *parent,
-> > +						  const char *prop_name)
-> > +{
-> > +	struct device_node *regnode = NULL;
+In the affected setups there is no vIOMMU. This is not about secure-IO,
+the assigned devices will not be part of the trusted base.
 
-> > +	struct device_node *child = NULL;
+> If we are doing this we also have a problem on mlx5 devices where
+> there are too many page sizes in the v1 table and it blows up the ATS
+> caching. It would be nice to widen this option to limit the page sizes
+> to other combinations (4k/2M/1G or something).
 
-Btw, redundant assignment here, as child will be assigned anyway AFAIR.
+Okay, I will update the patch to allow more settings.
 
-> > +	for_each_child_of_node(parent, child) {
-> 
-> > +		regnode = of_parse_phandle(child, prop_name, 0);
-> > +		if (!regnode) {
-> > +			regnode = of_get_child_regulator(child, prop_name);
-> > +			if (regnode)
-> > +				goto err_node_put;
-> > +		} else {
-> > +			goto err_node_put;
-> > +		}
-> 
-> I know this is just a move of the existing code, but consider negating the
-> conditional and have something like
-> 
-> 		regnode = of_parse_phandle(child, prop_name, 0);
-> 		if (regnode)
-> 			goto err_node_put;
-> 
-> 		regnode = of_get_child_regulator(child, prop_name);
-> 		if (regnode)
-> 			goto err_node_put;
-> 
-> > +	}
-> > +	return NULL;
-> > +
-> > +err_node_put:
-> > +	of_node_put(child);
-> > +	return regnode;
-> > +}
+Regards,
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Joerg
 
