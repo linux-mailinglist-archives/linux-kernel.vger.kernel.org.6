@@ -1,102 +1,79 @@
-Return-Path: <linux-kernel+bounces-315414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D6A96C26F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:31:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B5F96C271
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E209B24B79
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1CF28CAA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52161DFE09;
-	Wed,  4 Sep 2024 15:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7MQB1HV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299021DCB09;
-	Wed,  4 Sep 2024 15:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED6C1E00AA;
+	Wed,  4 Sep 2024 15:30:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DF61DFE2D;
+	Wed,  4 Sep 2024 15:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725463826; cv=none; b=Z/lvIAJo2Hy0jK/fq20qP/ChZp+dbjWdcbDtRJzN+5oEvzedxaWcNiPN0ruSnbcRGPM6JZt0tYKujSAvlT7RDnFfM22sITC4BcpBP2okQbbOrg2yRR0mlieqWBQ2dU6QQJcSIymGXVFEmReyy+A6fd8QGFyzjAt84pHTTvRC8z4=
+	t=1725463830; cv=none; b=c8HaO/3hCyL4eHEbcJ8cxK7LE9dF/JOejLxNZ38r9iRLwdHDHw4yTBgSBbrXK3rYSVCSfosKeYEe8qoLziAEHnakoMdQYP4b7Rx19z48hddLA86JTBKsCBlVB3uHHcZi4bX2tlYu8NzwHIBC7dNcI0toNHQCyxdKvkFGiFuhRsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725463826; c=relaxed/simple;
-	bh=hxOmlbtgXKR/p3D2sjwDnE4b4AheFtwuaWlkiEGCQdg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f9yzIMK54X8G9H+Jey2ejhbzyNbAa7iRrvr3Lpv2ykluhauZOirRYf4f5jrdGtb8CcRTY8MHxqWZH4onAg5lTG+snDFYfvdtmjw/z2RAiAPBEoEAncNsfzLclz8GHRyoFaN4ytJ+t+KXfTAJZxaMbNMXa4390mqv/AwBS0dEc5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7MQB1HV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C04C4CEC2;
-	Wed,  4 Sep 2024 15:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725463825;
-	bh=hxOmlbtgXKR/p3D2sjwDnE4b4AheFtwuaWlkiEGCQdg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P7MQB1HVD6P8Wbff5uJj5185RVRInxHOtA1PJ83DkBsaac26Z8xmWybj9qTVCHoVA
-	 Pu0iNdULbzqZeYcNNT0KEowTSiui7uCwN/MXplgJWHlXbNHIyz+plSN9VsfqqaddCR
-	 GiycK0I6SUl2MlqiGINsnH8oZoh5CJLLTs4d7FXPpP3yPW6BOloYvJi0G+GfIP6AJR
-	 Ws+GSp0XC1b4zn9Y4ZMh7FglZuRs6dQhzF86U7RhZP1af9pofhmMBUoXlUriwSqCQx
-	 KrKPAigVBfkQEgqioDVuYIDE+QnfSEFe8npSHJ5A2GH1dWIZ+wTwBrOgBo7EUaCY8N
-	 +o36A2rG9Z+LQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Shuah Khan <shuah@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests/ftrace: Fix eventfs ownership testcase to find mount point
-Date: Thu,  5 Sep 2024 00:30:21 +0900
-Message-Id: <172546382097.224182.6471842111781551515.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1725463830; c=relaxed/simple;
+	bh=95rMAoRVdd6FexEwYXmgjfyrSYj+jIxVuYCiMCheoN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5RkIo7QS53XMuA/uqvQBwsmuQtUqB4aARKmkJ1mFjZ3l3E5OQzm+Vg3N348/Fm8mXHycswAvO6WcpONEonL2/q4wIHWGSZOh2QyZnrFmeweKz0COKBVhYZ0BEkGetXaqH90voxUqKtgd+C6e598drFNbCO94tO1zv3RjtqsVk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33701FEC;
+	Wed,  4 Sep 2024 08:30:54 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A41B73F73F;
+	Wed,  4 Sep 2024 08:30:26 -0700 (PDT)
+Date: Wed, 4 Sep 2024 16:30:24 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	johan@kernel.org, konradybcio@kernel.org
+Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
+Message-ID: <Zth9EMydkwvJ30T0@pluto>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-3-quic_sibis@quicinc.com>
+ <Zth7DZmkpOieSZEr@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zth7DZmkpOieSZEr@pluto>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, Sep 04, 2024 at 04:21:49PM +0100, Cristian Marussi wrote:
+> On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
+> > Ensure that the bad duplicates reported by the platform firmware doesn't
+> > get added to the opp-tables.
+> > 
+> 
+> Hi Sibi,
+> 
+> so if the idea is to make the code more robust when FW sends BAD
+> duplicates, you necessarily need to properly drop opps in opp_count too.
+> 
+> One other option would be to just loop with xa_for_each BUT opp_count is
+> used in a number of places...so first of all let's try drop count properly.
+> 
+> Can you try this patch down below, instead of your patch.
+> If it solves, I will send a patch (after testing it a bit more :D)
 
-Fix eventfs ownership testcase to find mount point if stat -c "%m" failed.
-This can happen on the system based on busybox. In this case, this will
-try to use the current working directory, which should be a tracefs top
-directory (and eventfs is mounted as a part of tracefs.)
-If it does not work, the test is skipped as UNRESOLVED because of
-the environmental problem.
+Hold on... I sent you a diff that does not apply probably on your tree due
+to some uncomitted local work of mine...my bad...let me resend.
 
-Fixes: ee9793be08b1 ("tracing/selftests: Add ownership modification tests for eventfs")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- .../ftrace/test.d/00basic/test_ownership.tc        |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-index c45094d1e1d2..803efd7b56c7 100644
---- a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-@@ -6,6 +6,18 @@ original_group=`stat -c "%g" .`
- original_owner=`stat -c "%u" .`
- 
- mount_point=`stat -c '%m' .`
-+
-+# If stat -c '%m' does not work (e.g. busybox) or failed, try to use the
-+# current working directory (which should be a tracefs) as the mount point.
-+if [ ! -d "$mount_point" ]; then
-+	if mount | grep -qw $PWD ; then
-+		mount_point=$PWD
-+	else
-+		# If PWD doesn't work, that is an environmental problem.
-+		exit_unresolved
-+	fi
-+fi
-+
- mount_options=`mount | grep "$mount_point" | sed -e 's/.*(\(.*\)).*/\1/'`
- 
- # find another owner and group that is not the original
-
+Thanks,
+Cristian
 
