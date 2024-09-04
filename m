@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-315034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF2C96BCE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:49:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE37796BCF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2A482829A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2E91C20C32
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C1B1D9D88;
-	Wed,  4 Sep 2024 12:49:01 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7C1D935D;
-	Wed,  4 Sep 2024 12:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D0B1D9D87;
+	Wed,  4 Sep 2024 12:49:37 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8073B1D9345;
+	Wed,  4 Sep 2024 12:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454141; cv=none; b=pZmjdKhvkyZI5G58NtsZ1Ih2GZYGtnESnkMIFfEHC6I13ub9vDCEi34CZA34OCh21Vt5kzyJJuUSLTrbz5bQja3FGMOp7khlYmpbRLYoEit0pv0CWMaNKQNJ9a9bD//jc0y1auN9SZtmgHgamOG2iS/cT0S05s4r7QaRt9a+ixQ=
+	t=1725454177; cv=none; b=MVswvyVtALKAh2wGNNlKYeFHdR883gthfbG1b3n4uN5acXalk3ZDPbeKi6AUWru7cdeba4vqjwa2FZKwj/XTQzxvhff1tVL8pH/HBPOJuDGAI3HoXzsmczJTuwnrbeMzYbjM4t958namusbbg1rzS6TNZvE3JRXr/dsmDoog1SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454141; c=relaxed/simple;
-	bh=7nHkGu1WQn0BZSIK8Hrq3P0BLmtsI/SvosBrgbZMvoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYzSQYu28o71o5aunWjSkzy3ChkAuB2EoS0WK6qQqbJ9ZcwTtok0ihCdUy4UFEtJK0+JDEZFBaWUNBSAfXDclCmZFEHBfuQNODMxWUwRR21GkMvWHYW+LMjPdzo6OTwW1jWAaKFrqagH+AuTaKsfa8ApVyMRS8kyTBJCV4hUU4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1slpRA-0003vu-KF; Wed, 04 Sep 2024 14:48:40 +0200
-Date: Wed, 4 Sep 2024 14:48:40 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jiawei Ye <jiawei.ye@foxmail.com>, pablo@netfilter.org,
-	kadlec@netfilter.org, davem@davemloft.net, dsahern@kernel.org,
-	kuba@kernel.org, pabeni@redhat.com, fw@strlen.de,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: tproxy: Add RCU protection in nf_tproxy_laddr4
-Message-ID: <20240904124840.GA15053@breakpoint.cc>
-References: <tencent_DE4D2D0FE82F3CA9294AEEB3A949A44F6008@qq.com>
- <CANn89iLQuBYht_jMx7WwtbDP-PTnhBvNu2FWW1uGnKkcqnvT+w@mail.gmail.com>
+	s=arc-20240116; t=1725454177; c=relaxed/simple;
+	bh=HSvC+r3Qqvoa3KHlQWgwoyU4FCgKHXca4J/TMcTX0U8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TcYHt1LduQQKn/SaVlLAdz3i7gmSNBqLrjWUO51E7I2ei4xrBScUM/Y7B13v5bOB6u0+iJqhRzvatJxCXWoVSY+ESZCtBuakU6CGQ6ElIMcOxqpnAfRX3c56LN1KIuHl5vSUfRhhJDJCS59373Anp5gi6mWEKaflj11bFqWBT68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 92E0892009C; Wed,  4 Sep 2024 14:49:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 8D88C92009B;
+	Wed,  4 Sep 2024 13:49:32 +0100 (BST)
+Date: Wed, 4 Sep 2024 13:49:32 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Xi Ruoyao <xry111@xry111.site>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mips: Remove posix_types.h include from sigcontext.h
+In-Reply-To: <f47376d9dfc174fc6eeb29ee45c67413ecc1feb6.camel@xry111.site>
+Message-ID: <alpine.DEB.2.21.2409041348170.1802@angie.orcam.me.uk>
+References: <20240828030413.143930-2-xry111@xry111.site>  <alpine.DEB.2.21.2409040229030.1802@angie.orcam.me.uk> <f47376d9dfc174fc6eeb29ee45c67413ecc1feb6.camel@xry111.site>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iLQuBYht_jMx7WwtbDP-PTnhBvNu2FWW1uGnKkcqnvT+w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 
-Eric Dumazet <edumazet@google.com> wrote:
-> On Wed, Sep 4, 2024 at 2:25 PM Jiawei Ye <jiawei.ye@foxmail.com> wrote:
-> >
-> > In the `nf_tproxy_laddr4` function, both the `__in_dev_get_rcu()` call
-> > and the `in_dev_for_each_ifa_rcu()` macro are used to access
-> > RCU-protected data structures. Previously, these accesses were not
-> > enclosed within an RCU read-side critical section, which violates RCU
-> > usage rules and can lead to race conditions, data inconsistencies, and
-> > memory corruption issues.
-> >
-> > This possible bug was identified using a static analysis tool developed
-> > by myself, specifically designed to detect RCU-related issues.
-> >
-> > To address this, `rcu_read_lock()` and `rcu_read_unlock()` are added
-> > around the RCU-protected operations in the `nf_tproxy_laddr4` function by
-> > acquiring the RCU read lock before calling `__in_dev_get_rcu()` and
-> > iterating with `in_dev_for_each_ifa_rcu()`. This change prevents
-> > potential RCU issues and adheres to proper RCU usage patterns.
-> 
-> Please share with us the complete  stack trace where you think rcu is not held,
-> because your static tool is unknown to us.
-> 
-> nf_tproxy_get_sock_v4() would have a similar issue.
+On Wed, 4 Sep 2024, Xi Ruoyao wrote:
 
-Right, all netfilter hooks assume rcu read lock is held.
+> Yes, I just mean *changing* the include file is not explained and it
+> seems an error.  I'm not familiar with ancient kernels but AFAIK for
+> using __u32 etc. we should use linux/types.h since Linux 1.2.
 
-See nf_hook()/nf_hook_slow().
+ As I say the use of __u32, etc. is not needed here in the first place.
+
+  Maciej
 
