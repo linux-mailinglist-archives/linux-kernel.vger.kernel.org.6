@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-315309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBB096C0EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:39:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BC96C0EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E20628225E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69057B24CA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025191DB54A;
-	Wed,  4 Sep 2024 14:39:20 +0000 (UTC)
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37DF1DB54A;
+	Wed,  4 Sep 2024 14:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEtGWkr4"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C9929402;
-	Wed,  4 Sep 2024 14:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C31A29402;
+	Wed,  4 Sep 2024 14:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460759; cv=none; b=A7m0lSKhwvsRSwcqcARG4qbg12HHj2SjAiedmHFVqVodxFfjj5ReCPSqbhqGuPoCeGSZnpY1NUD5lC9vfs6oYpQxQwkDWw1iykl4GB9LdOasUa2gR+bZNRdL3EBLqz7F8owuviNDbYgCvJJAhdCmk9wIUYeWdo88ECTDJBg48hw=
+	t=1725460785; cv=none; b=UvLJDopYVP9yT63W65wVwyFdELH95XOZbplMlyqwpaH/o4aRoQq39kqorh7NRl+3w+pQ3ZN0RU5e+mrbXYkNM2UQUi/307Q0F74bldOnpx+wHbzWJhG6/LQkCkCgfYDHcRFMPHVHVBdCfAcL2pz+xYMsVD4AR4RvpWQIhb2/muE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460759; c=relaxed/simple;
-	bh=5quALXjRZwLUm7dAnwuV4FUF2d6AtY1LbRXAskSXcPA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=umGeN9zHR6pcUAgX2gnCReNYNEDiWdwzmVpqHZQsSazV9sPmsKGQ7RybNV0B1xGike1spYhV7iwPSVSoxZO9jnvgPJvg73G/pNUrTLXccWfMDu1O2Cp0sVHk9PHSoGfFXNNa4s3VUDznmE21JnIXaE3CCckKKNk5ScPqyXuoqUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1725460785; c=relaxed/simple;
+	bh=6aDzBtKmErAeDRhH2UevZcpPjDuLZhOTTHcO+4zxsXQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QCSD6OVOrjKBClN5NVFW8KacMMtEBfm5QExGQSH11ormUlsKWvKV+YJdkHWHzyXh08kGd2FeFpkoZj5CQ9JcJR4kFrgyC8tOCskOJcahMsieL7h6ER4P38akQINCuu6tn2QjtqtaYKGniXoT4AnJoy80++Mw7KTfnjj1VgLbp2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEtGWkr4; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82a24dec9cbso29475839f.1;
-        Wed, 04 Sep 2024 07:39:17 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f406034874so80578341fa.1;
+        Wed, 04 Sep 2024 07:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725460782; x=1726065582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVBUiu7O6zEyMcaehani03tQmAhOQarVx21y7gpLEM0=;
+        b=KEtGWkr4uQPLo6tdxbLXYUiFZtiVEYUvsLjX/hjBwei04rVVVpz5kk4tutnfN5tB44
+         PMcKbTuYEdz1QqMGxyCBw6j+JTUREHITcyhNlZ5OJVaUHzCRaaGG1vVPQ2H3BCBmrE2J
+         RibS7xqI1/t7tX/e0qpimxICvon8j0AQEh4UJxpNNv33qLZ/T0PJFZnME7sSeX9/+vCC
+         ge4bwbsckESaTf4WcY/5vd1zYlEs/Pq3cJVUBnSSLPqktwZWrnCI1BI8y5TE0ykBDPQ1
+         8rCZlL6aMjHSYNQZ9YNYgD43GDIjJSTQkzjiuvIh54NRLjHlKIBDNOpAiZfwCY763Osj
+         9uIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725460757; x=1726065557;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0kvnOjXzU3FwJLWDXcoK40WNU+7mM5+pyM0Rfyz7Dho=;
-        b=Zu8T3+vXfIjRtSMHWLbJy1lwZQmPq0lE9eonku71nLZAhFNp+Vl842XidKjgF9SDut
-         QJFG5dBRAFXxyrpVKlf8F4HsM0L67JlTpwrrfFFEnWiAuiF/yAIx2XNKqD0EPjcrdA4T
-         kUkw6VyRxASkKKasoZAHe7XDHoS4ffMwdquwk+zooOr/lpEoVlwkOBP5C533xoQSHvTv
-         JbgYYquCNGvv96YS1VVcJACnCf4J+BltbhTZuf7dsUlHUA7I+auB+nAh2BRnBkzsg9vj
-         Qye9qtv2itOZrqUIn3ewnf1L6Oo1X3pEYsSnMFMunxKnY4pYPU5Z4BlRMFeFAe37XOz+
-         A+eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ6qzuCg4zMzCrUwIOycBQWW+kZLbYNiuXzuVa4EBNsl5D8kFu0qHYDzs52GsKWTlEavxebUPq/DZA/Mg=@vger.kernel.org, AJvYcCXOv2n02N4iGy6lzkZ1lBahgRqaNMCpn3O1wKWmIRpLM+IT5yUWt1lH3wsY0hWwg7GxFlnfbkBrDGYm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjS7CMSrEEpiZPPCs4cKeriaTEYVArFAj7YiFfUupuVAXCMz0T
-	x599dBe2qlof1jXmUKcPZjm60hI/EGM59AW2FtmCnZGydKjVg6Q=
-X-Google-Smtp-Source: AGHT+IHs+kGc3Dt1q5uA8HC/zLD62drs9vIUHQQGPiLmP2kH7XWDuEOvltWaU6zXKTgCQg8hAEy9mQ==
-X-Received: by 2002:a05:6e02:1a65:b0:39f:558f:dd8b with SMTP id e9e14a558f8ab-39f797bd912mr17901175ab.12.1725460757099;
-        Wed, 04 Sep 2024 07:39:17 -0700 (PDT)
-Received: from [192.168.75.138] ([204.8.116.104])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e9632dsm3139181173.93.2024.09.04.07.39.16
+        d=1e100.net; s=20230601; t=1725460782; x=1726065582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YVBUiu7O6zEyMcaehani03tQmAhOQarVx21y7gpLEM0=;
+        b=v++cecRXKkHYqYttOwAQbvqRnwBsNJ2j00xB7n9vco7828JpeXz0EOn9748drm5mO9
+         WAhaH9LzkxAfbedKOIt/nqyI5tefQWUDSzChReQ7fW7keReUQSx9Iqm1FzOFrM9V+FpK
+         1/ErHaGlnsZ2dWjRJ4CiNPUOqKr/efU8Sh8l2/5UHQxbNnTPd59TBpI3giJRs5nqbW1v
+         iyn+EXl07uxNoYS61N5lWc9zA35I5L7BrVyJLmCOO9RPYVsygAI60b6lr194JUWoVlkg
+         +aZGkNTvrEpuc8hoaB0dI/J6IBiu7BhPVwBuVSyho0zVpFu8WklR/gzgaaJK7qkUo/00
+         e3Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfkxW+MtOI/9zcV0bCu8qdZR4dTm5lDN1ZRr8/jhna1Xa5HokwpjLqCgSCbFW0xwmsXkJeLMmgEh42Ydk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDLku9mxvVOWTxcdW6O3auRY0NT0ehwZ0v7tM9TPn15A2SGvgF
+	ATk54+RKyr+IRsrsR/BE/kL7Xt2D+f6L1hroGI2aZNNdaib7u+gn9YYQhA==
+X-Google-Smtp-Source: AGHT+IHEZqnJ/r7Vsq9zgIaMIObj1Al45QUxn9uBV5dp1ofp2e/AcjfuQV7Q1/nXOLAYU7oCV9dYNg==
+X-Received: by 2002:a05:651c:1993:b0:2f1:6cd6:c880 with SMTP id 38308e7fff4ca-2f64d546333mr36075961fa.37.1725460780717;
+        Wed, 04 Sep 2024 07:39:40 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f65eb480absm1375591fa.51.2024.09.04.07.39.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:39:16 -0700 (PDT)
-Message-ID: <8ee4ce7c4eb56ec80365492407b76ee3dc4b6347.camel@kernel.org>
-Subject: Re: [PATCH] nfs: fix memory leak in error path of nfs4_do_reclaim
-From: Trond Myklebust <trondmy@kernel.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>, anna@kernel.org
-Cc: jlayton@kernel.org, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  yukuai1@huaweicloud.com, houtao1@huawei.com,
- yi.zhang@huawei.com,  yangerkun@huawei.com, lilingfeng@huaweicloud.com
-Date: Wed, 04 Sep 2024 10:38:45 -0400
-In-Reply-To: <20240904123457.3027627-1-lilingfeng3@huawei.com>
-References: <20240904123457.3027627-1-lilingfeng3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        Wed, 04 Sep 2024 07:39:40 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH v2 0/2] Some enhancement for kvfree_rcu_mightsleep()
+Date: Wed,  4 Sep 2024 16:39:36 +0200
+Message-Id: <20240904143938.119964-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-09-04 at 20:34 +0800, Li Lingfeng wrote:
-> Commit c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
-> nfs4_do_reclaim()") separate out the freeing of the state owners from
-> nfs4_purge_state_owners() and finish it outside the rcu lock.
-> However, the error path is omitted. As a result, the state owners in
-> "freeme" will not be released.
-> Fix it by adding freeing in the error path.
->=20
-> Fixes: c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
-> nfs4_do_reclaim()")
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
-> =C2=A0fs/nfs/nfs4state.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-> index 877f682b45f2..30aba1dedaba 100644
-> --- a/fs/nfs/nfs4state.c
-> +++ b/fs/nfs/nfs4state.c
-> @@ -1957,6 +1957,7 @@ static int nfs4_do_reclaim(struct nfs_client
-> *clp, const struct nfs4_state_recov
-> =C2=A0				set_bit(ops->owner_flag_bit, &sp-
-> >so_flags);
-> =C2=A0				nfs4_put_state_owner(sp);
-> =C2=A0				status =3D
-> nfs4_recovery_handle_error(clp, status);
-> +				nfs4_free_state_owners(&freeme);
-> =C2=A0				return (status !=3D 0) ? status : -
-> EAGAIN;
-> =C2=A0			}
-> =C2=A0
+This is v2. This small change tends to improve even more the slow path
+of kvfree_rcu_mightsleep() API. It is hit when a low memory condition
+occurs which leads us into two options:
+  a) check if a GP is already passed for freed object;
+  b) if not, initialize and wait for completion of a new GP.
 
-Nice catch! Yes, that leak has been there for quite a while. Thanks for
-finding it.
+The differecne between v1 -> v2:
+  - Drop "Support dynamic rcu_head for single argument objects" patch;
+  - Use cond_synchronize_rcu_full() in a slow path.
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trond.myklebust@hammerspace.com
+Uladzislau Rezki (Sony) (2):
+  rcu/kvfree: Use polled API in a slow path
+  rcu/kvfree: Switch to expedited version in slow path
 
+ kernel/rcu/tree.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.39.2
 
 
