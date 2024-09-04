@@ -1,185 +1,109 @@
-Return-Path: <linux-kernel+bounces-315007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CDC696BC5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C0696BC9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13395281E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0604328582F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509441D799B;
-	Wed,  4 Sep 2024 12:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="No6efaH3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B531D9D71;
+	Wed,  4 Sep 2024 12:41:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3B126C1C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66261D933C;
+	Wed,  4 Sep 2024 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453078; cv=none; b=jcZoS7FZ0D8Vz2cvb5206dOZJvpAjpbcTG5TMCYPQG1m/HG57p+lQrAe07zI4oMi+y9AukEblQOf2ZXQRkw9jVcayGOtA1cPKft9AzPkB6RgWpFEox5wtsdQurNHvJqMegqVzNVrDTzX0OdA5KX0eJOWtkVCR5BkRXwuS1iF3d8=
+	t=1725453680; cv=none; b=iVmZplSgkI/OYhFi/Ck9fwAC4PliGnwkExHp5xhJLPJlNNy50dlAQ+cjL6/9tK0DWIaf/hyMpE52R0ruoCqr+VcMdT7C9Zjiy5Eq2BiRjieGwwTkRoeW4ssyp3Hl+/VUHvHHEM7Isua0gp89K/Afl+4TxgfHoaytO04GAReue/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453078; c=relaxed/simple;
-	bh=+8LLs4B22tCYpSKSSh6h5783N5Fn4/g1LnmVO3yQ3/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bDqHxCImi3X29dqBRcrONW9/dTY7wA2e15it/qttMV4dVQz7y03UzUOEAEiNm06XFSWLkaltpyRfMXGTfn6Prlbk88qTIL9AXjiUcWWXq3UpIgpFHJbGk2HLxo6MPXvvlE0yLb1k+ROOrJYU1eW9jFKAGIQuFjrKmYe5pemCF1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=No6efaH3; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725453077; x=1756989077;
-  h=date:from:to:cc:subject:message-id;
-  bh=+8LLs4B22tCYpSKSSh6h5783N5Fn4/g1LnmVO3yQ3/Y=;
-  b=No6efaH38EeJ1zy2LGIuravR8Kn6u0iTa19SdMrKmdGkTX1WMWfZdXLC
-   vypTxU2nJABMHsFIAKrRy6zzhQf8SrOeQ9Cvbeq7tSkSL6wjurhQgNRP7
-   d7WPom0xTriQrks27PbZS8smIb6RjR2V8yOAiYJU5Ay/crojZ+qJZnKUk
-   lfeQ9EC/Hdbja4KmvhpEtcGgIM4Og5NZDU6c9ICKvQMMv6m/WQ+Q9yyWg
-   5HPC769Nk2ga2/wlCzv4W8+Fcb4VpLQAaCFukbYPtdX2CGVRqdQHb8WKb
-   rmO3/P0Zr9LAWHTGPejeLwXEDDaQUf1K53GaAnLp14vrIK8HBrBs7k84Y
-   w==;
-X-CSE-ConnectionGUID: DXz8K/qrRS6KUd5HInDtFQ==
-X-CSE-MsgGUID: TNlWmpiQQW6V+UcZuSeISQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24301414"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="24301414"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:31:17 -0700
-X-CSE-ConnectionGUID: 3tnVlne+QcCVcFnKKhMkaA==
-X-CSE-MsgGUID: dcTiyGAmSRiYaN0lW4+4dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65987451"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 04 Sep 2024 05:31:15 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slpAH-000831-19;
-	Wed, 04 Sep 2024 12:31:13 +0000
-Date: Wed, 04 Sep 2024 20:30:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev] BUILD SUCCESS
- c5fc1889f28b031d7c3b9061e20560b1e0fb92d8
-Message-ID: <202409042011.2zWe6Z6h-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725453680; c=relaxed/simple;
+	bh=7eB/rlYGwMuL7IZpy++WQDT8FnMlscBwvb7t0s8HaqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TVfl08tSfOEAjHDGa9c7SQxy6IdWRFuBBo+s9m4qFsEXX5bFAJBGD062FtKsNFWK9Bzto+SQ8+WpeVikGajEOJIotMzSfRrBr+lu3bC3XNyt5YF98ueqHb8loKnZT6VfIGWNWdAAmPp7cvhuwjBRmGez3L0ulobvVMmKzD5uGbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WzMY60s0Qz4f3lfj;
+	Wed,  4 Sep 2024 20:40:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id F1F8F1A14D6;
+	Wed,  4 Sep 2024 20:41:13 +0800 (CST)
+Received: from huawei.com (unknown [10.67.174.45])
+	by APP2 (Coremail) with SMTP id Syh0CgCHvGFdVdhmhod9AQ--.48162S2;
+	Wed, 04 Sep 2024 20:41:13 +0800 (CST)
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH -next 0/2] perf stat: Support inherit events for bperf
+Date: Wed,  4 Sep 2024 12:31:01 +0000
+Message-Id: <20240904123103.732507-1-wutengda@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCHvGFdVdhmhod9AQ--.48162S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFy5XFyfurW8tw4xAF4ktFb_yoW3Wrb_Ga
+	4IqFyqqrWDAF92qa4ak3WrAr93XFWfZry8ta95WF45Cw4Yvr1UZF4kZryUAryrXF4UZrsx
+	Jwn5tryfuay3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-tree/branch: https://github.com/paulmckrcu/linux dev
-branch HEAD: c5fc1889f28b031d7c3b9061e20560b1e0fb92d8  EXP rcutorture: Limit callback flooding for Tiny SRCU in preemptible kernels
+Hi,
 
-elapsed time: 1249m
+bperf (perf-stat --bpf-counter) has not supported inherit events
+during fork() since it was first introduced.
 
-configs tested: 93
-configs skipped: 3
+This patch series tries to add this support by:
+ 1) adding two new bpf programs to monitor task lifecycle;
+ 2) recording new tasks in the filter map dynamically;
+ 3) reusing `accum_key` of parent task for new tasks.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thanks,
+Tengda
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                        neponset_defconfig   gcc-14.1.0
-arm                         socfpga_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                             alldefconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386                                defconfig   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                          multi_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                           gcw0_defconfig   gcc-14.1.0
-mips                           ip28_defconfig   gcc-14.1.0
-mips                           jazz_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-openrisc                 simple_smp_defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                     akebono_defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      ep88xc_defconfig   gcc-14.1.0
-powerpc                          g5_defconfig   gcc-14.1.0
-powerpc                    ge_imp3a_defconfig   gcc-14.1.0
-powerpc                 xes_mpc85xx_defconfig   gcc-14.1.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-s390                                defconfig   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                          sdk7786_defconfig   gcc-14.1.0
-sh                           se7724_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc32_defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
+Tengda Wu (2):
+  perf stat: Support inherit events during fork() for bperf
+  perf test: Use sqrtloop workload to test bperf event
+
+ tools/perf/tests/shell/stat_bpf_counters.sh   |  2 +-
+ tools/perf/util/bpf_counter.c                 |  9 +--
+ tools/perf/util/bpf_skel/bperf_follower.bpf.c | 75 +++++++++++++++++--
+ tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
+ 4 files changed, 79 insertions(+), 12 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
