@@ -1,159 +1,143 @@
-Return-Path: <linux-kernel+bounces-315879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6513F96C80E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:57:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A02596C810
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879821C218C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361711F239A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3754C1E7656;
-	Wed,  4 Sep 2024 19:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748E91E765D;
+	Wed,  4 Sep 2024 19:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NlSCdQS8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6BD8yNt"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE731E6DEB
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFF1E6DDE;
+	Wed,  4 Sep 2024 19:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479851; cv=none; b=WnmGVr3JEhNpPKJ3R1naR0a5XkAI7zloKWUVRJ/qdlbWwd1lpOqSFPb7VDULtAKo3vOf7J34apGLrEFtDzNZ/xzeEC2a43GNkdqPQZ1AKwB/5A9OZU1bwkjcNDJ3yy8FmxqGQA0rgIMeblzKVMtIKeACr6iWdQj0czQ38+n5GRY=
+	t=1725479894; cv=none; b=E1RwIoZIj4yfrE00EPG05RvmoS5fJsAxWFVONrS//vV/4bmoYg+JqMPMgx3OFO3tGf82EVWTK4prxZBQIS4jMz+JFSc3xy/EjauMPoe8MG4hG1tQwE6jnR/pZMIe10SzedouR2aWuFeEzzsuZ23YVh3PSLQYZtu0UVAfXcHB320=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479851; c=relaxed/simple;
-	bh=Xwgfnwm4aixwjHxK45Cfat1yHYnqgba6d47DLMpHEVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UiAz1iV55uUMJDW52qdWLvFCNbhY9SNO3ZyLpgt8sWK/I+6+o/OrHDH+AykssxwJ60IE3UGX0l91J2yznOQhWuh0S9a54ye1c6yG/Pm9M3i79qbM8ZaUO2S2Bdz/5Bc6xaq49jWIP5WzAXI/5+Z8TuIWS0QhpXa4fbR2+/s/f54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NlSCdQS8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725479849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dfOc/OwTB9hjAZ4+hRIzp7kADInixhRm8yePf7xIchM=;
-	b=NlSCdQS8ssym0JxaKEomFDLnTCDur9swUf4rREY8TxkdF2Yy3wwZuNEj/FOl9aQXcTZaL1
-	qBroIyL1mZj3enN8XZi7Ipwlf4OZMweiWZqlVRyBenDhI29bAob6trM+7pSz2ds38X4zC4
-	e4CqgEYvwUC+Nt9zZrs7PptRMB6uBh8=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-zfEPBnLnPWaYPpaPaasuhw-1; Wed, 04 Sep 2024 15:57:28 -0400
-X-MC-Unique: zfEPBnLnPWaYPpaPaasuhw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8698664af8so2365866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 12:57:27 -0700 (PDT)
+	s=arc-20240116; t=1725479894; c=relaxed/simple;
+	bh=zavzUwXlxjfb5MjitZxKh7537njoiHYD+hBJaxyi3B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/px9yFoCO08trUqAWZBCqDzUm3tsvfZOp1Huk0Bc4JeeSgyOtG92wndC4+nslcWNLoLVjCvHBAQNbG5HVWIJLlF2FaTGoPTpMLHTxWS/4cDniZCYY4NQ8kTw25PyklK608cm8tO9Osih23O3cl+BCqyR/1brctZfylRq03STOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6BD8yNt; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d4c923a3d7so13895a12.3;
+        Wed, 04 Sep 2024 12:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725479893; x=1726084693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cPICdxGtZMm7EVbsBiDOXLzIL+MnaADtVMssqy1cp2c=;
+        b=l6BD8yNtusMiXdWfUu8GV2zp9XUNyZIaWbXD2EYnLfLPmyExGc/METs+UcZUiQu+Xm
+         sW6uOFkBq6/zJUpkYR167UbqsDllaX8vdIABYnjdbpR6EzPkV7H4s2QW6jbYsvY2+1p3
+         PB+d46b9SlDV/1dlScUi+goWaxnceTLMCfLl4jHzRB3KQXb7jLt83nNcDGEhH+6t/UBK
+         kZARl1TTptVaiBA2iS6rQACFaOXkVaxsHr4oDkMBBxjg5J8zrWjX+J7VLaT5askspSGY
+         ZoV8gG+HLLV5ccbJ8A8HkuZe+lAZirE1R5CZrvlvvPNBM+j6pjI9KQ3KQ4Wddax2wd/A
+         23Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725479847; x=1726084647;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfOc/OwTB9hjAZ4+hRIzp7kADInixhRm8yePf7xIchM=;
-        b=AQFWL+XUp3jdJ2P9GdlfY3k9COrUAFdrXozh0v8SGHJ4ZeXGMd870V1fF32yEHKs3Q
-         FBGSnGXsGwAH7J8rqh6YLPiVKXC8OKPeDn5rl6LbCQIixXfU7VLkaqDJO6ep2bPCtjkG
-         QBNk19o8F6DETuFySaMfUzlqTrUXTHPcxE9EUhba0LLnfpDeqY6kZ6nty7cVcmgqxMEi
-         tGD1cVFD8rGb56JODSdlgOzpYi0epjK5WW2lqSY066rz4ASljWYtuPm9Mvqn+kF/gIO9
-         tcZwLlZbolvglhl6PGlgxqtk2b2UTxr80CUnNjZ8ifat1XeIsANL2tpDLYkSe5S6/fO4
-         jGkw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0cAfNKNp6Y8pOJRop2JviTiajt51icRikdUyKZQI5ZEF2W6TRoU18O4vekFXKiJvuEmmYnqYdPRFqPZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOueq1Rpzp/m/FEl3AhyNE1LHAqKTUYefDRn2NK0vNfccs4mCL
-	hIOF76Qo8zOQ0M/lnmMQeY3sgx9gKrBbNzosbxLwQnkoRmUH7r2tD4JvFejoSuFGwYBusnN5nX4
-	aQfnRpECHdxzJF16fIrW3zLUd+iBrf9HwqKLBWNbjxC2QdqN1daajBzf+E8vHXA==
-X-Received: by 2002:a17:907:94d4:b0:a89:b829:7598 with SMTP id a640c23a62f3a-a8a42fdba65mr344795966b.12.1725479846710;
-        Wed, 04 Sep 2024 12:57:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQhgIOlhuLY34Q4gwUYH9FdcOa8lFucrXBT8MB62RussGsqf5BBIcU5nwJAWBclu+fIPfYxw==
-X-Received: by 2002:a17:907:94d4:b0:a89:b829:7598 with SMTP id a640c23a62f3a-a8a42fdba65mr344794466b.12.1725479846369;
-        Wed, 04 Sep 2024 12:57:26 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62370ee0sm30693466b.106.2024.09.04.12.57.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:57:26 -0700 (PDT)
-Message-ID: <e64f38b4-8c7d-4680-ac17-a364cc843f48@redhat.com>
-Date: Wed, 4 Sep 2024 21:57:25 +0200
+        d=1e100.net; s=20230601; t=1725479893; x=1726084693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cPICdxGtZMm7EVbsBiDOXLzIL+MnaADtVMssqy1cp2c=;
+        b=T24PGJje8wj19LxPfDtvXXgshlAt36rWG6aCvNGycmIs4U9UzgbRaySSgHYKynzR8I
+         pt1+3p97JvXX6htq127+UL7VTnwF0WYfDjO3wiRL21E8y3QfuPMVSboUoyr65V4pIlDV
+         GP/u2usjYBpn90G/+fdRNX5JaDyjnnUzbLwRkCE59qfS5wEYZEL3QNiJWVl9Yja0oORZ
+         vcMBlnCIj+RP+jLpRFzW9wNACyjS5DmJsW5Gt3mN5YOp6uH6YRVWzILzrW4l1bkr5wD4
+         9hFRDV7SR9frKryJLKXO3XlXXbamvo48mi4TFqvu4FA3AP9phzDAOI5drvnDxEeYUMpz
+         bnuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtgIVLvyTirjJcsZVmxHXfOtal/sW08oZFs+NDZjnJa5Ro3U0wGBXFPGJv/K54XH2aUOoPDliYCIPjdWcfVCVq@vger.kernel.org, AJvYcCXxltYLr3sSiZdHjwdZH6ga6boZ2lyHx1Oxt66cvHQrMATUbbOpWU3g5XtdSXIZzlPYENKv8RRAGJ71RJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk5AUlvXtwDbXLW77fjjWAg4PAuyAiXZVddFelK+feYR7NGGmr
+	A97NOkhrNzjk4aSUzHH+D9R5NfgbN2aOCqkx/YfsxKWRSxe0lf0U
+X-Google-Smtp-Source: AGHT+IHiuHFL/47pKWStSEZDU1pmVIBJvuKjwmas3mljqR/n/RvBLMuLXDlS66q4XOAagB8218fbcQ==
+X-Received: by 2002:a17:90a:70cf:b0:2d8:f12f:6bed with SMTP id 98e67ed59e1d1-2da5592440bmr7912187a91.3.1725479892758;
+        Wed, 04 Sep 2024 12:58:12 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2da53740084sm4907126a91.32.2024.09.04.12.58.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 12:58:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 4 Sep 2024 12:58:11 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>, damon@lists.linux.dev,
+	linux-mm@kvack.org, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/damon/tests/vaddr-kunit: init maple tree without
+ MT_FLAGS_LOCK_EXTERN
+Message-ID: <b253cae1-8363-4f26-9698-97e76b4b17dd@roeck-us.net>
+References: <20240904172931.1284-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 4/9] power: supply: sysfs: register battery
- properties
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net>
- <20240904-power-supply-extensions-v3-4-62efeb93f8ec@weissschuh.net>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240904-power-supply-extensions-v3-4-62efeb93f8ec@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904172931.1284-1-sj@kernel.org>
 
-Hi,
-
-On 9/4/24 9:25 PM, Thomas Weißschuh wrote:
-> Instead of only registering properties from the psy_desc itself,
-> also register the ones from the battery.
-> Use power_supply_has_property() for this test which makes the logic also
-> easier to read.
+On Wed, Sep 04, 2024 at 10:29:31AM -0700, SeongJae Park wrote:
+> damon_test_three_regions_in_vmas() initializes a maple tree with
+> MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
+> mt_lock of the maple tree will not be used.  And therefore the maple
+> tree initialization code skips initialization of the mt_lock.  However,
+> __link_vmas(), which adds vmas for test to the maple tree, uses the
+> mt_lock.  In other words, the uninitialized spinlock is used.  The
+> problem becomes clear when spinlock debugging is turned on, since it
+> reports spinlock bad magic bug.
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Fix the issue by excluding MT_FLAGS_LOCK_EXTERN from the maple tree
+> initialization flags.  Note that we don't use empty flags to make it
+> further similar to the usage of mm maple tree, and to be prepared for
+> possible future changes, as suggested by Liam.
+> 
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
+> Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
+> Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/power/supply/power_supply_sysfs.c | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
+> Changes from v1
+> (https://lore.kernel.org/20240904004534.1189-1-sj@kernel.org)
+> - Keep lock usage and update the initialization flags (Liam)
+> - Fix a typo: s/celar/clear/ (Guenter)
 > 
-> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
-> index 3e63d165b2f7..4ab08386bcb7 100644
-> --- a/drivers/power/supply/power_supply_sysfs.c
-> +++ b/drivers/power/supply/power_supply_sysfs.c
-> @@ -367,7 +367,6 @@ static umode_t power_supply_attr_is_visible(struct kobject *kobj,
->  	struct device *dev = kobj_to_dev(kobj);
->  	struct power_supply *psy = dev_get_drvdata(dev);
->  	umode_t mode = S_IRUSR | S_IRGRP | S_IROTH;
-> -	int i;
->  
->  	if (!power_supply_attrs[attrno].prop_name)
->  		return 0;
-> @@ -375,19 +374,11 @@ static umode_t power_supply_attr_is_visible(struct kobject *kobj,
->  	if (attrno == POWER_SUPPLY_PROP_TYPE)
->  		return mode;
->  
-> -	for (i = 0; i < psy->desc->num_properties; i++) {
-> -		int property = psy->desc->properties[i];
-> -
-> -		if (property == attrno) {
-> -			if (power_supply_property_is_writeable(psy, property) > 0)
-> -				mode |= S_IWUSR;
-> -
-> -			return mode;
-> -		}
-> -	}
-> -
-> -	if (power_supply_battery_info_has_prop(psy->battery_info, attrno))
-> +	if (power_supply_has_property(psy, attrno)) {
-> +		if (power_supply_property_is_writeable(psy, attrno) > 0)
-> +			mode |= S_IWUSR;
->  		return mode;
-> +	}
->  
->  	return 0;
->  }
+>  mm/damon/tests/vaddr-kunit.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
+> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
+> index 83626483f82b..a339d117150f 100644
+> --- a/mm/damon/tests/vaddr-kunit.h
+> +++ b/mm/damon/tests/vaddr-kunit.h
+> @@ -77,7 +77,7 @@ static void damon_test_three_regions_in_vmas(struct kunit *test)
+>  		(struct vm_area_struct) {.vm_start = 307, .vm_end = 330},
+>  	};
+>  
+> -	mt_init_flags(&mm.mm_mt, MM_MT_FLAGS);
+> +	mt_init_flags(&mm.mm_mt, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
+>  	if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
+>  		kunit_skip(test, "Failed to create VMA tree");
+>  
+> -- 
+> 2.39.2
+> 
 
