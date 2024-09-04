@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-314986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D6896BBEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E327A96BBC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CD6B2D202
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21ACB1C21BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C241D7999;
-	Wed,  4 Sep 2024 12:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832F31D014F;
+	Wed,  4 Sep 2024 12:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="QLv7ABS+"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CA1D04B8;
-	Wed,  4 Sep 2024 12:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sjQhYWvQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F177C1917E3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452004; cv=none; b=O0xEaDT3zugIF0iVv4pyZX37J/n8R3/PWb67Bwi2ZfUTfsXcLL+CU8o7SuSz2NW0MXyWasUjhFalV4EXa+O2yMSTywlmp9c7DEQ+IvneMoWjVY/kToQerlM2FlrSIfDvwT69w5Ziymy/Wfj8/Yu+f49Hla1fM3LUvq8CQS9s/TM=
+	t=1725452129; cv=none; b=jh72zxhyScnm/0H4HFL26t+PtF6kyHdgT7OCVX0QpPZmLmOGh3lkiZCy34fgT+2lBF8ESXSxlHwRYomnjoSYeVhxfe7+MPcBVoSQrCWPGaW6zZ9A7Caq6jdGDefosH5Fd0o/lRL4GsvFhuc/soiHivsa57hecHB+FcIlYA4p3Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452004; c=relaxed/simple;
-	bh=C11HCu5mtryKsu8C9faHMCSo+KyXN+MYZk0e6IQdrn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=S4/qjySn7h5yjWN0s6HxU9EQDvU4225HUuvmDUJto+mF88qY4pRflSR1S2ElkfYA+3AF5qjJj1GJY1VC9hqm52FfAW06Vr4O4RGGImhOdXsr9Bz5GSDBmpLKsmvUVKbCcO2OWSKjvjDaf6Y3dHpisy3l66OFIztVzYUtN838LyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=QLv7ABS+; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id 8841D789DF;
-	Wed,  4 Sep 2024 20:13:17 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 8841D789DF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725451998;
-	bh=Vm1m87bDBl/nK+yI9aANRki1TovLXqNDyh/ugIwEEqg=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=QLv7ABS+UJFGUiOqbubTLaLLzujkcYA8E7NhYmtham0E6VbeZo68QgBkn64zh0N2t
-	 9atU1LzoG1fWfgTpspwTy2mNF62jGSMmt+nslLTprY5DkjBiKA/hp/U605JZGNzMMp
-	 pCXiCY26LgogHZCu1C+cjjlAe49i7UVAU+JPG7t0=
-Message-ID: <2ec7de72-8560-430c-a6b6-5ef7ad5f5e00@classfun.cn>
-Date: Wed, 4 Sep 2024 20:14:26 +0800
+	s=arc-20240116; t=1725452129; c=relaxed/simple;
+	bh=64gfv3s+htMpmdun/7Zzr72Fv4YYVzlBsASj1s+JTqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jScWPsUh7//STTstg8i6QXTZ3KSPa3OzejEYD3oot0Wp6M05tmgBshDUcAeDNro6XoqWEwhhLKT113aIKSIksaL6NQpVaejQzMdrXahiGX9sMSAQx31QbXia3wksv9OqS7HYGfvZU/1QtfkoUza98riC+xcwepWtl+9CDnvC4t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sjQhYWvQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7rrD7mnSuxzVizNijNZEIP45VR8f0WolBw+WuajR4Q8=; b=sjQhYWvQMO24sSpItwfGmOTvcG
+	7H0ST8u+KStZkQ5P3aCi9iYpQ9Ij72wjS8QiY0/cFO6upn3PVSyrqXU1tk1FrrsSKuguhRprYoMAO
+	2O9XusPRLt8GBnjTD9yZRek45uRYw6re/ngLVywrn+j84jYZ/vWQ+ddaHdmoNEahkbwpZYESAip7a
+	fCuz75QOiqWwo5VYEws1AchYcafSWKdLu5MM2AFZ8p8bkFXw5IR8nkmSFZ5yx1GvHVFLeEeo+VYJj
+	pLvpidida3rX9XW3x9gdzKg2Ub2rPVNCJ5b9bmcMOuNyhWqf0RVVMGqQ6NMY8S9kwC0taxxmwrSz8
+	XBJKBIKg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sloum-00000000pKX-2Yu0;
+	Wed, 04 Sep 2024 12:15:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1F468300642; Wed,  4 Sep 2024 14:15:13 +0200 (CEST)
+Date: Wed, 4 Sep 2024 14:15:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Leonardo Bras <leobras@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Rik van Riel <riel@surriel.com>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	linux-kernel@vger.kernel.org,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Chen Yu <yu.c.chen@intel.com>, Julia Lawall <Julia.Lawall@inria.fr>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [RFC PATCH v2 4/5] softirq: Unify should_wakeup_ksoftirqd()
+Message-ID: <20240904121513.GH4723@noisy.programming.kicks-ass.net>
+References: <20240904111223.1035-1-kprateek.nayak@amd.com>
+ <20240904111223.1035-5-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add Shanghai Novotech
- Ariaboard
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <20240904111456.87089-1-bigfoot@classfun.cn>
- <20240904111456.87089-2-bigfoot@classfun.cn>
- <b9e5389f-8492-425e-bc15-35ea55c0e3b5@kernel.org>
-Content-Language: en-US
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
- FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Junhao Xie <bigfoot@classfun.cn>
-From: Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <b9e5389f-8492-425e-bc15-35ea55c0e3b5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904111223.1035-5-kprateek.nayak@amd.com>
 
-On 2024/9/4 19:35, Krzysztof Kozlowski wrote:
-> On 04/09/2024 13:14, Junhao Xie wrote:
->> Add an entry for Shanghai Novotech Ariaboard (https://ariaboard.com/)
->>
->> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
->> ---
->>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> index a70ce43b3dc0..58d1a2e8b212 100644
->> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> @@ -145,6 +145,8 @@ patternProperties:
->>      description: Arctic Sand
->>    "^arcx,.*":
->>      description: arcx Inc. / Archronix Inc.
->> +  "^ariaboard,.*":
->> +    description: Shanghai Novotech Co., Ltd.
-> 
-> This is confusing. Prefix is entirely different than company name. I
-> would expect prefix like shanghainovotech.
-> 
-> Best regards,
-> Krzysztof
-> 
+On Wed, Sep 04, 2024 at 11:12:22AM +0000, K Prateek Nayak wrote:
 
-Thank you for your reply.
-Ariaboard is a subsidiary of Shanghai Novotech, maybe it would
-be better to change description to "Ariaboard"?
+> @@ -118,14 +101,40 @@ EXPORT_PER_CPU_SYMBOL_GPL(hardirq_context);
+>   * the task which is in a softirq disabled section is preempted or blocks.
+>   */
+>  struct softirq_ctrl {
+> +#ifdef CONFIG_PREEMPT_RT
+>  	local_lock_t	lock;
+> +#endif
+>  	int		cnt;
+>  };
+>  
+> -static DEFINE_PER_CPU(struct softirq_ctrl, softirq_ctrl) = {
+> +static DEFINE_PER_CPU_ALIGNED(struct softirq_ctrl, softirq_ctrl) = {
+> +#ifdef CONFIG_PREEMPT_RT
+>  	.lock	= INIT_LOCAL_LOCK(softirq_ctrl.lock),
+> +#endif
+>  };
 
-Shanghai Novotech: https://shanghainovotech.com/
-Ariaboard: https://ariaboard.com/
+With the exception of CONFIG_DEBUG_LOCK_ALLOC (part of LOCKDEP)
+local_lock_t is an empty structure when PREEMPT_RT=n.
 
-Best regards,
-Junhao
+That is to say, you can probably get by without those extra #ifdefs.
 
