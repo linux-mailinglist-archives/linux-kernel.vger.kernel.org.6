@@ -1,83 +1,115 @@
-Return-Path: <linux-kernel+bounces-314180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2390696AFCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:29:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C28496AFD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1719286775
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F63286787
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54E381741;
-	Wed,  4 Sep 2024 04:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B048248C;
+	Wed,  4 Sep 2024 04:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xfldbzlh"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acoIfdSe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A0A43152;
-	Wed,  4 Sep 2024 04:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5709681AB6;
+	Wed,  4 Sep 2024 04:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725424175; cv=none; b=LMIpGYeyUdiDBnBQniLo692FQvBPEr0R7+9nEmu/lUyjvx1jJHRSc26QxTJRcIIYqlCQeYG4rS7GbSfP397Kmk75L7qNkpwJJBzjMrvgzvvozOpepsl0N43I/US9mc6b9KKEzMo0lN2F6hRdi0cTk+QhOT7GAT0lpzz2zuZihBE=
+	t=1725424237; cv=none; b=iIF3kg+9gF5kuvSZv32VIwhEvY5RjkKP+bPcOTiLl91sZnfSAUk7dtK1QHMyd0JsV3GvP2j0Cq1wgzQMEHHj6zrneSmtHWKlzIv1r7LCC/3UdQtTuN6dJxpQhXf+9Xdx6Gev9BZgEnkPJ95hcWBVUWm4a9vrandD07cIPWHuoTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725424175; c=relaxed/simple;
-	bh=Y8IXN1rN2RoNHDeeGDPC4uyggAqYskHFl46L+lSWZZM=;
+	s=arc-20240116; t=1725424237; c=relaxed/simple;
+	bh=MAdzDHHKtXun7pzXRpyY+whxZK66qwaWKm5RCmmf9iE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHHmXlg10m387s7pCbumR/7AWGUDJJaMbSd/1MeZHynIn16SM4SaIfP6nULlz88sD6s8UEDGJ4s1NwtrUfnM2zpJKm6bM29PpjTHdbQettXhKqGOE/BrOWsIWN7jJo2SPVRAgH+UjpYOqiVGHA6NsMS9tw1rbFg4MqBBwB7bsmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xfldbzlh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BBc8Ka/vR8SFvHYVTELQXwp9sVABJ6GRH/edBy/xYJw=; b=XfldbzlhVwTQcy2y56lbSO/SZ2
-	ku/6kecuHVgT33L6kVM8CaNM7t62Ycsq1Q+tbQkYjmTZ9OBqPDecadEcLHmrrZ+Hehosl2XFG8kZ0
-	eYhE+axQCaqiwy8oiJbDwvtt1iuDQjKMJ8Zc8ip+fh/0elRzFgSdsidDSlgDK1+7VypWjeQoyeGf1
-	IrNSlgNatfzHyCOldQwpOuotpheeIy66hO0tYtsNrLu+J+Y4CLhCkZyhyBFI0oDmlWw3Njom/Z3Jv
-	nx+ZHwWJCZe3gKx09dG6cG4+SNgfu9OXFN1IQ97rPdCrGPQ3NSX3VCzYpHJfcY/fqlNu0Mfqfpvzz
-	cI2455gA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1slhe7-00000002nJS-3YSH;
-	Wed, 04 Sep 2024 04:29:31 +0000
-Date: Tue, 3 Sep 2024 21:29:31 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: ZhangHui <zhanghui31@xiaomi.com>, bvanassche@acm.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] block: move non sync requests complete flow to softirq
-Message-ID: <ZtfiK1xg2RVzkXW9@infradead.org>
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
- <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiwapvaUO0PMp4PaZ1gAY1giFl5zIwCmF34SXYWW5Ief/knOUu8Q8bzIbCK7cgJroVrfGw0hCO83jtrNoHvXd9sfApDwCcWhUAqoLyvcGKTIT0qr4VvVdiCw6v+JvBAePvz/YSeJzk7jstRTsrQ2tLacIDRACq5pzQt/D3BBGYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acoIfdSe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7859AC4CEC8;
+	Wed,  4 Sep 2024 04:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725424236;
+	bh=MAdzDHHKtXun7pzXRpyY+whxZK66qwaWKm5RCmmf9iE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=acoIfdSefqKxpBdky4UF5QEJG8BX97O2KdOLzq7slD3TrSOE3QRGZeAjxIa41hBXH
+	 +dOfbbKjDn88tJAclJ8MS6F/hW7BCJR/XktIE/vWlOLOwFobbXuYtQZYWM5p8CRuqB
+	 M68C7z1K++EGK7qM3X9U4dOGXrxpl8W5gIGWjO9IK4sZ+nrYnpx1t/+r6P0NhvLIjZ
+	 zeK0/sCOBdqdMipveX5RJe8uC7jn1B5RU6bVgu/sRAB2zKYMaU+RyLhDo8cgL+u3pJ
+	 Z9jlvX42slG922Ck8Y2cTnZIHoPlVXAP3n0FMtSl+SOpT92NsileTrP/uC6vSS/0Ei
+	 C+faS2uJ86JHw==
+Date: Tue, 3 Sep 2024 21:30:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240904043034.jwy4v2y4wkinjqe4@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
 
-On Tue, Sep 03, 2024 at 11:49:28AM -0600, Jens Axboe wrote:
-> The elephant in the room here is why an 80M completion takes 100 msec?
-> That seems... insane.
+On Tue, Sep 03, 2024 at 10:32:00AM -0700, Song Liu wrote:
+> Hi Josh,
 > 
-> That aside, doing writes that big isn't great for latencies in general,
-> even if they are orders of magnitude smaller (as they should be). Maybe
-> this is solvable by just limiting the write size here.
+> Thanks for the patchset! We really need this work so that we can undo our
+> hack for LTO enabled kernels.
 > 
-> But it really seems out of line for a write that size to take 100 msec
-> to process.
+> On Mon, Sep 2, 2024 at 9:00 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > Here's a new way to build livepatch modules called klp-build.
+> >
+> > I started working on it when I realized that objtool already does 99% of
+> > the work needed for detecting function changes.
+> >
+> > This is similar in concept to kpatch-build, but the implementation is
+> > much cleaner.
+> >
+> > Personally I still have reservations about the "source-based" approach
+> > (klp-convert and friends), including the fragility and performance
+> > concerns of -flive-patching.  I would submit that klp-build might be
+> > considered the "official" way to make livepatch modules.
+> >
+> > Please try it out and let me know what you think.  Based on v6.10.
+> >
+> > Also avaiable at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-rfc
+> 
+> I tried to compile the code in this branch with gcc-12 and llvm-18. Some
+> of these errors are easy to fix (attached below). But some are trickier, for
+> example:
+> 
+> with gcc-12:
+>   ...
+>   BTFIDS  vmlinux
+>   NM      System.map
+>   SORTTAB vmlinux
+> incomplete ORC unwind tables in file: vmlinux
+> Failed to sort kernel tables
 
-pagecache state processing is quite inefficient, we had to limit
-the number of them for XFS to avoid latency problems a while ago.
-Note that moving to folios means you can process a lot more data
-with the same number of completion iterations as well.  I'd suggest
-the submitter looks into that for whatever file system they are using.
+Thanks for trying it!  If you share your config(s) I can look into it.
 
+I haven't tried clang yet, but will soon.
+
+-- 
+Josh
 
