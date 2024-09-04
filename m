@@ -1,234 +1,169 @@
-Return-Path: <linux-kernel+bounces-315058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20BD96BD50
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CEB96BD40
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284F1B26BE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0051C24B90
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D95C1DA618;
-	Wed,  4 Sep 2024 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09901DB548;
+	Wed,  4 Sep 2024 12:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MqhyQPbl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TwWmIhmm"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2085.outbound.protection.outlook.com [40.107.249.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117751DA112;
-	Wed,  4 Sep 2024 12:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454601; cv=none; b=m3ttWSZic1s7ltQHws/t7omzd8rBHVAQrXugqq44SeiRoYuOE4RT5g/HTHzX8Zq1G/7PE6wnw8+/nGvChM1Luhe/5a3cgz0OuNQ7wucvlrX+zq8PEDHMQcIZKzbv0MVIBl2BUavTYrtB/jUjZvSosr/Gn0Y1cdTI0hFOjet1dCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454601; c=relaxed/simple;
-	bh=Fcd0kIv4uj2fI5afUr2RryCvVF7W3IzIfmNvA2+jmSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X4wwW5X5Cge1/d5tGIUHdY6KNUiB6JwqzCOPtqK7Frim8jHHpfoeL6I2Z7h3YnvsYJgsILaOJhFVS0d8FjTIjgkQ0levhIc1j4S72BzGN5mbnCqp0Se+As0WM0o7Of0lFY/H9ddpH00Lq+B7Ky/CI5mD+0AcREtJM4hjUDIoY4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MqhyQPbl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4844XgV2010124;
-	Wed, 4 Sep 2024 12:54:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hTdFOttdYDceHeWEwHYIPqera0Ca+5hH3pwRFvVQhUs=; b=MqhyQPblpBCItf6E
-	F5eJU5+fJp0dvplmcAa1JYnV4h2rq+wNi4cAjq07XtE6vv102eNt/ZGGI0P8PSsX
-	+5X3caWCRtrwpjgehCsANP4GA41O7PC0bS+cMfXBZL3d3OQuXS0RYT9dxjpAOJ9q
-	jkq68VAnXkSOyc8wCSACk2TcVSHlMTWNVEIAFrMwLlQxCMPpWkaR9oW3MSTzKZDQ
-	hKCcCQ+ne+IqqLX1VVW/ZIOHYC1diBAQlREqQpPOfituMNokmpYetolAB7HD9qxi
-	zFG40BkNGrMw55BIK+TOFFzV96J9Q+oYjE8nRE5sL90pkBe85lga6MUaZ5McF7ho
-	RKoBsQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrh77f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 12:54:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484CsIFG002879
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 12:54:18 GMT
-Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 05:54:14 -0700
-Message-ID: <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
-Date: Wed, 4 Sep 2024 05:54:13 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB71CC175;
+	Wed,  4 Sep 2024 12:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725454514; cv=fail; b=s0L6DcPM0DYlY+mmFcsB4youwvWEajTSJMMwZ+jDNt48eUTWJIWWsYMVMEJ/uVfCkNaYDfymbAL5tCmxiDB8mZbImzrmsoB9Na50vuR4EDiHmsi7KW5i6eVHAlkBzUchNwPMwYFiulgb3uRkGFbV3YzNDZ5IbQGOwWWB2nib9ys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725454514; c=relaxed/simple;
+	bh=bCNeUy4lDSFBlzsE40t8VwPt240/c+RHdtqUw+HnD90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RJhPpA5VJmCKvWulbPc12gsGi+0jvS4S29iV3MgkxSgI9JqOi67fMsRjHj9EGU0RR0HoK2FNTplNzyQSChMWRjBjsn0mNSzZe9pWkL1IHyW5yM7srn2Hbvqht49+RF3rSMwPEBjHMd/6KQXNLk0T7rkH+SEcu26qdsdpkn/hnOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TwWmIhmm; arc=fail smtp.client-ip=40.107.249.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KXKRrQLHlbQ80tpnzrNpvk1XPYQMhuIgr8KYZG2tMJS+oXVYpR47NSy+11irzJN7A2HKsTspD0U4l7CTzPCDFLw5Z0QRh8qGEcpYg50MGmGEAmPptd8zvFjwTj2mr4A0m2B1bwJfEq3LEhLpMlHWT1Y9NdQA68x/uck44uuP7V/ci0mV58YRr7hYwspwnULnPNIbcJJEsnvK8xqU6SBW1bFGf4b69sazoZTfFolaCjlnNb/TeZf9p/Laq/I1A4NjNyPpyUNQ8aPjdpwLE2Aulevv6DkR/bqyGulaWR0roQLSrwku0UJxFQVKQWo+4X0iHKbTIKakSDf4+3hdYvU2Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UhEHjoz+Q1MNlZ++9YV+m45E5kK0H8mvrsPEUDjJcdI=;
+ b=DsPRViUxJ/D1UT19As124ciXKP5VdWM1q2t5YEl9AXbRowv/TJHxhPHJfIHGV3rjFCnJZ12vIFyDZ2ELnWXfrEcTMpM4+eJmQu0sA2Pkjml6SVwHnvsmAGmHclNNR/AOFuBVJznoAatvrmxAY3NWXiWIwieM0aL2/xs9DvGiB/Ov9eb2nJWUwvbJxQbMkJZOLDRjwxhNgimXPHzxT0pBCp7agvJZ+EMo7K+GQXqbZh7DzbYEoefbEsZhd56F6xFXYwkv1MKuSltWNvApsufXtRg8HFVHO6YNJhZU6lV6h/A1BN8jRqd0N7076R3N0d06NZ8TxmLW42TfhBweXUdGHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UhEHjoz+Q1MNlZ++9YV+m45E5kK0H8mvrsPEUDjJcdI=;
+ b=TwWmIhmm35K52GgNN8lwpEvyimwUeRDSYrVQwPBn0xJUZ+0PD4We9Nl5wD31QgMC/6VdLnwexMb4VijgvzB4Z/2ToTluRZb8yuXUmQHpNA3SapxYPfUo/tzFb15KXg2pk2IXXRsUDY0RzTdc+guegHf4oD8WjbnGk+VUVFEqVGHgcWcohz7+S++krVqQLZQ0rrHL9TcWDzcTeljiNzHstSt9b420XtohfgpIYVgfRfVTdszyrEio7O5G+t3CN91J5FuUO/GTyZBDEHj5V6EfKWkI6h/GTOfy5zTaDEChgeL3mr1dPXZWldOkUpB9a+SltGDkvxVemzO6ASXUN0DgRA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AS4PR04MB9361.eurprd04.prod.outlook.com (2603:10a6:20b:4e6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 12:55:08 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 12:55:08 +0000
+Date: Wed, 4 Sep 2024 15:55:04 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Martyn Welch <martyn.welch@collabora.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@collabora.com, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] net: enetc: Replace ifdef with IS_ENABLED
+Message-ID: <20240904125504.fytmtyv3n2csnaep@skbuf>
+References: <20240904105143.2444106-1-martyn.welch@collabora.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904105143.2444106-1-martyn.welch@collabora.com>
+X-ClientProxiedBy: BE1P281CA0040.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:22::13) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
- SA8255p
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
-        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-18-quic_nkela@quicinc.com>
- <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1Hp_omeLx4zuoXLFAXoqUzJqKcCgxAme
-X-Proofpoint-ORIG-GUID: 1Hp_omeLx4zuoXLFAXoqUzJqKcCgxAme
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
- spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040097
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS4PR04MB9361:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37e1fab8-7d47-49ab-9548-08dccce0cd6a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JmFJjydcovb83Ncicq2fuofyNfYOuhjpYbLh3xm0ojeSIPNaEuEzpGFWuGVL?=
+ =?us-ascii?Q?fPgPGMYZmvTxoCyJkEdKeR3xXMc0T52bF8xczcZyfb+HZt1f/g3nGk326gP+?=
+ =?us-ascii?Q?WH4P6zYVFcTmrSd/PgGM39l12Y9pTsX71+Db1aBXTLy3IxIZKDav82P5Dra/?=
+ =?us-ascii?Q?lMNBG5xKG+5mQIj+wIy3XO9ReNvp2h18pNzuT+9tL8x8NfQCWRwYXuJHAlul?=
+ =?us-ascii?Q?YHQvm7FYbhuGgdXQJDp6vVwsDTLlhlQEmkYNookrXJ6r1kgPup/czJemNFFI?=
+ =?us-ascii?Q?kjzKlDrDQ5ybJoelbiJ8lDC9fLxx3F0NOO7t902Q6Lh/uW+KAuDBlKYS6ZaP?=
+ =?us-ascii?Q?kRcjUvtWd2LC2u1A2j0BcqjbZmkWkebDiD0lH3W2WYgZr0F7wO3Xu26F767e?=
+ =?us-ascii?Q?rjy68Z4BXs1NxLdozK8l7uuZEfxCVvivbH7ztEw5Z6GY3ZfhDNxThI9YAZa/?=
+ =?us-ascii?Q?Ij6UAdh9NdC8qzW+8aQdN9FbCf15GKiQBiVsNrOxO5r6O+wbgwtoyAT3TPNK?=
+ =?us-ascii?Q?VOFl5bI/5EG/zfuRCZOkYnEk2dJ0tcKK+AIB55yTZ5k9mVNmYBjR7vaQ4iFu?=
+ =?us-ascii?Q?toa4DWFrGTiqoxx4u7L9LXc8U4L2IUfKTETTOJHIh0+z4zAHZz3wqB/9yz1M?=
+ =?us-ascii?Q?xggrtn2gVVAYDFUpqjXx3nphPfRgmgKZaMHJCoTvl/6D9WPbMR573ZtPX9ij?=
+ =?us-ascii?Q?GzcRMEEUaq/xjITADsVeisLk2qjOwH9sBc+UgQvR9tv07SsHP8FMhCQeSkgS?=
+ =?us-ascii?Q?DIfvkYmvDsYqjP4JJjxl4e0XFZSI9SiY2O4tczYT3qxVyg/yHJW2YsLYfGdr?=
+ =?us-ascii?Q?UL5B2xsI7ilby4DtNchMLF/IQ4ybVRy5/VUsuv7UpLjdXyhrWZjbptfxCdKE?=
+ =?us-ascii?Q?HGqsFSd/IHl3Qc0WTHJGjmOzDbGs4YeAKurvQTKTT/F3rszdSkVb1FT3+yF8?=
+ =?us-ascii?Q?R+pbyjiPdKgxb9kuYtNg9WFCDkGfSygEpcRFXiB8v1Rj027sPa8wbUqblkGi?=
+ =?us-ascii?Q?AT1MOiRPhM97PWRCNsCVRIF8uhBA7m4YYm/M+Nqb5NS9hitPPeB8Ft7/IQ3K?=
+ =?us-ascii?Q?JRLSDxY23MlpmMNoSeAFxTToPC8Xiu3VxhWbrOtE0iaNeOH+T5I2Eebe5/kJ?=
+ =?us-ascii?Q?ll7IgZc7kJ11Rtec0G1xq38m69DY2/gttPsR6DFTzlIvwK1M2EoEEgxNrob6?=
+ =?us-ascii?Q?ttVIKsjPQm6C4lFpaoEPssPkMlmJGkhJ0h6WGHK7TLjlJRUKSQ9I+G5ZPE1+?=
+ =?us-ascii?Q?vrB4qNPCySuYxTBkisvJ384bAfQuJ3APsuPoMxtJ0ROp8CSbbuLeAtjx7rqR?=
+ =?us-ascii?Q?8r3eVpvhXolWgYh/7Q2PCM5H0nydLTlT/d1ejTR6FQkvvA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gFvjdjOnaNsnAzSe1Y2usp6saaKBPgfc18ftbEMbQwYeLUgLokI/HIhiO2NB?=
+ =?us-ascii?Q?iFek5x0ZKREgv40vSVIMdN00tT8Wa2VwxMwSd4tV3D5smE7xOxpeaSOQXF9R?=
+ =?us-ascii?Q?Eq69YBQvfv+iA5rlyWByDjqlB6N19/nPTe8GAtlXNDhFOzo/bZ8izZnMhqto?=
+ =?us-ascii?Q?L90yoVEAsR9uTAY4sV7c07QNPraQsdkSxSk2P5iG0ozTFnMo+r+jeiBQ192B?=
+ =?us-ascii?Q?mmfuCNFEN8x7y3W+3Gu1oUGzZGWVqGmGrLEJBLnJtUsdVtCgH9WcVyNkQGYK?=
+ =?us-ascii?Q?SEWrrTeYEbfdFWtc6/LelJA3F8684X2N3mtbtlKvD40RmhJq5EyRhbzVMVLe?=
+ =?us-ascii?Q?FIOHCzt6ICEy867FjjFZVWROZsxyL8xcyC2u4lBF22qePAHeaLsbLpBE05jr?=
+ =?us-ascii?Q?Q3PAf9JxyYAW6Wb8utoe+mGWUQxnzDL5iz0woBNnBN6MP06YchbsFnm9Zpte?=
+ =?us-ascii?Q?Hvb2/2oK46ZAj4WZ3UJGMDrM1cimQJb5TpZ5/wdVXAic5aHjg379FhQZH8NG?=
+ =?us-ascii?Q?NVyLTnFbzSEH0nVAdtrhVynAzap6WWTgq+lRDcKtoveDzbRcUAKvFmUXbs+f?=
+ =?us-ascii?Q?pM6BE3RHcw4db33PruZEV+rqUUsLuBYOtvifN9dpUhJT1iB54i3VDrq9bYDf?=
+ =?us-ascii?Q?BDiFqHET44MdCY/nGj7Dw8CghME5COF8D+60UyEW/cCat2+YKSuT+yfZtRCi?=
+ =?us-ascii?Q?0hyBRmmvq4zNqilQspcDbCPz0amO9np2Gdg9y1h9aascA4Kh0MQVt+h93Guj?=
+ =?us-ascii?Q?1XOrlQArSh2iru02s9Yr4tWWg3TonBUeFTfmhuezg4aYpwBgi71NVdPsGEeQ?=
+ =?us-ascii?Q?wP7Ie//DUowVV27GJhg7XVfAjzWsei03iq/2+evoFbyPtKSmAhlaI3tBZSOU?=
+ =?us-ascii?Q?x/Zu8MmwYxSWKGN/bbL54mszxe0m6Z33a31H9gTFjD0Ljv/BxXWyYu4KXcJb?=
+ =?us-ascii?Q?vtu3aewrjAB4l8kIl/YiLNYPvw6lPNQWSYRs+eVM/XILkVVskVHZjkf3p806?=
+ =?us-ascii?Q?phhJK8AKpI7cdURl6ahn0ehcvpKfvMLdxP+SbTAifUMK9IrX7znsHVZuD1f/?=
+ =?us-ascii?Q?st1wYEnzx7VCGFcRsIC2XuJsFo8hWhPe46XMZhxzIT7zaNOjr9Iai7PNF7zv?=
+ =?us-ascii?Q?+2Ah/8ByhnK541gI4tAlXt6Tn4C3ddik3rfgq6710PK8rKl4URw3O7LG8yXl?=
+ =?us-ascii?Q?i0MJ/ZOcfK1wvz52H4Jshs7OK4RxJAE0/tLR8cTyV9hsqLzQTwiV+ai3ANQt?=
+ =?us-ascii?Q?Q1Vm4SXzojL0gQywB0FBAJyB8ervBazglYlGDt5uPgAya+2K2uP+Mx3RMk18?=
+ =?us-ascii?Q?d7s4qDaeaJMm1KrNc6B5PUvjlEP3i07mE3S+KwPPdedKJMT7/wD1xtsISTj2?=
+ =?us-ascii?Q?LoawawzFPerzKs8CDrNnK/IfLxQjisB36j9u7eoa67XFm4eyh54ZpLun8xRq?=
+ =?us-ascii?Q?S4doLkuVFlUaEx1T4xdfTQ4MaMZcwHtjg4vpPzK5nG8JQ71bvCv8mMjW2fWu?=
+ =?us-ascii?Q?U4rhuc1Q+j/lioyxhidiggHVTCFZ7mMVzihpA/SCAnJ4/Nz87P8ZF4ilT5NS?=
+ =?us-ascii?Q?ww+tBwEEYJQ0f5jHgrAjIiUHqqbWw2Fi2K92najb1Wzi04HxcofcS42uov87?=
+ =?us-ascii?Q?3w=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37e1fab8-7d47-49ab-9548-08dccce0cd6a
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 12:55:08.2280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /2DadN1S80Hm9hp8V8d2odlUDjMW3WVVGu7lFkMg+zsSQZUWGx+ttR5f0O1FFdq8BPaHS5jmc6qrxk++vq9IoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9361
 
+On Wed, Sep 04, 2024 at 11:51:41AM +0100, Martyn Welch wrote:
+> The enetc driver uses ifdefs when checking whether
+> CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This works
+> if the driver is compiled in but fails if the driver is available as a
+> kernel module. Replace the instances of ifdef with use of the IS_ENABLED
+> macro, that will evaluate as true when this feature is built as a kernel
+> module and follows the kernel's coding style.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> ---
 
-On 9/3/2024 11:36 PM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 03, 2024 at 03:02:36PM -0700, Nikunj Kela wrote:
->> Add compatibles representing UART support on SA8255p.
->>
->> Clocks and interconnects are being configured in the firmware VM
->> on SA8255p platform, therefore making them optional.
->>
->> CC: Praveen Talari <quic_ptalari@quicinc.com>
->> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->> ---
->>  .../serial/qcom,serial-geni-qcom.yaml         | 53 ++++++++++++++++---
->>  1 file changed, 47 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->> index dd33794b3534..b63c984684f3 100644
->> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->> @@ -10,14 +10,13 @@ maintainers:
->>    - Andy Gross <agross@kernel.org>
->>    - Bjorn Andersson <bjorn.andersson@linaro.org>
->>  
->> -allOf:
->> -  - $ref: /schemas/serial/serial.yaml#
->> -
->>  properties:
->>    compatible:
->>      enum:
->>        - qcom,geni-uart
->>        - qcom,geni-debug-uart
->> +      - qcom,sa8255p-geni-uart
->> +      - qcom,sa8255p-geni-debug-uart
-> Why devices are not compatible? What changed in programming model?
-
-The cover-letter explains what is changed for devices in this platform.
-I will add the description in this patch too.
-
-
->
->>  
->>    clocks:
->>      maxItems: 1
->> @@ -51,18 +50,49 @@ properties:
->>        - const: sleep
->>  
->>    power-domains:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 2
->> +
->> +  power-domain-names:
-> This does not match power-domains anymore.
-
-Single power domain doesn't need to use power-domain-names binding as it
-is not needed however for multiple(in this case 2), you need to provide
-names. I will add this property to if block and only keep maxItems here.
-
-
->
->> +    items:
->> +      - const: power
->> +      - const: perf
->>  
->>    reg:
->>      maxItems: 1
->>  
->>  required:
->>    - compatible
->> -  - clocks
->> -  - clock-names
->>    - interrupts
->>    - reg
->>  
->> +allOf:
->> +  - $ref: /schemas/serial/serial.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - qcom,sa8255p-geni-uart
->> +              - qcom,sa8255p-geni-debug-uart
->> +    then:
->> +      required:
->> +        - power-domains
->> +        - power-domain-names
->> +
->> +      properties:
->> +        power-domains:
->> +          minItems: 2
->> +
->> +    else:
->> +      required:
->> +        - clocks
->> +        - clock-names
->> +
->> +      properties:
->> +        power-domains:
->> +          maxItems: 1
->> +
->>  unevaluatedProperties: false
->>  
->>  examples:
->> @@ -83,4 +113,15 @@ examples:
->>                          <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_QUP_0 0>;
->>          interconnect-names = "qup-core", "qup-config";
->>      };
->> +
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    serial@990000 {
->> +        compatible = "qcom,sa8255p-geni-uart";
->> +        reg = <0x990000 0x4000>;
->> +        interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
->> +        power-domains = <&scmi11_pd 4>, <&scmi11_dvfs 4>;
->> +        power-domain-names = "power", "perf";
->> +    };
->>  ...
->> -- 
->> 2.34.1
->>
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
