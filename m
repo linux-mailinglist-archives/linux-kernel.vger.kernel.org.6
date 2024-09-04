@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-314484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8520C96B3EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495EE96B3ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77F71C23876
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:08:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA097B23CF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D951017BEB0;
-	Wed,  4 Sep 2024 08:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rbap1gwj"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF67017C985;
+	Wed,  4 Sep 2024 08:09:33 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F108F52F70;
-	Wed,  4 Sep 2024 08:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC28155735;
+	Wed,  4 Sep 2024 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437326; cv=none; b=oRMj/juFZNKZW00KMu6mi0aeOUawPSoWgf8A5t0PcFYNDAo6wxcUJETkH8g9oYu362eVSwtMWmmwxSS4c32H1lUGFLbS9gzFK2iATS27+qR7JwNWjNtEqBt5JZN7Fi9jUp1LGcS/PzSslM0pbOVvc+qr4xLpd7uCjm6j/EmRsdY=
+	t=1725437373; cv=none; b=MZG0OwdwmV7a7teGvzX7kKQpINJ+ckC682sECpKBvdsRu2fNhQPyXJJC6A2unf8cZLwgu7BeJIn9ve4JE2vlmy4RD81aHWM8Byuk28mQyTArxkSImnTzCL2uQ2b3D2C52E6IbZBiK303skiXFLoqsjR3D5SZOqv78SRM8PYpEhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437326; c=relaxed/simple;
-	bh=60XKJBFQrNzMhkirdD2qis5gFKmyYkDScKZTst23+Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zbc5SoMp49EUkbV0/bm6tFhsMkXAfJopOGMAKOGrsBtGWRi7D8UKRHxOBcZ+EpSBZqQNkgehaEvUxxHyjWjozEMrzeB+oYGD/0yTybhwtyye1eUN0fiYPnJSWljCMXv0nAWhLCa/TvmF04Q82FY91GddYLfdK7Hh194aHKoZSd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rbap1gwj; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jda6kdkrlX1mijI27UzNrN49mCGupQmlGIn58DXJZPU=; b=Rbap1gwjxDKmEX54KIL3907rSS
-	tgC+gEqNWP6z7ut4FcRHXo9cnC6hsj3Jt0b/TfKgQIhfTjy14GvIpW1KUkDtWqKRLjzHZQPkec6hQ
-	QujMs7A9bnDzrPfSKrzUG/CgqQFA1V+15ShZuqjp1hZLAQ8avDvTwtAefVBHkAaqK2M2ezR+Q83Ro
-	EeytOF9clvS/T6qsaDsiTcmu6Jr7p/fPWDaC7KwUF3AeAsKVOEKLpOZ7WfaArR/C4mrI99+Lhtocu
-	HJPdLLQU4TekVx7yfy9tMCwVMhC+JMO/1XrB83oqLRz6Di8V/VyRY5Sbyp2b+iSueDaSWZ2QwQMrp
-	AqQQrB3w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sll4D-00000000Xr3-1PmP;
-	Wed, 04 Sep 2024 08:08:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3CB97300642; Wed,  4 Sep 2024 10:08:42 +0200 (CEST)
-Date: Wed, 4 Sep 2024 10:08:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
- entries
-Message-ID: <20240904080842.GE4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
- <20240903082909.GP4723@noisy.programming.kicks-ass.net>
- <20240904042829.tkcpql65cxgzvhpx@treble>
+	s=arc-20240116; t=1725437373; c=relaxed/simple;
+	bh=KY99IEVaWZ+f1T7u1eXXvb4Hi2LMioMrpkFaFZpmETc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XA19uNOGYrnvbPl7oJJoeR1fG+5sCsd4ATe47tSjV0hiVNbaaU+tVSAR9/Ty7QMRKt4rEPa+Y9EqqVtdPFF+pxsCkNFf8JkDiceakD3sbA0KlIWSJ3i9HJdBUa7+cip+ZaubyqTZ9env0SD4ldl5JquOJIVTE8VntnghCYCepTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAAX++qwFdhmk1UnAQ--.4786S2;
+	Wed, 04 Sep 2024 16:09:20 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: irusskikh@marvell.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next] net: atlantic: convert comma to semicolon
+Date: Wed,  4 Sep 2024 16:08:45 +0800
+Message-Id: <20240904080845.1353144-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904042829.tkcpql65cxgzvhpx@treble>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAX++qwFdhmk1UnAQ--.4786S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoW8JF1Dpr
+	W2ga4qgr4xZ3y8Ga1YqFW8AFnIqan7trWrKry5G34FvFn0yF1xJry5tF9Fkrn5XFZYkF13
+	Kr4jvFWxJa95AFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUtVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfU5l1vDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Tue, Sep 03, 2024 at 09:28:29PM -0700, Josh Poimboeuf wrote:
-> On Tue, Sep 03, 2024 at 10:29:09AM +0200, Peter Zijlstra wrote:
-> > On Mon, Sep 02, 2024 at 09:00:11PM -0700, Josh Poimboeuf wrote:
-> > > Create a symbol for each special section entry.  This helps objtool
-> > > extract needed entries.
-> > 
-> > A little more explanation would be nice,..
-> 
-> Indeed!
-> 
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> Subject: [PATCH] x86/alternative: Create symbols for special section entries
-> 
-> The kernel has a myriad of special sections including __bug_table,
-> .altinstructions, etc.  Each has its own distinct format, though each is
-> more or less an array of structs or pointers.
-> 
-> When creating a livepatch module, objtool extracts a subset of functions
-> out of the original object file and into a new one.  For that to work
-> properly, it also needs to extract a subset of each special section's
-> entries.  Specifically, it should only extract those entries which
-> reference the extracted functions.
-> 
-> One way to achieve that would be to hardcode intimate knowledge about
-> each special section and its entry sizes.  That's less than ideal,
-> especially for cases like .altinstr_replacement which has variable-sized
-> "structs" which are described by another section.
-> 
-> Take a more generic approach: for the "array of structs" style sections,
-> annotate each struct entry with a symbol containing the entry.  This
-> makes it easy for tooling to parse the data and avoids the fragility of
-> hardcoding section details.
-> 
-> (For the "array of pointers" style sections, no symbol is needed, as the
-> format is already self-evident.)
+Replace comma between expressions with semicolons.
 
-(so someone went and touched a ton of the alternative code recently,
-this is going to need a rebase)
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-This generates a metric ton of symbols and I'm not seeing you touch
-kallsyms.c, do we want to explicitly drop these from a --all-symbols
-build? I don't think it makes sense to have them in the final image,
-right?
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_ring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+index f7433abd6591..f21de0c21e52 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+@@ -557,7 +557,7 @@ static int __aq_ring_rx_clean(struct aq_ring_s *self, struct napi_struct *napi,
+ 				}
+ 
+ 				frag_cnt++;
+-				next_ = buff_->next,
++				next_ = buff_->next;
+ 				buff_ = &self->buff_ring[next_];
+ 				is_rsc_completed =
+ 					aq_ring_dx_in_range(self->sw_head,
+@@ -583,7 +583,7 @@ static int __aq_ring_rx_clean(struct aq_ring_s *self, struct napi_struct *napi,
+ 						err = -EIO;
+ 						goto err_exit;
+ 					}
+-					next_ = buff_->next,
++					next_ = buff_->next;
+ 					buff_ = &self->buff_ring[next_];
+ 
+ 					buff_->is_cleaned = true;
+-- 
+2.25.1
 
 
