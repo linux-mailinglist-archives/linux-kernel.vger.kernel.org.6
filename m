@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-315272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B5896C042
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0794E96C03F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816AA28EA5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E3D28ECA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427351E0B9D;
-	Wed,  4 Sep 2024 14:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610C21DC1A8;
+	Wed,  4 Sep 2024 14:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="K+lEcxMG"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AwNyUZZS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389CF1DB934
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702041386C9;
+	Wed,  4 Sep 2024 14:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459714; cv=none; b=r891Bm9yMRiSUbR/cC1Ek02VckYYq9DLQQK2euYgBhm9Abz5rPf+mCuhrOjLdlCv//IXzgPGSC3a8O/mQsvIdkCtve4YzlwESx+RHmjlGCmR8K/2pyH80NghAlEsAH8PcM+tLiSM/32OsIhBaiFMJy0HFTetz35j0UNuSILerEU=
+	t=1725459713; cv=none; b=fxkBL1dZwqugyx9LUp6gg0wEPflpxMW/cZddf/uBwW0zefoc106QZU54NbEdJIYRyAoPMACcLryr/o8gDz3srwLbXUXeyICAKM67YBb+PooVBK/ZVe6cRWnm18UHBtDCWK3E7VTmxNa/GwiReEhq48kD2xcFgQWdeZKfrEeDbCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459714; c=relaxed/simple;
-	bh=9Dajyz1uc3fIw7Uk2UpNROwl2ybAcZT3AYqsL32BjSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sKV+BR/bBG+ZhskASpe4ocSIHUzOpah4i1Rqi3+gYSdYmrskjCoZbC8X4eaefkgJRoHA10Dtj1k3sE690GZKIuWXuaxYU+pTuErQ15/dS/foKgQjw+clMdfsJghcFie+sO+4mgcmOd05OpgjoV6K+Fk1gdSHuf100f89HbCREQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=K+lEcxMG; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
-	by cmsmtp with ESMTPS
-	id lqZVsefEVumtXlqtHsSH0n; Wed, 04 Sep 2024 14:21:47 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id lqtDsHrgjV2ivlqtFspEh7; Wed, 04 Sep 2024 14:21:46 +0000
-X-Authority-Analysis: v=2.4 cv=OLns3jaB c=1 sm=1 tr=0 ts=66d86cfa
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=VwQbUJbxAAAA:8 a=5z-885-_BntmAJspvxsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Vc5HhuzT3Av9fGfJ5nOnIXbI/0nWjEfr5GgHCVIutXM=; b=K+lEcxMGxC2la7g5JCvwz9aAEI
-	oapjg5BiLwwfPyGKs4lnKYoL5hTVfVhEvaI9kaQiUJIDGcLnUlzpGlU0VfVQ26ndkdBEzayjf32hh
-	VmnOPuHK/efoBgIB/tnyCTY5hNTsrHLavYEYkJz+KIJpcmlcNGJLrALMSBIbCgoclQ10rtmQKoz6T
-	u6086Q/lQMV25D+BATv7E/F707FtNwBFhzfDJWN+ztfT9t/gTr+eRIEnrWHCvvmnwebIrCPHkJKvB
-	W/MvVD/TEPhUWC+83ANQ1n7l2gkQ8AyC5EVNQexAKgbWfBcmAL0buVk0Js83VgYUhc+/edD4/LRHx
-	Gqy+7aCQ==;
-Received: from [122.165.245.213] (port=53678 helo=[192.168.1.106])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <karthikeyan@linumiz.com>)
-	id 1slqtB-003lg7-2A;
-	Wed, 04 Sep 2024 19:51:41 +0530
-Message-ID: <c387b2df-4a49-434f-b660-765599f9ec0d@linumiz.com>
-Date: Wed, 4 Sep 2024 19:51:38 +0530
+	s=arc-20240116; t=1725459713; c=relaxed/simple;
+	bh=ngL98UXfE8sIVOA4xLAR7v1aB/yBJVOUhi4uMokF1Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ue3VeMItLjP7Oa2N9/Mvazb66O1zU5NgNyxmo1/1i75oAn6fjQxLWYZKXiyPl9trS3ouyTKBHXYzQ3I4LRsR3feFch6S/+PIwu0tRLz8aKBIGns+Sgvo4mQpeBUL2Ycoqgj4P8jss825/cfx6PANPakmJjGoxYmDt/P79+25INc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AwNyUZZS; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725459713; x=1756995713;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ngL98UXfE8sIVOA4xLAR7v1aB/yBJVOUhi4uMokF1Ak=;
+  b=AwNyUZZSXCzkw5IL6eRjTLCJkGSRERS8dAFbRHhGICrx8Wp58bhO6sSx
+   I9rn0o3y0tCiU8scS/BPvZ+dwshOHgEGYRg/pIGuOGyz610FxhAdf+938
+   dMktLd48T1nuV08JnwBlPh6ncIgqCKF6ASFXiWfODq5QtWCaAjyljgYQP
+   mDi5/cno+55xoQhLufvOz1oLdlV7zbWMQiCrKJdYn3epMp/JCXw3TOcka
+   f39ubSrl5V2lEWyUWmIa2olAqicoFBNtK+I+/gQTCXGY6+EZ2/NV7uoZt
+   XFi1s9zA/dFlfGE9xleRU9xCzOu6+RGdqaEbQyHcIdbNTrffhDo0C17jL
+   g==;
+X-CSE-ConnectionGUID: bgmsJ/EkQk+aF677YkCwaQ==
+X-CSE-MsgGUID: g61wYNRsRCa2rJ7wqWDTvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24267615"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="24267615"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 07:21:52 -0700
+X-CSE-ConnectionGUID: 1H+GBePaSS+PnL4/6LFPUA==
+X-CSE-MsgGUID: 5Vq1EPPQRPO975GXu4M2TA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="65124778"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 07:21:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slqtF-000000055V2-0Mvs;
+	Wed, 04 Sep 2024 17:21:45 +0300
+Date: Wed, 4 Sep 2024 17:21:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v5 4/7] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <Zths-IcwYyUV_kYk@smile.fi.intel.com>
+References: <20240902184222.24874-1-vassilisamir@gmail.com>
+ <20240902184222.24874-5-vassilisamir@gmail.com>
+ <ZtccnvhmcxyRQVuf@smile.fi.intel.com>
+ <20240904102427.GA44250@vamoiridPC>
+ <Zthr-bKR-jr7B2kc@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] ARM: dts: rockchip: Add watchdog node for RV1126
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <20240903105245.715899-1-karthikeyan@linumiz.com>
- <20240903105245.715899-5-karthikeyan@linumiz.com> <6440792.jCCqRG4XHG@diego>
-Content-Language: en-US
-From: karthikeyan <karthikeyan@linumiz.com>
-In-Reply-To: <6440792.jCCqRG4XHG@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1slqtB-003lg7-2A
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:53678
-X-Source-Auth: karthikeyan@linumiz.com
-X-Email-Count: 12
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfIKcx42K/BKS6VUpIrSpU71VCO/+ZsK9ZNbxrzfHQ7a9HX5yJYPI4ilhYBNw0AIlIWC68/MjlX1KrbzTcao96Am/GA43FlCo1BcsTxcUP8YDJr6TAu33
- 5B92DnsqOAbpGFMGtfQMUO1m/TY6+FvdCHwHUGdJOO8kzglfjFxCHb2nHZxKIdD8T3gYGysEsSauVAwL1ERCk4lY20WwPIeA1izVAWudaEClvWddCsW9VcmK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zthr-bKR-jr7B2kc@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Wed, Sep 04, 2024 at 05:17:29PM +0300, Andy Shevchenko wrote:
+> On Wed, Sep 04, 2024 at 12:24:27PM +0200, Vasileios Amoiridis wrote:
+> > On Tue, Sep 03, 2024 at 05:26:38PM +0300, Andy Shevchenko wrote:
+> > > On Mon, Sep 02, 2024 at 08:42:19PM +0200, Vasileios Amoiridis wrote:
+
+...
+
+> > > > +	if (!(reg & BMP380_STATUS_DRDY_PRESS_MASK) ||
+> > > > +	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
+> > > > +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> > > > +		return -EBUSY;
+> > > > +	}
+> > > 
+> > > Alternatively
+> > > 
+> > > 	if (!((reg & BMP380_STATUS_DRDY_PRESS_MASK) &&
+> > > 	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
+> > > 		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> > > 		return -EBUSY;
+> > > 	}
+> > 
+> > Why would I use && instead of || ? I just need one of the 2 to be true
+> > (one of the 2 measurements is not complete) and I can trigger the error
+> > action.
+> 
+> Oh, I messed up the logic inversion, but wouldn't it be simpler to read
+> "we return busy if neither press nor temp drdy bit set"?
+> 
+> 	if (!((reg & BMP380_STATUS_DRDY_PRESS_MASK) && (reg & BMP380_STATUS_DRDY_TEMP_MASK))) {
+> 		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> 		return -EBUSY;
+> 	}
+> 
+> (I left long line for the better understanding of my point, you may break it to
+>  two if needed)
+
+Scratch below, it needs more thinking...
+
+> With that, you even may have
+> 
+> #define BMP380_STATUS_DRDY_PRESS_AND_TEMP_MASK ...
+> 
+> 	if (!(reg & BMP380_STATUS_DRDY_PRESS_AND_TEMP_MASK)) {
+
+Maybe ^, but I have no time to dive into this, you got the idea I believe.
+
+> 		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> 		return -EBUSY;
+> 	}
+> 
+> which makes it all obvious.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 9/4/24 14:41, Heiko Stübner wrote:
-> Am Dienstag, 3. September 2024, 12:52:41 CEST schrieb Karthikeyan Krishnasamy:
->> Add watchdog node for Rockchip RV1126
->>
->> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
-> 
-> this needs a separate patch for adding a watchdog compatible to
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml#n33
-> 
-> see for example
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dcd615ee6fd3651ab0357364c4cf65b1148a40be
-> 
-> Thanks
-> Heiko
-> 
-Additional patch for compatible string, Got it. I will added in the next 
-version. Thanks.
->> ---
->>
->> Notes:
->>      v2:
->>      - No change
->>
->>   arch/arm/boot/dts/rockchip/rv1126.dtsi | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/rockchip/rv1126.dtsi
->> index abf442804d27..283985608428 100644
->> --- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
->> +++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
->> @@ -544,6 +544,14 @@ timer0: timer@ff660000 {
->>   		clock-names = "pclk", "timer";
->>   	};
->>   
->> +	wdt: watchdog@ff680000 {
->> +		compatible = "snps,dw-wdt";
->> +		reg = <0xff680000 0x100>;
->> +		clocks = <&cru PCLK_WDT>;
->> +		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->> +		status = "disabled";
->> +	};
->> +
->>   	i2s0: i2s@ff800000 {
->>   		compatible = "rockchip,rv1126-i2s-tdm";
->>   		reg = <0xff800000 0x1000>;
->>
-> 
-> 
-> 
-> 
-
-Best Regards,
-Karthikeyan
 
