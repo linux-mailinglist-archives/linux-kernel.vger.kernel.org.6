@@ -1,172 +1,183 @@
-Return-Path: <linux-kernel+bounces-315719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EC796C62E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:17:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D096C631
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1151F2564C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9CA1C25269
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA3A1E1A17;
-	Wed,  4 Sep 2024 18:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="CeqA4bv9"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB8D1E1A34;
+	Wed,  4 Sep 2024 18:19:28 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EF21E132E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DD51D6790
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473849; cv=none; b=jFHkyR5gQSUNxVcJHIrRXZPnDNsoAeZMIuK0Tpl29C/xd85lxFwckDhRhaN13FSMUP0ZbU4naEujiuH+nrEgRugwzjVgDGwkHPoD5/8CSvj4xNjZiENd09UEfBz94auLTHQLZqZ9hWmHA+iyJ5bxc7wmgnTuvYClg+tbBQQrTcg=
+	t=1725473967; cv=none; b=jhrhXfAppk89i542DRt0a2nNwXNGGfKng6/9uyhlvxHaWPG7jvFLUIqzhpuPH04ZgAvwp2DKfCq56oWl2Efq2J3aZ5ap0s/W/jfYgTmaEbxRzQ45q6oq5do4jHxarQ6gwjCYZK1/x5FjReEdbE0fsfRAkmorkGpMXkWgwvRMB4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473849; c=relaxed/simple;
-	bh=I+W2NTfc/9xVJnzHclTz/BeZPNHQf+LIMxJrxmBhxSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i9xhIdS2MM8fbEuEPPpLtS6p7ADc3Ua8jMfk43xPPksVAYrOaMwpoXVkjHI/nQcuX9rn9C0PSovF0htCxMvBUEyRsseS267DfT8FKbur/vgQwJ9vGY0PeJ5ApUVvEbp0lrrSAG+exP15AbIeGdf0tN8Y659BTP3oQKdIk2rD3cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=CeqA4bv9; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so757799566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1725473846; x=1726078646; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IkJHHyuzo9n/xqNW/T3zjv0yv5Sy4kGkYP2i0t9yco=;
-        b=CeqA4bv9Hn5w+dW4RuGOua/qYoSj9obpehfgsSvUT8jxndYiLH4HFJ2VfnQEVUr0+Z
-         lfbaiCX6OKG7RvcmDVQhrwd1k4aLeZBdBGpl9QacG8AU+LpIhiRSTKnFeDS0W52lxriY
-         qkQVVlYvOp/8/NAM/EaFAuFOtoA3+JuHEjGa0=
+	s=arc-20240116; t=1725473967; c=relaxed/simple;
+	bh=iFdWUqlGV2PDlljSJX1oZOqtXgVX67X7LRHepQPiK80=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QW2v2C24jZ1ljbKx1GDfs6sJDatyYG2jpOjGEAeQWFcLSzu4RM7wriyiiaBAM/hyPYEm+O0nw+BobmsJ3NnMtJ3fdb77Z3pDAokjWoyLwyn0xjqkYr5RYoch6bgn9ImFYm6FNVfLk7l7XNbhFkrTK+Bt1k4/y9NDslOnsXcO75g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a1c57f4a1so1017902739f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:19:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725473846; x=1726078646;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6IkJHHyuzo9n/xqNW/T3zjv0yv5Sy4kGkYP2i0t9yco=;
-        b=NfW6IyVjEm/HFtlyn/KcSbj0Xf5BF1hyAbce3NLLXGby7gP4B/vtamavCs5K7S7fJw
-         kcgMfeIB/gqzVtbdWZhtg6Xy9rJC4iZUyrfR9cU6vZ4s4UBPRh2U0JBfUKqH8qMX5lW3
-         Gun7KANsj4J19tbcPSaORzpud40yec01M0uwcp7cxjrYTRLtZf9MqD0qm27+OTYwp7Ex
-         CjgcT/0UK6Gr3KekI1aBm4I6tdAt69MKrFTVOgLxBEVdi+rtYIE0a4dst2Wb3spZ+Kdw
-         +Rpq/TnVrcw5kVfnmNXhBzzPrvQ2dX5Uc9/NyFqhoJJRqvVvBuUKDQcLXeBlQj3anIHE
-         a3QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9W3VHmex5jYYN0kfpdNxxsEpYQIRtsKaqP1PKOhOXQcGQUjes3e7XZgjBYTe+WFc63vSbBUkdXzyWeEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6UTV0JK7p9Gt6zing4DHC0gCypV2z8A+oe7NRrGl+NB8SYeD3
-	00GH/fIszTyFCVOZv39FKYm+ulOruGzk/z6m0p4LnF18EWP098UrmRUEQFc7IZQ=
-X-Google-Smtp-Source: AGHT+IEJiF8Xyygz2cHMSbHkH4dx5Nw3HKnkwdJc4P3JjMBGxQfgXs+PkCIQUUt5ds0uDBVsfpNqKQ==
-X-Received: by 2002:a17:907:944f:b0:a80:f81c:fd75 with SMTP id a640c23a62f3a-a8a32a91b7emr443793266b.0.1725473845209;
-        Wed, 04 Sep 2024 11:17:25 -0700 (PDT)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623c335bsm20674066b.179.2024.09.04.11.17.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 11:17:24 -0700 (PDT)
-Message-ID: <bcec53f3-e6e0-4585-89f9-80c64b20649f@citrix.com>
-Date: Wed, 4 Sep 2024 19:17:23 +0100
+        d=1e100.net; s=20230601; t=1725473965; x=1726078765;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5v8ecZ4KHwCQtLG0DSvxND0b9364kC606ptb+L6Bap0=;
+        b=gICm9oIPAU3eu4a6Qkzc5vFY3gNtTJ4IgLlQKkLCSaqY5nGgLmkqActz8ctMCW00Dx
+         bPE3RxwHE8Mkiok+W8pdTDqGvHkpa+D+Q/6DEe8RM3naF+8R0zGfhqLmLllJ8kc0jULf
+         Mal8+6YzIfJTtFr7PxC3zAWdoVrX7qdXfTdfKIAfsHLUszzTewhxqW9XBhzUvkTMZtcJ
+         tpSWZ1a4iMKXG5+RqUCs8U9dZsFhCpnUHUbcRXyBVEQ6Q2QI6j3Mt0dIhfkXXg6Y8w4B
+         Q6usQxtGkCtRCeAXZt/dQIFFc/1Sxz8PAGCZgJn9q0PjOYpUcl0/bsub11YDbmyUAsdk
+         eQQg==
+X-Forwarded-Encrypted: i=1; AJvYcCViYzsbYaZIWvYFv4c9b7gv4LRibvIad6mQpCPEIE5MeCoPLUp0v+U+AbDYfdQq/Kbt7J93S21jDU80vkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyu5JB2sTQFp9JEr+wC+a5wwLwNUQFZqo8TteKA7NSin+qnUhR
+	Gm4Wim2UNoTbU5I/uZsQRtmBQ63aZTy0U+i9/BlQ2RGIhaVghxPUOJn01CoK+szXxerGlfM7N5B
+	mMl8SR4IKhwLChvCJ2Qst39+zFrvAMs1w8fNZSWc5cfWeW8Pwgdzv8Xs=
+X-Google-Smtp-Source: AGHT+IF4tLwBuxUrjxjTyFAWaKoWUwEq8Sq5BeP/Yu6wo4u0ow6AM38DImsgwGvv+js/+VpjQtAZTQT+XdcRSyT2lv93PqkArAa9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/cpu] x86/cpu/intel: Replace PAT erratum model/family
- magic numbers with symbolic IFM references
-To: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- linux-tip-commits@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
- <mingo@kernel.org>, Len Brown <len.brown@intel.com>, x86@kernel.org
-References: <20240829220042.1007820-1-dave.hansen@linux.intel.com>
- <172535592591.2215.9909836777026903684.tip-bot2@tip-bot2>
- <c9f18ae0-8239-495a-abc2-d6538fbe5f5e@intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <c9f18ae0-8239-495a-abc2-d6538fbe5f5e@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:4118:b0:4c0:a90d:4a7c with SMTP id
+ 8926c6da1cb9f-4d017f16606mr1050332173.6.1725473965104; Wed, 04 Sep 2024
+ 11:19:25 -0700 (PDT)
+Date: Wed, 04 Sep 2024 11:19:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c274f106214f3631@google.com>
+Subject: [syzbot] [net?] WARNING in __dev_queue_xmit (4)
+From: syzbot <syzbot+1a3986bbd3169c307819@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/09/2024 7:46 pm, Dave Hansen wrote:
-> On 9/3/24 02:32, tip-bot2 for Dave Hansen wrote:
->> -	if (c->x86 == 6 && c->x86_model < 15)
->> +	if (c->x86_vfm >= INTEL_PENTIUM_PRO &&
->> +	    c->x86_vfm <= INTEL_CORE_YONAH)
->>  		clear_cpu_cap(c, X86_FEATURE_PAT);
-> Andy Cooper did point out that there is a theoretical behavioral change
-> here with c->x86_model==0.  There is a reference to the existence of
-> such a beast on at least on random web page[1] on the Internet as "P6
-> A-step".
->
-> But the SDM neither confirms nor denies that such a model ever existed.
-> If the SDM can't be bothered to acknowledge its existence, Linux
-> probably shouldn't either.
->
-> Either way, we're talking about a 32-bit CPU that's almost 30 years old
-> and was probably pre-production anyway.
->
-> I'm fine with the patch as-is.
->
-> 1. https://www.sandpile.org/x86/cpuid.htm
+Hello,
 
-This same purveyor of top quality x86 history pointed out that PAT
-didn't exist on the Pentium, PPro, or P2, so they are unlikely to be
-affected by this erratum.
+syzbot found the following issue on:
 
-Other cross references if they're helpful:
- * Banias Y31
- * Dothan X14
- * Yonah AE7
- * Yonah Xeon AF7
+HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=161fbc31980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3456bae478301dc8
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a3986bbd3169c307819
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e4f459980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12272ea5980000
 
-Finally, this looks suspiciously like it's the bug described in footnote
-1 of https://sandpile.org/x86/coherent.htm MTRR/PAT conflicts which
-otherwise identified that the early PAT-capable chips did behave as
-expected.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-43db1e03.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0e968f44e2ed/vmlinux-43db1e03.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b371a4faf10a/bzImage-43db1e03.xz
 
-~Andrew
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1a3986bbd3169c307819@syzkaller.appspotmail.com
+
+warning: `syz-executor452' uses wireless extensions which will stop working for Wi-Fi 7 hardware; use nl80211
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5199 at kernel/softirq.c:362 __local_bh_enable_ip+0xc3/0x120 kernel/softirq.c:362
+Modules linked in:
+CPU: 1 PID: 5199 Comm: syz-executor452 Not tainted 6.10.0-rc7-syzkaller-00141-g43db1e03c086 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__local_bh_enable_ip+0xc3/0x120 kernel/softirq.c:362
+Code: 00 e8 01 91 0b 00 e8 ec 30 43 00 fb 65 8b 05 8c dd b1 7e 85 c0 74 52 5b 5d c3 cc cc cc cc 65 8b 05 ce 8c b0 7e 85 c0 75 9e 90 <0f> 0b 90 eb 98 e8 f3 2e 43 00 eb 99 48 89 ef e8 a9 0e 1a 00 eb a2
+RSP: 0018:ffffc900032af368 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000200 RCX: 1ffffffff1fc96eb
+RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffffffff88c4e35d
+RBP: ffffffff88c4e35d R08: 0000000000000000 R09: fffffbfff1fc9092
+R10: ffffffff8fe48497 R11: 000000000000001d R12: ffff888021f9e000
+R13: ffff888021f9e100 R14: ffff88801c1e40b8 R15: ffff88801c1e4000
+FS:  0000555593697380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555638997000 CR3: 0000000026c08000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:851 [inline]
+ __dev_queue_xmit+0x872/0x4130 net/core/dev.c:4420
+ dev_queue_xmit include/linux/netdevice.h:3095 [inline]
+ __netlink_deliver_tap_skb net/netlink/af_netlink.c:307 [inline]
+ __netlink_deliver_tap net/netlink/af_netlink.c:325 [inline]
+ netlink_deliver_tap+0xa7d/0xd90 net/netlink/af_netlink.c:338
+ __netlink_sendskb net/netlink/af_netlink.c:1279 [inline]
+ netlink_broadcast_deliver net/netlink/af_netlink.c:1412 [inline]
+ do_one_broadcast net/netlink/af_netlink.c:1499 [inline]
+ netlink_broadcast_filtered+0x938/0xf10 net/netlink/af_netlink.c:1544
+ nlmsg_multicast_filtered include/net/netlink.h:1125 [inline]
+ genlmsg_multicast_netns_filtered include/net/genetlink.h:491 [inline]
+ genlmsg_multicast_netns include/net/genetlink.h:508 [inline]
+ nl80211_frame_tx_status+0xa6d/0xd00 net/wireless/nl80211.c:18952
+ ieee80211_report_ack_skb net/mac80211/status.c:645 [inline]
+ ieee80211_report_used_skb+0x1241/0x21c0 net/mac80211/status.c:778
+ ieee80211_free_txskb+0x23/0x40 net/mac80211/status.c:1291
+ ieee80211_do_stop+0xd5d/0x2200 net/mac80211/iface.c:650
+ ieee80211_runtime_change_iftype net/mac80211/iface.c:1873 [inline]
+ ieee80211_if_change_type+0x360/0x790 net/mac80211/iface.c:1911
+ ieee80211_change_iface+0xa5/0x500 net/mac80211/cfg.c:219
+ rdev_change_virtual_intf net/wireless/rdev-ops.h:74 [inline]
+ cfg80211_change_iface+0x586/0xdd0 net/wireless/util.c:1215
+ cfg80211_wext_siwmode+0x222/0x2b0 net/wireless/wext-compat.c:67
+ ioctl_standard_call+0xd0/0x210 net/wireless/wext-core.c:1045
+ wireless_process_ioctl+0x4e3/0x5e0 net/wireless/wext-core.c:983
+ wext_ioctl_dispatch net/wireless/wext-core.c:1016 [inline]
+ wext_ioctl_dispatch net/wireless/wext-core.c:1004 [inline]
+ wext_handle_ioctl+0x23d/0x2c0 net/wireless/wext-core.c:1077
+ sock_ioctl+0x3ac/0x6c0 net/socket.c:1275
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff609c12199
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdc08407c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ff609c5f48b RCX: 00007ff609c12199
+RDX: 0000000020000000 RSI: 0000000000008b06 RDI: 0000000000000003
+RBP: 00007ff609c5f469 R08: 00007ffdc08408f8 R09: 00007ffdc08408f8
+R10: 00007ffdc08408f8 R11: 0000000000000246 R12: 00007ff609c5f429
+R13: 0000000000000031 R14: 0000000000000047 R15: 0000000000000004
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
