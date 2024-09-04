@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-315606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FEA96C4D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:04:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6665D96C4EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39CF9280DB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212C12874A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF591E1315;
-	Wed,  4 Sep 2024 17:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F661E1A0C;
+	Wed,  4 Sep 2024 17:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bXlkCmlq"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPZ8wvII"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03CC1E1307
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DF41E0B7E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469470; cv=none; b=Z9pD5/f3tjXWYO3ulpQY3aVGNjE1/l3bCiDU2Et+XBtmXy2wTQ1IxfFt7mW0MqcL2zt35PjoloIUOfegY7V7u13/iK2+ptEzWRUTwwDYO4Apn46cYfBq6/UdPKW2pXeIaMedBV0K2KRGrXIdl86SpbHxhUwU1GMKtw0JoOPkZ9c=
+	t=1725469542; cv=none; b=rWw0R73OmjH53eVW79rREBGd2YrM36lNIH7N60JVpF1V5ZB9ndqjXn16CsAuFea8pGPu4bE+x5kixMmzN/vwJvAITRsz/08dZ8GOD966WJi5tnSCVqpfbKyvXH0jqlJLue8Za/Dzh5nwTnm3979GF7RSkoO+Ve9srLSjn4dSk24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469470; c=relaxed/simple;
-	bh=ljhbzx+k3bGCVd229wdwNgYsFTQeKAD41+zF550qPvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sYhlKUuJgqFAk+wJHnRyjApeWfqe6VK6Gsb9X6bFVj0hcmoBfnCRKHfxANkgANoTqFjd6JAAzNvL4Gbdm98eX0SblvT8T1boQP/zGD1OUVwgTJsn7aYfKkMLfe4h3oEFOqh8PCypviiDoSuU07deS0vO4r5LTIcfF82WXplir38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bXlkCmlq; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f01b8738dso5141628e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725469467; x=1726074267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mhRoNkL0Avzx5/KKEvsyPl06PAUtVfx20ocZRJCz2l8=;
-        b=bXlkCmlq0pOfP7B7SetykuV9zL/P4VDe2wXdWNCCCHdjM23c2WiHxFPPTQPhFNd6td
-         thV+OMboHxDEwHDQ/JZ/3izvEb68wBFkOPSclxMRsJP6uiygOVDnh8m2aEw9ogbqwknu
-         g0m06qLHVLhFURyRV3WkW7sQrnw9T51C1eUXZRzhSkBtlVR6V+uUWc1NUQm2YBs1T6iS
-         +Zj/bsWcaxIi2UhntVz4IckvPj0umhfcuA7jTtX4vVBPRirVki1mBP87oyn0hALx0ykL
-         u4UGa2tWgg5u77+1StIgPudvNbe+OM/c6LCnM6VwNRqKuWZaHJBn8+Yi2GXZPmhHJliG
-         ex6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469467; x=1726074267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mhRoNkL0Avzx5/KKEvsyPl06PAUtVfx20ocZRJCz2l8=;
-        b=LL9v48JGkdNIktSD/skDHeTwly1qDXw91V9xsqAs9PRxV85BVul35PVYagcvdN8Cd+
-         K10XCRwGRLUFB1NlhQT3z8DDfHavhIJkoa8Hqd4I3eM4/VhaQv8sv7egO0XoVhPpqmxB
-         QtapTr7L8dYyJclcT4EhJXgT3Gtt5ZFO89yuWjiBo5gfyHMFpdcWp5Oo7gLTd9paeYOy
-         PdV61CiQxF6B1K/sjrfQFBxdpwCAcF6xnVgYyX7s/bgqb5Y4O3RE1QIDW1j/IjrEXXdX
-         ubeMnUZrHOQ4mFbZ+eSbm9ztVbqQnR/KTPCmT6Gy8XZDQGW9Qq9T1mc6qjBEflJFoPLF
-         2emw==
-X-Forwarded-Encrypted: i=1; AJvYcCVG2KVaRbFbtfpznHF2utP4PGrmk/CrIHJLlxNABf2iY/NplRuDnnl9EN1HHcytnRqyYb40fmOI+m26TUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybgPYTTpXHH7I4iE0kmr92JWppTATQt/zfQNRschoMIBJBO4RV
-	cQD+cjtTjpQ6TWPzpVvMY9tlwlJutCtdSxEVdnk2j1SuyQn+YU7xwcxmgjdZuHXLBczQlED/Mav
-	Z9sAoKwcnc4K1TsL2zLS06UdRCALgKVI6cZ/uYMgsqGuwk9Jq7o17
-X-Google-Smtp-Source: AGHT+IF0AadLqa9ZD/bM7M4MW5HdZ8I6rbTRcWNvhpQRijDHnb9gFn5sXNDG6NA7E4HxGeH0JOvT0dIbgCNjO6GgEzU=
-X-Received: by 2002:a05:6512:1043:b0:52b:bf8e:ffea with SMTP id
- 2adb3069b0e04-53546b93f60mr11839455e87.40.1725469466208; Wed, 04 Sep 2024
- 10:04:26 -0700 (PDT)
+	s=arc-20240116; t=1725469542; c=relaxed/simple;
+	bh=yZmRYArkJKaIHXDzJYGm8lIouQqiNCGKNEsykROu9tk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Potdq5RPKA3/BE5L/tLmRpaa9JX8U13r+EFP/YsQq0LzOV//DBtcR/YddOsVQcWnAz9Ety0sUpJlWBE/FsIcLO+G5JEG6adReUxdjp0xeEmaYY4lyH2Zkc+x9adiszcq1teKAU2WiAHRlB778N5T6veYwL+4LsPypq4E3uBeBS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPZ8wvII; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA11C4CEC2;
+	Wed,  4 Sep 2024 17:05:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725469540;
+	bh=yZmRYArkJKaIHXDzJYGm8lIouQqiNCGKNEsykROu9tk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cPZ8wvII0B/zemNeac3UH29I/2dASumPLFuzWpy4d1wE2py87FodF489XQ6fWOIj2
+	 sK0Di0+GHmj+F8njKy5NjlncWFXGtR5cZHEr2fX2UJx9rCfdL3vTLFlwvXQO9d8wob
+	 7hIuzVaIFzJWcc4wTeonALIuUx5yVBYXWM1NdudLbQ7npkA8jnw4RfElZRlPSAjSQe
+	 maDI/Z0lZIQEvHZWgfAbonLYY4c+22qx0dUoXzuParjN4SmWLESCC+51cZMziFSvaz
+	 36K7ubL9I6EKoXH05us8IU5KKeYPEtBM53c/dwMJj2Qo7G+Qei2HpL+SUWx3TXGIRb
+	 qx9WaWAvVwa2g==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+To: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net] mptcp: pm: Fix uaf in __timer_delete_sync
+Date: Wed,  4 Sep 2024 19:05:18 +0200
+Message-ID: <20240904170517.237863-2-matttbe@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <000000000000b341bb062136d2d9@google.com>
+References: <000000000000b341bb062136d2d9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903192524.4158713-1-sean.anderson@linux.dev> <20240903192524.4158713-3-sean.anderson@linux.dev>
-In-Reply-To: <20240903192524.4158713-3-sean.anderson@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Sep 2024 19:04:15 +0200
-Message-ID: <CANn89iJki26SoevkdvcFO8HBCDbXR4-0nyZ55fFb2B66Pk63qA@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] net: xilinx: axienet: Enable adaptive IRQ
- coalescing with DIM
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, netdev@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Michal Simek <michal.simek@amd.com>, Heng Qi <hengqi@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1333; i=matttbe@kernel.org; h=from:subject; bh=yZmRYArkJKaIHXDzJYGm8lIouQqiNCGKNEsykROu9tk=; b=kA0DAAgB9reCT0JpoHMByyZiAGbYk02i3qZSl4gNdn1pk2k0H/eBzm8pdqNoPBbRNjxbs2v5+ okCMwQAAQgAHRYhBOjLhfdodwV6bif3eva3gk9CaaBzBQJm2JNNAAoJEPa3gk9CaaBzHl4P/AnY SvEmUwqv+MY08zwEntIUr0ZZ5IuJ93PpdKbwOmJrtBKmXSaSAO4b+qxF35x9SLrjPuG2OFgjTp2 iwm8ixyI1Wf/GYT7gQ67LN6gIb4bi9PtrNJPcJ92TppB9JHncfgfxgYsqQcWUh61ntEKVtIkbnj f6AIAtX9VAjvz4rOEkf22zzauWjJjDm3o9dTucB6GKcl5fKUia2fSZ/qIZb0/Jxn46GtCU2snsH HGxfbYRJ0wT/fVBuumxWCqrQNJhimqjotESWhwBlG1hDA1xCmJdPAIWGYQY9ra241jtLz8QRcdU T8j/IEK2UZf2nHOHp8cqvHkcNM5oy80E4W7lfi5UeFFoJZ2uC+sX97eJeb03FVtFOx+sS6Y8xbL 9OjUYfCJq+xkcUf06+kkuvEWoq4ZP7QwMnK3jLndy7w8vsevMY8E900ggXvqu85eMiLlwk7mWBF pJWUqvAIUq/FMwlNycW6oZ+htghXX00dUTslg1LOzMmE1Iy8aIk7k+YBHMHCrXxPUh1Aek3TCgX f4PTbDxT51rgzz7+UCCMbd9ZX7DsDeh52BU7GawhwR0sX5BJeOAHE+cRwTOMDzUOHiqhn9C8dFo +RxgF6k0dc+SmTR92XaDPawlr4WBAYjsaJPvHGpQC/llcFmBywVlRj8URJXKeS6RbY3U5RtQI8G 0HaW2
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp; fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024 at 9:25=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
-ev> wrote:
->
+#syz test
 
-> +
-> +/**
-> + * axienet_rx_dim_work() - Adjust RX DIM settings
-> + * @work: The work struct
-> + */
-> +static void axienet_rx_dim_work(struct work_struct *work)
-> +{
-> +       struct axienet_local *lp =3D
-> +               container_of(work, struct axienet_local, rx_dim.work);
-> +
-> +       rtnl_lock();
+Fixes: 00cfd77b9063 ("mptcp: retransmit ADD_ADDR when timeout")
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ net/mptcp/pm_netlink.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Why do you need rtnl ?
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index f891bc714668..792b5f09a915 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -332,17 +332,21 @@ struct mptcp_pm_add_entry *
+ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
+ 		       const struct mptcp_addr_info *addr, bool check_id)
+ {
+-	struct mptcp_pm_add_entry *entry;
+ 	struct sock *sk = (struct sock *)msk;
++	struct timer_list *add_timer = NULL;
++	struct mptcp_pm_add_entry *entry;
+ 
+ 	spin_lock_bh(&msk->pm.lock);
+ 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
+-	if (entry && (!check_id || entry->addr.id == addr->id))
++	if (entry && (!check_id || entry->addr.id == addr->id)) {
+ 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
++		add_timer = &entry->add_timer;
++	}
+ 	spin_unlock_bh(&msk->pm.lock);
+ 
+-	if (entry && (!check_id || entry->addr.id == addr->id))
+-		sk_stop_timer_sync(sk, &entry->add_timer);
++	/* no lock, because sk_stop_timer_sync() is calling del_timer_sync() */
++	if (add_timer)
++		sk_stop_timer_sync(sk, add_timer);
+ 
+ 	return entry;
+ }
+-- 
+2.45.2
 
-This is very dangerous, because cancel_work_sync(&lp->rx_dim.work)
-might deadlock.
-
-
-> +       axienet_dim_coalesce_rx(lp);
-> +       axienet_update_coalesce_rx(lp);
-> +       rtnl_unlock();
-> +
-> +       lp->rx_dim.state =3D DIM_START_MEASURE;
-> +}
->
 
