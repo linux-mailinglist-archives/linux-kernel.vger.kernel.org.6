@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-315156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A6596BEAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:37:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9500296BEAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBB41C21960
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4937E284923
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D2E1DB557;
-	Wed,  4 Sep 2024 13:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A021D9D97;
+	Wed,  4 Sep 2024 13:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnnL/MUd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Icl/vu/W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47071DB53A;
-	Wed,  4 Sep 2024 13:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2996E1DB929;
+	Wed,  4 Sep 2024 13:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457003; cv=none; b=DFbUIwdl1TWN/x2JYKFLzYz7TbPVwMkPyq1FwTe3eBt9zwlOn+istHc9RCafQm5jm8W2pMMQiAjpnUjQ5AKBchuQWUiL6tguHx94CyKu1sOPkyyPdmbGErI+VzT/1L2Qst+Y/3+UyGZNj9G8UBim6a73GIY9jz41q2fYpinfmqA=
+	t=1725457005; cv=none; b=aGYsdfER0jcYnVi2sey7fq9yR9LppPKyel/5wf0c1oFtS/r9aLpOtMD4LWnJvVLkNCbruNhuHQQqjwIZK6b5l2iUsvpg+eNB5DcqEWh5/AJiJQtmq8xccAMoCvDLSfcth0K+v6qINBD6ewpjrBXSWGrUjYBGKOQqs7782tizrJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457003; c=relaxed/simple;
-	bh=cWwLSUHZYqYI8cgQZImqZs4zv+twj68xkBlqsgZhALY=;
+	s=arc-20240116; t=1725457005; c=relaxed/simple;
+	bh=oDjE+vXredknBm8QeGQHFI6cPwk2C9o9aiXVHeKEOvk=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=WbnzDnYjLbiOr7FplZo6YBxRhQzCVkRf3ukilDhu1TIj2tiAMv/oycN+S1Oz4ofqSFaj0NlBOiQe7h4t4iGPLb3GixgU55ZJ83P602i4RQkqjUNFqTt9iwLQHF1bN6p8f3W1kA1jsm/X0llJluuimMr0oWsjkGG5Wv3VnfWe4qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnnL/MUd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEB2C4CEC9;
-	Wed,  4 Sep 2024 13:36:43 +0000 (UTC)
+	 Message-Id:Subject; b=Ngf7sSMpZGHuL2rT8bgpbIhpmu+Grhw7U30bChGtOZxLl7MQVMZAbIRm+OlN/90InnYNG//tapFPrSSPVNPSwUzm4Nc6kLOgis2ANTV/T589sNRD/rlkAKHBJ2YzfvzH9AAEKJQ3yGOwW/WLraDC5dkC/+hsoW+G7eks1CaZFqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Icl/vu/W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78628C4CEC6;
+	Wed,  4 Sep 2024 13:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725457003;
-	bh=cWwLSUHZYqYI8cgQZImqZs4zv+twj68xkBlqsgZhALY=;
+	s=k20201202; t=1725457004;
+	bh=oDjE+vXredknBm8QeGQHFI6cPwk2C9o9aiXVHeKEOvk=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=PnnL/MUdepyH8f7jACCE4b/4wv+fPngnIN2ZuQFXl2wlf5D8/rhD6wrMSWJxKZpDn
-	 cXVv4JxqHJ16tmrJjJXedKffi1yuj3npoauXrQnXb2KPLm4CjEW0dVybdok8MFVMP7
-	 /Q6ngzsyvPTTMwaPJL72D+9UTPS+34IAdoCDCPBTP+WUUWzuq3Anz/n5kcFHCNo8UW
-	 qyaWPgWzOr5gYDr8sdlWc/INLC3H3TgUqmpCdhcjVK+syp+rcZO9Wi0FaOmMLAivxi
-	 2HWXvCKNUmn5EWi89dYKY1xr+3M6hHr7tLmp7Bi4x5Ml14foXPRt6oyCF0mrbHn7pO
-	 pzTDArPPdbbXA==
-Date: Wed, 04 Sep 2024 08:36:42 -0500
+	b=Icl/vu/Wf1RLsvO9UJzE8rJ+8YBop70OmuI36qqXKJKayH+tv06QweaS4bP4ZvccR
+	 1YpdAc+scFoqqiX/xBm0XAyYbGeDTFAecogVLZftdiSLbwaCxrdSoGtP8d0vytpA4p
+	 YFYgN0Luj2eR0ivVh/AC3uVrDdBhPZv4qVatD526JlS/6PwprLTOw9G0K/T12uMhSz
+	 RtnRGU7SAsdLnWeUVlXGNKDdFOBVMtylOpBC+UwEM364bx7Z2nw2b+XxF1NQjwlvkM
+	 0JwhukaJMDDZ8lucNpvIa/B+i2aG04xpYOGtFFpnWpk+gnh4N/Ij9eVnv11gq5vlxX
+	 t2Pj2hishU32A==
+Date: Wed, 04 Sep 2024 08:36:43 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,83 +50,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frieder Schrempf <frieder@fris.de>
-Cc: Mathieu Othacehe <m.othacehe@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, Josua Mayer <josua@solid-run.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Francesco Dolcini <francesco.dolcini@toradex.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Parthiban Nallathambi <parthiban@linumiz.com>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Frieder Schrempf <frieder.schrempf@kontron.de>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Hiago De Franco <hiago.franco@toradex.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
- Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Shawn Guo <shawnguo@kernel.org>, 
- Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
- Michael Walle <mwalle@kernel.org>
-In-Reply-To: <20240904085415.645031-1-frieder@fris.de>
-References: <20240904085415.645031-1-frieder@fris.de>
-Message-Id: <172545685881.2410492.11093447141073155714.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] Add support for Kontron OSM-S i.MX8MP SoM and
- carrier boards
+To: Junhao Xie <bigfoot@classfun.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, Jonas Karlman <jonas@kwiboo.se>, 
+ linux-kernel@vger.kernel.org, FUKAUMI Naoki <naoki@radxa.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Dragan Simic <dsimic@manjaro.org>, Chukun Pan <amadeus@jmu.edu.cn>
+In-Reply-To: <20240904111456.87089-1-bigfoot@classfun.cn>
+References: <20240904111456.87089-1-bigfoot@classfun.cn>
+Message-Id: <172545685977.2410524.10394848640957143488.robh@kernel.org>
+Subject: Re: [PATCH 0/3] Add support for Ariaboard Photonicat RK3568
 
 
-On Wed, 04 Sep 2024 10:53:18 +0200, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Wed, 04 Sep 2024 19:14:53 +0800, Junhao Xie wrote:
+> Add dts for Ariaboard Photonicat RK3568.
 > 
-> Patch 1: board DT bindings
-> Patch 2: OSM-S i.MX8MP SoM and BL carrier board devicetrees
-> Patch 3: i.MX8MP SMARC module and eval carrier board devicetrees
+> This series bring support for:
+> * Debug UART
+> * SDIO QCA9377 WiFi and Bluetooth
+> * M.2 E-Key PCIe WiFi and Bluetooth
+> * M.2 B-Key USB Modem WWAN
+> * Ethernet WAN Port
+> * MicroSD Card slot
+> * eMMC
+> * HDMI Output
+> * Mali GPU
+> * USB Type-A
 > 
-> Changes for v3:
 > 
-> * Address Shawn's review comments (thanks!)
-> * Fix HDMI DDC interface
-> * Fix gpio-hog pinctrl in DL devicetree
-> * Fix DT check warnings in DL devicetree
-> * Adjust LVDS panel node to match that of proposed DL i.MX8MM
+> Junhao Xie (3):
+>   dt-bindings: vendor-prefixes: Add Shanghai Novotech Ariaboard
+>   dt-bindings: arm: rockchip: Add Ariaboard Photonicat RK3568
+>   arm64: dts: rockchip: add dts for Ariaboard Photonicat RK3568
 > 
-> Changes for v2:
-> 
-> DT bindings (patch1):
-> * Add tags from Krzysztof and Conor (thanks!)
-> 
-> SMARC DTs (patch 3):
-> * Fix GPIO labels
-> * Add support for TPM chip on SMARC module
-> * Disable PWM in favor of GPIO5 on SMARC carrier
-> * Enable LCDIF node to make HDMI work
-> * Add support for GPIO expanders on SMARC carrier
-> * Remove SPI flash as its removable and should be in an overlay
-> * Add CAN regulators to fix transceiver enable
-> 
-> Frieder Schrempf (3):
->   dt-bindings: arm: fsl: Add Kontron i.MX8MP OSM-S based boards
->   arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier
->     board
->   arm64: dts: Add support for Kontron i.MX8MP SMARC module and eval
->     carrier
-> 
->  .../devicetree/bindings/arm/fsl.yaml          |  13 +
->  arch/arm64/boot/dts/freescale/Makefile        |   6 +
->  .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 305 ++++++
->  .../boot/dts/freescale/imx8mp-kontron-dl.dtso | 110 +++
->  .../dts/freescale/imx8mp-kontron-osm-s.dtsi   | 908 ++++++++++++++++++
->  .../imx8mp-kontron-smarc-eval-carrier.dts     | 254 +++++
->  .../dts/freescale/imx8mp-kontron-smarc.dtsi   | 280 ++++++
->  7 files changed, 1876 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-dl.dtso
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc.dtsi
+>  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../rockchip/rk3568-ariaboard-photonicat.dts  | 598 ++++++++++++++++++
+>  4 files changed, 606 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dts
 > 
 > --
 > 2.46.0
@@ -149,20 +112,12 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-kontron-bl-osm-s.dtb freescale/imx8mp-kontron-smarc-eval-carrier.dtb' for 20240904085415.645031-1-frieder@fris.de:
+New warnings running 'make CHECK_DTBS=y rockchip/rk3568-ariaboard-photonicat.dtb' for 20240904111456.87089-1-bigfoot@classfun.cn:
 
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: clock-controller@30e20000: '#reset-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: clock-controller@30e20000: '#reset-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: pcie-ep@33800000: reg: [[864026624, 1048576], [402653184, 134217728], [865075200, 1048576], [867172352, 1048576]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space', 'dbi2', 'atu'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: pcie-ep@33800000: reg: [[864026624, 1048576], [402653184, 134217728], [865075200, 1048576], [867172352, 1048576]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space', 'dbi2', 'atu'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
+arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dtb: phy@fe8c0000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/rockchip,pcie3-phy.yaml#
+arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dtb: rfkill-modem: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/rfkill-gpio.yaml#
 
 
 
