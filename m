@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-315565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22B596C43F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:38:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85B396C446
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7866C2849AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE8E1C22930
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7AB1E0B66;
-	Wed,  4 Sep 2024 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEAA1DC07B;
+	Wed,  4 Sep 2024 16:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HXRho4HE"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4NDvVEAQ"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29DC1E00B6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A441CEE89
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467919; cv=none; b=pUSXj05hASRizgV+An/guU6X5wcuzstatMLULNsAuCU1AD9jEYkAj6p4WhaDXg/Nf8FCVD1Z5VNsG84mCkZNjBDPbSC/EN4A8V0JUm/ZuUsJvEbbVAVGBuOKa5c7zGiA+7B9jV+/BPKvcnomCI3Fi8iQQ4fyLf+sJEhZy4HIM1I=
+	t=1725467987; cv=none; b=CttfVsEG9fux3w2eSKVKHEtxRAACMulzhDjB/54qSRkCmQdOPokL0KcVcHrPoQSjUXTGzSmtU8eApNYewOgLKYNealEwDGB1PCLXhfzO/BsV9u+G9OG3gGOVyGQkH9jxJ//XjS3vpwgvSDLkHL9WjxYjKDpBNRkLaodCg947RO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467919; c=relaxed/simple;
-	bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
+	s=arc-20240116; t=1725467987; c=relaxed/simple;
+	bh=nn/g8cIBSnZ11bpaYzZZ8NthHY/+J2Dj+WTEu3myqks=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tuoEkPW2lgmFN3nIADnZHZhlcJYEAtBZvPQ15lJIQh9g682V8TFXdYPz1xJa1L6ekUlQZe3xRGReCa26vQmiJ+DlSvpJenRpyB617SnKoSPgz5jVYuNdbAQToLJECj6fTp0DFtEPixda2vymKyATwkuLmPKeFW/R6g5KzPbMrH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HXRho4HE; arc=none smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=Z7CRxrL2Bndb3H5/XJwAlOvTj/LmD67OmEulTls/ql5P2JEhHAKSrxn9HBcW01nvKSeQSmFeY5516XLOzAb1DTTSeZzgmhiuPSADNHx7msJxtS/LM1dsKqtu8v9j/rdDGjTBU4cBtyF88MtfOzLji0ST9D6iKD5KjAn4Ky8LyKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4NDvVEAQ; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c2443b2581so250a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:38:37 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-457c6389a3aso305171cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725467916; x=1726072716; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725467984; x=1726072784; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
-        b=HXRho4HEnOa9kQiu5HKUi7Um9KzIoc/MajCczV10P0ibaEQ6yZTuKxTD+xnxz2Wou+
-         o+Ep9P/a7mu7vrxOkl4dQoHuoqbHHUS18kZtDBol5LTOV9X7BXUwyLwL7KpaiY/znqsn
-         wmfQrd71gZUnKE5qgAvtPFarL9+htSmPR5pW3UXqwtlmifuYX0jDsU8vBhXVgyfQeyvf
-         u5r4vEZtyt/tlrKlsWvvV3IQObgP703DwVfou6Hw15UcFqc+f5pv4mwzufa6847M3n0d
-         Zoy49sW2YcFp09RnEm0vvzZIRtRsyw4zMtdpyYtvIijNORvg/LOTBerqFXh/8vlys4oB
-         /clQ==
+        bh=aVKgBZWcIsT5jzi2Y61F5gCJD2ntfYeuhQqcN6HyFFE=;
+        b=4NDvVEAQ/E8D7qwFNSsUh8b34gKbzyvh/WcZx7FL2DwEyQ8kQgOntCTawE/JmnYIH4
+         as8YCcT5j/iAUc8uEl0x3oN7ArONbAxN80QPkiDxOt4Pc8upx5tdIk65JyBoIIZiLpXL
+         D3a3bRnUPM4wqL+7IApmoo7TZjLXJ23PjIINwSd0Xs3Fojk3vdLbxBeCVzp0rERrj9GN
+         wSyttTI4O11+IHK3+Vve0KCU9cBstD56K2QTnpjFyq55QxScQUcSqm5hg1T+UYUR2fB4
+         jUAcZyAxxm2yJuCVXZl5F2V5R2BJrrvvQNOLEE/2CyowEULParc+4vZmgimIr9+KoVyN
+         Nygw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725467916; x=1726072716;
+        d=1e100.net; s=20230601; t=1725467984; x=1726072784;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
-        b=eJPeMf/Y2eAY7m8Fugj+oAWscp00ADY7xF56Y0jWR//FHFkgLgBGfr9HffQryItPOi
-         +fVbJS6uVfP+MQLE295zl0L9d6XgGzrbb/2XloH/QtOKSfpROyoemHYdxHYo5956ZT6B
-         ezW9DiSshbzFheoWF73n5n5RfiOLpZP95xgkzy8m8opjU4DbhojWl6oPm6D7G2GCRy5j
-         XtsANhhTHpLfzdxjs8f+5wnuZPMj4g6NB/9jP7tAYEBhT7O6g+/xdtXSAIxMSqfo6lYc
-         aOy/YqEQaB+kRo+jhaEn8ION9AldK7+kx9tJTaKjjJUqIX6bNZsY+bVckNX/j8gKPKte
-         XQxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIDNYoFpHaJ9VN1ofWk6skOE26jjqBul7i4HfbppXdM1r7JGGwNV2kWsTjLqFhYV9Xnj+3iWmpoHWt9C8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRFQFM/VShLsUL7XVk0sT+r4Jy0NW/MniZG+Ken3cDemg5C2y/
-	S7vrr78O0wqxKByHKB0j4osQZbYOSi9gE9X+MjN3ycguIDtPsyPjW4NLccaqDnAilLygXOgvpsX
-	4j/Uyk5pkvE7evE7OmRpJGCpJpFONnlTbQqvw
-X-Google-Smtp-Source: AGHT+IF6UKWmXapLL+d1BWCdn4AUAlZZFF1ra+TJue0mm7OLyZp7Lr+G5pXbIgCO7p3I8Y2jkaZWp5KGqk+tfX8/prk=
-X-Received: by 2002:a05:6402:40cd:b0:5c0:aa37:660b with SMTP id
- 4fb4d7f45d1cf-5c27858b48fmr241823a12.6.1725467915783; Wed, 04 Sep 2024
- 09:38:35 -0700 (PDT)
+        bh=aVKgBZWcIsT5jzi2Y61F5gCJD2ntfYeuhQqcN6HyFFE=;
+        b=GZuRLjJTUBovT+xDpZz6cd+4P5CXHcWu107dYGZ1aoaNYbfjpHzNK3TtJ+oMitObba
+         XTmMn1X9I3lVYhRNXtYVhOX75015lUx42BGkOBqYYIGSPIrJIoFiFiARIlXf8SRBVemE
+         LzmAUNPGDekHop/dQk1vBh7SKBZqBBblQ23ogPeQE3kqcVjXfnEQ5qPcqmtp4tP/Kqka
+         W8xUxkfrAxw2mMXsq0uDAx+e8CNak83Ba13NfPj0rCMutR55kNl3epu7ud0o9IH1ppID
+         uSBME2vO21kdWabypqYvbSHkzO+v+s+t/X/e7+tTbVC1hyKHPgbLErnkTTEYVD11GROV
+         JZDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYEMDoG6Am7hXSnMTPeQoOH4wULN5rgyT1kfuGfRV/qHTgNts8A8b8EyYgK0mAEWxArflaS0AQn3t+Sas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdxkvxzucvadWkvPX7oDeuid1pPfyK1fZ7cWvwD9rMXFtB32bm
+	c5qVaggD06Uk2mmN5gmPi24p9XiNM3m4ADpusnKCh4EDrAajn7sdWvxkvueMv58KUDYUlqKfvpg
+	McmFmD2GfYyoLtVc70+W78FagYKdP61OzrPOA
+X-Google-Smtp-Source: AGHT+IGwhDrAQPEAmF0bOfcaTr6MOXUafuS1vP9sMQ9KrAbdAewI1zke0LJG2AKiNDfA445/E3iPPiTzSRTtLdtDDnM=
+X-Received: by 2002:ac8:5ad3:0:b0:456:7ec0:39a9 with SMTP id
+ d75a77b69052e-457f7a9c517mr3513941cf.5.1725467984034; Wed, 04 Sep 2024
+ 09:39:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826204353.2228736-1-peterx@redhat.com> <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
- <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
- <20240828142422.GU3773488@nvidia.com> <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
- <20240828234958.GE3773488@nvidia.com> <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
- <20240904155203.GJ3915968@nvidia.com>
-In-Reply-To: <20240904155203.GJ3915968@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 4 Sep 2024 09:38:22 -0700
-Message-ID: <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	ankita@nvidia.com
+References: <20240902044128.664075-1-surenb@google.com> <20240902044128.664075-7-surenb@google.com>
+ <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
+ <CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com>
+ <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com> <ZtfDiH3lZ9ozxm0v@casper.infradead.org>
+ <CAJuCfpHJ9PwNOqmFOH373gn6Uqa-orG6zP3rqk-_x=GkpUo2+Q@mail.gmail.com>
+ <ZtiMZWqht_8Bse-5@casper.infradead.org> <keaqrfkkoswtpbtvr3l5oetd4d3ncbpaxsay7dckn74qdob2u2@lohq26fuccib>
+In-Reply-To: <keaqrfkkoswtpbtvr3l5oetd4d3ncbpaxsay7dckn74qdob2u2@lohq26fuccib>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 4 Sep 2024 09:39:33 -0700
+Message-ID: <CAJuCfpEtsWM2S0K=UB1QZ81qeq_5jY-R0zNz3Kc8WojvJfj76w@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, John Hubbard <jhubbard@nvidia.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	liam.howlett@oracle.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
+	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com, 
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 8:52=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wro=
-te:
+On Wed, Sep 4, 2024 at 9:37=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> On Thu, Aug 29, 2024 at 12:21:39PM -0700, Jiaqi Yan wrote:
+> On Wed, Sep 04, 2024 at 05:35:49PM GMT, Matthew Wilcox wrote:
+> > On Wed, Sep 04, 2024 at 09:18:01AM -0700, Suren Baghdasaryan wrote:
+> > > I'm not sure I understand your suggestion, Matthew. We allocate a
+> > > folio and need to store a reference to the tag associated with the
+> > > code that allocated that folio. We are not operating with ranges here=
+.
+> > > Are you suggesting to use a maple tree instead of page_ext to store
+> > > this reference?
+> >
+> > I'm saying that a folio has a physical address.  So you can use a physi=
+cal
+> > address as an index into a maple tree to store additional information
+> > instead of using page_ext or trying to hammer the additional informatio=
+n
+> > into struct page somewhere.
 >
-> > I think we still want to attempt to SIGBUS userspace, regardless of
-> > doing unmap_mapping_range or not.
+> Ah, thanks, that makes more sense.
 >
-> IMHO we need to eliminate this path if we actually want to keep things
-> mapped.
->
-> There is no way to generate the SIGBUS without poking a 4k hole in the
-> 1G page, as only that 4k should get SIGBUS, every other byte of the 1G
-> is clean.
+> But it would add a lot of overhead to the page alloc/free paths...
 
-Ah, sorry I wasn't clear. The SIGBUS will be only for poisoned PFN;
-clean PFNs under the same PUD/PMD for sure don't need any SIGBUS,
-which is the whole purpose of not unmapping.
-
->
-> Jason
+Yeah, inserting into a maple_tree in the fast path of page allocation
+would introduce considerable performance overhead.
 
