@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel+bounces-314431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E932596B317
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DF596B319
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906A6B257E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:43:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7359E1C24303
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5C11474A5;
-	Wed,  4 Sep 2024 07:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443C61465A0;
+	Wed,  4 Sep 2024 07:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EPzA+7jr"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTwHTsKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDF0383A3;
-	Wed,  4 Sep 2024 07:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0632146D6F;
+	Wed,  4 Sep 2024 07:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435781; cv=none; b=TRXTvFYJQv4sCuSIkgGESNAClM8jK/KfCGw2xiVh21E4OdBgggJfhy9w52WaRHD0fvKkHY3kSuB45o6oxbXu9PGHuU/OdamV9J3XiQTQjkVlaB/qVEv8V+w/98fz4RYnT+t7xnL9wIJPOLpawE1yExO/F6KbZL2TbShrN3jdjrc=
+	t=1725435800; cv=none; b=HlvOyxD0MYnDxsBZhXGSLy8HiQOzZKHstRxcKWKjbe2WDzjpmlZYMJf2ciRhydWsVdTH0tz/6BmSgdoJrUuO+21mf+orlG369boo1aPgo3SPXhLOjZZZ2BiY7QJVtcxwmYQKaOv+KfJz1M29Lp7CCQnhc11Uvf1VNSW8BqYTXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435781; c=relaxed/simple;
-	bh=uwBR9gA5n32jGX1WxQS+J1LikbGE2Zea9/SkdZGGd5U=;
+	s=arc-20240116; t=1725435800; c=relaxed/simple;
+	bh=7Z63bOR1fY9qwqSNIp920ir5fJ8AiMMISMSGccEKkt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxqJUO2I6auYsjd5B8VmBIKxhkr/vZhfMa6Tfo2v92V71EhzT6idqFVU79rBloTgFj15SU3X8jKAwKT6t9O3O4Use5GPlHIZpV4JAGIDnU81cQ//D0/jCEn8LO741WLLLy+JalclQZIRIo/mIt2WTvI6Gbc/bfgLD7HXW9Vozho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EPzA+7jr; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oIr5NQctAXvznghKyBIffsWxr2oGkb0ae6NRJ1vU5i0=; b=EPzA+7jrrjbXbLFkZ1goWYvkYC
-	ccrJH4YDiy1Bgic6LyCoGzV+nrSC0pRh191rnVzKaZhPdOeSlI5vHKZ+zgl8zkmr3jcF//BqMq5vB
-	NFVJpa8/oJF6W8Irp7FVVUllgsPn7LnFh/6ofMnHjAhEl3o41Z0suOmxUtMn4fXfOBknUunpo1jra
-	Oe5hruAxqfv3PPyVTUCx5fOQJMNiL/sY1LH5BzXYpk9FmPB8L62EubWDESz0jFJRbMKyXtZgClAm7
-	f80kEV0cSPG8BDgCe96oTUAu3Cxb58FHi+pue8rnBSu+aHiFdRZpAsoSs1c4ZfZWCgLfBDD8yQGEK
-	jfIZMm2Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1slkfH-00000000AVo-26lb;
-	Wed, 04 Sep 2024 07:42:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 67B8B3004AF; Wed,  4 Sep 2024 09:42:54 +0200 (CEST)
-Date: Wed, 4 Sep 2024 09:42:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 27/31] objtool: Fix weak symbol detection
-Message-ID: <20240904074254.GB4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <bcedaf8559e7e276e4d9ba511dab038ed70ebd6c.1725334260.git.jpoimboe@kernel.org>
- <20240903082645.GO4723@noisy.programming.kicks-ass.net>
- <20240904035513.cnbkivqibdklzpw2@treble>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fg7hpGEpCgD21IMfuoph8gr6Oh7Oi/6ZUwWbRnvvBb2zeO2nN9jeTnWo6ihJusYEtMD2657KBryvXVgyRXhs8tD4R6Lr8ejSzsfi7zlJbOpXpVKSP+fYsWxdlxmXakMR9NPKougoTuw5OMafxQcJlq98809vYXDvEIeBbeENqc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTwHTsKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4CEC4CEC2;
+	Wed,  4 Sep 2024 07:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725435800;
+	bh=7Z63bOR1fY9qwqSNIp920ir5fJ8AiMMISMSGccEKkt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hTwHTsKmjWJjApHg0lMnhr8lI0VPWdP1grV6CczeinyyraCuQSp1aSmQvkUqjw6kF
+	 ytP/hnYf8e/UiJglJznOMAP7NLMCl85ROv/1Ew3kl+Dflare6wiXrOdT8vRjNXBs6v
+	 ksKsk0zSEeRbHrWMkzsC7Js8/BN3uYZgQHGeGBEGOTTAfOvIR7MONe8l0mFRZP81l4
+	 fK+udSjPEDA66PtjqqFeSON+8LXbwmHsC3KTTylWosIDUT3lv/3N58QAprLOCU/O+E
+	 5K89V6PIUsb4bzBTxR+OeyEf1S6RhKDQGQTuuk/cMGZ6s+dD84qDNc4Oix2J0RujTI
+	 CGnZTGq9ee9uA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slkfw-000000001r2-1PXm;
+	Wed, 04 Sep 2024 09:43:37 +0200
+Date: Wed, 4 Sep 2024 09:43:36 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: srinivas.kandagatla@linaro.org, bgoswami@quicinc.com,
+	andersson@kernel.org, alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: apr: Fix some parenthesis alignment coding
+ style issues
+Message-ID: <ZtgPqJHnQYd7Jm_z@hovoldconsulting.com>
+References: <20240904054735.7952-1-riyandhiman14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,28 +62,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904035513.cnbkivqibdklzpw2@treble>
+In-Reply-To: <20240904054735.7952-1-riyandhiman14@gmail.com>
 
-On Tue, Sep 03, 2024 at 08:55:13PM -0700, Josh Poimboeuf wrote:
-> On Tue, Sep 03, 2024 at 10:26:45AM +0200, Peter Zijlstra wrote:
-> > On Mon, Sep 02, 2024 at 09:00:10PM -0700, Josh Poimboeuf wrote:
-> > > @@ -433,9 +433,13 @@ static void elf_add_symbol(struct elf *elf, struct symbol *sym)
-> > >  	/*
-> > >  	 * Don't store empty STT_NOTYPE symbols in the rbtree.  They
-> > >  	 * can exist within a function, confusing the sorting.
-> > > +	 *
-> > > +	 * TODO: is this still true?
-> > 
-> > a2e38dffcd93 ("objtool: Don't add empty symbols to the rbtree")
-> > 
-> > I don't think that changed.
+On Wed, Sep 04, 2024 at 11:17:35AM +0530, Riyan Dhiman wrote:
+> Adhere to Linux kernel coding style.
 > 
-> But see two patches back where I fixed a bug in the insertion of
-> zero-length symbols.
-> 
-> I was thinking that might actually be the root cause of the above
-> commit.
+> Issue reported by checkpatch:
+> - CHECK: Alignment should match open parenthesis
 
-Aah, yeah, might be. If we can reproduce the original problem, it should
-be verifiable.
+This is not something that is part of the coding style and just an
+excessive warning that that checkpatch issues when run with the
+--pedantic (a.k.a. --strict) flag.
+
+You can use that flag on your own code if you prefer, but don't send
+"cleanups" like this for code that is already in the kernel. It's just
+noise.
+
+If you want to practise on how to create and submit a patch, these kind
+of patches are accepted for code under drivers/staging however.
+
+Johan
 
