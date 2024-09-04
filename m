@@ -1,278 +1,147 @@
-Return-Path: <linux-kernel+bounces-315012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C3D96BC7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9350D96BC7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753001C22B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF83282503
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826F01D933C;
-	Wed,  4 Sep 2024 12:35:24 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEE41D9334;
+	Wed,  4 Sep 2024 12:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpkgEkRc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558C185935
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE0185935;
+	Wed,  4 Sep 2024 12:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453323; cv=none; b=uZxspYzo+N6VrxMIZoxoErXmZtAlrwHRF6pV9X3o/4AggWNpmOFQRB7RVos0fHtLWQ3ymDfL82fxonET7B6ay6+gjw9gyTC24iS3MmnNT94qGFjYRApw2K7lo5SNUq8sxHBN3CMJ/bNmwiLPpKXg94F9ds+pMlaWv6SPrJA6ZSg=
+	t=1725453354; cv=none; b=mC3Ra4oZbDkgJkpC5eGCDQJiq1PwVuGVxEzVxXp+1gJ6sEu3iq4iohkazZnM9lROTaPIg5oD2A4DkBIg6n9PJjoRLHh76gfVPinSRl0DKmP6a/a/EXGlS52IQbNc0ENEoovdQ8QZ1TOiJKfH8G1UZIgqq2uRRmTvHP+nGcAfM3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453323; c=relaxed/simple;
-	bh=t+gnULiEUiPPKts+uEzedNwutohl3nSJyDw2ulcoEKk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SssJoiIuZ6OVBDMKut5YlpUAk1K66DfK56mjJbeNW+QEXp5SIaBIB3fAak2ZguzxXbhcDM/5FKFFM7OnitfLucsVA00XZSJ/avTy/nc+3gMnufODZj4yf9JhI4fPIfd9r/ErDUh55DOC1P6WZiyJRzngeFe9N9bp7iPE8EOzoBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a36f1515cso553819639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:35:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725453321; x=1726058121;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mkfHEc9lmJJvVteLzBNeYlL/M/84Jk3aTacariufTS4=;
-        b=HNN3K2fTcJNctXaxsRMA7VyGllK9n3bVNBoQlYMlAJiyiewjMTrPs/kD/msvuqslmB
-         ejaZpSDcxEFbU9l5w6GO5DxLtN/sfyEEnFvSMGTDA1roEdXw1wlhUMDCuAoA7kgcSTyL
-         Lu9P85dzqky3eXxYwQY94lQzBPZM9dT8sO8RL0ajjx3DUnZI2an7wxgCimfBXudsPKM9
-         STjgUFQosR8r0WSX3L+aVGf8sZ6JPlJQdQ7fR4sniRVlOZ7W7d1gfHyW6p+Kr8qyq+Ns
-         RAYiuUwPtBE+6vFqriOnaLgY6MvanYbfgs5D13LhvBxCoO+R+vXs40jGIRfgGk989HR2
-         Ygew==
-X-Forwarded-Encrypted: i=1; AJvYcCVpaxDcSN0p6oEr/82wqtl3bZ27fZRkwNJCJ3ChwxkaZRf4SNnW+Z++aVbt7K9C7iQuwqdxQlKuYgV1trs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7IfeomPFab/gDlXMN9qDyS6RG/I2JhQX4HwoCc3avub8lT3vD
-	jUEUmqe5Z9XAQ12c8aW9bBzBJsp6tEthYP7j+euz0IBDlOpiX853vUN7HEeTlm73l5ztR/MSeiA
-	BjNWxsIIEzETa+F9LBza6Di7ZbKkgoO1iu1wMKJbNXD/UMMf+B6IIKaM=
-X-Google-Smtp-Source: AGHT+IHkvRx81+C03kHPhjTY8vxvtpp3lcHS4TYaT7Depvw6RQodJ9lgjjJDyjI/sm71l6vPbEXlPxNJFzmvJmnVO+t1/EiAVHup
+	s=arc-20240116; t=1725453354; c=relaxed/simple;
+	bh=fjWW4m3Ll2ydWjHg6gzxX2V7+q9bKZYwiViXSnn/3Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1rqh/BTsrGlD8gZv83AFUzmDcgjOpzKP74bL9FiZrdEPUmzmpCXOyzjUFMKJDvuL6GpYz5cH3ihqL3npGJdeNY0gTuBts6i922E2nkiIwHLY0/xyrqcRA3YP0MRWjlVTyxHqJscj0j6IYDhj5Y8NVDz6XUGxJin18l6HOF+K5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpkgEkRc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0932C4CEC6;
+	Wed,  4 Sep 2024 12:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725453353;
+	bh=fjWW4m3Ll2ydWjHg6gzxX2V7+q9bKZYwiViXSnn/3Ac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CpkgEkRc+CChmGCkYFkh1y56Dld92UgaWYbJ00E28R0XnsGC6NyORq5U+a7/eMjQe
+	 3K3r28UGRqlCK+gz2JyR3QPSRmtP8NpcRxUfI84sRUXtaqvoxniVdZmaC22ovYWAGv
+	 qWWTvYs2OF8nb+CuvzKIo4ZR+oVeMrukJ3vffBJT9VCCtbqkpngIu7OfEy/tmJa8sc
+	 WiccfciL75imt4RyDkcMJnOt0Pfns6YQP0+p6KWydop0JcmqnydRz4zyrNXlvohDY4
+	 Foge2izuF1WNAy4zGcOURTQXJvWxTYTZvTJWaq8Qqo0NYtvxL9lJkbEZsBq6O1CzEq
+	 u6WrZ6mafocOQ==
+Date: Wed, 4 Sep 2024 13:35:47 +0100
+From: Will Deacon <will@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
+Message-ID: <20240904123544.GG13550@willie-the-truck>
+References: <20240827164417.3309560-1-leo.yan@arm.com>
+ <20240827164417.3309560-2-leo.yan@arm.com>
+ <20240830103834.GA8000@willie-the-truck>
+ <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
+ <20240830130930.GA8615@willie-the-truck>
+ <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9820:b0:4c0:9a05:44c4 with SMTP id
- 8926c6da1cb9f-4d017c4697bmr1131411173.0.1725453321412; Wed, 04 Sep 2024
- 05:35:21 -0700 (PDT)
-Date: Wed, 04 Sep 2024 05:35:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004cb8a506214a6876@google.com>
-Subject: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in sk_filter_trim_cap
-From: syzbot <syzbot+b4bc25bfaad44df51f05@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello,
+On Sat, Aug 31, 2024 at 12:37:29PM +0100, Leo Yan wrote:
+> On 8/30/2024 2:09 PM, Will Deacon wrote:
+> 
+> [...]
+> 
+> >>>> @@ -160,6 +162,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
+> >>>>
+> >>>>   static struct attribute *arm_spe_pmu_cap_attr[] = {
+> >>>>        SPE_CAP_EXT_ATTR_ENTRY(arch_inst, SPE_PMU_CAP_ARCH_INST),
+> >>>> +     SPE_CAP_EXT_ATTR_ENTRY(lds, SPE_PMU_CAP_LDS),
+> >>>>        SPE_CAP_EXT_ATTR_ENTRY(ernd, SPE_PMU_CAP_ERND),
+> >>>>        SPE_CAP_EXT_ATTR_ENTRY(count_size, SPE_PMU_CAP_CNT_SZ),
+> >>>>        SPE_CAP_EXT_ATTR_ENTRY(min_interval, SPE_PMU_CAP_MIN_IVAL),
+> >>>
+> >>> What will userspace do with this? I don't think you can turn LDS on/off,
+> >>> so either you'll get the data source packet or you won't.
+> >>
+> >> Yes, LDS bit does not work as a switch.
+> >>
+> >> The tool in the userspace will record the LDS bit into the metadata. During
+> >> decoding phase, it reads out the LDS from metadata. Based on it, the perf
+> >> tool can know if the data source is supported or not, if yes then decode the
+> >> data source packet.
+> > 
+> > Why not just decode a data source packet when you see it? i.e. assume LDS
+> > is always set.
+> 
+> The current tool works this way to directly decode a data source packet.
+> 
+> However, as Arm ARM section D17.2.4 "Data Source packet" describes, the loaded
+> data source is implementation dependent, the data source payload format also
+> is implementation defined.
+> 
+> We are halfway here in using the LDS bit to determine if the data source is
+> implemented. However, we lack information on the data source format
+> implementation. As a first step, we can use the LDS bit for sanity checking in
+> the tool to detect any potential silicon implementation issues. Once we have
+> an architectural definition for the data source format, we can extend the tool
+> accordingly.
 
-syzbot found the following issue on:
+I don't think we shyould expose UAPI from the driver to detect potential
+hardware bugs. Let's add it when we know it's useful for something instead.
 
-HEAD commit:    33f339a1ba54 bpf, net: Fix a potential race in do_sock_get..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f046fb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4bc25bfaad44df51f05
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> >> Another point is how to decide the data source packet format. Now we maintain
+> >> a CPU list for tracking CPU variants which support data source trace. For long
+> >> term, I would like the tool can based on hardware feature (e.g. a ID register
+> >> in Arm SPE) to decide the data source format, so far it is absent. This is why
+> >> LDS bit + CPU list is a more reliable way. See some discussion [1].
+> > 
+> > Huh. Why would you have a CPU in the list if it _doesn't_ have LDS?
+> 
+> Yeah, this is what we don't expect - we can verify the implementation based on
+> LDS bit.
+> 
+> E.g. if users ask data source related questions, we can use LDS bit (saved in
+> the perf metadata) to confirm the feature has been implemented in a silicon.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+What exactly do you mean by this?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/05db6c7e2db6/disk-33f339a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/236ebb3d5e01/vmlinux-33f339a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/97dd5f4e883e/bzImage-33f339a1.xz
+As far as I can tell:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b4bc25bfaad44df51f05@syzkaller.appspotmail.com
+  - Data source packets are either present or absent depending on LDS
+  - You need CPU-specific information to decode them it they are present
 
-==================================================================
-BUG: KASAN: slab-use-after-free in sk_filter_trim_cap+0x270/0xa80 net/core/filter.c:155
-Read of size 8 at addr ffff888062a0a178 by task syz.3.1323/10208
+So it's neither necessary nor sufficient to expose the LDS bit to
+userspace.
 
-CPU: 0 UID: 0 PID: 10208 Comm: syz.3.1323 Not tainted 6.11.0-rc5-syzkaller-00191-g33f339a1ba54 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- sk_filter_trim_cap+0x270/0xa80 net/core/filter.c:155
- sk_filter include/linux/filter.h:1052 [inline]
- sock_queue_rcv_skb_reason+0x28/0xf0 net/core/sock.c:521
- sock_queue_rcv_skb include/net/sock.h:2376 [inline]
- mgmt_cmd_status+0x28d/0x4d0 net/bluetooth/mgmt_util.c:156
- cmd_status_rsp net/bluetooth/mgmt.c:1450 [inline]
- cmd_complete_rsp+0xe7/0x150 net/bluetooth/mgmt.c:1465
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x187/0x420 net/bluetooth/mgmt.c:9469
- hci_dev_close_sync+0x665/0x11a0 net/bluetooth/hci_sync.c:5191
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1222
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4ef0d7cef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4ef1b48038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f4ef0f35f80 RCX: 00007f4ef0d7cef9
-RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000005
-RBP: 00007f4ef0def01e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4ef0f35f80 R15: 00007ffef1e33f48
- </TASK>
-
-Allocated by task 6202:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __do_kmalloc_node mm/slub.c:4158 [inline]
- __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4170
- kmalloc_noprof include/linux/slab.h:685 [inline]
- sk_prot_alloc+0xe0/0x210 net/core/sock.c:2096
- sk_alloc+0x38/0x370 net/core/sock.c:2149
- bt_sock_alloc+0x3c/0x340 net/bluetooth/af_bluetooth.c:148
- hci_sock_create+0xa1/0x190 net/bluetooth/hci_sock.c:2202
- bt_sock_create+0x161/0x230 net/bluetooth/af_bluetooth.c:132
- __sock_create+0x490/0x920 net/socket.c:1571
- sock_create net/socket.c:1622 [inline]
- __sys_socket_create net/socket.c:1659 [inline]
- __sys_socket+0x150/0x3c0 net/socket.c:1706
- __do_sys_socket net/socket.c:1720 [inline]
- __se_sys_socket net/socket.c:1718 [inline]
- __x64_sys_socket+0x7a/0x90 net/socket.c:1718
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 10210:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kfree+0x149/0x360 mm/slub.c:4594
- sk_prot_free net/core/sock.c:2132 [inline]
- __sk_destruct+0x479/0x5f0 net/core/sock.c:2224
- sock_put include/net/sock.h:1884 [inline]
- mgmt_pending_free net/bluetooth/mgmt_util.c:307 [inline]
- mgmt_pending_remove+0x13e/0x1a0 net/bluetooth/mgmt_util.c:315
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- mgmt_index_removed+0xe6/0x340 net/bluetooth/mgmt.c:9402
- hci_sock_bind+0xcce/0x1150 net/bluetooth/hci_sock.c:1307
- __sys_bind_socket net/socket.c:1833 [inline]
- __sys_bind+0x23d/0x2f0 net/socket.c:1857
- __do_sys_bind net/socket.c:1865 [inline]
- __se_sys_bind net/socket.c:1863 [inline]
- __x64_sys_bind+0x7a/0x90 net/socket.c:1863
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888062a0a000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 376 bytes inside of
- freed 2048-byte region [ffff888062a0a000, ffff888062a0a800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x62a08
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff88801ac42000 ffffea0000a95600 dead000000000002
-raw: 0000000000000000 0000000000080008 00000001fdffffff 0000000000000000
-head: 00fff00000000040 ffff88801ac42000 ffffea0000a95600 dead000000000002
-head: 0000000000000000 0000000000080008 00000001fdffffff 0000000000000000
-head: 00fff00000000003 ffffea00018a8201 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5235, tgid 5235 (syz-executor), ts 58768438859, free_ts 15148990809
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- __do_kmalloc_node mm/slub.c:4157 [inline]
- __kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4177
- kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:605
- __alloc_skb+0x1f3/0x440 net/core/skbuff.c:674
- alloc_skb include/linux/skbuff.h:1320 [inline]
- nlmsg_new include/net/netlink.h:1015 [inline]
- inet6_ifinfo_notify+0x72/0x120 net/ipv6/addrconf.c:6162
- addrconf_notify+0xc6b/0x1020 net/ipv6/addrconf.c:3763
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- __dev_notify_flags+0x207/0x400
- dev_change_flags+0xf0/0x1a0 net/core/dev.c:8915
- do_setlink+0xcd0/0x41f0 net/core/rtnetlink.c:2900
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6660
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
- do_one_initcall+0x248/0x880 init/main.c:1267
- do_initcall_level+0x157/0x210 init/main.c:1329
- do_initcalls+0x3f/0x80 init/main.c:1345
- kernel_init_freeable+0x435/0x5d0 init/main.c:1578
- kernel_init+0x1d/0x2b0 init/main.c:1467
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888062a0a000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888062a0a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888062a0a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                ^
- ffff888062a0a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888062a0a200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Will
 
