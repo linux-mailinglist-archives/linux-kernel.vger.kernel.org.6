@@ -1,204 +1,102 @@
-Return-Path: <linux-kernel+bounces-315288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89AE96C07D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2782E96C081
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906922873BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15D31F26DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A81D9333;
-	Wed,  4 Sep 2024 14:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0E31DA0F3;
+	Wed,  4 Sep 2024 14:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gw5+6Lru"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/261sAf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4A15C96;
-	Wed,  4 Sep 2024 14:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE782C69B;
+	Wed,  4 Sep 2024 14:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460207; cv=none; b=me18HeMv54gU0GLRlFxyhD9PAQcn6zotz6QAeOjuF+BW9GRsje7/ZRGo6mEc9TVJcYEHLXC1E+kAORKobbtcS9PeNaDNFXd8wJtHEB//r8pFoMcszK5Xj5YmKC9sK/sqrgYHnGe1pDWScDXPoJU2NF6Xg64W6Z8LrkAiNjnOAlo=
+	t=1725460220; cv=none; b=oeVGWano+eVZdA/USWZi5J79qiwrR3Eh+6+UKdbZs4+Z3RVVwi3y5elhPWSdxf+MdncGv8XWZvFOUY/fYGESkzv4vxEItk+Xg63GttQ4LYDOSGu3I30A7r1xS4x8ZLySVSPNY52dWBnV2L6jMMkOdnrCZ1fnikYMuN4QbshamZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460207; c=relaxed/simple;
-	bh=IGbzTX5KEMiOqp/btvJ1ccQvnyeDHf44Oxf/FGejqvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WRHYE0L6C4sOLIdV5AHD7QNnFcePc+p8lQ/CSmEmVqoL6dq6yZPHw5hInxNgas9I5Apr+lxM8rlNOFLR0wsnwQf8Gst2IX2zrqNsiQZUeAJgvKYTIn6vWrqB5aNq5/plLiZVWHgmwn6zs8+A8vCC2u+EzZJMTHDJ+C2PisZKUNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gw5+6Lru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF92EC4CEC2;
-	Wed,  4 Sep 2024 14:29:54 +0000 (UTC)
+	s=arc-20240116; t=1725460220; c=relaxed/simple;
+	bh=sGDqeCF/9v4iitt9UrEra2iiQ4lLGL2Dbk06fch66ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=opQC5lfhAM/JqpZEc+ZMMmhUmrlaHXV/T4qoaKO9oHDc88Z7Db8Tqx/yazDdbzyKS47ZQX1TyOvfkPFiSPKdkDwP9t89fGZrwwTd3KZqhs2UaRBzsE3OtWe/61+iOw4FqkCUpIwk9c16PGTArPEJNAzd9uWmdE1C0LTlJLobE+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/261sAf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CBFC4CEC2;
+	Wed,  4 Sep 2024 14:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725460206;
-	bh=IGbzTX5KEMiOqp/btvJ1ccQvnyeDHf44Oxf/FGejqvI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gw5+6LrupMCviKvLpbyxwQl6v/VPtEtiCInsUzN21yDLYNvAh2KUEHQH2txBVglAo
-	 Bk+eOg5sZgyG7I0KR4rzFmIEUhJRQ/Q12D3hI3cyiJZVVUd8OzL63w8FFWtzImM7RT
-	 WcN+SP8JJT+Om8z05RBN4wfGSVT3UWfiIegxoPdzHEDNhNabk+128mWyfAvYKMbBHo
-	 XGg6IBIp/bkR3O7YKhmhqAmCqpXxKew2wOm6id79OZdMKaRtv6Ey7StboL101Mf8pU
-	 xUJxeZ0H98YDzFet19o2GdTx5kI9PMulaDv9g3R1YIOuit0PxbEgRUbAy8iBRAd3Hp
-	 80+WccgKKSBSg==
-Message-ID: <51e9fa5a-ac6f-42e8-85e5-7c5c02075a56@kernel.org>
-Date: Wed, 4 Sep 2024 16:29:52 +0200
+	s=k20201202; t=1725460220;
+	bh=sGDqeCF/9v4iitt9UrEra2iiQ4lLGL2Dbk06fch66ns=;
+	h=Date:From:To:Cc:Subject:From;
+	b=g/261sAfwcMeAGjqawlV4Eg4O/OuQEFNLZc4nQ65tp0LAICJwVFH8aEsL1JxWTLzE
+	 uUivNt407VQYE0I6RNfea8csfvXMqXt0BH4TdJoUEhD23R7/jyntMkRawk5WMzsgmD
+	 KICyNC3nDq2yCh0ZJbLE6w07QdNnCvPjmuGhVh+X5hTWggf3Paf4yO3/ZrIcJnNQxF
+	 npCyqINT28qQ9cZY2UeTynm2G5ZDiCH+sTQYnzlscoZ6dzRVhEryqKxHK/Jl9tAs+N
+	 FYt1iCDPGCzhybZ2xSIO62X8QEKDRJ9Vk6kogqRomkC5n0dQnXKXgyIalMegs53o7j
+	 GVf66xA6u6c3g==
+Date: Wed, 4 Sep 2024 11:30:11 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Kan Liang <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: perf mem record not getting the mem_load_aux events by default
+Message-ID: <Zthu81fA3kLC2CS2@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/21] dt-bindings: cpufreq: qcom-hw: document support
- for SA8255p
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
- cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-15-quic_nkela@quicinc.com>
- <odg5ssqu2soaqp6m4rambj7qhqiyp7othkvu4v6fu6xtuhbdho@vccya6qcwgoz>
- <1b831fc1-9360-4038-91b2-b2c0cea513ed@quicinc.com>
- <baf00e50-10b2-410b-9c56-713564a2d1b9@kernel.org>
- <c163149b-bdf1-423b-ab51-f734d00277fe@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c163149b-bdf1-423b-ab51-f734d00277fe@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 04/09/2024 16:19, Nikunj Kela wrote:
-> 
-> On 9/4/2024 6:17 AM, Krzysztof Kozlowski wrote:
->> On 04/09/2024 14:27, Nikunj Kela wrote:
->>> On 9/3/2024 11:26 PM, Krzysztof Kozlowski wrote:
->>>> On Tue, Sep 03, 2024 at 03:02:33PM -0700, Nikunj Kela wrote:
->>>>> Add compatible for the cpufreq engine representing support on SA8255p.
->>>>>
->>>>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->>>>> ---
->>>>>  .../bindings/cpufreq/cpufreq-qcom-hw.yaml        | 16 ++++++++++++++++
->>>>>  1 file changed, 16 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
->>>>> index 1e9797f96410..84865e553c8b 100644
->>>>> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
->>>>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
->>>>> @@ -34,6 +34,7 @@ properties:
->>>>>          items:
->>>>>            - enum:
->>>>>                - qcom,qdu1000-cpufreq-epss
->>>>> +              - qcom,sa8255p-cpufreq-epss
->>>>>                - qcom,sa8775p-cpufreq-epss
->>>>>                - qcom,sc7280-cpufreq-epss
->>>>>                - qcom,sc8280xp-cpufreq-epss
->>>>> @@ -206,6 +207,21 @@ allOf:
->>>>>          interrupt-names:
->>>>>            minItems: 2
->>>>>  
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            enum:
->>>>> +              - qcom,sa8255p-cpufreq-epss
->>>>> +    then:
->>>>> +      properties:
->>>>> +        reg:
->>>>> +          minItems: 2
->>>>> +          maxItems: 2
->>>>> +
->>>>> +        reg-names:
->>>>> +          minItems: 2
->>>>> +          maxItems: 2
->>>> What about interrupts? You need to constrain each of such lists.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>> Interrupts are not required, I still need to put constraints for
->> It's irrelevant whether they are required or not. Each property should
->> be narrowed.
-> 
-> So evenif we don't use interrupts property in our DT(patch#21), we need
-> to mention interrupts here? You suggest we put interrupts with maxItems: 0?
+Hi Kan,
 
-I don't understand. You use three quite separate statements. "Not
-required", "don't use" and here "maxItems: 0" which means not allowed.
+Recently I presented about 'perf mem record' and found that I had use
+'perf record' directly as 'perf mem record' on a Intel Hybrid system
+wasn't selecting the required aux event:
 
-All of these mean something else and I keep guessing and responding
-according to what you write. Probably half of my advises are just trash,
-because it turns out it is something entirely else than what I read.
+  http://vger.kernel.org/~acme/prez/lsfmm-bpf-2024/#/19
 
-Make a decision how the hardware looks like.
+The previous slides show the problem and the one above shows what worked
+for me.
 
-> 
-> I wonder why SA8775p compatible is not in constraint list..
-> 
->>> interrupts? BTW, there is no if block for SA8775p binding in this file.
->>
->>
->> Best regards,
->> Krzysztof
->>
+I saw this while trying to fix that:
 
-Best regards,
-Krzysztof
+Author: Kan Liang <kan.liang@linux.intel.com>
+commit abbdd79b786e036e60f01b7907977943ebe7a74d
+Date:   Tue Jan 23 10:50:32 2024 -0800
 
+    perf mem: Clean up perf_mem_events__name()
+    
+    Introduce a generic perf_mem_events__name(). Remove the ARCH-specific
+    one.
+    
+    The mem_load events may have a different format. Add ldlat and aux_event
+    in the struct perf_mem_event to indicate the format and the extra aux
+    event.
+    
+    Add perf_mem_events_intel_aux[] to support the extra mem_load_aux event.
+    
+    Rename perf_mem_events__name to perf_pmu__mem_events_name.
+
+--------------------------´
+
+So there are provisions for selecting the right events, but it doesn't
+seem to be working when I tried, can you take a look at what I describe
+on those slides and see what am I doing wrong?
+
+Thanks,
+
+- Arnaldo
 
