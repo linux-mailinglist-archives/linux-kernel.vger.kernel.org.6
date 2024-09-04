@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-314759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F47E96B810
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 525E296B815
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EAA1285D6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120D0285ECC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CB71CEE99;
-	Wed,  4 Sep 2024 10:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BD41CF2A0;
+	Wed,  4 Sep 2024 10:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiXTxOEZ"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YV+mZJVh"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91F51EBFEB;
-	Wed,  4 Sep 2024 10:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A861EBFEB;
+	Wed,  4 Sep 2024 10:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444987; cv=none; b=rLEghVW4GgAcIqKSlZZmu7xQ0uvc4gCaHKZkmeU2Af8KEIF23b1QsOCkGcc3wANB87oXxWJnGuEr611uZvspSibsZq+WMYOil9UgDBPv8RPVf5UKGIHkid3cTULjywtNsvPMOU5MUvA/uhTv5n+oTchWGzzMQHB+rRRBdqIjxQE=
+	t=1725445032; cv=none; b=hWZahFA84Wzlqkidc1JDj7tHyR8p/U5Q+wPcYXKyhOrcI3ns1k7MWPuGHNYhS3UDva3v93HqS3MMmgLoq1Di8Ikq/d4liEG1RMP+lTkpRhG91LIRnxa/E9TyaIj8WxKZPr61Xna2bB4uRxnO00g8ik7tVCOTTUXiAmD38HfD10Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444987; c=relaxed/simple;
-	bh=c5zgwRervJYJS/Dl+adZ4J/D5Z27/zxX6bPB+ouHVpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BttsayqxOVTSHtdJvkcuRG1ZVW0WjyZ4aPuDwC8rJYag1oFNnx0sQrGvyz83gqLXb8awmUBAuwI34SeaL++xOPpuLMo4YDIzs3Cx20gIl3jwIDVxL551rX1cGcJysYf2VXijHIEupSMnYNnDeTrmwkAS6jkv5aAhel4tpQkf+8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiXTxOEZ; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e017808428so2121130eaf.1;
-        Wed, 04 Sep 2024 03:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725444984; x=1726049784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QFfJDopo08396zla94L1PBabmTdXxT+6aOW8equ/pAo=;
-        b=iiXTxOEZonaQKv/Q6S2ZtlBIpELtkfKmR8dc+Ffp5FNc8z0lWcExI+JClmFLYZkeeR
-         j5wj42R2Bw9VGnHcnU833fvN7j75YUYo2XsNfceDtL90/+KYjvmq0YIba81Uj+fXqipD
-         hShS2WMpeF/Nm3h/CG8gSIjVyaPMoZJRdvVh8Dc9sm9E1dgL65EsEKCOkJe08tZHQkQj
-         hl1pf0Zx95EyLwnHmY3ykQLlbY4d9Q9wT+pDDUci6gAqc8oD/HPzIycaaPEfgX+JlvMv
-         YxCVeJZ3XFuVirs+5nTPzUhU2zW3pLHF8FEFTproUNCYhnZT2vesN+T7HkUAm319LnVq
-         y/lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725444984; x=1726049784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QFfJDopo08396zla94L1PBabmTdXxT+6aOW8equ/pAo=;
-        b=M1e8Kc2X861/52DFqjAQMS4TEX4lBsmhli3IsdnhVc+Xe6i+O08344zY1Wf+YZ49ZP
-         Z5xc9r3KJSzY1LrKqV5hPAkns2ZTed9mSert0YtZJVdstKktUarJqJaPwN4NT2VLlehm
-         /4sATxK+RnNgSacNGZMQ9KJRIKgOe+loqNbSz/mmsrqGl14cLVKl3Um7NA/YJT0ceFRK
-         b5f5rHR1xruKNXZ6V8DOul+hOr7OlOmVq7g+mYhi3Jw8/hUrt0Ui5W8byRjqyMwfbMIU
-         I5gzLC/FVSWm9c4qa67iUDBTSu8la7Ldx2ti8Jzeo5FcZa4Hp5BS/S1maYnXTWijeKri
-         gaUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0HyFRZU7n9kANCqOfBsfuSqgQ/2N35BszwvQWGqkgM8hO85lLO4Oqs5ByUYI9RARTQ81BAREmkv0mmoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEhSZRRfiqVrA01pqG0jMhbCJkr0na6cMq8w7CveDAygMT+/Hi
-	VQorjP+canwGGL+uLdP2iXMeX4ArZegWauJAy/6k+JndYZbgQfbMtgDezA==
-X-Google-Smtp-Source: AGHT+IEapMITuaq2WwM91qAfDzjqmN/GNuW9F67mqywWSvXbN59GgQNmG+GrcdJzSw4Jag36U4b9dg==
-X-Received: by 2002:a05:6358:989d:b0:1b5:fa6e:4606 with SMTP id e5c5f4694b2df-1b8117c47f3mr698249355d.14.1725444983641;
-        Wed, 04 Sep 2024 03:16:23 -0700 (PDT)
-Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8aab2sm1332102a12.20.2024.09.04.03.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 03:16:22 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] nilfs2: Remove duplicate 'unlikely()' usage
-Date: Wed,  4 Sep 2024 19:16:03 +0900
-Message-ID: <20240904101618.17716-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725445032; c=relaxed/simple;
+	bh=FnEjqY4BG/8kvJMrNnmifTj76ikhWyHxBitrNTqF1K4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfMWfXhd2T6pvHgO8f4emCELLvOpuixaYuVuu+J3GEutql628hNk8/UdcmtCeCAT7ZdM1gL1N8Z9Zyi40vwoz8lDWVnjS4OSIwG/z6x6O7to74mA3ns8SlOufiunhBGHIE2GOlbLBQruDkYeEdf27H/WPSa92C0sMCX5ZXx7YIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YV+mZJVh; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 484AGwMr021180;
+	Wed, 4 Sep 2024 05:16:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725445018;
+	bh=u4MwSTXsohCD+Bwq1qmj42jZwugtsKWFnbQOJvseaGo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YV+mZJVhnAyqUI2XKuUDiaqi8JdCwHsZf4VaDoe8qqDXuscKYC5tqw1xqm7Eygh8Y
+	 82gMZvUYpPBx7L4vV0zbk6xqac3OSF7mWJMXp9rDmCgeA/JN4vHEunT/WlMy+Crcj7
+	 yuKyhnjAT7BrLO5+zVLk8qZDWYbb+N5ltv5HXDZc=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 484AGv32029998
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 4 Sep 2024 05:16:58 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Sep 2024 05:16:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Sep 2024 05:16:57 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484AGuOH041850;
+	Wed, 4 Sep 2024 05:16:57 -0500
+Date: Wed, 4 Sep 2024 15:46:56 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+CC: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-pci@vger.kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Bao
+ Cheng Su <baocheng.su@siemens.com>,
+        Hua Qian Li <huaqian.li@siemens.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas
+	<bhelgaas@google.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+Message-ID: <6d722868-271a-485b-a7af-e2449adc83ca@ti.com>
+References: <cover.1725444016.git.jan.kiszka@siemens.com>
+ <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Kunwu Chan <chentao@kylinos.cn>
+On Wed, Sep 04, 2024 at 12:00:11PM +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+> to specific regions of host memory. Add the optional property
+> "memory-regions" to point to such regions of memory when PVU is used.
+> 
+> Since the PVU deals with system physical addresses, utilizing the PVU
+> with PCIe devices also requires setting up the VMAP registers to map the
+> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+> mapped to the system physical address. Hence, describe the VMAP
+> registers which are optionally unless the PVU shall used for PCIe.
 
-nested unlikely() calls, IS_ERR already uses unlikely() internally
+The last line above seems to be accidentally modified when compared to
+the one at:
+https://lore.kernel.org/r/ada462d5-157a-4e11-ba25-d412a2bb678f@ti.com/
+"Hence, describe the VMAP registers which are optionally
+configured whenever PVU is used for PCIe."
 
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
-Andrew, please add this to the queue for the next cycle.
+If you intended to modify it, then the sentence appears distorted.
 
-An additional cleanup patch.
-
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/page.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 7797903e014e..9c0b7cddeaae 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -262,7 +262,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
- 			NILFS_FOLIO_BUG(folio, "inconsistent dirty state");
- 
- 		dfolio = filemap_grab_folio(dmap, folio->index);
--		if (unlikely(IS_ERR(dfolio))) {
-+		if (IS_ERR(dfolio)) {
- 			/* No empty page is added to the page cache */
- 			folio_unlock(folio);
- 			err = PTR_ERR(dfolio);
--- 
-2.43.0
-
+Regards,
+Siddharth.
 
