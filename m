@@ -1,213 +1,145 @@
-Return-Path: <linux-kernel+bounces-314827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7C096B99F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFA796B9A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3C7282A69
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDAA2824E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E201CFED1;
-	Wed,  4 Sep 2024 11:06:53 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5FC1CF7CC;
+	Wed,  4 Sep 2024 11:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HNTtsFDU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A4C1CF7A4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186EE126C01
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448012; cv=none; b=D/L2n0AxyrUxbdNzNuV4E4QtdnjUPBj1R+HaRrc3YULCYoUfNO+oKAmxaZ62jBzxc1XbeIEJ4raUsV8wrX3BIseyiNmLea6ujb2X4U2oPVkqXwRr3EEzbDxlpDgTHZ6+ydzjKSeNSshFtQGe9lWmV8NGufVI8mIH3/oWVCuyvZU=
+	t=1725448050; cv=none; b=Z/8tuPSbs5vHhky6x7QFFopWaHuMf1Qhv7NachMbr9oPBVYaft3gL5fUtp6Qxctmhc0QUmgH4WxJPfvnLNfGZI+Zt8OX5gvaWr8MIyjhFMvKD4yMJH5znGKB0YOZrLU2h+CYD++5GMLmIMnCC242tV08I0Q7k271jYsvlwTmutQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448012; c=relaxed/simple;
-	bh=5LzeaJQmPXFY0gy9QCBlRjbPc8ssnZML3nw/RGrMRhQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=D9K2mbb+rLGCr3qDOVWUAhrNXqIgsrQpPZyPxELPecCaRJ2ew25JumKoElwe0407NP/7SWr+vxVoNALFy732/zZRHmD9wcAXyEgZ7lg16W3Ws4ut0+aslxToUULZqqQ94SnE+EaubGjPYQrlF8Rz0aWivvRjGs65H+Mrc/+EYuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f56ac8d88so41047365ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:06:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725448010; x=1726052810;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P62b6v8WPLmSIka/Wy8yNKcSDH3A4O9hYL8Aq+CMlXE=;
-        b=nfuoe44mYmmpWBozjMVIcac5If9waAO3KGr4/8GvKETyVcImGyWpPIMaJLRzFWclmQ
-         l4OantFb9aY81mOOZ3Vw5Ajpkk+YvXkEdX75cwoL+1bf3IRQS+QFjUZ7d3oB2wxNwSmo
-         u3ZV0fJVvfxRDiN+XbCnxxYP+WZEEupA7fSjPmE8USPNyhs/+kpNpQsTVKk9OO/iKIQb
-         fWq9GkVKPak67Hw7Ii9F1SfSvuNnGyHBC107quSXv5fqD6aa3CGkIwbifzg6LXvJYmPZ
-         7KgqlqtzlEbDugCMsc7+ER1B1esEiPna8UOU3DOcc0woAdE7ahrpgBJnZ6blfI+4IHOU
-         as3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVWtfNHeVgZF5iwAlqdQakCXEYNA3VyPl+7zTl2VsVfdgdyF8outv3dZMmDjOsCeC713majjNnEK4lLP/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHCF/CVPZNaqsQm5TKbGPgK4cal2+JOpKO4ElRmQ8V2/5idfuV
-	T1vWnlc+NJsZaXIGvTivMleKdzdJK1RPIH3RmOJ2aLbXLo1HqeiSPfkMlhboWi2zVP7DwWAmKZE
-	R/j5K0YtaN0Zp+Yl6fxVwZ2PabTvVqPeRLHSU3D7loKfD4uj9hp2QUnU=
-X-Google-Smtp-Source: AGHT+IHbK8Jr6lKKdsbZ1Q/eQ69lhARy6CNmjDHdsDZI8hIQUqyJLMJZvJ5JDEgSF8+al8FvDo1ZsliJro2SkOIclpZDBJkpc+tY
+	s=arc-20240116; t=1725448050; c=relaxed/simple;
+	bh=eDTMmqHcKakV+eu5KMZsB8ghVe3220P8EhKpBMiK70k=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lTYOWYFFt1W5KjIrrcSpxmMoLCXsGPuLYJPxItq4Tm9fG4Lx0e9I1EID9jIrhOslFpUB2wZDzx26aH5Q4pvds5CVH+qMrpOVPg2WnHDGChIwLh7SkRMP7DS4O34t7Khw4E43tUZNxL/vgYBkTs9zfxf8wJhAxaXDGOiHLXW5xho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HNTtsFDU; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725448047; x=1756984047;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eDTMmqHcKakV+eu5KMZsB8ghVe3220P8EhKpBMiK70k=;
+  b=HNTtsFDU5ngnb5aLnd1546T2SISvsVQXKfmTdSStMBukVIVw3Qr3/EVH
+   cFqWLW8qCwD6NNAC2/QRya6sQxs4pML8lqGxW+kb6V2TDU6PExMPBEnVP
+   uweibmI3QT8swfgJ8r0+f7XfSmC+gzJ5jTVJIdzaK+MCwNd7XgMIOfTFq
+   GsMdvaHtdpp5Ty5ZDJMRMlU9rvvgLvgef3gakUK/ZeheIaKxorBYOp/Ke
+   BP/pUfo1uwY69LqhAZy3ASA+ZDo26GeSuC+NfoKciSicZAzEnRBj5mpjg
+   8h6oHUZgMdBrI3ljxrEm2HriZJ5bcvupR1XImkEXabubLgsHmzNSIT2mc
+   g==;
+X-CSE-ConnectionGUID: dO+or9c6Qf6jfgjSonehfg==
+X-CSE-MsgGUID: MsJbcnxYQ5iYjRrBLsq9+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34762750"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="34762750"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 04:07:25 -0700
+X-CSE-ConnectionGUID: O3hIF7RmTs+KegW31R2H1w==
+X-CSE-MsgGUID: AR30nyffTYOGBbqbEKp/Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="69865844"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 04:07:22 -0700
+Message-ID: <c94d1463-4710-41fa-9936-fca1a0c2a275@linux.intel.com>
+Date: Wed, 4 Sep 2024 19:07:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54a:0:b0:39b:2133:8ee5 with SMTP id
- e9e14a558f8ab-39f40ed447cmr8469195ab.1.1725448010111; Wed, 04 Sep 2024
- 04:06:50 -0700 (PDT)
-Date: Wed, 04 Sep 2024 04:06:50 -0700
-In-Reply-To: <20240904110644.g52vgotsmi4lm56c@quack3>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b8b0b30621492b9d@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in jbd2_journal_dirty_metadata
-From: syzbot <syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com>
-To: jack@suse.cz
-Cc: jack@suse.com, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Klaus Jensen <its@irrelevant.dk>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+ Minwoo Im <minwoo.im@samsung.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 1/6] iommu/vt-d: Separate page request queue
+ from SVM
+To: Joel Granados <j.granados@samsung.com>
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+ <20240826-iopf-for-all-v1-1-59174e6a7528@samsung.com>
+ <CGME20240826130923eucas1p285627a5a210e62fbb0187962b1f8dde5@eucas1p2.samsung.com>
+ <242056a5-9d16-415a-9913-0add5b050f47@linux.intel.com>
+ <20240904091223.f3olpzrv5lkgekfe@joelS2.panther.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240904091223.f3olpzrv5lkgekfe@joelS2.panther.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On Tue 03-09-24 21:50:20, syzbot wrote:
->> syzbot found the following issue on:
->> 
->> HEAD commit:    fb24560f31f9 Merge tag 'lsm-pr-20240830' of git://git.kern..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1739530b980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c28d8da3e83b3cc68dc6
->> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->> 
->> Unfortunately, I don't have any reproducer for this issue yet.
->> 
->> Downloadable assets:
->> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-fb24560f.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/2d39db26a2bc/vmlinux-fb24560f.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/8910481ae16e/bzImage-fb24560f.xz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com
->> 
->> loop0: detected capacity change from 0 to 32768
->> =======================================================
->> WARNING: The mand mount option has been deprecated and
->>          and is ignored by this kernel. Remove the mand
->>          option from the mount to silence this warning.
->> =======================================================
->> ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
->> loop0: detected capacity change from 32768 to 0
->> syz.0.0: attempt to access beyond end of device
->> loop0: rw=0, sector=10576, nr_sectors = 1 limit=0
->> (syz.0.0,5108,0):__ocfs2_xattr_set_value_outside:1385 ERROR: status = -5
->
-> Looks like ocfs2 issue, not ext4.
->
-> #syz set ocfs2
+On 2024/9/4 17:12, Joel Granados wrote:
+> On Mon, Aug 26, 2024 at 09:09:14PM +0800, Baolu Lu wrote:
+>> On 2024/8/26 19:40, Klaus Jensen wrote:
+>>> From: Joel Granados<j.granados@samsung.com>
+>>>
+>>> IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM. Move
+>>> all Page Request Queue (PRQ) functions that handle prq events to a new
+>>> file in drivers/iommu/intel/prq.c. The page_req_des struct is made
+>>> available in drivers/iommu/intel/iommu.h.
+>>>
+>>> No functional changes are intended. This is a preparation patch to
+>>> enable the use of IO page faults outside the SVM and nested use cases.
+>>>
+>>> Signed-off-by: Joel Granados<j.granados@samsung.com>
+>>> ---
+>>>    drivers/iommu/intel/Makefile |   2 +-
+>>>    drivers/iommu/intel/iommu.c  |  18 +--
+>>>    drivers/iommu/intel/iommu.h  |  40 +++++-
+>>>    drivers/iommu/intel/prq.c    | 290 ++++++++++++++++++++++++++++++++++++++++
+>>>    drivers/iommu/intel/svm.c    | 308 -------------------------------------------
+>>>    5 files changed, 331 insertions(+), 327 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/intel/Makefile b/drivers/iommu/intel/Makefile
+>>> index c8beb0281559..d3bb0798092d 100644
+>>> --- a/drivers/iommu/intel/Makefile
+>>> +++ b/drivers/iommu/intel/Makefile
+>>> @@ -1,6 +1,6 @@
+>>>    # SPDX-License-Identifier: GPL-2.0
+>>>    obj-$(CONFIG_DMAR_TABLE) += dmar.o
+>>> -obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o
+>>> +obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o prq.o
+>>>    obj-$(CONFIG_DMAR_TABLE) += trace.o cap_audit.o
+>>>    obj-$(CONFIG_DMAR_PERF) += perf.o
+>>>    obj-$(CONFIG_INTEL_IOMMU_DEBUGFS) += debugfs.o
+>> Thanks for the patch! Now that IOPF is separate from SVA, the Kconfig
+>> needs to be updated accordingly.
+>>
+>> diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
+>> index f52fb39c968e..2888671c9278 100644
+>> --- a/drivers/iommu/intel/Kconfig
+>> +++ b/drivers/iommu/intel/Kconfig
+>> @@ -15,6 +15,7 @@ config INTEL_IOMMU
+>>           select DMA_OPS
+>>           select IOMMU_API
+>>           select IOMMU_IOVA
+>> +       select IOMMU_IOPF
+> This will force IOMMU_IOPF when INTEL_IOMMU is selected. You do this in
+> order to use IOPF if available, but it wont conflict with Intel IOMMU's
+> that do not support IOPF. right?
 
-The specified label "ocfs2" is unknown.
-Please use one of the supported labels.
+Intel VT-d includes a bit in the capability registers that indicates
+whether PRI is supported by the hardware. Therefore, there should be no
+conflict.
 
-The following labels are suported:
-missing-backport, no-reminders, prio: {low, normal, high}, subsystems: {.. see below ..}
-The list of subsystems: https://syzkaller.appspot.com/upstream/subsystems?all=true
-
->
-> 								Honza
->
->
->> (syz.0.0,5108,0):ocfs2_xa_set:2261 ERROR: status = -5
->> (syz.0.0,5108,0):__ocfs2_journal_access:705 ERROR: Error -30 getting 1 access to buffer!
->> (syz.0.0,5108,0):ocfs2_journal_access_path:751 ERROR: status = -30
->> (syz.0.0,5108,0):ocfs2_truncate_rec:5443 ERROR: status = -30
->> (syz.0.0,5108,0):ocfs2_remove_extent:5584 ERROR: status = -30
->> (syz.0.0,5108,0):__ocfs2_remove_xattr_range:782 ERROR: status = -30
->> (syz.0.0,5108,0):ocfs2_xattr_shrink_size:836 ERROR: status = -30
->> (syz.0.0,5108,0):__ocfs2_journal_access:705 ERROR: Error -30 getting 1 access to buffer!
->> (syz.0.0,5108,0):ocfs2_xa_prepare_entry:2152 ERROR: status = -30
->> (syz.0.0,5108,0):ocfs2_xa_set:2255 ERROR: status = -30
->> ------------[ cut here ]------------
->> kernel BUG at fs/jbd2/transaction.c:1513!
->> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
->> CPU: 0 UID: 0 PID: 5108 Comm: syz.0.0 Not tainted 6.11.0-rc5-syzkaller-00207-gfb24560f31f9 #0
->> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->> RIP: 0010:jbd2_journal_dirty_metadata+0xbab/0xc00 fs/jbd2/transaction.c:1512
->> Code: ff e9 74 fc ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c af fc ff ff 4c 89 ef e8 30 27 8a ff e9 a2 fc ff ff e8 66 dc 22 ff 90 <0f> 0b 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 95 fd ff ff 48 89 df e8
->> RSP: 0018:ffffc90002d7ea38 EFLAGS: 00010283
->> RAX: ffffffff8270afca RBX: ffff88801240bca0 RCX: 0000000000040000
->> RDX: ffffc90003092000 RSI: 00000000000081b4 RDI: 00000000000081b5
->> RBP: 1ffff11002481794 R08: 0000000000000003 R09: fffff520005afd38
->> R10: dffffc0000000000 R11: fffff520005afd38 R12: ffff88801240bc98
->> R13: 1ffff110065e591e R14: ffff88801240a000 R15: ffff88801240bc38
->> FS:  00007f28379866c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00000000200010c0 CR3: 000000003ce4c000 CR4: 0000000000350ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  <TASK>
->>  ocfs2_journal_dirty+0x156/0x7c0 fs/ocfs2/journal.c:812
->>  ocfs2_xa_journal_dirty fs/ocfs2/xattr.c:1453 [inline]
->>  ocfs2_xa_set+0x225b/0x2b40 fs/ocfs2/xattr.c:2264
->>  ocfs2_xattr_block_set+0x46e/0x3390 fs/ocfs2/xattr.c:2986
->>  __ocfs2_xattr_set_handle+0x67a/0x10a0 fs/ocfs2/xattr.c:3388
->>  ocfs2_xattr_set+0x128c/0x1930 fs/ocfs2/xattr.c:3651
->>  __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
->>  __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
->>  vfs_setxattr+0x221/0x430 fs/xattr.c:321
->>  do_setxattr fs/xattr.c:629 [inline]
->>  path_setxattr+0x37e/0x4d0 fs/xattr.c:658
->>  __do_sys_setxattr fs/xattr.c:676 [inline]
->>  __se_sys_setxattr fs/xattr.c:672 [inline]
->>  __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:672
->>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f2836b79eb9
->> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007f2837986038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
->> RAX: ffffffffffffffda RBX: 00007f2836d15f80 RCX: 00007f2836b79eb9
->> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000020000080
->> RBP: 00007f2836be793e R08: 0000000000000002 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 0000000000000000 R14: 00007f2836d15f80 R15: 00007ffdcb3dd268
->>  </TASK>
->> Modules linked in:
->> ---[ end trace 0000000000000000 ]---
->> RIP: 0010:jbd2_journal_dirty_metadata+0xbab/0xc00 fs/jbd2/transaction.c:1512
->> Code: ff e9 74 fc ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c af fc ff ff 4c 89 ef e8 30 27 8a ff e9 a2 fc ff ff e8 66 dc 22 ff 90 <0f> 0b 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 95 fd ff ff 48 89 df e8
->> RSP: 0018:ffffc90002d7ea38 EFLAGS: 00010283
->> RAX: ffffffff8270afca RBX: ffff88801240bca0 RCX: 0000000000040000
->> RDX: ffffc90003092000 RSI: 00000000000081b4 RDI: 00000000000081b5
->> RBP: 1ffff11002481794 R08: 0000000000000003 R09: fffff520005afd38
->> R10: dffffc0000000000 R11: fffff520005afd38 R12: ffff88801240bc98
->> R13: 1ffff110065e591e R14: ffff88801240a000 R15: ffff88801240bc38
->> FS:  00007f28379866c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00000000200010c0 CR3: 000000003ce4c000 CR4: 0000000000350ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> 
->> 
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> 
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> 
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->> 
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->> 
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->> 
->> If you want to undo deduplication, reply with:
->> #syz undup
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Thanks,
+baolu
 
