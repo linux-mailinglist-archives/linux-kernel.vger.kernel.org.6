@@ -1,225 +1,260 @@
-Return-Path: <linux-kernel+bounces-314162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC0E96AF89
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:49:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0FA96AF8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A98B285180
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1D5B2193D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707CC54774;
-	Wed,  4 Sep 2024 03:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Et/ee145"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD58957323;
+	Wed,  4 Sep 2024 03:50:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0A94F883
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 03:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0111E515;
+	Wed,  4 Sep 2024 03:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725421747; cv=none; b=MUp1an1hyK+YEUGEiJCpPW6DJcpGIO6w0quKDL7ng7qG+AjTe4V6iqqn9zDCi9HYfa5/5AKN9P+rVZWVgYS9yYiV6oXaDtIKxwuYPpAkv9WEzLMp+xH4h9XCoqpLwcQC7HTXc1rhRnKAVPbwUBatcen0tw9tbqpdT9CBAbKg6xo=
+	t=1725421835; cv=none; b=GG2WtdzGVxXRVOi7xG8X8uAvOojdqMLwOWuThhLQqQALOnkl4q1xTeqEG9VakbuP3sToQeVm981aElBRNI8fAzo2TlKilCr8IQlOJWVN25qqLSbfBePz0b/J22Mi7yTfmA2zTTQy0FZT1qliNP/9utrjgyH8ggz1yefJYAMZjGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725421747; c=relaxed/simple;
-	bh=f09ujSt9BLT4EcodnGu8Hfc/mEU6rIu+1i6Nq7K/Ung=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cKZQBqEpLP74nt49RpbQVxD8aW4fnGvWPzuRjtJ97G2NF2K4WXO/NtwV1BpKOF0kFGVrDeK1NNtM0jbgxnS46KwTN7HsyHz/8wzlbR/DwNYrkamjsv9FyL+MasjDSJmhbvjrCd+ctpbpxlxxwFqJqpMdClWCPiJL9O1dbeTAlsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Et/ee145; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA27C4CEC2;
-	Wed,  4 Sep 2024 03:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725421747;
-	bh=f09ujSt9BLT4EcodnGu8Hfc/mEU6rIu+1i6Nq7K/Ung=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Et/ee1450O6uT/OPAjjbA9tQ95qw9/UnKQvCKpjGNYKoeArGDXsUeZ20/vN0L8Qrh
-	 zcWcxirw3uJeyEFBsK4fDb3HJx87A5NOs97Z3b4AJEr/VqLXQjRv6ilR1U0ECrAc/b
-	 SdrxXeI0rtTTcaoXdZtoSMjapguB3PPzWSDvQz2trjL85C2nc6PtEaKItU8xlyTtbf
-	 9YdtP11xRaOX/CCWGa1OW/uVQhmfHF6A8jXqDD4R7kffdwK3UFFvwBuUdGePb6Sb1M
-	 /Y+j6ZAyxZ+2NWh8QL+rZRY4YoUdiPTxTtWyybxtsI+hHArNUfKpTI5hCl6ueNsgnA
-	 97CDnYrra8JVw==
-Message-ID: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
-Date: Wed, 4 Sep 2024 11:49:04 +0800
+	s=arc-20240116; t=1725421835; c=relaxed/simple;
+	bh=hFMnDmxVkkoxLJI4eHL2y2iXdvzX0K18YIayDSFys7U=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GRENyAyxenl5KPBy6eqyAhwkPiBIrnq3iDl7mbMEVzY4sqgU+GFnO1JhbnskiCtne1rLBQZOjNKPrZY8ZUQPzTObqKmI5wRVEicywTv0klBwSfO6upjhYICVStUlPNgKQDpr6JpDUdPxtv3PPiQkxsM/hGiROr8ZNZ8nJiMW678=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wz7mg6M1kz4f3kw5;
+	Wed,  4 Sep 2024 11:50:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id B5A171A07B6;
+	Wed,  4 Sep 2024 11:50:27 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnu4f_2NdmAdNPAQ--.50726S2;
+	Wed, 04 Sep 2024 11:50:27 +0800 (CST)
+Subject: Re: [PATCH v4 1/2] virtiofs: use pages instead of pointer for kernel
+ direct IO
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ houtao1@huawei.com
+References: <20240831093750.1593871-1-houtao@huaweicloud.com>
+ <20240831093750.1593871-2-houtao@huaweicloud.com>
+ <6074d653-3dd3-45a3-9241-a9e2e12252c6@linux.alibaba.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <ce91a37d-762f-75f8-3b16-dd714fceb4b9@huaweicloud.com>
+Date: Wed, 4 Sep 2024 11:50:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag
- if receive SIGKILL
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, wangzijie1@honor.com
-References: <52ced02d-728b-4e3b-9079-73efd91c90e3@kernel.org>
- <20240903060658.1780002-1-wangzijie1@honor.com>
+In-Reply-To: <6074d653-3dd3-45a3-9241-a9e2e12252c6@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240903060658.1780002-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBnu4f_2NdmAdNPAQ--.50726S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jry8AF13WF1rJr4xZF1kXwb_yoW7trWxpr
+	W5Kan0yFWxXrW7ur13Ga1Uur1Sv3yrKa18GrWfJa45Jrnaqr9FkF1Y9a4jgFy3Zr1vyrsF
+	qF4jvrsFgayqg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On 2024/9/3 14:06, wangzijie wrote:
-> From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-> 
->> On 2024/8/27 14:22, wangzijie wrote:
->>> Thread A
->>> -dquot_initialize
->>>   -dqget
->>>    -f2fs_dquot_acquire
->>>     -v2_read_dquot
->>>      -qtree_read_dquot
->>>       -find_tree_dqentry
->>>        -f2fs_quota_read
->>>         -read_cache_page_gfp
->>>          -do_read_cache_folio
->>>           -fiemap_read_folio
->>>            -folio_wait_locked_killable
->>>             -receive SIGKILL : return -EINTR
->>>         -set SBI_QUOTA_NEED_REPAIR
->>>     -set SBI_QUOTA_NEED_REPAIR
->>>
->>> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
->>> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
+Hi,
+
+On 9/3/2024 4:44 PM, Jingbo Xu wrote:
+>
+> On 8/31/24 5:37 PM, Hou Tao wrote:
+>> From: Hou Tao <houtao1@huawei.com>
 >>
->> f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
->> for f2fs_dquot_initialize() case?
+>> When trying to insert a 10MB kernel module kept in a virtio-fs with cache
+>> disabled, the following warning was reported:
 >>
->> Thanks,
-> 
-> Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to ignore this errno for more cases. If we need to do so, I will check it and resend patch.
-> Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
 
-How about this?
+SNIP
+>>
+>> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
+>> Signed-off-by: Hou Tao <houtao1@huawei.com>
+> Tested-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
----
-  fs/f2fs/f2fs.h  |  1 +
-  fs/f2fs/inode.c |  3 +--
-  fs/f2fs/super.c | 17 +++++++++++++----
-  3 files changed, 15 insertions(+), 6 deletions(-)
+Thanks for the test.
+>
+>
+>> ---
+>>  fs/fuse/file.c      | 62 +++++++++++++++++++++++++++++++--------------
+>>  fs/fuse/fuse_i.h    |  6 +++++
+>>  fs/fuse/virtio_fs.c |  1 +
+>>  3 files changed, 50 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index f39456c65ed7..331208d3e4d1 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -645,7 +645,7 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
+>>  	args->out_args[0].size = count;
+>>  }
+>>  
+>> -
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dfed1974eda5..a1704a19dfe9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -810,6 +810,7 @@ enum {
-  	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
-  	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
-  	FI_OPENED_FILE,		/* indicate file has been opened */
-+	FI_INIT_DQUOT,		/* indicate it's initializing dquot */
-  	FI_MAX,			/* max flag, never be used */
-  };
+SNIP
+>>  static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>>  			       size_t *nbytesp, int write,
+>> -			       unsigned int max_pages)
+>> +			       unsigned int max_pages,
+>> +			       bool use_pages_for_kvec_io)
+>>  {
+>> +	bool flush_or_invalidate = false;
+>>  	size_t nbytes = 0;  /* # bytes already packed in req */
+>>  	ssize_t ret = 0;
+>>  
+>> -	/* Special case for kernel I/O: can copy directly into the buffer */
+>> +	/* Special case for kernel I/O: can copy directly into the buffer.
+>> +	 * However if the implementation of fuse_conn requires pages instead of
+>> +	 * pointer (e.g., virtio-fs), use iov_iter_extract_pages() instead.
+>> +	 */
+>>  	if (iov_iter_is_kvec(ii)) {
+>> -		unsigned long user_addr = fuse_get_user_addr(ii);
+>> -		size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
+>> +		void *user_addr = (void *)fuse_get_user_addr(ii);
+>>  
+>> -		if (write)
+>> -			ap->args.in_args[1].value = (void *) user_addr;
+>> -		else
+>> -			ap->args.out_args[0].value = (void *) user_addr;
+>> +		if (!use_pages_for_kvec_io) {
+>> +			size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
+>>  
+>> -		iov_iter_advance(ii, frag_size);
+>> -		*nbytesp = frag_size;
+>> -		return 0;
+>> +			if (write)
+>> +				ap->args.in_args[1].value = user_addr;
+>> +			else
+>> +				ap->args.out_args[0].value = user_addr;
+>> +
+>> +			iov_iter_advance(ii, frag_size);
+>> +			*nbytesp = frag_size;
+>> +			return 0;
+>> +		}
+>> +
+>> +		if (is_vmalloc_addr(user_addr)) {
+>> +			ap->args.vmap_base = user_addr;
+>> +			flush_or_invalidate = true;
+> Could we move flush_kernel_vmap_range() upon here, so that
+> flush_or_invalidate is not needed anymore and the code looks cleaner?
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 008f01348afa..b1dbaeda306f 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -827,8 +827,7 @@ void f2fs_evict_inode(struct inode *inode)
+flush_kernel_vmap_range() needs to know the length of the flushed area,
+if moving it here(), the length will be unknown.
+>
+>> +		}
+>>  	}
+>>  
+>>  	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
+>> @@ -1513,6 +1533,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>>  			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+>>  	}
+>>  
+>> +	if (write && flush_or_invalidate)
+>> +		flush_kernel_vmap_range(ap->args.vmap_base, nbytes);
+>> +
+>> +	ap->args.invalidate_vmap = !write && flush_or_invalidate;
+> How about initializing vmap_base only when the data buffer is vmalloced
+> and it's a read request?  In this case invalidate_vmap is no longer needed.
 
-  	err = f2fs_dquot_initialize(inode);
-  	if (err) {
--		if (err != -EINTR)
--			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-+		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-  		err = 0;
-  	}
+You mean using the value of vmap_base to indicate whether invalidation
+is needed or not, right ? I prefer to keep it, because the extra
+variable invalidate_vmap indicates the required action for the vmap area
+and it doesn't increase the size of fuse_args.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8e29aba4b7a4..e774bdf875b2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2644,8 +2644,11 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
-  			if (PTR_ERR(page) == -ENOMEM) {
-  				memalloc_retry_wait(GFP_NOFS);
-  				goto repeat;
--			} else if (PTR_ERR(page) != -EINTR)
--				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+			} else if (PTR_ERR(page) == -EINTR &&
-+				is_inode_flag_set(inode, FI_INIT_DQUOT)) {
-+				return PTR_ERR(page);
-+			}
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-  			return PTR_ERR(page);
-  		}
+>
+>>  	ap->args.is_pinned = iov_iter_extract_will_pin(ii);
+>>  	ap->args.user_pages = true;
+>>  	if (write)
+>> @@ -1581,7 +1605,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>>  		size_t nbytes = min(count, nmax);
+>>  
+>>  		err = fuse_get_user_pages(&ia->ap, iter, &nbytes, write,
+>> -					  max_pages);
+>> +					  max_pages, fc->use_pages_for_kvec_io);
+>>  		if (err && !nbytes)
+>>  			break;
+>>  
+>> @@ -1595,7 +1619,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>>  		}
+>>  
+>>  		if (!io->async || nres < 0) {
+>> -			fuse_release_user_pages(&ia->ap, io->should_dirty);
+>> +			fuse_release_user_pages(&ia->ap, nres, io->should_dirty);
+>>  			fuse_io_free(ia);
+>>  		}
+>>  		ia = NULL;
+>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+>> index f23919610313..79add14c363f 100644
+>> --- a/fs/fuse/fuse_i.h
+>> +++ b/fs/fuse/fuse_i.h
+>> @@ -309,9 +309,12 @@ struct fuse_args {
+>>  	bool may_block:1;
+>>  	bool is_ext:1;
+>>  	bool is_pinned:1;
+>> +	bool invalidate_vmap:1;
+>>  	struct fuse_in_arg in_args[3];
+>>  	struct fuse_arg out_args[2];
+>>  	void (*end)(struct fuse_mount *fm, struct fuse_args *args, int error);
+>> +	/* Used for kvec iter backed by vmalloc address */
+>> +	void *vmap_base;
+>>  };
+>>  
+>>  struct fuse_args_pages {
+>> @@ -860,6 +863,9 @@ struct fuse_conn {
+>>  	/** Passthrough support for read/write IO */
+>>  	unsigned int passthrough:1;
+>>  
+>> +	/* Use pages instead of pointer for kernel I/O */
+>> +	unsigned int use_pages_for_kvec_io:1;
+> Maybe we need a better (actually shorter) name for this flag. kvec_pages?
 
-@@ -2721,10 +2724,16 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
-
-  int f2fs_dquot_initialize(struct inode *inode)
-  {
-+	int ret;
-+
-  	if (time_to_inject(F2FS_I_SB(inode), FAULT_DQUOT_INIT))
-  		return -ESRCH;
-
--	return dquot_initialize(inode);
-+	set_inode_flag(inode, FI_INIT_DQUOT);
-+	ret = dquot_initialize(inode);
-+	clear_inode_flag(inode, FI_INIT_DQUOT);
-+
-+	return ret;
-  }
-
-  static struct dquot __rcu **f2fs_get_dquots(struct inode *inode)
-@@ -3064,7 +3073,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
-
-  	f2fs_down_read(&sbi->quota_sem);
-  	ret = dquot_acquire(dquot);
--	if (ret < 0 && ret != -EINTR)
-+	if (ret < 0)
-  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-  	f2fs_up_read(&sbi->quota_sem);
-  	return ret;
--- 
-2.40.1
-
-> 
-> Thank you for review.
-> 
->>>
->>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>> ---
->>>   fs/f2fs/inode.c | 3 ++-
->>>   fs/f2fs/super.c | 6 +++---
->>>   2 files changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>> index ed629dabb..2af98e2b7 100644
->>> --- a/fs/f2fs/inode.c
->>> +++ b/fs/f2fs/inode.c
->>> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
->>>       err = f2fs_dquot_initialize(inode);
->>>       if (err) {
->>> +        if (err != -EINTR)
->>> +            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>           err = 0;
->>> -        set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>       }
->>>       f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 1f1b3647a..f99a36ff3 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>               if (PTR_ERR(page) == -ENOMEM) {
->>>                   memalloc_retry_wait(GFP_NOFS);
->>>                   goto repeat;
->>> -            }
->>> -            set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>> +            } else if (PTR_ERR(page) != -EINTR)
->>> +                set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>               return PTR_ERR(page);
->>>           }
->>> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>>       f2fs_down_read(&sbi->quota_sem);
->>>       ret = dquot_acquire(dquot);
->>> -    if (ret < 0)
->>> +    if (ret < 0 && ret != -EINTR)
->>>           set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>       f2fs_up_read(&sbi->quota_sem);
->>>       return ret;
-> 
-> 
+Naming is hard. The name "use_pages_for_kvec_io" is verbose indeed.
+kvec_pages is better. Will update it in the next spin.
+>
+>> +
+>>  	/** Maximum stack depth for passthrough backing files */
+>>  	int max_stack_depth;
+>>  
+>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+>> index dd5260141615..43d66ab5e891 100644
+>> --- a/fs/fuse/virtio_fs.c
+>> +++ b/fs/fuse/virtio_fs.c
+>> @@ -1568,6 +1568,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+>>  	fc->delete_stale = true;
+>>  	fc->auto_submounts = true;
+>>  	fc->sync_fs = true;
+>> +	fc->use_pages_for_kvec_io = true;
+>>  
+>>  	/* Tell FUSE to split requests that exceed the virtqueue's size */
+>>  	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
 
 
