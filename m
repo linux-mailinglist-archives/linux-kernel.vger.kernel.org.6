@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-315553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE8A96C41A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B13996C41B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E277DB27439
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553EE1C22C4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9A81E00A0;
-	Wed,  4 Sep 2024 16:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D126C1E00A6;
+	Wed,  4 Sep 2024 16:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6cooEZD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fgd9jWhK"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F5A1CEE89;
-	Wed,  4 Sep 2024 16:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771271DFE14
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467217; cv=none; b=OyVMwhoOREZVX6GbkjyB3egMgngX0D4znbDODLPxi+y9HoxATjGw0kJy3UTac9bon1VMnV5B4LsdpJKIUc7wpd8EmB78RQ1YceKfPnB0SUAXFVEimIg1lZ9iZDQcZ2eDm7vzeCwGbZRFwwYYwA15Nwm5NwnzKgAq4S2grBDkUDA=
+	t=1725467232; cv=none; b=DAcXBwsVkjUQV/bJH5haldeVbH35njUEYf6KKbHBWV1ab6IX/UOpRx42li/jSkulBbSg8g+ONIG1cXqyCz4VNkHwTqNQPnQrmFTRQSv7CtWiBx3sbAdjwjGs/vfuHCaVMEZmDzXTiO3+O/7ARxfP332BUjTQ34uxLLANbKmuv9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467217; c=relaxed/simple;
-	bh=7j0XF4fV98dLGEL3CqtnSJa083XT0sBfqDuPR+hB+gE=;
+	s=arc-20240116; t=1725467232; c=relaxed/simple;
+	bh=8CM+ER6jT6WN3Myh785kYSCtSEAyLTkTXwTJgmUn8VU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lAgjdFizemzJ7Yfn0IKGtfHnJmG7Bw+WJrroX0h7+JYxyk5+vk3FqdfJ1FXzyC20E0ctZoF+g0fuVgujPXWbxLuloiNbG8F03fqKu3HNVGjQTrjS+p32Tns8C4NSL1odevUuAf3DGXt8dNlxIftyHUpOkOzMqiZ4VYMSQmFxu48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6cooEZD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D134DC4CEC6;
-	Wed,  4 Sep 2024 16:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725467217;
-	bh=7j0XF4fV98dLGEL3CqtnSJa083XT0sBfqDuPR+hB+gE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h6cooEZDs685/cCiJF7fR1w63yDIR7tmeb4VdA/qaJspmdd3Ibk0rjbbMByYCUCYd
-	 u3O9QgZPdyvP5IDEAYxgEMVbSj03/I0yd/4x7ncDlHX9aua/q+Oe/Pu1Fm0+0SjUvv
-	 wgNuzehelYkvDdXPUoGV5yUVUBLXebDUR4Szi4RV3aUNCT/mLeWWgMG+ZH8dasmf7s
-	 uxy5psEOeRoEZwlF0uAJ68YLUGVYkZ4xqb2+TEcljQywdeXORfdJC966XhyqEkOjck
-	 H/b9oRBIpdvMLTaYErJMvivihra2K15zJz5Oe6z3klUF+vnyH+6jwILqrItvsVrRKF
-	 OHsDmcNZ7rcbQ==
-Date: Wed, 4 Sep 2024 17:26:52 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: cadence: macb: Enable software IRQ
- coalescing by default
-Message-ID: <20240904162652.GB4792@kernel.org>
-References: <20240903184912.4151926-1-sean.anderson@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/jGWB3CD2VvlNLWt7ADtzc4mtTfQaDHy/JDeMJ2bBwj5E2kExp7VeFUUNafaPVqxaRsBTHnCpIuWdVzfJIPMqPEZkM9ShskW2yk1KW1Tj45CZPyr2dISnWdsFZMo7tdPPAwvDs2GNb8s1i3ZXGp99u4OeWoxUnhGU6JZQvFujs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fgd9jWhK; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 4 Sep 2024 12:27:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725467228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf/mkXIK3Bv8nG/HByUgMnT8fjINIkgAQjXvtIV+Ba8=;
+	b=Fgd9jWhKnrgYi5m4PD5uSb1Hk/QHINynu/oAUGS724gNEz/iK7YYQvO1SK2E2FrelY3N3F
+	/090wgIgZCkYoLOcmLzFv/xcIn+Dw5R/xKaBG29E2IBvh4ctTGbQevntMxta+qk+gDfSLQ
+	7FnVruthDocgRD9Ac8uByWEoyKyUhiw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@kernel.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Vlastimil Babka <vbabka@suse.cz>, Dave Chinner <dchinner@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <l3dngdjyglhpnlcmjxerpmiyw4euodb6sxsxe3mwtyd2z3uopu@amisj3chjfqe>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <20240903051342.GA31046@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +65,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903184912.4151926-1-sean.anderson@linux.dev>
+In-Reply-To: <20240903051342.GA31046@lst.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 03, 2024 at 02:49:12PM -0400, Sean Anderson wrote:
-> This NIC doesn't have hardware IRQ coalescing. Under high load,
-> interrupts can adversely affect performance. To mitigate this, enable
-> software IRQ coalescing by default. On my system this increases receive
-> throughput with iperf3 from 853 MBit/sec to 934 MBit/s, decreases
-> interrupts from 69489/sec to 2016/sec, and decreases CPU utilization
-> from 27% (4x Cortex-A53) to 14%. Latency is not affected (as far as I
-> can tell).
+On Tue, Sep 03, 2024 at 07:13:42AM GMT, Christoph Hellwig wrote:
+> On Mon, Sep 02, 2024 at 02:52:52PM -0700, Andrew Morton wrote:
+> > It would be helpful to summarize your concerns.
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> And that'd better be a really good argument for a change that was
+> pushed directly to Linus bypassing the maintainer after multiple
+> reviewers pointed out it was broken.  This series simply undoes the
+> damage done by that, while also keeping the code dependend on it
+> working.
 
-Nice performance improvement :)
+Well, to be blunt, I thought the "we don't want the allocator to even
+know if we're in a non-sleepable context" argument was too crazy to have
+real support, and moving towards PF_MEMALLOC flags is something we've
+been talking about quite a bit going back years.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Little did I know the minefield I was walking into...
+
+But the disccussion seems to finally be cooling off and going in a more
+productive direction.
 
