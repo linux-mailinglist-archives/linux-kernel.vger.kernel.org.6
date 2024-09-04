@@ -1,80 +1,70 @@
-Return-Path: <linux-kernel+bounces-315138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA1296BE72
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB4B96BE73
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC431F26108
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D92D1F25CAB
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0EF1DB55F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08AC1EBFF7;
 	Wed,  4 Sep 2024 13:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T5TAk1mB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S2QJk5dq"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCBF1DA630
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF1D1DA2E0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456368; cv=none; b=eAHdbsjCTVRgrh7QnujrCa2zMQa3S4cpaTYWq2vXCGiSMlusX3okxyAGF9WUzjhqfhtnf3NgimOUrCCZD9yFnC2pEKVJwFlyZ9tJ00yTexwapHa/dC/XFE6SBoqtj5cCdimf8X7KoZaNmUDVGH+1vQbg32Ee9KkRKs+34jePAB0=
+	t=1725456368; cv=none; b=vD7HN5hhIM0/3y49yXEkGdph/7W54POfuwQ0zWqWOu5z81tag7QzhX4UGGV5CTBPHrRoqjelPnVypX5LBZHvywq97IU9vx+KfszxXHbqik0RFE4ABBjsv79xT7ka1SBk/qCEwjui4zoISKxo+R3/EMxWeAkW2kvki/pCyqiUWTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725456368; c=relaxed/simple;
-	bh=fV02eram5SAlbEuGwmDuQ+se3z089NuDaBoBuGLrODk=;
+	bh=+UzTOrwTfi1Ek1kSR/0pA7oqP/WQdFFaxGxcdMcbzYg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gULHKR+T3s8EjCxiTqO5NTKpfmzr2OXLu1kEwUjNMQ/pLofmkrjLbwQo87DCvniOUMGk9dzF5oLHeyzL2M1UzEffZAh4oz66KuQLy9DgNb78cpnnKPwmi/Rt4vb0vCXaHyjNw+1bkkyK7n8qzB8YxFnjGg7tjM8pMocbAyW766c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T5TAk1mB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725456362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8SNhHCBduhr9H1n14OffkTff0HidGminGrYHFT9HiFw=;
-	b=T5TAk1mBOW742wmvrFsNZDWXHT054DZ+mQwy3UZsNU7KHK6A7n5YYCMbj4+8gokS3ybbq+
-	zTTg93KPLHWBBBfWti719iphQ0v/d8BHKFBkVs1qsBnFGKXuWWaNQDydO9QnTi3mvNENs+
-	HfVhMhRJRuE+TK58r66ufWzYyS1+J68=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-OZXVNq5uOvmDfzFNmYLkLA-1; Wed, 04 Sep 2024 09:26:00 -0400
-X-MC-Unique: OZXVNq5uOvmDfzFNmYLkLA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8685464a7dso481665566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:26:00 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=XCP4t7N0INBTPECVZsAk/MsQK7CuhDHexrjTL2kRl7l9gvxw15lOKThFGWVPo/97Cf/yDNirAWr5er6e302ogvLcRcQ6y5XyqTbhOg8GIbLpQJcZj0mAFX/oJZCHRf3G1OXuaKpqZukBkv0OZ+mTI4FecidCgcQRUUAl3hkbOPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S2QJk5dq; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82a245753bfso243601239f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725456365; x=1726061165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CICro7vkXrs8sHD3fUI2iQ4lanIBBnekvLD7hab6AoY=;
+        b=S2QJk5dqmEW1oLiHBKzUjzGiDoUx7aInp0FNakMjaBdQyBygfUzYSXeu7KrKRTOuFR
+         1qLtKiJw7oEc1ESqHxuj7/XYkd50J578KtQm90kTIRv4q+9072w2g7I4Acl8LxH22dxH
+         rV6fideE2XrJA28uO9+DdLy8AJ6NORPmCG4eI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725456359; x=1726061159;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8SNhHCBduhr9H1n14OffkTff0HidGminGrYHFT9HiFw=;
-        b=Sk/g0kY6i8l2effFfuMDpcZ7yF8HSUpU11kRxKLNLNZW0yVimjxivLpjI8WrN0lHDZ
-         DWhsCnNAeLlrlMVJ8nG3M/RtFlzqcMx0Vad36S7UtNTuB5TE33zaQDZcIWAnEXZS4DWR
-         4Pc4s4tXOIs0AxVHiV8CQuWtn1SUzhPdF5dEj6SRZQzqprbjyWmVpyI8cr+HBT1msT7J
-         IRHvSerlyBO3EHnrWkZXm3LncNL6p/zQyoCVoc5n8k2Vl+pvRVomnrO2OiHRH7kvTjbU
-         53UX7I7PBSoOxgNBcuAphTbt58pHd4rL9q7jHc7T1wvg2Soo1CcdgP7PtVSngE2827AA
-         ILiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLGlXns6GT9Mifj4/Gv4Icl0op/9yPVUPSBOdaiiusFM7byF5GQ6Wk5uogO1qnVWK2q3GbVseytImUiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY0AfjWndbTxl9OVe2Mq3HZrFRyMQceToeuIfkmNtcVZfwvlWa
-	MeffEDXrYSqv6TLhdVI+TzK8aOE1xYMvHbpFeVBt8XpHPtZyQ+0Wi5y02RdRvSPoIQX9sdfzzWD
-	eQzU0gAko5bL6CyM9U/Z2hdxQdjcIHMd75dVPBQBvMyqQ4JvTD84hS/Qbix5xdw==
-X-Received: by 2002:a17:906:fd8b:b0:a86:968b:e9c1 with SMTP id a640c23a62f3a-a89a34e4375mr1246384166b.5.1725456359144;
-        Wed, 04 Sep 2024 06:25:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHc9RX7yalPWjcjlOP7ue8yMLn3BH4LZGW+kIo2ts8WjY3/Ym+juQ7azkErO7rt9xEW79nx+w==
-X-Received: by 2002:a17:906:fd8b:b0:a86:968b:e9c1 with SMTP id a640c23a62f3a-a89a34e4375mr1246380666b.5.1725456358569;
-        Wed, 04 Sep 2024 06:25:58 -0700 (PDT)
-Received: from [192.168.10.3] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a898908ebfasm813233866b.95.2024.09.04.06.25.56
+        d=1e100.net; s=20230601; t=1725456365; x=1726061165;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CICro7vkXrs8sHD3fUI2iQ4lanIBBnekvLD7hab6AoY=;
+        b=aBtMW0MymDnbD6THt+1ftanhnKsw9j/Ja6RERkrr6MSCMwyUzVuKEp+gxMe+IWJu9M
+         mHK0Va5B62MzW33PpAOt0+p4o6Piz9Hfc69ENryVx5FIvI+2iTG0b82sPK5mL9U0Viup
+         OUHq0X6GQvcRG0mahQzf+cQFUnMNgbuJx6v7k6d703Tl4BejEjrwVHiQHcjMkTA1LQ8u
+         ep3r8G+5PSBjWAY0o9BZHLpcXmeaKCo0Quwy7DXkHehX6ucjM3FoXUgM8V9J1Aav2WvL
+         Kf4rv9orouym/8L3qh4eaSphmWgmxacvpLOubyi5ttv0nwdS7ap2DzNh0hffFhTPtym8
+         p4jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoXLIrP9Fg1+z2vZ72Y4ttp3QrMIJBXq3xYV5lRblnWLhvFPEP5QUWIxmSQoMXqsIGonf3iIRsPLzgs6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDpFisSCtvk5ITDbN6EBdLodz2dWm45JixUVZLLniDFYnT2phf
+	JZqN68iHozWQ5UVM233NIbPiZuBwb3SMx7k43/Ccf/SSFqhSO80t3GLIounAHeo=
+X-Google-Smtp-Source: AGHT+IEluXNl214CW5UNS9t+LtCX+oeGGsC/N5xGJbSzupQnxzp+YC8JdWd11rKuUcXNRSJSOawNjg==
+X-Received: by 2002:a05:6602:29cf:b0:803:f97f:59d8 with SMTP id ca18e2360f4ac-82a10d7d132mr2645960039f.0.1725456365606;
+        Wed, 04 Sep 2024 06:26:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a499535sm362048339f.41.2024.09.04.06.26.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:25:58 -0700 (PDT)
-Message-ID: <9b6ef0fa-99f5-4eac-b51a-aa0a3126c443@redhat.com>
-Date: Wed, 4 Sep 2024 15:25:51 +0200
+        Wed, 04 Sep 2024 06:26:05 -0700 (PDT)
+Message-ID: <6db4d860-e72e-424b-8463-c82bff08a6c6@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 07:26:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,120 +72,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
-To: Suleiman Souhlal <ssouhlal@freebsd.org>,
- Sean Christopherson <seanjc@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Vineeth Pillai <vineeth@bitbyteword.org>, Borislav Petkov <bp@alien8.de>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Frederic Weisbecker <fweisbec@gmail.com>,
- suleiman@google.com
-References: <20240821095127.45d17b19@gandalf.local.home>
- <Zs97wp2-vIRjgk-e@google.com> <ZtgNqv1r7S738osp@freefall.freebsd.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 0/4] Add SWIG Bindings to libcpupower
+To: "John B. Wyatt IV" <jwyatt@redhat.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
+ Shuah Khan <shuah@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Arnaldo Melo <acme@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "John B. Wyatt IV" <sageofredondo@gmail.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240827062438.71809-1-jwyatt@redhat.com>
+ <ab9e3727-9978-4a30-8bff-e366fa5defc1@linuxfoundation.org>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <ZtgNqv1r7S738osp@freefall.freebsd.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ab9e3727-9978-4a30-8bff-e366fa5defc1@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/4/24 09:35, Suleiman Souhlal wrote:
-> On Wed, Aug 28, 2024 at 12:34:26PM -0700, Sean Christopherson wrote:
->> On Wed, Aug 21, 2024, Steven Rostedt wrote:
->>> From: Steven Rostedt <rostedt@goodmis.org>
->>>
->>> Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
->>> to high resolution timers with the comment:
->>>
->>>      KVM lapic timer and tsc deadline timer based on hrtimer,
->>>      setting a leftmost node to rb tree and then do hrtimer reprogram.
->>>      If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
->>>      do nothing and then make kvm lapic timer and tsc deadline timer fail.
->>>
->>> That was back in 2012, where hrtimer_start_range_ns() would do the
->>> reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
->>> high resolution timers disabled, this did not work. But a lot has changed
->>> in the last 12 years.
->>>
->>> For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
->>> timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
->>> timers. There's been lots of other changes that make low res work.
->>>
->>> I added this change to my main server that runs all my VMs (my mail
->>> server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
->>> system has been running just fine for over a month.
->>>
->>> ChromeOS has tested this before as well, and it hasn't seen any issues with
->>> running KVM with high res timers disabled.
+On 9/4/24 06:41, Shuah Khan wrote:
+> On 8/27/24 00:24, John B. Wyatt IV wrote:
+>> SWIG is a tool packaged in Fedora and other distros that can generate
+>> bindings from C and C++ code for several languages including Python,
+>> Perl, and Go. Providing bindings for scripting languages is a common feature
+>> to make use of libraries more accessible to more users and programs. My team
+>> specifically wants to expand the features of rteval. rteval is a Python program
+>> used to measure real time performance. We wanted to test the effect of enabling
+>> some levels of idle-stat to see how it affects latency, and didn't want to
+>> reinvent the wheel. Since SWIG requires the .o files created by libcpupower at
+>> compilation it makes sense to include this in the cpupower directory so that
+>> others can make use of them.
 >>
->> Can you provide some background on why this is desirable, and what the effective
->> tradeoffs are?  Mostly so that future users have some chance of making an
->> informed decision.  Realistically, anyone running with HIGH_RES_TIMERS=n is likely
->> already aware of the tradeoffs, but it'd be nice to capture the info here.
+>> The V2 of this patchset includes:
+>> * the full definition of libcpupower headers that is needed for the bindings
+>> * dummy implementation in C of a function listed in the header of libcpupower
+>> (requested by Shuah Khan)
+>> * test_raw_pylibcpupower.py demonstrates an example of using the bindings
+>> * adding myself and John Kacur to the cpupower section of the maintainers file
+>> (requested by Shuah Khan)
+>> * addressed review comments about doc, makefile, and maintainers file
+>> * small style and other fixes
+>>
+>> The name raw_pylibcpupower is used because a wrapper `pylibcpupower` may be
+>> needed to make the bindings more 'pythonic' in the future. The bindings folder
+>> is used because Go or Perl bindings may be useful for other users in the
+>> future.
+>>
+>> Note that while SWIG itself is GPL v3+ licensed; the resulting output, the
+>> bindings code, has the same license as the .o files used to generate the
+>> bindings (GPL v2 only). Please see
+>> https://swig.org/legal.html
+>> and
+>> https://lore.kernel.org/linux-pm/Zqv9BOjxLAgyNP5B@hatbackup/#t
+>> for more details on the license.
+>>
+>> Sincerely,
+>> John Wyatt
+>> Software Engineer, Core Kernel
+>> Red Hat
+>>
+>> John B. Wyatt IV (4):
+>>    Add SWIG bindings files for libcpupower
+>>    Implement dummy function for SWIG to accept the full library
+>>      definitions
+>>    Include test_raw_pylibcpupower.py
+>>    MAINTAINERS: Add Maintainers for SWIG Python bindings
+>>
+>>   MAINTAINERS                                   |   3 +
+>>   .../power/cpupower/bindings/python/.gitignore |   8 +
+>>   tools/power/cpupower/bindings/python/Makefile |  31 +++
+>>   tools/power/cpupower/bindings/python/README   |  59 +++++
+>>   .../bindings/python/raw_pylibcpupower.i       | 247 ++++++++++++++++++
+>>   .../bindings/python/test_raw_pylibcpupower.py |  42 +++
+>>   tools/power/cpupower/lib/powercap.c           |   8 +
+>>   7 files changed, 398 insertions(+)
+>>   create mode 100644 tools/power/cpupower/bindings/python/.gitignore
+>>   create mode 100644 tools/power/cpupower/bindings/python/Makefile
+>>   create mode 100644 tools/power/cpupower/bindings/python/README
+>>   create mode 100644 tools/power/cpupower/bindings/python/raw_pylibcpupower.i
+>>   create mode 100755 tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
+>>
 > 
-> We have found that disabling HR timers saves power without degrading
-> the user experience too much.
 
-This might have some issues on guests that do not support kvmclock, 
-because they rely on precise delivery of periodic timers to keep their 
-clock running.  This can be the APIC timer (provided by the kernel), the 
-RTC (provided by userspace), or the i8254 (choice of kernel/userspace).
+Noticed Rafael isn't on this thread. Adding now to keep him
+in the loop.
 
-These guests are few and far between these days, and in the case of the 
-APIC timer + Intel hosts we can use the preemption timer (which is 
-TSC-based and has better latency _and_ accuracy).  Furthermore, only x86 
-is requiring CONFIG_HIGH_RES_TIMERS, so it's probably just excessive 
-care and we can even apply Steven's patch as is.
+cpupower pull request go through Rafael's tree.
 
-Alternatively, the "depends on HIGH_RES_TIMERS || EXPERT" could be added 
-to virt/kvm.  Or a pr_warn could be added to kvm_init if HIGH_RES_TIMERS 
-are not enabled.
+> Couple of things to address:
+> 
+> 1. I noticed none of the patches have the subsystem prefix:
+>    pm:cpupower is the right prefix for patch subject for all
+>    the patches except the MAINTAINERS file
+> 
+> I will pull the fix  "Implement dummy function for SWIG to accept
+> the full library" Patch 2 in your series.
+> 
+> I want this subject changed to just fix as it is a problem irrespective
+> of SWIG - we have a missing function. Subject would be as follows:
+> 
+> ""pm:cpupower: Add missing powercap_set_enabled() stub function"
+> 
+> Make this the first patch in the series. I will send this up for
+> Linux 6.11-rc7 or Linux 6.12-rc1
+> 
+> Depending on how the timelines for merge window work, expect the
+> series to land in Linux 6.13-rc1. I would prefer to delay it anyway
+> so we can get some soaking in next.
+> 
 
-But in general, it seems that Linux has a laissez-faire approach to 
-disabling CONFIG_HIGH_RES_TIMERS - there must be other code in the 
-kernel (maybe sound/?) that is relying on having high-enough HZ or 
-hrtimers but that's not documented anywhere.  I don't have an objection 
-to doing the same in KVM, honestly, since most systems are running 
-CONFIG_HIGH_RES_TIMERS anyway.
-
-Paolo
+thanks,
+-- Shuah
 
 
