@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-315636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7F296C53A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CA096C545
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B5A2859E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2600B1F290D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF9D1E4912;
-	Wed,  4 Sep 2024 17:18:35 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31F21DEFCD;
+	Wed,  4 Sep 2024 17:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCcOIJJ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6531E202D;
-	Wed,  4 Sep 2024 17:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3401C4778C;
+	Wed,  4 Sep 2024 17:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470315; cv=none; b=O4S42tvSgDFKBbkZiSkEJbo/72lCc4V7wQI68KXhlwDrRk5lYNfEzyZATTPYy64nQs/qS0vRF/BZNlGpd+b063B0OLfMAU089lf3hhmgh8ihPv3hyI39bFXenlnZy4wy5TGDyOlb3RH9etesyH8XipriUzWdKO618IoZKjvzgWo=
+	t=1725470386; cv=none; b=CCLh3VZ8oadn6lvnpKxqCMnvmzf0GzCTbJW3v165gXl5PI+M2GdDrqrHx1ET/Gcw4fjM6QffaJLHzW8Q/r9E6kp3+HJbcikH4W5qzoGSNwInprpuk2zw1Rnf8S0WieHtCd0/UhPcGSPnxzxU7vXayrXJXIHa9Ee/lf6+Q6B/Bvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470315; c=relaxed/simple;
-	bh=dwP0dUhgLp+xDvuD6Z38b1kog/RqmlVxPR+iBWo/T0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qSOCHfDH+DWnXSsRY4zzCiAIOyeWZ4xLQQd1TnkI1Wv1kzAFYunWjn7NzqHwMHFQw6HvMbVB0GySbYKLd4qckD8RWcCeXIubepgxpG7fL2z2S/mETvc45PtFDAgxxpQt+L3+/Aeb0dgbKXGFMoo657olKVrlHPo0qt75SY2YTXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzTjN1CmTz9sSW;
-	Wed,  4 Sep 2024 19:18:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lSYeCfSSGneC; Wed,  4 Sep 2024 19:18:32 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzTjN0L9mz9sSV;
-	Wed,  4 Sep 2024 19:18:32 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E8B128B77A;
-	Wed,  4 Sep 2024 19:18:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wqRIgX-QwCxn; Wed,  4 Sep 2024 19:18:31 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 187428B778;
-	Wed,  4 Sep 2024 19:18:31 +0200 (CEST)
-Message-ID: <8fbb8fed-e8d4-475c-8093-373d0afb62cc@csgroup.eu>
-Date: Wed, 4 Sep 2024 19:18:30 +0200
+	s=arc-20240116; t=1725470386; c=relaxed/simple;
+	bh=7nt55skf5MkG+zn3hZ1jtUoFubnt7KYqSZXWSb3JOBA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SZktgk0z1Xn3FtIGrKsSbDjvyC7HZ+ihSqAjTd8fgcFZJoDLISWlOBPH9UCIo/jHXR+EMc3ey5BAhcI2K9K7RmqMey/2o4KW5UQzn4yqgBXhR/OKAa4oJ3OJDTcDBl9K/CF3MhYaYWiBMVtlJDfoAsNkTjRMjKalvc1zGPugqN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCcOIJJ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9C5C4CEC2;
+	Wed,  4 Sep 2024 17:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725470385;
+	bh=7nt55skf5MkG+zn3hZ1jtUoFubnt7KYqSZXWSb3JOBA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=vCcOIJJ4KxgpPQAZGfnIzSSSWzE5M5l45tKNYeGP02oYvr5QSyk7ynT74CPgrJXN8
+	 VHt5yWMgLdnNCjnFKfNeXitJqjdsBUxD4r3TLo0gDk4JC0asko3RJbtJLtJ7ATulMJ
+	 cIJVYZFYdtWgswn6/GxmHkNYUxvDyAaSnUR8wq1knAw8shughKHPVjgnGuJD671PXM
+	 n9WmSiYlUWdR/nhOLgGR4TyWzUM9BGBr18sUJGrvkrLMhhur/WvOf7uX51Dmctsqrg
+	 reUMJ/cB4bWNGlaYhjwhFzD3o+wgwMdxGey/yEvDxOwCdNtzBPgW27bmMyS5KKvDlt
+	 wRShNRiUxwlVQ==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>, 
+ Tzung-Bi Shih <tzungbi@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>
+Cc: chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+ Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ linux-i2c@vger.kernel.org
+In-Reply-To: <20240904090016.2841572-1-wenst@chromium.org>
+References: <20240904090016.2841572-1-wenst@chromium.org>
+Subject: Re: (subset) [PATCH v6 00/12] platform/chrome: Introduce DT
+ hardware prober
+Message-Id: <172547038191.87336.8695106953397068225.b4-ty@kernel.org>
+Date: Wed, 04 Sep 2024 18:19:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] vdso: Split linux/array_size.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-7-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240903151437.1002990-7-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-
-
-Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
+On Wed, 04 Sep 2024 17:00:02 +0800, Chen-Yu Tsai wrote:
+> This is v6 of my "of: Introduce hardware prober driver" [1] series.
+> v6 mainly addresses comments from Andy.
 > 
-> Split linux/array_size.h to make sure that the generic library
-> uses only the allowed namespace.
-
-There is only one place using ARRAY_SIZE(x), can be open coded as 
-sizeof(x)/sizeof(*x) instead.
-
-Christophe
-
+> v2 continued Doug's "of: device: Support 2nd sources of probeable but
+> undiscoverable devices" [2] series, but follows the scheme suggested by
+> Rob, marking all second source component device nodes as "fail-needs-probe",
+> and having a hardware prober driver enable the one of them.
 > 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   include/linux/array_size.h |  8 +-------
->   include/vdso/array_size.h  | 13 +++++++++++++
->   2 files changed, 14 insertions(+), 7 deletions(-)
->   create mode 100644 include/vdso/array_size.h
-> 
-> diff --git a/include/linux/array_size.h b/include/linux/array_size.h
-> index 06d7d83196ca..ca9e63b419c4 100644
-> --- a/include/linux/array_size.h
-> +++ b/include/linux/array_size.h
-> @@ -2,12 +2,6 @@
->   #ifndef _LINUX_ARRAY_SIZE_H
->   #define _LINUX_ARRAY_SIZE_H
->   
-> -#include <linux/compiler.h>
-> -
-> -/**
-> - * ARRAY_SIZE - get the number of elements in array @arr
-> - * @arr: array to be sized
-> - */
-> -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-> +#include <vdso/array_size.h>
->   
->   #endif  /* _LINUX_ARRAY_SIZE_H */
-> diff --git a/include/vdso/array_size.h b/include/vdso/array_size.h
-> new file mode 100644
-> index 000000000000..4079f7a5f86e
-> --- /dev/null
-> +++ b/include/vdso/array_size.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _VDSO_ARRAY_SIZE_H
-> +#define _VDSO_ARRAY_SIZE_H
-> +
-> +#include <linux/compiler.h>
-> +
-> +/**
-> + * ARRAY_SIZE - get the number of elements in array @arr
-> + * @arr: array to be sized
-> + */
-> +#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-> +
-> +#endif  /* _VDSO_ARRAY_SIZE_H */
+> [...]
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[03/12] regulator: Move OF-specific regulator lookup code to of_regulator.c
+        commit: b8c3255457147162cd713a319a8e2274335449b9
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
