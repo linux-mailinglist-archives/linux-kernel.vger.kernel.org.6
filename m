@@ -1,198 +1,152 @@
-Return-Path: <linux-kernel+bounces-315457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B214896C2F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:51:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE15396C2F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26E01C2061B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974AB1F25647
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400D72BD0D;
-	Wed,  4 Sep 2024 15:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801721E1304;
+	Wed,  4 Sep 2024 15:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d692u+bM"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrS0Q9Hi"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5591DEFDA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A4D1E0B86;
+	Wed,  4 Sep 2024 15:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464999; cv=none; b=nYvmiy0eEDlA6tGC2bRVLN97F9W409z+S0zXGT6fM8THcZBgjk68ryrjFQ1t1sI+u3bGlSqV4yNTFr9kQxclinelYjS10k/UInCkAk9nWyVGhHxxNq7Jai2WUy4O71S7VhxKzulNUKl7edBthmpVI8XfFaAjIAo8+4Zhd9zXiTw=
+	t=1725465041; cv=none; b=FQJffLGYW67V6fubjG99P+rDJ4VOYqPGxngKoPv3v2oIXUsTm3THS6GSqvvNYE9MPMhnwc36F6V2ipJle/Fd000EqUrDipnvm+7eNh981xBZQQwY5yWIs7ORNX/T3aCfolmQpS7ARiMaTJBMIwNj5RU5HBwDHAa7YbIBrYuGajE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464999; c=relaxed/simple;
-	bh=CTpZT61cw+v7Isz+5KEp0TwRe2k81PyY8Q9DOwJbOnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EE99tcc40kEAKCVOG4E/19kB16LFNwvMw9kjCjM9b9a92ZCt2smHDBiLqZsm8yoP57a3rdFc/i9S5Cxh33FJUgYq9EjiMwAohUj2QoS1IRl/WG3meGr1zzWMI9e/6xMhJoTA8MkRGYXWuZcVpjlKsX1Dkz2KmObYvFFUNcKBj+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d692u+bM; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e7b121be30so4227242a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:49:56 -0700 (PDT)
+	s=arc-20240116; t=1725465041; c=relaxed/simple;
+	bh=3h0jfTiAFR38+Kgi7UwXDmiCCO7ODKFwqWmvVPs+nc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k55RxBvzjg+aq3qdO+lFYZUrRASjD+yE/U29ZnEkMhffbmX4756eK+Yn5opcmbUYcsZEGfLyhprLJt34AFIE+aIzAyVvziMz4HCCd6fbxW26VxiitLcFFr4GVAsrzV5oZA95UViezbVSXUVRmiUrkbo/pkpoRwYnznSJMUAAb1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrS0Q9Hi; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20570b42f24so35468975ad.1;
+        Wed, 04 Sep 2024 08:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725464996; x=1726069796; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aUspjdaZipuOhA4NRY0RJgeHGMKwRMzsWto8djn5vLI=;
-        b=d692u+bMkoKPaC1KysMc/5oBJOQrUqWi4Tz0sQhd99IZ3e5CmzKMlA8yu83gEO4cYp
-         eW6ZnRYJOt+ixnU+LVgmrDSgFGgF6x4pjD92BZn87RVsxQYz1l+8Hz1Q+50owV20aCcT
-         DDl922u1dP02I/xMllsRxmpGVsEtPtPpTfszHZ/1ncPRpG7UkT1NH6b3pbs+27NrLIZn
-         +1fEpbl2zaZ5pFlB529qqhzBZfYxsf7azUnHlMRdnfAO0G9zhQshWQ8OJ5nbo2jpp6T0
-         5yh4GPeZt5eQoKT3Uen0gUECaPJy87To6Lc3yUh3riydVWa91hgocwi4voLipM6HKJOm
-         hyiw==
+        d=gmail.com; s=20230601; t=1725465040; x=1726069840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2LdoEIUi1Dv5O9cEGpaSjS0YiChdqkoHDENpXGhcpg=;
+        b=GrS0Q9HipQY0lswGYuYMVu8JhAParLzHEp9rrO+jSFJiRNgxKxJPQTWRFJSGbMG71x
+         YbJq9GVe5zv5NiijuVN1IQ0q9DXCDFjDGztgcF3NF4IYpzAVvR2Sm1vRrvhNljfW1mqm
+         2YtLcjSrRftdo/MhlCT9QCPSgBluIcr6YUYpn2zylMHsViLnsMg+sGkW4g7iPIcR0YeA
+         pwCfuUZuo5a5REm8iNdqnSVL+HL00CwZUrJqDARGiN2C9DcTR5Xzx7Cgn8f06+2xzUWq
+         8qiZZgvn/Q/Ho1uuPvgG3pKx3D5q47uqZivuCivTVv7ydg+dyQiyI0pWHLGg9mOMA4Au
+         YClw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725464996; x=1726069796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUspjdaZipuOhA4NRY0RJgeHGMKwRMzsWto8djn5vLI=;
-        b=ohH05i+BnU8KqfG3R4/ZoM5kTdRDaDRdXY3y6bQkTfkPYPEeJt492mQfhKJQEQo+2y
-         rQwbfRHtcumDXWdO4q+cwqgWUpFXK+B3tm3lBBI8UQWNmdQo9TC9uZG7VGkWOOC1E0Do
-         s+7opL7799mzx0pyeLjegp9o4JUYl5dJuWy4gCBgkWMwFtEp6f9s3T40i3aWPj4Owj57
-         3ZiGFlx4fpv3d3Ubd2oPb99T7wL+omQwpYC/oqH1BfqVTa7IFJ5rk6N1WuBpNR78sRwb
-         Iypo8uubB1aBVn1by6tRu3l6o7f1t13v0V4lGtIXnRkFgMG5QtAu0HxsEajYbNHW2kLl
-         j3AA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPjmmHpyI8mKsd/K+x63HEzGaUGtWlmvziqp37KSnyqdNfdCOIJfUJv93trTOiGCvoycKzzpDgR5drziQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT5tIE8tV3UiJxYWfLExQMA563BvUIFrGRRDx6kCPZoG+Qjeae
-	qWinEhaFqB+E38GxCXQyuuVC+8CjwCJ/08dRNbiE1Wi0FAaRDABW1K4l641NeQ==
-X-Google-Smtp-Source: AGHT+IGaIqW5Fd7iC7eWGx3Bkr4KIAhnl/c5JAG+0dmpw/6XA8lzo2zqW5pfYpjv80IFZFIFhT9/Sw==
-X-Received: by 2002:a17:902:cec6:b0:206:9caf:1e00 with SMTP id d9443c01a7336-2069caf211cmr72629265ad.25.1725464996370;
-        Wed, 04 Sep 2024 08:49:56 -0700 (PDT)
-Received: from thinkpad ([120.60.128.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae950571sm15158925ad.82.2024.09.04.08.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:49:56 -0700 (PDT)
-Date: Wed, 4 Sep 2024 21:19:44 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 2/4] PCI: dwc: Always cache the maximum link speed
- value in dw_pcie::max_link_speed
-Message-ID: <20240904154944.w4bujfmhy5uhzkld@thinkpad>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
- <ZtgooHdex5gXh0tP@hovoldconsulting.com>
+        d=1e100.net; s=20230601; t=1725465040; x=1726069840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2LdoEIUi1Dv5O9cEGpaSjS0YiChdqkoHDENpXGhcpg=;
+        b=FvPk7WUb+J1qHLDjimR2AMz34H13Xeh6GnmIR+L1LAdgRJiGYOWqmxuGtRuq9QRYhF
+         z+2DXpwJyucPdmZojwIjaeCAcGQyXxiGcq5Kx/eqfhTG/J1dbKQZYqvh2xDRLExZKOQT
+         eeHyebpVadn5HiG9Z6slJHLzxgM2Po9ZCA94vVhQMZZNJ1PgCy2dWGQC2G6B9TASzXPF
+         hjzAiJCqdwa/DZSfCCJK6o39IUmMMo9Y93jg93Fn+wL+S7CWTJor+9NP/hC0k+MvpQaO
+         /48y6gO1n3VvmfGdgJXkYGIRMCMB1dUXJYpSciQ2xnOiJZd28kFyX+yHUN4G13nrPcdy
+         cTGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe3kFkHScuHvGQm3/Fdueh/8vSuTuu+lmU9nllsqxOkxa6/GyYlj8+ibSqPao/M/Xqk361vDydjpItSs3N@vger.kernel.org, AJvYcCWH6Yw0KLE2V4T43PXlvbzTNHTu/FsAFFlFY/W3uQgtHpsBYE4t0SkjYFWhey86xpkBM4MG0jlHq5R7Hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmXlKywyARWfIHwCzVobeXPk1V6qwpxT3YWUgwkaxNDbs6WxFn
+	ivA5x94b/+ByZmh096Rl2q5AObSme7rYGc7HWBpxaFQBlibLBMmxxBrw0QmUFZ8eD2ZM2WL++w1
+	/+BU42qzW8N9c3/cDWT+ZVtAE7s+iJZDL0b0=
+X-Google-Smtp-Source: AGHT+IEpmm/4MJT/OGuv6caXpo6ITiWG0GqLT+7dMjxiS0777nX30sw948DcGEq7H6fjys3a1oAyV9NokIpBiphmJjY=
+X-Received: by 2002:a17:902:e94d:b0:205:2d09:9a30 with SMTP id
+ d9443c01a7336-20699acce23mr66632825ad.13.1725465039496; Wed, 04 Sep 2024
+ 08:50:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtgooHdex5gXh0tP@hovoldconsulting.com>
+References: <20240904023721.8534-1-ghanshyam1898@gmail.com> <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+In-Reply-To: <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+Date: Wed, 4 Sep 2024 21:20:02 +0530
+Message-ID: <CAG-Bmoc9NVTZgOTGTsngKCw2mCankPvwz8ywExNzFiij+2sGQA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 11:30:08AM +0200, Johan Hovold wrote:
-> On Wed, Sep 04, 2024 at 12:41:58PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Currently, dw_pcie::max_link_speed has a valid value only if the controller
-> > driver restricts the maximum link speed in the driver or if the platform
-> > does so in the devicetree using the 'max-link-speed' property.
-> > 
-> > But having the maximum supported link speed of the platform would be
-> > helpful for the vendor drivers to configure any link specific settings.
-> > So in the case of non-valid value in dw_pcie::max_link_speed, just cache
-> > the hardware default value from Link Capability register.
-> > 
-> > While at it, let's also remove the 'max_link_speed' argument to the
-> > dw_pcie_link_set_max_speed() function since the value can be retrieved
-> > within the function.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Wed, Sep 4, 2024 at 11:21=E2=80=AFAM Qu Wenruo <quwenruo.btrfs@gmx.com> =
+wrote:
+>
+>
+>
+> =E5=9C=A8 2024/9/4 12:07, Ghanshyam Agrawal =E5=86=99=E9=81=93:
+> > Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+> > Closes:https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
+> > Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
 > > ---
-> >  drivers/pci/controller/dwc/pcie-designware.c | 18 ++++++++++++++----
-> >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index 86c49ba097c6..0704853daa85 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -687,16 +687,27 @@ void dw_pcie_upconfig_setup(struct dw_pcie *pci)
-> >  }
-> >  EXPORT_SYMBOL_GPL(dw_pcie_upconfig_setup);
-> >  
-> > -static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 max_link_speed)
-> > +static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
-> >  {
-> >  	u32 cap, ctrl2, link_speed;
-> >  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> >  
-> >  	cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+> >   fs/btrfs/ref-verify.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+> > index 9522a8b79d22..4e98ddf5e8df 100644
+> > --- a/fs/btrfs/ref-verify.c
+> > +++ b/fs/btrfs/ref-verify.c
+> > @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *fs=
+_info)
+> >               return -ENOMEM;
+> >
+> >       extent_root =3D btrfs_extent_root(fs_info, 0);
+> > +     if (!extent_root)
+> > +             return -EIO;
 > > +
-> > +	/*
-> > +	 * Even if the platform doesn't want to limit the maximum link speed,
-> > +	 * just cache the hardware default value so that the vendor drivers can
-> > +	 * use it to do any link specific configuration.
-> > +	 */
-> > +	if (pci->max_link_speed < 0) {
-> 
-> This should be 
-> 
-> 	if (pci->max_link_speed < 1) {
-> 
+>
+> Can you reproduce the original bug and are sure it's an NULL extent tree
+> causing the problem?
 
-Well I was trying to catch the error value here because if neither driver nor
-platform limits the max link speed, this would have -EINVAL (returned by
-of_pci_get_max_link_speed()).
+The original bug can be reproduced using the c program provided by syzkalle=
+r
+https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
 
-But logically it makes sense to use 'pci->max_link_speed < 1' since anything
-below value 1 is an invalid value.
+>
+> At least a quick glance into the console output shows there is no
+> special handling like rescue=3Dibadroots to ignore extent root, nor any
+> obvious corruption in the extent tree.
 
-Will change it.
+I don't have a deep knowledge of filesystems and am unable to
+understand this. If you believe I should try to understand this part
+for working on this particular bug, please let me know. I will try to
+understand this.
+>
+> If extent root is really empty, we should error out way earlier.
 
-- Mani
+Upon studying the function call sequence, I found out that the
+variable extent_root is read for the first time at btrfs_root_node
+in fs/btrfs/ctree.c, "eb =3D rcu_dereference(root->node);" where "root"
+is the extent_root. This is where we get a null pointer error.
+>
+> Mind to explain the crash with more details?
+I have answered your questions individually. If any other details are
+needed, please let me know.
+>
+> Thanks,
+> Qu
+>
+> >       eb =3D btrfs_read_lock_root_node(extent_root);
+> >       level =3D btrfs_header_level(eb);
+> >       path->nodes[level] =3D eb;
 
-> but the patch works as-is because of the default case in the switch
-> below which falls back to PCI_EXP_LNKCAP_SLS.
-> 
-> > +		pci->max_link_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, cap);
-> > +		return;
-> > +	}
-> > +
-> >  	ctrl2 = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCTL2);
-> >  	ctrl2 &= ~PCI_EXP_LNKCTL2_TLS;
-> >  
-> > -	switch (pcie_link_speed[max_link_speed]) {
-> > +	switch (pcie_link_speed[pci->max_link_speed]) {
-> >  	case PCIE_SPEED_2_5GT:
-> >  		link_speed = PCI_EXP_LNKCTL2_TLS_2_5GT;
-> >  		break;
-> 
-> > @@ -1058,8 +1069,7 @@ void dw_pcie_setup(struct dw_pcie *pci)
-> >  {
-> >  	u32 val;
-> >  
-> > -	if (pci->max_link_speed > 0)
-> > -		dw_pcie_link_set_max_speed(pci, pci->max_link_speed);
-> > +	dw_pcie_link_set_max_speed(pci);
-> 
-> With the above fixed:
-> 
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Thank you very much for reviewing my patch. I look forward to hearing
+back from you.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks & Regards,
+Ghanshyam Agrawal
 
