@@ -1,148 +1,168 @@
-Return-Path: <linux-kernel+bounces-314328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7999696B1EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFB096B1D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6041C2113A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:38:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625F91C25638
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995E913A88D;
-	Wed,  4 Sep 2024 06:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE60213EFF3;
+	Wed,  4 Sep 2024 06:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bNGV+pWW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lL8gap5n"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7090612C549
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D379513E043;
+	Wed,  4 Sep 2024 06:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431877; cv=none; b=P12peh/HYwzKK4jxp0vLHM1a7ofREnsk0cH+UIN4TGqBjk0Lh1uJOQAVehKhUtsXQkChQ4Tvv0GNSERE3UQJhwhp7LaunOOjJDPxZQHiAyVCVVIGVwOg8sOLV04k1+s4NbsGbJhkYDW6I7V/y7EMUorI/GndP+j5Z/B8P0867mQ=
+	t=1725431702; cv=none; b=KrSXWUuFLs7LmHlGs1sC1tTk5uboqoo7XdaWME+btaZRweItCJXKjRKu0Nvsqw9R3iwn2/QDHwd/RzQXnPWmO5fk4EBXdoSqu3cvGd5LsVMCiFeHEEqxkn9nQXJ6ukJBsI4w432gboLXg1FNAu1mF3oQThDGZeKYRbVa7rFuQxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431877; c=relaxed/simple;
-	bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kRaR/Lco/5Zqh+PviAJd9/YEMAoYiznDf/3d5Hy9k3PauCF5pPDg5w6IgAQoJ2PGzoewYSEF44eZf9sVZNMFHUgG7W7GgIujhCq7KUyzKEozm0y7qlA9arj7y+oQeQ1Nl1om2okp8zei+WA72R2VY3jLO5woQ90eSr4dNzR0SIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bNGV+pWW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725431874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
-	b=bNGV+pWWw5PkKRWLvaQaOub1/rNrcRy/NaMVuKzOWWczPKzQrjOuktJ75k+vFVqMxUC1Jm
-	2WwvdF/yjZAXOlUZy1mgeJKW1S1qkNyhO+/r3l/MH6Hp8DQsfa8AXOKd4eZKF5XrEi4oaO
-	+DetWoRHaQ1gMcwNq3FVOic3oVugvb4=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-444-z5DfV5WyONaIYm-DGDhX8Q-1; Wed, 04 Sep 2024 02:37:53 -0400
-X-MC-Unique: z5DfV5WyONaIYm-DGDhX8Q-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7143af9568bso5352495b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:37:53 -0700 (PDT)
+	s=arc-20240116; t=1725431702; c=relaxed/simple;
+	bh=pzWt2YVoXo96ojHGFXPqlS+NJRYI//tHEp9TugmINsk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TLV+t0scu5/xx8qLVaLUjMT2ICV25UMD5MTd9lVaXOTmetIDobTtYG8KEtpjpmR0Kab5Sg021KBEzof7kF1EGzVl7hzI4XHkZ76j6d2dtRrMIMgbBAE4EJiP4CNAoIsHT3pQMnJBXEYdWAZ+CWmeA0EKLUEVA3BNwyDU+BDSV44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lL8gap5n; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d88c0f8e79so3111116a91.3;
+        Tue, 03 Sep 2024 23:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725431700; x=1726036500; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sf1py8tvSyI6/QZWxA+E1HrMmuG/sHo9zPGhA+HbV5s=;
+        b=lL8gap5nib6PrG1qZ2gQGnRwTixq9Gvv0B3iU4b4QjpxgV5oBLfpnGlSvXWJCghjjR
+         wazwSz/+934HtD7PhTsmSVx/iTJURn7DMnow/DSWR8wvwEdQvY/3T7ItIEO8WOZLOjiq
+         qDShPLhlIK89io90I4nNVP+ahcYcu1qzdyt0Q9fT948pggA92lTKhdJdCxbmRiipfP33
+         +KTw9uQo9bikCU4UUXbxTPPhgb2TUd6HHuSPTIaCvonrbTYvlOT+EjStlyNJuIMAyGto
+         VyZgl7U6ylt7e95tdePcCAheI+A58dE6FPmCOBGlxU+fSWhB4OU1cqN0pfnnvjeWVsor
+         C2JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725431692; x=1726036492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725431700; x=1726036500;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
-        b=GxBskCp/kqOWYs3usXt/MjcdbarWS+g+QcOQMgahw3FlTH5cbCbR5VCAbm+6HndOv6
-         H1SwoJYJCFNFsEa10aYCADQsDB0q7NkBw5/X73H9qobOPGX4UZeASNQye/VGN6PWJIzB
-         hqYmMbeGehZUSfKf4WmeiCKEysfIPljhpkAYHkEOHxwVyNElkMKB+/0rL1H1yvb5rVrT
-         xfJ/+AAZYrFk8Lo2yOpn27QFuMFWZDPFMXzjSdjpTQyrqx8+bIoj2VE6bh4tcpCsSxeT
-         S+qfv2hrRmSyMUmKsbEvGvctRaT8LHSolnO0+UEyHeVbFY5CbmG0cGci+Mu07cjQpHCV
-         RNeg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9rbu+x0ZI+t7xv1aRwQkm9nvRuddiOhNY2LHg4lCJ3/NcSi6dEhlBuCXRASI+8nxoZwvp2+dg0esroYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuUk9084B+T1TL8r1ux8m8ltVNuliitM1I1u4I6g4A4/Lpw2e4
-	AUyEvKjBJ1w8lx+otdnQyJDps1eP/VmUBIu3jMW3Qdunt+JVEwPNRjgo3zaeckRXsx1e1mc7W8a
-	QOQKu1HExSW5iIYMbtRtd3Xwv4m4H5l0+km610E06EIQ7D+5Iobqn6PaxYNLEooE5huZkVKLPqX
-	J8QeHxeAFFVJdYsDoAq29fiF4SOvHknUk8uMf6
-X-Received: by 2002:a05:6a21:1706:b0:1c2:8f50:b450 with SMTP id adf61e73a8af0-1cece502d52mr12321290637.18.1725431692598;
-        Tue, 03 Sep 2024 23:34:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELt1GC768sylfd9cTaGwknyMDJpOCJXkmNL6NeitKqFXTFJKiRjDvxPjGsHsp/dkBeUZBjUFKz563x6JqMgvo=
-X-Received: by 2002:a05:6a21:1706:b0:1c2:8f50:b450 with SMTP id
- adf61e73a8af0-1cece502d52mr12321276637.18.1725431691959; Tue, 03 Sep 2024
- 23:34:51 -0700 (PDT)
+        bh=sf1py8tvSyI6/QZWxA+E1HrMmuG/sHo9zPGhA+HbV5s=;
+        b=lGBmVYLgC7Sq2rsyUsASxAetSS+goRwut8hGLSMwGHUMYxz/QYM1zSBHElFsoWDFCb
+         ApXWVko43tEuSgVeJ6PxoFrc2kdkXYtwUD6RUA6soVs0UEElHDkEjupfGzu0TCLLe1j9
+         2iOQb72ziuvAt5at9zR1Sccao0/U2i4Iod6aSVtgyDlB4Nw4eWCwj5xZ4max6zSaLoYe
+         U/IJJwE++PVibJDoxTzwdpnQN4p3g7y4HSCNCPWNm2k/yuHzTHBqEI/9SawmT0C9H4UL
+         sQpEFm5kSm4iamhohi1Ug2HyRxT65I5VSS4x4fPRBq/IvOLLipL/CVsHasd1L/WNxlr5
+         qJ0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVpYHBpTk/PWGyRIubHgR8Y/wtiqb8cP0lwKxa6IaQgfftfl/fH6iMEZ5U7YRrBLxobRQiNbE9H2uogBgYySg==@vger.kernel.org, AJvYcCX7F0BBncOkSDoQrcUVJceelY5BkypmQ35jFHeM2EpZ4HKJNVStLCzkGOXkd7RPPxBtCcfWwK/Spc3rlgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbG70z3Xpvx4E8n5u2+FaQr7nd22aJHsKpaa0cWJeVxVueT37s
+	aj4mnJLUioUTQlHWML1ce4hbUxo0HJoNjE4ta5h25jinOaGCww7z
+X-Google-Smtp-Source: AGHT+IFSvjO5aIt45xbi4X/NYxH96k7WWgc2nubxFDRF6dFP58dT4skdOPLx9l622UIIfapkdrdKsw==
+X-Received: by 2002:a17:90a:c7d0:b0:2d8:a672:186d with SMTP id 98e67ed59e1d1-2da74885568mr4085269a91.20.1725431699888;
+        Tue, 03 Sep 2024 23:34:59 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8eb9ccbb9sm4989837a91.37.2024.09.03.23.34.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2024 23:34:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
- <20240903171514.201569-3-carlos.bilbao.osdev@gmail.com> <CACGkMEvHU0VnOEZbVnEr1SvmOF5PhMtKk=M2o7Wwq-DUO9p7Uw@mail.gmail.com>
- <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com>
-In-Reply-To: <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 4 Sep 2024 14:34:41 +0800
-Message-ID: <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com, shannon.nelson@amd.com, 
-	sashal@kernel.org, alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr, 
-	steven.sistare@oracle.com, bilbao@vt.edu, xuanzhuo@linux.alibaba.com, 
-	johnah.palmer@oracle.com, eperezma@redhat.com, cratiu@nvidia.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Carlos Bilbao <cbilbao@digitalocean.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <20240904044807.nnfqlku5hnq5sx3m@treble>
+Date: Wed, 4 Sep 2024 14:34:44 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <AAD198C9-210E-4E31-8FD7-270C39A974A8@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <20240904044807.nnfqlku5hnq5sx3m@treble>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Wed, Sep 4, 2024 at 1:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com>=
- wrote:
->
->
->
-> On 04.09.24 05:38, Jason Wang wrote:
-> > On Wed, Sep 4, 2024 at 1:15=E2=80=AFAM Carlos Bilbao
-> > <carlos.bilbao.osdev@gmail.com> wrote:
-> >>
-> >> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>
-> >> Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementations
-> >> with vdpa_config_ops->set_config(). This is needed per virtio spec
-> >> requirements; virtio-spec v3.1 Sec 5.1.4 states that "All of the devic=
-e
-> >> configuration fields are read-only for the driver."
-> >>
-> >> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> >
-> > Note that only the config space of the modern device is read only. So
-> > it should be fine to remove vp_vdpa which only works for modern
-> > devices.
-> Just out of curiosity: how will this work for devices that are not
-> v1.3 compliant but are v1.2 compliant?
 
-Devices don't know the version of the spec, it works with features.
-For example, most devices mandate ACCESS_PLATFORM which implies a
-mandatory VERSION_1. So they are modern devices.
 
-> Or is this true of all devices
-> except eni?
+> On Sep 4, 2024, at 12:48, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>=20
+> On Wed, Aug 28, 2024 at 10:23:50AM +0800, Wardenjohn wrote:
+>> One system may contains more than one livepatch module. We can see
+>> which patch is enabled. If some patches applied to one system
+>> modifing the same function, livepatch will use the function enabled
+>> on top of the function stack. However, we can not excatly know
+>> which function of which patch is now enabling.
+>>=20
+>> This patch introduce one sysfs attribute of "using" to klp_func.
+>> For example, if there are serval patches  make changes to function
+>> "meminfo_proc_show", the attribute "enabled" of all the patch is 1.
+>> With this attribute, we can easily know the version enabling belongs
+>> to which patch.
+>>=20
+>> The "using" is set as three state. 0 is disabled, it means that this
+>> version of function is not used. 1 is running, it means that this
+>> version of function is now running. -1 is unknown, it means that
+>> this version of function is under transition, some task is still
+>> chaning their running version of this function.
+>=20
+> I'm missing how this is actually useful in the real world.  It feels
+> like a solution in search of a problem.  And it adds significant
+> maintenance burden.  Why?
+>=20
+> Do you not have any control over what order your patches are applied?
+> If not, that sounds dangerous and you have much bigger problems.
+>=20
+> This "problem" needs to be managed in user space.
+>=20
+> --=20
+> Josh
 
-ENI depends on the virtio-pci legacy library, so we know it's a legacy
-device implementation which allows mac address setting via config
-space.
+Hi, Josh.
 
-Thanks
+First, introducing feature "using" is just a state of one klp_function =
+is using or not in the system.
+I think this state will not bring significant maintenance burden, right?
 
->
-> Thanks,
-> Dragos
-> >
-> > And for eni, it is a legacy only device, so we should not move the
-> > set_config there.
-> >
-> > For the rest, we need the acks for those maintainers.
-> >
-> > Thanks
-> >
->
+And then, this feature can tell user that which function is now running =
+in this system. As we know, livepatch enable many patches for one =
+function, and the stack top function of target function is the "using" =
+function. Here will bring us some questions:=20
+1. Since we patch some patches to one function, which version of this =
+function A is my system exactly now using?=20
+2. One patch may contains many function fixes, the "using" version of =
+target function belongs to which patch now?=20
+Livepatch now cannot tell us this information, although livepatch can do =
+it.
+
+In the scenario where multiple people work together to maintain the same =
+system, or a long time running system, the patch sets will inevitably be =
+cumulative. I think kernel can maintain and tell user this most accurate =
+information by one sysfs interface.
+
+A real case I met have been shown in the previous mail to explain the =
+use in real world.
+
+At the process I introduce this feature, we found that the function of =
+klp_find_ops can be optimized. If we can move klp_ops structure into =
+klp_func, we don't need to maintain one global list again. And if we =
+want to find an klp_ops, we just need to get the klp_func (which we will =
+already have). This will be a nice efficiency improvement.
+
+Regards.
+Wardenjohn.
+
+
+
 
 
