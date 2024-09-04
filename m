@@ -1,191 +1,63 @@
-Return-Path: <linux-kernel+bounces-314174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B6B96AFB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:15:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF6496AFBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824D01F2531F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099A61F24E9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CC36F067;
-	Wed,  4 Sep 2024 04:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ntcj8PtI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139306F2E0;
+	Wed,  4 Sep 2024 04:15:29 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585292E401;
-	Wed,  4 Sep 2024 04:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BEF17C64;
+	Wed,  4 Sep 2024 04:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725423328; cv=none; b=KNrrNloFglNxWx44PlkHVxyjaQrNlqb7HxWyPz8dax1a8pzdhNVzmQrjdwH7QEVs3I0coLOFqf5EiXPZgOZHTH0CtyeGhEWPDsbktFNCAWrodIpd+5A3hj543qCYTDk3gtqCfohBT+L39SDeTOnJDQ3Qm1y0tiec+0P6kKdCjzQ=
+	t=1725423328; cv=none; b=sDxO5Eb7IyEFwH6SLIqMBVmHvrLCehIuMOefJZ/F/vzUnhqNiDSuURgSSlpl+4rKfFa7TBdnFMfn5vrofVg2q/zKPx9sX08VjA+sHlootAnGAx2yr0BCjzVTzKtDFmoXSVZX5I+TS39jLU0FKrK2CxOipzv3HShw6/YlJFnLLFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725423328; c=relaxed/simple;
-	bh=04cXRNVhzxjuM3K45RH8+pyf4XyvBDyMQBZtKwITLPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JpTd2xKdlud6Dmo/1jh9eXJJhEuESl1AikUyh3keczjqcf9La4luCzRdXrlk2P+b7pST3OVMNzRyIh91ES91TUocqEBng3g0U3g6NN++9cfUq6zLTvJ6AXI4jtXkEgvec4LGesgX+yycgaBlXrgczbKuO4Th57VR5ngFcKggnqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ntcj8PtI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LwKZV028269;
-	Wed, 4 Sep 2024 04:15:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7OwV9q54UMJ6Ji6Evf3mn018rjPxWeTlzaxGAmoj8x4=; b=ntcj8PtIJErq78mW
-	PjFcNJ3pD55ac5x/QQL9X3Lxi4x6Cdn29M9sPh+QIY1YKH3Y1zZBubaMGvS0eP8J
-	DnEhm2y7QnWSHv42I7tsiM8OTVbTB1y8isFB+1G11Sz2E/Ok83tLpL6vh22vpUVw
-	LU9jDv2qTU6Z5KEb6Z67+r6EjV7BTCsS3GXy3LV1Xx/5ilpkmVMFNb6MH1LqfCwd
-	JOgaID4b1qC465TxRTSX/ghUoR/PAwfxYo8hVWBCqr6vYhDC29L2eczSDUEvRfpK
-	dH0S+rzWGuvl02H+jcIJ9dWIPDNv4ePhLidAfbZxrfmy2KX/Xu1I6d8kWWXUZcYb
-	9JCi1w==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxsfwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 04:15:15 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4844FEtW019077
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 04:15:14 GMT
-Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 21:15:08 -0700
-Message-ID: <a4b30cf0-3432-475c-9266-51b79780a666@quicinc.com>
-Date: Wed, 4 Sep 2024 09:45:05 +0530
+	bh=J2aRFA2pMhcoLz++9eY15O2uQJaPDBQeqT83I3XGURc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeLi4w4XdXG6H9rGnHC/Ii6W/h20HIIEZWbra3lDmLRfRSg08e/+GE6a3QCge8Zr1gjy1qFAE4259+QQg/7EmZK69k9ZCMZRSH1IBCCkKhYOk+BE8B5bpGVZzHIvxAa/F+TbAZNaDpkRYxmvbe17MrEdgo8kUSQk/tKUIu2cJto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C25DA68AA6; Wed,  4 Sep 2024 06:15:22 +0200 (CEST)
+Date: Wed, 4 Sep 2024 06:15:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sean Anderson <sean.anderson@linux.dev>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dma: Trace API
+Message-ID: <20240904041522.GA13349@lst.de>
+References: <20240826203240.2234615-1-sean.anderson@linux.dev> <20240829041912.GB4408@lst.de> <4c2c6b24-aee1-495f-ab47-662e1e818f4b@linux.dev> <20240903072512.GA1521@lst.de> <20240903092154.5f0bfafe@gandalf.local.home> <d8936bfc-1ea3-4142-8035-0dfb8e491c31@linux.dev> <20240903205322.69d7638c@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Add Qualcomm QCS8300 DT
- bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>,
-        Danila Tikhonov
-	<danila@jiaxyga.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        "Vladimir
- Lypak" <vladimir.lypak@gmail.com>,
-        Adam Skladowski <a39.skl@gmail.com>,
-        "Sibi
- Sankar" <quic_sibis@quicinc.com>,
-        Rohit Agarwal <quic_rohiagar@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Andrew Halaney
-	<ahalaney@redhat.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
-        <quic_okukatla@quicinc.com>
-References: <20240827151622.305-1-quic_rlaggysh@quicinc.com>
- <20240827151622.305-2-quic_rlaggysh@quicinc.com>
- <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qOEMVR2bohbJmNxDGHLge5sbfItYPJtA
-X-Proofpoint-ORIG-GUID: qOEMVR2bohbJmNxDGHLge5sbfItYPJtA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_02,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1011 suspectscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2409040029
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903205322.69d7638c@gandalf.local.home>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Tue, Sep 03, 2024 at 08:53:22PM -0400, Steven Rostedt wrote:
+> This should do. I could get it into the next minor version.
 
-On 8/27/2024 9:02 PM, Krzysztof Kozlowski wrote:
-> On 27/08/2024 17:16, Raviteja Laggyshetty wrote:
->> The Qualcomm QCS8300 SoC has several bus fabrics that could be
->> controlled and tuned dynamically according to the bandwidth demand.
->>
->> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> ---
-> A nit, subject: drop second/last, redundant "DT bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->
-> And you do not add "Qualcomm QCS8300" here. QCS8300 is a SoC. You add
-> here specific device, right?
-Agreed, QCS8300 should be enough, I will update the commit text, addressing the comments.
->
->>  .../interconnect/qcom,qcs8300-rpmh.yaml       |  50 +++++
->>  .../interconnect/qcom,qcs8300-rpmh.h          | 189 ++++++++++++++++++
->>  2 files changed, 239 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
->>  create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
->>
->> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
->> new file mode 100644
->> index 000000000000..ac75eeb6a6b4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
->> @@ -0,0 +1,50 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/interconnect/qcom,qcs8300-rpmh.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Technologies, Inc. RPMh Network-On-Chip Interconnect on QCS8300
->> +
->> +maintainers:
->> +  - Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> +
->> +description: |
->> +  RPMh interconnect providers support system bandwidth requirements through
->> +  RPMh hardware accelerators known as Bus Clock Manager (BCM).
->> +
->> +  See also:: include/dt-bindings/interconnect/qcom,qcs8300.h
-> Just one ':'
-Will address this in next revision of patch.
->
->> +required:
->> +  - compatible
->> +
->> +allOf:
->> +  - $ref: qcom,rpmh-common.yaml#
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    gem_noc: interconnect-gem-noc {
->> +        compatible = "qcom,qcs8300-gem-noc";
-> Hm, no reg?
->
-> Where is your DTS? Please follow standard upstream process, which means
-> you send DTS separately. Your internal guideline already should cover
-> that. If it does not, please look at upstreaming of SM8650, update your
-> guideline and then follow SM8650 process. That way we can verify that
-> what you send is true.
-
-Thanks for the review !
-
-I will share the link to DTSi change and will update the yaml in the next revision.
-
-> Best regards,
-> Krzysztof
-
-Thanks,
-
-Raviteja.
-
+Sean, is that enough for your use case?  Otherwise I'd keep the
+unsigned long long for the _sg array, and use the proper types
+elsewhere.
 
