@@ -1,277 +1,97 @@
-Return-Path: <linux-kernel+bounces-314592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B2696B57A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:51:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8140E96B56C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9349E286927
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357841F2469E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB071CCB5B;
-	Wed,  4 Sep 2024 08:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3221CCB26;
+	Wed,  4 Sep 2024 08:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULV4DK35"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="XI+3BHKk"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D58192580
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4116F824;
+	Wed,  4 Sep 2024 08:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725439860; cv=none; b=Xk90I1V85W4WQ8NiMmFAhGkBRLXb4lKOwh94urI9pQq84i222ilBnSrXE6E5JK1yTchzGqamfH+SLyyIMmy9y3DA4B5CiVEza9UeK91CHA7/W6TnR8tJCOvEpJNuBHkYMjISjHlDRiK1E9s95V4oipG4ceI5hLPJDpymnekUNZw=
+	t=1725439764; cv=none; b=VD9UeXSnPvh6Kj75HdLUJgEgRq2QU6QiqIQYiNsB7BTnnpfHiNxC4MVeV0KFDiS0quU/f9yqTJHWdqdVVRVe+zmBpz0DiDoMRtYCEzwf2g1lu3h6JDuyxAEocAwm7xc0WvE+WVDtFhf0PcDxXIMtG5ShVcTdvzpgN5NtySxdcD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725439860; c=relaxed/simple;
-	bh=ZeQnII5iOsSaAN/382NYIE5N5wtpBoreUVnZdAGV/sU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MseItcjyngTWRPtkWs2Y0Yy9IRgbDvBLBR3e4j8g+39CB/chUJ8R76SxurWD3dnimViOKeZjsdNSmby/yh/HZ4W3TxQlLQAe2cUmjFtYJv2Qfd/CmwF5DXH1tGVYO5V4XCWUvwlYnfir62+CYyzxvr/llMOBvr60owNdjVG1bk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULV4DK35; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so43036285e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725439857; x=1726044657; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAoF/sBQT05+7maWlE4+kjdcdbz6vsNUh8P5QuhJkOk=;
-        b=ULV4DK35fCyo/4LvEJi+XYSr7ea19P82r+LuV1s8b4+TBMw7+Qx+jALtpsmayPlMRr
-         EPlzGZmRgKaDaBVJc8OEfkEdVc/WevGv0IMqXKeQGRxbDLMLs/9QaeK6vzyWkcnWGLy1
-         +lsHbWhTgHD2rTIRWzOt4KK4f1oL6X4+JLC6AhdFkxHs5zhoWiNiDHRBcS08heiKikZp
-         hcRhIjNzFoJ4F/lcAJAifIcj4yBQjbqvqq5s9DVeh2su7BTuRY28oRir64LqOl1m0OiW
-         4RrDxVJGEM9Q07LuBP7U5fDZeJpFoTJ1GCJjUcnjmuuiL+tE3yXC/3mJhH9fUspGXpLC
-         9REA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725439857; x=1726044657;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAoF/sBQT05+7maWlE4+kjdcdbz6vsNUh8P5QuhJkOk=;
-        b=RzGb5tRBKoP0N1FQL+zKjriJxGLk9DN/Prl6K+IEHgdIouObktJhixbNoVrHv4gJru
-         vSyc0bH21eXF6QYvLVEdjOjvU3C3Roz19l7KsqzMu9aGl+rtBU0Ob3O49jCgxTLUq/kM
-         GqudSf23OEawUvCX6waArDeMJbut1AeqODVZWzw6s8zG5MwRzEfQW/4IAh4j5XJ6l9F1
-         xB0z/PLOHapBGy8sEo5iEzMnWQ28QnUPS6IDx/go795hDPP4v6pExRzIgL4xPMsxYgBW
-         i8EieWjLYArlidvq3qVUqm6HYChFjEjLbhRMfgCK3h2lsXLMiRIIyVBTmBXvn0viEFTj
-         b4VA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8gLpkZjsMFpAzi40vNhw/egAGBRA0hkwTJeuDGh2+NGux7UPhyfejOKSMrr0dPgSDFiyLdhJe4FKgdek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze9e+6VrnjMx4UvS0UtyBN8HWrZaKiQZdceLDYuHeSaMCZMbPu
-	jNYAfzMQMdpbG7/k7vuSKR24LWs9Fnhuh2wcfv337NGzhs1lwiBB
-X-Google-Smtp-Source: AGHT+IH+6NmnJHY66jzsgeQKrM8jmVMhcXpIeSKAYiGv2Ap/H1A/xxtaUNQPohLH9NiBwVWJRODIJw==
-X-Received: by 2002:a05:600c:3c90:b0:428:1a48:d5cf with SMTP id 5b1f17b1804b1-42c8de798b4mr30025395e9.9.1725439856577;
-        Wed, 04 Sep 2024 01:50:56 -0700 (PDT)
-Received: from [192.168.0.20] ([148.56.230.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ca42726fsm8157781f8f.9.2024.09.04.01.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 01:50:55 -0700 (PDT)
-Message-ID: <1487d7e3-184d-4832-bf6f-7fce8e14db5d@gmail.com>
-Date: Wed, 4 Sep 2024 10:50:54 +0200
+	s=arc-20240116; t=1725439764; c=relaxed/simple;
+	bh=Nc1emj1+sVtZbo4IHO9UaqkbgItQAQDWG19sR8DLfgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UBGRl2sB3dIG4oeRBZaV4aGW16Di7cZfNV6ync/5TBSCCGJeIQdpoir7Up83vExSkkUWmLjiHOyaQlfwONedS6nAyB2B6e8R650xACdzOcYhp/ptwN8GxRTrB/lJqPcD5F2Zebo6a+5onk/be+LKXJT8qD8SIEx7KQW6EpCenMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=XI+3BHKk; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=64Jy7Anr49mmXZNGV3iO4Xkyk9gN0bNX/x2F4h/amIA=; b=XI+3BHKkmeSYSxudJttkjn+QY6
+	0lgJBVa1nlNtFNhR+YTCrDl8ZAI+5S3SdHjveyAcb6bYLic7L2rQjEs0w7ZiCJEECh3IB2i4h1et/
+	Oy9dGhztMKznM9Xu8t6vmjxZBvO9vuL7ZL3sh0uvKAYHnIJK+YsxkHpnYlcFB2ABh36nQNkXg8DVC
+	+Wh1SMHzCVZcJzjrZ31V3E073ho0JuSs3Ok1Dsj4vkSkgJePSe5izJQrKlyv3YQyLiNa9JEhpxM9X
+	K76Sdl+OhPnw5STBApwkKNzT385Vt96fb6CBdlxVI5v4g+8fsob2CpSBN7k5neckjtwvUpWQphIyc
+	GqW+39iA==;
+Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sllhQ-0006YS-QX; Wed, 04 Sep 2024 10:49:12 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>,
+ David Jander <david.jander@protonic.nl>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
+ David Jander <david@protonic.nl>
+Subject:
+ Re: [PATCH can-next v5 02/20] arm64: dts: rockchip: add CAN-FD controller
+ nodes to rk3568
+Date: Wed, 04 Sep 2024 10:50:57 +0200
+Message-ID: <3673727.WbyNdk4fJJ@diego>
+In-Reply-To: <20240904-rockchip-canfd-v5-2-8ae22bcb27cc@pengutronix.de>
+References:
+ <20240904-rockchip-canfd-v5-0-8ae22bcb27cc@pengutronix.de>
+ <20240904-rockchip-canfd-v5-2-8ae22bcb27cc@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
-To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com,
- shuijing.li@mediatek.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240903121028.20689-1-liankun.yang@mediatek.com>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; keydata=
- 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
-In-Reply-To: <20240903121028.20689-1-liankun.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 03/09/2024 14:09, Liankun Yang wrote:
-> Update efuse data for MT8188 displayport.
+Am Mittwoch, 4. September 2024, 10:12:46 CEST schrieb Marc Kleine-Budde:
+> From: David Jander <david@protonic.nl>
 > 
-> The DP monitor can not display when DUT connected to USB-c to DP dongle.
-> Analysis view is invalid DP efuse data.
+> Add nodes to the rk3568 devicetree to support the CAN-FD controllers.
 > 
-> Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
-> 
+> Signed-off-by: David Jander <david@protonic.nl>
+> Tested-by: Alibek Omarov <a1ba.omarov@gmail.com>
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-Nit: no new-line here :)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-> ---
-> Changes in V3:
-> - Add Fixes tag.
-> - Update the commit title.
-> - Update the commit description.
-> - Update change log position in commit message.
 
-Thanks, you could have added my Reviewed-by tag, as the feedback I gave was 
-minimal and you fixed that in the submission.
-
-Regards,
-Matthias
-
-> Per suggestion from the previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/
-> 20240902133736.16461-1-liankun.yang@mediatek.com/
-> 
->   drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
->   1 file changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-> index d8796a904eca..f2bee617f063 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-> @@ -145,6 +145,89 @@ struct mtk_dp_data {
->   	u16 audio_m_div2_bit;
->   };
->   
-> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
-> +	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
-> +		.idx = 0,
-> +		.shift = 10,
-> +		.mask = 0x1f,
-> +		.min_val = 1,
-> +		.max_val = 0x1e,
-> +		.default_val = 0xf,
-> +	},
-> +	[MTK_DP_CAL_CLKTX_IMPSE] = {
-> +		.idx = 0,
-> +		.shift = 15,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
-> +		.idx = 1,
-> +		.shift = 0,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
-> +		.idx = 1,
-> +		.shift = 8,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
-> +		.idx = 1,
-> +		.shift = 16,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
-> +		.idx = 1,
-> +		.shift = 24,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
-> +		.idx = 1,
-> +		.shift = 4,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
-> +		.idx = 1,
-> +		.shift = 12,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
-> +		.idx = 1,
-> +		.shift = 20,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
-> +		.idx = 1,
-> +		.shift = 28,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +};
-> +
->   static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
->   	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
->   		.idx = 3,
-> @@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
->   static const struct mtk_dp_data mt8188_dp_data = {
->   	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
->   	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
-> -	.efuse_fmt = mt8195_dp_efuse_fmt,
-> +	.efuse_fmt = mt8188_dp_efuse_fmt,
->   	.audio_supported = true,
->   	.audio_pkt_in_hblank_area = true,
->   	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
 
