@@ -1,297 +1,281 @@
-Return-Path: <linux-kernel+bounces-315678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A46696C5B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7590396C5BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C92251F25AFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:47:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E418AB22BEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292741DFE1A;
-	Wed,  4 Sep 2024 17:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8E1E1A32;
+	Wed,  4 Sep 2024 17:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ehwnOzR7"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pucGto3l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF5C1DEFF2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579D21D88BF;
+	Wed,  4 Sep 2024 17:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472047; cv=none; b=alcN10kHhYGRtm7nCcgaxTXWgJJfPTcJHiiYgJZ/I7gMwKmZkPzI8Ws5WXXzf1aPO88x+OXFxoafN+4cq+XbG/WlCrKfcjKVjRLqikusZnd+DCfQoAQTbhbdjKVM5c6TpXgUDE8IqyULQTIDFGSrFrTcsS/qsXMwtEWS1QaLfl0=
+	t=1725472068; cv=none; b=qUlRX+YQwqWtWj9Ic2kqUVbcwOaSbua2J5bWyKoBQ83v5VNVp1YjSD1FEOcSVbcSEfh/iTdeffsFBPY7as3S5ZqmfWFIPaAZcx19aMtdWpabVaf+ShoC2sf6VcTKG2cATmLoLRQcgZvU9gXZ95EijZbKoVlRJbw0qyTw4CmVpZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472047; c=relaxed/simple;
-	bh=FrCTyMpDj3SCWGRs519+WiyBPOW5cdUM3QKEcU8omnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZYqm/9kJqQ2Dl5Wy+NrRWaUr0fwrH95nl1t+Du+t7ECcyFCP8n6HXbdmxqEe77mdabuYiXdiPEISMOZWTzuqFSW/HXMTB67Ve7WSUFq2nDHk7KslQDZekQpt/DkqIiamBOfionZbE0m7jMnhbMT/YDwsmvpF6zGNJRhXhH2KmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=ehwnOzR7; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so49041755e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1725472042; x=1726076842; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8g0+DHUE+OUpJrZw/tw/EuKm9P0V302ne/WHUmgYLGs=;
-        b=ehwnOzR7Jle902IdSbU3GjPx6Oicy5WtIc4RnR+WfqyGj3xpYdVIKGSArDwerI4J/C
-         ftudHCHp0Mm/kn2ZgSg8vHvkCI1FQe3T48no7IsQ/4ej0QioxgNCy/nUchc7gvwa+xq1
-         1EKRt56kmeZsW2lcDkvRYV5R/YVUHLfnCuhA8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472042; x=1726076842;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8g0+DHUE+OUpJrZw/tw/EuKm9P0V302ne/WHUmgYLGs=;
-        b=nK7uCzk3qD0mM2ZA38YIWdt5w9WJy+aiJoY9bx9epDLUa0mxtfk+e6OjfyuVaEYEAT
-         EeghAQZ1RNk0lkte1pF7tNOA31JqNxcaGFT+E3kK3IlG3hiqAwpDHDLdp7veYlYqJvN2
-         30nuRzRvY7XI9HDaz3GFSQhoWgnXdAP8SU8egLnrM1s9TJc1U3AlhXcMvK6At+THeFSf
-         pSqkQGYbUSB2B8nuZeRYsy5pohX4N1FRCeTcXZc2iMEVifY0VXcMoJ0obfgHBqv9Pq4w
-         zLS0/U9lsWs883dxHoKhr/CyWIai4ZoO9cjrRON+7tdMDQFThnDcb09ZUjYYxGaKdJXI
-         Ng/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXHnUzdi+RX4LYuCov+TtXvMuUvMGM75H8aFgGF32XQoLYXBhveEz84xung4370HMTRQlLM3zQJ7MuFt2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy+gJxiz+SLBIa46HI414As9SA28Sw5Sruyl+VsxHkEXZVuIJu
-	WDi5+ZIPVPmSa8eA6xwoqkoZCM4Um+GsVMXLh9OIhE+/djbwDTHrL3kgfV5mVNE=
-X-Google-Smtp-Source: AGHT+IG9N7mF2lwL90P0lf9F2pLe6fmACORF/uZLvQdUsO9j+qwCmQXHTNh6Ppj1N5/V+kkq7nUj7A==
-X-Received: by 2002:adf:e406:0:b0:374:c1c5:43ca with SMTP id ffacd0b85a97d-374c1c54c23mr11008410f8f.32.1725472042097;
-        Wed, 04 Sep 2024 10:47:22 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ce8bbeacsm7686756f8f.92.2024.09.04.10.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 10:47:21 -0700 (PDT)
-Date: Wed, 4 Sep 2024 19:47:19 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Luben Tuikov <ltuikov89@gmail.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>
-Subject: Re: [RFC PATCH] drm/sched: Fix teardown leaks with waitqueue
-Message-ID: <ZtidJ8S9THvzkQ-6@phenom.ffwll.local>
-Mail-Followup-To: Philipp Stanner <pstanner@redhat.com>,
-	Luben Tuikov <ltuikov89@gmail.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>
-References: <20240903094446.29797-2-pstanner@redhat.com>
+	s=arc-20240116; t=1725472068; c=relaxed/simple;
+	bh=JIFxZElsjBlrrcNLTSikMQZRzfEJoNSRcxA5VX2JZ2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aJAFpqHYYVd9VUbVi6RHg0rllIVlezjAge7OAfGUt/uHqth0e8qwOBUrbjtjGto2Ddp4aDGG0wlF7dNT4zt0JiUZKyzTaGUfOg6TSmtusULtX7NZ1kopSXV3eoj9illrmPYqiUxHelFGoqL/m7jCbSSskwWPT48Pzjz6dsdbvuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pucGto3l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484BSgSS003593;
+	Wed, 4 Sep 2024 17:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qZQnCnyfSNwaoiRWrBhYJ06WGShR2EB7KQmdAo5/+YY=; b=pucGto3lCqkUWCXl
+	V8WVhyNZTi6dz+ghjdudKLGcT+weQzqhfJ3tR5f1Z4CH8NQKr3IQCkvWs1VC42Ox
+	Le5swwmozrzUcHyo+8qFn/HV6W4p1X2OvUBmC1A/XRlu7QNVxJ1SjpyzeJK1h9W2
+	5THz24MknhHWQx6CxB+lr9pM9ddJq0eZGMjpIz+Xvig+jw/euJYudiVayaPu1ya6
+	IjEIe6eION9zlHYSSNLM9aNfzH3Z2+HZdmB1myF7OCgkQx5PyNe5RxfAvmRj6mmZ
+	8h5G8muyNE31pFYPDq9xX1NKUTcDoX7qNMf77trJe9sw4OuVEjTmYdF0rpQHrsHU
+	W0kY5A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxfbdqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 17:47:33 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484HlWCm002144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 17:47:32 GMT
+Received: from [10.50.7.129] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 10:47:23 -0700
+Message-ID: <c5c1f0bf-2f69-44ae-b54b-d69d002e3199@quicinc.com>
+Date: Wed, 4 Sep 2024 23:17:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903094446.29797-2-pstanner@redhat.com>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 5/6] arm64: dts: qcom: ipq5018: Add PCIe related nodes
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <p.zabel@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_nsekar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <robimarko@gmail.com>
+References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
+ <20240827045757.1101194-6-quic_srichara@quicinc.com>
+ <20240830085901.oeiuuijlvq2ydho2@thinkpad>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <20240830085901.oeiuuijlvq2ydho2@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QIgxJOTfgNCvH2OEJNI5EJz30P3lCKqI
+X-Proofpoint-ORIG-GUID: QIgxJOTfgNCvH2OEJNI5EJz30P3lCKqI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_15,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409040134
 
-On Tue, Sep 03, 2024 at 11:44:47AM +0200, Philipp Stanner wrote:
-> The GPU scheduler currently does not ensure that its pending_list is
-> empty before performing various other teardown tasks in
-> drm_sched_fini().
+
+
+On 8/30/2024 2:29 PM, Manivannan Sadhasivam wrote:
+> On Tue, Aug 27, 2024 at 10:27:56AM +0530, Sricharan R wrote:
+>> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+>>
+>> Add phy and controller nodes for a 2-lane Gen2 and
+>> 1-lane Gen2 PCIe buses.
+>>
+>> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+>> ---
+>>   [v2] Removed relocatable flags,  removed assigned-clock-rates,
+>>        fixed rest of the cosmetic comments.
+>>
+>>   arch/arm64/boot/dts/qcom/ipq5018.dtsi | 168 +++++++++++++++++++++++++-
+>>   1 file changed, 166 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>> index 7e6e2c121979..dd5d6b7ff094 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>> @@ -9,6 +9,7 @@
+>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>   #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>>   #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>>   
+>>   / {
+>>   	interrupt-parent = <&intc>;
+>> @@ -143,7 +144,33 @@ usbphy0: phy@5b000 {
+>>   			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
+>>   
+>>   			#phy-cells = <0>;
+>> +		};
+>> +
+>> +		pcie_x1phy: phy@7e000{
+>> +			compatible = "qcom,ipq5018-uniphy-pcie-gen2x1";
+>> +			reg = <0x0007e000 0x800>;
+>> +			#phy-cells = <0>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+>> +			clock-names = "pipe";
+>> +			assigned-clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+>> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
+>> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
+>> +			reset-names = "phy", "common";
+>> +			status = "disabled";
+>> +		};
+>>   
+>> +		pcie_x2phy: phy@86000{
+>> +			compatible = "qcom,ipq5018-uniphy-pcie-gen2x2";
+>> +			reg = <0x00086000 0x1000>;
+>> +			#phy-cells = <0>;
+>> +			#clock-cells = <0>;
+>> +			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+>> +			clock-names = "pipe";
+>> +			assigned-clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+>> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
+>> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
+>> +			reset-names = "phy", "common";
+>>   			status = "disabled";
+>>   		};
+>>   
+>> @@ -170,8 +197,8 @@ gcc: clock-controller@1800000 {
+>>   			reg = <0x01800000 0x80000>;
+>>   			clocks = <&xo_board_clk>,
+>>   				 <&sleep_clk>,
+>> -				 <0>,
+>> -				 <0>,
+>> +				 <&pcie_x2phy>,
+>> +				 <&pcie_x1phy>,
+>>   				 <0>,
+>>   				 <0>,
+>>   				 <0>,
+>> @@ -387,6 +414,143 @@ frame@b128000 {
+>>   				status = "disabled";
+>>   			};
+>>   		};
+>> +
+>> +		pcie0: pci@80000000 {
 > 
-> If there are still jobs in the pending_list, this is problematic because
-> after scheduler teardown, no one will call backend_ops.free_job()
-> anymore. This would, consequently, result in memory leaks.
+> pcie@
 > 
-> One way to solves this is to implement a waitqueue that drm_sched_fini()
-> blocks on until the pending_list has become empty.
+  ok
+
+>> +			compatible = "qcom,pcie-ipq5018";
+>> +			reg =  <0x80000000 0xf1d>,
+>> +			       <0x80000f20 0xa8>,
+>> +			       <0x80001000 0x1000>,
+>> +			       <0x00078000 0x3000>,
+>> +			       <0x80100000 0x1000>;
 > 
-> Add a waitqueue to struct drm_gpu_scheduler. Wake up waiters once the
-> pending_list becomes empty. Wait in drm_sched_fini() for that to happen.
+> Are you sure that the config space is only 4K?
 > 
-> Suggested-by: Danilo Krummrich <dakr@redhat.com>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
-> Hi all,
+  ok, let me double check.
+
+>> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+>> +			device_type = "pci";
+>> +			linux,pci-domain = <0>;
+>> +			bus-range = <0x00 0xff>;
+>> +			num-lanes = <1>;
+>> +			max-link-speed = <2>;
+>> +			#address-cells = <3>;
+>> +			#size-cells = <2>;
+>> +
+>> +			phys = <&pcie_x1phy>;
+>> +			phy-names ="pciephy";
+>> +
+>> +			ranges = <0x01000000 0 0x80200000 0x80200000 0 0x00100000
 > 
-> since the scheduler has many stake holders, I want this solution
-> discussed as an RFC first.
-> 
-> This version here has IMO the advantage (and disadvantage...) that it
-> blocks infinitly if the driver messed up the clean up, so problems
-> might become more visible than the refcount solution I proposed in
-> parallel.
+> Please check the value of this field in other SoCs.
 
-Very quick comment because I'm heading out for the r4l conference, but
-maybe I can discuss this there with Danilo a bit.
-
-Maybe we should do step 0 first, and document the current rules? The
-kerneldoc isn't absolute zero anymore, but it's very, very bare-bones.
-Then get that acked and merged, which is a very good way to make sure
-we're actually standing on common ground.
-
-Then maybe step 0.5 would be to add runtime asserts to enforce the rules,
-like if you tear down the scheduler and there's stuff in flight, you splat
-on a WARN_ON.
-
-With that foundation there should be a lot clearer basis to discuss
-whether there is an issue, and what a better design could look like. The
-little pondering I've done I've come up with a few more ideas along
-similar lines.
-
-One comment below, kinda unrelated.
+  ok, if its about the child address encoding for IO region, will fix.
 
 > 
-> Cheers,
-> P.
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 40 ++++++++++++++++++++++++++
->  include/drm/gpu_scheduler.h            |  4 +++
->  2 files changed, 44 insertions(+)
+>> +				  0x02000000 0 0x80300000 0x80300000 0 0x10000000>;
+>> +
+>> +			#interrupt-cells = <1>;
+>> +			interrupt-map-mask = <0 0 0 0x7>;
+>> +			interrupt-map = <0 0 0 1 &intc 0 0 142 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 2 &intc 0 0 143 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 3 &intc 0 0 144 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 4 &intc 0 0 145 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "global_irq";
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 7e90c9f95611..200fa932f289 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -564,6 +564,13 @@ static void drm_sched_job_timedout(struct work_struct *work)
->  		 * is parked at which point it's safe.
->  		 */
->  		list_del_init(&job->list);
-> +
-> +		/*
-> +		 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-> +		 */
-> +		if (list_empty(&sched->pending_list))
-> +			wake_up(&sched->job_list_waitque);
-> +
->  		spin_unlock(&sched->job_list_lock);
->  
->  		status = job->sched->ops->timedout_job(job);
-> @@ -584,6 +591,15 @@ static void drm_sched_job_timedout(struct work_struct *work)
->  		drm_sched_start_timeout_unlocked(sched);
->  }
->  
-> +static bool drm_sched_no_jobs_pending(struct drm_gpu_scheduler *sched)
-> +{
-> +	/*
-> +	 * For list_empty() to work without a lock.
-> +	 */
+> I'm pretty sure that this SoC has SPI based MSI interrupts. So they should be
+> described even though ITS is supported.
 
-So this is pretty far from the gold standard for documenting memory
-barrier semantics in lockless code. Ideally we have a comment for both
-sides of the barrier (you always need two, or there's no function
-barrier), pointing at each another, and explaining exactly what's being
-synchronized against what and how.
+  ok
 
-I did years ago add a few missing barriers with that approach, see
-b0a5303d4e14 ("drm/sched: Barriers are needed for
-entity->last_scheduled"). Reading that patch again it feels a bit on the
-terse side of things (plus I noticed spelling issues now too, oops).
-
-Cheers, Sima
-
-> +	rmb();
-> +	return list_empty(&sched->pending_list);
-> +}
-> +
->  /**
->   * drm_sched_stop - stop the scheduler
->   *
-> @@ -659,6 +675,12 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
->  		}
->  	}
->  
-> +	/*
-> +	 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-> +	 */
-> +	if (drm_sched_no_jobs_pending(sched))
-> +		wake_up(&sched->job_list_waitque);
-> +
->  	/*
->  	 * Stop pending timer in flight as we rearm it in  drm_sched_start. This
->  	 * avoids the pending timeout work in progress to fire right away after
-> @@ -1085,6 +1107,12 @@ drm_sched_get_finished_job(struct drm_gpu_scheduler *sched)
->  		/* remove job from pending_list */
->  		list_del_init(&job->list);
->  
-> +		/*
-> +		 * Inform tasks blocking in drm_sched_fini() that it's now safe to proceed.
-> +		 */
-> +		if (list_empty(&sched->pending_list))
-> +			wake_up(&sched->job_list_waitque);
-> +
->  		/* cancel this job's TO timer */
->  		cancel_delayed_work(&sched->work_tdr);
->  		/* make the scheduled timestamp more accurate */
-> @@ -1303,6 +1331,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
->  	init_waitqueue_head(&sched->job_scheduled);
->  	INIT_LIST_HEAD(&sched->pending_list);
->  	spin_lock_init(&sched->job_list_lock);
-> +	init_waitqueue_head(&sched->job_list_waitque);
->  	atomic_set(&sched->credit_count, 0);
->  	INIT_DELAYED_WORK(&sched->work_tdr, drm_sched_job_timedout);
->  	INIT_WORK(&sched->work_run_job, drm_sched_run_job_work);
-> @@ -1333,12 +1362,23 @@ EXPORT_SYMBOL(drm_sched_init);
->   * @sched: scheduler instance
->   *
->   * Tears down and cleans up the scheduler.
-> + *
-> + * Note that this function blocks until the fences returned by
-> + * backend_ops.run_job() have been signalled.
->   */
->  void drm_sched_fini(struct drm_gpu_scheduler *sched)
->  {
->  	struct drm_sched_entity *s_entity;
->  	int i;
->  
-> +	/*
-> +	 * Jobs that have neither been scheduled or which have timed out are
-> +	 * gone by now, but jobs that have been submitted through
-> +	 * backend_ops.run_job() and have not yet terminated are still pending.
-> +	 *
-> +	 * Wait for the pending_list to become empty to avoid leaking those jobs.
-> +	 */
-> +	wait_event(sched->job_list_waitque, drm_sched_no_jobs_pending(sched));
->  	drm_sched_wqueue_stop(sched);
->  
->  	for (i = DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 5acc64954a88..bff092784405 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -29,6 +29,7 @@
->  #include <linux/completion.h>
->  #include <linux/xarray.h>
->  #include <linux/workqueue.h>
-> +#include <linux/wait.h>
->  
->  #define MAX_WAIT_SCHED_ENTITY_Q_EMPTY msecs_to_jiffies(1000)
->  
-> @@ -503,6 +504,8 @@ struct drm_sched_backend_ops {
->   *            timeout interval is over.
->   * @pending_list: the list of jobs which are currently in the job queue.
->   * @job_list_lock: lock to protect the pending_list.
-> + * @job_list_waitque: a waitqueue for drm_sched_fini() to block on until all
-> + *		      pending jobs have been finished.
->   * @hang_limit: once the hangs by a job crosses this limit then it is marked
->   *              guilty and it will no longer be considered for scheduling.
->   * @score: score to help loadbalancer pick a idle sched
-> @@ -532,6 +535,7 @@ struct drm_gpu_scheduler {
->  	struct delayed_work		work_tdr;
->  	struct list_head		pending_list;
->  	spinlock_t			job_list_lock;
-> +	wait_queue_head_t		job_list_waitque;
->  	int				hang_limit;
->  	atomic_t                        *score;
->  	atomic_t                        _score;
-> -- 
-> 2.46.0
 > 
+>> +
+>> +			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
+>> +				 <&gcc GCC_PCIE1_AXI_M_CLK>,
+>> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
+>> +				 <&gcc GCC_PCIE1_AHB_CLK>,
+>> +				 <&gcc GCC_PCIE1_AUX_CLK>,
+>> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>;
+>> +
+>> +			clock-names = "iface",
+>> +				      "axi_m",
+>> +				      "axi_s",
+>> +				      "ahb",
+>> +				      "aux",
+>> +				      "axi_bridge";
+>> +
+>> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
+>> +				 <&gcc GCC_PCIE1_SLEEP_ARES>,
+>> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
+>> +				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
+>> +				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
+>> +				 <&gcc GCC_PCIE1_AHB_ARES>,
+>> +				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>,
+>> +				 <&gcc GCC_PCIE1_AXI_SLAVE_STICKY_ARES>;
+>> +
+>> +			reset-names = "pipe",
+>> +				      "sleep",
+>> +				      "sticky",
+>> +				      "axi_m",
+>> +				      "axi_s",
+>> +				      "ahb",
+>> +				      "axi_m_sticky",
+>> +				      "axi_s_sticky";
+>> +
+>> +			msi-map = <0x0 &v2m0 0x0 0xff8>;
+>> +			status = "disabled";
+> 
+> Please add the rootport node also as like other SoCs.
+> 
+  ok
 
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> Above comments applies to below PCIe node.
+>
+  ok
+
+Regards,
+  Sricharan
+
 
