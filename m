@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-314472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865CC96B3D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DAF96B3D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418DF2897EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4C11F25BC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501D217BECD;
-	Wed,  4 Sep 2024 08:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C56D17BECD;
+	Wed,  4 Sep 2024 08:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g0AVtAK1"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DBSpLNHT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67ECFC12
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0468E1494AB;
+	Wed,  4 Sep 2024 08:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436971; cv=none; b=LfliWI8/Iv26S695+x+sRZ4cOcieQD+76WWgS4YFwHYU9UIce8wTfLLdT4UVqNFpCZ0rDJvZ1m1YN/67EcoFTyEeI0DM7lGIYHn60X8YV0k39J/W8n1ypQFQ6Hs7ROQziLJ0+sx7ma+kl2flmZU7STboeoMWu6PS7VQHdJiCbvs=
+	t=1725436987; cv=none; b=o2n+VLmkEi33RSp4akHM71S3LPhwA7fui9uLxC42DiJZD+oNFIyucQfo6OBER+t4P5ZGITkYrL4bPaIhHZQFP55MGOI5nOLBpeMQ8fbLsI9cbx/qYvx/ObFL/qZdKA4RRtqjNUxLWqOfkdDVIJNVLk3tqBEqgDK68Niu8gs28So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436971; c=relaxed/simple;
-	bh=dDcdKq7ppSYN4Yv4rxqWl4NK1gtCIBnTvMkiH0xJG6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X0e4TuvT0CQF04ZmWHaGMgv/LZ4uZEfcsz2+j1JwO2SkkxE9t1UM6NFsodENmQI1ppWq8VmMDZHOwZga86iTFNIXXjIfhFqunsWigGizAP7IORzfGl319o8sYkuFmQoR8Mi1qd0dfC+3gPOTJJMuU+RNg3m5j/gcUiGuIE+EDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g0AVtAK1; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so42833055e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725436967; x=1726041767; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dbsiPwHzdU7yQfw0bVfDw6SqwSWkWnRdJycvBly0WUw=;
-        b=g0AVtAK1iEnn/iWInE2LZounTfgvg9QgLlTJuXSKcm26scsd5c8wi9KrrKt5KrMYR+
-         4fnRw1ho9tHknXL9GxqneyaRhymcKXOMFraZdfhylBXFglJyfBA7MOarnj3UnE2B/13d
-         GaR36EVG7o6WKB/wK0F0EAMT1Pxh0DB++qoeHwvo83/l8Yy08yJcAir5OoZ1kDoIm1wW
-         PVH1iKMPJfbm0h5VlQINaQATRYm626DILTgOiV6JVNtEvVmPupqvOfqKOIeRUNqTzNj7
-         5xwP44BwZEy97mB783w60rzohzAz6l6MhZTamW8vpxSyDo5xqSAftQinyI05hcDuDg4d
-         ztpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725436967; x=1726041767;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbsiPwHzdU7yQfw0bVfDw6SqwSWkWnRdJycvBly0WUw=;
-        b=a3jAKGj0JEV9z/emx/b9yDpQhYah2O36VCFsA477+YLzQZP1GCZn1qdvyRHtGEx9a7
-         tTwYhr41IJU80KS7yDKRkCZyPxPReYHnMBfQxOfV0K4gUxCOlYA8f8dDPPYp293BGBNs
-         +t6CSvt2fjeu2FDnR3qqlyw7KpWGJs0d+stw8OOa7jqrxii38sg3BWsg7vos4c+u8q/t
-         d4avuMNFuxYr3IYJ15mA5TWbm8o6tBEp+moeUQrzgbOyZbV8jxdJoZryoJdesfAssWEi
-         NMWbAurvFr+GVbjkO8BWzRqp4PzTkVYrZMDypODkwO3sCukW8W3+dyzw1kNKcEnAjtai
-         4StA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKFrbUhPtV9HxrHfddVrM4PFXhAm1MMOrYiraixVSvgVE3DxqdoZHClmIb1YpfSzl0VJNX+toveaAuGco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPce/eyhm2cxdybbgOA26ML3kE4lA+zDjL0uTSIh0IWZ639n2o
-	JH/8LavT1AcHFjRR/TcZPtjLFiMz4ZHKzagWfn0zJ1WjwLMyklPcVoYOi9Yvmps=
-X-Google-Smtp-Source: AGHT+IGyDGx5cm2clgCM+58D1DQI6ScWGOORu/UwO/wHkk24NWcrYuEi0RVx30LWqkM6S3wJfZbhMA==
-X-Received: by 2002:a05:600c:4512:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-42bb01c1ff9mr187146885e9.22.1725436967102;
-        Wed, 04 Sep 2024 01:02:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b9859486sm12993928f8f.111.2024.09.04.01.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 01:02:46 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:02:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nate Watterson <nwatterson@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] iommu/tegra241-cmdqv: Fix ioremap() error handling in
- probe()
-Message-ID: <5a6c1e9a-0724-41b1-86d4-36335d3768ea@stanley.mountain>
+	s=arc-20240116; t=1725436987; c=relaxed/simple;
+	bh=EvtTAN43MF9IJtI4LMQlHahxmGI3fTgZDyA4IWKhy9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eONFTPFiGNLAPhfm66CvEyzenqi6ZcQGehxk0wuEskJd2Rep3tu/Zp6cE2ODUUoVCIxi4tHErFsXe8vmiBvUKJFad5ajnFORXka8wAp8KX1UIfiXnN+AltQbaImyXTck1BdBHOQ6X2mrRvz4EIQst1APDU79YBIaBdAdRQ58ddM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DBSpLNHT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725436984;
+	bh=EvtTAN43MF9IJtI4LMQlHahxmGI3fTgZDyA4IWKhy9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DBSpLNHT8iipmirt/a9Ck4pTN1x4XZzXXYCt8DjWp0BrztNv4xfbG7UuZj95liHRF
+	 eA+TO50zntwE9XORnLAeD/scs+YIZERvIAcFM0r4XPgflBwuF+QVYfcqhB3ggcx9mp
+	 ZC9tQnNZ3TWSABLgAR8wfa3Sxt4m/fLor+xcnMbCRi3h8N5l64NMREwBrvER7ddbbv
+	 UmGb99MCSfeAiHHHnOSfBY7Yqt3uD7q7L9D4lhWck2BMmbDODyydhRUo1kl1RVvSgy
+	 46fjKRmuT++9dlVXdL9+mo5h2hoUOIG/c7k5wCYCf1ZY8FF2sPKJyhPqq9BdtKsjMA
+	 GfTJbCGANc4DA==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7711717E0F95;
+	Wed,  4 Sep 2024 10:03:03 +0200 (CEST)
+Date: Wed, 4 Sep 2024 10:03:00 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 3/4] drm/panthor: enable fdinfo for memory stats
+Message-ID: <20240904100300.40ea245d@collabora.com>
+In-Reply-To: <20240903202541.430225-4-adrian.larumbe@collabora.com>
+References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
+	<20240903202541.430225-4-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The ioremap() function doesn't return error pointers, it returns NULL
-on error so update the error handling.  Also just return directly
-instead of calling iounmap() on the NULL pointer.  Calling
-iounmap(NULL) doesn't cause a problem on ARM but on other architectures
-it can trigger a warning so it'a bad habbit.
+On Tue,  3 Sep 2024 21:25:37 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Implement drm object's status callback.
+>=20
+> Also, we consider a PRIME imported BO to be resident if its matching
+> dma_buf has an open attachment, which means its backing storage had alrea=
+dy
+> been allocated.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 03fd13c21dcc..240b54192177 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -772,9 +772,9 @@ __tegra241_cmdqv_probe(struct arm_smmu_device *smmu, struct resource *res,
- 	static_assert(offsetof(struct tegra241_cmdqv, smmu) == 0);
- 
- 	base = ioremap(res->start, resource_size(res));
--	if (IS_ERR(base)) {
--		dev_err(smmu->dev, "failed to ioremap: %ld\n", PTR_ERR(base));
--		goto iounmap;
-+	if (!base) {
-+		dev_err(smmu->dev, "failed to ioremap\n");
-+		return NULL;
- 	}
- 
- 	regval = readl(base + TEGRA241_CMDQV_CONFIG);
--- 
-2.45.2
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_gem.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
+hor/panthor_gem.c
+> index 38f560864879..c60b599665d8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> @@ -145,6 +145,17 @@ panthor_gem_prime_export(struct drm_gem_object *obj,=
+ int flags)
+>  	return drm_gem_prime_export(obj, flags);
+>  }
+> =20
+> +static enum drm_gem_object_status panthor_gem_status(struct drm_gem_obje=
+ct *obj)
+> +{
+> +	struct panthor_gem_object *bo =3D to_panthor_bo(obj);
+> +	enum drm_gem_object_status res =3D 0;
+> +
+> +	if (bo->base.base.import_attach || bo->base.pages)
+> +		res |=3D DRM_GEM_OBJECT_RESIDENT;
+> +
+> +	return res;
+> +}
+> +
+>  static const struct drm_gem_object_funcs panthor_gem_funcs =3D {
+>  	.free =3D panthor_gem_free_object,
+>  	.print_info =3D drm_gem_shmem_object_print_info,
+> @@ -154,6 +165,7 @@ static const struct drm_gem_object_funcs panthor_gem_=
+funcs =3D {
+>  	.vmap =3D drm_gem_shmem_object_vmap,
+>  	.vunmap =3D drm_gem_shmem_object_vunmap,
+>  	.mmap =3D panthor_gem_mmap,
+> +	.status =3D panthor_gem_status,
+>  	.export =3D panthor_gem_prime_export,
+>  	.vm_ops =3D &drm_gem_shmem_vm_ops,
+>  };
 
 
