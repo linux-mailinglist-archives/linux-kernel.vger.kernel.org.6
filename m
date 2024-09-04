@@ -1,143 +1,186 @@
-Return-Path: <linux-kernel+bounces-315880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A02596C810
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02B596C811
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361711F239A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F196C1C220A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748E91E765D;
-	Wed,  4 Sep 2024 19:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFE21E7665;
+	Wed,  4 Sep 2024 19:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6BD8yNt"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ifrT9eKs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFF1E6DDE;
-	Wed,  4 Sep 2024 19:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389E713D51B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479894; cv=none; b=E1RwIoZIj4yfrE00EPG05RvmoS5fJsAxWFVONrS//vV/4bmoYg+JqMPMgx3OFO3tGf82EVWTK4prxZBQIS4jMz+JFSc3xy/EjauMPoe8MG4hG1tQwE6jnR/pZMIe10SzedouR2aWuFeEzzsuZ23YVh3PSLQYZtu0UVAfXcHB320=
+	t=1725479945; cv=none; b=oZ319Ue3m+/YRR9vnfUEnPNv2iP7qYBATUK0oLm+rqDnRnXLi/Q6BbtLRs14cufolq1pxdrbthRgni4B0WsRGaiKhGiQMPl6tWRI7GkAEZPZXZvNyw6Y1nITkO5uKLa3vpfJHgHKxbvgrllBaq00XV44GLSKSYSqDPLicZel9j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479894; c=relaxed/simple;
-	bh=zavzUwXlxjfb5MjitZxKh7537njoiHYD+hBJaxyi3B8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/px9yFoCO08trUqAWZBCqDzUm3tsvfZOp1Huk0Bc4JeeSgyOtG92wndC4+nslcWNLoLVjCvHBAQNbG5HVWIJLlF2FaTGoPTpMLHTxWS/4cDniZCYY4NQ8kTw25PyklK608cm8tO9Osih23O3cl+BCqyR/1brctZfylRq03STOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6BD8yNt; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d4c923a3d7so13895a12.3;
-        Wed, 04 Sep 2024 12:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725479893; x=1726084693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cPICdxGtZMm7EVbsBiDOXLzIL+MnaADtVMssqy1cp2c=;
-        b=l6BD8yNtusMiXdWfUu8GV2zp9XUNyZIaWbXD2EYnLfLPmyExGc/METs+UcZUiQu+Xm
-         sW6uOFkBq6/zJUpkYR167UbqsDllaX8vdIABYnjdbpR6EzPkV7H4s2QW6jbYsvY2+1p3
-         PB+d46b9SlDV/1dlScUi+goWaxnceTLMCfLl4jHzRB3KQXb7jLt83nNcDGEhH+6t/UBK
-         kZARl1TTptVaiBA2iS6rQACFaOXkVaxsHr4oDkMBBxjg5J8zrWjX+J7VLaT5askspSGY
-         ZoV8gG+HLLV5ccbJ8A8HkuZe+lAZirE1R5CZrvlvvPNBM+j6pjI9KQ3KQ4Wddax2wd/A
-         23Zg==
+	s=arc-20240116; t=1725479945; c=relaxed/simple;
+	bh=q4Zx2I3Gi9EYhBHmJYx0PYPLfRI02GuBKpR7J2sbZuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3wU93Boj+yQG6Rh7NYtLJsj9z+ukrGDrNdEVAN7e/QmudIgAOEYC2sraS1Wm108ZC0ScWvAEbKnpt+hrrKIUUY/66AUMbmKgqKZvs9IW1YZyopr1AABMv1F20rk0YImHuavl4A8is6fJLkNDtOvpsnKDn4LR6L+CbLZrxjH2Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ifrT9eKs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725479943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FVc6JRTF1durtkuxn7+CXSDcgneG4y9FqqasPGYLMFI=;
+	b=ifrT9eKsXaDeAwYuaX3dKa/xyaeHmiyIXLGvRIzNrLEu1IG2aKCBrHU978ySITf3bYnC08
+	HA+9llq6raCHuZIoe6O4IBPvsUHX9KGlnAANAS45mVbnLzeC7gnNnBqOuWwsTv9gnoy3Rn
+	GxSHXAiP9wyIvVg7ve60j2BE4G/4KxM=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-SIorE5l3OHKFxwhbm32yJQ-1; Wed, 04 Sep 2024 15:59:02 -0400
+X-MC-Unique: SIorE5l3OHKFxwhbm32yJQ-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c24b4a57b4so3094003a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 12:59:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725479893; x=1726084693;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cPICdxGtZMm7EVbsBiDOXLzIL+MnaADtVMssqy1cp2c=;
-        b=T24PGJje8wj19LxPfDtvXXgshlAt36rWG6aCvNGycmIs4U9UzgbRaySSgHYKynzR8I
-         pt1+3p97JvXX6htq127+UL7VTnwF0WYfDjO3wiRL21E8y3QfuPMVSboUoyr65V4pIlDV
-         GP/u2usjYBpn90G/+fdRNX5JaDyjnnUzbLwRkCE59qfS5wEYZEL3QNiJWVl9Yja0oORZ
-         vcMBlnCIj+RP+jLpRFzW9wNACyjS5DmJsW5Gt3mN5YOp6uH6YRVWzILzrW4l1bkr5wD4
-         9hFRDV7SR9frKryJLKXO3XlXXbamvo48mi4TFqvu4FA3AP9phzDAOI5drvnDxEeYUMpz
-         bnuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtgIVLvyTirjJcsZVmxHXfOtal/sW08oZFs+NDZjnJa5Ro3U0wGBXFPGJv/K54XH2aUOoPDliYCIPjdWcfVCVq@vger.kernel.org, AJvYcCXxltYLr3sSiZdHjwdZH6ga6boZ2lyHx1Oxt66cvHQrMATUbbOpWU3g5XtdSXIZzlPYENKv8RRAGJ71RJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk5AUlvXtwDbXLW77fjjWAg4PAuyAiXZVddFelK+feYR7NGGmr
-	A97NOkhrNzjk4aSUzHH+D9R5NfgbN2aOCqkx/YfsxKWRSxe0lf0U
-X-Google-Smtp-Source: AGHT+IHiuHFL/47pKWStSEZDU1pmVIBJvuKjwmas3mljqR/n/RvBLMuLXDlS66q4XOAagB8218fbcQ==
-X-Received: by 2002:a17:90a:70cf:b0:2d8:f12f:6bed with SMTP id 98e67ed59e1d1-2da5592440bmr7912187a91.3.1725479892758;
-        Wed, 04 Sep 2024 12:58:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2da53740084sm4907126a91.32.2024.09.04.12.58.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 12:58:12 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 4 Sep 2024 12:58:11 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/damon/tests/vaddr-kunit: init maple tree without
- MT_FLAGS_LOCK_EXTERN
-Message-ID: <b253cae1-8363-4f26-9698-97e76b4b17dd@roeck-us.net>
-References: <20240904172931.1284-1-sj@kernel.org>
+        d=1e100.net; s=20230601; t=1725479940; x=1726084740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FVc6JRTF1durtkuxn7+CXSDcgneG4y9FqqasPGYLMFI=;
+        b=mu4WdkT6pf0Tf6iQAYJ0HMPBhs4vKqtYSBiNwNj5cC9zFiBy2HGwDKDchjv2i+lDpY
+         Q6oz7UaceYC7QqfyP2iqaARVQYoDrDaOuq+D8cPsBQ34WcdMqu2vROYu84qML+pjHe/V
+         qXlgKB036w/izEtQFfbPiaNRctFqJg6CzD3avidivVdWF/R/w+KocVNWJBoTB/5VNTG+
+         vietxR657MGUiImGXskSyKrV9k9QAdr3bL7T6ky6plTfDILUniw0e3j6bIVykqjc2OhJ
+         Ht6xqnIfmGG7PUz33wvdeZDSNJ0/aBs8wh5pc8CpSdid5nAGtngkA6ioeIqBLiY56BW+
+         e1MA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdrbXuaV+eoIWwmbxIHPty7ppylLIHjmYLLvMA8GDnQBMO2z3tOwgO0XyCEOdanOSFxqIShtSsC72B6dU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1zZdSk5JUwCtpu6BagsG76WWUcaXCyKaJHVXwPgLP8blnPrBK
+	aXdu0yGHB6EiBpwAI05T8xWqGgxGCwO8Iw516JtHoXlzKwmcQ/tyieAtnJWIjLbfaou6EO5H/32
+	EJT+vHBE/tV4H1QFP0+lRmNuIjginsq2+tqdxXQwX4N/lPU6B1u+TPgyEIEIWbFwbAyz5+Q==
+X-Received: by 2002:a17:907:3ea6:b0:a86:95ff:f3a0 with SMTP id a640c23a62f3a-a897f77ef10mr1757507566b.3.1725479940561;
+        Wed, 04 Sep 2024 12:59:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgDwNRq0AbKATIeRJchwrsuYhAK9IGlpgF1YxJRkZZpzO5Ek1cAhmzW/UQMzonzWzKDKaFsg==
+X-Received: by 2002:a17:907:3ea6:b0:a86:95ff:f3a0 with SMTP id a640c23a62f3a-a897f77ef10mr1757504666b.3.1725479939992;
+        Wed, 04 Sep 2024 12:58:59 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62038d6fsm31568966b.61.2024.09.04.12.58.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 12:58:59 -0700 (PDT)
+Message-ID: <e2ed8a03-7973-4ab9-9b9d-d1c23616de86@redhat.com>
+Date: Wed, 4 Sep 2024 21:58:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904172931.1284-1-sj@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 5/9] power: supply: sysfs: rework uevent property
+ loop
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net>
+ <20240904-power-supply-extensions-v3-5-62efeb93f8ec@weissschuh.net>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240904-power-supply-extensions-v3-5-62efeb93f8ec@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 10:29:31AM -0700, SeongJae Park wrote:
-> damon_test_three_regions_in_vmas() initializes a maple tree with
-> MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
-> mt_lock of the maple tree will not be used.  And therefore the maple
-> tree initialization code skips initialization of the mt_lock.  However,
-> __link_vmas(), which adds vmas for test to the maple tree, uses the
-> mt_lock.  In other words, the uninitialized spinlock is used.  The
-> problem becomes clear when spinlock debugging is turned on, since it
-> reports spinlock bad magic bug.
-> 
-> Fix the issue by excluding MT_FLAGS_LOCK_EXTERN from the maple tree
-> initialization flags.  Note that we don't use empty flags to make it
-> further similar to the usage of mm maple tree, and to be prepared for
-> possible future changes, as suggested by Liam.
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
-> Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
-> Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Signed-off-by: SeongJae Park <sj@kernel.org>
+Hi,
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+On 9/4/24 9:25 PM, Thomas Weißschuh wrote:
+> Instead of looping through all properties known to be supported by the
+> psy, loop over all known properties and decide based on the return value
+> of power_supply_get_property() whether the property existed.
+> 
+> This makes the code shorter now and even more so when power supply
+> extensions are added.
+> It also simplifies the locking, as it can all happen inside
+> power_supply_get_property().
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+p.s.
+
+Last review for me in this set. I'm afraid I don't have the bandwidth
+atm to also review the actual extension API.
+
+
+
+
 
 > ---
-> Changes from v1
-> (https://lore.kernel.org/20240904004534.1189-1-sj@kernel.org)
-> - Keep lock usage and update the initialization flags (Liam)
-> - Fix a typo: s/celar/clear/ (Guenter)
+>  drivers/power/supply/power_supply_sysfs.c | 26 +++++---------------------
+>  1 file changed, 5 insertions(+), 21 deletions(-)
 > 
->  mm/damon/tests/vaddr-kunit.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-> index 83626483f82b..a339d117150f 100644
-> --- a/mm/damon/tests/vaddr-kunit.h
-> +++ b/mm/damon/tests/vaddr-kunit.h
-> @@ -77,7 +77,7 @@ static void damon_test_three_regions_in_vmas(struct kunit *test)
->  		(struct vm_area_struct) {.vm_start = 307, .vm_end = 330},
->  	};
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+> index 4ab08386bcb7..915a4ba62258 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -290,6 +290,8 @@ static ssize_t power_supply_show_property(struct device *dev,
+>  				dev_dbg_ratelimited(dev,
+>  					"driver has no data for `%s' property\n",
+>  					attr->attr.name);
+> +			else if (ret == -EINVAL) /* property is not supported */
+> +				return -ENODATA;
+>  			else if (ret != -ENODEV && ret != -EAGAIN)
+>  				dev_err_ratelimited(dev,
+>  					"driver failed to report `%s' property: %zd\n",
+> @@ -451,11 +453,7 @@ static int add_prop_uevent(const struct device *dev, struct kobj_uevent_env *env
 >  
-> -	mt_init_flags(&mm.mm_mt, MM_MT_FLAGS);
-> +	mt_init_flags(&mm.mm_mt, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
->  	if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
->  		kunit_skip(test, "Failed to create VMA tree");
+>  int power_supply_uevent(const struct device *dev, struct kobj_uevent_env *env)
+>  {
+> -	const struct power_supply *psy = dev_get_drvdata(dev);
+> -	const enum power_supply_property *battery_props =
+> -		power_supply_battery_info_properties;
+> -	unsigned long psy_drv_properties[POWER_SUPPLY_ATTR_CNT /
+> -					 sizeof(unsigned long) + 1] = {0};
+> +	struct power_supply *psy = dev_get_drvdata(dev);
+>  	int ret = 0, j;
+>  	char *prop_buf;
 >  
-> -- 
-> 2.39.2
+> @@ -483,22 +481,8 @@ int power_supply_uevent(const struct device *dev, struct kobj_uevent_env *env)
+>  	if (ret)
+>  		goto out;
+>  
+> -	for (j = 0; j < psy->desc->num_properties; j++) {
+> -		set_bit(psy->desc->properties[j], psy_drv_properties);
+> -		ret = add_prop_uevent(dev, env, psy->desc->properties[j],
+> -				      prop_buf);
+> -		if (ret)
+> -			goto out;
+> -	}
+> -
+> -	for (j = 0; j < power_supply_battery_info_properties_size; j++) {
+> -		if (test_bit(battery_props[j], psy_drv_properties))
+> -			continue;
+> -		if (!power_supply_battery_info_has_prop(psy->battery_info,
+> -				battery_props[j]))
+> -			continue;
+> -		ret = add_prop_uevent(dev, env, battery_props[j],
+> -			      prop_buf);
+> +	for (j = 0; j < POWER_SUPPLY_ATTR_CNT; j++) {
+> +		ret = add_prop_uevent(dev, env, j, prop_buf);
+>  		if (ret)
+>  			goto out;
+>  	}
 > 
+
 
