@@ -1,162 +1,146 @@
-Return-Path: <linux-kernel+bounces-314528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D82D96B489
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3617996B48C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C835428BCB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6656A1C20D5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501951862B4;
-	Wed,  4 Sep 2024 08:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UjKb9fer"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED2918E743;
+	Wed,  4 Sep 2024 08:30:27 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCADE1865E7;
-	Wed,  4 Sep 2024 08:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E29118BC31
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438612; cv=none; b=ZnS1vtxePQv41//q1QKJaZ1VNFm1u0BhEnX8PTWqh4yVzT2tRkIHy5ASD/O/rVEogYezIBFLBATacIyOBGAOBE/vYB0kos4nCg22zAwHVzzTJ5aq3sZ0AAQOwYd4wHELiCONrUTGx3yi08KZIn7GHwzTO5anTuaa/mA2UeMc85U=
+	t=1725438626; cv=none; b=ol1Qai8BzGxkBFaSAXi09H30oxuauW36YP3aYs8nEYBS8Gn+Da6pdfi6AkDb/HztPLrOmUBjPQnZh/HaiW2zoVq1gbwbCZ89jutaacHrDruLABINPu5bONHxwtAAOJzBduV52HtowEgLUh+9uS7FCBIUmDcAb0pHfQZZTTcY9YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438612; c=relaxed/simple;
-	bh=L5zcVEr5rIFzQVfdK/YrFSWmGXeDLvZo8OR4UU7NjZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WqB4z3Qdtz1scgjqLQ7RW+OrjTzNrBhAkTl0ehIFc3081DnZT8pjfgamj4Bhoq+xDULn1Huv8hgS9O1o4t+qMyBaj2VHYPKLNuM3ZTMilm9AvstfhA4qSR7cmmOGxevRnSRABxOo6RcbVhm7jlao8TRR/sU7oQnMmTXwfcaW79M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UjKb9fer; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4840DhPN015921;
-	Wed, 4 Sep 2024 08:29:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KzIKAsJu/wdUWk2sEUxvPTMam1vZyNmKG0fNcBCt++4=; b=UjKb9ferOL1ma8SN
-	uV9PGV7EgUfZTe3VEO124hTAVhqulk90TmRxRlO4tPeVjRxTEhacy5tjk16w9ab3
-	RdmXiq+EvzmxzzIuAjQE5D2vtFqX9uZirSPLoMFgWFmZjdoEh0fjsnz83y5gZ+Au
-	AtVr+AgURCqGFaGtpnllD8Z6B9ASybr5cp5o0vOlJf6vnxQ2M41ESoyaFF8O1YyV
-	1QZpSyulus3GvX3zwjdlOJU/KA/TT2rdcF3vhcdFEm3PoA9sYXLQBnojpehzAXiZ
-	CLdtBZ5KNCJcdVS0guwGwjpOSos5LjnRrzPLsc8nu21QAdruvgkwFBeiQypwpBQV
-	KBAIhA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bu8ut4r4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 08:29:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4848Tn8E022676
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 08:29:49 GMT
-Received: from [10.131.117.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 01:29:45 -0700
-Message-ID: <b143a3c3-8a12-4ac9-bb0f-3b4b9ea976a1@quicinc.com>
-Date: Wed, 4 Sep 2024 13:59:38 +0530
+	s=arc-20240116; t=1725438626; c=relaxed/simple;
+	bh=qcSXkF2eeVbXnz/TGB7tvcwJtXcMcs1eddCFuoy6vt0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UMWKbr8vS9hoUiUdVp/mrWxbBdhddn8Ac0FR2zR7JEYg+GoJm9jmMlehvlqEN9iy9CCtmWAGa/LrLUQX95bg/YN2AkdXSx/JMhg3Ckdx7zsHjuqkXR58PkgTSAOZN+LNDPpdQ+r2gSNEIPZWGHS771qUdcM8hmR5BFhbucCJdOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a217cec1fso77785739f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:30:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725438624; x=1726043424;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=riEJj9yptEntwWm8uC4noCWANnp3aNiR1XVqLGvV3To=;
+        b=uKfGqDSDJZ68DFLxLgYYEuwdbK40sT0tbMALq0+xNGP0REFlvZvKCVd2rcieQbVi5/
+         j3jsEHbxJnyZRJYs7mTXQwf71nMV8SpUYTJZH5K34GDf1AnjnW7y/KjHZetiLiJOOcEF
+         I0sQsQOw9aNydRL+v7GXoqL9MvChvRp8sNWMqW2BhKk2Gx+4v7Okkr7R2yQ3Jq3pjLFc
+         cJFkp0OVuYSO7EMjT9fOWqCTyHIIp891Eo5iJm7kLtpOhgkPsxRn8ZkYCSUNLrmNmzI6
+         xhpn3eMNE+0MrLEBmJPegcqLqicrBLbiJy/Zh97CC4n8uLCaVC6oyubZDxQi/3Ko7stn
+         V5Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVndOZnx9pWNj6V5K2oD5KkFGHycnmTsyQoSn2PdzLK0dISDTzIjq5Ra/1e9Hdhx++gof/5Bu3AxAjQ4PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLN6WCjhcwp6pNXfm/EaWWELbQSUMPsHL8XekjuINRJ0rJ9Ev9
+	7W3gCepK+paHJAdTHyFZRcYSfZ45ZOGF+6M7m/YRzlcrVFEjJ2VFVJx5AMMCYuoB86V4JNzIbK9
+	7SGSXRIbOKKzagz7hG7Ueg0L1Ia73QOYrJLftOiZciN1tCV2G+DCGh0A=
+X-Google-Smtp-Source: AGHT+IFf1N79VFCXobIPXbsA0DCA/+/jvIHiGNZkPocqGC8SqI64i4RB4lO0DtdwLR1uojTxi3MkPM7uX1EFYS4pE5neID6NzICK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu: Don't disable next-page prefetcher on
- devices it works on
-To: Doug Anderson <dianders@chromium.org>, Will Deacon <will@kernel.org>
-CC: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Stephen Boyd <swboyd@chromium.org>, Chen Lin <chen45464546@163.com>,
-        <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_sibis@quicinc.com>
-References: <20240513161343.1.I5db5530070a1335e6cc3c55e056c2a84b1031308@changeid>
- <20240517163742.GA525@willie-the-truck>
- <CAD=FV=UEXjD=w41Hj_gE--DXhkSjNdfPnkc7X=FrZJ5_90Jq0g@mail.gmail.com>
-Content-Language: en-US
-From: Pankaj Patil <quic_pankpati@quicinc.com>
-In-Reply-To: <CAD=FV=UEXjD=w41Hj_gE--DXhkSjNdfPnkc7X=FrZJ5_90Jq0g@mail.gmail.com>
+X-Received: by 2002:a05:6638:860d:b0:4c2:7945:5a32 with SMTP id
+ 8926c6da1cb9f-4d05e776145mr84665173.5.1725438624417; Wed, 04 Sep 2024
+ 01:30:24 -0700 (PDT)
+Date: Wed, 04 Sep 2024 01:30:24 -0700
+In-Reply-To: <000000000000a45a92061ce6cc7d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004a5da1062146fc27@google.com>
+Subject: Re: [syzbot] [wpan?] WARNING in __dev_change_net_namespace (2)
+From: syzbot <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
+	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4JxAi8u3j0kxiKsTL1aYbT-sgNV0zrmI
-X-Proofpoint-GUID: 4JxAi8u3j0kxiKsTL1aYbT-sgNV0zrmI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_05,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 clxscore=1011 mlxscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040065
 
-On 5/17/2024 10:49 PM, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, May 17, 2024 at 9:37 AM Will Deacon <will@kernel.org> wrote:
->>
->> Hi Doug,
->>
->> On Mon, May 13, 2024 at 04:13:47PM -0700, Douglas Anderson wrote:
->>> On sc7180 trogdor devices we get a scary warning at bootup:
->>>   arm-smmu 15000000.iommu:
->>>   Failed to disable prefetcher [errata #841119 and #826419], check ACR.CACHE_LOCK
->>>
->>> We spent some time trying to figure out how we were going to fix these
->>> errata and whether we needed to do a firmware update. Upon closer
->>> inspection, however, we realized that the errata don't apply to us.
->>> Specifically, the errata document says that for these errata:
->>> * Found in: r0p0
->>> * Fixed in: r2p2
->>>
->>> ...and trogdor devices appear to be running r2p4. That means that they
->>> are unaffected despite the scary warning.
->>>
->>> The issue is that the kernel unconditionally tries to disable the
->>> prefetcher even on unaffected devices and then warns when it's unable
->>> to.
->>>
->>> Let's change the kernel to only disable the prefetcher on affected
->>> devices, which will get rid of the scary warning on devices that are
->>> unaffected. As per the comment the prefetcher is
->>> "not-particularly-beneficial" but it shouldn't hurt to leave it on for
->>> devices where it doesn't cause problems.
->>>
->>> Fixes: f87f6e5b4539 ("iommu/arm-smmu: Warn once when the perfetcher errata patch fails to apply")
->>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>> ---
->>>
->>>  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c | 21 +++++++++++++--------
->>>  1 file changed, 13 insertions(+), 8 deletions(-)
->>
->>
->> Just curious, but did you see any performance impact (good or bad) as a
->> result of this patch? The next-page prefetcher has always looked a little
->> naive to me and, with a tendency for tiny TLBs in some implementations,
->> there's a possibility it could do more harm than good.
-> 
-> This patch actually makes no difference on trogdor today other than
-> getting rid of the scary warning. Specifically on trogdor the
-> ACR.CACHE_LOCK bit seems to be set so the kernel is unable to change
-> the setting anyway and has never been able to. We are working on
-> figuring out how to fix the firmware and then we have to get a
-> firmware spin before we can really see any changes. I'll keep an eye
-> out to see if performance numbers change when the firmware uprevs.
-> 
-> BTW: any idea how big of a deal these errata are? We're _just_
-> finishing a firmware uprev process and there is always pushback
-> against kicking off a new one unless the issue is important. Given
-> that we've been living with this issue since devices shipped I'm going
-> to assume we don't need to rush a firmware update, but if this is
-> really scary and needs to be addressed sooner we can figure that out.
-> 
-> -Doug
+syzbot has found a reproducer for the following issue on:
 
-Receiving the warning on pre-silicon platforms as well, despite being unaffected. If merged, it will help in reducing log clutter.
-The patch applies cleanly on the tip of linux-next, tag: next-20240904.
+HEAD commit:    88fac17500f4 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1547d653980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=1df6ffa7a6274ae264db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bf3fdb980000
 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-88fac175.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/de92cf928379/vmlinux-88fac175.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/253b0e12054b/bzImage-88fac175.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com
+
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f95c6735f80 R15: 00007ffd0db2c528
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5268 at net/core/dev.c:11568 __dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
+Modules linked in:
+CPU: 0 UID: 0 PID: 5268 Comm: syz.0.15 Not tainted 6.11.0-rc6-syzkaller-00026-g88fac17500f4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
+Code: 01 90 48 c7 c7 40 dc 0c 8d 48 c7 c6 20 dc 0c 8d ba c5 2c 00 00 e8 e6 d8 cb f7 90 0f 0b 90 90 e9 54 ea ff ff e8 a7 b4 09 f8 90 <0f> 0b 90 e9 4a fb ff ff e8 99 b4 09 f8 90 0f 0b 90 e9 d5 fe ff ff
+RSP: 0018:ffffc90002456fc0 EFLAGS: 00010293
+RAX: ffffffff8989d809 RBX: dffffc0000000000 RCX: ffff88801cbe2440
+RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
+RBP: ffffc900024573f8 R08: ffffffff8989d349 R09: 1ffffffff283c909
+R10: dffffc0000000000 R11: fffffbfff283c90a R12: ffff88803362c1b8
+R13: ffff88803362cbf0 R14: ffff88803362c734 R15: 00000000fffffff4
+FS:  00007f95c734f6c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd5dd5ec6d6 CR3: 0000000011730000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ dev_change_net_namespace include/linux/netdevice.h:3932 [inline]
+ cfg802154_switch_netns+0xc8/0x390 net/ieee802154/core.c:230
+ nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f95c657cef9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f95c734f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f95c6735f80 RCX: 00007f95c657cef9
+RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000006
+RBP: 00007f95c734f090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f95c6735f80 R15: 00007ffd0db2c528
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
