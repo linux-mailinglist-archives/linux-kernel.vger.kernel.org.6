@@ -1,221 +1,120 @@
-Return-Path: <linux-kernel+bounces-314452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D24E96B387
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0151696B392
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7441F267DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:53:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC52D1F226F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4243165F0E;
-	Wed,  4 Sep 2024 07:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FTA1Ld3s"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3E016C6B7;
+	Wed,  4 Sep 2024 07:53:24 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A301494AB
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F3154C09;
+	Wed,  4 Sep 2024 07:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436326; cv=none; b=f+eVnS4yd1FAiUPDerTDIEvRdRjLILqoq8O37kFBUKw4aJYrPgGrdGVuAfVC1dt9YPmZ0YtunJhFCV9JEDy83Snsoutr2pTjVgQevTCm1LNJ+XEpZ/jgiRn5U3P/ysvrl5IdbiCBNKKMrY8GYRcmEZEzdmbhHyq2DmOhTv+YbbM=
+	t=1725436404; cv=none; b=ixfFF8pp3Ag9xgH2uJLwPh/LSP9fcYT2Cx4dkoD8h/WbJfCKRIGRalVH1Y+FjAttBPIBDif5o5zVTYL/eXmOszvbiq1Y8z8DNjD5RyczRwhYPK73YVrflzaAa5EJhQdHUc4WOm/ZxL8C8tv6B09fokVDBrXOvG19TC+4YdMP/To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436326; c=relaxed/simple;
-	bh=XlTIUbn1Mep0bKbMFbS0L2TutkBucy3kWAGcWXdoArw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IubHzw5qH25Cpnf53kmozZcmAIS9G4g7ZONnn8btcff39fvuqgy4kwDYLjUcd2xK6cl3zJUO+zANTkL12FoCgFT6hhiKkNCHzt2SBsapfsJQ4j3QLLR0k0fkCoSJRObh/P3o6kNW0cg/3V5xTj6j6EIZD1s1ypLQlSRYc7g9esE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FTA1Ld3s; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-709340f1cb1so1888218a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1725436323; x=1726041123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfyB8TiIbc9wTFMFFJC/xReObRPNUC9QjHtcNn56KQA=;
-        b=FTA1Ld3siaOom4JlLMAXFqCTnsO8rHjmGYsBC1s6/n2y6TFUOofBkIx7l/qMqHFDAc
-         /dEH7km6kw2FYPgdc2AtMEWvDJ2W7BBXZ6rvKhyi7hqJUP3xGG4LHXxryLidQoGE0+q0
-         3ASflZQAmtZ0gzAO290aQ8XvfZV7GfGfR9prKg4Y/pWS661u4puozjkzxYp7NRw7acqJ
-         l+uQ65VHq/F2sLu8EmDBcKPdA4g0nZRk8etMmRegTTuH0JqTAw+/V0PivZ+m0PWvPdOL
-         e7FefUztI2bjckzQ/h5qy5CYjKEeWuNF6Q7HN2GaF2XbUDTwQxTb4MxwD0O0o7+Cpbyt
-         aMuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725436323; x=1726041123;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bfyB8TiIbc9wTFMFFJC/xReObRPNUC9QjHtcNn56KQA=;
-        b=Gz2KQo//fATt7fyUXkhX3ek3HL3FsIxyS5wUjBz7g0zgP9uxifmzzvFednwPp4wSgu
-         stXvAM4yExqMZTFSQrEObmPX5HMyWCC5ZMitZvYmTcopfOi42ABboBUPoZ2hoBpnAEwH
-         145ulsALUhT6rDXc0yCpZ3hQkp0qQxHsWsG3KQ3P/CrVki1mVj3Sa4I/co5YjpkRZwW5
-         ko7f5pQv1mcwyATM5tkPAIF6b6nTjjU33i1IVUay2Hk/hJd/Qxxqda9BKCLjLW2pbMFy
-         9VslZj9RrXnyY/xivSbEroSxtaXf45Qo1DZFievjXumhda1wIvs4AJalGFv/+hxf7fiE
-         SB4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXuucXtrS8NW1kRcDw7H1sNRtoFdObiVIkWHM1eTk/Pjvc50TCpRNvV6W1S3AOlAdETGsqmJogs6B83hLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0TUExEADr1IjtIOoGlobk340WH+tFm4fLNBWzh9IqDsiR8Vkl
-	3W7yBKNKfNjIzN6UlhuoyAx1+cYQDX0DrbOJm3wbv2UeCFKkPr2XttlU5O9VRnY=
-X-Google-Smtp-Source: AGHT+IG652SFWHwBqEQjGzp7WbwcxYCsCWumiQr3uHJxnBiYGLnAeBTDteRRsBG1TzYF486FAdHplg==
-X-Received: by 2002:a05:6870:a44c:b0:278:1b05:eda9 with SMTP id 586e51a60fabf-2781b066212mr5124716fac.17.1725436323108;
-        Wed, 04 Sep 2024 00:52:03 -0700 (PDT)
-Received: from [10.254.132.181] ([139.177.225.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177858be66sm1037612b3a.120.2024.09.04.00.51.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 00:52:02 -0700 (PDT)
-Message-ID: <845e22c1-84ee-47f8-b335-346b21d3216c@bytedance.com>
-Date: Wed, 4 Sep 2024 15:51:56 +0800
+	s=arc-20240116; t=1725436404; c=relaxed/simple;
+	bh=9YVSl3Ct5tIWYZ8sVcOucsvy4DaQHnWGMJrURp+UFVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rVHE4cNGBToVElOAGRaI4nTdOnS5p09P5UGhxoTE0GMLtxulKiasndBf7fUiDKAG6upeLDqd/3hKJM95XEHlhByq/wkamDd91z0acU3vO/WbfJ4XtFOqBMURqrfJFYuj1+DBw81wecFYYJlMjspPD++1N8w1PbYmTjCIAWTRXjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAB3f+voEdhmno8mAQ--.4888S2;
+	Wed, 04 Sep 2024 15:53:12 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	deren.wu@mediatek.com,
+	mingyen.hsieh@mediatek.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] wifi: mt76: mt7925: convert comma to semicolon
+Date: Wed,  4 Sep 2024 15:52:13 +0800
+Message-Id: <20240904075213.1352976-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH v2] virtio_net: Fix mismatched buf address
- when unmapping for small packets
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jiahui Cen <cenjiahui@bytedance.com>,
- Ying Fang <fangying.tommy@bytedance.com>, mst@redhat.com,
- jasowang@redhat.com, eperezma@redhat.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-References: <20240904061009.90785-1-liwenbo.martin@bytedance.com>
- <1725432304.274084-1-xuanzhuo@linux.alibaba.com>
- <CABwj4+hMwUQ+=m+XyG=66e+PUbOzOvHEsQzboB17DE+3aBHA3g@mail.gmail.com>
- <1725435002.9733856-1-xuanzhuo@linux.alibaba.com>
-From: Wenbo Li <liwenbo.martin@bytedance.com>
-In-Reply-To: <1725435002.9733856-1-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB3f+voEdhmno8mAQ--.4888S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4ktF1xGrg_yoW8Ar4DpF
+	W8G3yjyr1UJ3Zxt3Z5XanxCFsxZan5C3WfKrZYq3s5Zw1kAF1xAFy7Ja4UJryDAFWIka12
+	gr4FqryrXw43urJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbkR67UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Thank you. I'll fix these in v3.
+Replace comma between expressions with semicolons.
 
-On 9/4/24 15:30, Xuan Zhuo wrote:
-> On Wed, 4 Sep 2024 15:21:28 +0800, =?utf-8?b?5paH5Y2a5p2O?= <liwenbo.martin@bytedance.com> wrote:
->> When SWIOTLB is enabled, a DMA map will allocate a bounce buffer for real
->> DMA operations,
->> and when unmapping, SWIOTLB copies the content in the bounce buffer to the
->> driver-allocated
->> buffer (the `buf` variable). Such copy only synchronizes data in the buffer
->> range, not the whole page.
->> So we should give the correct offset for DMA unmapping.
-> I see.
->
-> But I think we should pass the "correct" buf to virtio core as the "data" by
-> virtqueue_add_inbuf_ctx().
->
-> In the merge mode, we pass the pointer that points to the virtnet header.
-> In the small mode, we pass the pointer that points to the virtnet header - offset.
->
-> But this is not the only problem, we try to get the virtnet header by the buf
-> inside receive_buf(before receive_small).
->
-> 	flags = ((struct virtio_net_common_hdr *)buf)->hdr.flags;
->
-> So I think it is time to unify the buf that passed to the virtio core into a
-> pointer pointed to the virtnet header.
->
-> Thanks.
->
->
->> Thanks.
->>
->> On Wed, Sep 4, 2024 at 2:46 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
->>> On Wed,  4 Sep 2024 14:10:09 +0800, Wenbo Li <liwenbo.martin@bytedance.com>
->> wrote:
->>>> Currently, the virtio-net driver will perform a pre-dma-mapping for
->>>> small or mergeable RX buffer. But for small packets, a mismatched
->> address
->>>> without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
->>> Will used virt_to_head_page(), so could you say more about it?
->>>
->>>          struct page *page = virt_to_head_page(buf);
->>>
->>> Thanks.
->>>
->>>> That will result in unsynchronized buffers when SWIOTLB is enabled, for
->>>> example, when running as a TDX guest.
->>>>
->>>> This patch handles small and mergeable packets separately and fixes
->>>> the mismatched buffer address.
->>>>
->>>> Changes from v1: Use ctx to get xdp_headroom.
->>>>
->>>> Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling
->> mergeable buffers")
->>>> Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
->>>> Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
->>>> Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
->>>> ---
->>>>   drivers/net/virtio_net.c | 29 ++++++++++++++++++++++++++++-
->>>>   1 file changed, 28 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>> index c6af18948..cbc3c0ae4 100644
->>>> --- a/drivers/net/virtio_net.c
->>>> +++ b/drivers/net/virtio_net.c
->>>> @@ -891,6 +891,23 @@ static void *virtnet_rq_get_buf(struct
->> receive_queue *rq, u32 *len, void **ctx)
->>>>        return buf;
->>>>   }
->>>>
->>>> +static void *virtnet_rq_get_buf_small(struct receive_queue *rq,
->>>> +                                   u32 *len,
->>>> +                                   void **ctx,
->>>> +                                   unsigned int header_offset)
->>>> +{
->>>> +     void *buf;
->>>> +     unsigned int xdp_headroom;
->>>> +
->>>> +     buf = virtqueue_get_buf_ctx(rq->vq, len, ctx);
->>>> +     if (buf) {
->>>> +             xdp_headroom = (unsigned long)*ctx;
->>>> +             virtnet_rq_unmap(rq, buf + VIRTNET_RX_PAD + xdp_headroom,
->> *len);
->>>> +     }
->>>> +
->>>> +     return buf;
->>>> +}
->>>> +
->>>>   static void virtnet_rq_init_one_sg(struct receive_queue *rq, void
->> *buf, u32 len)
->>>>   {
->>>>        struct virtnet_rq_dma *dma;
->>>> @@ -2692,13 +2709,23 @@ static int virtnet_receive_packets(struct
->> virtnet_info *vi,
->>>>        int packets = 0;
->>>>        void *buf;
->>>>
->>>> -     if (!vi->big_packets || vi->mergeable_rx_bufs) {
->>>> +     if (vi->mergeable_rx_bufs) {
->>>>                void *ctx;
->>>>                while (packets < budget &&
->>>>                       (buf = virtnet_rq_get_buf(rq, &len, &ctx))) {
->>>>                        receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
->> stats);
->>>>                        packets++;
->>>>                }
->>>> +     } else if (!vi->big_packets) {
->>>> +             void *ctx;
->>>> +             unsigned int xdp_headroom = virtnet_get_headroom(vi);
->>>> +             unsigned int header_offset = VIRTNET_RX_PAD +
->> xdp_headroom;
->>>> +
->>>> +             while (packets < budget &&
->>>> +                    (buf = virtnet_rq_get_buf_small(rq, &len, &ctx,
->> header_offset))) {
->>>> +                     receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
->> stats);
->>>> +                     packets++;
->>>> +             }
->>>>        } else {
->>>>                while (packets < budget &&
->>>>                       (buf = virtqueue_get_buf(rq->vq, &len)) != NULL) {
->>>> --
->>>> 2.20.1
->>>>
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
+
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+index 9dc22fbe25d3..82c5a8def344 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+@@ -2171,12 +2171,12 @@ void mt7925_mcu_bss_rlm_tlv(struct sk_buff *skb, struct mt76_phy *phy,
+ 
+ 	tlv = mt76_connac_mcu_add_tlv(skb, UNI_BSS_INFO_RLM, sizeof(*req));
+ 	req = (struct bss_rlm_tlv *)tlv;
+-	req->control_channel = chandef->chan->hw_value,
+-	req->center_chan = ieee80211_frequency_to_channel(freq1),
+-	req->center_chan2 = ieee80211_frequency_to_channel(freq2),
+-	req->tx_streams = hweight8(phy->antenna_mask),
+-	req->ht_op_info = 4, /* set HT 40M allowed */
+-	req->rx_streams = hweight8(phy->antenna_mask),
++	req->control_channel = chandef->chan->hw_value;
++	req->center_chan = ieee80211_frequency_to_channel(freq1);
++	req->center_chan2 = ieee80211_frequency_to_channel(freq2);
++	req->tx_streams = hweight8(phy->antenna_mask);
++	req->ht_op_info = 4; /* set HT 40M allowed */
++	req->rx_streams = hweight8(phy->antenna_mask);
+ 	req->band = band;
+ 
+ 	switch (chandef->width) {
+-- 
+2.25.1
+
 
