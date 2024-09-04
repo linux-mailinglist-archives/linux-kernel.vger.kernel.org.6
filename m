@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-315714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45DA96C61F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:15:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DC296C622
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90A81C250CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:15:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93FBAB222B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C3C1E1330;
-	Wed,  4 Sep 2024 18:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D721E1A0F;
+	Wed,  4 Sep 2024 18:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoBAW9YT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTn8Qs6t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0452C84A22;
-	Wed,  4 Sep 2024 18:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD761E00B6;
+	Wed,  4 Sep 2024 18:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473731; cv=none; b=LhFHSiBY31C+gR7JiU5aKcrsog2u4nC42A3H0VND6YG8N+jpFwEVrReYsH6wjfvMOuy4/7BqsdEntS/ZUmRh8fbMZSZ8yDrMxRLX2FT4ltH7uS4wGZy3T2gOv5k7GWOZ5CHfVzeTymxmr7desUbV11IlCtEm3rr7OTmtThZpthY=
+	t=1725473756; cv=none; b=WiUO9DiIat7H4+eDgncnOcvm2W8T0biVvWWivaLv/ffjbj2OUMvB2UgWY2Ro84pM7B218fTqQVqctVUymjlM3z/tgkNIQaIrV2I7neCY75ZDuiwSeRVhNNMF/rM5gboFqVpp8R3X23Y7lYqYFdOXyXK93W/bRAKP48YubKhotyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473731; c=relaxed/simple;
-	bh=50z5k6U+Yaf2Knd3rhnPaInQsmkIRGPLkC9rAHg30DM=;
+	s=arc-20240116; t=1725473756; c=relaxed/simple;
+	bh=yti34NQLp3z26/2GmTL1llnQu5VorhQFs8/RIojmn5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDK3elX8oJAqh14Hj+Evc9wza55h1x9EHTf+PdRPXpp1oIBLkRIyz6MxNnQMK+xqt/UcH97DHkYLztnhZmAaVt/vGlOUdRFZO3IoeWUXIGkhlpYIKi/UVrEiIDvpZ1I+UXNeS/hhLAoznwk3V9PRUIdgLoxWnt9N9/oc4xFv1lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QoBAW9YT; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2053f6b8201so36484425ad.2;
-        Wed, 04 Sep 2024 11:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725473729; x=1726078529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwO+mWB5T8nnBU/vhgg8gwpf1IbVYSC47eToIiPUKl0=;
-        b=QoBAW9YT0vKEjbsbYH8KQ4Uzz10VU9oJlPQPIBKoV4SbJxWfSiJA6Q0ELC+iPu0T0b
-         LaMgr0xMT/FeNO/uX8Jbr3DVUpKIgaBumJy4zZOT0Ft1KqBmzRSByt0wYRV+5men5t+E
-         98EgNkXnNaQkU/jW6U/Qvry+7J8EE+ezx3a3oNpKlMU43pS/JCIf4F3om+P7LTywzO8M
-         9TKkqOYIhlUrAsatGmmmoM6oJrgRwjtUrVyo4thJYMUWdvlMZrmScy5/jjTuH0s8QX06
-         +fJJgMd8RALqNIalCzdgLozWGGidJJTtX5+L84duGuO3tIkapUtdcHp+LLiF/L8QOsvg
-         jffg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725473729; x=1726078529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WwO+mWB5T8nnBU/vhgg8gwpf1IbVYSC47eToIiPUKl0=;
-        b=Vkq7kJfQqbQWbBZDm+VXdGtnd4Sq0z8MXVMoME4SNEExSZ/TWQCyefdm1mT8Ugspk9
-         NJne/haDb7L4BOE8CBMxKP6KItVTovCOs50FX9vxXr7/JbgRTSpwZAMYxorFitVQk8Aw
-         eghori8lWVgifJgd3e7/mbgik+Y5PVLM9PdPkT7T4Fbynq7esLlXGz+WGImi2ja2wTjt
-         61dZklwbgWNfjXshAPG4IQoE01lAdqx3J9ad17QihocGam2ZrZssGFlWqUUWNm3iQM3W
-         6g43OVcbGWyeqQ0gRwZVTZASi4m84jHkzb6vi3d0IREQhTi5sz/MFjEklLSu9a6Ag5/s
-         q55Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWit+U/o642HMs9HStoE9hT81WlUj4LqTUCiB+Lo5hYQZTLvxhnqROLUyeUDl1EN+Jlbv3Ds/7a5v3HM08=@vger.kernel.org, AJvYcCXVUrMX4ie2CM+6n6pWIDOctuLq7Ue4PZMhgp9SpUoTOAQ08kQpcvbiD5LzPyTY52edZsC3g74ENxYl+X7Ii7S07h8/ug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUNwqC3A+5q0MzObtdRDhoYdkf8RAzItq7OoWE0fTyzskGAgV5
-	4A1cQqknHp1S022eic3rXEl3MKs2br8xv4r4zeUUbvnEI/fGWRDV
-X-Google-Smtp-Source: AGHT+IFkuclXI18u9/kLkb7YSk0EEYX4GvehBs0jB9UiAkmzv7JpCn8tuVhjyVch0/Jcs3TlPTX48w==
-X-Received: by 2002:a17:902:f690:b0:206:a239:de67 with SMTP id d9443c01a7336-206a239fb32mr49199275ad.18.1725473728812;
-        Wed, 04 Sep 2024 11:15:28 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae90f076sm16487225ad.7.2024.09.04.11.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:15:28 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:15:25 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>, Mark Gross <mgross@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-geode@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/platform/geode: switch GPIO buttons and LEDs to
- software properties
-Message-ID: <ZtijvdOiA-RF_2RO@google.com>
-References: <ZsV6MNS_tUPPSffJ@google.com>
- <a2366dcc-908e-41e9-875e-529610682dc1@redhat.com>
- <595fe328-b226-4db5-a424-bf07ad1890b4@redhat.com>
- <20240904132104.GDZthewNjCZ4iLgEoD@fat_crate.local>
- <57bbca66-4d84-46c1-a638-1347ee6a222a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMvwhvNrW53KGOQCcUMV+7laHMuKiE2fEPh6D/s1eWHa624F8b0YaHp6CnzzZv8pDT6I4AbdL3+k3Me0p6lu2RfSl4d5y0bob3ewA63AhjX+IQyTVf7vnO9Nougk8K/PkSEIwEUqc1bMiNzhWGMA+WnYHGSguf4tTBom+bDWLjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTn8Qs6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB046C4CEC2;
+	Wed,  4 Sep 2024 18:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725473756;
+	bh=yti34NQLp3z26/2GmTL1llnQu5VorhQFs8/RIojmn5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTn8Qs6t83kgEnt8WxIiz+sR0BjVfd0t0v+2+cO9JDYgEGJ+i+6YCXj13tNM7KfjK
+	 brAE4kJMaihidAcTe73L59tn6hd9bdy1ZgupVZqbbIg73flCNM9YNpls+3vGC6xUyK
+	 bbZmkThbQVLKFdUqksKhckHj6G3tXvVhDRbJJ2Ss7MnvpQimIW0sAPC94AVPkcd4Ue
+	 zUQoruEJBHW/xcRkw3Fjk09wKygVNMo2RUPAPBRQwHcA5R6AqiM+RIXm+FGIMQ7toe
+	 aEH8kwLzW6liYHsYbkv1LxijVc19iYiitpAlqQTHG40LKNj/LcnpesFoaDgPqP73SX
+	 f5TVS+ULx14aQ==
+Date: Wed, 4 Sep 2024 11:15:54 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH 8/8] perf tools: Check fallback error and order
+Message-ID: <Ztij2o6O9jbAdMiJ@google.com>
+References: <20240904064131.2377873-1-namhyung@kernel.org>
+ <20240904064131.2377873-9-namhyung@kernel.org>
+ <CAP-5=fWnAwVumJgypta=RJV4JBN7A82bn4aUuNJX4G3Xi0zfhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <57bbca66-4d84-46c1-a638-1347ee6a222a@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWnAwVumJgypta=RJV4JBN7A82bn4aUuNJX4G3Xi0zfhg@mail.gmail.com>
 
-On Wed, Sep 04, 2024 at 06:01:30PM +0200, Hans de Goede wrote:
-> Hi,
+On Wed, Sep 04, 2024 at 09:19:25AM -0700, Ian Rogers wrote:
+> On Tue, Sep 3, 2024 at 11:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > The perf_event_open might fail due to various reasons, so blindly
+> > reducing precise_ip level might not be the best way to deal with it.
+> >
+> > It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
+> > given precise level.  Let's try again with the correct error code.
 > 
-> On 9/4/24 3:21 PM, Borislav Petkov wrote:
-> > On Wed, Sep 04, 2024 at 03:02:17PM +0200, Hans de Goede wrote:
-> >> Or I can merge it through platform-drivers-x86.git/for-next
-> >> with an ack from one of the x86 maintainers.
-> > 
-> > Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-> 
-> 
-> Thank you.
-> 
-> I've applied this patch to my review-hans branch now:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-> 
-> Note it will show up in my review-hans branch once I've pushed my
-> local branch there, which might take a while.
-> 
-> Once I've run some tests on this branch the patches there will be
-> added to the platform-drivers-x86/for-next branch and eventually
-> will be included in the pdx86 pull-request to Linus for the next
-> merge-window.
+> We also have pmu's max_precise:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmu.h?h=perf-tools-next#n91
+> The reducing the precision approach was iirc taken for AMD who will
+> forward some precise events to IBS, but the max_precise on the cpu PMU
+> is 0. I think because of this, reducing the precision below
+> evsel->pmu->max_precise shouldn't be necessary and another fallback
+> may help better.
 
-Hans, could you squash the following bit into the original patch please:
+Internally IBS has max_precise of 2 and I think it should have that in
+the sysfs.
+
+But I found a problem with this code.  Now cycles:P would stop at 2
+because after that it won't return EOPNOTSUPP.  Instead, it returns
+EINVAL because of exclude_kernel and PERF_PMU_CAP_NO_EXCLUDE.
+
+Maybe we need something like this.. :(
+
+Thanks,
+Namhyung
 
 
-diff --git a/arch/x86/platform/geode/geode-common.c b/arch/x86/platform/geode/geode-common.c
-index 8f365388cfbb..d35aaf3e76a0 100644
---- a/arch/x86/platform/geode/geode-common.c
-+++ b/arch/x86/platform/geode/geode-common.c
-@@ -14,7 +14,7 @@
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 0133c9ad3ce07a24..6157dc68044eb389 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2587,6 +2587,13 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+        if (err == -EINVAL && evsel__detect_missing_features(evsel))
+                goto fallback_missing_features;
  
- #include "geode-common.h"
- 
--const struct software_node geode_gpiochip_node = {
-+static const struct software_node geode_gpiochip_node = {
- 	.name = "cs5535-gpio",
- };
- 
-
--- 
-Dmitry
++       /* HACK: AMD IBS doesn't accept exclude_*, forwarding it back to core PMU */
++       if (err == -EINVAL && evsel->precise_max && evsel->core.attr.precise_ip &&
++                       evsel->core.attr.exclude_kernel) {
++               evsel->core.attr.precise_ip = 0;
++               goto fallback_missing_features;
++       }
++
+ out_close:
+        if (err)
+                threads->err_thread = thread;
 
