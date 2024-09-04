@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-314539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B933396B4B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D03A96B230
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765E5287A08
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6BC1F23E50
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556BF1CC167;
-	Wed,  4 Sep 2024 08:35:04 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D691CCB4B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E03146588;
+	Wed,  4 Sep 2024 06:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="H23CjZKh"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112BB126C0A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438904; cv=none; b=oNtxriNLvayBvW/vpiEMIM/YAonNUPmTWzaxkWorPpbp4urG9wRUN/B6yrRr9/yTLBipVjJGIiGiWlygGegMSihgZ0+cU7CPXpRzqR4eqivFgnhDAVj07IegIlu4i0I5QlC8i2dGAtMhmRyQ/OeRlT3Fh2gW3GIc7oX/sBAZM70=
+	t=1725432981; cv=none; b=DQpMnkHGJ3h6VOWC9CTABh6A2TsMSJ54JhJwHkaGD6G1rlQVutSc/hnheqtOiPghFDuxUNOQFUwzSbBBz8ylpcyrK3sNjzEGk79dsMGB3VpRB2EUj+S4YvgzJzEfOAzK/oOb/8giTeJvgDuMGRmfQRbocunLRAKm4bWRpWQMZpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438904; c=relaxed/simple;
-	bh=Fb+HAj/0/rc13Oz+/lwCLpb0c6ipSymkclzff49pYsQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UdwUg7u9GLXwywuxwbaGDr7jK525EQAGUDjgQ+T1Jyc9/Ct0grrpwQ5gQeObiyzV6lNfOfhzZAJW+fYAceBhl4+/VI26U7MyF5dfTCKtk7FZxZBfT5aCFlN3wcp6UtaEg39SEf4a55clxj1pH53xiELyKRcSjymUypf00xYi8Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766d81bb272b-e4731;
-	Wed, 04 Sep 2024 16:34:58 +0800 (CST)
-X-RM-TRANSID:2ee766d81bb272b-e4731
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d81bb249d-1db7d;
-	Wed, 04 Sep 2024 16:34:58 +0800 (CST)
-X-RM-TRANSID:2eea66d81bb249d-1db7d
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: fancer.lancer@gmail.com
-Cc: jdmason@kudzu.us,
-	dave.jiang@intel.com,
-	allenbh@gmail.com,
-	ntb@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] ntb: idt: Fix the cacography in ntb_hw_idt.c
-Date: Wed,  4 Sep 2024 14:54:42 +0800
-Message-Id: <20240904065442.102889-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725432981; c=relaxed/simple;
+	bh=jEU/yiPDlijZ1hPPllZLOJhLAd/v7FEN/G784d2Y0TA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IrhO4cPvsrGmpF2ZFnb7bHsWtYb/WGvd/la4eBpyl9vk2Gj199VjpvYV7OFRa2a8OZ5n0/oQPfuh0uhEq3qSBj003EHzx/V5uDKeIGBrzQGh6gLKJ4MoUk49DVvmkpBEZ86qq2BVgV1vPD+1jmit5UmloZZY5nE2ypruDxZcEqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=H23CjZKh; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725432969; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=74Yfbt5V1bRHHf2JB/mJ5iQAdMROQNunrC5fjEZ61Pg=;
+	b=H23CjZKhqMJc5K2Oq43F9KBwbDZqwBfLNFSfs9n5HEnZGPYH6EFHXiXtuzdDBFr/q3fflimV1+NpaCoaGVQ3Ctf6jJITJBr2OW3873QoZYVYFhvjcXKCds5RMusHZwBDgLYpWlhNkmeGfyC8LrZ3AGWuNR28Z/fsQMHoYJiEFaU=
+Received: from 30.221.130.127(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEGOD2h_1725432968)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Sep 2024 14:56:09 +0800
+Message-ID: <443a883e-7565-43ed-9def-77e0d666c454@linux.alibaba.com>
+Date: Wed, 4 Sep 2024 14:56:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-
-The word 'swtich' is wrong, so fix it.
-
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- drivers/ntb/hw/idt/ntb_hw_idt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-index 48dfb1a69a77..6fc9dfe82474 100644
---- a/drivers/ntb/hw/idt/ntb_hw_idt.c
-+++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-@@ -2547,7 +2547,7 @@ static void idt_deinit_dbgfs(struct idt_ntb_dev *ndev)
-  */
- 
- /*
-- * idt_check_setup() - Check whether the IDT PCIe-swtich is properly
-+ * idt_check_setup() - Check whether the IDT PCIe-switch is properly
-  *		       pre-initialized
-  * @pdev:	Pointer to the PCI device descriptor
-  *
--- 
-2.33.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] erofs: support unencoded inodes for fileio
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+ <20240830032840.3783206-2-hsiangkao@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240830032840.3783206-2-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
+On 2024/8/30 11:28, Gao Xiang wrote:
+> Since EROFS only needs to handle read requests in simple contexts,
+> Just directly use vfs_iocb_iter_read() for data I/Os.
+> 
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+
+Unmapped extent could actually split, already fixed as below:
+
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index 598b865ae25f..7f82238047e6 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -127,6 +127,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+  			erofs_put_metabuf(&buf);
+  		} else if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+  			folio_zero_segment(folio, cur, cur + len);
++			attached = 0;
+  		} else {
+  			if (io->rq && (map->m_pa + ofs != io->dev.m_pa ||
+  				       map->m_deviceid != io->dev.m_deviceid)) {
 
