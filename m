@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-314713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA5E96B76E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:52:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF7B96B772
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE84C1C2417B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12E61C2242E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39801CDA09;
-	Wed,  4 Sep 2024 09:52:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0511CDA09;
+	Wed,  4 Sep 2024 09:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YaSfZaoE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA968185926
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1C1EBFEA;
+	Wed,  4 Sep 2024 09:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443569; cv=none; b=hvpN1gT1kkDv1j9u5SHzAHH2yMnCScCcbTsNIqjSk7yH4KLDba2VxDuMGAKyqnmSNPTlJwD9ivVV+rHXmQ5TDL56GpE6/6ScWYED+TB7WI0xILN1yXOCgqRoQsYD+CYKV6k3cswv4jIonv60w1DDtAjCkMx0hkgd6LWHJDL/kZ8=
+	t=1725443602; cv=none; b=SPb6CZe9XLcv2uCo65g6xDjJ05s5qDclMLxVmPv5v/1wj+0Ixsjzl/Rgifnyu6NW7ddYnwpO86VrYP+EipU7gp5CcWi6HBICpAdMXccASWgRiSqL2SBAZ/kMGUsDGGugBcvC1MFOwpnI6uzK5IXk2n39jcy+WOjDa+M56E+eCQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443569; c=relaxed/simple;
-	bh=G2gSgXAkWV8CXgpO/BiDwZliPz4H8EJfiHjcOwAJ5jo=;
+	s=arc-20240116; t=1725443602; c=relaxed/simple;
+	bh=NBh72CSFH3xrTu5kazoMl9N+ejgQmT44qsc98DLhg8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSaBsBXJix1xwz5V74I5ABXYaw17112FAiALMyzsktO+rNYJ8rFQlRaQUaxP1k62qTQZwh5EEoPp7gm3u2kPCWSlBr7Hz9d9D7KEQK6i5BFEENxnlbM/YRe2AL3dbUJsgSA4pgB+a1kqjitSberilDVmli75DtQK/J59FySKzsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slmgm-0001n1-US; Wed, 04 Sep 2024 11:52:36 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slmgm-005QGx-CB; Wed, 04 Sep 2024 11:52:36 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0A3DD3324C9;
-	Wed, 04 Sep 2024 09:52:36 +0000 (UTC)
-Date: Wed, 4 Sep 2024 11:52:35 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: can: cc770: Simplify parsing DT properties
-Message-ID: <20240904-gorgeous-peculiar-newt-067532-mkl@pengutronix.de>
-References: <20240903135731.405635-1-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnaRdU1IwBf6ZhSVfigG37mI6DijR0TyOjHDBkpnIEKD51BCRgfMEET+N3AQl832vH+0xfcBuHtJVqsodMM1RGZCMtof8+FI3upRzfnWEckAmrWEBbfUHqeg8gvRhiRXRyjkwb8nzNW5XfDd6HqG9MBiiBGMJjj9tVkuCv52Ido=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YaSfZaoE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F3BC4CEC6;
+	Wed,  4 Sep 2024 09:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725443601;
+	bh=NBh72CSFH3xrTu5kazoMl9N+ejgQmT44qsc98DLhg8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YaSfZaoENlPebWPb53Xjtvae3OqpsrD/7wvZUVtYVvb02xCj9EW91hzSzj+Qmlfky
+	 vcMui7R7v2fRy63fxB+3nhjs1mGF1egWObarP7pAOGADjxTk4/vwIsmk/923wuu+0G
+	 uaWfRCbx98sJeY4UXQXp0t4vm7sNCsE+suDodY+g=
+Date: Wed, 4 Sep 2024 11:53:18 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Richard Narron <richard@aaazen.com>
+Cc: Linux stable <stable@vger.kernel.org>,
+	Linux kernel <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
+Message-ID: <2024090419-repent-resonant-14c1@gregkh>
+References: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wfrzeulhkfopbkjv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903135731.405635-1-robh@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
 
+On Mon, Sep 02, 2024 at 03:39:49PM -0700, Richard Narron wrote:
+> I get an "out of memory" error when building Linux kernels 5.15.164,
+> 5.15.165 and 5.15.166-rc1:
+> ...
+>   LD [M]  drivers/mtd/tests/mtd_stresstest.o
+>   LD [M]  drivers/pcmcia/pcmcia_core.o
+>   LD [M]  drivers/mtd/tests/mtd_subpagetest.o
+> 
+> cc1: out of memory allocating 180705472 bytes after a total of 283914240
+> bytes
+>   LD [M]  drivers/mtd/tests/mtd_torturetest.o
+>   CC [M]  drivers/mtd/ubi/wl.o
+>   LD [M]  drivers/pcmcia/pcmcia.o
+>   CC [M]  drivers/gpu/drm/nouveau/nvkm/engine/disp/headgv100.o
+>   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dce/dmub_hw_lock_mgr.o
+>   LD [M]  drivers/mtd/tests/mtd_nandbiterrs.o
+>   CC [M]  drivers/mtd/ubi/attach.o
+>   LD [M]  drivers/staging/qlge/qlge.o
+> make[4]: *** [scripts/Makefile.build:289:
+> drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o]
+> Error 1
+> make[3]: *** [scripts/Makefile.build:552: drivers/staging/media/atomisp]
+> Error 2
+> make[2]: *** [scripts/Makefile.build:552: drivers/staging/media] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+>   LD [M]  drivers/pcmcia/pcmcia_rsrc.o
+>   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dce/dmub_outbox.o
+> make[1]: *** [scripts/Makefile.build:552: drivers/staging] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+>   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dml/calcs/dce_calcs.o
+>   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dml/calcs/custom_float.o
+>   CC [M]  drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.o
+> ...
+> 
+> #uname -a
+> Linux aragorn 5.15.166-rc1-smp #1 SMP PREEMPT Mon Sep 2 14:03:00 PDT 2024
+> i686 AMD Ryzen 9 5900X 12-Core Processor AuthenticAMD GNU/Linux
+> 
+> Attached is my config file.
+> 
+> I found a work around for this problem.
+> 
+> Remove the six minmax patches introduced with kernel 5.15.164:
+> 
+> minmax: allow comparisons of 'int' against 'unsigned char/short'
+> minmax: allow min()/max()/clamp() if the arguments have the same
+> minmax: clamp more efficiently by avoiding extra comparison
+> minmax: fix header inclusions
+> minmax: relax check to allow comparison between unsigned arguments
+> minmax: sanity check constant bounds when clamping
+> 
+> Can these 6 patches be removed or fixed?
 
---wfrzeulhkfopbkjv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's a bit late, as we rely on them for other changes.
 
-On 03.09.2024 08:57:30, Rob Herring (Arm) wrote:
-> Use of the typed property accessors is preferred over of_get_property().
-> The existing code doesn't work on little endian systems either. Replace
-> the of_get_property() calls with of_property_read_bool() and
-> of_property_read_u32().
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> v2:
-> - Use reverse xmas tree order
-> - Fix slew unsigned comparison
+Perhaps just fixes for the files that you are seeing build crashes on?
+I know a bunch of them went into Linus's tree for this issue, but we
+didn't backport them as I didn't know what was, and was not, needed.  If
+you can pinpoint the files that cause crashes, I can dig them up.
 
-Added to linux-can-next.
+thanks,
 
-Thanks,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---wfrzeulhkfopbkjv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbYLeAACgkQKDiiPnot
-vG9EVwf+M/MpT+nMGdkIp1dv1myWb6N6DFUuGPOMbXFizmWl1BuO6PQQV5Z1TD4W
-lVFvt/vhkDloG6x73nD9U2Jf5n8mp3HwVQJF3hfCLUFsQ3uGWI/4VTjksSRZ4L1H
-whvUWgNyn4MSQ5hNHRyMEKdy+rw8lGPlwCVjxjqrd0izeJNKobQsoRlJSiEETcRj
-hGGhNc+JRgbZIYcRO1ERKgA0hvWVroHyf5o/iN7d5eOJXmlVh+qpBK5i/Kq97Kxg
-WDNcLogphNiJgssLhu8mAm9chrNZ6a/jiHgqa/c+MeTnbdQ4Th35VdSe85s8Jpe3
-KdyKjJWkE0eYK5dj6VTLaGCmMqqIsg==
-=GVdl
------END PGP SIGNATURE-----
-
---wfrzeulhkfopbkjv--
+greg k-h
 
