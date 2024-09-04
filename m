@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-315064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F86396BD6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AF696BD3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821471C24D0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB431F23BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE441DA30E;
-	Wed,  4 Sep 2024 12:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF981DA115;
+	Wed,  4 Sep 2024 12:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="BJH1Gwvd"
-Received: from pv50p00im-ztdg10022001.me.com (pv50p00im-ztdg10022001.me.com [17.58.6.58])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="hiEKGlHy"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F911D9D99
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.58
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454661; cv=none; b=pYfkxr/Kzdj2HvGs+NP0hsjh6PCxGsvZQ+eUzzbJBJHJ2GvYSUiQCG73FIBro4U+VyOq8yZRAPQMEVpl5OQFxsyiA/mcWZPWm2J50J3Oc7GGtJ3L9QAd3Di5tNRVgAgfMBVy4UDGALynAkT1hXjCXlr3J62fV6DVvL+ax6ApcRE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454661; c=relaxed/simple;
-	bh=fzj/oclTmnCHB3hbiGEklL8+S9AfRLTq+SRiNp9ZtQI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J7J7QZbaa5X/VgeKSwYcqs28Yj5TMVuWP9uayJgLMMWGpbT3JhN5HRmcfHAI4+jhaVVosYXkOpvYOsJQlb3gNa+cKcUn9WMT1TjwvD8qm4l4gTFkFOrOJIqNmIgsHPKpgBqY9Utjl1kyzJrQJ1tDUHwCAQ30+VAlP+b5gxozyP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=BJH1Gwvd; arc=none smtp.client-ip=17.58.6.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725454659;
-	bh=idcU0ReTbtAFWE8j/+dTR9RAS+21qVyWNpl+uT4Ko4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=BJH1Gwvd0VetAtEkyuSPfMfWvQD4c48kwYIku7uDj4paoJRSEVvUjG3n4YbUEmCAc
-	 4I+OHCa64xGyxdwIX1Kt4XFmxRgwQ8SmSD2SCLr3GN2H1F10xpLrHhtDU0CKptRio9
-	 nBN7FcZ1l0DqanZUZoK/Qgqqsqyr8LBp+ycIbgfV6mf9E/9I4ehkJbg3vA3mb9dAwv
-	 y6kqlGZhIe9Y52FJ6CGFMPlJmCJMhmWCYcmuLXiUwaUCMejG9jiEAMYX/FbVRdvyI9
-	 jyBk+Mq9wBVfjUjlM5Qrad+F0G+W87rTuQBgKUnrxw0zYiZHApI5oKy4LsxV2VqAhZ
-	 q5qtqGSLX1+bg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10022001.me.com (Postfix) with ESMTPSA id 6C7353E217F;
-	Wed,  4 Sep 2024 12:57:33 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 04 Sep 2024 20:56:44 +0800
-Subject: [PATCH 3/3] driver core: bus: Correct API bus_rescan_devices()
- behavior
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4869A1D86F7;
+	Wed,  4 Sep 2024 12:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725454499; cv=pass; b=OCl7oTFsi/olsNQRIA1BeXeGiuPCTGCnC78AwYSThcVXvj5idW1ktWt+5zx7z6cziLbBvcoSiQjjWbXUCJWTBG92cPHYSYZZAB9+vI//vGJMKem+h7W6BugovUxg8+ErXgPISP44wgAQ7n4YnAcG4w05186n4s7bdOtbn4h/T2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725454499; c=relaxed/simple;
+	bh=Albu5sRQ0I+S2aJ2p3y8s3vyJ4WN595Y55KiK1JykBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=teyiZcrfJ1IMOsxDC1H4sLMQIS04HtBxKpx9Xrhi65KRbQxhBUqc1U0oTdBNr2HT/aeW4mQo/XrKIe2Z14bx4UT+zmZfXebzSS+keBPlVZZ9QBvvWmjPUkjwEWkEjZkoB1eXy/7a8bydxsTAPeJff6H3O6zPgfqeprKeEHe+4Z0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=hiEKGlHy; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725454487; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kF1yD70P2vaaQrzk8Y7dRKktmWt78mCzlEuwEPlykV1/X3+AY1NBzITsExMJwK1m2DZkYSNXEZuxi/8fEi5tkJ3T56JZ5cZ/KdmY2B8W8U6r/2D4pU7/O6RWvKVsR1ruaB8Pb8Z5rAQRLOB7yQ6srjqA7xHq/KW9sKihtN4kq9E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725454487; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YCY1tSj+dIFHQAkVxVxdKyLUzNjSk2r1e9kB6YYQRIo=; 
+	b=ADftAVpJt/BV1K2REIjNWIx6ro/BUuW142qfWp1pzLcA/OWUFsSjBjBfKfYz6lKDTmf1e6kM2T7DitJBhBsZ+WA67ZD9+zjJ8wU0ROZYZh8VpHr2CO0iRwI3UOJ8KDLppGkdLZBH8hjQixuu6V4HnlZJ/4yCcIwKfRILAthFCeU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725454487;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=YCY1tSj+dIFHQAkVxVxdKyLUzNjSk2r1e9kB6YYQRIo=;
+	b=hiEKGlHyXQlPkw8gVixfw6Oi8geX9ZsfuT+Y4OiXGqKek+98tR1njA6vqbpSUCZu
+	3/ectda7cjSwFco6GDi2p8tqsFQRL7T+CZYnDq6YonvycRZnpHg90KyK0lH2oxF8dgY
+	FrhQrRuAI7vFtPAPav4hVt+JyevaGGVed9nhiW/I=
+Received: by mx.zohomail.com with SMTPS id 1725454485680542.2054998188497;
+	Wed, 4 Sep 2024 05:54:45 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
+Date: Wed, 04 Sep 2024 08:56:45 -0400
+Message-ID: <6077666.lOV4Wx5bFT@trenzalore>
+In-Reply-To: <ag7hzh4crzuqkvborkqz4elastaodaq6e63xbssztfgoz5dhka@6bsjq3v37u54>
+References:
+ <20240903145615.9302-1-detlev.casanova@collabora.com>
+ <20240903145615.9302-2-detlev.casanova@collabora.com>
+ <ag7hzh4crzuqkvborkqz4elastaodaq6e63xbssztfgoz5dhka@6bsjq3v37u54>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-bus_match_unlikely-v1-3-122318285261@quicinc.com>
-References: <20240904-bus_match_unlikely-v1-0-122318285261@quicinc.com>
-In-Reply-To: <20240904-bus_match_unlikely-v1-0-122318285261@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: C6QhOV54FmcYX6wKBFioCQXDjr5uthgS
-X-Proofpoint-GUID: C6QhOV54FmcYX6wKBFioCQXDjr5uthgS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409040098
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+X-ZohoMailClient: External
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Wednesday, 4 September 2024 02:00:27 EDT Krzysztof Kozlowski wrote:
+> On Tue, Sep 03, 2024 at 10:51:36AM -0400, Detlev Casanova wrote:
+> > The device is compatible with rk3588, so add an entry for the 2
+> > compatibles together.
+> > 
+> > The rk3576 device has a power-domain that needs to be on for the eMMC to
+> > be used. Add it as a requirement.
+> > 
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> NAK
+> 
+> Drop fake tag. It is impossible to receive a review-tag from me on THE
+> FIRST version.  I almost never provide reviews out of mailing lists.
+> 
+> And since there is no changelog here and no versioning, this obviously
+> is not v2 or v3.
 
-API bus_rescan_devices() should ideally scan drivers for a bus's devices
-as many as possible, but it really stops scanning for remaining devices
-even if a device encounters inconsequential errors such as -EPROBE_DEFER
-and -ENODEV, fixed by ignoring such inconsequential errors during scanning.
+That's because the patch was from another patchset[0]. Only this patch needed
+a rebase on the mmc tree, so I sent it separately. You reviewed it here [1].
 
-By the way, Neither the API's return value nor device_reprobe()'s existing
-logic are changed.
+[0]: https://lore.kernel.org/all/010201919989e3de-60b56341-85e0-4869-89d1-362407c4f2ec-000000@eu-west-1.amazonses.com/
+[1]: https://lore.kernel.org/all/m5ua5jnbv4u36glqt2qrps35asuqfycxedgjrfhodi5bvs2r2h@xvy4qxt4gx74/
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/bus.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+> > ---
+> > 
+> >  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 34 ++++++++++++++-----
+> >  1 file changed, 26 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml index
+> > 80d50178d2e3..84a667f0c526 100644
+> > --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > 
+> > @@ -12,14 +12,18 @@ maintainers:
+> >  properties:
+> >    compatible:
+> > -    enum:
+> > -      - rockchip,rk3568-dwcmshc
+> > -      - rockchip,rk3588-dwcmshc
+> > -      - snps,dwcmshc-sdhci
+> > -      - sophgo,cv1800b-dwcmshc
+> > -      - sophgo,sg2002-dwcmshc
+> > -      - sophgo,sg2042-dwcmshc
+> > -      - thead,th1520-dwcmshc
+> > +    oneOf:
+> > +      - items:
+> > +          - const: rockchip,rk3576-dwcmshc
+> > +          - const: rockchip,rk3588-dwcmshc
+> > +      - enum:
+> > +          - rockchip,rk3568-dwcmshc
+> > +          - rockchip,rk3588-dwcmshc
+> > +          - snps,dwcmshc-sdhci
+> > +          - sophgo,cv1800b-dwcmshc
+> > +          - sophgo,sg2002-dwcmshc
+> > +          - sophgo,sg2042-dwcmshc
+> > +          - thead,th1520-dwcmshc
+> > 
+> >    reg:
+> >      maxItems: 1
+> > 
+> > @@ -35,6 +39,9 @@ properties:
+> >      minItems: 1
+> >      maxItems: 5
+> > 
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > 
+> >    resets:
+> >      maxItems: 5
+> > 
+> > @@ -97,6 +104,17 @@ allOf:
+> >              - const: block
+> >              - const: timer
+> > 
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: rockchip,rk3576-dwcmshc
+> > +
+> > +    then:
+> > +      properties:
+> > +        power-domains:
+> > +          minItems: 1
+> 
+> Why minItems? This does not look right. I don't get what you are trying
+> to say here.
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 6b5ea82a44c1..31d9d5d08934 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -58,9 +58,6 @@ static int __must_check bus_rescan_single_device(struct device *dev)
- 	return ret;
- }
- 
--static int __must_check bus_rescan_devices_helper(struct device *dev,
--						void *data);
--
- /**
-  * bus_to_subsys - Turn a struct bus_type into a struct subsys_private
-  *
-@@ -790,15 +787,18 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
- 						  void *data)
- {
- 	int ret = 0;
-+	int *first_error = data;
- 
--	if (!dev->driver) {
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_lock(dev->parent);
--		ret = device_attach(dev);
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_unlock(dev->parent);
--	}
--	return ret < 0 ? ret : 0;
-+	ret = bus_rescan_single_device(dev);
-+
-+	if (ret >= 0)
-+		return 0;
-+	if (!*first_error)
-+		*first_error = ret;
-+	/* Ignore these errors to scan drivers for next device */
-+	if (ret == -EPROBE_DEFER || ret == -ENODEV)
-+		return 0;
-+	return ret;
- }
- 
- /**
-@@ -811,7 +811,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
-  */
- int bus_rescan_devices(const struct bus_type *bus)
- {
--	return bus_for_each_dev(bus, NULL, NULL, bus_rescan_devices_helper);
-+	int err = 0;
-+
-+	bus_for_each_dev(bus, NULL, &err, bus_rescan_devices_helper);
-+	return err;
- }
- EXPORT_SYMBOL_GPL(bus_rescan_devices);
- 
-@@ -826,9 +829,13 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
-  */
- int device_reprobe(struct device *dev)
- {
-+	int ret;
-+
- 	if (dev->driver)
- 		device_driver_detach(dev);
--	return bus_rescan_devices_helper(dev, NULL);
-+
-+	ret = bus_rescan_single_device(dev);
-+	return ret < 0 ? ret : 0;
- }
- EXPORT_SYMBOL_GPL(device_reprobe);
- 
+I'm saying that for the rockchip,rk3576-dwcmshc compatible, 1 power-domain
+node has to be set.
 
--- 
-2.34.1
+
+Regards,
+Detlev.
+
+
+
 
 
