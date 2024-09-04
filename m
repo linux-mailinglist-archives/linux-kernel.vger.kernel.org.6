@@ -1,72 +1,119 @@
-Return-Path: <linux-kernel+bounces-313976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D75196AD2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F138496AD30
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494E91C242EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305941C23FDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5917E1;
-	Wed,  4 Sep 2024 00:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702807F9;
+	Wed,  4 Sep 2024 00:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrfTCg3V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUCx098X"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9E9173;
-	Wed,  4 Sep 2024 00:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624AA391;
+	Wed,  4 Sep 2024 00:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725408791; cv=none; b=G2vQEvw/wMh65jkiWYARniPCKBP6XKfT6hcZFqaksFuQqvWAo9dagPGfaQxeZTCcM6E1aEE4LCrpob0zr6a2HWqEDq2RuNUlNSVbrg4smR9T/rm8r98X6xtV3hzokJ58vsd60bDL0W7jTLyeRiTvrXcHwrV1gHi72WRJAK9aBqs=
+	t=1725408952; cv=none; b=iDRu2+VxRV0bcUgDbXGxgAT/V7gxprvOrA25UdyP1xOOPoaHOU+t0dqRPlb/B7bT6KZzKGxH6EIRC/HZwGtAZIfd8cxxN5/Wp0sg19lnfkmwjzNFC1oLnG2Y/hI+oT+MQG+Usf3pD+gOphSk8otonQIVsLUvBPkuGsFxE6PVWTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725408791; c=relaxed/simple;
-	bh=wzv2dlQImwfQPmX0iww6hLaABYJFLVMq1mXi9LVbT5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uGg641Y9dYZ8nD+a6D7txZ5Nwh7yGbNYJw29tTVSLVo4VN/L0BP/xr7IiIXn+cMYwemXZ9S/vNGBSAr1HdlUvGc4707iTNvIKC7rW6d5OTkGyMorBI0Ysxb0+SEGueoK4rgXkJ030P774WVjo/iilOmOXGYckvjIxbyrMGlgKaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrfTCg3V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4775AC4CEC4;
-	Wed,  4 Sep 2024 00:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725408790;
-	bh=wzv2dlQImwfQPmX0iww6hLaABYJFLVMq1mXi9LVbT5A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PrfTCg3VuHkdwmTbCafk5E0qNb8a/8MXXAlbp2TomWkXedUEV9kH20DgZVDlod9fo
-	 Q8+EbyyLfCsycwcBGImlPnOzJs17g6MNYvh/s4llvx97ptPOqw4Z6a1ILQj8AOR5tJ
-	 Qn4kbcufNXScFbQpb3wrONeAhBzuP2vKvLXo7YF4SJWLH2OmfGaQs8P5HPrtp88Dan
-	 yr0MMj3IHCFajUqJZR2Nl+BdHGrCELy9al2ivA05o4LhmJvdxxbWbumNXUzLPdWlN1
-	 JNYeiuNkWr9Ois0FPRtu4XlnU40sOSd4kX7Rufb9tu4oowUzYn87Og0xYWaSrUBK2m
-	 JYmRgdGiyYN8w==
-Date: Tue, 3 Sep 2024 17:13:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
- Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] sefltests: mptcp: connect: remote time in
- TAP output
-Message-ID: <20240903171309.1e032d49@kernel.org>
-In-Reply-To: <20240902-net-next-mptcp-ksft-subtest-time-v1-2-f1ed499a11b1@kernel.org>
-References: <20240902-net-next-mptcp-ksft-subtest-time-v1-0-f1ed499a11b1@kernel.org>
-	<20240902-net-next-mptcp-ksft-subtest-time-v1-2-f1ed499a11b1@kernel.org>
+	s=arc-20240116; t=1725408952; c=relaxed/simple;
+	bh=d4HzHlcyWhxhYwrf+ZdncBLTDdqhz1jAA19ceRLiAdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUu+ZMunhGAgbqp4AeARkXEqSBeOzod6JpNsAlnuUtHXgoJlmy6XzU0L3Az2IUCM4K4ZE+QLcRTviHQRUYMFnBFuTYLDZIPLAyWJqVtofGbFMc9s7mTMAKzDTo6ozAxScJoGotUpgX+VCSX7pp4oii+9aZmRXrlxGofuIALuv18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUCx098X; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso760220a12.0;
+        Tue, 03 Sep 2024 17:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725408951; x=1726013751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NvNhaHXkaFL0Epr1sED0M5HwOXo21A0WSrifM/juZnE=;
+        b=HUCx098X+L16bfSw69VhAZhNlMe81rGnFV7aJkuOnOm394z6yAzZ1vjHSj8OvVJVke
+         waiZnZBlAh7hrUW1D5617FQMsSkvpZc1a/DeiaHgZvNr4Cu7KzQ9YX2ZQTTXeH6aIhZr
+         TVlI7JgO0mXtMlvduaJeLIbtB2fx89fQVE7pz59ZozsYn1JMjG7XGzk7Sbi0GWbmMprn
+         q0MabhW/Zo8oKtxTFY5EM+aarrYmo/Iiilwk4/HvEwzpqD7yft69Mk6gB/CkMBcXUAYW
+         wLOuM69lSNgxpouezxoEu81NtYwGc3eXh5wxvVWUHWHMm0Yz0mStaSeGX2+fmoWFB+7h
+         xkTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725408951; x=1726013751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NvNhaHXkaFL0Epr1sED0M5HwOXo21A0WSrifM/juZnE=;
+        b=bdno1jVFDRJ0/54Wb6d82FlmVbnROON1tQovTyHdWMB7NJX52ppNZfr5rqSHxBnrKp
+         ggZ9grYseWw5DOqJlWaFuICROmbTdNmq3s8LuA8myu/z/IZaw3eTkTAU5mgRuTZ4oelD
+         fYynmgQsfpS9LNB2bSHPUezYBj9oGizPrBLB2hJI6C7k784OSlh0hLiSv5MbdfmKh4MX
+         I9CbeQ1pEoIeSZ3C5VKu436OrA7s/bF+7i2WKiSnRYCki4AkyMf3FDRYEHY4gvW/8hcJ
+         SrNy5YO3LYJKpegS+P2Pk553zshTy5Fo3HCJimqft7cQvhSb1FbfZJqVtojDCrt2SOtS
+         aPkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgK7xEoREh/teLS937GDeGck75n/yJ31H8O44ZxBdf0ozjZLag+f/sEXEcJ9kNr+nCNmfV0egmJacRrc=@vger.kernel.org, AJvYcCW0Bymg2Cd8o1m2Pzhg/Mhve6uPeT01bnwrbbyyZYRz/VdwZhGSRnh0E8fHZACeczeyroHpD8NEh4dNeeQZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz+d+NUIt4hJBTSb5uaP/4os7iKUTMcv37PXykjqJoi5HOKXwt
+	QJoljXR/rChj/jDfmT1t+O0k6fKIu5tI3urq/Sr7PrCyELgaa7uf6O4N+n0QALQfbk/PT/NU7IH
+	AHY8EAid1yKl4ZRJKE1Rw/HWeH+0=
+X-Google-Smtp-Source: AGHT+IErZy5Q2Ts0A0vkjKg869s0jLwCVRYZCjG3no5WSj++BQIHoeXoTs1Dabp+pzStx5LKZYTJqtuSltaEX5UC6Bk=
+X-Received: by 2002:a17:90a:157:b0:2da:71f8:7ff with SMTP id
+ 98e67ed59e1d1-2da71f80949mr1686174a91.5.1725408950587; Tue, 03 Sep 2024
+ 17:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240902160828.1092891-1-ojeda@kernel.org> <20240903-super-elk-of-bliss-eaed2c@lindesnes>
+In-Reply-To: <20240903-super-elk-of-bliss-eaed2c@lindesnes>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 4 Sep 2024 02:15:38 +0200
+Message-ID: <CANiq72=KrOnx1utXaM17x07B=V-6zmW5nA+zYKS0AU8Rd+2v9A@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
+ error messages
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 02 Sep 2024 13:13:05 +0200 Matthieu Baerts (NGI0) wrote:
-> Subject: [PATCH net-next 2/3] sefltests: mptcp: connect: remote time in TAP output
+On Tue, Sep 3, 2024 at 9:49=E2=80=AFPM Nicolas Schier <nicolas@fjasle.eu> w=
+rote:
+>
+> thanks, no objections.
 
-nit: typo in the subject
--- 
-pw-bot: cr
+Thanks for taking a look!
+
+> I'd rather like to have
+>
+>     output=3D$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9][0-9])/\1\2/p=
+')
+>
+> here (thus, explicitly check against a two number subversion), so that
+> we can detect also versions like 1.100 or 2.1 and bail out.
+
+So I didn't change that here to avoid more changes in the same commit,
+but happy to do that if preferred.
+
+However, do we want to make it too strict? i.e. I don't think it is
+very unexpected to get v1.100 or v2.1 -- it may not be what current
+`pahole` does or ever do, but I am not sure we gain much by being so
+strict.
+
+(Similarly, for the ^..$ suggestion, it could be that `pahole` decides
+to to something like `pahole v1.25`, i.e. `name version`, like other
+programs).
+
+Either way, I am happy -- I doubt `pahole` changes too much, and if it
+does, we can change this too.
+
+Cheers,
+Miguel
 
