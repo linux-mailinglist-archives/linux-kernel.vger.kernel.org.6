@@ -1,181 +1,216 @@
-Return-Path: <linux-kernel+bounces-314990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FACD96BBD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0840196BBD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D64A1F2613F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3E41C20CEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5629E1D88BB;
-	Wed,  4 Sep 2024 12:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94261D79B6;
+	Wed,  4 Sep 2024 12:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dYJdOnWT"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="eXBeZN7s"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5251D79B3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983C01D014F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452259; cv=none; b=K4CO4mVTeE1dXDrvP2fPSK/uV+rTofxs8kNsewrKlUqdxs8EbEB7vQfxFlYl1roT5w/We30AGVfTV8GAsGNEGb+L5/Eqt5UMQun39D/RgXOWDzfUAT9HavWMHK5OpUe1XlAnRUlhXKTCpDRjA9NmSJNu/ZXG2poTzu07UA4+wL0=
+	t=1725452257; cv=none; b=WM9b0QRWAigPaICZtoixIuSunhWDhRUjrAo0V91ncQ9UNr4++Y2LKlBtoLRzccibTcGgF/s4NM8DbvrCaZ9i2T/qAaHH0JPmbP78Dn8vPqlWPqxL0H2nrifYE3DvgOfY9NSUDkAyZBAlPGK6GBp0QMdaIKItoFq/8sW4zRODfY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452259; c=relaxed/simple;
-	bh=qYsm8565woFnw1fHRK+sts6GjAK52KGTUSLhgkbr1Ts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TXFz15XDBog2V09twsjLqY/SmJFxqN8uPzE/79TDo7y44J766P1CFJ7ckQfUq2aSZPCNPYt0+qPSawF0bbk3QRALERJSBhlk5H4TkVJzA+gjs86MUAnihHlprpGS0aFykpnarFfXPt65QrYWH5dQNpxDfl22o3vdvfn1M7KiUL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dYJdOnWT; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53346132365so8018121e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:17:37 -0700 (PDT)
+	s=arc-20240116; t=1725452257; c=relaxed/simple;
+	bh=zj4T6WIZPeDa2vmSh0wjtMlkCysvSJAyGYFqeXOmG2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CqjpKPWBOlguiX7sFXSZtQPiSWeH1Km/DJUW2IeihMiWMESzicY02wtY3y9zQqon82/yd3q2deGKahZWPB0io7ZZbG+7s+JrYzVD5RZrMhcG6wRb2S2kR105MAnJGZbhb1GJnk0DccU73xQWjprcFTjEhilU+dgft4lGEsokwRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=eXBeZN7s; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f64e82aeacso14737421fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1725452256; x=1726057056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jlAAsB7SoUZZgOYwhXzTNmhBITwqQOW3TbtLYgYnb60=;
-        b=dYJdOnWT4olSrGBwJXdnsjBFgU4j5y5nfHaI1FRevh5VXPaTfCDolFjtNFJSuk9pCW
-         M2LqglnYgSeyywQyKuUn1R/+jgAnAyBniKVZuNy7Q9n3aBXGA+PiC0NZxbYLKtmPtrBs
-         KQrT7xn8GRIlB7cF8zg57dRBIYBdLKaQYIlfgs3X7jKz/kSeYX9l6jFgk9nMlRi9hvvv
-         H+dwS6ha2pfqCsgyhOoew5HQtsY7NIYB9cpFuh2xYN92oeAE3WDR1uc8CuVWs3fST5hE
-         sX9UqsRKkFixlAViL+HMGzLjLVpxBdRaJDCFu9yBeM6XjEMnIoxMbzjx/RN8nV2PbAoC
-         m/UA==
+        d=tuxon.dev; s=google; t=1725452253; x=1726057053; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Dou6mOpsNIsQhbLYqI2p6f69XLT/g8gRU79/Y8W7xI=;
+        b=eXBeZN7s7RaJeXKMfFQzr3eREESwYsefuTID6B+eCWl+HocnK3FU31VHPkIKkuX48E
+         4mejZv9JOfwJeFBtiGbc97+MBYfP83Z8YCA0AgPXYcPBGyuD+mWWEx0tt8Mrls7GNePL
+         N7HGkclE/bH3Z2DJphY008aSCyhEp58btEjIvncLgJjD5+RLMjt9lYNaRWBiz27N7oPv
+         e/7Wr7ABMoPce4RjQk4553dvz2aHQ56HaD7eY3ecfOUwU9lhns2rv8bARxfwQAsZYU2E
+         js4jt4p5GUg2587cqJlNGawX3RGivvhK1QjyfHi6FuvD4Gs3qmY6jqdl+Yz0BSQHinil
+         hxcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725452256; x=1726057056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jlAAsB7SoUZZgOYwhXzTNmhBITwqQOW3TbtLYgYnb60=;
-        b=rZK3wEjYgWjhnztCbk4gND/FwLX19FnU2y8k/dsZBdLtFl6tiuEOAvBYI4mJmx22GC
-         Y6lxRWnc5N8hcD4PrJP67cCG5MkoSyfWH+8VDhHqa0xlXv4ObJnY8XIPRdieoZ5Lkamv
-         Mh4PD+xY59+LP5p2Woms/MfwpMdlCzVbquDSEPMow9X7CmKHUw1a9vyu105D2cq1iIc7
-         Q66Z9HxiuMQhgoO8K1uFa6eeCwgXNtY3uZP2+uTpPGuDUg23QNmPiH3UKTKJmP6DW0kc
-         TfLRfnfaucsHf7ERX+/x7vxhVAdg2jkvY4aecrWjawbqOhJ6O4SsOzYC67i3C3FmoJIz
-         YAjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsUoxatzJvD5PwSJIN4Zt7iARJKEDJR9b/9lOFI2aPrr0qSRMiaYwSTdkarqDkHuELk4RAZrsVD6Kmshk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDMt1mOk49fNlJmn8b5PBCUXtJtsaPr03nB6VfITDUB+FPs2rR
-	9GuwCBqlBcv8oeSfegUP8NKnfqM4aiOjot/TJC1lXHcPuguoy6RWDPhDWH6WQ2L5OvZ+tFGn+IW
-	KcRM2oYhbJYdD+oQ6ZHxZJtvNlB6mdmzbbvC1oQ==
-X-Google-Smtp-Source: AGHT+IHONA2kh/9cuUHglAMjIqImf7K09nF2SZfCubD5ZSJYCibfpv2CbmuIEnueZFBXb2pJWbIKdkcALwOvnjG7oMU=
-X-Received: by 2002:a05:6512:2211:b0:534:3cdc:dbef with SMTP id
- 2adb3069b0e04-53546b8d6d5mr11049948e87.43.1725452254963; Wed, 04 Sep 2024
- 05:17:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725452253; x=1726057053;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Dou6mOpsNIsQhbLYqI2p6f69XLT/g8gRU79/Y8W7xI=;
+        b=hMsF3Hh5LKK+ewLJWQqU92IzFhN47OlIakb51k+GVpwGR/pamAptcKwzPVrKRngIOL
+         2VllhCikY8q2q0KjLwbyOqAPQL580hsxD/mFn+T/ChxWqP8XrtyezHrCb5OafJmw4gCM
+         Jn5W0UCL+h+Zo44HAj3SxIxU9HKvJqYTgHlvL1A28i53hm2qgG8lObLi7GhISzrCaHxG
+         Y4Y8JmAoTsrbtZjMV5R4UuAjqOf3Y54Xwsk8LpmyVO//rvc7l0mUvkuSw0LlXaFDa58N
+         f8X3AiKi4hxAEW8lOtzdX17tUvGlFmxgHot47FeV+viyo9xB6/u2HwEnXB71Nj8tSHy+
+         Igkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4eCahdHtBnmML5gJ07Vf9Q92vxPeTKvnl95LB8o4xatt66hf9QBoTDPp572gL1MeU6ByTHhJAFeUbNVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylnvaM6GXoRJo/gsC66x8lmiiVjrYJEK9w/zrsEW42z7i7EebK
+	U8rL2obh/56PIWnWbv1dvclzK262elu5wN0RP3SbxAUGRbNmBbsu9xlQWTfw+dE=
+X-Google-Smtp-Source: AGHT+IHIB0jGC+rRkMo8IDU8M56OjRH4fYE4YIr0S9tvlFg9or1QcS58k5s2WfCgUk3OlQ5thdo7OQ==
+X-Received: by 2002:a2e:1312:0:b0:2f3:d82b:1959 with SMTP id 38308e7fff4ca-2f64441ec9fmr46353361fa.23.1725452252267;
+        Wed, 04 Sep 2024 05:17:32 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c39bsm7568836a12.52.2024.09.04.05.17.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 05:17:31 -0700 (PDT)
+Message-ID: <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+Date: Wed, 4 Sep 2024 15:17:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829010151.2813377-1-samuel.holland@sifive.com> <20240829010151.2813377-10-samuel.holland@sifive.com>
-In-Reply-To: <20240829010151.2813377-10-samuel.holland@sifive.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Wed, 4 Sep 2024 17:47:24 +0530
-Message-ID: <CAK9=C2WjraWjuQCeU2Y4Jhr-gKkOcP42Sza7wVp0FgeGaD923g@mail.gmail.com>
-Subject: Re: [PATCH v4 09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions
- for guests
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, 
-	Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+Content-Language: en-US
+To: Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
+ conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
+ magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de,
+ robh@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+ <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 6:32=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> The interface for controlling pointer masking in VS-mode is henvcfg.PMM,
-> which is part of the Ssnpm extension, even though pointer masking in
-> HS-mode is provided by the Smnpm extension. As a result, emulating Smnpm
-> in the guest requires (only) Ssnpm on the host.
->
-> Since the guest configures Smnpm through the SBI Firmware Features
-> interface, the extension can be disabled by failing the SBI call. Ssnpm
-> cannot be disabled without intercepting writes to the senvcfg CSR.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->
-> (no changes since v2)
->
-> Changes in v2:
->  - New patch for v2
->
->  arch/riscv/include/uapi/asm/kvm.h | 2 ++
->  arch/riscv/kvm/vcpu_onereg.c      | 3 +++
->  2 files changed, 5 insertions(+)
->
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
-asm/kvm.h
-> index e97db3296456..4f24201376b1 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -175,6 +175,8 @@ enum KVM_RISCV_ISA_EXT_ID {
->         KVM_RISCV_ISA_EXT_ZCF,
->         KVM_RISCV_ISA_EXT_ZCMOP,
->         KVM_RISCV_ISA_EXT_ZAWRS,
-> +       KVM_RISCV_ISA_EXT_SMNPM,
-> +       KVM_RISCV_ISA_EXT_SSNPM,
->         KVM_RISCV_ISA_EXT_MAX,
->  };
->
-> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-> index b319c4c13c54..6f833ec2344a 100644
-> --- a/arch/riscv/kvm/vcpu_onereg.c
-> +++ b/arch/riscv/kvm/vcpu_onereg.c
-> @@ -34,9 +34,11 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
->         [KVM_RISCV_ISA_EXT_M] =3D RISCV_ISA_EXT_m,
->         [KVM_RISCV_ISA_EXT_V] =3D RISCV_ISA_EXT_v,
->         /* Multi letter extensions (alphabetically sorted) */
-> +       [KVM_RISCV_ISA_EXT_SMNPM] =3D RISCV_ISA_EXT_SSNPM,
+Hi, Stephen,
 
-Why not use KVM_ISA_EXT_ARR() macro here ?
+On 03.09.2024 22:48, Stephen Boyd wrote:
+> Quoting Claudiu (2024-08-30 06:02:13)
+>> diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+>> index 067a26a66c24..247fa80a4f53 100644
+>> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+>> @@ -160,6 +160,18 @@ i2c3: i2c@10090c00 {
+>>                         status = "disabled";
+>>                 };
+>>  
+>> +               vbattb: vbattb@1005c000 {
+>> +                       compatible = "renesas,r9a08g045-vbattb";
+>> +                       reg = <0 0x1005c000 0 0x1000>;
+>> +                       interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+>> +                       clock-names = "bclk", "rtx";
+>> +                       #clock-cells = <1>;
+>> +                       power-domains = <&cpg>;
+>> +                       resets = <&cpg R9A08G045_VBAT_BRESETN>;
+>> +                       status = "disabled";
+>> +               };
+>> +
+>>                 cpg: clock-controller@11010000 {
+>>                         compatible = "renesas,r9a08g045-cpg";
+>>                         reg = <0 0x11010000 0 0x10000>;
+>> @@ -425,4 +437,11 @@ timer {
+>>                 interrupt-names = "sec-phys", "phys", "virt", "hyp-phys",
+>>                                   "hyp-virt";
+>>         };
+>> +
+>> +       vbattb_xtal: vbattb-xtal {
+> 
+> The node name should be something like clock-<frequency> but if the
+> frequency is different per-board then I don't know what should happen
+> here.
 
->         KVM_ISA_EXT_ARR(SMSTATEEN),
->         KVM_ISA_EXT_ARR(SSAIA),
->         KVM_ISA_EXT_ARR(SSCOFPMF),
-> +       KVM_ISA_EXT_ARR(SSNPM),
->         KVM_ISA_EXT_ARR(SSTC),
->         KVM_ISA_EXT_ARR(SVINVAL),
->         KVM_ISA_EXT_ARR(SVNAPOT),
-> @@ -129,6 +131,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsign=
-ed long ext)
->         case KVM_RISCV_ISA_EXT_M:
->         /* There is not architectural config bit to disable sscofpmf comp=
-letely */
->         case KVM_RISCV_ISA_EXT_SSCOFPMF:
-> +       case KVM_RISCV_ISA_EXT_SSNPM:
+The frequency should be always around 32768 Hz but not necessarily exactly
+32768 Hz. It depends on what is installed on the board, indeed. RTC can do
+time error adjustments based on the variations around 32768 Hz.
 
-Why not add KVM_RISCV_ISA_EXT_SMNPM here ?
+> Can you leave the vbattb_xtal phandle up above and then require
+> the node to be defined in the board with the proper frequency after the
+> dash?
 
-Disabling Smnpm from KVM user space is very different from
-disabling Smnpm from Guest using SBI FWFT extension.
+Is it OK for you something like this (applied on top of this series)?
 
-The KVM user space should always add Smnpm in the
-Guest ISA string whenever the Host ISA string has it.
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index f31ec08a1e1d..60679211dc48 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -181,7 +181,8 @@ vbattb: clock-controller@1005c000 {
+                        compatible = "renesas,r9a08g045-vbattb";
+                        reg = <0 0x1005c000 0 0x1000>;
+                        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+-                       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>,
+<&vbattb_xtal>;
++                       /* rtx clock must be overridden by the board. */
++                       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <0>;
+                        clock-names = "bclk", "rtx";
+                        #clock-cells = <1>;
+                        power-domains = <&cpg>;
+@@ -454,11 +455,4 @@ timer {
+                interrupt-names = "sec-phys", "phys", "virt", "hyp-phys",
+                                  "hyp-virt";
+        };
+-
+-       vbattb_xtal: vbattb-xtal {
+-               compatible = "fixed-clock";
+-               #clock-cells = <0>;
+-               /* This value must be overridden by the board. */
+-               clock-frequency = <0>;
+-       };
+ };
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 95b79a03d3d5..46cce0d48ddc 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -47,6 +47,12 @@ chosen {
+                stdout-path = "serial0:115200n8";
+        };
 
-The Guest must explicitly use SBI FWFT to enable
-Smnpm only after it sees Smnpm in ISA string.
++       vbattb_xtal: clock-32768 {
++               compatible = "fixed-clock";
++               #clock-cells = <0>;
++               clock-frequency = <32768>;
++       };
++
+        memory@48000000 {
+                device_type = "memory";
+                /* First 128MB is reserved for secure area. */
+@@ -351,14 +357,11 @@ &rtc {
+ };
 
->         case KVM_RISCV_ISA_EXT_SSTC:
->         case KVM_RISCV_ISA_EXT_SVINVAL:
->         case KVM_RISCV_ISA_EXT_SVNAPOT:
-> --
-> 2.45.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+ &vbattb {
++       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+        renesas,vbattb-load-nanofarads = <12500>;
+        status = "okay";
+ };
 
-Regards,
-Anup
+-&vbattb_xtal {
+-       clock-frequency = <32768>;
+-};
+-
+ &wdt0 {
+        timeout-sec = <60>;
+        status = "okay";
+
+
+Thank you for your review,
+Claudiu Beznea
+
+> 
+>> +               compatible = "fixed-clock";
+>> +               #clock-cells = <0>;
+>> +               /* This value must be overridden by the board. */
+>> +               clock-frequency = <0>;
 
