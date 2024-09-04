@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-314800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930A496B8E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:47:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E1E96B938
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1761C21078
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:47:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C4A7B247DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F351CC175;
-	Wed,  4 Sep 2024 10:47:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C692635
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0191D0147;
+	Wed,  4 Sep 2024 10:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nCv3HGcu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4611865F0;
+	Wed,  4 Sep 2024 10:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725446854; cv=none; b=Ny96CS2UHkvOA82Wb82bUImAK7Tam2BDC51d+z9qBIdPGG4Qij+7sKOTu/VclTeNl8wHut0s66gSu+Jls/aXEvhGKzdhJTmx1tXnPXFJNX08kQvJiy5u00qWaDZbuoHqRZsAEtLbHnDtFLxhf1vqnbut2dKffDhfiEnXiuPkkpA=
+	t=1725446972; cv=none; b=C5juyK3X6zZb/wr83WJvGLvEbBKqSHyk1GMZVdQi2PeW7uSkLo/sITOGaNnsw8OBdKj+0jY9IovWHrOGcZXSN7SQXgOPWdoMymWDrFpHfFJS6oK1AG65EOxWGowEl5KUjnOzHY+oif1TWngUZZn2tVcCJ4xqBvEGGoMqYBSx+x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725446854; c=relaxed/simple;
-	bh=t2XVLFemD5Kopy4SWLyufY4bCf1EvtXVF+nLjaeWgi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BoklzjCqXm8kgUM0Q7yjt0FNGIaW+BydVzn/Q19yf+EU73jU9T86sBIwlAg+yHnE+BbX10N+ZanTvleyhNm5WvgBab8jhTo7noxTJR57poy/b7jjcRePFh/fdkpA599r1H7M6DxCTWEP5fG1xaHugRccYMMcQiUXtkE7eBy1RZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19CA7FEC;
-	Wed,  4 Sep 2024 03:47:58 -0700 (PDT)
-Received: from [10.57.87.65] (unknown [10.57.87.65])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D4423F73B;
-	Wed,  4 Sep 2024 03:47:30 -0700 (PDT)
-Message-ID: <f7ced14c-8bc5-405f-bee7-94f63980f525@arm.com>
-Date: Wed, 4 Sep 2024 11:47:29 +0100
+	s=arc-20240116; t=1725446972; c=relaxed/simple;
+	bh=0ijP+pVmbADabEuDyLRkpzrf3oC7O0FWuy5uCaOr28w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XblxuVXS6qcPEB4V0cWTplOgFkg8GowqtX9iWmnz6SsP+8Qb7zd/whDiW72Sfn8DVk/rHIY2yTVXDk+kZa0AF/TSL+W0bqp7apoi+/uwgkRRspsIs19tUC/QjSJPrIrhTuLGbDliVe4W6yIcwWq0dQOCbAskyi6zgWl2Vyhhl/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nCv3HGcu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4849h0Cb027357;
+	Wed, 4 Sep 2024 10:49:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	O98drQdkSode7+dkoFVrCnCB9AJPpOKGVsLRbhcDHbM=; b=nCv3HGcuEuQ5MVZ0
+	tjkiNhZftb32t6TpxlT7Yf4EYjLTqevForavP4tXAkDhNEJDc3uMLI90MSH3r8aP
+	0ioCg0lUgdvjKjGcMoqkTGzu3AXP1+0i36Nohf+4nLTVGtMryqFcGmKl4prHZToC
+	LTtzaOg4YDzPrkSu6L0QUgWcUbodJQmJxdWDW4nNrEiqln0VC4Gb0ejDQLrjl1Ft
+	ZjHET3JtgjwNtbsW5naDCwXM7E3LyLiM0ej9299h6CSGpXh6MfEtPspbvTGv7jsS
+	HFinAwl9hUPcpvkoc9hJgpUM0/Saly82gCkDFqAp8LG4RXVSSOw/ONStucM64x51
+	Yt6ujQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt672j4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 10:49:22 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484AnLZn000395
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 10:49:21 GMT
+Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 03:49:14 -0700
+Message-ID: <b016abbb-7214-4892-b1d2-1bf3ba1b7560@quicinc.com>
+Date: Wed, 4 Sep 2024 16:19:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,229 +64,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm: Tidy up shmem mTHP controls and stats
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240808111849.651867-1-ryan.roberts@arm.com>
- <20240808111849.651867-3-ryan.roberts@arm.com>
- <747d1319-f746-4379-bf88-a0f6c3f558b4@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <747d1319-f746-4379-bf88-a0f6c3f558b4@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] usb: dwc3: gadget: Refine the logic for resizing Tx
+ FIFOs
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jing Leng
+	<jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
+        Jack Pham
+	<quic_jackp@quicinc.com>,
+        "kernel@quicinc.com" <kernel@quicinc.com>,
+        "Wesley
+ Cheng" <quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>,
+        Vijayavardhan Vennapusa
+	<quic_vvreddy@quicinc.com>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240903132917.603-1-quic_akakum@quicinc.com>
+ <20240903221055.s4gu6actfbrkonmr@synopsys.com>
+Content-Language: en-US
+From: AKASH KUMAR <quic_akakum@quicinc.com>
+In-Reply-To: <20240903221055.s4gu6actfbrkonmr@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: R4vkwNhuaDIAm_x4aCxkuzty1zm6Uir0
+X-Proofpoint-GUID: R4vkwNhuaDIAm_x4aCxkuzty1zm6Uir0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_09,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040081
 
-Hi Andrew,
+Hi Thinh,
 
-
-On 09/08/2024 09:31, Baolin Wang wrote:
-> 
-> 
-> On 2024/8/8 19:18, Ryan Roberts wrote:
->> Previously we had a situation where shmem mTHP controls and stats were
->> not exposed for some supported sizes and were exposed for some
->> unsupported sizes. So let's clean that up.
+On 9/4/2024 3:41 AM, Thinh Nguyen wrote:
+> On Tue, Sep 03, 2024, Akash Kumar wrote:
+>> The current logic is rigid, setting num_fifos to fixed values:
 >>
->> Anon mTHP can support all large orders [2, PMD_ORDER]. But shmem can
->> support all large orders [1, MAX_PAGECACHE_ORDER]. However, per-size
->> shmem controls and stats were previously being exposed for all the anon
->> mTHP orders, meaning order-1 was not present, and for arm64 64K base
->> pages, orders 12 and 13 were exposed but were not supported internally.
+>> 3 for any maxburst greater than 1.
+>> tx_fifo_resize_max_num for maxburst greater than 6.
+>> Additionally, it did not differentiate much between bulk and
+>> isochronous transfers, applying similar logic to both.
 >>
->> Tidy this all up by defining ctrl and stats attribute groups for anon
->> and file separately. Anon ctrl and stats groups are populated for all
->> orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
->> populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
+>> The new logic is more dynamic and tailored to the specific needs of
+>> bulk and isochronous transfers:
 >>
->> Additionally, create "any" ctrl and stats attribute groups which are
->> populated for all orders in (THP_ORDERS_ALL_ANON |
->> THP_ORDERS_ALL_FILE_DEFAULT). swpout stats use this since they apply to
->> anon and shmem.
+>> Bulk Transfers: Ensures that num_fifos is optimized by considering
+>> both the maxburst value and the maximum allowed number of FIFOs.
 >>
->> The side-effect of all this is that different hugepage-*kB directories
->> contain different sets of controls and stats, depending on which memory
->> types support that size. This approach is preferred over the
->> alternative, which is to populate dummy controls and stats for memory
->> types that do not support a given size.
+>> Isochronous Transfers: Ensures that num_fifos is sufficient by
+>> considering the maxburst value and the maximum packet multiplier.
 >>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> This change aims to optimize the allocation of Tx FIFOs for both bulk
+>> and isochronous endpoints, potentially improving data transfer
+>> efficiency and overall performance.
+>> It also enhances support for all use cases, which can be tweaked
+>> with DT parameters and the endpoint’s maxburst and maxpacket.
+>>
+>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
 >> ---
->>   mm/huge_memory.c | 144 +++++++++++++++++++++++++++++++++++++----------
->>   1 file changed, 114 insertions(+), 30 deletions(-)
+>> Changes for v2:
+>> Redefine logic for resizing tx fifos.
 >>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 0c3075ee00012..082d86b7c6c2f 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -482,8 +482,8 @@ static void thpsize_release(struct kobject *kobj);
->>   static DEFINE_SPINLOCK(huge_anon_orders_lock);
->>   static LIST_HEAD(thpsize_list);
->>   -static ssize_t thpsize_enabled_show(struct kobject *kobj,
->> -                    struct kobj_attribute *attr, char *buf)
->> +static ssize_t anon_enabled_show(struct kobject *kobj,
->> +                 struct kobj_attribute *attr, char *buf)
->>   {
->>       int order = to_thpsize(kobj)->order;
->>       const char *output;
->> @@ -500,9 +500,9 @@ static ssize_t thpsize_enabled_show(struct kobject *kobj,
->>       return sysfs_emit(buf, "%s\n", output);
->>   }
->>   -static ssize_t thpsize_enabled_store(struct kobject *kobj,
->> -                     struct kobj_attribute *attr,
->> -                     const char *buf, size_t count)
->> +static ssize_t anon_enabled_store(struct kobject *kobj,
->> +                  struct kobj_attribute *attr,
->> +                  const char *buf, size_t count)
->>   {
->>       int order = to_thpsize(kobj)->order;
->>       ssize_t ret = count;
->> @@ -544,19 +544,35 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
->>       return ret;
->>   }
->>   -static struct kobj_attribute thpsize_enabled_attr =
->> -    __ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
->> +static struct kobj_attribute anon_enabled_attr =
->> +    __ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
->>   -static struct attribute *thpsize_attrs[] = {
->> -    &thpsize_enabled_attr.attr,
->> +static struct attribute *anon_ctrl_attrs[] = {
->> +    &anon_enabled_attr.attr,
->> +    NULL,
->> +};
->> +
->> +static const struct attribute_group anon_ctrl_attr_grp = {
->> +    .attrs = anon_ctrl_attrs,
->> +};
->> +
->> +static struct attribute *file_ctrl_attrs[] = {
->>   #ifdef CONFIG_SHMEM
->>       &thpsize_shmem_enabled_attr.attr,
->>   #endif
->>       NULL,
->>   };
->>   -static const struct attribute_group thpsize_attr_group = {
->> -    .attrs = thpsize_attrs,
->> +static const struct attribute_group file_ctrl_attr_grp = {
->> +    .attrs = file_ctrl_attrs,
->> +};
->> +
->> +static struct attribute *any_ctrl_attrs[] = {
->> +    NULL,
->> +};
->> +
->> +static const struct attribute_group any_ctrl_attr_grp = {
->> +    .attrs = any_ctrl_attrs,
->>   };
-> 
-> I wonder why adding a NULL group?
-> 
->>     static const struct kobj_type thpsize_ktype = {
->> @@ -595,64 +611,132 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback,
->> MTHP_STAT_ANON_FAULT_FALLBACK);
->>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge,
->> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->>   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
->> +#ifdef CONFIG_SHMEM
->>   DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
->>   DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
->>   DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
->> +#endif
->>   DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->>   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
->>   -static struct attribute *stats_attrs[] = {
->> +static struct attribute *anon_stats_attrs[] = {
->>       &anon_fault_alloc_attr.attr,
->>       &anon_fault_fallback_attr.attr,
->>       &anon_fault_fallback_charge_attr.attr,
->> +#ifndef CONFIG_SHMEM
->>       &swpout_attr.attr,
->>       &swpout_fallback_attr.attr,
->> -    &shmem_alloc_attr.attr,
->> -    &shmem_fallback_attr.attr,
->> -    &shmem_fallback_charge_attr.attr,
->> +#endif
->>       &split_attr.attr,
->>       &split_failed_attr.attr,
->>       &split_deferred_attr.attr,
->>       NULL,
->>   };
->>   -static struct attribute_group stats_attr_group = {
->> +static struct attribute_group anon_stats_attr_grp = {
->> +    .name = "stats",
->> +    .attrs = anon_stats_attrs,
->> +};
->> +
->> +static struct attribute *file_stats_attrs[] = {
->> +#ifdef CONFIG_SHMEM
->> +    &shmem_alloc_attr.attr,
->> +    &shmem_fallback_attr.attr,
->> +    &shmem_fallback_charge_attr.attr,
->> +#endif
->> +    NULL,
->> +};
->> +
->> +static struct attribute_group file_stats_attr_grp = {
->> +    .name = "stats",
->> +    .attrs = file_stats_attrs,
->> +};
->> +
->> +static struct attribute *any_stats_attrs[] = {
->> +#ifdef CONFIG_SHMEM
->> +    &swpout_attr.attr,
->> +    &swpout_fallback_attr.attr,
->> +#endif
-> 
-> Sorry I did not point it out in early version. I think file pages and shmem can
-> also be split, while 'split_deferred' is only for anonymous page. So I think the
-> any_stats_attrs should be:
-> static struct attribute *any_stats_attrs[] = {
-> #ifdef CONFIG_SHMEM
->     &swpout_attr.attr,
->     &swpout_fallback_attr.attr,
-> #endif
->     &split_attr.attr,
->     &split_failed_attr.attr,
->     NULL,
-> };
+>> Changes for v1:
+>> Added additional condition to allocate tx fifo for hs isoc eps,
+>> keeping the other resize logic same.
+>> ---
+>>   drivers/usb/dwc3/gadget.c | 15 ++++++---------
+>>   1 file changed, 6 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>> index 89fc690fdf34..49809a931104 100644
+>> --- a/drivers/usb/dwc3/gadget.c
+>> +++ b/drivers/usb/dwc3/gadget.c
+>> @@ -778,15 +778,12 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+>>   
+>>   	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
+>>   
+>> -	if ((dep->endpoint.maxburst > 1 &&
+>> -	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
+>> -	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
+>> -		num_fifos = 3;
+>> -
+>> -	if (dep->endpoint.maxburst > 6 &&
+>> -	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
+>> -	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
+>> -		num_fifos = dwc->tx_fifo_resize_max_num;
+>> +	if (usb_endpoint_xfer_bulk(dep->endpoint.desc))
+>> +		num_fifos = min_t(unsigned int, dep->endpoint.maxburst + 1,
+>> +				  dwc->tx_fifo_resize_max_num);
+>> +	if (usb_endpoint_xfer_isoc(dep->endpoint.desc))
+>> +		num_fifos = max_t(unsigned int, dep->endpoint.maxburst,
+>> +				  usb_endpoint_maxp_mult(dep->endpoint.desc));
+> No. Don't mix usb_endpoint_maxp_mult with maxburst like this. Check base
+> on operating speed. Also, now you're ignoring tx_fifo_resize_max_num for
+> isoc.
+Sure will add separate check based on speed.
 
-Could you please squash the following into this patch, which is already in
-mm-unstable? I'm hoping this sufficient and I don't need to send a whole new
-revision since there are changes on top of this in mm-unstable, which makes
-things tricky.
+We have to support three versions of CAM support through same dt and image
+SS/SS+ capable cam which needs 10k fifo
+HS cams which needs 3K
+multi UVC cams which needs 1k and 2k fifo
 
-----8<-----
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 382938e46f96f..5905957b1f70d 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -631,8 +631,6 @@ static struct attribute *anon_stats_attrs[] = {
-        &swpout_attr.attr,
-        &swpout_fallback_attr.attr,
- #endif
--       &split_attr.attr,
--       &split_failed_attr.attr,
-        &split_deferred_attr.attr,
-        &nr_anon_attr.attr,
-        &nr_anon_partially_mapped_attr.attr,
-@@ -663,6 +661,8 @@ static struct attribute *any_stats_attrs[] = {
-        &swpout_attr.attr,
-        &swpout_fallback_attr.attr,
- #endif
-+       &split_attr.attr,
-+       &split_failed_attr.attr,
-        NULL,
- };
-
-----8<-----
+Putting any dependency with tx_fifo_resize_max_num, we can't achieve 1k 
+and 10K,
+it has to be decided by maxbursts itself which user can configure.
+All uvc gadget applications supports configurable maxburst which they 
+use while opening,
+so it should be better for isoc eps to decide fifo based on maxbursts.
 
 Thanks,
-Ryan
+Akash
 
 
