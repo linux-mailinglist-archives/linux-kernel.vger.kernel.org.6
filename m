@@ -1,100 +1,116 @@
-Return-Path: <linux-kernel+bounces-314456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBFB96B398
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C06196B39D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A792928561C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F02D1C246B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FFD170A11;
-	Wed,  4 Sep 2024 07:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F3216F287;
+	Wed,  4 Sep 2024 07:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3BrWzj5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m4+La8y+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD151527AC;
-	Wed,  4 Sep 2024 07:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1211B16E886;
+	Wed,  4 Sep 2024 07:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436450; cv=none; b=YnYM1/kOAhYcRuKldbtfA3iZpmj/G1UoXjvn0CNEkSksO1D/SiJxX/6uYRCNE+Yo4G5BCcgCuPiljLynmwAsLymrSGjkBALlt/X8vMxmNtqPyox0cWWaVMVtSUExZysjldA69j7tfc/WE/r6LoPHrINVHdcHPmO30gP6JuITf1o=
+	t=1725436484; cv=none; b=UviWgfsXM635aAesPTEtPFGn8bd3BVESqVhs5g3UZOCoznxUctMZxZ5eLcssZDxIhMu35B2BVvIeQc1eUCYOXUgoDhOQO99OBS5cEtb5dPz3OPG3AonRIyRBBi63rWOhpX+6ZeqL1XYgCikydiT4v4fFKvGN8MWhlGs9S0jQ3C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436450; c=relaxed/simple;
-	bh=tYtrEDc7EZsTjo/5ig+4fdGj4uBHOZMkYPvyjZdx0ic=;
+	s=arc-20240116; t=1725436484; c=relaxed/simple;
+	bh=B3WKefeYNK0fHWwsG4Ect5mAFLxMvkP/5ZCHvWxq54Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfLkh8Kzd8JBGpaebeXEXnzBKZaCxhDXjDUqDsy9PzmZaLrVKbScAkyPLhEU83JuycOzfU7WuKG7DEx+sfDt0tmGrsllVeUunXxRD/0xaLRtP2J5A2SYowcCILSIqZlPvgMqnumHX2h6b1LQjqML7XbszMnJekbZkPvSWAa3vLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3BrWzj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44455C4CEC2;
-	Wed,  4 Sep 2024 07:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725436450;
-	bh=tYtrEDc7EZsTjo/5ig+4fdGj4uBHOZMkYPvyjZdx0ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K3BrWzj5Q/cI6MLryFyFrDV3vlEV+n3mwK9gHQH4f0iHw8++ZKuk+whdWkiomUum1
-	 vxZI4P/VDgAAlm1Bc4qsRr5VjWmFW9ksm5N5Rqlqw5Fq0jrr80fdLsmowdtJbi99T8
-	 5q9zropvuX1LcVYkzeWrW/2jLEAWDcvHhvq1vkcZPPizCKDtEoucwRKaGIrhmdoZZU
-	 RtB0f2prBA5pM7RBJfBD1lNl6niKHKdu42y/4Sl8C6dmhyqhyVg6JZ7S9LHajQh+88
-	 iSYlvVLLpkR5PN1oz3bSSibo4ujwTgKGVZLwIKeQVDCqE+ELpCd1MeShfiYT/RyfWX
-	 4FkSJ5rH9PtGA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slkqQ-000000002X3-1cIo;
-	Wed, 04 Sep 2024 09:54:27 +0200
-Date: Wed, 4 Sep 2024 09:54:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?utf-8?B?SsOpcsO0bWU=?= de Bretagne <jerome.debretagne@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sc8280xp: Add Microsoft Surface
- Pro 9 5G
-Message-ID: <ZtgSMlgKyQ6nKu4U@hovoldconsulting.com>
-References: <20240903224252.6207-1-jerome.debretagne@gmail.com>
- <20240903224252.6207-5-jerome.debretagne@gmail.com>
- <9a2b9e55-2bbb-4b91-8d81-1f1f82347125@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T1ti7J7JU69rOQEn3v09AsgevQdr0nw6rkUeH4M58wegEIyvxIOSrKQb4nIche/PJ/lLHJmyob+43SAI/dxn6JieUb/K1GR68YKU7+c19zlG/Eb6NNl0dPP7hYxTHHKQBaKOYsnjg+3GPwDg0pFcrmGM42gOCdJdEZpIOGfkhNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m4+La8y+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kB6cbogSGnXAcC485KPPWQrTZQLJiozS3TCDlxmwCkw=; b=m4+La8y+HTssXekrVvWG3sq9Q7
+	P3nkJ4YtrNeTDjoTESxt01kvRc1SZXTg6HOS5hPJyyq1kuat0723y9d0UKvMizT6N1cSYOrDqPNpe
+	zTp/LN8fCHbLjov/jwGY93aklB9EItxyFr7hTuKaxh3edfNmF3ufrRgcvMYZiOCFsFYh1/oe+iH9E
+	TCU1n/D7+TcOMTz94AsyCGdW47yFVxbZJTug8NXxpKxEVHJldiEtvK3+TExlDi7w4+Q2uRFkzkO79
+	TYWSDlA/+Xb69Up4nrlAJ0htaABS+jKJ2Ppe31ZCXaWX4hDZ/l+bbMTS29vlh0Al9oysS9SfGu0uw
+	s11EeSKg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1slkqX-00000000AcH-2r2h;
+	Wed, 04 Sep 2024 07:54:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 560A730083E; Wed,  4 Sep 2024 09:54:33 +0200 (CEST)
+Date: Wed, 4 Sep 2024 09:54:33 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 29/31] objtool: Calculate function checksums
+Message-ID: <20240904075433.GD4723@noisy.programming.kicks-ass.net>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ffe8cd49f291ab710573616ae1d9ff762405287e.1725334260.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a2b9e55-2bbb-4b91-8d81-1f1f82347125@kernel.org>
+In-Reply-To: <ffe8cd49f291ab710573616ae1d9ff762405287e.1725334260.git.jpoimboe@kernel.org>
 
-On Wed, Sep 04, 2024 at 09:46:09AM +0200, Krzysztof Kozlowski wrote:
-> On 04/09/2024 00:42, Jérôme de Bretagne wrote:
-> > Add an initial devicetree for the Microsoft Surface Pro 9 5G, based
-> > on SC8280XP.
+On Mon, Sep 02, 2024 at 09:00:12PM -0700, Josh Poimboeuf wrote:
+> Calculate per-function checksums based on the functions' content and
+> relocations.  This will enable objtool to do binary diffs.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  scripts/Makefile.lib                    |   1 +
+>  tools/objtool/Makefile                  |   7 +-
+>  tools/objtool/builtin-check.c           |   1 +
+>  tools/objtool/check.c                   | 137 +++++++++++++++++++++++-
+>  tools/objtool/elf.c                     |  31 ++++++
+>  tools/objtool/include/objtool/builtin.h |   3 +-
+>  tools/objtool/include/objtool/check.h   |   5 +-
+>  tools/objtool/include/objtool/elf.h     |  11 +-
+>  tools/objtool/include/objtool/objtool.h |   2 +
+>  9 files changed, 188 insertions(+), 10 deletions(-)
+> 
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 8411e3d53938..9f4708702ef7 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -265,6 +265,7 @@ ifdef CONFIG_OBJTOOL
+>  
+>  objtool := $(objtree)/tools/objtool/objtool
+>  
+> +objtool-args-$(CONFIG_LIVEPATCH)			+= --sym-checksum
+>  objtool-args-$(CONFIG_HAVE_JUMP_LABEL_HACK)		+= --hacks=jump_label
+>  objtool-args-$(CONFIG_HAVE_NOINSTR_HACK)		+= --hacks=noinstr
+>  objtool-args-$(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)	+= --hacks=skylake
+> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> index bf7f7f84ac62..6833804ca419 100644
+> --- a/tools/objtool/Makefile
+> +++ b/tools/objtool/Makefile
+> @@ -21,6 +21,9 @@ OBJTOOL_IN := $(OBJTOOL)-in.o
+>  LIBELF_FLAGS := $(shell $(HOSTPKG_CONFIG) libelf --cflags 2>/dev/null)
+>  LIBELF_LIBS  := $(shell $(HOSTPKG_CONFIG) libelf --libs 2>/dev/null || echo -lelf)
+>  
+> +LIBXXHASH_FLAGS := $(shell $(HOSTPKG_CONFIG) libxxhash --cflags 2>/dev/null)
+> +LIBXXHASH_LIBS  := $(shell $(HOSTPKG_CONFIG) libxxhash --libs 2>/dev/null || echo -lxxhash)
 
-> Rest looks good, except ordering of nodes/overrides/phandles. They
-> should go alphabetically, AFAIR, so your &tlmm is placed in wrong spot.
-
-For the other sc8280xp machines (and I believe at least some other
-SoCs), we placed the pinctrl section, which tends to be quite long, last
-on purpose with a separating header (e.g. so that it is easy to find):
-
-	/* PINCTRL */
-
-	&pmr735a_gpios {
-	...
-
-	&tlmm {
-
-
-Looks like the header comment is missing here if you want to follow that
-style, though.
-
-Johan
+This was not installed on my system and I got a nasty build fail. Should
+we make all this depend on CONFIG_LIVEPATCH or force world+dog to
+install this as yet another kernel build dependency?
 
