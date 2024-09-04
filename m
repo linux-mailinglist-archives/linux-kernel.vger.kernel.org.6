@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-314719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA9B96B786
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B36096B789
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AB521F26412
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC9A1C23D53
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5141CEE8A;
-	Wed,  4 Sep 2024 09:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CB91CEE99;
+	Wed,  4 Sep 2024 09:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LG96+EOQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rD4X1bCw"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE651CEE88
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9035A1CEE89
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443805; cv=none; b=ot/rPCcYWduvWguIciw+oXFrTv4wKHzdnlwnN2J8h52EnGMkc22GEKqlYmY3kh6wO0SdfdP4ZZQW3L1I5x/8b8sl5G12FDLv0Az2Y44ajL+4VDDcllwuXfvSrUnIpw8AubZQlgi/2Z0Hjxg7gXagD+SPZZkkzks3JdiPZCpF43E=
+	t=1725443847; cv=none; b=jXvi6kdtlnr02BoIQPGj2hbDd/viJp+QzScVnHBrxHgMmoFw9fefN3ETEWbsVxP/9lCPK/EvafV+fuXI5Z1BH6wbOEiqBKncYj1v9Cqyd8alX88Br6V/HlGu+KslK6SCi/Y4BigGW3RVzEfhgvMXKRCeL4LeN0UoBfUiuZHENE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443805; c=relaxed/simple;
-	bh=j7d7+SJDD2TGyNhvLnv/7wUKLARgA6jThTpmxjWen4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLh1bwgq83Y0KaLFbMVkAppUoo/8rOcYORN8u3igZEl4MLg3Edfg5LvsI5JsH4exFyabNVPOsu4XxYrl9Q3wlWWhYqANLsOmwUh3BlN+wvdr7Bnqf7CLEuVF5+LvEocdottU0qc8K8hffs2AH8yhogzkciSyNzGS+Y1a+qz9WLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LG96+EOQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725443801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nBE9muUVCuFZMT5coYFm3HHWrhocogLIqDyjWLoRgw8=;
-	b=LG96+EOQ5WPp3AT1ZIyLCj9fhV8rujM/oR99jsFjklVbwQM45diAowjiKK2xZwrFt4GpKG
-	mH8BIQKXZ9IwZ5dI1GUthzvlkep9TMSRVBtrF2hrpxet4X1slr4FWBvV1GOl+3zI/F+COu
-	p7J8jReCCD22xIfnPo6ScH7JR1ld89Q=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-490-kBEUWc58OOeCqLAoIbDK7g-1; Wed,
- 04 Sep 2024 05:56:37 -0400
-X-MC-Unique: kBEUWc58OOeCqLAoIbDK7g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D81701955F45;
-	Wed,  4 Sep 2024 09:56:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id ACD4C1956086;
-	Wed,  4 Sep 2024 09:56:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  4 Sep 2024 11:56:24 +0200 (CEST)
-Date: Wed, 4 Sep 2024 11:56:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sven Schnelle <svens@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
-Message-ID: <20240904095449.GA28781@redhat.com>
-References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
- <20240903073629.2442754-1-svens@linux.ibm.com>
- <20240903090843.GA17936@redhat.com>
- <CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
+	s=arc-20240116; t=1725443847; c=relaxed/simple;
+	bh=FTjiDZN9yInQz1hWZ/h7wkmO4TF9Z15WUfoej4IaTi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kzKir8+tP28LFJizOStgl8TsjMwkgtV2zMvYGRAWdC/mq+vkkQQh1+y1MJcJoCNLop7hIjQdfz8GilpZvh2UWFFgKyboPcWu5gLI+uWAnN+2AjKiKYqb2nnyrXSPcmcVUp+/yJKLXzR+f+xW6JHYx1j921v/WAuErzbC67j0Mj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rD4X1bCw; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a80eab3945eso611533466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 02:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725443842; x=1726048642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VG3SCtSxXoO9kJ5qHjWCI3Ghtvll31qds48f+pV4lgI=;
+        b=rD4X1bCwGOBvitJHen45c4x8u46QDcFb1O+/cG8Yp7e6P3PkWs0zrLPKe8uzKZ1XBK
+         DusovKHjjLPg/ZUYDiT69KunU3kICUh/VEf4iBVaoHJGXpXDjouOxB9383Dt1p3MFQIH
+         f3giDMJko1rwrlOs2lt/gGTnGO2Jjv7w/Q/K0Uteb5OK8wqry1em3hleSKUUkzc1pBA9
+         SqnmCEMA3aRqDfmv7HmmtklU9ad0whi9XZX6EGX1e+RsJ9p927mX5335xbIMMNZXSyEX
+         Er56b33fUdVYF57JYcLmp9AkcQEOgyp+N3nQmg5JuMQl4qkVtGkNR0EG6ROFn+d88nAB
+         FYew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725443842; x=1726048642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VG3SCtSxXoO9kJ5qHjWCI3Ghtvll31qds48f+pV4lgI=;
+        b=UM6A8KjWBxeEd8Az3v2Gl1oJVy7M37bE5zoF3tyIOkZhQ7EzkcyrkJZAFNyBAATZff
+         NoYJd2QwuGgoM0gTE0LVkMFKnR71TyBcHu4NI3G0DRiwyXzJQvfCHLlndZ3e8hlqkhfY
+         QhATZEeh3rzXhfNuIUrZ1PnRN9D78q0UAjDmpUHfj5IBh/AKQr4SOQWfB6yP7zGPNlKA
+         LLgsyDbkM2gwcpAqidqKiuL7olR3EHM1iLmGYhGGAscrrZ8t2jSU4k5fWijWWBcSXUZT
+         F67U6c3U4otZtonkJswlT8A/v6zxZ/Q9Q/e90vfMhXRR6frioeLUv9ASEzvvB8AUY0v0
+         qGIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9lDT7cMSy8biBN+mk71cCi8htGFNcMBW9bK3jJhjXTov0WDov1QXxBZAh0BKOjEoVPa+j/LEcbqdlAEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8Wc1vLdqqYMfa7OfOPQHnsUrUJdARF3jal6CSB1dflH0WNIbg
+	P5YEeLXfb+Sqy/mXqATfT0zFgs5/oEceDJZzqPsxyBAkWO26jZ0VCxmrzHZnKTk=
+X-Google-Smtp-Source: AGHT+IE+2W/EhIoP1awAXccexwE4Hd7T9R6Il9R6pyNmD5WD6nEZ6n3i30rCZtmi+ObSIObIoDmtIQ==
+X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr1210183566b.22.1725443841806;
+        Wed, 04 Sep 2024 02:57:21 -0700 (PDT)
+Received: from hackbox.lan ([84.232.173.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb26sm788422666b.1.2024.09.04.02.57.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 02:57:21 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.12
+Date: Wed,  4 Sep 2024 12:57:10 +0300
+Message-Id: <20240904095710.2813541-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi=qJr4r2DTLDMDh=ryK-x9sciGEeL+ZaWExpiHGyPhiQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-I didn't have time to write a full reply yesterday.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-On 09/03, Linus Torvalds wrote:
->
-> On Tue, 3 Sept 2024 at 02:09, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > but with or without this fix __create_xol_area() also needs
-> >
-> >         area->xol_mapping.mremap = NULL;
->
-> I think the whole thing needs to be zeroed out.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-Again, this is what Sven did and I agree with this fix for now.
+are available in the Git repository at:
 
-> It was always horribly buggy. The close thing just made it more
-> *obviously* buggy, because closing a vma is a lot more common than
-> mremap'ing it.
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.12
 
-Well, this code is very old, I don't think it was "always" buggy.
-But at least today it is horribly ugly, and
+for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
 
-> Either use kzalloc(), or do a proper initializer something like this:
->
-> -       area->xol_mapping.name = "[uprobes]";
-> -       area->xol_mapping.fault = NULL;
-> -       area->xol_mapping.pages = area->pages;
-> +       area->xol_mapping = (struct vm_special_mapping) {
-> +               .name = "[uprobes]",
-> +               .pages = area->pages,
-> +               .close = uprobe_clear_state,
-> +       };
+  clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 12:39:38 +0300)
 
-either way the code is still ugly, imo.
+----------------------------------------------------------------
+i.MX clocks changes for 6.12
 
-How about the (untested) patch below?
+- Use clk_hw pointer instead of fw_name for acm_aud_clk[0-1]_sel clocks
+  on i.MX8Q as parents in ACM provider
+- Add i.MX95 NETCMIX support to the block control provider
+- Fix parents for ENETx_REF_SEL clocks on i.MX6UL
 
-I am not going to send this patch right now, it conflicts with the ongoing
-close/mremap changes, but what do you think?
+----------------------------------------------------------------
+Michel Alex (1):
+      clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL
 
-We do not need to add the instance of vm_special_mapping into mm_struct,
-a single instance (xol_mapping below) with .fault = xol_fault() is enough.
-And, with this change xol_area no longer needs "struct page *pages[2]", it
-can be turned into "struct page *page".
+Shengjiu Wang (1):
+      clk: imx: imx8: Use clk_hw pointer for self registered clock in clk_parent_data
 
-Oleg.
----
+Wei Fang (3):
+      dt-bindings: clock: add i.MX95 NETCMIX block control
+      dt-bindings: clock: add RMII clock selection
+      clk: imx95: enable the clock of NETCMIX block control
 
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -101,7 +101,6 @@ struct xol_area {
- 	atomic_t 			slot_count;	/* number of in-use slots */
- 	unsigned long 			*bitmap;	/* 0 = free slot */
- 
--	struct vm_special_mapping	xol_mapping;
- 	struct page 			*pages[2];
- 	/*
- 	 * We keep the vma's vm_start rather than a pointer to the vma
-@@ -1453,6 +1452,21 @@ void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned lon
- 		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
- }
- 
-+static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
-+			    struct vm_area_struct *vma, struct vm_fault *vmf)
-+{
-+	struct xol_area *area = vma->vm_mm->uprobes_state.xol_area;
-+
-+	vmf->page = area->pages[0];
-+	get_page(vmf->page);
-+	return 0;
-+}
-+
-+static const struct vm_special_mapping xol_mapping = {
-+	.name = "[uprobes]",
-+	.fault = xol_fault,
-+};
-+
- /* Slot allocation for XOL */
- static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- {
-@@ -1479,7 +1493,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- 
- 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
- 				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
--				&area->xol_mapping);
-+				&xol_mapping);
- 	if (IS_ERR(vma)) {
- 		ret = PTR_ERR(vma);
- 		goto fail;
-@@ -1518,9 +1532,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 	if (!area->bitmap)
- 		goto free_area;
- 
--	area->xol_mapping.name = "[uprobes]";
--	area->xol_mapping.fault = NULL;
--	area->xol_mapping.pages = area->pages;
- 	area->pages[0] = alloc_page(GFP_HIGHUSER);
- 	if (!area->pages[0])
- 		goto free_bitmap;
-
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  1 +
+ drivers/clk/imx/clk-imx6ul.c                       |  4 +--
+ drivers/clk/imx/clk-imx8-acm.c                     | 38 +++++++++++++++++-----
+ drivers/clk/imx/clk-imx95-blk-ctl.c                | 30 +++++++++++++++++
+ include/dt-bindings/clock/nxp,imx95-clock.h        |  3 ++
+ 5 files changed, 65 insertions(+), 11 deletions(-)
 
