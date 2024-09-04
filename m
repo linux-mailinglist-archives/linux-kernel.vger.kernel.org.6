@@ -1,93 +1,141 @@
-Return-Path: <linux-kernel+bounces-314743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5052396B7E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:08:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FE996B7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833E31C24794
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79C51F271F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE70D1CF5F3;
-	Wed,  4 Sep 2024 10:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0F1CF5C9;
+	Wed,  4 Sep 2024 10:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHfyKHB0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HI5ntC4D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496271CF5C0;
-	Wed,  4 Sep 2024 10:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E883A1CC16B;
+	Wed,  4 Sep 2024 10:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444508; cv=none; b=DqKT2GsB3Ci0EM9YvGw3kBY+LYvjZ4RiVObnWxTTXPNCGn16v7WltV+vAKU4SuECp4LMOJUc4pzUDneHhUpgvnYyYxpGIL5Y+2jF+MXvdyFsjUTsJnsO6jnPBd8L96IMb+LP1EJarB2I/2qw2KAKzic41u3BpARmU5JaTOLH0OQ=
+	t=1725444540; cv=none; b=t1PEcb2RpafhHqAoqFpdm60TKMVvIMEY0GW5tcX9M2eKiqyXszvHAvLvkxU8ajCtzMVKH5ZqaHFty2j0stcuHe2wbNgilPb30wgY8+kQtinaF43uLVsAWyjnvrv2JTkno5+/RYUMFU9WNuvVbwHUZWvnuPpgBg1F0Nz7M9YOxZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444508; c=relaxed/simple;
-	bh=h+ZEYfjn015chexkmjVF91yXTddj8EqTDzVXa7vLvQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Px3HO6Jm9AXuhbKOInCBtK6OvdwqQpiZr/KXNCPmNdN03YfCNktCI/3CLyig9gGO3Q3G0kae1Sp4ZCGoc7W0w1FoG9vmdOCd4k+T9sE9mBHRnn/wD5gQKoacCIXG4Xr6nmEUh+mR4jvd17SeD8cEU5u+/BFR8lDk03llXN/Ixh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHfyKHB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F95C4CEC2;
-	Wed,  4 Sep 2024 10:08:24 +0000 (UTC)
+	s=arc-20240116; t=1725444540; c=relaxed/simple;
+	bh=YZWwkReZ49n9P8WkgOjbJ1s9CGRE6fuIwNZU5RAEIjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2FygyBxPs6OXYGqBYmRt34EQr3MkGlT7E0/1EKMYVR8T+w9msb2FyzEHk53+OhzYqKkaqFqI7Nn8e/dNtYZymdK4FVkvYln952p5zCWyJT1uZeiahBOrnqMi9kZPK2VYj6EQIMiqJOOIl5y5R3EMWpEOWRLPr2MAlciVnzE+YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HI5ntC4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718D2C4CECA;
+	Wed,  4 Sep 2024 10:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725444508;
-	bh=h+ZEYfjn015chexkmjVF91yXTddj8EqTDzVXa7vLvQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JHfyKHB0HJBsFEZlL7NjNCB5ddfJxum5SE+uGVyWPlj7ImOuEjAJWhQ19kXHj86O/
-	 JUSehN6SDX/w+BTnao+5DetDK0qdy6ycr2ZvoN9Hgw5dn9YwpS8aqGPdOZ6Q3NW4bO
-	 4G47XVjyBuKsE32/ICXRP112G7vJLvzvXHF7B0QbGl0xqeprwT79ho3iBQa9gdteTK
-	 MVHIMvatmubJWC2FpyeQnix0sFd4KzBWc6dl/DAmNPhg3Nxonxs2Mu6ZAlinKvW8Pz
-	 WTYUz87+WIGyVhzpsYUxs2ilKDSFTELafqe+ckjorc+6gFxR6wGxgdqcfBDmVuh4cz
-	 AF3GBajLF7CGQ==
-Date: Wed, 4 Sep 2024 10:08:22 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 11/12] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <Ztgxlmhnkn7NVC81@google.com>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-12-wenst@chromium.org>
+	s=k20201202; t=1725444539;
+	bh=YZWwkReZ49n9P8WkgOjbJ1s9CGRE6fuIwNZU5RAEIjA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HI5ntC4De7eUU1YL0En298CGSZaOi+x4vcB2YqRnGQvn0m6DMLWXM/vREwHqtGK+t
+	 5UtTpZBiR8QrGEI00rA5/gP9+mZ6sSVprnRxv9HunSni7S/QOu/pwwDmkWYrNaksRK
+	 mvbgvHun62O/+hGb0fxwBamJIX9O79RzKcVtugSgyDEp7+rum03IH1t4FWGOnSeCaW
+	 ZMnGsH80dtiGifGBem2ns+9lkKbw9yRXSQfzjn9ECICB4ELJAlfZjow21trJbmLWin
+	 HwIeb9FfC7M6iSCXUE+8On0ZX4+4WNO/RrBGiFCJh49lCGtVfbTVYb5C+0ffe05Bul
+	 S9R5c+JhCBBaw==
+Message-ID: <2fdcb1b1-3d60-4b46-8a9b-127a5950ea28@kernel.org>
+Date: Wed, 4 Sep 2024 12:08:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904090016.2841572-12-wenst@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+To: JieGan <quic_jiegan@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, Tao Zhang <quic_taozha@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Song Chai <quic_songchai@quicinc.com>, Yushan Li <quic_yushli@quicinc.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
+ <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 05:00:13PM +0800, Chen-Yu Tsai wrote:
-> diff --git a/drivers/platform/chrome/chromeos_of_hw_prober.c b/drivers/platform/chrome/chromeos_of_hw_prober.c
-[...]
-> +static int chromeos_of_hw_prober_probe(struct platform_device *pdev)
-> +{
-> +	for (size_t i = 0; i < ARRAY_SIZE(hw_prober_platforms); i++) {
-> +		int ret;
-> +
-> +		if (!of_machine_is_compatible(hw_prober_platforms[i].compatible))
-> +			continue;
-> +
-> +		ret = hw_prober_platforms[i].prober(&pdev->dev, hw_prober_platforms[i].data);
-> +		/* Ignore unrecoverable errors and keep going through other probers */
-> +		if (ret == -EPROBE_DEFER)
-> +			return ret;
+On 03/09/2024 03:30, JieGan wrote:
+> On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
+>> On 27.08.2024 9:27 AM, Jie Gan wrote:
+>>> Add coresight components for x1e80100. This change includes CTI,
+>>> dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+>>>
+>>> Change in V1:
+>>> Check the dtb with dtbs_check W=1, and fix the warnings for
+>>> the change.
+>>>
+>>
+>> Applying this series and enabling CORESIGHT=m (along with all the options
+>> in menuconfig) breaks booting on my X1E Surface Laptop 7
+>>
+>> Konrad
+> 
+> Did not observe any booting issues with our devices. Any relevant log to share?
+> This patch also tested by my colleague.
+> 
+> Can you successfully boot without the patch?
 
-Is it harmless if some of the components get probed multiple times?  E.g.:
-comp1 probed -> comp2 probed -> comp3 returned -EPROBE_DEFER -> some time
-later, chromeos_of_hw_prober_probe() gets called again.
+I think that's the definition of "breaks booting"...
+
+Best regards,
+Krzysztof
+
 
