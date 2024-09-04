@@ -1,315 +1,189 @@
-Return-Path: <linux-kernel+bounces-315218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB8796BF6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC9996BF72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE861F22E3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9EB289C48
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F3E1DC1B2;
-	Wed,  4 Sep 2024 13:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A0C1DB952;
+	Wed,  4 Sep 2024 13:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TwF5r9sl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B7XAAZ6g"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012053.outbound.protection.outlook.com [52.101.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550551DAC4A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458345; cv=none; b=UDkzVo8fNm6/4fgYPqbawfnd5uB6wRpjZtzfXPEAlR1lI0oaQIeuZOFWrT1NzAKXEmch7MOpE5WYo3cz61q6UNCKmWJ6dLdXlHFcAZvwzwcuDpUDvmmUVx8jkZ8gADGRO8JGAXqj8SoRY2IT2w8X0OtqwtUWzFhUEUBhhjwYCc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458345; c=relaxed/simple;
-	bh=DQB2my14Tc7B1BmSCv5p/w38SHBxxI1Y+G+gxhaEIrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xqgw+OpVqW7uJIbPniEVA/wHztG3WzVYJjrTZhTCjF/WY5Q43Vd/IKCV7NGAQekiUgRWCtpWUygfJCoGrSUdBzddscv7y9zmlQT8pMSXtWPUdFmYBg7bx4HnbGomNPnHwXxt2yVsy9f2PXwPeaW4YcTajThLpl89D1v4MVemzMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TwF5r9sl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725458341;
-	bh=DQB2my14Tc7B1BmSCv5p/w38SHBxxI1Y+G+gxhaEIrk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TwF5r9slZO5Npd/Q5ZZPWWWxjFM/wV8wkQMYkeqtyO8r38esixOYf00YdijQ5XamI
-	 QJYyt7aD7qHfl308b3Da+RV0VfNy8lQcvYuVc0K97TT5rA0e+/0htw2htaNX1sIrnD
-	 waRy5vWOIcqaSSK6QQU0ycqUR885EiEjDrdZqjWZhPwXCfiy087GKjHslONFiEwi56
-	 ybhyIX+komgcErye/inhjhYQ8B1kCic9qdAHbaMt8zdu+iGUUMJj8NVDUmlDJ3yIYZ
-	 SAWeNKU0nQM9Axg7X8WIi6a5Zcenm4edjqMyY6VEojirdxAthzUhEXFr88G+W1T7KJ
-	 tZEUuYnUt27wg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BD9D017E10BF;
-	Wed,  4 Sep 2024 15:59:00 +0200 (CEST)
-Date: Wed, 4 Sep 2024 15:58:54 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Mihail Atanassov
- <mihail.atanassov@arm.com>, linux-kernel@vger.kernel.org, Liviu Dudau
- <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, David Airlie
- <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, Shashank Sharma <shashank.sharma@amd.com>, Ketil
- Johnsen <ketil.johnsen@arm.com>, Akash Goel <akash.goel@arm.com>
-Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
-Message-ID: <20240904155854.471ff2a8@collabora.com>
-In-Reply-To: <0a362641-6029-4316-bd95-7e00dade89d8@arm.com>
-References: <20240828172605.19176-1-mihail.atanassov@arm.com>
-	<c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
-	<a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
-	<96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
-	<Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
-	<090ae980-a944-4c00-a26e-d95434414417@amd.com>
-	<80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
-	<20240904132308.7664902e@collabora.com>
-	<a5a53492-9651-403e-b613-91ef0b9e80b6@amd.com>
-	<298d0516-3b92-47e9-ad54-185de97561ee@arm.com>
-	<20240904152018.3de547f6@collabora.com>
-	<0a362641-6029-4316-bd95-7e00dade89d8@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C121DB949;
+	Wed,  4 Sep 2024 13:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725458367; cv=fail; b=couOTKG4pvbp/Bea1rlcBKvRvtlP8JD7sE5E2Cg4VRHKdwoWSiOOfVMh4thVBtCC0FcwzJ/1LFLURM6tnN2p24UyZX/Icsh7V5oj7Db9kBNtPj5Gq3qYMq30m8oofdJvVTZ1u4NhOf7wKIXqyWjYEMCrYPxFEWUPtabUhopQfQo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725458367; c=relaxed/simple;
+	bh=OoJU0qwvw1DjCj9mFY2aFVT7jMMnfsv/fRROvXo8AA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AYt4a0i+CDxryFqkEKbHIWJ8lP8ytu5S7mtMmTQ7uBQVI2b6OcmoOV4QSYRgRWgJ7pq8WqHBwpoBybXPar7VGiSgX2eMmN/IpjUuQ36IzWIkD8bPVa1cluEQHeGkWZM0nag7SBcPSE0MrpeipXfeZmIZ2B8+wjiA4/GlPue2jbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B7XAAZ6g; arc=fail smtp.client-ip=52.101.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wyqo8FGLFM8ZHaYvtgYj4hk1xEG7gKCXn0GtOjeH8TGDklR9wpov5jFV9qMBgG8csirSzmCZOMWjajgRK9s+ZpGuGLgA98FV8U/tFBSwb7ceb4KZDnj45A9SCTbsSUg7m0Kg5TaoueQw6klQgj6UOQqTZUIZFWFPvse96dv7wSLtMPdaDDWwFw5ORT2k6NYM+z2+r46NgfUBeT0gK5HNYB/D9wYHzVM84zkzNC5ntTEKPh3cGXetuYXLtT+Y697Z2PxTjwE6H1FKY0ofzYKAPLh6LNw87M8Ie9oxX/qpAZWUy7Phw5NNFYhI8QfHUJlMautwQNfWKHvT2rgo5RmKqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=doxiX0QeM2tlYWuZ2JOzWTuZi0vTJxXceTFcfowjma4=;
+ b=bB5O51kNtoAvLHX4+CzsZZb6hO44SdfHI6afvz4Gd/ffNa4B1LsdfPUEgRIjb8RXGWGhptVBd0/7Ov3XK6fGGIdKralKrNIyfhH/mCSPCWWzbuFqi0C6V8j8w1VDWgzEZEwdeewgH6G8T/uOBJgTU+XLkNl/s6Htc93kSejRM7EkD9RoVFWtYNDfqjQ2ftoY7kCkO76OoLsrUrqlGTUSo3KZnLUbbZ5IhvBy2vqXi3UvgVICIcDSIx1Cr3elkr0ePlTwCCZP0qOtpa+VeBO/iD4lVRu+jnNG1SabFvcEgwtS9czafKw/AqKuFRZESOApoYfSO7yzg/p3dpOZ5hBFQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=doxiX0QeM2tlYWuZ2JOzWTuZi0vTJxXceTFcfowjma4=;
+ b=B7XAAZ6gMLvAFEPtSCQLIx03Yb5PdMTdd8VKSeauF/UztyG2cxXRCnXw0WwmCGbifYXlr8pBhSgFNkjr6qrVYyO243+NNCMSONATDkRwZ9Noqgf5dladLCqKi5lxsBJP1/GPBOUgv2agS/6028zvh8UjPimxPJOqCjGUN3GR1IFTCVFlXolDdq4sHkysU/ECcQMZScD5wawxiPEpdzBD/BgBRfZGQJfYBJ3msLO9suwM1IrcuEWDyqq5tDr2eECK/aVgt9tJog1nWSvpIExvupQhuQZk/VsFx4r+RizhGAMDxIkOhA1AIj5i5nFQuKiuV7pHak9Gw5211ll3lFhC1w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB10778.eurprd04.prod.outlook.com (2603:10a6:150:226::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 13:59:22 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 13:59:21 +0000
+Date: Wed, 4 Sep 2024 09:59:14 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+	Bjorn Helgaas  =?utf-8?Q?=3Cbhelgaas=40google=2Ecom=3E=3BKrzysztof_Wil?=
+	=?utf-8?Q?czy=C5=84ski?= <kw@linux.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	imx@lists.linux.dev, linux-pci@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/1] dt-bindings: PCI: layerscape-pci: Add deprecated
+ property 'num-viewport'
+Message-ID: <ZthnsofkAI7YbI4u@lizhi-Precision-Tower-5810>
+References: <20240823185855.776904-1-Frank.Li@nxp.com>
+ <172468109227.92699.12972235014145037669.robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172468109227.92699.12972235014145037669.robh@kernel.org>
+X-ClientProxiedBy: BYAPR06CA0045.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 511d4830-cba2-4337-77d9-08dccce9c6ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CuZ50+ws9P1DhviJ3MlCCNKXwQRMq3RCZZh+M5iINQSddlQnpIL0yB8Pk4X0?=
+ =?us-ascii?Q?LFE4drAkwtoWqbIEgHEqdBT/GmIUP9grdzyTpEeA66gtk9P5wfgTfveBq+/e?=
+ =?us-ascii?Q?1DUgH7+9M2YGlOhFjRm4V/gt9nyARype5mYHFAygMM/7BnwOFAqOa5Qq12CU?=
+ =?us-ascii?Q?BRex4YtI1gcAPt3UdBp1eo0YSBS8Mib6eeC4Xlxe83sFed+sH0pBsciQsJBm?=
+ =?us-ascii?Q?QMKPFlh3CemfSbjHxX2jNxqjex3YscUuGtvvBB/opvo9eYWGcdC+uyux2Ngs?=
+ =?us-ascii?Q?izW0GxX3v13j3E8LWHxke0BbhO3bdVYcE+1tbPpNgnt4aNKMsi9swpY3iw1j?=
+ =?us-ascii?Q?kcd5qIJZoXNMTHftfwqltQuBNKJDIgVLq9VGg6lgfRM+qHeMyrOO4EdxMSo2?=
+ =?us-ascii?Q?wZz/of/aRP0iEHj50UQ33axZFQTW5FaesWGEa+730CTfkPk6IkJ+QBTM9Bar?=
+ =?us-ascii?Q?Wor51cDETK8h50BWAVw+BFkVQGQZx1ygO0VvamAMk/bi52Z6zQ6tqoTbaQUd?=
+ =?us-ascii?Q?bBCvLKaZMfn9gKJmsT0YNExTN7Z+QlxQUjDstVsdNjXMXhQIPCI4p572SXVB?=
+ =?us-ascii?Q?6RaZJz6VdFMNd4Oy/pXs/Zj3zy0Tg8eI+J5z5pxxNMmRF2AJ04uoRrvmv7Sl?=
+ =?us-ascii?Q?c9QCtU72rc+ar/W7oMvpK41svmWbH3alFjZpSV6xGbFoWZQd1bhoGNpZl0CD?=
+ =?us-ascii?Q?ZseslussUaRxITIJNO3bISEgw33ZDj/+CQT8WdhQZWFyde7HIy0hCUMIKqpL?=
+ =?us-ascii?Q?i3BMNt6qCwPCxYz1Rw/idndBWZWKAW0XZo8YyxHLmmUSxJO23Kh04dDK77E7?=
+ =?us-ascii?Q?xTSuyvdw+/1mfwnwMS4pAFntw2XRvWBdifk8BngNPrJbHs1vIfp0WYtqtUOe?=
+ =?us-ascii?Q?Zsro9aIIul6F60Hyz2W1roIeugeTFcdeZOcNo6aRccAnVDyZQqk5Eqq9PN6q?=
+ =?us-ascii?Q?pTIOKWfD0HiT4kOz/yYKwiyXdvlCjx0dQY2W/iNOOMm3MimtJXqtmC62Asvo?=
+ =?us-ascii?Q?/WoN8H06a1639yL90TQfG4CuWSdEFp26AT272d0uWYOosP3pRR3/HO3x8E2h?=
+ =?us-ascii?Q?4nAXiCAcR/EzTjlqdz2WJrXbqfzOodjz7wFmiwCdRU+FZrLrFOY73b2GGk/Z?=
+ =?us-ascii?Q?KfbcVuDP73SFLOpGrW83yuEf/QQwMo/x+D9YDWlT9UC5dMvFOWP/RzTpsU4X?=
+ =?us-ascii?Q?sCpP6qGajQ1wvWMgV6TKniN+N6vGCaUHNqngn5/w0h2LUUrG8/ebb6IzCyeY?=
+ =?us-ascii?Q?qUIGHpY9nI0XXpGr9cgpMcModnejMqM7o/rcpBLniH4RXF6Tv+BGB2nEgI9w?=
+ =?us-ascii?Q?RdR2xPWjm8mtSlQEmKkuDHVB2/zaYDd852kVW29r6dUe5lcAbxjd9faUDaYE?=
+ =?us-ascii?Q?bkTYwLTAOpF8wLhMphreMluBEqofMgAHxlr3UgbW9ugH7sgbTQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0DcoVLrKBWfqAkqghJwvHGRxrwLXIJTwpfvhDRcuvMi3UK7C4dOyAb+FfwLT?=
+ =?us-ascii?Q?ArysmtJWY2y5FbfsKpk1HUNrOh3ySXq7LZIdYnOSE2LKybocCnOv98BXiW1E?=
+ =?us-ascii?Q?kHD/q5AVLm5CJbf4QRcgg6PDXUvu6hNuQjdAXvmX4Yz/O/4DF1Siq66Ha/RP?=
+ =?us-ascii?Q?xL+d8pZFFTbZ3tUfn0+bW0tXoIpT8vQ8sjpO6GostZVVmu3G0/q4Ii8kKPHO?=
+ =?us-ascii?Q?iG3jvMkG0Ivrjk4fHuVWORe46XtPNpXkyD8fwPbuO/bvr2eYugt8Bsd1lLSR?=
+ =?us-ascii?Q?0wpYSOx9cp3a7PL1kTXZTrpz+p0axN/gJveNKFSX8TuMhB7WW/FgQLHwlu2A?=
+ =?us-ascii?Q?DYkMnNRYIG/nmRFIWYJ8vFhgGXTP36T/d2hFqDHybw08Gq3ojKuFzEuTwl/5?=
+ =?us-ascii?Q?UwT0D8YTFWPXj9dXg51Lcx9UyzDrGrYDJ+0M37NKBf4Dr89njFzo2SrZk0qq?=
+ =?us-ascii?Q?4z8KASUksaWMmgXfXjQSXPfObEF+DUgnNkBd21kK4hF5FhP9DKhraQ9nRugN?=
+ =?us-ascii?Q?HowTe801V1oyvGcWzy7mGAXulpfIpIk9DqYEpAMxofVxi9X2sJZhWdalSPSN?=
+ =?us-ascii?Q?JJbfm7AVAKzEJxGshLA2HdAh25FKuYbB4LM89EaUzQ+FR+D1YYySrTIXuJrh?=
+ =?us-ascii?Q?CPqf1cX8bVvvJy3/5iB7SFyqXWkQCW4aWViwVx1oxvfiYU0O8X3VD/uMrho9?=
+ =?us-ascii?Q?cL4tXQSHd1/uNK7kQWqio1rW3xGcBYwY9QA7sRjimnW1GeEbA2gNAay4TYh0?=
+ =?us-ascii?Q?drp/Y42DO4NjPXIrYmAD2TkHlwlda5lXC4LUl1i1N2/Po88gp93k9zFP2Sb/?=
+ =?us-ascii?Q?U0MaIzMY0VA9S7hWrH9vBj8NxZEySNMqheBTWwpLlRudlj5c46W8qD9Haud2?=
+ =?us-ascii?Q?+KX7myZpNexVrh5nxRWbceZoGuHFSvFICozqXV8NkWlZDKmH+DToIzlyYxrK?=
+ =?us-ascii?Q?sKNRz9/miIm4px7KfVsVF9vWCl0Mt3AMLREoU6v3tnZzrf6cb1qMfYvQL3QV?=
+ =?us-ascii?Q?Ai7SVhbEaiok7KbCfd96C1cfPX0lzWj1vXCjHP49EHilHvb/8ZU62f3fJn+0?=
+ =?us-ascii?Q?FqsqAcH8xCiQ4YYuevoQbJF4Z+dxKQ0Ti4fdkK4xIPfNOF4MvekY5BMlrvBj?=
+ =?us-ascii?Q?1O+Fk4Vi2LOfs0zcxe/savdXTm+hVTqkbdkNiGGIlipAjab/vQsEUHdK0pQb?=
+ =?us-ascii?Q?M6cMx3KuoEoxqTwNteIylts5jXzggH32VvJ+B3WGYYS7M9uifqMUiDcPbrxI?=
+ =?us-ascii?Q?AXok9eD+eJ0K2STBDhHSEUghGnWpGeBrVoDmGIijq+74tByXKxYOArro0+39?=
+ =?us-ascii?Q?9KoGpMVm88sPu2QY1VbBl1jKirIQcVY+P1K4dxqCVxTkG96ouDATRTJgPVlk?=
+ =?us-ascii?Q?3Z7OYvnhQbuPIT9q6TgsRB1HD9C9+Na2xQXdndPsbgf2ZxTse6pWlwUDmU02?=
+ =?us-ascii?Q?YSNIQoUlh9C0KCfjwe2BJXdGvVJj6q9oiI6Jf6w/mctqbd6EWzx9dYdJ1gjI?=
+ =?us-ascii?Q?/9+QB+GVUcA82o9b4OXSKORM1VmmKvt3n8bmdf5LXGhp9bnnE61U2ArHgDi6?=
+ =?us-ascii?Q?Z/9SXOahgNMA3+85QU/fDE72NhqzXV/qnl1TgSVG?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 511d4830-cba2-4337-77d9-08dccce9c6ed
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 13:59:21.8418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UkLmnQkDqqvW/3Kmv9kZ1G7A9sqUFexvJvvDZVYe27Kq8v7hltm0iNtgVMfsx5KC0AtE705X+UxgelkBc20pZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10778
 
-On Wed, 4 Sep 2024 14:35:12 +0100
-Steven Price <steven.price@arm.com> wrote:
+On Mon, Aug 26, 2024 at 09:04:53AM -0500, Rob Herring (Arm) wrote:
+>
+> On Fri, 23 Aug 2024 14:58:54 -0400, Frank Li wrote:
+> > Copy the 'num-viewport' property from snps,dw-pcie-common.yaml to
+> > fsl,layerscape-pcie.yaml to address the below warning. This is necessary
+> > due to historical reasons where fsl,layerscape-pcie.yaml does not
+> > directly reference snps,dw-pcie-common.yaml.
+> >
+> > /arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: pcie@3400000: Unevaluated properties are not allowed ('num-viewport' was unexpected)
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../devicetree/bindings/pci/fsl,layerscape-pcie.yaml      | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> On 04/09/2024 14:20, Boris Brezillon wrote:
-> > + Adrian, who has been looking at the shrinker stuff for Panthor
-> >=20
-> > On Wed, 4 Sep 2024 13:46:12 +0100
-> > Steven Price <steven.price@arm.com> wrote:
-> >  =20
-> >> On 04/09/2024 12:34, Christian K=C3=B6nig wrote: =20
-> >>> Hi Boris,
-> >>>
-> >>> Am 04.09.24 um 13:23 schrieb Boris Brezillon:   =20
-> >>>>>>>> Please read up here on why that stuff isn't allowed:
-> >>>>>>>> https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#i=
-ndefinite-dma-fences     =20
-> >>>>>>> panthor doesn't yet have a shrinker, so all memory is pinned, whi=
-ch means
-> >>>>>>> memory management easy mode.     =20
-> >>>>>> Ok, that at least makes things work for the moment.     =20
-> >>>>> Ah, perhaps this should have been spelt out more clearly ;)
-> >>>>>
-> >>>>> The VM_BIND mechanism that's already in place jumps through some ho=
-ops
-> >>>>> to ensure that memory is preallocated when the memory operations are
-> >>>>> enqueued. So any memory required should have been allocated before =
-any
-> >>>>> sync object is returned. We're aware of the issue with memory
-> >>>>> allocations on the signalling path and trying to ensure that we don=
-'t
-> >>>>> have that.
-> >>>>>
-> >>>>> I'm hoping that we don't need a shrinker which deals with (active) =
-GPU
-> >>>>> memory with our design.   =20
-> >>>> That's actually what we were planning to do: the panthor shrinker was
-> >>>> about to rely on fences attached to GEM objects to know if it can
-> >>>> reclaim the memory. This design relies on each job attaching its fen=
-ce
-> >>>> to the GEM mapped to the VM at the time the job is submitted, such t=
-hat
-> >>>> memory that's in-use or about-to-be-used doesn't vanish before the G=
-PU
-> >>>> is done.   =20
-> >>
-> >> How progressed is this shrinker? =20
-> >=20
-> > We don't have code yet. All we know is that we want to re-use Dmitry's
-> > generic GEM-SHMEM shrinker implementation [1], and adjust it to match
-> > the VM model, which means not tracking things at the BO granularity,
-> > but at the VM granularity. Actually it has to be an hybrid model, where
-> > shared BOs (those imported/exported) are tracked individually, while
-> > all private BOs are checked simultaneously (since they all share the VM
-> > resv object).
-> >  =20
-> >> It would be good to have an RFC so that
-> >> we can look to see how user submission could fit in with it. =20
-> >=20
-> > Unfortunately, we don't have that yet :-(. All we have is a rough idea
-> > of how things will work, which is basically how TTM reclaim works, but
-> > adapted to GEM. =20
->=20
-> Fair enough, thanks for the description. We might need to coordinate to
-> get this looked at sooner if it's going to be blocking user submission.
->=20
-> >> =20
-> >>> Yeah and exactly that doesn't work any more when you are using user
-> >>> queues, because the kernel has no opportunity to attach a fence for e=
-ach
-> >>> submission.   =20
-> >>
-> >> User submission requires a cooperating user space[1]. So obviously user
-> >> space would need to ensure any BOs that it expects will be accessed to
-> >> be in some way pinned. Since the expectation of user space submission =
-is
-> >> that we're reducing kernel involvement, I'd also expect these to be
-> >> fairly long-term pins.
-> >>
-> >> [1] Obviously with a timer to kill things from a malicious user space.
-> >>
-> >> The (closed) 'kbase' driver has a shrinker but is only used on a subset
-> >> of memory and it's up to user space to ensure that it keeps the releva=
-nt
-> >> parts pinned (or more specifically not marking them to be discarded if
-> >> there's memory pressure). Not that I think we should be taking it's
-> >> model as a reference here.
-> >> =20
-> >>>>> Memory which user space thinks the GPU might
-> >>>>> need should be pinned before the GPU work is submitted. APIs which
-> >>>>> require any form of 'paging in' of data would need to be implemente=
-d by
-> >>>>> the GPU work completing and being resubmitted by user space after t=
-he
-> >>>>> memory changes (i.e. there could be a DMA fence pending on the GPU =
-work).   =20
-> >>>> Hard pinning memory could work (ioctl() around gem_pin/unpin()), but
-> >>>> that means we can't really transparently swap out GPU memory, or we
-> >>>> have to constantly pin/unpin around each job, which means even more
-> >>>> ioctl()s than we have now. Another option would be to add the XGS fe=
-nce
-> >>>> to the BOs attached to the VM, assuming it's created before the job
-> >>>> submission itself, but you're no longer reducing the number of user =
-<->
-> >>>> kernel round trips if you do that, because you now have to create an
-> >>>> XSG job for each submission, so you basically get back to one ioctl()
-> >>>> per submission.   =20
-> >>
-> >> As you say the granularity of pinning has to be fairly coarse for user
-> >> space submission to make sense. My assumption (could be wildly wrong)
-> >> was that most memory would be pinned whenever a context is rendering. =
-=20
-> >=20
-> > The granularity of pinning (in term of which regions are pinned) is not
-> > really the problem, we can just assume anything that's mapped to the VM
-> > will be used by the GPU (which is what we're planning to do for kernel
-> > submission BTW). The problem is making the timeslice during
-> > which VM memory is considered unreclaimable as short as possible, such
-> > that the system can reclaim memory under mem pressure. Ideally, you want
-> > to pin memory as long as you have jobs queued/running, and allow for
-> > reclaim when the GPU context is idle.
-> >=20
-> > We might be able to involve the panthor_scheduler for usermode queues,
-> > such that a context that's eligible for scheduling first gets its VM
-> > mappings pinned (fence creation + assignment to the VM/BO resvs), and
-> > things get reclaimable again when the group is evicted from the CSG
-> > slot. That implies evicting idle groups more aggressively than we do
-> > know, but there's probably a way around it. =20
->=20
-> Can we evict idle groups from the shrinker? User space already has to do
-> a little dance to work out whether it needs to "kick" the kernel to do
-> the submission. So it would be quite reasonable to extend the kick to
-> also pin the VM(s). The shrinker could then proactively evict idle
-> groups, and at that point it would be possible to unpin the memory.
->=20
-> I'm probably missing something, but that seems like a fairly solid
-> solution to me.
+Bjorn and krzysztof wilczynaski
 
-The locking might be tricky to get right, but other than that, it looks
-like an option that could work. It's definitely worth investigating.
+	Could you pick this trivial binding doc change patch, which acked
+by Rob, I don't want to miss this merge windows. It help reduce
+CHECK_DTBS warnings.
 
->=20
-> >> =20
-> >>> For AMDGPU we are currently working on the following solution with
-> >>> memory management and user queues:
-> >>>
-> >>> 1. User queues are created through an kernel IOCTL, submissions work =
-by
-> >>> writing into a ring buffer and ringing a doorbell.
-> >>>
-> >>> 2. Each queue can request the kernel to create fences for the current=
-ly
-> >>> pushed work for a queues which can then be attached to BOs, syncobjs,
-> >>> syncfiles etc...
-> >>>
-> >>> 3. Additional to that we have and eviction/preemption fence attached =
-to
-> >>> all BOs, page tables, whatever resources we need.
-> >>>
-> >>> 4. When this eviction fences are requested to signal they first wait =
-for
-> >>> all submission fences and then suspend the user queues and block
-> >>> creating new submission fences until the queues are restarted again.
-> >>>
-> >>> This way you can still do your memory management inside the kernel (e=
-.g.
-> >>> move BOs from local to system memory) or even completely suspend and
-> >>> resume applications without their interaction, but as Sima said it is
-> >>> just horrible complicated to get right.
-> >>>
-> >>> We have been working on this for like two years now and it still could
-> >>> be that we missed something since it is not in production testing yet=
-.   =20
-> >>
-> >> I'm not entirely sure I follow how this doesn't create a dependency
-> >> cycle. From your description it sounds like you create a fence from the
-> >> user space queue which is then used to prevent eviction of the BOs nee=
-ded.
-> >>
-> >> So to me it sounds like:
-> >>
-> >> 1. Attach fence to BOs to prevent eviction.
-> >>
-> >> 2. User space submits work to the ring buffer, rings doorbell.
-> >>
-> >> 3. Call into the kernel to create the fence for step 1.
-> >>
-> >> Which is obviously broken. What am I missing?
-> >>
-> >> One other thing to note is that Mali doesn't have local memory - so the
-> >> only benefit of unpinning is if we want to swap to disk (or zram etc).=
- =20
-> >=20
-> > Which would be good to have, IMHO. If we don't do the implicit swapout
-> > based on some sort of least-recently-used-VM, we have to rely on
-> > userspace freeing its buffer (or flagging them reclaimable) as soon as
-> > they are no longer used by the GPU. =20
->=20
-> It's an awkward one because really you do want user space to free
-> buffers - generally the user space driver has a fairly large number of
-> buffers which are for temporary storage (and kept around to avoid the
-> overhead of freeing/allocating each frame). I know we've resorted to
-> idle timers in user space in an attempt to do this in the past - but
-> it's ugly.
+Frank
 
-Fair enough.
-
->=20
-> Actual swapout can work, but it incurs a heavy penalty when the
-> application becomes active again. But I agree we should probably be
-> aiming to add support for this.
-
-I guess the other case is a gazillion of GPU contexts, each keeping
-buffers around for good reason. If most of those contexts are idle, I
-guess swapping out mostly inactive context is better than having the
-OOM kick in to reclaim memory. And yes, there's a hit any time an
-inactive context gets active again, if and only if the system was under
-memory pressure in the meantime. So I guess the slowdown is acceptable
-in that case.
-
-Just to mention that, IIRC, MSM already moved away from explicit BO
-reclaim (BO flagged reclaimable from userspace when they're back in the
-userspace BO cache) in favor of an LRU-based swapout. Dmitry's work is
-also centered around this LRU-based swapout model, even though it also
-supports the model we have in panfrost, lima, vc4, etc. So it looks
-like the new trend for embedded GPU drivers is to defer this memory
-reclaim responsibility entirely to the kernel rather than letting
-userspace decide which bits are reclaimable.
+>
 
