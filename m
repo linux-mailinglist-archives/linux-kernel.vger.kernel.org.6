@@ -1,58 +1,75 @@
-Return-Path: <linux-kernel+bounces-314677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E0B96B6AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3412296B6AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1D528BFF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A4E1F227C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26381CF5C7;
-	Wed,  4 Sep 2024 09:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1A61CEE99;
+	Wed,  4 Sep 2024 09:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iajBY3cX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3P4OZcS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515361CCB41;
-	Wed,  4 Sep 2024 09:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90C31CCB55;
+	Wed,  4 Sep 2024 09:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442209; cv=none; b=K03wJ3lM5ulxhoSmu0aw90poro0SpjIJGaxyCD8vMAYnAHWc5yXGlksrAJY/KE8SxshrjlFktG5rDbsDS60nMx0MLf0DJdgnevG1ihkGl7a6L3czlrknndsHCGSRby+f7OdCRYHAimPj6w2KtxTH7DERjlSJ7E+N9kmyeukKV8I=
+	t=1725442192; cv=none; b=pvdcFwRiDRJVqGWmnn42oPX8jTr+NwL5HtI3FIWyU60SCIWl9qW48Nu4cUwA4BVZW6UuaGDk+UBl5nxepqUgKVutHgtNB0sqK4FdYaMevvATZyOaHcMBux0hZa02DO3xaVvWi7WDOLpRYqRLn5PPuT55wNzIp/1iTp2cpZZLtLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442209; c=relaxed/simple;
-	bh=RevlNoJv4JYRDAemKLgtFTzuLfhjsrtVm/vM57JgUtQ=;
+	s=arc-20240116; t=1725442192; c=relaxed/simple;
+	bh=54V5tRrYnwlqE+z9YtX9ph4B2JFbbRsCj+benJAsYwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEa2+Y98IndRqPypo/REKxfGj3nLdPMKDBLzeUww+D71eCD56ROh4W2ductvSsmVtASo6um/+pdUMCQRiHRIQH34CLKPDL6+fbam0JAYjdDrMNgqW3NuvVjYjQ57q/PgUDomVYj6pHio8cLikim8rM+2MPneML7dBYg+HhQ2HAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iajBY3cX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24826C4CEC2;
-	Wed,  4 Sep 2024 09:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725442208;
-	bh=RevlNoJv4JYRDAemKLgtFTzuLfhjsrtVm/vM57JgUtQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PawGwwAAkFxn3uR40uUajnZk2AmgTcH9PElZ0WT1DqkcJ8jsnlZwlYUbApLBTTnHcLDz3Sj7D8alZAp62C1dWaqv1n0kucSdC5VOGLaJAIVB9QL+9sUXhDgdGLQa9yybwif93n/zPf+llej2d87iy541wutzEwBFz2YuM6jXeg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3P4OZcS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661DEC4CEC9;
+	Wed,  4 Sep 2024 09:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725442191;
+	bh=54V5tRrYnwlqE+z9YtX9ph4B2JFbbRsCj+benJAsYwI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iajBY3cXKCi4cCrVKzb4mzcWkb5Ys3aHKgPeTUSivoyQvAom05SgL/E0BdDi/stz1
-	 PwF0XKEnha4PcpA8RLnonJ4ncFGO8xZJrnLh47I6ezikneb9vIo8UQLZidPFhfHCH4
-	 OA+KY4881urPgJocve/ClqEEO+Avh3aiBQwBpK94=
-Date: Wed, 4 Sep 2024 11:30:05 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	abdulrasaqolawani@gmail.com, Helge Deller <deller@gmx.de>
-Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
-Message-ID: <2024090459-moaning-proclaim-6bf5@gregkh>
-References: <20240901160803.673617007@linuxfoundation.org>
- <CA+G9fYvS_NL7bcKkOJEX2irsBHcrYHz_yOOU84T9V9XB7n92RQ@mail.gmail.com>
+	b=b3P4OZcSIc7hjw+laxcYBj+S8AnEW9jJSxdE8ThEa6t1hCN6DSSGfvwYqDFZxKRD2
+	 jjoK8Eho5TznssDQUROcxeeOPU/BYAK1KB9nsO5nWLdbE0zifFTZeDJbpvrSKkI7Ss
+	 yNzW+rC+VdhAGS0blclB2qCJ/ZNJdJs7QRmpl3QoyzYapQUzyBMcimMWH+3gVEs0mC
+	 tWq/GAFlNri3UTqQ1kUFD+YDplxEPSxKwe7vnzYS0q+0hfW8cDQtXg3NLIESmF8J0h
+	 vYuOzh4mgE4E7nAPCt0AlmaYz4oKSY0zR0HcQS4/Nq1F/wfzj9LdxdhaHg0hadtoA4
+	 PIw5M+ypS+nxw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slmL2-000000001tc-18qO;
+	Wed, 04 Sep 2024 11:30:08 +0200
+Date: Wed, 4 Sep 2024 11:30:08 +0200
+From: Johan Hovold <johan@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Subject: Re: [PATCH v6 2/4] PCI: dwc: Always cache the maximum link speed
+ value in dw_pcie::max_link_speed
+Message-ID: <ZtgooHdex5gXh0tP@hovoldconsulting.com>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
+ <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,48 +78,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvS_NL7bcKkOJEX2irsBHcrYHz_yOOU84T9V9XB7n92RQ@mail.gmail.com>
+In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
 
-On Mon, Sep 02, 2024 at 02:16:48PM +0530, Naresh Kamboju wrote:
-> On Sun, 1 Sept 2024 at 21:50, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.19.321 release.
-> > There are 98 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.321-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Wed, Sep 04, 2024 at 12:41:58PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> The Powerpc defconfig builds failed on Linux stable-rc due to following
-> build warnings / errors with clang-18 and gcc-12.
+> Currently, dw_pcie::max_link_speed has a valid value only if the controller
+> driver restricts the maximum link speed in the driver or if the platform
+> does so in the devicetree using the 'max-link-speed' property.
 > 
-> This is a same problem on current stable-rc review on
->    - 4.19.321-rc1 review
->    - 5.4.283-rc1 review
->    - 5.10.225-rc1 review
->    - 5.15.166-rc1 review
+> But having the maximum supported link speed of the platform would be
+> helpful for the vendor drivers to configure any link specific settings.
+> So in the case of non-valid value in dw_pcie::max_link_speed, just cache
+> the hardware default value from Link Capability register.
 > 
-> In the case of stable-rc linux-4.19.y
+> While at it, let's also remove the 'max_link_speed' argument to the
+> dw_pcie_link_set_max_speed() function since the value can be retrieved
+> within the function.
 > 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
 > 
-> Anders bisected this to first bad commit id as,
->   fbdev: offb: replace of_node_put with __free(device_node)
->   [ Upstream commit ce4a7ae84a58b9f33aae8d6c769b3c94f3d5ce76 ]
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 86c49ba097c6..0704853daa85 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -687,16 +687,27 @@ void dw_pcie_upconfig_setup(struct dw_pcie *pci)
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_upconfig_setup);
+>  
+> -static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 max_link_speed)
+> +static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
+>  {
+>  	u32 cap, ctrl2, link_speed;
+>  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>  
+>  	cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+> +
+> +	/*
+> +	 * Even if the platform doesn't want to limit the maximum link speed,
+> +	 * just cache the hardware default value so that the vendor drivers can
+> +	 * use it to do any link specific configuration.
+> +	 */
+> +	if (pci->max_link_speed < 0) {
 
-Now dropped, thanks.
+This should be 
 
-greg k-h
+	if (pci->max_link_speed < 1) {
+
+but the patch works as-is because of the default case in the switch
+below which falls back to PCI_EXP_LNKCAP_SLS.
+
+> +		pci->max_link_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, cap);
+> +		return;
+> +	}
+> +
+>  	ctrl2 = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCTL2);
+>  	ctrl2 &= ~PCI_EXP_LNKCTL2_TLS;
+>  
+> -	switch (pcie_link_speed[max_link_speed]) {
+> +	switch (pcie_link_speed[pci->max_link_speed]) {
+>  	case PCIE_SPEED_2_5GT:
+>  		link_speed = PCI_EXP_LNKCTL2_TLS_2_5GT;
+>  		break;
+
+> @@ -1058,8 +1069,7 @@ void dw_pcie_setup(struct dw_pcie *pci)
+>  {
+>  	u32 val;
+>  
+> -	if (pci->max_link_speed > 0)
+> -		dw_pcie_link_set_max_speed(pci, pci->max_link_speed);
+> +	dw_pcie_link_set_max_speed(pci);
+
+With the above fixed:
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
