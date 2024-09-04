@@ -1,284 +1,138 @@
-Return-Path: <linux-kernel+bounces-314712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0F696B76B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C1596B764
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33791C2221C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD611C21FF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EE51CDA09;
-	Wed,  4 Sep 2024 09:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A643E1CDA18;
+	Wed,  4 Sep 2024 09:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2Y/TpBq"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kt653IpM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9F0145B35
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9C145B35;
+	Wed,  4 Sep 2024 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443550; cv=none; b=dvBnJCzvqy6ea66DkA2/g9r0fpixq01hwlb00dMsbQoomEyUDjz0ri9+yXu/pdg/LWhl7yBkK3jcbg+kC/HcMDzNq1O3GedvqDxPOeNkHJ91EeVb6w6yMsgLdetZrN9j7aCwSwatYdmOf6+WPy8BVjqXTLVOR/CTt894yELuj8U=
+	t=1725443506; cv=none; b=tIbAb5Zh2w1OwThLVIcEcqo0MtxlEqr84DyXnQpwjpjKrDaR+pASKfKJnLfaQ/OuKQf2a4v0qB1jRWoPPIdKmShhaMG0seTUVY+Banq6l+l6HM5InmPmNSzW/nVXJdB0ottQxD4se3PX/Ul58bAxWWvmt86jqeJ3SETQdCgpBWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443550; c=relaxed/simple;
-	bh=EnappI5a9nIBuX2OrvDrft2ZiNqkHMaiAtA8/FqKzWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dJJYKsjIQwfS+8GX7wwTndNLx9/Jz3mq6ttneFcq7phUnG3oiTxFepulFQk9oqieLP+s0iFWhLRuvvAqaAXb4jgZhIVT24PmDHdqVsP9h+oCzgTae7ggbJcf6u7moiS0bf0NozBwuq0zJruBsAO2nKr9NsuvV+ZXmJiilT7+ozs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2Y/TpBq; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso55332665e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 02:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725443547; x=1726048347; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N31sdjPZnU9gWDNDGrMFMo8pfc0/4uQTHslgdr3uxdw=;
-        b=Y2Y/TpBq7mH7Z8SIdjZbxRjUkQxPnrevbuHxx6b6rCx8a1XU2Lk66cda2WC/80AtXx
-         OknOmc9cktqTW7/m2xcil/QCup9X9MXG9Mdh0G9OVDERYRq96Yp46pfYugEcImseR3Zo
-         3iPH9tMg4UFpgTW9hiK8mgGGY5eCoafkL7PpX/rFw4S5gSuHUdRph+1RQmtyJYXeNWYK
-         iRHP1yCDAsB38j/++l+epQDGTrE49083JSdXIK583kHOZ0ms7pS80X+VUVsN9w0w2Jpk
-         brvR4TYKZt9Fx+cmg5BKWrpJRlmJUFnmh7gSchX1bxaUmUtanbOqJTOK19EdFts1qEWv
-         9Zjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725443547; x=1726048347;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N31sdjPZnU9gWDNDGrMFMo8pfc0/4uQTHslgdr3uxdw=;
-        b=FQXvCtZvlu6ycq1xqvgftdRiKK2m3hl0X2+Aj9c7xD+H6XKed97aYzElerO8iVhr7v
-         9Q9q4asyV+jqbx3587wqo2rcUmAna3BWyD3YVYwFq7gXOvq7kBYn8DY/OwdJp+vIcB9x
-         XQMAhXR2NsspOBRHQ0eOlpm5fObwpxNFnHx4XwHuwb2TdHt1zB0sid0nfa8ge0EaQqQw
-         T/RzvQ43fRFJ0qYfEbdAmfqQ0eJcICND62yEcxGvAIlXZD0fJyLpJQ/n+aUUEZKHAyPg
-         I7bzjM3lIDKgOGMIXnJTqFEgRhR642Z67dcPQ53beQnAnwzgo/e5WiNynJFd51BIpQAj
-         tjLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLqCr6J28G227zALCCxsSX6h0VSjiB/DWDCvd3S9woKRctYQcN1ZFGylLv0rnLWzwu11PPc6kYI+CMc68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ21jUalpLi5oadG4ilyH5dJOKj/f7zcfXT97E8sTTuE7n68ZV
-	neetB5IpkiQ38Urakq9JbharzQLdSOD90+zOpy1dPLMPccNc27Tl
-X-Google-Smtp-Source: AGHT+IGylQ1hjz/deZtmanKVut58Xefs+Wl4dKDaaIIiODpf/o+wyN8I+JhibvK+w1ILtKu7k1jKrA==
-X-Received: by 2002:a05:6000:186e:b0:374:c92e:f6a3 with SMTP id ffacd0b85a97d-374c92ef910mr7604779f8f.14.1725443546005;
-        Wed, 04 Sep 2024 02:52:26 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm199394895e9.43.2024.09.04.02.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 02:52:25 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] LoongArch/percpu: Simplify _percpu_read() and _percpu_write()
-Date: Wed,  4 Sep 2024 11:51:40 +0200
-Message-ID: <20240904095205.739422-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725443506; c=relaxed/simple;
+	bh=9v8g1rIECH33scUifS0SJLjKLhwqrmPT+U7zRZHR7aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GC8zOvZa5Q1Vxwu2ldA3LtrJZzZTwO+I72IuJyHSwi+DGZw2hP/jtzt4YWPKBHAcQDewFWIyLB1IUnjQ3zYYrfYhEERxhpLAwVjMkS07lVITf+2ZBiFYRccwkykK2qlrfTss92y1lUUyRa7lJjBf6WHFcn7K7aJ6OunyT+n2UaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kt653IpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC1BC4CEC2;
+	Wed,  4 Sep 2024 09:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725443505;
+	bh=9v8g1rIECH33scUifS0SJLjKLhwqrmPT+U7zRZHR7aQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kt653IpMJgUa37vyxIoA3w6Y9fHCQ6jN3ejkCQo9mUejmBKRAkDi7UwqDMKGaqE7y
+	 wQDEEEbl1XaPaE1tarYBe9V5MRRUrChv3OsCRA7IAcz66WMWCK+yiy0mtQibNA2sDX
+	 bdzTPi9qUpXimz11f6JOLAF5vteJeIWxfzAveUUo=
+Date: Wed, 4 Sep 2024 11:51:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
+Message-ID: <2024090459-glancing-vengeful-f3fb@gregkh>
+References: <20240901160803.673617007@linuxfoundation.org>
+ <98f6ad0c-65d0-4a39-8a11-a55b3dd83b7b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98f6ad0c-65d0-4a39-8a11-a55b3dd83b7b@oracle.com>
 
-_percpu_read() and _percpu_write() macros call __percpu_read()
-and __percpu_write() static inline functions that result in a single
-assembly instruction. Percpu infrastructure expects its leaf
-definitions to encode the size of their percpu variable, so the patch
-merges asm clauses from the static inline function into the
-corresponding leaf macros.
+On Mon, Sep 02, 2024 at 02:44:44PM +0530, Harshit Mogalapalli wrote:
+> Hi Greg,
+> 
+> On 01/09/24 21:45, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.19.321 release.
+> > There are 98 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> > Anything received after that time might be too late.
+> 
+> Build fails on our infrastructure.
+> 
+> 
+> BUILDSTDERR: In file included from /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/bitmap.h:6,
+> BUILDSTDERR:                  from /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/perf/util/include/../../util/pmu.h:5,
+> BUILDSTDERR:                  from arch/x86/util/pmu.c:9:
+> BUILDSTDERR: /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/align.h:6:10:
+> fatal error: uapi/linux/const.h: No such file or directory
+> BUILDSTDERR:  #include <uapi/linux/const.h>
+> BUILDSTDERR:           ^~~~~~~~~~~~~~~~~~~~
+> BUILDSTDERR: compilation terminated.
+> 
+> 
+> Looked at the commits:
+> 
+> This commit 993a20bf6225c: ("tools: move alignment-related macros to new
+> <linux/align.h>") is causing that perf build to fail.
+> 
+> Solution is not to drop this patch as this is probably pulled in to support
+> bitmap_size() macros in these commits(which are also part of this release):
+> 
+> 6fbe5a3920f48 fix bitmap corruption on close_range() with
+> CLOSE_RANGE_UNSHARE
+> ef9ebc42c10f8 bitmap: introduce generic optimized bitmap_size()
+> 
+> 
+> 
+> Applying the below diff, helps the perf build to pass: I think we should
+> fold this into: commit 993a20bf6225c: ("tools: move alignment-related macros
+> to new <linux/align.h>")
+> 
+> diff --git a/tools/include/linux/align.h b/tools/include/linux/align.h
+> index 14e34ace80dda..a27bc1edf6e5c 100644
+> --- a/tools/include/linux/align.h
+> +++ b/tools/include/linux/align.h
+> @@ -3,7 +3,7 @@
+>  #ifndef _TOOLS_LINUX_ALIGN_H
+>  #define _TOOLS_LINUX_ALIGN_H
+> 
+> -#include <uapi/linux/const.h>
+> +#include <linux/const.h>
+> 
+>  #define ALIGN(x, a)            __ALIGN_KERNEL((x), (a))
+>  #define ALIGN_DOWN(x, a)       __ALIGN_KERNEL((x) - ((a) - 1), (a))
 
-The secondary effect of this change is to avoid explicit __percpu
-function arguments. Currently, __percpu macro is defined in
-include/linux/compiler_types.h, but with proposed patch [1],
-__percpu definition will need macros from include/asm-generic/percpu.h,
-creating forward dependency loop.
+Change now made, thanks.
 
-The proposed solution is the same as x86 architecture uses.
+> !! But this breaks the build for arm here.
+> !! Not sure what is the best way to solve this problem.
 
-Patch is compile tested only.
+Are people building perf for arm on 4.19.y?  If so, wow, this thing is
+about to go end-of-life any week now, and I would be amazed if it built
+at all anymore as I can't get perf to build on _ANY_ lts kernel these
+days.
 
-[1] https://lore.kernel.org/lkml/20240812115945.484051-4-ubizjak@gmail.com/
+Anyway, I'll make this change and if any arm build fixes want to show
+up, I'll be glad to take them.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>
-Cc: Xi Ruoyao <xry111@xry111.site>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
-v2: Add a missing cast and a missing coma in the asm template,
-    reported by kernel test robot. Some formatting changes.
----
- arch/loongarch/include/asm/percpu.h | 130 +++++++++-------------------
- 1 file changed, 41 insertions(+), 89 deletions(-)
+thanks,
 
-diff --git a/arch/loongarch/include/asm/percpu.h b/arch/loongarch/include/asm/percpu.h
-index 8f290e5546cf..2bb84227a8c5 100644
---- a/arch/loongarch/include/asm/percpu.h
-+++ b/arch/loongarch/include/asm/percpu.h
-@@ -68,75 +68,6 @@ PERCPU_OP(and, and, &)
- PERCPU_OP(or, or, |)
- #undef PERCPU_OP
- 
--static __always_inline unsigned long __percpu_read(void __percpu *ptr, int size)
--{
--	unsigned long ret;
--
--	switch (size) {
--	case 1:
--		__asm__ __volatile__ ("ldx.b %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 2:
--		__asm__ __volatile__ ("ldx.h %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 4:
--		__asm__ __volatile__ ("ldx.w %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 8:
--		__asm__ __volatile__ ("ldx.d %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	default:
--		ret = 0;
--		BUILD_BUG();
--	}
--
--	return ret;
--}
--
--static __always_inline void __percpu_write(void __percpu *ptr, unsigned long val, int size)
--{
--	switch (size) {
--	case 1:
--		__asm__ __volatile__("stx.b %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 2:
--		__asm__ __volatile__("stx.h %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 4:
--		__asm__ __volatile__("stx.w %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 8:
--		__asm__ __volatile__("stx.d %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	default:
--		BUILD_BUG();
--	}
--}
--
- static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val, int size)
- {
- 	switch (size) {
-@@ -157,6 +88,39 @@ static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 	return 0;
- }
- 
-+#define __pcpu_op_1(op)		op ".b "
-+#define __pcpu_op_2(op)		op ".h "
-+#define __pcpu_op_4(op)		op ".w "
-+#define __pcpu_op_8(op)		op ".d "
-+
-+#define _percpu_read(size, _pcp)					\
-+({									\
-+	unsigned long __pcp_ret;					\
-+									\
-+	__asm__ __volatile__(						\
-+		__pcpu_op_##size("ldx") "%[ret], $r21, %[ptr]	\n"	\
-+		: [ret] "=&r"(__pcp_ret)				\
-+		: [ptr] "r"(&(_pcp))					\
-+		: "memory");						\
-+	(typeof(_pcp))__pcp_ret;					\
-+})
-+
-+#define __pcpu_cast_1(val)	(((unsigned long) val) & 0xff)
-+#define __pcpu_cast_2(val)	(((unsigned long) val) & 0xffff)
-+#define __pcpu_cast_4(val)	(((unsigned long) val) & 0xffffffff)
-+#define __pcpu_cast_8(val)	((unsigned long) val)
-+
-+#define _percpu_write(size, _pcp, _val)					\
-+do {									\
-+	unsigned long __pcp_val = __pcpu_cast_##size(_val);		\
-+									\
-+	__asm__ __volatile__(						\
-+		__pcpu_op_##size("stx") "%[val], $r21, %[ptr]	\n"	\
-+		:							\
-+		: [val] "r"(__pcp_val), [ptr] "r"(&(_pcp))		\
-+		: "memory");						\
-+} while (0)
-+
- /* this_cpu_cmpxchg */
- #define _protect_cmpxchg_local(pcp, o, n)			\
- ({								\
-@@ -167,18 +131,6 @@ static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 	__ret;							\
- })
- 
--#define _percpu_read(pcp)						\
--({									\
--	typeof(pcp) __retval;						\
--	__retval = (typeof(pcp))__percpu_read(&(pcp), sizeof(pcp));	\
--	__retval;							\
--})
--
--#define _percpu_write(pcp, val)						\
--do {									\
--	__percpu_write(&(pcp), (unsigned long)(val), sizeof(pcp));	\
--} while (0)								\
--
- #define _pcp_protect(operation, pcp, val)			\
- ({								\
- 	typeof(pcp) __retval;					\
-@@ -215,15 +167,15 @@ do {									\
- #define this_cpu_or_4(pcp, val) _percpu_or(pcp, val)
- #define this_cpu_or_8(pcp, val) _percpu_or(pcp, val)
- 
--#define this_cpu_read_1(pcp) _percpu_read(pcp)
--#define this_cpu_read_2(pcp) _percpu_read(pcp)
--#define this_cpu_read_4(pcp) _percpu_read(pcp)
--#define this_cpu_read_8(pcp) _percpu_read(pcp)
-+#define this_cpu_read_1(pcp) _percpu_read(1, pcp)
-+#define this_cpu_read_2(pcp) _percpu_read(2, pcp)
-+#define this_cpu_read_4(pcp) _percpu_read(4, pcp)
-+#define this_cpu_read_8(pcp) _percpu_read(8, pcp)
- 
--#define this_cpu_write_1(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_2(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_4(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_8(pcp, val) _percpu_write(pcp, val)
-+#define this_cpu_write_1(pcp, val) _percpu_write(1, pcp, val)
-+#define this_cpu_write_2(pcp, val) _percpu_write(2, pcp, val)
-+#define this_cpu_write_4(pcp, val) _percpu_write(4, pcp, val)
-+#define this_cpu_write_8(pcp, val) _percpu_write(8, pcp, val)
- 
- #define this_cpu_xchg_1(pcp, val) _percpu_xchg(pcp, val)
- #define this_cpu_xchg_2(pcp, val) _percpu_xchg(pcp, val)
--- 
-2.46.0
-
+greg k-h
 
