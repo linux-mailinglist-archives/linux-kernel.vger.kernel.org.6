@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-314034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 214CC96ADF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BD296AE02
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14CA1F258A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F661C243D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE76CA6F;
-	Wed,  4 Sep 2024 01:34:52 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE45FC1D;
+	Wed,  4 Sep 2024 01:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUF1/3BS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7A16FB0;
-	Wed,  4 Sep 2024 01:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DFBE40
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725413692; cv=none; b=pf7EFxoeSSReZRXsylwraf30ocwsaKzodL5u0aR0eoK79/ju7JemZ4PZ3amNSchDs10vEerzkz8i12uQaunA8s1CKXSMt1VgVTOnHtHGQV0UVCaWCA7Xgk8rclX0apUo2GfyKMPuMsUncq2ilSiDukagWMgbAXvgCThHMoKyI1o=
+	t=1725414097; cv=none; b=HonpS1HUTv+DGBNmBjWI5KkiV1cdlOs5uPnvwXtMdgMLU+O9rjABjjVdbrzWpOliynsA7Nk9PDT5VK1BWI/HTojy05fUFk7yQhMZeOvdayvBvi/Tf+he0URusgZyvMEX1hrO5ox4AfkAAzMfNjhovFQuy6QkMLTcCuzXTdwmT3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725413692; c=relaxed/simple;
-	bh=/yxz+pWqjJQREexM5ADMn9Lt93zR1fHFhywmxz3jKfU=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hVijrrLbHtBJEkcN9fY/OXZuJ/irBV/TGnoBnRZakwilAWd12idCB1muXclu/Ap7WEonsJmxGLnX3z5rd+Q6bwTWNlhClozRvm85bvQYcX3uUuqj/+w17n4/9E8QrMaVK+wRHX4CtHQyZoXeOKMakn+05DocDwERntAG8XYVRWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wz4lL4zDwzyR7Q;
-	Wed,  4 Sep 2024 09:33:50 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id D44DF180105;
-	Wed,  4 Sep 2024 09:34:47 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 4 Sep 2024 09:34:46 +0800
-Message-ID: <a86835c6-24d8-4f04-979e-a77d35776467@huawei.com>
-Date: Wed, 4 Sep 2024 09:34:45 +0800
+	s=arc-20240116; t=1725414097; c=relaxed/simple;
+	bh=UnnpCwlE+so5Kv+8OWodgftABGvoZ8EJKADD4dklPFs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E1cSNO2FD+lIfmpisWgx5nWfzLez/nQmsbC6uNbC4+U31GrdWdTARWKs+x2dbLN8MEgDQlLgVUHkkWxAEacWchz6o28OQxZkh1OOJxmWw1w526PIHJffjWCTxNhETlN/SbxkHqimfkIZoVLMcvPKz+Fulb7jdQ/r9Cx5H6xHXTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUF1/3BS; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725414096; x=1756950096;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UnnpCwlE+so5Kv+8OWodgftABGvoZ8EJKADD4dklPFs=;
+  b=XUF1/3BS6hVZtyI3ZKOLUcRozj11k17OIPO5dfRFUhr5ks6mvtk5bSkN
+   CdklSPvucRbScXQo0anDSt+ilwQOnHf7AI8/IYcmawfLnxpKptkdi9fh6
+   yQGg9gB70UsGw8mbMHjGKbrVJ7rBaahOmiyJ90pQtWfvW+VRT10E4y8kS
+   SqJDx5xqxqfSIPi2tFxnEYPfqIAfpXXvkcOwOi1oZAwzNTHIUdMmVmUF1
+   I+CrB3AUYMpXEwwc+BBBWX696NYClK0RJFf3nNeaLj8hYUILecUSBVt14
+   KtQHsmwyawW7HPvmXflLceraHaH/K5cRXYzoMbcvnSCcgwLpxPYV9aevc
+   w==;
+X-CSE-ConnectionGUID: /G+QF41HQFKm156m1YQmEw==
+X-CSE-MsgGUID: S/oorHyUT4e0cyoU9lcumg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23909354"
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="23909354"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 18:41:34 -0700
+X-CSE-ConnectionGUID: agDQG6ANS5aB5angA94v7g==
+X-CSE-MsgGUID: TrK6lBzwST6Nh/6mqu1t2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="69927690"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa005.jf.intel.com with ESMTP; 03 Sep 2024 18:41:32 -0700
+Message-ID: <8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
+Date: Wed, 4 Sep 2024 09:37:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,40 +66,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, Paolo Abeni <pabeni@redhat.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
-	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V6 net-next 03/11] net: hibmcge: Add mdio and hardware
- configuration supported in this module
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20240830121604.2250904-1-shaojijie@huawei.com>
- <20240830121604.2250904-4-shaojijie@huawei.com>
- <0ff20687-74de-4e63-90f4-57cf06795990@redhat.com>
- <0341f08c-fe8b-4f9c-961e-9b773d67d7bf@huawei.com>
- <20240903104407.31a7cde6@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20240903104407.31a7cde6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+ Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Minwoo Im <minwoo.im@samsung.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
+ non-nested and non-svm cases
+To: Joel Granados <j.granados@samsung.com>
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+ <CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
+ <20240826135955.GI3468552@ziepe.ca>
+ <20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
+ <d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
+ <20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/3/24 9:20 PM, Joel Granados wrote:
+> On Mon, Sep 02, 2024 at 08:47:21PM +0800, Baolu Lu wrote:
+>> On 2024/9/2 18:48, Joel Granados wrote:
+>>>> I definitely expect PRI to work outside PASID and SVA cases, so this
+>>>> is going in a good direction
+>>> This touches on a detail (at least in Intel's vtd-io spec) that is not
+>>> 100% clear to me. Second paragraph of section "3.4.3 Scalable Mode
+>>> Address Translation" reads:
+>>> "
+>>>     ... Scalable-mode context-entries support both requests-without-PASID
+>>>     and requests-with-PASID. However unlike legacy mode, in scalable-mode,
+>>>     requests-without-PASID obtain a PASID value from the RID_PASID field of
+>>>     the scalable-mode context- entry and are processed similarly to
+>>>     requests-with-PASID.Implementations not supporting RID_PASID capability
+>>>     (ECAP_REG.RPS is 0b), use a PASID value of 0 to perform address
+>>>     translation for requests without PASID.
+>>> "
+>>> This basically means that a default PASID is used even though the
+>>> request is without PASID. Right? Therefore "outside PASID" means with
+>>> the default PASID (at least in Intels case). Right?
+>> Kind of yes.
+>>
+>> The PCI specification defines the concept of PASID and its role in
+>> transaction routing. We refer to PCI transactions with a PASID prefix as
+>> "request-with-PASID" and those without a PASID prefix as "request-
+>> without-PASID." Consequently, I understand 'outside PASID' to mean
+>> transactions that do not have a PASID prefix.
+>>
+>> The VT-d specification describes how the IOMMU hardware handles request-
+>> without-PASID. It uses a reserved PASID for its internal routing and
+>> handling purposes. If RID_PASID is supported (ECAP_REG.RPS=1), software
+>> can select its own reserved PASID. Otherwise, the IOMMU hardware will
+>> use a default value of 0.
+>>
+> Thx for getting back to me. This generates another doubt in my head
+> regarding the published capabilities from the intel IOMMU Hardware:
+> 
+> So ecap_pasid [1] does not have to be set in scalable-mode. Right? This
+> allows hardware supporting scalable-mode to reject transactions with
+> PASID whenever ecap_pasid is*NOT*  set; even though internally things
+> are handled with a PASID. This question is directly related to the two
+> last patches in the set.5/6 and 6/6.
 
-on 2024/9/4 1:44, Jakub Kicinski wrote:
-> On Tue, 3 Sep 2024 20:13:58 +0800 Jijie Shao wrote:
->>>> +{
->>>> +    struct hbg_priv *priv = netdev_priv(netdev);
->>>> +    struct phy_device *phydev = priv->mac.phydev;
->>> Minor nit: please respect the reverse x-mas tree order
->> Here, I need to get the *priv first, so I'm not following the reverse x-mas tree order here.
->> I respect the reverse x-mas tree order everywhere else.
-> In this case you should move the init into the body of the function.
+Yes. And 5/6, 6/6 make sense to me. We should remove the PASID
+restriction from the code once PRI is split from SVA.
 
-ok， Thanks! Jijie Shao
-
+Thanks,
+baolu
 
