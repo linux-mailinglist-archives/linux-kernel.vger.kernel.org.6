@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-314152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C44796AF4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC696AF47
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9212EB20FC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC8C1F26CD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B2F535D4;
-	Wed,  4 Sep 2024 03:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="MMylalTG"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBD04AEE6;
-	Wed,  4 Sep 2024 03:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E274070;
+	Wed,  4 Sep 2024 03:26:00 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6924D5BD;
+	Wed,  4 Sep 2024 03:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725420391; cv=none; b=BqLfw/fFLwMtB5LHZ9GOp3km6xcAYDuxEOiu1h2Mx4BpvreosbMcc7khiMSh7NIyEFiNEb+Fd0/7pzckiW/aBNVyLZBGZOfP6Xnbf9uMlhnCtGnCnveyxtalhETRtThvfcAgQfmux2cfiFbclRDfAwz8szDQnU1mtBHRHnio2OQ=
+	t=1725420360; cv=none; b=JeGYzwPPURCM+ZlAR4ks56zYJFEpfYDyorHIoTCnPxlfC803uT9bXqoSTpE3p9tkuq9U1plJ9O+GHKBMBsFuSPVIQq5/2hRvygjqRrajTert48DoG6PRaeJ6PFDxf3NIT/9FNt20YbHcc3o6ogB/vfC/FtAVldwxsVO1Gkn9N0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725420391; c=relaxed/simple;
-	bh=s3iYt5e2TmkyeeA8g783ZeoXYGtRUq9Wb2fY2EzMyz4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SOiL4J+VkMs6qqszjdMr0dGXuaAUZws6ALdahpW6lw3YNoLqOYpedYan3vTdmExXvnTSAn6X/k3JYA6ekwuByXfY7L7EZy8xY2A1zNmjJGBTqAvFuyUzHOI2x3X6raGxif1tBuJcpHr4JcM2x94v7CImnlRV5N5yH8cg2ao7gSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=MMylalTG; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4843Q4WZ02043187, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1725420364; bh=s3iYt5e2TmkyeeA8g783ZeoXYGtRUq9Wb2fY2EzMyz4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=MMylalTGH2CfWE/2Zb0HpU52dpgH09jZLQ2KiaPyieHxBh9hRFoJQ6yzUYBnED53e
-	 5fLYi4sNDpqBwWTnxlWN73lSmdSTm3ynDFnz8iXy5RLe4dOkX1N0drA1SXUIrqkbBF
-	 Gp1pgScvwVIV4cmkv8KKqDLLNqfCRernZW9PMdkswHXGCy0bShmhwcxmb+dcOH1NzR
-	 YRk2jAGRDOeLRjlJlBNdSp2BoSXWt9oLSNa/HbGTH/t9qrEV87tgZD0S5nK6PPAp+2
-	 KM65Eix2yTu4ugoFZbm0kjce+pWqWhTzcr5caJlQmJvjia/b7VBixEMked5eLGmMh3
-	 h0gv6Wjrg1KNQ==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4843Q4WZ02043187
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Sep 2024 11:26:04 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 4 Sep 2024 11:26:05 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 4 Sep
- 2024 11:26:04 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
-        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, "Justin
- Lai" <justinlai0215@realtek.com>
-Subject: [PATCH net-next v30 13/13] MAINTAINERS: Add the rtase ethernet driver entry
-Date: Wed, 4 Sep 2024 11:21:14 +0800
-Message-ID: <20240904032114.247117-14-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240904032114.247117-1-justinlai0215@realtek.com>
-References: <20240904032114.247117-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1725420360; c=relaxed/simple;
+	bh=bmanCmjxWczkQ2hnSDrLENqXLAf+YOBzZ9WKDpz/HC4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DNLzC3LBUeDoyYl3qK402G9nw9S13oiiuwVwQs2yYnbIIDf5NUbHWODgoNUMsUHwSiEzKWY9c3XCp8WqOo6mTSZSPiTuPZVytK1CjAurrQUqVESQnQtp5qV/MwsvbtHduJG7K9ZTpjlpUqqNuWiNYYIjvVrmu+W3aop3O2b/jAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: piDI8MszQ1GvxMU8eMEOXA==
+X-CSE-MsgGUID: glaku73bSLamD/v+xkULWw==
+X-IronPort-AV: E=Sophos;i="6.10,200,1719849600"; 
+   d="scan'208";a="95370732"
+From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
+To: Jens Axboe <axboe@kernel.dk>, "bvanassche@acm.org" <bvanassche@acm.org>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
+ complete flow to softirq
+Thread-Topic: [External Mail]Re: [PATCH v3] block: move non sync requests
+ complete flow to softirq
+Thread-Index: AQHa/fgOh/cV01vbcESyzBPikRppQrJF0TIAgAChD4A=
+Date: Wed, 4 Sep 2024 03:25:55 +0000
+Message-ID: <31b99746-badc-4304-877d-790c6ff95c80@xiaomi.com>
+References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
+ <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
+In-Reply-To: <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C6DDBED67C9E32408F07A7428481F025@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
-
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index baf88e74c907..791ed432d024 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19878,6 +19878,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RTASE ETHERNET DRIVER
-+M:	Justin Lai <justinlai0215@realtek.com>
-+M:	Larry Chiu <larry.chiu@realtek.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/realtek/rtase/
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
--- 
-2.34.1
-
+T24gMjAyNC85LzQgMTo0OSwgSmVucyBBeGJvZSB3cm90ZToNCj4gT24gOS8zLzI0IDU6NTQgQU0s
+IFpoYW5nSHVpIHdyb3RlOg0KPj4gRnJvbTogemhhbmdodWkgPHpoYW5naHVpMzFAeGlhb21pLmNv
+bT4NCj4+DQo+PiBDdXJyZW50bHksIGZvciBhIGNvbnRyb2xsZXIgdGhhdCBzdXBwb3J0cyBtdWx0
+aXBsZSBxdWV1ZXMsIGxpa2UgVUZTNC4wLA0KPj4gdGhlIG1xX29wcy0+Y29tcGxldGUgaXMgZXhl
+Y3V0ZWQgaW4gdGhlIGludGVycnVwdCB0b3AtaGFsZi4gVGhlcmVmb3JlLA0KPj4gdGhlIGZpbGUg
+c3lzdGVtJ3MgZW5kIGlvIGlzIGV4ZWN1dGVkIGR1cmluZyB0aGUgcmVxdWVzdCBjb21wbGV0aW9u
+IHByb2Nlc3MsDQo+PiBzdWNoIGFzIGYyZnNfd3JpdGVfZW5kX2lvIG9uIHNtYXJ0cGhvbmUuDQo+
+Pg0KPj4gSG93ZXZlciwgd2UgZm91bmQgdGhhdCB0aGUgZXhlY3V0aW9uIHRpbWUgb2YgdGhlIGZp
+bGUgc3lzdGVtIGVuZCBpbw0KPj4gaXMgc3Ryb25nbHkgcmVsYXRlZCB0byB0aGUgc2l6ZSBvZiB0
+aGUgYmlvIGFuZCB0aGUgcHJvY2Vzc2luZyBzcGVlZA0KPj4gb2YgdGhlIENQVS4gQmVjYXVzZSB0
+aGUgZmlsZSBzeXN0ZW0ncyBlbmQgaW8gd2lsbCB0cmF2ZXJzZSBldmVyeSBwYWdlDQo+PiBpbiBi
+aW8sIHRoaXMgaXMgYSB2ZXJ5IHRpbWUtY29uc3VtaW5nIG9wZXJhdGlvbi4NCj4+DQo+PiBXZSBt
+ZWFzdXJlZCB0aGF0IHRoZSA4ME0gYmlvIHdyaXRlIG9wZXJhdGlvbiBvbiB0aGUgbGl0dGxlIENQ
+VSB3aWxsDQo+PiBjYXVzZSB0aGUgZXhlY3V0aW9uIHRpbWUgb2YgdGhlIHRvcC1oYWxmIHRvIGJl
+IGdyZWF0ZXIgdGhhbiAxMDBtcy4NCj4+IFRoZSBDUFUgdGljayBvbiBhIHNtYXJ0cGhvbmUgaXMg
+b25seSA0bXMsIHdoaWNoIHdpbGwgdW5kb3VidGVkbHkgYWZmZWN0DQo+PiBzY2hlZHVsaW5nIGVm
+ZmljaWVuY3kuDQo+IFRoZSBlbGVwaGFudCBpbiB0aGUgcm9vbSBoZXJlIGlzIHdoeSBhbiA4ME0g
+Y29tcGxldGlvbiB0YWtlcyAxMDAgbXNlYz8NCj4gVGhhdCBzZWVtcy4uLiBpbnNhbmUuDQo+DQo+
+IFRoYXQgYXNpZGUsIGRvaW5nIHdyaXRlcyB0aGF0IGJpZyBpc24ndCBncmVhdCBmb3IgbGF0ZW5j
+aWVzIGluIGdlbmVyYWwsDQo+IGV2ZW4gaWYgdGhleSBhcmUgb3JkZXJzIG9mIG1hZ25pdHVkZSBz
+bWFsbGVyIChhcyB0aGV5IHNob3VsZCBiZSkuIE1heWJlDQo+IHRoaXMgaXMgc29sdmFibGUgYnkg
+anVzdCBsaW1pdGluZyB0aGUgd3JpdGUgc2l6ZSBoZXJlLg0KPg0KPiBCdXQgaXQgcmVhbGx5IHNl
+ZW1zIG91dCBvZiBsaW5lIGZvciBhIHdyaXRlIHRoYXQgc2l6ZSB0byB0YWtlIDEwMCBtc2VjDQo+
+IHRvIHByb2Nlc3MuDQo+DQo+IC0tDQo+IEplbnMgQXhib2UNCj4NCmhpIEplbnMsDQoNClRoaXMg
+cHJvYmxlbSBpcyBzdHJvbmdseSByZWxhdGVkIHRvIHdoZXRoZXIgdGhlIENQVSBpcyBhIGxhcmdl
+DQpjb3JlIG9yIGEgbGl0dGxlIGNvcmUgYW5kIHRoZSBDUFUgZnJlcXVlbmN5LiBPbiBhIGxhcmdl
+IGNvcmUsIHRoZSB0aW1lDQp3aWxsIG9idmlvdXNseSBiZSBzaG9ydGVyLCBidXQgd2UgY2Fubm90
+IGFzc3VtZSB3aGljaCBjb3JlIHRoZSBJTyB3aWxsDQpiZSBjb21wbGV0ZWQgb24gYW5kIHRoZSBj
+dXJyZW50IENQVSBmcmVxdWVuY3kuLi4NCg0KTGltaXRpbmcgdGhlIElPIHNpemUgaXMgYWxzbyBh
+IG1ldGhvZCwgYnV0IGhvdyBsYXJnZSB0byBsaW1pdCBpdCBpcyBhDQpwcm9ibGVtLCBhbmQgSSBh
+bSB3b3JyaWVkIHdoZXRoZXIgaXQgd2lsbCBjYXVzZSBiYW5kd2lkdGggbG9zcyBpbg0Kc29tZSBz
+Y2VuYXJpb3M/DQoNClRoYW5rcw0KWmhhbmcNCg0K
 
