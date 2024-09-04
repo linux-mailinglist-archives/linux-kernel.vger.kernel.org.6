@@ -1,161 +1,97 @@
-Return-Path: <linux-kernel+bounces-314428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2DD96B30B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9E796B0C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163C0B254F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:39:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1E69B24266
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E79F146D6F;
-	Wed,  4 Sep 2024 07:38:57 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90389146D54;
-	Wed,  4 Sep 2024 07:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F1712CD89;
+	Wed,  4 Sep 2024 05:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="og1oklMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675DC84FA0;
+	Wed,  4 Sep 2024 05:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435537; cv=none; b=HzxecAMNlIZYf3H6CxnhJ8YBqgbvCWXgKsVZr3d3KqSFfA4OuX6eMVADq3ivxESJ5tNEuUby5Nniq6EmUXQ/5LRm0322tnKn8vcZVKo0PEd8l1zCb6exPhmVovL1I8o3+0bOW0Jyar97jUbC8OqW7VyAIBk8T2vI0oxKLy50nms=
+	t=1725429292; cv=none; b=KD9YkzKJcFrz4q69DBB/sj3uOa7LP/kItNtgtyy+NXWRiEYXhZvaeRoJbuxramEYQUm+JOqMQrNFoNBRtKlbRVuVyXXUQK2eWluPVgEHC41QZqJ/RdbL09jRErMfA4Egjr8ZAdWhVgOWgvWXeKVTLjkiFT2C8So8k3UocKYcRZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435537; c=relaxed/simple;
-	bh=z++EeMTUVFxeUBjT8sx1xnif4BDfuTsQgwzKkIHmxAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bssgS8fSn2NZ6EDjo9l/4Sm5FC/5FHDz4pKGcuYNrfgBofhW0hoaoiC/5wdO36sbwHO0TUHDiWyogdYYD/wE8+EvTlHs58AIZDX9DAcgiOnWKmIyV7VIeW5f/NC0gmyB3W7pnftSA3CQEa46O8/9p8xP3vvdXsGSb4qj4AoRrzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee566d80e8aa99-e3a9c;
-	Wed, 04 Sep 2024 15:38:50 +0800 (CST)
-X-RM-TRANSID:2ee566d80e8aa99-e3a9c
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766d80e89503-19a46;
-	Wed, 04 Sep 2024 15:38:50 +0800 (CST)
-X-RM-TRANSID:2ee766d80e89503-19a46
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: gregkh@linuxfoundation.org
-Cc: jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] serial: pic32_uart: Use devm for kasprintf and request_irq
-Date: Wed,  4 Sep 2024 13:53:53 +0800
-Message-Id: <20240904055353.102273-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725429292; c=relaxed/simple;
+	bh=pDZcotIHkEE1L9COrUn/fnSB2fVdzH08tCumXOdDPKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KS6kErx2EgAWB01ysKteKx7RhCNLtFcRHdNJXGsqZ/V3StVjUjF9lqVCIL4bvWA8HcaFPnrLuYEZQFveuHVbQWm6ukw+SeZGb6UImDoSETZ1xeLhNwGDRW0hPG4hChG02tRI36zZ2MOqrq+LaoqSU0nR+e4C5ioTJwpjMaLXP9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=og1oklMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45A6C4CEC2;
+	Wed,  4 Sep 2024 05:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725429291;
+	bh=pDZcotIHkEE1L9COrUn/fnSB2fVdzH08tCumXOdDPKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=og1oklMK64rQw2DhxZjdNOpmuXJN+eI32oSS1J/ZqbWHobqxlgwp4Q4TSYVXbtqS3
+	 0oyMBQSUdSRxnCPYUrK6AW4+Tr4yLLwSXpB1IHpZEjB1s/Y8rt3aXi3WcY9O1/Uqiy
+	 9RRJoIkdJ/ak0v4gCP4UwGunORkmGWSPaF5eqm6kqyCBDUY9rZgMNy0qvCndpJZG56
+	 ZYxjnS/5QqViNZym19UtdOpE1pvVP+eniYBfFUBjTIQnf77OVJZ84BYWSErJ2Kz7Qc
+	 gR6DXf7NvMoiKYFAeBb2oZo4Tx8mYQSouLkqUrepK2B2uYn6t4CT6WU36m9FX24Lks
+	 4R5qIWL7OFXXA==
+Date: Wed, 4 Sep 2024 07:54:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
+	tglx@linutronix.de, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
+	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com
+Subject: Re: [PATCH v2 00/21] arm64: qcom: Introduce SA8255p Ride platform
+Message-ID: <glo34r35r2jqypeureu5dzoe6udkniqbma627jnv55ihfoatfu@ujvsxcsrhhdc>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903220240.2594102-1-quic_nkela@quicinc.com>
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Tue, Sep 03, 2024 at 03:02:19PM -0700, Nikunj Kela wrote:
+> This series enables the support for SA8255p Qualcomm SoC and Ride
+> platform. This platform uses SCMI power, reset, performance, sensor
+> protocols for resources(e.g. clocks, regulator, interconnect, phy etc.)
+> management. SA8255p is a virtual platforms that uses Qualcomm smc/hvc
+> transport driver.
+> 
+> Multiple virtual SCMI instances are being used to achieve the parallelism.
+> SCMI platform stack runs in SMP enabled VM hence allows platform to service
+> multiple resource requests in parallel. Each device is assigned its own
+> dedicated SCMI channel and Tx/Rx doorbells.
+> 
 
-Use devm_kasprintf and devm_request_irq to simplify code.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- drivers/tty/serial/pic32_uart.c | 31 +++++++++++--------------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+It does not look like you tested the bindings, at least after quick
+look. Please run  (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
 
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index 261c8115a700..0119a4d81521 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -484,7 +484,7 @@ static int pic32_uart_startup(struct uart_port *port)
- 	 */
- 	sport->enable_tx_irq = false;
- 
--	sport->irq_fault_name = kasprintf(GFP_KERNEL, "%s%d-fault",
-+	sport->irq_fault_name = devm_kasprintf(port->dev, GFP_KERNEL, "%s%d-fault",
- 					  pic32_uart_type(port),
- 					  sport->idx);
- 	if (!sport->irq_fault_name) {
-@@ -493,49 +493,49 @@ static int pic32_uart_startup(struct uart_port *port)
- 		goto out_disable_clk;
- 	}
- 	irq_set_status_flags(sport->irq_fault, IRQ_NOAUTOEN);
--	ret = request_irq(sport->irq_fault, pic32_uart_fault_interrupt,
-+	ret = devm_request_irq(port->dev, sport->irq_fault, pic32_uart_fault_interrupt,
- 			  IRQF_NO_THREAD, sport->irq_fault_name, port);
- 	if (ret) {
- 		dev_err(port->dev, "%s: request irq(%d) err! ret:%d name:%s\n",
- 			__func__, sport->irq_fault, ret,
- 			pic32_uart_type(port));
--		goto out_f;
-+		goto out_disable_clk;
- 	}
- 
--	sport->irq_rx_name = kasprintf(GFP_KERNEL, "%s%d-rx",
-+	sport->irq_rx_name = devm_kasprintf(port->dev, GFP_KERNEL, "%s%d-rx",
- 				       pic32_uart_type(port),
- 				       sport->idx);
- 	if (!sport->irq_rx_name) {
- 		dev_err(port->dev, "%s: kasprintf err!", __func__);
- 		ret = -ENOMEM;
--		goto out_f;
-+		goto out_disable_clk;
- 	}
- 	irq_set_status_flags(sport->irq_rx, IRQ_NOAUTOEN);
--	ret = request_irq(sport->irq_rx, pic32_uart_rx_interrupt,
-+	ret = devm_request_irq(port->dev, sport->irq_rx, pic32_uart_rx_interrupt,
- 			  IRQF_NO_THREAD, sport->irq_rx_name, port);
- 	if (ret) {
- 		dev_err(port->dev, "%s: request irq(%d) err! ret:%d name:%s\n",
- 			__func__, sport->irq_rx, ret,
- 			pic32_uart_type(port));
--		goto out_r;
-+		goto out_disable_clk;
- 	}
- 
--	sport->irq_tx_name = kasprintf(GFP_KERNEL, "%s%d-tx",
-+	sport->irq_tx_name = devm_kasprintf(port->dev, GFP_KERNEL, "%s%d-tx",
- 				       pic32_uart_type(port),
- 				       sport->idx);
- 	if (!sport->irq_tx_name) {
- 		dev_err(port->dev, "%s: kasprintf err!", __func__);
- 		ret = -ENOMEM;
--		goto out_r;
-+		goto out_disable_clk;
- 	}
- 	irq_set_status_flags(sport->irq_tx, IRQ_NOAUTOEN);
--	ret = request_irq(sport->irq_tx, pic32_uart_tx_interrupt,
-+	ret = devm_request_irq(port->dev, sport->irq_tx, pic32_uart_tx_interrupt,
- 			  IRQF_NO_THREAD, sport->irq_tx_name, port);
- 	if (ret) {
- 		dev_err(port->dev, "%s: request irq(%d) err! ret:%d name:%s\n",
- 			__func__, sport->irq_tx, ret,
- 			pic32_uart_type(port));
--		goto out_t;
-+		goto out_disable_clk;
- 	}
- 
- 	local_irq_save(flags);
-@@ -557,15 +557,6 @@ static int pic32_uart_startup(struct uart_port *port)
- 
- 	return 0;
- 
--out_t:
--	free_irq(sport->irq_tx, port);
--	kfree(sport->irq_tx_name);
--out_r:
--	free_irq(sport->irq_rx, port);
--	kfree(sport->irq_rx_name);
--out_f:
--	free_irq(sport->irq_fault, port);
--	kfree(sport->irq_fault_name);
- out_disable_clk:
- 	clk_disable_unprepare(sport->clk);
- out_done:
--- 
-2.33.0
-
-
+Best regards,
+Krzysztof
 
 
