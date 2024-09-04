@@ -1,155 +1,78 @@
-Return-Path: <linux-kernel+bounces-315820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4886196C757
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:17:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A6296C758
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003781F2643B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:17:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C241C22A49
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7DD1E503D;
-	Wed,  4 Sep 2024 19:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C56D1E6324;
+	Wed,  4 Sep 2024 19:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddh6PIQd"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSIO3OGA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13A31E4921;
-	Wed,  4 Sep 2024 19:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1571E00B7;
+	Wed,  4 Sep 2024 19:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725477386; cv=none; b=aXmIoguSV3Sv8y7tl26Cqv94TekTuLHZzFojZqixhtvFbRkQEswIwcNnsi8+C4hXAVj4p7p/QFGkOzBQuYnw4IcwmMQO81P9Bp6fGCdPWLLt7LEHiPCkCBoIZMovTvOXQ0yAbnEXT59kTwpAJAE+nns3+tdqWHrk1mpuoV+pnhk=
+	t=1725477405; cv=none; b=M7raF1BR25mfoXcYX7iU7Lnt9kDaHVXh1vOdqGQlUhveqGSo4tMU5E3l5+dREUmtEWJvMOL6D/qIroGIhW6Pm9KJX5P+MowJlujIDyxvo1aozc0Xjy/QLzX7hNqQCVP5Kw+YO3GnuqR6oEU9nL++c36iDIbX6XwTjvZZfBtaiSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725477386; c=relaxed/simple;
-	bh=nhsrHnEsMlnnTiCbTBVNHbb+/ULqv2U6DtGkCcLXKH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FqZFiCdSWxk0PsZbb/54HSln/JkTnvbWmAqrnx6QBCv7oTFw3TJ+1FBPT2RMsRIUCHfLdD2H5TfWadSxQTqtxcN5C1/jqeYyDRXmEYN6YGZMx01Dk+SHD+3ceJLTykyFaqgvyoZxDFyoaSRa2IMcJVsZCQ/7IyZeafO86c0FxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddh6PIQd; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f50ca18a13so83934501fa.1;
-        Wed, 04 Sep 2024 12:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725477383; x=1726082183; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ecWxmSdlEAY3T5UrX15kGaPsyAsRyZMUa4Di/cMCXFI=;
-        b=ddh6PIQdDuenxm3k3FHgVuj8hTVI+I83jz+CJkmVDJh/xk5cPfWs+aG4S+dAlXcmSS
-         UMzrelBoXOVtDB1ipn/TfoIJQFwhUeWBBL21wJ9CaS++yMuuTNptwlmA7SRSvIx8F8lR
-         dMiSgddZaWOR6ZdlYB5bkkOe3fMlqcWz0PyKPUEZDxnAj/yhTA1X73VLYh4j6K89Z8p7
-         uP/ZKitHmqIpWMYOeJxnlc/rvPjf+QLs0vyIKam94Z4/O/DSuiz5+5++xmXSD7diKO2M
-         +SWzwTkBy4UZeG5h2pXkx/V6JdwkDawUARPhvqrSnWbeEFDVRYp6FXPWibvlFmum8RYV
-         HyxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725477383; x=1726082183;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ecWxmSdlEAY3T5UrX15kGaPsyAsRyZMUa4Di/cMCXFI=;
-        b=blk7vesi8fdUhgvZuPjWm9VG4KzaVxvYCz9/rYIuJrD4K1k75zNQyZGFJ+Qc48KJpH
-         LUUrZ3onlk2TY2ZjOZ5NPloeSC6WZxO7sY8BXmrX/9iIVRY5dNaI++eH1meh/cyfAVuh
-         YxkEdrTszDGHlMzUewJSLEQbPkOf+Dev+DpCvoNDqrxyg6RE8052XhecMJJiGwdf+FM3
-         sshvZxH0/mJbu+xGMNjQp5o89rp/++zABnfvqz63pID+zYyyYXk3D/A00d2MK4yFvMue
-         ngGIY6PygXHgKzTxQw1ZLBqGuDwWV3jhhdmeYDEDhP/pSl7XfOgee9Hy5RJhbpQqAHzM
-         U2/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+h3tNV89CMFzWrLto5HZzY+lXaa+7Vhx/uyfDOfCw2DXnFw8cUdtazrlf1Hp71bQAegvwIj3prHyPyQ==@vger.kernel.org, AJvYcCWiSIbdgrFIZhgDl/88+9HW4LJXTL7UmEuXiqKsg8MEwFkMOmv858Tt6XAKmDYVzxP/bm/dqeEySDOIyJOX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8pn30Jm3coWtGIOpD+txKO6XLHh0Xrqep5/aeAXpZ0NfOUxN4
-	qgCDqJ3SvzJys8WLu7aUqNbNFe62WfqLD/nP7VgaiEvGUsDa5oSy
-X-Google-Smtp-Source: AGHT+IGIRVLiKyEhxZ1uo9S8EscCI1mmCRNIj9YYobqVKCt+R5Y827KNmuZM1nTVb4rMFFpaX8s3LQ==
-X-Received: by 2002:a2e:461a:0:b0:2f6:4f17:aead with SMTP id 38308e7fff4ca-2f64f17b38cmr23257631fa.21.1725477382664;
-        Wed, 04 Sep 2024 12:16:22 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc54eafbsm238928a12.33.2024.09.04.12.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:16:22 -0700 (PDT)
-Message-ID: <f2bc481b-8560-40b4-88a1-5517c21f5630@gmail.com>
-Date: Wed, 4 Sep 2024 21:16:20 +0200
+	s=arc-20240116; t=1725477405; c=relaxed/simple;
+	bh=f7II1IdWzs3cfE7wiW+hiFpacAuoS9NMzhqHSHGuJgs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fxmQsFZbB8ZsRKYWutkUw1KtHuor4w6QDIjatecz8FLnV7oyfdfYUFZhBQpQeUWoIlMugQEQttWEntXoBeJGpOdo5fynBi7vJrUNNspk7+JWvfEUMiRaDmLOUxhSZtadFefHVDXr8qyhmtmPMDK2QQbb0GVfQ9KkD30MF83c2/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSIO3OGA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C00C4CEC2;
+	Wed,  4 Sep 2024 19:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725477404;
+	bh=f7II1IdWzs3cfE7wiW+hiFpacAuoS9NMzhqHSHGuJgs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=OSIO3OGABy5nshvJSKow+aJJj40eIFDh3RDP6EZP2ZJSnZCxWlHXGs6F399seJ0aR
+	 iq2/vKWXbp/8cqqi8izm/YwU5MzBWuHzGKFQNkeFF/vDhGS/PhRqfBuu6ybbGNianW
+	 pZBWvo8nioxzkn6BVo6XnMArO8ZpkAE4aRGV6h8TTBxZaAszG79c/hJDUc1EK14AKI
+	 2FFkHrq7QYfBcPeaAyvNYCiZcpXDi+jmc3K8HyMqXXk1VwPdZs5cyRfMjK5I9bxXbo
+	 8CENaacmFaobPYYHXZHNH/Fr8kE6WXXPn1NMsTmcu7pejdR5jo3FjCjLtMSdPkNxJa
+	 S6O4V3ChSZ2fw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE3473822D30;
+	Wed,  4 Sep 2024 19:16:46 +0000 (UTC)
+Subject: Re: [GIT PULL] perf-tools fixes for v6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240904190540.4086525-1-namhyung@kernel.org>
+References: <20240904190540.4086525-1-namhyung@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240904190540.4086525-1-namhyung@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git perf-tools-fixes-for-v6.11-2024-09-04
+X-PR-Tracked-Commit-Id: e162cb25c410afc42051a582c46a47dde597f51c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2adad548f74c30739c35994da419eb2318e6fbd1
+Message-Id: <172547740521.1139567.12804773063239725703.pr-tracker-bot@kernel.org>
+Date: Wed, 04 Sep 2024 19:16:45 +0000
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/22] Input: powermate - use guard notation when
- acquiring spinlock
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- Ville Syrjala <syrjala@sci.fi>,
- Support Opensource <support.opensource@diasemi.com>,
- Eddie James <eajames@linux.ibm.com>, Andrey Moiseev <o2g.org.ru@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>, Jeff LaBundy <jeff@labundy.com>,
- linux-kernel@vger.kernel.org,
- Javier Carrasco Cruz <javier.carrasco.cruz@gmail.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044902.1049017-1-dmitry.torokhov@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240904044902.1049017-1-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 04/09/2024 06:49, Dmitry Torokhov wrote:
-> Using guard notation makes the code more compact and error handling
-> more robust by ensuring that locks are released in all code paths
-> when control leaves critical section.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/powermate.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/input/misc/powermate.c b/drivers/input/misc/powermate.c
-> index 4b039abffc4b..ecb92ee5ebbc 100644
-> --- a/drivers/input/misc/powermate.c
-> +++ b/drivers/input/misc/powermate.c
-> @@ -194,22 +194,18 @@ static void powermate_sync_state(struct powermate_device *pm)
->  static void powermate_config_complete(struct urb *urb)
->  {
->  	struct powermate_device *pm = urb->context;
-> -	unsigned long flags;
->  
->  	if (urb->status)
->  		printk(KERN_ERR "powermate: config urb returned %d\n", urb->status);
->  
-> -	spin_lock_irqsave(&pm->lock, flags);
-> +	guard(spinlock_irqsave)(&pm->lock);
->  	powermate_sync_state(pm);
-> -	spin_unlock_irqrestore(&pm->lock, flags);
->  }
->  
->  /* Set the LED up as described and begin the sync with the hardware if required */
->  static void powermate_pulse_led(struct powermate_device *pm, int static_brightness, int pulse_speed,
->  				int pulse_table, int pulse_asleep, int pulse_awake)
->  {
-> -	unsigned long flags;
-> -
->  	if (pulse_speed < 0)
->  		pulse_speed = 0;
->  	if (pulse_table < 0)
-> @@ -222,8 +218,7 @@ static void powermate_pulse_led(struct powermate_device *pm, int static_brightne
->  	pulse_asleep = !!pulse_asleep;
->  	pulse_awake = !!pulse_awake;
->  
-> -
-> -	spin_lock_irqsave(&pm->lock, flags);
-> +	guard(spinlock_irqsave)(&pm->lock);
->  
->  	/* mark state updates which are required */
->  	if (static_brightness != pm->static_brightness) {
-> @@ -245,8 +240,6 @@ static void powermate_pulse_led(struct powermate_device *pm, int static_brightne
->  	}
->  
->  	powermate_sync_state(pm);
-> -
-> -	spin_unlock_irqrestore(&pm->lock, flags);
->  }
->  
->  /* Callback from the Input layer when an event arrives from userspace to configure the LED */
+The pull request you sent on Wed,  4 Sep 2024 12:05:40 -0700:
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git perf-tools-fixes-for-v6.11-2024-09-04
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2adad548f74c30739c35994da419eb2318e6fbd1
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
