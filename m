@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-314359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C2196B23D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC1396B235
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DF21F242FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43111C214CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBE8148857;
-	Wed,  4 Sep 2024 06:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FBE145FEB;
+	Wed,  4 Sep 2024 06:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GF3otf1N"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="anx+jUJn"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DF51474A7;
-	Wed,  4 Sep 2024 06:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0CC1DDE9;
+	Wed,  4 Sep 2024 06:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433177; cv=none; b=I79WECMxT634rDRuFblTW/ODwN5+0HyPb2II3V/LVLVj1n+v5FxOPBPoC/A0346g77/IdMI3EdvALod3cOV8sdlf6A5jO5Iqyxi7lO3kk0Pq7nP8yV83CsLaKFvyTJOVn2DFNUlXfckOPntpLAf43X4yCFsDtZgez+LyCwnDsTQ=
+	t=1725433172; cv=none; b=eI2C6kR2RsOm30GVb/J70T8k3DbCOmOKtIA3g6jbwj85knUIi/Y0IPo4xk7k9HpB+CkNiI1iJhqkvDvZ9iqb/N7mp/DsCWl/j6vd2g6Gw1+aBuKvPMLopQR1cf/czJF/DE2K8UQKRp8RQEeG0L2WKUdedRmstFzV8X7mvoi+h2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433177; c=relaxed/simple;
-	bh=ctHiHkwE6tuAM+pU9h4uYZ8WWO1ajWuOutSejTQKAfI=;
+	s=arc-20240116; t=1725433172; c=relaxed/simple;
+	bh=aQyhcc3F3PANNj74AR0gp1Z4T/rwnutME68N8t9B1WY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X9pToQlDOSkGxt7RKdTLJzfMuujsjIsZWhUTz12yAbet7UTZ6bGKCum9e/XHPpa/1fLoZbnB/tqqevhF7V5Wi3B+ltHbXfZLBdNEf+wcqusuvw26HI25AUAotvu0G1eRrgZZu21y8xK+lgmOU5qQ1GbX/6QD5zIneg2GZPzgdF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GF3otf1N; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=cDQNPvdte++Fgc7PsThb2Okfx5DTkXXU/18vb8WYc8JzLFV56bvI2f6MnigsFWuFkoawbyEDOCFMWAFgCM2504Tc8f7Cw5l2rWYpknrt6piwmmqcR28sQ+Ychk4TPLXBPP4FxMCQO0+DoZg/UYEHbIod7E8Th5ogFJ1+xeY8XQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=anx+jUJn; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4843qjJ5023414;
-	Wed, 4 Sep 2024 06:59:24 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4843l4Ga026977;
+	Wed, 4 Sep 2024 06:59:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=0S2sSyTqalzFM
-	k1QFvsJIk3XU0AKQNPbYyEFYeBwcas=; b=GF3otf1N2dE7lFoVSqzt7Qzhqmfaj
-	0ttbc5r5mdGqg5b2IstGXvSoP2n1eM8WrTh2M0RCi1HdgHPcjYnUDa+WstAoSybp
-	gdgYwMkl8eFxujlUomHtvuzM8xLhfqsffvtPXOdeyj+YExc8fQT99w9gnpVD4sBi
-	y2hYkoA9/XJkl11naeAg/p4fhN8FkrFS274GP/v9SfoqHJYXA5tQMQgA2/JIgaAQ
-	iWkT7hQdXWlQJQ4D3bQ4qrjulGadO10QVjbjdyOxFkNbDIsibjZ5mT2cYSOmJjL5
-	PCOY2qmxzCvbrLuwVnbebBPXqfKP/R4VrhQHJ2Y72Ml9s2cbU4faxadWw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btp9hn8u-1
+	:mime-version:content-transfer-encoding; s=pp1; bh=bpnTrhuT9tk24
+	mc0lWEQWOy52/vroDUge2MFDgcCyR4=; b=anx+jUJn6idlgKmc8fF4BR02/M52W
+	Pwr0wZpcMu8cQMN/FbWw9BYzTjBpUh9atZo5yA0PZ/+4p01HUlParICB3t9P9tZ5
+	zMzttQ/mI1EL4Wnk5lxAn4DHGq3gvt+l82M64m38ukYlJSn7zpRIhKuf/xyj3oFy
+	Y2KAboJICyb+5Sh2qe/H91Z658KQdww/6JBMK3YTwMfG51xRVjlgt9LsonbN2gwt
+	v4YUSvUzr3HBTbSdI7LN2pUH3LPWKZTd1Cozbb8KQddzPaNtuXlQejxPyF/W03Gt
+	0/wb/SjQpHVmpHv1DEc3Bd99pldiOBcva6zovSJ0EfkFv6cklIFVk5nbQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41brkqt1tx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:23 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4845US8E000926;
-	Wed, 4 Sep 2024 06:59:22 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cf0mxcm4-1
+	Wed, 04 Sep 2024 06:59:22 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48455ePr011979;
+	Wed, 4 Sep 2024 06:59:21 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cegpxf9u-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4846xITl11469248
+	Wed, 04 Sep 2024 06:59:21 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4846xJVk53346580
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Wed, 4 Sep 2024 06:59:19 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DBD3020043;
-	Wed,  4 Sep 2024 06:59:18 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C8DFF20040;
-	Wed,  4 Sep 2024 06:59:18 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7160E20043;
+	Wed,  4 Sep 2024 06:59:19 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5F76D20040;
+	Wed,  4 Sep 2024 06:59:19 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  4 Sep 2024 06:59:18 +0000 (GMT)
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  4 Sep 2024 06:59:19 +0000 (GMT)
 Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
-	id 88E4DE0297; Wed,  4 Sep 2024 08:59:18 +0200 (CEST)
+	id 203CEE0297; Wed,  4 Sep 2024 08:59:19 +0200 (CEST)
 From: Sven Schnelle <svens@linux.ibm.com>
 To: Steven Rostedt <rostedt@goodmis.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH 3/7] s390/tracing: pass ftrace_regs to function_graph_enter()
-Date: Wed,  4 Sep 2024 08:58:57 +0200
-Message-ID: <20240904065908.1009086-4-svens@linux.ibm.com>
+        bpf@vger.kernel.org
+Subject: [PATCH 4/7] Add print_function_args()
+Date: Wed,  4 Sep 2024 08:58:58 +0200
+Message-ID: <20240904065908.1009086-5-svens@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240904065908.1009086-1-svens@linux.ibm.com>
 References: <20240904065908.1009086-1-svens@linux.ibm.com>
@@ -92,69 +89,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7aIX8uAl-RY4UpNawcSPGqSm3YmATvQS
-X-Proofpoint-ORIG-GUID: 7aIX8uAl-RY4UpNawcSPGqSm3YmATvQS
+X-Proofpoint-GUID: g7qxufGOAcbGUCKmLgjBagyF508u6CrB
+X-Proofpoint-ORIG-GUID: g7qxufGOAcbGUCKmLgjBagyF508u6CrB
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-04_04,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 spamscore=0
- malwarescore=0 mlxlogscore=662 adultscore=0 mlxscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 mlxscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2409040049
 
-Will be used later to print function arguments in the function
-graph tracer.
+Add a function to decode argument types with the help of BTF. Will
+be used to display arguments in the function and function graph
+tracer.
 
 Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
 ---
- arch/s390/kernel/entry.h  | 4 +++-
- arch/s390/kernel/ftrace.c | 4 ++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ kernel/trace/trace_output.c | 68 +++++++++++++++++++++++++++++++++++++
+ kernel/trace/trace_output.h |  9 +++++
+ 2 files changed, 77 insertions(+)
 
-diff --git a/arch/s390/kernel/entry.h b/arch/s390/kernel/entry.h
-index 21969520f947..d0a5fbaad987 100644
---- a/arch/s390/kernel/entry.h
-+++ b/arch/s390/kernel/entry.h
-@@ -5,6 +5,7 @@
- #include <linux/percpu.h>
- #include <linux/types.h>
- #include <linux/signal.h>
-+#include <linux/ftrace.h>
- #include <asm/extable.h>
- #include <asm/ptrace.h>
- #include <asm/idle.h>
-@@ -41,7 +42,8 @@ void do_restart(void *arg);
- void __init startup_init(void);
- void die(struct pt_regs *regs, const char *str);
- int setup_profiling_timer(unsigned int multiplier);
--unsigned long prepare_ftrace_return(unsigned long parent, unsigned long sp, unsigned long ip);
-+unsigned long prepare_ftrace_return(unsigned long parent, unsigned long sp, unsigned long ip,
-+				    struct ftrace_regs *regs);
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index d8b302d01083..70405c4cceb6 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -12,8 +12,11 @@
+ #include <linux/sched/clock.h>
+ #include <linux/sched/mm.h>
+ #include <linux/idr.h>
++#include <linux/btf.h>
++#include <linux/bpf.h>
  
- struct s390_mmap_arg_struct;
- struct fadvise64_64_args;
-diff --git a/arch/s390/kernel/ftrace.c b/arch/s390/kernel/ftrace.c
-index cf9ee90ae216..dd77b656d9b9 100644
---- a/arch/s390/kernel/ftrace.c
-+++ b/arch/s390/kernel/ftrace.c
-@@ -266,14 +266,14 @@ void ftrace_arch_code_modify_post_process(void)
-  * in current thread info.
-  */
- unsigned long prepare_ftrace_return(unsigned long ra, unsigned long sp,
--				    unsigned long ip)
-+				    unsigned long ip, struct ftrace_regs *regs)
- {
- 	if (unlikely(ftrace_graph_is_dead()))
- 		goto out;
- 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
- 		goto out;
- 	ip -= MCOUNT_INSN_SIZE;
--	if (!function_graph_enter(ra, ip, 0, (void *) sp, NULL))
-+	if (!function_graph_enter(ra, ip, 0, (void *) sp, regs))
- 		ra = (unsigned long) return_to_handler;
- out:
- 	return ra;
+ #include "trace_output.h"
++#include "trace_btf.h"
+ 
+ /* must be a power of 2 */
+ #define EVENT_HASHSIZE	128
+@@ -669,6 +672,71 @@ int trace_print_lat_context(struct trace_iterator *iter)
+ 	return !trace_seq_has_overflowed(s);
+ }
+ 
++#ifdef CONFIG_FUNCTION_TRACE_ARGS
++void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
++			 unsigned long func)
++{
++	const struct btf_param *param;
++	const struct btf_type *t;
++	const char *param_name;
++	char name[KSYM_NAME_LEN];
++	unsigned long arg;
++	struct btf *btf;
++	s32 tid, nr = 0;
++	int i;
++
++	trace_seq_printf(s, "(");
++
++	if (!ftrace_regs_has_args(fregs))
++		goto out;
++	if (lookup_symbol_name(func, name))
++		goto out;
++
++	btf = bpf_get_btf_vmlinux();
++	if (IS_ERR_OR_NULL(btf))
++		goto out;
++
++	t = btf_find_func_proto(name, &btf);
++	if (IS_ERR_OR_NULL(t))
++		goto out;
++
++	param = btf_get_func_param(t, &nr);
++	if (!param)
++		goto out_put;
++
++	for (i = 0; i < nr; i++) {
++		arg = ftrace_regs_get_argument(fregs, i);
++
++		param_name = btf_name_by_offset(btf, param[i].name_off);
++		if (param_name)
++			trace_seq_printf(s, "%s = ", param_name);
++		t = btf_type_skip_modifiers(btf, param[i].type, &tid);
++		if (!t)
++			continue;
++		switch (BTF_INFO_KIND(t->info)) {
++		case BTF_KIND_PTR:
++			trace_seq_printf(s, "0x%lx", arg);
++			break;
++		case BTF_KIND_INT:
++			trace_seq_printf(s, "%ld", arg);
++			break;
++		case BTF_KIND_ENUM:
++			trace_seq_printf(s, "%ld", arg);
++			break;
++		default:
++			trace_seq_printf(s, "0x%lx (%d)", arg, BTF_INFO_KIND(param[i].type));
++			break;
++		}
++		if (i < nr - 1)
++			trace_seq_printf(s, ", ");
++	}
++out_put:
++	btf_put(btf);
++out:
++	trace_seq_printf(s, ")");
++}
++#endif
++
+ /**
+  * ftrace_find_event - find a registered event
+  * @type: the type of event to look for
+diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
+index dca40f1f1da4..a21d8ce606f7 100644
+--- a/kernel/trace/trace_output.h
++++ b/kernel/trace/trace_output.h
+@@ -41,5 +41,14 @@ extern struct rw_semaphore trace_event_sem;
+ #define SEQ_PUT_HEX_FIELD(s, x)				\
+ 	trace_seq_putmem_hex(s, &(x), sizeof(x))
+ 
++#ifdef CONFIG_FUNCTION_TRACE_ARGS
++void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
++			 unsigned long func);
++#else
++static inline void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
++				       unsigned long func) {
++	trace_seq_puts(s, "()");
++}
++#endif
+ #endif
+ 
 -- 
 2.43.0
 
