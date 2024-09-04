@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-314709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D7E96B756
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:50:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15C996B75B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70B02859E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3018D1C21F31
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BDA1CDA09;
-	Wed,  4 Sep 2024 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UugeXufx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7AC1CCECB;
+	Wed,  4 Sep 2024 09:50:55 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22265145B35
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB83145B35
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443404; cv=none; b=nfFu/WuVDkTLaKRArK7OmVLWUMM7nYfk+STcvzVUlMtJnL9Kl4/omFAbXsm0jxk5PqYogRUy/tPhGd2qw/mrns1pqPYgdxaP0pnBIIYhFEjNLU1sYsQGEZS0zVFf5av94aG9I4B38Ta3QksVmNHMN64bTdOxGg9/13mO8RHL9Kc=
+	t=1725443455; cv=none; b=ZH/DAsd4H9lYm1vs27u5+DFocOquRjCOjYbUsRI2c0MeRyofJPhOJzqGvfwYrJ4nTUxc+Y7Y4r2ekNUdVKjbSL5lSVmehrav/N3RBqR85KEB16O5SquC+qBgVOGPVGUekXUA3blC53Y5tdlc5KyRQ8uvklfzOTr2NYW8rVZz/BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443404; c=relaxed/simple;
-	bh=aaB0YSpYA6l5ZPYyfistw17D1sw3OVjLeevGcL2o5M0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDM9+ZZQ5bFqtiknMJMtFbe6f4m5IMnxnT1AEulw7gw+2shPxRLNTd5VRJm/XhEShYWtNsNOqmZF0J0dUg1bWNzKGRv/JTOP8vpUtJAAdntOp4h9oORLmlWT0ZRDj2y75q8PDkFY005rjDdkA7EkLPHczicZq5L0ZRvFyJyxWFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UugeXufx; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725443402; x=1756979402;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aaB0YSpYA6l5ZPYyfistw17D1sw3OVjLeevGcL2o5M0=;
-  b=UugeXufxMJd+4e/kDMf6CCDDN5l1d8P+NlYDSHy2reKgEStakQ0bMqGn
-   A5qqgqtlWYAj8BkE8lFM8yYyZeak0bH1i54CqiH1x8gQHKSJnyFo3/NZ1
-   fBRuakKvkzZXq7V1fVfg6rqXuWXI3kkr+Vlsh+n4WGU65nDOBKB8a3jHl
-   weLBhn9vWwEWHEh6SP31oiwB3JN2gFZcIjYCwlAYwN+b7AkG0E4X5i2Rb
-   UqTm2eWJefTYU+9s8rxYY3w4tzw/8afUu0hDpXzajoQBLEruPYf9QdTfb
-   0L0+DML896e2LecPgRq+hnu1/iGZ6xXlz8b4iRrsoAWeN0jAut38dyqXF
-   A==;
-X-CSE-ConnectionGUID: N+oaIwkJSjSH9vXCp35u5w==
-X-CSE-MsgGUID: W3x+an0SSqKMk1O0If8u9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24045573"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="24045573"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 02:50:02 -0700
-X-CSE-ConnectionGUID: YoZwp93IT6uZ7EIeBr69lA==
-X-CSE-MsgGUID: t8P8L4jQS5CxWHeJKdEXdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="64870890"
-Received: from zhaohaif-mobl.ccr.corp.intel.com (HELO [10.125.241.1]) ([10.125.241.1])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 02:50:01 -0700
-Message-ID: <3159e4ba-1c39-4a79-a844-c52c08fe41b9@linux.intel.com>
-Date: Wed, 4 Sep 2024 17:49:49 +0800
+	s=arc-20240116; t=1725443455; c=relaxed/simple;
+	bh=JGnFHr77G379PpB6Dr0hWdy2WMMB6oV9BeQxLhM5amU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q+KMvBUdImr4E5qz851ZyXtyX2ZCXhz3I9yH/WX5IZd6OpKdCOPSUtEWfWiBV+sqeQiRYwNvdXq2uHh0b1ySdinImCVxdaxtRQGCgowO2N3eVN8/62fvVzobZ0NHUA9rV6eI2D2EdMMp1ftisDsfzPNpihfM5G0Mkl3CH5U5uvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WzHkT09fkz1xwns;
+	Wed,  4 Sep 2024 17:48:49 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id BEE5F1A0188;
+	Wed,  4 Sep 2024 17:50:49 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 4 Sep 2024 17:50:49 +0800
+Message-ID: <ffc4e9b0-3e67-9215-9168-91b2b3c68d5f@huawei.com>
+Date: Wed, 4 Sep 2024 17:50:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/vt-d: Fix 'Null pointer dereferences' issue
-To: Qianqiang Liu <qianqiang.liu@163.com>, dwmw2@infradead.org,
- baolu.lu@linux.intel.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240903144601.8149-1-qianqiang.liu@163.com>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-In-Reply-To: <20240903144601.8149-1-qianqiang.liu@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] static_call: Handle module init failure correctly in
+ static_call_del_module()
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
+References: <87cylj7v6x.ffs@tglx>
+ <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <877cbr7qed.ffs@tglx>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <877cbr7qed.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
-On 9/3/2024 10:46 PM, Qianqiang Liu wrote:
-> Passing null pointer "pdev" to "pci_enable_pasid", which dereferences it.
-> Check the "pdev" is null or not before passing to "pci_enable_pasid".
->
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> ---
->   drivers/iommu/intel/iommu.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 9f6b0780f2ef..a1e54f334330 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -3935,7 +3935,7 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
->   	 * So always enable PASID support on devices which have it, even if
->   	 * we can't yet know if we're ever going to use it.
->   	 */
-> -	if (info->pasid_supported &&
-> +	if (info->pasid_supported && pdev &&
->   	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
 
-You hit any issue with specific ver kernel ? seems impossible to hit
-such NULL pointer issue with the latest kernel for which you sent
-this patch.
+On 2024/9/4 16:51, Thomas Gleixner wrote:
+> On Wed, Sep 04 2024 at 16:03, Jinjie Ruan wrote:
+>> On 2024/9/4 15:08, Thomas Gleixner wrote:
+>>> So the check must be:
+>>>
+>>> 	if (!static_call_key_has_mods(key))
+>>>         	break;
+>>
+>> Hi, Thomas,
+>>
+>> with this patch, the issue not occurs again，
+>>
+>> but there are some memory leak here same to the following problem:
+> 
+> That has absolutely nothing to do with static calls and the memory
+> allocation failure case there.
+> 
+> The module passed all preparatory steps, otherwise it would not be able
+> to create a kmem_cache from the module init() function:
+> 
+>      kmem_cache_create+0x11/0x20
+>      do_one_initcall+0xdc/0x550
+>      do_init_module+0x241/0x630
+> 
+> amdgpu_init()
+> 
+> 	r = amdgpu_sync_init();
+> 	if (r)
+> 		goto error_sync;
+> 
+> 	r = amdgpu_fence_slab_init();
+> 	if (r)
+> 		goto error_fence;
+> 
+>         <SNIP>
+>         
+> 	return pci_register_driver(&amdgpu_kms_pci_driver);
+> 
+> error_fence:
+> 	amdgpu_sync_fini();
+> error_sync:
+>         return r;
+> 
+> Can you spot the problem?
 
-Thanks,
-Ethan
+I see, let me test it.
 
->   		info->pasid_enabled = 1;
->   
+> 
+> Thanks,
+> 
+>         tglx
 
