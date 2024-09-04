@@ -1,201 +1,154 @@
-Return-Path: <linux-kernel+bounces-315534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0327C96C3E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:19:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EE896C3EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276451C21D1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3A51F2224C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D13B1DFE21;
-	Wed,  4 Sep 2024 16:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7A51E00AB;
+	Wed,  4 Sep 2024 16:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROivptP+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ltx1om/k"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F081DFE0B;
-	Wed,  4 Sep 2024 16:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3871E00B6
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466738; cv=none; b=BnDmt4sc03OevUNFm8+Mrs5Ps3BdGrSk8NlqvfPFFb9o/25u01+tWkNYfLD9xCnpUkJrFEp/BCjb4QNsqRShqnyk5lySbWT9GVhKOJD6c0TnHGPwmTBj193b7bw1LG9dDx/fckCeFambeXoxI5zX9SDr+PfbqRqAXfqXuk87Pyk=
+	t=1725466779; cv=none; b=tpZgl22CFNa6U+5dh5z68GDsYLMAfyFUUsQ3q3y4ZQ+IAvSy8YTuQW9DR5gJfOrPIiVZoX/wQnIc9onZGmsqJQWOWfb373G0pLGmfRpDWVjIdJfikE+Zp/9KotMM+nGjywntYPSCrBIODPnOJ4B25XqNfxY8fPm6JJ5v5nlqqbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466738; c=relaxed/simple;
-	bh=0bKyW3fD0KF6qrF+/e2zTkbWl5tvvBYdeZlv0lyicxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXnD3+rd5uMPmK0pQ8xW2eB7qN/gqZTcc6a0x6yYkUmngg/nkpKddS2WGuCLrYbxEVkywwiJwIRHsmWPg/2sT5nn//KW0PMjTZAfztPwPUjvEDxDuuut24PWhErJjQXYh9fwAf9cauLKwWvNyrh4aJitcojo7FeCLv1h3YNCxvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROivptP+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D249FC4CEC5;
-	Wed,  4 Sep 2024 16:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725466738;
-	bh=0bKyW3fD0KF6qrF+/e2zTkbWl5tvvBYdeZlv0lyicxY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ROivptP+CrJ38Sw1vOjLCyIuYylERI7RMhwkI5IUtIucs2vPKum0FWDcx1RnJj/4K
-	 /Udyk3HKvxddBaTAnWfoQPdA11A6tUUIMQvCVCD+tiZ2kEDdyQZt67ps1fgvI//q91
-	 Tkya6/k6RTRMCRMrRiffxYvKtaYUywX6W8/fpkigXw1Eux6mbue3ibD2jSuHH/WKMo
-	 F9wqP+Y7Dqquw7ffkPZ/bhvKqj0B6M2kY41FSfPv4NeuPnIm7FAhXL4Mjx939evRTI
-	 sjfXaxuZUi0cyUBfuKCabcv1Fzhb/WF8sQP/YXvQPnahHy+lQv9NMdMuWsp56QW0Xv
-	 1ybbzMxSMv5QQ==
-Message-ID: <04992d68-5cf7-4376-85a6-588a4c26a82c@kernel.org>
-Date: Thu, 5 Sep 2024 01:18:42 +0900
+	s=arc-20240116; t=1725466779; c=relaxed/simple;
+	bh=WR9gODpJwzztNv80pp/9TofBTjDhBhMxxRESpXAfG54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qKuWMQoPwcw9ws94UahVQWBppebSjPbE/YjVraZkjsZi2m+vGKESZ6iF2ovWBuwObeIUXLMjMX9t4TrR2b/GT2FmpkRVhSjqILlwajWlowt3vzdMyL5adzMREvG94Tg4l79bodyEjKdMX61HcIOvEI31/grY5pvJR24wbUvKbeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ltx1om/k; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-202018541afso219415ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725466777; x=1726071577; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=25Zf/4cKd4+468N9AqNX5z8KPRD3uRfodn3ph1xnn0w=;
+        b=Ltx1om/k2w3DD8wsdwK3Rbalr0kIUbZEstOv8avYlbHlQ4JO7Msx6w9fNwgn3lbYWx
+         8+uyk57OwP/o375MM8J7h45WMpS2SCRm4GBOfAKu50t6/Wc4QuQLamMoiskvCeA4sQyc
+         OOWBtRoGaUewwG0SkwBfVPc+Fhr6BtN+U7RgqaAMKus0DrJP/s3tqdEpYUiOOiGDuMOa
+         D5LD524cKf2FypPohC0Iez+k5uQ2igOD1NMIPk4IPdjCoElVTxv8WGH85IOWnX8NxBNH
+         gtwtoKd0jkfqhn2pma3U3NEKgTjhxSIbjnwBDpWjR7mpFE98injog9hvPkgofbrszFVe
+         OPmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725466777; x=1726071577;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=25Zf/4cKd4+468N9AqNX5z8KPRD3uRfodn3ph1xnn0w=;
+        b=ihUJUhVc5lXr6UCUncSD1uae4z/ZwRRO22IsuzrhlqsGJHPryYj3bFcpfdPxodmTON
+         0JBQcGfjqDapWl0kn/co0bB9tInrO0nt3HsGYwJgzRTmKGNTw0ooPkM8YZTXpgnxPxrS
+         tFQdgBOc6h8/m2pyvyI+23hXje2JCGErYBAtCSFBPrx83VRMBxnnybzNn4/8VEu9Lzaw
+         P8eUqwN4b59ADmzLS7B9r6f2DRMmwXDTlmJa61AMo0ha7lEyd7gFzFr/yh9nTQvAB6l4
+         wJy3kVYp3pAyuHuohYu3eX3cwMR006vIka7v5m/hhRoBc06A4xU/XT9JnHGwQ9d+Pvmq
+         yykg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEjGKq/B5gZfJgAC4xCyFv/2YK5X59HIjowt/h2Ut56hkfHOUjzzzned+Xe0uk7NoK1AQK/cyTW+lInes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeAfH9lTNrYIlHoGci4MiqDQSpPCUEChrFlEOXHRONHrLb4DC2
+	q/E6UNuae+a0wX6sf8mdu2AcRAK3DqhbOBumSRmHx6JmnYDgx0fEB3qTqWsXsRky7IcV1uPxNbb
+	4TEolc7KAPszr2eEMoHwtTMVvgvBN/HorlOeV
+X-Google-Smtp-Source: AGHT+IEiFBoQQwHuUEXS3IHquLDvHm6vqwNYM/SC1nUtLaeosM7rzHTua+C3+xTNmlk+KAAtYb8yNjJWCRaslrFFyy0=
+X-Received: by 2002:a17:902:ce81:b0:1fd:74a8:df75 with SMTP id
+ d9443c01a7336-206b0725477mr3875685ad.16.1725466776976; Wed, 04 Sep 2024
+ 09:19:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the extcon tree
-To: Hans de Goede <hdegoede@redhat.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Chanwoo Choi
- <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240904152421.4e0ad2b7@canb.auug.org.au>
- <f31f8bea-95da-4d32-afe0-9c2abc69d833@redhat.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <f31f8bea-95da-4d32-afe0-9c2abc69d833@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240904064131.2377873-1-namhyung@kernel.org> <20240904064131.2377873-9-namhyung@kernel.org>
+In-Reply-To: <20240904064131.2377873-9-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 4 Sep 2024 09:19:25 -0700
+Message-ID: <CAP-5=fWnAwVumJgypta=RJV4JBN7A82bn4aUuNJX4G3Xi0zfhg@mail.gmail.com>
+Subject: Re: [PATCH 8/8] perf tools: Check fallback error and order
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>, 
+	James Clark <james.clark@arm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Kajol Jain <kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Mingwei Zhang <mizhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-24. 9. 4. 18:24에 Hans de Goede 이(가) 쓴 글:
-> Hi all,
-> 
-> On 9/4/24 7:24 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the extcon tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/extcon/extcon-lc824206xa.c:413:22: error: initialization of 'unsigned int' from 'const enum power_supply_usb_type *' makes integer from pointer without a cast [-Wint-conversion]
->>   413 |         .usb_types = lc824206xa_psy_usb_types,
->>       |                      ^~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/extcon/extcon-lc824206xa.c:413:22: note: (near initialization for 'lc824206xa_psy_desc.usb_types')
->> drivers/extcon/extcon-lc824206xa.c:413:22: error: initializer element is not computable at load time
->> drivers/extcon/extcon-lc824206xa.c:413:22: note: (near initialization for 'lc824206xa_psy_desc.usb_types')
->> drivers/extcon/extcon-lc824206xa.c:414:10: error: 'const struct power_supply_desc' has no member named 'num_usb_types'; did you mean 'usb_types'?
->>   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->>       |          ^~~~~~~~~~~~~
->>       |          usb_types
->> In file included from include/linux/kernel.h:16,
->>                  from include/linux/cpumask.h:11,
->>                  from arch/x86/include/asm/paravirt.h:21,
->>                  from arch/x86/include/asm/cpuid.h:62,
->>                  from arch/x86/include/asm/processor.h:19,
->>                  from include/linux/sched.h:13,
->>                  from include/linux/delay.h:23,
->>                  from drivers/extcon/extcon-lc824206xa.c:20:
->> include/linux/array_size.h:11:25: error: initialization of 'const enum power_supply_property *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
->>    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->>       |                         ^
->> drivers/extcon/extcon-lc824206xa.c:414:26: note: in expansion of macro 'ARRAY_SIZE'
->>   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->>       |                          ^~~~~~~~~~
->> include/linux/array_size.h:11:25: note: (near initialization for 'lc824206xa_psy_desc.properties')
->>    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->>       |                         ^
->> drivers/extcon/extcon-lc824206xa.c:414:26: note: in expansion of macro 'ARRAY_SIZE'
->>   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->>       |                          ^~~~~~~~~~
->>
->> Caused by commit
->>
->>   e508f2606c0b ("extcon: Add LC824206XA microUSB switch driver")
->>
->> interatcing with commit
->>
->>   364ea7ccaef9 ("power: supply: Change usb_types from an array into a bitmask")
->>
->> from the battery tree.
-> 
-> Since I'm the author of both commits this is my bad, sorry.
-> 
-> Stephen, thank you for fixing this in -next.
-> 
-> Chanwoo, Sebastian send a pull-request for an immutable branch with
-> these changes:
-> 
-> https://lore.kernel.org/linux-pm/ez5ja55dl7w7ynq2wv4efsvvqtk4xyalf4k6agtsuhpgrtlpg3@d6ghlle4cu2q/
-> 
-> Can you please merge the ib-psy-usb-types-signed tag into
-> extcon.git/extcon-next and then apply Stephen's fix so that Linus
-> does not get hit by this build error when he merges the extcon
-> changes for 6.12 ?
+On Tue, Sep 3, 2024 at 11:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The perf_event_open might fail due to various reasons, so blindly
+> reducing precise_ip level might not be the best way to deal with it.
+>
+> It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
+> given precise level.  Let's try again with the correct error code.
 
-I pulled "tags/ib-psy-usb-types-signed" and pushed it to extcon.git
-- git pull git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/ib-psy-usb-types-signed
+We also have pmu's max_precise:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmu.h?h=3Dperf-tools-next#n91
+The reducing the precision approach was iirc taken for AMD who will
+forward some precise events to IBS, but the max_precise on the cpu PMU
+is 0. I think because of this, reducing the precision below
+evsel->pmu->max_precise shouldn't be necessary and another fallback
+may help better.
 
-And I send the fix-up mail as following:
-https://lkml.org/lkml/2024/9/5/13
+Thanks,
+Ian
 
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
->> I have applied the following merge fix patch.
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Wed, 4 Sep 2024 15:19:19 +1000
->> Subject: [PATCH] fix up for "extcon: Add LC824206XA microUSB switch driver"
->>
->> interacting with "power: supply: Change usb_types from an array into a
->> bitmask" from het battery tree.
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  drivers/extcon/extcon-lc824206xa.c | 15 +++++----------
->>  1 file changed, 5 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/extcon/extcon-lc824206xa.c b/drivers/extcon/extcon-lc824206xa.c
->> index d58a2c369018..56938748aea8 100644
->> --- a/drivers/extcon/extcon-lc824206xa.c
->> +++ b/drivers/extcon/extcon-lc824206xa.c
->> @@ -393,14 +393,6 @@ static int lc824206xa_psy_get_prop(struct power_supply *psy,
->>  	return 0;
->>  }
->>  
->> -static const enum power_supply_usb_type lc824206xa_psy_usb_types[] = {
->> -	POWER_SUPPLY_USB_TYPE_SDP,
->> -	POWER_SUPPLY_USB_TYPE_CDP,
->> -	POWER_SUPPLY_USB_TYPE_DCP,
->> -	POWER_SUPPLY_USB_TYPE_ACA,
->> -	POWER_SUPPLY_USB_TYPE_UNKNOWN,
->> -};
->> -
-> 
->>  static const enum power_supply_property lc824206xa_psy_props[] = {
->>  	POWER_SUPPLY_PROP_ONLINE,
->>  	POWER_SUPPLY_PROP_USB_TYPE,
->> @@ -410,8 +402,11 @@ static const enum power_supply_property lc824206xa_psy_props[] = {
->>  static const struct power_supply_desc lc824206xa_psy_desc = {
->>  	.name = "lc824206xa-charger-detect",
->>  	.type = POWER_SUPPLY_TYPE_USB,
->> -	.usb_types = lc824206xa_psy_usb_types,
->> -	.num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->> +	.usb_types = BIT(POWER_SUPPLY_USB_TYPE_SDP) |
->> +		     BIT(POWER_SUPPLY_USB_TYPE_CDP) |
->> +		     BIT(POWER_SUPPLY_USB_TYPE_DCP) |
->> +		     BIT(POWER_SUPPLY_USB_TYPE_ACA) |
->> +		     BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN),
->>  	.properties = lc824206xa_psy_props,
->>  	.num_properties = ARRAY_SIZE(lc824206xa_psy_props),
->>  	.get_property = lc824206xa_psy_get_prop,
-> 
-> 
-
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
-
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/evsel.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 8c4d70f7b2f5b880..0133c9ad3ce07a24 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2565,9 +2565,6 @@ static int evsel__open_cpu(struct evsel *evsel, str=
+uct perf_cpu_map *cpus,
+>         return 0;
+>
+>  try_fallback:
+> -       if (evsel__precise_ip_fallback(evsel))
+> -               goto retry_open;
+> -
+>         if (evsel__ignore_missing_thread(evsel, perf_cpu_map__nr(cpus),
+>                                          idx, threads, thread, err)) {
+>                 /* We just removed 1 thread, so lower the upper nthreads =
+limit. */
+> @@ -2584,11 +2581,12 @@ static int evsel__open_cpu(struct evsel *evsel, s=
+truct perf_cpu_map *cpus,
+>         if (err =3D=3D -EMFILE && rlimit__increase_nofile(&set_rlimit))
+>                 goto retry_open;
+>
+> -       if (err !=3D -EINVAL || idx > 0 || thread > 0)
+> -               goto out_close;
+> +       if (err =3D=3D -EOPNOTSUPP && evsel__precise_ip_fallback(evsel))
+> +               goto retry_open;
+>
+> -       if (evsel__detect_missing_features(evsel))
+> +       if (err =3D=3D -EINVAL && evsel__detect_missing_features(evsel))
+>                 goto fallback_missing_features;
+> +
+>  out_close:
+>         if (err)
+>                 threads->err_thread =3D thread;
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
 
