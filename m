@@ -1,77 +1,70 @@
-Return-Path: <linux-kernel+bounces-315098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF20696BDEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E1096BDCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D242281CE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187E71F2685A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A7A1DA0F9;
-	Wed,  4 Sep 2024 13:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8D01DB529;
+	Wed,  4 Sep 2024 13:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNqeqCYa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dC5IJhq4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDD120334;
-	Wed,  4 Sep 2024 13:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E951DAC4E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725455173; cv=none; b=E1dKUQshN7WtQ6gn6CBxaBOdp6mB//NLH/R6eBNNHsqZEjs5Lt4Pwx5shu/pe1NnbOgPtRLjEdVBUFNTGpb52gd3wiMu8XHfi2KC/c+fE2RcZi0dsuJCfyjDlzDCWE0cDVWsyDlVh3nMUDg2jTl4ahTnNJTs7wv+TqT1+TeQVDY=
+	t=1725455091; cv=none; b=FjmhpW251c7WK46z9NNpD/AzTOl3CP4T7LFRhyjKrRJIkcFludrcTFJmkd5rAwNe9wnICsSMcVHhOEBzS2m2Y0+csgKld0PX3T5cXdYt9lmnnTnE5Etki7tn4g4ja4aoU6SXpZInTqOjxybPUuzW3VRZtYDST/JPMkBmQSku/r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725455173; c=relaxed/simple;
-	bh=mM1Ro031A08ZpqxLqSTFKpkQoEe2UZuBQXmTL877tWo=;
+	s=arc-20240116; t=1725455091; c=relaxed/simple;
+	bh=7ak4XrEdnlRi2v/8yamUtfMc99iT2J630o3+jOFReH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TX6YAxE0TJIVHc+nTWPFECwk619k1mBKmZEdBkx27tby88KyLaJ35EDs/fplonRTdu8rRQUgDTsdpf6LE37wn24+Xz6w6Z67uGmAtnZE3uVmb8FnST1XZ0W2VH6+5vPnms0seYvcisbo8VKG9jdZGeDn3ZkJQfAEzeBFi7vmj2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNqeqCYa; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725455172; x=1756991172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mM1Ro031A08ZpqxLqSTFKpkQoEe2UZuBQXmTL877tWo=;
-  b=lNqeqCYaCAzpB9JmD2amk7JTTBzkzj5/YfbAXDvBghOIjyvUJdSGERdU
-   ntV7ragFU0q62JR4+8iz18z/fl+dWWceY006g2gbGxL0QT5ls/VCXMjdP
-   BasdX2KZ60MisYefv1ahSiFF6Cwrto5fQMEI98S3Ca8rlFtQeuxNqOWyR
-   zOFdFyrrqh+Ca0gX+DWdUpo4ANTGTI8yv0SU1fOmg1YWIped77RQN7cCb
-   DPsjSbNgSIyiBt7yDxYb9w5JEn/u3O3Vv69gYqfpNcsWzn5xecAD/Zvqv
-   DsZNXNyP7DOv3ze1iIJlLGLAZ8diUKbokuKunOf6tSyFVsPZBPi7NmYUM
-   Q==;
-X-CSE-ConnectionGUID: apJ8ch55SjiuYsnSkYB51w==
-X-CSE-MsgGUID: XGujfzHUR0OCXiqT32u3Dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="41611954"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="41611954"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:05:18 -0700
-X-CSE-ConnectionGUID: O5NtZppmScGRPLixhjd7kg==
-X-CSE-MsgGUID: jEMrTlcBR4qBKW9Pj0Tg9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65308473"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 04 Sep 2024 06:05:17 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slphC-000863-2y;
-	Wed, 04 Sep 2024 13:05:14 +0000
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMW7i7Y5hov8u93nrNJgCXwabWep8l47rChyL49wBfxfmBGUKTurR3COGDHlIO6hfqoSyNlb+HLYCbNyjsj7ULNvsjjlFi+wtY5Ni5vBFs0DvnqryiZyU+q2sUk/viuOZ0Po4w4tBIDAgDBycW0d+TjdXETI2PS/g/KgboKu08E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dC5IJhq4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725455088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zSmRkKcwStoVZz4ycbGuELyN9bbatZOLmay6g4DKLKw=;
+	b=dC5IJhq4cjJCHK6PB7kAQevW2LmSrrBifgXZQwQMABdRiO6qFgYcTq9BEURxFiPmZd5Dgj
+	8cclZkOjT+XZ152VoxMVqZcKoRglVNnUzk6uvGCtqiEzAlXkevRAhx5+XYwCfCtKXrRZH/
+	I9oOfEhqCDymxMkIw6Ew9q6K3KZ97es=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-8quKOHEAMIa7bzdo6jPLpQ-1; Wed,
+ 04 Sep 2024 09:04:43 -0400
+X-MC-Unique: 8quKOHEAMIa7bzdo6jPLpQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D4ACF19560AE;
+	Wed,  4 Sep 2024 13:04:41 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.59])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95DF3195605A;
+	Wed,  4 Sep 2024 13:04:36 +0000 (UTC)
 Date: Wed, 4 Sep 2024 21:04:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Replace ifdeffery by
- pm_sleep_ptr() macro
-Message-ID: <202409042054.YDMtnXfx-lkp@intel.com>
-References: <20240903170752.3564538-3-andriy.shevchenko@linux.intel.com>
+From: Ming Lei <ming.lei@redhat.com>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] block: fix ordering between checking
+ BLK_MQ_S_STOPPED and adding requests
+Message-ID: <Ztha3hb962mok1wf@fedora>
+References: <20240903081653.65613-1-songmuchun@bytedance.com>
+ <20240903081653.65613-4-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,90 +73,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903170752.3564538-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240903081653.65613-4-songmuchun@bytedance.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Andy,
+On Tue, Sep 03, 2024 at 04:16:53PM +0800, Muchun Song wrote:
+> Supposing first scenario with a virtio_blk driver.
+> 
+> CPU0                                                                CPU1
+> 
+> blk_mq_try_issue_directly()
+>     __blk_mq_issue_directly()
+>         q->mq_ops->queue_rq()
+>             virtio_queue_rq()
+>                 blk_mq_stop_hw_queue()
+>                                                                     virtblk_done()
+>     blk_mq_request_bypass_insert()                                      blk_mq_start_stopped_hw_queues()
+>         /* Add IO request to dispatch list */   1) store                    blk_mq_start_stopped_hw_queue()
+>                                                                                 clear_bit(BLK_MQ_S_STOPPED)                 3) store
+>     blk_mq_run_hw_queue()                                                       blk_mq_run_hw_queue()
+>         if (!blk_mq_hctx_has_pending())                                             if (!blk_mq_hctx_has_pending())         4) load
+>             return                                                                      return
+>         blk_mq_sched_dispatch_requests()                                            blk_mq_sched_dispatch_requests()
+>             if (blk_mq_hctx_stopped())          2) load                                 if (blk_mq_hctx_stopped())
+>                 return                                                                      return
+>             __blk_mq_sched_dispatch_requests()                                          __blk_mq_sched_dispatch_requests()
+> 
+> Supposing another scenario.
+> 
+> CPU0                                                                CPU1
+> 
+> blk_mq_requeue_work()
+>     /* Add IO request to dispatch list */       1) store            virtblk_done()
+>     blk_mq_run_hw_queues()/blk_mq_delay_run_hw_queues()                 blk_mq_start_stopped_hw_queues()
+>         if (blk_mq_hctx_stopped())              2) load                     blk_mq_start_stopped_hw_queue()
+>             continue                                                            clear_bit(BLK_MQ_S_STOPPED)                 3) store
+>         blk_mq_run_hw_queue()/blk_mq_delay_run_hw_queue()                       blk_mq_run_hw_queue()
+>                                                                                     if (!blk_mq_hctx_has_pending())         4) load
+>                                                                                         return
+>                                                                                     blk_mq_sched_dispatch_requests()
+> 
+> Both scenarios are similar, the full memory barrier should be inserted between
+> 1) and 2), as well as between 3) and 4) to make sure that either CPU0 sees
+> BLK_MQ_S_STOPPED is cleared or CPU1 sees dispatch list. Otherwise, either CPU
+> will not rerun the hardware queue causing starvation of the request.
+> 
+> The easy way to fix it is to add the essential full memory barrier into helper
+> of blk_mq_hctx_stopped(). In order to not affect the fast path (hardware queue
+> is not stopped most of the time), we only insert the barrier into the slow path.
+> Actually, only slow path needs to care about missing of dispatching the request
+> to the low-level device driver.
+> 
+> Fixes: 320ae51feed5c ("blk-mq: new multi-queue block IO queueing mechanism")
+> Cc: stable@vger.kernel.org
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-kernel test robot noticed the following build warnings:
+Looks fine,
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next linus/master v6.11-rc6 next-20240904]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-intel-Replace-ifdeffery-by-pm_sleep_ptr-macro/20240904-011041
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20240903170752.3564538-3-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 2/3] pinctrl: baytrail: Replace ifdeffery by pm_sleep_ptr() macro
-config: i386-buildonly-randconfig-002-20240904 (https://download.01.org/0day-ci/archive/20240904/202409042054.YDMtnXfx-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409042054.YDMtnXfx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409042054.YDMtnXfx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/pinctrl/intel/pinctrl-baytrail.c: In function 'byt_pinctrl_probe':
->> drivers/pinctrl/intel/pinctrl-baytrail.c:1610:49: warning: the address of 'byt_pinctrl_pm_init' will always evaluate as 'true' [-Waddress]
-    1610 |         ret = pm_sleep_ptr(byt_pinctrl_pm_init) ? byt_pinctrl_pm_init(vg) : 0;
-         |                                                 ^
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
 
-vim +1610 drivers/pinctrl/intel/pinctrl-baytrail.c
+Thanks,
+Ming
 
-  1587	
-  1588	static int byt_pinctrl_probe(struct platform_device *pdev)
-  1589	{
-  1590		const struct intel_pinctrl_soc_data *soc_data;
-  1591		struct device *dev = &pdev->dev;
-  1592		struct intel_pinctrl *vg;
-  1593		int ret;
-  1594	
-  1595		soc_data = intel_pinctrl_get_soc_data(pdev);
-  1596		if (IS_ERR(soc_data))
-  1597			return PTR_ERR(soc_data);
-  1598	
-  1599		vg = devm_kzalloc(dev, sizeof(*vg), GFP_KERNEL);
-  1600		if (!vg)
-  1601			return -ENOMEM;
-  1602	
-  1603		vg->dev = dev;
-  1604		ret = byt_set_soc_data(vg, soc_data);
-  1605		if (ret) {
-  1606			dev_err(dev, "failed to set soc data\n");
-  1607			return ret;
-  1608		}
-  1609	
-> 1610		ret = pm_sleep_ptr(byt_pinctrl_pm_init) ? byt_pinctrl_pm_init(vg) : 0;
-  1611		if (ret)
-  1612			return ret;
-  1613	
-  1614		vg->pctldesc		= byt_pinctrl_desc;
-  1615		vg->pctldesc.name	= dev_name(dev);
-  1616		vg->pctldesc.pins	= vg->soc->pins;
-  1617		vg->pctldesc.npins	= vg->soc->npins;
-  1618	
-  1619		vg->pctldev = devm_pinctrl_register(dev, &vg->pctldesc, vg);
-  1620		if (IS_ERR(vg->pctldev)) {
-  1621			dev_err(dev, "failed to register pinctrl driver\n");
-  1622			return PTR_ERR(vg->pctldev);
-  1623		}
-  1624	
-  1625		ret = byt_gpio_probe(vg);
-  1626		if (ret)
-  1627			return ret;
-  1628	
-  1629		platform_set_drvdata(pdev, vg);
-  1630	
-  1631		return 0;
-  1632	}
-  1633	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
