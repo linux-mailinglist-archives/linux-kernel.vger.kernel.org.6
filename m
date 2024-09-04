@@ -1,269 +1,244 @@
-Return-Path: <linux-kernel+bounces-315122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689D896BE39
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 588B896BE3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5C71C250AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BD11C20994
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFD31DAC4D;
-	Wed,  4 Sep 2024 13:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496761CF7C4;
+	Wed,  4 Sep 2024 13:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZTNG3ml"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e4zasnJ+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBA01D88DA;
-	Wed,  4 Sep 2024 13:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B37C1DB53A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456019; cv=none; b=idn+Ezh6RhDaiNKbUetCjJZA9PoDujXb7/jqdJXzebD2+1L2KkGYj9kl/rgM3QgLSdI5kOF9d32VEi2lXQsyI10Ai5alHSR85aCc7V5F3wOU7935cE8vfuvIF7lef8nUvmlaRpxeMb9Ohi3bpbjW0cmG2YyVv47QeKyFJQc3ky4=
+	t=1725456029; cv=none; b=oxRuEUjj3MY7BkB98Rfr6JtJZHktCfP288mFUiX6tQL8Q+AG9qhXOZfk4sIleQk5QgMHaAE22KVX5a/5wtMEK64oz+UThSbt8n0zIoHk1ihEQ15ySEuwvzPo+GTI4eUogW7VKeiNjqOspXC+nl0VQN7zetMG9YPLR4VR5jIr/PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456019; c=relaxed/simple;
-	bh=ji3ee7bEt2Ak5byQ+v6Y2EgVTfP+Cys2lyvNsofcdoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fcfmn1IhOuxbIqQpFAGaczpIgl5XziHWxFSjOx90H8IZQePvQ8FdJNUakOeakW2Y6XjiLDn6GKB7FXMsBZKt95JXTgeFGi1UXF7rxL34C9wjys+ERB9Ih5Z1qFtx81cS5BNgYkyDAcA4Xgv0xHnTMXo1T+un62P3NqtDX+WBzz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZTNG3ml; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A20C4CEC2;
-	Wed,  4 Sep 2024 13:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725456019;
-	bh=ji3ee7bEt2Ak5byQ+v6Y2EgVTfP+Cys2lyvNsofcdoA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PZTNG3mlNHjLFyRUe+aJGbLfCjMrZHGnPiJXxH3DOSQkSOUGQs4G1MqXKAQkZyMrD
-	 MTPyenlX1AWmw2AOBy1sY7GVkv2BU9rJk8HM/lpS91WTlZqVQP5UBe4apMEgMTkBdf
-	 +WorKXTE07Nv0zr+NiGRnLGLkHQo2dbYIeDRA0hGWXQeuYP32Zm6wNXmTw3f3nzQFM
-	 EGDXdyY99qaV0ua7gq/OR8v8iaiyQl0QIXNbsNzLCHif1FGPXRiaVI1r3VvPFgdKoo
-	 OK9iF56M4geqQmx8wHFNK5Phqh8UhvZxUHYcRHuDw2Vs6HAAVlsFlMyvkE14qOJqJE
-	 nrgxHXpA3wpww==
-Message-ID: <3529c7ef-95e1-42b0-93c3-6ac4266c4b19@kernel.org>
-Date: Wed, 4 Sep 2024 15:20:01 +0200
+	s=arc-20240116; t=1725456029; c=relaxed/simple;
+	bh=geQ7oy+LfhaERG9upyCFDkW6co0pm3gp4kEVy7MK+fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tg4El4Xxvg8HZ1KrZ83a+ziTNuha4Ge8pVB/s1zoBk1U6S4J0A6+SJ0xZPv+wW/jpDv1igSuGZr95UnB/9qWbmDE0vE6VlU+wW+ywvSmqGwBb8ZkMqpwnrSeLhoB/63r4bU5RKCFtUeoJkDbn09D5XH0tgPdeX4Q2mGlfZwlR5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e4zasnJ+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725456024;
+	bh=geQ7oy+LfhaERG9upyCFDkW6co0pm3gp4kEVy7MK+fo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e4zasnJ+v9XIbYeuXL7nQ1Rfzc1B6yc4R0H0K1jFlTNs/JEsH9q5UXRLyIhe19bZo
+	 1JKMIjzQ9HTANub+3IoAMAoC46bBksPd0cvnxDUuWHESzRENWm4/uA7SEgYc644spA
+	 WraUmQVLJPmenbWAxVm8tOxMp0tiCDz6cHpO3yC9YVLNXHjJgj0WzPFkBBlo2ZEE59
+	 ubAR+kUF3yOe9smBZOlLpDBmoVhaHe9IvPRMh3Y05hibua//41bJRVRKiHWTVajMRc
+	 aucOHfe5wc/lxsHkNNrQmJtBpJHHb5JdUZEwG/ZR2X7H1ABQp4WJCx5XwT+xR8OZv/
+	 h5BAWJo1vbU2Q==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DAB7617E1091;
+	Wed,  4 Sep 2024 15:20:23 +0200 (CEST)
+Date: Wed, 4 Sep 2024 15:20:18 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>, =?UTF-8?B?QWRyacOhbg==?= Larumbe
+ <adrian.larumbe@collabora.com>
+Cc: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Mihail
+ Atanassov <mihail.atanassov@arm.com>, linux-kernel@vger.kernel.org, Liviu
+ Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, David Airlie
+ <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
+ <Xinhui.Pan@amd.com>, Shashank Sharma <shashank.sharma@amd.com>, Ketil
+ Johnsen <ketil.johnsen@arm.com>, Akash Goel <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
+Message-ID: <20240904152018.3de547f6@collabora.com>
+In-Reply-To: <298d0516-3b92-47e9-ad54-185de97561ee@arm.com>
+References: <20240828172605.19176-1-mihail.atanassov@arm.com>
+	<c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
+	<a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
+	<96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
+	<Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
+	<090ae980-a944-4c00-a26e-d95434414417@amd.com>
+	<80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
+	<20240904132308.7664902e@collabora.com>
+	<a5a53492-9651-403e-b613-91ef0b9e80b6@amd.com>
+	<298d0516-3b92-47e9-ad54-185de97561ee@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/21] dt-bindings: i2c: document support for SA8255p
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
- cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com,
- Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-16-quic_nkela@quicinc.com>
- <xtguaoof7iblrtd2idsa2k4ml64qkttgliyijbeqw5thkdcbx3@jnm75a4wmbqd>
- <06968d9d-0428-4fe8-8526-c91db3d9f0e7@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <06968d9d-0428-4fe8-8526-c91db3d9f0e7@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 04/09/2024 14:41, Nikunj Kela wrote:
-> 
-> On 9/3/2024 11:31 PM, Krzysztof Kozlowski wrote:
->> On Tue, Sep 03, 2024 at 03:02:34PM -0700, Nikunj Kela wrote:
->>> Add compatible representing i2c support on SA8255p.
->>>
->>> Clocks and interconnects are being configured in Firmware VM
->>> on SA8255p, therefore making them optional.
->>>
->>> CC: Praveen Talari <quic_ptalari@quicinc.com>
->>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->>> ---
->>>  .../bindings/i2c/qcom,i2c-geni-qcom.yaml      | 33 +++++++++++++++++--
->>>  1 file changed, 31 insertions(+), 2 deletions(-)
->>>
->> I don't know what to do with this patch. Using specific compatibles next
->> to generic compatible is just wrong, although mistake was probably
->> allowing generic compatible. The patch does not explain the differences
->> in interface which would explain why devices are not compatible.
-> 
-> I mentioned in the description that clocks and interconnects on this
-> platform are configured in Firmware VM(over SCMI using power and perf
-> domains) therefore this is not compatible with existing generic compatible.
++ Adrian, who has been looking at the shrinker stuff for Panthor
 
-It is not obvious to me. I doubt it is obvious to others. Commit msg
-does not say they are compatible and usually difference in
-clocks/interconnects is not reason of incompatibility. So why suddenly
-here we would understand it differently?
+On Wed, 4 Sep 2024 13:46:12 +0100
+Steven Price <steven.price@arm.com> wrote:
 
+> On 04/09/2024 12:34, Christian K=C3=B6nig wrote:
+> > Hi Boris,
+> >=20
+> > Am 04.09.24 um 13:23 schrieb Boris Brezillon: =20
+> >>>>>> Please read up here on why that stuff isn't allowed:
+> >>>>>> https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#ind=
+efinite-dma-fences   =20
+> >>>>> panthor doesn't yet have a shrinker, so all memory is pinned, which=
+ means
+> >>>>> memory management easy mode.   =20
+> >>>> Ok, that at least makes things work for the moment.   =20
+> >>> Ah, perhaps this should have been spelt out more clearly ;)
+> >>>
+> >>> The VM_BIND mechanism that's already in place jumps through some hoops
+> >>> to ensure that memory is preallocated when the memory operations are
+> >>> enqueued. So any memory required should have been allocated before any
+> >>> sync object is returned. We're aware of the issue with memory
+> >>> allocations on the signalling path and trying to ensure that we don't
+> >>> have that.
+> >>>
+> >>> I'm hoping that we don't need a shrinker which deals with (active) GPU
+> >>> memory with our design. =20
+> >> That's actually what we were planning to do: the panthor shrinker was
+> >> about to rely on fences attached to GEM objects to know if it can
+> >> reclaim the memory. This design relies on each job attaching its fence
+> >> to the GEM mapped to the VM at the time the job is submitted, such that
+> >> memory that's in-use or about-to-be-used doesn't vanish before the GPU
+> >> is done. =20
+>=20
+> How progressed is this shrinker?
 
-> 
-> 
->>  In the
->> same time my advice of separate binding was not followed, because maybe
->> these devices are compatible? But then it should be expressed...
-> 
-> Sorry, I missed that. You want me to use 'oneOf' expression with this
-> compatible?
+We don't have code yet. All we know is that we want to re-use Dmitry's
+generic GEM-SHMEM shrinker implementation [1], and adjust it to match
+the VM model, which means not tracking things at the BO granularity,
+but at the VM granularity. Actually it has to be an hybrid model, where
+shared BOs (those imported/exported) are tracked individually, while
+all private BOs are checked simultaneously (since they all share the VM
+resv object).
 
-I proposed separate binding file. But your commit msg suggested these
-are compatible. Lack of driver change is also proof of that.
+> It would be good to have an RFC so that
+> we can look to see how user submission could fit in with it.
 
-I don't want to keep discussing this because it does not lead to
-anywhere. We keep repeating the same.
+Unfortunately, we don't have that yet :-(. All we have is a rough idea
+of how things will work, which is basically how TTM reclaim works, but
+adapted to GEM.
 
-> 
-> 
->>
->> You have entire commit msg to explain what and why.
-> 
-> Will put more details in description.
-> 
-> 
->>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> index 9f66a3bb1f80..b477fae734b6 100644
->>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> @@ -15,6 +15,7 @@ properties:
->>>      enum:
->>>        - qcom,geni-i2c
->>>        - qcom,geni-i2c-master-hub
->>> +      - qcom,sa8255p-geni-i2c
->>>  
->>>    clocks:
->>>      minItems: 1
->>> @@ -69,8 +70,6 @@ properties:
->>>  required:
->>>    - compatible
->>>    - interrupts
->>> -  - clocks
->>> -  - clock-names
->>>    - reg
->>>  
->>>  allOf:
->>> @@ -81,6 +80,10 @@ allOf:
->>>            contains:
->>>              const: qcom,geni-i2c-master-hub
->>>      then:
->>> +      required:
->>> +        - clocks
->>> +        - clock-names
->>
->> So it is required here?
-> 
-> We are removing clocks from generic required list and enforcing rules
-> for all compatibles other than sa8255p.
-> 
-> 
->>> +
->>>        properties:
->>>          clocks:
->>>            minItems: 2
->>> @@ -100,7 +103,21 @@ allOf:
->>>            items:
->>>              - const: qup-core
->>>              - const: qup-config
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: qcom,sa8255p-geni-i2c
->>> +    then:
->>> +      required:
->>> +        - power-domains
->>> +
->> And possible here? I assume with the same clocks? The same for
->> interconnects - same values are valid?
-> 
-> I guess I need to put here the same description as in the cover letter
-> to make it more clear. We are not using clocks and interconnects in this
-> platform in Linux. Instead, sending request to Firmware VM over
-> SCMI(using power and perf protocols)
-> 
-> 
->>
->>>      else:
->>> +      required:
->>> +        - clocks
->>> +        - clock-names
->> And clocks are required again?
-> Explained above.
->>> +
->>>        properties:
->>>          clocks:
->>>            maxItems: 1
->> Eeee? So now all other variants have max 1 clock?
-> 
-> I will make if block for sa8255p up so else is not applied to rest of
-> the platforms.
-> 
-> 
->>
->> Nope, this wasn't ever tested on real DTS.
-> 
-> This is tested on SA8255p DTS and I ran DT schema check on SA8775p DT as
-> well.
+>=20
+> > Yeah and exactly that doesn't work any more when you are using user
+> > queues, because the kernel has no opportunity to attach a fence for each
+> > submission. =20
+>=20
+> User submission requires a cooperating user space[1]. So obviously user
+> space would need to ensure any BOs that it expects will be accessed to
+> be in some way pinned. Since the expectation of user space submission is
+> that we're reducing kernel involvement, I'd also expect these to be
+> fairly long-term pins.
+>=20
+> [1] Obviously with a timer to kill things from a malicious user space.
+>=20
+> The (closed) 'kbase' driver has a shrinker but is only used on a subset
+> of memory and it's up to user space to ensure that it keeps the relevant
+> parts pinned (or more specifically not marking them to be discarded if
+> there's memory pressure). Not that I think we should be taking it's
+> model as a reference here.
+>=20
+> >>> Memory which user space thinks the GPU might
+> >>> need should be pinned before the GPU work is submitted. APIs which
+> >>> require any form of 'paging in' of data would need to be implemented =
+by
+> >>> the GPU work completing and being resubmitted by user space after the
+> >>> memory changes (i.e. there could be a DMA fence pending on the GPU wo=
+rk). =20
+> >> Hard pinning memory could work (ioctl() around gem_pin/unpin()), but
+> >> that means we can't really transparently swap out GPU memory, or we
+> >> have to constantly pin/unpin around each job, which means even more
+> >> ioctl()s than we have now. Another option would be to add the XGS fence
+> >> to the BOs attached to the VM, assuming it's created before the job
+> >> submission itself, but you're no longer reducing the number of user <->
+> >> kernel round trips if you do that, because you now have to create an
+> >> XSG job for each submission, so you basically get back to one ioctl()
+> >> per submission. =20
+>=20
+> As you say the granularity of pinning has to be fairly coarse for user
+> space submission to make sense. My assumption (could be wildly wrong)
+> was that most memory would be pinned whenever a context is rendering.
 
-You just affected all the DTS everywhere. It's your task to check all
-DTS everywhere. Not ours.
+The granularity of pinning (in term of which regions are pinned) is not
+really the problem, we can just assume anything that's mapped to the VM
+will be used by the GPU (which is what we're planning to do for kernel
+submission BTW). The problem is making the timeslice during
+which VM memory is considered unreclaimable as short as possible, such
+that the system can reclaim memory under mem pressure. Ideally, you want
+to pin memory as long as you have jobs queued/running, and allow for
+reclaim when the GPU context is idle.
 
-Best regards,
-Krzysztof
+We might be able to involve the panthor_scheduler for usermode queues,
+such that a context that's eligible for scheduling first gets its VM
+mappings pinned (fence creation + assignment to the VM/BO resvs), and
+things get reclaimable again when the group is evicted from the CSG
+slot. That implies evicting idle groups more aggressively than we do
+know, but there's probably a way around it.
 
+>=20
+> > For AMDGPU we are currently working on the following solution with
+> > memory management and user queues:
+> >=20
+> > 1. User queues are created through an kernel IOCTL, submissions work by
+> > writing into a ring buffer and ringing a doorbell.
+> >=20
+> > 2. Each queue can request the kernel to create fences for the currently
+> > pushed work for a queues which can then be attached to BOs, syncobjs,
+> > syncfiles etc...
+> >=20
+> > 3. Additional to that we have and eviction/preemption fence attached to
+> > all BOs, page tables, whatever resources we need.
+> >=20
+> > 4. When this eviction fences are requested to signal they first wait for
+> > all submission fences and then suspend the user queues and block
+> > creating new submission fences until the queues are restarted again.
+> >=20
+> > This way you can still do your memory management inside the kernel (e.g.
+> > move BOs from local to system memory) or even completely suspend and
+> > resume applications without their interaction, but as Sima said it is
+> > just horrible complicated to get right.
+> >=20
+> > We have been working on this for like two years now and it still could
+> > be that we missed something since it is not in production testing yet. =
+=20
+>=20
+> I'm not entirely sure I follow how this doesn't create a dependency
+> cycle. From your description it sounds like you create a fence from the
+> user space queue which is then used to prevent eviction of the BOs needed.
+>=20
+> So to me it sounds like:
+>=20
+> 1. Attach fence to BOs to prevent eviction.
+>=20
+> 2. User space submits work to the ring buffer, rings doorbell.
+>=20
+> 3. Call into the kernel to create the fence for step 1.
+>=20
+> Which is obviously broken. What am I missing?
+>=20
+> One other thing to note is that Mali doesn't have local memory - so the
+> only benefit of unpinning is if we want to swap to disk (or zram etc).
+
+Which would be good to have, IMHO. If we don't do the implicit swapout
+based on some sort of least-recently-used-VM, we have to rely on
+userspace freeing its buffer (or flagging them reclaimable) as soon as
+they are no longer used by the GPU.
+
+[1]https://patchwork.kernel.org/project/dri-devel/cover/20240105184624.5086=
+03-1-dmitry.osipenko@collabora.com/
 
