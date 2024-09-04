@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-315253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9478F96BFDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:17:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C6E96BFFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DBEB27999
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD4A1F21499
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CB01DC048;
-	Wed,  4 Sep 2024 14:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEE31E00A7;
+	Wed,  4 Sep 2024 14:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ltEJ6AK0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="LyC6MZ9H"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9724A1DB53F;
-	Wed,  4 Sep 2024 14:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD091DB954
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459426; cv=none; b=hnqdskidRVaqFC2WgsXiDL4bcrg50ERngI8wEE0JpEWvxx8uGWiTx8hX26SzkeWI6vT/VD2dkDj5q4GPXE+wcSCSTWXImGFYvvc86JTfyuL5by1PqnDI+3S3DoOq4Is284np0lBQlQO8YAKhEH/7JavsYkLHd+Cr8+lRL04lBjc=
+	t=1725459455; cv=none; b=iK9DRcny6VxuKnn6r3zro4VCM2n5HwHt95NhjiX7j67APypv2gZuI2ooqEHUbbPcxbwHlzTrMwLm6ptOqcjd2E2Y1yP4QZ9tYiOjBjybHX4BGxicbBqFFSGoqUgML+jtM6Me4qlYfseZyDCFccRvhiRTEGOx876LlOlbu680ygM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459426; c=relaxed/simple;
-	bh=PxUHbQeEumoCJfWHHMr56fEbNumjfbwbEqTpDJ0QTYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOTXwka+syQ+/nELKbL0L6mIG5QxUCuJBvCZi5PijHBdELNKiRIdOIlJVT+8rNbpVAWdXJ2QWYGNNaM34G949HpBJrUva+91DnuiIgsbzTDfTBUniiWMIW/Qzi7wB1HbJDpJAsVMJIB8SY4jBM3Yhe9m0aj+VME9CnTSEW1uR14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ltEJ6AK0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D7BC4CEC2;
-	Wed,  4 Sep 2024 14:17:04 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ltEJ6AK0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725459422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0gX4iKFO2d6giGBiJdj/U8E7BIuEXsYx2gfWhptxDWU=;
-	b=ltEJ6AK0bHrwJ9RXlZ516PTeVUtSiUL7yGEtQLnYEjyD1A1U1r0m+mgYrevZkKv2SDRcnb
-	YkcfwwvWKQHO67NklnaO03mC/TAAJUP+XqDWQ00JUD/4WMIVCqL7ugAMEJq23lFeUZtWsB
-	GaTlLQGomeGWPBvK1KOIbdDK5n9Hp3Y=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 19554c25 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 4 Sep 2024 14:17:02 +0000 (UTC)
-Date: Wed, 4 Sep 2024 16:16:54 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v5 0/5] Wire up getrandom() vDSO implementation on powerpc
-Message-ID: <Zthr1nB_RJ56YD3O@zx2c4.com>
-References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1725459455; c=relaxed/simple;
+	bh=WIm84H2mmnsIK6IhMzZ+R1nRWNpIDii8yeJ1IOe+8s8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxsUS9uz+OA8jc929D+l/qSujPNmWSbddFDBxvvZBaedQXm2QRMkG1tHkQVa5zWnblScBtI8cothHg0hwYKhFI/9pIIAVmAvr9276jnWnJInH12VgzXCbGd3KCB3018rlJI2wTujEbmxr7zYcqC6J7m9dQGMlZ3nhEoysOyvFWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=LyC6MZ9H; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id ldRLsyVzdqvuolqp3sQEfX; Wed, 04 Sep 2024 14:17:26 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id lqp0ss00YX5Erlqp1sC0cf; Wed, 04 Sep 2024 14:17:24 +0000
+X-Authority-Analysis: v=2.4 cv=K+QkHTWI c=1 sm=1 tr=0 ts=66d86bf4
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
+ a=HSDmG33uGC2uzMr5-wEA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
+ a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u3Lk9sQSz+EbH5buYhkOPLBvuDmn7/9B/u1wslum9Xo=; b=LyC6MZ9HIBeeUjoxWaMQaJ/s2A
+	Rs33Marh1EyfTCuYxcNDjhXsCov2NlkItKJLbyAGDWD+XlCQGSWoOT70hhEPfENiBTWReCt1VwEsv
+	idot4CKai9OaD9wzYZdzwcpFTqXsQAQNAONYIwgKJ7hl7MTHpPvYbzti9siDc9oFNvQ4INZIL5DJb
+	9XLULsPYfcbhITbSYMUkuNOas+kiGbUuiaQiJ8vk4uTaUH8ZrOZD8dl9U81f++goSdUwQrdkJ7J1m
+	euOR+BFjjWBwM9K2zit4d8KFK912LZJEBIVi3q7phz7lsTsEEwT2nQS9G9JL5hsh6nc0Km1nSkPCh
+	fv37CPoQ==;
+Received: from [122.165.245.213] (port=55132 helo=[192.168.1.106])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1slqoy-003hhL-2T;
+	Wed, 04 Sep 2024 19:47:20 +0530
+Message-ID: <e86edfae-cdc8-475a-97fc-dab69a023761@linumiz.com>
+Date: Wed, 4 Sep 2024 19:47:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] dt-bindings: rtc: microcrystal,rv3028: add
+ clock-cells property
+To: Rob Herring <robh@kernel.org>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+References: <20240903105245.715899-1-karthikeyan@linumiz.com>
+ <20240903105245.715899-6-karthikeyan@linumiz.com>
+ <20240903144542.GA985263-robh@kernel.org>
+Content-Language: en-US
+From: karthikeyan <karthikeyan@linumiz.com>
+In-Reply-To: <20240903144542.GA985263-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1slqoy-003hhL-2T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:55132
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 2
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKXALDF0If+wydPygc92qq/7mH//MdWhSK2bA4pSFlgm3sH6Kp11RyQFr9+PG54B495w8DRDb6BWG5EesHF6t6r+z9g4BaK7kqqgaecneF7uOz0SzH0/
+ K5zvolwPWtQnDDWy4WcjT3DYc/z4fI+FifATen7K2vShjcQKxszv2nU3dttTAD0vmbfKjX3nnm9uy45XypCKJGAfeC7rXizCU6kso+y8xKBWDvVszUVJdwmP
 
-Hi Christophe, Michael,
-
-On Mon, Sep 02, 2024 at 09:17:17PM +0200, Christophe Leroy wrote:
-> This series wires up getrandom() vDSO implementation on powerpc.
+On 9/3/24 20:15, Rob Herring wrote:
+> On Tue, Sep 03, 2024 at 04:22:42PM +0530, Karthikeyan Krishnasamy wrote:
+>> consume clkout from rv3028 rtc which is able to provide
+>> different clock frequency upon configuration
 > 
-> Tested on PPC32 on real hardware.
-> Tested on PPC64 (both BE and LE) on QEMU:
+> Please write complete sentences.
 > 
-> Performance on powerpc 885:
-> 	~# ./vdso_test_getrandom bench-single
-> 	   vdso: 25000000 times in 62.938002291 seconds
-> 	   libc: 25000000 times in 535.581916866 seconds
-> 	syscall: 25000000 times in 531.525042806 seconds
+> The subject is wrong. There is no such property 'clock-cells'.
+I will updated in next version. Thanks.
 > 
-> Performance on powerpc 8321:
-> 	~# ./vdso_test_getrandom bench-single
-> 	   vdso: 25000000 times in 16.899318858 seconds
-> 	   libc: 25000000 times in 131.050596522 seconds
-> 	syscall: 25000000 times in 129.794790389 seconds
-> 
-> Performance on QEMU pseries:
-> 	~ # ./vdso_test_getrandom bench-single
-> 	   vdso: 25000000 times in 4.977777162 seconds
-> 	   libc: 25000000 times in 75.516749981 seconds
-> 	syscall: 25000000 times in 86.842242014 seconds
+>>
+>> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+>> ---
+>>
+>> Notes:
+>>      v2:
+>>      - fix commit message subject
+>>
+>>   Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+>> index 5ade5dfad048..cda8ad7c1203 100644
+>> --- a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+>> +++ b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+>> @@ -22,6 +22,9 @@ properties:
+>>     interrupts:
+>>       maxItems: 1
+>>   
+>> +  "#clock-cells":
+>> +    const: 0
+>> +
+>>     trickle-resistor-ohms:
+>>       enum:
+>>         - 3000
+>> -- 
+>> 2.39.2
+>>
 
-Looking good. I have no remaining nits on this patchset; it looks good
-to me.
-
-A review from Michael would be nice though (in addition to the necessary
-"Ack" I need to commit this to my tree), because there are a lot of PPC
-particulars that I don't know enough about to review properly. For
-example, you use -ffixed-r30 on PPC64. I'm sure there's a good reason
-for this, but I don't know enough to assess it. And cvdso_call I have no
-idea what's going on. Etc.
-
-But anyway, awesome work, and I look forward to the final stretches.
-
-Jason
+Best regards,
+Karthikeyan
 
