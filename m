@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-314450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E06B96B37A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D2596B37C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B051284E4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543FA284221
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE47E16BE15;
-	Wed,  4 Sep 2024 07:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746517279E;
+	Wed,  4 Sep 2024 07:51:17 +0000 (UTC)
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEDF155C96;
-	Wed,  4 Sep 2024 07:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04A61482FE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436268; cv=none; b=F4r2ouTk1QusKNucHqyuJjMF1h3S0JrSgouFRMThELWyh9EyFNY0xu/TpOEVnA0z0QbWxghGUpPdXJDrpwbo1XmPe4Z431TxULi1bMhPd1b4vtWcZ8SF6PVOf0MzH7t+x4hvkweTAG3uQxXKKhOKA0OGvOGkzOj5hDWULN2nuAw=
+	t=1725436277; cv=none; b=nsgzO8Bo56RtQEA+/1abz8rhJKe/EOC78nJcIkNKXxMXKgwQpm/ONdOZ2SCV1KCBRE1KCZ/zw9tNE5hPG+/ygqvbu6vwuxDsCZ8E8JyyeGWaXcEQ9mOUTN+XQlWioLBwBCNiLtdgGm6wNbqVzzfJOKnOi5L4t758S/bCxRKFGJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436268; c=relaxed/simple;
-	bh=VbH+uuzHIKkUDK9nfnyaqfHG1YqgtauHPGQsXtiUDDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KYu2iUZH7AmCfLGdepGO3a0dC4688flXDFzRUBKbIIdedq1yvAH/bKc/qgfHYVb0zXLbHKnsLA+RA9fTLrIUye1XXUyUWpDxo7nqTK76OXaQ/R/faQFLPiXMRHNSmSgP0M9kvh+JosXBhLAee3cRvW1vIRKQGTo+7dfB74Unst8=
+	s=arc-20240116; t=1725436277; c=relaxed/simple;
+	bh=rryD/qsb8DpQ62iy4z1sC76lv2cKkZWtVUpI7BBhplw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKOW/XbnBZ4L/uOxTh8MFdRdtMuM7TV8gQXkHGR0CfLwc96Zlokxiyj76HwInngoP0HsANywFtRsJhfiNpkTTlNTUbON/4cTy9MTf/xOt0EU958vLXYbe0DB0fpJfJBrY51pW3BSGBoPJmSgGoADiyZmVExBuOrQMgIFRd/RaGg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzF6T6FRvz9sSC;
-	Wed,  4 Sep 2024 09:50:57 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4WzF6p01Lkz9sSK;
+	Wed,  4 Sep 2024 09:51:14 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id MyT5AqoNw1ah; Wed,  4 Sep 2024 09:50:57 +0200 (CEST)
+	with ESMTP id qYpIcXmvmtsx; Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzF6T53SRz9sS7;
-	Wed,  4 Sep 2024 09:50:57 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzF6n6Qj6z9sSH;
+	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9D7618B77A;
-	Wed,  4 Sep 2024 09:50:57 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD9C48B77A;
+	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id XVy8Rvp824KA; Wed,  4 Sep 2024 09:50:57 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EC5188B778;
-	Wed,  4 Sep 2024 09:50:56 +0200 (CEST)
-Message-ID: <64e74f4d-948d-442e-9810-69907915401c@csgroup.eu>
-Date: Wed, 4 Sep 2024 09:50:56 +0200
+	with ESMTP id kKaLfropVvtH; Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.246])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6886D8B778;
+	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH] soc: fsl: cpm1: qmc: Fix dependency on fsl_soc.h
+Date: Wed,  4 Sep 2024 09:51:09 +0200
+Message-ID: <fcca0369d0bcd527aa77bccdfc0894faa029cead.1725431771.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: make copy_to_kernel_nofault() not fault on user
- addresses
-To: Omar Sandoval <osandov@osandov.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Benjamin Gray <bgray@linux.ibm.com>,
- "Christopher M. Riedl" <cmr@bluescreens.de>
-Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-um@lists.infradead.org, kernel-team@fb.com
-References: <cover.1725223574.git.osandov@fb.com>
- <f0e171cbae576758d9387cee374dd65088e75b07.1725223574.git.osandov@fb.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <f0e171cbae576758d9387cee374dd65088e75b07.1725223574.git.osandov@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725436270; l=1853; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=rryD/qsb8DpQ62iy4z1sC76lv2cKkZWtVUpI7BBhplw=; b=MoREKiPaV3SOEi6ZoLBSiakHPY29fDl3VZo5OxZ7yS4wsedLZM56lTJcG7q0NEx3Y/32lEuWl rxHnulqNuMsAr43O7Yx4A8IYxOOiajrhd8br9uf6JzrT0P7k2RsPM/X
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Hi,
+QMC driver requires fsl_soc.h to use function get_immrbase().
+This header is provided by powerpc architecture and the functions
+it declares are defined only when FSL_SOC is selected.
 
-Le 02/09/2024 à 07:31, Omar Sandoval a écrit :
-> [Vous ne recevez pas souvent de courriers de osandov@osandov.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> From: Omar Sandoval <osandov@fb.com>
-> 
-> I found that on x86, copy_to_kernel_nofault() still faults on addresses
-> outside of the kernel address range (including NULL):
-> 
->    # echo ttyS0 > /sys/module/kgdboc/parameters/kgdboc
->    # echo g > /proc/sysrq-trigger
->    ...
->    [15]kdb> mm 0 1234
->    [   94.652476] BUG: kernel NULL pointer dereference, address: 0000000000000000
-...
-> 
-> Note that copy_to_kernel_nofault() uses pagefault_disable(), but it
-> still faults. This is because with Supervisor Mode Access Prevention
-> (SMAP) enabled, do_user_addr_fault() Oopses on a fault for a user
-> address from kernel space _before_ checking faulthandler_disabled().
-> 
-> copy_from_kernel_nofault() avoids this by checking that the address is
-> in the kernel before doing the actual memory access. Do the same in
-> copy_to_kernel_nofault() so that we get an error as expected:
-> 
->    # echo ttyS0 > /sys/module/kgdboc/parameters/kgdboc
->    # echo g > /proc/sysrq-trigger
->    ...
->    [17]kdb> mm 0 1234
->    kdb_putarea_size: Bad address 0x0
->    diag: -21: Invalid address
-> 
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-> ---
->   mm/maccess.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/maccess.c b/mm/maccess.c
-> index 72e9c03ea37f..d67dee51a1cc 100644
-> --- a/mm/maccess.c
-> +++ b/mm/maccess.c
-> @@ -61,6 +61,9 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
->          if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
->                  align = (unsigned long)dst | (unsigned long)src;
-> 
-> +       if (!copy_kernel_nofault_allowed(dst, size))
-> +               return -ERANGE;
-> +
->          pagefault_disable();
->          if (!(align & 7))
->                  copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
-> --
-> 2.46.0
-> 
+Today the dependency is the following:
 
-This patch leads to the following errors on ppc64le_defconfig:
+	depends on CPM1 || QUICC_ENGINE || \
+		   (FSL_SOC && (CPM || QUICC_ENGINE) && COMPILE_TEST)
 
-[    2.423930][    T1] Running code patching self-tests ...
-[    2.428912][    T1] code-patching: test failed at line 395
-[    2.429085][    T1] code-patching: test failed at line 398
-[    2.429561][    T1] code-patching: test failed at line 432
-[    2.429679][    T1] code-patching: test failed at line 435
+This dependency tentatively ensure that FSL_SOC is there when doing a
+COMPILE_TEST.
 
-This seems to be linked to commit c28c15b6d28a ("powerpc/code-patching: 
-Use temporary mm for Radix MMU"), copy_from_kernel_nofault_allowed() 
-returns false for the patching area.
+CPM1 is only selected by PPC_8xx and cannot be selected manually.
+CPM1 selects FSL_SOC
 
-Christophe
+QUICC_ENGINE on the other hand can be selected by ARM or ARM64 which
+doesn't select FSL_SOC. QUICC_ENGINE can also be selected with just
+COMPILE_TEST.
+
+It is therefore possible to end up with CPM_QMC selected
+without FSL_SOC.
+
+So fix it by making it depend on FSL_SOC at all time.
+
+The rest of the above dependency is the same as the one for CPM_TSA on
+which CPM_QMC also depends, so it can go away, leaving only a simple
+dependency on FSL_SOC.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/lkml/20240904104859.020fe3a9@canb.auug.org.au/
+Fixes: 8655b76b7004 ("soc: fsl: cpm1: qmc: Handle QUICC Engine (QE) soft-qmc firmware")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ drivers/soc/fsl/qe/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
+index 5e3c996eb19e..eb03f42ab978 100644
+--- a/drivers/soc/fsl/qe/Kconfig
++++ b/drivers/soc/fsl/qe/Kconfig
+@@ -48,8 +48,7 @@ config CPM_TSA
+ config CPM_QMC
+ 	tristate "CPM/QE QMC support"
+ 	depends on OF && HAS_IOMEM
+-	depends on CPM1 || QUICC_ENGINE || \
+-		   (FSL_SOC && (CPM || QUICC_ENGINE) && COMPILE_TEST)
++	depends on FSL_SOC
+ 	depends on CPM_TSA
+ 	help
+ 	  Freescale CPM/QE QUICC Multichannel Controller
+-- 
+2.44.0
+
 
