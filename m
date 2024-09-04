@@ -1,96 +1,130 @@
-Return-Path: <linux-kernel+bounces-315224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3668796BF7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:02:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BC996BF88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D908F1F2452F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:02:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFAC5B2C4C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7B61DA2F7;
-	Wed,  4 Sep 2024 14:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X5Z93DQQ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A01E4400
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A81DB528;
+	Wed,  4 Sep 2024 14:02:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302984400;
+	Wed,  4 Sep 2024 14:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458541; cv=none; b=GA/27SQOqcscTRgj4TZYOmDoDJGpiaTyZRHPXKM8nD+ORmnrKe6k2Ruq+lG5tUhs0MIMqYLqFitjRNgWgVqnP+rShGagoJuI1Aj6hfYcS3Arcmm2EHtH7v8y4GqeCiOf4IZYCnZ4TcH+ToGn+/n1IXMPNNZxwKKNRmNDGXyTtTM=
+	t=1725458551; cv=none; b=udhNPaO87TwMDqmsHgEpfOuYn6tsAHxmJDnNy/zeMd/ioRqr1Oc3kedIre51e8AG6aMMCCYBvOxNNXYDFcLA+CubjwyMc4bHywFc0FtveR2pferdj+sNh7pSKxSr4BAPIu3gDBmM+FTeqhFETlWB1ECgYWCf5arY3Safes6w8zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458541; c=relaxed/simple;
-	bh=UhwfhjmEIwfyrOt+eVdm6YsUWpdK6zDRlyoJSoqeNTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJnt55oXiiMh0wVbH4CTRN7Bz9S3Xh3zJGWuP0zlNYn7TlYMrOJYHzMkjmaA1ujE50Nvsgu19VChGIrDGSkUdRM8Eykp7AqpTv+JC3oSfkpMNbV6W1ECenk3lia365kEw3B9lnMMPr4wqOh0/Xzmg9WYY7gzwKPWBmewVuGXL7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X5Z93DQQ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CZEi/jgdlEuh+YoqzZDjVAlHDyia1w9HPAhShC3zubc=; b=X5Z93DQQ9zeaVNGXoK+9OanCIx
-	lr2iSWQLvrImTdO59nExoAAfCbAIUJffyC3tzyQzz15lhkw1vvI3PRWG7JVQ2NGPIUzx7eOLYVJ7V
-	xu8b6utm7I+iE9H1V+kFH9Fl//zN/BMrxvPcVjf2C9/QK9yxXIzlq5UVdCQ4lD322ekrMYnJDXIAC
-	sE8eKjxhQV3dN/yk01qQ6YNJ5/faVexv7MoBR64o9xeGIVBSOvDxTd2l9V1KrULsvsge+DRgFVOMR
-	JYya7LKG2aB8Q/B4dkxBldk7u4ImLCs8AqBETpZ3Zga/9vu2mxWVRsMBoV8FjdCrmGS4UwB4IwjnJ
-	FyYgZYDA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1slqaJ-00000000EgQ-1rpv;
-	Wed, 04 Sep 2024 14:02:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7F5BD300642; Wed,  4 Sep 2024 16:02:10 +0200 (CEST)
-Date: Wed, 4 Sep 2024 16:02:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Phil Auld <pauld@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] sched/isolation: Add HK_FLAG_SCHED to nohz_full
-Message-ID: <20240904140210.GK4723@noisy.programming.kicks-ass.net>
-References: <20240818234520.90186-1-longman@redhat.com>
- <20240818234520.90186-2-longman@redhat.com>
- <ZtcK3aF_d3BUhiVz@localhost.localdomain>
- <7fa3dbd5-7c2e-4614-a5f4-258546cb090b@redhat.com>
- <ZteAfUXZd1TgIwiL@pavilion.home>
- <4822d111-b02d-469a-a457-46392c35021f@redhat.com>
- <ZthWKgK9B_AUqSs1@localhost.localdomain>
- <20240904130445.GI4723@noisy.programming.kicks-ass.net>
- <20240904134427.GA136544@pauld.westford.csb>
+	s=arc-20240116; t=1725458551; c=relaxed/simple;
+	bh=oUM29cWZRC0F6zWB1ab9D18QDlLiwlDzs5Y+Y1QxGw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRduVIppFuXeThDtNWaIH+Vjz9FMmgNxlsnR8rYzN9mDamP1LPbNkp46hdlGZ3c0GqutZq8LEMqi5QcUp5Ke3Duj2oNk+javtcDenj2yIWufKxi36DWU+OlYskpNnyVtZF48ItMuSV39bfc8pAZAPEKo1UsV5xag/voUm0p+zp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A33FFEC;
+	Wed,  4 Sep 2024 07:02:54 -0700 (PDT)
+Received: from [10.1.33.19] (PF4Q20KV.arm.com [10.1.33.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CD603F73F;
+	Wed,  4 Sep 2024 07:02:26 -0700 (PDT)
+Message-ID: <f3d81afa-fd67-4750-86e9-dfea1e47e002@arm.com>
+Date: Wed, 4 Sep 2024 15:02:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904134427.GA136544@pauld.westford.csb>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
+To: Will Deacon <will@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
+References: <20240827164417.3309560-1-leo.yan@arm.com>
+ <20240827164417.3309560-2-leo.yan@arm.com>
+ <20240830103834.GA8000@willie-the-truck>
+ <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
+ <20240830130930.GA8615@willie-the-truck>
+ <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
+ <20240904123544.GG13550@willie-the-truck>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240904123544.GG13550@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 09:44:27AM -0400, Phil Auld wrote:
+On 9/4/2024 1:35 PM, Will Deacon wrote:
 
-> > You can create single CPU partitions using cpusets dynamically.
-> >
+>>> Why not just decode a data source packet when you see it? i.e. assume LDS
+>>> is always set.
+>>
+>> The current tool works this way to directly decode a data source packet.
+>>
+>> However, as Arm ARM section D17.2.4 "Data Source packet" describes, the loaded
+>> data source is implementation dependent, the data source payload format also
+>> is implementation defined.
+>>
+>> We are halfway here in using the LDS bit to determine if the data source is
+>> implemented. However, we lack information on the data source format
+>> implementation. As a first step, we can use the LDS bit for sanity checking in
+>> the tool to detect any potential silicon implementation issues. Once we have
+>> an architectural definition for the data source format, we can extend the tool
+>> accordingly.
 > 
-> This is somewhat new though...   Although you could turn off load balancing with
-> groups v1, in v2 you could not. 
+> I don't think we shyould expose UAPI from the driver to detect potential
+> hardware bugs. Let's add it when we know it's useful for something instead.
 
-I can't remember, but I think I stalled cpuset-v2 until this was
-adressed -- that is, AFAIR any v2 can actually do this too. You create
-many 1 cpu partitions. It is more cumbersome that v1, but it is very
-much doable.
+I understand your concern.
 
+>>>> Another point is how to decide the data source packet format. Now we maintain
+>>>> a CPU list for tracking CPU variants which support data source trace. For long
+>>>> term, I would like the tool can based on hardware feature (e.g. a ID register
+>>>> in Arm SPE) to decide the data source format, so far it is absent. This is why
+>>>> LDS bit + CPU list is a more reliable way. See some discussion [1].
+>>>
+>>> Huh. Why would you have a CPU in the list if it _doesn't_ have LDS?
+>>
+>> Yeah, this is what we don't expect - we can verify the implementation based on
+>> LDS bit.
+>>
+>> E.g. if users ask data source related questions, we can use LDS bit (saved in
+>> the perf metadata) to confirm the feature has been implemented in a silicon.
+> 
+> What exactly do you mean by this?
 
+Sometimes, users might ask if the data source is supported in Arm SPE. With exposing
+the LDS bit, it would be helpful for us to check if the feature is supported. For
+example, when a user uses the perf tool to record Arm SPE data, the LDS bit is stored
+in the perf metadata, and we can check its value during post-analysis.
+ 
+> As far as I can tell:
+> 
+>   - Data source packets are either present or absent depending on LDS
+>   - You need CPU-specific information to decode them it they are present
+> 
+> So it's neither necessary nor sufficient to expose the LDS bit to
+> userspace.
+
+We can live without exposing LDS bit currently. I will drop this change in next spin.
+
+Just head up, later I think we might still need to expose capacity bits (or the
+PMSIDR_EL1 register) for new features. As you said, we can do it when it is necessary.
+
+Thanks for suggestion!
+
+Leo 
 
