@@ -1,112 +1,215 @@
-Return-Path: <linux-kernel+bounces-313986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A6096AD50
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:28:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00B896AD53
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB7228423F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B0E286275
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A39BA50;
-	Wed,  4 Sep 2024 00:28:07 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BD92581;
+	Wed,  4 Sep 2024 00:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="I1VurvpW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T1yfThjZ"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2F1B66C;
-	Wed,  4 Sep 2024 00:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555AA391;
+	Wed,  4 Sep 2024 00:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725409686; cv=none; b=XP4XNsGnuIAtazMt1aTX2BvpYv5WAzIpLAA7trAAJzTWlgRG2KMtkyhOe8tgA4G2dGjXhlPe7yXiVpRRpKs+e7ljOO/9/ITesUBlVcF51Kpt6Ntr87u4pMqygXz6tIaRDkfw4gIMWDfe3MvvonOPeBGoVTZ2udcS3ldE0B6sYXY=
+	t=1725409830; cv=none; b=HnZImP0j3rapGtPASHiaZwIaL4WYLzLTCfhGBSvGKECbc0pj3kQVDXCJaJeKFzBwTniuzCrj+Vdbl74Eh6Q35O6BFhHpVOS1/CHf/8ArTqWHhDCmilQrFDgJAE5ZClEngwpOvNg/eX/FH6uccbIKKW+5i+4F7DgBAzumn7mOGi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725409686; c=relaxed/simple;
-	bh=gy4hAKBYfvoYkNXZdcCiPvChAhmVEjnxfrdfroixmG0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J2lZuJ/aTJesz2uqFxkZY8M5vgMBbbblDQEgzncZanMd9nEjM3U3fTy1raaLn6zTut+yB398N/UL0ux5fQKayS6/JqiZn25h0iD/KL8SLispGDIBuEzKGMx82bxTZOLskOFj/pVT6MhbylS2HlyRVyub6mOvXUscTucMOEI0Vy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 04 Sep 2024 00:27:25 +0000
-Subject: [PATCH 3/3] riscv: dts: spacemit: add gpio support for K1 SoC
+	s=arc-20240116; t=1725409830; c=relaxed/simple;
+	bh=hGmo0WNuS757TdfmGfpzHV8y4j/AC/7g1GSfO+Prb9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhT64KTMe//qCIk92zXpqcCel3gb2MVOZXdqEiFe1+YT9LGzKHBEeGqApoKkVMXIC6gSXB3tFAtuONsNWkt+eQ7KAVBRigRKsp5hXDrHBVQRTyEp4HtBHafq8KMzvNpB2LzW1qmkIy0Gd9a5ywu7++dHa3uXY0iNIW5mIGvsTqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=I1VurvpW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T1yfThjZ; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4EAC9138023D;
+	Tue,  3 Sep 2024 20:30:26 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Tue, 03 Sep 2024 20:30:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1725409826; x=
+	1725496226; bh=8piwn31ZqXZogp3zBpb74/a7XmbRS2i2JWJumbJdJWQ=; b=I
+	1VurvpWYC+8KV1TDmLQuOYnHL4meZFlxOVgThutq38fHvf5RGLGVu6rYXQqLmfAp
+	TkYpf3WBSdxoseD1SvAZN5iYcp5013GNN7/VOlUwQ5vHjzgMHjHIPg6XM6Y0WhSy
+	DKzwHHMRIzzHMcN3dlAXUzJatqTN2OhzEcXccaknsJp0q0djAsRV/YaMXOH/LXyj
+	MNyfXAZ2KGahnFOsHTMH9fWqC3YsAjWPvSH8OZZWpCBoLpkDilonGCOQHCVY2nvL
+	ki+fTELyDIRVttbbZDnD8CfxDFw3eXP9hdynNo13X7B5MuW0mAiTFQrF95AeL/dU
+	sLUv/3HPEuWGMRbvWiU8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725409826; x=1725496226; bh=8piwn31ZqXZogp3zBpb74/a7XmbR
+	S2i2JWJumbJdJWQ=; b=T1yfThjZGXyHN4Jd7MY/d3NOaBItLSxrp0CUZIdQjNLb
+	Lfyl9VChWswyBuqTXmSQUcYjYCaHO44YJmdjTT2gsRyWz+jaQMjDjH5EkQcwwEiH
+	/3BIhGiPbfVL2wrdvhD3zFsAqNzicg8gJVZc+vwxSx8SQ2EgFO1FY2ZJJ7TjRCRu
+	nZZVqYNSqSn4cZl+ftwRJ2EfmnJRiB03Ghnrp2CAgOFxZt2LNoAXNVlVIZfvGaiY
+	0Px08/Q0UfM1gdiJKm6U7Q7Uxz3gUv4YX6ntPFtIWJhrsw1Rf7MXxYYEooqnzkNE
+	YyXXJR6RLsdz4U0ut9w8w08vBlqoLOgvlzM6mSROLQ==
+X-ME-Sender: <xms:IqrXZlUdiDpTUveRLF9mh2GRNNtnlLuwueE08ylJNqz8gT6FRKPbkw>
+    <xme:IqrXZln3oD7lD8KJmZITrk4HGKc7XTIFihmSUx9zdxfQL_Aog1DhRC-mXl6VRSWeh
+    pQgChnWC_xCaSl1OMo>
+X-ME-Received: <xmr:IqrXZhafL3Q7kNAxUg-uQTebtUiQLg9tWM7zkSvUjhFJa02z95kEcRW7SNXDoAKm6XZjrHWjhNtpsxNiG90qg-hrR-stE2Ztulc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehiedgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepueeiueevleefvedttefg
+    vdeutdekveduheevffdvhfeluefhgfdtgeeutedtudejnecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
+    hjphdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    rghprghisheslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhsohhunhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvg
+    gumhhunhgurdhrrghilhgvsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehl
+    ihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnh
+    gvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:IqrXZoXsX0L8g1PNLT2QNjUsW0zpGxJFodkWEaf9p0cg6GPPvBPPyg>
+    <xmx:IqrXZvn2Ng5_MoIacaUNfkwNcK6MVp-Tq34E8U5sR7xw_lL3E66-TQ>
+    <xmx:IqrXZld6vYstL7XtgWt07gZ9m7AClS9WELDBL9vCPKeN7aTxH3tbnQ>
+    <xmx:IqrXZpHSaGiDtV-ETuyyO3FIodqpGsFoLLlbpW0vSSkgvNqHeVV8gQ>
+    <xmx:IqrXZtaBu8Lvwx87zWwNSsufpaLH8icR7jrWiTyybME-P70PC5mr5eNT>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Sep 2024 20:30:24 -0400 (EDT)
+Date: Wed, 4 Sep 2024 09:30:22 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Allen Pais <apais@linux.microsoft.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-sound@vger.kernel.org, edmund.raile@protonmail.com,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [RFT][PATCH 0/5] firewire: use sleepable workqueue to handle
+ 1394 OHCI IT/IR context events
+Message-ID: <20240904003022.GA347045@workstation.local>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Allen Pais <apais@linux.microsoft.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-sound@vger.kernel.org, edmund.raile@protonmail.com,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org
+References: <20240901110642.154523-1-o-takashi@sakamocchi.jp>
+ <EB8EC5FD-AB6C-48C3-8980-65E8CB444BDF@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-03-k1-gpio-v1-3-6072ebeecae0@gentoo.org>
-References: <20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org>
-In-Reply-To: <20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
- Meng Zhang <zhangmeng.kevin@spacemit.com>, 
- Meng Zhang <kevin.z.m@hotmail.com>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=gy4hAKBYfvoYkNXZdcCiPvChAhmVEjnxfrdfroixmG0=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBm16mAzKQqhIRAHRj8x0eR0whqAE38Cg8Ov60Dg
- DzdoEyXVd2JApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZtepgF8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277apQEACJgGBpAHyaenJ7eF
- T7/Q8syncOfzBxoTm7WYnlaM23Wup3C4/KD2+u0c7pRKkNgQp+K3OdqRUiO1C8pb72qQIEFHgv+
- zH2HKGcPstHabN3mw442MeRuuqla6vyX/GtS/UvBY/u4fErG7eCCbW7tWHcWgYXXCxWGHKqHbUK
- LSymTQg2IOLLIayOtuwwBqmHVk1yE12B9D91+Gn6sNZU+XCCrWX8tfsl5aS1xTSvvxENQoRO8fN
- WsUM7M/7aNXXrYMa3QASsQlgjY7ygyrjmBrtjlw2l5czaCtnQbp4ZJCpzM8bt8M+HnM3OVFr+yF
- A5c50uwUhCcy/y68IZJ9ttLVMrAEFEjLgOk0LbcP/PhMkLTg3+958cZSFIlkF/szBS7Cp95oCge
- Vr5cF6wHtezAte9s/h1BnfXj7AFpVc357t4c9OENS748G44D1U1fFuak6U0vuBVc+/2DFRlkF73
- Z0xfk+LFOkU8fzQo2yr/++kh/C8Azro0ztPI41XQHr2ebAET70n3jd0QbY5A1drZkjOFYqKj6RN
- lzOW//tphdlNAv+XNwZ4AnC/flVSb4EsR1wfUJDXfFLwsh/dddvwhGfCgnQjleX2ogYFIlhalu5
- UuaKZQ6Ly89+3cQ1nnan5hjkprBN7ONfRNp7ZpdAeVZ2WzE91p2j0EDHgeZWsg/2MjuA==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <EB8EC5FD-AB6C-48C3-8980-65E8CB444BDF@linux.microsoft.com>
 
-Populate the GPIO node in the device tree for K1 SoC.
-Also, map all 128 pins as GPIO to the pinctrl controller.
+HI,
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index a2d5f7d4a942a..648b459597a4d 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -416,6 +416,19 @@ uart9: serial@d4017800 {
- 			status = "disabled";
- 		};
+On Tue, Sep 03, 2024 at 11:06:53AM -0700, Allen Pais wrote:
+> 
+> 
+> >This series of change is inspired by BH workqueue available in recent
+> >kernel.
+> 
+> >In Linux FireWire subsystem, tasklet softIRQ context has been utilized to
+> >operate 1394 OHCI Isochronous Transmit (IT) and Isochronous Receive (IR)
+> >contexts. The tasklet context is not preferable, as you know.
+> 
+> >I have already received a proposal[1][2] to replace the usage of tasklet
+> >with BH workqueue. However, the proposal includes bare replacement for 1394
+> >OHCI IT, IR, Asynchronous Transmit (AT), and Asynchronous Receive (AR)
+> >contexts with neither any care of actual usage for each context nor
+> >practical test reports. In theory, this kind of change should be done by
+> >step by step with enough amount of evaluation over software design to avoid
+> >any disorder.
+> 
+> >In this series of changes, the usage of tasklet for 1394 OHCI IT/IR
+> >contexts is just replaced, as a first step. In 1394 OHCI IR/IT events,
+> >software is expected to process the content of page dedicated to DMA
+> >transmission for each isochronous context. It means that the content can be
+> >processed concurrently per isochronous context. Additionally, the content
+> >of page is immutable as long as the software schedules the transmission
+> >again for the page. It means that the task to process the content can sleep
+> >or be preempted. Due to the characteristics, BH workqueue is _not_ used.
+> 
+> >At present, 1394 OHCI driver is responsible for the maintenance of tasklet
+> >context, while in this series of change the core function is responsible
+> >for the maintenance of workqueue and work items. This change is an attempt
+> >to let each implementation focus on own task.
+> 
+> >The change affects the following implementations of unit protocols which
+> >operate isochronous contexts:
+> 
+> >- firewire-net for IP over 1394 (RFC 2734/3146)
+> >- firedtv
+> >- drivers in ALSA firewire stack for IEC 61883-1/6
+> >- user space applications
+> 
+> >As long as reading their codes, the first two drivers look to require no
+> >change. While the drivers in ALSA firewire stack require change to switch
+> >the type of context in which callback is executed. The series of change
+> >includes a patch for them to adapt to work process context.
+> 
+> >Finally, these changes are tested by devices supported by ALSA firewire
+> >stack with/without no-period-wakeup runtime of PCM substream. I also tested
+> >examples in libhinoko[3] as samples of user space applications. Currently I
+> >face no issue.
+> 
+> >On the other hand, I have neither tested for firewire-net nor firedtv,
+> >since I have never used these functions. If someone has any experience to
+> >use them, I would request to test the change.
+> 
+> >[1] https://lore.kernel.org/lkml/20240403144558.13398-1-apais@linux.microsoft.com/
+> >[2] https://github.com/allenpais/for-6.9-bh-conversions/issues/1
+> >[3] https://git.kernel.org/pub/scm/libs/ieee1394/libhinoko.git/
+> 
+> 
+> >Regards
+> 
+> Thank you for doing this work. You will probably need to send out a v2
+> As most of you patches have single line comment instead of Block style
+> Commnents (/* ..*/). Please have it fixed.
  
-+		gpio: gpio@d4019000 {
-+			compatible = "spacemit,k1-gpio";
-+			reg = <0x0 0xd4019000 0x0 0x800>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupts = <58>;
-+			interrupt-names = "gpio_mux";
-+			interrupt-parent = <&plic>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 0 128>;
-+		};
-+
- 		pinctrl: pinctrl@d401e000 {
- 			compatible = "spacemit,k1-pinctrl";
- 			reg = <0x0 0xd401e000 0x0 0x400>;
+Thanks for your comment. However, I think we have a need to update kernel
+documentation.
 
--- 
-2.45.2
+As long as I know, Mr. Linus has few oposition to C99-style comment[1].
+In recent kernel development process, C11 is widely accepted. Actually, we
+can see many lines with C99-style comment in source tree.
 
+For the kernel API documentation, we still need to use Doxygen-like block
+comment since documentation generator requires it. Additionally we can also
+see C90 comment is mandatory for UAPI since 'scripts/check-uapi.sh'
+hard-codes it. For the other part, C99-style comment brings no issue, as
+long as I know.
+
+> - Allen
+> 
+> >Takashi Sakamoto (5):
+> > firewire: core: allocate workqueue to handle isochronous contexts in
+> >   card
+> > firewire: core: add local API for work items scheduled to workqueue
+> >   specific to isochronous contexts
+> > firewire: ohci: process IT/IR events in sleepable work process to
+> >   obsolete tasklet softIRQ
+> > firewire: core: non-atomic memory allocation for isochronous event to
+> >   user client
+> > ALSA: firewire: use nonatomic PCM operation
+
+[1] https://lore.kernel.org/lkml/CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com/
+
+
+Thanks
+
+Takashi Sakamoto
 
