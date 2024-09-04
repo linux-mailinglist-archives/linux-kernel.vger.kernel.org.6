@@ -1,89 +1,183 @@
-Return-Path: <linux-kernel+bounces-315330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD6396C126
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C166996C121
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E468288622
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7833028378C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF91A1DC742;
-	Wed,  4 Sep 2024 14:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021E91DC07B;
+	Wed,  4 Sep 2024 14:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3018xlu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Asn+0wpT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295951DB53C;
-	Wed,  4 Sep 2024 14:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C51DB548
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461305; cv=none; b=XzMd+0OLmqWPp/nUtQBFcSzQLzHf8pZ9DICpcGRnmbQulMNV8mt7lIM7PYIQkDerX1e65u1z6WJ/Omc29MYJhliBPVV5arWkhsgz2y2fjtTwAuVS3hR1HLnDhJkRPNt2z6sfWsYkPS1vMZ9r8BAz02267bDoQl5qo9cYp9rh86I=
+	t=1725461286; cv=none; b=agy0D66p0yMiEVWDm/EmeNXLv8P8b12drYizf7Uk+v4sRyw5fh6CTJAKHy4r9C2r1+s3FEjmvBaJGPJ5xVI8ZiSptdzkKB8LUXLerbjd+T7xGHvOpXH6ucbMK0nKg9vKIuF1UjgoqrmgVqRYnzzSnR3wdQDYH1RIZSzcEl73hDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461305; c=relaxed/simple;
-	bh=aSgyay04rukkSKGyNBhfbxPLHP5fFfaqSa1WJf5ZLLc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=tBIIKgTQ5wq6xFNnnB0RRYCbldFpNuZ7yBEvIqlCCKIS/bjiNEMIVo8jeEJ7bauiZ8OaaSAKESjHT3MgqP1V8a8Zesb8A2QnI82m1yTTM5Ec+RIg/MpMzux7qNf8LuFurEN09XG+UwAaY2gNatq1fzOtTtyhsXISi9P/qezvGjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3018xlu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63793C4CEC6;
-	Wed,  4 Sep 2024 14:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725461303;
-	bh=aSgyay04rukkSKGyNBhfbxPLHP5fFfaqSa1WJf5ZLLc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=b3018xlu7QLwoY8krfOJEpp46QB0pBmlOkn5EtTAJeb5aEZCAi7RDgN2RvCv/APQv
-	 7gTc9+IiF8duZDpW8td8kZdTzc70iFf65C0Gzvb9/MMb1W88wcC73DwWqL9YsEbp9x
-	 64m38WOwjO+7Cwc8XIDdjRd5Gn/Nf6MWE5CEDOnRrm7T8cUOI0+hyLDtqEoEV/AA8I
-	 eFdWdzcn+GRluvBxxR6rBrYWxaQH1hi4LI/YyJYldJaISP5G/Yc+58Hl/XTG0IMaFI
-	 THdGawCOnativ+acb2RiTt/dF/vzTbHOTxC20f+v1+LT1QEe5t2dc8jAbxdu8TT1Mj
-	 e9obJEKbU5hJg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,  James Prestwood
- <prestwoj@gmail.com>,  linux-wireless@vger.kernel.org,
-  ath10k@lists.infradead.org,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware
- (-110) (ETIMEDOUT)
-References: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
-Date: Wed, 04 Sep 2024 17:48:20 +0300
-In-Reply-To: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de> (Paul
-	Menzel's message of "Wed, 4 Sep 2024 12:45:01 +0200")
-Message-ID: <87bk13jwzv.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1725461286; c=relaxed/simple;
+	bh=zwkevx0JOA1sU3/G6Uk1dmNSxwY1PH5EmMk1/KtzlkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHIbvlgkvTy3rcXbLHIH3qye03Sci3jfE7+3H7Bp2qo7rPwVS1mc6aG/FZG1IvMtwGEkrh0eFJKJGdkGXxbtcFV+iV+uNpbAZr+ypWBF/CPPgVj3z7g3o0BTz8EUfHjtvqUtk0T6a6Y6/fkOraa8wNEp7soxWQImUrf0C+9xsMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Asn+0wpT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so47033865e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725461283; x=1726066083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j6kEIYFtkOtx+DJY9n3gGx8oC/72d34oJtC4eMa+2Jo=;
+        b=Asn+0wpTHemfiJQDjxEd62JM06+gVADtIFWCMpECwKqfx15B4QNIk0iqFQTwVxjHAj
+         Pq6SH/serdvBRZjmdveGp+rwsN8wZMo1C1z/DxBV8eapfomAzS0sjcVP0Kkh/HJWcmiI
+         aqWb8L+DLJ9Cpbbu8REj/FQHjfU8zz/dVsrP8T4FFrod6fn7HHlpWGHRL4pLoGJk85iX
+         O9+jenjQ5wNOG2G2GLhjZFWdySTxcwlfxAXnIc15wEAi3hiyxYBovkFTSqUX5wCCSIZe
+         8EVXCakApavMXmFWhGBqi/XG2Z0CYEMDTN+cnJoXdxrAD9DyNpisGEjKZm6GfAXjiLkz
+         BqkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725461283; x=1726066083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6kEIYFtkOtx+DJY9n3gGx8oC/72d34oJtC4eMa+2Jo=;
+        b=USuG6Jxuuhu1SAwVV9CPvS2a1lNwOdSJNyetAk+DW9PAOd/ZRL88Yx2EBTex1+QyPa
+         wUu0edAtSiGU9S8bhZ8VLJtTfpJSxWf4AF/nL8QJatGl68EmXl0zyizyHe7V2Nq9vNPW
+         McTArsTmKTvH4qSQst77Et6qWU8leYJgTrV5QURBWaXkn8TI3GZcb8RBq0X87RR7a/eI
+         Mn2SyvfIm5dKxu5+5o+sdBPgMXGYpTKqXUXmLSzcv++DiEvjkWp+F4ueHxnbQDfn9DQZ
+         9d9Nx1SIw423YrSUFONdwqqbwAfypZiMBlT2/1uEPcpbOJtzydPa+zatus+E5FuK/eRD
+         9rqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWK64KLFec2CbyMjO4aClpL+5/48cdEajoiXUNurI5ff/SE2eQ2kCL8LsQ4XTBW1dPEv8hXMRma0XZE8Ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8E5cZ3sDZ4DrETvXHzIZ1P6uw4Od3Fgpk8347tIbZ8RGM5Xs5
+	Lfeme4f8XZfqljgwR/BNUNpjXpbg9Xh88FxkrTyplYT5xxsZj7qus2FjY2TrTdE=
+X-Google-Smtp-Source: AGHT+IHKZyt11Lslz0HlasHPTxHt7BSYAR0Jjt79ONBZBuyaQ3ymGqrpolN3WJVQPOJE6wYCFvw0hQ==
+X-Received: by 2002:a05:600c:3b8e:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42bb01b556bmr164929245e9.15.1725461282171;
+        Wed, 04 Sep 2024 07:48:02 -0700 (PDT)
+Received: from myrica ([2.221.137.100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb01d300csm218202355e9.15.2024.09.04.07.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:48:01 -0700 (PDT)
+Date: Wed, 4 Sep 2024 15:48:21 +0100
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>
+Subject: Re: [PATCH v4 21/43] arm64: RME: Runtime faulting of memory
+Message-ID: <20240904144821.GA223966@myrica>
+References: <20240821153844.60084-1-steven.price@arm.com>
+ <20240821153844.60084-22-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821153844.60084-22-steven.price@arm.com>
 
-Paul Menzel <pmenzel@molgen.mpg.de> writes:
+On Wed, Aug 21, 2024 at 04:38:22PM +0100, Steven Price wrote:
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 2c4e28b457be..337b3dd1e00c 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -627,6 +627,181 @@ static int fold_rtt(struct realm *realm, unsigned long addr, int level)
+>  	return 0;
+>  }
+>  
+> +static phys_addr_t rtt_get_phys(struct realm *realm, struct rtt_entry *rtt)
+> +{
+> +	bool lpa2 = realm->params->flags & RMI_REALM_PARAM_FLAG_LPA2;
 
-> Dear Linux folks,
->
->
-> Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3
-> (or unloading and loading the `ath10k_core`/`ath10k_pci` modules)
-> having been connected to an AVM network:
->
->     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware
->     (-110)
->
-> Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and
-> applied it, and the error is still there (as exepected).
->
-> Can the warning be improved so the user know, which component is at fault?
+At this point realm->params is NULL, cleared by kvm_create_realm()
 
-The warning comes from mac80211 and it already contains your network
-interface name (wlp58s0). What else would you want to see?
+Thanks,
+Jean
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
+> +
+> +	if (lpa2)
+> +		return rtt->desc & GENMASK(49, 12);
+> +	return rtt->desc & GENMASK(47, 12);
+> +}
+> +
+> +int realm_map_protected(struct realm *realm,
+> +			unsigned long base_ipa,
+> +			struct page *dst_page,
+> +			unsigned long map_size,
+> +			struct kvm_mmu_memory_cache *memcache)
+> +{
+> +	phys_addr_t dst_phys = page_to_phys(dst_page);
+> +	phys_addr_t rd = virt_to_phys(realm->rd);
+> +	unsigned long phys = dst_phys;
+> +	unsigned long ipa = base_ipa;
+> +	unsigned long size;
+> +	int map_level;
+> +	int ret = 0;
+> +
+> +	if (WARN_ON(!IS_ALIGNED(ipa, map_size)))
+> +		return -EINVAL;
+> +
+> +	switch (map_size) {
+> +	case PAGE_SIZE:
+> +		map_level = 3;
+> +		break;
+> +	case RME_L2_BLOCK_SIZE:
+> +		map_level = 2;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (map_level < RME_RTT_MAX_LEVEL) {
+> +		/*
+> +		 * A temporary RTT is needed during the map, precreate it,
+> +		 * however if there is an error (e.g. missing parent tables)
+> +		 * this will be handled below.
+> +		 */
+> +		realm_create_rtt_levels(realm, ipa, map_level,
+> +					RME_RTT_MAX_LEVEL, memcache);
+> +	}
+> +
+> +	for (size = 0; size < map_size; size += PAGE_SIZE) {
+> +		if (rmi_granule_delegate(phys)) {
+> +			struct rtt_entry rtt;
+> +
+> +			/*
+> +			 * It's possible we raced with another VCPU on the same
+> +			 * fault. If the entry exists and matches then exit
+> +			 * early and assume the other VCPU will handle the
+> +			 * mapping.
+> +			 */
+> +			if (rmi_rtt_read_entry(rd, ipa, RME_RTT_MAX_LEVEL, &rtt))
+> +				goto err;
+> +
+> +			/*
+> +			 * FIXME: For a block mapping this could race at level
+> +			 * 2 or 3... currently we don't support block mappings
+> +			 */
+> +			if (WARN_ON((rtt.walk_level != RME_RTT_MAX_LEVEL ||
+> +				     rtt.state != RMI_ASSIGNED ||
+> +				     rtt_get_phys(realm, &rtt) != phys))) {
 
