@@ -1,138 +1,96 @@
-Return-Path: <linux-kernel+bounces-314038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BD296AE02
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:41:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A4A96ADFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F661C243D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169461F25AFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE45FC1D;
-	Wed,  4 Sep 2024 01:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUF1/3BS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F05C153;
+	Wed,  4 Sep 2024 01:39:01 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DFBE40
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40277BE40
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725414097; cv=none; b=HonpS1HUTv+DGBNmBjWI5KkiV1cdlOs5uPnvwXtMdgMLU+O9rjABjjVdbrzWpOliynsA7Nk9PDT5VK1BWI/HTojy05fUFk7yQhMZeOvdayvBvi/Tf+he0URusgZyvMEX1hrO5ox4AfkAAzMfNjhovFQuy6QkMLTcCuzXTdwmT3Y=
+	t=1725413941; cv=none; b=sbghD5kBR9iVscrP5tXbSwQxr4WmOnzAHNO53AV+JKNuuCTiDglJiP9u6gdpQ21ONU//hrGQHW4Hvwrl/o3HNOUBkrGdEiPD1rH+lohSM561VxB7FeMecFOmcYGRhF3d+IsBTI/lV6S9wTT0OwApKjJuSTQHFptoubjfeFRjO04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725414097; c=relaxed/simple;
-	bh=UnnpCwlE+so5Kv+8OWodgftABGvoZ8EJKADD4dklPFs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E1cSNO2FD+lIfmpisWgx5nWfzLez/nQmsbC6uNbC4+U31GrdWdTARWKs+x2dbLN8MEgDQlLgVUHkkWxAEacWchz6o28OQxZkh1OOJxmWw1w526PIHJffjWCTxNhETlN/SbxkHqimfkIZoVLMcvPKz+Fulb7jdQ/r9Cx5H6xHXTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUF1/3BS; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725414096; x=1756950096;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UnnpCwlE+so5Kv+8OWodgftABGvoZ8EJKADD4dklPFs=;
-  b=XUF1/3BS6hVZtyI3ZKOLUcRozj11k17OIPO5dfRFUhr5ks6mvtk5bSkN
-   CdklSPvucRbScXQo0anDSt+ilwQOnHf7AI8/IYcmawfLnxpKptkdi9fh6
-   yQGg9gB70UsGw8mbMHjGKbrVJ7rBaahOmiyJ90pQtWfvW+VRT10E4y8kS
-   SqJDx5xqxqfSIPi2tFxnEYPfqIAfpXXvkcOwOi1oZAwzNTHIUdMmVmUF1
-   I+CrB3AUYMpXEwwc+BBBWX696NYClK0RJFf3nNeaLj8hYUILecUSBVt14
-   KtQHsmwyawW7HPvmXflLceraHaH/K5cRXYzoMbcvnSCcgwLpxPYV9aevc
-   w==;
-X-CSE-ConnectionGUID: /G+QF41HQFKm156m1YQmEw==
-X-CSE-MsgGUID: S/oorHyUT4e0cyoU9lcumg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23909354"
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="23909354"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 18:41:34 -0700
-X-CSE-ConnectionGUID: agDQG6ANS5aB5angA94v7g==
-X-CSE-MsgGUID: TrK6lBzwST6Nh/6mqu1t2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="69927690"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa005.jf.intel.com with ESMTP; 03 Sep 2024 18:41:32 -0700
-Message-ID: <8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
-Date: Wed, 4 Sep 2024 09:37:35 +0800
+	s=arc-20240116; t=1725413941; c=relaxed/simple;
+	bh=dbbjY550F/QeMObcxG12FPiR8xtkvDK6VwrIPxV3wbU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ew5BlAYDeISN6by5urs6zGn1OkpOwLKXjNEUGwXW0z8blkTnYam72/A6J7L2m+rRuJDMNiWU6wwWf44+U56NCe2hw60fehOFz+ru3kIJxjet3ktolbWDqjMh4bSqVWXzHBPAIU1MIVlEXJn/EBqgqNtbHSPoCSD74gm9Hx5MfMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a1c57f4dcso776659739f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 18:38:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725413939; x=1726018739;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EUPZmeZh+qqUcV7hVlN+J3fLNWuEfzw0szL+D7nHxU=;
+        b=mSqbS4wCw26ayyMgmbX3Ui68GGr9MDVG1ndoHG3o5zM0ex3JeitK1BxchlnALgp0eL
+         hAygoQYH/jHXzBtuTwA51G0nmuMtA5x61hnSwhZyQ6nZtzRm2WWq8BJZw6lHhYgzOoAn
+         vvyMASO9F6P4BlcQ0jqj+47k1NwsXb/4JgrC5vb5jMyo6DHuCL2YIuJ8lqAhVhX5MoWw
+         vdpYxqRnTQ7QteLiDXM6s7I6y2/TTGrwf9gWv4VbaKkW8MtkMyfuiUSLxRZhSPwyQl3S
+         JP9/NLqRzB93AFOhEH1QcoeNgZ72AQZj/PjLLdwot+4mZJwgZmBa8eJImZcA0ggTngB1
+         ZIdw==
+X-Gm-Message-State: AOJu0YwltKccOE39f4KIeWUk8lmeuR0KN2aQU3St7/kwPgG6jFZrBgng
+	G2GIrO2Ea3CuFMbwEr/vSqfsyFLOQL4jVVG2hiicY8/N98ZYZw5+U/ITC9pRZ2iq6IYxNzbe0Cb
+	Jd5n6Zchzl+lb9K/QglbjlGl7yf2cy9PAsb64CMGjsDaMlx+iJIf+66A=
+X-Google-Smtp-Source: AGHT+IH9vfqC4aTIubmnqTp0TXyi1q0oC3roKf7lJQYdPM/SuPD2o12WmPu5DXcToX6q3rEOrCHram6MDuVxbRi8CUYEPqzdx3a5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
- Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Minwoo Im <minwoo.im@samsung.com>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, Klaus Jensen <k.jensen@samsung.com>
-Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
- non-nested and non-svm cases
-To: Joel Granados <j.granados@samsung.com>
-References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
- <CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
- <20240826135955.GI3468552@ziepe.ca>
- <20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
- <d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
- <20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6d87:b0:7f6:1e9c:d6f4 with SMTP id
+ ca18e2360f4ac-82a262d23a9mr42841639f.3.1725413939394; Tue, 03 Sep 2024
+ 18:38:59 -0700 (PDT)
+Date: Tue, 03 Sep 2024 18:38:59 -0700
+In-Reply-To: <0000000000001b6052062139be1c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f2ca920621413c5f@google.com>
+Subject: Re: [syzbot] [syzbot] [btrfs?] general protection fault in btrfs_root_node
+From: syzbot <syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/3/24 9:20 PM, Joel Granados wrote:
-> On Mon, Sep 02, 2024 at 08:47:21PM +0800, Baolu Lu wrote:
->> On 2024/9/2 18:48, Joel Granados wrote:
->>>> I definitely expect PRI to work outside PASID and SVA cases, so this
->>>> is going in a good direction
->>> This touches on a detail (at least in Intel's vtd-io spec) that is not
->>> 100% clear to me. Second paragraph of section "3.4.3 Scalable Mode
->>> Address Translation" reads:
->>> "
->>>     ... Scalable-mode context-entries support both requests-without-PASID
->>>     and requests-with-PASID. However unlike legacy mode, in scalable-mode,
->>>     requests-without-PASID obtain a PASID value from the RID_PASID field of
->>>     the scalable-mode context- entry and are processed similarly to
->>>     requests-with-PASID.Implementations not supporting RID_PASID capability
->>>     (ECAP_REG.RPS is 0b), use a PASID value of 0 to perform address
->>>     translation for requests without PASID.
->>> "
->>> This basically means that a default PASID is used even though the
->>> request is without PASID. Right? Therefore "outside PASID" means with
->>> the default PASID (at least in Intels case). Right?
->> Kind of yes.
->>
->> The PCI specification defines the concept of PASID and its role in
->> transaction routing. We refer to PCI transactions with a PASID prefix as
->> "request-with-PASID" and those without a PASID prefix as "request-
->> without-PASID." Consequently, I understand 'outside PASID' to mean
->> transactions that do not have a PASID prefix.
->>
->> The VT-d specification describes how the IOMMU hardware handles request-
->> without-PASID. It uses a reserved PASID for its internal routing and
->> handling purposes. If RID_PASID is supported (ECAP_REG.RPS=1), software
->> can select its own reserved PASID. Otherwise, the IOMMU hardware will
->> use a default value of 0.
->>
-> Thx for getting back to me. This generates another doubt in my head
-> regarding the published capabilities from the intel IOMMU Hardware:
-> 
-> So ecap_pasid [1] does not have to be set in scalable-mode. Right? This
-> allows hardware supporting scalable-mode to reject transactions with
-> PASID whenever ecap_pasid is*NOT*  set; even though internally things
-> are handled with a PASID. This question is directly related to the two
-> last patches in the set.5/6 and 6/6.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Yes. And 5/6, 6/6 make sense to me. We should remove the PASID
-restriction from the code once PRI is split from SVA.
+***
 
-Thanks,
-baolu
+Subject: [syzbot] [btrfs?] general protection fault in btrfs_root_node
+Author: ghanshyam1898@gmail.com
+
+Added a check for the nullability of the extent_root variable.
+
+I am not sure what error code I should return when the variable is
+null. Can someone help me with this? Thank you very much.
+
+#syz test
+
+diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+index 9522a8b79d22..e613420cb079 100644
+--- a/fs/btrfs/ref-verify.c
++++ b/fs/btrfs/ref-verify.c
+@@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *fs_info)
+  return -ENOMEM;
+
+  extent_root = btrfs_extent_root(fs_info, 0);
++ if (!extent_root)
++ return -EBADF;
++
+  eb = btrfs_read_lock_root_node(extent_root);
+  level = btrfs_header_level(eb);
+  path->nodes[level] = eb;
 
