@@ -1,130 +1,222 @@
-Return-Path: <linux-kernel+bounces-315358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFEFC96C1A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F7596C190
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2541B2D000
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4711F2A161
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A451DCB02;
-	Wed,  4 Sep 2024 14:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5F41DC07E;
+	Wed,  4 Sep 2024 14:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SACRSE7R"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Dk0Gkft5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB1A1DC05F;
-	Wed,  4 Sep 2024 14:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395241DC07A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461924; cv=none; b=V32oowyOB9DbUggtMOyuRLoui4vDdfF/uv511oDrfKmHazpBhzUsNFWUEDcAxEqYwXX0+4ipFKPp/YMctpq7rR5314urQlq3DjjO5JXkJJwLkZGMtu+7vHBDf/k4rx99ILRu2GJOB0bXM3hwmq1zkM300GUBcK/y8TnG43/iYGw=
+	t=1725461981; cv=none; b=WzelB8R6+ewsjS1SwEzYwfnAUJQSdRpiSngqXoLnySbUffYWOVJbsi++AiaNdjO2pPo784B3c5AN6O9Aw7tga9bcv4G60TJvO23hHl9cdEUUw9FLcp0yixeONPpdiZfQ8aPtazZqW4SKMfwKM/HUkO6O08ht1PO0PbeiEIFbiqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461924; c=relaxed/simple;
-	bh=ul6VV4JjxH0XxP4Hhv6qq03d2y4Xr1eVllPyVW6Vt2k=;
+	s=arc-20240116; t=1725461981; c=relaxed/simple;
+	bh=un8Ep5MZe8u3hniH8cbxJUJwLU4jDlXGHUAN0L4HI0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNM5gsXc1KQjBF0SxwoAbC0FXhtuqdq9F2J7SG11tjKFX8EJcPLWgbBqYf0+lS4VTCcqid+Fl4sdckVqZnCNATLsn3G4bYV5QAJaAdyz6jMr9aEGzKszJrb0N+DqzTzF+OETs9WaCHCB3GPn6WLbOaWCEYEBGb9z7LLVl0LiM1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SACRSE7R; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86753ac89bso31661066b.0;
-        Wed, 04 Sep 2024 07:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725461921; x=1726066721; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyHRUbS96LQJMnxC77/pMoO0AXemk+GGLf2OYY2VbUE=;
-        b=SACRSE7ReCgTFpa1yOZue9YSUKkh8mH5Oukf6EPx4p8sGfjaFUjrg3Z21h40K6yQai
-         0ubFRbPKz6IWR1Fe1DKOm9xzgD8Wcsic9hZ6Ltm0+UKj7318zigG1aiCl2Y9c2xyXfuL
-         O9ug1AVVbFFMIS7B/t4QwvLqCBfyURKxc5BSKp2AKGF7tDUjIYq5e2jjLYF9zUNqVUBu
-         i93qLAcMOAS34ElJfZ6PPYB6CqEsiwTxSmELKS81Zh2QuuJTCnL+0NypXgb02AnatToo
-         jrJEVWWLBQKMKQZ8o8zs+bGhBz1aFSbnbpFIaDgd5ysDYs5E1Ax3q/YhXMuZzaQwY++x
-         8PcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725461921; x=1726066721;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nyHRUbS96LQJMnxC77/pMoO0AXemk+GGLf2OYY2VbUE=;
-        b=pQ2j7c2u/pW1Gc0U0dQtB6tLUztmfeD1RFvvBnKSgZD41ESsPxI57pYt8RvyO6EgsL
-         2KS3rTPbiKym+JjeeqdnLm4+MXbszLYqWdNRWD96kUgceWP4ymlKPgql+9nueRbdUec4
-         gR+9SToALHrmb6rpYVGlg86suqhLt+tuENTgUIJcNbyaJ7hO0OWIpg0iU760IhgkEILj
-         kwoy1iHAmjfuAVq9DZ0oOFDv+h46ASfTQ5inEvPHxxmauXy2wzSHc3jWq04OlpfXBwbK
-         rUMUyeAH76084+49m5alLv5AiuqwpCnTwlSkIENvONy6Y2O/+m/W6AwYkYcANNqdsz32
-         z2ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXB2AK26ectVKjvBZxYIWtYsAywsURiYlJyLRPEiiBmHmiHhzzJ1eTpEywXyEXOmWDMuoOBd5bRn7JGxSc=@vger.kernel.org, AJvYcCXfD7QaCWqmIU8N9G72cdJZqzAsBXDegOjO9R0NmqXK0Y4oGR8QHkDKk4R/n6DotsYLv4OdBCFc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5AYiSOchIxv69ws4Tz/gJlhHVkjWBuOt9zvzaQbntFDsZKeDU
-	ykNxkCStX8Q1WGoOVoCePdDK3DRNYrs8kZizIkut4Ue+w08Fhh6R
-X-Google-Smtp-Source: AGHT+IF9fNPAMV3rkGRPbruFXWJ88SAxEy28gAk+8MFg+kx8FVMQrf0q3A1TSlP9jRdQelWzVhiB+g==
-X-Received: by 2002:a17:907:3e92:b0:a80:a37f:c303 with SMTP id a640c23a62f3a-a89a357825bmr653597266b.4.1725461921263;
-        Wed, 04 Sep 2024 07:58:41 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d041sm1984566b.132.2024.09.04.07.58.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:58:40 -0700 (PDT)
-Date: Wed, 4 Sep 2024 17:58:37 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next v7 3/7] net: stmmac: refactor FPE verification
- process
-Message-ID: <20240904145837.wh7tdrffsiqpot22@skbuf>
-References: <cover.1725441317.git.0x1207@gmail.com>
- <cover.1725441317.git.0x1207@gmail.com>
- <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
- <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjwPkIkzJOqZsVq3d0PXu0FyfxDbFBTz4PQDBa9xZrm7hTFn9EsLdlYtpfCrbZlN3z4XZQrjnUUum7ZgquKbnZ6dIrizckUtfDu6YV9G5s7iHGw8EeGYfYpXgomxcALJDjLBT8PjxhoYgsliOZtYqLfRip29ypoQj4EPMmzysGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Dk0Gkft5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725461977;
+	bh=un8Ep5MZe8u3hniH8cbxJUJwLU4jDlXGHUAN0L4HI0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dk0Gkft5rcrtZdfjiqMcr0oDrSCNuMgFxap/sNFLJnMvND2nKf/va+cLk+PgpQ9+v
+	 LqZXFZgFksy7UC/S5B14DKgBe9ZFbbVz0TJuRht+rmCIqngELplbLyiatEW0iJ15qO
+	 /XSsHXg3jf2ESrN58o8eNQQB+9O5tp0CwpWXBL5FFfP9ozQcvYphLul7KLci7uonX8
+	 jMtGd8Bm7gRcpKatdpycE6VuvKZTi/8hDBW+cTbnQMrCS9MICx5657lQK3O/Pd6wlc
+	 EONQTVN/jqynTCVTUneFQbc82988ILWzeXKCwKpvxoYCkBO3Ko2V/oZenwET+CWprs
+	 NT1nnCMEQx6sg==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8C8D817E1167;
+	Wed,  4 Sep 2024 16:59:35 +0200 (CEST)
+Date: Wed, 4 Sep 2024 10:59:33 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	regressions@lists.linux.dev, kernelci@lists.linux.dev,
+	kernel@collabora.com
+Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default ops
+Message-ID: <10431dfd-ce04-4e0f-973b-c78477303c18@notapiano>
+References: <cover.1721818168.git.leon@kernel.org>
+ <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
- <1e452525e496b28c0b1ea43afbdc3533c92930c6.1725441317.git.0x1207@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
 
-On Wed, Sep 04, 2024 at 05:21:18PM +0800, Furong Xu wrote:
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 3072ad33b105..e2f933353f40 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -969,17 +969,30 @@ static void stmmac_mac_config(struct phylink_config *config, unsigned int mode,
->  static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
->  {
->  	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
-> -	enum stmmac_fpe_state *lo_state = &fpe_cfg->lo_fpe_state;
-> -	enum stmmac_fpe_state *lp_state = &fpe_cfg->lp_fpe_state;
-> -	bool *hs_enable = &fpe_cfg->hs_enable;
-> +	unsigned long flags;
->  
-> -	if (is_up && *hs_enable) {
-> -		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
-> -					MPACKET_VERIFY);
-> +	del_timer_sync(&fpe_cfg->verify_timer);
+On Wed, Jul 24, 2024 at 09:04:49PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Most of the arch DMA ops (which often, but not always, involve
+> some sort of IOMMU) are using the same DMA operations, but for all
+> modern platforms dma-iommu implementation is really matters.
+> 
+> So let's make sure to call them directly without need to perform
+> function pointers dereference.
+> 
+> During system initialization, the arch can set its own DMA and in such
+> case, the default DMA operations will be overridden.
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> Signed-off-by: Leon Romanovsky <leon@kernel.org>
+> ---
 
-Interesting comments in include/linux/timer.h:
- * Do not use in new code. Use timer_delete_sync() instead.
+Hi,
 
-Also, interesting comment in the timer_delete_sync() kernel-doc:
- Callers must prevent restarting of the timer, otherwise this function is meaningless.
+KernelCI has identified a boot regression originating from this patch. I've
+verified that reverting the patch fixes the issue.
 
-I don't think you have any restart prevention mechanism. So between the
-timer deletion and the spin_lock_irqsave(), another thread has enough
-time to acquire fpe_cfg->lock first, and run stmmac_fpe_verify_timer_arm().
+Affected platforms:
+* sc7180-trogdor-kingoftown
+* sc7180-trogdor-lazor-limozeen
+
+Relevant kernel log:
+
+[    5.790809] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
+[    5.799844] Mem abort info:
+[    5.799846]   ESR = 0x0000000096000006
+[    5.808708]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    5.808712]   SET = 0, FnV = 0
+[    5.808714]   EA = 0, S1PTW = 0
+[    5.818465]   FSC = 0x06: level 2 translation fault
+[    5.818468] Data abort info:
+[    5.818469]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[    5.827063]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    5.827065]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    5.838768] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000d20bb000
+[    5.838771] [0000000000000040] pgd=08000000d20c1003
+[    5.863071] , p4d=08000000d20c1003
+[    5.898011] , pud=08000000d20c2003, pmd=0000000000000000
+[    5.898014] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+[    5.898016] Modules linked in: ipv6 hci_uart venus_core btqca v4l2_mem2mem btrtl qcom_spmi_adc5 sbs_battery btbcm qcom_vadc_common cros_ec_typec videobuf2_v4l2 leds_cros_ec cros_kbd_led_backlight cros_ec_chardev videodev elan_i2c videobuf2_common qcom_stats mc bluetooth coresight_stm stm_core ecdh_generic ecc pwrseq_core panel_edp icc_bwmon ath10k_snoc ath10k_core ath mac80211 phy_qcom_qmp_combo aux_bridge libarc4 coresight_replicator coresight_etm4x coresight_tmc coresight_funnel cfg80211 rfkill coresight qcom_wdt cbmem ramoops reed_solomon pwm_bl coreboot_table backlight crct10dif_ce
+[    5.898057] CPU: 7 UID: 0 PID: 70 Comm: kworker/u32:4 Not tainted 6.11.0-rc6-next-20240903-00003-gdfc6015d0711 #660
+[    5.898061] Hardware name: Google Lazor Limozeen without Touchscreen (rev5 - rev8) (DT)
+[    5.898062] Workqueue: events_unbound deferred_probe_work_func
+[    5.904227] hub 2-1:1.0: 4 ports detected
+[    5.906827]
+[    5.906828] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    5.906831] pc : dma_common_alloc_pages+0x54/0x1b4
+[    5.906837] lr : dma_common_alloc_pages+0x4c/0x1b4
+[    5.906839] sp : ffff8000807d3730
+[    5.906840] x29: ffff8000807d3730 x28: ffff02a7d312f880 x27: 0000000000000001
+[    5.906843] x26: 000000000000c000 x25: 0000000000000000 x24: 0000000000000001
+[    5.906845] x23: ffff02a7d23b6898 x22: 0000000000006cc0 x21: 000000000000c000
+[    5.906847] x20: ffff02a7858bf410 x19: fffffe0a60006000 x18: 0000000000000001
+[    5.906850] x17: 00000000000000d5 x16: 1fffe054f0bcc261 x15: 0000000000000001
+[    5.906852] x14: ffff02a7844dc680 x13: 0000000000100180 x12: dead000000000100
+[    5.906855] x11: dead000000000122 x10: 00000000001001ff x9 : ffff02a87f7b7b00
+[    5.906857] x8 : ffff02a87f7b7b00 x7 : ffff405977d6b000 x6 : ffff8000807d3310
+[    5.906860] x5 : ffff02a87f6b6398 x4 : 0000000000000001 x3 : ffff405977d6b000
+[    6.092491] x2 : ffff02a7844dc600 x1 : 0000000100000000 x0 : fffffe0a60006000
+[    6.099809] Call trace:
+[    6.102327]  dma_common_alloc_pages+0x54/0x1b4
+[    6.106895]  __dma_alloc_pages+0x68/0x90
+[    6.110921]  dma_alloc_pages+0x10/0x1c
+[    6.114772]  snd_dma_noncoherent_alloc+0x28/0x8c
+[    6.119514]  __snd_dma_alloc_pages+0x30/0x50
+[    6.123897]  snd_dma_alloc_dir_pages+0x40/0x80
+[    6.128465]  do_alloc_pages+0xb8/0x13c
+[    6.132315]  preallocate_pcm_pages+0x6c/0xf8
+[    6.132317]  preallocate_pages+0x160/0x1a4
+[    6.132319]  snd_pcm_set_managed_buffer_all+0x64/0xb0
+[    6.152964]  lpass_platform_pcm_new+0xc0/0xe8
+[    6.157443]  snd_soc_pcm_component_new+0x3c/0xc8
+[    6.162184]  soc_new_pcm+0x4fc/0x668
+[    6.165853]  snd_soc_bind_card+0xabc/0xbac
+[    6.170063]  snd_soc_register_card+0xf0/0x108
+[    6.174533]  devm_snd_soc_register_card+0x4c/0xa4
+[    6.179361]  sc7180_snd_platform_probe+0x180/0x224
+[    6.184285]  platform_probe+0x68/0xc0
+[    6.188050]  really_probe+0xbc/0x298
+[    6.191717]  __driver_probe_device+0x78/0x12c
+[    6.196186]  driver_probe_device+0x3c/0x15c
+[    6.200481]  __device_attach_driver+0xb8/0x134
+[    6.205047]  bus_for_each_drv+0x84/0xe0
+[    6.208985]  __device_attach+0x9c/0x188
+[    6.212924]  device_initial_probe+0x14/0x20
+[    6.217219]  bus_probe_device+0xac/0xb0
+[    6.221157]  deferred_probe_work_func+0x88/0xc0
+[    6.225810]  process_one_work+0x14c/0x28c
+[    6.229923]  worker_thread+0x2cc/0x3d4
+[    6.233773]  kthread+0x114/0x118
+[    6.237093]  ret_from_fork+0x10/0x20
+[    6.240763] Code: f9411c19 940000c9 aa0003f3 b4000460 (f9402326)
+[    6.247012] ---[ end trace 0000000000000000 ]---
+
+See below for the suspicious hunk.
+
+[..]
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 6832fd6f0796..02451e27e0b1 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+[..]
+> @@ -611,6 +662,8 @@ static struct page *__dma_alloc_pages(struct device *dev, size_t size,
+>  	size = PAGE_ALIGN(size);
+>  	if (dma_alloc_direct(dev, ops))
+>  		return dma_direct_alloc_pages(dev, size, dma_handle, dir, gfp);
+> +	if (use_dma_iommu(dev))
+> +		return dma_common_alloc_pages(dev, size, dma_handle, dir, gfp);
+
+Is this check correct? dma_common_alloc_pages uses the dma_ops, but the comment
+in dma_iommu said it meant that dma_ops wouldn't be used.
+
+And similarly for dma_common_free_pages below.
+
+>  	if (!ops->alloc_pages_op)
+>  		return NULL;
+>  	return ops->alloc_pages_op(dev, size, dma_handle, dir, gfp);
+> @@ -635,6 +688,8 @@ static void __dma_free_pages(struct device *dev, size_t size, struct page *page,
+>  	size = PAGE_ALIGN(size);
+>  	if (dma_alloc_direct(dev, ops))
+>  		dma_direct_free_pages(dev, size, page, dma_handle, dir);
+> +	else if (use_dma_iommu(dev))
+> +		dma_common_free_pages(dev, size, page, dma_handle, dir);
+>  	else if (ops->free_pages)
+>  		ops->free_pages(dev, size, page, dma_handle, dir);
+>  }
+[..]
+
+Please add
+Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+when fixing this.
+
+Happy to provide any other details necessary.
+
+#regzbot introduced: next-20240822..20240823
+#regzbot title: Null pointer dereference in dma_common_alloc_pages() for sc7180 platforms
+
+Thanks,
+Nícolas
 
