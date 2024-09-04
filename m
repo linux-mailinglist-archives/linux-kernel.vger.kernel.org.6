@@ -1,172 +1,152 @@
-Return-Path: <linux-kernel+bounces-314226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D6E96B041
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:03:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC47996B044
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0C91C2384D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 195F81C23DDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B37482866;
-	Wed,  4 Sep 2024 05:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA22682C8E;
+	Wed,  4 Sep 2024 05:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDH7hCXf"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fJumvytq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6080B2A1BF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 05:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CADF82C60;
+	Wed,  4 Sep 2024 05:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426203; cv=none; b=jtc0gu1OXi8+T5qdd/dDImZaYInLlGTXxQaGMif7R+SjVoL+c7StawRbs4rkGGAsONlBwNGjcn3jwXPxchjdwfWp7KtjhHiCpFoHsC+ecO49z4dVkDQzVNObQM5Rw1BTPyQnpqfZ6CTKpqfUUI8ai5Vd8sXfG+mJFVW4IOzokcI=
+	t=1725426332; cv=none; b=PyQk0WlpOeJzQSqqmTQXx04/bxmtVZ+txjJyx+8RgrdM87GBqtNNf8iL3fh8LG934L3bFMGG1lNLIVPMoH1DlWzh2cJXQtItcrjFIJeUkYbPXjaiuHi/VSH8Axz0Xs6cwfN5hDqQjbDwIBuRJCiyzmdWmXORU6BFHrhsMVY72oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426203; c=relaxed/simple;
-	bh=PgQSIHPPaPcmAm+knXEyHt6qQxQ4Ml/ktvDvf43bWL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvfkOUrjDswvHrZWkJl0eXRPK2cYbbvE+P09pA/6/7KQz45jV2rbBMUVqBGgFsthOb39vSbBbNYuFQqR/3c7To+t3KIz7oE5PhgfRgH9OHUeC+e/uCDu4Zj38Sa7/+xEYzBlZoafX8IW3r7ssATB9VAOLF2wHy2PzRS49IsUPnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDH7hCXf; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d2a107aebso91555ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 22:03:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725426201; x=1726031001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUqFxyibmNEUdmAh831YwQL84u1yegFcAIFBz15HPh0=;
-        b=sDH7hCXfqxfcb9GJpqAivBcTqmgKb7lfhDXV7GxvYpBnhLVC/2EQ97g92wagmbU+E1
-         xDxCxUuTugebRI3avKXqE+W0XOOhK1kjBKsezUzuWgl5Ugaf/HrHiiwsZNOo7uiKlMTz
-         aoZ0VsbwIG+yEuiYg3Rx9IXo3xHUsSCgx6SZ3BzfdBNnYfZZn4fA1P2XL39Ljx7pXyHH
-         S816+tY45dclpwWN7jryOSZVcRDJ2p/FpJiSuIAcaOGGL0vAYd9NYWC6gd7tMut38ThI
-         fQvCLkgvGyUJuRyUhNEpSooGm5zLCtYvpW/cK7k9Ccq75l+AxRnVl3O5O+VQMadeczps
-         0snw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725426201; x=1726031001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vUqFxyibmNEUdmAh831YwQL84u1yegFcAIFBz15HPh0=;
-        b=IFzJ2BR9wthgwoa0qg8qkcCpsjp5k6fozFCVLz/HBjecWoHPRbG36SyLT97ompaohO
-         u7g/ZQFM21MdCNZ2hKZ9zrAGn4Z68uCLlH1DJ1YLxvfWOU8GDHX89xz167iAgAY8IbuE
-         M0M6erAptoylUgDrO9DxRyIeqhxeO/XVIH3EtIRbkHfRQkCujo8MpBW+UMG73feMszyP
-         qxSj1FKuCTWxiK4RUIXiV7cB72a41SzOwKmqJYTAKpAuMybBHhRW3xSXA5euXnHgm3PM
-         A2hjVNzUW7O6ZFQ0yg6fprTAzYd62j+IzVk6RfvOEt4oGiKR0Xc1Hp/dOooMBcHkx25L
-         SA0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWwSkqTa9caw9kjTkW5r9RcSd63RMY2P4LlAzYMInvJlfrwwGWS91biCw6Cg3WZyYAg0PqdChU4wih1VlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxEaRvUJ1BIF3/xPyXobm9OU3AbbO2cAvyplQc6u9UaWWhZPbB
-	IUcujluI5Z4pZtqNd2XnBeuVM95yz3mPykVHc8E1Ni49+kQp5SSrahnWwb+v6JMw4kPxe+sX8+t
-	6OciRgVswmjZsr0s7hO6ygLap4fxUSXOuGq00
-X-Google-Smtp-Source: AGHT+IGOZwXDIEewBVh+sribLgHgJauqFq3yGYw9foTrMuhyBtnnqfLTGlY5eceQ9mJ8RCor8gG93uaGHiyGtcN2ptA=
-X-Received: by 2002:a05:6e02:1d13:b0:39f:52b4:e286 with SMTP id
- e9e14a558f8ab-39f739c95bamr2205845ab.26.1725426201077; Tue, 03 Sep 2024
- 22:03:21 -0700 (PDT)
+	s=arc-20240116; t=1725426332; c=relaxed/simple;
+	bh=PgdvbH11XmsZ5U7OHuKqSafP++l7ZXuPR2HUPocHO6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=onr40GweJoxW3mT5x5fyUvUubg7a0HfwO1Guxu8fmHzHKPhFkQi9xihcMCPpkFrRpKi/O7CkOFnswnpTqVpJPlk4m8NS0g0CO5MTvrGGwkVbkkNFHFqmknvGpOi3C/YvM8upIg2WecGbhir9QC8gT6fhPyFeozm2tnQC+zK9Des=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fJumvytq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725426324;
+	bh=NAaMoxOCJ8yaps3swDHsqzPY7ywBTbwVbaYo0OgWZ/E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fJumvytqh33Kz6uM64mZdY+0QpLJ+4XesiwENASpCodUhR/lDWzGumdHwNVVLi0Dp
+	 OAvCPunh+pQOTLsx11INh/RvK6qJd3U7s9Cq9yQmcSl5BmW2/2zzZICiwUQF95lztN
+	 iHeGlVGNjhUhMh/0juGbmvPWmceD9weKmSINfiL3H5b4SxB6gQaS88cTHupQFwneti
+	 ypnCFFhWKWW4A5iEkSjonVM+VVjoIAw0vX2CLu1CSVbCxuCETYq8h2MH7IvHPZvz45
+	 kX3joeg0G8/aSrqOyKu9yA1915JR7vUVuwSM1l7U1ccYHEb+/JEinib+6c0lhMrT5x
+	 qB48Pps8PGGXA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz9RR5zjSz4wb7;
+	Wed,  4 Sep 2024 15:05:23 +1000 (AEST)
+Date: Wed, 4 Sep 2024 15:05:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Message-ID: <20240904150522.0410150f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240831070415.506194-1-irogers@google.com> <20240831070415.506194-6-irogers@google.com>
- <ZtccNpePJAM24nA7@x1>
-In-Reply-To: <ZtccNpePJAM24nA7@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 3 Sep 2024 22:03:09 -0700
-Message-ID: <CAP-5=fVpT2ntV8YND4iuTWet1or8m2hPD-+Ohx_j1sdqgkwj6g@mail.gmail.com>
-Subject: Re: [PATCH v1 5/6] perf parse-events: Vary default_breakpoint_len on
- i386 and arm64
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Jihong <yangjihong@bytedance.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
-	John Garry <john.g.garry@oracle.com>, Junhao He <hejunhao3@huawei.com>, 
-	David Ahern <dsa@cumulusnetworks.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/DDjeWMXVs/vgKyeH8PMghzo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/DDjeWMXVs/vgKyeH8PMghzo
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 7:24=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Sat, Aug 31, 2024 at 12:04:14AM -0700, Ian Rogers wrote:
-> > On arm64 the breakpoint length should be 4-bytes but 8-bytes is
-> > tolerated as perf passes that as sizeof(long). Just pass the correct
-> > value.
-> >
-> > On i386 the sizeof(long) check in the kernel needs to match the
-> > kernel's long size. Check using an environment (uname checks) whether
-> > 4 or 8 bytes needs to be passed. Cache the value in a static.
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ gcc --version
-> gcc (GCC) 14.2.1 20240801 (Red Hat 14.2.1-1)
-> Copyright (C) 2024 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is N=
-O
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOS=
-E.
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ gcc --version
-> gcc (GCC) 14.2.1 20240801 (Red Hat 14.2.1-1)
-> Copyright (C) 2024 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is N=
-O
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOS=
-E.
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ uname -a
-> Linux toolbox 6.10.4-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Aug 11 15=
-:32:50 UTC 2024 x86_64 GNU/Linux
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ head /etc/os-release
-> NAME=3D"Fedora Linux"
-> VERSION=3D"40 (Toolbx Container Image)"
-> ID=3Dfedora
-> VERSION_ID=3D40
-> VERSION_CODENAME=3D""
-> PLATFORM_ID=3D"platform:f40"
-> PRETTY_NAME=3D"Fedora Linux 40 (Toolbx Container Image)"
-> ANSI_COLOR=3D"0;38;2;60;110;180"
-> LOGO=3Dfedora-logo-icon
-> CPE_NAME=3D"cpe:/o:fedoraproject:fedora:40"
-> =E2=AC=A2[acme@toolbox perf-tools-next]$
->
->  CC      /tmp/build/perf-tools-next/tests/bp_signal_overflow.o
-> tests/bp_signal.c: In function =E2=80=98__event=E2=80=99:
-> tests/bp_signal.c:115:28: error: operand of =E2=80=98?:=E2=80=99 changes =
-signedness from =E2=80=98int=E2=80=99 to =E2=80=98long unsigned int=E2=80=
-=99 due to unsignedness of other operand [-Werror=3Dsign-compare]
->   115 |         pe.bp_len =3D is_x ? default_breakpoint_len() : sizeof(lo=
-ng);
->       |                            ^~~~~~~~~~~~~~~~~~~~~~~~
->   LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
+Hi all,
 
-Teach me to build only with clang. Fixed in v2.
+Today's linux-next merge of the usb tree got a conflict in:
 
-Thanks,
-Ian
+  drivers/usb/typec/ucsi/ucsi.c
 
-> cc1: all warnings being treated as errors
-> make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
-05: /tmp/build/perf-tools-next/tests/bp_signal.o] Error 1
->   CC      /tmp/build/perf-tools-next/builtin-mem.o
-> make[4]: *** Waiting for unfinished jobs....
->   CC      /tmp/build/perf-tools-next/util/symbol.o
->   CC      /tmp/build/perf-tools-next/builtin-version.o
->   AR      /tmp/build/perf-tools-next/libpmu-events.a
->   CC      /tmp/build/perf-tools-next/util/metricgroup.o
->   CC      /tmp/build/perf-tools-next/builtin-c2c.o
->   CC      /tmp/build/perf-tools-next/util/header.o
-> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
-58: tests] Error 2
-> make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.=
-o] Error 2
-> make[2]: *** Waiting for unfinished jobs....
->
+between commit:
+
+  87eb3cb4ec61 ("usb: typec: ucsi: Fix cable registration")
+
+from the usb.current tree and commit:
+
+  73910c511b1a ("usb: typec: ucsi: Only assign the identity structure if th=
+e PPM supports it")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/usb/typec/ucsi/ucsi.c
+index 17155ed17fdf,f0b5867048e2..000000000000
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@@ -993,11 -929,12 +939,12 @@@ static int ucsi_register_cable(struct u
+  		break;
+  	}
+ =20
+- 	desc.identity =3D &con->cable_identity;
++ 	if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
++ 		desc.identity =3D &con->cable_identity;
+ -	desc.active =3D !!(UCSI_CABLE_PROP_FLAG_ACTIVE_CABLE &
+ -			 con->cable_prop.flags);
+ -	desc.pd_revision =3D UCSI_CABLE_PROP_FLAG_PD_MAJOR_REV_AS_BCD(
+ -	    con->cable_prop.flags);
+ +	desc.active =3D !!(UCSI_CABLE_PROP_FLAG_ACTIVE_CABLE & cable_prop.flags);
+ +
+ +	if (con->ucsi->version >=3D UCSI_VERSION_2_1)
+ +		desc.pd_revision =3D UCSI_CABLE_PROP_FLAG_PD_MAJOR_REV_AS_BCD(cable_pro=
+p.flags);
+ =20
+  	cable =3D typec_register_cable(con->port, &desc);
+  	if (IS_ERR(cable)) {
+@@@ -1094,8 -1009,10 +1041,9 @@@ static int ucsi_register_partner(struc
+  	if (pwr_opmode =3D=3D UCSI_CONSTAT_PWR_OPMODE_PD)
+  		ucsi_register_device_pdos(con);
+ =20
+- 	desc.identity =3D &con->partner_identity;
++ 	if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
++ 		desc.identity =3D &con->partner_identity;
+  	desc.usb_pd =3D pwr_opmode =3D=3D UCSI_CONSTAT_PWR_OPMODE_PD;
+ -	desc.pd_revision =3D UCSI_CONCAP_FLAG_PARTNER_PD_MAJOR_REV_AS_BCD(con->c=
+ap.flags);
+ =20
+  	partner =3D typec_register_partner(con->port, &desc);
+  	if (IS_ERR(partner)) {
+
+--Sig_/DDjeWMXVs/vgKyeH8PMghzo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbX6pIACgkQAVBC80lX
+0Gw48QgAnNbFLvzNKT3OZZbQntVMNnjWrDIxZoU4975Tv+dmb8UGwcAlpoJhkxr8
+n8DcXopXedL28nvRpkl6mdWg0f7Qfed3gO/YB1oneWgNhvYePZAtHU9JrEe5Hh+E
+95aOeg/odug/9iVgXP7FG0T8ltJ9UvUaSfuh4lwGDTuAq219TZsVZiEJxcNk4rZQ
+nX/6xIwDjJLF+aVtfzSvqnnu5c2D1wbK+/Wg3rea4A90UUjhSxA6CYnqVsq1z6S5
+lAt1KmyGS0yWRYJaZ4lLBAB3dk3hpLJpop5fX7W39y0wcWNwm0MmaUsxx+7c4FyD
+G31l3kS8a9mc2B1aGc3UFI/MwEAcqA==
+=JjGC
+-----END PGP SIGNATURE-----
+
+--Sig_/DDjeWMXVs/vgKyeH8PMghzo--
 
