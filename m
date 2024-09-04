@@ -1,194 +1,171 @@
-Return-Path: <linux-kernel+bounces-314731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2DF96B7C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92EF96B7CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD3F1C21F44
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546B01F21A0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E571CCB5B;
-	Wed,  4 Sep 2024 10:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2EB1CF5C9;
+	Wed,  4 Sep 2024 10:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G4o+wR5a"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqN68MbP"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37A419B3C3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983BF1CF5D3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444322; cv=none; b=j2hnBpDeH399LSL7EONqiXT8jcoQ6XzRqKUkuBxfEd04QTPfSszaSdlxumWJbh8xTyiKnpJWEPwHX3LysymYuS1XDt7VpiR/PJOWRTIRNblNYAvXdNRn+ZfeA4I7QqlLwXUijAjB/83PRtfikefa8ufem0tFZK+kuRn7FUiUIb8=
+	t=1725444342; cv=none; b=PXbBRmE9enGVi3iI1E75bVU49DdNYTvaGppEkg8xs7xCTYQsGLGk06+A9YMQyOfJjHU0SqOm7eWXcPuSQvoWAKhP2VFNipL/JBgfs7l0trDTKrA02a0EUicH9E0H5uTCB7z/2ydnuExEdwYBCMTF8+DqBPp94slXo+8iNBbulvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444322; c=relaxed/simple;
-	bh=AONNU4qb9oiFPGSw9fpfGy0jr4gbBJfkSgZJ8vVzOxw=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=eDuX7mYuNy1An+DXkw+fRRVPJn0Cq8YeZVsiaEX7utUtQD5Bdp9ZTStKIULFhpsmw1bsARd7kli+t40CZhsMEHK4xWqSrexth85Jr3Rt7uHPdEmKoKGQHs9iibjayn+7mxw2dX6vFo9MbUq6ewkiwAnDD4r31h416sRB8XUd1lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=G4o+wR5a; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240904100518euoutp024d4c4583d84346e9be52013d647a688c~yAncwmr_u1346313463euoutp02l
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:05:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240904100518euoutp024d4c4583d84346e9be52013d647a688c~yAncwmr_u1346313463euoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725444318;
-	bh=YPUgnqz7LL9XdDgsRpg8rhlUBrIzuDzbzJ48Egoi0w8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=G4o+wR5aGwLhae7QjKcpVSzh8LflCPCA+2XzDD1+TEGsDLJDDfKvlVDStmqG3Hqol
-	 dWmBoOyyFlS4ijTRv7wZjITXSz8uRX0/xOeqjPLdV3mwJWAbP8vD7hyDA1rXxR5ApY
-	 8Ei9BG3icTezz8Sh+xjnSHqF8/Qb4xm96CTC4xHM=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240904100517eucas1p2b8a8411572ce57ec9d023fbaa3d6069d~yAnccTdD21206612066eucas1p24;
-	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id A7.D6.09875.DD038D66; Wed,  4
-	Sep 2024 11:05:17 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240904100517eucas1p19e878377b0d393607150e7ac0e9a9d4b~yAnb1shjE2106921069eucas1p1B;
-	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240904100517eusmtrp1f6c7d16c091ef3f2bfb5ded3351c8d37~yAnb0uaL02008320083eusmtrp1I;
-	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-fd-66d830dd78f8
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id D3.EA.14621.DD038D66; Wed,  4
-	Sep 2024 11:05:17 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240904100516eusmtip1baa7740dc219f528d9d5b87ee53afb20~yAnboFi560150501505eusmtip1R;
-	Wed,  4 Sep 2024 10:05:16 +0000 (GMT)
-Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 4 Sep 2024 11:05:10 +0100
-Date: Wed, 4 Sep 2024 12:05:07 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>, "David
- Woodhouse" <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Will
-	Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
-	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
-	<k.jensen@samsung.com>
-Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
- non-nested and non-svm cases
-Message-ID: <20240904100507.u3speeqf5ncopjhc@joelS2.panther.com>
+	s=arc-20240116; t=1725444342; c=relaxed/simple;
+	bh=qKxfA0ClsNmcJkbtBwmSmCYZJ9vmXcRSSui0jEv6Uys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pVRoV9IYmaO28a3nLCRepapiB52IR2Kk3qwOU1XVQWEcQi4KZGwOZTKM5Mj0KEAqyQnwHd6XfLLtnnxMwEzxiSofC8ZG229YDtYo7LkwoaRV76j+WYFthVHMOcN8frQEVDhEbncHnQB8/YhFnntW/fmNESmkQBL247TQUhCRQiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eqN68MbP; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70f59acf6c7so313692a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725444339; x=1726049139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CIEqtb0/9F1loSbNbXhveL3mObT0bYvJU/ZvAslsQR0=;
+        b=eqN68MbPuFRTgQv+DxwvbVZQyb3WrTI4QYK1prffBAMktfqLScFHNhq0/9YAEWCXOv
+         2MBhbl40KV4avMc9NnPGY4WvvqKC8b57shDGJw1Ui0vltMHmjREOdczwrh5HpHL+v29D
+         EixZj8oE1xNf+aQYS1AXWLGRtaXw4Led3alwFINuo+oSgPmbe7/dRo2reaGfK3089U7+
+         Z8TSuS1Wwfx+hKQ7FU5X2YMWYtQPdaMrJWO4+Y6G0ZqXVBRlaByudsU/vTc8BZQ3kqKE
+         V6fX3k+wBxo5bpabZRm86srKG5FAD6iYGLAfzj7QUDzjLAvc4yFk8IQ39v4kpw1ZVjnZ
+         96rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725444339; x=1726049139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CIEqtb0/9F1loSbNbXhveL3mObT0bYvJU/ZvAslsQR0=;
+        b=RKCFPIPT4B/N7q2YmpMMijweVIBmKpRaRR0PR9KdVG4ygKDAsK6SVMBQtMxRcSdwSZ
+         uyXd/k0CI6zCGbTP7D7vzZ+SEsXjXZJRLDrLaay6aaTtIKZvQ3cz/e0KqVdCBrNfB0eh
+         gEAiLNTv1yrAddGMEIR/jkursVwtBHYIppJz88tAmMstc682KID14xcypfKGXAUwsC5P
+         U5Eor+fcR9VzTwVEtHkrnDHHd+eaZJGxdMq7BB8B0d29tj3R6ek/x3eSniswrZdGlYGQ
+         fkeG9e2fVAKpKjgkyLF4Pk2ZbDGG1XRqCDkwXG0w/p45GQHYctPazthYQgU7S1dQMKUg
+         270Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Ta+rqbdOsQ+hPe/JIukDiZDfcYDcqRxBXBvrISCEx7cfTEhft4IBmVi3SDUUUXapYVl6gLqx0aUHURI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzex4puD9pfANA1+lCKUjGVxVjvvn1DNKSmStvNNA1olOm1ZOJZ
+	xG3sJ3PgBgSDpnmDHt1fmtermMPPKZluPxTQ2clICJ+drdZEI6fB4IJB7du5CJ/HXzOOjn9ZpP1
+	hhzkpoQDqinsSEy2X+JdpK07UBkKdVFmYjV0YeadP6cpjYpGB
+X-Google-Smtp-Source: AGHT+IHKr3MA3hwPxyiGJmcFol57BYdcbd6OW2LBeXJN0l/coREJFmMP/eCrcFKSlEyU226769uZzSp2VNuZj862uw4=
+X-Received: by 2002:a05:6830:620f:b0:703:77c0:cedb with SMTP id
+ 46e09a7af769-70f684a03cbmr10137918a34.1.1725444339557; Wed, 04 Sep 2024
+ 03:05:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djP87p3DW6kGZy5pmWxeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
-	XBmr2puYChaKVmz/dJuxgfGrQBcjJ4eEgInEpQ0T2boYuTiEBFYwSqz/84sRwvnCKHFlYQML
-	hPOZUWL1z6tMMC3zLx2HSixnlJh07iRC1fE/G9ghnC1ALc8/MIO0sAioSJyZ/YMNxGYT0JE4
-	/+YOWFxEQF2iqXEv2HZmgf9MEntO94ElhAVSJZas3AC2j1fAQeLX37fsELagxMmZT1hAbGag
-	QQt2fwJq5gCypSWW/+MACXMKOEusmfIR6lRliYPLDrFD2LUSp7bcYgLZJSEwn1PizpOJUAkX
-	iSdn5jNC2MISr45vgYrLSJye3MMC0TCZUWL/vw/sEM5qRolljV+hVlhLtFx5wg5yhYSAo8ST
-	mxEQJp/EjbeCEHfySUzaNp0ZIswr0dEmBNGoJrH63huWCYzKs5B8NgvJZ7MQPlvAyLyKUTy1
-	tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMHGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJML7WuRG
-	mhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgsEwenVAPTjIeR4ofa
-	NvJcz1iXVWPpqnFMTFfy8rr6D8IrbofI3VXg7Htx6I9Y2HS2IyJFuclnf6xQ94rz5Lsxe8da
-	DZP5L2592WwpYyCvtTmp/AB3gsj21BsfcuzVWp8K81szH9xkJBvVsontzKT7C8M2h6v5Rx9p
-	zVj377zxok/2R4zvzOc+zxvzP+t4UrqHyokf0XkyOt+F4vemTDKonLPRQd/+jZlux07Br/Wl
-	KmZq1SFp5i8r1Q77PZuceGWCzuOfCyNaXmvm8gp6WTOnbHJdYs6ZeazJ8xy3+7eTZUVKB7Z8
-	fazTJyEyQT1s87a//zT9FkmYr1Mx5z/xdIWDblzwxUllm9i/fn/CevxnrUXJh0tKLMUZiYZa
-	zEXFiQAK76OpywMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7p3DW6kGVy9x2qxeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
-	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehmr2puYChaKVmz/dJuxgfGr
-	QBcjJ4eEgInE/EvHWboYuTiEBJYySryc85kdIiEjsfHLVVYIW1jiz7UuNoiij4wSy/79Y4Rw
-	tjBK9D95zghSxSKgInFm9g82EJtNQEfi/Js7zCC2iIC6RFPjXrBuZoH/TBItSxezgCSEBVIl
-	lqzcwARi8wo4SPz6+xZstZDAbGaJMz+CIOKCEidnPgGrZwYaumD3J6BBHEC2tMTyfxwgYU4B
-	Z4k1Uz4yQVyqLHFw2SGoD2olPv99xjiBUXgWkkmzkEyahTBpASPzKkaR1NLi3PTcYkO94sTc
-	4tK8dL3k/NxNjMDo3Xbs5+YdjPNefdQ7xMjEwXiIUYKDWUmE97XIjTQh3pTEyqrUovz4otKc
-	1OJDjKbAoJjILCWanA9MH3kl8YZmBqaGJmaWBqaWZsZK4rxul8+nCQmkJ5akZqemFqQWwfQx
-	cXBKNTCJXnz3wczfokX80v4l3x6F6W9lz60/uZFfbUHNtpKg/uV+C1u//ufU3lb24vPZ7/p6
-	64PrF0/KnbU5RHFrxGnuqQ9DAgsNK1aFsj4+IOBut8xrsbDG1U7vRZfm63s8bHbn9tY7JM4S
-	ethNvkLo7dMVmX+Pxq1nfTMpJPrr5nupJS4cT+rValy6w7j9NBsWaMT8iIioCDrAe/qz9vXN
-	94VkTy7uvSXx6GW6r6jULdPc4M2zFx6wslJ8/WxnW45YiY4TQxNr5rI4/3t+x3oDd8fNeK9W
-	suDoj+2f1Dal+JUemnJsWYjE8tsOi08f/HV7pcL1hy7pPNlZ16o9/unPm3JS6c1W0Zh/avNr
-	rc10t3QrsRRnJBpqMRcVJwIAxt0xOmcDAAA=
-X-CMS-MailID: 20240904100517eucas1p19e878377b0d393607150e7ac0e9a9d4b
-X-Msg-Generator: CA
-X-RootMTR: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
-References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
-	<CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
-	<20240826135955.GI3468552@ziepe.ca>
-	<20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
-	<d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
-	<20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
-	<8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
+References: <CADYN=9JBw6kq4E9aA=Pr1rFy-6tY-j-XOthQVYVw6ptmj11=HA@mail.gmail.com>
+ <f3fe6be4-723e-45b8-baa6-5c285cc5c150@redhat.com>
+In-Reply-To: <f3fe6be4-723e-45b8-baa6-5c285cc5c150@redhat.com>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Wed, 4 Sep 2024 12:05:28 +0200
+Message-ID: <CADYN=9+xONPg=UrApM9xsKs2Um3VDMCi5X0684k0idJv-th82w@mail.gmail.com>
+Subject: Re: Potential Regression in futex Performance from v6.9 to v6.10-rc1
+ and v6.11-rc4
+To: David Hildenbrand <david@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, dvhart@infradead.org, dave@stgolabs.net, 
+	andrealmeid@igalia.com, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 09:37:35AM +0800, Baolu Lu wrote:
-> On 9/3/24 9:20 PM, Joel Granados wrote:
-> > On Mon, Sep 02, 2024 at 08:47:21PM +0800, Baolu Lu wrote:
-> >> On 2024/9/2 18:48, Joel Granados wrote:
-> >>>> I definitely expect PRI to work outside PASID and SVA cases, so this
-> >>>> is going in a good direction
-> >>> This touches on a detail (at least in Intel's vtd-io spec) that is not
-> >>> 100% clear to me. Second paragraph of section "3.4.3 Scalable Mode
-> >>> Address Translation" reads:
-> >>> "
-> >>>     ... Scalable-mode context-entries support both requests-without-PASID
-> >>>     and requests-with-PASID. However unlike legacy mode, in scalable-mode,
-> >>>     requests-without-PASID obtain a PASID value from the RID_PASID field of
-> >>>     the scalable-mode context- entry and are processed similarly to
-> >>>     requests-with-PASID.Implementations not supporting RID_PASID capability
-> >>>     (ECAP_REG.RPS is 0b), use a PASID value of 0 to perform address
-> >>>     translation for requests without PASID.
-> >>> "
-> >>> This basically means that a default PASID is used even though the
-> >>> request is without PASID. Right? Therefore "outside PASID" means with
-> >>> the default PASID (at least in Intels case). Right?
-> >> Kind of yes.
-> >>
-> >> The PCI specification defines the concept of PASID and its role in
-> >> transaction routing. We refer to PCI transactions with a PASID prefix as
-> >> "request-with-PASID" and those without a PASID prefix as "request-
-> >> without-PASID." Consequently, I understand 'outside PASID' to mean
-> >> transactions that do not have a PASID prefix.
-> >>
-> >> The VT-d specification describes how the IOMMU hardware handles request-
-> >> without-PASID. It uses a reserved PASID for its internal routing and
-> >> handling purposes. If RID_PASID is supported (ECAP_REG.RPS=1), software
-> >> can select its own reserved PASID. Otherwise, the IOMMU hardware will
-> >> use a default value of 0.
-> >>
-> > Thx for getting back to me. This generates another doubt in my head
-> > regarding the published capabilities from the intel IOMMU Hardware:
-> > 
-> > So ecap_pasid [1] does not have to be set in scalable-mode. Right? This
-> > allows hardware supporting scalable-mode to reject transactions with
-> > PASID whenever ecap_pasid is*NOT*  set; even though internally things
-> > are handled with a PASID. This question is directly related to the two
-> > last patches in the set.5/6 and 6/6.
-> 
-> Yes. And 5/6, 6/6 make sense to me. We should remove the PASID
-> restriction from the code once PRI is split from SVA.
+On Tue, 3 Sept 2024 at 14:37, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 03.09.24 14:21, Anders Roxell wrote:
+> > Hi,
+> >
+> > I've noticed that the futex01-thread-* tests in will-it-scale-sys-threa=
+ds
+> > are running about 2% slower on v6.10-rc1 compared to v6.9, and this
+> > slowdown continues with v6.11-rc4. I am focused on identifying any
+> > performance regressions greater than 2% that occur in automated
+> > testing on arm64 HW.
+> >
+> > Using git bisect, I traced the issue to commit
+> > f002882ca369 ("mm: merge folio_is_secretmem() and
+> > folio_fast_pin_allowed() into gup_fast_folio_allowed()").
+>
+> Thanks for analyzing the (slight) regression!
+>
+> >
+> > My tests were performed on m7g.large and m7g.metal instances:
+> >
+> > * The slowdown is consistent regardless of the number of threads;
+> >     futex1-threads-128 performs similarly to futex1-threads-2, indicati=
+ng
+> >     there is no scalability issue, just a minor performance overhead.
+> > * The test doesn=E2=80=99t involve actual futex operations, just dummy =
+wake/wait
+> >     on a variable that isn=E2=80=99t accessed by other threads, so the =
+results might
+> >     not be very significant.
+> >
+> > Given that this seems to be a minor increase in code path length rather
+> > than a scalability issue, would this be considered a genuine regression=
+?
+>
+> Likely not, I've seen these kinds of regressions (for example in my fork
+> micro-benchmarks) simply because the compiler slightly changes the code
+> layout, or suddenly decides to not inline a functions.
+>
+> Still it is rather unexpected, so let's find out what's happening.
+>
+> My first intuition would have been that the compiler now decides to not
+> inline gup_fast_folio_allowed() anymore, adding a function call.
+>
+> LLVM seems to inline it for me. GCC not.
+>
+> Would this return the original behavior for you?
 
-Thx for the clarification. I'll make sure to include them in my V1
+David thank you for quick patch for me to try.
 
-Best
+This patch helped the original regression on v6.10-rc1, but on current main=
+line
+v6.11-rc6 the patch does nothing and the performance is as expeced.
 
--- 
 
-Joel Granados
+Cheers,
+Anders
+
+>
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 69c483e2cc32d..6642f09c95881 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2726,7 +2726,8 @@ EXPORT_SYMBOL(get_user_pages_unlocked);
+>    * in the fast path, so instead we whitelist known good cases and if in=
+ doubt,
+>    * fall back to the slow path.
+>    */
+> -static bool gup_fast_folio_allowed(struct folio *folio, unsigned int fla=
+gs)
+> +static __always_inline bool gup_fast_folio_allowed(struct folio *folio,
+> +               unsigned int flags)
+>   {
+>          bool reject_file_backed =3D false;
+>          struct address_space *mapping;
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
