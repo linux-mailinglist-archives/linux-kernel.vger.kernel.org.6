@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-314015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528B096ADB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB74C96ADB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82F7F1C20DA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C2A285F3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBCEBA50;
-	Wed,  4 Sep 2024 01:16:07 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B85A4A3F;
-	Wed,  4 Sep 2024 01:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34855C96;
+	Wed,  4 Sep 2024 01:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gtEuMQcK"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3494E63C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725412567; cv=none; b=NADJCjfkd2ysVsD52ozyN1TPnNPQgJCVe8pPRWyUr6DKW6asP0NZOt28SssxDMdDZhwyfcrAAAU98zb+UFfP7qLQ89UOZV9k//eUXEsagB1icMJ+PAtnmuLYCzQa50z0zFPfngzv9LR55WHBdqxjLiMCTmShxQwXVqLac7+z0bc=
+	t=1725412626; cv=none; b=on4GxxYwIspgYxua+aiivuaG8Pcq+4uS7IS2vscDff/TwpmINTumXDjA5TuD2uUjbyJdFg+FhvoY/O5i+0oZ0S9CtIRYM7IZdsolrt4m8tNawUfF22jE6r5FZCeGDgU4bSS5SNaxkverBy/szdsAZ/6YWCdidksJ9ofXeIWdWyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725412567; c=relaxed/simple;
-	bh=9lrTEjGx49ggIDY773iVJJwYcmojKAO9Di+PWU9h79g=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BMODH+FJXnCuM31b7WYs2+cl1v+EC+R9WGDSpbJPm+0S3gPygpZ/SRWnCPf+GBSoc072V8coMPtK1WLbcxqRjJBIlZIrQ5NkHBjh1EDdPNkVq8vYzkOOIqH3PDpNSFz7Z2my79IkYNUrzkaiwPWG4k9h8sLtPToTt9rQlEIR6AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8AxSZrPtNdmANApAA--.43966S3;
-	Wed, 04 Sep 2024 09:15:59 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front2 (Coremail) with SMTP id qciowMBxzsXOtNdm9m8FAA--.15006S2;
-	Wed, 04 Sep 2024 09:15:58 +0800 (CST)
-Subject: Re: [PATCH V3 1/2] dt-bindings: EDAC for ls3a5000 memory controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903114714.11428-1-zhaoqunqin@loongson.cn>
- <20240903114714.11428-2-zhaoqunqin@loongson.cn>
- <c901ff6b-2e4d-4dd1-82da-e2e3d5db7988@kernel.org>
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Message-ID: <32aded46-86ce-59cf-e8b4-2621c0dd9ebe@loongson.cn>
-Date: Wed, 4 Sep 2024 09:15:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1725412626; c=relaxed/simple;
+	bh=NCc+vL4Xf17rwfZm0pBFIaqDinZRRvObBmVqQAT7A6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHiZu2hjDnH+KVMm6v/7RVp1qFhcHqoitVD6e5G9M6wH3ItTOMdOi6GMCDS1lkpi8BBkd0R74n5TeyNrYHitGYk1WCNbIQq1skJkrQzEX/LTXk+TPZDTBDMMGkUB8KLvtp8bH/ZZHYKimMQN8EaMpriP5ilrBecfgLMEx338zVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gtEuMQcK; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 3 Sep 2024 21:16:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725412620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rQzYOHMyrq7t59Ykk0pAhpV7+DRQum6wY5MPwnLcic4=;
+	b=gtEuMQcK45L8judrF5ka80VaQCtIaWgD5a4OzH+xUHPET9XKz83gNn6GCOX84C3e3mq9rO
+	rFUei0M4L39R6xeJMY9/20AMzJI2jfbIssaZzgOqbDOOA3j0zhD24smbPjgXriKR3CNOYf
+	wUpxTIhmvpLv9a8ZrpbX+9sIt7jDXqo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org, 
+	liam.howlett@oracle.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
+	keescook@chromium.org, dennis@kernel.org, jhubbard@nvidia.com, yuzhao@google.com, 
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 5/6] alloc_tag: make page allocation tag reference
+ size configurable
+Message-ID: <3kfgku2oxdcnqgtsevsc6digb2zyapbvchbcarrjipyxgytv2n@7tolozzacukf>
+References: <20240902044128.664075-1-surenb@google.com>
+ <20240902044128.664075-6-surenb@google.com>
+ <20240901220931.53d3ad335ae9ac3fe7ef3928@linux-foundation.org>
+ <CAJuCfpHL04DyQn5WLz0GZ_zMYyg1b6UwKd_+8DSko843uSk7Ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c901ff6b-2e4d-4dd1-82da-e2e3d5db7988@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qciowMBxzsXOtNdm9m8FAA--.15006S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUPEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCF54CYxVAaw2AFwI0_Jrv_JF1l4c8EcI0Ec7Cj
-	xVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxU2nYFDUUUU
+In-Reply-To: <CAJuCfpHL04DyQn5WLz0GZ_zMYyg1b6UwKd_+8DSko843uSk7Ww@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Tue, Sep 03, 2024 at 06:07:28PM GMT, Suren Baghdasaryan wrote:
+> On Sun, Sep 1, 2024 at 10:09 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Sun,  1 Sep 2024 21:41:27 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > > Introduce CONFIG_PGALLOC_TAG_REF_BITS to control the size of the
+> > > page allocation tag references. When the size is configured to be
+> > > less than a direct pointer, the tags are searched using an index
+> > > stored as the tag reference.
+> > >
+> > > ...
+> > >
+> > > +config PGALLOC_TAG_REF_BITS
+> > > +     int "Number of bits for page allocation tag reference (10-64)"
+> > > +     range 10 64
+> > > +     default "64"
+> > > +     depends on MEM_ALLOC_PROFILING
+> > > +     help
+> > > +       Number of bits used to encode a page allocation tag reference.
+> > > +
+> > > +       Smaller number results in less memory overhead but limits the number of
+> > > +       allocations which can be tagged (including allocations from modules).
+> > > +
+> >
+> > In other words, "we have no idea what's best for you, you're on your
+> > own".
+> >
+> > I pity our poor users.
+> >
+> > Can we at least tell them what they should look at to determine whether
+> > whatever random number they chose was helpful or harmful?
+> 
+> At the end of my reply in
+> https://lore.kernel.org/all/CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com/#t
+> I suggested using all unused page flags. That would simplify things
+> for the user at the expense of potentially using more memory than we
+> need.
 
-在 2024/9/3 下午8:29, Krzysztof Kozlowski 写道:
-> On 03/09/2024 13:47, Zhao Qunqin wrote:
->> add device tree bindings for ls3a5000 EDAC driver.
->>
->> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
-> So no improvements? No changes? Why do you send the same?
+Why would that use more memory, and how much?
 
-I'm sorry,  I thought if you hadn't raised any issues with the previous 
-version of dt binding, I wouldn't need to make any changes.
+> In practice 13 bits should be more than enough to cover all
+> kernel page allocations with enough headroom for page allocations
+> coming from loadable modules. I guess using 13 as the default would
+> cover most cases. In the unlikely case a specific system needs more
+> tags, the user can increase this value. It can also be set to 64 to
+> force direct references instead of indexing for better performance.
+> Would that approach be acceptable?
 
-For this version of the patch, I only changed the driver.
-
-Best regards,
-
-Zhao Qunqin.
-
->
-> Best regards,
-> Krzysztof
-
+Any knob that has to be kept track of and adjusted is a real hassle -
+e.g. lockdep has a bunch of knobs that have to be periodically tweaked,
+that's used by _developers_, and they're often wrong.
 
