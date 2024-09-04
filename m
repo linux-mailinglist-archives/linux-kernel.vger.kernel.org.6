@@ -1,176 +1,209 @@
-Return-Path: <linux-kernel+bounces-314892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33B596BAA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C9896BAAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11AD61C22ADA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EF31F22DE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16A1D0DCF;
-	Wed,  4 Sep 2024 11:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4E91D2225;
+	Wed,  4 Sep 2024 11:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LpLfIYGx"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDo+i+OD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8221D04AA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791DE1CF7A6;
+	Wed,  4 Sep 2024 11:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449353; cv=none; b=IwqKGOGpkP9mQ9rTw/itCkhAIBcFNJXqvxWEky7xX6qwHxwdeIuqy0HTEiMfscXbNLn/EYh0JyFzb01YVmk4aqnBeQslw93bePqDvLL3oDL9IpXYOHEnrsQRO5Np4dT40eJGGcAyD+vWwWUwIqmSXYT5QDUL6CTS5djnkio0K7M=
+	t=1725449375; cv=none; b=lpuTWFUm31xw7VjaDUrKYzXzPSTRwzQo3OtYKOMroT5rSu2Uj7F0BRZeDTrn+jRYYjZ28Is3bQWPh0o8dYORhi2PUlSLTG8+oyciAm5fBQ/8cxQhG9AgulOTSLfT4BuEqy4gZqiQIckceVaM6h1o3Y9O37oWL8Tp8nQ2sN6WFB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449353; c=relaxed/simple;
-	bh=gXsUyKWX4eqG122FiUepNnh81SKVQrwhRAm8zyF53+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SFbHyj3LhaCobMu4BWbBhq8VRIELJs1EQu1Li6emQY6hrWwbSyPNdscVRrtLOcntWylCzp6+YhxYr6ai8+WTTkzhoY4g50cWQrCF/Wo+ThHZo4NZAUYppNLH+qmK0fIgKcT46NWgJxlBWPaBjTEHgbYxFTltHDS1uEQNTK3cfFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LpLfIYGx; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 349C8C000C;
-	Wed,  4 Sep 2024 11:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725449348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WydPZP7NPAakT9XUYDlnXK7eOUzTvx6eQKKMASqspTA=;
-	b=LpLfIYGx7X/MXTsan9nOxCKtJzrhkPpo3Bpz54ov7ed/Gi1k0j0dQKT9PPQhuA2xfv06Pg
-	fpzKjn08WRFgIrM6Picz7zMqr7cIwLTPvyuGpj3hDdPe1GJl+0oTlzJMXxpLrfY6zmI8mF
-	a7DSs1TM/p6eZrSguUUNgB5tMxvE+jz/aW9UKg0jvktspEbGRlZX2hOW1mUFVAYqiMi8eh
-	4+joFENOO9PJ5Nx/JaPDO64EfjKWHEPo74A1UY5xaea9ncTN0yKcIiRcxWL/i1CGeRrAbb
-	r2MfxVYGpCaMOP11udloXOfq8UJD5a1qjNqv6DPzyEaejDXUYWPCKhiomfpjlA==
-Message-ID: <c8a82583-5570-4286-9f1b-00a2717bae4b@bootlin.com>
-Date: Wed, 4 Sep 2024 13:29:07 +0200
+	s=arc-20240116; t=1725449375; c=relaxed/simple;
+	bh=wDbZjpbh7d5SMohBU9tM7AEFFdcqXfex4l2JBIWINjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aJWrRS2S3ZeMeEXew5RuFoATNy00blOK4lDgXuQ4wn5UnuIESKDhcTqiIYFTfTFLljdIw6UhxHfbzQtTD+CsWhVQiwTimsm6LA6tiEvfvYY+IHBebPJQa2nGpaD0A9T+dDrYDuePZrNhCWwzFsbE5fxQxfxgkKPWcsI8q3EKVcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDo+i+OD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF39FC4CED1;
+	Wed,  4 Sep 2024 11:29:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725449375;
+	bh=wDbZjpbh7d5SMohBU9tM7AEFFdcqXfex4l2JBIWINjE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uDo+i+OD7YcZQkH4Kf1blwRPvQN7ltIZ/3WWJnFJPWLnazkXlpoRoOPq66Epj1o7P
+	 einOJeuiFQ00o/ndcc37yiEuTRjrdlq9dnlSaWHfW3GD0UvmvY4zF0xWc+OoirBUBQ
+	 GiIhXD3qWLfSO2H2+Q47iWquktQQFayzDT0TY1TVp/Uo0cL7M9ndkIpJMS41QczNis
+	 gOWUXYOWVSLJQl+mgRSzLsshjsjCeJtUf3hbg10YqheaHxw8efFGXdhvWoUFl9GHvQ
+	 izzP9PBZgpvcHY705zblTbu1QHjk8PG+fVg+AD3OK4N/s+nVbcMVSWTB1cIcMRVYv7
+	 G419Me+McWxfg==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27045e54272so2907678fac.0;
+        Wed, 04 Sep 2024 04:29:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6ui9aDv9c99WacbGPK6O20dUOiUQzrJ0ZgMt+JbcueqNdPMht/so6Axw0/3cwT6KTvOuIOJnoOeMcvKc=@vger.kernel.org, AJvYcCViG49XcJViviSebdjPh+pCgaTq1CzsbkTKjsKKwm0hu6F9o7CI3NlA7VtDrEOhhl7qlbbdEaUVo3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/jtKXhWEGAyLyrS7PRyr5fGeLOE7AG4eU+JZD10muY/VG5B7D
+	J5JHkdUfDLJEwmpvAyoVarAhVv69pEAZPrClg0e8H5O92fBhU6I6Utlb8aHoPBNBFlNuRPZKxGn
+	QoKuQg/GdpDeEC36bCjlfHts8V/c=
+X-Google-Smtp-Source: AGHT+IFtcZkT9cYGlrZKkEBlTZjui+UE/KUyYk1iXSUfbJVI6UUv55LSXDlRPs6qeRksifDC2A1cH3pEyDoKGzCMCiM=
+X-Received: by 2002:a05:6870:5cc7:b0:270:64ed:c125 with SMTP id
+ 586e51a60fabf-277c804bc6bmr15834642fac.16.1725449374219; Wed, 04 Sep 2024
+ 04:29:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mux: add mux_chip_resume() function
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
- theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com>
- <20240613-mux-mmio-resume-support-v1-1-4525bf56024a@bootlin.com>
- <94069d56-0981-2d69-65c2-901a05758806@axentia.se>
- <f5067055-1470-4386-8839-b4ec2527872e@bootlin.com>
- <4cf89e3d-7164-67b5-0a3c-9e8e4df274eb@axentia.se>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <4cf89e3d-7164-67b5-0a3c-9e8e4df274eb@axentia.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+References: <3310447.aeNJFYEL58@rjwysocki.net> <1979653.PYKUYFuaPT@rjwysocki.net>
+ <20240904063915.GA3674@ranerica-svr.sc.intel.com>
+In-Reply-To: <20240904063915.GA3674@ranerica-svr.sc.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Sep 2024 13:29:22 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h+kvT061n442G2Q4gyRzS_fj4yROTD-1APYvK2K4tagw@mail.gmail.com>
+Message-ID: <CAJZ5v0h+kvT061n442G2Q4gyRzS_fj4yROTD-1APYvK2K4tagw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity
+ on hybrid systems
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/24 11:32, Peter Rosin wrote:
-> Hi!
-> 
-> 2024-09-04 at 11:18, Thomas Richard wrote:
->> On 9/3/24 15:22, Peter Rosin wrote:
->>> Hi!
->>>
->>> Sorry for being unresponsive. And for first writing this in the older v4
->>> thread instead of here.
->>>
->>> 2024-06-13 at 15:07, Thomas Richard wrote:
->>>> The mux_chip_resume() function restores a mux_chip using the cached state
->>>> of each mux.
->>>>
->>>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
->>>> ---
->>>>  drivers/mux/core.c         | 29 +++++++++++++++++++++++++++++
->>>>  include/linux/mux/driver.h |  1 +
->>>>  2 files changed, 30 insertions(+)
->>>>
->>>> diff --git a/drivers/mux/core.c b/drivers/mux/core.c
->>>> index 78c0022697ec..0858cacae845 100644
->>>> --- a/drivers/mux/core.c
->>>> +++ b/drivers/mux/core.c
->>>> @@ -215,6 +215,35 @@ void mux_chip_free(struct mux_chip *mux_chip)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(mux_chip_free);
->>>>  
->>>> +/**
->>>> + * mux_chip_resume() - restores the mux-chip state
->>>> + * @mux_chip: The mux-chip to resume.
->>>> + *
->>>> + * Restores the mux-chip state.
->>>> + *
->>>> + * Return: Zero on success or a negative errno on error.
->>>> + */
->>>> +int mux_chip_resume(struct mux_chip *mux_chip)
->>>> +{
->>>> +	int ret, i;
->>>> +
->>>> +	for (i = 0; i < mux_chip->controllers; ++i) {
->>>> +		struct mux_control *mux = &mux_chip->mux[i];
->>>> +
->>>> +		if (mux->cached_state == MUX_CACHE_UNKNOWN)
->>>> +			continue;
->>>> +
->>>> +		ret = mux_control_set(mux, mux->cached_state);
->>>
->>> mux_control_set() is an internal helper. It is called from
->>> __mux_control_select() and mux_control_deselect() (and on init...)
->>>
->>> In all those cases, there is no race to reach the mux_control_set()
->>> function, by means of the mux->lock semaphore (or the mux not being
->>> "published" yet).
->>>
->>> I fail to see how resume is safe when mux->lock is ignored?
->>
->> I think I should use mux_control_select() to use the lock.
->> If I ignore the lock, I could have a cache coherence issue.
->>
->> I'll send a new version which use mux_control_select().
->> But if I use mux_control_select(), I have to clean the cache before to
->> call it, if not nothing happen [1].
->>
->> [1]
->> https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/mux/core.c#L319
-> 
-> No, calling mux_control_select() in resume context is not an
-> option IIUC. That would dead-lock if there is a long-time client
-> who has locked the mux in some desired state.
+On Wed, Sep 4, 2024 at 8:33=E2=80=AFAM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
+>
+> On Wed, Aug 28, 2024 at 01:48:10PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Make intel_pstate use the HWP_HIGHEST_PERF values from
+> > MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
+> > via the previously introduced arch_set_cpu_capacity() on hybrid
+> > systems without SMT.
+> >
+> > Setting asymmetric CPU capacity is generally necessary to allow the
+> > scheduler to compute task sizes in a consistent way across all CPUs
+> > in a system where they differ by capacity.  That, in turn, should help
+> > to improve scheduling decisions.  It is also necessary for the scheduti=
+l
+> > cpufreq governor to operate as expected on hybrid systems where tasks
+> > migrate between CPUs of different capacities.
+> >
+> > The underlying observation is that intel_pstate already uses
+> > MSR_HWP_CAPABILITIES to get CPU performance information which is
+> > exposed by it via sysfs and CPU performance scaling is based on it.
+> > Thus using this information for setting asymmetric CPU capacity is
+> > consistent with what the driver has been doing already.  Moreover,
+> > HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
+> > both the instructions-per-cycle (IPC) factor and the maximum turbo
+> > frequency and the units in which that value is expressed are the same
+> > for all CPUs in the system, so the maximum capacity ratio between two
+> > CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
+> > values.  Of course, in principle that capacity ratio need not be
+> > directly applicable at lower frequencies, so using it for providing the
+> > asymmetric CPU capacity information to the scheduler is a rough
+> > approximation, but it is as good as it gets.  Also, measurements
+> > indicate that this approximation is not too bad in practice.
+> >
+> > If the given system is hybrid and non-SMT, the new code disables ITMT
+> > support in the scheduler (because it may get in the way of asymmetric C=
+PU
+> > capacity code in the scheduler that automatically gets enabled by setti=
+ng
+> > asymmetric CPU capacity) after initializing all online CPUs and finds
+> > the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
+> > capacity number for each (online) CPU by dividing the product of its
+> > HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PE=
+RF.
+> >
+> > When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
+> > and if it is the one with the maximum HWP_HIGHEST_PERF value, the
+> > capacity numbers for all of the other online CPUs are recomputed.  This
+> > also takes care of a cleanup during driver operation mode changes.
+> >
+> > Analogously, when a new CPU goes online, its capacity number is updated
+> > and if its HWP_HIGHEST_PERF value is greater than the current maximum
+> > one, the capacity numbers for all of the other online CPUs are
+> > recomputed.
+> >
+> > The case when the driver is notified of a CPU capacity change, either
+> > through the HWP interrupt or through an ACPI notification, is handled
+> > similarly to the CPU online case above, except that if the target CPU
+> > is the current highest-capacity one and its capacity is reduced, the
+> > capacity numbers for all of the other online CPUs need to be recomputed
+> > either.
+> >
+> > If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
+> > capacity information is computed from scratch to reflect the new turbo
+> > status.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> A few minor comments below...
+>
+> FWIW,
+>
+> Reviewed-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com> # scale i=
+nvariance
+>
+> [...]
+>
+> > +
+> > +static void hybrid_init_cpu_scaling(void)
+>
+> Maybe renaming hybrid_init_cpu_scaling() as hybrid_init_cpu_capacity_scal=
+ing(),
+> __hybrid_init_cpu_scaling() as __hybrid_init_cpu_capacity_scaling(), and
+> hybrid_update_cpu_scaling() as hybrid_update_cpu_capacity_scaling()?
+>
+> It would make the code easier to read.
 
-Yes, I didn't thought about it.
+Sure, if that helps.
 
-> 
-> I see no trivial solution to integrate suspend/resume, and do
-> not have enough time to think about what a working solutions
-> would look like. Sorry.
-> 
+> > +{
+> > +     bool disable_itmt =3D false;
+> > +
+> > +     mutex_lock(&hybrid_capacity_lock);
+> > +
+> > +     /*
+> > +      * If hybrid_max_perf_cpu is set at this point, the hybrid CPU ca=
+pacity
+> > +      * scaling has been enabled already and the driver is just changi=
+ng the
+> > +      * operation mode.
+> > +      */
+> > +     if (hybrid_max_perf_cpu) {
+> > +             __hybrid_init_cpu_scaling();
+> > +             goto unlock;
+> > +     }
+> > +
+> > +     /*
+> > +      * On hybrid systems, use asym capacity instead of ITMT, but beca=
+use
+> > +      * the capacity of SMT threads is not deterministic even approxim=
+ately,
+> > +      * do not do that when SMT is in use.
+> > +      */
+> > +     if (hwp_is_hybrid && !sched_smt_active() && arch_enable_hybrid_ca=
+pacity_scale()) {
+> > +             __hybrid_init_cpu_scaling();
+> > +             disable_itmt =3D true;
+> > +     }
+> > +
+> > +unlock:
+> > +     mutex_unlock(&hybrid_capacity_lock);
+> > +
+> > +     if (disable_itmt)
+> > +             sched_clear_itmt_support();
+>
+> It may be worth adding a comment here saying that the sched domains will
+> rebuilt to disable asym packing and enable asym capacity.
 
-We maybe have a solution.
-Please let me know if it's relevant or not for you:
-
-- Add a get operation in struct mux_control_ops.
-
-- Implement mux_chip_suspend() which reads the state of each mux using
-the get operation, and store it in a hardware_state variable (stored in
-the mux_control struct).
-
-- The mux_chip_resume uses the hardware_state value to restore all muxes
-using mux_control_set().
-So if a mux is locked with a long delay, there is no dead-lock.
-
-- If the get operation is not defined, mux_chip_suspend() and
-mux_chip_resume() do nothing (maybe a warning or info message could be
-useful).
-
-Regards,
-
-Thomas
-
-
-
-
+Won't hurt I suppose.
 
