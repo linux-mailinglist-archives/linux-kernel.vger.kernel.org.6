@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-314272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11A496B0E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:05:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2185C96AFAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99073287872
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513331C20F30
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC1C84A22;
-	Wed,  4 Sep 2024 06:05:07 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2B47F9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE8D664C6;
+	Wed,  4 Sep 2024 04:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I26nldO4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF79535D4;
+	Wed,  4 Sep 2024 04:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725429906; cv=none; b=PXcr/3lIjJg0kJW1nQcM1jaddXenDYmUL3vXPGRBNBWusIAL3QN4Hl/8bM5wJ6dYI1ZAhMaGCXdqX/0bPrBlsiVaET8X1IFp7zKHKu7l52SOA4dkor+GYkbQ7Fc/YbVV/qBISOsJx58wLgh2RCBNn0M1FRB0g0W/N2NBmJyXgEY=
+	t=1725423201; cv=none; b=YkNMvEEJ9IDdlYL+ddGgZLk5CnwdYaxoNxMQyHG6o3zgeL1oWuwCD0425XM40U27LGcUudEq6aw3BgY4IZiwMqhssq8IhlvfsoHdgWUDnCTMDdjfFjJlGyrRvafhnDP8QrlbHOB4t28Kpb/HyRiEjJNUpPzVldANs1f08mmtGHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725429906; c=relaxed/simple;
-	bh=tx4lEADMd74YQFjQTU9b8oXT05pAW7yWAdIIrIaPUHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NtGtePsP9M329GYRmaAB3rQpiXddqVEYDRunrF1eKc3bPiXzj0VC4xVfS8Y8Mxnqaho3P8ntf/6W5yvV1zxTLLxo4uvMCt7LQd36GWcDi0v5ndg6c97HCmeQ1DZtSbGeQP4AIYDvRgPJI0atSRorAqZqDL0fIA352GPMpKRkggs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee966d7f88b9d7-e89db;
-	Wed, 04 Sep 2024 14:04:59 +0800 (CST)
-X-RM-TRANSID:2ee966d7f88b9d7-e89db
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee366d7f88b847-1716a;
-	Wed, 04 Sep 2024 14:04:59 +0800 (CST)
-X-RM-TRANSID:2ee366d7f88b847-1716a
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: minyard@acm.org
-Cc: openipmi-developer@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] ipmi: Use devm_kasprintf
-Date: Wed,  4 Sep 2024 12:12:13 +0800
-Message-Id: <20240904041213.53052-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725423201; c=relaxed/simple;
+	bh=YnjDYRGjkDMHHnHASIFpaM2SeBHqmhLnXcfbSafMHM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNFFO+fEAS9+CmsZqXcTDZZNAhDsH/Je2JBIDtn/bEoOSZV41fp11PxUxxt1Sh36EEqh0xjMuTBB3TJwt/oq5gGr4MtzFsJBKfwM71EQt4Yl9OVrkIUtp0VBeyqkZRB1Qd6KztYHBkwqP/AIGVl4evW+iDKoIjztmpNWDpw6mvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I26nldO4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=bf2CZyN5mQgV/X6CFXW7hB5Y6GAMnpi/vhBUgDn81og=; b=I26nldO4VeBAcDpaYh3EsAcsvg
+	QiS6Ujs1db8hwZRhod2kMZPrsKSsyEPsw/FapW1udicFi7lW3at8LaZekPdjlbCx/iZ79pXH28Syl
+	9LhVMDcaqa0eQvmg9BLVzdVyc4Da+U1avADxojKA85VcI6vO2n0K6JDNf5DD7v640n4vsrbXmErWr
+	2MIH0vUN8N2TxFCW/Y1mLpTeIjT1zpBow/QhZ5yWms5C8ejcmdARjdZ2z9hM8gli1JsTy0JEopPlw
+	V26uWk8A37z3EwuRSvmymWpiT/TJgmF+ePbejGpWFBmtLLkJM6+gL+7XJpUnG43JB21ffwL/Z0298
+	Wo4oP8BA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1slhON-00000002lCq-3Wxr;
+	Wed, 04 Sep 2024 04:13:15 +0000
+Date: Tue, 3 Sep 2024 21:13:15 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Luca Stefani <luca.stefani.ge1@gmail.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] btrfs: Split remaining space to discard in chunks
+Message-ID: <ZtfeWyP2zYawbFCZ@infradead.org>
+References: <20240903071625.957275-1-luca.stefani.ge1@gmail.com>
+ <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
+ <Zta6RR1gXPi7cRH3@infradead.org>
+ <e5d765e8-e294-465f-adfc-ad4787116959@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5d765e8-e294-465f-adfc-ad4787116959@gmx.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Tue, Sep 03, 2024 at 07:13:29PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/9/3 16:57, Christoph Hellwig 写道:
+> > You'll also need add a EXPORT_SYMBOL_GPL for blk_alloc_discard_bio.
+> 
+> Just curious, shouldn't blk_ioctl_discard() also check frozen status to
+> prevent block device trim from block suspension?
 
-Use devm_kasprintf to simplify code.
+Someone needs to explain what 'block suspension' is for that first.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+> And if that's the case, would it make more sense to move the signal and
+> freezing checks into blk_alloc_discard_bio()?
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index e12b531f5c2f..5d78b1fe49a8 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -3213,7 +3213,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 
- 	if (intf_num == -1)
- 		intf_num = intf->intf_num;
--	intf->my_dev_name = kasprintf(GFP_KERNEL, "ipmi%d", intf_num);
-+	intf->my_dev_name = devm_kasprintf(intf->si_dev, GFP_KERNEL, "ipmi%d", intf_num);
- 	if (!intf->my_dev_name) {
- 		rv = -ENOMEM;
- 		dev_err(intf->si_dev, "Unable to allocate link from BMC: %d\n",
-@@ -3226,7 +3226,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 	if (rv) {
- 		dev_err(intf->si_dev, "Unable to create symlink to bmc: %d\n",
- 			rv);
--		goto out_free_my_dev_name;
-+		goto out_unlink1;
- 	}
- 
- 	intf->bmc_registered = true;
-@@ -3237,11 +3237,6 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 	intf->in_bmc_register = false;
- 	return rv;
- 
--
--out_free_my_dev_name:
--	kfree(intf->my_dev_name);
--	intf->my_dev_name = NULL;
--
- out_unlink1:
- 	sysfs_remove_link(&intf->si_dev->kobj, "bmc");
- 
--- 
-2.33.0
-
-
+No.  Look at that the recent history of the dicard support.  We tried
+that and it badly breaks callers not expecting the signal handling.
 
 
