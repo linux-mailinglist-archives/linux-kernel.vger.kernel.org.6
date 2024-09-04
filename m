@@ -1,224 +1,147 @@
-Return-Path: <linux-kernel+bounces-315433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C18696C2B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A66196C2B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C46B2431C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18467281E49
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C961DEFE6;
-	Wed,  4 Sep 2024 15:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268DC1DEFCE;
+	Wed,  4 Sep 2024 15:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2aVv8FX"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rqSGbcW4"
+Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D6D1EC017;
-	Wed,  4 Sep 2024 15:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8C91EC017
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464553; cv=none; b=OhIK2AhjMHchZw8bJJUmKbmVZGWs7FnVVNiA/+KXvLvS1/dstssQj83T1v9whAQrC3QU962USUhB7E2JnkntB5Kc91Aiccn3wI3ya4eQ3gExsvoWYQ3MqLkoU31EhIz6TyLX65Kkv4eM73r8pc6Bhgo8Zhnjs2emz6aoqSZtSo0=
+	t=1725464574; cv=none; b=iG0qiOzj2Iksg/sg0XrltVVSLNVNz6VSW89nzFrs04mMvhSV0+6n5vIMh3Y4s+EQcPlS5NnjBG8y/A/70zMG2e8apHIZwyw3sDC6qvqVbk4N4hW8ow7rsApO61tX9L6SknDRD2OztBGLUIFXjL9FzIR0fxY5bsaxmPg2RHnscBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464553; c=relaxed/simple;
-	bh=1xPFZ8hYwbWHIZ7KEURxSxbiLnr+gE2MVkYSkkl1uEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7XqOQB+LNaQAZ16zKP4yfJ1NdUjbkU/advV1QYJe+8baJAg7vsoSLbwVlWIUXT0ydE7fRQ4N0DVd17Vo8BHOwdMXrDiRFUN2vqQvpAvKisTyZ7LkF+GvPg6DqIndhnv1L3bxSczLNIIiP47Yy37RdDL9LPdNpLMJ18tmEl3Vss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2aVv8FX; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a866966ffceso34149866b.2;
-        Wed, 04 Sep 2024 08:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725464550; x=1726069350; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M6e2YvfuCivW4PaDMInxNwbpYH1/P7j1Q84PnG6YUUM=;
-        b=K2aVv8FXdEneK2iydMbyVFtf2g/8d4gijF2l2s0eIgE0L26RY6zOSnktguuIp1Oarl
-         LD4p+zYKOiwMhrVz0/Duvz8GC/J47C9t92YuGBOmMDSniAwsCLMm5CV0sIFeD0+TjPB+
-         aa6YdJrDKLBrYlMMN5eNAPGwlGo/EDEcSEcQM6zW8tb5PfqfQg7NlQ7Rt/rw2ZWRYR2V
-         XOoVBuYPkpujZgYRhRDDupfa+4FsdzWoIwGcjpFv6+kyfqLN1YtQMYtqMkhb1zZVa09M
-         /SbNvJFh2PoULEwztaEDyN7gtAqOPgO82Ex4MTTRM0N9rX5UrErL/DgWkoNMkglIfu+x
-         Fg+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725464550; x=1726069350;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M6e2YvfuCivW4PaDMInxNwbpYH1/P7j1Q84PnG6YUUM=;
-        b=hTRV62P3uDGxR4nuR5QjtoHL1r99BG3ckgGzZlFmct7fSpXbIzHkvjgAF3fE7O6m3S
-         Ny/bM8I9ePfNL4fbikv8o1gGMKC8g1Hj9G/vOXKV1BXcRs0e87nvtfL8UbrlWiH/Y0Gn
-         ZXFoedCcks13flutEplw5wJuA1REAQkvEVREn7ABmci5LP9WRlX90Vl+ziD950XVSAWe
-         1G8RyKRnzwCKVYTMDtIdzzQbZSj4JxCwWsZN0E6geXoJkeueS4ub1eDIqWspqfsaP7VK
-         6zkPanzm77SUU6pi+KCcJqjc+ChOEkkQD+b5ZgLBHw7C+mstoaSAwsPqhfr8oubHn26u
-         QfUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfbWyONMYW+bHA9xnMpLDcLcScIqKOqhsD/LMyyuE8woIvbYt+DROJys/cELAl7TzzGQmVe58E@vger.kernel.org, AJvYcCWjaCChvuGzhn8w4idCVN83xmTYS9jUer/70CM+Pkq0NJCGa5vnMloaLrD6mWoHRRFoXQ1CA7opnUNeRnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIzY7LIBJppsUz2RnOZhI44futGR7A3bOrM1JcTVpMue/mhdr6
-	XhKcIZsi1pB2cOq1VxSwo+PKRVU73GnFSleHJcTzc7pufzOkxtyU
-X-Google-Smtp-Source: AGHT+IHMic4XBuw2foanj88RblIDJ3ytZUAtd4gGVvzDtDWkXLLbXdQlWIpM8/kI4V1eZSw3Ww7rJQ==
-X-Received: by 2002:a17:907:7b94:b0:a7a:87b3:722f with SMTP id a640c23a62f3a-a89a34c8c79mr775057766b.3.1725464549704;
-        Wed, 04 Sep 2024 08:42:29 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62038d59sm7125066b.52.2024.09.04.08.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:42:29 -0700 (PDT)
-Date: Wed, 4 Sep 2024 18:42:26 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com
-Subject: Re: [PATCH net-next v7 5/7] net: stmmac: support fp parameter of
- tc-mqprio
-Message-ID: <20240904154226.ztksb6sv4mjccb5l@skbuf>
-References: <cover.1725441317.git.0x1207@gmail.com>
- <cover.1725441317.git.0x1207@gmail.com>
- <28f580d1c1e3cfdb0803207a5e05d42c4f9dd529.1725441317.git.0x1207@gmail.com>
- <28f580d1c1e3cfdb0803207a5e05d42c4f9dd529.1725441317.git.0x1207@gmail.com>
+	s=arc-20240116; t=1725464574; c=relaxed/simple;
+	bh=c47YgnVj7bLi89JJ+f8/PcYHC/sb8Dn8Ph7vHEJCWIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+lHR1aKodE+eh2HBvlmcknFmjXQ2Nf8wUXhf/DlHjJFz3NnY3SLKIHauOddLhhwhccNslIIAjSepMeQuaYmNuPzgMWLrHyoxy5OyqR71rg4iZI1uaMoKvlnNaMOuwVrgczpgqk4tIitC4XS4J9KGfRfDHVNQQ6ATyNGW8CJo+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rqSGbcW4; arc=none smtp.client-ip=17.58.6.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725464572;
+	bh=KUEEThO+wIFUIInS4RaKW89uvFojRITiRf5ABc/++DU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=rqSGbcW4ynU8oAbm8CZuQw/TlVJfgaCUoHHbQjJxC1HzP6pQxohxjpbrD53O5sHJl
+	 4SvSCUX1oCeXD3OdXeu+L6qkSHGiWouhYiOhEtsDhsaxWz1QLidYFaEGXFpWvJADKk
+	 Y708jZ/y586E8XKboy0d1n3ST2ZbXqKLR3G+gbPhoLLYsCtpPElUeZUu2I1o9vrQZX
+	 XYVgHjgFbMMDHiA4mcZbidMZa5WoNmvp20AeZGgfIUAV0Ji96bRTM3S/D0QyYdM/D3
+	 t1pu9p64vGUrg5p+LJuN8iTCh4IY4jcy9iRyOyCju0lNf0CszoRtIElmNPbFtORe82
+	 clENC0QPoYBaQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 30242500113;
+	Wed,  4 Sep 2024 15:42:47 +0000 (UTC)
+Message-ID: <b4106831-f1bd-44d9-aed7-18097d3ddead@icloud.com>
+Date: Wed, 4 Sep 2024 23:42:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28f580d1c1e3cfdb0803207a5e05d42c4f9dd529.1725441317.git.0x1207@gmail.com>
- <28f580d1c1e3cfdb0803207a5e05d42c4f9dd529.1725441317.git.0x1207@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] driver core: bus: Correct API bus_rescan_devices()
+ behavior
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240904-bus_match_unlikely-v1-0-122318285261@quicinc.com>
+ <20240904-bus_match_unlikely-v1-3-122318285261@quicinc.com>
+ <2024090403-viewing-snagged-4249@gregkh>
+ <1b79fb55-26d7-4966-9260-d3cdf3e0e8c8@icloud.com>
+ <2024090410-earphone-financial-9b72@gregkh>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024090410-earphone-financial-9b72@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: nAeTjKo62a6CMd1-c-HiD1nxya89IJ1a
+X-Proofpoint-ORIG-GUID: nAeTjKo62a6CMd1-c-HiD1nxya89IJ1a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_13,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 spamscore=0 mlxscore=0
+ bulkscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2409040119
 
-On Wed, Sep 04, 2024 at 05:21:20PM +0800, Furong Xu wrote:
-> +static void stmmac_reset_tc_mqprio(struct net_device *ndev,
-> +				   struct netlink_ext_ack *extack)
-> +{
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +
-> +	netdev_reset_tc(ndev);
-> +	netif_set_real_num_tx_queues(ndev, priv->plat->tx_queues_to_use);
-> +	stmmac_fpe_map_preemption_class(priv, ndev, extack, 0);
-> +}
-> +
-> +static int tc_setup_dwmac510_mqprio(struct stmmac_priv *priv,
-> +				    struct tc_mqprio_qopt_offload *mqprio)
-> +{
-> +	struct netlink_ext_ack *extack = mqprio->extack;
-> +	struct tc_mqprio_qopt *qopt = &mqprio->qopt;
-> +	u32 offset, count, num_stack_tx_queues = 0;
-> +	struct net_device *ndev = priv->dev;
-> +	u32 num_tc = qopt->num_tc;
-> +	int err;
-> +
-> +	if (!num_tc) {
-> +		stmmac_reset_tc_mqprio(ndev, extack);
-> +		return 0;
-> +	}
-> +
-> +	err = netdev_set_num_tc(ndev, num_tc);
-> +	if (err)
-> +		return err;
-> +
-> +	for (u32 tc = 0; tc < num_tc; tc++) {
-> +		offset = qopt->offset[tc];
-> +		count = qopt->count[tc];
-> +		num_stack_tx_queues += count;
-> +
-> +		err = netdev_set_tc_queue(ndev, tc, count, offset);
-> +		if (err)
-> +			goto err_reset_tc;
-> +	}
-> +
-> +	err = netif_set_real_num_tx_queues(ndev, num_stack_tx_queues);
-> +	if (err)
-> +		goto err_reset_tc;
-> +
-> +	err = stmmac_fpe_map_preemption_class(priv, ndev, extack,
-> +					      mqprio->preemptible_tcs);
-> +	if (err)
-> +		goto err_reset_tc;
+On 2024/9/4 22:44, Greg Kroah-Hartman wrote:
+> On Wed, Sep 04, 2024 at 10:26:39PM +0800, Zijun Hu wrote:
+>> On 2024/9/4 21:54, Greg Kroah-Hartman wrote:
+>>> On Wed, Sep 04, 2024 at 08:56:44PM +0800, Zijun Hu wrote:
+>>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>>
+>>>> API bus_rescan_devices() should ideally scan drivers for a bus's devices
+>>>> as many as possible, but it really stops scanning for remaining devices
+>>>> even if a device encounters inconsequential errors such as -EPROBE_DEFER
+>>>
+>>> -EPROBE_DEFER should not be an issue for scanning the bus, that's only
+>>> for probe errors, so who is returning that mess today?  Let's fix that
+>>> up please.
+>>>
+>>
+>> drivers/amba/bus.c:
+>> struct bus_type amba_bustype = {
+>> ...
+>>         .match          = amba_match,
+>> ...
+>> };
+>> amba_match() may return -EPROBE_DEFER.
+> 
+> Why?  That feels wrong.
+> 
 
-I appreciate the improvement with the separate tc_ops, but I'm still not
-in love with this.
+i have below understanding after reading drivers/amba/bus.c.
 
-This stmmac_hw entry (copied with line numbers because it lacks a name
-by which I can easily reference it):
+amba_device_add() needs to read ID from device to add device.
+but resources such as clocks may be not ready to read ID at that time
 
-159 »       }, {
-160 »       »       .gmac = false,
-161 »       »       .gmac4 = true,
-162 »       »       .xgmac = false,
-163 »       »       .min_id = 0,
-164 »       »       .regs = {
-165 »       »       »       .ptp_off = PTP_GMAC4_OFFSET,
-166 »       »       »       .mmc_off = MMC_GMAC4_OFFSET,
-167 »       »       »       .est_off = EST_GMAC4_OFFSET,
-168 »       »       },
-169 »       »       .desc = &dwmac4_desc_ops,
-170 »       »       .dma = &dwmac4_dma_ops,
-171 »       »       .mac = &dwmac4_ops,
-172 »       »       .hwtimestamp = &stmmac_ptp,
-173 »       »       .mode = NULL,
-174 »       »       .tc = &dwmac510_tc_ops,
-175 »       »       .mmc = &dwmac_mmc_ops,
-176 »       »       .est = &dwmac510_est_ops,
-177 »       »       .setup = dwmac4_setup,
-178 »       »       .quirks = stmmac_dwmac4_quirks,
-179 »       }, {
+so it registers a empty amba_driver @amba_proxy_drv which will trigger
+reading ID within bus_type match() when add a device by amba_device_add()
 
-has .mac = &dwmac4_ops, so it does not implement .fpe_map_preemption_class().
-But it also has .tc = &dwmac510_tc_ops, so tc_setup_dwmac510_mqprio() will
-get called.
+bus_type match() will defer device probe when resources is not ready
+during match().
 
-Thus, I suppose that the stmmac_fpe_map_preemption_class() ->
-stmmac_do_void_callback() mechanism will return -EINVAL for dwmac4_ops,
-and this will make mqprio offload fail, for the sole reason that FPE is
-not supported, _EVEN IF_ FPE was never requested (mqprio->preemptible_tcs is 0),
-and the offload could have otherwise been applied just fine.
+at deferral probe() time, match() is able to read ID since resources is
+ready at that time, and it notify device adding by uevent to user.
 
-Not to mention my previous complaint still applies, that the test for
-the presence of stmmac_ops :: fpe_map_preemption_class() is unnaturally
-late relative to the flow of the tc_setup_dwmac510_mqprio() function.
+user loads matched driver for the device which has ID read out.
 
-Thus, I really recommend you to replace the stmmac_do_void_callback()
-anti-pattern with something like:
+>> you maybe also look at below AMBA bus related commit.
+>> Commit: 656b8035b0ee ("ARM: 8524/1: driver cohandle -EPROBE_DEFER from
+>> bus_type.match()"
+> 
+> Ah, ick, clocks.  What a mess.
+> 
+> I don't think we need this anymore with the genric device link stuff
+> anymore, but I'm not quite sure.
+> 
+yes, i agree with you.
 
-	// early
-	if (mqprio->preemptible_tcs && !priv->hw->ops->fpe_map_preemption_class) {
-		NL_SET_ERR_MSG_MOD(mqprio->extack,
-				   "Cannot map preemptible TCs to TXQs");
-		return -EOPNOTSUPP;
-	}
+>> is it proper to change bus_type match()'s return value type to bool type
+>> back if this issue is fixed?
+> 
+> Yes, I would like to.  Care to look into it, odds are you can test this
+> better than I can :)
+> 
+actually, i also does not have AMBA test environment. let me send a AMBA
+patch to start a topic to check if AMBA maintainers have good ideas to
+help us at spare time.
 
-	// late
-	if (priv->hw->ops->fpe_map_preemption_class) {
-		err = priv->hw->ops->fpe_map_preemption_class(priv->dev,
-							      mqprio->preemptible_tcs,
-							      extack);
-		if (err)
-			goto err_reset_tc;
-	}
+> thanks,
+> 
+> greg k-h
 
-WARNING: code not tested. The idea is that the early check makes sure
-that only dwmac410_ops and dwmac510_ops permit mqprio->preemptible_tcs
-to go to a non-zero value (which can later be reset to zero if desired,
-in the late code path). For dwmac4_ops, mqprio->preemptible_tcs = 0 is
-the only supported value (for which nothing needs to be done), and the
-late code path is bypassed, due to the "if" condition returning false.
-
-Either organize like this, or if you really, really, really insist to
-use the stmmac_do_callback() anti-pattern in new code, at least don't
-share the setup_mqprio() code path between MACs that implement
-fpe_map_preemption_class() and MACs that don't.
 
