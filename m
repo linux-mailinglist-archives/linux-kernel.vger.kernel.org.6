@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-314228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D1996B046
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236C196B047
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73DBF283E0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:06:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D5A1F25D25
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4CC8289A;
-	Wed,  4 Sep 2024 05:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191AA6BB46;
+	Wed,  4 Sep 2024 05:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L6xp+GUN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QCywuEXl"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D3B823AC;
-	Wed,  4 Sep 2024 05:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1193E2A1BF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 05:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725426355; cv=none; b=r8pJ/51kX9Fl1LxLD1gFkbzKw+qFVTcQaC2E7hwL8jDe4ynON91F+OWI/hsi2pRS0kBEGmkKrNAP3Im17nF/Zg1PfFLBOB5N9+TlPMrtxECuLiBv9FoHsRYvXLH2NOVSy5soRskNsTt/R1LqJ3dlcBQrSsfZgEdCNlwYmP+AZMo=
+	t=1725426372; cv=none; b=hymsah8KoUQzzLQ2Yj+/qlbiLXSohyO97aIE6B/qBE3pzkzE1uiDQeKSNBYs7NerbZefH+4g2Zl3nGDMk8ZhiMypfBCvqf0YSonr4XFOk8+z0D5h3rqyZ0r/oYl7nmzO4vyNVcpEMfSm0ei/3a1vEwDJQaltu98Lg+vDrsiTN0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725426355; c=relaxed/simple;
-	bh=EW5G/XbqUYX+e5tpLOAtqeq+z9wxUmGBSVQzr4loBYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zt8b6HcA45eFcZBM0efcHwFMoN3rSEWjdQFxI/m9+3AS31CRYdvqqpGTkhjne5LTQUazYR3O1tJgviUlV8InFqZBRvY+GBxV592oGy8QEzJ6EpoHxnZk9hSjnrDUZ5sC3HMEteHx9rjfVbrdT0EamWjVinxS/dd5xoFflaePnjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L6xp+GUN; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725426354; x=1756962354;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EW5G/XbqUYX+e5tpLOAtqeq+z9wxUmGBSVQzr4loBYA=;
-  b=L6xp+GUNVDYuwGzPDqOPynH0h8Vrzw+OMz/oEr6NIY0Jj4P5Dvs9sl9d
-   Ad96/MbcXS+sETrdAlhXXb5Q0O3zrpW7LRa0rkOo/sf8iL6+R0Uw7gkEV
-   j9yQNUYuA32o4AQhJZqqF3twidUEtA75b+iWbVgsCgrUP9Kez6pWC1OT0
-   MaQhqU3x0sppPtMcZuK1OE832ELNI34x25YiwgC4ggw3JXLRL4vjV1WE7
-   uOjsmoU2dB6OoIE935OUgU1sSUKs7bp8T8sDcmrgru29C55vMx/a8kEAk
-   4DIFKhyPrBxYA0FBpc4euvOVO1JT2mthHv1a26pTYGDaMhsiJQJn5bfiL
-   w==;
-X-CSE-ConnectionGUID: QmEAXQY+Scalm/n1HsH+vA==
-X-CSE-MsgGUID: l1uTjhSYQ7SWgFVmbn9WyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35449161"
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="35449161"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 22:05:53 -0700
-X-CSE-ConnectionGUID: VWxVcqmAQkOOxsi5HRflfg==
-X-CSE-MsgGUID: MepIRCW9TJOfqWXcVOFICw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
-   d="scan'208";a="69530223"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 03 Sep 2024 22:05:52 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 554BA128; Wed, 04 Sep 2024 08:05:51 +0300 (EEST)
-Date: Wed, 4 Sep 2024 08:05:51 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/3] pinctrl: intel: Replace ifdeffery by
- pm_sleep_ptr() macro
-Message-ID: <20240904050551.GB1532424@black.fi.intel.com>
-References: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
- <20240903170752.3564538-2-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725426372; c=relaxed/simple;
+	bh=8NZXFOK5kVcVvWq34hjYgP7IR//Zf1C4jXrpWDVCx7c=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=iKLJ/Ts/lvyrQPkDsAEd3xqLAJlq0nJzUT/N5h+qCmvaMPkkc5XB22Clerr+JL++3M1DoX/fyMtYU1PiLdAwDvMo3iA3x7efeKfm9n+22HATMOewEXdEWNE/r1RMOPFJu7BrIS21h3M2e2N9Zn7YtD1QilrAfbHBfS3Q5FxaY3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QCywuEXl; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d9e31e66eeso63049487b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 22:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725426370; x=1726031170; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sOEY0OPjV6UwK7RE5otslHgrEtU0LZKMZO4cnEiTsX4=;
+        b=QCywuEXlQGbWWJO55l8l1rR0S68oWX6ixiFog6hcIQpXiYf0Ffs4x8z5zEiuwBMfh5
+         NLLi9KkiahbpVxNIl9d27UQOne3XRvux+FTFwXNVbKVfJW+q9a1uw4jQVudKRCTJ3BIj
+         PQh/1rw5iUQALFEwvsdsZ9Wf+s8c+qXIUgaMQx8lqC5bOq9JQHF+zuCEDSbQV6tJNlbE
+         gBmymHSWDoECksksE9H3SCdbS8F0jICrTuXF4NdiMDvszR3CrqH3mQvKQcHHzFGhvOJk
+         qPsc2cSwlcuCytUsZF5jD5TJGQg+lJYTYi+y+RjLDDRSnrvaqX3wPiGGTaBbdw0Ptnrk
+         X+oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725426370; x=1726031170;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sOEY0OPjV6UwK7RE5otslHgrEtU0LZKMZO4cnEiTsX4=;
+        b=JD/2ZMYBHnXl8yH3AG276YhZFSHBfQuTLeiVglrmLaC1iYPKh3IqOrowdzde+r5eXy
+         WXTXSBCaY8XKs12G7Ny/PFLCnqDeLGoXZZayztrf34cDu+DSI7AobG2RPzXtu4h3tPPk
+         XgrPiWUKe84/FtAI1BLufr9uvPGgldcT/7VmlUpC+HOq0NueISYDi5z9LmOnABL6P0WA
+         qjWcrBCykFQMNDODVJZZq2cnN5DNdJHFJA9EhvgxXzfYRsNrfNVo65pJixnqPXebLHp+
+         j8MXg7uJ4oMbzFJExDpw4EMIR0kiTk7RC2Dd5XKhRdUof+0u9TbQ2B/SOzVkia13kF4q
+         ifRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaH+3eHq33739pe8Ieo1jPe13oEscF5QvjytnZPAIcLdeY7sG+BIljBuVzJ8rfM7WeLmjrm9FUWeQvx0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXaJjG0sejMGekvuGDuPc0WtMrBTZWko0ZnrDvbDdN78gdMCE3
+	3JHbhzZU1vB/rw20JnW5hzFTCcy+KejaqEbaj3Q3MVawi4NvdfYxIHCZX4JEMBcL0JqP7GzZd9u
+	EHG1uxA==
+X-Google-Smtp-Source: AGHT+IG4q2Rfl1bh+1E2WEnu6VeIwyumA3FKC/smF40viGQ80EGwkIhHpGxoi6rFJcYWGrtZnXz/zCN+ierB
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:c48b:5e3:a63c:2d09])
+ (user=irogers job=sendgmr) by 2002:a05:690c:713:b0:663:ddc1:eab8 with SMTP id
+ 00721157ae682-6d40f4397a5mr3374497b3.4.1725426369795; Tue, 03 Sep 2024
+ 22:06:09 -0700 (PDT)
+Date: Tue,  3 Sep 2024 22:06:00 -0700
+Message-Id: <20240904050606.752788-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240903170752.3564538-2-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Subject: [PATCH v2 0/6] Various 32-bit and test fixes
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	John Garry <john.g.garry@oracle.com>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 03, 2024 at 08:04:49PM +0300, Andy Shevchenko wrote:
-> Explicit ifdeffery is ugly and theoretically might be not synchronised
-> with the rest of functions that are assigned via pm_sleep_ptr() macro.
-> Replace ifdeffery by pm_sleep_ptr() macro to improve this.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-intel.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 7a790c437f68..bfe891522044 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -1482,7 +1482,6 @@ static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
->  
->  static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
->  {
-> -#ifdef CONFIG_PM_SLEEP
->  	const struct intel_pinctrl_soc_data *soc = pctrl->soc;
->  	struct intel_community_context *communities;
->  	struct intel_pad_context *pads;
-> @@ -1497,7 +1496,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
->  	if (!communities)
->  		return -ENOMEM;
->  
-> -
->  	for (i = 0; i < pctrl->ncommunities; i++) {
->  		struct intel_community *community = &pctrl->communities[i];
->  		u32 *intmask, *hostown;
-> @@ -1519,7 +1517,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
->  
->  	pctrl->context.pads = pads;
->  	pctrl->context.communities = communities;
-> -#endif
+Running `perf test` as an i386 executable yielded a number of
+failures, some of which are addressed here.
 
-Can't we make this a stub when !PM_SLEEP?
+The first 2 are straightforward use strtoull issues when parsing a
+64-bit quantity in 32-bit land.
 
-#ifdef CONFIG_PM_SLEEP
-static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
-{
-...
-}
-#else
-static inline int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
-{
-	return 0;
-}
-#endif
+The 3rd patch just avoids a fail when `perf probe` isn't compiled in
+(in my case as LIBELF wasn't present).
 
->  
->  	return 0;
->  }
-> @@ -1649,7 +1646,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
->  	if (irq < 0)
->  		return irq;
->  
-> -	ret = intel_pinctrl_pm_init(pctrl);
-> +	ret = pm_sleep_ptr(intel_pinctrl_pm_init) ? intel_pinctrl_pm_init(pctrl) : 0;
+The 4th and 5th cases fix the breakpoint length, on i386 so the
+sizeof(long) used matches the kernel's sizeof(long). On aarch64 the
+value is change to 4 instead of sizeof(long), ie 8, as future kernels
+may make 8 an invalid argument.
 
-Then this still looks like a function call and not like some weird
-conditional.
+The final change addresses i386 watchpoint support not supporting
+8-byte values.
 
->  	if (ret)
->  		return ret;
->  
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
+v2: Fix a signed comparison build issue with gcc.
+
+Ian Rogers (6):
+  perf pmus: Fix name comparisons on 32-bit systems
+  perf time-utils: Fix 32-bit nsec parsing
+  perf test: Skip uprobe test if probe command isn't present
+  perf parse-events: Add default_breakpoint_len helper
+  perf parse-events: Vary default_breakpoint_len on i386 and arm64
+  perf test: Make watchpoint data 32-bits on i386
+
+ tools/perf/tests/bp_account.c                 |  4 +++-
+ tools/perf/tests/bp_signal.c                  |  3 ++-
+ tools/perf/tests/bp_signal_overflow.c         |  3 ++-
+ tools/perf/tests/parse-events.c               |  3 ++-
+ .../shell/test_uprobe_from_different_cu.sh    |  7 ++++++
+ tools/perf/tests/wp.c                         |  5 ++++
+ tools/perf/util/parse-events.c                | 23 ++++++++++++++++++-
+ tools/perf/util/parse-events.h                |  2 ++
+ tools/perf/util/pmus.c                        |  6 ++---
+ tools/perf/util/time-utils.c                  |  4 ++--
+ 10 files changed, 50 insertions(+), 10 deletions(-)
+
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
