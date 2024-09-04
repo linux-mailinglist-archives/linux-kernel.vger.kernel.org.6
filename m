@@ -1,63 +1,71 @@
-Return-Path: <linux-kernel+bounces-315366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102C596C1B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC8496C1CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F5C2B2B6EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE703B2B905
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338F11DEFC4;
-	Wed,  4 Sep 2024 15:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCvDF9pP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0341B1DC75A;
+	Wed,  4 Sep 2024 15:03:43 +0000 (UTC)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C381DCB07;
-	Wed,  4 Sep 2024 15:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506761DA608;
+	Wed,  4 Sep 2024 15:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462181; cv=none; b=C+CFNhxJGoR6MwCR87QJT+GvzNmmxk/n5oNxsRFfCVSTjH70HfjiVQKw07JwNI2xbxMHNXDTTtXXryP7MOg3V2TXlQd6ytszkNieu1hS/pOE1oXUOyA1Q44eAm2wZjy4giG8b3NcUORAR0JfWt6iaUq0tncqpOGh7sZF5G/IpnI=
+	t=1725462222; cv=none; b=scPgffH53yZHElvIacTzv/pB+MjdpJ2zYau+bKe7Toz3mwYatF08VDvEyVWke1u37CGDB7UbR/61p0o3Xhy6aozsGkPmDEBKuwemjeq1skAeNIWQgQ8JldiVYfswtrn4qOp7bXFn/86KAurAYyaaDWuDY9kI6JwaZoTpN3aGfjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462181; c=relaxed/simple;
-	bh=Rr62ZUBbhFRmGxMpSUooVTp/zwJrJMHB5CDDGvfY9ow=;
+	s=arc-20240116; t=1725462222; c=relaxed/simple;
+	bh=oAtw8QLJTfDJtAImTRmUn59QUaqixqWWWJkpAI+DRXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJ+IQSX8CLmUNn12eqeR3eWjpppZ/By+EJ9EjfofYiCNCQ/vDb5pVuRzMqTmcXiHj/Iv4gH00wq2+nTF368I4MjomsO11MLA53S4GZKuu0W06+WtLgJGM2XEMeD6VpOoVOykUjcIZd0RBR/JG+orpWZR899eiitgsKyq2pWVzUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCvDF9pP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C288FC4CECA;
-	Wed,  4 Sep 2024 15:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725462181;
-	bh=Rr62ZUBbhFRmGxMpSUooVTp/zwJrJMHB5CDDGvfY9ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCvDF9pPNqn4yahTr0CnU/WFUi7+1ghrRvy6PWj450wswPOAS+28oHQG0vlbB5FC+
-	 KljOX4XpT1YT8GCi0ee0rlp+W3fXLkUs3RZUpM5Mb3P8wsgpzWDP+A0xwI1mbNX4zY
-	 0UA4lRQTS5VG3rnyuSf24yGSP1jrVflo2ikxpiumpXOycy9poiwiZKWeib7qMGZTEs
-	 3JwwRB8VEmJzPAzT80N9yd/NGpPkOjCnZVj+xpBfrstAkSxdKohUpz9xG0UW5hyAyZ
-	 C+IW7l8yLKgGEnH1fG12VarTdXr7ClwGsahV5L2NWwXC98pxId52Rp3m7Ve9SKpKqc
-	 LylTiw7g38R2w==
-Date: Wed, 4 Sep 2024 16:02:55 +0100
-From: Will Deacon <will@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v5 0/2] arm64: Implement getrandom() in vDSO
-Message-ID: <20240904150254.GA13919@willie-the-truck>
-References: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
- <20240904120504.GB13550@willie-the-truck>
- <CAMj1kXHsfmaydb+RCxA1rJPs9K8o4y8LSMTO8sMH-pmAwrZ6PA@mail.gmail.com>
- <ZthmZrDUcau5Ebc6@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyOuVNQmP3MYTZkhpJE/YyBFYHAeXXvNVKrNh1+Rz0zKJEdP22UaC1xQ3b9E/+NlYf7zGQE5s/CgmREQ844tJD99/AH4JB5t6HRix4sEKpp5fEwE+rtFCHOMDv6h0aBFB3gTHMrbtWGx5k9eSWewGbT23LMdRin4V+mw5XohtTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1215290a12.2;
+        Wed, 04 Sep 2024 08:03:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725462221; x=1726067021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hOC7waCCkQoMQkhqz0PBH9fJGvLRMTZyncgnFWYy3E0=;
+        b=IOpwmYhsP7BkOU8JwhAVZDmdvr7XICnXXPxOsrkRGN0heZh9kFbqBEJlmwOs7zaT3Y
+         q4sVQk5/XF157+DMrjR841Zvv+KL9bHXvL4XUXVOwcL4dlXT9b3ejmM+0ewWEvyhwiQD
+         LFUkv/J8fsdEQZsBVuJjPm0GeY8HxVREOnQlD1tviGqhna/7U0h93uLnDIgOVhirb144
+         15CWb/u00VhT9wM+vTmmXmKPQh9EDJmtQKIzPclIXbQ5Wq+VXqeRlZdxOFDiTQmQ5cKL
+         gVm3wqfTj2+fKfV/FJQh4ymXAsrqQavvDZD2am8nLCdaXKnXieFfqIvEpSeC3BM05g7O
+         llEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEhlXWjuIL2ayDC4Ot6JXXyd9vhQJYpMv3OwRUHDies6GqvAmfZd/4rwpc6d4q6OI4AtkXUcsFDKGd@vger.kernel.org, AJvYcCVqqEMCRlhJt219RfpddcAFHKN7vI1kuBGVArxFKgdjsaIwiKKZUjzyFJNHXgGfn+s4MLekdZuaA+d1@vger.kernel.org, AJvYcCXmhxnzd4qgtineSk9fyIAOlcAYmvV2wrtQzLQpxJnkfBtcpEQXkxGbHi9dSdpmRM7y0K2YwgEFl9Od+mXg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnmfUgM10ZECj4lttJ0GTtg8uBP44p/P/S86AoDFp/o0D1YQ+x
+	/4V62qSlzzlKtJpQXMvMUBtFjf13ku6XwydJIXQWKWoKauWVyJYU
+X-Google-Smtp-Source: AGHT+IHyKUc0x9KM8r7gfcsXlK+gsn4eBpyS8muEMq8I3FrEpz0HjjpC7yuRyiiRAMxAoDlUNTSa1g==
+X-Received: by 2002:a05:6a21:4603:b0:1cc:e500:5f30 with SMTP id adf61e73a8af0-1cece517cd4mr15437085637.24.1725462220519;
+        Wed, 04 Sep 2024 08:03:40 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8cccfsm1774651a12.22.2024.09.04.08.03.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 08:03:40 -0700 (PDT)
+Date: Thu, 5 Sep 2024 00:03:38 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v3 1/1] dt-bindings: PCI: layerscape-pci: Fix property
+ 'fsl,pcie-scfg' type
+Message-ID: <20240904150338.GD3032973@rocinante>
+References: <20240701221612.2112668-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,62 +74,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZthmZrDUcau5Ebc6@zx2c4.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240701221612.2112668-1-Frank.Li@nxp.com>
 
-On Wed, Sep 04, 2024 at 03:53:42PM +0200, Jason A. Donenfeld wrote:
-> On Wed, Sep 04, 2024 at 02:28:32PM +0200, Ard Biesheuvel wrote:
-> > On Wed, 4 Sept 2024 at 14:05, Will Deacon <will@kernel.org> wrote:
-> > >
-> > > +Ard as he had helpful comments on the previous version.
-> > >
-> > 
-> > Thanks for the cc
-> > 
-> > > On Tue, Sep 03, 2024 at 12:09:15PM +0000, Adhemerval Zanella wrote:
-> > > > Implement stack-less ChaCha20 and wire it with the generic vDSO
-> > > > getrandom code.  The first patch is Mark's fix to the alternatives
-> > > > system in the vDSO, while the the second is the actual vDSO work.
-> > > >
-> > > > Changes from v4:
-> > > > - Improve BE handling.
-> > > >
-> > > > Changes from v3:
-> > > > - Use alternative_has_cap_likely instead of ALTERNATIVE.
-> > > > - Header/include and comment fixups.
-> > > >
-> > > > Changes from v2:
-> > > > - Refactor Makefile to use same flags for vgettimeofday and
-> > > >   vgetrandom.
-> > > > - Removed rodata usage and fixed BE on vgetrandom-chacha.S.
-> > > >
-> > > > Changes from v1:
-> > > > - Fixed style issues and typos.
-> > > > - Added fallback for systems without NEON support.
-> > > > - Avoid use of non-volatile vector registers in neon chacha20.
-> > > > - Use c-getrandom-y for vgetrandom.c.
-> > > > - Fixed TIMENS vdso_rnd_data access.
-> > > >
-> > > > Adhemerval Zanella (1):
-> > > >   arm64: vdso: wire up getrandom() vDSO implementation
-> > > >
-> > > > Mark Rutland (1):
-> > > >   arm64: alternative: make alternative_has_cap_likely() VDSO compatible
-> > > >
-> > 
-> > This looks ok to me now
-> > 
-> > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Hello,
+
+> fsl,pcie-scfg actually need an argument when there are more than one PCIe
+> instances. Change it to phandle-array and use items to describe each field
+> means.
 > 
-> Great. Thanks a bunch for your reviews, Ard.
+> Fix below warning.
 > 
-> Will, if you want to Ack this, I'll queue it up with the other getrandom
-> vDSO patches for 6.12.
+> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: pcie@3400000: fsl,pcie-scfg:0: [22, 0] is too long
+>         from schema $id: http://devicetree.org/schemas/pci/fsl,layerscape-pcie.yaml#
 
-I won't pretend to have reviewed the chacha asm, but the rest of it looks
-good to me. Thanks!
+Applied to dt-bindings, thank you!
 
-Acked-by: Will Deacon <will@kernel.org>
+[1/1] dt-bindings: PCI: layerscape-pci: Change property 'fsl,pcie-scfg' type
+      https://git.kernel.org/pci/pci/c/f66b63ef10d6
 
-Will
+	Krzysztof
 
