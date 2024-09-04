@@ -1,174 +1,210 @@
-Return-Path: <linux-kernel+bounces-315160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D8296BEBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A1496BEB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223BB1F24CF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A021F25DBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4981DC1BD;
-	Wed,  4 Sep 2024 13:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACE71DC182;
+	Wed,  4 Sep 2024 13:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aZaUrtjU"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6v+SAhg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7022E1DC05B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233181DC063;
+	Wed,  4 Sep 2024 13:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457009; cv=none; b=lEKLop4E8LkOwMnPvtknfhfFTeht/GpPNZuPn5SraFsbbOUaZuR/BxHbomp5+f+Rc+ZaTsND+vyl6OowI4OsJgXkwUZP9DNPzz55OmPcMQRrUI8ISaGYF5KUvrhPxD/XSBZjk3CP1Vk4SPItNayQaVKO0PotFfplV4RzbSQBeuU=
+	t=1725457008; cv=none; b=tiOOWcJ5Rjal6lhuwvrSWYf2sH9yhEKWcwVIMQ/KkMwDSPAoQUyJ4SBaMxxXT4NVx3EGegzjjS9po6yYJ1GyJdzmS9Q3gzyyPaM1t7b55khRjWFq6gDHXYkbPQho/WHBwW1nRdEgM3CjYk9NXjHuqf1Bo6tO883jX2dMCYZFGh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457009; c=relaxed/simple;
-	bh=qtJkX2PqoVFYdBdlWbYyp5mzAidzj4chLb44Ln6lBOg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JMN32mvkDLQTie4XryIwKOAz2RAj0u8WdrKsJZeR54UgBnLypL29MS+2Ens+ibCAJszGOUMQWYjlsDDbUAEOUv7Lrx75qfosmyfjBLMUfhIYRQRVzehP4ZBamvHJpNiKiABiYFbxMHar8D5ZvJlTUWXzHTwtSB4mxObdlIaeBIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aZaUrtjU; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374bd059b12so2667295f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725457006; x=1726061806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=B86/UPLKVaKSm0EPiBkbujK3A4YitMx5WggFUmn8Coo=;
-        b=aZaUrtjUoiOKODP03m0E1QtWt25s3due8GXQtYB1sJPlfv0HkN1Ih8yT2frU/NJBzX
-         MybB9/dQfc3eotODJn1Fml6VMsS9giwkTxj4Byzh7GWUuPUnDqfAO3NQrkMwcYYjkRHq
-         h/FORv+gyMX9o6uo9kckP0XBhz5jU2s7TDs53QUD2rJJcGZB0upothlZ6cTEQ3vbUkJ/
-         dtYkKcrV8xndg1NNXlcDmu+QBLyx7E2iEyCCiIen7V0tP/H8fT4fqwcjs1/6vAIBxVAg
-         dghXeVAHnLeU6PNon9kNIACRj4NOOFN1+z/TBWYHkGlWwB4NhmIZPu7+HPPRvfZqYK/K
-         wquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725457006; x=1726061806;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B86/UPLKVaKSm0EPiBkbujK3A4YitMx5WggFUmn8Coo=;
-        b=YJIil20H5a3yyG65k33peD8lYbyR6rJlo2zpfDBD1NHhM+7uupI+KanA+u0XOQZFPb
-         e5260MPAtsslAtrTJEm7kU0ZsVsZHIdmzvCfsCkvFeZ3TL59vW2ibQ+dKEhOvky0UHqY
-         gii1eszEK1Xep6PXXEOdUf17GfKhEfvUzoeRexb/5XUg9H2BRTidp+ylBkTdD0yXP+ws
-         624IohTk42C2XT7YM5eJBXMRwvnnxDuZ3pFMFlKNYp5wI4dAdC9t7ba3YuispTAY0Hxf
-         iPvktMHGh/zzNKMH1yfwA2YHJeAWkZpU5qACUoh1GXHlOEC0HVXaQR/MdBcfUYI7+7kq
-         q6Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuBkvnBgFJqq8Ms8x+Y6bikxuEhdxNeJJ/v3F3paEBOSy/j3f6YFxnpuJZBGWcFzc+ptAAXR8d5lVNR4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDzJ+dBhcnbVpR/b7VmK+CGrBkv+jYJTRjXkhDyDYkq02ileB1
-	Ef3E4hDckkEm1av7izQXIttLoEA8cBpKd2cB9pNWuAfXDnctsv9oKBvgmyFMuAU=
-X-Google-Smtp-Source: AGHT+IGCca6VtkCUEewJ04oZM5OKZlmILREvFYANBtzDYBJo5Pgpzgh/80aH7ezyMm1sRLB/m6/1WA==
-X-Received: by 2002:adf:f2d1:0:b0:374:c3f7:6af1 with SMTP id ffacd0b85a97d-374c3f76cd2mr7592505f8f.15.1725457005502;
-        Wed, 04 Sep 2024 06:36:45 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee71616sm17094656f8f.31.2024.09.04.06.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:36:45 -0700 (PDT)
-Message-ID: <251acd21-7d0d-451c-b581-cdb74b4096ed@linaro.org>
-Date: Wed, 4 Sep 2024 14:36:43 +0100
+	s=arc-20240116; t=1725457008; c=relaxed/simple;
+	bh=qjvJ5qt+qG+v8zQHBH0fy06OHFR7KWMqsLIE2+fh8Zk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=MMacCKeZKK94XvAAbT3fQmuKW54Ldab0du5+GhquLmebWzzdE9CiAMIABHa3F62lhahwMBvUhq0dDDt5MBVQTl9ZkT5MLjKL/+phz92OTUmZS5KNM8tye5Y2k+d9fefylweP36bvGeLo+UXHYn9989JIZKZaZUByHMyjz2SYfNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6v+SAhg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32ACDC4CEC3;
+	Wed,  4 Sep 2024 13:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725457007;
+	bh=qjvJ5qt+qG+v8zQHBH0fy06OHFR7KWMqsLIE2+fh8Zk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=l6v+SAhgFmSTidGa/NZMfa+E2fxijpwefZgT2IDlGcYuRzNjWIyd6iH20DjofLFRV
+	 YGDq2n/BishEtIrwor3UsfA5mqR13B2kXN2j0gkxinVYdvd05lvQ+p1O+Q03QRt3Rg
+	 i/wKIOCYDE1aDUU+Gs6KCt6A7X/Fl4u/NEtu/CWXFMD5HXYG1qOMIvsx7GjUIjDxbp
+	 LmOT3P9ENaCBKh+444/Jls9mof2UOOSIsw0XZskX6gyRbthfueOa7GTuHNA8i58HHX
+	 mw8LDvsH44u2NlGjPZ/FhkhzdwGwsQdmIQ5vks0W7WUoPkHmaxhKLlZSap+5Km4yP/
+	 k3MOGW5bY7xrw==
+Date: Wed, 04 Sep 2024 08:36:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] perf tools: Add fallback for exclude_guest
-From: James Clark <james.clark@linaro.org>
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain
- <kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@rivosinc.com>,
- Mingwei Zhang <mizhang@google.com>, Ian Rogers <irogers@google.com>,
- Kan Liang <kan.liang@linux.intel.com>
-References: <20240904064131.2377873-1-namhyung@kernel.org>
- <20240904064131.2377873-8-namhyung@kernel.org>
- <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org>
-Content-Language: en-US
-In-Reply-To: <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: devicetree@vger.kernel.org, Robert Foss <rfoss@kernel.org>, 
+ linux-media@vger.kernel.org, stable@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, cros-qcom-dts-watchers@chromium.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, Todor Tomov <todor.too@gmail.com>, 
+ Hariram Purushothaman <hariramp@quicinc.com>, 
+ Kapatrala Syed <akapatra@quicinc.com>, 
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>, 
+ Hariram Purushothaman <quic_hariramp@quicinc.com>, 
+ Will Deacon <will@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Suresh Vankadara <quic_svankada@quicinc.com>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
+References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
+Message-Id: <172545686193.2410595.1216751512618101525.robh@kernel.org>
+Subject: Re: [PATCH 00/10] (no cover subject)
 
 
-
-On 04/09/2024 2:28 pm, James Clark wrote:
+On Wed, 04 Sep 2024 16:40:06 +0530, Vikram Sharma wrote:
+> SC7280 is a Qualcomm SoC. This series adds support to
+> bring up the CSIPHY, CSID, VFE/RDI interfaces in SC7280.
+> 
+> SC7280 provides
+> 
+> - 3 x VFE, 3 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 5 x CSI PHY
+> 
+> The changes are verified on SC7280 qcs6490-rb3gen2-vision board,
+> the base dts for qcs6490-rb3gen2 is:
+> https://lore.kernel.org/all/20231103184655.23555-1-quic_kbajaj@quicinc.com/
+> 
+> V1 for this series: https://lore.kernel.org/linux-arm-msm/20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com/
+> 
+> Changes in V2:
+> 1)  Improved indentation/formatting.
+> 2)  Removed _src clocks and misleading code comments.
+> 3)  Added name fields for power domains and csid register offset in DTSI.
+> 4)  Dropped minItems field from YAML file.
+> 5)  Listed changes in alphabetical order.
+> 6)  Updated description and commit text to reflect changes
+> 7)  Changed the compatible string from imx412 to imx577.
+> 8)  Added board-specific enablement changes in the newly created vision
+>      board DTSI file.
+> 9)  Fixed bug encountered during testing.
+> 10) Moved logically independent changes to a new/seprate patch.
+> 11) Removed cci0 as no sensor is on this port and MCLK2, which was a
+>     copy-paste error from the RB5 board reference.
+> 12) Added power rails, referencing the RB5 board.
+> 13) Discarded Patch 5/6 completely (not required).
+> 14) Removed unused enums.
+> 
+> To: Robert Foss <rfoss@kernel.org>
+> To: Todor Tomov <todor.too@gmail.com>
+> To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Kapatrala Syed <akapatra@quicinc.com>
+> To: Hariram Purushothaman <hariramp@quicinc.com>
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Konrad Dybcio <konradybcio@kernel.org>
+> To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> To: cros-qcom-dts-watchers@chromium.org
+> To: Catalin Marinas <catalin.marinas@arm.com>
+> To: Will Deacon <will@kernel.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> 
+> Test-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+> Suresh Vankadara (1):
+>       media: qcom: camss: Add support for camss driver on SC7280
+> 
+> Vikram Sharma (9):
+>       media: dt-bindings: media: camss: Add qcom,sc7280-camss binding
+>       media: dt-bindings: media: qcs6490-rb3gen2-vision-mezzanine: Add dt bindings
+>       media: qcom: camss: Fix potential crash if domain attach fails
+>       media: qcom: camss: Sort CAMSS version enums and compatible strings
+>       media: qcom: camss: Add camss_link_entities_v2
+>       arm64: dts: qcom: sc7280: Add support for camss
+>       arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Enable IMX577 sensor
+>       arm64: dts: qcom: sc7280: Add default and suspend states for GPIO
+>       arm64: defconfig: Enable camcc driver for SC7280
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+>  .../bindings/media/qcom,sc7280-camss.yaml          | 441 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>  .../dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dts  |  61 +++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 208 ++++++++++
+>  arch/arm64/configs/defconfig                       |   1 +
+>  drivers/media/platform/qcom/camss/camss-csid.c     |   1 -
+>  .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     |  13 +-
+>  drivers/media/platform/qcom/camss/camss-csiphy.c   |   5 +
+>  drivers/media/platform/qcom/camss/camss-csiphy.h   |   1 +
+>  drivers/media/platform/qcom/camss/camss-vfe.c      |   8 +-
+>  drivers/media/platform/qcom/camss/camss.c          | 400 ++++++++++++++++++-
+>  drivers/media/platform/qcom/camss/camss.h          |   1 +
+>  13 files changed, 1131 insertions(+), 11 deletions(-)
+> ---
+> base-commit: fdadd93817f124fd0ea6ef251d4a1068b7feceba
+> change-id: 20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-15c195fb3f12
+> 
+> Best regards,
+> --
+> Vikram Sharma <quic_vikramsa@quicinc.com>
 > 
 > 
-> On 04/09/2024 7:41 am, Namhyung Kim wrote:
->> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUPP
->> if not.  Let's add a fallback so that it can work with default events.
->>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: James Clark <james.clark@linaro.org>
->> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->> ---
->>   tools/perf/util/evsel.c | 21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
->>
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index 0de0a72947db3f10..8c4d70f7b2f5b880 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -3400,6 +3400,27 @@ bool evsel__fallback(struct evsel *evsel, 
->> struct target *target, int err,
->>                 "to fall back to excluding hypervisor samples", 
->> paranoid);
->>           evsel->core.attr.exclude_hv = 1;
->> +        return true;
->> +    } else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
->> +           !evsel->exclude_GH) {
->> +        const char *name = evsel__name(evsel);
->> +        char *new_name;
->> +        const char *sep = ":";
->> +
->> +        /* Is there already the separator in the name. */
->> +        if (strchr(name, '/') ||
->> +            (strchr(name, ':') && !evsel->is_libpfm_event))
->> +            sep = "";
->> +
->> +        if (asprintf(&new_name, "%s%su", name, sep) < 0)
->> +            return false;
->> +
->> +        free(evsel->name);
->> +        evsel->name = new_name;
->> +        /* Apple M1 requires exclude_guest */
->> +        scnprintf(msg, msgsize, "trying to fall back to excluding 
->> guest samples");
->> +        evsel->core.attr.exclude_guest = 1;
->> +
->>           return true;
->>       }
-> 
-> Not sure if this is working, for some reason it doesn't try the 
-> fallback. With exclude guest made mandatory in the Arm PMU, then:
 > 
 
-Looks like you change this, but it's not obvious why the stat behavior 
-is different to perf record anyway:
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 8b9889873d3e..6f2ee3032f5f 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -639,7 +639,7 @@ static enum counter_recovery 
-stat_handle_error(struct evsel *counter)
-          * (behavior changed with commit b0a873e).
-          */
-         if (errno == EINVAL || errno == ENOSYS ||
--           errno == ENOENT || errno == EOPNOTSUPP ||
-+           errno == ENOENT ||
-             errno == ENXIO) {
-                 if (verbose > 0)
-                         ui__warning("%s event is not supported by the 
-kernel.\n",
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/qcs6490-rb3gen2-vision-mezzanine.dtb' for 20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com:
+
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: pcie@1c08000: interrupts: [[0, 307, 4], [0, 308, 4], [0, 309, 4], [0, 312, 4], [0, 313, 4], [0, 314, 4], [0, 374, 4], [0, 375, 4]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: pcie@1c08000: interrupt-names:0: 'msi' was expected
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: pcie@1c08000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: usb@8cf8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: video-codec@aa00000: iommus: [[66, 8576, 32]] is too short
+	from schema $id: http://devicetree.org/schemas/media/qcom,sc7280-venus.yaml#
+arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtb: pinctrl@f100000: Unevaluated properties are not allowed ('cam2-default', 'cam2-suspend' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-pinctrl.yaml#
+
+
+
 
 
 
