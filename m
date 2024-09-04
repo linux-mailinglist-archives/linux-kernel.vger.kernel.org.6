@@ -1,98 +1,222 @@
-Return-Path: <linux-kernel+bounces-314482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748B396B3E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D8D96B3E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CB21C244D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367DC1C230A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9839317C9B9;
-	Wed,  4 Sep 2024 08:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D6A17BECC;
+	Wed,  4 Sep 2024 08:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcqUN6KA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ig3y8/M8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E264417C990;
-	Wed,  4 Sep 2024 08:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F7F52F70;
+	Wed,  4 Sep 2024 08:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437130; cv=none; b=SXNDQOSrkID8BIckM2GdpBQgqX8VtppTefpej+55bNB4cXDD8VgcBr8o5z9oJwhkWCd6CzyxHT3gyH/hSItacVbOJWJji0yErmQ9LfUsjEsNZLvy64XwMFI4LApRsS6UUCNCJj7+Cibt6Tgf0CCUfailaZAopZlUw+Dy4uD5T8M=
+	t=1725437274; cv=none; b=XmMAv8Bgx35YHjz61WxoAZCVoFwIM72PMvKEnbWOTfYpQtaSyDZvqt6hQ9wMG8gRSHQJDcHN+ipuT83kNnNS+i286T1FcdtpWI+qc1OoQO9O4zE9UeJrhFt2Hk+P0lhIIXr08ifEUcEweLGLJyib373Fd3A766fceO+nqq77JIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437130; c=relaxed/simple;
-	bh=7qgWRytiyCO7SWQTn1LaW2tQh6Df8ICaF+PLtw4lLsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TykxNjZCZEFXfG/9o+YUYSLEZ/WLvE5inrKRJyayyzsfv2LPFP2PwyVfuU08Jc4ql9fRu6APtpVYSobzMs+s28eks5xsw7fiFaFka5TO6Scq31Apq3dBKyCZ0BObqs27fmeGRI6HSJilhAzqnymT+OcggkPAz6/MK3YH/fe+nQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcqUN6KA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A40C4CEC5;
-	Wed,  4 Sep 2024 08:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725437129;
-	bh=7qgWRytiyCO7SWQTn1LaW2tQh6Df8ICaF+PLtw4lLsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EcqUN6KAi2o90T+wVIBwV8S83o3xLRsfDfxmBPLM6Y7vYtWe8O6QbMXDrr1eUD1Vh
-	 Q9D+pBdKG47gGnSpO271e/wwAFXhePE+5iuBYoZIvAjU2C4lELzZH1zwRWuP33X50p
-	 WfdrJpnATbu2S5ywHKNexualvVpNIGie/m5yB50du8GWwjEmn0Kqw+GOH//Or+xM57
-	 TauL/adJ31PdPqiykIM7786VpBpkPUUbqnvd+4oNwBuVlgA6Q8kHEI2mVO8peNX+2V
-	 fpNPpESZJndlU//p35Oi52z5jUeKfQXm7KZ8nv+Y3/SdbSCF807eVYGpt0XnqZPevD
-	 ZgjUj5Tfy7E7Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sll1O-0000000054Y-1kjo;
-	Wed, 04 Sep 2024 10:05:46 +0200
-Date: Wed, 4 Sep 2024 10:05:46 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org
-Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
-Message-ID: <ZtgU2kwBBl1q1Oh2@hovoldconsulting.com>
-References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
- <20240904031324.2901114-3-quic_sibis@quicinc.com>
- <ZtgHw1RrZTZLr7Mw@hovoldconsulting.com>
+	s=arc-20240116; t=1725437274; c=relaxed/simple;
+	bh=yIZHX3eBXK8zzAS3yQQPOB9+lqHIWH64eVUUSWwPUX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B2RL1iEQuN1pq8h5PpBumKIxednNn+SsEhuf/AUf8zv8xHyyWu/O3VoNbI+lRtNTCjkM2IDwB+xejJK1bRc9S1qvyIJztewjNMz5u08EzdDynvCiof2BhJYhYB8DrciwulKUr4vPE9c+JdFTSdrjQjnH1DH82UrrcFcfKBRU8xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ig3y8/M8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725437270;
+	bh=yIZHX3eBXK8zzAS3yQQPOB9+lqHIWH64eVUUSWwPUX8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ig3y8/M8mLHuyDuF26oOvQqp19c7SrU7XkCJbJXqFPRD4jMtxnr8Qld/yQDpuxicC
+	 nDMX6UmM5D9mo1Fv6pFcLBv6Bz67hns/sfYHF3MDCA5YmL3WMZskfyMq0CWYTZaRMH
+	 I0BgkkuMIdyoWj8mpKMAfYje8wFeEgkJZzcTCP3YPl8HTXp6wXWrVuV//cLN9lcbae
+	 rCHquOB6EHHfNToZh/TxKMxWPGjhLn9UD1Ataw5jZSr114kZT3dacZJ2M3tx7xw6FA
+	 rZm2D347GVeopyRsmv3LPsTi56GDUuBq+9HCj/GuFb62+RaKtAA3Uh4VH1O6ovBvu1
+	 hwqf0xtxdKofQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 60C7A17E0F95;
+	Wed,  4 Sep 2024 10:07:50 +0200 (CEST)
+Date: Wed, 4 Sep 2024 10:07:43 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 4/4] drm/panthor: add sysfs knob for enabling job
+ profiling
+Message-ID: <20240904100743.225f1837@collabora.com>
+In-Reply-To: <20240903202541.430225-5-adrian.larumbe@collabora.com>
+References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
+	<20240903202541.430225-5-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtgHw1RrZTZLr7Mw@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 09:09:56AM +0200, Johan Hovold wrote:
-> On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
-> > Ensure that the bad duplicates reported by the platform firmware doesn't
-> > get added to the opp-tables.
+On Tue,  3 Sep 2024 21:25:38 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-> But with this patch applied, instead of the above warnings I now get two
-> *errors* at boot:
-> 
-> 	[    8.952173] cpu cpu4: EM: non-increasing freq: 0
->	[    8.979460] cpu cpu8: EM: non-increasing freq: 0
-> 
-> Can you do something about that as well? At least make sure to highlight
-> this in the commit message as this is information that is needed to be
-> able to evaluate the patch.
+> This commit introduces a DRM device sysfs attribute that lets UM control
+> the job accounting status in the device. The knob variable had been broug=
+ht
+> in as part of a previous commit, but now we're able to fix it manually.
+>=20
+> As sysfs files are part of a driver's uAPI, describe its legitimate input
+> values and output format in a documentation file.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  Documentation/gpu/panthor.rst         | 46 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_drv.c | 39 +++++++++++++++++++++++
+>  2 files changed, 85 insertions(+)
+>  create mode 100644 Documentation/gpu/panthor.rst
+>=20
+> diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
+> new file mode 100644
+> index 000000000000..cbf5c4429a2d
+> --- /dev/null
+> +++ b/Documentation/gpu/panthor.rst
+> @@ -0,0 +1,46 @@
+> +.. SPDX-License-Identifier: GPL-2.0+
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> + drm/Panthor CSF driver
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> +
+> +.. _panfrost-usage-stats:
+> +
+> +Panthor DRM client usage stats implementation
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The drm/Panthor driver implements the DRM client usage stats specificati=
+on as
+> +documented in :ref:`drm-client-usage-stats`.
+> +
+> +Example of the output showing the implemented key value pairs and entire=
+ty of
+> +the currently possible format options:
+> +
+> +::
+> +     pos:    0
+> +     flags:  02400002
+> +     mnt_id: 29
+> +     ino:    491
+> +     drm-driver:     panthor
+> +     drm-client-id:  10
+> +     drm-engine-panthor:     111110952750 ns
+> +     drm-cycles-panthor:     94439687187
+> +     drm-maxfreq-panthor:    1000000000 Hz
+> +     drm-curfreq-panthor:    1000000000 Hz
+> +     drm-total-memory:       16480 KiB
+> +     drm-shared-memory:      0
+> +     drm-active-memory:      16200 KiB
+> +     drm-resident-memory:    16480 KiB
+> +     drm-purgeable-memory:   0
+> +
+> +Possible `drm-engine-` key names are: `panthor`.
+> +`drm-curfreq-` values convey the current operating frequency for that en=
+gine.
+> +
+> +Users must bear in mind that engine and cycle sampling are disabled by d=
+efault,
+> +because of power saving concerns. `fdinfo` users and benchmark applicati=
+ons which
+> +query the fdinfo file must make sure to toggle the job profiling status =
+of the
+> +driver by writing into the appropriate sysfs node::
+> +
+> +    echo <N> > /sys/bus/platform/drivers/panthor/[a-f0-9]*.gpu/profiling
+> +
+> +Where `N` is a bit mask where cycle and timestamp sampling are respectiv=
+ely
+> +enabled by the first and second bits.
 
-I tried running with just this patch (i.e. without patch 1/2), but then
-cpufreq fails already during boot with eight of these errors:
+This should probably be documented in
+Documentation/ABI/testing/sysfs-driver-panthor too.
 
-[    9.258577] cpufreq: cpufreq_online: ->get() failed	
-...
-[    9.405603] cpufreq: cpufreq_online: ->get() failed
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index e18838754963..26475db96c41 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1450,6 +1450,44 @@ static void panthor_remove(struct platform_device =
+*pdev)
+>  	panthor_device_unplug(ptdev);
+>  }
+> =20
+> +static ssize_t profiling_show(struct device *dev,
+> +			      struct device_attribute *attr,
+> +			      char *buf)
+> +{
+> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
+> +
+> +	return sysfs_emit(buf, "%d\n", ptdev->profile_mask);
+> +}
+> +
+> +static ssize_t profiling_store(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf, size_t len)
+> +{
+> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D kstrtou32(buf, 0, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	if ((value & ~PANTHOR_DEVICE_PROFILING_ALL) !=3D 0)
+> +		return -EINVAL;
+> +
+> +	ptdev->profile_mask =3D value;
+> +
+> +	return len;
+> +}
+> +
+> +static DEVICE_ATTR_RW(profiling);
+> +
+> +static struct attribute *panthor_attrs[] =3D {
+> +	&dev_attr_profiling.attr,
+> +	NULL,
+> +};
+> +
+> +ATTRIBUTE_GROUPS(panthor);
+> +
+>  static const struct of_device_id dt_match[] =3D {
+>  	{ .compatible =3D "rockchip,rk3588-mali" },
+>  	{ .compatible =3D "arm,mali-valhall-csf" },
+> @@ -1469,6 +1507,7 @@ static struct platform_driver panthor_driver =3D {
+>  		.name =3D "panthor",
+>  		.pm =3D pm_ptr(&panthor_pm_ops),
+>  		.of_match_table =3D dt_match,
+> +		.dev_groups =3D panthor_groups,
+>  	},
+>  };
+> =20
 
-and seven of these messages:
-
-[   12.322987] energy_model: Accessing cpu4 policy failed
-...
-[   18.462780] energy_model: Accessing cpu4 policy failed
-
-Johan
 
