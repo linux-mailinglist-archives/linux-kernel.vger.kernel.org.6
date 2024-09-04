@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-314404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C8796B2C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:25:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058C796B2C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3254C1F2714E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FB9285754
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34095146581;
-	Wed,  4 Sep 2024 07:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D66146A66;
+	Wed,  4 Sep 2024 07:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i5/AE7gA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mADcoJZI"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BD3145A05
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CB3145A05
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725434751; cv=none; b=VHfMdrTpcqQAD84ckIycrfN1frBwLaU9vcT5UJyI3Sdpj6SZaxfnxcsJTBcEZ34Dwm4ZZzDHvAyCu6aCjJ9UpVDSqoVuCk+i5YQnAnm4+nGN2NBN4Pg0lbvoMBm9MUmL2Ys2HoQ11nh07tLC+dQuQMFjUjWABu4Q+SeNGeYAORo=
+	t=1725434849; cv=none; b=iTQUID8dka2UqAaIEhTbiB18FawN+XpyKA4k6QFI6d0HRLW1wuBrtwZD1WMgCp1KayMV89IiKZOTkcKY+BxZKe1c+oYvWtQ6ZvHfQ1CstHuk0j4r8kPWaFH4vBWPBIUHYAufnBCnqcnmVcjmWOeZEHhRvUl0FSXaMMaea6r38CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725434751; c=relaxed/simple;
-	bh=ZtjWFy7AfO9EdyqhcgulwtDmU/bcKMsg/rppWMCn84g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X9TWNDYbwz1+zEV1RVhlMUUJw/1zfASw1G3Lj13euKZArK/zAJ7UjGq6VXNONZ7roA0+cmfkouOY3cFCwc49OgQCl3j9oZwvudOEHoz0hLedvVD6FbgB38K1HrS93X86UB4Z0xh0Kd2VM0K9rq7jo8IcNnR4C+OBOuKJeL/Ps+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i5/AE7gA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725434749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0Ai0i48K+x75wE2opWN6H+yE5yaU/0owwcRJ41uJwPs=;
-	b=i5/AE7gAl19K/KOIpO9CUGE30Fv1fOuPst0QK1jc7nKDQjA2B2Vv5E1J9UEMk3P8VRuJyQ
-	a2nA1rVfIO14MbHsABueVN1djOu/u7JCBcf06mzGwsiLn1EWUPcyqhRsZH9fYq9hQ5z6/j
-	XKUhoN7umQZg22BsflHlI63u7ZRgipY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-uGuNZPkgPaGZeEifKr-1xA-1; Wed, 04 Sep 2024 03:25:47 -0400
-X-MC-Unique: uGuNZPkgPaGZeEifKr-1xA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42bb9fa67c5so9394685e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:25:47 -0700 (PDT)
+	s=arc-20240116; t=1725434849; c=relaxed/simple;
+	bh=bdClaQMyoGsCdWLYe2ixknLgtAqi8KipDXtel2rdSiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MliUlswRWyWsX2DSjQzx/aCFTCxoybl9gRrbSJGKqLsrXDx7t47IxseUhntN0BVPkue8vbFckTFbVv9lUBb0pyk33NQ8yPOmx6R6RUtxthMmex28hdRFWD3UR8IVnTMM89mDzd8yGYOhHJdj8yclq6sOmLhaejYj8p/fa9E/Xto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mADcoJZI; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c210e23573so6481699a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725434844; x=1726039644; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7pHc8+HPsRwaUTwqoeziGvhSwpCVJZ7q8cThJ3O3xi4=;
+        b=mADcoJZIUJ8JVrVC0mnJKtuzJwL2oW9cXGX1JSdf+oFnL8UhRQzx21bmzQpwRoplRY
+         2sjVepf9MyYFABRzqRuXWJlzEhzV7V0JqOoQxJ4yUbgkjUaq75jcWVjyiOvWC4+a5iOG
+         NhfViMK/K/ZoPaR6cH60A2qDrwSWhkMVhXMK0+bghGR13bq3v21Qr99xvo8LvrRrKBz/
+         ilcI+J7a1cayarUwBvNxlcPzAqvO6GKRDV8XWftKHZPeY6KcXfLbHJr7G7ZGLCe+19lf
+         sd/R6iLFWzAXiZFWewbReMBUHPY3NQ1mYs9dRb9c/VaqYn0P4ve+Z4qFkfS7RpviABw+
+         Q+Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725434746; x=1726039546;
+        d=1e100.net; s=20230601; t=1725434844; x=1726039644;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0Ai0i48K+x75wE2opWN6H+yE5yaU/0owwcRJ41uJwPs=;
-        b=mTx37J7geG65i+/KJBZfnWb18UrVl7A51UqXNlOcHRl93HhyjFQWwA20C1PdnxllTM
-         GO5Ypd5jw+5TUK9gT+R22FN281iHFXfpvv4x+7650ZuFx12m6BPwFD23hUB5p3pKPF86
-         dFvBnqbSfi7jEI++AFjMHZ0jCBCTFo6rFfZuk02u24rZKchor57xW1heYk8bnbFddD8x
-         I1myqM82JnnzIZdyhu96TCx5qhaHfA2GjDve5I2CUomETV00zK7iA3yP+s1fHtrB2hkW
-         mNolPUI6e22yUH5PIdurT/z7YB7dvr3dbZzazxYIcOwWt2pZhZ1NXnQ49z6rRekQKYjB
-         0C0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSXRlvzsvIjAwJFl/TIkLvjUbsJgUQ8/4cA0CjEJGmn4dJeAXcv9NOeG37z90uAfq/I2CYsVFhuuih3YU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyer8j+G/GTCerCSFDxWH9DBE+bSOu39z6lfiPtcma4eFhdRgCW
-	2bDLfttOmBGZAXCpxvRdxsQuxftakC9DyuNYwXN6nape/oWsFASO3AIKyoiR9PHpMIiGQDc1dqC
-	0UZ/t+i8xjT5vlWxepegZUuzd0AB816ZTCIK//QH2PM5fSnND2ORG1Y6rr9mi0A==
-X-Received: by 2002:a05:600c:1c83:b0:426:5440:8541 with SMTP id 5b1f17b1804b1-42bb01e5f83mr144896425e9.27.1725434746511;
-        Wed, 04 Sep 2024 00:25:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEviBJFNrkQInUgxY9gMkRKTSBKIkiCknbrw34c2RvP/P4K3CeawHA8LFRYHivQqQ6/eeBWBQ==
-X-Received: by 2002:a05:600c:1c83:b0:426:5440:8541 with SMTP id 5b1f17b1804b1-42bb01e5f83mr144896215e9.27.1725434746012;
-        Wed, 04 Sep 2024 00:25:46 -0700 (PDT)
-Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6f9b584sm193222905e9.16.2024.09.04.00.25.45
+        bh=7pHc8+HPsRwaUTwqoeziGvhSwpCVJZ7q8cThJ3O3xi4=;
+        b=nyaaRQw5Avch3zufMxqHHF83wMYEgIgm3gbPaQR1CVB9ILPAOMbwbSlbTIWBkT+UCT
+         6PVIlHcR2wLsem/Pi1sucUi5np9GQW/SBWcJ6ZnHZuWgJP4HBFeNKRKQxqbrjXoxdK6o
+         +ez6yPXE+XHfd0KTq5KqrElScSQJ6AQXomszCOSwfsxaTTrxKLnZEFHQlKCMFCX11vtj
+         CsFcUduuqI/zp4PtTizjafY6YGXezu0qTGld0fV2W6lY7dRmF19I98AnbzF6bv84sSob
+         bWCT71RdglYQ1WorWVHrC/MhqJZh1FDUaBAlfafK36yMRQnzdn9YOeL4yuBs4k4dFKpH
+         e9eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkE52uOO9K0sG8tHB7uPqol1/s8SWTaxLWSAbUnFlkinn+a4uhlSnNUVtLy5VxbVNxE6PkdU3VnT3Yfj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlTi+8vd6h5NaUg1o5E5Yp6Nj+hbr+5qjCfAU+yNO/N4GDpGJh
+	hTVjeG6w3D6UL5p2TeicMEuqeIDgWQ6aJI7jec9GPug+xgRHTeM3sdoRRbsH5J0=
+X-Google-Smtp-Source: AGHT+IEUvILUXPWBCZLAJR4C0Geb6guuCqa6NJmJmhATsIjVr+yjHLOuGJ4mUc7lhn3MTCOXoQnDOg==
+X-Received: by 2002:a17:907:6d0a:b0:a80:f358:5d55 with SMTP id a640c23a62f3a-a8a1d3271d8mr427039566b.33.1725434842698;
+        Wed, 04 Sep 2024 00:27:22 -0700 (PDT)
+Received: from localhost.localdomain ([188.27.130.242])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d77fasm771151766b.167.2024.09.04.00.27.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 00:25:45 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: Fix might_sleep() lockdep warning in pcim_intx()
-Date: Wed,  4 Sep 2024 09:25:42 +0200
-Message-ID: <20240904072541.8746-2-pstanner@redhat.com>
+        Wed, 04 Sep 2024 00:27:22 -0700 (PDT)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: jic23@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	lars@metafoo.de,
+	michael.hennerich@analog.com,
+	gstols@baylibre.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v3 0/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+Date: Wed,  4 Sep 2024 10:27:08 +0300
+Message-ID: <20240904072718.1143440-1-aardelean@baylibre.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,55 +85,85 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-commit 25216afc9db5 ("PCI: Add managed pcim_intx()") moved the
-allocation step for pci_intx()'s device resource from
-pcim_enable_device() to pcim_intx(). As before, pcim_enable_device()
-sets pci_dev.is_managed to true; and it is never set to false again.
+The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
+The main difference between AD7606C-16 & AD7606C-18 is the precision in
+bits (16 vs 18).
+Because of that, some scales need to be defined for the 18-bit variants, as
+they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
 
-Under some circumstances it can happen that drivers share a struct
-pci_dev. If one driver uses pcim_enable_device() and the other doesn't,
-this causes the other driver to run into managed pcim_intx(), which will
-try to allocate when called for the first time.
+Because the AD7606C-16,18 also supports bipolar & differential channels,
+for SW-mode, the default range of 10 V or ±10V should be set at probe.
+On reset, the default range (in the registers) is set to value 0x3 which
+corresponds to '±10 V single-ended range', regardless of bipolar or
+differential configuration.
 
-Allocations might sleep, so calling pci_intx() while holding spinlocks
-becomes then invalid, which causes lockdep warnings and could cause
-deadlocks.
+Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
 
-Have pcim_enable_device()'s release function, pcim_disable_device(), set
-pci_dev.is_managed to false so that subsequent drivers using the same
-struct pci_dev do not run implicitly into managed code.
+This changeset, does a bit of rework to the existing ad7606 driver and then
+adds support for the AD7606C-16 & AD7606C-18 parts.
 
-Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-Reported-by: Alex Williamson <alex.williamson@redhat.com>
-Closes: https://lore.kernel.org/all/20240903094431.63551744.alex.williamson@redhat.com/
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-@Alex:
-Please have a look whether this fixes your issue.
+Datasheet links:
+  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-16.pdf
+  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-18.pdf
 
-Might also be cool to include your lockdep warning in the commit
-message, if you can provide that.
+Changelog v2 -> v3:
+  - v2: https://lore.kernel.org/linux-iio/20240902103638.686039-1-aardelean@baylibre.com/
+  - Applied checkpatch.pl changes
+  - Managed to setup and run 'make dt_binding_check DT_SCHEMA_FILES=adi,ad7606.yaml'
+    - Found the winning combination for this setup
+    - David Lechner also helped
+  - For patch 'iio: adc: ad7606: rework available attributes for SW channels'
+    - Removed an extra space that checkpatch found
+  - For patch 'dt-bindings: iio: adc: document diff-channels corner case
+    for some ADCs'
+    - Removed 'the the' stutter (that I did in writing)
+  - For patch 'dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings'
+    - Updated binding with some description for 'diff-channels' & 'bipolar'
+      properties
+    - Channel definitions are counted from 1 to 8 to match datasheet
+    - Added more bindings rules for 'diff-channels' & 'bipolar' for AD7606C
+      - Adapted some ideas from adi,ad7192.yaml
+  - For patch 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+    - Updated 'diff-channels' property with channel numbers (from 1 to 8)
+      handling
 
-P.
----
- drivers/pci/devres.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changelog v1 -> v2:
+  - v1: https://lore.kernel.org/linux-iio/20240819064721.91494-1-aardelean@baylibre.com/
+  - Fixed description in 'iio: adc: ad7606: add 'bits' parameter to channels macros'
+  - Added patch 'dt-bindings: iio: adc: document diff-channels corner case
+    for some ADCs'
+    - diff-channels = <reg reg> can be used to define differential channels
+      with dedicated positive + negative pins
+  - Re-worked patch 'dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings'
+    - Using standard 'diff-channels' & 'bipolar' properties from adc.yaml
+  - Re-worked patch 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+    - Reading 18-bit samples now relies on SPI controllers being able to
+      pad 18-bits to 32-bits.
+    - Implemented 'diff-channels = <reg reg>' setting
+    - Removed some bad/left-over channel configuration code which I forgot
+      during development and rebasing.
 
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 3780a9f9ec00..c7affbbf73ab 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -483,6 +483,8 @@ static void pcim_disable_device(void *pdev_raw)
- 
- 	if (!pdev->pinned)
- 		pci_disable_device(pdev);
-+
-+	pdev->is_managed = false;
- }
- 
- /**
+Alexandru Ardelean (8):
+  iio: adc: ad7606: add 'bits' parameter to channels macros
+  iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct()
+  iio: adc: ad7606: split a 'ad7606_sw_mode_setup()' from probe
+  iio: adc: ad7606: wrap channel ranges & scales into struct
+  iio: adc: ad7606: rework available attributes for SW channels
+  dt-bindings: iio: adc: document diff-channels corner case for some
+    ADCs
+  dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings
+  iio: adc: ad7606: add support for AD7606C-{16,18} parts
+
+ .../devicetree/bindings/iio/adc/adc.yaml      |   4 +
+ .../bindings/iio/adc/adi,ad7606.yaml          | 108 +++++
+ drivers/iio/adc/ad7606.c                      | 433 +++++++++++++++---
+ drivers/iio/adc/ad7606.h                      |  78 +++-
+ drivers/iio/adc/ad7606_spi.c                  |  71 ++-
+ 5 files changed, 598 insertions(+), 96 deletions(-)
+
 -- 
 2.46.0
 
