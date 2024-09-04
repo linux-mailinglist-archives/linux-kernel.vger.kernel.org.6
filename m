@@ -1,142 +1,243 @@
-Return-Path: <linux-kernel+bounces-315956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEF296C920
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CC196C924
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D2E128617F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847DE286283
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9031547EB;
-	Wed,  4 Sep 2024 21:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7101537D9;
+	Wed,  4 Sep 2024 21:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BPWYIsWy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S30JOPQe"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C29738DD1;
-	Wed,  4 Sep 2024 21:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF8E84047;
+	Wed,  4 Sep 2024 21:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725484023; cv=none; b=tel8ntS72+Okbi+sW9pFdh2AdbsHKFM43ozXqh/RypgEZ4PFiXCBzSXT6i4Hnp0Imqu31T4Iei2WSo/d8LQO0AAgjrGd7tXjDAHUiU/3Pq6zU6KMK0/YFGyhWY79RO6JZg2pd2jrLfuMwyuO0SqVrbQTW9voxEselnBtQZA5E5Y=
+	t=1725484066; cv=none; b=TDpJIHgG18KdaMauwTW6SkHgy2jaIbGK2ORi2rHjV14BrrBwjxn+bvVEUjPkiBTlfalLQw9sigT6XKJ+vKh4ZbWNX8OxVFTkceEJqS60nui48+H2NuSoecbLeKjSM2FbLdnXgd16VzAVkfzKbQ427neSooYxAJ4vtRo0gQmU05Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725484023; c=relaxed/simple;
-	bh=odu6RoR3qtTtWweMGYFXbf4nuKSVJnn/jlrXrFQ+nm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G3F7XKEWK3iLcKyYCA30rO5Ox5gahatU/SyqTBPk8CCHZWvNOU93VkOHCsp2vNoiqYwKL8MhdU7z+1ovN8zFTKzLgZEkc0L7QF1M1Lg6mWqbACGh//kc9K/K9TXyjPdeSnAf1mcPUwIuIQrBGwSk+W9jp+ZWTNtm1ub14tQ4Hn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BPWYIsWy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484GrcYx009456;
-	Wed, 4 Sep 2024 21:06:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dDglSu69AeoOpMOFO6jbmEMEAsj/2CnT5VlnlR29lX8=; b=BPWYIsWyHDs+n5QA
-	0r3glsATHaHZfS3MlmPCkFL1D7dbQOp3mCOQvPb9pRMTPIDNMG6tc3hMI8BMJWR3
-	vjBaWEogng5eIH6/vfWWAfp5zSGbB/vrjSA6f60jlf1tsniFY82BiNYki+cdhKrS
-	gpTMrRbaj8fgTpa0piEIOhek2bVPpjNrX+TDxBTlMERnTFh8f3mHrC7sg360zDLM
-	eXWLNN16uMJ2rzgkYdDvGebjku8nJfqSDucVF9Ij/fuOWzb9bew8TBLT/qPjHrnO
-	1lZCwdUzk5nzmpIywfoihp2NAGACYy0qXkrqZcIm+0f9IJNGh4TdfrIqaxajsHqJ
-	KHhr6g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41e0bhn93h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 21:06:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484L6Mj0000645
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 21:06:22 GMT
-Received: from [10.110.102.234] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 14:06:18 -0700
-Message-ID: <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
-Date: Wed, 4 Sep 2024 14:06:18 -0700
+	s=arc-20240116; t=1725484066; c=relaxed/simple;
+	bh=UGTJYGv+0UmGj+Ze0pdlYqBkQwyEedTIWoYfk5nRgb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bb6sC4CpfJxZS+iCSQ8qjyGOAeVyFN0JcJtd2wTx7rRg2V3bFCObkbbwmkVUXWxqfPWHcMxYki1sBuksHhsjSjvbv+1Bj/gzRNzyEjEuxtUaGBDSCxAVkM7hgRGzej6PpeA9Dd9dAhwDLx7BZi4QyQCr+tR0j6ZPHsjEbapvr8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S30JOPQe; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e1915e18so57897165e9.1;
+        Wed, 04 Sep 2024 14:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725484063; x=1726088863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5OiiYFimXSQBkHtC8xC7+fpH0+JqA60CxzJJEPbycak=;
+        b=S30JOPQeMCJteCt7/HY9nAO7IUgQAoUBEd+zTu7/iBheOmY+Ikq/UuAL84U6GR1InB
+         hstl+zPiYzfB+ClLeERWW0+ricCmcpZkIQ8B9wMJJGXzrdCulI47NLw/YGRx41zYLmy/
+         JUMt7LGa45lvT441dS9mSJZYEj0+G1M9Fi4fDxXAO1+TuX5S3Mj0YTk3ZlCBnv0bctQT
+         +iL1TErcWRIdJh+aRCnXj1C8NWeMKtpseFdMc6E6W4OYQUdO4VzqP/r8YYSUMGadEO5X
+         w739r8UZXd4LA8eqdH1r921SgOqCaUcTafucQ9Lu81MXggnZUBX1feQninyeK0xvMcnH
+         cP/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725484063; x=1726088863;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5OiiYFimXSQBkHtC8xC7+fpH0+JqA60CxzJJEPbycak=;
+        b=TKn/LcMsrwpMAeUOH7tzbpRT9B5gNXPNS+nhtcKxOKwfEDZqwOphUxZ7aNxOGjSH8b
+         qunRVTgz9Ba8DelLgC/E9RK+pPAcAqwzKRPHFCaeYXFrss2ZxZQQ8Ra/cOJgCFhXc5j0
+         6L1spgTxvH/UpQ7wVm63wBxHNIfqFn1SRPMNVjfQVDmqvHtDJwZH3YWRWJB7RUAjo2pc
+         tBkxYFbrO3PDPlRdwdbDZZQBPujjx5bdOsFbOhqCxi6E9IxHADUCsTxR7tdIw7h9WDpY
+         d8nA8y1E7lzeFinemWfZiqDRwTbiBnu0L6YYZnGa5DidTZrOxQG6I1Cx69mKfA9P16iY
+         74ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyUf8JRZ2bVL5vjrmP2LUMDZzocPHmRo3JVySGNrrjbHnDonRQ7pa3jh7klefNr1Uw23DGiMktcKtX0Q=@vger.kernel.org, AJvYcCXYx8N2d3Mtb02/hV544Ps4WaNDhroG8QMMtoJ1UmVz/L5gEbRsbu128sPgnUMYq6Gkajgs9kRkHawj8cAlXck9UfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmTeGLlLljMKJJD1LZa0C89pYEfNB7pREXMHd86iHFH+phPW/w
+	YWbRnPJqwxk+5BcdKOlU8laHBgtDtfb/H1T9myJ2NFrx/UiBp223
+X-Google-Smtp-Source: AGHT+IEisZfpjh5yr9l6IjozsVxAz5zCuH1MG1Vkuxvikw5aLmvlyJiyUkuG0hGlWfs2IGpkAl+blQ==
+X-Received: by 2002:a05:600c:3511:b0:426:6f1e:ce93 with SMTP id 5b1f17b1804b1-42c7b5f0e91mr93463875e9.33.1725484062449;
+        Wed, 04 Sep 2024 14:07:42 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:c57c:1e61:792:2ab1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c7a41bdc8sm158821485e9.3.2024.09.04.14.07.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 14:07:41 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 00/12] media: ov5645: Add support for streams
+Date: Wed,  4 Sep 2024 22:07:07 +0100
+Message-Id: <20240904210719.52466-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>,
-        Praveen Talari
-	<quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
- <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
- <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
- <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
- <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
- <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pquT8ry2dJOFwM1L5eqbhUs2RQGmgVaK
-X-Proofpoint-GUID: pquT8ry2dJOFwM1L5eqbhUs2RQGmgVaK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_19,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=978
- priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040160
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 9/4/2024 9:58 AM, Andrew Lunn wrote:
->> Sorry, didn't realize SPI uses different subject format than other
->> subsystems. Will fix in v3. Thanks
-> Each subsystem is free to use its own form. e.g for netdev you will
-> want the prefix [PATCH net-next v42] net: stmmac: dwmac-qcom-ethqos:
-of course they are! No one is disputing that.
->
-> This is another reason why you should be splitting these patches per
-> subsystem, and submitting both the DT bindings and the code changes as
-> a two patch patchset. You can then learn how each subsystem names its
-> patches.
+Hi All,
 
-Qualcomm QUPs chips have serial engines that can be configured as
-UART/I2C/SPI so QUPs changes require to be pushed in one series for all
-3 subsystems as they all are dependent.
+This patch series aims to add the below features,
+- Support subdev active state
+- Support for streams
+- Support for virtual channel
+- Code cleanup
 
+Sending this is as an RFC, I've done limited testing and Im seeing issue
+when route is updated and wanted some feedback on the implementation.
 
->
-> Please pick one victim subsystem and work on the patches for just that
-> subsystem. Once you have them correct, you can use everything you
-> learned to fixup all your other patches, one by one.
->
-> 	Andrew      	 
+When route is updated for the sensor with below command, and when start
+streaming I get "Dangling sink streams: mask 0x1" error. Should the
+corresponding bridge also need to support routes to fix this? or is it
+something missing Ive missed in the current implementation.
+
+$ media-ctl -R "'ov5645 0-003c' [1/0->0/1[1]]"
+
+Output after route update:
+- entity 4: ov5645 0-003c (2 pads, 1 link, 1 route)
+            type V4L2 subdev subtype Sensor flags 0
+            device node name /dev/v4l-subdev1
+        routes:
+                1/0 -> 0/1 [ACTIVE]
+        pad0: SOURCE
+                [stream:1 fmt:UYVY8_1X16/1920x1080 field:none colorspace:srgb
+                 crop:(0,0)/1920x1080]
+                -> "csi-10830400.csi2":0 [ENABLED,IMMUTABLE]
+        pad1: SINK,0x8
+                [stream:0 fmt:UYVY8_1X16/2592x1944 field:none colorspace:srgb
+                 crop:(0,0)/1920x1080]
+              
+v4l2-compliance log after this patch series:
+--------------------------------------------
+root@smarc-rzg2l:~# v4l2-compliance -u /dev/v4l-subdev1
+v4l2-compliance 1.28.1-5233, 64 bits, 64-bit time_t
+v4l2-compliance SHA: fc15e229d9d3 2024-07-23 19:22:15
+
+Compliance test for device /dev/v4l-subdev1:
+
+Driver Info:
+        Driver version   : 6.11.0
+        Capabilities     : 0x00000002
+                Streams Support
+        Client Capabilities:[   53.919041] ov5645 0-003c: =================  START STATUS  =================
+ 0x0000000000000[   53.927271] ov5645 0-003c: ==================  END STATUS  ==================
+003
+streams interval-uses-which
+Required ioctls:
+        test VIDIOC_SUDBEV_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev1 open: OK
+        test VIDIOC_SUBDEV_QUERYCAP: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device routing ioctls:
+        test Try VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+        test Active VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev1: 47, Succeeded: 47, Failed: 0, Warnings: 0
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (12):
+  media: i2c: ov5645: Add V4L2_SUBDEV_FL_HAS_EVENTS and subscribe hooks
+  media: i2c: ov5645: Use local `dev` pointer for subdev device
+    assignment
+  media: i2c: ov5645: Enable runtime PM after
+    v4l2_async_register_subdev()
+  media: i2c: ov5645: Use dev_err_probe instead of dev_err
+  media: i2c: ov5645: Use v4l2_async_register_subdev_sensor()
+  media: i2c: ov5645: Drop `power_lock` mutex
+  media: i2c: ov5645: Use subdev active state
+  media: i2c: ov5645: Switch to {enable,disable}_streams
+  media: i2c: ov5645: Add internal image sink pad
+  media: i2c: ov5645: Report internal routes to userspace
+  media: i2c: ov5645: Report streams using frame descriptors
+  media: i2c: ov5645: Add virtual channel support
+
+ drivers/media/i2c/ov5645.c | 507 +++++++++++++++++++++++--------------
+ 1 file changed, 316 insertions(+), 191 deletions(-)
+
+-- 
+2.34.1
+
 
