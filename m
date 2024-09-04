@@ -1,177 +1,194 @@
-Return-Path: <linux-kernel+bounces-314737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5427F96B7D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:07:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2DF96B7C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A191F261BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:07:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD3F1C21F44
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FEC1CF5D6;
-	Wed,  4 Sep 2024 10:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E571CCB5B;
+	Wed,  4 Sep 2024 10:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RDaIuZk0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G4o+wR5a"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36F41D0148;
-	Wed,  4 Sep 2024 10:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37A419B3C3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444347; cv=none; b=EUzw5TaUl5MMMBlhz6nEoEjhZe16p90JpXvXISqewGJaZvAsnKfNF5aJSUJ+NvFcbSl/FhfrI9Eg9fvjipC06B3zMI5A5C8k839j8iLrXNEEhh1cyVEK8RMge8uQUXFQmJQ0Zn4L2e+Un55LsHwI1+Ox+Yb6BH/mKq5FcIiPn10=
+	t=1725444322; cv=none; b=j2hnBpDeH399LSL7EONqiXT8jcoQ6XzRqKUkuBxfEd04QTPfSszaSdlxumWJbh8xTyiKnpJWEPwHX3LysymYuS1XDt7VpiR/PJOWRTIRNblNYAvXdNRn+ZfeA4I7QqlLwXUijAjB/83PRtfikefa8ufem0tFZK+kuRn7FUiUIb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444347; c=relaxed/simple;
-	bh=tr5e5PtP7qsxD5kCFOheL+VA55HsD6EksiPhYw4urdc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eZ5waSVrPnbCnH0LWrmVpRXzJeawpLVSxC3Uza5Yh515mWKos/OJNk5sVUux28bbYxEI8xuD8EgJ0/7ud9wA3E7hbaY+PrGf+Upo7M7aebIgahzE59gK04UP+OV5xBY4ZFjel/LJuwDca3foGX5d0ULtHtyQBiAZ8f6PBJ8fVdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RDaIuZk0; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 484A5ICo092784;
-	Wed, 4 Sep 2024 05:05:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725444318;
-	bh=SLGSSWdm0/NpuMM7l2G8hjHi9lfVBKZfDv2c9sdtF3E=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=RDaIuZk0kkHpilOj7e8QsjKFJdEIuQSnpdJf4G7l+OR2aSsRClN/1x3pdHn+ydE9N
-	 CwsfuSsHmb6gZRqraNKWLaltSFLRLh5OFxeUnztPLUcimdKT5Aca7T1rk7gUcAObfl
-	 5Wb5oKj/BO6U9zfbUwGZGmy3UJ1aOrgMwycI4nZk=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 484A5ImM059692
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 4 Sep 2024 05:05:18 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Sep 2024 05:05:17 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Sep 2024 05:05:17 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484A5HpM029548;
-	Wed, 4 Sep 2024 05:05:17 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 484A5GdW015390;
-	Wed, 4 Sep 2024 05:05:17 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-        Dan
- Carpenter <dan.carpenter@linaro.org>,
-        Sai Krishna <saikrishnag@marvell.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Javier Carrasco
-	<javier.carrasco.cruz@gmail.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon
- Horman <horms@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Paolo
- Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Alexander Lobakin <aleksander.lobakin@intel.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v4 5/5] net: ti: icssg-prueth: Add multicast filtering support in HSR mode
-Date: Wed, 4 Sep 2024 15:35:06 +0530
-Message-ID: <20240904100506.3665892-6-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240904100506.3665892-1-danishanwar@ti.com>
-References: <20240904100506.3665892-1-danishanwar@ti.com>
+	s=arc-20240116; t=1725444322; c=relaxed/simple;
+	bh=AONNU4qb9oiFPGSw9fpfGy0jr4gbBJfkSgZJ8vVzOxw=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=eDuX7mYuNy1An+DXkw+fRRVPJn0Cq8YeZVsiaEX7utUtQD5Bdp9ZTStKIULFhpsmw1bsARd7kli+t40CZhsMEHK4xWqSrexth85Jr3Rt7uHPdEmKoKGQHs9iibjayn+7mxw2dX6vFo9MbUq6ewkiwAnDD4r31h416sRB8XUd1lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=G4o+wR5a; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240904100518euoutp024d4c4583d84346e9be52013d647a688c~yAncwmr_u1346313463euoutp02l
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:05:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240904100518euoutp024d4c4583d84346e9be52013d647a688c~yAncwmr_u1346313463euoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725444318;
+	bh=YPUgnqz7LL9XdDgsRpg8rhlUBrIzuDzbzJ48Egoi0w8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=G4o+wR5aGwLhae7QjKcpVSzh8LflCPCA+2XzDD1+TEGsDLJDDfKvlVDStmqG3Hqol
+	 dWmBoOyyFlS4ijTRv7wZjITXSz8uRX0/xOeqjPLdV3mwJWAbP8vD7hyDA1rXxR5ApY
+	 8Ei9BG3icTezz8Sh+xjnSHqF8/Qb4xm96CTC4xHM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240904100517eucas1p2b8a8411572ce57ec9d023fbaa3d6069d~yAnccTdD21206612066eucas1p24;
+	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id A7.D6.09875.DD038D66; Wed,  4
+	Sep 2024 11:05:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240904100517eucas1p19e878377b0d393607150e7ac0e9a9d4b~yAnb1shjE2106921069eucas1p1B;
+	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240904100517eusmtrp1f6c7d16c091ef3f2bfb5ded3351c8d37~yAnb0uaL02008320083eusmtrp1I;
+	Wed,  4 Sep 2024 10:05:17 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-fd-66d830dd78f8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id D3.EA.14621.DD038D66; Wed,  4
+	Sep 2024 11:05:17 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240904100516eusmtip1baa7740dc219f528d9d5b87ee53afb20~yAnboFi560150501505eusmtip1R;
+	Wed,  4 Sep 2024 10:05:16 +0000 (GMT)
+Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 4 Sep 2024 11:05:10 +0100
+Date: Wed, 4 Sep 2024 12:05:07 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>, "David
+ Woodhouse" <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Will
+	Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
+	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
+	<k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
+ non-nested and non-svm cases
+Message-ID: <20240904100507.u3speeqf5ncopjhc@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djP87p3DW6kGZy5pmWxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
+	XBmr2puYChaKVmz/dJuxgfGrQBcjJ4eEgInEpQ0T2boYuTiEBFYwSqz/84sRwvnCKHFlYQML
+	hPOZUWL1z6tMMC3zLx2HSixnlJh07iRC1fE/G9ghnC1ALc8/MIO0sAioSJyZ/YMNxGYT0JE4
+	/+YOWFxEQF2iqXEv2HZmgf9MEntO94ElhAVSJZas3AC2j1fAQeLX37fsELagxMmZT1hAbGag
+	QQt2fwJq5gCypSWW/+MACXMKOEusmfIR6lRliYPLDrFD2LUSp7bcYgLZJSEwn1PizpOJUAkX
+	iSdn5jNC2MISr45vgYrLSJye3MMC0TCZUWL/vw/sEM5qRolljV+hVlhLtFx5wg5yhYSAo8ST
+	mxEQJp/EjbeCEHfySUzaNp0ZIswr0dEmBNGoJrH63huWCYzKs5B8NgvJZ7MQPlvAyLyKUTy1
+	tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMHGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJML7WuRG
+	mhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgsEwenVAPTjIeR4ofa
+	NvJcz1iXVWPpqnFMTFfy8rr6D8IrbofI3VXg7Htx6I9Y2HS2IyJFuclnf6xQ94rz5Lsxe8da
+	DZP5L2592WwpYyCvtTmp/AB3gsj21BsfcuzVWp8K81szH9xkJBvVsontzKT7C8M2h6v5Rx9p
+	zVj377zxok/2R4zvzOc+zxvzP+t4UrqHyokf0XkyOt+F4vemTDKonLPRQd/+jZlux07Br/Wl
+	KmZq1SFp5i8r1Q77PZuceGWCzuOfCyNaXmvm8gp6WTOnbHJdYs6ZeazJ8xy3+7eTZUVKB7Z8
+	fazTJyEyQT1s87a//zT9FkmYr1Mx5z/xdIWDblzwxUllm9i/fn/CevxnrUXJh0tKLMUZiYZa
+	zEXFiQAK76OpywMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7p3DW6kGVy9x2qxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
+	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehmr2puYChaKVmz/dJuxgfGr
+	QBcjJ4eEgInE/EvHWboYuTiEBJYySryc85kdIiEjsfHLVVYIW1jiz7UuNoiij4wSy/79Y4Rw
+	tjBK9D95zghSxSKgInFm9g82EJtNQEfi/Js7zCC2iIC6RFPjXrBuZoH/TBItSxezgCSEBVIl
+	lqzcwARi8wo4SPz6+xZstZDAbGaJMz+CIOKCEidnPgGrZwYaumD3J6BBHEC2tMTyfxwgYU4B
+	Z4k1Uz4yQVyqLHFw2SGoD2olPv99xjiBUXgWkkmzkEyahTBpASPzKkaR1NLi3PTcYkO94sTc
+	4tK8dL3k/NxNjMDo3Xbs5+YdjPNefdQ7xMjEwXiIUYKDWUmE97XIjTQh3pTEyqrUovz4otKc
+	1OJDjKbAoJjILCWanA9MH3kl8YZmBqaGJmaWBqaWZsZK4rxul8+nCQmkJ5akZqemFqQWwfQx
+	cXBKNTCJXnz3wczfokX80v4l3x6F6W9lz60/uZFfbUHNtpKg/uV+C1u//ufU3lb24vPZ7/p6
+	64PrF0/KnbU5RHFrxGnuqQ9DAgsNK1aFsj4+IOBut8xrsbDG1U7vRZfm63s8bHbn9tY7JM4S
+	ethNvkLo7dMVmX+Pxq1nfTMpJPrr5nupJS4cT+rValy6w7j9NBsWaMT8iIioCDrAe/qz9vXN
+	94VkTy7uvSXx6GW6r6jULdPc4M2zFx6wslJ8/WxnW45YiY4TQxNr5rI4/3t+x3oDd8fNeK9W
+	suDoj+2f1Dal+JUemnJsWYjE8tsOi08f/HV7pcL1hy7pPNlZ16o9/unPm3JS6c1W0Zh/avNr
+	rc10t3QrsRRnJBpqMRcVJwIAxt0xOmcDAAA=
+X-CMS-MailID: 20240904100517eucas1p19e878377b0d393607150e7ac0e9a9d4b
+X-Msg-Generator: CA
+X-RootMTR: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+	<CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
+	<20240826135955.GI3468552@ziepe.ca>
+	<20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
+	<d1e1370a-0714-4da8-b645-f56d83ab0159@linux.intel.com>
+	<20240903132018.yi2xuyrp7v3npfmt@joelS2.panther.com>
+	<8ab86203-ce4e-464d-81ea-2425e769d8a1@linux.intel.com>
 
-Add support for multicast filtering in HSR mode
+On Wed, Sep 04, 2024 at 09:37:35AM +0800, Baolu Lu wrote:
+> On 9/3/24 9:20 PM, Joel Granados wrote:
+> > On Mon, Sep 02, 2024 at 08:47:21PM +0800, Baolu Lu wrote:
+> >> On 2024/9/2 18:48, Joel Granados wrote:
+> >>>> I definitely expect PRI to work outside PASID and SVA cases, so this
+> >>>> is going in a good direction
+> >>> This touches on a detail (at least in Intel's vtd-io spec) that is not
+> >>> 100% clear to me. Second paragraph of section "3.4.3 Scalable Mode
+> >>> Address Translation" reads:
+> >>> "
+> >>>     ... Scalable-mode context-entries support both requests-without-PASID
+> >>>     and requests-with-PASID. However unlike legacy mode, in scalable-mode,
+> >>>     requests-without-PASID obtain a PASID value from the RID_PASID field of
+> >>>     the scalable-mode context- entry and are processed similarly to
+> >>>     requests-with-PASID.Implementations not supporting RID_PASID capability
+> >>>     (ECAP_REG.RPS is 0b), use a PASID value of 0 to perform address
+> >>>     translation for requests without PASID.
+> >>> "
+> >>> This basically means that a default PASID is used even though the
+> >>> request is without PASID. Right? Therefore "outside PASID" means with
+> >>> the default PASID (at least in Intels case). Right?
+> >> Kind of yes.
+> >>
+> >> The PCI specification defines the concept of PASID and its role in
+> >> transaction routing. We refer to PCI transactions with a PASID prefix as
+> >> "request-with-PASID" and those without a PASID prefix as "request-
+> >> without-PASID." Consequently, I understand 'outside PASID' to mean
+> >> transactions that do not have a PASID prefix.
+> >>
+> >> The VT-d specification describes how the IOMMU hardware handles request-
+> >> without-PASID. It uses a reserved PASID for its internal routing and
+> >> handling purposes. If RID_PASID is supported (ECAP_REG.RPS=1), software
+> >> can select its own reserved PASID. Otherwise, the IOMMU hardware will
+> >> use a default value of 0.
+> >>
+> > Thx for getting back to me. This generates another doubt in my head
+> > regarding the published capabilities from the intel IOMMU Hardware:
+> > 
+> > So ecap_pasid [1] does not have to be set in scalable-mode. Right? This
+> > allows hardware supporting scalable-mode to reject transactions with
+> > PASID whenever ecap_pasid is*NOT*  set; even though internally things
+> > are handled with a PASID. This question is directly related to the two
+> > last patches in the set.5/6 and 6/6.
+> 
+> Yes. And 5/6, 6/6 make sense to me. We should remove the PASID
+> restriction from the code once PRI is split from SVA.
 
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 42 +++++++++++++++++++-
- 1 file changed, 40 insertions(+), 2 deletions(-)
+Thx for the clarification. I'll make sure to include them in my V1
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 49b855ae62a4..76ccfd79f45f 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -492,6 +492,36 @@ static int icssg_prueth_del_mcast(struct net_device *ndev, const u8 *addr)
- 	return 0;
- }
- 
-+static int icssg_prueth_hsr_add_mcast(struct net_device *ndev, const u8 *addr)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	struct prueth *prueth = emac->prueth;
-+
-+	icssg_fdb_add_del(emac, addr, prueth->default_vlan,
-+			  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_BLOCK, true);
-+
-+	icssg_vtbl_modify(emac, emac->port_vlan, BIT(emac->port_id),
-+			  BIT(emac->port_id), true);
-+	return 0;
-+}
-+
-+static int icssg_prueth_hsr_del_mcast(struct net_device *ndev, const u8 *addr)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	struct prueth *prueth = emac->prueth;
-+
-+	icssg_fdb_add_del(emac, addr, prueth->default_vlan,
-+			  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
-+			  ICSSG_FDB_ENTRY_BLOCK, false);
-+
-+	return 0;
-+}
-+
- /**
-  * emac_ndo_open - EMAC device open
-  * @ndev: network adapter device
-@@ -652,7 +682,10 @@ static int emac_ndo_stop(struct net_device *ndev)
- 
- 	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
- 
--	__dev_mc_unsync(ndev, icssg_prueth_del_mcast);
-+	if (emac->prueth->is_hsr_offload_mode)
-+		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
-+	else
-+		__dev_mc_unsync(ndev, icssg_prueth_del_mcast);
- 
- 	atomic_set(&emac->tdown_cnt, emac->tx_ch_num);
- 	/* ensure new tdown_cnt value is visible */
-@@ -730,7 +763,12 @@ static void emac_ndo_set_rx_mode_work(struct work_struct *work)
- 		return;
- 	}
- 
--	__dev_mc_sync(ndev, icssg_prueth_add_mcast, icssg_prueth_del_mcast);
-+	if (emac->prueth->is_hsr_offload_mode)
-+		__dev_mc_sync(ndev, icssg_prueth_hsr_add_mcast,
-+			      icssg_prueth_hsr_del_mcast);
-+	else
-+		__dev_mc_sync(ndev, icssg_prueth_add_mcast,
-+			      icssg_prueth_del_mcast);
- }
- 
- /**
+Best
+
 -- 
-2.34.1
 
+Joel Granados
 
