@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-315052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE3D96BD37
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515E496BCDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53DE91F22783
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845F61C220AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BFF26AED;
-	Wed,  4 Sep 2024 12:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KEOIq6hV"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B738A1D9D6A;
+	Wed,  4 Sep 2024 12:48:18 +0000 (UTC)
+Received: from mail.aaazen.com (99-33-87-210.lightspeed.sntcca.sbcglobal.net [99.33.87.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C541DA31C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FBD1D6DDE;
+	Wed,  4 Sep 2024 12:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.33.87.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454447; cv=none; b=ig+qrJr5IX2tn3UAANNInqbFAwlt5GWMxsEUPipdhHOXUXzENs8Pc2BImfxgpvObmDeE9gAX/fdZEAuaz//qjlL0iZy9prEvS3ZZGJslK2UiJXpc9XohEf5FezONC5HJ1lTtijC9QN8iPY4MP0uP2iyi31rIeN/w1zTeHp/c1JA=
+	t=1725454098; cv=none; b=I/aOOJAtub/JwYpkFY2tcJ5voRb13XVNuNFvVvopoY1GJM4oCrHw2x5xAvocPJXwo0bq02FP6yD2HU4qF7+tWX8Tqc3QoaXz0SpVnAOI2eDJb17rqhn5pQA+ID2b0Z3EVHMQ4/yanw8pEWsH6XKREQnKFeHBxVs6mTYlYkEG2s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454447; c=relaxed/simple;
-	bh=046RFLhkfGFj/Nbwb24oGDOR3meKhAVCzU3jESfr7HE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=BN5P2Y/E9+sLcy0b3gAXYx5FtBJ1JqC0Q4rqKiTGLACTgTeqBBSjezXQ5KZmiN9lTFFrpP4WK7Nv929djIGtq4awc7f2WstuYkEbhkStOCnVE003EQrZiqSmSUWaF/Z3WLJ2oO+rwZXiDXOqf73ATWvy5RCXx5LS4z6KvPhVQu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KEOIq6hV; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725454430; bh=4Akw6XbNWVpEbbA3HqMh1oScv/rb5TuPGINhaPXGUWY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KEOIq6hV7vHJXYvZUPe555M+gU7k2XWD3gbozo6tmh9vDLBsaKXN4nmS6BiHvEq+N
-	 pqdYDGrgqyefu+oiZ8lOMnvt4JyhqgTyCFUYgbZi4DtaWB1p2AFW86FRHunHft1nv0
-	 eUMMcitftCH3D3aR/YmUXbJOUb0/5DbSwoET3aUE=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id BEDACC47; Wed, 04 Sep 2024 20:47:45 +0800
-X-QQ-mid: xmsmtpt1725454065tnepb3zy7
-Message-ID: <tencent_CE76CFE28DD5A5A20DF7121F5DDBDDB71907@qq.com>
-X-QQ-XMAILINFO: NWaY/LEHNR/FE0GfLsii6F6J+S/D9qf5Qd0zaM3G7sJsoXI+mEqAzma6DVTQsB
-	 DIFX8ou0SMQugBqeSI8Uh5tpWyi7HYD297S3C6DF5ude/2Oo84NVP37GxsOGsTseVqN92NbNwS6i
-	 WUb5ze0ZDwtsbIo9tw83Kfj9bEgZm6PYT/xMz9eNDtbOdbKSB7t+B1jEGDim/1+I9ylEyj2XujHw
-	 hQMb00AREtoIi10q8580s1kpOrqDGgdS1yX296a8KOnhtAyUQp3PgRFLRBRlx45MavR3K20E2+6f
-	 wcmRHUgaRs8jjzURcySJhuXaYa3l2STlTCJmjefDrinJ+J7MZoJ82Ntwjqkuh1iTCoBGlz3lTB+t
-	 26ATkSINNRuewv0yp3B2bwFNqZnh0uoRXfFOZWbpD4yK1NR/2ZPQPvy9AaSIYpwM4z3d1bXSrJvd
-	 dvhVmm8rG3gNirv0xiwPQR25g7OSvxbXxzRtoHYJ2JKsj2RKGzB4AMg2oytwaXAbihNARs5T+9od
-	 DwiFYxZDXjwDBAhu9pTfZaYSgiuapsuOuSUFtqajyVaGvOggU9iW4ioTLyYbGzqpvsqdb3MebzkE
-	 xtu2vieFLRGWfQFugCej8O6sqnv7IIpLA7P58/PN5egfOqA4z2iLZdflQQB+z58YrSYD0lUaMLV/
-	 6ez2885cnj9PF6tTS0bojyHrxiBDmtcs9lM0obo8My0MoAMZjUEC1JnnHx8CVI/NXGCMPuT2AC5j
-	 NZgw5A5YSneoPyxILaGAG61XDZqO76WJldfsPVoO7VC/Te96UEi4BPtYCc/tW2fl1APCVuhQbsB4
-	 F7O1gKVYmio9UHMOWepvD+XUnwto6G34XSSEB+jCRB7UtjfVIZHBz86q8NpyDgdrPQm3CQMweuek
-	 axna6yhuBeAuDdCU7k0yrC9NyJ/XBYAhpRKjNhIpMgCGp1hYunU4RYxs583qImRQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-Date: Wed,  4 Sep 2024 20:47:46 +0800
-X-OQ-MSGID: <20240904124745.4113899-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000a338d6062149eb22@google.com>
-References: <000000000000a338d6062149eb22@google.com>
+	s=arc-20240116; t=1725454098; c=relaxed/simple;
+	bh=BxBXr1JwIhSOYtpAbjVQSDPksrtq48NOtKtuzNlUNl8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PHIh5pzNG9ffTnFcklZs2wsYbURCaBhMX7L8xj9CuRPf3SLD68VhdUOTbEioF7Bp97LRyxfHnnwnxn5kTeCDqLWMffM9drg/f7o5nOOo9b9KvrZPnh4EvQeTt9/56G+HkdLGzVKgeb4ejENbHvX8dc+0d3zRjBptc/aL0Hk24zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com; spf=pass smtp.mailfrom=aaazen.com; arc=none smtp.client-ip=99.33.87.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaazen.com
+Received: from localhost (localhost [127.0.0.1])
+	by thursday.test (OpenSMTPD) with ESMTP id 98049a54;
+	Wed, 4 Sep 2024 05:48:09 -0700 (PDT)
+Date: Wed, 4 Sep 2024 05:48:09 -0700 (PDT)
+From: Richard Narron <richard@aaazen.com>
+X-X-Sender: richard@thursday.test
+To: Greg KH <gregkh@linuxfoundation.org>
+cc: Linux stable <stable@vger.kernel.org>, 
+    Linux kernel <linux-kernel@vger.kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
+In-Reply-To: <2024090419-repent-resonant-14c1@gregkh>
+Message-ID: <fc713222-f7b1-d1c0-2aa2-c15f42d3873e@aaazen.com>
+References: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com> <2024090419-repent-resonant-14c1@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-prevent kernel-infoleak.
-We need to clear the structure before filling fields.
+On Wed, 4 Sep 2024, Greg KH wrote:
 
-#syz test
+> On Mon, Sep 02, 2024 at 03:39:49PM -0700, Richard Narron wrote:
+> > I get an "out of memory" error when building Linux kernels 5.15.164,
+> > 5.15.165 and 5.15.166-rc1:
+> > ...
+> > cc1: out of memory allocating 180705472 bytes after a total of 283914240
+> > bytes
+> > ...
+> > make[4]: *** [scripts/Makefile.build:289:
+> > drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o]
+> > Error 1
+> > ...
+> >
+> > I found a work around for this problem.
+> >
+> > Remove the six minmax patches introduced with kernel 5.15.164:
+> >
+> > minmax: allow comparisons of 'int' against 'unsigned char/short'
+> > minmax: allow min()/max()/clamp() if the arguments have the same
+> > minmax: clamp more efficiently by avoiding extra comparison
+> > minmax: fix header inclusions
+> > minmax: relax check to allow comparison between unsigned arguments
+> > minmax: sanity check constant bounds when clamping
+> >
+> > Can these 6 patches be removed or fixed?
+>
+> It's a bit late, as we rely on them for other changes.
+>
+> Perhaps just fixes for the files that you are seeing build crashes on?
+> I know a bunch of them went into Linus's tree for this issue, but we
+> didn't backport them as I didn't know what was, and was not, needed.  If
+> you can pinpoint the files that cause crashes, I can dig them up.
+>
 
-diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-index 6bd9fe565385..e9ddaa9b580d 100644
---- a/drivers/usb/class/usbtmc.c
-+++ b/drivers/usb/class/usbtmc.c
-@@ -759,6 +759,7 @@ static struct urb *usbtmc_create_urb(void)
- 		usb_free_urb(urb);
- 		return NULL;
- 	}
-+	memset(dmabuf, 0, bufsize);
- 
- 	urb->transfer_buffer = dmabuf;
- 	urb->transfer_buffer_length = bufsize;
+The first one to fail on 5.15.164 was:
+drivers/media/pci/solo6x10/solo6x10-core.o
 
+So I found and applied this patch to 5.15.164:
+[PATCH] media: solo6x10: replace max(a, min(b, c)) by clamp(b, a, c)
+
+Then the next to fail on 5.15.164 was:
+drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o
+
+This is also the first to fail on version 5.15.166-rc1
+
+Richard Narron
 
