@@ -1,228 +1,154 @@
-Return-Path: <linux-kernel+bounces-314293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B375696B167
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A7296B16E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71911C247AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631622812D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B390130A7D;
-	Wed,  4 Sep 2024 06:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE95312FB37;
+	Wed,  4 Sep 2024 06:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f+mDibDg"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1CX2RCw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C732612D1F1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF4823DE;
+	Wed,  4 Sep 2024 06:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725430734; cv=none; b=kVk1j5CpcR/Q6rJyAel1DSUYto1xtPR9GKNBEr8Pa0rZDEuqGZKfVmON7dyqQ45wDjpO/Mwa5DmM/qmlxBxDwTmhpOY3stLCzUkVku8CpiskTpReuXAjb5WWra1yIviLsTzBhX9V9CluqB7nqtnP0npVN+u0RCBe3s+ALruxAUA=
+	t=1725430857; cv=none; b=lQfS3VFaimDELhdBWJjtsr/daTJbMQhq2UCSHeux9MrS8Cz2FeeEcYWu+DtvRo2tIyT1YdFCfl5HzIBflmHG8U9M9K96tzmnVuSYxw+7uuVfJ2VGS8p5TNZ4OvUqrD7jPZMM1s/aFJpc/k/c8cMFhhiOV/TkJle7wm2mG6taICU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725430734; c=relaxed/simple;
-	bh=UeMkU1/snICGZnsW/arCIBJFU191Jqcgi5FRw1vBkOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHWE7nH8Ql/VBxhirLq8ZPxTrFNmG4mQQBPpE3JifA9q2J6ARIEbb8L959FvXT/89AGsmdqPfMJJP93dm4JMOKP4PH5MdGKWOBymsK9IuAMtjaQn/lo+Ooiwlvp6Lbs8OyJW/kJoZ7+DVtGtVV5QCQ4LEltcSIcoNtCqYcJdKEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=f+mDibDg; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-714226888dfso420179b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725430732; x=1726035532; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1dLJducQRrjRbAOaAZmrJ4SGclalwzTUXPAbwLGNOA=;
-        b=f+mDibDg3c6TCFw2mbXl5agGpRVPq5oezlLTt/WKev/xZDsx9gJI5fJw5CidfMR6cc
-         23r96gBPoRbqgBT2vhHH1AwgRnnNuqyFCP3VZVyoivg68lUw/Lwqo8ISRR5C+UZU607O
-         Ub8kWp8qksb1TAiatTe0z9UEVY9wQx3VX/r7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725430732; x=1726035532;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A1dLJducQRrjRbAOaAZmrJ4SGclalwzTUXPAbwLGNOA=;
-        b=CqxfJ7nSwSj+cS4Yv27GGPjHtj2Kvl3Cm7i9LsgIjk80r8rwWcx1TMisKmYMDCbLAk
-         vNVQU+QcoaVSrD0ix+0xRTjbTHQ2E7a6HWYcSbrT1DIC0d0zuWYo6BvoZUSzBzalZGz/
-         pmmrVRfhXXn7KLizfxU5YiPHoRMv9Q+z0F64k5S6LoXuQAv1qgdloo2kUQXtnTQ13fQm
-         IUzd0/Wc7r3Hb4uwnEYEU/aBK1CV64FDcLc2tSFRR8VsFzBTey4WePgU+MFfuArEnrga
-         rsfqwWGYros+75Tn6KcNVbPlOMpqo/zSB11SO7qUc78794fJvrJnb9E778rc3G1QM+pF
-         TA/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfT9isMkrW9Anzu8ZOc5cm2m8sUwfNYouDUSabDFn1V/FM++vYkvxWp7uxqf7+lzfesa7J8ME3LurAPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIxpYd4OiRHJAHZPVDxNhKhyU1AyXZ7TtsZMoaAWXLh+twL7lJ
-	YVQQvma645xltjAgDlieWgJb/EbilD/9/zBvjcZWcybvBQnoswu0BjnUakZ9LSZYXFBhlSUB+Bt
-	oUqIZIfMiO6ywE/F/TLQ24YHXFh1mXmWKVGk9
-X-Google-Smtp-Source: AGHT+IHs0EvXSZZcTNuqGLIYbNnmOeRRNioG9nVnnSbw5x5S1n44ywyuOvT/VOHiOy/LbARraamuEGl890QXJbxNwjA=
-X-Received: by 2002:a05:6a20:d046:b0:1c4:8da5:219a with SMTP id
- adf61e73a8af0-1cce0ff26c9mr22064045637.8.1725430731827; Tue, 03 Sep 2024
- 23:18:51 -0700 (PDT)
+	s=arc-20240116; t=1725430857; c=relaxed/simple;
+	bh=XqKUL6PEj2w3yGnDvCFP5iYhWwifl9fcAkAZ+Lvf5m4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEvruexD+sSH3AtkxnwDdAk9tLMkNOyQEZBAu5mtDClM8gs0CN+Pg9HMTx8WsiY1y/jm4g6krQlo46LQwCnWrHaKaOia+g4wRMwsazu9GWxsXk2syElg7o2YHqSx9uLeRiHE51N/mJ6edrS3iiE3b5no6eDMiXK6vVcI0OWY1BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1CX2RCw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5826DC4CEC2;
+	Wed,  4 Sep 2024 06:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725430856;
+	bh=XqKUL6PEj2w3yGnDvCFP5iYhWwifl9fcAkAZ+Lvf5m4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d1CX2RCwSXHJgdMt7ZU/FvX6Q+58x3EsWxxiq10DcjYzX0ehrL939LU5gHSqJiNd6
+	 6hguHW0RuDrJe5XDKjz6OJpZWbi6NWX0bce4l1NbwxtLUS+QrbLj1U50B6YeivMTXu
+	 kjuH6SdCs1WdqFHwRx/j4C5zzZkADDzTJ6DnC9pQjzI9J1lt6F4WmNBZsQgkAgSFgF
+	 yZxkQ4cQnYG1bOTtNTKTJhMK5HLDmJeKp7YBh9TYPsdPtrdblFuX8VisXjD7UgFuhQ
+	 H+rtWYeznSalOj9IkYsfZJmztzTaH9S7/0vHfRP+bLRqIeVkB5FWN6XJMc8/2eDwvC
+	 UszGS3FIk/0lg==
+Date: Wed, 4 Sep 2024 08:20:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: dac: add docs for ad8460
+Message-ID: <pp3r4ygrialun2x6vtghp27ianggjzs3g3436b6mi6mttfy57a@q7kcwolkkn27>
+References: <20240904023040.23352-1-Mariel.Tinaco@analog.com>
+ <20240904023040.23352-2-Mariel.Tinaco@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903124048.14235-1-gakula@marvell.com> <20240903124048.14235-2-gakula@marvell.com>
- <CALs4sv0s0=8Mg-5hQAeLEnTDfwKFy2esp9yFchX0kpPCEciNpA@mail.gmail.com> <CH0PR18MB43396EE468C12EB47B9E4CC9CD9C2@CH0PR18MB4339.namprd18.prod.outlook.com>
-In-Reply-To: <CH0PR18MB43396EE468C12EB47B9E4CC9CD9C2@CH0PR18MB4339.namprd18.prod.outlook.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Wed, 4 Sep 2024 11:48:38 +0530
-Message-ID: <CALs4sv2398-S2ttmxJZBMYAQWsauC_VdApb1T5Y6MpzBPAYocA@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [net-next PATCH 1/4] octeontx2-pf: Defines common
- API for HW resources configuration
-To: Geethasowjanya Akula <gakula@marvell.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"davem@davemloft.net" <davem@davemloft.net>, "pabeni@redhat.com" <pabeni@redhat.com>, 
-	"jiri@resnulli.us" <jiri@resnulli.us>, "edumazet@google.com" <edumazet@google.com>, 
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>, Subbaraya Sundeep Bhatta <sbhatta@marvell.com>, 
-	Hariprasad Kelam <hkelam@marvell.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000e2cf890621452552"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904023040.23352-2-Mariel.Tinaco@analog.com>
 
---000000000000e2cf890621452552
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 04, 2024 at 10:30:39AM +0800, Mariel Tinaco wrote:
+> This adds the bindings documentation for the 14-bit
 
-On Wed, Sep 4, 2024 at 11:18=E2=80=AFAM Geethasowjanya Akula <gakula@marvel=
-l.com> wrote:
->
->
->
-> >-----Original Message-----
-> >From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-> >Sent: Tuesday, September 3, 2024 8:27 PM
-> >To: Geethasowjanya Akula <gakula@marvell.com>
-> >Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kuba@kernel.or=
-g;
-> >davem@davemloft.net; pabeni@redhat.com; jiri@resnulli.us;
-> >edumazet@google.com; Sunil Kovvuri Goutham <sgoutham@marvell.com>;
-> >Subbaraya Sundeep Bhatta <sbhatta@marvell.com>; Hariprasad Kelam
-> ><hkelam@marvell.com>
-> >Subject: [EXTERNAL] Re: [net-next PATCH 1/4] octeontx2-pf: Defines commo=
-n
-> >API for HW resources configuration
-> >
-> >On Tue, Sep 3, 2024 at 6:11=E2=80=AFPM Geetha sowjanya <gakula@marvell.c=
-om>
-> >wrote:
-> >>
-> >> -
-> >>         /* Assign default mac address */
-> >>         otx2_get_mac_from_af(netdev);
-> >>
-> >> @@ -3118,11 +3141,8 @@ static int otx2_probe(struct pci_dev *pdev, con=
-st
-> >struct pci_device_id *id)
-> >>         if (test_bit(CN10K_LMTST, &pf->hw.cap_flag))
-> >>                 qmem_free(pf->dev, pf->dync_lmt);
-> >>         otx2_detach_resources(&pf->mbox);
-> >Isn't some of this unwinding/cleanup already moved to the new
-> >function? Looks like duplicate code to me.
-> No. If the otx2_probe () fails in any of the function after " otx2_init_r=
-src()" function call.
-> Then below code cleanup the resources allocated.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-Ack. I missed to see that otx2_init_rsrc() is being carved out in
-order to be called independently also.
+> High Voltage, High Current, Waveform Generator
+> Digital-to-Analog converter.
+> 
+> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
+> ---
+>  .../bindings/iio/dac/adi,ad8460.yaml          | 154 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 161 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
 
-> >
-> >> -err_disable_mbox_intr:
-> >>         otx2_disable_mbox_intr(pf);
-> >> -err_mbox_destroy:
-> >>         otx2_pfaf_mbox_destroy(pf);
-> >> -err_free_irq_vectors:
-> >>         pci_free_irq_vectors(hw->pdev);
-> >>  err_free_netdev:
-> >>         pci_set_drvdata(pdev, NULL);
-> >> --
-> >> 2.25.1
-> >>
-> >>
+> +  adi,range-microvolt:
+> +    description: Voltage output range specified as <minimum, maximum>
+> +    oneOf:
 
---000000000000e2cf890621452552
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+This oneOf does not make sense. There is only one condition. Drop.
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIATHKzGMiMVv5Ubuuvc+P1Z/bpKkS0fk
-AwrAO5XWaP8yMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
-NDA2MTg1MlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQBNkhJyY6nlwtYSCZj5K2B/VuWxdUKiXm3Jc5HYignIRwYT4Ra5
-jXuVvXgM4mZNccDOQ2J6Jmhnjli4Nwrn+4g6lUHWe/s2kdXdURE2zwx77JwHYxKRSiU+q04GeDAs
-3rGCX4DXpBmGscB42tkYdTRqfzUXj73ZCBkhf4OUYAA1T7G80vQllTlAC4wzcmjregMUSuUiAmSw
-XOGCGL0RAEyAZvpjRaG+VgSz/QUDNVapZls4Pjk5NuFaxNzNx+p+aIr87mE+2auuXyuCfReHhZV3
-sOWATamiT8HSREblKHjn1zZE/bNahU7ORJhBJKz0aM2ygZpSIDEF2T1b3o0rJbRu
---000000000000e2cf890621452552--
+> +      - items:
+> +          - enum: [0, -10000000, -20000000, -30000000, -40000000, -55000000]
+> +          - enum: [10000000, 20000000, 30000000, 40000000, 55000000]
+
+What's the default? It's not a required property.
+
+> +
+> +  adi,range-microamp:
+> +    description: Current output range specified as <minimum, maximum>
+> +    oneOf:
+> +      - items:
+> +          - enum: [-50000, -100000, -300000, -500000, -1000000]
+
+I don't understand why 0 is not listed here.
+
+> +          - enum: [50000, 100000, 300000, 500000, 1000000]
+> +      - items:
+> +          - const: 0
+> +          - enum: [50000, 100000, 300000, 500000, 1000000]
+> +
+
+What's the default? It's not a required property.
+
+> +  adi,max-millicelsius:
+> +    description: Overtemperature threshold
+> +    default: 50000
+> +    minimum: 20000
+> +    maximum: 150000
+> +
+> +  shutdown-reset-gpios:
+> +    description: Corresponds to SDN_RESET pin. To exit shutdown
+> +      or sleep mode, pulse SDN_RESET HIGH, then leave LOW.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description: Manual Power On Reset (POR). Pull this GPIO pin
+> +      LOW and then HIGH to reset all digital registers to default
+> +    maxItems: 1
+> +
+> +  shutdown-gpios:
+> +    description: Corresponds to SDN_IO pin. Shutdown may be
+> +      initiated by the user, by pulsing SDN_IO high. To exit shutdown,
+> +      pulse SDN_IO low, then float.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+
+Some supplies are for sure required. Devices rarely can operate without
+power provided.
+
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +additionalProperties: false
+
+unevaluatedProperties instead.
+
+Best regards,
+Krzysztof
+
 
