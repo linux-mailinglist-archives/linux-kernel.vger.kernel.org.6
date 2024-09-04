@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-315030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30CB96BCB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:45:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEC796BD31
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B30286FA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE62283687
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DD41D9344;
-	Wed,  4 Sep 2024 12:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C831DC1AF;
+	Wed,  4 Sep 2024 12:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lx6Esf6p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pVerrnM/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2AE1D58B0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AF71D9337;
+	Wed,  4 Sep 2024 12:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453891; cv=none; b=dDYrraMwJQkF5mCDkQFtVUAYshyv/VlvWeLcHgk+D+t9Xh+pleKttvbD8k+l/SABJ92chEH5KOCG2VfDS5NTTsO/wOLHmBhIY1pF5OFPE+i/N84lNkdL0NtzkWZzu76puertZdKRg81VTeknocQLpUKSQF/Ofkd8j3OOB0yKPec=
+	t=1725454356; cv=none; b=ppT2mymD125xQg8CtCVAKN0xEkty9tiabkcnlA3znIAjVv6xLBUJgi/Yzy4oLgjrcG3iSu6N9WKEZIjswYaFcsm2mJ9ttTRkwtynXYmWCIbwG7bocvjzxjUFqM/wjnsGiaYDRgS61q9bRummN7pQMkNWTkC5wX3J/7gy4bu89K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453891; c=relaxed/simple;
-	bh=v7fVXR7pVzAugjJ5b6domRUKEYCHm+1h1VQHWRwd2Vg=;
+	s=arc-20240116; t=1725454356; c=relaxed/simple;
+	bh=2FI7kUugQ8AZNyDv48uoku3rUnL9chur7kuEfnt2whs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IGd1FSn0VFmPf9qZgNNryA5ZcdtuuUUEXqgjHSSbLgE07y/9b57IF1jG5cKeVuGPa0s2r77Fgbgx6f/snjAJMqjGg8ZjIucBCDLPFKcEWrjtITvmyTMCFyJkZ33VVxmq8BNkG6IoKqKchmoU8BR6llqH8KazD1SgwjTbf6KVWb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lx6Esf6p; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725453890; x=1756989890;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=v7fVXR7pVzAugjJ5b6domRUKEYCHm+1h1VQHWRwd2Vg=;
-  b=lx6Esf6p/1/+3w5+LIDqGO1NCo2aFRzHYFjxtVG2KtJpII8jtg+IUHaE
-   O1878IPx6z5+7PFFjAk0FL6GXlpXpWGUQwZjmc6mUWHyRSgmP+3zVjOSN
-   +Xay/jLjLSblWoJiZdHUfjKAaIxEn3GDCssRrgKbj29gYZk0W1X6pZkHC
-   28OF7uLKTSLD6/Gctka0oConlMiEIK9yuhIE7BwfEhR0g+PKQEZ7KMYt8
-   U4E1oViYFz1ye82tj8mgXHpnDfQcxzHbQUb3ZtNgkoPy7fELnNcfR4lG9
-   H6gkB0uDq3IdtIwRE98tybTEfTFYBoL2V/zlmVwRyEaZGWQWYedTOTEab
-   A==;
-X-CSE-ConnectionGUID: 1MVfnLrzRZG2DIekZcchfA==
-X-CSE-MsgGUID: tZucLqe5TWGCvDKEagPeLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24219674"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="24219674"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:44:49 -0700
-X-CSE-ConnectionGUID: aJHqLRxrQhO8y7pAYXrO7w==
-X-CSE-MsgGUID: L1ZXSVr7QVygV7LyWjuc+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="70054527"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:44:49 -0700
-Received: from [10.212.20.134] (kliang2-mobl1.ccr.corp.intel.com [10.212.20.134])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 5912520B5782;
-	Wed,  4 Sep 2024 05:44:48 -0700 (PDT)
-Message-ID: <b97ab074-3889-47ae-a66f-46a2f8a99005@linux.intel.com>
-Date: Wed, 4 Sep 2024 08:44:47 -0400
+	 In-Reply-To:Content-Type; b=kGU7+VBqHOpzdcvjBhtRMYO0hvjtI118/zBAydiJ0J8DSPh8igXl7jaS5+XXsxsstObFynMsoCcqVclwYR/xTSj6jRfCTEWSnccFrw3/ydvGYN4mg9ug/pI05RP6KUxbBvMS6wByopRJHw21DL9AGdxpI0hcNsBqG5+FQoAHdWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pVerrnM/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4849hvk9031157;
+	Wed, 4 Sep 2024 12:45:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2FI7kUugQ8AZNyDv48uoku3rUnL9chur7kuEfnt2whs=; b=pVerrnM/J4KZjcOE
+	/hnl/13e5yz0GENRYaQ/u2vhLTLsMLqlEhq6CeHU7KYupbYeO3csiuFcSXQZhvvs
+	hSj8JHX7d6OPemM1nwFnWy6ww1vxL56TOVKNxxCgr4aAutdr21eKEmkDLB+IS+OQ
+	1M2NtoSf4ZHgu2sqH+vuLlfyXulXDI4Ae0bQ5IFkfOlUJ5wIGI8GkD0vnwhcmBDG
+	9s4fMeweWXqwlDly96iTh/AAhbPEBnmTV0mgHKhvFDNI1nyLDK4ojV7dNo0cO120
+	rzrC9eA9zHXe7ooiOh7/IdSinlBK50h7cgPjPT/lx016nCtQK8pQB2U/xI/MIkoG
+	tHxrng==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvbkjkq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 12:45:10 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484Cj9hC013102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 12:45:09 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 05:45:05 -0700
+Message-ID: <24d4676f-4385-406d-9728-54afc3144e17@quicinc.com>
+Date: Wed, 4 Sep 2024 05:45:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,81 +64,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Generic hotplug support for a PMU with a scope
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+Subject: Re: [PATCH v2 15/21] dt-bindings: i2c: document support for SA8255p
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240802151643.1691631-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>,
+        Praveen Talari
+	<quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-16-quic_nkela@quicinc.com>
+ <7fc1e4c3-ca09-4a0a-b072-0c4f1d21e44f@kernel.org> <ZtgSd_SLndvLLVYF@shikoro>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <ZtgSd_SLndvLLVYF@shikoro>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GfWhUZz5Jq0_pwPHu9T0QF37Le3YywI6
+X-Proofpoint-GUID: GfWhUZz5Jq0_pwPHu9T0QF37Le3YywI6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 spamscore=0 clxscore=1011
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040096
 
-Hi Peter,
 
-Gentle ping.
+On 9/4/2024 12:55 AM, Wolfram Sang wrote:
+>> Just to clarify to I2C maintainers:
+>> This is incomplete. Missing driver changes.
+> Thanks, Krzysztof!
 
-The patch set provides a generic hotplug support to facilitate various
-specific PMU drivers. Could you please take a look?
+Driver changes are going through internal review and will soon be
+posted. For your reference, we have pushed driver changes in CodeLinaro
+git branch(nkela/sa8255p_v6_11_rc2)  in kernel-qcom repo [1]. You can
+take a look at the changes that are in pipeline and will follow soon.
 
-Thanks,
-Kan
-On 2024-08-02 11:16 a.m., kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The perf subsystem assumes that the counters of a PMU are per-CPU. So
-> the user space tool reads a counter from each CPU in the system wide
-> mode. However, many PMUs don't have a per-CPU counter. The counter is
-> effective for a scope, e.g., a die or a socket. To address this, a
-> cpumask is exposed by the kernel driver to restrict to one CPU to stand
-> for a specific scope. In case the given CPU is removed,
-> the hotplug support has to be implemented for each such driver.
-> 
-> The codes to support the cpumask and hotplug are very similar.
-> - Expose a cpumask into sysfs
-> - Pickup another CPU in the same scope if the given CPU is removed.
-> - Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
-> - In event init, always set the CPU in the cpumask to event->cpu
-> - Usually, an event can be read from any CPU of the scope. (For now,
->   it is only supported by the pkg scope PMU, via
->   PERF_EV_CAP_READ_ACTIVE_PKG, e.g., cstate_pkg, rapl, etc)
-> 
-> Similar duplicated codes are implemented for each such PMU driver. It
-> would be good to introduce a generic infrastructure to avoid such
-> duplication.
-> 
-> The patch series introduce 5 popular scopes, core, die, cluster, pkg,
-> and the system-wide. The PMU drivers for cstate, iommu, idxd and rapl
-> are updated to apply the new infrastructure. The new infrastructure
-> can also be applied for other PMU drivers from different ARCHs as well.
-> But I don't have such platforms. It's not done in this patch series.
-> They can be added later separately.
-> 
-> The uncore driver isn't updated either. Because a per-PMU cpumask is
-> required since commit c74443d92f68 ("perf/x86/uncore: Support per PMU
-> cpumask"). Since different types of PMU share the same hotplug codes,
-> more factor out works and verification are expected. The cleanup of the
-> uncore driver can be done later separately.
-> 
-> Kan Liang (7):
->   perf: Generic hotplug support for a PMU with a scope
->   perf: Add PERF_EV_CAP_READ_SCOPE
->   perf/x86/intel/cstate: Clean up cpumask and hotplug
->   iommu/vt-d: Clean up cpumask and hotplug
->   dmaengine: idxd: Clean up cpumask and hotplug
->   perf/x86/rapl: Move the pmu allocation out of CPU hotplug
->   perf/x86/rapl: Clean up cpumask and hotplug
-> 
->  arch/x86/events/intel/cstate.c | 140 +-------------------------
->  arch/x86/events/rapl.c         | 119 ++++++----------------
->  drivers/dma/idxd/idxd.h        |   7 --
->  drivers/dma/idxd/init.c        |   3 -
->  drivers/dma/idxd/perfmon.c     |  98 +-----------------
->  drivers/iommu/intel/iommu.h    |   2 -
->  drivers/iommu/intel/perfmon.c  | 111 +--------------------
->  include/linux/cpuhotplug.h     |   3 -
->  include/linux/perf_event.h     |  21 ++++
->  kernel/events/core.c           | 176 ++++++++++++++++++++++++++++++++-
->  10 files changed, 229 insertions(+), 451 deletions(-)
-> 
+[1]:
+https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/tree/nkela/sa8255p_v6_11_rc2?ref_type=heads
+
 
