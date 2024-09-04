@@ -1,100 +1,201 @@
-Return-Path: <linux-kernel+bounces-315556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2E696C424
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D83996C428
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEB11F27D4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372CE285273
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8651E00B6;
-	Wed,  4 Sep 2024 16:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B7B1E0B8E;
+	Wed,  4 Sep 2024 16:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2xOdbMBA"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="NEPW8DSc"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092EB1CEE89
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D8C1DCB2F;
+	Wed,  4 Sep 2024 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467469; cv=none; b=l7L2HA5NCVCrWIC2us1OlJSEp0SFelJWGq4wOBECnbxWw9p2FL8GaUo0WxXArmtn+xzeDDHCWb2wZ9nx93klkiX2UuvsS0hbOwpsDm7EnRDKdPngvtLxpYv4hwW5Zo9ohW7Yf58kJSnEY7h0h2XVRzeG/y/b90YkPW7yfwDaQCI=
+	t=1725467483; cv=none; b=Kuq0ti+jKzdbv61uch6s7lvFKfiQw4whAG8MOtuO/K7/UTVwEsgnSVu6IyZob0Ft4SrZC7pBja7WFtcHk7XCTVN8LM9JcEhTCwR9IT1dAJIKM+vx3XwqIRFoBDxCVjCMRsHz3j+WGUMwCFNObyHzgCa0VivyHSYIszGtAnGJRpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467469; c=relaxed/simple;
-	bh=xbNSgcdt23Q7rokBKs0uIKGlDc6DJJ/JldN4DLaNghM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAz1UsS+HsaS9q2NxwCovdFG6XNiD+dZzOSLHMDzApKBSBDpaanil7qIZXVFcaPa8GJueZIb2GGpQfaoNgAnkn6XPQLsh5ir9kehVtsxTQ2ksngW3qMj92DkMKgJw7/mxgH7X4GYt0Jf318/eFOSW0MfCvy1rbZtqM3vfi3ReKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2xOdbMBA; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c09fd20eddso6592821a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725467466; x=1726072266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xbNSgcdt23Q7rokBKs0uIKGlDc6DJJ/JldN4DLaNghM=;
-        b=2xOdbMBAQTGo+KtqMgR5Q84qR8QaCy+lZZ77X+o4B0/YoHWTjjFbNvq0A94QGhZrG+
-         uUOzLWBM0c/HdQlpOvkPHvRGSdR5mrId1wpC5G+QvcemV6N0PDyPA03nHJwKmGhqcPZk
-         qDM7oiKatUsHoQvU04WA0ABoOXLe/rUww+k1tdqyVIrGO96q8fkYf9bEQwUT4aGm5Zo7
-         M39SWMatMF32oSVm2ZOS8oM2W6bmSYl3QiLpX0hL0TJ6n0SxDrQlCjJU/wMKspQvC7PZ
-         oNlDUI5p4ILkunwlx769nX5p1TJBdOYT7IeFYff+6kGlC5IRhTYDWMy6ZWhEC1/donzN
-         FIgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725467466; x=1726072266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xbNSgcdt23Q7rokBKs0uIKGlDc6DJJ/JldN4DLaNghM=;
-        b=U3lBEvslou+rNRmZVOAwwkPpOo5dHp3n8pRA8E8sVmvrs/CIkULK5LqUcYKnduRshI
-         xnL4MThY3wLKkmQrNRmouBjio5Ewj2KnzgkRWhHPm/QvGE15a5rryc6M+1Zp5wXF0gsy
-         zVDtI34+0rvUR7zK0HHH5NMK9G3IE5HkFDEld8TOjJVJt8uY/j9/PqwUZ0TB4GLU/o03
-         A93eEqM3WD2pO56CK1U1CMDin015Cpn1saHEtTh7gccdl3BeSzekBN6+DyxE9PGelvFr
-         bKQdpcipXRV4y4OQkBfMrMPNzeGY/CT5LRFjBkO5laLCz6EiNMd/serD5j/6ThQa+hw3
-         hp1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6FHlJqB1OKDH4dCh93Y1/QOJc976wpA4AlBXizeBhSB9wOpCQcbynKgmEzN7GGVG008LMLmXPPJg47Ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrd/b7bUT12BaJYFhrn5xPSId/kdIQGd4kJQQyhKhwf5aT0Ee6
-	1+RNLxvQhbdMyXlQxsmeQVnRccrdrFT1aiTuRNAL4LgdKiiq3YoKXfzGm07j6fv602UmAF33NXc
-	bQIsADY9Ow/Wmecn9YSlsjq/q8PFJNzTbGD6c
-X-Google-Smtp-Source: AGHT+IF62n2pBXCDxyXxkgckfOehREKGzP3yBwNSv6m+Is52LgdpPKWra4hUhuMQlWJrolmrZOd2fpYLEdlvpcFXArQ=
-X-Received: by 2002:a05:6402:234a:b0:5c3:c530:e98d with SMTP id
- 4fb4d7f45d1cf-5c3c530ea76mr1178119a12.30.1725467465494; Wed, 04 Sep 2024
- 09:31:05 -0700 (PDT)
+	s=arc-20240116; t=1725467483; c=relaxed/simple;
+	bh=9B8NIdXtKXjQYQ4GwKfLnNiVZOtUKLuK57HoNnIRKdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f57M6t7qOI0zqS0PAoEG9gxltVrBwoQ+lIBOhVsCAV0Yti97grW4qyq4ruQ93JN8yK40LwXoLD+ugdWuPM+Ot4ywopaI/O7shwNQmEKi44ScbXN6rKj8R0wW5qHel1e1Z63XpKROTfUihj9sk8nAu5ZquV42HRiZ5BRrwZKBxhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=NEPW8DSc; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WzSfl4CvDz9srB;
+	Wed,  4 Sep 2024 18:31:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1725467471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6h8xLJebhDjKCW4hsQao0KzGPncsnYRAjwovRv+KG+A=;
+	b=NEPW8DScBNdQJfXRYrK8v7eYl7idqIFZG1/uqnNhb6WN+hB/aXAOw5rF23ZiwRorUjOaU2
+	jFlaYWY4gVhxdodUWlE8SrqnGy4kVYPCghGIyNmGASF80RP7uD0JV1eT/NpDKjbKq6vCdd
+	K0NVw+7bUGuZYXy0QIxoz4IQhBjbVk17EmYvWRz3MunU9rHjEt3EQDsmVdL1q9FiO76vS4
+	q6DuWSOu6hTiSSIKPF4WxLcviInnHxUSIbBf8IQPABIuIRkqRZP7YFBqcHRN0PXUQSmkxu
+	oWuzN+DIUcDeXWJQJxVqwsIZJZ0rouaXVn/wcwf9BHiVmfN01rpNgzcNQCWhyQ==
+Date: Thu, 5 Sep 2024 02:30:52 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Christoph Hellwig <hch@infradead.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH xfstests v2 2/2] open_by_handle: add tests for u64 mount
+ ID
+Message-ID: <20240904.162424-novel.fangs.vital.nursery-BQvjXGlIi7vb@cyphar.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240902164554.928371-1-cyphar@cyphar.com>
+ <20240902164554.928371-2-cyphar@cyphar.com>
+ <CAOQ4uxgS6DvsbUsEoM1Vr2wcd_7Bj=xFXMAy4z9PphTu+G6RaQ@mail.gmail.com>
+ <20240903.044647-some.sprint.silent.snacks-jdKnAVp7XuBZ@cyphar.com>
+ <CAOQ4uxhXa-1Xjd58p8oGd9Q4hgfDtGnae1YrmDWwQp3t5uGHeg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903184334.4150843-1-sean.anderson@linux.dev> <20240903184334.4150843-4-sean.anderson@linux.dev>
-In-Reply-To: <20240903184334.4150843-4-sean.anderson@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Sep 2024 18:30:52 +0200
-Message-ID: <CANn89iKJiU0DirRbpnMTPe0w_PZn9rf1_5=mAxhi3zbcoJR49A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: xilinx: axienet: Relax partial rx checksum checks
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k27yakkh67nm3oib"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhXa-1Xjd58p8oGd9Q4hgfDtGnae1YrmDWwQp3t5uGHeg@mail.gmail.com>
+
+
+--k27yakkh67nm3oib
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 8:43=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
-ev> wrote:
->
-> The partial rx checksum feature computes a checksum over the entire
-> packet, regardless of the L3 protocol. Remove the check for IPv4.
-> Additionally, packets under 64 bytes should have been dropped by the
-> MAC, so we can remove the length check as well.
+On 2024-09-03, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Tue, Sep 3, 2024 at 8:41=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> w=
+rote:
+> >
+> > On 2024-09-02, Amir Goldstein <amir73il@gmail.com> wrote:
+> > > On Mon, Sep 2, 2024 at 6:46=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.co=
+m> wrote:
+> > > >
+> > > > Now that open_by_handle_at(2) can return u64 mount IDs, do some tes=
+ts to
+> > > > make sure they match properly as part of the regular open_by_handle
+> > > > tests.
+> > > >
+> > > > Link: https://lore.kernel.org/all/20240828-exportfs-u64-mount-id-v3=
+-0-10c2c4c16708@cyphar.com/
+> > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > ---
+> > > > v2:
+> > > > - Remove -M argument and always do the mount ID tests. [Amir Goldst=
+ein]
+> > > > - Do not error out if the kernel doesn't support STATX_MNT_ID_UNIQUE
+> > > >   or AT_HANDLE_MNT_ID_UNIQUE. [Amir Goldstein]
+> > > > - v1: <https://lore.kernel.org/all/20240828103706.2393267-1-cyphar@=
+cyphar.com/>
+> > >
+> > > Looks good.
+> > >
+> > > You may add:
+> > >
+> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > It'd be nice to get a verification that this is indeed tested on the =
+latest
+> > > upstream and does not regress the tests that run the open_by_handle p=
+rogram.
+> >
+> > I've tested that the fallback works on mainline and correctly does the
+> > test on patched kernels (by running open_by_handle directly) but I
+> > haven't run the suite yet (still getting my mkosi testing setup working
+> > to run fstests...).
+>=20
+> I am afraid this has to be tested.
+> I started testing myself and found that it breaks existing tests.
+> Even if you make the test completely opt-in as in v1 it need to be
+> tested and _notrun on old kernels.
+>=20
+> If you have a new version, I can test it until you get your fstests setup
+> ready, because anyway I would want to check that your test also
+> works with overlayfs which has some specialized exportfs tests.
+> Test by running ./check -overlay -g exportfs, but I can also do that for =
+you.
 
-Some packets have a smaller len (than 64).
+I managed to get fstests running, sorry about that...
 
-For instance, TCP pure ACK and no options over IPv4 would be 54 bytes long.
+For the v3 I have ready (which includes a new test using -M), the
+following runs work in my VM:
 
-Presumably they are not dropped by the MAC ?
+ - ./check -g exportfs
+ - ./check -overlay -g exportfs
+
+Should I check anything else before sending it?
+
+Also, when running the tests I think I may have found a bug? Using
+overlayfs+xfs leads to the following error when doing ./check -overlay
+if the scratch device is XFS:
+
+  ./common/rc: line 299: _xfs_has_feature: command not found
+    not run: upper fs needs to support d_type
+
+The fix I applied was simply:
+
+diff --git a/common/rc b/common/rc
+index 0beaf2ff1126..e6af1b16918f 100644
+--- a/common/rc
++++ b/common/rc
+@@ -296,6 +296,7 @@ _supports_filetype()
+ 	local fstyp=3D`$DF_PROG $dir | tail -1 | $AWK_PROG '{print $2}'`
+ 	case "$fstyp" in
+ 	xfs)
++		. common/xfs
+ 		_xfs_has_feature $dir ftype
+ 		;;
+ 	ext2|ext3|ext4)
+
+Should I include this patch as well, or did I make a mistake somewhere?
+(I could add the import to the top instead if you'd prefer that.)
+
+Thanks.
+
+>=20
+> Thanks,
+> Amir.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--k27yakkh67nm3oib
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtiLPAAKCRAol/rSt+lE
+b0qTAQDObJfQoQ4ty+6/dZXFiueoF+rCfMaWVyS6FylNcXzCyAD/Xcl172RWrIge
+yjkBNVF0rbuTGTjAO/YNjJC5TclDzQQ=
+=z7px
+-----END PGP SIGNATURE-----
+
+--k27yakkh67nm3oib--
 
