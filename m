@@ -1,192 +1,117 @@
-Return-Path: <linux-kernel+bounces-315345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F92296C177
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3B496C15D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99743B28AC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693FF2880D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7851DC1B6;
-	Wed,  4 Sep 2024 14:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C1C1DC752;
+	Wed,  4 Sep 2024 14:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HhM7w8pF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U74k0j2M"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC711DA608;
-	Wed,  4 Sep 2024 14:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C161DC1BE;
+	Wed,  4 Sep 2024 14:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461676; cv=none; b=Jgb0r6uRbL0gLrjPx6gcjje5608IaDx8slgRP673N4TcVCmLwAZIk36BeE1rnIhD3aivSwvaV5k/VqRKM6ylGOW7dZrGW0gepsPwSXC5hqhWkzEdUcnCtHyC7WnPUTUqXq7HyPHTKyqZHv6wLhOEeyU0VODH4LJS/UkYzAA5NLw=
+	t=1725461736; cv=none; b=XRc1nnMr/bL5lf08VvclMC+8WR5tG52Plaa+fQuf9Wvg537LpiWlj0vitOpnviKw0PwWudARObMyhO9Xn5MEzU1F+v3PrXU7oNnX2ntaJ++hf/+Jifjv4ikeQh8VuYygMIZk7BuhjfaiFZzlIwvD+5FCOgBF7bOGGn9Eph0GyvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461676; c=relaxed/simple;
-	bh=gScODNlhZlCpvbSMLGAqKd3woX3TK+hV8QrO1mnEaek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhQ6/Xkf5Ov2/5TuB2EpFUiBt5UFNzXvDCoF3KUZH88UCzNZfp7FclnUAh/jNMCTEQPXyZ7Fax7UFHosSq92LBrPUY4HstkYivVPtlgJ1w99sno1Dow6CCnAKq82lsWZwQjRLiP/sVb3JLFC3FBbPA2S5MgOF9E1YJm1GmRMuus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HhM7w8pF; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725461674; x=1756997674;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gScODNlhZlCpvbSMLGAqKd3woX3TK+hV8QrO1mnEaek=;
-  b=HhM7w8pFOmqRa0tHZHdFrCacc/2mW0/mdNq5FH/V2p/FNpQRvj7iW/20
-   R19ezm1o1fweLolN0fCu8e3alKsCKvtQRsR7/gNKylCPejk3Q0hSqD5yg
-   JJLUmUng5lTyL3ynPErwY6L1F8QKmOgCiihliCYtxV8dWS2fqBZ/+mAzk
-   QnTtVp3BEc8FuyuRJu7tiEoYlZ0zreOxyxSRupblEUJx9xqMlLemXcBSe
-   lAUEaghWYnMEUNt3+lX9S2Z+PxXJnkAr9KbI2ovcf2lQw00CLCZ1eXhPm
-   9IQOad/lUfLWICW/KYLiT7i1XQdX+Oz4FkwvHIczn3AvoNlhqWK8fMWdQ
-   Q==;
-X-CSE-ConnectionGUID: F5poGVHbTsW3L6TG5mmuVg==
-X-CSE-MsgGUID: Nz60CBNeT3K8k/On7NPPXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34728443"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="34728443"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 07:54:33 -0700
-X-CSE-ConnectionGUID: 5eekNsSJQU2avM4KnI150w==
-X-CSE-MsgGUID: ujr9ZKurQTSX4qVvTL7Wcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="64962308"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa006.fm.intel.com with SMTP; 04 Sep 2024 07:54:30 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 04 Sep 2024 17:54:29 +0300
-Date: Wed, 4 Sep 2024 17:54:29 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: Re: [PATCH v3] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Message-ID: <Zth0pbxJnKYKn8u2@kuha.fi.intel.com>
-References: <20240903181917.617400-1-lk@c--e.de>
- <ZthNkY4MEpUgw3We@kuha.fi.intel.com>
- <ZthnbdKig//kPKgF@cae.in-ulm.de>
+	s=arc-20240116; t=1725461736; c=relaxed/simple;
+	bh=ymWC1YStYMGTEMXZ7FO0wmha5kKpx/fA96VZFrcOXIE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=nPrZ9WU+M2/Sb4wkocsZeRDZZN2uZ8TqfgKnovKbO556kMvHh3W65Q/RI7bB6PtwhTb7xAOh9i/BepdNDGgiXY6U9RYokTIXnk1O8s3hruWcGDB5csvXdzU9iq53KN0F4f5B4dPvnljXeKXqUHq+0WJSxnnPJcSXiKIXEJNWs/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U74k0j2M; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f4f505118fso75605281fa.3;
+        Wed, 04 Sep 2024 07:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725461733; x=1726066533; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Hd7gUZqbj28umqmZjsOsuH9ZJyZ+JUCo1bY2awC4m/E=;
+        b=U74k0j2MjoGai8EJgUsWt8Y2tXj7NbaHWMeV60AZ5RUgUY4/z8OwncX/Npnpbg6rXv
+         U1ddVvCS0YUS4aLZjv/l0Vnp1sNWznOkrEWEW9/ZPYV8lr/m+BFXQJbbhQdXInUKZlH/
+         0ptm59prBzDfqnjhyKRV3pTghqhEjGJr/dRaWLiOeevgRT3a4G0yXkfpNoQ6pYMo3pcz
+         c0tfIGpYBZdSBNuNkDgwfT1pF2LwymeAq3oWloBboY5pvCo3/6i+A5Qs9Le24WMXIzxm
+         4OKeFPQR62A8PaSZ0JIgmSTaRAk1FIGMY42zPObECap6zf424/ZcApqCdCilYNqXji89
+         D6fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725461733; x=1726066533;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hd7gUZqbj28umqmZjsOsuH9ZJyZ+JUCo1bY2awC4m/E=;
+        b=ISFd/We9FUlKT6sB5+YgA0NagaFmRMefpyg/HkiybyuLaLkNeF91hznWfzMqSbjfi8
+         KjAu1IosmM58tMPmOm+fksAHpVlshbgosXQd9LZMqu5iRdfwr23MNgwEMAV2ze1v23Ze
+         sR5BMmsJJr5h4rzfdhLGZTovVUljqUZkJDiE3Fa+RJYE152Loz6Py3TeDBPWiPzkXdLQ
+         NWRVnyIjMooM2rRYTreM8gLJ1sdzTZ2h5++aWm35wgECXA8Fu6Kp0ZBLK2+5a/ZU9NXm
+         mJZ0/2lzf7RBfhIMBFZ1YoAfR0GkCO24VlttZ321Q+/U6BO7t1UY7Cwbh/xUuQUgi6F9
+         Z1FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv73z4JGq0GEpr1QeyGqqd+U3yL6lKzhxObwg9ymy+J92bjmMd1UObgQ83//JaZKacU704s+NFg6GF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOAacpmVAL7WceAqxmoh3fQXWwj7lDiYKufQxwt/IP54xqNYFw
+	X1Z539QRt4dI+A+K+ZaBwx1BX7Qc2y9J3YnGBsBnMz/tteNAJjTYSNCmDXF6CketfYUJlmBsvEw
+	B15qQ8WO52LSJNk/qMhHPszic34QOb25/jVo=
+X-Google-Smtp-Source: AGHT+IHOh3lqwP+i6vSZOE7DnLA7Enf8tQ/hCOZSZJaXJteR5wu1wdIhn8vxxmkvJB6gvpe6B94RSyK/uVC9/EII3WA=
+X-Received: by 2002:a05:651c:1991:b0:2f1:922f:874a with SMTP id
+ 38308e7fff4ca-2f626564f62mr108709101fa.14.1725461732877; Wed, 04 Sep 2024
+ 07:55:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZthnbdKig//kPKgF@cae.in-ulm.de>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 4 Sep 2024 09:55:21 -0500
+Message-ID: <CAH2r5msCnFTerrxda-e95d6xb5f9kLtEj8=h63WC7Mccj1_8NQ@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 04, 2024 at 03:58:05PM +0200, Christian A. Ehrhardt wrote:
-> 
-> Hi Heikki,
-> 
-> On Wed, Sep 04, 2024 at 03:07:45PM +0300, Heikki Krogerus wrote:
-> > On Tue, Sep 03, 2024 at 08:19:17PM +0200, Christian A. Ehrhardt wrote:
-> > > If the busy indicator is set, all other fields in CCI should be
-> > > clear according to the spec. However, some UCSI implementations do
-> > > not follow this rule and report bogus data in CCI along with the
-> > > busy indicator. Ignore the contents of CCI if the busy indicator is
-> > > set.
-> > > 
-> > > If a command timeout is hit it is possible that the EVENT_PENDING
-> > > bit is cleared while connector work is still scheduled which can
-> > > cause the EVENT_PENDING bit to go out of sync with scheduled connector
-> > > work. Check and set the EVENT_PENDING bit on entry to
-> > > ucsi_handle_connector_change() to fix this.
-> > > 
-> > > Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-> > > Bisected-by: Christian Heusel <christian@heusel.eu>
-> > > Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-> > > Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
-> > > ---
-> > >  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> > > index 4039851551c1..540cb1d2822c 100644
-> > > --- a/drivers/usb/typec/ucsi/ucsi.c
-> > > +++ b/drivers/usb/typec/ucsi/ucsi.c
-> > > @@ -38,6 +38,10 @@
-> > >  
-> > >  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
-> > >  {
-> > > +	/* Ignore bogus data in CCI if busy indicator is set. */
-> > > +	if (cci & UCSI_CCI_BUSY)
-> > > +		return;
-> > 
-> > I started testing this and it looks like the commands never get
-> > cancelled when the BUSY bit is set. I don't think this patch is the
-> > problem, though. I think the BUSY handling broke earlier, probable in
-> > 5e9c1662a89b ("usb: typec: ucsi: rework command execution functions").
-> > 
-> > I need to look at this a bit more carefully, but in the meantime, can
-> > you try this:
-> > 
-> > 	if (cci & UCSI_CCI_BUSY) {
-> > 		complete(&ucsi->complete);
-> >		return;
-> >         }
-> 
-> I really don't think this is the correct thing to do and it will
-> likely make things worse.
+Please pull the following changes since commit
+780bdc1ba77646c3461f1988b12c42c60f836d77:
 
-That was the behaviour before all that command execution refactoring
-this summer. I'm not saying that it's right, but that's how it was.
+  Merge tag '6.11-rc5-server-fixes' of git://git.samba.org/ksmbd
+(2024-08-25 12:15:04 +1200)
 
-> A notification with the UCSI_CCI_BUSY bit does _not_ mean that
-> the controller is busy doing other things and cannot complete the
-> command.
-> 
-> Instead it is an indication that the controller _is_ working to
-> complete our command but will take somewhat longer:
-> 
-> Citing:
-> | Note: If a command takes longer than MIN_TIME_TO_RESPOND_WITH_BUSY ms
-> |       for the PPM (excluding PPM to OPM communication latency) to complete,
-> |       then the PPM shall respond to the command by setting the CCI Busy
-> |       Indicator and notify the OPM.
-> |       Subsequently, when the PPM actually completes the command, the
-> |       PPM shall notify the OPM of the outcome of the command via an
-> |       asynchronous notification associated with that command.
-> 
-> Unless I misunderstand what you are trying to do your change would
-> cause us to needlessly abort/cancel every command that takes more than
-> MIN_TIME_TO_RESPOND_WITH_BUSY to complete.
-> 
-> What am I missing?
+are available in the Git repository at:
 
-The decision to Cancel was made to work around buggy EC firmwares that
-reported BUSY, and then never completed the command. So without that
-Cancel hack, the PPM was stuck on those systems.
+  git://git.samba.org/ksmbd.git tags/v6.11-rc6-server-fixes
 
-I don't know what we should do about that hack. We probable could just
-ignore those old systems, and then add quirks for them as needed. But
-I also don't really like what you are proposing in this patch, that we
-basically ignore the BUSY bit completely.
+for you to fetch changes up to 844436e045ac2ab7895d8b281cb784a24de1d14d:
 
-Right now I was hoping that we return the behaviour of the driver to
-a point where everything worked as before, and after that start
-improving the driver. That's why I was hoping to hear does the problem
-that you are seeing go away with that approach.
+  ksmbd: Unlock on in ksmbd_tcp_set_interfaces() (2024-08-29 20:28:37 -0500)
 
-With which command do you guys get the busy notification?
+----------------------------------------------------------------
+Three smb3 server fixes
+- Fix crash in session setup
+- FIx locking bug
+- Improve access bounds checking
+----------------------------------------------------------------
+Dan Carpenter (1):
+      ksmbd: Unlock on in ksmbd_tcp_set_interfaces()
 
-In any case, I don't think all those ucsi_*_common() functions give us
-enough room to move here. I feel that the command execution needs to
-be refactored somehow again.
+Namjae Jeon (1):
+      ksmbd: unset the binding mark of a reused connection
 
-thanks,
+Thorsten Blum (1):
+      smb: Annotate struct xattr_smb_acl with __counted_by()
+
+ fs/smb/server/smb2pdu.c       | 4 ++++
+ fs/smb/server/transport_tcp.c | 4 +++-
+ fs/smb/server/xattr.h         | 2 +-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
 -- 
-heikki
+Thanks,
+
+Steve
 
