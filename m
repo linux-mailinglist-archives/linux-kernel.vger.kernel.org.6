@@ -1,243 +1,156 @@
-Return-Path: <linux-kernel+bounces-314884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B2596BA87
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:27:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460FF96BA89
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964A21F241FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F7C2848B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691461D04B8;
-	Wed,  4 Sep 2024 11:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B61D04AF;
+	Wed,  4 Sep 2024 11:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LfZnuDM3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="RyraMryO"
+Received: from pv50p00im-ztdg10012101.me.com (pv50p00im-ztdg10012101.me.com [17.58.6.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DECB18660E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C13618660E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448997; cv=none; b=u++Ava4jRu98l54r09zkJbMo7G4ZayCzZxu8ClHYxtieC5NG9RGPsZWeiA0i8+6SE71BzlaoOWfnp4BXMK66VT+Wy2KnN+0kzSIJdh20KHZE/cxphbHsUAO9ASBHaw7EcPhV838mMeA16PnDYvmggxVx636vk99qG5w5quFOIHI=
+	t=1725449017; cv=none; b=cb+vCB4HXYZd83Ot/hzZw1zK4RwLJE5TgXGYERFiSk55Ws8KkWuxE5Iwj7Sh9pJQ2yXTWd1OTh6J9wtyHgaVzW3sdrHDm5CWNpAycF1BJYxyV3Ai93EMRtZIIDNfX0TKXeaRxzBTbDBYtETHKKnqcRh8UFR3LOWDaN/XZ9rb8xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448997; c=relaxed/simple;
-	bh=LWcupDb/szoL2F6j/H+ldLsPINpu0oFbCPpV0VYTUVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FO5RcGwcvdJZuOenxLY0Hmqo7U9Vc6js1kVIFHkhzXD+/AIQxUSjBzTEc5Rb0G7IJiW7aXftICmkI/qqzMRwq7UOEjQ/tKApoqejk161Xoynj1phStyP+quZC9AD90VloSSPjGPW4IXayk2JIlXubOebUlfclLQlxinVRz92Ck4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LfZnuDM3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725448993;
-	bh=LWcupDb/szoL2F6j/H+ldLsPINpu0oFbCPpV0VYTUVQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LfZnuDM3hzp9GmKkwYVU+5dKoaaiQRmBi1pNQhPpiMxJIC9bmYsgR8QrymmbztOfg
-	 3gaMapqKJABuslOTjgWMUHoZRbhId0AfRfSPNeRJ0lYhMmrBpOxJtBRT/OnvYQTqJg
-	 DAseDjGz4hW39YnKs32Tusk/E9un/Mg0OlnpQwm2pXB6iS1S3tf4kl2QvKG/ycbxUg
-	 z44Le0Uey8or9LqJIdo7QUZyLD6H0mmSW/HoFgyKulspezCk/4yErzha8YsR8blcmD
-	 kT6uZFh4UGcz0gSR82DQPj74kpuSMCsaIv5dmFNvjGxaxvdEjZW7+m5hD5i0tskwcM
-	 XnJW8UmWuQ0ag==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E964217E0FD3;
-	Wed,  4 Sep 2024 13:23:12 +0200 (CEST)
-Date: Wed, 4 Sep 2024 13:23:08 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Mihail
- Atanassov <mihail.atanassov@arm.com>, linux-kernel@vger.kernel.org, Liviu
- Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, David Airlie
- <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, Shashank Sharma <shashank.sharma@amd.com>, Ketil
- Johnsen <ketil.johnsen@arm.com>, Akash Goel <akash.goel@arm.com>
-Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
-Message-ID: <20240904132308.7664902e@collabora.com>
-In-Reply-To: <80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
-References: <20240828172605.19176-1-mihail.atanassov@arm.com>
-	<c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
-	<a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
-	<96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
-	<Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
-	<090ae980-a944-4c00-a26e-d95434414417@amd.com>
-	<80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725449017; c=relaxed/simple;
+	bh=hfiJmse3dy7/RukxHr3TKj57lOw+URgRbGy5V4q1aDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U6OMLX7LGIr3YqDeoXG76btdtJvRJghKvClkMHYfb7vcFZnK9G/vlmldSMwaMk8EQulSHEBjsz7LO87Mh6ebgsR5WntVo33o/PXbnlu/+kv47ChcgEmjSViSUUpVi5lNf2l1rM/ZfhHXo1EsyHu55qLhuA25Tfkk/HRIS7QGxXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=RyraMryO; arc=none smtp.client-ip=17.58.6.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725449015;
+	bh=FBGnX7lkEFVsmCkqd26xnasYVdZEstE51WAqZGUTDIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=RyraMryOLk8mJUIizeL4TJGcpIxk5BnP4T9EiSJoRoZrrcUrJiSxZg97F8gKFXGex
+	 f4TMT+UwveyHgu0p2P3UrnqjFwhkPFlUzqx4NRkXJsqR9z+J1IryTkimuWvDBizMjo
+	 5YAThoze4MzrTHlncmuNTc+DwhfLJL4ta2ZW7alXeKA7614mJKBS6JLAY08oVKnfqg
+	 NVSuouh64BN3mRzZk9upU4qj6XDSltB2AZQUNflbqcz0x2qB5C/oEQ5AE4C54Yuq2K
+	 rVTjs2cIJ47GgJg22YwFxpqBbgCJG6f3N149yaN82xx5fcmsvaKoEyqRLTp/uVN8Lo
+	 L+Ycltb4cfc5A==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10012101.me.com (Postfix) with ESMTPSA id 9B397740330;
+	Wed,  4 Sep 2024 11:23:30 +0000 (UTC)
+Message-ID: <023af837-e58d-4b12-ae9a-1bb7823b09c8@icloud.com>
+Date: Wed, 4 Sep 2024 19:23:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] driver core: bus: Correct return value for storing
+ bus attribute drivers_probe
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+References: <20240826-fix_drivers_probe-v1-1-be511b0d54c5@quicinc.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20240826-fix_drivers_probe-v1-1-be511b0d54c5@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: RO9et5Jya6sEglU93wPBjutM8c7ULmhy
+X-Proofpoint-ORIG-GUID: RO9et5Jya6sEglU93wPBjutM8c7ULmhy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_09,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2409040086
 
-On Wed, 4 Sep 2024 10:31:36 +0100
-Steven Price <steven.price@arm.com> wrote:
+On 2024/8/26 20:23, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> drivers_probe_store() regards bus_rescan_devices_helper()'s returned
+> value 0 as success when find driver for a single device user specify
+> that is wrong since the following 3 failed cases also return 0:
+> 
+> (1) the device is dead
+> (2) bus fails to match() the device with any its driver
+> (3) bus fails to probe() the device with any its driver
+> 
+> Fixed by only regarding successfully attaching the device to a driver
+> as success.
+> 
+> Fixes: b8c5cec23d5c ("Driver core: udev triggered device-<>driver binding")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/base/bus.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index abf090ace833..0a994e63785c 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -40,6 +40,20 @@ static struct kset *bus_kset;
+>  	struct driver_attribute driver_attr_##_name =		\
+>  		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+>  
+> +/* Bus rescans drivers for a single device */
+> +static int __must_check bus_rescan_single_device(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	if (dev->parent && dev->bus->need_parent_lock)
+> +		device_lock(dev->parent);
+> +	ret = device_attach(dev);
+> +	if (dev->parent && dev->bus->need_parent_lock)
+> +		device_unlock(dev->parent);
+> +
+> +	return ret;
+> +}
+> +
+>  static int __must_check bus_rescan_devices_helper(struct device *dev,
+>  						void *data);
+>  
+> @@ -311,12 +325,19 @@ static ssize_t drivers_probe_store(const struct bus_type *bus,
+>  {
+>  	struct device *dev;
+>  	int err = -EINVAL;
+> +	int res;
+>  
+>  	dev = bus_find_device_by_name(bus, NULL, buf);
+>  	if (!dev)
+>  		return -ENODEV;
+> -	if (bus_rescan_devices_helper(dev, NULL) == 0)
+> +
+> +	res = bus_rescan_single_device(dev);
+> +	/* Propagate error code upwards as far as possible */
+> +	if (res < 0)
+> +		err = res;
+> +	else if (res == 1)
+>  		err = count;
+> +
+>  	put_device(dev);
+>  	return err;
+>  }
+> 
 
-> On 04/09/2024 08:49, Christian K=C3=B6nig wrote:
-> > Am 03.09.24 um 23:11 schrieb Simona Vetter: =20
-> >> On Tue, Sep 03, 2024 at 03:46:43PM +0200, Christian K=C3=B6nig wrote: =
-=20
-> >>> Hi Steven,
-> >>>
-> >>> Am 29.08.24 um 15:37 schrieb Steven Price: =20
-> >>>> Hi Christian,
-> >>>>
-> >>>> Mihail should be able to give more definitive answers, but I think I
-> >>>> can
-> >>>> answer your questions.
-> >>>>
-> >>>> On 29/08/2024 10:40, Christian K=C3=B6nig wrote: =20
-> >>>>> Am 28.08.24 um 19:25 schrieb Mihail Atanassov: =20
-> >>>>>> Hello all,
-> >>>>>>
-> >>>>>> This series implements a mechanism to expose Mali CSF GPUs' queue
-> >>>>>> ringbuffers directly to userspace, along with paraphernalia to all=
-ow
-> >>>>>> userspace to control job synchronisation between the CPU and GPU.
-> >>>>>>
-> >>>>>> The goal of these changes is to allow userspace to control work
-> >>>>>> submission to the FW/HW directly without kernel intervention in the
-> >>>>>> common case, thereby reducing context switching overhead. It also
-> >>>>>> allows
-> >>>>>> for greater flexibility in the way work is enqueued in the ringbuf=
-s.
-> >>>>>> For example, the current kernel submit path only supports indirect
-> >>>>>> calls, which is inefficient for small command buffers. Userspace c=
-an
-> >>>>>> also skip unnecessary sync operations. =20
-> >>>>> Question is how do you guarantee forward progress for fence signali=
-ng? =20
-> >>>> A timeout. Although looking at it I think it's probably set too high
-> >>>> currently:
-> >>>> =20
-> >>>>> +#define JOB_TIMEOUT_MS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 5000 =20
-> >>>> But basically the XGS queue is a DRM scheduler just like a normal GPU
-> >>>> queue and the jobs have a timeout. If the timeout is hit then any
-> >>>> fences
-> >>>> will be signalled (with an error). =20
-> >>> Mhm, that is unfortunately exactly what I feared.
-> >>> =20
-> >>>>> E.g. when are fences created and published? How do they signal?
-> >>>>>
-> >>>>> How are dependencies handled? How can the kernel suspend an userspa=
-ce
-> >>>>> queue? =20
-> >>>> The actual userspace queue can be suspended. This is actually a
-> >>>> combination of firmware and kernel driver, and this functionality is
-> >>>> already present without the user submission. The firmware will
-> >>>> multiplex
-> >>>> multiple 'groups' onto the hardware, and if there are too many for t=
-he
-> >>>> firmware then the kernel multiplexes the extra groups onto the ones =
-the
-> >>>> firmware supports. =20
-> >>> How do you guarantee forward progress and that resuming of suspended
-> >>> queues
-> >>> doesn't end up in a circle dependency? =20
->=20
-> I'm not entirely sure what you mean by "guarantee" here - the kernel by
-> itself only guarantees forward progress by the means of timeouts. User
-> space can 'easily' shoot itself in the foot by using a XGS queue to
-> block waiting on a GPU event which will never happen.
->=20
-> However dependencies between applications (and/or other device drivers)
-> will only occur via dma fences and an unsignalled fence will only be
-> returned when there is a path forward to signal it. So it shouldn't be
-> possible to create a dependency loop between contexts (or command stream
-> groups to use the Mali jargon).
->=20
-> Because the groups can't have dependency cycles it should be possible to
-> suspend/resume them without deadlocks.
->=20
-> >>>> I haven't studied Mihail's series in detail yet, but if I understand
-> >>>> correctly, the XGS queues are handled separately and are not suspend=
-ed
-> >>>> when the hardware queues are suspended. I guess this might be an area
-> >>>> for improvement and might explain the currently very high timeout (to
-> >>>> deal with the case where the actual GPU work has been suspended).
-> >>>> =20
-> >>>>> How does memory management work in this case? =20
-> >>>> I'm not entirely sure what you mean here. If you are referring to the
-> >>>> potential memory issues with signalling path then this should be
-> >>>> handled
-> >>>> by the timeout - although I haven't studied the code to check for
-> >>>> bugs here. =20
-> >>> You might have misunderstood my question (and I might misunderstand t=
-he
-> >>> code), but on first glance it strongly sounds like the current
-> >>> approach will
-> >>> be NAKed.
-> >>> =20
-> >>>> The actual new XGS queues don't allocate/free memory during the queue
-> >>>> execution - so it's just the memory usage related to fences (and the
-> >>>> other work which could be blocked on the fence). =20
-> >>> But the kernel and the hardware could suspend the queues, right?
-> >>> =20
-> >>>> In terms of memory management for the GPU work itself, this is handl=
-ed
-> >>>> the same as before. The VM_BIND mechanism allows dependencies to be
-> >>>> created between syncobjs and VM operations, with XGS these can then =
-be
-> >>>> tied to GPU HW events. =20
-> >>> I don't know the details, but that again strongly sounds like that wo=
-n't
-> >>> work.
-> >>>
-> >>> What you need is to somehow guarantee that work doesn't run into memo=
-ry
-> >>> management deadlocks which are resolved by timeouts.
-> >>>
-> >>> Please read up here on why that stuff isn't allowed:
-> >>> https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#indefi=
-nite-dma-fences =20
-> >> panthor doesn't yet have a shrinker, so all memory is pinned, which me=
-ans
-> >> memory management easy mode. =20
-> >=20
-> > Ok, that at least makes things work for the moment. =20
->=20
-> Ah, perhaps this should have been spelt out more clearly ;)
->=20
-> The VM_BIND mechanism that's already in place jumps through some hoops
-> to ensure that memory is preallocated when the memory operations are
-> enqueued. So any memory required should have been allocated before any
-> sync object is returned. We're aware of the issue with memory
-> allocations on the signalling path and trying to ensure that we don't
-> have that.
->=20
-> I'm hoping that we don't need a shrinker which deals with (active) GPU
-> memory with our design.
+please ignore RFC for this patch, will push it within a patch
+series.
 
-That's actually what we were planning to do: the panthor shrinker was
-about to rely on fences attached to GEM objects to know if it can
-reclaim the memory. This design relies on each job attaching its fence
-to the GEM mapped to the VM at the time the job is submitted, such that
-memory that's in-use or about-to-be-used doesn't vanish before the GPU
-is done.
+thanks
+> ---
+> base-commit: 888f67e621dda5c2804a696524e28d0ca4cf0a80
+> change-id: 20240826-fix_drivers_probe-88c6a2cc1899
+> 
+> Best regards,
 
-> Memory which user space thinks the GPU might
-> need should be pinned before the GPU work is submitted. APIs which
-> require any form of 'paging in' of data would need to be implemented by
-> the GPU work completing and being resubmitted by user space after the
-> memory changes (i.e. there could be a DMA fence pending on the GPU work).
-
-Hard pinning memory could work (ioctl() around gem_pin/unpin()), but
-that means we can't really transparently swap out GPU memory, or we
-have to constantly pin/unpin around each job, which means even more
-ioctl()s than we have now. Another option would be to add the XGS fence
-to the BOs attached to the VM, assuming it's created before the job
-submission itself, but you're no longer reducing the number of user <->
-kernel round trips if you do that, because you now have to create an
-XSG job for each submission, so you basically get back to one ioctl()
-per submission.
 
