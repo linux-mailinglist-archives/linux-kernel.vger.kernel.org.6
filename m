@@ -1,147 +1,113 @@
-Return-Path: <linux-kernel+bounces-315278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DA396C050
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7174396C04E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9D228EDB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9731F23B60
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500AD1DFE02;
-	Wed,  4 Sep 2024 14:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F5D1DC058;
+	Wed,  4 Sep 2024 14:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="TTG5uyMG"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A3Qc/M+g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F2B1DEFEC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AF61DC04A;
+	Wed,  4 Sep 2024 14:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459828; cv=none; b=VVkCm5+o23Gk+Qj6FN80B8X10JPNKkSMxZ6CSZKZwy24iNEp77wIJGBEmC+sIe7XjEMUnHnsBIelgc8hNfPd4gxmNKHOWdcOPBUPsz0sugDVWHeqz2SMe0B644hf5qQnf/rNGS1vgiyTmBOlsg390+r0BlQGQufz3MAKf2Trua8=
+	t=1725459825; cv=none; b=YfpHOyvmpwz+0Q9CL04o5lLsmY8d5qmnOr9DEDnITrQOWtyCGVJGZaBtn61Y3eLKe/JkfdszUVvaGXbBpvMVq+PBcNiruok63v/xAgbTQVXKO1IlgLixk2Aj4TM5NBuAKqUBX5JXcyRMP3oeVJA1yZw+f5uNruSRuwVKuGMb15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459828; c=relaxed/simple;
-	bh=jDxosuXrzcBbOxaPlz08zYKBFslvCTkiK84hKv76KGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V3G/1LvO8tOvpHReCK9lMGtIz9ZZfI5cxnmKWu0IIxj1tVbdLSuxgBrXqu4W9y6rJPsdVbhcJHzByYdBBvVPa6WrYAjlhpGpM6kZ7VLM1JNTQbRuPiUZQCyu1vvETHyW55j34D3Ojunxb0P6LeeMzCaAXWQF4LLoo3ZjpIenL+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=TTG5uyMG; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id lkvtszfaNqvuolqvCsQI8J; Wed, 04 Sep 2024 14:23:47 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id lqvAsSWArO7CrlqvBsPO7j; Wed, 04 Sep 2024 14:23:46 +0000
-X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66d86d72
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
- a=CDJ--hqRtXxyQu1MzM8A:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=n9N1T1b3GYjcRtNdTA0eRt+BVdBxLA/iS8Tvd/9BiNg=; b=TTG5uyMGqpvP6hbpopOPtqgQYs
-	cnPjiMnM6MOsyRTDhg1Z6dGFL4C29Kq4yCHyz1grE8dHjgmcLKkPCZ7/RBPiarQhT9rwseT/l0c4g
-	Kj8zLuoyGys2GZIaRgCyE0FQnBcy3ufuB3vhuroQoUUA7HYe+v704KDRCedK3+l8i3M+BQddExODZ
-	tNqMs6s2/8JQWhVxFDAa0ddfLsZG4lbeY54qBne0+PPeki4fmdOqSPMZbaGr9dai+L9no7UuLijDt
-	EbhAEjiQDNi7dLcVrtuD68bENOpjc5SXgCR9QUzr0hiwrJSd8EuMSpJMtgqDBbNdErzBWFK41aFj6
-	QH/0ORRQ==;
-Received: from [122.165.245.213] (port=53602 helo=[192.168.1.106])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <karthikeyan@linumiz.com>)
-	id 1slqv9-003mnG-0R;
-	Wed, 04 Sep 2024 19:53:43 +0530
-Message-ID: <5023c87c-993f-4264-b950-5a47edd5e9d0@linumiz.com>
-Date: Wed, 4 Sep 2024 19:53:39 +0530
+	s=arc-20240116; t=1725459825; c=relaxed/simple;
+	bh=upyMFhK2PT2U7+0NWGDIv0m1IqeBZy+daOSAhTHxgec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f67753J6XhGs96XpIPZ8jinIX71Y8EzfVQ+b/+06S36qoreLkWHcepFag1kJ/5MVdjjJ3ahpVaPeylHeojpl8ETULU5U6NtNeZ6D/iNtzjHtiJA+KLUauuFsTbRHpNz+G4MO3SoZNMlj140fQxJD6D2g/SVBFQH95pmp0GNRPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A3Qc/M+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C84AC4CEC2;
+	Wed,  4 Sep 2024 14:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725459825;
+	bh=upyMFhK2PT2U7+0NWGDIv0m1IqeBZy+daOSAhTHxgec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A3Qc/M+gEmKz7lWfvOBFjTNaY0JATLI3xxWYhw9DIf7cxKEWTyNA1g/W1ILhwVeKd
+	 DLqApFksvp/PPYuneJqwWioAP6pTolRgqxX3SxijUBHP9YjkiRAY+piN1nNhNZMjEp
+	 eeLDk57jvbLgj7kzgwX66osETYWGSUNhFvqzAQ9I=
+Date: Wed, 4 Sep 2024 16:23:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Richard Narron <richard@aaazen.com>
+Cc: Linux stable <stable@vger.kernel.org>,
+	Linux kernel <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
+Message-ID: <2024090413-unwed-ranging-befe@gregkh>
+References: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
+ <2024090419-repent-resonant-14c1@gregkh>
+ <fc713222-f7b1-d1c0-2aa2-c15f42d3873e@aaazen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v2 0/8] Add support Relfor Saib board which is
- based on Rockchip RV1109 SoC
-To: Heiko Stuebner <heiko@sntech.de>, conor+dt@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, alexandre.belloni@bootlin.com
-Cc: devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20240903105245.715899-1-karthikeyan@linumiz.com>
- <172544170317.2587256.1675013741817340842.b4-ty@sntech.de>
-Content-Language: en-US
-From: karthikeyan <karthikeyan@linumiz.com>
-In-Reply-To: <172544170317.2587256.1675013741817340842.b4-ty@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1slqv9-003mnG-0R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:53602
-X-Source-Auth: karthikeyan@linumiz.com
-X-Email-Count: 22
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLd0TJ8fVUxuUvAg8qUZGddXH6i6BKUBPjHvd2fti7Bpq5sLOl3FJqoTRUXqKxRWFeFTFDShH3I/JjFIoIAoiA8TG4ikUqrhdNO3oQrzdZWxxgcje5rv
- Qm4VpFFU6OF3pnTq5CuWaP0f5MLkBHpjPhCyI9+P4S+3beRCTVOzrAn6Dim+/juxHP7XCUVAGfsy7NSLfFAE1fxJjrpu+JJxca0lcyO1Np32/ESx/z5GDWbZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc713222-f7b1-d1c0-2aa2-c15f42d3873e@aaazen.com>
 
+On Wed, Sep 04, 2024 at 05:48:09AM -0700, Richard Narron wrote:
+> On Wed, 4 Sep 2024, Greg KH wrote:
+> 
+> > On Mon, Sep 02, 2024 at 03:39:49PM -0700, Richard Narron wrote:
+> > > I get an "out of memory" error when building Linux kernels 5.15.164,
+> > > 5.15.165 and 5.15.166-rc1:
+> > > ...
+> > > cc1: out of memory allocating 180705472 bytes after a total of 283914240
+> > > bytes
+> > > ...
+> > > make[4]: *** [scripts/Makefile.build:289:
+> > > drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o]
+> > > Error 1
+> > > ...
+> > >
+> > > I found a work around for this problem.
+> > >
+> > > Remove the six minmax patches introduced with kernel 5.15.164:
+> > >
+> > > minmax: allow comparisons of 'int' against 'unsigned char/short'
+> > > minmax: allow min()/max()/clamp() if the arguments have the same
+> > > minmax: clamp more efficiently by avoiding extra comparison
+> > > minmax: fix header inclusions
+> > > minmax: relax check to allow comparison between unsigned arguments
+> > > minmax: sanity check constant bounds when clamping
+> > >
+> > > Can these 6 patches be removed or fixed?
+> >
+> > It's a bit late, as we rely on them for other changes.
+> >
+> > Perhaps just fixes for the files that you are seeing build crashes on?
+> > I know a bunch of them went into Linus's tree for this issue, but we
+> > didn't backport them as I didn't know what was, and was not, needed.  If
+> > you can pinpoint the files that cause crashes, I can dig them up.
+> >
+> 
+> The first one to fail on 5.15.164 was:
+> drivers/media/pci/solo6x10/solo6x10-core.o
+> 
+> So I found and applied this patch to 5.15.164:
+> [PATCH] media: solo6x10: replace max(a, min(b, c)) by clamp(b, a, c)
 
+What is the git commit id of that change?  I can't seem to find it.
 
-On 9/4/24 14:54, Heiko Stuebner wrote:
-> On Tue, 3 Sep 2024 16:22:37 +0530, Karthikeyan Krishnasamy wrote:
->> Rockchip RV1109 is compatible with Rockchip RV1126.
->> In this series, adding required missing peripheral in
->> RV1126 and its pin mux.
->>
->> Relfor Saib board is equipped with 1GB of RAM and 4GB of eMMC
->> Pheripherals like Bluetooth 4.2, Wifi 5G, audio-codec,
->> ir transmitter and receiver, etc
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/8] ARM: dts: rockchip: Add i2c3 node for RV1126
->        commit: 15db79e0bdcb883f0d7a678fe8701a270467a339
-> [2/8] ARM: dts: rockchip: Add i2s0 node for RV1126
->        commit: 212cda94739b1644e38ef4f588bb580c12feb9a7
-> [3/8] ARM: dts: rockchip: Add pwm node for RV1126
->        commit: 898eb75f443eaf6cb46facf52fc337fbdbdca079
-> 
-> 
-> This means I applied a part of your series and you don't need to
-> resubmit the patches mentioned above in a next submission.
-> 
-> 
-> I re-sorted some properties and nodes according the alphabetical
-> sorting we use. Please see
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst
-> 
-> for the details.
-> 
-> 
-> Best regards,
+> Then the next to fail on 5.15.164 was:
+> drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o
 
-Thanks, i will updated the other patches in next version.
+What .c file is this happening for?
 
-Best Regards,
-Karthikeyan
+thanks,
+
+greg k-h
 
