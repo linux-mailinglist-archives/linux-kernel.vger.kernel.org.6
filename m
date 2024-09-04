@@ -1,68 +1,107 @@
-Return-Path: <linux-kernel+bounces-315674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85F896C5A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:46:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE38796C5AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C433286C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4AD1C22569
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0461D88BF;
-	Wed,  4 Sep 2024 17:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA091E1A08;
+	Wed,  4 Sep 2024 17:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfA/i04C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h4tHTXI8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XIDUJcOS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J5DtVrRa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QLe+ZCvL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727B11E132F;
-	Wed,  4 Sep 2024 17:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC531DFE1A;
+	Wed,  4 Sep 2024 17:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725471967; cv=none; b=qLjQKUDtmZRlQUzGxg8hzY/uqeuG4QjusGLsblsy8ZByhu6Pw/+PJC+e98me9kNW+V/qZGmxnIYKrk2JNL/O7IOqa7i1eEMRFM8yfax9Bil8kUTiimtyjHy3IvNv0V8uznx+gYSovjALz7xXARA9XGErAlYW778YI2exZaTJHCI=
+	t=1725471999; cv=none; b=fp7pT4y7YWd3sk3ZdQlqsREnofl0X8gTAmqPGT6FuN2PBYoMwaBx7+7pbemODsdPSFdObXRWmP0fOcwVSJtiZT/tnRHcnPNt5dHk4IQkdHtqiNH8cbBJXRgqNP2P4V5t6TeQp9w1NWTz4Je8JO7rsyv+J6S0qMIOnOwCIzy+a9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725471967; c=relaxed/simple;
-	bh=irxYBNFy4EClqg+5d7p7Vn8xZAMgVMf7T7CNAtDKyzc=;
+	s=arc-20240116; t=1725471999; c=relaxed/simple;
+	bh=OLEa0qrKgCpqJxEBIBOa/IRqvVidi/D1LKVs6fG6eug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8LdK5OHeLslGJts3qnhIHwHzszkVpMxTuQWB4QJcz9aRQ/y1erCnGOalMX/hCVQUR9mlitODgMVzB/eWsbMxTJVTtCs6oKIUKC/RjKCcRBNEbE0Tvb1TO4o5Vw8zKc5f2NcOmI39uAbqvSNNYDsDfA0JLess/6uioZGf3h0NvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfA/i04C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53720C4CEC2;
-	Wed,  4 Sep 2024 17:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725471966;
-	bh=irxYBNFy4EClqg+5d7p7Vn8xZAMgVMf7T7CNAtDKyzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfA/i04C1wzL9s43385zxc0pEM8iayfJ/cy+nOLorVz6Ju7drxZwXi9OcvCZYhikQ
-	 CkGgMsNkTJx9ETcqUBSGkiiTfrqJt0VF63GA7HcPeP10u/xvGCZekMfll+2qJ6pffX
-	 DjXfDc0iNl2GKe393+LHOkM9NqSXC7VfnWKcdZDXtcEQUgguU+wVLY8/8Rizj4TCOy
-	 02Q6J0svWqNjawI9IjZcDNN/CRP8tY/r5x/OX0pUA2z9RaTyk6fZeQPg1OqaLq9wEs
-	 qP2Y1isVBlZHYXzAwFVMLAZrxEF8LlOgoJlZGUuC7/DsEssM8TO7il/3LG73MsKh7j
-	 mqbPidgyt9s2w==
-Date: Wed, 4 Sep 2024 10:46:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [RFC/PATCHSET 0/8] perf tools: Do not set attr.exclude_guest by
- default (v2)
-Message-ID: <Ztic3BR4UUdhIVrq@google.com>
-References: <20240904064131.2377873-1-namhyung@kernel.org>
- <CAP-5=fU5UeHER5hPAUhq_9_fSUR9okp_i0sOk_E7Q_aZkvo+DQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A36UAPEkmWZVbBQfs8Fid74Sb0nAw3yHVHkCv37EcO+LVm7DTd0bgeUWlQYV4RMNyo2i67Gvf98AfNjx6t2sGgBMoP+lcNeUguoGTL13qWWmFA31nr5WqIRcRm3s4bcQTrM5+bUqrg5Q8KmY8e8bfYBjSf6h5j4SuZMI7lbtZIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h4tHTXI8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XIDUJcOS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J5DtVrRa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QLe+ZCvL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EEDEF21A34;
+	Wed,  4 Sep 2024 17:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725471996;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
+	b=h4tHTXI8ABm5BtGNd7Nrmiz1zs+Mf6l7LPypYh1xmHhujzBqqXEBhynYyOAb/tNkgh8EaW
+	nUDqRoe1qd3fhw+VFyz0BUsjAhj8Wuc9zzyt7tRySR8930Qvsw20/SPHZkxagX1tw2RqTG
+	DnRWhR5i89IDE+nfeHm4q32EwuDh4Kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725471996;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
+	b=XIDUJcOS97XA4FyQ6FcX9zJjKpaWH5c1gZIFuL1SOLy2c/rWEMT5a7J1hf1zCZMN2WSTJf
+	+ZzO5mj2vjNQh8Dw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=J5DtVrRa;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QLe+ZCvL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725471995;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
+	b=J5DtVrRaLArcF4ikE9hBT0RLGamqpKWnseTfD2Seoyn+TUWAOL/RrusUafnnVRYokzWkb1
+	Sp0DzVVe6Zk9nLFUVDAGz5hbKGO95V0OvMJpYu9rZDwNjryy7Te206AysOv12yBaDbd2rE
+	rTQxksroNRgD1nhhukig/cOih34KS+c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725471995;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
+	b=QLe+ZCvLY6sBsbE3JR1t5xF1AZt3jKjkiy4vK2fMFKpBOnMzv/YRMqIwKjWONcOf9pnGZB
+	65MGfhKP61VQv2AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C83D6139E2;
+	Wed,  4 Sep 2024 17:46:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P6aiMPuc2GZwMgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 04 Sep 2024 17:46:35 +0000
+Date: Wed, 4 Sep 2024 19:46:30 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>, clm@fb.com,
+	josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
+Message-ID: <20240904174630.GP26776@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240904023721.8534-1-ghanshyam1898@gmail.com>
+ <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,122 +111,84 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU5UeHER5hPAUhq_9_fSUR9okp_i0sOk_E7Q_aZkvo+DQ@mail.gmail.com>
+In-Reply-To: <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: EEDEF21A34
+X-Spam-Score: -2.71
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.71 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmx.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org,syzkaller.appspotmail.com];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[9c3e0cdfbfe351b0bc0e];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Ian,
-
-On Wed, Sep 04, 2024 at 09:36:02AM -0700, Ian Rogers wrote:
-> On Tue, Sep 3, 2024 at 11:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hello,
-> >
-> > I found perf tools set exclude_guest bit inconsistently.  It used to
-> > set the bit but now the default event for perf record doesn't.  So I'm
-> > wondering why we want the bit in the first place.
-> >
-> > Actually it's not good for PMUs don't support any exclusion like AMD
-> > IBS because it disables new features after the exclude_guest due to
-> > the missing feature detection logic.
+On Wed, Sep 04, 2024 at 03:21:34PM +0930, Qu Wenruo wrote:
 > 
-> I think trying to clean this up is good but there's a wac-a-moie
-> problem whenever a default or fallback is changed - it can break a
-> hard to test platform in unthought of ways. I wonder if we can expand
-> PMU testing to at least capture the differences in behavior. For
-
-Right, that's why I use a software event to test kernel features and
-separate branch stack, precise_ip and excludes testing.
-
-
-> example, pick an event that works, like legacy cycles, then increase
-> the precision to 3 and the event should either open again or fail with
-> EINVAL, if it opens then it should count. Similarly for the exclude_*
-
-But sometimes precision and exclude_* interfere each other.  AMD IBS
-accepts precise_ip up to 2 but it'd fail if exclude_guest is set.  And
-sometimes the same PMU requires different exclude bits.  For instance,
-Intel branch stack sampling needs exclude_hv as well as exclude_kernel
-for regular users, but normally it is enough to have exclude_kernel
-for other events.
-
-I agree that we need to save this info to per-PMU and reuse it for
-other events.  Actually I tried this but failed to get it working.
-IIRC sometimes legacy events don't have evsel->pmu and looking up a
-PMU for the evsel failed to get a correct PMU.  Also I couldn't come
-up with an absolute way to make sure if it checks the PMU features
-100% correct.  I think I need to add something to the kernel to show
-supported (and required?) PMU exclude_* capabilities.
-
-Maybe we can revisit this later, but having the missing kernel feature
-checks separate from the PMU specific checks is an improvement IMHO.
-Also having another fallback for exclude_guest would fix an existing
-problem on Apple M1.
-
-
-> bits. I think some PMUs don't behave like they should and we can add
-> ifs to the test to capture these behaviours - for example an
-> exclude_.. is accepted for an event but then the event doesn't count
-> if the bit is set. There are many cases where a large group of events
-
-So I want to start from no exclude_* and to add a bit at a time until
-the PMU accepts the event so that it won't have unnecessary bits.
-
-Thanks,
-Namhyung
-
-
-> will cause the group to stop counting, in metrics we work around this
-> with grouping flags for the metric:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/pmu-events.h?h=perf-tools-next#n16
-> but these shouldn't be necessary as the PMU kernel driver should
-> reject the perf_event_open.
 > 
-> Thanks,
-> Ian
+> 在 2024/9/4 12:07, Ghanshyam Agrawal 写道:
+> > Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+> > Closes:https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
+> > Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+> > ---
+> >   fs/btrfs/ref-verify.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+> > index 9522a8b79d22..4e98ddf5e8df 100644
+> > --- a/fs/btrfs/ref-verify.c
+> > +++ b/fs/btrfs/ref-verify.c
+> > @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *fs_info)
+> >   		return -ENOMEM;
+> >
+> >   	extent_root = btrfs_extent_root(fs_info, 0);
+> > +	if (!extent_root)
+> > +		return -EIO;
+> > +
 > 
-> > v2 changes)
-> >  * update the missing feature detection logic
-> >  * separate exclude_hv fallback
-> >  * add new fallback for exclude_guest
-> >
-> > v1) https://lore.kernel.org/lkml/20240902014621.2002343-1-namhyung@kernel.org/
-> >
-> > AFAIK it doesn't matter for the most cases but perf kvm.  If users
-> > need to set the bit, they can still use :H modifier.  For vPMU pass-
-> > through or Apple M1, it'd add the exclude_guest during the fallback
-> > logic.  Please let me know if it's ok for you.
-> >
-> > The code is available at 'perf/exclude-v2' branch in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> >
-> > Thanks,
-> > Namhyung
-> >
-> >
-> > Namhyung Kim (8):
-> >   perf tools: Don't set attr.exclude_guest by default
-> >   perf tools: Simplify evsel__add_modifier()
-> >   perf stat: Add --exclude-guest option
-> >   perf tools: Do not set exclude_guest for precise_ip
-> >   perf tools: Detect missing kernel features properly
-> >   perf tools: Separate exclude_hv fallback
-> >   perf tools: Add fallback for exclude_guest
-> >   perf tools: Check fallback error and order
-> >
-> >  tools/perf/Documentation/perf-stat.txt      |   7 +
-> >  tools/perf/builtin-kvm.c                    |   1 +
-> >  tools/perf/builtin-stat.c                   |   2 +
-> >  tools/perf/dlfilters/dlfilter-test-api-v0.c |   2 +-
-> >  tools/perf/dlfilters/dlfilter-test-api-v2.c |   2 +-
-> >  tools/perf/tests/attr/test-record-dummy-C0  |   2 +-
-> >  tools/perf/tests/parse-events.c             |  30 +-
-> >  tools/perf/util/evsel.c                     | 393 ++++++++++++++------
-> >  tools/perf/util/evsel.h                     |   1 -
-> >  tools/perf/util/parse-events.c              |   6 +-
-> >  tools/perf/util/util.c                      |  10 +-
-> >  tools/perf/util/util.h                      |   3 +
-> >  12 files changed, 322 insertions(+), 137 deletions(-)
-> >
-> > --
-> > 2.46.0.469.g59c65b2a67-goog
-> >
+> Can you reproduce the original bug and are sure it's an NULL extent tree
+> causing the problem?
+> 
+> At least a quick glance into the console output shows there is no
+> special handling like rescue=ibadroots to ignore extent root, nor any
+> obvious corruption in the extent tree.
+> 
+> If extent root is really empty, we should error out way earlier.
+> 
+> Mind to explain the crash with more details?
+
+In the stack trace it looks the ref-verify mount option is enabled, I
+don't think we've tested that in combination with the rescue options as
+ref-verify is a debugging tool, must be built in config (by default is
+not and is not on distro configs).
+
+We should fix the bug where it crashes when run in syzkaller so we can
+allow it to continue coverage but otherwise I wouldn't put too much
+effort into that. I.e. if we can do a simple fallback and exit gracefully
+and not try to continue ref-verify + missint extent (or other trees).
 
