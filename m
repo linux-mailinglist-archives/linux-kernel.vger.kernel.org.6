@@ -1,59 +1,86 @@
-Return-Path: <linux-kernel+bounces-315105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA68C96BDF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:14:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4DF96BE21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09AAF1C24A9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:14:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E51B2B796
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D421DC180;
-	Wed,  4 Sep 2024 13:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963061DA0EC;
+	Wed,  4 Sep 2024 13:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4sUI+ig"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tbu933Aq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E121DC06C;
-	Wed,  4 Sep 2024 13:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BF71D04A1;
+	Wed,  4 Sep 2024 13:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725455407; cv=none; b=l0c1zqYvYuueYxrQ3QLfInKRhDWR1dEh78b/y+kkZ0uYmqnjRN7r4xXrUBawaDdbpqCgy4pLx+02xuYiqJpsiz5HTAJEjF27G8SMzqNDAui3Oqmt1RABtulqBjV7ysXv8PAZ99n8yA7mVbt7mxvZlvyaU+kfp4v2adMkZ3w4e/s=
+	t=1725455614; cv=none; b=E3U7qhflVgIBtPbma6jwe+Xy10aaAxJtjT5ip2R7qgGkTAyJjmhhbIOqsNfsEBY9sMwPDtYxCkpNe24pvzU4iD+doTgJ7y0msd1BqkQ2JkUGJMHTyH1PYoeLxsTBqsvWAFDH2C3f7TBIQNKGPOmjWpYm27k6lXy6Ni8pzkQLvdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725455407; c=relaxed/simple;
-	bh=y7saYhhmY4HIH/NGyMHPeLYHWBqEunS8IquI7fd6Rk8=;
+	s=arc-20240116; t=1725455614; c=relaxed/simple;
+	bh=zHIc1Xe49cAdQbrSE9iC8kis8SkfxhbbHfvV3kPeSfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4GbDo2k85tXooCzvxjcecWfij529z8jIrQUp1txtus+0oc3iHIX6pP+DYr4jMF8x24RUymJWHtloTwzKZpsdsxMebENuYsa9IaAv9rj+E2bYCGqSd8yOpcDGz3cnlwUQpV2R57cTwa+jmrQdW2CSCIGnx8ry0UQr3Qofg7XV1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4sUI+ig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEF1C4CEC6;
-	Wed,  4 Sep 2024 13:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725455407;
-	bh=y7saYhhmY4HIH/NGyMHPeLYHWBqEunS8IquI7fd6Rk8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j4sUI+igb6bNlHUhmZUe1PoS8r3JD6x8Thr+invKaUAWEMl9sxSDlDpoZFSCxkt9A
-	 51XSZ76cZUhpFBA5MRk4LQcbREF1MrCyEgpN1fO8AvxjHSnnE48lJK11MrWrjjcrl2
-	 9sgUv/iw1MA0u4r/ekonE60H5PqmbaZY8NbNx3mU3DLxAOmx2KPVhLkI323Bmh9yum
-	 K6+WbdQ590B9T4EOtZlClV37loEt0W5Z3WCij1Btc4HZXBzi99gyouguODqp9nSxCi
-	 EqA3xfNQRkxRO/Xz7AbPp5RVXj+c4UiXgm5zipHdViZCga2Swb7b/rD5tg57HVMcBJ
-	 jGf3NultZ42tg==
-Date: Wed, 4 Sep 2024 10:09:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Song Liu <song@kernel.org>, Tengda Wu <wutengda@huaweicloud.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH -next 0/2] perf stat: Support inherit events for bperf
-Message-ID: <ZthcJtXyWk7uJFZY@x1>
-References: <20240904123103.732507-1-wutengda@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HeBcuwkejC3S58HVYffd1xVPeWckgZEkqYQjggK+oN3HRUeuDTa2LbrZwln6KRt4vPBbYXIgSz6RsBYeZZA82gO6HkZSbJCwhYjtIkwKTwkmpv121FzQqg7Yjlx40uMLMIHmxBMV9DuXp7QV4cSBs/f5wG58oHA54TR3Q/FqW2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tbu933Aq; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725455612; x=1756991612;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zHIc1Xe49cAdQbrSE9iC8kis8SkfxhbbHfvV3kPeSfA=;
+  b=Tbu933AqvgAgh+hSF1nNy9V8+bHfaf4Am+wgwyaFCbVM6qTlsI1pIyoO
+   o2pTOy4I4t3UjEIu9JfwjSjiiyhYRNZZ/h9OyutFX38+Gr54xeR+XoQHz
+   kSw4Zq+dRm99FRbg/e7Gj7Kne/elBnNuDkG6H1UZvYJ5ZZ3ZLF4pWfbit
+   s723QLQRBHdNAo1aGzER/NjGRzbN2hI+Yna5DhU8Bk/730pZK9pXJG3Z7
+   RzwuDbFTEKqTU8xx8gTe24uHlvYcQExJw0iKQeD5M3rJW52QrpURgOZCR
+   dEVUCDTD7Mw38DWVrk1cTicx0a+C6XFjq0A0+NghOg2l4R5ZvPzQsHAvb
+   w==;
+X-CSE-ConnectionGUID: cYVBtOtJQr+1QJdo4I7zuA==
+X-CSE-MsgGUID: uFYa/eZ8RTq8n3w8zD7S0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27904056"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="27904056"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:13:31 -0700
+X-CSE-ConnectionGUID: nqlk14NrR3qCkWhyjarSeQ==
+X-CSE-MsgGUID: EbYFOQjIR46uSDvJ0f9PEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="69894307"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:13:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slpp5-000000054Ne-0cgl;
+	Wed, 04 Sep 2024 16:13:23 +0300
+Date: Wed, 4 Sep 2024 16:13:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v6 05/12] regulator: Do pure DT regulator lookup in
+ of_regulator_bulk_get_all()
+Message-ID: <Zthc8r62z2eaR8k0@smile.fi.intel.com>
+References: <20240904090016.2841572-1-wenst@chromium.org>
+ <20240904090016.2841572-6-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,38 +89,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904123103.732507-1-wutengda@huaweicloud.com>
+In-Reply-To: <20240904090016.2841572-6-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Sep 04, 2024 at 12:31:01PM +0000, Tengda Wu wrote:
-> Hi,
+On Wed, Sep 04, 2024 at 05:00:07PM +0800, Chen-Yu Tsai wrote:
+> The to-be-introduced I2C component prober needs to enable regulator
+> supplies (and toggle GPIO pins) for the various components it intends
+> to probe. To support this, a new "pure DT lookup" method for getting
+> regulator supplies is needed, since the device normally requesting
+> the supply won't get created until after the component is probed to
+> be available.
 > 
-> bperf (perf-stat --bpf-counter) has not supported inherit events
-> during fork() since it was first introduced.
+> Convert the existing of_regulator_bulk_get_all() for this purpose.
+> This function has no in-tree users, as the original patch [1] that
+> used it was never landed. This patch changes the function ABI, but
+> it is straightforward to convert users.
 > 
-> This patch series tries to add this support by:
->  1) adding two new bpf programs to monitor task lifecycle;
->  2) recording new tasks in the filter map dynamically;
->  3) reusing `accum_key` of parent task for new tasks.
+> The underlying code that supports the existing regulator_get*()
+> functions has been reworked in previous patches to support this
+> specific case. An internal OF-specific version of regulator_get(),
+> of_regulator_get_optional(), is added for this.
+> 
+> Also convert an existing usage of "dev && dev->of_node" to
+> "dev_of_node(dev)".
 
-Song, can you please take a look?
+> [1] https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Thanks in advance!
+Make it Link tag.
 
-- Arnaldo
- 
-> Thanks,
-> Tengda
-> 
-> Tengda Wu (2):
->   perf stat: Support inherit events during fork() for bperf
->   perf test: Use sqrtloop workload to test bperf event
-> 
->  tools/perf/tests/shell/stat_bpf_counters.sh   |  2 +-
->  tools/perf/util/bpf_counter.c                 |  9 +--
->  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 75 +++++++++++++++++--
->  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
->  4 files changed, 79 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.34.1
+  Link: https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/ [1]
+  Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
