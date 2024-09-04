@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-316057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EF796CA90
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:42:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AB396CA96
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8CE1F255E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7951C22266
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8A71714B5;
-	Wed,  4 Sep 2024 22:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA61779AB;
+	Wed,  4 Sep 2024 22:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GR6zidaI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IC9N4otR"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A051F146D7F;
-	Wed,  4 Sep 2024 22:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA41383A3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725489734; cv=none; b=uG1UQcRbombF8yHC4wHdAsP0O6AwRTB1JrlP+0+EJ/HTXxP568vkBGiYROU8gcJa+EvCR6c4XTPPwlJzMfH6grndg5N6+aqsziwjpsRaDPHSRptcJjnQR8zDEJZYaYAG3nMrB+8jg5OQ6BZkXcGe+Z0WuvKaiNWRZ35N/uoDxIc=
+	t=1725490167; cv=none; b=qTfO0xq2qxT6Yy61IYiKfgcVa/o1kA/8R2ZftUYxlgXnpPykRS2z5rivkTn1jICaE6OdAuxtz1r0crbzIcZwM1psjMmUxiDafmybBWIZq7tGfuRWw9c/g+rfp0vUQ21lSnjtm2UeQwrKjrvciTajbpMozALVC0reSHJwl/qhfQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725489734; c=relaxed/simple;
-	bh=A1QppiQ4BCgg4QDQXK6JibKQMdbtjXSH6rCHs+lp4u4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BPmSRVa74VS5QCUABHXEenLYfIHbfsuzesPrgj+b81QqyBYKsgnBEiAAhZPBQauCgBhV0TyQg2I2sURxVEaHXf2hzRjZLP6YLLqOTqzpBA1zE23+d1tUEzzUiANH5d1r+DW5OHwH/GasyCNbwJsPqc1vAtlbnXNj8NfHtoL2Ur0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GR6zidaI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725489729;
-	bh=4EfHIIDWCzyWNu/Kz5sVR2Pj6+7t2drz1rRVzgdtwuA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GR6zidaIsGspKfRrvNdaolPpUIGHhBfEytKlnoWa9UKyaRupfAhA3vB8YNq6VvEf+
-	 51VDTtEMCRfp9OogHY1BvB+Rw63dE+wgmiihDk2xztfCO7wWFxGXRf1swSME7+BAQz
-	 syA+x6qMXOBlVPsveuAwYuHBI24RWTHCg6QlNyNneI2zi11sBqWQX133O4rSa/2qxC
-	 iKq7Y4fm5Ax6l8r5G6yJ7ynh/AXN7hDzdj2/HR1JplSIlYUMqeu9ufxEWF+9PqJmkh
-	 g9HXjglPaqjpkc3wVrGmPr4fK2b+/k6CZBuy3uGnPt0GTL6tkv+UxEjxvtp20gNAxQ
-	 jYc8Qh12XP21Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzctn50pQz4wd0;
-	Thu,  5 Sep 2024 08:42:09 +1000 (AEST)
-Date: Thu, 5 Sep 2024 08:42:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
- <namhyung@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the perf tree
-Message-ID: <20240905084208.78279c14@canb.auug.org.au>
-In-Reply-To: <20240902105121.1a5b25f8@canb.auug.org.au>
-References: <20240902105121.1a5b25f8@canb.auug.org.au>
+	s=arc-20240116; t=1725490167; c=relaxed/simple;
+	bh=jmw/WoF+sMtgKd5g54QLssILzP8E4zWxN4BoO369wQw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c9y5WzclCBEvHc+JNXT8YOTwf0KM3U1aWLy7lMIf6TduU2OSLhnHgqD8mDIXyrZjRGcC5UrbJYriXMGi/8pxJKFwEGuVFtZeMDAxF6fGipUunR25fyTIzbIplD2aKcIRNerHU/Vi86ECfFfIDt1yBhx7ID1XRx/S++sokD0ACqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IC9N4otR; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d2159ebf3dso205922a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725490165; x=1726094965; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AfjMWL7qSHtmE1rmU7GUtTr0KNqRvj4ny0P55ZezMaI=;
+        b=IC9N4otRLJ4DkodH0aTynZHECIIfv1gJMaPj6coIYulx5hQauFgqvvr/jUGhhOWTI9
+         qWR0XLuHotxA+f5IgyyA78G/3DaQxwtErBsJYapZQJusK4nZ9eKNGo0EaDDljupVgygZ
+         pca+rzhUnxrrS9y5qKnxq0a3AgfV5PTIBtDpmv/qeDuDFiT/Kb32+NrqFOIFQZzMON/z
+         Xp16iGR5amMbLcae5uB1ZJ1bLJE58ecP/++b09iqAEdZQadqI+2L+inatg7n/ue1huop
+         15cc+EN1wksLULKm14+8tMYN05hrVVLXZA2L64YFOuLExVZwXk2YA6yatdy5K8mmC8Ne
+         Cz6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725490165; x=1726094965;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AfjMWL7qSHtmE1rmU7GUtTr0KNqRvj4ny0P55ZezMaI=;
+        b=qlxqvn2PdKVM1Q0elS+O5GRTDbZt8bGcvZtVCyRplv4tzOR5cZ6yQwUyvE/fL1rz67
+         gXUJHTH0l61DrNpsgyOR+tCYN+f13EZ6EnxUAnblu41QNs5GgVkxCOkBf4Sg0l18QquL
+         Pb+2NYyvV1M4tgE3hwRa7sK4kXpgZ4Or7Ga8Y5PeHXhhE8e6NMW0OmvYrEu7zrq6wJMP
+         ZiItPQvO0F0dT+UQ0vO0zPZavSQjsDYF+zgyrpUc/2y1wFUeWr+NuVduYXG64H8JRpf+
+         7LtRWsGObKQ0FpXJBtyx9dk39wQGUFf93vMsUcVYQf06ZklWSj6vXO2wRJuoXG8HwQYe
+         vhig==
+X-Forwarded-Encrypted: i=1; AJvYcCWAwUqIk39YaedLA8JXC8AsiklKvB5pqC5Lgo0ExQAqTjjZf3l0GLGm5hIFW0soZJfyK/+pB0Bx29OQg28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIPRo78MFV0TqlXjMC+YcSVb/MCKQezUvErYyhDVsrG5DXKVDF
+	v3ZuuUPclcC/eGPjVOnRcW3G9aa99I9hOT8GQb3WnEG19Vk351sB/cZhwSD41CjsuCIuCba+I4U
+	m1A==
+X-Google-Smtp-Source: AGHT+IGxB0koQk+4DjbniMid//s+el+4YQz2SWzY87trrY9JIa/Nx1bMlTC4pMlfqu9yuRVU/vSNoPRCjB8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:2352:b0:205:799f:124f with SMTP id
+ d9443c01a7336-205799f1586mr8750175ad.5.1725490165129; Wed, 04 Sep 2024
+ 15:49:25 -0700 (PDT)
+Date: Wed, 4 Sep 2024 15:49:23 -0700
+In-Reply-To: <20240904210830.GA1229985@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/acL/h8JtZqiRuMuCfv.eadj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <20240720000138.3027780-1-seanjc@google.com> <20240720000138.3027780-2-seanjc@google.com>
+ <20240904210830.GA1229985@thelio-3990X>
+Message-ID: <Ztjj8xrWMzzrlbtM@google.com>
+Subject: Re: [PATCH 1/6] KVM: nVMX: Get to-be-acknowledge IRQ for nested
+ VM-Exit at injection site
+From: Sean Christopherson <seanjc@google.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Zeng Guang <guang.zeng@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
---Sig_/acL/h8JtZqiRuMuCfv.eadj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 04, 2024, Nathan Chancellor wrote:
+> I bisected (log below) an issue with starting a nested guest that
+> appears on two of my newer Intel test machines (but not a somewhat old
+> laptop) when this change as commit 6f373f4d941b ("KVM: nVMX: Get
+> to-be-acknowledge IRQ for nested VM-Exit at injection site") in -next is
+> present in the host kernel.
+> 
+> I start a virtual machine with a full distribution using QEMU then start
+> a nested virtual machine using QEMU with the same kernel and a much
+> simpler Buildroot initrd, just to test the ability to run a nested
+> guest. After this change, starting a nested guest results in no output
+> from the nested guest and eventually the first guest restarts, sometimes
+> printing a lockup message that appears to be caused from qemu-system-x86
 
-Hi all,
+*sigh*
 
-On Mon, 2 Sep 2024 10:51:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> The following commits are also in the perf-current tree as different
-> commits (but the same patches):
->=20
->   6236ebe07131 ("perf daemon: Fix the build on more 32-bit architectures")
->   2518e13275ab ("perf python: Fix the build on 32-bit arm by including mi=
-ssing "util/sample.h"")
->   74fd69a35cae ("perf lock contention: Fix spinlock and rwlock accounting=
-")
->   37e2a19c98bf ("perf test pmu: Set uninitialized PMU alias to null")
->=20
-> These are commits
->=20
->   478e3c7ebbe7 ("perf daemon: Fix the build on more 32-bit architectures")
->   4cb80590f12d ("perf python: include "util/sample.h"")
->   60f47d2c58cb ("perf lock contention: Fix spinlock and rwlock accounting=
-")
->   387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
->=20
-> and this last one is causing an unnecessary conflict.
+It's not you, it's me.
 
-These latter commits are now in Linus' tree.
+I just bisected hangs in my nested setup to this same commit.  Apparently, I
+completely and utterly failed at testing.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/acL/h8JtZqiRuMuCfv.eadj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbY4kAACgkQAVBC80lX
-0GyPRwgAkKeoxbzLz4zBTJzsc2YAoqeq54et/vXwTFbHq00oRRR1R+/lzBi3PmZG
-3IfpVWA8S5yfbzWfzCUZ5hHWOXfNkkM3Vc7qCG28YmEW6FZD+AIE4m+u2be3COJe
-TXFZjcOR9A2Rr3GSce0Kn0MBYyLoEEY3FWNdQaCjTtxwGqV+8Q5GEFECDK651loj
-1I6IRpOq8FU/s+nFlAFWahaSO4DkyxautJZVTOB7V7+iAODQPTbYNonQEmpwNV05
-FKi+vBw/Gc8w5MQu+ISImVE7WVpywDxXs90WeeFdu0UwbPAMa2SIk/xRW0UPTyrM
-hOEPITSN+90Q2EoBsKrcv0zkvh3vYg==
-=zwpS
------END PGP SIGNATURE-----
-
---Sig_/acL/h8JtZqiRuMuCfv.eadj--
+There isn't that much going on here, so knock wood, getting a root cause shouldn't
+be terribly difficult.
 
