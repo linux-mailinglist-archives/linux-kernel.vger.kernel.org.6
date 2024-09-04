@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-315475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358F496C31B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E796C31C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B8C5B2856E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301571C20A2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF101E0B81;
-	Wed,  4 Sep 2024 15:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="W29J2V+5"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FF51E0B93;
+	Wed,  4 Sep 2024 15:52:40 +0000 (UTC)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE5B1E0B78
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C010286A8;
+	Wed,  4 Sep 2024 15:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465139; cv=none; b=HIbAAisdPIOjan7cVdls2L//HlnGwYkjkS8r2N7OU24pEl4Q4UIejBo13VtQnG6YdzhO5OVybBFYpkW2BzoYWguzuxnmOHznhn/WlJghBsn09eOBvnAGLLjqa5eueM1m6CG4NwHGHrn/sz2954OWQcEMeb3kDfMMKQbbwuA78XE=
+	t=1725465159; cv=none; b=rmXe7UBjhEpDU3UPVGyJO+i6AyuvbMZYOyiaEF4sNIVj45CbKocWPL7SD26VLaebSmD/x3dqaQs3nZjwBW77jpjzrLqjZxN2QahybILXTjxohvTiBSHZsQU8e/mDjotYgSSa+V9T2zQVmqEMmmzgh5Fg7dJrw+2AlijRn4VNnI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465139; c=relaxed/simple;
-	bh=rYyRA6enZf3Z+Vz8JwkHG41q18ctJtQgk39vRKV2Scg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szYYD2ErYxG7RTYAIX+jXC/AgIJtiAoQ59ev4eebY9GDSiBi1asq9BWK+mZveiT3L/TntDp4cgqPUkqCHSelGG7QPHF7+w/7zSuRYmzyhqwSoGBqs5ax2VQTBeKjWFU6TVzqlcS24vymJL7b7m1SxXl3yQztF/T0gWAOLIQSFL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=W29J2V+5; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d4a4e4931so24481805ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725465136; x=1726069936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1F6z7aom2l+zwYv4bAFPmXnr+9mQvzC1zWeuLt2yJZg=;
-        b=W29J2V+5+juvf3idKJ3mJic/TaaRyg8bS1NNfPvj4V3jBe3cx2qiHvoVGIMIQ1mkHE
-         4zG644ubxbMhyxDRsuzo7dNFTQMvQBx5K5QfYC8RyIJk+jRyzq6wAwTOEPejWCHMNY7r
-         NIDb2aO0FE6VTfK1LQCz+R3UJxppOnZXLDDlM=
+	s=arc-20240116; t=1725465159; c=relaxed/simple;
+	bh=lUY77zhKCX1hCMrkL0mkbTJCo8TnHEqNmN62M8lSMYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EIGFIOhS/QscUMQTV5E/hceNMR6g1yNbk/Sh34CCQl+S2p/g5U3veqw8qW3+yBzO02sz5Supehu6cpQT19pN/MciR2mDqRXBStZ3nQx3H8UapHJRMyuLRX3keKniSOEzE83Scfs7wicfUruOF+iFMJZ+0hv8N3yfiUiK+osIRCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4668944a91.2;
+        Wed, 04 Sep 2024 08:52:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725465136; x=1726069936;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1F6z7aom2l+zwYv4bAFPmXnr+9mQvzC1zWeuLt2yJZg=;
-        b=Jo+gqBXAsdBt+ztfTGTnOdWF8FIK49B+HAjXarLlXVOzThIe6tz0fS11vk381ZTRSH
-         sPJfsL8jDqMCJ8P1dN6noNsBOcXPPeKhGnXtbYXSp2Cyqy1zwCcBeR2d014BfG7ZH/SM
-         ePT6L8/lc3Fpuni/dCrId73Ad/oWwaOTdNlM3m44+6neBecMRjNn0LyFRcQzR6B1SXpL
-         MTNRgK0rguMrDcls1/TrYQmrxhdo8QG+zj51UeqVZsYjPISV3gU43DNdnzQpRzKmH2JE
-         C4jVCevJfWCIuxSxb7m61DF+P/MD3JHkvvL/3ITN2KOZ3s077k6qpUbvTJkUkSkZVlbn
-         GygQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvxIISxxc9/WoaeFQCIUo7MKah3tOHdqXmSd0PYkRt75rk1QJrGKhMatDXSoUwcvVQFexe4fHLqrUdjH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxLVPvM2C3un5TrjKi+rWMmtdfviKx1T/zvD0jFlNjMiDUBm2U
-	KmoQqljGxn4zqMn8/2CaJ6pmF0fgGvV+UfxIw7UfyG1PzH5EFmhkH35d3dDhwhM=
-X-Google-Smtp-Source: AGHT+IGJxj99I7Lx9VRpurNkyqRoE4VY2BE28+JGwvHWANHOTMtgECHvU2Ope7Zpogwhuz+Bze5fJw==
-X-Received: by 2002:a05:6e02:152a:b0:397:a41d:aa8e with SMTP id e9e14a558f8ab-39f37879fc5mr237963445ab.0.1725465136595;
-        Wed, 04 Sep 2024 08:52:16 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2de5f52sm3186226173.44.2024.09.04.08.52.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 08:52:16 -0700 (PDT)
-Message-ID: <f469b5b1-a846-4add-a629-b0a415e9fcab@linuxfoundation.org>
-Date: Wed, 4 Sep 2024 09:52:15 -0600
+        d=1e100.net; s=20230601; t=1725465157; x=1726069957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nRpCSa2dicAy71ZoCq3WWsHgrn4GYp+rcy53dep9/Ss=;
+        b=mNqx5ks8IB/S6A4LS3E0Dv/iwzUE7t3VzXDxnbSFst28b/rGqgmCLJR5VLVNKBoAvU
+         wduvbBZzgXKulo/SYYv0yjGQhyrbZkeagr02VUVBO3CQ4lqxnHB+Ku8psfj78vcb7pwg
+         7OY/Lj4koy5dLqWkbvyIDf7xiE48vq3YX5aj0Usf9eHx9P7jA/4Pjt7tzU+hGHZUovjT
+         ZCSscXSsxLae3SYGVH+NrdyetHEA9sVsBlLn+/7ghv70ysTZfXtUYZUW7XQSQGh1Vz47
+         xWYdu3frUpeVmEvWbQaKW2lL6tKconZqfwJ48wuHXV0e8KKHaFj09ulsVD8/5jZDA3T1
+         L7uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgJUKLYmWu0s/0Apv7UMe8Np3CYGzWqN3nYFJ1LDm//lQccblY3BfAj18RrJCfCCO3rpOZzUsJMXEa+vk=@vger.kernel.org, AJvYcCWcZy8k7qlS6rXFvecbQwPX93zokNDest4HnlOHwQ+TBmyCq7nnhVYgM9kMfmNznGIVoiUyrnUIPGVa4f555NYqTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6NPRo4274hrYV07gmsJCcq+bZSeOLWO1gmGu8nuOasU/mrudr
+	R48LMvrNlweY8q8q7D2zgPJv5WLGBD/xOeto5dnS6bt7skcpIUbWMWei7MUsvbWLXVwpW4M59WK
+	i111SVzhIUWm1+/2OoP0KsZazTBM=
+X-Google-Smtp-Source: AGHT+IFX3MHyKkqzSL4Emt9nWckQqcoksiFJEqtX0Xv0KCxrxnSGvAy2zifePpZa0h15Uh8crIIJBtsc6riF/sEMqVI=
+X-Received: by 2002:a17:90b:c12:b0:2d3:b49f:ace3 with SMTP id
+ 98e67ed59e1d1-2d85638576dmr21007154a91.28.1725465157361; Wed, 04 Sep 2024
+ 08:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Add SWIG Bindings to libcpupower
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
- Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Arnaldo Melo <acme@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "John B. Wyatt IV" <sageofredondo@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240827062438.71809-1-jwyatt@redhat.com>
- <ab9e3727-9978-4a30-8bff-e366fa5defc1@linuxfoundation.org>
- <ZthrAiB2j-l-V2wu@rhfedora>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ZthrAiB2j-l-V2wu@rhfedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240904064131.2377873-1-namhyung@kernel.org> <20240904064131.2377873-8-namhyung@kernel.org>
+ <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org> <251acd21-7d0d-451c-b581-cdb74b4096ed@linaro.org>
+In-Reply-To: <251acd21-7d0d-451c-b581-cdb74b4096ed@linaro.org>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 4 Sep 2024 08:52:24 -0700
+Message-ID: <CAM9d7cgAuYwh+zaEAa3v6V86=6bWgsDpN_LM75OM3JkJ=ZQvaQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] perf tools: Add fallback for exclude_guest
+To: James Clark <james.clark@linaro.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>, 
+	Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/24 08:13, John B. Wyatt IV wrote:
-> On Wed, Sep 04, 2024 at 06:41:14AM -0600, Shuah Khan wrote:
->> On 8/27/24 00:24, John B. Wyatt IV wrote:
->>> [snipped]
->>
->> Couple of things to address:
->>
->> 1. I noticed none of the patches have the subsystem prefix:
->>    pm:cpupower is the right prefix for patch subject for all
->>    the patches except the MAINTAINERS file
->>
->> I will pull the fix  "Implement dummy function for SWIG to accept
->> the full library" Patch 2 in your series.
->>
->> I want this subject changed to just fix as it is a problem irrespective
->> of SWIG - we have a missing function. Subject would be as follows:
->>
->> ""pm:cpupower: Add missing powercap_set_enabled() stub function"
->>
->> Make this the first patch in the series. I will send this up for
->> Linux 6.11-rc7 or Linux 6.12-rc1
-> 
-> Understood.
-> 
->> Depending on how the timelines for merge window work, expect the
->> series to land in Linux 6.13-rc1. I would prefer to delay it anyway
->> so we can get some soaking in next.
-> 
-> Thank you, I appreciate it.
-> 
-> What kind of soaking are you looking for? Is there anything I can do to
-> help?
-> 
+Hello James,
 
-It is more the timing than anything you can do. We are at rc6. Please do
-send the series with the changes I requested.
+On Wed, Sep 4, 2024 at 6:36=E2=80=AFAM James Clark <james.clark@linaro.org>=
+ wrote:
+>
+>
+>
+> On 04/09/2024 2:28 pm, James Clark wrote:
+> >
+> >
+> > On 04/09/2024 7:41 am, Namhyung Kim wrote:
+> >> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUP=
+P
+> >> if not.  Let's add a fallback so that it can work with default events.
+> >>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: James Clark <james.clark@linaro.org>
+> >> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> >> ---
+> >>   tools/perf/util/evsel.c | 21 +++++++++++++++++++++
+> >>   1 file changed, 21 insertions(+)
+> >>
+> >> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> >> index 0de0a72947db3f10..8c4d70f7b2f5b880 100644
+> >> --- a/tools/perf/util/evsel.c
+> >> +++ b/tools/perf/util/evsel.c
+> >> @@ -3400,6 +3400,27 @@ bool evsel__fallback(struct evsel *evsel,
+> >> struct target *target, int err,
+> >>                 "to fall back to excluding hypervisor samples",
+> >> paranoid);
+> >>           evsel->core.attr.exclude_hv =3D 1;
+> >> +        return true;
+> >> +    } else if (err =3D=3D EOPNOTSUPP && !evsel->core.attr.exclude_gue=
+st &&
+> >> +           !evsel->exclude_GH) {
+> >> +        const char *name =3D evsel__name(evsel);
+> >> +        char *new_name;
+> >> +        const char *sep =3D ":";
+> >> +
+> >> +        /* Is there already the separator in the name. */
+> >> +        if (strchr(name, '/') ||
+> >> +            (strchr(name, ':') && !evsel->is_libpfm_event))
+> >> +            sep =3D "";
+> >> +
+> >> +        if (asprintf(&new_name, "%s%su", name, sep) < 0)
+> >> +            return false;
+> >> +
+> >> +        free(evsel->name);
+> >> +        evsel->name =3D new_name;
+> >> +        /* Apple M1 requires exclude_guest */
+> >> +        scnprintf(msg, msgsize, "trying to fall back to excluding
+> >> guest samples");
+> >> +        evsel->core.attr.exclude_guest =3D 1;
+> >> +
+> >>           return true;
+> >>       }
+> >
+> > Not sure if this is working, for some reason it doesn't try the
+> > fallback. With exclude guest made mandatory in the Arm PMU, then:
+> >
+>
+> Looks like you change this, but it's not obvious why the stat behavior
+> is different to perf record anyway:
 
-thanks,
--- Shuah
+Right, I think we should consolidate the open code to be used by
+both perf record and perf stat.  I'll reorder my patchset to have
+exclude_guest fallback first.
+
+Anyway thanks for the test and the fix.  With this, perf stat and
+perf record work well on your setup?
+
+Thanks,
+Namhyung
+
+>
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 8b9889873d3e..6f2ee3032f5f 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -639,7 +639,7 @@ static enum counter_recovery
+> stat_handle_error(struct evsel *counter)
+>           * (behavior changed with commit b0a873e).
+>           */
+>          if (errno =3D=3D EINVAL || errno =3D=3D ENOSYS ||
+> -           errno =3D=3D ENOENT || errno =3D=3D EOPNOTSUPP ||
+> +           errno =3D=3D ENOENT ||
+>              errno =3D=3D ENXIO) {
+>                  if (verbose > 0)
+>                          ui__warning("%s event is not supported by the
+> kernel.\n",
+>
+>
 
