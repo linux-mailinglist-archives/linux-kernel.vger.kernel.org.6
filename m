@@ -1,103 +1,171 @@
-Return-Path: <linux-kernel+bounces-315698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7839C96C5EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFC596C5EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219EF1F23B36
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DAE284859
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53DB1E1A29;
-	Wed,  4 Sep 2024 18:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0031E1324;
+	Wed,  4 Sep 2024 18:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnC9JJFH"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XbW7O68X"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E162AE9F;
-	Wed,  4 Sep 2024 18:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D963D1DFE2D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472888; cv=none; b=oxx6sCixIMR4boF552KJiCEI2Ror8RsxBkFT8PjkMv+H8hw+bD3dru2UwIm/0f5v6sEdScOunIdxeFzVwOANPKbUoHm1p1FDfGqX/LmdK4UwZ5PxHdwvc7utnlygsebouMVfqr/RuxOBqY+mhWcN0XjumEKgnIJSb86vYDTz3Gg=
+	t=1725472915; cv=none; b=Oj8jxsWUFGiWc/sgxg2pSLH6mbGlQTkQs8y5mxeSoKdSIyQ0bQ95gPb3ftRIRvqYSLYcs+qgRFuv9NOCGt6Ta79ppJqxddIIJS3rqSV/pqo1ULRJQCg6Y1/5fS5HrBz3bdu7p6WYcvBwOINTZ77mORFYUtqIAhKq9u0lYqPOtJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472888; c=relaxed/simple;
-	bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=moA4Hnml7Z+57mfFBDsziO1UA8Cl/pQVjM/M4YswkEHS7jplfKp3V4VsoTmYFZYA1NDxLXjw7JS4YGtEnUr8ngJ8DUNQFQF3hsip2R32AzTkDSz/8GtxJS+TPpitosBjiEJuT2cVzJpyXFxq75kw3fKBA7Ka1xVZCMoCqWyUY9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnC9JJFH; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso4615425a12.1;
-        Wed, 04 Sep 2024 11:01:26 -0700 (PDT)
+	s=arc-20240116; t=1725472915; c=relaxed/simple;
+	bh=kvhqnlfhsbpncUCZEiavCzg2LzA66ExExMNp1OY8eBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sL3N8Zjpn/YOieEIWIpPYor1dkp1ghsQZBjti89i9kv33T+274O6F/7IJY3faUrogkC1qZ5ywRqNkBB5MdVnm0knSroEiOOA9sqrvf6abY2cSkcLWhnnFk29AvVCTxK+me4vCXYVAKYFZODfDYEnMGCAqw1VO8XrOKRW+8Te1kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XbW7O68X; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a1af43502so353452439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725472886; x=1726077686; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
-        b=lnC9JJFHxL3yFR5F3iyKb1ZUO4NPUEwc6Rp1T82w4RvBAQGcD/46crVNdMla5nXA3r
-         TlhUlzKlAZqvYamF7gTJNtYX6a9Ereo5lLMwOadEmA34eRp92UtfCf5bVpldPwNdihNs
-         UciwDOiC/GyqgDROXnztsYVi1P8ERKxhpSPEcI/Dih3CsT2VhDaVe+5aTXc7KRfeVrx0
-         BH8YDbG/JvYLNSCB4TcLz7X85N0T9n6IVigADB/KVE70dGiANajxqVqhXc9zLHvyQWLW
-         W9/UyNkvGhOiQbj3G6XMNrr3mQ3rWLV01R4nhxlgSAs/g6xBxNH85eqrauS6Dj1+tjrT
-         lAWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472886; x=1726077686;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linuxfoundation.org; s=google; t=1725472913; x=1726077713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
-        b=c+P6OgjHKrvnXn57CNdirCsfBMXk6ZrqPLu+3v2PZGP53oaBBjzeiHd2DHkSfSBmG3
-         DIPp5ZeG+4dSIMXy52aPhzLOTiKSKYvYUk/ZsabENqOpZ4fGHNQ75Ksh4fdPWmveJ6Hv
-         EXok2ABOnGh6uElM3B9bFu/cVkSIMl45DPyknM32jllcypz1rp2EzQo5MED6/f3lP/O2
-         GOz5cUCGaf8LDpLar+7s+5q1mTdXBBFA7w4kxapzrXxjDUps5zYKVQrGOKccWX8+Sgel
-         jNKspAjJ8sJkZ4oJJWm4sAGYmyZ5HKT97bxQZjJTzHgHBOeYBrRfJ3qBrUDj+gH7kkl7
-         veNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWYpWiWa8xkeVxXlnxUQmiRFUd95w1P8LGx80OxYaaVD+CAPqp/29TUjlUrMEsLHsXs7Q=@vger.kernel.org, AJvYcCV5q/4Prn656GEjNrZg2qVIN8bKSQbT0W7TkesLWdai8tXN4ImURn9qAC0LTvriGtGoQHnh/+G4o7aTwGg9@vger.kernel.org, AJvYcCXkmmcOtt5Ye6qmA+6Hyy45SZLX0wX+yZ50qLTyxJU5bJMtj/I09qvbiOX1OSe/FDrFm2vz2AOIjZZ/dZonSHOG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcBd2qZ9eXOlosuuG7HaNoKw0fLjdYBaPkk0MSCY9iw9Hg4DIx
-	T2h8jxzJnLCF9KM92ckAX91CdlNzxGh9dWLar0ctWCxgIgk5NyMt
-X-Google-Smtp-Source: AGHT+IFOA5S9ZL41D7ESXarGq3JXM7szdODlLGvWURgGPa3hq8cCWJIzW8RGSayR90J/ig4Dz/SVaQ==
-X-Received: by 2002:a05:6a20:9f91:b0:1c3:b0b5:cbd1 with SMTP id adf61e73a8af0-1cece5d1354mr16087939637.38.1725472885669;
-        Wed, 04 Sep 2024 11:01:25 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778521165sm1896887b3a.20.2024.09.04.11.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:01:25 -0700 (PDT)
-Message-ID: <20942a8e9a23e4cc6def8ff8cc59b30e18f07962.camel@gmail.com>
-Subject: Re: [PATCH bpf,v2,0/2] bpf: fix incorrect name check pass logic in
- btf_name_valid_section
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>, martin.lau@linux.dev,
- ast@kernel.org,  daniel@iogearbox.net, andrii@kernel.org
-Cc: song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	mykolal@fb.com, shuah@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Date: Wed, 04 Sep 2024 11:01:20 -0700
-In-Reply-To: <20240831054525.364353-1-aha310510@gmail.com>
-References: <20240831054525.364353-1-aha310510@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
+        b=XbW7O68XhAVyoIOcmKTdw5Ilxj7olMPKSD/W+m8mkSQ6eTMdkYM88U5EZfADMX63Kg
+         M6TfB1mLDcmMzE7AeYFnneFWokQozgT/HZ6m2AbGhCcJTyvfJNvNF5SMOaAqY6X1x+xs
+         pyVTLuq7KfkJ3HLxY26RuvZpKJlEBEXgrFYbY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725472913; x=1726077713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
+        b=FtXYnfcYfkeNbEpxV4M52vzmzsj1ZfbEkaxl7szDDF7rpZXcWXanNGCfitViV0xDIg
+         DWFmB+ZbBMSSbPw344FZ0bv2o5076447ljdxXPAygygVI9+HngNIkpUS1vDaHcwRmavI
+         RpHHXJPBN77yD3UDl7GxDvUnJ546zPPbrohrVv0qc15GCNhjjWzjg0T8ePgVwY2r1JfR
+         aEYoAgNQAVJf3cMkULdZ5B1DXDpOZ7k06ITX0JkKDtRWavvtNEdj/1cwWtvbDYyNDPdU
+         PAXne/r419sOpU7Q4AKEW+sNkGHvUrB35CHObvCtOCZWj1cH2VNcnUZ+uSFdMQ7L4lk4
+         xwbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVCG/ljOzVgdRSvgMN9e34iWYvAQ+34mXH2Eoo/14CfkEe5PTWr1LDGY8L76EQdoG9XCWvy0/81VViLng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaqTZ5kLT8jwlntLlLhB1xODaRjGW8A+IKsudDLAFwglHbjTQ9
+	7/U9edjSSHbcvGZoMGA1mfDQdMuHFgLs8t/wk9R+ml6iegEt9Bu3sqyU1o5mDPI=
+X-Google-Smtp-Source: AGHT+IE09d+IBeWwgHe5zjgeYzKqlOeVFBKdTyoUXo2CmM5mem85ZvAmg7ax8y1cyKmmP1BgZ4kZOg==
+X-Received: by 2002:a05:6602:60c7:b0:807:f0fb:11a2 with SMTP id ca18e2360f4ac-82a11094588mr2605807839f.13.1725472912591;
+        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a49897bsm366616139f.37.2024.09.04.11.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
+Message-ID: <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 12:01:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Michal Hocko <mhocko@suse.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ "conduct@kernel.org" <conduct@kernel.org>
+References: <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2024-08-31 at 14:45 +0900, Jeongjun Park wrote:
-> This patch was written to fix an issue where btf_name_valid_section() wou=
-ld=20
-> not properly check names with certain conditions and would throw an OOB v=
-uln.=20
-> And selftest was added to verify this patch.
+On 9/2/24 03:51, Kent Overstreet wrote:
+> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+>> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+>>> On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+>>>> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+>>>> [...]
+>>>>> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+>>>>> in the case of bugs, because that's going to be an improvement w.r.t.
+>>>>> system robustness, in exactly the same way we don't use BUG_ON() if it's
+>>>>> something that we can't guarantee won't happen in the wild - we WARN()
+>>>>> and try to handle the error as best we can.
+>>>>
+>>>> We have discussed that in a different email thread. And I have to say
+>>>> that I am not convinced that returning NULL makes a broken code much
+>>>> better. Why? Because we can expect that broken NOFAIL users will not have a
+>>>> error checking path. Even valid NOFAIL users will not have one because
+>>>> they _know_ they do not have a different than retry for ever recovery
+>>>> path.
+>>>
+>>> You mean where I asked you for a link to the discussion and rationale
+>>> you claimed had happened? Still waiting on that
+>>
+>> I am not your assistent to be tasked and search through lore archives.
+>> Find one if you need that.
+>>
+>> Anyway, if you read the email and even tried to understand what is
+>> written there rather than immediately started shouting a response then
+>> you would have noticed I have put actual arguments here. You are free to
+>> disagree with them and lay down your arguments. You have decided to
+>>
+>> [...]
+>>
+>>> Yeah, enough of this insanity.
+>>
+>> so I do not think you are able to do that. Again...
+> 
+> Michal, if you think crashing processes is an acceptable alternative to
+> error handling _you have no business writing kernel code_.
+> 
+> You have been stridently arguing for one bad idea after another, and
+> it's an insult to those of us who do give a shit about writing reliable
+> software.
+> 
+> You're arguing against basic precepts of kernel programming.
+> 
+> Get your head examined. And get the fuck out of here with this shit.
+> 
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Kent,
 
-[...]
+Using language like this is clearly unacceptable and violates the
+Code of Conduct. This type of language doesn't promote respectful
+and productive discussions and is detrimental to the health of the
+community.
 
+You should be well aware that this type of language and personal
+attack is a clear violation of the Linux kernel Contributor Covenant
+Code of Conduct as outlined in the following:
+
+https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+
+Refer to the Code of Conduct and refrain from violating the Code of
+Conduct in the future.
+
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
