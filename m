@@ -1,122 +1,301 @@
-Return-Path: <linux-kernel+bounces-315977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1AD96C965
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFB996C966
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8CC1F22CF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AB831F22496
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD06C2F2;
-	Wed,  4 Sep 2024 21:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ewoIzGC3"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2B138DD1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED05A155324;
+	Wed,  4 Sep 2024 21:13:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756BF154445;
+	Wed,  4 Sep 2024 21:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725484391; cv=none; b=CxdRFhsY2cnFsuHBzRINNcxEOQEKU1VjqFaaQ47fpWziSNZU3CInQNIc61nr0ZkhBvbgm9pF/ao/M7B/0CmGdoB5QoyXMggubRfuoVpbIvPfyzszjA+Dv6eKjdYMImqtWRUKT3tesBr4dX3TV9YuWlGl/jydxn7EUckOmXfsEfQ=
+	t=1725484396; cv=none; b=o/VR5scEqTMF+Rfy0cIxsDhHOIHn8LA1G8i3Ra1h8GHTZ6FzMA2XWuUZNkHBXkvkyR7EhmvWYOC0lgS9btP9CukMazAlrbGt8suElf0jB7Ch9Njh5AoXlgucig1ht3gIcMGxVqGA8km+0bgOvSvpVDr0j2BOqvEnZvuX0xgHRZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725484391; c=relaxed/simple;
-	bh=EZnl5uYlNHiDJu+WCgGj2ZNQ90JoBB2sDAjgz23XqWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUsKGe5zDK+/HYO1AiH+y5CAV3X95pDQvpXZJTghp8E2bJZDqzCRLYDwyudx2/oihuwHojbgAW/cdhJVVWQWVOoviaPYTW1hveS+LostJdPww72D30Yp8bPN8ZwwhfRVTmbrKg3DbszwH9NtKfv4RXKVNzCWNSRmFdeSi/pLhiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ewoIzGC3; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725484386;
-	bh=EZnl5uYlNHiDJu+WCgGj2ZNQ90JoBB2sDAjgz23XqWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ewoIzGC30tt1IuZk5t/bbwE5016o3F34leLHZctzARyaswH7XztlHw5+i5tShJrTY
-	 WZ3VX1URl4rUR9Kj0xfOr5vd0DHDIhYkq6Xem6KKtG4HZ0LIZ2qq5x5vZ3z+wmSclE
-	 i712HUO94KkpLZa6WQlL2/Ft2TBQXkxrMyE6yp5I=
-Date: Wed, 4 Sep 2024 23:13:06 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.12-rc1
-Message-ID: <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
-References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
- <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
- <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
+	s=arc-20240116; t=1725484396; c=relaxed/simple;
+	bh=60TeuMnpfB13HnAaI1nDlQN8xQaPq3nXkxbwmi32LwI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=DkWi/z11Vmq2ueQc1glMawJ6LgHHt6mflfTSiTluIN2er0mC/k5X4gL6yah0azQkONNiz/2KNhxheCCjOUgUqYNeXOF+yvF88OJLH1rU+s7h02iEkQkpjA9uf5pk3xjKflmi8ryJZLmp7pxa+OVhhKDN94g321hP7tdVSf3HPqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83B5CFEC;
+	Wed,  4 Sep 2024 14:13:38 -0700 (PDT)
+Received: from [10.57.81.194] (unknown [10.57.81.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6A9E3F73F;
+	Wed,  4 Sep 2024 14:13:09 -0700 (PDT)
+Message-ID: <a25103a1-47e3-472a-bfa8-abdfbc843cd3@arm.com>
+Date: Wed, 4 Sep 2024 22:13:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+From: Leo Yan <leo.yan@arm.com>
+Subject: Re: [PATCH v6 4/8] perf auxtrace: Introduce
+ auxtrace_record__validate_events()
+To: Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-5-leo.yan@arm.com>
+ <3f03541e-6dab-472f-bad9-4cdc0c0dc061@intel.com>
+Content-Language: en-US
+In-Reply-To: <3f03541e-6dab-472f-bad9-4cdc0c0dc061@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-09-04 15:04:35+0000, Shuah Khan wrote:
-> On 8/27/24 06:56, Shuah Khan wrote:
-> > On 8/24/24 12:53, Thomas Weißschuh wrote:
-> > > Hi Shuah,
-> > > 
-> > > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-> > > 
-> > >    Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >    https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
-> > > 
-> > > for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
-> > > 
-> > >    tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
-> > > 
-> > > ----------------------------------------------------------------
-> > > nolibc changes for 6.12
-> > > 
-> > > Highlights
-> > > ----------
-> > > 
-> > > * Clang support (including LTO)
-> > > 
-> > > Other Changes
-> > > -------------
-> > > 
-> > > * stdbool.h support
-> > > * argc/argv/envp arguments for constructors
-> > > * Small #include ordering fix
-> > > 
-> > 
-> > Thank you Thomas.
-> > 
-> > Pulled and pushed to linux-kselftest nolibc branch for Linux 6.12-rc1
-> > 
+On 9/3/2024 4:26 PM, Adrian Hunter wrote:
+> On 23/08/24 14:33, Leo Yan wrote:
+>> A prerequisite for multiple AUX events is that the AUX events cannot
+>> overlap CPU maps. The reason is that every CPU has only one AUX trace
+>> buffer and maps it to an unique buffer index for CPU and system tracing
+>> mode.
+>>
+>> To prevent the case of CPU maps overlapping occurring within multiple
+>> AUX events, the auxtrace_record__validate_events() function is
+>> introduced. It iterates through all AUX events and returns failure if
+>> it detects CPU maps overlapping.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>  tools/perf/builtin-record.c |  4 +++
+>>  tools/perf/util/auxtrace.c  | 64 +++++++++++++++++++++++++++++++++++++
+>>  tools/perf/util/auxtrace.h  |  7 ++++
+>>  3 files changed, 75 insertions(+)
+>>
+>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+>> index adbaf80b398c..2c618efba97d 100644
+>> --- a/tools/perf/builtin-record.c
+>> +++ b/tools/perf/builtin-record.c
+>> @@ -862,6 +862,10 @@ static int record__auxtrace_init(struct record *rec)
+>>
+>>       auxtrace_regroup_aux_output(rec->evlist);
+>>
+>> +     err = auxtrace_validate_events(rec->evlist);
+>> +     if (err)
+>> +             return err;
+>> +
+>>       return auxtrace_parse_filters(rec->evlist);
+>>  }
+>>
+>> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+>> index ca8682966fae..87e4f21b6edf 100644
+>> --- a/tools/perf/util/auxtrace.c
+>> +++ b/tools/perf/util/auxtrace.c
+>> @@ -2828,6 +2828,70 @@ int auxtrace_parse_filters(struct evlist *evlist)
+>>       return 0;
+>>  }
+>>
+>> +int auxtrace_validate_events(struct evlist *evlist)
 > 
-> I am running sanity tests and getting this message:
+> 'auxtrace_validate_aux_events' would better indicate that it is
+> looking only at AUX area events.
+
+Will fix.
+
+>> +{
+>> +     struct evsel *evsel;
+>> +     struct perf_cpu_map *cpu_map = NULL;
+>> +     struct perf_cpu_map *cpu_map_intersect = NULL;
+>> +     struct perf_cpu_map *cpu_map_merged = NULL;
+>> +     int ret = 0;
+>> +
+>> +     if (!evlist)
+>> +             return 0;
 > 
-> $HOME/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
+> Elsewhere we assume it is not NULL, might as well here too.
 
-This indicates you are using 'run-tests.sh'.
-Pass "-p" to let it download the toolchain automatically.
+Sure, will drop this checking.
 
-> I tried setting TOOLCHAIN_BASE to the directory I installed gcc-13.2.0-nolibc
+>> +
+>> +     /*
+>> +      * Currently the tool only supports multiple AUX events without
+>> +      * overlapping CPU maps and every CPU has its unique AUX buffer
+>> +      * for CPU or system mode tracing.
+>> +      *
+>> +      * Returns failure if detects CPU maps overlapping.
+>> +      */
+>> +     evlist__for_each_entry(evlist, evsel) {
+>> +             if (!evsel__is_aux_event(evsel))
+>> +                     continue;
+>> +
+>> +             if (perf_cpu_map__is_empty(evsel->pmu->cpus))
+>> +                     continue;
+> 
+> Unless perf_cpu_map__intersect() is broken, the empty check
+> should not be needed.
 
-Not sure where this variable comes from, but I have never seen it.
+Perf's CPU map implementation is tricky. IIRC, if without this checking, it
+will break the tool.
 
-> Something changed since the last time I did the pull request handling.
+In below code, we invokes perf_cpu_map__merge() for merging maps. It does
+_not_ always allocate a new map for merging. Based on testing, it only
+allocates a new map if two passed map pointers are not NULL. If a passed CPU
+map pointer is NULL, then it will directly return the another map's pointer.
 
-In the test setup not much has changed.
-Maybe you cleaned out your ~/.cache?
-Or it's the first PR with run-tests.sh?
+This leads the difficulty for releasing the merged map. If the returned merged
+map is a new allocated one, it is safe us to release it. Otherwise, we might
+release a CPU map unexpectedly - though it is returned by
+perf_cpu_map__merge(), but the CPU map comes from a PMU and should not be
+released.
 
-> Any help is much appreciated.
+Anyway, I will remove the empty check and see if fix the perf CPU map issue.
 
-Hope this helped.
+> Shouldn't we be looking at evsel->cpus ?
 
+I don't find the field `evsel->cpus`, I assume you are referring to
+evsel__cpus(evsel)?  If so, I will change to use the CPU map from evsel.
 
-Thomas
+> Possibly need to consider the perf_cpu_map__has_any_cpu() case?
+> e.g.
+>                 if (cpu_map && (perf_cpu_map__has_any_cpu(evsel->cpus) ||
+>                                 perf_cpu_map__has_any_cpu(cpu_map)) {
+>                         ret = -EINVAL;
+>                         break;
+>                 }
+
+Will add.
+
+>> +
+>> +             cpu_map_intersect = perf_cpu_map__intersect(cpu_map, evsel->pmu->cpus);
+>> +             if (cpu_map_intersect) {
+>> +                     perf_cpu_map__put(cpu_map_intersect);
+>> +                     pr_err("Doesn't support AUX events with overlapping CPU masks\n");
+>> +                     ret = -EINVAL;
+>> +                     break;
+>> +             }
+>> +             perf_cpu_map__put(cpu_map_intersect);
+> 
+> Maybe add a helper:
+> 
+> static bool perf_cpu_map__do_maps_intersect(struct perf_cpu_map *a, struct perf_cpu_map *b)
+> {
+>         struct perf_cpu_map *intersection = perf_cpu_map__intersect(a, b);
+>         bool ret = !perf_cpu_map__is_empty(intersection);
+> 
+>         perf_cpu_map__put(intersection);
+> 
+>         return ret;
+> }
+
+Will do.
+
+>> +
+>> +             cpu_map_merged = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
+>> +             if (!cpu_map_merged) {
+>> +                     ret = -ENOMEM;
+>> +                     break;
+>> +             }
+>> +
+>> +             /* Update the CPU maps after merging */
+>> +             perf_cpu_map__put(cpu_map);
+>> +             cpu_map = cpu_map_merged;
+> 
+> perf_cpu_map__merge() is a bit tricky - see its comments.  This
+> should probably all just be:
+> 
+>                 cpu_map = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
+
+This might lead to memory leak for the 'old' cpu_map after merging.
+
+We cannot assume the `cpu_map` variable is extended from its old value, a new
+CPU map is allocated during the merging. This is why the patch always release
+the old cpu_map (perf_cpu_map__put(cpu_map)) and then assign the new merged
+CPU map.
+
+>> +     }
+>> +
+>> +     if (!ret)
+>> +             goto out;
+> 
+> Could we put the error path last i.e.
+> 
+>         perf_cpu_map__put(cpu_map);
+> 
+>         if (ret)
+>                 goto out_err;
+> 
+>         return 0;
+> 
+> out_err:
+
+Makes sense. Will fix.
+
+>> +
+>> +     /* If fails, dump CPU maps for debugging */
+>> +     evlist__for_each_entry(evlist, evsel) {
+>> +             char buf[200];
+>> +
+>> +             if (!evsel__is_aux_event(evsel))
+>> +                     continue;
+>> +
+>> +             cpu_map__snprint(evsel->pmu->cpus, buf, sizeof(buf));
+>> +             pr_debug("AUX event [%s]'s cpu map is: %s\n", evsel->pmu->name, buf);
+> 
+> Could probably use cpu_map__fprintf(pmu->cpus, debug_file()) and
+> not need buf.
+
+Will do.
+
+Thanks for suggestions!
+
+Leo
+
+>> +     }
+>> +
+>> +out:
+>> +     perf_cpu_map__put(cpu_map);
+>> +     return ret;
+>> +}
+>> +
+>>  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
+>>                           struct perf_sample *sample, const struct perf_tool *tool)
+>>  {
+>> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+>> index a1895a4f530b..67a74ad0c383 100644
+>> --- a/tools/perf/util/auxtrace.h
+>> +++ b/tools/perf/util/auxtrace.h
+>> @@ -636,6 +636,7 @@ void addr_filters__exit(struct addr_filters *filts);
+>>  int addr_filters__parse_bare_filter(struct addr_filters *filts,
+>>                                   const char *filter);
+>>  int auxtrace_parse_filters(struct evlist *evlist);
+>> +int auxtrace_validate_events(struct evlist *evlist);
+>>
+>>  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
+>>                           struct perf_sample *sample, const struct perf_tool *tool);
+>> @@ -875,6 +876,12 @@ int auxtrace_parse_filters(struct evlist *evlist __maybe_unused)
+>>       return 0;
+>>  }
+>>
+>> +static inline
+>> +int auxtrace_validate_events(struct evlist *evlist __maybe_unused)
+>> +{
+>> +     return 0;
+>> +}
+>> +
+>>  int auxtrace_mmap__mmap(struct auxtrace_mmap *mm,
+>>                       struct auxtrace_mmap_params *mp,
+>>                       void *userpg, int fd);
+> 
 
