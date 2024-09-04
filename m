@@ -1,171 +1,130 @@
-Return-Path: <linux-kernel+bounces-315234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF3696BFAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0346396BFB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5FB22F54
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363FB1C2198B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F0F1DA31D;
-	Wed,  4 Sep 2024 14:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bic19V4E"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C1E1DB947;
+	Wed,  4 Sep 2024 14:08:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876071D9D70
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFFE1DA311
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458833; cv=none; b=pttsITGqgek0sg8KijRXzbPbN+MivPlw+ExUkgLXUp5a1gr7cOE4XBKtaVdK3ylCJzYaRLo3qDqiys5N9t+spXmZrX64V3xi81H07ZdmV9odi1uepjXUzifBD3wP8bppvqEiDJKsqtOzlVyh3Dwa6OgHdHeiP0qDxqXTOm2yjHs=
+	t=1725458898; cv=none; b=JVpqBUQ4HAUO1quiDqfcyb2tvwB0PcBvbexzdJa+f61DAbWaojLOtC6A6EuzbFHT+05cH9O21c5paaFkJR1cd1nEc/ooVD7hnOH2sMZf5qVgjQiwZVNZDH77s5qcBStJDnt6dHTZMvtbNMOpjlgNwBOYPUmp4tmjOzDMsamdjOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458833; c=relaxed/simple;
-	bh=4xPxlwu1bhPSXn0lYvYoNGfGIo6tkfTqVZqIzPt0jh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gSgn1APlduy0lNsqmCyQgQS37MiyV93JkRLK3VHsNFFPNPP+zTEGdT3jqKyMn6DfaFAw6f9wHw6wWTmAyXKVyffiAUCPAdzJnpf5BfG8p+68sdyKpFjowTrlBR9XVN2Kj2lK36uT0JzIoCte/e9ewvBDVL+Qbq+MCdFWNBSoVEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bic19V4E; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c8cef906so2379338f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725458830; x=1726063630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Nc9aX50i+dMN/1Cd07ZSHF0hwNUhEe8ygyGy7L3y3I=;
-        b=bic19V4Em7ozUZ/veVq0Ba5HbTif23raa1Ahx0Vn9Jb7fQL3t7pg3oLyoJz38IH/uv
-         mKKBpjkJyY9AJRN2ffftfE5XLN7BmdfhMdcGowRU3xlsToBmvCdxWg0c+ygK4qtkcqI7
-         4zJz80piCF4HNLPNlpaBd89kEbDUvkwPHxv3pdndU8jG11rjx79D0d0w8fgCfAb8db0f
-         SNjin8z8pSNogy2MjpoaxI35j+ykD3dWmVyIg6lwtC2oIe6JuNP232FPmKH7evx/kxFr
-         /FvLjBodoFa5IgD1fVB1XtSznFwMzA+QOvC8mRbafEhmFwL9SQ1uKXE9ixHqmtTIl7db
-         HrsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725458830; x=1726063630;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Nc9aX50i+dMN/1Cd07ZSHF0hwNUhEe8ygyGy7L3y3I=;
-        b=P4GzMfeghU2pIRshEZibzo3Kfv4t8T5K2Eisv7v8nEsx/9A0451P+uwqOar7pXKvZ3
-         L/+I6d5QoIPwwqF0KmHevVsefEjXXh3zX4XYXipP5/5dNv7727QjeoYQ5hDeWOL/z9BP
-         Af5gdj5Rh2qPAPnGGSS6QukV6qQCnwLqHpLIEZEJ/or+FZMfZtmcGzy0pmkhKf20oq8q
-         0yriJyYsgLQ80l00w6ch2pEvTZZVcDNUJj7+9+OYp+JSU/lW2nbSauAy0LlfASMuUdWc
-         zEBURLMq6vzOZyotrz4WcDrYjFfiIkWss2RG2dEr2KeNNbc2Vcea+8ZDGgbr+GQN68tI
-         Ieew==
-X-Forwarded-Encrypted: i=1; AJvYcCWIBIqBuQmUYfnaApKKGI1vl+CCUahQ0nb09uk1WF0Mt8Dmfk3JjBJVcRwXG1lRomZ9jZpJJazuOoMQfgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuVyE5MqGE9Svpd5pH87hD4NzWxZgpxl/2UZwD6tXX/1jFXSA/
-	7XvM84yJiJmIpbBHmWmvmyukuFlIGuXUVd5sY9DA/WbnhqNKN6XbgoQTl0IZR8w=
-X-Google-Smtp-Source: AGHT+IERvN09HxpnR1/88V4krFNTYDQv3qQjgSZkek/YY4MS8sDjiitPdrGu1ZBD37ARHvs1yryObA==
-X-Received: by 2002:a05:6000:4029:b0:374:ce9a:ff11 with SMTP id ffacd0b85a97d-376dea47205mr4105172f8f.50.1725458829037;
-        Wed, 04 Sep 2024 07:07:09 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:66d0:70f:5bef:d67d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4c83fsm17100901f8f.22.2024.09.04.07.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:07:08 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Martyn Welch <martyn.welch@collabora.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2] gpio: mpc8xxx: switch to using DEFINE_RUNTIME_DEV_PM_OPS()
-Date: Wed,  4 Sep 2024 16:07:06 +0200
-Message-ID: <20240904140706.70359-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725458898; c=relaxed/simple;
+	bh=kd9E40PQBFEWrTjYdxm/EiNgkyAQn3UseBk97RlZljA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qvLiMUG20698bBrkQ7k3pndJazbTN5RY7z+26d/daLOXpLvKevJDtJ2zRuW6dQfYKolZKvk6JrotNobMqN+KKeQrUza5LO50VQWKjHaaZHjp/DbKj6FK2oPe4PVAfVtE2SDEpd8+5y7Oc58+SaLMY02kMmEI9YdnVnGPfATvYhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slqgA-00038p-Fg
+	for linux-kernel@vger.kernel.org; Wed, 04 Sep 2024 16:08:14 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slqg9-005TSO-Sf
+	for linux-kernel@vger.kernel.org; Wed, 04 Sep 2024 16:08:13 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 8F2B8332980
+	for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:08:13 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 744AC33295B;
+	Wed, 04 Sep 2024 14:08:10 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id efa89c82;
+	Wed, 4 Sep 2024 14:08:09 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 0/2] arm64: dts: rockchip: rk3568: add CAN-FD controller
+Date: Wed, 04 Sep 2024 16:07:55 +0200
+Message-Id: <20240904-rk3568-canfd-v1-0-73bda5fb4e03@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALtp2GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSwMT3aJsY1MzC93kxLy0FF1T40RTM6PE1DQDszQloJaCotS0zAqwcdG
+ xtbUA3n1WF14AAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@pengutronix.de, David Jander <david@protonic.nl>, 
+ Alibek Omarov <a1ba.omarov@gmail.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1337; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=kd9E40PQBFEWrTjYdxm/EiNgkyAQn3UseBk97RlZljA=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm2GnFxpWKaInvtdWH/pDwe0TPVCSfLmYkktUa/
+ G64Np4mB16JATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZthpxQAKCRAoOKI+ei28
+ bxc1B/9Xhh40JT5rXUQwzROGWVPCn8HbwD6tU+C0mluTt1awCG6CpnaSCUyTIMwwrQ3ASng2WRk
+ xTYZu20Jf7Y0bj/wEFWK6hzCuptxeva3n2Mp/0FUx8bw94U8yR6gcflLTgRwGaUFnnyYzNiWp1i
+ aNXEYI6ccnoT4E+9oZbUgHMni22hAg30cfo00L3E7009MzRVch/JQhMWM0EET2oJgVjsY9/jd2a
+ qOQt3snn2qujw21cd20jJVC4vB3UpmfS5eYPODLBtBWSdTRhWI4tsFk9I4PG+eV+Dyhhiq7/IYN
+ VjyG2qc5V2SZ+fpCAb/LAldGXXqiU4labSxCRi5m3PwbwiUO
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+This series first adds the CAN-FD controllers nodes to the rk3568
+devicetree, then it enables the CAN-FD controllers on the
+rk3568-mecsbc board.
 
-Use the preferred API for assigning system sleep pm callbacks in drivers.
+The DT bindings for this series are going upstream via
+can-next/net-next into v6.12 with this PR:
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+| https://patch.msgid.link/all/20240904130256.1965582-1-mkl@pengutronix.de
+
+So when applied to v6.12-armsoc/dts64 this series produces checkpatch
+warnings about undocumented DT compatible strings. Maybe we have to
+postpone this series a bit.
+
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
-v1 -> v2:
-- include pm.h too (doesn't hurt)
-- use pm_ptr() instead of pm_sleep_ptr()
-- improve the line breaks
+Changes:
+- rk3568-mecsbc: fixed order of phandles (thanks Heiko)
+- These Patches were previously part of another series and have now
+  been spun off.
+- Link to previous version: https://patch.msgid.link/20240904-rockchip-canfd-v5-0-8ae22bcb27cc@pengutronix.de
 
- drivers/gpio/gpio-mpc8xxx.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+---
+David Jander (2):
+      arm64: dts: rockchip: add CAN-FD controller nodes to rk3568
+      arm64: dts: rockchip: mecsbc: add CAN0 and CAN1 interfaces
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index e084e08f54387..685ec31db409d 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -17,6 +17,8 @@
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/pm_runtime.h>
- #include <linux/property.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -431,30 +433,28 @@ static void mpc8xxx_remove(struct platform_device *pdev)
- 	}
- }
- 
--#ifdef CONFIG_PM
--static int mpc8xxx_suspend(struct platform_device *pdev, pm_message_t state)
-+static int mpc8xxx_suspend(struct device *dev)
- {
--	struct mpc8xxx_gpio_chip *mpc8xxx_gc = platform_get_drvdata(pdev);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = dev_get_drvdata(dev);
- 
--	if (mpc8xxx_gc->irqn && device_may_wakeup(&pdev->dev))
-+	if (mpc8xxx_gc->irqn && device_may_wakeup(dev))
- 		enable_irq_wake(mpc8xxx_gc->irqn);
- 
- 	return 0;
- }
- 
--static int mpc8xxx_resume(struct platform_device *pdev)
-+static int mpc8xxx_resume(struct device *dev)
- {
--	struct mpc8xxx_gpio_chip *mpc8xxx_gc = platform_get_drvdata(pdev);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = dev_get_drvdata(dev);
- 
--	if (mpc8xxx_gc->irqn && device_may_wakeup(&pdev->dev))
-+	if (mpc8xxx_gc->irqn && device_may_wakeup(dev))
- 		disable_irq_wake(mpc8xxx_gc->irqn);
- 
- 	return 0;
- }
--#else
--#define mpc8xxx_suspend NULL
--#define mpc8xxx_resume NULL
--#endif
-+
-+static DEFINE_RUNTIME_DEV_PM_OPS(mpc8xx_pm_ops,
-+				 mpc8xxx_suspend, mpc8xxx_resume, NULL);
- 
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id gpio_acpi_ids[] = {
-@@ -467,12 +467,11 @@ MODULE_DEVICE_TABLE(acpi, gpio_acpi_ids);
- static struct platform_driver mpc8xxx_plat_driver = {
- 	.probe		= mpc8xxx_probe,
- 	.remove_new	= mpc8xxx_remove,
--	.suspend	= mpc8xxx_suspend,
--	.resume		= mpc8xxx_resume,
- 	.driver		= {
- 		.name = "gpio-mpc8xxx",
- 		.of_match_table	= mpc8xxx_gpio_ids,
- 		.acpi_match_table = ACPI_PTR(gpio_acpi_ids),
-+		.pm = pm_ptr(&mpc8xx_pm_ops),
- 	},
- };
- 
+ arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dts | 14 +++++++++
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi       | 39 ++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+---
+base-commit: 78d500329b65217c45422ac0adf5c030783d3e58
+change-id: 20240904-rk3568-canfd-53a562aef06f
+
+Best regards,
 -- 
-2.43.0
+Marc Kleine-Budde <mkl@pengutronix.de>
+
 
 
