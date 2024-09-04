@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-314459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C06196B39D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A350796B3AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F02D1C246B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65301C20CE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F3216F287;
-	Wed,  4 Sep 2024 07:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F011C126C0A;
+	Wed,  4 Sep 2024 07:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m4+La8y+"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lHJfC8NL"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1211B16E886;
-	Wed,  4 Sep 2024 07:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B97148FF9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436484; cv=none; b=UviWgfsXM635aAesPTEtPFGn8bd3BVESqVhs5g3UZOCoznxUctMZxZ5eLcssZDxIhMu35B2BVvIeQc1eUCYOXUgoDhOQO99OBS5cEtb5dPz3OPG3AonRIyRBBi63rWOhpX+6ZeqL1XYgCikydiT4v4fFKvGN8MWhlGs9S0jQ3C0=
+	t=1725436545; cv=none; b=AAdJg7u9dDCxrdgxEdwgD2rUbgiTYrcgzgDPHXqxVWJfFtiqUIyvqYOduzRHBaK+SwcV7e+FE92ryJrTeOlmxAAkuR85XPC44A1+2qweD6NwqEFiI741vP59vssMfrCBiR83V0CkYn0jMvs0U8/5qMa12KlTOGaarteU6EJgeyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436484; c=relaxed/simple;
-	bh=B3WKefeYNK0fHWwsG4Ect5mAFLxMvkP/5ZCHvWxq54Y=;
+	s=arc-20240116; t=1725436545; c=relaxed/simple;
+	bh=aKREuGuvO5ZHE1yHZZsfwqNwpc5ngWPlAvJqmQi/mFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1ti7J7JU69rOQEn3v09AsgevQdr0nw6rkUeH4M58wegEIyvxIOSrKQb4nIche/PJ/lLHJmyob+43SAI/dxn6JieUb/K1GR68YKU7+c19zlG/Eb6NNl0dPP7hYxTHHKQBaKOYsnjg+3GPwDg0pFcrmGM42gOCdJdEZpIOGfkhNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m4+La8y+; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kB6cbogSGnXAcC485KPPWQrTZQLJiozS3TCDlxmwCkw=; b=m4+La8y+HTssXekrVvWG3sq9Q7
-	P3nkJ4YtrNeTDjoTESxt01kvRc1SZXTg6HOS5hPJyyq1kuat0723y9d0UKvMizT6N1cSYOrDqPNpe
-	zTp/LN8fCHbLjov/jwGY93aklB9EItxyFr7hTuKaxh3edfNmF3ufrRgcvMYZiOCFsFYh1/oe+iH9E
-	TCU1n/D7+TcOMTz94AsyCGdW47yFVxbZJTug8NXxpKxEVHJldiEtvK3+TExlDi7w4+Q2uRFkzkO79
-	TYWSDlA/+Xb69Up4nrlAJ0htaABS+jKJ2Ppe31ZCXaWX4hDZ/l+bbMTS29vlh0Al9oysS9SfGu0uw
-	s11EeSKg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1slkqX-00000000AcH-2r2h;
-	Wed, 04 Sep 2024 07:54:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 560A730083E; Wed,  4 Sep 2024 09:54:33 +0200 (CEST)
-Date: Wed, 4 Sep 2024 09:54:33 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 29/31] objtool: Calculate function checksums
-Message-ID: <20240904075433.GD4723@noisy.programming.kicks-ass.net>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <ffe8cd49f291ab710573616ae1d9ff762405287e.1725334260.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DA5La64LGfuS9sddmMUOWskfuiOrxk1hC/tdekNCNb8k6wKj2ULgw5Zn9Ae15YLPTpoCXvlRWZPMj2hr7tpq/93qw73B930DXowRyxW7SBhh3gMdcvxFWGV+v2GT9UbF5bryRMCUPN7cM3GGJjLokYDDSJdMMGFbVC4kx+cn6Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lHJfC8NL; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=aKRE
+	uGuvO5ZHE1yHZZsfwqNwpc5ngWPlAvJqmQi/mFA=; b=lHJfC8NLL5hM1d99YWjb
+	k8hDKbwT7sQf8dInSNM2O1kpA1swfRUSh15nms8BwX4XK7sQOPW/xU646LChoL7s
+	MlL6mj1/2d4+GpkSgFJnakGliodkpCyjufupzv5XqiJo4TZN0ytxUDDuqoOtWhcw
+	Ftacip61yFvUV0V9V8Eyu/o1oSEVbgN2RdE8+kWEb7GCFzV5oAi5AyzCYkfoebJA
+	/7HgHZSVS4QsdZaaMW51/42QLG8Wzrtmb4XGaKBOfOAaMiycCkPj2/JN9DPa+haG
+	ze9bm6J1gbHzupDjyCxJh3vuGJwM0K55flbm52CyxTjg8jfMmmuw6GBpIF2P5GCE
+	Gg==
+Received: (qmail 509259 invoked from network); 4 Sep 2024 09:55:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2024 09:55:35 +0200
+X-UD-Smtp-Session: l3s3148p1@4iHCf0YhlpwgAwDPXwdRANgvu6DX4+2c
+Date: Wed, 4 Sep 2024 09:55:35 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Nikunj Kela <quic_nkela@quicinc.com>, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+	amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
+	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+	wim@linux-watchdog.org, linux@roeck-us.net,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com,
+	quic_psodagud@quicinc.com,
+	Praveen Talari <quic_ptalari@quicinc.com>
+Subject: Re: [PATCH v2 15/21] dt-bindings: i2c: document support for SA8255p
+Message-ID: <ZtgSd_SLndvLLVYF@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Nikunj Kela <quic_nkela@quicinc.com>, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+	amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
+	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+	wim@linux-watchdog.org, linux@roeck-us.net,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com,
+	quic_psodagud@quicinc.com,
+	Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-16-quic_nkela@quicinc.com>
+ <7fc1e4c3-ca09-4a0a-b072-0c4f1d21e44f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FHEJDPFXKqntwo2j"
+Content-Disposition: inline
+In-Reply-To: <7fc1e4c3-ca09-4a0a-b072-0c4f1d21e44f@kernel.org>
+
+
+--FHEJDPFXKqntwo2j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ffe8cd49f291ab710573616ae1d9ff762405287e.1725334260.git.jpoimboe@kernel.org>
 
-On Mon, Sep 02, 2024 at 09:00:12PM -0700, Josh Poimboeuf wrote:
-> Calculate per-function checksums based on the functions' content and
-> relocations.  This will enable objtool to do binary diffs.
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->  scripts/Makefile.lib                    |   1 +
->  tools/objtool/Makefile                  |   7 +-
->  tools/objtool/builtin-check.c           |   1 +
->  tools/objtool/check.c                   | 137 +++++++++++++++++++++++-
->  tools/objtool/elf.c                     |  31 ++++++
->  tools/objtool/include/objtool/builtin.h |   3 +-
->  tools/objtool/include/objtool/check.h   |   5 +-
->  tools/objtool/include/objtool/elf.h     |  11 +-
->  tools/objtool/include/objtool/objtool.h |   2 +
->  9 files changed, 188 insertions(+), 10 deletions(-)
-> 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 8411e3d53938..9f4708702ef7 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -265,6 +265,7 @@ ifdef CONFIG_OBJTOOL
->  
->  objtool := $(objtree)/tools/objtool/objtool
->  
-> +objtool-args-$(CONFIG_LIVEPATCH)			+= --sym-checksum
->  objtool-args-$(CONFIG_HAVE_JUMP_LABEL_HACK)		+= --hacks=jump_label
->  objtool-args-$(CONFIG_HAVE_NOINSTR_HACK)		+= --hacks=noinstr
->  objtool-args-$(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)	+= --hacks=skylake
-> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> index bf7f7f84ac62..6833804ca419 100644
-> --- a/tools/objtool/Makefile
-> +++ b/tools/objtool/Makefile
-> @@ -21,6 +21,9 @@ OBJTOOL_IN := $(OBJTOOL)-in.o
->  LIBELF_FLAGS := $(shell $(HOSTPKG_CONFIG) libelf --cflags 2>/dev/null)
->  LIBELF_LIBS  := $(shell $(HOSTPKG_CONFIG) libelf --libs 2>/dev/null || echo -lelf)
->  
-> +LIBXXHASH_FLAGS := $(shell $(HOSTPKG_CONFIG) libxxhash --cflags 2>/dev/null)
-> +LIBXXHASH_LIBS  := $(shell $(HOSTPKG_CONFIG) libxxhash --libs 2>/dev/null || echo -lxxhash)
 
-This was not installed on my system and I got a nasty build fail. Should
-we make all this depend on CONFIG_LIVEPATCH or force world+dog to
-install this as yet another kernel build dependency?
+> Just to clarify to I2C maintainers:
+> This is incomplete. Missing driver changes.
+
+Thanks, Krzysztof!
+
+
+--FHEJDPFXKqntwo2j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbYEnYACgkQFA3kzBSg
+KbZVYBAAiXNxlHjbEKLTGAkGhtvJsfotjpV3nCHTOIX/wTow3SIk/EuRFp+rNX9D
+bvnB135tiFbnLkTasCvFaDoz1L5wOf3pnguvdpQAIauuzlIznrT6k//2iFhEBwKV
+FgaVWIWUvfGw6LMCubL9h54kRsAVjdMBb4pN4C0U4cQh63+3nbJYGsqgTaxVyFR8
+1vBhtghAuAT9uFYeOPgP4GsV0wm4G4far6kM9R0wdaiu/abnMT7aiIa7T2eGps1+
+N+NerB2mmf6E+XEDnK9eDRCNMUJcam4IfYVjaQzwC//aFSFdmVvvjXKfbnssf+JF
+Vfn0hqkLmMSxL37rtuVH9v1JE+QJ8yPCwNzJpey+GWDInsux2gFaEsj5y7DNaXz9
+rJl6yjzKGUEIaB3unQqDNIXOYa8t54sZOVPMiXyiwRf3n+itlcgM1UyIAhcJL62u
+khTLRb01S4AJCQU0i/tkvtxjThP+U40p/2HWHcvNIdv+FAvNwpP3Hwbr7hthVHXo
+yoOMh7BeGjoG2Kp9/5JanWIWUy4RiAVJiKKZA6wP+QQhnpRldvAbfv56htszdT8F
+epR8Zsy8YVvVQbgzZcCmFkKY5tHrkfOYaURZFpE5stum6qKUSt/asnkEsDxqkCss
+4D9DFaqxYU6zv5TvPEk8Ht4P+xoSS9D6XBET6SgXeNARud2kCSw=
+=F3tI
+-----END PGP SIGNATURE-----
+
+--FHEJDPFXKqntwo2j--
 
