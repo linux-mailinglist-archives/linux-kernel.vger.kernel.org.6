@@ -1,155 +1,202 @@
-Return-Path: <linux-kernel+bounces-315610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159EC96C4EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:07:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BA996C4F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D790BB20D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45834280F5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D291E0B8A;
-	Wed,  4 Sep 2024 17:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4351E0B88;
+	Wed,  4 Sep 2024 17:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NjhDPTtW"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="Mhe/hP29"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A7C537F8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1480B537F8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469653; cv=none; b=HfCWH2PeHpJaw/ypmNObHHBJTh3R0qGKbkkxhR7G8stmCnfOvtFvTNTXvJKwvPqCnNe4UUvhWqRr0Kkk/bZSvDllFPaj1GtZqUHsd/Zn6io5d2Ljd57XYJkgAKVRczNHnvIk7uhCeZCsOLgYJnbNWp3UomWsjtX3M6VCYmwp0R4=
+	t=1725469740; cv=none; b=X3Hww3NdY3j6Uq3MycBkD+G/793B3ZvD17yTWS2A26i8nerQKHK21Tw0dBK22d3sx26qhpP/F+uwf6XF/5nU/5JWgSbtVMbdfqxJnGVLao96fbl9ct0yQ9KUjotCvaYhEE64kG4QkyqC8+Gz06Q6PUxWvaPMPouP2dDxq4Qi8Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469653; c=relaxed/simple;
-	bh=Xlgw2GMMp/03ibSeh6HYCn+WWH+tFS60FEPDSbg/2pU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UVPpOoQO8Mljde4ePmmliJBxUo2nV2qY9UZXpZC5NRJU7jqoZsBWzn1cIp+mb7PyWtaatXQkZS+IqCEnSIs1tZMzfm+Tyg3maFcGjYWJYuH3eqGipie0+ot93epDQjFWQDz6vg1KMJmjBWgABDZ+qjgBGP+oZtCECoZGgqJ9m/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NjhDPTtW; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-429d1a9363aso2065e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:07:32 -0700 (PDT)
+	s=arc-20240116; t=1725469740; c=relaxed/simple;
+	bh=u3ZvcL8BPrB68a4X9IwgbjbbkL0CyD0guw83BJC/mas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lNYYn5/Y6rx83GyRLT0QlILjfyHSi6ulNRd7PLgaatZFpgJuPTR19ufN5Wg+5fKIkzwu/N+7wu1jvYQOI/Crr7cUmjg46EIn3zXERthQKeBvuK+YhfjuYZj69QWGy6MagC0jv5ovXtXEhzKtqcT6W8X6M7QGEft//4rBjj8iXJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=Mhe/hP29; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7cd9cfe4748so4483121a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725469651; x=1726074451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xlgw2GMMp/03ibSeh6HYCn+WWH+tFS60FEPDSbg/2pU=;
-        b=NjhDPTtWW2UcqBHap1r/7zYnUZl6zQCFA1orP55YjGA+qnzKSlU7J3Jl9nAeWWWLuL
-         JazpnOhC4B6DzU25/0m+ph4MVwhxqOsTqQ3X3YDXJED91p/UtSr02yZrwXCRkc41Neht
-         Dp7DIRzQMQAZUxmlEzHFv6LiohMq4u3rlELA/5RlQKavNhj5yadie360HHspDtg7RSN+
-         jnoeVpVkplmyyKu3LazrpyQ0Uz1oNNa0k8d8CjGOu5s08DOHKjBPxOWcsWT4AQA58cwP
-         3pBuN2FHJspjoLTsHmaJgHk9kHIOhOsI8ud09Ld1CQOn7cYpb8w+UNHvgrETk6Fg45Lz
-         /2Zw==
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1725469738; x=1726074538; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Iqt+zesRFHLpIS/hqFROtrd7FMYxHqBTvOuaNxUX9g0=;
+        b=Mhe/hP29imZ79Fo8IH34TSYWvx4qT7LTBX6c5mx81738ZmhitHViJQWimjnJMMVGCg
+         2G7AycooHthozzA4uqZd3e2OJU67mxlO2/EbSPKqMFyxxNcbJIoWsHbJhOmxd5qDNsiq
+         JgypQUTTevzpGdXA2ZeauSdlTVnJH5FcFMu7BFohq0JCGd0A0f9ui5bIAixWiqw9GjxU
+         40As5GkePD63sgDH7AP48nYmHx2FpjURmcTS5e+gRm3fVCIVlnkGTxPEVOKH3kRRmJVy
+         cb9zqalguDakMGOLMVLTNBhZMx9U/dG3zs9AVoVV2lhaKWi7xy/dSTzFjdybP6cC7XIW
+         ejGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469651; x=1726074451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xlgw2GMMp/03ibSeh6HYCn+WWH+tFS60FEPDSbg/2pU=;
-        b=cvsYdfGQ1ste8KKzUh+W9wUyIF48BGJcaN53KALZswi27TWOGbnAjod7JbQBce1jUY
-         D8Bx4UM5Pu6PIeOlIWdbZ8ag+tz5dxVYtjdzM4eEWWE1VOzS5XIqG+490YGa1/BcfgaH
-         znCBjauwyWqLQdgVym5Z+/y3+8w0RMEOycIcX3sexie/NOBL4+jj+QBI8V6fGcBa2h1/
-         0K+gvlxr2l/QPoca4TxN9uEBYzrdZ5WbWMcsmHliCH+AVUO1R7WAjl7Qxyl/gg0Atg+1
-         Hd6b9TAsZZ33pyCp5FrfRHFL7j0m5lk2DTUHF2DeXMMO/ieCs6fSE7Wk5kAF6+a7iWvi
-         IIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjqAFSc9MzcFNn5HX58rauTu5M4FqqzrBX58VodcnoC6ymMI4JGjoPyS/PqJ68S14OWKDKyWcTIinEl6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAxK4szzA3NW2b8zOa02YAYs2Tq3fex2Q8J2kYe3jaJym3/16M
-	TNjuEtgF51JU5rSWAL7idnuEP+o+9805+Z8c1ronHrX+d74vScjxNGmBfTon9FFOibHinKfxTXA
-	Q+M4bhCQEi5SskzxbcWL/rtL6ZHugG7vM3UuN
-X-Google-Smtp-Source: AGHT+IGDPmKBCRMKvig2+wSno2hrrMerXw5gQJsXdFfViNnACMu5y6zs3h8saPjc7a+y+FozaMvEKkcpnkLIwPGgoyM=
-X-Received: by 2002:a05:600c:4e4e:b0:426:6edd:61a7 with SMTP id
- 5b1f17b1804b1-42c95599759mr1450555e9.7.1725469650395; Wed, 04 Sep 2024
- 10:07:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725469738; x=1726074538;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iqt+zesRFHLpIS/hqFROtrd7FMYxHqBTvOuaNxUX9g0=;
+        b=Q2XgUKwu4d1oFYsRyYkjAmdpz/NocbAHvpwhZvHKhtcwJ0T2Wxj7G/v6qR9nEB4rND
+         /tFE6YwTaVPunb1eS5mYilyOoxIJAThLKqznJ+mQ8cLfz+60lgxGOu/n9CAQqib7mZkC
+         9eo14j/IvRkLh2QkAdMTx6Fh4FcTo4sB4CfOpjqk8RnSKwpI7aCHWEhhUculVx7Xe31X
+         OaoSUVDslNUqkQX59F2pwZOW4Bdg2F7KwqS8fH4dPohs9+uUAxf2IEDinEHVHibzL6L9
+         9hayIhZV2CGaiutfLLFyk35g8tUBHvFRAMtgthEW0KuLxD/9Br7ZdVjDXmZ87IQg8VOG
+         9DxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIB9MJ4jyoAhcZ183goNh8lRlAqaE1tJ99HCXC3k2O8bl0m+lBpQ6qYx07+x2SOJXDAYhaDtcpJQqXaIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmaJgxnbIMpKzFO8lO5//8lQijlEovjeboIzPi1jWAohEF2g2V
+	+V1GGkqcPM7wtAheofvritqWgXonGDHr94WRMvt8HBlNRVCj+Yvl34zkLPiHjw==
+X-Google-Smtp-Source: AGHT+IF3Kb+pDTWTbCuoLq+gGygGJqsbJK48Dtfc4WBRAMElYtzZVRlYr9KBQ5TwDHvV7PFjVCf8Ww==
+X-Received: by 2002:a17:90a:4d85:b0:2d8:f7c6:e1dd with SMTP id 98e67ed59e1d1-2da55a78a6cmr7812790a91.37.1725469738084;
+        Wed, 04 Sep 2024 10:08:58 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d84462afb6sm16246387a91.33.2024.09.04.10.08.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 10:08:57 -0700 (PDT)
+Message-ID: <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
+Date: Wed, 4 Sep 2024 22:38:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
- <20240828142422.GU3773488@nvidia.com> <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
- <20240828234958.GE3773488@nvidia.com> <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
- <20240904155203.GJ3915968@nvidia.com> <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
- <20240904164324.GO3915968@nvidia.com> <CACw3F53ojc+m9Xq_2go3Fdn8aVumxwmBvPgiUJgmrQP3ExdT-g@mail.gmail.com>
- <20240904170041.GR3915968@nvidia.com>
-In-Reply-To: <20240904170041.GR3915968@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 4 Sep 2024 10:07:19 -0700
-Message-ID: <CACw3F51F9J0UYva56TYo4pVbM0XrtHnx9AkBbfUVL1rnHzhaHA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	ankita@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Vaishnav M A <vaishnav@beagleboard.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
+ robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
+ <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
+ <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+ <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+ <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 10:00=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Wed, Sep 04, 2024 at 09:58:54AM -0700, Jiaqi Yan wrote:
-> > On Wed, Sep 4, 2024 at 9:43=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com>=
- wrote:
-> > >
-> > > On Wed, Sep 04, 2024 at 09:38:22AM -0700, Jiaqi Yan wrote:
-> > > > On Wed, Sep 4, 2024 at 8:52=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.=
-com> wrote:
-> > > > >
-> > > > > On Thu, Aug 29, 2024 at 12:21:39PM -0700, Jiaqi Yan wrote:
-> > > > >
-> > > > > > I think we still want to attempt to SIGBUS userspace, regardles=
-s of
-> > > > > > doing unmap_mapping_range or not.
-> > > > >
-> > > > > IMHO we need to eliminate this path if we actually want to keep t=
-hings
-> > > > > mapped.
-> > > > >
-> > > > > There is no way to generate the SIGBUS without poking a 4k hole i=
-n the
-> > > > > 1G page, as only that 4k should get SIGBUS, every other byte of t=
-he 1G
-> > > > > is clean.
-> > > >
-> > > > Ah, sorry I wasn't clear. The SIGBUS will be only for poisoned PFN;
-> > > > clean PFNs under the same PUD/PMD for sure don't need any SIGBUS,
-> > > > which is the whole purpose of not unmapping.
-> > >
-> > > You can't get a SIGBUS if the things are still mapped. This is why th=
-e
-> > > SIGBUS flow requires poking a non-present hole around the poisoned
-> > > memory.
-> > >
-> > > So keeping things mapped at 1G also means giving up on SIGBUS.
-> >
-> > SIGBUS during page fault is definitely impossible when memory is still
-> > mapped, but the platform still MCE or SEA in case of poison
-> > consumption, right? So I wanted to propose new code to SIGBUS (either
-> > BUS_MCEERR_AR or BUS_OBJERR) as long as the platform notifies the
-> > kernel in the synchronous poison consumption context, e.g. MCE on X86
-> > and SEA on ARM64.
->
-> So you want a SIGBUS that is delivered asynchronously instead of via
-> the page fault handler? Something like that is sort of what I ment by
-> "eliminate this path", though I didn't think keeping an async SIGBUS
-> was an option?
+>> gpio-map is what you are looking for. It's documented in the DT spec.
+>> It was created exactly for this purpose of remapping GPIO lines on a
+>> connector.
+>>
+>> Rob
 
-Not really, I don't think an SIGBUS *async* to the poison consuming
-thread is critical, at least not as useful as SIGBUS *sync* to the
-poison consuming thread.
 
->
-> Jason
+Hi. I found docs on nexus nodes [1] and tried using it for mikroBUS, but 
+it does not seem to be working. Here is my connector:
+
+```
+
+     mikrobus_gpio0: mikrobus-gpio0 {
+         #gpio-cells = <2>;
+         gpio-map =
+         <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
+         <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
+         <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
+         <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
+         <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
+         <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
+         gpio-map-mask = <0xf 0x0>;
+         gpio-map-pass-thru = <0x0 0x1>;
+     };
+
+...
+
+&main_uart5 {
+     status = "okay";
+     pinctrl-names = "default";
+     pinctrl-0 = <&mikrobus_uart_pins_default>;
+
+     gnss {
+         compatible = "u-blox,neo-8";
+         reset-gpios = <&mikrobus_gpio0 10 GPIO_ACTIVE_LOW>;
+     };
+};
+
+```
+
+
+After some fdtdump, I can see that at least the dtc compiler does not 
+seem to do the forwarding at dt compile time. Here is the dump:
+
+```
+
+mikrobus-gpio0 {
+         #gpio-cells = <0x00000002>;
+         gpio-map = <0x00000000 0x00000000 0x00000025 0x0000000b 
+0x00000000 0x00000001 0x00000000 0x00000025 0x00000009 0x00000000 
+0x00000002 0x00000000 0x00000025 0x00000018 0x00000000 0x00000003 
+0x00000000 0x00000025 0x00000019 0x00000000 0x00000004 0x00000000 
+0x00000025 0x00000016 0x00000000 0x00000005 0x00000000 0x00000025 
+0x00000017 0x00000000 0x00000006 0x00000000 0x00000025 0x00000007 
+0x00000000 0x00000007 0x00000000 0x00000025 0x00000008 0x00000000 
+0x00000008 0x00000000 0x00000025 0x0000000e 0x00000000 0x00000009 
+0x00000000 0x00000025 0x0000000d 0x00000000 0x0000000a 0x00000000 
+0x00000025 0x0000000c 0x00000000 0x0000000b 0x00000000 0x00000025 
+0x0000000a 0x00000000>;
+         gpio-map-mask = <0x0000000f 0x00000000>;
+         gpio-map-pass-thru = <0x00000000 0x00000001>;
+         phandle = <0x0000000e>;
+     };
+
+...
+
+serial@2850000 {
+             compatible = "ti,am64-uart", "ti,am654-uart";
+             reg = <0x00000000 0x02850000 0x00000000 0x00000100>;
+             interrupts = <0x00000000 0x000000b7 0x00000004>;
+             power-domains = <0x00000003 0x0000009c 0x00000001>;
+             clocks = <0x00000002 0x0000009c 0x00000000>;
+             clock-names = "fclk";
+             status = "okay";
+             pinctrl-names = "default";
+             pinctrl-0 = <0x0000000d>;
+             phandle = <0x00000081>;
+             gnss {
+                 compatible = "u-blox,neo-8";
+                 reset-gpios = <0x0000000e 0x0000000a 0x00000001>;
+             };
+  };
+
+```
+
+
+So I am a bit unsure. Is the dtc parser in the kernel supposed to do the 
+mapping, or is it supposed to be done by `dtc` at compile time? Maybe we 
+do not have support for it in upstream kernel yet? Or maybe I am missing 
+something?
+
+
+[1]: 
+https://devicetree-specification.readthedocs.io/en/v0.3/devicetree-basics.html#nexus-nodes-and-specifier-mapping
+
+
+Ayush Singh
+
 
