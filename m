@@ -1,193 +1,141 @@
-Return-Path: <linux-kernel+bounces-315908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59D796C8AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B2696C8B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F14CB25915
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60DA2896A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF11148FEC;
-	Wed,  4 Sep 2024 20:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6F2148848;
+	Wed,  4 Sep 2024 20:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SwxrzMYX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PErKCY51"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776F11EBFEC;
-	Wed,  4 Sep 2024 20:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80241146A79;
+	Wed,  4 Sep 2024 20:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725482362; cv=none; b=f1enfi9pemGtvORcdAChkuHPL9wJsTqXUW/oOkZh67vvGDFuARMGpdY8/7wK42HyTCFxQFqKdJGDIGws7/D9SmmsOn1Ow8MvPA90bReLTQkYHnMm9FHTnPjyM5viGPCeCwKc2UnBN/1u/Oh+0ws5+JBZmyLuPx52WKLS5tzEOso=
+	t=1725482404; cv=none; b=Baf5cinlgkQZIfPZDivcKFr/bVSbceTf+4L+WGqZtU/QUe46VE0YrDqNHx+Sx7NXcx8Dc76VPv2gYOFQOhqI/hlocpM9X3plV7JdsWrEpfMig8CIjdOY+lhohfnLuiX1pLf6ObJFU8xSHUPrA5+KKYLRg/PdYJ981Q76dIiSfSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725482362; c=relaxed/simple;
-	bh=uPiQ61OOR0hZ57gQNFysNnyl3ZeWchlxMMXCZIsLWcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1pI1QspOcfMmlEYSKxhrtVIW0onVZFw7GnC5axduVrHu80L7iIMQHVOh9AIyTQAVWh/0fkWn9MCI6JKCVpmG6sbgR3NfoOvD3eJjriok87eRUcErYnEK1Tj8AHFDFDX9+s6KtmER8OY0z6IHejZuxhxcACIZKLxnvo5c3ZaOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SwxrzMYX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4DEFC4CEC2;
-	Wed,  4 Sep 2024 20:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725482362;
-	bh=uPiQ61OOR0hZ57gQNFysNnyl3ZeWchlxMMXCZIsLWcU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SwxrzMYXf3fGfmWvsNafCG0TUa1xDjoxu7pZeKFl1u1kq+SkrvdPl4UjXOx15mk/Q
-	 t6a7odt4dUW8gassDj6WhhOzS3rAVZejOl0P2cN/DXFy1PkITzyRne/NMs5igfKhL7
-	 jaA3O8XSd2Lpeu2cBYUwDlo0B/D1owWFF4mHjrRKJ7Qqq85mBScRV0IL/SjAOjp6Xy
-	 xGy1a85OfzqnUHAFmPcgdbf1mgG/y0VTzcJbF9dc2gnKQGarqKLRtsSLnlMwIvI4Zm
-	 DTL4MyqCYeeIIr6/zJPIaoCgpdCKRcwbzIbZrY1j24gkUjOqaggDRo4QjGVJX2+OaC
-	 bQbAS2mnUL+2w==
-Message-ID: <e4a13002-f471-4951-9180-14f0f8b30bd2@kernel.org>
-Date: Wed, 4 Sep 2024 22:39:10 +0200
+	s=arc-20240116; t=1725482404; c=relaxed/simple;
+	bh=zqe6+b/FTfJHgkE9MkhgaaAsT5L43NyeI82wDMeUKAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qjK6xX6ASAOq4zAeoNL2+YuyyZ77N3OAxMZUolunUTwvcUdJZF8jWkwuWjMdGZqauytyfzouPnlnkYdSVTjR2WELUjNJ1U+g86sD4wm+3pa6vYcllmroC7aBcycpYsILlWqfk23n3gj/0UQlpQ36l9qRI/wdLeVGNamvhJ1f468=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PErKCY51; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so50914205e9.3;
+        Wed, 04 Sep 2024 13:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725482401; x=1726087201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rMC9PyIWnX47bjnEnEHO5NXAPXt5crdtOv8guFK+s5k=;
+        b=PErKCY514ngUKSSN0GrT3UTuExk8foQw/F6qqyRs5YyDvtf+nx2HYO1HbRZo1GD0xd
+         67p/5LdLsr3AbQb9XZ+rqGTzGooENi2BfSCDHHJLieRnD0H52aD3tw4gmqy5VivRUiaQ
+         +N7i3i81coA61STH7KnOAWGuvwxyE2+Hnz739HO1EyrcsbJ9QyCDYVEqezdM8PQLbyO9
+         9YXEAetoBy6JJvaNtvIE+nHetBxA7h5NngBcdUQkREQWK7AWCKR+j7ovi/kWy+auGss+
+         I5/AJ/wKLgIJ6tiu1o4qX4R0lOYjTAfpSezZtpfaI2znvsUVSO4VFUSmJe9xRbDRwEDQ
+         3bFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725482401; x=1726087201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rMC9PyIWnX47bjnEnEHO5NXAPXt5crdtOv8guFK+s5k=;
+        b=eOs+FDvqiKkNiWFiXeQJCHDaSkEoleSVuSsoWJ7RPi3Nqj1zLk5GPgEZf64BFcZEiX
+         1+qIfUPDKLFjMDKQk2Az47B5bQLgZiIIRTP/pqMo6fVdMec5SqwAZT0ugpTNwRxe50Ig
+         0jlXna20cJTe9iCcUR8+mXynXa1dJZsfpojYPO7JHV9hukQZPPlpPHrw+Knadfn7XA7o
+         Sl8bfsXpNTyr5Gz1hSU06FhUmi/xUiJee+0Y6DV92DWavMQKqDdTO/GAU/1yFWGpBsoI
+         +HHaM4rCfeMnVJtoU27+cxHOoTorVtb1Yc7SPZaMoXHABaYm/NXO7pQ8qC9gBm4iYCTr
+         4s5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVg4k8nuV+jVAG85ANnBf7iNszwAlaaKqeODlwzh8KRRt+vE+aL9KwfWLPsi/XrKVO89aCBARNSFf/d6bY=@vger.kernel.org, AJvYcCWLHctdPDJh0mjjHJmFwbw44peqTqcN1+hnA+sVf1IDse8+7+fjsfkk3V0Q4+V9VSSgojTqi/Jd31dbi24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHq7RErUVa7SiVArX5GNriHofsKfFUJI+5+C0HgoNwyoT4vJ0E
+	locKmcAX8XJ3AVP0RVIZuWttTXr32CpNJlX29MaQ3aYQeSzFB+xg
+X-Google-Smtp-Source: AGHT+IEGXVfuDlPCdE0TrKvq2ls5isaLcHyGYBvzekLbPYPrZI+rDOevIiOOPR/3gKoYxFzozgP+TA==
+X-Received: by 2002:a7b:cb11:0:b0:429:c674:d9de with SMTP id 5b1f17b1804b1-42c9a36029fmr2136315e9.2.1725482400217;
+        Wed, 04 Sep 2024 13:40:00 -0700 (PDT)
+Received: from localhost ([185.220.101.69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c7a41bdc8sm158287955e9.3.2024.09.04.13.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 13:39:59 -0700 (PDT)
+From: Maxim Mikityanskiy <maxtram95@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Peter Wu <peter@lekensteyn.nl>,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Maxim Mikityanskiy <maxtram95@gmail.com>
+Subject: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
+Date: Wed,  4 Sep 2024 23:39:55 +0300
+Message-ID: <20240904203955.245085-1-maxtram95@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH V2] mptcp: pm: Fix uaf in __timer_delete_sync
-Content-Language: en-GB
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: davem@davemloft.net, edumazet@google.com, geliang@kernel.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org,
- mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com,
- syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
- <tencent_472581BA11BB2533E79EA21B964B2A1BC408@qq.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <tencent_472581BA11BB2533E79EA21B964B2A1BC408@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
+the discrete GPU. snd_hda_intel probes the device and schedules
+azx_probe_continue(), which fails at azx_first_init(). The driver ends
+up probed, but calls azx_free() and stops the chip. However, from the
+runtime PM point of view, the device remains active, because the PCI
+subsystem makes it active on probe, and it's still bound. It prevents
+vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
+power management for the video and audio devices).
 
-Thank you for this patch!
+Fix it by forcing the device to the suspended state in azx_free().
 
-On 04/09/2024 03:01, Edward Adam Davis wrote:
-> There are two paths to access mptcp_pm_del_add_timer, result in a race
-> condition:
-> 
->      CPU1				CPU2
->      ====                               ====
->      net_rx_action
->      napi_poll                          netlink_sendmsg
->      __napi_poll                        netlink_unicast
->      process_backlog                    netlink_unicast_kernel
->      __netif_receive_skb                genl_rcv
->      __netif_receive_skb_one_core       netlink_rcv_skb
->      NF_HOOK                            genl_rcv_msg
->      ip_local_deliver_finish            genl_family_rcv_msg
->      ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
->      tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
->      tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
->      tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
->      tcp_data_queue                     remove_anno_list_by_saddr
->      mptcp_incoming_options             mptcp_pm_del_add_timer
->      mptcp_pm_del_add_timer             kfree(entry)
-> 
-> In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
-> zone protected by "pm.lock", the entry will be released, which leads to the
-> occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
-> 
-> Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
+Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
+---
+ sound/pci/hda/hda_intel.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Please add a Fixes tag and Cc stable.
-
-And add 'net' after PATCH in the subject:
-
-  [PATCH net v3]
-
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  net/mptcp/pm_netlink.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-> index 3e4ad801786f..d4cbf7dcf983 100644
-> --- a/net/mptcp/pm_netlink.c
-> +++ b/net/mptcp/pm_netlink.c
-> @@ -1430,8 +1430,10 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
->  
->  	entry = mptcp_pm_del_add_timer(msk, addr, false);
->  	if (entry) {
-> +		spin_lock_bh(&msk->pm.lock);
->  		list_del(&entry->list);
->  		kfree(entry);
-> +		spin_unlock_bh(&msk->pm.lock);
-
-Mmh, I can understand it would help to reduce issues here, but I don't
-think that's enough: in mptcp_pm_del_add_timer(), CPU1 can get the entry
-from the list under the lock, then immediately after, the free can
-happen on CPU2, while CPU1 is trying to access entry->add_timer outside
-the lock, no? Something like this:
-
-  CPU1              CPU2
-  ====              ====
-  entry = (...)
-                    kfree(entry)
-  entry->add_timer
-
-
-What about keeping a reference to add_timer inside the lock, and calling
-sk_stop_timer_sync() with this reference, instead of "entry->add_timer"?
-I'm thinking about something like that to be applied *on top* of your
-patch, WDYT?
-
-  https://lore.kernel.org/20240904170517.237863-2-matttbe@kernel.org
-
-Cheers,
-Matt
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index b79020adce63..65fcb92e11c7 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
+ 	if (use_vga_switcheroo(hda)) {
+ 		if (chip->disabled && hda->probe_continued)
+ 			snd_hda_unlock_devices(&chip->bus);
+-		if (hda->vga_switcheroo_registered)
++		if (hda->vga_switcheroo_registered) {
+ 			vga_switcheroo_unregister_client(chip->pci);
++
++			/* Some GPUs don't have sound, and azx_first_init fails,
++			 * leaving the device probed but non-functional. As long
++			 * as it's probed, the PCI subsystem keeps its runtime
++			 * PM status as active. Force it to suspended (as we
++			 * actually stop the chip) to allow GPU to suspend via
++			 * vga_switcheroo.
++			 */
++			pm_runtime_disable(&pci->dev);
++			pm_runtime_set_suspended(&pci->dev);
++			pm_runtime_enable(&pci->dev);
++		}
+ 	}
+ 
+ 	if (bus->chip_init) {
 -- 
-Sponsored by the NGI0 Core fund.
+2.46.0
 
 
