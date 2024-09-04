@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-315324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3828296C117
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:46:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C533A96C11A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B88D1C24D21
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82BFB28767D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1AB1DB551;
-	Wed,  4 Sep 2024 14:46:09 +0000 (UTC)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9BB1DB55A;
+	Wed,  4 Sep 2024 14:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc8xIe5U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6625A22071;
-	Wed,  4 Sep 2024 14:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B2826AED;
+	Wed,  4 Sep 2024 14:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461168; cv=none; b=MRhTtje2uIgc9EkfmxgzfuVqIbMcgTucPxz2DzQDs/TN67D11mW8uz88s0osbuc4502tHAmU9vof+/Wz6sIrefRgS0hVyjouYW8USfO5wgzb+9N1gassm4rBCXxGGQ+SatYlUm5nVpNhimVrbDSAS3zq98c3uvvk7go4c/MY36w=
+	t=1725461195; cv=none; b=glbGoAc2EekHWe4hPcZnBbe5paHDHXtlouyP9z9IOCKkk4RMK/RwbGcnIWfVh8RYc0qpLSrI6jZORcb52XvgtQnOkWNnllNGZRr/vZZnhefyRiEUL3x/ZNMlzRmZniH7YqL6vddXjSmANwBWVHAX4faLrRVpN/Ol1okcU9A/c6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461168; c=relaxed/simple;
-	bh=tZ4zoQ7+fGa7qXkuJICtHotCFwlzcQ2J7vhk5NZh5kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oudnW9p9dXpYR80FB63wZIn272unmvm+Jrglw1+b62JEPNlB8ZN8if+m6iiMnygJIYLzK8VLvSjLMKcpvy4tKeEwFRzCE3JOglCEe49Qwxf6vP3pLpeEgEgYCIU73YHlUQWEn5N4CkKtQzcqpiuZXC8Ji+SOghCsAuU5bvK8N48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d88edf1340so2876117a91.1;
-        Wed, 04 Sep 2024 07:46:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725461167; x=1726065967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D/gRRuRqrbg0AurY1sJ7Xea56DowsKJuBt1BAJTfT7E=;
-        b=deqGhfwTJd35sR6Kip+WJoS18k3Jhkz7+ND3nVrtw5w3GY/nNDGg40xfAgi5zMhotQ
-         HIyxWz218VYgLom6a5pdp4u3GKPx0lkBiZCqP3ZXv8lHJ6tHqkvS4wvYdIGYREjNF9Jk
-         ehYzq76tvoHsnFPdCfKvyS22XtmOTy1ZOvZmlgeyd1olc5itkVYjSvYRYtH54On2X4zt
-         4lq7siF3q5+9KCkITGK5xk4gDmH8Tv1c0Iqq/8IfXkPKUiDComikzc0zhihuvSVfK4sZ
-         J+um3S2W3ZAu2Z7N9bxcObVslcJ9mMhofWDs94xGf7G1F3Ri33kwH2VT1s1Z1pem+fKM
-         zCcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4MdQ0zOfxfzDqebjxhmimi1VMiiF62XjrOaXcJLbJRlQoV+1nDHb4XUxiSNN5hZIX1ydXmf4f/1YFyafG@vger.kernel.org, AJvYcCWMiEK1qoiEgWgdkktbFpi7LeW8DY7+7o6zpgulwtii4KxP/VvXgWD+v2cUSKchSp0AoSfxck9e+Ueo@vger.kernel.org, AJvYcCXwHe62eBZqjyjD0QgWjeVKYhDN8Q54MoxRxm9DzbTCKv6cjVbJozSAYtsfCnnPj7EssPwKYMpsIMSI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX726Wa6iy/qLH0T4rNDP22KTGwt8LmQr6FlN+uvfIaj14OMlU
-	1v9d+gAwvcIjaLgyNxkSDp73HCNXqXe1XVyhzkwqu9510W+HlgZy
-X-Google-Smtp-Source: AGHT+IEFMGUmWkfIoTMckkMOZIt5S/YmaX0JZJtpZBVyk/WvpQWvlu8kAsbTAAvWVLa6jsYzlr7VSA==
-X-Received: by 2002:a17:90b:4a48:b0:2c9:9643:98f4 with SMTP id 98e67ed59e1d1-2da55924209mr7514672a91.5.1725461166596;
-        Wed, 04 Sep 2024 07:46:06 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d84462afb6sm16048198a91.33.2024.09.04.07.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:46:06 -0700 (PDT)
-Date: Wed, 4 Sep 2024 23:46:04 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Olof Johansson <olof@lixom.net>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: layerscape-pci: Replace
- fsl,lx2160a-pcie with fsl,lx2160ar2-pcie
-Message-ID: <20240904144604.GB3032973@rocinante>
-References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
- <20240826-2160r2-v1-1-106340d538d6@nxp.com>
+	s=arc-20240116; t=1725461195; c=relaxed/simple;
+	bh=jjhUvktSSK6oRKWqJSi1DkoYWq4WT8VdynjaNASoxqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jBSwnyvL6BImSkKIoSIIQvvn+ptvfIfgtvhADRqSbuqynZNPZaIFdTretxb8LVBbNFdnlvobAYloDo7JWsGoqcFgPxYHmvpODCSBCYwivA0lW14ld5MlRhC9w+9x8S4pvFFxuRGYBgr8Q17Q+9AGcJ2AIIKK8c2VNh0v3vdV5nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bc8xIe5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F450C4CEC9;
+	Wed,  4 Sep 2024 14:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725461195;
+	bh=jjhUvktSSK6oRKWqJSi1DkoYWq4WT8VdynjaNASoxqM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Bc8xIe5UYNFy+x/bRukuZuHBhWAekXtaiyDeczSqzE/3xx97XRtvnyN2Sl+jY8ipc
+	 5CV75N5bkddMXhh1dNsUzENDKnRCI1npE7zLGVX7z9vTaLnZmWzefzhE2fKOTO4a8V
+	 B8QT3KQ0ac0nZNiqjtsEd8p8vDD68FbYJF0aUvgsSDW5WSCA84OlhdiFk/vyvO4Ezr
+	 VsRktRNVlWkzug+01CUY/jHbyWX5r0+BwRlJ3Jw7LyiFFHsaqmaukQriiGLQrUQlhp
+	 l9AgsWfH8rx2gbxdZvr4ZaMPR2j3MSeOEFPrBVSNiSzYhDjYPl+WcMQodFL4szx8i7
+	 7J64QYuMpHaXg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334c018913so6362777e87.0;
+        Wed, 04 Sep 2024 07:46:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKo1Qu2akNcYyc8ipGFbAuU9uCIBFckWtoWRVZR1BD675a5ReIvvhl3fQzx/1gRomtfKzhx6uXQ4QM0RbD@vger.kernel.org, AJvYcCWexsRQldDf2FQ1bCdQUGKDo6Xfgnb49zWNR3aoTxP2/yGMVtIkpJwayWQe8ByYTTvF/tgQK2J6sFyv@vger.kernel.org, AJvYcCWmQMvA5I22ukNLXiONS5z+ENb9VKGE6PyNo2h9SzxJ41e5zQZ5pULwRApPI59KMK1k98KTXIB5wG+n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+neQuRTIYT82IscQwEVE4AywyDDf2DlFSgGT+fUyeOLsbQSz/
+	ouibX+iL2HFaO+GEVOIc/3x3MRy0HJi8CvNj1H93xhiqI9OqYh0kokKD/hM+Kp/U80COYpg++Bj
+	7JWht+a+aJLdwROEF9cuhcHIqsg==
+X-Google-Smtp-Source: AGHT+IGtxU4o6s/f1DAK6nTPPwgCHa6Sg526x73C4tz20dZ4bjnMAiznKvUV5aaf+LWCkh4CxWXHiTVso1GTb4+vUh4=
+X-Received: by 2002:a05:6512:10d6:b0:52b:c27c:ea1f with SMTP id
+ 2adb3069b0e04-53546bc0a1dmr11831535e87.55.1725461193461; Wed, 04 Sep 2024
+ 07:46:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-2160r2-v1-1-106340d538d6@nxp.com>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org> <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
+ <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org> <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+In-Reply-To: <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 4 Sep 2024 09:46:20 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
+Message-ID: <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Vaishnav M A <vaishnav@beagleboard.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Aug 31, 2024 at 1:11=E2=80=AFPM Ayush Singh <ayush@beagleboard.org>=
+ wrote:
+>
+> >> But here you can have subnodes, no? These could then be just
+> >> enumerated as usual.
+> >>
+> >> &mikrobus_board {
+> >>      mikrobus_gpio: gpio {
+> >>              gpio-controller;
+> >>              #gpio-cells =3D <1>;
+> >>      };
+> >>
+> >>      spi {
+> >>              cs-gpios =3D <&mikrobus_gpio 1>;
+> >>
+> >>              spi@0 {
+> >>                      compatible =3D "mydevice";
+> >>                      reg =3D <0>;
+> >>              };
+> >>      };
+> >> };
+> >>
+>
+> Hi, I am now working on an approach for mikroBUS based on the apprach
+> described here: [1]
+>
+>
+> I am thinking of the gpio-controller approach you seem to have used
+> here. So I wanted to inquire if there already exists a gpio-controller
+> driver that can create a proxy controller that forwards stuff to the
+> underlying actual controller.
 
-> fsl,lx2160a-pcie compatible is used for mobivel according to
-> Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
-> 
-> fsl,layerscape-pcie.yaml is used for designware PCIe controller binding. So
-> change it to fsl,lx2160ar2-pcie and allow fall back to fsl,ls2088a-pcie.
-> 
-> Sort compatible string.
+gpio-map is what you are looking for. It's documented in the DT spec.
+It was created exactly for this purpose of remapping GPIO lines on a
+connector.
 
-Applied to dt-bindings, thank you!
-
-[1/1] dt-bindings: PCI: layerscape-pci: Replace fsl,lx2160a-pcie with fsl,lx2160ar2-pcie
-      https://git.kernel.org/pci/pci/c/1a1bf58897d2
-
-	Krzysztof
+Rob
 
