@@ -1,61 +1,95 @@
-Return-Path: <linux-kernel+bounces-314810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F55996B957
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E5996B966
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040831F282BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242CE282962
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71F01CF7B9;
-	Wed,  4 Sep 2024 10:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4951D048F;
+	Wed,  4 Sep 2024 10:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/ih1hOv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yU3R7Tst"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E56713AD22;
-	Wed,  4 Sep 2024 10:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEA91D0147
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725447259; cv=none; b=jtf4FyYhGu1sCveBsdBzAidqRt0Dgwgm/ZNljorzdryHzh5NMdplDGRUfJFDF0OvrfsdWECjHHuwKNrso8rf6cAh+f34t7ZARn6OB40fH7eEqdZRKIrVyyvtrHBXPNX4nDFVsA3H/HZalCVH922nnFL6cQVG2NXYFk8GYvdpVog=
+	t=1725447341; cv=none; b=Zxl3pYzTydd0gZKT5bIx4amtQKpHyLxPtzUUkrhkxQdd+Tjhg44rm0MfkL7ISIDsB6+Bnwycb1cp9QRuemq63MvYSLqm7KGWx0V4yzGmrlKcPNeWS/1GOmSj3eASfyYyqEaMn5oEi471R46t01F3hSVPWkgX5V6hRU5953U5w+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725447259; c=relaxed/simple;
-	bh=HhQvuwZmWKAr/jdvLk3yTQm7CYTgzuoOEywfGNZucU8=;
+	s=arc-20240116; t=1725447341; c=relaxed/simple;
+	bh=cOKW7NUKZZI6Wp4SVULd/68D6NarWm5qu7B4EWb1yQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UynMmN1AAZfdLQTxRZb/xOqP+Hdt+pfzhKZ4sZ+pk+YiF0aOSIFZeZ4EdAKSfVQiuSptc73tay8VBNBdkrCvGwOvM3efYP7sPuLboe9f3Veaf7Xa25kezcvE3Y0oPdGwlMUTEXXmPQhnkmF1rQCoiPLunJm5tFD9SNk+7ghQUgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/ih1hOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA162C4CEC2;
-	Wed,  4 Sep 2024 10:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725447258;
-	bh=HhQvuwZmWKAr/jdvLk3yTQm7CYTgzuoOEywfGNZucU8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Y/ih1hOvsulHiROzZk3z2FWpfbA4oQBP7lR97UxDecbdVhnsLRJxqZLfNTTUxgC4b
-	 7U2ZnFdiAi2at9+qGoZYr5H+0NP0fgV5vwXD9ZpsQTr8qQD49nECEI/19plEfa/C/a
-	 zwLsZI+0Pm9WI5DP/JTlze5JdLAvMZnfIWEtedj2FOSHVwzAvKECLcHJwbaoRY4hBN
-	 3HnaY6kQ/jJekojbifC1XhcJPTrctuW5xI7LsD8XrXo3yJNh4c2Ar2EOfSGowasw35
-	 5zI8ZXVDJ1d3Ac6GjrckDvBb/B1TWRzOcsvzQtUXshY9TMAxO9m8nboUsEP5j1dVJH
-	 JUNRHfoC8N3WQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 80515CE0D32; Wed,  4 Sep 2024 03:54:18 -0700 (PDT)
-Date: Wed, 4 Sep 2024 03:54:18 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
-Message-ID: <0ae7d150-7b92-4e8e-98ea-b28c3b824e11@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
- <gbar5cxixgq4jtxgtzv7xjipabhqqbwdwyrtahkkws3tregdvo@edqb7ku2uhk2>
- <0359b3a4-b6db-45d9-9957-b304b4a85865@paulmck-laptop>
- <f4nkwsbqvpaxxqph3iucohfqy5zwn7j7u5uwppp7rp4mnx2eqj@lqxwtgboskik>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1CDXha4Ss1+u+YX7GvtJdKUWZZ271Togs3VFtK83J9l6FzM1vF0gzRTc0Xv9WJI8mmjvcoNHbWZi4DSi2Ih7BisaHzFeau2Ince+9u1EvZukMwiVCMiZHzCOSZhF5lun1gODKZ4hfSVb69pGGO0wLPcm0zE4Rk+HnbucU0ccac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yU3R7Tst; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f50966c469so73481141fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:55:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725447338; x=1726052138; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+7OAyLujGbFYszTADm1Fbnglj5tVVPCg8cnH8d6UNw=;
+        b=yU3R7TstScONgqbu0F9jaQG+Pp1iizzmQ4b/9+4XQi+EQ+/n33Kuk0tdjtBzeBl8Ih
+         ky2HWUkw1g/cqlsL1KgTxb4Wzut20NCZT+hXtIIeW3yUFVLS7Da4DqTM4KfE8k2/4nwH
+         ZsKZ4PHwf0hBRk+XegCVyBhd7LTTYGEFM9PxLSQDATy+kuLekYAXqJHq69k1zMk/QVGO
+         cMJkfw2Nnb+M8ge1dcW4UsLSB1E7Tv2xxjGJ3JxfTYCCCKWgI4tpS3FbwnUzJ5oaMRmK
+         kcc9b+Zfkv+xZ+ScnEnSHUGa6RGpek/QqCrErjOo8IM4zEUEbfKxMi0gTl07DS7XQA9L
+         BmAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725447338; x=1726052138;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+7OAyLujGbFYszTADm1Fbnglj5tVVPCg8cnH8d6UNw=;
+        b=JmR3/mm92xXcjPkQzTL1klZQX97D782nvJPkWT+BKEgluQluVw6nfeG2N+o3GKEhYU
+         UQip2tnnLKqJZgkiEyOJabcTdxPhs4WLyepjkNacuBtINVqOGS4vKsF9IdkdY4Pvqfhv
+         rFI/BSplk6yFIi5giqlub4uDqbzUNxibDV/v2NKk8OgfGZD6ADAHUxNZLTpsOL5vU8dh
+         ut3JENbQNJFgT8I/cm8LV/BfMqaewgH2JtPHUNymSKXTaU2pBy++xykUQhWRXkYQD4kM
+         TUf9sZmcQqqUo4prmiohdn5wn6pz6W9WgFZWt7jYtG6UTZIK+wDgQWHdTbBsiIaciEUC
+         JoYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNEscg9POBzkJ2R5sz2+0BzW9XnAM/sFDM0wlWcsR69yvPoXan0WZg3LWELIRI/9N7AytUWOzIQX10o/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVSdEhh690RWVGgWGz3hTnJi7dNZoZs3D5mS+bCdNGd3nrAaIn
+	JxwFX3PM4tJvkYhkM/p4ZlR35Bbc1ke/47Jq0wS+qUdtmfQbc6SiV6xmP1dtEVo=
+X-Google-Smtp-Source: AGHT+IFE66IwvXATV2zxxNEOIEdbkl9lbKAFhzct/n7RvYANLBHuO6JOsOi5ySMCjoe65faREHS88Q==
+X-Received: by 2002:a05:651c:220a:b0:2f0:20cd:35fc with SMTP id 38308e7fff4ca-2f62902e264mr101506221fa.7.1725447336786;
+        Wed, 04 Sep 2024 03:55:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f6151881dcsm25498841fa.124.2024.09.04.03.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:55:36 -0700 (PDT)
+Date: Wed, 4 Sep 2024 13:55:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	Xin Liu <quic_liuxin@quicinc.com>
+Subject: Re: [PATCH 03/19] dt-bindings: phy: Add QMP UFS PHY comptible for
+ QCS8300
+Message-ID: <e7qsuk3xoqgywubrkejoy3dztae2comlfn3mu6t226mvfvpfof@mlnj5s2xcsjf>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-3-d0ea9afdc007@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,68 +98,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f4nkwsbqvpaxxqph3iucohfqy5zwn7j7u5uwppp7rp4mnx2eqj@lqxwtgboskik>
+In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-3-d0ea9afdc007@quicinc.com>
 
-On Tue, Sep 03, 2024 at 07:03:53PM -0400, Kent Overstreet wrote:
-> On Tue, Sep 03, 2024 at 03:13:40PM GMT, Paul E. McKenney wrote:
-> > On Tue, Sep 03, 2024 at 05:38:05PM -0400, Kent Overstreet wrote:
-> > > On Tue, Sep 03, 2024 at 09:32:51AM GMT, Paul E. McKenney wrote:
-> > > > Hello!
-> > > > 
-> > > > This series provides light-weight readers for SRCU.  This lightness
-> > > > is selected by the caller by using the new srcu_read_lock_lite() and
-> > > > srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
-> > > > srcu_read_unlock() flavors.  Although this passes significant rcutorture
-> > > > testing, this should still be considered to be experimental.
-> > > 
-> > > This avoids memory barriers, correct?
-> > 
-> > Yes, there are no smp_mb() invocations in either srcu_read_lock_lite()
-> > or srcu_read_unlock_lite().  As usual, nothing comes for free, so the
-> > overhead is moved to the update side, and amplified, in the guise of
-> > the at least two calls to synchronize_rcu().
-> > 
-> > > > There are a few restrictions:  (1) If srcu_read_lock_lite() is called
-> > > > on a given srcu_struct structure, then no other flavor may be used on
-> > > > that srcu_struct structure, before, during, or after.  (2) The _lite()
-> > > > readers may only be invoked from regions of code where RCU is watching
-> > > > (as in those regions in which rcu_is_watching() returns true).  (3)
-> > > > There is no auto-expediting for srcu_struct structures that have
-> > > > been passed to _lite() readers.  (4) SRCU grace periods for _lite()
-> > > > srcu_struct structures invoke synchronize_rcu() at least twice, thus
-> > > > having longer latencies than their non-_lite() counterparts.  (5) Even
-> > > > with synchronize_srcu_expedited(), the resulting SRCU grace period
-> > > > will invoke synchronize_rcu() at least twice, as opposed to invoking
-> > > > the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
-> > > > srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
-> > > > srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
-> > > > from NMI handlers (that is what the _nmisafe() interface are for).
-> > > > Although one could imagine readers that were both _lite() and _nmisafe(),
-> > > > one might also imagine that the read-modify-write atomic operations that
-> > > > are needed by any NMI-safe SRCU read marker would make this unhelpful
-> > > > from a performance perspective.
-> > > 
-> > > So if I'm following, this should work fine for bcachefs, and be a nifty
-> > > small perforance boost.
-> > 
-> > Glad you like it!
-> > 
-> > > Can I give you an account for my test cluster? If you'd like, we can
-> > > convert bcachefs to it and point it at your branch.
-> > 
-> > Thank you, but I will pass on more accounts.  I have a fair amount of
-> > hardware at my disposal.  ;-)
+On Wed, Sep 04, 2024 at 04:33:44PM GMT, Jingyi Wang wrote:
+> From: Xin Liu <quic_liuxin@quicinc.com>
 > 
-> Well - bcachefs might be a good torture test; if you patch bcachefs to
-> use the new API point me at a branch and I'll point the CI at it
+> Document the QMP UFS PHY compatible for QCS8300 to support physical
+> layer functionality for USB found on the SoC.
 
-I am sorry, but I am getting on a plane today, am short of time, and
-won't be responsive for the inevitable issues.
+So this is talking about USB, but the patch changes UFS. Please adjust.
 
-But this is a very simple change, just change srcu_read_lock() and
-srcu_read_unlock() into srcu_read_lock_lite() and srcu_read_unlock_lite().
+> 
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> index f9cfbd0b2de6..a3540f7a8ef8 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> @@ -18,6 +18,7 @@ properties:
+>      enum:
+>        - qcom,msm8996-qmp-ufs-phy
+>        - qcom,msm8998-qmp-ufs-phy
+> +      - qcom,qcs8300-qmp-ufs-phy
+>        - qcom,sa8775p-qmp-ufs-phy
+>        - qcom,sc7180-qmp-ufs-phy
+>        - qcom,sc7280-qmp-ufs-phy
+> @@ -85,6 +86,7 @@ allOf:
+>            contains:
+>              enum:
+>                - qcom,msm8998-qmp-ufs-phy
+> +              - qcom,qcs8300-qmp-ufs-phy
+>                - qcom,sa8775p-qmp-ufs-phy
+>                - qcom,sc7180-qmp-ufs-phy
+>                - qcom,sc7280-qmp-ufs-phy
+> 
+> -- 
+> 2.25.1
+> 
 
-Would one of your bcachefs early adopters be up for this task?
-
-							Thanx, Paul
+-- 
+With best wishes
+Dmitry
 
