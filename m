@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-315592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB7D96C498
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880C396C49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D012B23202
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FD11C24C22
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443661E00BF;
-	Wed,  4 Sep 2024 16:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6B01E0B8E;
+	Wed,  4 Sep 2024 16:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tEnzQq7/"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBkOilQe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0670F1E1337
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9644240C03
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469149; cv=none; b=VLDwSiKpYWBwoLE1MV6OJysVDj9CWb4K7LkglxOe2AelTYlGatSt1+Eagz8iHBSdqycOleeT5oGTzgn60jWknaFXDOWhHqJkHbqiYMiNq9Md2fRbf+3mTwlyz6kdFewXHWEbuFaXvxWKKhgwiZwN+KHXCXg+YOpSdrAPM8yR7ug=
+	t=1725469195; cv=none; b=X9/dA2jNhVLHLiQAF4UZFeeU6uRoytV8EbAz4RZi1FGtx7Tf9y+WEei17L08kOpP04qGscN7EKrB9Z801Izu+Qi6P5eBu8QcYuYK1rGUwCahaVWodvt6lSQxG1UU0jxr7Or5r/+9sXJTBgB/mdBGjguwf3GccnvUy6fm8h3RcdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469149; c=relaxed/simple;
-	bh=v1CB9ImWnBS09j2TzKRaEV5BswHxsHTE4CMEUnt0+yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKHkiVxz7foTase23g49AS1CLvwajXKXlk2VijgnFVEoFgB2HKQq6Fnj42D774clh1yMNiRsuaVnFFSTOoFL+Kn16TpFvxTstkhHqrdkvzuZDeg5TIZXnfOUMDIqCx/xCqaHwcp+sQYpSyf8peLx2adQoQpLdxNZvsw+JLeETPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tEnzQq7/; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso670a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725469146; x=1726073946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v1CB9ImWnBS09j2TzKRaEV5BswHxsHTE4CMEUnt0+yw=;
-        b=tEnzQq7/FzPV8MaU1hW1anKblz1v7iaBGgW60wE+ACzQdptlkiBYRfOJEhtlgbtCfK
-         U5u496qndXnVMh7KPl4Yzla28jLTXmdlvQGEi52bMg360cwsbs7/tjEE5xvjm/8rDh9n
-         gYKfhfi+B7hzplSmFNrZQlV7U4CDY27P8VDhCuMWuPlkVnX3kQYWVTXp2vvzi01zxTOK
-         u2leck/QLIAxAnGep980EYHFAq7RvZyL0EyjqRuWJIZGWloWpR6fjiQJ42X5GWvQTI3A
-         ZoWsmi6hXqjr+5yHzQQWeKTEmY4BqAHRpbTQMRXVXNE7SgK7EVlFM4Z+Ky/wrFhwQxg6
-         YMZA==
+	s=arc-20240116; t=1725469195; c=relaxed/simple;
+	bh=FdKFRjKxfqgZ4ZAePiUERmZ19meUV5QJp1p3+aRRUo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bY0LrxPcsekvbC4VVrFmRKBS0ElENa8UTgX9/JlJm9O+uibdvApXyFcQv1AD+AyYg0meraTzqwuT5p766/PaMR4xRoHvQPAzPRMwFhR1BgjlP61QaElF5GpIm6b80I0M34nsXHGs0mtt8fj9ybiq5xG8CRgfeLq5JwtFy0UEybg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBkOilQe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725469192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JS7JkB28x15FUN4FVJqrYpTRHNCrw4xEi/Lrret8yfM=;
+	b=VBkOilQeUEi8xLCG0lTODH1b0M1qeEM1YqG8RQEm01EBk3HmVcf5fZaZ6T23QK1vVZrhVA
+	kCQ+5BmOvHR56imW42LfSVjDk3SSmcbio6Mcmm/Cf2TVBa/yOWOvM5Eh/0iYhUUTHbuAPc
+	DciYZ9yaoHBHIg1MX2Tp6v6+OvTo2HA=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-325-e-DgsNX3NrqVhbfbXnnEXw-1; Wed, 04 Sep 2024 12:59:51 -0400
+X-MC-Unique: e-DgsNX3NrqVhbfbXnnEXw-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5334aba4422so5715799e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469146; x=1726073946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v1CB9ImWnBS09j2TzKRaEV5BswHxsHTE4CMEUnt0+yw=;
-        b=Rb0t1beVOQlRnpki6KG/btp72eV4fRAH/WvMmDcQMES6AE3X6g1AOGvmwsLoVBZIs3
-         JN/nrWlSQEWa2TQcINLBIgXQtaW7wdd81Siujx79Wm9P7Z0nxPNsC5HZzQtaC2uBdI7X
-         4ckGOtE57xyYTzJqV+YsiNxyh8Uhx99CLE8khYCzpDYz+Tp7ZFKHc4X+HjgIaarVt22K
-         Y3YBwVAJ/YWel7Xi9kb/qOVbh3ClW2Via4LdJVpWM3EcCmhteiPfOdlG8I2yjOZYzJQj
-         gPJRhP2l5uKJC0wZxXaDMBOw9zam8g+VnxXxw8mxZj7tapr+47pozVKukYXi2/QC4b/O
-         8nlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyKVGQ4AUs3Tle5Nr5dGbvGAPd08LubBOSj2gT8mY/bpO7uV1lI351sN1tlEtqNgUrMne2NpUbMmp8Qao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZWEEtlkdnGA8cc7uLBOzyjpCqqInu3rd5a3VIkraNeg5crLZu
-	pQgjPnQ1ZKDZy5CJuL2RgP2+qarW9fize41dsWD8FWJGjvolIi8vERjtlyF1IfEzktIrw1JRu0l
-	8HppNWY/XUVz1fUtgwmON/OisaV2ILxbGD6U/
-X-Google-Smtp-Source: AGHT+IG0aERy7faC+1a6oZmkUUhuQ4K85jcFSSvvPHiUncBSURkpbe0WpQYOSgoRnbA5jZ9RY4ycgAXL88BusZEB1Ro=
-X-Received: by 2002:a05:6402:1c86:b0:5c3:c2fc:8de6 with SMTP id
- 4fb4d7f45d1cf-5c3c2fc98ddmr144634a12.3.1725469145666; Wed, 04 Sep 2024
- 09:59:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725469189; x=1726073989;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JS7JkB28x15FUN4FVJqrYpTRHNCrw4xEi/Lrret8yfM=;
+        b=dsuwQ0KC2nTsVjs9T8hIrDFHdpPP0eR+6Cyyfi9WaSSHWouHU0YbaEh91JeWS4bqTI
+         S6oS8ZU0EJy8RKxFADCGDxmrH1+olu2FJDfqEXB48mdPGgb2VOUD42vm99iuSXUzz14w
+         GVBlXMNaAnBssaxWnIyimZjIj+suMOxzraJMpsLij+x58v/clI8emQWoMzKJZu5l4uHQ
+         lCOeQSLfzvaYWR+v0xwzuT3TWt97H91T7YL/qWGg0QY1T7UULWrI3NcKHGnUO7IHP44Z
+         yv5aqZjFsau2rDiXfIaUFcjY2rtrPuR0l5ZEtRVXfb5Z98RHfxWMcdQFnSM3nNPxWuhC
+         5B/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVi0pG/J9ZLDbrBRxIMOzcdLueP6+sk1isstpEf/ThfsNqJ35n2zyPZ7yVH8JWvOdNPS0VjFhyOyicctro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI1qugOflIQ47NpY+wiPrx4VJKKygxIFtXhcBnIzMZSib58Cex
+	bqnREZi3wyQ4Cvqvm8opQ7TosqhKJSDqYJltfDgwGFmgjqQqLzHPzznU6tbYlbmKgMXDvy117Xc
+	p2H9fayHOTjwKHSkkIXC9vDyQ2a4Sx8CS5ghdC5GgGX0Y/EVZLJJYdCugxPSvOg==
+X-Received: by 2002:a05:6512:68c:b0:52c:d76f:7f61 with SMTP id 2adb3069b0e04-53546bb4d04mr9440203e87.56.1725469189439;
+        Wed, 04 Sep 2024 09:59:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9B/Kw2sYApLrjKyz7ByJ58hLtcGIgW+Hr3O4jbaYLUgaa3c5CshLF9IIRJpnoQqDHMdCh2Q==
+X-Received: by 2002:a05:6512:68c:b0:52c:d76f:7f61 with SMTP id 2adb3069b0e04-53546bb4d04mr9440182e87.56.1725469188788;
+        Wed, 04 Sep 2024 09:59:48 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc56f114sm124404a12.57.2024.09.04.09.59.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 09:59:48 -0700 (PDT)
+Message-ID: <371e1476-1b7c-4993-b481-132b7552b572@redhat.com>
+Date: Wed, 4 Sep 2024 18:59:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826204353.2228736-1-peterx@redhat.com> <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
- <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
- <20240828142422.GU3773488@nvidia.com> <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
- <20240828234958.GE3773488@nvidia.com> <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
- <20240904155203.GJ3915968@nvidia.com> <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
- <20240904164324.GO3915968@nvidia.com>
-In-Reply-To: <20240904164324.GO3915968@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 4 Sep 2024 09:58:54 -0700
-Message-ID: <CACw3F53ojc+m9Xq_2go3Fdn8aVumxwmBvPgiUJgmrQP3ExdT-g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	ankita@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: lenovo-ymc: Ignore the 0x0 state
+To: Gergo Koteles <soyer@irl.hu>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <08ab73bb74c4ad448409f2ce707b1148874a05ce.1724340562.git.soyer@irl.hu>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <08ab73bb74c4ad448409f2ce707b1148874a05ce.1724340562.git.soyer@irl.hu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 4, 2024 at 9:43=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wro=
-te:
->
-> On Wed, Sep 04, 2024 at 09:38:22AM -0700, Jiaqi Yan wrote:
-> > On Wed, Sep 4, 2024 at 8:52=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com>=
- wrote:
-> > >
-> > > On Thu, Aug 29, 2024 at 12:21:39PM -0700, Jiaqi Yan wrote:
-> > >
-> > > > I think we still want to attempt to SIGBUS userspace, regardless of
-> > > > doing unmap_mapping_range or not.
-> > >
-> > > IMHO we need to eliminate this path if we actually want to keep thing=
-s
-> > > mapped.
-> > >
-> > > There is no way to generate the SIGBUS without poking a 4k hole in th=
-e
-> > > 1G page, as only that 4k should get SIGBUS, every other byte of the 1=
-G
-> > > is clean.
-> >
-> > Ah, sorry I wasn't clear. The SIGBUS will be only for poisoned PFN;
-> > clean PFNs under the same PUD/PMD for sure don't need any SIGBUS,
-> > which is the whole purpose of not unmapping.
->
-> You can't get a SIGBUS if the things are still mapped. This is why the
-> SIGBUS flow requires poking a non-present hole around the poisoned
-> memory.
->
-> So keeping things mapped at 1G also means giving up on SIGBUS.
+Hi,
 
-SIGBUS during page fault is definitely impossible when memory is still
-mapped, but the platform still MCE or SEA in case of poison
-consumption, right? So I wanted to propose new code to SIGBUS (either
-BUS_MCEERR_AR or BUS_OBJERR) as long as the platform notifies the
-kernel in the synchronous poison consumption context, e.g. MCE on X86
-and SEA on ARM64.
+On 8/22/24 5:38 PM, Gergo Koteles wrote:
+> While booting, Lenovo 14ARB7 reports 'lenovo-ymc: Unknown key 0 pressed'
+> warning. Because lenovo_ymc_probe() calls lenovo_ymc_notify() and that
+> time the YMC part is not triggered yet (which is mandatory for this
+> model). At the end of lenovo_ymc_notify() YMC is triggered by the
+> ideapad-laptop driver and then lenovo_ymc_notify() will be called by WMI
+> to report the actual value.
+> 
+> Add 0x0 YMC state to the sparse keymap to ignore.
+> 
+> Signed-off-by: Gergo Koteles <soyer@irl.hu>
 
->
-> Jason
+Thank you for your patch, I've improved the commit message to address
+Ilpo's review comments and applied this patch to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?h=review-hans&id=a8a2253e84dc62b0d50943408c480188a0086263
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/platform/x86/lenovo-ymc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/lenovo-ymc.c b/drivers/platform/x86/lenovo-ymc.c
+> index e0bbd6a14a89..bd9f95404c7c 100644
+> --- a/drivers/platform/x86/lenovo-ymc.c
+> +++ b/drivers/platform/x86/lenovo-ymc.c
+> @@ -43,6 +43,8 @@ struct lenovo_ymc_private {
+>  };
+>  
+>  static const struct key_entry lenovo_ymc_keymap[] = {
+> +	/* Ignore the uninitialized state */
+> +	{ KE_IGNORE, 0x00 },
+>  	/* Laptop */
+>  	{ KE_SW, 0x01, { .sw = { SW_TABLET_MODE, 0 } } },
+>  	/* Tablet */
+
 
