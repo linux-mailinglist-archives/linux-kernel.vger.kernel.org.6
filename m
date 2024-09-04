@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-314711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C1596B764
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:51:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA5E96B76E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD611C21FF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE84C1C2417B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A643E1CDA18;
-	Wed,  4 Sep 2024 09:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kt653IpM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39801CDA09;
+	Wed,  4 Sep 2024 09:52:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9C145B35;
-	Wed,  4 Sep 2024 09:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA968185926
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443506; cv=none; b=tIbAb5Zh2w1OwThLVIcEcqo0MtxlEqr84DyXnQpwjpjKrDaR+pASKfKJnLfaQ/OuKQf2a4v0qB1jRWoPPIdKmShhaMG0seTUVY+Banq6l+l6HM5InmPmNSzW/nVXJdB0ottQxD4se3PX/Ul58bAxWWvmt86jqeJ3SETQdCgpBWs=
+	t=1725443569; cv=none; b=hvpN1gT1kkDv1j9u5SHzAHH2yMnCScCcbTsNIqjSk7yH4KLDba2VxDuMGAKyqnmSNPTlJwD9ivVV+rHXmQ5TDL56GpE6/6ScWYED+TB7WI0xILN1yXOCgqRoQsYD+CYKV6k3cswv4jIonv60w1DDtAjCkMx0hkgd6LWHJDL/kZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443506; c=relaxed/simple;
-	bh=9v8g1rIECH33scUifS0SJLjKLhwqrmPT+U7zRZHR7aQ=;
+	s=arc-20240116; t=1725443569; c=relaxed/simple;
+	bh=G2gSgXAkWV8CXgpO/BiDwZliPz4H8EJfiHjcOwAJ5jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GC8zOvZa5Q1Vxwu2ldA3LtrJZzZTwO+I72IuJyHSwi+DGZw2hP/jtzt4YWPKBHAcQDewFWIyLB1IUnjQ3zYYrfYhEERxhpLAwVjMkS07lVITf+2ZBiFYRccwkykK2qlrfTss92y1lUUyRa7lJjBf6WHFcn7K7aJ6OunyT+n2UaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kt653IpM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC1BC4CEC2;
-	Wed,  4 Sep 2024 09:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725443505;
-	bh=9v8g1rIECH33scUifS0SJLjKLhwqrmPT+U7zRZHR7aQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kt653IpMJgUa37vyxIoA3w6Y9fHCQ6jN3ejkCQo9mUejmBKRAkDi7UwqDMKGaqE7y
-	 wQDEEEbl1XaPaE1tarYBe9V5MRRUrChv3OsCRA7IAcz66WMWCK+yiy0mtQibNA2sDX
-	 bdzTPi9qUpXimz11f6JOLAF5vteJeIWxfzAveUUo=
-Date: Wed, 4 Sep 2024 11:51:42 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
-Message-ID: <2024090459-glancing-vengeful-f3fb@gregkh>
-References: <20240901160803.673617007@linuxfoundation.org>
- <98f6ad0c-65d0-4a39-8a11-a55b3dd83b7b@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSaBsBXJix1xwz5V74I5ABXYaw17112FAiALMyzsktO+rNYJ8rFQlRaQUaxP1k62qTQZwh5EEoPp7gm3u2kPCWSlBr7Hz9d9D7KEQK6i5BFEENxnlbM/YRe2AL3dbUJsgSA4pgB+a1kqjitSberilDVmli75DtQK/J59FySKzsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slmgm-0001n1-US; Wed, 04 Sep 2024 11:52:36 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slmgm-005QGx-CB; Wed, 04 Sep 2024 11:52:36 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 0A3DD3324C9;
+	Wed, 04 Sep 2024 09:52:36 +0000 (UTC)
+Date: Wed, 4 Sep 2024 11:52:35 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: can: cc770: Simplify parsing DT properties
+Message-ID: <20240904-gorgeous-peculiar-newt-067532-mkl@pengutronix.de>
+References: <20240903135731.405635-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wfrzeulhkfopbkjv"
 Content-Disposition: inline
-In-Reply-To: <98f6ad0c-65d0-4a39-8a11-a55b3dd83b7b@oracle.com>
+In-Reply-To: <20240903135731.405635-1-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2024 at 02:44:44PM +0530, Harshit Mogalapalli wrote:
-> Hi Greg,
-> 
-> On 01/09/24 21:45, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.321 release.
-> > There are 98 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> > Anything received after that time might be too late.
-> 
-> Build fails on our infrastructure.
-> 
-> 
-> BUILDSTDERR: In file included from /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/bitmap.h:6,
-> BUILDSTDERR:                  from /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/perf/util/include/../../util/pmu.h:5,
-> BUILDSTDERR:                  from arch/x86/util/pmu.c:9:
-> BUILDSTDERR: /builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/align.h:6:10:
-> fatal error: uapi/linux/const.h: No such file or directory
-> BUILDSTDERR:  #include <uapi/linux/const.h>
-> BUILDSTDERR:           ^~~~~~~~~~~~~~~~~~~~
-> BUILDSTDERR: compilation terminated.
-> 
-> 
-> Looked at the commits:
-> 
-> This commit 993a20bf6225c: ("tools: move alignment-related macros to new
-> <linux/align.h>") is causing that perf build to fail.
-> 
-> Solution is not to drop this patch as this is probably pulled in to support
-> bitmap_size() macros in these commits(which are also part of this release):
-> 
-> 6fbe5a3920f48 fix bitmap corruption on close_range() with
-> CLOSE_RANGE_UNSHARE
-> ef9ebc42c10f8 bitmap: introduce generic optimized bitmap_size()
-> 
-> 
-> 
-> Applying the below diff, helps the perf build to pass: I think we should
-> fold this into: commit 993a20bf6225c: ("tools: move alignment-related macros
-> to new <linux/align.h>")
-> 
-> diff --git a/tools/include/linux/align.h b/tools/include/linux/align.h
-> index 14e34ace80dda..a27bc1edf6e5c 100644
-> --- a/tools/include/linux/align.h
-> +++ b/tools/include/linux/align.h
-> @@ -3,7 +3,7 @@
->  #ifndef _TOOLS_LINUX_ALIGN_H
->  #define _TOOLS_LINUX_ALIGN_H
-> 
-> -#include <uapi/linux/const.h>
-> +#include <linux/const.h>
-> 
->  #define ALIGN(x, a)            __ALIGN_KERNEL((x), (a))
->  #define ALIGN_DOWN(x, a)       __ALIGN_KERNEL((x) - ((a) - 1), (a))
 
-Change now made, thanks.
+--wfrzeulhkfopbkjv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> !! But this breaks the build for arm here.
-> !! Not sure what is the best way to solve this problem.
+On 03.09.2024 08:57:30, Rob Herring (Arm) wrote:
+> Use of the typed property accessors is preferred over of_get_property().
+> The existing code doesn't work on little endian systems either. Replace
+> the of_get_property() calls with of_property_read_bool() and
+> of_property_read_u32().
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v2:
+> - Use reverse xmas tree order
+> - Fix slew unsigned comparison
 
-Are people building perf for arm on 4.19.y?  If so, wow, this thing is
-about to go end-of-life any week now, and I would be amazed if it built
-at all anymore as I can't get perf to build on _ANY_ lts kernel these
-days.
+Added to linux-can-next.
 
-Anyway, I'll make this change and if any arm build fixes want to show
-up, I'll be glad to take them.
+Thanks,
+Marc
 
-thanks,
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-greg k-h
+--wfrzeulhkfopbkjv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbYLeAACgkQKDiiPnot
+vG9EVwf+M/MpT+nMGdkIp1dv1myWb6N6DFUuGPOMbXFizmWl1BuO6PQQV5Z1TD4W
+lVFvt/vhkDloG6x73nD9U2Jf5n8mp3HwVQJF3hfCLUFsQ3uGWI/4VTjksSRZ4L1H
+whvUWgNyn4MSQ5hNHRyMEKdy+rw8lGPlwCVjxjqrd0izeJNKobQsoRlJSiEETcRj
+hGGhNc+JRgbZIYcRO1ERKgA0hvWVroHyf5o/iN7d5eOJXmlVh+qpBK5i/Kq97Kxg
+WDNcLogphNiJgssLhu8mAm9chrNZ6a/jiHgqa/c+MeTnbdQ4Th35VdSe85s8Jpe3
+KdyKjJWkE0eYK5dj6VTLaGCmMqqIsg==
+=GVdl
+-----END PGP SIGNATURE-----
+
+--wfrzeulhkfopbkjv--
 
