@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-315892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E351396C83E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C7196C842
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931BB1F24442
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303F91C22728
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78CE145A05;
-	Wed,  4 Sep 2024 20:18:40 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117951448E4;
+	Wed,  4 Sep 2024 20:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfIGtva8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFACC6BFA3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740821EBFEC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725481120; cv=none; b=IRMB6d2VO2WTy93LkSXVzNu8TjX9tNFy6BEnS2fBVvNwg2wPgzhi9ku0qFr+4sH6NOaDlIYM7GSDcQ1ObsbYfYl4CAVWYke468D/vuGVroiYFsadkMkQwXyD1sNvofgWgtuLRunI97s5+oiIoRxial5LN5wUg9bH8dvIevGDYHo=
+	t=1725481178; cv=none; b=d2nC3EE+aTzRkAB+QMrSQmR45h3jQeD1rxjE2WeSdjgJYuUrIm30o11N+QBPOKPBQ05xdplFw8ZNMr5F4zc9lnVN8MkDzX5YigBEaFxHEEs63269LIQnu7yVdSELSYXoNJLRwGoT1Kw9WG0dGKloT1GhMNAqkwttzHoQdPEMO80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725481120; c=relaxed/simple;
-	bh=k6RsXNwLgxov2po/iQNH02SOvV8DmDra4bYIETXKEiw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOhExJzT5fxykUszqfyXoBcaE6uZkwuDKSaZUVyLO/UQCUCxG5/6sXJ8HsduIra5aCib/biG9N8L6CrTd1Q21onPlBPKni644w53PXCRLaFXSdp1Bsv8K9iAN8azc83SuUTGjfO/QRD2UuBzbZtDQHs9xj5i/pndOPGZTP8tEU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id dc229e1f-6afa-11ef-825d-005056bdfda7;
-	Wed, 04 Sep 2024 23:18:35 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Sep 2024 23:18:33 +0300
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Gergo Koteles <soyer@irl.hu>, platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ike Panhc <ike.pan@canonical.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
- scope_guard() clear of its scope
-Message-ID: <ZtjAmavK5tr4mvka@surfacebook.localdomain>
-References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
- <8a106cfe-f7cd-4660-983a-feba627cdcab@redhat.com>
+	s=arc-20240116; t=1725481178; c=relaxed/simple;
+	bh=6E+z1a4feayFGttJhcEnyuo7bEGQuJ7HBIny5vcGLC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOl5okxmk5hzs7ETjt8AAHEbxoMITMy+0swYGGwTU7Tqn7x+IorVMbBIx60FgTqXLQ6IypE2XLckW1baE+ePmPV9TyzXkrZSY7k2IUBRH31Sw8BlOXYZwobuIUhnWZMvcZQIVRJUL3YmWGeXovE4eceCGYBzVTaIPNripyiMljM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfIGtva8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3D7C4CEC2;
+	Wed,  4 Sep 2024 20:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725481178;
+	bh=6E+z1a4feayFGttJhcEnyuo7bEGQuJ7HBIny5vcGLC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rfIGtva8IuEI31S2RVkGrjjFhYVUx4nWkpQVKDYUmytbvZqg0rpbHSSgV5zTFV1lY
+	 vAZ58RQZLaZiVjaEOfh7Isq7igt6d1NAgtuAggsSnrrb2bqi6C8LLX/Oe/79SR8EmX
+	 U0Gn/AgzEX4lSrR3r6WwV+Pb/lCwATuvRMb5ih8hKmyraKWxHi8X6IS1XRtNc0MZ2Y
+	 rkfzqsAmN+bpz46Yva8WnrxzGReA05fTNVjF1q9mpQYZbJjT/r2vzOM7l/FXCtF9Qb
+	 aDJpSPgQnLqUyLP6uKI2TMVSzMWLU9DIxyNn0ZCBkc7d7SXA4tjSxovHI+kGEuToxc
+	 +Q3mfVySUO2NQ==
+Date: Wed, 4 Sep 2024 10:19:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org,
+	peterz@infradead.org
+Subject: Re: [PATCHSET sched_ext/for-6.12] sched_ext: Apply pick_next_task()
+ updates and remove switch_class()
+Message-ID: <ZtjA2Kk52dbnWaSC@slm.duckdns.org>
+References: <20240904080326.1132275-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,52 +57,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8a106cfe-f7cd-4660-983a-feba627cdcab@redhat.com>
+In-Reply-To: <20240904080326.1132275-1-tj@kernel.org>
 
-Wed, Sep 04, 2024 at 08:14:53PM +0200, Hans de Goede kirjoitti:
-> Hi,
+On Tue, Sep 03, 2024 at 10:03:02PM -1000, Tejun Heo wrote:
+> d7b01aef9dbd ("Merge branch 'tip/sched/core' into for-6.12") received sched
+> core udpates around pick_next_task() and put_prev_task(). While the merge
+> commit added a minimal workaround to keep sched_ext building and mostly
+> functioning, sched_ext is currently out of step with other sched classes.
 > 
-> On 8/29/24 6:50 PM, Andy Shevchenko wrote:
-> > First of all, it's a bit counterintuitive to have something like
-> > 
-> > 	int err;
-> > 	...
-> > 	scoped_guard(...)
-> > 		err = foo(...);
-> > 	if (err)
-> > 		return err;
-> > 
-> > Second, with a particular kernel configuration and compiler version in
-> > one of such cases the objtool is not happy:
-> > 
-> >   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end of section
-> > 
-> > I'm not an expert on all this, but the theory is that compiler and
-> > linker in this case can't understand that 'result' variable will be
-> > always initialized as long as no error has been returned. Assigning
-> > 'result' to a dummy value helps with this. Note, that fixing the
-> > scoped_guard() scope (as per above) does not make issue gone.
-> > 
-> > That said, assign dummy value and make the scope_guard() clear of its scope.
-> > For the sake of consistency do it in the entire file.
-> > 
-> > Fixes: 7cc06e729460 ("platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202408290219.BrPO8twi-lkp@intel.com/
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> This patchset brings sched_ext upto the code by replacing
+> pick_next_task_scx() with pick_task_scx() which doesn't require the current
+> task to be queued and can detemrine between the current task and the top of
+> the local DSQ statelessly. This allows unifying regular and core-sched pick
+> task paths. After the updates, sched_class->switch_class() is no longer used
+> and dropped.
+> 
+> This change causes two subtle API changes for the BPF schedulers. Both are
+> desirable and all the existing schedulers should be okay with them.
+> 
+> The patchset is also available in the following git branch:
+> 
+>  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-pick_task
+> 
+> and contains the following patches:
+> 
+>  0001-sched_ext-Don-t-call-put_prev_task_scx-before-pickin.patch
+>  0002-sched_ext-Replace-SCX_TASK_BAL_KEEP-with-SCX_RQ_BAL_.patch
+>  0003-sched_ext-Unify-regular-and-core-sched-pick-task-pat.patch
+>  0004-sched_ext-Relocate-functions-in-kernel-sched-ext.c.patch
+>  0005-sched_ext-Remove-switch_class_scx.patch
+>  0006-sched_ext-Remove-sched_class-switch_class.patch
 
-> Thank you for your patch, I've applied this patch to my review-hans 
-> branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+Applying to sched_ext/for-6.12.
 
-Have you had a chance to go through the discussion?
-
-TL;DR: please defer this. There is still no clear understanding of the root
-cause and the culprit.
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+tejun
 
