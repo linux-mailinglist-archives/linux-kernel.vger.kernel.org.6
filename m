@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-316075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31CF96CAD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E0F96CAD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381A9B24E40
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FDE286692
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5970D17BEA7;
-	Wed,  4 Sep 2024 23:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5162F17ADFF;
+	Wed,  4 Sep 2024 23:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="IbFn0LTk"
-Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MPsKM2WV"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F2216EC19
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295C41779A5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725492980; cv=none; b=WVBR3EBqBHUwJx00Sl4rupuegvgXyAwpsylLlGdyKN10qKK3/a6+1/P97g58cBOlO8zRgkjRjsIjMUlA9yhxYUWrjQiBCB00XztnPrwb6WIrlNTWvk7vXrydriUuqzl0c9CSnbycvky+5PBu3VN/oMS/GYWPfGawR0YTfjYllUo=
+	t=1725492993; cv=none; b=hGEmw1tW3kckjj0jy8yiI0kmcgnCjZ+6mdgt9nBLOAJzULV1Sjnq6z9lZOpENuOb2QFPsRmaitJSBjbaBnpqjCNer1Q+NYbB9IcbSLwr7JggQ4WhGNAw90EGHmFmK7CLcz64/wteTQ61vGvEKNhNajuHGqOE8xZFasjivo+kL0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725492980; c=relaxed/simple;
-	bh=gGKTS5e69eGwsuCxPYviwNkaaS50fkXjlI55u9zXG/A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lBs47gwiC5likLwOijuPSFOIn+CmGV2GJbYYkmRee6A/1+0da/EZhGZOS5hgkhOMpDMGabUItDWrGvVryDwm7eqQrCqdKmYeXef8S2Pb4A+js0dsvYCIeb/LPcwSqIpBnEPVJvR1hviLAQ/IQk2R7pDrL5RsVWYiOYB+8ake+b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=IbFn0LTk; arc=none smtp.client-ip=17.58.6.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725492979;
-	bh=9rDPKSc7WMZoY4WpNOd2VKz4Iu3eG9WY3g92yxKTVKw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=IbFn0LTk0cC1B27JOHB1R1BEnvJd+wa8mFOoYdXmu5yJWsDetqbbE3FUiwtN3jFTN
-	 4en5DNJy/tB2XAcXHw6ZkEOD8bgW8/qxh6+stssXlZP4sqi4qt541aAxTB6uBe6xS5
-	 Rh292rXOYoxKF9fkPhpxtlJ+tHn2uJ82xPhGKxAb8lGb1e4MvVCacK9Nteb5WB5qtz
-	 S37kRpHecrIgwPbSxky5DO+pXHkIeor1CUSnuCqlgA9z8D5A+uHhc7g3GTcBNxKC1a
-	 xE7Zs7JFqGHiV6FFGwYfK8ORa7ETqA4mojgNwpuwd2Bdu24GUtmj6fGmgmBTmpnDaE
-	 s9B0N+mCKfeIQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 5B64D800063;
-	Wed,  4 Sep 2024 23:36:11 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 05 Sep 2024 07:35:38 +0800
-Subject: [PATCH] net: sysfs: Fix weird usage of class's namespace relevant
- fields
+	s=arc-20240116; t=1725492993; c=relaxed/simple;
+	bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rEUfOfkPOyJ6467RbohGw/ICjyW8m0uD8kBPNJKagbtaW2MBACe1LlnPMyHQJRkGBnPrqvE2MqrrPhCVsn0OFFCYwC309fbLz2LY5VWVoRPMrWI7YH5yeHGiCuEMAUbfJWZrR6IVPz5t2J1XapORHNxVr5vCuLcAsRCJqggdEFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MPsKM2WV; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a80eab3945eso29958866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725492990; x=1726097790; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
+        b=MPsKM2WVt2sUBm90hKCTyGq0lMMgYb8rN5ZKj2LPs7Oc7D4KBP8sY8zGdsWA3/Tdl3
+         q8o6LJV0k0I11gnyXcAWb4fGrU74CbNvBnqeWHDPwYQ9pWO+u8OmdUZTqPmTdgb3Qaeq
+         9PUedgVeRVU+hvEmHVheNXMt4QM4zRng1cL2LzeNGVnffz/wQRWQCyCyJkaPYPROUalG
+         wy2pYiXsVc3SFUohOJtM45+O6URRQOauuxtjmdtpRkrBkazKFMmVMTDSCGLkE4mNja9z
+         Q/qcjKbOQte4DBaZYaamAUc0U1Qojsos93X6dw0NzJTB6s0Sa33LrtWpv2DGIV4LNGOW
+         zfXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725492990; x=1726097790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
+        b=smQA7pRjY9GejlppJ7SXuY4PMoedmjjhgpk5VPcnTFwLlLCpgv05fOjdILBuCO9rZm
+         91biMZKfL/ajm2P4SAi+Mw4Y3904zOvLtEuFxfRYH7OIiAXyutC0JAaN/Rd7jHoA4WKv
+         3NqgMrv0+DDpHOd+3LqLlxkRYSgTnvEn0A8kAxAbdufj5UBowWGJV32FotImthUEs1Oj
+         S1BO4VVtxnVwwL3ojGQ0AUSSuXZD4KgjgOstLk/1XWjFnBSw0kb0negERsQfsqofp8M6
+         zxvyAZ7Ms+t9VN0UIMu9Y5OCYmxHiox924QDLchOSACxtdk8csxfjfnEaAjVgLg8P9yj
+         XEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgLGZwB7udhuYKtAqLEHIS1/EKP8WozSrM4Jsw1JBLvZNBZUl5kiPNSczsEk39oeGLri8027yye0xfdaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhmVox4G1o61BCTI0F0ZP6lyrdXBH3cYV6gIweBSP9uAvvN+ZZ
+	WZqeJFAg7VO54eNwRwxxK30unmg6hUBpNRvrBvBkm/jj8ZxQApFH+8pkX2MgXwDoPvcn84Mnmsq
+	Sx+VRdvLAVfVBlNAdeZB23iuB8fK5l6Cd62Cy
+X-Google-Smtp-Source: AGHT+IHDuuc1NSBZcv5eJMmcgD4W2enzMP+OEXUp/tHe1vBeLVIoJgIUtpVBiUuFO4YpWpSbAoDry8IrbZw74IYvlGY=
+X-Received: by 2002:a17:906:db07:b0:a86:ae95:eba3 with SMTP id
+ a640c23a62f3a-a89a3823702mr1493644166b.62.1725492989563; Wed, 04 Sep 2024
+ 16:36:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-fix_class_ns-v1-1-88ecccc3517c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMnu2GYC/x2MQQqAIBAAvyJ7TlCxoL4SIaZrLYSFCxFIf086D
- sNMBcZCyDCJCgVvYjpzA90JCLvPG0qKjcEoY9WorEz0uHB4ZpdZ+pi0D6pfhxSgJVfB5v/dvLz
- vBx9d2WNeAAAA
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Zijun Hu <zijun_hu@icloud.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: nYYn2LZ9ZsL0_a6pdNzhYxjTe8JmaiRJ
-X-Proofpoint-GUID: nYYn2LZ9ZsL0_a6pdNzhYxjTe8JmaiRJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_21,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 bulkscore=0 phishscore=0 clxscore=1015 suspectscore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409040178
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
+ <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
+ <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
+ <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
+ <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
+ <CAJD7tkaXvm95mRH04OX0KJtiBuTaaDyyJQirbAjUV0B+DjaWJA@mail.gmail.com>
+ <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com> <CAGsJ_4yX7xmyDokYgc_H7MaxcOptcLeQs-SB1O22bSRHFdvVhQ@mail.gmail.com>
+ <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com>
+In-Reply-To: <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 4 Sep 2024 16:35:52 -0700
+Message-ID: <CAJD7tkYu2v2VnMizVeOTHTNXXbdnd+UqaKhTRfrTC7THUiPPdA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Barry Song <21cnbao@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
+	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
+	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
+	ying.huang@intel.com, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+[..]
+> >
+> > On the other hand, if you read the code of zRAM, you will find zRAM has
+> > exactly the same mechanism as zeromap but zRAM can even do more
+> > by same_pages filled. since zRAM does the job in swapfile layer, there
+> > is no this kind of consistency issue like zeromap.
+> >
+> > So I feel for zRAM case, we don't need zeromap at all as there are duplicated
+> > efforts while I really appreciate your job which can benefit all swapfiles.
+> > i mean, zRAM has the ability to check "zero"(and also non-zero but same
+> > content). after zeromap checks zeromap, zRAM will check again:
+> >
+>
+> Yes, so there is a reason for having the zeromap patches, which I have outlined
+> in the coverletter.
+>
+> https://lore.kernel.org/all/20240627105730.3110705-1-usamaarif642@gmail.com/
+>
+> There are usecases where zswap/zram might not be used in production.
+> We can reduce I/O and flash wear in those cases by a large amount.
+>
+> Also running in Meta production, we found that the number of non-zero filled
+> complete pages were less than 1%, so essentially its only the zero-filled pages
+> that matter.
+>
+> I believe after zeromap, it might be a good idea to remove the page_same_filled
+> check from zram code? Its not really a problem if its kept as well as I dont
+> believe any zero-filled pages should reach zram_write_page?
 
-Device class has two namespace relevant fields which are associated by
-the following usage:
-
-struct class {
-	...
-	const struct kobj_ns_type_operations *ns_type;
-	const void *(*namespace)(const struct device *dev);
-	...
-}
-if (dev->class && dev->class->ns_type)
-	dev->class->namespace(dev);
-
-The usage looks weird since it checks @ns_type but calls namespace()
-it is found for all existing class definitions that the other filed is
-also assigned once one is assigned in current kernel tree, so fix this
-weird usage by checking @namespace to call namespace().
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-driver-core tree has similar fix as shown below:
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=a169a663bfa8198f33a5c1002634cc89e5128025
----
- net/core/net-sysfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 444f23e74f8e..d10c88f569b0 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -1056,7 +1056,7 @@ static const void *rx_queue_namespace(const struct kobject *kobj)
- 	struct device *dev = &queue->dev->dev;
- 	const void *ns = NULL;
- 
--	if (dev->class && dev->class->ns_type)
-+	if (dev->class && dev->class->namespace)
- 		ns = dev->class->namespace(dev);
- 
- 	return ns;
-@@ -1740,7 +1740,7 @@ static const void *netdev_queue_namespace(const struct kobject *kobj)
- 	struct device *dev = &queue->dev->dev;
- 	const void *ns = NULL;
- 
--	if (dev->class && dev->class->ns_type)
-+	if (dev->class && dev->class->namespace)
- 		ns = dev->class->namespace(dev);
- 
- 	return ns;
-
----
-base-commit: 88fac17500f4ea49c7bac136cf1b27e7b9980075
-change-id: 20240904-fix_class_ns-adf1ac05b6fc
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+I brought this up before and Sergey pointed out that zram is sometimes
+used as a block device without swap, and that use case would benefit
+from having this handling in zram. That being said, I have no idea how
+many people care about this specific scenario.
 
