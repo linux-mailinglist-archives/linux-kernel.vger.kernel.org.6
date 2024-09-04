@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-315150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D3896BE97
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:35:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8514696BE98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B7142828AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853D61C221D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D571DA10F;
-	Wed,  4 Sep 2024 13:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ej4V6gEZ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ED11922CF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F351DA61A;
+	Wed,  4 Sep 2024 13:35:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0C1DA115
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456918; cv=none; b=KcUBRnkCc0PkNeqDu6KJuo8dIRuul9u6tblO2ncotmhcBIUximqsXCeVltOUlwkZYLoaHZWJ5VAWru3GVdpLTKIQlOzNQnLz66dub67MEg7KAK+IrvdAHsrO1uniSHpjFpQ8AEgSv6r0PLUPUcf+7mzbZfiEUkvha39RIrb+1yw=
+	t=1725456920; cv=none; b=aOne0gsCHIEJgAc13aCVGq0KDYQ606WsACEbHDbmwmZ5ZtApKymG2F9itELB7TLbi9rL+Nj8ZN2cpR+bUIXEW6PolQuRaQOV5KHwHkn4LNx5qKZrWCKQ0jC0jtRTfq0i2PSgkoSQp4LFvrjHx7pImmdmXDWl03CXlCU+HMnMUB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456918; c=relaxed/simple;
-	bh=41xFYfekiMubd9r2YEtmUlcXoreoFCjcE8w50qz+NWE=;
+	s=arc-20240116; t=1725456920; c=relaxed/simple;
+	bh=+UxOrg0gPYL9rtCEiYu2o8aZzP1MOjXcl4Sx1CF5pF0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qJ9vqKoKL8fk8E+nTq+pM9R1un6DMcBojq5pb+zYgIt5CbiJMaykI1j8nLZqZKSMt0Z5oAX4WiY1rktt/FYsGXh+uNcTJY/I7UrATyYBwsloSLMfaIfNAzKPFRBlEjvEHa8+Ruwb50XhAlhFE0Xy4H0HJw96RrPlwCaL3DxzbOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ej4V6gEZ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3780c8d689aso296789f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:35:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725456913; x=1726061713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ld5cWyae/iB0k1Ca1RVlaEbBbyAMRHm9ax0zyn7Axo=;
-        b=Ej4V6gEZcpHkDMvv2oF4/93mwpXkOpfLs0BFdhPTM5ooPwiAu7EX+XEwng65Ff+vJu
-         OozDsLXqQpgiSHHbhjnVfAOn87kh8NGPrbHsp7YCnIIzTXRfvFiIqp24cdSZb046osVb
-         YornORTglNi8CF4gFzeBdo5YpUPdIOfwOkXwbw24fnWJ94vuHJQgpTPUIH1mhJNLFXi0
-         CchpZm7lal9tlSd8eylPQYkBW/b8XuA8Fm8uyTznQhOELOYpfQhJzW5RRAlTA65stMCj
-         B7VfWtrSwibEwAADeoScnSTwWtNb+gcDTMn78xJq+eCHl2bpxa4wPjpbneVVWFf8stI/
-         fTDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725456913; x=1726061713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ld5cWyae/iB0k1Ca1RVlaEbBbyAMRHm9ax0zyn7Axo=;
-        b=Eriza0itHOsq7jOZCq2M+U6EvgywC14W26JIPuocxw346IxiRu/pfaeX4NjlHnzTcM
-         p2PSha3autdTjGnxYk42KaobzyEbEDvy4rnfDlOQK2dyRZphmYFa/r9wP6emOIYIFRT2
-         DXKmpYCpCQS6iayccs4pM+sju+LirPHFXNUviJCI3CUtQDIwzeYSDjcPfu0S8Mb7dVkV
-         lD+Y182z4ivmiazrA3Gi1N3/nUIOVqukZ2K74hkuSMj+5R6dDmlrkpCoxFOsnEyQEqFR
-         rVfM67dcAGKuYfpX17eIccIKMHXVtLtjmpoQPcVJTi9faLwomcXlvfyFBOehIvtZjCLF
-         DcIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaxEn4RYWZnGeqJKetOi71ydo9y38pP0XrkKE1ESWL37Tb/IVaFJeCtZA6HpHTRv/jgTWoOK4F4/8W3pw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk+qFC4ung2jCBRIsFNf+de2F6h/O5/XzDjKRY1kXppbD1rL8H
-	xOuYl1siUotaVDdG0KfRuWYVo+P8N131V+uKOfoBouAQnIgXGV7tYSPgOcZHyIE=
-X-Google-Smtp-Source: AGHT+IE1R2i+awcjDPl197c7K24+01eFHTYrMYyuAR8ePTTzDeEHp8BDpPPt5Zs/ISrbNMsn/ws9NA==
-X-Received: by 2002:a05:6000:4029:b0:374:ce9a:ff11 with SMTP id ffacd0b85a97d-376dea47205mr4000346f8f.50.1725456913032;
-        Wed, 04 Sep 2024 06:35:13 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3767dc16f83sm4099348f8f.60.2024.09.04.06.35.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:35:12 -0700 (PDT)
-Message-ID: <eac88362-4b3e-4fd1-b649-2f374453aeae@linaro.org>
-Date: Wed, 4 Sep 2024 15:35:11 +0200
+	 In-Reply-To:Content-Type; b=OOK9HkDpws260lSH+5yNmXmwX6caZjGT88c1ZSbRDQFRrMDSrEubXe0fm01Dzqd8bD3isZkkHNGQIPwqzavtEa7Odhl+rPiPz3wfRanmtGSg5Xo2dBDoE+gpVux//Jo424010Rd/nCi1RZHOQtq7wE8SvDT1glMgMaTE/O8t5YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 224B0FEC;
+	Wed,  4 Sep 2024 06:35:44 -0700 (PDT)
+Received: from [10.57.75.163] (unknown [10.57.75.163])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A27353F73B;
+	Wed,  4 Sep 2024 06:35:14 -0700 (PDT)
+Message-ID: <0a362641-6029-4316-bd95-7e00dade89d8@arm.com>
+Date: Wed, 4 Sep 2024 14:35:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,35 +41,210 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] thermal/drivers/imx_sc_thermal: Use dev_err_probe
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-pm@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240717085517.3333385-1-alexander.stein@ew.tq-group.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240717085517.3333385-1-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+ =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Mihail Atanassov <mihail.atanassov@arm.com>, linux-kernel@vger.kernel.org,
+ Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ Shashank Sharma <shashank.sharma@amd.com>,
+ Ketil Johnsen <ketil.johnsen@arm.com>, Akash Goel <akash.goel@arm.com>
+References: <20240828172605.19176-1-mihail.atanassov@arm.com>
+ <c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
+ <a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
+ <96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
+ <Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
+ <090ae980-a944-4c00-a26e-d95434414417@amd.com>
+ <80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
+ <20240904132308.7664902e@collabora.com>
+ <a5a53492-9651-403e-b613-91ef0b9e80b6@amd.com>
+ <298d0516-3b92-47e9-ad54-185de97561ee@arm.com>
+ <20240904152018.3de547f6@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240904152018.3de547f6@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 17/07/2024 10:55, Alexander Stein wrote:
-> This adds the error code to the error message and also stores that
-> message in case of probe deferral.
+On 04/09/2024 14:20, Boris Brezillon wrote:
+> + Adrian, who has been looking at the shrinker stuff for Panthor
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
+> On Wed, 4 Sep 2024 13:46:12 +0100
+> Steven Price <steven.price@arm.com> wrote:
+> 
+>> On 04/09/2024 12:34, Christian König wrote:
+>>> Hi Boris,
+>>>
+>>> Am 04.09.24 um 13:23 schrieb Boris Brezillon:  
+>>>>>>>> Please read up here on why that stuff isn't allowed:
+>>>>>>>> https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#indefinite-dma-fences    
+>>>>>>> panthor doesn't yet have a shrinker, so all memory is pinned, which means
+>>>>>>> memory management easy mode.    
+>>>>>> Ok, that at least makes things work for the moment.    
+>>>>> Ah, perhaps this should have been spelt out more clearly ;)
+>>>>>
+>>>>> The VM_BIND mechanism that's already in place jumps through some hoops
+>>>>> to ensure that memory is preallocated when the memory operations are
+>>>>> enqueued. So any memory required should have been allocated before any
+>>>>> sync object is returned. We're aware of the issue with memory
+>>>>> allocations on the signalling path and trying to ensure that we don't
+>>>>> have that.
+>>>>>
+>>>>> I'm hoping that we don't need a shrinker which deals with (active) GPU
+>>>>> memory with our design.  
+>>>> That's actually what we were planning to do: the panthor shrinker was
+>>>> about to rely on fences attached to GEM objects to know if it can
+>>>> reclaim the memory. This design relies on each job attaching its fence
+>>>> to the GEM mapped to the VM at the time the job is submitted, such that
+>>>> memory that's in-use or about-to-be-used doesn't vanish before the GPU
+>>>> is done.  
+>>
+>> How progressed is this shrinker?
+> 
+> We don't have code yet. All we know is that we want to re-use Dmitry's
+> generic GEM-SHMEM shrinker implementation [1], and adjust it to match
+> the VM model, which means not tracking things at the BO granularity,
+> but at the VM granularity. Actually it has to be an hybrid model, where
+> shared BOs (those imported/exported) are tracked individually, while
+> all private BOs are checked simultaneously (since they all share the VM
+> resv object).
+> 
+>> It would be good to have an RFC so that
+>> we can look to see how user submission could fit in with it.
+> 
+> Unfortunately, we don't have that yet :-(. All we have is a rough idea
+> of how things will work, which is basically how TTM reclaim works, but
+> adapted to GEM.
 
-Applied, thanks
+Fair enough, thanks for the description. We might need to coordinate to
+get this looked at sooner if it's going to be blocking user submission.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>
+>>> Yeah and exactly that doesn't work any more when you are using user
+>>> queues, because the kernel has no opportunity to attach a fence for each
+>>> submission.  
+>>
+>> User submission requires a cooperating user space[1]. So obviously user
+>> space would need to ensure any BOs that it expects will be accessed to
+>> be in some way pinned. Since the expectation of user space submission is
+>> that we're reducing kernel involvement, I'd also expect these to be
+>> fairly long-term pins.
+>>
+>> [1] Obviously with a timer to kill things from a malicious user space.
+>>
+>> The (closed) 'kbase' driver has a shrinker but is only used on a subset
+>> of memory and it's up to user space to ensure that it keeps the relevant
+>> parts pinned (or more specifically not marking them to be discarded if
+>> there's memory pressure). Not that I think we should be taking it's
+>> model as a reference here.
+>>
+>>>>> Memory which user space thinks the GPU might
+>>>>> need should be pinned before the GPU work is submitted. APIs which
+>>>>> require any form of 'paging in' of data would need to be implemented by
+>>>>> the GPU work completing and being resubmitted by user space after the
+>>>>> memory changes (i.e. there could be a DMA fence pending on the GPU work).  
+>>>> Hard pinning memory could work (ioctl() around gem_pin/unpin()), but
+>>>> that means we can't really transparently swap out GPU memory, or we
+>>>> have to constantly pin/unpin around each job, which means even more
+>>>> ioctl()s than we have now. Another option would be to add the XGS fence
+>>>> to the BOs attached to the VM, assuming it's created before the job
+>>>> submission itself, but you're no longer reducing the number of user <->
+>>>> kernel round trips if you do that, because you now have to create an
+>>>> XSG job for each submission, so you basically get back to one ioctl()
+>>>> per submission.  
+>>
+>> As you say the granularity of pinning has to be fairly coarse for user
+>> space submission to make sense. My assumption (could be wildly wrong)
+>> was that most memory would be pinned whenever a context is rendering.
+> 
+> The granularity of pinning (in term of which regions are pinned) is not
+> really the problem, we can just assume anything that's mapped to the VM
+> will be used by the GPU (which is what we're planning to do for kernel
+> submission BTW). The problem is making the timeslice during
+> which VM memory is considered unreclaimable as short as possible, such
+> that the system can reclaim memory under mem pressure. Ideally, you want
+> to pin memory as long as you have jobs queued/running, and allow for
+> reclaim when the GPU context is idle.
+> 
+> We might be able to involve the panthor_scheduler for usermode queues,
+> such that a context that's eligible for scheduling first gets its VM
+> mappings pinned (fence creation + assignment to the VM/BO resvs), and
+> things get reclaimable again when the group is evicted from the CSG
+> slot. That implies evicting idle groups more aggressively than we do
+> know, but there's probably a way around it.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Can we evict idle groups from the shrinker? User space already has to do
+a little dance to work out whether it needs to "kick" the kernel to do
+the submission. So it would be quite reasonable to extend the kick to
+also pin the VM(s). The shrinker could then proactively evict idle
+groups, and at that point it would be possible to unpin the memory.
+
+I'm probably missing something, but that seems like a fairly solid
+solution to me.
+
+>>
+>>> For AMDGPU we are currently working on the following solution with
+>>> memory management and user queues:
+>>>
+>>> 1. User queues are created through an kernel IOCTL, submissions work by
+>>> writing into a ring buffer and ringing a doorbell.
+>>>
+>>> 2. Each queue can request the kernel to create fences for the currently
+>>> pushed work for a queues which can then be attached to BOs, syncobjs,
+>>> syncfiles etc...
+>>>
+>>> 3. Additional to that we have and eviction/preemption fence attached to
+>>> all BOs, page tables, whatever resources we need.
+>>>
+>>> 4. When this eviction fences are requested to signal they first wait for
+>>> all submission fences and then suspend the user queues and block
+>>> creating new submission fences until the queues are restarted again.
+>>>
+>>> This way you can still do your memory management inside the kernel (e.g.
+>>> move BOs from local to system memory) or even completely suspend and
+>>> resume applications without their interaction, but as Sima said it is
+>>> just horrible complicated to get right.
+>>>
+>>> We have been working on this for like two years now and it still could
+>>> be that we missed something since it is not in production testing yet.  
+>>
+>> I'm not entirely sure I follow how this doesn't create a dependency
+>> cycle. From your description it sounds like you create a fence from the
+>> user space queue which is then used to prevent eviction of the BOs needed.
+>>
+>> So to me it sounds like:
+>>
+>> 1. Attach fence to BOs to prevent eviction.
+>>
+>> 2. User space submits work to the ring buffer, rings doorbell.
+>>
+>> 3. Call into the kernel to create the fence for step 1.
+>>
+>> Which is obviously broken. What am I missing?
+>>
+>> One other thing to note is that Mali doesn't have local memory - so the
+>> only benefit of unpinning is if we want to swap to disk (or zram etc).
+> 
+> Which would be good to have, IMHO. If we don't do the implicit swapout
+> based on some sort of least-recently-used-VM, we have to rely on
+> userspace freeing its buffer (or flagging them reclaimable) as soon as
+> they are no longer used by the GPU.
+
+It's an awkward one because really you do want user space to free
+buffers - generally the user space driver has a fairly large number of
+buffers which are for temporary storage (and kept around to avoid the
+overhead of freeing/allocating each frame). I know we've resorted to
+idle timers in user space in an attempt to do this in the past - but
+it's ugly.
+
+Actual swapout can work, but it incurs a heavy penalty when the
+application becomes active again. But I agree we should probably be
+aiming to add support for this.
+
+Steve
+
 
