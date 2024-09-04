@@ -1,77 +1,53 @@
-Return-Path: <linux-kernel+bounces-315244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B8696BFC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1986A96BFC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4354A287E98
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA051C241DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A50E1DA620;
-	Wed,  4 Sep 2024 14:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04711DA62C;
+	Wed,  4 Sep 2024 14:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAUQ3IV9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m2E58tiU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20171DA311;
-	Wed,  4 Sep 2024 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1221D9D70;
+	Wed,  4 Sep 2024 14:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459119; cv=none; b=Q5uJyt/CO+yzG/SWV/nvOXPwlBpFT6LrMHID2k1l3+RQyrRmhg6CaTSap5PVt+4rEFo4NsorJ22EUZNp4NZqLm/WAeyAVeU6EaTWnKH8u/DCwYmRN1rEiaQl8oZa7W+t8EW2HieNfgPGp9NNMQBRZN3Lcz1Y19yMx/UmGQOr1D4=
+	t=1725459187; cv=none; b=lrO1L1yp+zMW6HmboD84Qq2VmtXAH6ssm0IJon/OmfX0MgmeOR4GaGAIpmayRU44ahvNvHaZ79AGUbW+s0IfErddjFZhrJfILe8gXf42JXgLvomAnGgCTFXj7isuz/ZPOuKc/Yz1R1ca6S1+chmRkcNrpyDq6j5w4bb9p8lyHBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459119; c=relaxed/simple;
-	bh=+3ALZ8n8RZc/Nxa6DpBxhgCos4a+VQLJwizgv7Ks8i0=;
+	s=arc-20240116; t=1725459187; c=relaxed/simple;
+	bh=RrFPDPZeZLM6GXuS6xgLbpxSSAazd3xRY/Ov7VdhJTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTiJk2rL1bpUxSJYWNNEYkxzr//8BdO0H3VejvCUxlu3LJPmjkSP5PbTPEIaAbvT9ACTmq8824N7MtdD8tuhhZhiVo0CxlpuAvGGZnf6L8sueMrUDWd2EWZd+e65jLWk5XE1jNeOSJ276FIkzFBzl4+4fnmRAZaQx+df24Dlim8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAUQ3IV9; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725459117; x=1756995117;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+3ALZ8n8RZc/Nxa6DpBxhgCos4a+VQLJwizgv7Ks8i0=;
-  b=PAUQ3IV9MIBI3PjInOWoR09rPYCbNJUJ5+m3uhtdPnbhGCFKGBAtPvJ9
-   2dSxJYYtE39m8n6xt+vVoFbMdHeiPV9LtQ2Hol85lGKH3I6FTlQPAE4Jx
-   W1QLtVMOsoEM0+/YSMn0kcvC1Sw7ve4K8zjL/kaWZgL7FJRZ2sN3pqZV5
-   rtWbETYFKE7YylI9aGsa1JgUkautJ5VYFOc4FqdLj9WICBsWJ3FYA5H6n
-   iO1NsJfDH1etJWkUkx0isTaxjiJyEv8HzxAbROobPV0u4T/jUV/YKDcXb
-   ORrRWmoSZ3Mxba6MC03ADDMAQcy+SXqL3VX9NQyge58x8he+tWxomV/lJ
-   Q==;
-X-CSE-ConnectionGUID: wuMd+mGzQCi/+/GbtNH5Zw==
-X-CSE-MsgGUID: HPXVmNGLQ0qO9ncgLFc20A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="35283156"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="35283156"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 07:11:57 -0700
-X-CSE-ConnectionGUID: EJpDmL5VQwecN7eD9K6LrQ==
-X-CSE-MsgGUID: A4WHzv0OQpWJcMIIqwRRUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="65275568"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 07:11:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slqjg-000000055LZ-3T9x;
-	Wed, 04 Sep 2024 17:11:52 +0300
-Date: Wed, 4 Sep 2024 17:11:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Martyn Welch <martyn.welch@collabora.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpio: mpc8xxx: switch to using
- DEFINE_RUNTIME_DEV_PM_OPS()
-Message-ID: <ZthqqEtrKFp7COOw@smile.fi.intel.com>
-References: <20240904140706.70359-1-brgl@bgdev.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CotKSS28HiHggZHdeGLzUMdEJZ78fvWxJvWkDb4ZZd8zyfhf6KirApNiEOpgxiXg4E7b7dzTshzRiYc9+j5OeXMwXGqTrnxS3nqNk/5uVrKZzJX7jHaEE+kk3F/D6RpKJzpBD8yG1maz1bHkrh6kwMBFJ2pL+fCmJBMUZDNq8MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m2E58tiU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BAE5C4CEC2;
+	Wed,  4 Sep 2024 14:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725459186;
+	bh=RrFPDPZeZLM6GXuS6xgLbpxSSAazd3xRY/Ov7VdhJTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m2E58tiUogfSLAVqXAojnuaQINFW7uzDemNJN6IWUD3ZGiH9HybxwKtWuJmX5M3iE
+	 NiaH9eM1dLV1Sj9bURV0BsZ+vyJuOUZi0vERIRgJh9dxPUrUX3pP8SxC3Bx9+ZGIP+
+	 QDd1zr9MJigDyokSHkGwN4w1RPs7lISsaLWkfECw=
+Date: Wed, 4 Sep 2024 16:13:03 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] USB: usbtmc: prevent kernel-infoleak
+Message-ID: <2024090427-trident-delegator-0781@gregkh>
+References: <000000000000a338d6062149eb22@google.com>
+ <tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com>
+ <2024090430-revolving-unmindful-75b7@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,21 +56,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904140706.70359-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <2024090430-revolving-unmindful-75b7@gregkh>
 
-On Wed, Sep 04, 2024 at 04:07:06PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Sep 04, 2024 at 04:09:15PM +0200, Greg KH wrote:
+> On Wed, Sep 04, 2024 at 09:55:43PM +0800, Edward Adam Davis wrote:
+> > The syzbot reported a kernel-usb-infoleak in usbtmc_write,
+> > we need to clear the structure before filling fields.
 > 
-> Use the preferred API for assigning system sleep pm callbacks in drivers.
+> Really?
+> 
+> 
+> > 
+> > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+> > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > ---
+> >  drivers/usb/class/usbtmc.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> > index 6bd9fe565385..e9ddaa9b580d 100644
+> > --- a/drivers/usb/class/usbtmc.c
+> > +++ b/drivers/usb/class/usbtmc.c
+> > @@ -759,6 +759,7 @@ static struct urb *usbtmc_create_urb(void)
+> >  		usb_free_urb(urb);
+> >  		return NULL;
+> >  	}
+> > +	memset(dmabuf, 0, bufsize);
+> 
+> To do this simpler, kzmalloc() above this would be nice.
+> 
+> But, this feels odd, where is the data leaking from?  This is used for
+> both the read and write path, but where is the leak happening?  A short
+> read?  If so, we need to properly truncate the buffer being sent to
+> userspace and not send the unread data.  If a short write, that makes no
+> sense.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I looked at the report and this seems to be data sent to the device, so
+somehow we aren't setting the length to send to the device correctly.
 
-(and please correct Suggested-by email when applying, thanks!)
+Good luck!
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+greg k-h
 
