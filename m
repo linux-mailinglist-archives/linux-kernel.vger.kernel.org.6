@@ -1,207 +1,173 @@
-Return-Path: <linux-kernel+bounces-314365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B1596B252
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:05:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCCF96B255
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF051284872
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD597B22BD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202C4145FE8;
-	Wed,  4 Sep 2024 07:05:27 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFE96A8D2;
+	Wed,  4 Sep 2024 07:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LREveYF/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E91EC01C;
-	Wed,  4 Sep 2024 07:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE52F126BFE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433526; cv=none; b=ihiG5W07Z52A5cfsDHFxLJg4RHEvHNRXfbEvuTp5cgEIfZub2L1n3UkDMXJ8QdbbVuxQTSDMDjYecvuUMAeAB7QhgDV1bz5hzK1f6lIroo9M40tjSmKcryFWgvxrFyYqGj/lgLPj3hoIxdiaNME7bLrYuJsU2x7J8+SL+DGFtes=
+	t=1725433604; cv=none; b=DPsrf0aA+6lEgE7o/NfN95tJIE6RbWlIKLMeRaE/LqUbIfVXskqZWs8sv26pwCqJ3fUwQ7HDsf1TS61QsedSim4B8JYyEHPO1fGb61bvdkC2QOpAeJKAQQgSNk8emfdor0FkxvG0XpU5pH2U2F17aWg2Mw+g4X9scXwlFDnnV24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433526; c=relaxed/simple;
-	bh=c7qUXUOvGX+WYqEK4G2pw0HsJjV4YrvOvUOiIHnfWT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKmAqgKUOEQel5pgb1LVKX56FZW0UZs+ehOdy7yFFXLfIkN6wuIs7Wv+xOIQuCGv+jgAyEdv6PelHfoZY0guCW0gh6CPx2Zo3SYbAAmowxwd9SV+lmKMlVR5j6GNElqT6idPfvXZUEGXX+ZGgBmx7w+v2+Yqr8YUDJsZ1xmjdZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Wed, 4 Sep 2024 07:05:20 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Meng Zhang <kevin.z.m@hotmail.com>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: gpio: spacemit: add support for K1 SoC
-Message-ID: <20240904070520-GYA107481@gentoo>
-References: <20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org>
- <20240904-03-k1-gpio-v1-1-6072ebeecae0@gentoo.org>
- <ttvqw3hncprtshhdgsnvlfopobqcxtsraxevgxqgnlt6orftkr@ktahud64cczd>
+	s=arc-20240116; t=1725433604; c=relaxed/simple;
+	bh=9+4+02P6VdlWS5bH9NiDFW/JYVZ0bGvOd3je7eBy/Kk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pAfxc2+DYHYgxd8OviT97Ou+zOSZSxr+spPvITHg8GP0DfdF4oKmPv9oqqa6tCWNXw5e5hLNF3mzdK2VVvkWbuOie58RngmLl6biy8+mEtKupv1HfJPeRnnZiSdnnAw1CbmEpszmvJ5BwlL3lHoIxuG1rvEcxuDHMlpSeZfIaEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LREveYF/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725433602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D1fOf/Lbka3oPuT1iX3a8CQcbtqm54HN8PC96Xte6gY=;
+	b=LREveYF/C9SLgUv/CK4wRsdR1yOtW1Dhrnk9B366yDWoNg1b+cpVZs5Gbg7EqtFtCLP/fc
+	7Yg3wrcCrJjztCOLxkNxpPRTyT22eTXJaDyuu7MXpj5gXsGT/AmGH/r6YB1kgbdzytXtij
+	8jEvl1uRChj27rwtk1ArV2svOyjprIU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-316-9ilLSRe6NAe8byGc7t4prw-1; Wed, 04 Sep 2024 03:06:40 -0400
+X-MC-Unique: 9ilLSRe6NAe8byGc7t4prw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428ea5b1479so9223225e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:06:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725433599; x=1726038399;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D1fOf/Lbka3oPuT1iX3a8CQcbtqm54HN8PC96Xte6gY=;
+        b=e0QeEAXuuPeedL636ncDZPNXvh4wUxgZVYjcT9snViGPzL0Gs225XjMfS7HALK/7kH
+         AZobRf2DttkfjHnWHqgGYxddeeyzs3AYKjTdILxKPUztvjBX2kDIgd6CmZPxKUYgTzUY
+         73z6NRRcOCPpW7G5yh+Z3mg9okXGM4PQLDUEJvVlZZvDUY38flh86epXZVRnYqa5nX67
+         LsTxveVGM3Fxy/shnEJb3C9a2F8q5bItr8fktaK1KUT3Ef2KoXwG7sW81/tN8X/TXLjL
+         bgvBUgxQas+s74Us4TtdI/DYDK0sA7uXJFHsumg7NdKI2Peq7q49jX/BDb7dk+4nxnCG
+         TQwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhPhZNcz528mF7vxWZodOOyOJVZDkkxy8GfkdeZoSlTkltGvdtbDLXldjTtzMOnRYCfxjdQ3IWF45G2l0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPY1zuTS0WgVOhvQMXzIRjByj/BRGOFJl1RhJso/cpbUTNO1sL
+	puW3VEzuj37RrD1Nxp5hFrow4X/yLu7IT6G5sylY9d71MLhI9SR2dEPD806hc26HjrPWUYU2WhN
+	VOQTuQqkuhF1mNUXZgu1UW2hy89HQYA2Bt6M3lp4fX4UmJHxsTv+XQKcddPDviQ==
+X-Received: by 2002:a05:600c:3b8e:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42bb01b556bmr154098915e9.15.1725433598813;
+        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHf/Kc6FZV8G94W1sYODGsLkpfpa2DDiOzZF4FZwEIEwJQGn0yGP3bHFUfookRalM2sYhKFPA==
+X-Received: by 2002:a05:600c:3b8e:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42bb01b556bmr154098685e9.15.1725433598350;
+        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33f5esm191840235e9.39.2024.09.04.00.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
+Message-ID: <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?=
+	 <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
+Date: Wed, 04 Sep 2024 09:06:37 +0200
+In-Reply-To: <20240903094431.63551744.alex.williamson@redhat.com>
+References: <20240725120729.59788-2-pstanner@redhat.com>
+	 <20240903094431.63551744.alex.williamson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ttvqw3hncprtshhdgsnvlfopobqcxtsraxevgxqgnlt6orftkr@ktahud64cczd>
 
-Hi Krzysztof 
+On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote:
+> On Thu, 25 Jul 2024 14:07:30 +0200
+> Philipp Stanner <pstanner@redhat.com> wrote:
+>=20
+> > pci_intx() is a function that becomes managed if
+> > pcim_enable_device()
+> > has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
+> > pcim_intx()") changed this behavior so that pci_intx() always leads
+> > to
+> > creation of a separate device resource for itself, whereas earlier,
+> > a
+> > shared resource was used for all PCI devres operations.
+> >=20
+> > Unfortunately, pci_intx() seems to be used in some drivers'
+> > remove()
+> > paths; in the managed case this causes a device resource to be
+> > created
+> > on driver detach.
+> >=20
+> > Fix the regression by only redirecting pci_intx() to its managed
+> > twin
+> > pcim_intx() if the pci_command changes.
+> >=20
+> > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+>=20
+> I'm seeing another issue from this, which is maybe a more general
+> problem with managed mode.=C2=A0 In my case I'm using vfio-pci to assign
+> an
+> ahci controller to a VM.
 
-On 08:46 Wed 04 Sep     , Krzysztof Kozlowski wrote:
-> On Wed, Sep 04, 2024 at 12:27:23AM +0000, Yixun Lan wrote:
-> > The GPIO controller of K1 support basic functions as input/output,
-> > all pins can be used as interrupt which route to one IRQ line,
-> > trigger type can be select between rising edge, failing edge, or both.
-> > There are four GPIO banks, each consisting of 32 pins.
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> >  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 95 ++++++++++++++++++++++
-> >  1 file changed, 95 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> > new file mode 100644
-> > index 0000000000000..db2e62fb452fd
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> > @@ -0,0 +1,95 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/gpio/spacemit,k1-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: SpacemiT K1 GPIO controller
-> > +
-> > +description: >
-> 
-> Drop >
-> 
-> > +  The controller's registers are organized as sets of eight 32-bit
-> > +  registers with each set controlling a bank of up to 32 pins.  A single
-> > +  interrupt is shared for all of the banks handled by the controller.
-> > +
-> > +maintainers:
-> > +  - Yixun Lan <dlan@gentoo.org>
-> 
-> Maintainers go before description. Use example-schema as template.
-> 
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: '^gpio@[0-9a-f]+$'
-> 
-> 
-> No, why? Drop.
-> 
-> > +
-> > +  compatible:
-> > +    items:
-> 
-> and you can drop items as well.
-> 
-> > +      - const: spacemit,k1-gpio
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +    description: >
-> 
-> Drop >. Everywhere.
-> 
-> > +      Define the base and range of the I/O address space containing
-> > +      the SpacemiT K1 GPIO controller registers
-> 
-> Redundant description, drop.
-> 
-> > +
-> > +  ranges: true
-> > +
-> > +  "#gpio-cells":
-> > +    const: 2
-> > +    description: >
-> > +      The first cell is the pin number (within the controller's
-> > +      pin space), and the second is used for the following:
-> > +      bit[0]: polarity (0 for active-high, 1 for active-low)
-> 
-> Rather refer to standard GPIO bindings header.
-> 
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  gpio-ranges: true
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +    description:
-> > +      The interrupt shared by all GPIO lines for this controller.
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: gpio_mux
-> > +
-> > +  "#interrupt-cells":
-> > +    const: 2
-> > +    description: |
-> > +      The first cell is the GPIO number, the second should specify
-> > +      flags.  The following subset of flags is supported:
-> > +      - bits[3:0] trigger type flags (no level trigger type support)
-> > +        1 = low-to-high edge triggered
-> > +        2 = high-to-low edge triggered
-> > +      Valid combinations are 1, 2, 3
-> 
-> Hm? No, you must use standard interrupt flags, not custom ones.
-> 
-It should be same as standard flags, my intention here was try to say
-the controller support edge trigger only, but no level trigger flags (4, 8)
-should I just replace number to macro, and put it like this:
+"In my case" doesn't mean OOT, does it? I can't fully follow.
 
-The value is defined in <dt-bindings/interrupt-controller/irq.h>
-Only the following flags are supported:
-    IRQ_TYPE_EDGE_RISING
-    IRQ_TYPE_EDGE_FALLING
-    IRQ_TYPE_EDGE_BOTH
+> =C2=A0 ahci_init_one() calls pcim_enable_device()
+> which sets is_managed =3D true.=C2=A0 I notice that nothing ever sets
+> is_managed to false.=C2=A0 Therefore now when I call pci_intx() from vfio=
+-
+> pci
+> under spinlock, I get a lockdep warning
+
+I suppose you see the lockdep warning because the new pcim_intx() can=20
+now allocate, whereas before 25216afc9db5 it was pcim_enable_device()
+which allocated *everything* related to PCI devres.
+
+>  as I no go through pcim_intx()
+> code after 25216afc9db5=C2=A0
+
+You alwas went through pcim_intx()'s logic. The issue seems to be that
+the allocation step was moved.
+
+> since the previous driver was managed.
+
+what do you mean by "previous driver"?
+
+> =C2=A0 It seems
+> like we should be setting is_managed to false is the driver release
+> path, right?
+
+So the issue seems to be that the same struct pci_dev can be used by
+different drivers, is that correct?
+
+If so, I think that can be addressed trough having
+pcim_disable_device() set is_managed to false as you suggest.
+
+Another solution can could at least consider would be to use a
+GFP_ATOMIC for allocation in get_or_create_intx_devres().
+
+I suppose your solution is the better one, though.
 
 
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - gpio-controller
-> > +  - '#gpio-cells'
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - interrupt-controller
-> > +  - '#interrupt-cells'
-> 
-> Use consistent quotes. Either ' or ".
-> 
-> > +
-> > +additionalProperties: false
-> 
-> Best regards,
-> Krzysztof
+P.
 
-Ack for other comments, will address them in next version, thanks
+> =C2=A0 Thanks,
+>=20
+> Alex
+>=20
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
 
