@@ -1,202 +1,171 @@
-Return-Path: <linux-kernel+bounces-315827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE3596C76C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368AD96C773
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5956F1F26A11
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AF228502D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2401E6DCF;
-	Wed,  4 Sep 2024 19:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFFA1E6DF9;
+	Wed,  4 Sep 2024 19:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lpBi5lQO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="cpGmUWwy"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4971E5034;
-	Wed,  4 Sep 2024 19:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD46514037F;
+	Wed,  4 Sep 2024 19:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725477795; cv=none; b=BSD7zs3Rm8RGu1jMOsUaw9L8j0JfhsieS/9BjrMnaQXYMWiaPcAy4gcaHmSHrAFOfOeWKzzzMumN9376yJe4ykprLYwqVSwcwdlS4C0ksQQtBjjL3fLiLkzTpuZbjsX8oDFrJY9z+n5WDYtoWHgMzs/EUg0z6yAijuZMonokrA8=
+	t=1725477954; cv=none; b=QvLpMAbmoyGh6ObpDGcWFaVTwlEBHio7oBhgPXsRhdqjc0jiZa+g/pvFceyEdRHu9qhZd3xohE23E69fZPp0S9SJeSBh6sPMY6LFySpBXxVwQo7IRA15MRdrPlf4MuwJA8ulbanmudVMxFJdHp7nWf7PaVSvFMcdyNLmhWkeubw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725477795; c=relaxed/simple;
-	bh=4wcsBOr2fzCHJ5b6O4hsPqGBLBwATw2oUkdqrqEwPgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8q701I1xlmGhnYt3CNBCqv/V84AcdfvANGKKoY7K3MFtQSvdoKRb+a6LE9ZzW10/glWQuipwIwK/Hxa64N4QQk2fdZZP1uKUe7+Oo4t/Ri5/T1NH1S59s7SeY383oNA5x8BwNlsiCNpc27HHzeNNbkgfCSdZpgHjQ7kTcu0+Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lpBi5lQO; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725477794; x=1757013794;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4wcsBOr2fzCHJ5b6O4hsPqGBLBwATw2oUkdqrqEwPgQ=;
-  b=lpBi5lQOO/r70YMqIRzgrnXAV2p8IkMDplRxky5Lb+iHUz4/WV5u5xqE
-   zLCI6iOwZz+JdVQbG43CrWGhFf5AuoOrAMEZMInfZvvMu/cBI8F7XqI+P
-   LXGQWZtxQwhHi/RuFmDsWNHKO43RAGD62Bef7X2QI2LLPfagwH428kk+A
-   shuJ1MPua7cixptPdKkQ0QxzOHAd4um0AUBRy8aevAFmeoLX7c1okVeqO
-   JbgtY6hCuo0UEFEotRvOvXPAiFmyVaKJA4sCVM8DnNWeU0aHeXRVGN2Vm
-   X7lv4x/o2Aykt8TlwHjFg+gHLHJPthxB/+CeDCPC1p0NJw8zqTbVrNpN4
-   Q==;
-X-CSE-ConnectionGUID: 6ZUo4xnNTb+X5ZUI7WtdgQ==
-X-CSE-MsgGUID: nLDCXJiXRz+Sa5jJ7bjH7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="46690814"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="46690814"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 12:23:09 -0700
-X-CSE-ConnectionGUID: To3hBdIpSra6xpZsucP93Q==
-X-CSE-MsgGUID: VjApYc4/Tzez6wViLnxSFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="65417052"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
-  by fmviesa008.fm.intel.com with SMTP; 04 Sep 2024 12:23:02 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 04 Sep 2024 22:23:01 +0300
-Date: Wed, 4 Sep 2024 22:23:01 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH 07/21] drm/msm/dpu: Check CRTC encoders are valid clones
-Message-ID: <ZtizlTxH-7EBhiSd@intel.com>
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-7-502b16ae2ebb@quicinc.com>
- <uqtlpynjdszqyyikj64uxwuqnk3lmzma7kd2vwxipnj4fg2eje@7toj5kww7vk7>
- <9f95704d-0699-4b11-b8cb-40f1a57eeebd@quicinc.com>
- <CAA8EJpqM0QBxLFCx22UuVmYAE258im_Up2-3fu6qez1GrOhOQg@mail.gmail.com>
+	s=arc-20240116; t=1725477954; c=relaxed/simple;
+	bh=fTt3UQDXWr0WfqkNcK9NRses1WpSjmsB2JnJm1vdGOY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pE3Tzp48Zh6PfhtikY4v10eZxR2awJt2kg0Otnho+s5TqyDl0ym6kyC2xOniAHkLfkZjLsu0p0S7b5pzA+hRMwukjej01njZCt4GcNYhrWHh+mrSNdD75Z8KeVfQStLFfVX72nFLaRPq5+cbQIA+iqmiLsvTa/m+JIcpCE7X8Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=cpGmUWwy; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725477949;
+	bh=fTt3UQDXWr0WfqkNcK9NRses1WpSjmsB2JnJm1vdGOY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cpGmUWwyRbLk07iw6nkisli9TBMBcC3KbnZAiisyRPL+KNK+/iEwbkH6ZBxMgIojD
+	 nBBmVk0d0ZRDrvI592VNZdYUh/Z6iC3wY7E+L9F/ybUFUZRqnl1YfbCyqQoe1TSQXq
+	 3Pw99s+cWsQfHzI942jP4FR8hGVxnkp0fi3uDH+c=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH RFC v3 0/9] power: supply: extension API
+Date: Wed, 04 Sep 2024 21:25:33 +0200
+Message-Id: <20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA8EJpqM0QBxLFCx22UuVmYAE258im_Up2-3fu6qez1GrOhOQg@mail.gmail.com>
-X-Patchwork-Hint: comment
+X-B4-Tracking: v=1; b=H4sIAC202GYC/3XNywrCMBAF0F8pWRtJpw+NK0HwA9yKi7aZ2oCkI
+ dMnpf9uDC4E6fLe4Z5ZGKHTSOwULczhoEm3xodkF7GqKcwTuVY+MxCQilwAt+2IjlNv7WvmOHV
+ oPhPi4qBkKutMSCWZX1uHtZ6CfGe364U9fNlo6lo3h29DHE5fON+Eh5gLXqZZnkuQolTVeURNR
+ FXTN3uDXYAH+MWO2xh4DFSlkqwUMRTqD1vX9Q1pSBn4FQEAAA==
+To: Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725477949; l=4259;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=fTt3UQDXWr0WfqkNcK9NRses1WpSjmsB2JnJm1vdGOY=;
+ b=P4z4DlIB1CoKXerK5LU2fOjcn0VUhUp95g3cwDh8jwMpVF5bcqIh6v52VfmL6J5bZzYa9Y2H/
+ PcKTxhnk6CUATawpJU06tzA1cho7BNIBkqgO4ewQe4mhh7lgWFIuMDe
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, Sep 04, 2024 at 09:41:23PM +0300, Dmitry Baryshkov wrote:
-> On Wed, 4 Sept 2024 at 01:18, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
-> >
-> >
-> >
-> > On 8/30/2024 10:00 AM, Dmitry Baryshkov wrote:
-> > > On Thu, Aug 29, 2024 at 01:48:28PM GMT, Jessica Zhang wrote:
-> > >> Check that each encoder in the CRTC state's encoder_mask is marked as a
-> > >> possible clone for all other encoders in the encoder_mask and that only
-> > >> one CRTC is in clone mode at a time
-> > >>
-> > >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> > >> ---
-> > >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 36 +++++++++++++++++++++++++++++++-
-> > >>   1 file changed, 35 insertions(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > >> index 5ec1b5a38922..bebae365c036 100644
-> > >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > >> @@ -1,6 +1,6 @@
-> > >>   // SPDX-License-Identifier: GPL-2.0-only
-> > >>   /*
-> > >> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> > >> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > >>    * Copyright (c) 2014-2021 The Linux Foundation. All rights reserved.
-> > >>    * Copyright (C) 2013 Red Hat
-> > >>    * Author: Rob Clark <robdclark@gmail.com>
-> > >> @@ -1204,6 +1204,36 @@ static struct msm_display_topology dpu_crtc_get_topology(
-> > >>      return topology;
-> > >>   }
-> > >>
-> > >> +static bool dpu_crtc_has_valid_clones(struct drm_crtc *crtc,
-> > >> +            struct drm_crtc_state *crtc_state)
-> > >> +{
-> > >> +    struct drm_encoder *drm_enc;
-> > >> +    struct drm_crtc *temp_crtc;
-> > >> +    int num_cwb_sessions = 0;
-> > >> +
-> > >> +    drm_for_each_crtc(temp_crtc, crtc->dev)
-> > >> +            if (drm_crtc_in_clone_mode(temp_crtc->state))
-> > >
-> > > No, get the state from drm_atomic_state. temp_crtc->state might be
-> > > irrelevant.
-> >
-> > Hi Dmitry,
-> >
-> > Ack.
-> >
-> > >
-> > >> +                    num_cwb_sessions++;
-> > >
-> > > Even simpler:
-> > > if (temp_crtc != crtc && drm_crtc_in_clone_mode(...))
-> > >       return false;
-> >
-> > Ack.
-> >
-> > >
-> > >> +
-> > >> +    /*
-> > >> +     * Only support a single concurrent writeback session running
-> > >> +     * at a time
-> > >
-> > > If it is not a hardware limitation, please add:
-> > > FIXME: support more than one session
-> >
-> > This is a hardware limitation.
-> >
-> > >
-> > >> +     */
-> > >> +    if (num_cwb_sessions > 1)
-> > >> +            return false;
-> > >> +
-> > >> +    drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
-> > >> +            if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
-> > >> +                            crtc_state->encoder_mask) {
-> > >
-> > > Align to opening bracket, please. Granted that other drivers don't
-> > > perform this check, is it really necessary? Doesn't
-> > > validate_encoder_possible_clones() ensure the same, but during the
-> > > encoder registration?
-> >
-> > The difference here is that validate_encoder_possible_clones() is only
-> > called when the drm device is initially registered.
-> >
-> > The check here is to make sure that the encoders userspace is proposing
-> > to be cloned are actually possible clones of each other. This might not
-> > be necessary for drivers where all encoders are all possible clones of
-> > each other. But for MSM (and CWB), real-time display encoders can only
-> > be clones of writeback (and vice versa).
-> 
-> I had the feeling that encoder_mask should already take care of that,
-> but it seems I was wrong.
-> Please extract this piece as a generic helper. I think it should be
-> called from the generic atomic_check() codepath.
+Introduce a mechanism for drivers to extend the properties implemented
+by a power supply.
 
-Yeah, if we are semi-assured that drivers aren't screwing up those
-bitmasks anymore we could shove the cloning checks into
-drm_atomic_helper_check_modeset(). It already checks possible_crtcs.
-We could then throw out the equavalent code from i915 as well...
+Motivation
+----------
 
-Are there decent IGTs to make sure the kernel properly rejects
-illegal cloning configurations?
+Various drivers, mostly in platform/x86 extend the ACPI battery driver
+with additional sysfs attributes to implement more UAPIs than are
+exposed through ACPI by using various side-channels, like WMI,
+nonstandard ACPI or EC communication.
 
+While the created sysfs attributes look similar to the attributes
+provided by the powersupply core, there are various deficiencies:
+
+* They don't show up in uevent payload.
+* They can't be queried with the standard in-kernel APIs.
+* They don't work with triggers.
+* The extending driver has to reimplement all of the parsing,
+  formatting and sysfs display logic.
+* Writing a extension driver is completely different from writing a
+  normal power supply driver.
+* ~Properties can not be properly overriden.~
+  (Overriding is now explicitly forbidden)
+
+The proposed extension API avoids all of these issues.
+An extension is just a "struct power_supply_ext" with the same kind of
+callbacks as in a normal "struct power_supply_desc".
+
+The API is meant to be used via battery_hook_register(), the same way as
+the current extensions.
+
+When testing, please enable lockdep to make sure the locking is correct.
+
+Contents
+--------
+
+* Patch 1 to 5 are preparation patches.
+* Patch 6 implements the extension API itself.
+* Patch 7 implements a locking scheme for the extension API.
+* Patch 8 adds extension support to test_power.c
+* Patch 9 converts the in-tree cros_charge-control driver to the
+  extension API.
+
+Open issues
+-----------
+
+* Newly registered properties will not show up in hwmon.
+  To do that properly would require some changes in the hwmon core.
+  As far as I know, no current driver would extend the hwmon properties anyways.
+* As this is only useful with the hooks of CONFIG_ACPI_BATTERY, should
+  it also be gated behind this or another config?
+* Is an rw_semaphore acceptable?
+
+[0] https://lore.kernel.org/lkml/20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net/
+
+Signed-off-by: Thomas Wei√üschuh <linux@weissschuh.net>
+---
+Changes in v3:
+- Make naming more consistent
+- Readd locking
+- Allow multiple active extensions
+- Allow passing a "void *ext_data" when registering
+- Switch example driver from system76 to cros_charge-control
+- Link to v2: https://lore.kernel.org/r/20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net
+
+Changes in v2:
+- Drop locking patch, let's figure out the API first
+- Allow registration of multiple extensions
+- Pass extension to extension callbacks as parameter
+- Disallow property overlap between extensions and core psy
+- Drop system76/pdx86 maintainers, as the system76 changes are only RFC
+  state anyways
+- Link to v1: https://lore.kernel.org/r/20240606-power-supply-extensions-v1-0-b45669290bdc@weissschuh.net
+
+---
+Thomas Wei√üschuh (9):
+      power: supply: core: rename psy_has_property() to psy_desc_has_property()
+      power: supply: core: register thermal zone for battery
+      power: supply: hwmon: register battery properties
+      power: supply: sysfs: register battery properties
+      power: supply: sysfs: rework uevent property loop
+      power: supply: core: implement extension API
+      power: supply: core: add locking around extension access
+      power: supply: test-power: implement a power supply extension
+      power: supply: cros_charge-control: use power_supply extensions
+
+ drivers/power/supply/cros_charge-control.c | 207 +++++++++++------------------
+ drivers/power/supply/power_supply.h        |  18 +++
+ drivers/power/supply/power_supply_core.c   | 169 +++++++++++++++++++++--
+ drivers/power/supply/power_supply_hwmon.c  |  52 ++++----
+ drivers/power/supply/power_supply_leds.c   |   2 +
+ drivers/power/supply/power_supply_sysfs.c  |  65 +++++----
+ drivers/power/supply/test_power.c          | 104 +++++++++++++++
+ include/linux/power_supply.h               |  33 +++++
+ 8 files changed, 453 insertions(+), 197 deletions(-)
+---
+base-commit: d8abb73f584772eaafa95a447c90f1c02dba0dec
+change-id: 20240602-power-supply-extensions-07d949f509d9
+
+Best regards,
 -- 
-Ville Syrj‰l‰
-Intel
+Thomas Wei√üschuh <linux@weissschuh.net>
+
 
