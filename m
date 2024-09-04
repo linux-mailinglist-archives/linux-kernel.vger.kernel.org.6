@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-314880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F6896BA74
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:26:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25B196BA76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6C8282F7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:26:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFD5CB294A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B481D0161;
-	Wed,  4 Sep 2024 11:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RUQZoTLu"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F301D0179;
+	Wed,  4 Sep 2024 11:21:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D821D0167;
-	Wed,  4 Sep 2024 11:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010791CFEDD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448838; cv=none; b=eBkSI5mg1DfR1P+OaMoViGNi+pDHGmlQxplcIDzcxEOcMEn0JXf2xa/inXoD1Yl07vD1zMAxruB8jrCiM9x/EJXB9ds0Y+ZAOr731cmibHlzmA+6mn+AbQQ4+EsVT05YjBTe+qz5kECl3tNpt6t0twO1lX9HacxHWQbVH93CA5o=
+	t=1725448861; cv=none; b=jltRU461DNzFiP0w/A2coBF3ohzAe6D7zNd0jhFdGi5guBX50I8AdxKwvZloN3r5bL5NenPOjEcI66oxUcIrCk9svPytnb9se3PYgF8nwswGQVsizgdIsIyxENaqBaWckTVzvxHpIpRFo6msaUgVJGMMxJpSMPYA5BnGXZlLn0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448838; c=relaxed/simple;
-	bh=/p67161pq4mFVbBAVqpn+WmmAOac3AJuuOBsiT98BCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U/mg7uAnAq07LWxu3J0vOKttOZxBYi0mMrF1S2TMVSBBqajO+BxbtGAIEIF805NEhRzP65wsniKdmC4RQXgid1yO8ugTEEDzvDmjid+wEg/kOYFBnAzpT49Zc5m+BOSMP8J96PMgt/1qHo98n5RL52ITTk9tLhPLLlo/ujlBLzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RUQZoTLu; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 484BKIsb002952;
-	Wed, 4 Sep 2024 06:20:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725448818;
-	bh=2JE8yXmqVX5IfjYueX0kdENmSWkRL9BydcoG+TvETAQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RUQZoTLu8dUpEGshxZDCyjESQyGqE+tLIArQSwQ5H/I5KMYfg7w3l4w7AhFhkqFWV
-	 zm93GYs5NXdlDagjilxaniEzz9VJf8sa6mAx8FKf/m8sIUcaCOICEBMozOWIxrKM4b
-	 KgLjLP8S1/IqtfhtP2ZdCL7L3EwmgMbbtldUlFvc=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484BKICn052628;
-	Wed, 4 Sep 2024 06:20:18 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Sep 2024 06:20:18 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Sep 2024 06:20:18 -0500
-Received: from [10.250.149.209] ([10.250.149.209])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484BKFLo106649;
-	Wed, 4 Sep 2024 06:20:15 -0500
-Message-ID: <40ad98dd-6a1d-4619-9732-459ca837468e@ti.com>
-Date: Wed, 4 Sep 2024 16:50:14 +0530
+	s=arc-20240116; t=1725448861; c=relaxed/simple;
+	bh=TftL3iSBmRYXaP1isB4MihdnO9S9c/Serawns1g+mEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FL+ET1Q9PRVDB5kSqGw3JGuE2LhZYm5lPlWTbf+lh0D7V/2IRyqbAIBk19ArJ39L0uwo/Yzwc/AL9tBkuAqfYVG+UtE2FgSTeT66T0sBWgR/nfcDaThINSTRt6lUZUcp05R5io9CTp7fNOHtaoj8na+n5F0Whz84cnFRehWQ04M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slo41-00024s-Dq; Wed, 04 Sep 2024 13:20:41 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slo40-005RJT-Un; Wed, 04 Sep 2024 13:20:40 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 79257332619;
+	Wed, 04 Sep 2024 11:20:40 +0000 (UTC)
+Date: Wed, 4 Sep 2024 13:20:39 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: haibo.chen@nxp.com
+Cc: han.xu@nxp.com, yogeshgaur.83@gmail.com, broonie@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, devicetree@vger.kernel.org, singh.kuldeep87k@gmail.com, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+	kernel@pengutronix.de, hs@denx.de, festevam@gmail.com, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/6] spi: nxp-fspi: remove the imx8mp compatible string
+Message-ID: <20240904-free-chowchow-of-endeavor-9c3f8b-mkl@pengutronix.de>
+References: <20240904111727.1834935-1-haibo.chen@nxp.com>
+ <20240904111727.1834935-3-haibo.chen@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: k3-r5: Delay notification of wakeup event
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240820105004.2788327-1-b-padhi@ti.com>
- <522affaa-47ad-4834-be3c-acdd04902821@ti.com>
- <CANLsYkzfpO4dcF=xkfZRo8ekCOzyNwvjHkwu8t5T58B2hV8-AQ@mail.gmail.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <CANLsYkzfpO4dcF=xkfZRo8ekCOzyNwvjHkwu8t5T58B2hV8-AQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fqyfxuqjctwfsa3a"
+Content-Disposition: inline
+In-Reply-To: <20240904111727.1834935-3-haibo.chen@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-On 03-09-2024 20:02, Mathieu Poirier wrote:
-> On Tue, 3 Sept 2024 at 04:15, Beleswar Prasad Padhi <b-padhi@ti.com> wrote:
->> Hi Mathieu,
->>
->> On 20-08-2024 16:20, Beleswar Padhi wrote:
->>> From: Udit Kumar <u-kumar1@ti.com>
->>>
->>> Few times, core1 was scheduled to boot first before core0, which leads
->>> to error:
->>>
->>> 'k3_r5_rproc_start: can not start core 1 before core 0'.
->>>
->>> This was happening due to some scheduling between prepare and start
->>> callback. The probe function waits for event, which is getting
->>> triggered by prepare callback. To avoid above condition move event
->>> trigger to start instead of prepare callback.
->>>
->>> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
->>
->> Please put this patch on hold. I have some additional changelog that
->> should go in v3.
->>
-> I applied this patch a couple of weeks ago - are those changes to the
-> code?  If so please send another patch on top of rproc-next.
+--fqyfxuqjctwfsa3a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 04.09.2024 19:17:23, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
+>=20
+> According to imx8mp RM, the fspi is compatible with the fspi on
+> imx8mm. So remove this redundant imx8mp compatible string here.
+>=20
+> Fixes: 0467a97367d4 ("spi: fspi: enable fspi driver for on imx8mp")
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
+>  drivers/spi/spi-nxp-fspi.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> index fd1816befcd8..da110188bfed 100644
+> --- a/drivers/spi/spi-nxp-fspi.c
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -1286,7 +1286,6 @@ static int nxp_fspi_resume(struct device *dev)
+>  static const struct of_device_id nxp_fspi_dt_ids[] =3D {
+>  	{ .compatible =3D "nxp,lx2160a-fspi", .data =3D (void *)&lx2160a_data, =
+},
+>  	{ .compatible =3D "nxp,imx8mm-fspi", .data =3D (void *)&imx8mm_data, },
+> -	{ .compatible =3D "nxp,imx8mp-fspi", .data =3D (void *)&imx8mm_data, },
 
-Understood. Those are code changes, I will post another patch series for 
-the same.
+I think this breaks old DT with new driver, doesn't it?
 
-Thanks,
-Beleswar
+>  	{ .compatible =3D "nxp,imx8qxp-fspi", .data =3D (void *)&imx8qxp_data, =
+},
+>  	{ .compatible =3D "nxp,imx8dxl-fspi", .data =3D (void *)&imx8dxl_data, =
+},
+>  	{ /* sentinel */ }
 
->
->> Thanks,
->> Beleswar
->>
->>> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
->>> [ Applied wakeup event trigger only for Split-Mode booted rprocs ]
->>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->>> ---
->>> v2: Changelog:
->>> * Mathieu
->>> 1) Rebased changes on top of -next-20240820 tag.
->>>
->>> Link to v1:
->>> https://lore.kernel.org/all/20240809060132.308642-1-b-padhi@ti.com/
->>>
->>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
->>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> index 8a63a9360c0f..e61e53381abc 100644
->>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> @@ -469,8 +469,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>>                        ret);
->>>                return ret;
->>>        }
->>> -     core->released_from_reset = true;
->>> -     wake_up_interruptible(&cluster->core_transition);
->>>
->>>        /*
->>>         * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
->>> @@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>>                ret = k3_r5_core_run(core);
->>>                if (ret)
->>>                        return ret;
->>> +
->>> +             core->released_from_reset = true;
->>> +             wake_up_interruptible(&cluster->core_transition);
->>>        }
->>>
->>>        return 0;
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--fqyfxuqjctwfsa3a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbYQoQACgkQKDiiPnot
+vG/lkwf/U0AwRwCtRAjI/wFFBk3Pwcp0wSfCBNraW/3ZQ6e5J07JIhVh6lUbLcdO
+SpJcVczbyhIrtVbLp3qczodFMNVN0SplPUrTlQs9pvRDdLTIhDEoDzmjalJFG+rZ
+nXfTWgTF58UQdv2ya6k/xrs/SyislM6bGGdyWAX/+tyURXAJe2tt+cjTPCfgpEEW
+PSTviaGoGKlFkwi3OKQ0UYtxBIJE0wV2r2YMQOzXaaqVqZ0K9Hh6bDo0tpRo//O7
+srlfOyH9LsQaN3TnVxzoRSA7z5RqDvetWU2rBto6JdjS0nbI5otGgbOtmLGlhCAJ
+v2hxFKgdk6Gkx7moLTLvXuDWXbIXxQ==
+=Ejr1
+-----END PGP SIGNATURE-----
+
+--fqyfxuqjctwfsa3a--
 
