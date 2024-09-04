@@ -1,194 +1,100 @@
-Return-Path: <linux-kernel+bounces-314458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77FC96B39B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBFB96B398
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0421A1C24A0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A792928561C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDD115574C;
-	Wed,  4 Sep 2024 07:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FFD170A11;
+	Wed,  4 Sep 2024 07:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PY2vcxuY"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3BrWzj5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0395AFC12
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD151527AC;
+	Wed,  4 Sep 2024 07:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436478; cv=none; b=SU7RssMoxVypnE77i0YA6WGmkxzARH9+jCfn0zJj1QBQbqGX79wmYMeXC4s5v9J1GDAHz8UmHeYFJx50nGqWE1Yg555ahYhA4sBqUWGRVOsKqEY8Ki9HTl+xBvnrvsAJjx3y/OMSnan7AQ9OseaII0ZVuDEif1IpEKQBm5LUfB0=
+	t=1725436450; cv=none; b=YnYM1/kOAhYcRuKldbtfA3iZpmj/G1UoXjvn0CNEkSksO1D/SiJxX/6uYRCNE+Yo4G5BCcgCuPiljLynmwAsLymrSGjkBALlt/X8vMxmNtqPyox0cWWaVMVtSUExZysjldA69j7tfc/WE/r6LoPHrINVHdcHPmO30gP6JuITf1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436478; c=relaxed/simple;
-	bh=4vyNiNiH1v08P0yMcB0Tpdo2B83NyylFDODnvzqYY4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rHzPX+0O36E5V0tRgasgr/7WwlsM6g9QE8tZ9cJ0ed/If7OS4NTUrvMSBa56wG5jiQQB5rkANKahgVaFgX2Ntr/VWUaMkoX1VZHa+fKjpDdX2LcA+IVYGS3DU8+v/+bVGeav2jfvfwA1ypJewRujyYrSx94FbFgLUYecYNtLulw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PY2vcxuY; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-498c3d1d788so1919985137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725436476; x=1726041276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XxP8uxBrxXEUMSrhNgWV8NVY8CGnEdtra3EFMhwcZVE=;
-        b=PY2vcxuYBMnknFGvcg4+zUJApGBgl/FLXWzaodHvKBbZc4kpoa021AfIUfNh5ysN5k
-         bLvoxspaM7hxokjbXAVYPBpGx1VRe2ACzCZhTRIWGMD77bZnN2cf0fBs9mnQQbkl90o3
-         qivpbFTCcU/UTRWC0OQhYMmvIgGvcsE+sKp99t43vmH6KV7dg+6ZMYqJ07Wo76zy7PlM
-         ZLwToTaGZINyms7A2Ck7TjGpUtYOGegR+2ldLZI8uDEtXV5stnJ5T0XCyd6/xKc/XhM+
-         D06OMEEzy5/3OEZA3Y4ON9y8/OznwDaGd10iWZgDAspxNHVoOp/VQXjr1houQOBdi6ju
-         wtvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725436476; x=1726041276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XxP8uxBrxXEUMSrhNgWV8NVY8CGnEdtra3EFMhwcZVE=;
-        b=HqewB/Q9JMGLfYSD6j86Kcsw/Awkw0GY7mQp8Hov4bDlYJbxiyZLPy2mm5XQGnfqbA
-         HNh2s/6dHC4L4wyR0H+MjOAzLZFAQqEReuaV58mGb4IvuG5HkkHsIEmgLEvJeCMlxeUP
-         QN35lYw54uqD7g7nSoJZP0z21JwxPqUIfIzr2gTyTv9Rp7aj1faZbDgfw7SiYWBZiavU
-         RhRKYtj+XT2Z8HMuA79c+kYVX9+FmP5w8NAGEA+qq4RLIPKg8ZdQU+b6q2Kvj7aqBdrp
-         wW2jC1DVpS3Lr1ODwq1EV+pjGNGmhzV1/ZTLvMICiCygR2wIVlXPyb4XUrrSebvf9AQh
-         8PGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWanpLTVU8xzOfNekwBP1oeTE4OamDSQBmBYabINDF5A4747OUFO0KP34ENequCkQ+BbF5UcAmhmjPUHZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+oWmQ50sUcubyY/YG2j5RkpqpzrKjyMI9jk6AMvFV6cjuYD02
-	sIMiePOf3rSKBByLo1OY0M2Jhaa3Jj+c7Azhgv7p/XnuE7N+7ZfUh4xKexaKvUg8Jgk/bv1U6tA
-	AduwcjcuTZbir900wnrZEBAIsfWo=
-X-Google-Smtp-Source: AGHT+IGj3e9LihOyTv2RTKK+ffTsTHLy4Q57XPgdreaMh7p6JHnGSNd1hg/5aRjmybMIvr0brZIQFjh24MDeXcupEtk=
-X-Received: by 2002:a05:6102:c46:b0:493:eebc:d77d with SMTP id
- ada2fe7eead31-49a779b68eamr10223208137.15.1725436475730; Wed, 04 Sep 2024
- 00:54:35 -0700 (PDT)
+	s=arc-20240116; t=1725436450; c=relaxed/simple;
+	bh=tYtrEDc7EZsTjo/5ig+4fdGj4uBHOZMkYPvyjZdx0ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfLkh8Kzd8JBGpaebeXEXnzBKZaCxhDXjDUqDsy9PzmZaLrVKbScAkyPLhEU83JuycOzfU7WuKG7DEx+sfDt0tmGrsllVeUunXxRD/0xaLRtP2J5A2SYowcCILSIqZlPvgMqnumHX2h6b1LQjqML7XbszMnJekbZkPvSWAa3vLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3BrWzj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44455C4CEC2;
+	Wed,  4 Sep 2024 07:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725436450;
+	bh=tYtrEDc7EZsTjo/5ig+4fdGj4uBHOZMkYPvyjZdx0ic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K3BrWzj5Q/cI6MLryFyFrDV3vlEV+n3mwK9gHQH4f0iHw8++ZKuk+whdWkiomUum1
+	 vxZI4P/VDgAAlm1Bc4qsRr5VjWmFW9ksm5N5Rqlqw5Fq0jrr80fdLsmowdtJbi99T8
+	 5q9zropvuX1LcVYkzeWrW/2jLEAWDcvHhvq1vkcZPPizCKDtEoucwRKaGIrhmdoZZU
+	 RtB0f2prBA5pM7RBJfBD1lNl6niKHKdu42y/4Sl8C6dmhyqhyVg6JZ7S9LHajQh+88
+	 iSYlvVLLpkR5PN1oz3bSSibo4ujwTgKGVZLwIKeQVDCqE+ELpCd1MeShfiYT/RyfWX
+	 4FkSJ5rH9PtGA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slkqQ-000000002X3-1cIo;
+	Wed, 04 Sep 2024 09:54:27 +0200
+Date: Wed, 4 Sep 2024 09:54:26 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: =?utf-8?B?SsOpcsO0bWU=?= de Bretagne <jerome.debretagne@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sc8280xp: Add Microsoft Surface
+ Pro 9 5G
+Message-ID: <ZtgSMlgKyQ6nKu4U@hovoldconsulting.com>
+References: <20240903224252.6207-1-jerome.debretagne@gmail.com>
+ <20240903224252.6207-5-jerome.debretagne@gmail.com>
+ <9a2b9e55-2bbb-4b91-8d81-1f1f82347125@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-2-usamaarif642@gmail.com>
- <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
- <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com> <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
-In-Reply-To: <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 4 Sep 2024 19:54:24 +1200
-Message-ID: <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
-	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a2b9e55-2bbb-4b91-8d81-1f1f82347125@kernel.org>
 
-On Wed, Sep 4, 2024 at 7:22=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Wed, Sep 4, 2024 at 12:17=E2=80=AFAM Barry Song <21cnbao@gmail.com> wr=
-ote:
-> >
-> > On Wed, Sep 4, 2024 at 7:12=E2=80=AFPM Yosry Ahmed <yosryahmed@google.c=
-om> wrote:
-> > >
-> > > [..]
-> > > > > @@ -426,6 +515,26 @@ static void sio_read_complete(struct kiocb *=
-iocb, long ret)
-> > > > >         mempool_free(sio, sio_pool);
-> > > > >  }
-> > > > >
-> > > > > +static bool swap_read_folio_zeromap(struct folio *folio)
-> > > > > +{
-> > > > > +       unsigned int idx =3D swap_zeromap_folio_test(folio);
-> > > > > +
-> > > > > +       if (idx =3D=3D 0)
-> > > > > +               return false;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Swapping in a large folio that is partially in the zer=
-omap is not
-> > > > > +        * currently handled. Return true without marking the fol=
-io uptodate so
-> > > > > +        * that an IO error is emitted (e.g. do_swap_page() will =
-sigbus).
-> > > > > +        */
-> > > > > +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
-> > > > > +               return true;
-> > > >
-> > > > Hi Usama, Yosry,
-> > > >
-> > > > I feel the warning is wrong as we could have the case where idx=3D=
-=3D0
-> > > > is not zeromap but idx=3D1 is zeromap. idx =3D=3D 0 doesn't necessa=
-rily
-> > > > mean we should return false.
-> > >
-> > > Good catch. Yeah if idx =3D=3D 0 is not in the zeromap but other indi=
-ces
-> > > are we will mistakenly read the entire folio from swap.
-> > >
-> > > >
-> > > > What about the below change which both fixes the warning and unbloc=
-ks
-> > > > large folios swap-in?
-> > >
-> > > But I don't see how that unblocks the large folios swap-in work? We
-> > > still need to actually handle the case where a large folio being
-> > > swapped in is partially in the zeromap. Right now we warn and unlock
-> > > the folio without calling folio_mark_uptodate(), which emits an IO
-> > > error.
-> >
-> > I placed this in mm/swap.h so that during swap-in, it can filter out an=
-y large
-> > folios where swap_zeromap_entries_count() is greater than 0 and less th=
-an
-> > nr.
-> >
-> > I believe this case would be quite rare, as it can only occur when some=
- small
-> > folios that are swapped out happen to have contiguous and aligned swap
-> > slots.
->
-> I am assuming this would be near where the zswap_never_enabled() check
-> is today, right?
+On Wed, Sep 04, 2024 at 09:46:09AM +0200, Krzysztof Kozlowski wrote:
+> On 04/09/2024 00:42, Jérôme de Bretagne wrote:
+> > Add an initial devicetree for the Microsoft Surface Pro 9 5G, based
+> > on SC8280XP.
 
-The code is close to the area, but it doesn't rely on zeromap being
-disabled.
+> Rest looks good, except ordering of nodes/overrides/phandles. They
+> should go alphabetically, AFAIR, so your &tlmm is placed in wrong spot.
 
->
-> I understand the point of doing this to unblock the synchronous large
-> folio swapin support work, but at some point we're gonna have to
-> actually handle the cases where a large folio being swapped in is
-> partially in the swap cache, zswap, the zeromap, etc.
->
-> All these cases will need similar-ish handling, and I suspect we won't
-> just skip swapping in large folios in all these cases.
+For the other sc8280xp machines (and I believe at least some other
+SoCs), we placed the pinctrl section, which tends to be quite long, last
+on purpose with a separating header (e.g. so that it is easy to find):
 
-I agree that this is definitely the goal. `swap_read_folio()` should be a
-dependable API that always returns reliable data, regardless of whether
-`zeromap` or `zswap` is involved. Despite these issues, mTHP swap-in should=
-n't
-be held back. Significant efforts are underway to support large folios in
-`zswap`, and progress is being made. Not to mention we've already allowed
-`zeromap` to proceed, even though it doesn't support large folios.
+	/* PINCTRL */
 
-It's genuinely unfair to let the lack of mTHP support in `zeromap` and
-`zswap` hold swap-in hostage.
+	&pmr735a_gpios {
+	...
 
-Nonetheless, `zeromap` and `zswap` are distinct cases. With `zeromap`, we
-permit almost all mTHP swap-ins, except for those rare situations where
-small folios that were swapped out happen to have contiguous and aligned
-swap slots.
+	&tlmm {
 
-swapcache is another quite different story, since our user scenarios begin =
-from
-the simplest sync io on mobile phones, we don't quite care about swapcache.
 
-Thanks
-Barry
+Looks like the header comment is missing here if you want to follow that
+style, though.
+
+Johan
 
