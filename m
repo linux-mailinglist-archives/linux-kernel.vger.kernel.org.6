@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-314999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87DD96BBF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2DE96BC00
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AE91F21CBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4732D28469D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303B81D79B9;
-	Wed,  4 Sep 2024 12:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4920F1D88B8;
+	Wed,  4 Sep 2024 12:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="N/Y//2oE"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsK6zi6q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E761D4169
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83B91D5893
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452552; cv=none; b=fJUV19XAFahFZjwyWMva1/HSiGnvdnoR7D8RhjB/UqUsNFK3OOKkdAA68/oE4IgJKxON+q9nHJFcefzKjsYUa89WxKLiCiYW3ZYxtS+MnrVN5T+N6FTfJwpSmXMB4cbiTkj40Wh7rT8gp4qOeoI8D7S3m8KQpi4r/Xxjyb9KCxs=
+	t=1725452647; cv=none; b=tGu+EMxFH21sXFNfJpwkRSmjNhZ+/k5CP6UXkEOKthBJz4r29pDeqZLezpFNcAzlLho2IgouNBlnmgdgDB1flxz2A+795zQeRqcSwuHu0b+FoWXPdrHKm9ZORzuUHKifgMA5kuKaPtMm3KXIQngwQlhE6M8U0zN0Alo6GQtfE40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452552; c=relaxed/simple;
-	bh=0Dt2TC1mWGZYIHxyeALqQ1TnRbbzwrfrV+DLAXHle1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I4cx0Q55+ZkmWLvxnFOiMiuVguznrTSx8ixHrmajiN12PiwxTKIG1rwn+CsHfWEjtLeaRcsZYOh0E5N7CPQ2uX3Ap7rKWlp8bcJnkou81cf2L0AOKbl5qoqwBqClbiSFbY7zlo+j4wFdT28tV/c5g356LDRFniYZ/DA8xwLdCzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=N/Y//2oE; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82a10bd0d58so20940239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1725452550; x=1726057350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ju9Hq+FgR4Nn2GcAcehqW18ZWQc9xC6Fkglr1yE5YOM=;
-        b=N/Y//2oE2B37UkoIYTQ2wY006zOzp137WpFvaklv/CUZuHbWu6Gm6CbSfoq++CsKxa
-         ZG2SQS1DpY98XTZIelTivz6DuJKSGYY55VRocIeFgXDAS89muHLE/WIjJH/dfMfkMJc8
-         u5FU4wxaI2534NxukBNBBPsh6bn+viA1A1JUXUG3edsu7khmWVl750eYlyXh2ezfRH9b
-         U3B8slJjrl3e/KAfle3pofQ7dAnMhQFePeEtk8Q0oH3zhfFIth4+L5zvPlKEpE/u0VKb
-         AVYtmzC8NjNKGMbYRvuADsw8x2Dx6JB1G/fqCfZv3jxQtql5ogdlbWVZ06BWAiNeLDxn
-         lOJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725452550; x=1726057350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ju9Hq+FgR4Nn2GcAcehqW18ZWQc9xC6Fkglr1yE5YOM=;
-        b=baq9/HzOcXzOb1BRe/tw6Lqjarc3wu4ak+vny/SO+P+qBkPaLMDBqLiNMeiMXuI3pe
-         bXOx/m+qhx38XXeqgdVU6HLDzYDCkPfPrCusO6829As60eA5QwTZ8kcyVJYi8vfZ2Iqm
-         C254Gi81H4h2S/XJAJlHRGfmKOSP/han8rgfGOLcShBGx7OM7r6e9Rli0PdUYn+QA4Wt
-         yCAypB6ZJfz5oUgcZEykQtb54cufXnu8190iGhnHlseZQ8bDzc3Bj0iiwK0+rRiMIc1M
-         mXBGKx4iGRMWhAfxZs9RpipCZqiOrKb+2YXPlr95Xv5miOsNOPhuIkSqZX0OX+j5HlQn
-         eI9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXon20Ss+E7d3synbUxhmK9EfojvaKT07nFMLVSSWpdQgmfHT3lmIm7iE7J/D1uUwA1q3iUUU4X+Hj4QWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKJMHntUPbQiP2o/DVrJgs1rxBOCMptkgKIFVdPjrhA71crQBW
-	LVEXmgfSsrcj+lR8r1FhT1qhrP7jVrB9NOQ/LiHrHXljZRtIpuWtJ+pyyrae6nmO5Q0WECyAT3d
-	aqID5MnnT17oKiPoADbnhPQ0F/k1ASGJogVAEpA==
-X-Google-Smtp-Source: AGHT+IHPjtXAXxUmHhn9hwmGB4/VcwV/vcS/lCwZ+rwRHq9HHhBtYsEB6Vwzvqfdu5MMGbv6xPJ7cpHsv2V3fV8GXEA=
-X-Received: by 2002:a05:6e02:1c46:b0:39d:4dab:a533 with SMTP id
- e9e14a558f8ab-39f74f88f94mr14510545ab.0.1725452549998; Wed, 04 Sep 2024
- 05:22:29 -0700 (PDT)
+	s=arc-20240116; t=1725452647; c=relaxed/simple;
+	bh=j/87510LA4gtO73Emfr696qWrE/N497dC5nxyxs0adU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8Nc42t9zI4z5ENG2E3IP1tRKr8azOgdZpT/oqcza2o/QWUvqEaeKR8Vz3/t9SPTF6eyGpyFjR/T1QA4iTkL/YrC3aGdBpanSf+5XYWt7HOJfWFZbDAkBI/xJBWxSWGdcpfLgk17dcDidyaYZzEccIpAFWk7pZq+HoeA3FDuXgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsK6zi6q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22782C4CEC2;
+	Wed,  4 Sep 2024 12:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725452647;
+	bh=j/87510LA4gtO73Emfr696qWrE/N497dC5nxyxs0adU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BsK6zi6qoN5b4VLEVKr8CODHVpu+VCRsqnQcVrZ7ADRMPV2At4yz7FUKQIVBhCIgU
+	 dUojUxuigczjSgwSjPjHBLRi+iuriHoFk4qinqDXI3b6baB7LTBw3HJpSn3vwg+XzF
+	 Gpnhe6P065FrDC8zNupQJ+TLs5dxvK2Ev/Fa7nEp3zLNViPk9LrEx4kCIbwrCenHda
+	 VzM62ieSElgSkyOc2I/iM2VedonEVjpqs/2LnYJI0yTp1wZr4+m1iSV9Dh9OQM5kpb
+	 CbFz/6C0lTBIPfIidNGe2tK+Cg1tpkBwZA78Wss/PcMWwML+ND3gzBfKHkUoB/RoLR
+	 Rs25UtW669YuQ==
+Date: Wed, 4 Sep 2024 13:24:02 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, jialong.yang@shingroup.cn
+Subject: Re: [PATCH v3 2/3] perf: Add driver for Arm NI-700 interconnect PMU
+Message-ID: <20240904122356.GE13550@willie-the-truck>
+References: <cover.1725037424.git.robin.murphy@arm.com>
+ <275e8ef450eeaf837468ce34e2c6930d59091fbc.1725037424.git.robin.murphy@arm.com>
+ <20240902144714.GA11443@willie-the-truck>
+ <0a41657e-a52c-43c9-9b73-89fd73a376c7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829010151.2813377-1-samuel.holland@sifive.com> <20240829010151.2813377-11-samuel.holland@sifive.com>
-In-Reply-To: <20240829010151.2813377-11-samuel.holland@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 4 Sep 2024 17:52:19 +0530
-Message-ID: <CAAhSdy0P6Jxdr1+zQLuisMpMapHWHXkSkzEEBG+wWXbbzf7ASw@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] KVM: riscv: selftests: Add Smnpm and Ssnpm to
- get-reg-list test
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, 
-	Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a41657e-a52c-43c9-9b73-89fd73a376c7@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Aug 29, 2024 at 6:32=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> Add testing for the pointer masking extensions exposed to KVM guests.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+On Mon, Sep 02, 2024 at 07:47:18PM +0100, Robin Murphy wrote:
+> On 02/09/2024 3:47 pm, Will Deacon wrote:
+> > > +static ssize_t arm_ni_format_show(struct device *dev,
+> > > +				  struct device_attribute *attr, char *buf)
+> > > +{
+> > > +	struct arm_ni_format_attr *fmt = container_of(attr, typeof(*fmt), attr);
+> > > +	int lo = __ffs(fmt->field), hi = __fls(fmt->field);
+> > > +
+> > > +	return sysfs_emit(buf, "config:%d-%d\n", lo, hi);
+> > > +}
+> > 
+> > Nit: if you end up adding single-bit config fields in the future, this
+> > will quietly do the wrong thing. Maybe safe-guard the 'lo==hi' case (even
+> > if you just warn once and return without doing anything).
+> 
+> The counter-argument is that I don't foresee having any reason to add
+> single-bit config fields here in future, nor indeed config1 or config2
+> fields, so I intentionally pruned the would-be dead code while copy-pasting
+> this implementation from arm-cmn. Yes, if someone were to make an incomplete
+> change without paying attention or testing they could introduce a bug, but
+> when is that ever not true?
 
-LGTM.
+I guess I'm just a little more wary when it comes to UAPI. Somebody starts
+relying on the broken message and then you're toast. It's also incredibly
+easy to avoid by construction and the dead code isn't hurting anybody.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+> > > +	name = devm_kasprintf(ni->dev, GFP_KERNEL, "arm_ni_%d_cd_%d", ni->id, cd->id);
+> > > +	if (!name)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	err = cpuhp_state_add_instance(arm_ni_hp_state, &cd->cpuhp_node);
+> > > +	if (err)
+> > > +		return err;
+> > 
+> > What happens if there's a CPU hotplug operation here? Can we end up calling
+> > perf_pmu_migrate_context() concurrently with perf_pmu_register()?
+> 
+> Yes. Alternatively we could register the PMU before the hotplug handler,
+> then potentially miss a hotplug event and leave a user-visible PMU
+> associated with an invalid CPU. This is a known issue for all system PMU
+> drivers, and the conclusion 5 years ago was that it's impractical to close
+> this race from outside perf core itself[1][2].
 
-Regards,
-Anup
+Ok, I'm going to walk right into the trap you've set me...
 
-> ---
->
-> (no changes since v2)
->
-> Changes in v2:
->  - New patch for v2
->
->  tools/testing/selftests/kvm/riscv/get-reg-list.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/tes=
-ting/selftests/kvm/riscv/get-reg-list.c
-> index 8e34f7fa44e9..54ab484d0000 100644
-> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> @@ -41,9 +41,11 @@ bool filter_reg(__u64 reg)
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_I:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_M:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_V:
-> +       case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SMNPM:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SMSTATEEN:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SSAIA:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SSCOFPMF:
-> +       case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SSNPM:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SSTC:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SVINVAL:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_SVNAPOT:
-> @@ -414,9 +416,11 @@ static const char *isa_ext_single_id_to_str(__u64 re=
-g_off)
->                 KVM_ISA_EXT_ARR(I),
->                 KVM_ISA_EXT_ARR(M),
->                 KVM_ISA_EXT_ARR(V),
-> +               KVM_ISA_EXT_ARR(SMNPM),
->                 KVM_ISA_EXT_ARR(SMSTATEEN),
->                 KVM_ISA_EXT_ARR(SSAIA),
->                 KVM_ISA_EXT_ARR(SSCOFPMF),
-> +               KVM_ISA_EXT_ARR(SSNPM),
->                 KVM_ISA_EXT_ARR(SSTC),
->                 KVM_ISA_EXT_ARR(SVINVAL),
->                 KVM_ISA_EXT_ARR(SVNAPOT),
-> @@ -946,8 +950,10 @@ KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
->  KVM_ISA_EXT_SUBLIST_CONFIG(fp_f, FP_F);
->  KVM_ISA_EXT_SUBLIST_CONFIG(fp_d, FP_D);
->  KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(smnpm, SMNPM);
->  KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
->  KVM_ISA_EXT_SIMPLE_CONFIG(sscofpmf, SSCOFPMF);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(ssnpm, SSNPM);
->  KVM_ISA_EXT_SIMPLE_CONFIG(sstc, SSTC);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svinval, SVINVAL);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svnapot, SVNAPOT);
-> @@ -1009,8 +1015,10 @@ struct vcpu_reg_list *vcpu_configs[] =3D {
->         &config_fp_f,
->         &config_fp_d,
->         &config_h,
-> +       &config_smnpm,
->         &config_smstateen,
->         &config_sscofpmf,
-> +       &config_ssnpm,
->         &config_sstc,
->         &config_svinval,
->         &config_svnapot,
-> --
-> 2.45.1
->
+Why can't we prevent hotplug (e.g. with cpus_read_lock()) while we're
+setting this up?
+
+... and climbing back out of that trap, is the conversation you had with
+Thomas written down anywhere?
+
+I don't want to block this patch, but if five years has passed with
+nobody looking at this then we probably need to address that at some
+point before adding more and more broken drivers.
+
+Will
 
