@@ -1,136 +1,109 @@
-Return-Path: <linux-kernel+bounces-315685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9E596C5C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D835496C5C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F611F280BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB801C21B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3FC1E1339;
-	Wed,  4 Sep 2024 17:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC631E132C;
+	Wed,  4 Sep 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnwLu/pY"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WdytTgKO"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DF44778C;
-	Wed,  4 Sep 2024 17:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F331A4778C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472327; cv=none; b=mi+WI8xV9qXG3rfxc6wh3PU7pO1sEcm44KrPtIS7sxqsT7QeCD9dzGvUOdWhf1C1t6oU187o53beb5x18bVWKLs1NGxMhjsPrgmDbJihAXWkx7ZA9kygI4gML2oa2liUFsh4dwD/sitwdxfdc8vL1IkeLL7QpYqpx+CKcucJ298=
+	t=1725472387; cv=none; b=L3rLH31H+G9KoyKno/0P8qPBGOaZwksL1LqK76pFFcIfQCFiZj89V/igbNfwIUjUcyThI4etkkiKhI3TzXgSeUwDlOocGNCvIBD/dBML7jdCgSf4h2IbZEOafEEr0eiD4y7QvFpKKi5PzVXmXvbEdA+A0d2J4XN2tluN8iY++uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472327; c=relaxed/simple;
-	bh=YGPraftcRKoUXwmDO7A034tijjCaw06B+EsJ6AUIBNc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l68nOILYDwns1AYWCqhq7UdG5UN9zfZvgkL4tBnnrh093rFCRcOd25ZmILExC01FZXqtddoogoN8xEu+y33f0OoVm3VqWZYLLt33Oz3dIs9KdjuJnwqj6W80wosssITx7R1lIfNCtQU/Qy8aBqFhQpNTo+tBUUGEjm79FXqUK9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnwLu/pY; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f6514f23b6so21466111fa.1;
-        Wed, 04 Sep 2024 10:52:05 -0700 (PDT)
+	s=arc-20240116; t=1725472387; c=relaxed/simple;
+	bh=ywbijTZhwyt/6ij0RFa2D9Ro9VsCA+t3KXgXReAdAaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hV54Ilfvh5fUomo4M0unoGfrMnWMjL99tqZAG/8nD/Qq3FRT93NN2eTqPdIbtjFxr0lIWfTAHYxv4vesdJf1F1zUC2CHXftBiIlAuTlzAY3IfsKP9h2FwJHB3hzmuY8jRvq0knDeJ+jVFp7czOo0KztDgfQv0Wq68PGbXez5g5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WdytTgKO; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6c35b545b41so9622446d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725472324; x=1726077124; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=InAq5n71slwXeqxP3KBnSK24bt4N3NVLz7CRiZbko1k=;
-        b=LnwLu/pYC/IBp/F4ARkkrD7AI5X4p8acckdpL+taZZ2OYhC/t8g9+ohBqX8PVkSw8s
-         IdzOQF9MplhN/Qfcdz89g6neY8Oe5OzHkz4OXdLzUi9Yg/4bPoIcHwEkQNoDyr794cuP
-         e977JSV6GWrMzsyTPcQVXJ2ScULhIhyzBsl3M6qbdaXaNIXf3chYPAdDfdg3Vdoemx2a
-         VI9QF/xP2Lj4YB03u2z4VYypceBMKTrSeB7wT4kHv4TPSav3zwIlLHeVV7PJs/Vj0SSG
-         U354En+con0OwYDiScpKgIo3lUmEwvWfJFoWsb4AqofA2m7dgKiyAugy7er4MsiUeFxJ
-         /fYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472324; x=1726077124;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1725472382; x=1726077182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=InAq5n71slwXeqxP3KBnSK24bt4N3NVLz7CRiZbko1k=;
-        b=E16uHXK5uqO70jE6EQar9tXgZJbOzz1UTky+87oIEuhqTWxIXyYY1ly29rTg1XH8Ri
-         GcInfqBZI7mJxK+i9HfTH1klF/PsOx3rzY4bWJvMGyMFgwGPiRlEluGhNJOLdbxF0sK1
-         t7lW0UV/C8OA5L0E7kczv5wVN5fRDlY5J02hKX8WRB5Stk48V8kZyhprTf/XjaMxul4U
-         DBELJXYzodI38UN6xSPWBrljGmQN5LflbKBd0TlETZnK9dGBSxmNEEiFyNIgbf648m0G
-         PSlvSRz2j2qOEoAdHU8ewpdY10gFRsrkP9Og8rS0XGC7LGCV45He0N2/LloPYhk71Ugh
-         rYew==
-X-Forwarded-Encrypted: i=1; AJvYcCVfQzW0BVo1YGMbWJClSgTMoDpmD7rKteIN4819tl+B2DW3CdS967eYOBpExiOD/HlUcOMr@vger.kernel.org, AJvYcCXMizdmoeqq5Dtnns4BGr7+LCLAhE3cuat1oH+SZZSelyJHIUUKulYChr7RDv9zmOd6t0EZZn/vIbK2Oug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCxFnSHM3lu+qaUiel0/sfPxeOhHzskGITIlOnvMqtEGMCHQ8D
-	yq1c2r3uUTTnsaRk3zSYwQzLtVDcY63DJFtAkCXZWXwG4EjiCYhE
-X-Google-Smtp-Source: AGHT+IEwEkiLdnz1yLd7itMz4Si8sdSPOfOM39CzoEUEW1cu0bt+uqw3ZVzS1TrU0yY4BbQVSu4LLw==
-X-Received: by 2002:a05:6512:1048:b0:530:da96:a990 with SMTP id 2adb3069b0e04-53546b5988fmr15139183e87.32.1725472323930;
-        Wed, 04 Sep 2024 10:52:03 -0700 (PDT)
-Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084dfc3sm2416779e87.269.2024.09.04.10.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 10:52:03 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 4 Sep 2024 19:52:00 +0200
-To: Xingyu Li <xli399@ucr.edu>
-Cc: Uladzislau Rezki <urezki@gmail.com>, paulmck@kernel.org,
-	frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yu Hao <yhao016@ucr.edu>
-Subject: Re: BUG: WARNING in kvfree_rcu_bulk
-Message-ID: <ZtieQFsSiALVVGld@pc636>
-References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
- <ZtAunXBPC4WElcez@pc636>
- <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
+        bh=AdW1fsDt98LP9wqqPeshnNEnMDj0upLQiCewBOyDU1g=;
+        b=WdytTgKO2EekMKhSmQ3vLBQ2G5cInrRSTbQiDBpiz37ipEsYYJ4e+hf1IQ6yzbf8y3
+         HQh0me/v7n/urSpE8b5iT1DxAtBjMTb4KmA2tmG852446DCYlIqk5ivqcnmhV2+ElgQ3
+         sj9Zz6ZL41bjHA/2iswj6l9FgvyD1WiA+ce2A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725472382; x=1726077182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AdW1fsDt98LP9wqqPeshnNEnMDj0upLQiCewBOyDU1g=;
+        b=WpIZo1nYDpgdZfsKO4HMP7Ae11HXFDd6t9Gz5HwM6m4jBsP7FbZYEfFMM72MMI6WOi
+         7hzx28xQEviufrXMYhaGgnWNLlFy64vXK4CSrCLXwhTOVAig+ufQBLLRBJRp0PCGdoGi
+         fmXk3ymLaRClAnycirc9Zd5kiBEPufUmQ8mYNCYn2MV8VZWPMeyP7Mtj49LzCKQvtaR5
+         0+Al1TQg5qEQu0d3ZUVCWE1J6v+B8CLtH0EQcV+9IVc27BFVjfEPo0YuuzuTd+rpTobC
+         vRxKMprvensYFEJ+PbakifCdUYBPtMsfB/J2wdxH/Y4oWd6tp101gnhB8UDmjRmXMyiu
+         jIwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhoRXLDfWUA6Zu+V35F3foKJiqQNvOe0jWwpsT//U4ubUTA2uKO976zSIb8K9XBjIuW05YG5XJKfVrXCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVIJey1bag0pRAREuaAUF4+V3ZpIG3pVp/QTrhv3Z5YMj8e/Qq
+	nKop8jjewcrVdY14TdOm4sw/Vv3VYqj2YR083TiwlhrCzNmJcTqmMmWHD0azLY5KVlvH4fF8j9U
+	=
+X-Google-Smtp-Source: AGHT+IGO/sbQZDHS3jWZypC9YA+WRCVZk9I3vNHHEvuiIZJyJfKPfWpQlPVlSK7ifCJwHPvqO5dsyw==
+X-Received: by 2002:ad4:5c6b:0:b0:6b7:9a53:70e9 with SMTP id 6a1803df08f44-6c519221b8bmr53316586d6.17.1725472382378;
+        Wed, 04 Sep 2024 10:53:02 -0700 (PDT)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5202de5adsm297126d6.60.2024.09.04.10.53.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 10:53:01 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9782651bdso84943085a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:53:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX66xDSXBlUmlE5Xg6eDh4vjm6F/rLuycbiuB0ryxi8KLcODrrCDFWmDChks9g5pBBYYozGiGiWB97i600=@vger.kernel.org
+X-Received: by 2002:a05:6214:5096:b0:6c3:5ff2:7db3 with SMTP id
+ 6a1803df08f44-6c518def5f3mr55548526d6.9.1725472380537; Wed, 04 Sep 2024
+ 10:53:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
+References: <20240904141521.554451-1-tejasvipin76@gmail.com>
+In-Reply-To: <20240904141521.554451-1-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 4 Sep 2024 10:52:46 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XBDowrFSEKHq9Qc3rJ3kurkn4NeibAW7wR3_nCdvzDYA@mail.gmail.com>
+Message-ID: <CAD=FV=XBDowrFSEKHq9Qc3rJ3kurkn4NeibAW7wR3_nCdvzDYA@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: himax-hx83112a: transition to mipi_dsi wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello!
+Hi,
 
+On Wed, Sep 4, 2024 at 7:15=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com>=
+ wrote:
 >
-> Here is the config file:
-> https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
-> 
-Thank you. I was not able to boot my box using your config file. But i
-enabled all needed configs in to run your reproduce so it does not
-complain on below warnings:
+> Changes the himax-hx83112a panel to use multi style functions for
+> improved error handling.
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/panel/panel-himax-hx83112a.c | 297 +++++++++----------
+>  1 file changed, 136 insertions(+), 161 deletions(-)
 
-<snip>
-urezki@pc638:~$ sudo ./a.out
-the reproducer may not work as expected: USB injection setup failed: failed to chmod /dev/raw-gadget
-the reproducer may not work as expected: 802154 injection setup failed: netlink_query_family_id failed
-<snip>
-
-sudo modprobe raw_gadget 
-sudo modprobe ieee802154
-sudo modprobe ieee802154_socket 
-sudo modprobe hci
-sudo modprobe hci_vhci 
-sudo modprobe mac802154
-sudo modprobe ieee802154
-sudo modprobe ieee802154_socket
-sudo modprobe mac802154_hwsim
-sudo modprobe adf7242
-sudo modprobe atusb
-sudo modprobe at86rf230
-sudo modprobe fakelb
-sudo modprobe mrf24j40
-sudo modprobe cc2520
-
-and even after that i am not able to get any "WARNING in kvfree_rcu_bulk".
-
-urezki@pc638:~$ uname -a
-Linux pc638 6.11.0-rc2+ #3827 SMP PREEMPT_DYNAMIC Wed Sep  4 19:37:22 CEST 2024 x86_64 GNU/Linux
-urezki@pc638:~$
-
-is it easy to reproduce? Am i missing something in my setup?
-
---
-Uladzislau Rezki
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
