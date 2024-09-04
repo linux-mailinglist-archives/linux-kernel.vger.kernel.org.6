@@ -1,128 +1,171 @@
-Return-Path: <linux-kernel+bounces-315597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA61F96C4A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B945696C4AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A95283C64
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A9C282A7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB86E1E0B71;
-	Wed,  4 Sep 2024 17:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276C91E132B;
+	Wed,  4 Sep 2024 17:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dO4blEU0"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="URq5BXoa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8BE537F8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE731E1308;
+	Wed,  4 Sep 2024 17:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469278; cv=none; b=JcGbiS94CVJP6o7lcgh67lllNsqFMSrQsZKfL9diCgImUPb87BI+4W0/aa8ikprscOqvUNtGccbKqz2d7Sa7Qcu+mB3rBIXhBM6/IVNCqp9BrKg88w6jWExC1/t8ye5C+RmObfmw7tSeNPbbc0RFxHP30AyDDLCv2ojVr4Fl2Og=
+	t=1725469359; cv=none; b=OuYGuF3XddeiV0kcWqUqkfwyvxw+E2/cJc7a3UZ0uQKnvZRqFE9IYooA7mVDsn4kgs6gAFzS1dJyTW7/3w/b5J1gJfNjSoP4ujy73a1xDTN8EuWso2AuyH1jsV8BDiNFDuXRJAe/l7YQp491cG2Z0knPX1DGk0pCAJvQBVDSBwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469278; c=relaxed/simple;
-	bh=SMwfMxRbhIejqPpvJ6rfUHRCXekvUWgpLlZca+d08ow=;
+	s=arc-20240116; t=1725469359; c=relaxed/simple;
+	bh=US8Ynb10iF9xYswNwvpB7BFfvlXZRqfZaVbdnQchArQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXvESwIu8lWYJczHZny5sn3SQV3ByyW8FN0gN/1h7ZTYZotKarsVHfqXWd2n9HuhJMH/+zV/mxwbmIjrnM69AysTckj2k2A+YcnyiqD1qDqgBwqh6d7xIebj9nITfPbOqzuE3PYGohb0qFWHp+JpffhphP2g5QawmSpHf0UVJWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dO4blEU0; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a81bd549eso637870466b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725469275; x=1726074075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=igjjJkRDnT4710DOt69t7RwKA+wIuknyStdIEfj6q8s=;
-        b=dO4blEU0jtCIU+AAyn9ZRpBtu2hvJ4YfwLtOaN2XztckU2FAxODQPnONXiEs19lwny
-         RwNQk0L6inXFmtPdersfCGobwWOXi7huET+cotTPvgVkaXBtmmL96103J/8OwK9dDB2/
-         lESdTFn56i67Ghw0BNCNhkzeGt+tKGnSdGygpYPB2E2wo+cEzK/wUttfojFDH1a1G0wM
-         JUj7//Bg6P+Q1bITXCzm1t53lQQSwHY5aFl6qRg3FkQ+9kmCHREgTmVuOQ6CPSOcay9K
-         ovY8ZrUHoHWNFXhhW3g2Njd5iYXpIQieZyBuaT+0Bhx8dLg6+NXrzUCEV5R+rRi3Up4A
-         ZdJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469275; x=1726074075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=igjjJkRDnT4710DOt69t7RwKA+wIuknyStdIEfj6q8s=;
-        b=WDb4aFPKCZnvq2QIQt0FxUYXpjQma0vsjnS8d1Le3KqGmRNSWZIbYIRH7l+DQkkIF5
-         vDlZYRnvfievDf+4C6D7w4LXf4vpBYgYOEHCex6veJuztDBtkve9F/JBNBexy8QkEMwX
-         Nv6KImvi6YKeIKHZv07Nb/BP3l4l+xS++ywap4tdjsFzyRgkm9g5mfAqFtNJ3LWdEkTh
-         MgKgqKPG02y8XallQx7q37V5M1iR5oQDxX3h7bBxBjBS4JdR5w4fIA9pOfDBwUz2RTy0
-         tEQcEGDkHcjcBkgHksi7LcQ8ARMQIi9lSkdUpCt7eHc6Ja654k0gwOBb1l6n5e8LmPgv
-         nlCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQPDZs/FgB64+f/TnSVLh+g+Y+IrzgJjV2IHsgbY/gcbPAciKCndXzT5u2p47qxyYFVqs4DCfb1nGqWu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWIcJyXc5nZACCX9dnf/NBpJaELbYTgak/fY/Xz1Pry1SsDD3t
-	AHQpHBH16UJZzMsfJuL1tSIBjyRKIZZs+3K+x5RKOH+Caf0m4RhSk7eLbs8ToTw=
-X-Google-Smtp-Source: AGHT+IEdhO+6u5bQtS/Pjv4pVjqT1PHlHw58PSqoO2bfvx8uyhINdf+pDMVbe4vM0TqY/tHlEK8Ojw==
-X-Received: by 2002:a17:907:7206:b0:a7a:be06:d8eb with SMTP id a640c23a62f3a-a8a1d4c2635mr725404566b.53.1725469274485;
-        Wed, 04 Sep 2024 10:01:14 -0700 (PDT)
-Received: from localhost (109-81-94-33.rct.o2.cz. [109.81.94.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a6ca1sm14385166b.173.2024.09.04.10.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 10:01:14 -0700 (PDT)
-Date: Wed, 4 Sep 2024 19:01:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <ZtiSWUxMQSBzN9cr@tiehlicka>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <20240903051342.GA31046@lst.de>
- <l3dngdjyglhpnlcmjxerpmiyw4euodb6sxsxe3mwtyd2z3uopu@amisj3chjfqe>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhXk4zK5IBOrXiXrVLNd+2kWJwm7hiN2QWPIeb+Q/j8Gs96BZzR3dDCCIwuULUSifCLsg1n/iSbar5PVdx4gp/YrzW8uWW6C1h4WBZ6h+JZwCRrVSSxe62n6I4sPiA93wZ89dXuMYzm3ZKhhv1hHPtKRD2HLDNMAqumH1rwbwdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=URq5BXoa; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725469356; x=1757005356;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=US8Ynb10iF9xYswNwvpB7BFfvlXZRqfZaVbdnQchArQ=;
+  b=URq5BXoaEa40YvuTLPb41MsPhLnTTLpaIV1iNsKLkOwyJ5dKsKYFNTL1
+   7QWBWrk+rPvvkkVVP1/8ntZOrYbxQmCtoFjAh0hxuqtSvL4lt+Rup6DBh
+   cgLUclkfRmGVCJONBuBr+x3W5ZCbY605OPU6GqatIlDPFFFvhpm6ZCHuC
+   qCTM2cihYdq4+DCUeeEzJ2HT/EDduP1BC4O7vDIRw9RAosl6phlwMihzu
+   nSMN9TpFLehlIxb7Iu//4BGUUeSRDbHkBDacKyadI8rrE20Ich7ZOSm/p
+   +5TUtX35XFLgE/1q4Vn6NeNBusZRvgxDVr+tEqB1ApwWnmuCJdtZRblSX
+   g==;
+X-CSE-ConnectionGUID: /Jiap9FxTDu+bS91b1PP0Q==
+X-CSE-MsgGUID: enKpfRJ7RcyRztGyjeUOBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="35533043"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="35533043"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 10:02:35 -0700
+X-CSE-ConnectionGUID: FLcKVKEESdSxQg/aSf7D6A==
+X-CSE-MsgGUID: 0tp3ZtA7QuCfz06etye05w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="65389153"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Sep 2024 10:02:32 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sltOn-0008Mj-0n;
+	Wed, 04 Sep 2024 17:02:29 +0000
+Date: Thu, 5 Sep 2024 01:02:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
+	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <202409050054.oRwtzLQ4-lkp@intel.com>
+References: <20240903202541.430225-2-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <l3dngdjyglhpnlcmjxerpmiyw4euodb6sxsxe3mwtyd2z3uopu@amisj3chjfqe>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903202541.430225-2-adrian.larumbe@collabora.com>
 
-On Wed 04-09-24 12:27:04, Kent Overstreet wrote:
-> On Tue, Sep 03, 2024 at 07:13:42AM GMT, Christoph Hellwig wrote:
-> > On Mon, Sep 02, 2024 at 02:52:52PM -0700, Andrew Morton wrote:
-> > > It would be helpful to summarize your concerns.
-> > 
-> > And that'd better be a really good argument for a change that was
-> > pushed directly to Linus bypassing the maintainer after multiple
-> > reviewers pointed out it was broken.  This series simply undoes the
-> > damage done by that, while also keeping the code dependend on it
-> > working.
-> 
-> Well, to be blunt, I thought the "we don't want the allocator to even
-> know if we're in a non-sleepable context" argument was too crazy to have
-> real support, and moving towards PF_MEMALLOC flags is something we've
-> been talking about quite a bit going back years.
-> 
-> Little did I know the minefield I was walking into...
+Hi Adrián,
 
-There is a lot of historical baggage and several people tried to explain
-that things are quite complex and you cannot simply apply design choices
-same way as if you were developing something from scratch. 
+kernel test robot noticed the following build errors:
 
-> But the disccussion seems to finally be cooling off and going in a more
-> productive direction.
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.11-rc6 next-20240904]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reality check: https://lore.kernel.org/all/8734mitahm.fsf@trenco.lwn.net/T/#u
+url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-introduce-job-cycle-and-timestamp-accounting/20240904-042645
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240903202541.430225-2-adrian.larumbe%40collabora.com
+patch subject: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp accounting
+config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20240905/202409050054.oRwtzLQ4-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409050054.oRwtzLQ4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409050054.oRwtzLQ4-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   In function 'copy_instrs_to_ringbuf',
+       inlined from 'queue_run_job' at drivers/gpu/drm/panthor/panthor_sched.c:3089:2:
+>> include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_435' declared with attribute error: min(ringbuf_size - start, size) signedness error
+     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
+     491 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
+     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:100:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     100 |         BUILD_BUG_ON_MSG(!__types_ok(x,y,ux,uy),        \
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/minmax.h:105:9: note: in expansion of macro '__careful_cmp_once'
+     105 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:129:25: note: in expansion of macro '__careful_cmp'
+     129 | #define min(x, y)       __careful_cmp(min, x, y)
+         |                         ^~~~~~~~~~~~~
+   drivers/gpu/drm/panthor/panthor_sched.c:2882:19: note: in expansion of macro 'min'
+    2882 |         written = min(ringbuf_size - start, size);
+         |                   ^~~
+
+
+vim +/__compiletime_assert_435 +510 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  496  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  497  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  498  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  499  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  500  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  501   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  502   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  503   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  504   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  505   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  506   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  507   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  508   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  509  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @510  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  511  
+
 -- 
-Michal Hocko
-SUSE Labs
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
