@@ -1,266 +1,886 @@
-Return-Path: <linux-kernel+bounces-315207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625A296BF30
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA9396BF15
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199C328A7D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D8428BD3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEA61DC06C;
-	Wed,  4 Sep 2024 13:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6F21D9D6A;
+	Wed,  4 Sep 2024 13:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cWCRgg7R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ui2Ufc8B"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E4E1DC073
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458113; cv=fail; b=VaR1juIQKaQpEPesYQ6+HACZRkFfeoRheCVOoKlEoSlyqtdVFAhMbG6xfTkoxnb4PL3rubSqrJWCFwurwCVRVGVk1HUsPnCKmdj6TLZ8hyclbNn+97HK68eAcMfMADSzkeUF71+lWop85NIaxmmYBN2kvr2w+Bf8CwdP3KBJHD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458113; c=relaxed/simple;
-	bh=XujzhAKJ9k3gz4RAOrfQl8ss5/cDZBAdoMsQqKPLQWM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VQoS/bms28ARwStQZ1WnfQb5kod+pxdLcCTF8UweJmx78oJLeeqKI3m041J7r7hSnmZuEN0Nj25fR4FV0X6wQNSnYS46OGgO5LVE2Jg6k02b8BYIoYsMn7WmU+NLZMWFr183xwyVekvMfxcnSVadHmX/wlFCpDYlwptWPXyLE+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cWCRgg7R; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725458111; x=1756994111;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=XujzhAKJ9k3gz4RAOrfQl8ss5/cDZBAdoMsQqKPLQWM=;
-  b=cWCRgg7RIjy3izW2NoHNacU9ZTmd5ZbRaTsoVlCG7vI/Kd1tenhMAToQ
-   6trlAQKRKkmqJVfej6LFuwyx9ZniPWREpwo8+bSWr69/6Q328j3QXpDQ9
-   sS1vykmf+wbffe8+aGsvhBnuK8mpf8zY6WWBSMcIRdIGMmTHhAo+XREv9
-   SNr87zvXCFmObs+QPwuDs1QAlBG6/C5EiE8E16zyolSGBKRFGGCMA/WZI
-   cP7bAwVCrfSj6QoQXQElESCcb1jzDARTM/Uo1oVwslUG74rZGtFuGNxU8
-   gD+zgzGcVvPsERlfscwww9HgFlNDY3dDY3t4K/BoXHAE+hRS7Htv8KBfp
-   w==;
-X-CSE-ConnectionGUID: JlmUUfHxQLOaNKQMSiAbKQ==
-X-CSE-MsgGUID: +W0XiqSbROqws8th008UMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="23630102"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="23630102"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:51:02 -0700
-X-CSE-ConnectionGUID: QQoV7YhVRQiyuZANZgN8XA==
-X-CSE-MsgGUID: PtLCSSo/RzyZncVOKkhh5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="64969445"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Sep 2024 06:51:02 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 4 Sep 2024 06:51:01 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 4 Sep 2024 06:51:00 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 4 Sep 2024 06:51:00 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 4 Sep 2024 06:51:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zk+pC1OCFad4/za1pNl6WmY/5AdCnnvbyufkgLOTF7uB+vQfO8PYEhjVsDiC/R2OVPxYgd0sINjKbuULoGPI8XZxshsBubuJ7WhNu36th4Y54NmDRvvgzfLKFNCQgFRJgI/YWsucvrwQVQyWXskrfS6y6wBOB00PrlAMhfEsUN1vwFbZ0W8j6irZbPZa6Cc/Ialxszguw9H1KnIJYo9LYFhECf79ggSUFNOGUGrrixiTGEuMszUyWlXIjBe4I/ISipMmEtx5purBy1oUzlEo3+J3iOAoMDlTSuJGUg6EtYbKKe9XCoBIIx718zNSKSncpH0ac+uvow/kbCL9WXsunQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OlIPwjLlaxE39e+nW1XFJ+woBCcimxTOBk+NBNsPgV8=;
- b=Bqaq9MfgA//oNPPo6lC4lzqnLbmEljTkZ+MpNVgMnJlmkcBOzXsP2xuV+Uz4DspNCajMe2Xft/Et2H3kF3nezp6vGeak/NgRVCGUTHaeCd4ls6SlaYzNLEIz+opifnas/lwBcRcCxH0reXPAx9xSjBiKP6JlUR4ICEwbFP3Pqj440qHIcVQiLUcFvPFJ5EqFaELbaw3l33p3yM67TYM+efcD0Lqkhw7tDxp5NnthmbLaijgv5phrgI/N5Sou5IH6088dLnwuOfoEALDKvhyC8RJKG7QPpx1kCNseGdtJ9vAgtE7EC/42pBeLwQhmz3qCVK4LN1ux1GmlqY0mjedTMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by BL3PR11MB6481.namprd11.prod.outlook.com (2603:10b6:208:3bc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Wed, 4 Sep
- 2024 13:50:58 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 13:50:58 +0000
-Date: Wed, 4 Sep 2024 08:50:54 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Rob Herring <robh@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Oliver O'Halloran <oohall@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvdimm: Use of_property_present() and
- of_property_read_bool()
-Message-ID: <66d865bec41f1_1e915829465@iweiny-mobl.notmuch>
-References: <20240731191312.1710417-26-robh@kernel.org>
- <CAL_JsqKC5S_-vJjdYEsoFHAQiQvymVDE4_moy5g_p7YEfAmDLA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKC5S_-vJjdYEsoFHAQiQvymVDE4_moy5g_p7YEfAmDLA@mail.gmail.com>
-X-ClientProxiedBy: MW4P222CA0028.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:303:114::33) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A731D58B9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725457987; cv=none; b=HL2lxs3AwtbvOhS4eK7Op9vdlzO3NT0NiSR8QQ7PbEGS51xBW2TL+y0fXsvDpMdRRpeVhWIb5SPfR1J+/UyX99gxjt4/aYgOTEKxLrdYLntYeFALTaI23nF/V75oXuDHRWKs2j/K7roElAPXqNBiBSAJLdOEQDtPwn96DVxzcng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725457987; c=relaxed/simple;
+	bh=9MLVb0ol/bNSK3nQlDhr1DFPS4VYuZy2g5x2XjWkP/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ez3NRuKRknxD59YQy9EvAS19d0MtfXIC2t/1dk+tnLF2Z+uKB5rKLkm+PTOitJxM+gkPYLG9po4s8+Yqd/QLA73rSvAxbSh8VN0T2PcXhTajCtXnL9LTFjBiLBRsyvlxZYgmpUiLjf5+gJ5DwTk/0qUVCvHFHS7MfVIMnDSwGfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ui2Ufc8B; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so1643626a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725457984; x=1726062784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZntCKAB5sQ3BAt4fIJTMZ8RahlX4phC65t95D6JfQa0=;
+        b=Ui2Ufc8B+wJQeJtruvaY3Jfu5pUfj6AJdPDbgest8m1uaGXfIoucJHhi/1TMm3q3IH
+         0fpTqBnvdtizFiH87J/+qb0Ezzl0zuzL/ehLrS5Pe/4F5pIREZBUM2VzQx9vIDc7ploB
+         x04f8mem//AI8LvTYIg+ANVno8u3wTo7vJSd4jsskpiSwb4CoVeyNZUR2CWdJyjCFGbi
+         ERofZVBC1bcW87l6vVM3mZBAQBw/44YSDP9+cc+JtHU3yoOt9ayqtIyuP/6O0NQHMzZV
+         5pQ3dqm6YGTPjHoWqQmJWrAdvK6v8kGUdxTLX+emzOgZn3Ji7/zoXdboaFKA1RvR6L3z
+         QCGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725457984; x=1726062784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZntCKAB5sQ3BAt4fIJTMZ8RahlX4phC65t95D6JfQa0=;
+        b=KkLyQ1poZkFHj//fWGweWNAkAg9SsL+Jld3AGzplUXOICE/Sicrn87QvOGShGuyxPm
+         uCqZPBo28P7Fy2Uc9GeEcFuoieErzX37PaGTfn23X+shNR1Tjj9LkL4O1ec0B6A9y2Cy
+         2We9GLFU+Y2prjpVIp0RLmizq1NeYCDlE5aMY3XaUK7QpuqrgHYRp96e1/M1gq8pWB4G
+         Yi0zOgMkwn07XjZIe5f+IWgtg59YsTJywLUuVZoyNQatDEaM5Gpisok9mx0yw026yy/I
+         K0azxlToNyHUXxpPSh5YSIU5hgdl25Z84leBKobEUhneoF+uQK7zlF/RWMgt1eXYr6B1
+         eM7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXLnAZ6nJIc5xf8dxbsqJtgfNgFqsBf5qYtmMWW/CN5i6ET/OXGIYM4rTA3AvMHFBqpN9R4XzEsQBc+R0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnYWsuFuCM1hl32bPIHPAh/3i4vE60DJGKn16MVbw6Q1PdD2oK
+	eDUqTdQcznzKYUOQBghWJ+TN8b+qAeSGN7CPFUJNzsVUns5T0h5JWPtedJbLbgIwY0uzZnrBMbI
+	bQLdtfbc8pvIKwxYANwTwRKl/yzA=
+X-Google-Smtp-Source: AGHT+IFqxqadthrOQ4NsyQ+izqUPWveKo+Hil93rCSTgTTkoWsmpk/l+FzkM8j54bz2Ond0r8GGJqH2XV1B3q3PoGMw=
+X-Received: by 2002:a17:90b:19d2:b0:2d3:d09a:630e with SMTP id
+ 98e67ed59e1d1-2d893285d01mr12375124a91.1.1725457983705; Wed, 04 Sep 2024
+ 06:53:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|BL3PR11MB6481:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0591cef5-10ee-4032-f95a-08dccce89aee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QlBNUTk3RlR2aFhzQUNTNTRDVVlSdVJWckVFLzdvQm96MmNPMzE3YzNVY29m?=
- =?utf-8?B?MjZndUs2MjNyN1FwcTIwbTFlcGdXY1dnOVpCaUUwR1lsVTdBckpRTGg0YTBX?=
- =?utf-8?B?cWMzOStZcVNIbXQxL2hNM01zL3pPV2ZteWI3cHR5ZzRLUVE1YlRpUDZmTDJV?=
- =?utf-8?B?YjlTQWlncEJPeUhMRkNUNDZ4QWErOU1PcTFnankxckhpUHVSNUdNbFZDTFR6?=
- =?utf-8?B?c0x1V01UejFVSm5uWm5nL21VY3NpRVl5RldjV2s4MWppZmlFMGp5MitCODBR?=
- =?utf-8?B?Rldxdnd0Mmh6aUR5WEZLNHhQN3NZTDI1UkNFME9CVElyaFl4ckszLzc1MFFZ?=
- =?utf-8?B?UG92TXVlenJZb0trUkk1citaSXJPMjhaU01iRnVUMmxDbTdOUEZRMXBkR1la?=
- =?utf-8?B?dVFhOWVldFVTTmlzZHVsWlk1RWRZbUdXTWtVeklFRFZNQ3BVNDVyK0h3NjNE?=
- =?utf-8?B?eGJmeVQ2U3EzM0IzQXV2b1RPNHl6OGY3Rmo5RUlRRUpvR3RNaE1zYzJxSi9q?=
- =?utf-8?B?T21HdHFMN2hFQkpZbjBrT2RzbTdyMUhpZHgraUd3LzREbkxseXNEQUllOTA4?=
- =?utf-8?B?Mk1ESXZRT2dEOStic1hFUnMxN1FTWGpEY29CbjA0MFVic3JFQ01iY3NKL1Rp?=
- =?utf-8?B?Z2xKSGQ5TUJ4elpGdGJ3c2R2S0ZJd2ljNEl1RDRoYmRFWHpXdkdKZGFKcUd0?=
- =?utf-8?B?QklSOTEvWlpyUXNDV1pEUUQ3REFIRzN1dkE2b04yTEQ0MEozaDFlNWcrRVN4?=
- =?utf-8?B?U285QmR3aXVwVWp5Y3dQVlQ4NVlUN3JDVXBYTis2b3VteWRXR1RHcEM1OUhR?=
- =?utf-8?B?UHk5T0gvR0xtN2pQeTY5MG5DYis5cFh5cHBSNHFFaFFNKzBDY1U2VWZyM3FC?=
- =?utf-8?B?bXdQMEs3Q3NWR3I4RHBJU3l3Qkl6dmFOT0pnb3BUZ0VBdGFiSWJLT2hIMWRj?=
- =?utf-8?B?cXZHMG1DQ3JhWC9ZUFAweWJXYU41MU9oaDZRTmt0NDRub1FxWHZmQnNUV1ov?=
- =?utf-8?B?SEk5dVpaY2ZrRDE1RWNrMWdIWUVYeWdHYytNRU5uTGxBQ2cxV0ZnUWJxYUUx?=
- =?utf-8?B?YklQU29OTjc2MEpSUnAxV1Q2SVNMVldFbGoyenBSUmZaL0dROTdJaTI2RVF1?=
- =?utf-8?B?dzJNM0dUQU03eTBFdTRtVjJSRjg1NVR5YnNzUTVtMmFGRHVvcHV1bFk0S1o2?=
- =?utf-8?B?ZkduajNiQ3pRTTI4dWkrYXFWZy91d1o2ZVUzVHI2dnY2MmU5aHY3RW5lWENE?=
- =?utf-8?B?RmxGSVBmTWo4bVNvcDZneW9GL09ncUNKdEI0QTdtVit6ZitHL3ZnSjNiZ1VV?=
- =?utf-8?B?SmlUb2t6eWpQWEZ0a2ZOWEhlSkpuMnFLMTlHL3c2NlNIdDVsSFo2bFpSU0ta?=
- =?utf-8?B?YmZxOTFGVUNyK0I5RGo3ZGRobUw2eFlpTENrTnA0ZkVRMjdLZ3A1REFzeUNu?=
- =?utf-8?B?VGl1dDJiMXpZODRiY3VFTWFHTFFSbG1sQjVsa3JobjRBQU5XTysyV24vT0VI?=
- =?utf-8?B?RytyNUdYTEUrVlN6SXU2WjR6T1VUeVZ1QzFXY1RKM2JaNTlkNkFsMnZGUzlS?=
- =?utf-8?B?Q3lSWjk3eUhjNnFQdml2Uk1EMU9Xd0tYbjl4Mlk4KzlPYUdRYnlrangrWTBp?=
- =?utf-8?B?QmMwYkxwMk1sMEgxTFM4aUpIQnZhTjlsQk1ZcFIyZXBReW9Pc3ltOXgvWGtY?=
- =?utf-8?B?Q0NvYnB1TCt1MlowNFd0NmtOVlVQRzF5eEp3b0hrTGtrQjl4K2MzSFBDMU1S?=
- =?utf-8?B?cWtwSDl0SENpVHpxSjM1amJHRjgwN3BYZ3ZPTnVYT3lkVWlhY3kyREx3T1cr?=
- =?utf-8?B?RnFTTUNTaFdYT1loWHhPQT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NEpFb0NtVWszUmxwSk9Renp6T0VSUVFZWDNoejZWUnZnVTdDZXBhODl4R0dB?=
- =?utf-8?B?aFQxU3A2QjNJbVdDakUwaFIxeXFiNitCazl4T0tFOGFYZVNhTGJrWXZPUXpu?=
- =?utf-8?B?S2FYNG5lcU1lWUtaSDJRdEFHOVZvYktGbFBmdWltcEljdTdmYmo5dmFtVGVk?=
- =?utf-8?B?dTlUbU0yWGh2enNFdjRxV1h5MW1uK1FJNHZCc3pNY0FxZCtOenNEbjk4TUdB?=
- =?utf-8?B?OSt6c0RLRkF2d2NpT2p2RnJ6NEZ3Q1NvQzkzcHBOQS9WUkgwdTJsZXVLdE5V?=
- =?utf-8?B?bmxKL3FXLzVNUHUxSXZKV3E5c2xJU0ExT01yVXA1U1ZoZzZ2VlZwdUVVYWRr?=
- =?utf-8?B?SlNDZXpGOUFkMWFWeC81dXRGeG5odDhjQ1Z0ZllpTnFjdlZJYnVGSi9GNVk3?=
- =?utf-8?B?NGpjanB2TWQvdlBHbjVVazdvR09Kb2JpU3ZSRGxvWk93ODF5Mm5aamowd2tP?=
- =?utf-8?B?RzdjQW9nT2dqV1dQWDBOSFdnNW9XZFZkV2lDUHR2dVROTUtGclh6cHBkTGR6?=
- =?utf-8?B?WGR5R29veHFNR2F3ZHBERk51QWtBWmJsQVUzNFYwN2Z1b0U3aVBHVVJsTHpm?=
- =?utf-8?B?Rng2TkQzRXRiMTZhaGNPUitZcWM5Y2JSY0dSZS9SZHNkdXZQRGFDa3dpL2M3?=
- =?utf-8?B?TDV5TWtLcTBZbHVsV29FQzNHU2ttT3I3b3ZYNnBsY0hESVpIcWNLR1A0Sk41?=
- =?utf-8?B?bGkzcmFhTnJiOFUvd0Y4N2Y2QlBMUEZiODAxL1kweEFvOVFFTVQrYkdjS25Q?=
- =?utf-8?B?R1JITDl3MXJtRUdBMkxjVi85N0V3WXQwQzJUV1JmSE14ZDV6Vnp2dnJ0WUgv?=
- =?utf-8?B?VUtSSVM0MjFMWWQ2ZW1WM3lhWVMyVEp0dkw3RERQZTZJUVpFNElBd2wxVXU5?=
- =?utf-8?B?ZE9uR2VaQllTWjZ3OUl0MHA4UU1VRnVrc1crZUVQVkh5R2tpMjlpdGZSRzk0?=
- =?utf-8?B?cnp6RzBOdVFZZTVkOVp2dTFCSTJXZTc5SFVZUExiK1FNaHpXZE51T3M5Ry9L?=
- =?utf-8?B?a2M0ek9UVThLOGhYeXZyQ2dLaFVSMDQzRitxbXEyNFBFOHdoWEpJZEE0TnZ0?=
- =?utf-8?B?OVRhYlFWcU9CZkNQa3pMMEU0Y3NPZTdUVjBGU1hrTkh6U1dXTE92R3VzdzNH?=
- =?utf-8?B?dFNZSmh4Q1VWZzZYMytSYjhZbDRFUlhLQnhUK1RQcFFPcytUelYvb2hoYVdt?=
- =?utf-8?B?WTRRanZ6RFNkKzBURit1ZGRxMjlyeElGZVFFRnMxNGFRMldNakZFdHREanVO?=
- =?utf-8?B?TytQSktuQlZRTUxwelNsUHFmVW12WGVKWkpVWDNMM1EyZ3o4b2JFc0t5eG01?=
- =?utf-8?B?RzBMc2JKazFWSGpreFladHcxZjhHcnhDQ050RU4zOEVNRTZuSVJGMDBtRUxX?=
- =?utf-8?B?dVplT0Q2cjJBVlBKaThvbmY0WXUwT3hwV05SdWV4N0tuTmQ4YXQweUIra3dC?=
- =?utf-8?B?Ky80b0xNc09wQTlxVVExdlNCanlnS1ZEdjc1V09sY2RZbTEyb3lXQ05CSkVq?=
- =?utf-8?B?VGJ3WkJ1dXlOSEdERjl5ZnhYRlBFU0V4aHp4Zy83Rm1RRThtVzdiNWVZbXNn?=
- =?utf-8?B?QTJSMHB6NzMrMi8wWXhpZk9Jdit2MFdZUjJpYTlsM3haUk9tTXFLTjUyaVpl?=
- =?utf-8?B?dzNoalJud1BRYzYxbXRtZ0h5b0ZjNFpMSk9LaUZRYktCZjZZQjNLL2ZvZWpE?=
- =?utf-8?B?THAraTZBcnhGNkdqWFE0UVVVdFVET2pxcmk3Sm5pR2RNaWpYSTBOYkZUeFhJ?=
- =?utf-8?B?V2pwK3lZVGM4WjFyNE1pQ2txM0VoZnRVUHJZQVRXQnBxdE0vaTQ0RTVSR1hr?=
- =?utf-8?B?TForNk9UTGNFZHcyTEYrbnFwVEVjVkJ3MDZYZ2lFVmpCYVArbVh3V3J3WHpK?=
- =?utf-8?B?aHp4Z2tDNzdJNjBrNm9PRVU4Zk5JbEwxNHVmRFRBdE96Rm5acktGRDQvOXVw?=
- =?utf-8?B?WjROOG93TEZ5ZWpDc0pnKzhORTgrMzZXUUZqOWZFdStHb1Q2RzNsUGJpcVZP?=
- =?utf-8?B?VnJMUmVCb0trQTFkZCtUNW1EakJLYWx3M1FSa3Vyc0g4UDIxS1hsTE5zQlg0?=
- =?utf-8?B?VnRiTDd1SVE2OElLME5WNklqczZIeDgrNXl5S0ZPYUphMk03Z3ZUelM1aTAx?=
- =?utf-8?Q?GEdhkGd89r+v7lHWPmc2vcZsH?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0591cef5-10ee-4032-f95a-08dccce89aee
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 13:50:58.6047
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6trTFllDpaWdjsGbbNQladSZgXYP1XN8eMFOk7WQmD0BIYHLqWr4jY5Ko7GP9cMt6do/hcB91pqh95toClOZXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6481
-X-OriginatorOrg: intel.com
+References: <20240904023310.163371-1-aford173@gmail.com> <20240904023310.163371-4-aford173@gmail.com>
+ <c882eed1-9f36-4382-89fe-f56dd457a45f@kontron.de>
+In-Reply-To: <c882eed1-9f36-4382-89fe-f56dd457a45f@kontron.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 4 Sep 2024 08:52:52 -0500
+Message-ID: <CAHCN7xL4WikbY+k+QdBS64-Kt2oHTQU1i_G44PGJDZZKkRaymw@mail.gmail.com>
+Subject: Re: [PATCH V5 3/5] phy: freescale: fsl-samsung-hdmi: Support dynamic integer
+To: Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc: linux-phy@lists.infradead.org, dominique.martinet@atmark-techno.com, 
+	linux-imx@nxp.com, festevam@gmail.com, aford@beaconembedded.com, 
+	Sandor.yu@nxp.com, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Marco Felsch <m.felsch@pengutronix.de>, 
+	Lucas Stach <l.stach@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rob Herring wrote:
-> On Wed, Jul 31, 2024 at 2:14 PM Rob Herring (Arm) <robh@kernel.org> wrote:
+On Wed, Sep 4, 2024 at 8:35=E2=80=AFAM Frieder Schrempf
+<frieder.schrempf@kontron.de> wrote:
+>
+> On 04.09.24 4:32 AM, Adam Ford wrote:
+> > There is currently a look-up table for a variety of resolutions.
+> > Since the phy has the ability to dynamically calculate the values
+> > necessary to use the intger divider which should allow more
+>
+>                        ^ integer
+>
+> > resolutions without having to update the look-up-table.
 > >
-> > Use of_property_present() and of_property_read_bool() to test
-> > property presence and read boolean properties rather than
-> > of_(find|get)_property(). This is part of a larger effort to remove
-> > callers of of_find_property() and similar functions.
-> > of_(find|get)_property() leak the DT struct property and data pointers
-> > which is a problem for dynamically allocated nodes which may be freed.
+> > If the lookup table cannot find an exact match, fall back to the
+> > dynamic calculator of the integer divider.
+>
+> Nitpick: You have thre different versions of how to spell "lookup table"
+> in the paragraphs above. Maybe you can decide on one... ;)
+>
 > >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > Previously, the value of P was hard-coded to 1, this required an
+> > update to the phy_pll_cfg table to add in the extra value into the
+> > table, so if the value of P is calculated to be something else
+> > by the PMS calculator, the calculated_phy_pll_cfg structure
+> > can be used instead without having to keep track of which method
+> > was used.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> The comments I have are only nitpicks and the patch seems to work fine
+> for me. So feel free to add:
+>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+>
 > > ---
-> >  drivers/nvdimm/of_pmem.c | 2 +-
-> >  drivers/nvmem/layouts.c  | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> Ping
-
-It is soaking for 6.12.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/log/?h=libnvdimm-for-next
-
-Thanks,
-Ira
-
-> 
-> > diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
-> > index 403384f25ce3..b4a1cf70e8b7 100644
-> > --- a/drivers/nvdimm/of_pmem.c
-> > +++ b/drivers/nvdimm/of_pmem.c
-> > @@ -47,7 +47,7 @@ static int of_pmem_region_probe(struct platform_device *pdev)
-> >         }
-> >         platform_set_drvdata(pdev, priv);
+> > V5:  No Change
+> > V4:  No Change
+> > V3:  Change size of pll_div_regs to include PHY_REG01 (P)
+> >      Create calculated_phy_pll_cfg to containe the values
+> >      Eliminate the PMS calculation from fsl_samsung_hdmi_phy_configure
+> >      Make the LUT primary and fall back to integer calculator in
+> >      phy_clk_round_rate.
+> >      Check the range right away to ensure it's reaonsable rather than
+> >      trying to find a clock only to learn it's outside the range.
+> >      Overall added notes and comments where stuff may not be intuitive.
 > >
-> > -       is_volatile = !!of_find_property(np, "volatile", NULL);
-> > +       is_volatile = of_property_read_bool(np, "volatile");
-> >         dev_dbg(&pdev->dev, "Registering %s regions from %pOF\n",
-> >                         is_volatile ? "volatile" : "non-volatile",  np);
+> > V2:  Update phy_clk_round_rate and phy_clk_set_rate to both support
+> >      the integer clock PMS calculator.
+> > ---
+> >  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 341 +++++++++++++------
+> >  1 file changed, 235 insertions(+), 106 deletions(-)
 > >
-> > diff --git a/drivers/nvmem/layouts.c b/drivers/nvmem/layouts.c
-> > index 77a4119efea8..65d39e19f6ec 100644
-> > --- a/drivers/nvmem/layouts.c
-> > +++ b/drivers/nvmem/layouts.c
-> > @@ -123,7 +123,7 @@ static int nvmem_layout_bus_populate(struct nvmem_device *nvmem,
-> >         int ret;
+> > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy=
+/freescale/phy-fsl-samsung-hdmi.c
+> > index 4f6874226f9a..8f2c0082aa12 100644
+> > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > @@ -16,6 +16,8 @@
 > >
-> >         /* Make sure it has a compatible property */
-> > -       if (!of_get_property(layout_dn, "compatible", NULL)) {
-> > +       if (!of_property_present(layout_dn, "compatible")) {
-> >                 pr_debug("%s() - skipping %pOF, no compatible prop\n",
-> >                          __func__, layout_dn);
-> >                 return 0;
-> > --
-> > 2.43.0
+> >  #define PHY_REG(reg)         (reg * 4)
 > >
+> > +#define REG01_PMS_P_MASK     GENMASK(3, 0)
+> > +#define REG03_PMS_S_MASK     GENMASK(7, 4)
+> >  #define REG12_CK_DIV_MASK    GENMASK(5, 4)
+> >
+> >  #define REG13_TG_CODE_LOW_MASK       GENMASK(7, 0)
+> > @@ -38,281 +40,296 @@
+> >  #define REG34_PLL_LOCK               BIT(6)
+> >  #define REG34_PHY_CLK_READY  BIT(5)
+> >
+> > -#define PHY_PLL_DIV_REGS_NUM 6
+> > +#ifndef MHZ
+> > +#define MHZ  (1000UL * 1000UL)
+> > +#endif
+> > +
+> > +#define PHY_PLL_DIV_REGS_NUM 7
+> >
+> >  struct phy_config {
+> >       u32     pixclk;
+> >       u8      pll_div_regs[PHY_PLL_DIV_REGS_NUM];
+> >  };
+> >
+> > +/*
+> > + * The calculated_phy_pll_cfg only handles integer divider for PMS onl=
+y,
+>
+> Nitpick: Remove duplicate 'only'
+>
+> > + * meaning the last four entries will be fixed, but the first three wi=
+ll
+> > + * be calculated by the PMS calculator
+>
+> Nitpick: Period at the end of the sentence
 
 
+Good catch.  I ran these through checkpatch, but I need to tell myself
+not do work on this stuff at night when I am tired.
+Sorry about that.  My grammar isn't normally this bad.  :-)
+
+adam
+>
+> > + */
+> > +static struct phy_config calculated_phy_pll_cfg =3D {
+> > +     .pixclk =3D 0,
+> > +     .pll_div_regs =3D { 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00 },
+> > +};
+> > +
+> > +/* The lookup table contains values for which the fractional divder is=
+ used */
+>
+> Nitpick: It seems this comment would rather belong into patch 5/5.
+
+I put it here because I wanted to distinguish between the table below
+and the variable above which are both of the same structure type to
+explain why we needed both.
+>
+> >  static const struct phy_config phy_pll_cfg[] =3D {
+> >       {
+> >               .pixclk =3D 22250000,
+> > -             .pll_div_regs =3D { 0x4b, 0xf1, 0x89, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 23750000,
+> > -             .pll_div_regs =3D { 0x50, 0xf1, 0x86, 0x85, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x50, 0xf1, 0x86, 0x85, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 24000000,
+> > -             .pll_div_regs =3D { 0x50, 0xf0, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x50, 0xf0, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 24024000,
+> > -             .pll_div_regs =3D { 0x50, 0xf1, 0x99, 0x02, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x50, 0xf1, 0x99, 0x02, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 25175000,
+> > -             .pll_div_regs =3D { 0x54, 0xfc, 0xcc, 0x91, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0xfc, 0xcc, 0x91, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 25200000,
+> > -             .pll_div_regs =3D { 0x54, 0xf0, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0xf0, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 26750000,
+> > -             .pll_div_regs =3D { 0x5a, 0xf2, 0x89, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0xf2, 0x89, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 27000000,
+> > -             .pll_div_regs =3D { 0x5a, 0xf0, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0xf0, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 27027000,
+> > -             .pll_div_regs =3D { 0x5a, 0xf2, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0xf2, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 29500000,
+> > -             .pll_div_regs =3D { 0x62, 0xf4, 0x95, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0xf4, 0x95, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 30750000,
+> > -             .pll_div_regs =3D { 0x66, 0xf4, 0x82, 0x01, 0x88, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x66, 0xf4, 0x82, 0x01, 0x88, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 30888000,
+> > -             .pll_div_regs =3D { 0x66, 0xf4, 0x99, 0x18, 0x88, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x66, 0xf4, 0x99, 0x18, 0x88, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 33750000,
+> > -             .pll_div_regs =3D { 0x70, 0xf4, 0x82, 0x01, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x70, 0xf4, 0x82, 0x01, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 35000000,
+> > -             .pll_div_regs =3D { 0x58, 0xb8, 0x8b, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x58, 0xb8, 0x8b, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 36000000,
+> > -             .pll_div_regs =3D { 0x5a, 0xb0, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0xb0, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 36036000,
+> > -             .pll_div_regs =3D { 0x5a, 0xb2, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0xb2, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 40000000,
+> > -             .pll_div_regs =3D { 0x64, 0xb0, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x64, 0xb0, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 43200000,
+> > -             .pll_div_regs =3D { 0x5a, 0x90, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x90, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 43243200,
+> > -             .pll_div_regs =3D { 0x5a, 0x92, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x92, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 44500000,
+> > -             .pll_div_regs =3D { 0x5c, 0x92, 0x98, 0x11, 0x84, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5c, 0x92, 0x98, 0x11, 0x84, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 47000000,
+> > -             .pll_div_regs =3D { 0x62, 0x94, 0x95, 0x82, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0x94, 0x95, 0x82, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 47500000,
+> > -             .pll_div_regs =3D { 0x63, 0x96, 0xa1, 0x82, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x63, 0x96, 0xa1, 0x82, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 50349650,
+> > -             .pll_div_regs =3D { 0x54, 0x7c, 0xc3, 0x8f, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0x7c, 0xc3, 0x8f, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 50400000,
+> > -             .pll_div_regs =3D { 0x54, 0x70, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0x70, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 53250000,
+> > -             .pll_div_regs =3D { 0x58, 0x72, 0x84, 0x03, 0x82, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x58, 0x72, 0x84, 0x03, 0x82, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 53500000,
+> > -             .pll_div_regs =3D { 0x5a, 0x72, 0x89, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x72, 0x89, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 54000000,
+> > -             .pll_div_regs =3D { 0x5a, 0x70, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x70, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 54054000,
+> > -             .pll_div_regs =3D { 0x5a, 0x72, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x72, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 59000000,
+> > -             .pll_div_regs =3D { 0x62, 0x74, 0x95, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0x74, 0x95, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 59340659,
+> > -             .pll_div_regs =3D { 0x62, 0x74, 0xdb, 0x52, 0x88, 0x47 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0x74, 0xdb, 0x52, 0x88, 0=
+x47 },
+> >       }, {
+> >               .pixclk =3D 59400000,
+> > -             .pll_div_regs =3D { 0x63, 0x70, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x63, 0x70, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 61500000,
+> > -             .pll_div_regs =3D { 0x66, 0x74, 0x82, 0x01, 0x88, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x66, 0x74, 0x82, 0x01, 0x88, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 63500000,
+> > -             .pll_div_regs =3D { 0x69, 0x74, 0x89, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x69, 0x74, 0x89, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 67500000,
+> > -             .pll_div_regs =3D { 0x54, 0x52, 0x87, 0x03, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0x52, 0x87, 0x03, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 70000000,
+> > -             .pll_div_regs =3D { 0x58, 0x58, 0x8b, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x58, 0x58, 0x8b, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 72000000,
+> > -             .pll_div_regs =3D { 0x5a, 0x50, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x50, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 72072000,
+> > -             .pll_div_regs =3D { 0x5a, 0x52, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x52, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 74176000,
+> > -             .pll_div_regs =3D { 0x5d, 0x58, 0xdb, 0xA2, 0x88, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5d, 0x58, 0xdb, 0xA2, 0x88, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 74250000,
+> > -             .pll_div_regs =3D { 0x5c, 0x52, 0x90, 0x0d, 0x84, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5c, 0x52, 0x90, 0x0d, 0x84, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 78500000,
+> > -             .pll_div_regs =3D { 0x62, 0x54, 0x87, 0x01, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0x54, 0x87, 0x01, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 80000000,
+> > -             .pll_div_regs =3D { 0x64, 0x50, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x64, 0x50, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 82000000,
+> > -             .pll_div_regs =3D { 0x66, 0x54, 0x82, 0x01, 0x88, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x66, 0x54, 0x82, 0x01, 0x88, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 82500000,
+> > -             .pll_div_regs =3D { 0x67, 0x54, 0x88, 0x01, 0x90, 0x49 },
+> > +             .pll_div_regs =3D { 0xd1, 0x67, 0x54, 0x88, 0x01, 0x90, 0=
+x49 },
+> >       }, {
+> >               .pixclk =3D 89000000,
+> > -             .pll_div_regs =3D { 0x70, 0x54, 0x84, 0x83, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x70, 0x54, 0x84, 0x83, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 90000000,
+> > -             .pll_div_regs =3D { 0x70, 0x54, 0x82, 0x01, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x70, 0x54, 0x82, 0x01, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 94000000,
+> > -             .pll_div_regs =3D { 0x4e, 0x32, 0xa7, 0x10, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x4e, 0x32, 0xa7, 0x10, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 95000000,
+> > -             .pll_div_regs =3D { 0x50, 0x31, 0x86, 0x85, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x50, 0x31, 0x86, 0x85, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 98901099,
+> > -             .pll_div_regs =3D { 0x52, 0x3a, 0xdb, 0x4c, 0x88, 0x47 },
+> > +             .pll_div_regs =3D { 0xd1, 0x52, 0x3a, 0xdb, 0x4c, 0x88, 0=
+x47 },
+> >       }, {
+> >               .pixclk =3D 99000000,
+> > -             .pll_div_regs =3D { 0x52, 0x32, 0x82, 0x01, 0x88, 0x47 },
+> > +             .pll_div_regs =3D { 0xd1, 0x52, 0x32, 0x82, 0x01, 0x88, 0=
+x47 },
+> >       }, {
+> >               .pixclk =3D 100699300,
+> > -             .pll_div_regs =3D { 0x54, 0x3c, 0xc3, 0x8f, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0x3c, 0xc3, 0x8f, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 100800000,
+> > -             .pll_div_regs =3D { 0x54, 0x30, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x54, 0x30, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 102500000,
+> > -             .pll_div_regs =3D { 0x55, 0x32, 0x8c, 0x05, 0x90, 0x4b },
+> > +             .pll_div_regs =3D { 0xd1, 0x55, 0x32, 0x8c, 0x05, 0x90, 0=
+x4b },
+> >       }, {
+> >               .pixclk =3D 104750000,
+> > -             .pll_div_regs =3D { 0x57, 0x32, 0x98, 0x07, 0x90, 0x49 },
+> > +             .pll_div_regs =3D { 0xd1, 0x57, 0x32, 0x98, 0x07, 0x90, 0=
+x49 },
+> >       }, {
+> >               .pixclk =3D 106500000,
+> > -             .pll_div_regs =3D { 0x58, 0x32, 0x84, 0x03, 0x82, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x58, 0x32, 0x84, 0x03, 0x82, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 107000000,
+> > -             .pll_div_regs =3D { 0x5a, 0x32, 0x89, 0x88, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x32, 0x89, 0x88, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 108000000,
+> > -             .pll_div_regs =3D { 0x5a, 0x30, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x30, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 108108000,
+> > -             .pll_div_regs =3D { 0x5a, 0x32, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x32, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 118000000,
+> > -             .pll_div_regs =3D { 0x62, 0x34, 0x95, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x62, 0x34, 0x95, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 118800000,
+> > -             .pll_div_regs =3D { 0x63, 0x30, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x63, 0x30, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 123000000,
+> > -             .pll_div_regs =3D { 0x66, 0x34, 0x82, 0x01, 0x88, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x66, 0x34, 0x82, 0x01, 0x88, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 127000000,
+> > -             .pll_div_regs =3D { 0x69, 0x34, 0x89, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x69, 0x34, 0x89, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 135000000,
+> > -             .pll_div_regs =3D { 0x70, 0x34, 0x82, 0x01, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x70, 0x34, 0x82, 0x01, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 135580000,
+> > -             .pll_div_regs =3D { 0x71, 0x39, 0xe9, 0x82, 0x9c, 0x5b },
+> > +             .pll_div_regs =3D { 0xd1, 0x71, 0x39, 0xe9, 0x82, 0x9c, 0=
+x5b },
+> >       }, {
+> >               .pixclk =3D 137520000,
+> > -             .pll_div_regs =3D { 0x72, 0x38, 0x99, 0x10, 0x85, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x72, 0x38, 0x99, 0x10, 0x85, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 138750000,
+> > -             .pll_div_regs =3D { 0x73, 0x35, 0x88, 0x05, 0x90, 0x4d },
+> > +             .pll_div_regs =3D { 0xd1, 0x73, 0x35, 0x88, 0x05, 0x90, 0=
+x4d },
+> >       }, {
+> >               .pixclk =3D 140000000,
+> > -             .pll_div_regs =3D { 0x75, 0x36, 0xa7, 0x90, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x75, 0x36, 0xa7, 0x90, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 144000000,
+> > -             .pll_div_regs =3D { 0x78, 0x30, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x78, 0x30, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 148352000,
+> > -             .pll_div_regs =3D { 0x7b, 0x35, 0xdb, 0x39, 0x90, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x7b, 0x35, 0xdb, 0x39, 0x90, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 148500000,
+> > -             .pll_div_regs =3D { 0x7b, 0x35, 0x84, 0x03, 0x90, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x7b, 0x35, 0x84, 0x03, 0x90, 0=
+x45 },
+> >       }, {
+> >               .pixclk =3D 154000000,
+> > -             .pll_div_regs =3D { 0x40, 0x18, 0x83, 0x01, 0x00, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x40, 0x18, 0x83, 0x01, 0x00, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 157000000,
+> > -             .pll_div_regs =3D { 0x41, 0x11, 0xa7, 0x14, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x41, 0x11, 0xa7, 0x14, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 160000000,
+> > -             .pll_div_regs =3D { 0x42, 0x12, 0xa1, 0x20, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x42, 0x12, 0xa1, 0x20, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 162000000,
+> > -             .pll_div_regs =3D { 0x43, 0x18, 0x8b, 0x08, 0x96, 0x55 },
+> > +             .pll_div_regs =3D { 0xd1, 0x43, 0x18, 0x8b, 0x08, 0x96, 0=
+x55 },
+> >       }, {
+> >               .pixclk =3D 164000000,
+> > -             .pll_div_regs =3D { 0x45, 0x11, 0x83, 0x82, 0x90, 0x4b },
+> > +             .pll_div_regs =3D { 0xd1, 0x45, 0x11, 0x83, 0x82, 0x90, 0=
+x4b },
+> >       }, {
+> >               .pixclk =3D 165000000,
+> > -             .pll_div_regs =3D { 0x45, 0x11, 0x84, 0x81, 0x90, 0x4b },
+> > +             .pll_div_regs =3D { 0xd1, 0x45, 0x11, 0x84, 0x81, 0x90, 0=
+x4b },
+> >       }, {
+> >               .pixclk =3D 180000000,
+> > -             .pll_div_regs =3D { 0x4b, 0x10, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x4b, 0x10, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 185625000,
+> > -             .pll_div_regs =3D { 0x4e, 0x12, 0x9a, 0x95, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x4e, 0x12, 0x9a, 0x95, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 188000000,
+> > -             .pll_div_regs =3D { 0x4e, 0x12, 0xa7, 0x10, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x4e, 0x12, 0xa7, 0x10, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 198000000,
+> > -             .pll_div_regs =3D { 0x52, 0x12, 0x82, 0x01, 0x88, 0x47 },
+> > +             .pll_div_regs =3D { 0xd1, 0x52, 0x12, 0x82, 0x01, 0x88, 0=
+x47 },
+> >       }, {
+> >               .pixclk =3D 205000000,
+> > -             .pll_div_regs =3D { 0x55, 0x12, 0x8c, 0x05, 0x90, 0x4b },
+> > +             .pll_div_regs =3D { 0xd1, 0x55, 0x12, 0x8c, 0x05, 0x90, 0=
+x4b },
+> >       }, {
+> >               .pixclk =3D 209500000,
+> > -             .pll_div_regs =3D { 0x57, 0x12, 0x98, 0x07, 0x90, 0x49 },
+> > +             .pll_div_regs =3D { 0xd1, 0x57, 0x12, 0x98, 0x07, 0x90, 0=
+x49 },
+> >       }, {
+> >               .pixclk =3D 213000000,
+> > -             .pll_div_regs =3D { 0x58, 0x12, 0x84, 0x03, 0x82, 0x41 },
+> > +             .pll_div_regs =3D { 0xd1, 0x58, 0x12, 0x84, 0x03, 0x82, 0=
+x41 },
+> >       }, {
+> >               .pixclk =3D 216000000,
+> > -             .pll_div_regs =3D { 0x5a, 0x10, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x10, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 216216000,
+> > -             .pll_div_regs =3D { 0x5a, 0x12, 0xfd, 0x0c, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x5a, 0x12, 0xfd, 0x0c, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 237600000,
+> > -             .pll_div_regs =3D { 0x63, 0x10, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x63, 0x10, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 254000000,
+> > -             .pll_div_regs =3D { 0x69, 0x14, 0x89, 0x08, 0x80, 0x40 },
+> > +             .pll_div_regs =3D { 0xd1, 0x69, 0x14, 0x89, 0x08, 0x80, 0=
+x40 },
+> >       }, {
+> >               .pixclk =3D 277500000,
+> > -             .pll_div_regs =3D { 0x73, 0x15, 0x88, 0x05, 0x90, 0x4d },
+> > +             .pll_div_regs =3D { 0xd1, 0x73, 0x15, 0x88, 0x05, 0x90, 0=
+x4d },
+> >       }, {
+> >               .pixclk =3D 288000000,
+> > -             .pll_div_regs =3D { 0x78, 0x10, 0x00, 0x00, 0x80, 0x00 },
+> > +             .pll_div_regs =3D { 0xd1, 0x78, 0x10, 0x00, 0x00, 0x80, 0=
+x00 },
+> >       }, {
+> >               .pixclk =3D 297000000,
+> > -             .pll_div_regs =3D { 0x7b, 0x15, 0x84, 0x03, 0x90, 0x45 },
+> > +             .pll_div_regs =3D { 0xd1, 0x7b, 0x15, 0x84, 0x03, 0x90, 0=
+x45 },
+> >       },
+> >  };
+> >
+> > @@ -322,7 +339,8 @@ struct reg_settings {
+> >  };
+> >
+> >  static const struct reg_settings common_phy_cfg[] =3D {
+> > -     { PHY_REG(0), 0x00 }, { PHY_REG(1), 0xd1 },
+> > +     { PHY_REG(0), 0x00 },
+> > +     /* PHY_REG(1-7) pix clk specific */
+> >       { PHY_REG(8), 0x4f }, { PHY_REG(9), 0x30 },
+> >       { PHY_REG(10), 0x33 }, { PHY_REG(11), 0x65 },
+> >       /* REG12 pixclk specific */
+> > @@ -415,6 +433,76 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct=
+ fsl_samsung_hdmi_phy *phy,
+> >              phy->regs + PHY_REG(14));
+> >  }
+> >
+> > +static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout,=
+ u8 *p, u16 *m, u8 *s)
+> > +{
+> > +     unsigned long best_freq =3D 0;
+> > +     u32 min_delta =3D 0xffffffff;
+> > +     u8 _p, best_p;
+> > +     u16 _m, best_m;
+> > +     u8 _s, best_s;
+> > +
+> > +     /* The ref manual states the values of 'P' range from 1 to 11 */
+> > +     for (_p =3D 1; _p <=3D 11; ++_p) {
+> > +             for (_s =3D 1; _s <=3D 16; ++_s) {
+> > +                     u64 tmp;
+> > +                     u32 delta;
+> > +
+> > +                     /* s must be one or even */
+> > +                     if (_s > 1 && (_s & 0x01) =3D=3D 1)
+> > +                             _s++;
+> > +
+> > +                     /* _s cannot be 14 per the TRM */
+> > +                     if (_s =3D=3D 14)
+> > +                             continue;
+> > +
+> > +                     /*
+> > +                      * TODO: Ref Manual doesn't state the range of _m
+> > +                      * so this should be further refined if possible.
+> > +                      * This range was set based on the original value=
+s
+> > +                      * in the look-up table
+> > +                      */
+>
+> There is the strange note "Div by -Div by 255" in the RM. I think it's
+> supposed to define the range, but is missing the number for the lower
+> bound. The upper bound is probably 255!?
+>
+> But we might also leave it like it is here and extend it later after
+> further testing.
+
+I was confused by that too.  I am not sure how a negative division
+would work in this context.
+
+>
+> > +                     tmp =3D (u64)fout * (_p * _s);
+> > +                     do_div(tmp, 24 * MHZ);
+> > +                     _m =3D tmp;
+> > +                     if (_m < 0x30 || _m > 0x7b)
+> > +                             continue;
+> > +
+> > +                     /*
+> > +                      * Rev 2 of the Ref Manual states the
+> > +                      * VCO can range between 750MHz and
+> > +                      * 3GHz.  The VCO is assumed to be _m x
+> > +                      * the reference frequency of 24MHz divided
+> > +                      * by the prescaler, _p
+>
+> Maybe better: "The VSO is assumed to be (M * f_ref) / P"
+
+I can reword this for better readability.
+
+>
+> > +                      */
+> > +                     tmp =3D (u64)_m * 24 * MHZ;
+> > +                     do_div(tmp, _p);
+> > +                     if (tmp < 750 * MHZ ||
+> > +                         tmp > 3000 * MHZ)
+> > +                             continue;
+> > +
+> > +                     tmp =3D (u64)_m * 24 * MHZ;
+> > +                     do_div(tmp, _p * _s);
+>
+> tmp already contains (_m * f_ref) / _p, so we sould be able to reuse
+> that value here and simply do do_div(tmp, _s) without recalculating tmp, =
+no?
+>
+> > +
+> > +                     delta =3D abs(fout - tmp);
+> > +                     if (delta < min_delta) {
+> > +                             best_p =3D _p;
+> > +                             best_s =3D _s;
+> > +                             best_m =3D _m;
+> > +                             min_delta =3D delta;
+> > +                             best_freq =3D tmp;
+> > +                     }
+> > +             }
+> > +     }
+> > +
+> > +     if (best_freq) {
+> > +             *p =3D best_p;
+> > +             *m =3D best_m;
+> > +             *s =3D best_s;
+> > +     }
+> > +
+> > +     return best_freq;
+> > +}
+> > +
+> >  static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy =
+*phy,
+> >                                         const struct phy_config *cfg)
+> >  {
+> > @@ -428,13 +516,13 @@ static int fsl_samsung_hdmi_phy_configure(struct =
+fsl_samsung_hdmi_phy *phy,
+> >       for (i =3D 0; i < ARRAY_SIZE(common_phy_cfg); i++)
+> >               writeb(common_phy_cfg[i].val, phy->regs + common_phy_cfg[=
+i].reg);
+> >
+> > -     /* set individual PLL registers PHY_REG2 ... PHY_REG7 */
+> > +     /* set individual PLL registers PHY_REG1 ... PHY_REG7 */
+> >       for (i =3D 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+> > -             writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i *=
+ 4);
+> > +             writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(1) + i *=
+ 4);
+> >
+> > -     /* High nibble of pll_div_regs[1] contains S which also gets writ=
+ten to REG21 */
+> > +     /* High nibble of PHY_REG3 and low nibble of PHY_REG21 both conta=
+in 'S' */
+> >       writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
+> > -            cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
+> > +            cfg->pll_div_regs[2] >> 4), phy->regs + PHY_REG(21));
+> >
+> >       fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
+> >
+> > @@ -462,29 +550,70 @@ static unsigned long phy_clk_recalc_rate(struct c=
+lk_hw *hw,
+> >  static long phy_clk_round_rate(struct clk_hw *hw,
+> >                              unsigned long rate, unsigned long *parent_=
+rate)
+> >  {
+> > +     u32 int_div_clk;
+> >       int i;
+> > +     u16 m;
+> > +     u8 p, s;
+> > +
+> > +     /* If the clock is out of range return error instead of searching=
+ */
+> > +     if (rate > 297000000 || rate < 22250000)
+> > +             return -EINVAL;
+> >
+> > +     /* Check the look-up table */
+> >       for (i =3D ARRAY_SIZE(phy_pll_cfg) - 1; i >=3D 0; i--)
+> >               if (phy_pll_cfg[i].pixclk <=3D rate)
+> > -                     return phy_pll_cfg[i].pixclk;
+> > +                     break;
+> > +     /* If the rate is an exact match, return it now */
+> > +     if (rate =3D=3D phy_pll_cfg[i].pixclk)
+> > +             return phy_pll_cfg[i].pixclk;
+> > +
+> > +     /*
+> > +      * The math on the lookup table shows the PMS math yields a
+> > +      * frequency 5 x pixclk.
+> > +      * When we check the integer divider against the desired rate,
+> > +      * multiply the rate x 5 and then divide the outcome by 5.
+> > +      */
+> > +     int_div_clk =3D fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &=
+s) / 5;
+> >
+> > -     return -EINVAL;
+> > +     /* If the rate is an exact match, return it now */
+> > +     if (int_div_clk =3D=3D rate)
+> > +             return int_div_clk;
+> > +
+> > +     /* Fall back to the closest value in the LUT */
+> > +     return phy_pll_cfg[i].pixclk;
+> >  }
+> >
+> >  static int phy_clk_set_rate(struct clk_hw *hw,
+> >                           unsigned long rate, unsigned long parent_rate=
+)
+> >  {
+> >       struct fsl_samsung_hdmi_phy *phy =3D to_fsl_samsung_hdmi_phy(hw);
+> > +     u32 int_div_clk;
+> >       int i;
+> > -
+> > -     for (i =3D ARRAY_SIZE(phy_pll_cfg) - 1; i >=3D 0; i--)
+> > -             if (phy_pll_cfg[i].pixclk <=3D rate)
+> > -                     break;
+> > -
+> > -     if (i < 0)
+> > -             return -EINVAL;
+> > -
+> > -     phy->cur_cfg =3D &phy_pll_cfg[i];
+> > +     u16 m;
+> > +     u8 p, s;
+> > +
+> > +     /* If the integer divider works, just use it */
+> > +     int_div_clk =3D fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &=
+s) / 5;
+> > +     if (int_div_clk =3D=3D rate) {
+> > +             dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using integer di=
+vider\n");
+> > +             calculated_phy_pll_cfg.pixclk =3D int_div_clk;
+> > +             calculated_phy_pll_cfg.pll_div_regs[0] =3D FIELD_PREP(REG=
+01_PMS_P_MASK, p);
+> > +             calculated_phy_pll_cfg.pll_div_regs[1] =3D m;
+> > +             calculated_phy_pll_cfg.pll_div_regs[2] =3D FIELD_PREP(REG=
+03_PMS_S_MASK, s-1);
+> > +             /* pll_div_regs 3-6 are fixed and pre-defined already */
+> > +             phy->cur_cfg  =3D &calculated_phy_pll_cfg;
+> > +     } else {
+> > +             /* Otherwise, search the LUT */
+> > +             dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional=
+ divider\n");> +               for (i =3D ARRAY_SIZE(phy_pll_cfg) - 1; i >=
+=3D 0; i--)
+> > +                     if (phy_pll_cfg[i].pixclk <=3D rate)
+> > +                             break;
+> > +
+> > +             if (i < 0)
+> > +                     return -EINVAL;
+> > +
+> > +             phy->cur_cfg =3D &phy_pll_cfg[i];
+> > +     }
+> >
+> >       return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
+> >  }
 
