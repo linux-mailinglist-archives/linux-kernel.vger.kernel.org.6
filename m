@@ -1,172 +1,130 @@
-Return-Path: <linux-kernel+bounces-314715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97FB196B776
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C572496B77A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4411C22007
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DCD1C24251
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286601CF29F;
-	Wed,  4 Sep 2024 09:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C591CEE8A;
+	Wed,  4 Sep 2024 09:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsSlsSsk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T4pfLUo3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70F1CEEBB;
-	Wed,  4 Sep 2024 09:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487D91CCEE9;
+	Wed,  4 Sep 2024 09:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443606; cv=none; b=umGoIkAXSv7dRxK4P/lDLgvzDKMbvAdNLpspdOf6DnrFf8pmjBeuTQU7KZ5vS+Jmtu0y945FM54tXzoP8KpYB/CHvsRERDZ2uyN7E/obFVp3XmDzwVWz/ezqLuMEm7BWtZd6aurWBoOTZXSHHDuAMuEHM1R1qM+cBXpcz7WIkPI=
+	t=1725443687; cv=none; b=PMceOPdj1t8kpMhA2r4bN3y8SwT/gpocqCPV4JJwusoYEJK36GUXAoRR8Whvjc6aQfdIoVLTkyQgX6zoDRvIdBGg6pNo/jbTdsq0/c+QQXZ8+GnvSGAb7Td6d7mMe3E7nF+t6TpG6+SQoWw7nj9YUVN7Pbo5D8NaeUkxSl3uOms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443606; c=relaxed/simple;
-	bh=Rs/7CNs57mYMKC518TOwDxf97qBOBf04kquglQP1lwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKXyY4t8vP1MX1WPY/BEF8amMSV8+I0bXT/fu6GtClcyDkUdF0GJ6akO6lJG1dB9pgdRJP7Y2hD52jwuHEyqGcnk+hYzboQgQEP7VESChP7N0X4CKOiiStIFTeBrM3IttDJJBTYkgI+JLr8OYcmDtY2mWKSu3LLSY+rznQ0xATU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsSlsSsk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E849DC4CEC2;
-	Wed,  4 Sep 2024 09:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725443606;
-	bh=Rs/7CNs57mYMKC518TOwDxf97qBOBf04kquglQP1lwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UsSlsSskbJHuC+h8APdYWUHWE27EWWoS5s+VzmxiB2D3IPWTRipWpIKtn5zyni497
-	 hVP+Ox7LqqiXOGEFtPsrAJZdEExcCBqzCxaqqgOE3kpzKjfJRZsoFGT29mYI8m5Iqw
-	 rZ0zCfCTVztes5x+XnObG6NHo9bJwDiCtpeflbGcddmKgwqEpCu6SF/qpHVPh9ni1W
-	 ppDs8jvB+vds1Aih5gTRYLgyGZ/opjK/46+emlH4fin2rM9HKedQuMGGy+q3a8UKng
-	 bPzCsVAgywe3ywpnlWsmkHQ8qY0/f+totvXZS/nscbccko+yJ9Z0oBge2FV1+Fh4PX
-	 GGhZptjpW3lFg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slmhq-000000002Dc-0ROQ;
-	Wed, 04 Sep 2024 11:53:42 +0200
-Date: Wed, 4 Sep 2024 11:53:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: manivannan.sadhasivam@linaro.org
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 4/4] PCI: qcom: Add RX margining settings for 16.0 GT/s
-Message-ID: <ZtguJs128O-N07Eg@hovoldconsulting.com>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-4-ec39f7ae3f62@linaro.org>
+	s=arc-20240116; t=1725443687; c=relaxed/simple;
+	bh=A8jBBEU4JmlCS2iIUWpGULpUfjnILI4ZQFsy022HtJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/Ebavk3h5hxJD9f2tWDK2nlOI9Kqafc+SWqeu5uBeBNiL4wyxLFaBnz+sW3TpWDA5x2fVrAQksxqaoO+UqCSd6gTSOHBfW17V9e62ovaMP3ZUcnddKOYgIMF0A1ed4R5dl4SEsC2YjnHRK8BKpWQjEs/Pm+c51zqqAdqAN4v2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T4pfLUo3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725443685; x=1756979685;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=A8jBBEU4JmlCS2iIUWpGULpUfjnILI4ZQFsy022HtJM=;
+  b=T4pfLUo3lEc3LqO4/rgnpu43xjvyO+zaLIvWh/pPD2GXBJepWHv38HMw
+   xlJl8uzwkUFNRol7CnxPkm0f+NKnuMw1beE7A/svPdhuzZFCGVVWcFcpk
+   ao5MLxcQ6v8uoK+hf6bIB1FApK1eMYS5jY1u9HPKkhYptZe6QjQtkfDDM
+   W6No0af0v1UVZeCMcURNbFtoXiKYKyzHpTAtgtP0CaZ26tyuBrKc0gRdV
+   wqJRGXKIv0yz9mBThOvaPvjId/Z7DjjzfH0KavsdzrRSKhkyZF7RwXJyU
+   cGnDH2eL/tJhyi3H6HV9f/23+3gI+q5NlKpr8tUOHJTux+y+B+aElHHZY
+   g==;
+X-CSE-ConnectionGUID: FnigzqCTRQyBcWxzZ2a11Q==
+X-CSE-MsgGUID: W07t5m9oR0eP2QgC0BzPPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34664469"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="34664469"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 02:54:44 -0700
+X-CSE-ConnectionGUID: YwwdvXlxSQu8VWPsqwJ44Q==
+X-CSE-MsgGUID: 2cjHcJE3RoOhPTSsDAyR3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="69618113"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa005.fm.intel.com with ESMTP; 04 Sep 2024 02:54:41 -0700
+Received: from mglak.igk.intel.com (mglak.igk.intel.com [10.237.112.146])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id D6B0427BD9;
+	Wed,  4 Sep 2024 10:54:39 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joshua Hay <joshua.a.hay@intel.com>,
+	Igor Bagnucki <igor.bagnucki@intel.com>,
+	Alan Brady <alan.brady@intel.com>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"Tantilov, Emil S" <emil.s.tantilov@intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH iwl-net] idpf: deinit virtchnl transaction manager after vport and vectors
+Date: Wed,  4 Sep 2024 11:54:17 +0200
+Message-ID: <20240904095418.6426-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-4-ec39f7ae3f62@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 12:42:00PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-> 
-> Add RX lane margining settings for 16.0 GT/s (GEN 4) data rate. These
-> settings improve link stability while operating at high date rates and
-> helps to improve signal quality.
-> 
-> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> [mani: dropped the code refactoring and minor changes]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.h  | 18 ++++++++++++++++
->  drivers/pci/controller/dwc/pcie-qcom-common.c | 31 +++++++++++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-qcom-common.h |  1 +
->  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  4 +++-
->  drivers/pci/controller/dwc/pcie-qcom.c        |  4 +++-
->  5 files changed, 56 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 51744ad25575..f5be99731f7e 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -209,6 +209,24 @@
->  
->  #define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
->  
-> +/*
-> + * 16.0 GT/s (GEN4) lane margining register definitions
+When the device is removed, idpf is supposed to make certain virtchnl
+requests e.g. VIRTCHNL2_OP_DEALLOC_VECTORS and VIRTCHNL2_OP_DESTROY_VPORT.
 
-nit: Gen 4?
+However, this does not happen due to the referenced commit introducing
+virtchnl transaction manager and placing its deinitialization before those
+messages are sent. Then the sending is impossible due to no transactions
+being available.
 
-> + */
-> +#define GEN4_LANE_MARGINING_1_OFF		0xb80
+Lack of cleanup can lead to the FW becoming unresponsive from e.g.
+unloading-loading the driver and creating-destroying VFs afterwards.
 
-nit: upper case hex
+Move transaction manager deinitialization to after other virtchnl-related
+cleanup is done.
 
-> +#define MARGINING_MAX_VOLTAGE_OFFSET		GENMASK(29, 24)
-> +#define MARGINING_NUM_VOLTAGE_STEPS		GENMASK(22, 16)
-> +#define MARGINING_MAX_TIMING_OFFSET		GENMASK(13, 8)
-> +#define MARGINING_NUM_TIMING_STEPS		GENMASK(5, 0)
-> +
-> +#define GEN4_LANE_MARGINING_2_OFF		0xb84
+Fixes: 34c21fa894a1 ("idpf: implement virtchnl transaction manager")
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+---
+ drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Same here
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+index a5f9b7a5effe..f18f490dafd8 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+@@ -3040,9 +3040,9 @@ void idpf_vc_core_deinit(struct idpf_adapter *adapter)
+ 	if (!test_bit(IDPF_VC_CORE_INIT, adapter->flags))
+ 		return;
+ 
+-	idpf_vc_xn_shutdown(adapter->vcxn_mngr);
+ 	idpf_deinit_task(adapter);
+ 	idpf_intr_rel(adapter);
++	idpf_vc_xn_shutdown(adapter->vcxn_mngr);
+ 
+ 	cancel_delayed_work_sync(&adapter->serv_task);
+ 	cancel_delayed_work_sync(&adapter->mbx_task);
+-- 
+2.45.0
 
-> +#define MARGINING_IND_ERROR_SAMPLER		BIT(28)
-> +#define MARGINING_SAMPLE_REPORTING_METHOD	BIT(27)
-> +#define MARGINING_IND_LEFT_RIGHT_TIMING		BIT(26)
-> +#define MARGINING_IND_UP_DOWN_VOLTAGE		BIT(25)
-> +#define MARGINING_VOLTAGE_SUPPORTED		BIT(24)
-> +#define MARGINING_MAXLANES			GENMASK(20, 16)
-> +#define MARGINING_SAMPLE_RATE_TIMING		GENMASK(13, 8)
-> +#define MARGINING_SAMPLE_RATE_VOLTAGE		GENMASK(5, 0)
->  /*
->   * iATU Unroll-specific register definitions
->   * From 4.80 core version the address translation will be made by unroll
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> index dc7d93db9dc5..99b75e7f085d 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> @@ -43,3 +43,34 @@ void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
->  	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
->  }
->  EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
-> +
-> +void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci)
-
-I'd try to find a shorter symbol name here, "settings" seems redundant
-after "set". Perhaps just
-
-	qcom_pcie_common_enable_lane_margining()
-
-or
-
-	qcom_pcie_common_enable_16gt_lane_margining()?
-
-if these settings are indeed specific to 16 GT/s. But perhaps it's
-better to let the helper honour pci->max_link_speed if different
-settings will later be needed for higher speeds:
-
-	if (pcie_link_speed[pci->max_link_speed] >= PCIE_SPEED_16_0GT)
-		qcom_pcie_common_enable_lane_margining(pci)
-
->  void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
-> +void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci);
-
-And maybe something similar for the eq settings for symmetry.
-
-Johan
 
