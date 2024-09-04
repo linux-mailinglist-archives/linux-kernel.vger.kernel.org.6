@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-314150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC696AF47
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852A896AF4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC8C1F26CD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F046287F1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E274070;
-	Wed,  4 Sep 2024 03:26:00 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6924D5BD;
-	Wed,  4 Sep 2024 03:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FEE61FC4;
+	Wed,  4 Sep 2024 03:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yHJJwlLb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086D4776E;
+	Wed,  4 Sep 2024 03:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725420360; cv=none; b=JeGYzwPPURCM+ZlAR4ks56zYJFEpfYDyorHIoTCnPxlfC803uT9bXqoSTpE3p9tkuq9U1plJ9O+GHKBMBsFuSPVIQq5/2hRvygjqRrajTert48DoG6PRaeJ6PFDxf3NIT/9FNt20YbHcc3o6ogB/vfC/FtAVldwxsVO1Gkn9N0w=
+	t=1725420413; cv=none; b=NF6F41AKCPA7brLCWxE0i9+s+JzocVRVeSaRgbH2t0Cq8RWUGvWLlj0obO4eTdHFAJR7XnH6wgqspPc0nNAJZq650snfIR0byUBtrt5LmPXbkxE/YZZbCKjim4kvEaHY+KLcq8wSc/GHen8v5zvoOd6NG+q9pVDrxK/DOZ1tG84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725420360; c=relaxed/simple;
-	bh=bmanCmjxWczkQ2hnSDrLENqXLAf+YOBzZ9WKDpz/HC4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DNLzC3LBUeDoyYl3qK402G9nw9S13oiiuwVwQs2yYnbIIDf5NUbHWODgoNUMsUHwSiEzKWY9c3XCp8WqOo6mTSZSPiTuPZVytK1CjAurrQUqVESQnQtp5qV/MwsvbtHduJG7K9ZTpjlpUqqNuWiNYYIjvVrmu+W3aop3O2b/jAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: piDI8MszQ1GvxMU8eMEOXA==
-X-CSE-MsgGUID: glaku73bSLamD/v+xkULWw==
-X-IronPort-AV: E=Sophos;i="6.10,200,1719849600"; 
-   d="scan'208";a="95370732"
-From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
-To: Jens Axboe <axboe@kernel.dk>, "bvanassche@acm.org" <bvanassche@acm.org>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Topic: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Index: AQHa/fgOh/cV01vbcESyzBPikRppQrJF0TIAgAChD4A=
-Date: Wed, 4 Sep 2024 03:25:55 +0000
-Message-ID: <31b99746-badc-4304-877d-790c6ff95c80@xiaomi.com>
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
- <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
-In-Reply-To: <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C6DDBED67C9E32408F07A7428481F025@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725420413; c=relaxed/simple;
+	bh=Gb9HgOw6SwMHu+m6RoFCLfrFFn7egZTm/+TNsO2o4WQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=GbjM+WrPCmCZouS0UybHVUMQGH+qj6Eo1yrjSccg4yh+4Yu8tmU5mbeEsQbcqtJ7nX9WVTKHDbYpT5sK/UA7PT3tYG6tYJbiuDhFd1iytzpRoM7vzJy1zQvSR4gwIEDNv+ANGbrLY7I/fzvpGNjk6HMyQYv7zAZBjtn/QIn828M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yHJJwlLb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDD2C4CEC2;
+	Wed,  4 Sep 2024 03:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725420412;
+	bh=Gb9HgOw6SwMHu+m6RoFCLfrFFn7egZTm/+TNsO2o4WQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=yHJJwlLbT55mciZh8f0oDoniKaNmUXIP03ZznNj31Z64sCxHf2L4t6A69tz/1crDm
+	 Xv257ILyUlotOqQSGXcwzdCmXUq1KNg2T/ipFy8Pls3VzhGZOx1bBmxlnMArhwrzHy
+	 Nl/ht4ZA9oeYLGozwQ//iiZoIdKcUYC+BhcB5ccU=
+Date: Tue, 3 Sep 2024 20:26:51 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.11-rc7
+Message-Id: <20240903202651.f258324d271b4813dfa8de7a@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-T24gMjAyNC85LzQgMTo0OSwgSmVucyBBeGJvZSB3cm90ZToNCj4gT24gOS8zLzI0IDU6NTQgQU0s
-IFpoYW5nSHVpIHdyb3RlOg0KPj4gRnJvbTogemhhbmdodWkgPHpoYW5naHVpMzFAeGlhb21pLmNv
-bT4NCj4+DQo+PiBDdXJyZW50bHksIGZvciBhIGNvbnRyb2xsZXIgdGhhdCBzdXBwb3J0cyBtdWx0
-aXBsZSBxdWV1ZXMsIGxpa2UgVUZTNC4wLA0KPj4gdGhlIG1xX29wcy0+Y29tcGxldGUgaXMgZXhl
-Y3V0ZWQgaW4gdGhlIGludGVycnVwdCB0b3AtaGFsZi4gVGhlcmVmb3JlLA0KPj4gdGhlIGZpbGUg
-c3lzdGVtJ3MgZW5kIGlvIGlzIGV4ZWN1dGVkIGR1cmluZyB0aGUgcmVxdWVzdCBjb21wbGV0aW9u
-IHByb2Nlc3MsDQo+PiBzdWNoIGFzIGYyZnNfd3JpdGVfZW5kX2lvIG9uIHNtYXJ0cGhvbmUuDQo+
-Pg0KPj4gSG93ZXZlciwgd2UgZm91bmQgdGhhdCB0aGUgZXhlY3V0aW9uIHRpbWUgb2YgdGhlIGZp
-bGUgc3lzdGVtIGVuZCBpbw0KPj4gaXMgc3Ryb25nbHkgcmVsYXRlZCB0byB0aGUgc2l6ZSBvZiB0
-aGUgYmlvIGFuZCB0aGUgcHJvY2Vzc2luZyBzcGVlZA0KPj4gb2YgdGhlIENQVS4gQmVjYXVzZSB0
-aGUgZmlsZSBzeXN0ZW0ncyBlbmQgaW8gd2lsbCB0cmF2ZXJzZSBldmVyeSBwYWdlDQo+PiBpbiBi
-aW8sIHRoaXMgaXMgYSB2ZXJ5IHRpbWUtY29uc3VtaW5nIG9wZXJhdGlvbi4NCj4+DQo+PiBXZSBt
-ZWFzdXJlZCB0aGF0IHRoZSA4ME0gYmlvIHdyaXRlIG9wZXJhdGlvbiBvbiB0aGUgbGl0dGxlIENQ
-VSB3aWxsDQo+PiBjYXVzZSB0aGUgZXhlY3V0aW9uIHRpbWUgb2YgdGhlIHRvcC1oYWxmIHRvIGJl
-IGdyZWF0ZXIgdGhhbiAxMDBtcy4NCj4+IFRoZSBDUFUgdGljayBvbiBhIHNtYXJ0cGhvbmUgaXMg
-b25seSA0bXMsIHdoaWNoIHdpbGwgdW5kb3VidGVkbHkgYWZmZWN0DQo+PiBzY2hlZHVsaW5nIGVm
-ZmljaWVuY3kuDQo+IFRoZSBlbGVwaGFudCBpbiB0aGUgcm9vbSBoZXJlIGlzIHdoeSBhbiA4ME0g
-Y29tcGxldGlvbiB0YWtlcyAxMDAgbXNlYz8NCj4gVGhhdCBzZWVtcy4uLiBpbnNhbmUuDQo+DQo+
-IFRoYXQgYXNpZGUsIGRvaW5nIHdyaXRlcyB0aGF0IGJpZyBpc24ndCBncmVhdCBmb3IgbGF0ZW5j
-aWVzIGluIGdlbmVyYWwsDQo+IGV2ZW4gaWYgdGhleSBhcmUgb3JkZXJzIG9mIG1hZ25pdHVkZSBz
-bWFsbGVyIChhcyB0aGV5IHNob3VsZCBiZSkuIE1heWJlDQo+IHRoaXMgaXMgc29sdmFibGUgYnkg
-anVzdCBsaW1pdGluZyB0aGUgd3JpdGUgc2l6ZSBoZXJlLg0KPg0KPiBCdXQgaXQgcmVhbGx5IHNl
-ZW1zIG91dCBvZiBsaW5lIGZvciBhIHdyaXRlIHRoYXQgc2l6ZSB0byB0YWtlIDEwMCBtc2VjDQo+
-IHRvIHByb2Nlc3MuDQo+DQo+IC0tDQo+IEplbnMgQXhib2UNCj4NCmhpIEplbnMsDQoNClRoaXMg
-cHJvYmxlbSBpcyBzdHJvbmdseSByZWxhdGVkIHRvIHdoZXRoZXIgdGhlIENQVSBpcyBhIGxhcmdl
-DQpjb3JlIG9yIGEgbGl0dGxlIGNvcmUgYW5kIHRoZSBDUFUgZnJlcXVlbmN5LiBPbiBhIGxhcmdl
-IGNvcmUsIHRoZSB0aW1lDQp3aWxsIG9idmlvdXNseSBiZSBzaG9ydGVyLCBidXQgd2UgY2Fubm90
-IGFzc3VtZSB3aGljaCBjb3JlIHRoZSBJTyB3aWxsDQpiZSBjb21wbGV0ZWQgb24gYW5kIHRoZSBj
-dXJyZW50IENQVSBmcmVxdWVuY3kuLi4NCg0KTGltaXRpbmcgdGhlIElPIHNpemUgaXMgYWxzbyBh
-IG1ldGhvZCwgYnV0IGhvdyBsYXJnZSB0byBsaW1pdCBpdCBpcyBhDQpwcm9ibGVtLCBhbmQgSSBh
-bSB3b3JyaWVkIHdoZXRoZXIgaXQgd2lsbCBjYXVzZSBiYW5kd2lkdGggbG9zcyBpbg0Kc29tZSBz
-Y2VuYXJpb3M/DQoNClRoYW5rcw0KWmhhbmcNCg0K
+
+Linus, please pull this batch of hotfixes, thanks.
+
+
+The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+
+  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-09-03-20-19
+
+for you to fetch changes up to 052a45c1cb1b32f05dd63a295d65496d8b403283:
+
+  alloc_tag: fix allocation tag reporting when CONFIG_MODULES=n (2024-09-01 17:59:03 -0700)
+
+----------------------------------------------------------------
+17 hotfixes, 15 of which are cc:stable.
+
+Mostly MM, no identifiable theme.  And a few nilfs2 fixups.
+
+----------------------------------------------------------------
+Adrian Huang (1):
+      mm: vmalloc: optimize vmap_lazy_nr arithmetic when purging each vmap_area
+
+Hao Ge (2):
+      mm/slub: add check for s->flags in the alloc_tagging_slab_free_hook
+      codetag: debug: mark codetags for poisoned page as empty
+
+Jan Kuliga (1):
+      mailmap: update entry for Jan Kuliga
+
+Jann Horn (2):
+      userfaultfd: fix checks for huge PMDs
+      userfaultfd: don't BUG_ON() if khugepaged yanks our page table
+
+Liam R. Howlett (1):
+      maple_tree: remove rcu_read_lock() from mt_validate()
+
+Marc Zyngier (1):
+      scripts: fix gfp-translate after ___GFP_*_BITS conversion to an enum
+
+Mike Yuan (1):
+      mm/memcontrol: respect zswap.writeback setting from parent cg too
+
+Muhammad Usama Anjum (1):
+      selftests: mm: fix build errors on armhf
+
+Petr Tesarik (1):
+      kexec_file: fix elfcorehdr digest exclusion when CONFIG_CRASH_HOTPLUG=y
+
+Ryusuke Konishi (3):
+      nilfs2: protect references to superblock parameters exposed in sysfs
+      nilfs2: fix missing cleanup on rollforward recovery error
+      nilfs2: fix state management in error path of log writing function
+
+Suren Baghdasaryan (1):
+      alloc_tag: fix allocation tag reporting when CONFIG_MODULES=n
+
+Usama Arif (1):
+      Revert "mm: skip CMA pages when they are not available"
+
+Will Deacon (1):
+      mm: vmalloc: ensure vmap_block is initialised before adding to queue
+
+ .mailmap                                |  1 +
+ Documentation/admin-guide/cgroup-v2.rst |  7 ++--
+ fs/nilfs2/recovery.c                    | 35 ++++++++++++++++-
+ fs/nilfs2/segment.c                     | 10 +++--
+ fs/nilfs2/sysfs.c                       | 43 ++++++++++++++++-----
+ kernel/kexec_file.c                     |  2 +-
+ lib/codetag.c                           | 17 ++++++---
+ lib/maple_tree.c                        |  7 +---
+ mm/memcontrol.c                         | 12 ++++--
+ mm/page_alloc.c                         |  7 ++++
+ mm/slub.c                               |  4 ++
+ mm/userfaultfd.c                        | 29 ++++++++-------
+ mm/vmalloc.c                            |  7 +++-
+ mm/vmscan.c                             | 24 +-----------
+ scripts/gfp-translate                   | 66 ++++++++++++++++++++++++---------
+ tools/testing/selftests/mm/mseal_test.c | 37 +++++++-----------
+ tools/testing/selftests/mm/seal_elf.c   | 13 +------
+ 17 files changed, 197 insertions(+), 124 deletions(-)
+
 
