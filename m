@@ -1,189 +1,162 @@
-Return-Path: <linux-kernel+bounces-314527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB84296B486
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D82D96B489
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C4F1C205BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C835428BCB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E633186608;
-	Wed,  4 Sep 2024 08:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501951862B4;
+	Wed,  4 Sep 2024 08:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sqfjs3n5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UjKb9fer"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21217279E;
-	Wed,  4 Sep 2024 08:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCADE1865E7;
+	Wed,  4 Sep 2024 08:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438563; cv=none; b=sKPc5U9GDri5s/Z5d34QhRDjpI4cstPJHh0vY5bUknyjMTyHHI7fMsn6eO7OkvF3puELSNjIgcQ0zF6kJVjQXdNC3gJCGEJDbpzEz/Qlrq2zkBRVjSzs5qLGDiiXs2WYoZUtWLcAWwyMNquejOuwml8eiAGecwrbjwmeOiBp/10=
+	t=1725438612; cv=none; b=ZnS1vtxePQv41//q1QKJaZ1VNFm1u0BhEnX8PTWqh4yVzT2tRkIHy5ASD/O/rVEogYezIBFLBATacIyOBGAOBE/vYB0kos4nCg22zAwHVzzTJ5aq3sZ0AAQOwYd4wHELiCONrUTGx3yi08KZIn7GHwzTO5anTuaa/mA2UeMc85U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438563; c=relaxed/simple;
-	bh=DItLMDxS2TW6o/6g12CJyEVIDQxxNg16Gtc7lgv7AAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFrzI9hYiJ2oEwr6xJZprZDgt6GGVpmBoNXBD8FrfcqqMdjf0eFJhWf2QpAsWGEF0ie4qG7SK5BzGYhVpAhHqJbbU/07kzHcNX4arWgp6ONxnztC/9VUXL8kiQwoqzy21mjpOSkQGHzYfK60OYtsCN6W5y3yJViERtT8vzrmqnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sqfjs3n5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B922C4CEC2;
-	Wed,  4 Sep 2024 08:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725438562;
-	bh=DItLMDxS2TW6o/6g12CJyEVIDQxxNg16Gtc7lgv7AAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sqfjs3n5NWQI9vjApwFd/XLyL25PYhhk1NJKeswVqXvRnWRAgNgynUMN2s5KDbhLp
-	 XMpHOWt3GawNpByUlT5TwfjzusBULb5gR8oHxXA6OPHIPZJ7fVUxJrBxE9dHLZQIA7
-	 DLnMrTbQ/h24k3D7VBCjJ3FxSlDWGCcHvLmjJuQjRCCGiSlzSFzil/xZTmpKHz8cRp
-	 UcocHgNDIvqT6nARG2SZvLi8Gljq1N1OcvuqYgmToOVHhkArdHWQWuNb4tFRD6MnLW
-	 wt5a9IYFubShOGvLW5NylL5T0lgwwWOTVI14M/bYHUHhbRwG7Imaj1Lkhs4mBEioDZ
-	 Pqf1oJJ5B9IaA==
-Date: Wed, 4 Sep 2024 11:29:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: syzbot <syzbot+b8b7a6774bf40cf8296b@syzkaller.appspotmail.com>
-Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (2)
-Message-ID: <20240904082918.GL4026@unreal>
-References: <000000000000d70eed06211ac86b@google.com>
+	s=arc-20240116; t=1725438612; c=relaxed/simple;
+	bh=L5zcVEr5rIFzQVfdK/YrFSWmGXeDLvZo8OR4UU7NjZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WqB4z3Qdtz1scgjqLQ7RW+OrjTzNrBhAkTl0ehIFc3081DnZT8pjfgamj4Bhoq+xDULn1Huv8hgS9O1o4t+qMyBaj2VHYPKLNuM3ZTMilm9AvstfhA4qSR7cmmOGxevRnSRABxOo6RcbVhm7jlao8TRR/sU7oQnMmTXwfcaW79M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UjKb9fer; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4840DhPN015921;
+	Wed, 4 Sep 2024 08:29:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KzIKAsJu/wdUWk2sEUxvPTMam1vZyNmKG0fNcBCt++4=; b=UjKb9ferOL1ma8SN
+	uV9PGV7EgUfZTe3VEO124hTAVhqulk90TmRxRlO4tPeVjRxTEhacy5tjk16w9ab3
+	RdmXiq+EvzmxzzIuAjQE5D2vtFqX9uZirSPLoMFgWFmZjdoEh0fjsnz83y5gZ+Au
+	AtVr+AgURCqGFaGtpnllD8Z6B9ASybr5cp5o0vOlJf6vnxQ2M41ESoyaFF8O1YyV
+	1QZpSyulus3GvX3zwjdlOJU/KA/TT2rdcF3vhcdFEm3PoA9sYXLQBnojpehzAXiZ
+	CLdtBZ5KNCJcdVS0guwGwjpOSos5LjnRrzPLsc8nu21QAdruvgkwFBeiQypwpBQV
+	KBAIhA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bu8ut4r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 08:29:50 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4848Tn8E022676
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 08:29:49 GMT
+Received: from [10.131.117.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 01:29:45 -0700
+Message-ID: <b143a3c3-8a12-4ac9-bb0f-3b4b9ea976a1@quicinc.com>
+Date: Wed, 4 Sep 2024 13:59:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d70eed06211ac86b@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu: Don't disable next-page prefetcher on
+ devices it works on
+To: Doug Anderson <dianders@chromium.org>, Will Deacon <will@kernel.org>
+CC: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        Stephen Boyd <swboyd@chromium.org>, Chen Lin <chen45464546@163.com>,
+        <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <quic_sibis@quicinc.com>
+References: <20240513161343.1.I5db5530070a1335e6cc3c55e056c2a84b1031308@changeid>
+ <20240517163742.GA525@willie-the-truck>
+ <CAD=FV=UEXjD=w41Hj_gE--DXhkSjNdfPnkc7X=FrZJ5_90Jq0g@mail.gmail.com>
+Content-Language: en-US
+From: Pankaj Patil <quic_pankpati@quicinc.com>
+In-Reply-To: <CAD=FV=UEXjD=w41Hj_gE--DXhkSjNdfPnkc7X=FrZJ5_90Jq0g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4JxAi8u3j0kxiKsTL1aYbT-sgNV0zrmI
+X-Proofpoint-GUID: 4JxAi8u3j0kxiKsTL1aYbT-sgNV0zrmI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_05,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 clxscore=1011 mlxscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040065
 
-#syz fix: "IB/core: Fix ib_cache_setup_one error flow cleanup"
+On 5/17/2024 10:49 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, May 17, 2024 at 9:37 AM Will Deacon <will@kernel.org> wrote:
+>>
+>> Hi Doug,
+>>
+>> On Mon, May 13, 2024 at 04:13:47PM -0700, Douglas Anderson wrote:
+>>> On sc7180 trogdor devices we get a scary warning at bootup:
+>>>   arm-smmu 15000000.iommu:
+>>>   Failed to disable prefetcher [errata #841119 and #826419], check ACR.CACHE_LOCK
+>>>
+>>> We spent some time trying to figure out how we were going to fix these
+>>> errata and whether we needed to do a firmware update. Upon closer
+>>> inspection, however, we realized that the errata don't apply to us.
+>>> Specifically, the errata document says that for these errata:
+>>> * Found in: r0p0
+>>> * Fixed in: r2p2
+>>>
+>>> ...and trogdor devices appear to be running r2p4. That means that they
+>>> are unaffected despite the scary warning.
+>>>
+>>> The issue is that the kernel unconditionally tries to disable the
+>>> prefetcher even on unaffected devices and then warns when it's unable
+>>> to.
+>>>
+>>> Let's change the kernel to only disable the prefetcher on affected
+>>> devices, which will get rid of the scary warning on devices that are
+>>> unaffected. As per the comment the prefetcher is
+>>> "not-particularly-beneficial" but it shouldn't hurt to leave it on for
+>>> devices where it doesn't cause problems.
+>>>
+>>> Fixes: f87f6e5b4539 ("iommu/arm-smmu: Warn once when the perfetcher errata patch fails to apply")
+>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>> ---
+>>>
+>>>  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c | 21 +++++++++++++--------
+>>>  1 file changed, 13 insertions(+), 8 deletions(-)
+>>
+>>
+>> Just curious, but did you see any performance impact (good or bad) as a
+>> result of this patch? The next-page prefetcher has always looked a little
+>> naive to me and, with a tendency for tiny TLBs in some implementations,
+>> there's a possibility it could do more harm than good.
+> 
+> This patch actually makes no difference on trogdor today other than
+> getting rid of the scary warning. Specifically on trogdor the
+> ACR.CACHE_LOCK bit seems to be set so the kernel is unable to change
+> the setting anyway and has never been able to. We are working on
+> figuring out how to fix the firmware and then we have to get a
+> firmware spin before we can really see any changes. I'll keep an eye
+> out to see if performance numbers change when the firmware uprevs.
+> 
+> BTW: any idea how big of a deal these errata are? We're _just_
+> finishing a firmware uprev process and there is always pushback
+> against kicking off a new one unless the issue is important. Given
+> that we've been living with this issue since devices shipped I'm going
+> to assume we don't need to rush a firmware update, but if this is
+> really scary and needs to be addressed sooner we can figure that out.
+> 
+> -Doug
 
-On Sun, Sep 01, 2024 at 08:46:22PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    928f79a188aa Merge tag 'loongarch-fixes-6.11-2' of git://g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14089643980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9e8c6a00ef394bcf
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b8b7a6774bf40cf8296b
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-928f79a1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5bf719d3bbf5/vmlinux-928f79a1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/88527595ba7c/bzImage-928f79a1.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b8b7a6774bf40cf8296b@syzkaller.appspotmail.com
-> 
-> infiniband syz1: ib_query_port failed (-19)
-> infiniband syz1: Couldn't set up InfiniBand P_Key/GID cache
-> ------------[ cut here ]------------
-> GID entry ref leak for dev syz1 index 0 ref=1
-> WARNING: CPU: 0 PID: 19837 at drivers/infiniband/core/cache.c:806 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-> WARNING: CPU: 0 PID: 19837 at drivers/infiniband/core/cache.c:806 gid_table_release_one+0x387/0x4b0 drivers/infiniband/core/cache.c:886
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 19837 Comm: syz.1.3934 Not tainted 6.11.0-rc5-syzkaller-00079-g928f79a188aa #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-> RIP: 0010:gid_table_release_one+0x387/0x4b0 drivers/infiniband/core/cache.c:886
-> Code: 78 07 00 00 48 85 f6 74 2a 48 89 74 24 38 e8 b0 0a 76 f9 48 8b 74 24 38 44 89 f9 89 da 48 c7 c7 c0 69 51 8c e8 5a c3 38 f9 90 <0f> 0b 90 90 e9 6f fe ff ff e8 8b 0a 76 f9 49 8d bc 24 28 07 00 00
-> RSP: 0018:ffffc900042b7080 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9002811e000
-> RDX: 0000000000040000 RSI: ffffffff814dd406 RDI: 0000000000000001
-> RBP: ffff88807ebaaf00 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000001 R11: 0000000000000000 R12: ffff888051860000
-> R13: dffffc0000000000 R14: ffffed100fd755fb R15: 0000000000000001
-> FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f56c6b40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: 000000002effcff8 CR3: 0000000060c5e000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ib_device_release+0xef/0x1e0 drivers/infiniband/core/device.c:498
->  device_release+0xa1/0x240 drivers/base/core.c:2582
->  kobject_cleanup lib/kobject.c:689 [inline]
->  kobject_release lib/kobject.c:720 [inline]
->  kref_put include/linux/kref.h:65 [inline]
->  kobject_put+0x1e4/0x5a0 lib/kobject.c:737
->  put_device+0x1f/0x30 drivers/base/core.c:3790
->  rxe_net_add+0xe0/0x110 drivers/infiniband/sw/rxe/rxe_net.c:544
->  rxe_newlink+0x70/0x190 drivers/infiniband/sw/rxe/rxe.c:197
->  nldev_newlink+0x373/0x5e0 drivers/infiniband/core/nldev.c:1794
->  rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
->  rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg net/socket.c:745 [inline]
->  ____sys_sendmsg+0x9b4/0xb50 net/socket.c:2597
->  ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
->  __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
->  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-> RIP: 0023:0xf7f20579
-> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-> RSP: 002b:00000000f56c656c EFLAGS: 00000296 ORIG_RAX: 0000000000000172
-> RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00000000200003c0
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> ----------------
-> Code disassembly (best guess), 2 bytes skipped:
->    0:	10 06                	adc    %al,(%rsi)
->    2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
->    6:	10 07                	adc    %al,(%rdi)
->    8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
->    c:	10 08                	adc    %cl,(%rax)
->    e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
->   1e:	00 51 52             	add    %dl,0x52(%rcx)
->   21:	55                   	push   %rbp
->   22:	89 e5                	mov    %esp,%ebp
->   24:	0f 34                	sysenter
->   26:	cd 80                	int    $0x80
-> * 28:	5d                   	pop    %rbp <-- trapping instruction
->   29:	5a                   	pop    %rdx
->   2a:	59                   	pop    %rcx
->   2b:	c3                   	ret
->   2c:	90                   	nop
->   2d:	90                   	nop
->   2e:	90                   	nop
->   2f:	90                   	nop
->   30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
->   37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Receiving the warning on pre-silicon platforms as well, despite being unaffected. If merged, it will help in reducing log clutter.
+The patch applies cleanly on the tip of linux-next, tag: next-20240904.
+
 
