@@ -1,299 +1,236 @@
-Return-Path: <linux-kernel+bounces-314054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031C796AE34
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A2E96AE3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741931F25867
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676BF1C2348B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4315111187;
-	Wed,  4 Sep 2024 02:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A964F208C4;
+	Wed,  4 Sep 2024 02:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M6IfwdEF"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2043.outbound.protection.outlook.com [40.107.105.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcfB2oFo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6D8E567;
-	Wed,  4 Sep 2024 02:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725415444; cv=fail; b=PqPnHAn3wSy5rrfHhJzfwuLlgavR2qJFYd0GAKqvBNZyxd7EqUXD6/g1a4p/AFm2RDx/XLe/xrXSaTDQKSTe1SseGvX2VACkil2agXWxS1CTMvzVdS9HRNw4Z4PdEv+2is7V2vYEhZ/Jy8HWjBK/bFCQ/ICModjHD/mmNzZQZag=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725415444; c=relaxed/simple;
-	bh=66AAWPeBkgfl2ZIcQyVGDp4A9tX7e4SFkxOWg4yBKBE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=h2lz0VjFXT6RvkA+xt88nw1SWBaHJzjbDzFC0sQZbw+9rdvvcvGlJ/uD600WwIUzOhoW0I0/xqtpLzbDXlSP5sGu2buj9mG+w/UPOEjm4fXovhc9ruPw/swOxNjYUTrzUCgcO0YeQUChPNOgypW9/13sjxPFOhcEhhRMVu8HMbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M6IfwdEF; arc=fail smtp.client-ip=40.107.105.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m3J5LnTrRAtjniOhe0zM+0v+WcOYFiuiOW8bLW4pnaVbZVGDyQ5cQqwDZ2Ct2M5g/0zY865PO1nMlQ6b+Sx9ZL4Be72c8sUy9VTLQnIBD+ZGQ3FdvnthvHusi8ZjHAup5ozJ9JBUoRcsbZICbEQJs3XFtLe1cSLKoyO2714z6/U10c0wdZreUwmAXpZODsq4Qp9WpI6kiHTy12yEyzvmwitOZUI/ajGjaO1hcqOwurL4b9XekACNusVIOS0cNsyBePzGhdorZTL1+QkPvY7mrzTLxUgo5Mk9fENm5aZrLqnIXIesBiDt56OfHC+ihfLJrhg7c6+Rml5weU7SO2HZRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rgFydWj/GDAfiXk/1UowxIpno4JMPiqJ2Swd0nvto9Q=;
- b=TJhJaZNphLsEZQlJBwaiE3XyK1Q0hjnSr+zulxtARki/t4vLPwa4+NdTykfdEM1GKP2ko0amrnM+oUBOJ8ZuRMODtc8agOtdca3Er3f94PI9nql1Oqgq1jkGwuFk7pLNBYczCkaVKOZ37ahEviLckJ9TudsV3QZ7iVvSvvJVIZ4ybfn+OIKemi4hRVWqmrYbCJ2c0yhQwuI5vvIxK6gvt2qb/OyP6pAlKUBj6wTQF8biCO6giVto5MZHaQE/laHheFJ6cxdX6FrCaO1ZsOdoVCLemA/b8E0HHIYL5QnWvE/xMjBKZwHrU+5ziXp5u2g8CaCcLqGZ3oe3Gj3sn/EtQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rgFydWj/GDAfiXk/1UowxIpno4JMPiqJ2Swd0nvto9Q=;
- b=M6IfwdEFlTt1pYUzjzqJfoPsAXfaWEt75g0FDRkcfpf8YgaUsczJj2Y4F1O+N6vU7DzmK/w+2B/xu95sYQ6sd2eyKKc5yPEKhWqJGhc2hN3b2Belcwel+2HcCyLqxpY7uWqlNRJbkChq3q4CFKanf2vu24ihX4fSmNJdYDJkoRWDFX6Pkeqs/UBw2GHMVYQ3pOpHxXaD2ZbL+ta9XI8rHMMJiVIkwdaCFRnDFo5rkbAiA094gSgXuwpqBGUkApQMzKOHrP6tliIUdXwhu7h9U+2pdiEOdLZ5I6lKwv+aemHSDWnuTy6mKGVBTimYsgYveUoYSQh/p6cRTc5Ri19kQQ==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB8PR04MB6859.eurprd04.prod.outlook.com (2603:10a6:10:119::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
- 2024 02:03:59 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 02:03:59 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Diogo Manuel Pais Silva <diogo.pais@ttcontrol.com>, Abel Vesa
-	<abel.vesa@linaro.org>
-CC: "abelvesa@kernel.org" <abelvesa@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "EMC: linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] clk: imx8qxp: Defer instead of failing probe
-Thread-Topic: [PATCH v3] clk: imx8qxp: Defer instead of failing probe
-Thread-Index: AQHa/UMHooRn38K5ZkGUQDhNL9MK1LJG4cPA
-Date: Wed, 4 Sep 2024 02:03:59 +0000
-Message-ID:
- <PAXPR04MB84591356511162E61E074221889C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References:
- <DU0PR01MB93828B0E6808E33C608BC0E29DD32@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
- <AM6PR04MB5941651E3920794104B3D24F88D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
- <Zs7gXhohOyQ/abOf@linaro.org>
- <DU0PR01MB9382A2BBCCD8C786121975B89D922@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
-In-Reply-To:
- <DU0PR01MB9382A2BBCCD8C786121975B89D922@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Enabled=True;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_SiteId=5638dc0c-ffa2-418f-8078-70f739ff781f;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_SetDate=2024-09-02T14:18:09.837Z;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Name=TTControl
- -
- Public;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_ContentBits=0;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Method=Privileged;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|DB8PR04MB6859:EE_
-x-ms-office365-filtering-correlation-id: 8766bd9b-3ca7-4bd5-9582-08dccc85d734
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?NVveu3p4SFVy5AWLi5pZ8FmoL0VI5zXqAxcIVigdypwRWpYTjHmXFoM6ADDd?=
- =?us-ascii?Q?qefVqKpd66wvFopeA2l51seT3FG3a0IXnJBLg2Sf6ilfJtOJI8H1rzZa0kFK?=
- =?us-ascii?Q?2Zl64LzmBkv/xb0a6oSRi5PSpaP5RfKsyeGhY6MksOF6R4EyYncaDkjEGata?=
- =?us-ascii?Q?WYwMoCsXCj0kxEXehGkD/gNgoNtoEBdpxcxBwlmuZKX0e5zlTOm1/hEiMmjW?=
- =?us-ascii?Q?WG02pNQ8hJ8YYSa1GzJcy9zk8FJHgNoeUVDnVFcltMWtVgMqggSJOWAKmdMr?=
- =?us-ascii?Q?89xHo2diZj4sHsLTU73nWZ0V49Yde0qmzxDMYrF3wvpS72P8CkcbSMdrg/Ou?=
- =?us-ascii?Q?i+ALHgb6OJAKoCsJh51n34jxX+FiWmHuexhAVVqeENawGmfGsoS+Q7Dm5xea?=
- =?us-ascii?Q?nDP4R9I+S2gLNNBH9oy73kQzuqsOMgx8+vaJnJ/jss4tMWkaPZlygd9iNg0j?=
- =?us-ascii?Q?/9dh3gAgU6okeL56j86UeIvSOZsnUfEH8o0TxHkGMEM8G8IzQno2I60abzVY?=
- =?us-ascii?Q?aEZc3sAMap9JWHwbG3cYTJa/BZoHgRCkP42OMKjzG8XMWwsyt3t/eDcXfRAV?=
- =?us-ascii?Q?gBlDgcjMgcxMDguRAWJqeZU4I5Zyy6OC1pNjvYOQT4f97wXB7AIs4Jgywsrd?=
- =?us-ascii?Q?qSZ9u4NasLi5mJoamHt/oLFZ5OFo8VhjG5gliSlIULLNCWvSyl4AozYX7Y8q?=
- =?us-ascii?Q?YiNGU9d24i4INQxbx8WWEQb2cDTwbNqcvFc9pmzgyNHl80WELYS8Swkxsxsi?=
- =?us-ascii?Q?SR3jtL84iDz5DGJguQEnhwrWYNhZbBmsSzuRpW9456Y1/AjeeVmnGMgso6JT?=
- =?us-ascii?Q?KL92RgImE+SKdJ8HSmym8lWtVsHuDmM6ujGOYpg4sedGLe/bebsPagGqdfg1?=
- =?us-ascii?Q?hTSmq6ClPQmubB8xlbZGpDEWY8SW1eHIeVYqHLW+/mpho6ELtW+k3/mzCr6P?=
- =?us-ascii?Q?W221a025l2/AnBlKllaT1AZytjZydZGDncZn6/kPdBzatZjhSBzwb7AxHjmF?=
- =?us-ascii?Q?yYyp+R1G7Z0neXpVRDC97FJ099lCX1nLQUUYVskD3iOdmoLqG3LObhRzRm6Y?=
- =?us-ascii?Q?UNwdHxB7pp5GovlPD+m0sxKWXlE46PsjsNs/a98DcKFfoK6G5ckXAENhkdPC?=
- =?us-ascii?Q?1wgmpdI7ZuDTjLB5DSGxL//YvTpjqWjR01wwu+z8CUNiPdEmchEY10AK6YVB?=
- =?us-ascii?Q?fnZO8syWLEdoLOL2OtL4UKjfb3dXkEQyzXeDd9q+gMeu3hyFFc8eulZzcth4?=
- =?us-ascii?Q?io4cFSpDkwgZO0PWps91jHUXhlMOVKlkLxGygkmqQLRJ0jDKeAGYtj+psgBy?=
- =?us-ascii?Q?wKAUjJ7P2T1q/qORVKyIcD9Zt5uh/4IAju2pbz6u13nIFikgzfOfpfOG6teH?=
- =?us-ascii?Q?HFVqyoVlqx0+pv4WAhsWJ+R2luKqEGHwxdjMPWVhTh23KSNLYw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?gC36oDiz4WkiUdO6kL9TFzNX9v8yhRwHeJoW8nCe4YvXWqA42f19XnPni9XM?=
- =?us-ascii?Q?Q7pmXBm/mj+cLPn5QEEMWxUrAZpZcL3dt63bH1fkbEQ4bq+PVvVUtzi/nYpo?=
- =?us-ascii?Q?fsznGu1XAfbDW0n4Dwu0GTrBiw2oZXM6rw5joNkme/b41ybB54BpLzXEz1Z0?=
- =?us-ascii?Q?SkiGBezyLCxUpEzzluchyO5zwt9/oRDowoSZXbh5lbIQzxuOMtCTTyrKOgZh?=
- =?us-ascii?Q?2c6hBLIJ4wgqwXhKPGTFXUjpcfFbGEwG6eQ9z2ZixFXbA51Psp/fcn0IGpMB?=
- =?us-ascii?Q?rSA/pvoUuf8+lOajAU+zjqcg8ghB4CFn7VjsLW/dvbSyUpatApZVqQ2oSLmi?=
- =?us-ascii?Q?vZ2H1mitQ6AjFQx54Q1h447rt4M3+od/mSsHw+aGBNgeE1AULFpnYgOjjFLv?=
- =?us-ascii?Q?BJPIU4k//G9ruqOqhvgmvelnpIUCMf2XtLkAC68AiJoXiUTsf1c8xMsLfhZ1?=
- =?us-ascii?Q?FaEsPxBeLI29VCaD4XZWGdXTfuEVxzY/FYaOQ9wdCFh/z3RwndJEQOFqo4Qi?=
- =?us-ascii?Q?/7W67MlBTQP0a5VJVV/dz7KGvhOrwyHxsf0r/ZQqtUsXFJ9vXO0PQ3Wyis5Y?=
- =?us-ascii?Q?EHH/QVSL0skQrYJlZKwCnbFL/3vVo9U3hOQ7XmZoFdrrq6CUY07m0dKsefW5?=
- =?us-ascii?Q?NT3hSWCU39FHjU6MncwKs7BCizL6t1efhRYXgsQJWe4GpPUPweNDK7/21lqr?=
- =?us-ascii?Q?Qap5WfUqNq9KoczvwAcf65tSEBnc6eqDVIlCobByYX+VGJAxgvZZ4i8N7PGz?=
- =?us-ascii?Q?h2uDan9knvVE56KB72GtUi6NzFXNg/WMLOrVCiwQWQN0xfUIUx6KzHkvaHFW?=
- =?us-ascii?Q?vfrFvvHqpXKZYXyVGY2F9FEoFJ1j2hCA4p1iiMCHd9FO25UUN8qjS+zltba/?=
- =?us-ascii?Q?TvHzqpU6W59FJwQ2Pd3V6A0m6NTj2NAKQVOsvX8J8yixkbXXyG50k2KT/QeJ?=
- =?us-ascii?Q?ns+L39pBjSjbw1LvKnwiNGi4MMjnBESSRtXCe5+Iwsf7WOTaACBWXdNEP/kL?=
- =?us-ascii?Q?r0azBo2eopaBaVI7VgvAhizN5518W+RRogKC+OfPzG5Ga2ZAt9xy3Ly/GVn2?=
- =?us-ascii?Q?je3NYppA23Z2XNdSQ2cvp+rBcSSwAzq/J6p2kKufZQk3arR9zcM8ZhrrhAU0?=
- =?us-ascii?Q?n5O2MTNRwI+SSTsTNNT6Dt7pZuq9rN2i8g89wpSUSF9Ovl16Lvc2ePvHHo+a?=
- =?us-ascii?Q?okEDtkR3boEQFrgJy3A+wiWlaleWj+u8Fx994Am4dTlEp+7RNR56ufNHKYeW?=
- =?us-ascii?Q?/DeOlszC+3xXGUX7KMqgtxiDObEMvMEVGU+JWcSRb4EJ3iOfyTXny7yx+Kck?=
- =?us-ascii?Q?AJDI4Dsnq5OkUVQQe+lyyJqcBQRMFg4Pe+aBGk12x2A221RlqYJF8K1YEiKW?=
- =?us-ascii?Q?tbtLurrKtITFp06gJLkyXLgzhj59drpJ5m0PzQQ+b1C17awxOuKLHvnq/n0B?=
- =?us-ascii?Q?0Lu2GP16GtXzkRz4Vu3P3Ap/z5AHZEVhihzXUVF22DRhhm3LibxfsLNu+e2Y?=
- =?us-ascii?Q?XZfPyjcxiK7r49XTNaBhdWXaaxmLKTtjKCE+4+LNJR52f1QEO4Y/d2HUs9lv?=
- =?us-ascii?Q?oV8rIBlR8cbZ7ZnqjoA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F13FBF0;
+	Wed,  4 Sep 2024 02:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725415496; cv=none; b=C+56r0AZswqHN+BOOB7Owe4A37Wm7HO4bvyMIwwzNhRGOp/b/zOfp05MH2dyCIbaCsEGBTjF+PS2ZnUgQyigmMcKvTVoFW0hUA5W0hsyxG0i9qSBOG+6IiFSUqwyAidlUfl09eFpa2VANdiQebpnnIj54vsxZxBhtWuxwNMf0nQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725415496; c=relaxed/simple;
+	bh=gjDEYDEGYaab6iQMQIrG64hkt0UrkZJho2SHEiVlOE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GyT5guQxvBcbPIkDGcIGBgB1h8rzsdMJ8E+Z0xMC0h9ot5JXN5BGmzkCqi+ZoTY006G0n8FPAk0NAQCjDpmQpahMH23deYBaMmRMsojm8u9LLmpC6C9s7S526llWWFA1NlY2gtUY0s4Chtt48jdax+3ALPqFtUBllXlltvQucw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcfB2oFo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CFDDC4CEC7;
+	Wed,  4 Sep 2024 02:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725415495;
+	bh=gjDEYDEGYaab6iQMQIrG64hkt0UrkZJho2SHEiVlOE8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jcfB2oFoMCW5rj3TTpTsKnTR6FZU90Jd8SA0/cB5YWREbPDLIRJYskZ+i5n5TBgeo
+	 qCgon0JC02NBSmhXKbbmvoUaYAFJStGrt9yr3dKt0wOGD6+TjHoANaRXiyDxdpLZUJ
+	 NvNbkMOp6fN3miFP/G5eo/HW5Ff2tu/dnSXJ6KPuq3PX+Se2togXOBXw2EFOBthe0l
+	 6XGJVZ99ABeuR2tfqG5JpaLiYZUhQvWEWJ6+/6STemGaXlMzdeViMFzy9bwUtHyRGJ
+	 nUkEfqM0GQ3WZJhR+qn4mOguhqZxAS0usVljzHI1pWRLCbb6lxWXbub6UW725pFEVf
+	 +dDEMg2WNvV+A==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f24263acso90480891fa.0;
+        Tue, 03 Sep 2024 19:04:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/Ctkr77soFGYrZBtZw59QlAaBTQT3CGPpd9HcpO1N7Wo1A80NNJkmPwYk/iI6/Ar+ID+TZcN2liZSVeo=@vger.kernel.org, AJvYcCXVwU1fJ9ewBX+JS/qjzxEAKfR1/mv47z9ctVrCluF2EN6pXWD9EA9Uh22+Z5pCIxkRG9IfIvaOWFxtG2Wn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwZSZLEbfVCZ32MSDqUltB9oDMFLhwTdkJY4Xr6E1y60/gJz7l
+	EPal7z4CHkHLFbbfCGZiXoUTSUnnbQThhz4t+YQ1U3xqmrQT2FSSWUA/CuEnh/VYsmHzzYvoVe1
+	ltIuRx9e1oZ6yBqn7qx/0TatvLQw=
+X-Google-Smtp-Source: AGHT+IEw0wupQ6/0yZccqEPItnn4emPRy32JyqKzgm8XDKw0z7NfvjUafWDNFEN/qAkSgOgNFSEgTWzW1WFw9AmGWoc=
+X-Received: by 2002:a2e:612:0:b0:2f3:f9f1:4799 with SMTP id
+ 38308e7fff4ca-2f61089390cmr127357461fa.31.1725415494239; Tue, 03 Sep 2024
+ 19:04:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8766bd9b-3ca7-4bd5-9582-08dccc85d734
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2024 02:03:59.2566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OgYlhUFZj8oJgOFjseh3m5oU4ft0pJIiTGIyOZj+K6lDwPmkrqvRk0nzitcw7qrHlX/kKkTcus3pQjYIb/Efow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6859
+References: <20240902160828.1092891-1-ojeda@kernel.org>
+In-Reply-To: <20240902160828.1092891-1-ojeda@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 4 Sep 2024 11:04:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQf4xpnypbBNA0PJqeBnHqCn7YnAg8kcay6dyYYSSLDmg@mail.gmail.com>
+Message-ID: <CAK7LNAQf4xpnypbBNA0PJqeBnHqCn7YnAg8kcay6dyYYSSLDmg@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
+ error messages
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Diogo,
+On Tue, Sep 3, 2024 at 1:09=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Like patch "rust: suppress error messages from
+> CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1],
 
-> Subject: [PATCH v3] clk: imx8qxp: Defer instead of failing probe
->=20
-> When of_clk_parent_fill is ran without all the parent clocks having
-> been probed then the probe function will return -EINVAL, making it so
-> that the probe isn't attempted again. As fw_devlink is on by default
-> this does not usually happen, but if fw_devlink is disabled then it is
-> very possible that the parent clock will be probed after the lpcg first
-> attempt.
+Better to point the commit instead of the patch in ML.
 
-Did you meet issue with fw_devlink disabled?
 
->=20
-> Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
+Like commit 5ce86c6c8613 ("rust: suppress error messages
+from CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT"),
+
+
+
+
+
+
+
+
+
+> do not assume the file existing
+> and being executable implies executing it will succeed.
+>
+> Instead, bail out if executing it fails for any reason, as well as if
+> the program does not print to standard output what we are expecting from
+> `pahole --version`. The script needs to ensure that it always returns
+> an integer, since its output will go into a Kconfig `int`-type symbol.
+>
+> In addition, check whether the program exists first, and provide
+> error messages for each error condition, similar to how it is done in
+> e.g. `scripts/rust_is_available.sh`.
+>
+> For instance, currently `pahole` may be built for another architecture
+> or may be a program we do not expect that fails:
+>
+>     $ echo 'bad' > bad-pahole
+>     $ chmod u+x bad-pahole
+>     $ make PAHOLE=3D./bad-pahole defconfig
+>     ...
+>     ./bad-pahole: 1: bad: not found
+>     init/Kconfig:112: syntax error
+>     init/Kconfig:112: invalid statement
+>
+> With this applied, we get instead:
+>
+>     ***
+>     *** Running './bad-pahole' to check the pahole version failed with
+>     *** code 127. pahole will not be used.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=3D0
+>
+> Similarly, `pahole` currently may be a program that returns successfully,
+> but that does not print the version that we would expect:
+>
+>     $ echo 'echo' > bad-pahole
+>     $ chmod u+x bad-pahole
+>     $ make PAHOLE=3D./bad-pahole defconfig
+>     ...
+>     init/Kconfig:114: syntax error
+>     init/Kconfig:114: invalid statement
+>
+> With this applied, we get instead:
+>
+>     ***
+>     *** pahole './bad-pahole' returned an unexpected version output.
+>     *** pahole will not be used.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=3D0
+>
+> Finally, with this applied, if the program does not exist, we get:
+>
+>     $ make PAHOLE=3D./bad-pahole defconfig
+>     ...
+>     ***
+>     *** pahole './bad-pahole' could not be found. pahole will not be used=
+.
+>     ***
+>     ...
+>     $ grep CONFIG_PAHOLE_VERSION .config
+>     CONFIG_PAHOLE_VERSION=3D0
+>
+> Link: https://lore.kernel.org/rust-for-linux/20240727140302.1806011-1-mas=
+ahiroy@kernel.org/ [1]
+> Co-developed-by: Nicolas Schier <nicolas@fjasle.eu>
+> Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
-> v2: change from dev_warn to dev_err_probe
-> v3: refresh patch
-> ---
->  drivers/clk/imx/clk-imx8qxp-lpcg.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-
-> imx8qxp-lpcg.c
-> index d0ccaa040225..cae8f6060fe8 100644
-> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> @@ -225,8 +225,8 @@ static int imx_lpcg_parse_clks_from_dt(struct
-> platform_device *pdev,
->=20
->         ret =3D of_clk_parent_fill(np, parent_names, count);
->         if (ret !=3D count) {
-> -               dev_err(&pdev->dev, "failed to get clock parent names\n")=
-;
-> -               return count;
-> +               return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
-> +                                    "failed to get all clock parent
-> + names\n");
->         }
-
-The change is not enough, you also need to handle
-        ret =3D imx_lpcg_parse_clks_from_dt(pdev, np);                     =
-                          =20
-        if (!ret)                                                          =
-                        =20
-                return 0;
-->
-        ret =3D imx_lpcg_parse_clks_from_dt(pdev, np);                     =
-                          =20
-        if (!ret)                                                          =
-                        =20
-                return 0;
-        if (ret =3D=3D -EPROBE_DEFER)
-                return ret;
-
-Regards,
-Peng.
-
->=20
->         ret =3D of_property_read_string_array(np, "clock-output-names",
+> v1: https://lore.kernel.org/all/20240728125527.690726-1-ojeda@kernel.org/
+> v2:
+>
+> Reworked to catch successful programs that may not output what we expect =
+from
+> pahole as well as to do the checking step-by-step (for better error messa=
+ges).
+>
+> I didn't change the regular expression to reduce the changes (except addi=
+ng
+> `p`) -- it can be improved separately.
+>
+> Also, please note that I added Nicolas as co-author since he proposed par=
+t of
+> the solution, but he has not formally signed off yet.
+>
+>  scripts/pahole-version.sh | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/pahole-version.sh b/scripts/pahole-version.sh
+> index f8a32ab93ad1..cdb80a3d6e4f 100755
+> --- a/scripts/pahole-version.sh
+> +++ b/scripts/pahole-version.sh
+> @@ -5,9 +5,33 @@
+>  #
+>  # Prints pahole's version in a 3-digit form, such as 119 for v1.19.
+>
+> -if [ ! -x "$(command -v "$@")" ]; then
+> -       echo 0
+> +set -e
+> +trap "echo 0; exit 1" EXIT
+> +
+> +if ! command -v "$@" >/dev/null; then
+> +       echo >&2 "***"
+> +       echo >&2 "*** pahole '$@' could not be found. pahole will not be =
+used."
+> +       echo >&2 "***"
+> +       exit 1
+> +fi
+> +
+> +output=3D$("$@" --version 2>/dev/null) || code=3D$?
+> +if [ -n "$code" ]; then
+> +       echo >&2 "***"
+> +       echo >&2 "*** Running '$@' to check the pahole version failed wit=
+h"
+> +       echo >&2 "*** code $code. pahole will not be used."
+> +       echo >&2 "***"
+> +       exit 1
+> +fi
+> +
+> +output=3D$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9]+)/\1\2/p')
+> +if [ -z "${output}" ]; then
+> +       echo >&2 "***"
+> +       echo >&2 "*** pahole '$@' returned an unexpected version output."
+> +       echo >&2 "*** pahole will not be used."
+> +       echo >&2 "***"
+>         exit 1
+>  fi
+>
+> -"$@" --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/'
+> +echo "${output}"
+> +trap EXIT
+>
+> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
 > --
-> 2.34.1
-> ________________________________________
-> From: Abel Vesa <abel.vesa@linaro.org>
-> Sent: Wednesday, August 28, 2024 10:31 AM
-> To: Diogo Manuel Pais Silva
-> Cc: Peng Fan; abelvesa@kernel.org; linux-clk@vger.kernel.org;
-> shawnguo@kernel.org; kernel@pengutronix.de;
-> s.hauer@pengutronix.de; linux-arm-kernel@lists.infradead.org;
-> sboyd@kernel.org; mturquette@baylibre.com; festevam@gmail.com;
-> imx@lists.linux.dev; EMC: linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
->=20
-> On 24-07-02 08:10:44, Diogo Manuel Pais Silva wrote:
-> > When of_clk_parent_fill is ran without all the parent clocks having
-> been probed then the probe function will return -EINVAL, making it so
-> that the probe isn't attempted again. As fw_devlink is on by default
-> this does not usually happen, but if fw_devlink is disabled then it is
-> very possible that the parent clock will be probed after the lpcg first
-> attempt.
-> >
-> > Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
->=20
-> This patch doesn't apply cleanly.
->=20
-> Please respin.
->=20
-> Thanks!
->=20
-> > ---
-> > v2: change from dev_warn to dev_err_probe
-> > ---
-> >  drivers/clk/imx/clk-imx8qxp-lpcg.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> > b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> > index d0ccaa040225..7bd9b745edbe 100644
-> > --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> > +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> > @@ -225,8 +225,8 @@ static int
-> imx_lpcg_parse_clks_from_dt(struct
-> > platform_device *pdev,
-> >
-> >       ret =3D of_clk_parent_fill(np, parent_names, count);
-> >       if (ret !=3D count) {
-> > -             dev_err(&pdev->dev, "failed to get clock parent names\n")=
-;
-> > -             return count;
-> > +             return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
-> > +                             "failed to get all clock parent
-> > + names\n");
-> >       }
-> >
-> >       ret =3D of_property_read_string_array(np, "clock-output-names",
-> > --
-> > 2.34.1
-> CONFIDENTIALITY: The contents of this e-mail are confidential and
-> intended only for the above addressee(s). If you are not the intended
-> recipient, or the person responsible for delivering it to the intended
-> recipient, copying or delivering it to anyone else or using it in any
-> unauthorized manner is prohibited and may be unlawful. If you receive
-> this e-mail by mistake, please notify the sender and the systems
-> administrator at straymail@tttech.com immediately.
+> 2.46.0
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
