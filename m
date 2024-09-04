@@ -1,173 +1,477 @@
-Return-Path: <linux-kernel+bounces-314366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCCF96B255
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3096C96B259
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD597B22BD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:06:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BB04B23DFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFE96A8D2;
-	Wed,  4 Sep 2024 07:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C828B146585;
+	Wed,  4 Sep 2024 07:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LREveYF/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HaDQiCd8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE52F126BFE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A913D6A8D2;
+	Wed,  4 Sep 2024 07:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433604; cv=none; b=DPsrf0aA+6lEgE7o/NfN95tJIE6RbWlIKLMeRaE/LqUbIfVXskqZWs8sv26pwCqJ3fUwQ7HDsf1TS61QsedSim4B8JYyEHPO1fGb61bvdkC2QOpAeJKAQQgSNk8emfdor0FkxvG0XpU5pH2U2F17aWg2Mw+g4X9scXwlFDnnV24=
+	t=1725433681; cv=none; b=dvq8EFZFJ84dCCRtN52z+WnvIQEgAXui73UulzebfClDi1w8nIm28eqhRp/FTokDyVCHCaTlnzeifvPEmOZy38TWfCwZUEa5Na9lTWa1EVE3a/29D7YfoV2Ry3qHWyKRkpn8KzYky63UrtNH/0EK/0zNxYuTjBcA+SkUHXTP6+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433604; c=relaxed/simple;
-	bh=9+4+02P6VdlWS5bH9NiDFW/JYVZ0bGvOd3je7eBy/Kk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pAfxc2+DYHYgxd8OviT97Ou+zOSZSxr+spPvITHg8GP0DfdF4oKmPv9oqqa6tCWNXw5e5hLNF3mzdK2VVvkWbuOie58RngmLl6biy8+mEtKupv1HfJPeRnnZiSdnnAw1CbmEpszmvJ5BwlL3lHoIxuG1rvEcxuDHMlpSeZfIaEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LREveYF/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725433602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D1fOf/Lbka3oPuT1iX3a8CQcbtqm54HN8PC96Xte6gY=;
-	b=LREveYF/C9SLgUv/CK4wRsdR1yOtW1Dhrnk9B366yDWoNg1b+cpVZs5Gbg7EqtFtCLP/fc
-	7Yg3wrcCrJjztCOLxkNxpPRTyT22eTXJaDyuu7MXpj5gXsGT/AmGH/r6YB1kgbdzytXtij
-	8jEvl1uRChj27rwtk1ArV2svOyjprIU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-316-9ilLSRe6NAe8byGc7t4prw-1; Wed, 04 Sep 2024 03:06:40 -0400
-X-MC-Unique: 9ilLSRe6NAe8byGc7t4prw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428ea5b1479so9223225e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:06:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725433599; x=1726038399;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D1fOf/Lbka3oPuT1iX3a8CQcbtqm54HN8PC96Xte6gY=;
-        b=e0QeEAXuuPeedL636ncDZPNXvh4wUxgZVYjcT9snViGPzL0Gs225XjMfS7HALK/7kH
-         AZobRf2DttkfjHnWHqgGYxddeeyzs3AYKjTdILxKPUztvjBX2kDIgd6CmZPxKUYgTzUY
-         73z6NRRcOCPpW7G5yh+Z3mg9okXGM4PQLDUEJvVlZZvDUY38flh86epXZVRnYqa5nX67
-         LsTxveVGM3Fxy/shnEJb3C9a2F8q5bItr8fktaK1KUT3Ef2KoXwG7sW81/tN8X/TXLjL
-         bgvBUgxQas+s74Us4TtdI/DYDK0sA7uXJFHsumg7NdKI2Peq7q49jX/BDb7dk+4nxnCG
-         TQwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhPhZNcz528mF7vxWZodOOyOJVZDkkxy8GfkdeZoSlTkltGvdtbDLXldjTtzMOnRYCfxjdQ3IWF45G2l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPY1zuTS0WgVOhvQMXzIRjByj/BRGOFJl1RhJso/cpbUTNO1sL
-	puW3VEzuj37RrD1Nxp5hFrow4X/yLu7IT6G5sylY9d71MLhI9SR2dEPD806hc26HjrPWUYU2WhN
-	VOQTuQqkuhF1mNUXZgu1UW2hy89HQYA2Bt6M3lp4fX4UmJHxsTv+XQKcddPDviQ==
-X-Received: by 2002:a05:600c:3b8e:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42bb01b556bmr154098915e9.15.1725433598813;
-        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHf/Kc6FZV8G94W1sYODGsLkpfpa2DDiOzZF4FZwEIEwJQGn0yGP3bHFUfookRalM2sYhKFPA==
-X-Received: by 2002:a05:600c:3b8e:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42bb01b556bmr154098685e9.15.1725433598350;
-        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33f5esm191840235e9.39.2024.09.04.00.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 00:06:38 -0700 (PDT)
-Message-ID: <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?=
-	 <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
-Date: Wed, 04 Sep 2024 09:06:37 +0200
-In-Reply-To: <20240903094431.63551744.alex.williamson@redhat.com>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	 <20240903094431.63551744.alex.williamson@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725433681; c=relaxed/simple;
+	bh=ujkfgFcta+jaZo3W65HHpjN0mTvqdn/KfBCJvNnjwZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D00ZLpZbxtJIwBmuufqPSnXuE58oAp6wJ+TlJ4v0wL4WecnmZdSoJotw/aGFkm6hVKFwx/Y1WCcz3o/QLS1/QAf6zSq/5rUpvAyPpLhDs/7CQtjtZX7PdzllEhV4+vKIiH4YMDj9K/MCS6qNhLBJfy5Wu7VMpDVnXyOaZoEc94E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HaDQiCd8; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725433679; x=1756969679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ujkfgFcta+jaZo3W65HHpjN0mTvqdn/KfBCJvNnjwZ0=;
+  b=HaDQiCd8dMal8qu+9TnB6eK1xho90YX4Gbh1KvCiQ47IopCBdcs2eMN4
+   ocoUGj9aoMD2AViTBJ+wVkS2PO3VBssn99GpUyeD2GUH4/qWKC+WkTaO9
+   9VCUBu0WjcWAveqks9yP9GYMF3uYHd0igwrzmN0w14ytsBaGPAxpLSK3I
+   Ob2IqVA5Uxr24hR1i4sI6ZrBWPc2WFrGZ/BNhyHbX7eUJEGpuAn61CgBO
+   nB7i9thXIHuhIZyIYdaeIlMzuvf5q6/Qy+hAvlEzDD3l8GtrGAiIdG3o8
+   QJvuaBJd5wfpmxrBffWJEZdQEEQy7xX+DgkcAT89XIgHvwN5AuWANWCgL
+   Q==;
+X-CSE-ConnectionGUID: R+NSA22gT0iz8BMghLtbfw==
+X-CSE-MsgGUID: rr4qs/tGSxauei4dFJw9Eg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27824600"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="27824600"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 00:07:57 -0700
+X-CSE-ConnectionGUID: istFUcuDT9aLhJqRl4HKng==
+X-CSE-MsgGUID: h1/a3uwrTjKQrqngGD06Ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="69801822"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 00:07:53 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 75EF311F781;
+	Wed,  4 Sep 2024 10:07:50 +0300 (EEST)
+Date: Wed, 4 Sep 2024 07:07:50 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v3 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <ZtgHRrH55fKX6m_P@kekkonen.localdomain>
+References: <20240815-rp1-cfe-v3-0-e15a979db327@ideasonboard.com>
+ <20240815-rp1-cfe-v3-3-e15a979db327@ideasonboard.com>
+ <ZtAnpqmiidMXY3o8@kekkonen.localdomain>
+ <0a9f8470-606b-47e2-a622-038a2c070b5e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a9f8470-606b-47e2-a622-038a2c070b5e@ideasonboard.com>
 
-On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote:
-> On Thu, 25 Jul 2024 14:07:30 +0200
-> Philipp Stanner <pstanner@redhat.com> wrote:
->=20
-> > pci_intx() is a function that becomes managed if
-> > pcim_enable_device()
-> > has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
-> > pcim_intx()") changed this behavior so that pci_intx() always leads
-> > to
-> > creation of a separate device resource for itself, whereas earlier,
-> > a
-> > shared resource was used for all PCI devres operations.
-> >=20
-> > Unfortunately, pci_intx() seems to be used in some drivers'
-> > remove()
-> > paths; in the managed case this causes a device resource to be
-> > created
-> > on driver detach.
-> >=20
-> > Fix the regression by only redirecting pci_intx() to its managed
-> > twin
-> > pcim_intx() if the pci_command changes.
-> >=20
-> > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
->=20
-> I'm seeing another issue from this, which is maybe a more general
-> problem with managed mode.=C2=A0 In my case I'm using vfio-pci to assign
-> an
-> ahci controller to a VM.
+Moi,
 
-"In my case" doesn't mean OOT, does it? I can't fully follow.
+On Mon, Sep 02, 2024 at 01:05:42PM +0300, Tomi Valkeinen wrote:
+> Hi Sakari,
+> 
+> Thanks for the review!
 
-> =C2=A0 ahci_init_one() calls pcim_enable_device()
-> which sets is_managed =3D true.=C2=A0 I notice that nothing ever sets
-> is_managed to false.=C2=A0 Therefore now when I call pci_intx() from vfio=
--
-> pci
-> under spinlock, I get a lockdep warning
+You're welcome.
 
-I suppose you see the lockdep warning because the new pcim_intx() can=20
-now allocate, whereas before 25216afc9db5 it was pcim_enable_device()
-which allocated *everything* related to PCI devres.
+> > > +#define cfe_dbg(fmt, arg...) dev_dbg(&cfe->pdev->dev, fmt, ##arg)
+> > 
+> > cfe should be an argument to cfe_dbg().
+> 
+> Why? This, and the ones below, is an internal macro to make it easier and
+> shorter to do prints. Adding the parameter gives no benefit that I can see.
 
->  as I no go through pcim_intx()
-> code after 25216afc9db5=C2=A0
+Generally macros shouldn't expect certain variables not defined on the same
+level the macros themselves. It gets harder to maintain this way.
 
-You alwas went through pcim_intx()'s logic. The issue seems to be that
-the allocation step was moved.
+> > > +#define node_supports_image_output(node) \
+> > > +	(!!(node_desc[(node)->id].caps & V4L2_CAP_VIDEO_CAPTURE))
+> > 
+> > No need to cast to bool through !!. Same below.
+> 
+> I like my bools to be bools, not ints... But at the same time, I don't see
+> how that would cause issues in the uses we have in this driver. So I'll drop
+> these.
 
-> since the previous driver was managed.
+Alternatively, explicitly cast to bool. But I don't think it's needed.
 
-what do you mean by "previous driver"?
+> 
+> > > +#define node_supports_meta_output(node) \
+> > > +	(!!(node_desc[(node)->id].caps & V4L2_CAP_META_CAPTURE))
+> > > +#define node_supports_image_input(node) \
+> > > +	(!!(node_desc[(node)->id].caps & V4L2_CAP_VIDEO_OUTPUT))
+> > > +#define node_supports_meta_input(node) \
+> > > +	(!!(node_desc[(node)->id].caps & V4L2_CAP_META_OUTPUT))
+> > > +#define node_supports_image(node) \
+> > > +	(node_supports_image_output(node) || node_supports_image_input(node))
+> > > +#define node_supports_meta(node) \
+> > > +	(node_supports_meta_output(node) || node_supports_meta_input(node))
+> > > +
+> > > +#define is_image_output_node(node) \
+> > > +	((node)->buffer_queue.type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
+> > > +#define is_image_input_node(node) \
+> > > +	((node)->buffer_queue.type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > +#define is_image_node(node) \
+> > > +	(is_image_output_node(node) || is_image_input_node(node))
+> > > +#define is_meta_output_node(node) \
+> > > +	((node)->buffer_queue.type == V4L2_BUF_TYPE_META_CAPTURE)
+> > > +#define is_meta_input_node(node) \
+> > > +	((node)->buffer_queue.type == V4L2_BUF_TYPE_META_OUTPUT)
+> > > +#define is_meta_node(node) \
+> > > +	(is_meta_output_node(node) || is_meta_input_node(node))
+> > > +
+> > > +/* To track state across all nodes. */
+> > > +#define NUM_STATES		5
 
-> =C2=A0 It seems
-> like we should be setting is_managed to false is the driver release
-> path, right?
+This might be nicer if declared as last.
 
-So the issue seems to be that the same struct pci_dev can be used by
-different drivers, is that correct?
+> > > +#define NODE_REGISTERED		BIT(0)
+> > > +#define NODE_ENABLED		BIT(1)
+> > > +#define NODE_STREAMING		BIT(2)
+> > > +#define FS_INT			BIT(3)
+> > > +#define FE_INT			BIT(4)
 
-If so, I think that can be addressed trough having
-pcim_disable_device() set is_managed to false as you suggest.
+...
 
-Another solution can could at least consider would be to use a
-GFP_ATOMIC for allocation in get_or_create_intx_devres().
+> > > +static int cfe_start_channel(struct cfe_node *node)
+> > > +{
+> > > +	struct cfe_device *cfe = node->cfe;
+> > > +	struct v4l2_subdev_state *state;
+> > > +	struct v4l2_mbus_framefmt *source_fmt;
+> > > +	const struct cfe_fmt *fmt;
+> > > +	unsigned long flags;
+> > > +	bool start_fe;
+> > > +	int ret;
+> > > +
+> > > +	cfe_dbg("%s: [%s]\n", __func__, node_desc[node->id].name);
+> > 
+> > This looks like a development time leftover. There are quite a few such
+> > prints that provide little information anyway. How about removing them all?
+> 
+> These are very valuable when testing, fixing or improving the driver. If I
+> were to remove them, I would just have to add them back whenever I'd be
+> doing something with the driver and things would not work perfectly.
+> 
+> The debug prints we have are all low frequency. There's a bunch printed when
+> starting the streaming and when stopping it, but the debug prints are not
+> used while streaming is on-going, and instead we have trace events for that.
 
-I suppose your solution is the better one, though.
+I'm fine with debug prints when they do print useful information but you
+have many of them just in the beginning of the function, printing only the
+function name (and possibly the node name). I'd remove those, except in
+cases where calling the function itself is useful information, such as on
+returning the buffers.
 
+> > > +static int cfe_link_node_pads(struct cfe_device *cfe)
+> > > +{
+> > > +	int ret;
+> > > +	int pad;
+> > > +
+> > > +	/* Source -> CSI2 */
+> > > +
+> > > +	pad = media_entity_get_fwnode_pad(&cfe->source_sd->entity,
+> > > +					  cfe->remote_ep_fwnode,
+> > > +					  MEDIA_PAD_FL_SOURCE);
+> > > +	if (pad < 0) {
+> > > +		cfe_err("Source %s has no connected source pad\n",
+> > > +			cfe->source_sd->name);
+> > > +		return pad;
+> > > +	}
+> > > +
+> > > +	cfe->source_pad = pad;
+> > > +
+> > > +	ret = media_create_pad_link(&cfe->source_sd->entity, pad,
+> > > +				    &cfe->csi2.sd.entity, CSI2_PAD_SINK,
+> > > +				    MEDIA_LNK_FL_IMMUTABLE |
+> > > +				    MEDIA_LNK_FL_ENABLED);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	for (unsigned int i = 0; i < CSI2_NUM_CHANNELS; i++) {
+> > > +		struct cfe_node *node = &cfe->node[i];
+> > > +
+> > > +		if (!check_state(cfe, NODE_REGISTERED, i))
+> > > +			continue;
+> > > +
+> > > +		/* CSI2 channel # -> /dev/video# */
+> > > +		ret = media_create_pad_link(&cfe->csi2.sd.entity,
+> > > +					    node_desc[i].link_pad,
+> > > +					    &node->video_dev.entity, 0, 0);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > > +		if (node_supports_image(node)) {
+> > > +			/* CSI2 channel # -> FE Input */
+> > > +			ret = media_create_pad_link(&cfe->csi2.sd.entity,
+> > > +						    node_desc[i].link_pad,
+> > > +						    &cfe->fe.sd.entity,
+> > > +						    FE_STREAM_PAD, 0);
+> > > +			if (ret)
+> > > +				return ret;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	for (unsigned int i = CSI2_NUM_CHANNELS; i < NUM_NODES; i++) {
+> > > +		struct cfe_node *node = &cfe->node[i];
+> > > +		struct media_entity *src, *dst;
+> > > +		unsigned int src_pad, dst_pad;
+> > > +
+> > > +		if (node_desc[i].pad_flags & MEDIA_PAD_FL_SINK) {
+> > > +			/* FE -> /dev/video# */
+> > > +			src = &cfe->fe.sd.entity;
+> > > +			src_pad = node_desc[i].link_pad;
+> > > +			dst = &node->video_dev.entity;
+> > > +			dst_pad = 0;
+> > > +		} else {
+> > > +			/* /dev/video# -> FE */
+> > > +			dst = &cfe->fe.sd.entity;
+> > > +			dst_pad = node_desc[i].link_pad;
+> > > +			src = &node->video_dev.entity;
+> > > +			src_pad = 0;
+> > > +		}
+> > > +
+> > > +		ret = media_create_pad_link(src, src_pad, dst, dst_pad, 0);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int cfe_probe_complete(struct cfe_device *cfe)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	cfe->v4l2_dev.notify = cfe_notify;
+> > > +
+> > > +	for (unsigned int i = 0; i < NUM_NODES; i++) {
+> > > +		ret = cfe_register_node(cfe, i);
+> > > +		if (ret) {
+> > > +			cfe_err("Unable to register video node %u.\n", i);
+> > > +			goto unregister;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	ret = cfe_link_node_pads(cfe);
+> > > +	if (ret) {
+> > > +		cfe_err("Unable to link node pads.\n");
+> > > +		goto unregister;
+> > > +	}
+> > > +
+> > > +	ret = v4l2_device_register_subdev_nodes(&cfe->v4l2_dev);
+> > > +	if (ret) {
+> > > +		cfe_err("Unable to register subdev nodes.\n");
+> > > +		goto unregister;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +
+> > > +unregister:
+> > > +	cfe_unregister_nodes(cfe);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int cfe_async_bound(struct v4l2_async_notifier *notifier,
+> > > +			   struct v4l2_subdev *subdev,
+> > > +			   struct v4l2_async_connection *asd)
+> > > +{
+> > > +	struct cfe_device *cfe = to_cfe_device(notifier->v4l2_dev);
+> > > +
+> > > +	if (cfe->source_sd) {
+> > > +		cfe_err("Rejecting subdev %s (Already set!!)", subdev->name);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	cfe->source_sd = subdev;
+> > > +
+> > > +	cfe_dbg("Using source %s for capture\n", subdev->name);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int cfe_async_complete(struct v4l2_async_notifier *notifier)
+> > > +{
+> > > +	struct cfe_device *cfe = to_cfe_device(notifier->v4l2_dev);
+> > > +
+> > > +	return cfe_probe_complete(cfe);
+> > > +}
+> > > +
+> > > +static const struct v4l2_async_notifier_operations cfe_async_ops = {
+> > > +	.bound = cfe_async_bound,
+> > > +	.complete = cfe_async_complete,
+> > > +};
+> > > +
+> > > +static int cfe_register_async_nf(struct cfe_device *cfe)
+> > > +{
+> > > +	struct platform_device *pdev = cfe->pdev;
+> > > +	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
+> > > +	int ret = -EINVAL;
 
-P.
+Is the assignment necessary?
 
-> =C2=A0 Thanks,
->=20
-> Alex
->=20
+> > > +	struct fwnode_handle *local_ep_fwnode;
+> > > +	struct fwnode_handle *remote_ep_fwnode;
+> > > +	struct v4l2_async_connection *asd;
+> > > +
+> > > +	local_ep_fwnode = fwnode_graph_get_endpoint_by_id(pdev->dev.fwnode, 0, 0, 0);
+> > > +	if (!local_ep_fwnode) {
+> > > +		cfe_err("Failed to find local endpoint fwnode\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > > +
+> > > +	remote_ep_fwnode = fwnode_graph_get_remote_endpoint(local_ep_fwnode);
+> > > +	if (!remote_ep_fwnode) {
+> > > +		cfe_err("Failed to find remote endpoint fwnode\n");
+> > > +		ret = -ENODEV;
+> > > +		goto err_put_local_fwnode;
+> > > +	}
+> > > +
+> > > +	/* Parse the local endpoint and validate its configuration. */
+> > > +	v4l2_fwnode_endpoint_parse(local_ep_fwnode, &ep);
 
+You'll need to check the return value here.
+
+> > > +
+> > > +	if (ep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+
+This check is redundant.
+
+> > > +		cfe_err("endpoint node type != CSI2\n");
+> > > +		ret = -EINVAL;
+> > > +		goto err_put_remote_fwnode;
+> > > +	}
+> > > +
+> > > +	for (unsigned int lane = 0; lane < ep.bus.mipi_csi2.num_data_lanes; lane++) {
+> > > +		if (ep.bus.mipi_csi2.data_lanes[lane] != lane + 1) {
+> > > +			cfe_err("subdevice %pfwf: data lanes reordering not supported\n",
+> > > +				remote_ep_fwnode);
+> > > +			ret = -EINVAL;
+> > > +			goto err_put_remote_fwnode;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	cfe->csi2.dphy.max_lanes = ep.bus.mipi_csi2.num_data_lanes;
+> > > +	cfe->csi2.bus_flags = ep.bus.mipi_csi2.flags;
+> > > +
+> > > +	cfe->remote_ep_fwnode = remote_ep_fwnode;
+> > > +
+> > > +	cfe_dbg("source %pfwf: %u data lanes, flags=0x%08x\n",
+> > > +		remote_ep_fwnode, cfe->csi2.dphy.max_lanes, cfe->csi2.bus_flags);
+> > > +
+> > > +	/* Initialize and register the async notifier. */
+> > > +	v4l2_async_nf_init(&cfe->notifier, &cfe->v4l2_dev);
+> > > +	cfe->notifier.ops = &cfe_async_ops;
+> > > +
+> > > +	asd = v4l2_async_nf_add_fwnode(&cfe->notifier, remote_ep_fwnode,
+> > > +				       struct v4l2_async_connection);
+> > 
+> > Could you use v4l2_async_nf_add_fwnode_remote() and just not bother with
+> > remote_ep_fwnode at all?
+> 
+> I need the remote_ep_fwnode in cfe_link_node_pads() when creating the links.
+> 
+> Is there some other way to get the remote pad so that I can call the
+> media_create_pad_link()?
+
+Could you use v4l2_create_fwnode_links_to_pad() for that?
+
+> 
+> > > +	if (IS_ERR(asd)) {
+> > > +		ret = PTR_ERR(asd);
+> > > +		cfe_err("Error adding subdevice: %d\n", ret);
+> > > +		goto err_put_remote_fwnode;
+> > > +	}
+> > > +
+> > > +	ret = v4l2_async_nf_register(&cfe->notifier);
+> > > +	if (ret) {
+> > > +		cfe_err("Error registering async notifier: %d\n", ret);
+> > > +		goto err_nf_cleanup;
+> > > +	}
+> > > +
+> > > +	fwnode_handle_put(local_ep_fwnode);
+> > > +
+> > > +	return 0;
+> > > +
+> > > +err_nf_cleanup:
+> > > +	v4l2_async_nf_cleanup(&cfe->notifier);
+> > > +err_put_remote_fwnode:
+> > > +	fwnode_handle_put(remote_ep_fwnode);
+> > > +err_put_local_fwnode:
+> > > +	fwnode_handle_put(local_ep_fwnode);
+> > > +
+> > > +	return ret;
+> > > +}
+
+...
+
+> > > +static void cfe_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct cfe_device *cfe = platform_get_drvdata(pdev);
+> > > +
+> > > +	debugfs_remove(cfe->debugfs);
+> > > +
+> > > +	v4l2_async_nf_unregister(&cfe->notifier);
+> > > +	v4l2_async_nf_cleanup(&cfe->notifier);
+> > > +
+> > > +	media_device_unregister(&cfe->mdev);
+> > 
+> > Do you think you might have the time to write patch that would convert the
+> > driver to use media device refcounting? It's not needed for upstreaming
+> > though, but would be nice to have such a new driver to be converted when we
+> > (hopefully not in too distant future) could merge that set.
+> 
+> I had a quick try. I noticed that the current driver will crash if streaming
+> is active when unbinding/unloading, so that needs fixing anyway.
+> 
+> But with the v4 series ([PATCH v4 00/26] Media device lifetime management),
+> I hit WARN_ON(!vdev->release) in __video_register_device(). I haven't
+> studied the series that much, but I understood vdev's release will be
+> handled via the media device. Is that not right?
+
+Let's discuss this online.
+
+> > > +	debugfs_create_file("csi2_regs", 0444, debugfs, csi2, &csi2_regs_fops);
+> > 
+> > Should this reflect the device name? This will currently only work with one
+> > such device in the system.
+> 
+> These files are in a device specific directory, e.g.
+> "rp1-cfe:1f00110000.csi/".
+
+Ack.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
