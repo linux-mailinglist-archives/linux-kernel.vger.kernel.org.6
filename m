@@ -1,127 +1,476 @@
-Return-Path: <linux-kernel+bounces-315566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85B396C446
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:39:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4F596C448
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE8E1C22930
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACBC2837FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEAA1DC07B;
-	Wed,  4 Sep 2024 16:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3391E00BF;
+	Wed,  4 Sep 2024 16:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4NDvVEAQ"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIL5LFQQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A441CEE89
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49107EF09;
+	Wed,  4 Sep 2024 16:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467987; cv=none; b=CttfVsEG9fux3w2eSKVKHEtxRAACMulzhDjB/54qSRkCmQdOPokL0KcVcHrPoQSjUXTGzSmtU8eApNYewOgLKYNealEwDGB1PCLXhfzO/BsV9u+G9OG3gGOVyGQkH9jxJ//XjS3vpwgvSDLkHL9WjxYjKDpBNRkLaodCg947RO0=
+	t=1725468066; cv=none; b=COitZm4E3uY3QdwuzIkYGVxbYb6qndHtfE+jhsUJVN2SBxXd5cefn/5H306ddn0dT03KfnpApw30q9KhzrD05lvcfah5GItWR44hUxGD5GnHU9VTp82ap/SCeJZT1D9am2LsZWJN3x4vs6bYvRWJ+xbeVMPk6kb+3sTBtWfv5IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467987; c=relaxed/simple;
-	bh=nn/g8cIBSnZ11bpaYzZZ8NthHY/+J2Dj+WTEu3myqks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z7CRxrL2Bndb3H5/XJwAlOvTj/LmD67OmEulTls/ql5P2JEhHAKSrxn9HBcW01nvKSeQSmFeY5516XLOzAb1DTTSeZzgmhiuPSADNHx7msJxtS/LM1dsKqtu8v9j/rdDGjTBU4cBtyF88MtfOzLji0ST9D6iKD5KjAn4Ky8LyKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4NDvVEAQ; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-457c6389a3aso305171cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:39:45 -0700 (PDT)
+	s=arc-20240116; t=1725468066; c=relaxed/simple;
+	bh=crBcUXgESgk53/9DZImImT02wsdTaOoqug2nwijxluI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUEK6nUFWz/I+Qt5Hu9ew8Edqp45yW+ubcFb85SRLQemxon8G34XczVjQBE49gtVU7IlfIO4ujah7lkRAfALHCtwOgCobniTkfDbTVV+pkedbBNgym27hSMo9NcpDuJmKfVNgImCuxEA2qsu4HIC1woFWLEU0VLltltcT0D9ex8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIL5LFQQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201d5af11a4so59986945ad.3;
+        Wed, 04 Sep 2024 09:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725467984; x=1726072784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aVKgBZWcIsT5jzi2Y61F5gCJD2ntfYeuhQqcN6HyFFE=;
-        b=4NDvVEAQ/E8D7qwFNSsUh8b34gKbzyvh/WcZx7FL2DwEyQ8kQgOntCTawE/JmnYIH4
-         as8YCcT5j/iAUc8uEl0x3oN7ArONbAxN80QPkiDxOt4Pc8upx5tdIk65JyBoIIZiLpXL
-         D3a3bRnUPM4wqL+7IApmoo7TZjLXJ23PjIINwSd0Xs3Fojk3vdLbxBeCVzp0rERrj9GN
-         wSyttTI4O11+IHK3+Vve0KCU9cBstD56K2QTnpjFyq55QxScQUcSqm5hg1T+UYUR2fB4
-         jUAcZyAxxm2yJuCVXZl5F2V5R2BJrrvvQNOLEE/2CyowEULParc+4vZmgimIr9+KoVyN
-         Nygw==
+        d=gmail.com; s=20230601; t=1725468064; x=1726072864; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aeaKmr+BaQmmrWNAJ5MrtWLTRHH5N3x5Ie7V8/tzmk=;
+        b=nIL5LFQQOwBvPd+c6Ij83EGe0GgmvzfMdwVkf+sqk++PawAbW/hCkvVEX9pnsOjvbu
+         2J5oTIpDYoSrNX7iH/jd1cUxRKkm4W2BNAo5E+OyNRRAPygIt9iNAY4uLf0crSvknVqx
+         TdqBWMk7W3dV+1L9Ct1HzkSxnMZqeHMwe+kbbQMmKswS78TX0tCESB13dWT9hAZo4kOS
+         M951Zkx2vIqeGNyLrXS9W/P/4EAq3LOddpNHvRu/ep7r09uQh3CTBSnI6yL9/426hPqp
+         d+iWrmLC3v2baZAg4nXsqJRi1G5IrUdJqIF06D7+6CGO1PPmchundX85FDX3C8OrrLMd
+         eU9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725467984; x=1726072784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aVKgBZWcIsT5jzi2Y61F5gCJD2ntfYeuhQqcN6HyFFE=;
-        b=GZuRLjJTUBovT+xDpZz6cd+4P5CXHcWu107dYGZ1aoaNYbfjpHzNK3TtJ+oMitObba
-         XTmMn1X9I3lVYhRNXtYVhOX75015lUx42BGkOBqYYIGSPIrJIoFiFiARIlXf8SRBVemE
-         LzmAUNPGDekHop/dQk1vBh7SKBZqBBblQ23ogPeQE3kqcVjXfnEQ5qPcqmtp4tP/Kqka
-         W8xUxkfrAxw2mMXsq0uDAx+e8CNak83Ba13NfPj0rCMutR55kNl3epu7ud0o9IH1ppID
-         uSBME2vO21kdWabypqYvbSHkzO+v+s+t/X/e7+tTbVC1hyKHPgbLErnkTTEYVD11GROV
-         JZDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYEMDoG6Am7hXSnMTPeQoOH4wULN5rgyT1kfuGfRV/qHTgNts8A8b8EyYgK0mAEWxArflaS0AQn3t+Sas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdxkvxzucvadWkvPX7oDeuid1pPfyK1fZ7cWvwD9rMXFtB32bm
-	c5qVaggD06Uk2mmN5gmPi24p9XiNM3m4ADpusnKCh4EDrAajn7sdWvxkvueMv58KUDYUlqKfvpg
-	McmFmD2GfYyoLtVc70+W78FagYKdP61OzrPOA
-X-Google-Smtp-Source: AGHT+IGwhDrAQPEAmF0bOfcaTr6MOXUafuS1vP9sMQ9KrAbdAewI1zke0LJG2AKiNDfA445/E3iPPiTzSRTtLdtDDnM=
-X-Received: by 2002:ac8:5ad3:0:b0:456:7ec0:39a9 with SMTP id
- d75a77b69052e-457f7a9c517mr3513941cf.5.1725467984034; Wed, 04 Sep 2024
- 09:39:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725468064; x=1726072864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/aeaKmr+BaQmmrWNAJ5MrtWLTRHH5N3x5Ie7V8/tzmk=;
+        b=cbAcQ4/znS6RcTuYjUHanbJ4MqRSVHyEga3/VqVqW9+asagtJQg5NMw4f3OPSgA0h6
+         H760N2PwHLHaco2niGj++0ZIAReLq8Y2hsIjkMZAkN7NI/aSEbOl7W4FW3+lATrkLl58
+         R9A1pA+HKlktAglG0mqj7OK0P4n74Kdyoxlcd9rxhmHoDDFx3YopIDolgiZrkXNiLtoH
+         YMWN3+/pWMHEyxwwvgnx4trcAeotZAkLE/jgHoEDHO7nY4xpVWnbOU1tqZ3mCJkaB9CD
+         3oJjFeh0bsVS9znhTzFSUHwyd1/VVB+PSxlJ8ipi2e3gGbNXo45vpgwx8u74mI9UYm5K
+         3dcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAqE8JGEVJvxoiRDt+G40BxtNrc+zL30zo2bRvN32dz1RXMAJ9J6KOQueTQqbIg48Swh1UjUb1qCHGrzMG@vger.kernel.org, AJvYcCVWYdHUPGz0PZMxsP73njQXwbZEVgd2maFFGAaDBXPYrwkvySvLjHfhKxTnZHYwMiDSEahcmR5i22KN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPM13G30iDq0YPIacVmCZ/kRoblx1FPGdxjrwrGe4au7Hgo8GH
+	CLL6ylvREgAQwVciVbH8uPhYJQIDp2IeH3bPP/JztFa9XgdX3sa5
+X-Google-Smtp-Source: AGHT+IF5Wb/jiEJKwRbb3pOTl68z8CE9cJP1u/voEdna7+dlnUNZhFwxqDtwYVCfEunG1NMCFx4Ccg==
+X-Received: by 2002:a17:902:da82:b0:206:9ab3:2ebc with SMTP id d9443c01a7336-2069ab33684mr74202075ad.47.1725468063824;
+        Wed, 04 Sep 2024 09:41:03 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea66598sm15518015ad.250.2024.09.04.09.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 09:41:03 -0700 (PDT)
+Date: Thu, 5 Sep 2024 00:40:59 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	broonie@kernel.org, angelogioacchino.delregno@collabora.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v4] dt-bindings: Fix various typos
+Message-ID: <ZtiNm6gLMQVYB+/2@visitorckw-System-Product-Name>
+References: <20240904160118.2773055-1-eleanor15x@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902044128.664075-1-surenb@google.com> <20240902044128.664075-7-surenb@google.com>
- <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
- <CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com>
- <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com> <ZtfDiH3lZ9ozxm0v@casper.infradead.org>
- <CAJuCfpHJ9PwNOqmFOH373gn6Uqa-orG6zP3rqk-_x=GkpUo2+Q@mail.gmail.com>
- <ZtiMZWqht_8Bse-5@casper.infradead.org> <keaqrfkkoswtpbtvr3l5oetd4d3ncbpaxsay7dckn74qdob2u2@lohq26fuccib>
-In-Reply-To: <keaqrfkkoswtpbtvr3l5oetd4d3ncbpaxsay7dckn74qdob2u2@lohq26fuccib>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 4 Sep 2024 09:39:33 -0700
-Message-ID: <CAJuCfpEtsWM2S0K=UB1QZ81qeq_5jY-R0zNz3Kc8WojvJfj76w@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, John Hubbard <jhubbard@nvidia.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, arnd@arndb.de, 
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
-	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com, 
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904160118.2773055-1-eleanor15x@gmail.com>
 
-On Wed, Sep 4, 2024 at 9:37=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Wed, Sep 04, 2024 at 05:35:49PM GMT, Matthew Wilcox wrote:
-> > On Wed, Sep 04, 2024 at 09:18:01AM -0700, Suren Baghdasaryan wrote:
-> > > I'm not sure I understand your suggestion, Matthew. We allocate a
-> > > folio and need to store a reference to the tag associated with the
-> > > code that allocated that folio. We are not operating with ranges here=
-.
-> > > Are you suggesting to use a maple tree instead of page_ext to store
-> > > this reference?
-> >
-> > I'm saying that a folio has a physical address.  So you can use a physi=
-cal
-> > address as an index into a maple tree to store additional information
-> > instead of using page_ext or trying to hammer the additional informatio=
-n
-> > into struct page somewhere.
->
-> Ah, thanks, that makes more sense.
->
-> But it would add a lot of overhead to the page alloc/free paths...
+On Thu, Sep 05, 2024 at 12:01:18AM +0800, Yu-Chun Lin wrote:
+> Corrected several typos in Documentatin/devicetree/bindings files.
 
-Yeah, inserting into a maple_tree in the fast path of page allocation
-would introduce considerable performance overhead.
+Documentatin -> Documentation
+> 
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+
+With the above fix:
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+
+Regards,
+Kuan-Wei
+
+> ---
+> v3->v4
+> I squashed all previous version commits. 
+> 
+> v2->v3
+> Corrected "interlaved" to "interleaved"
+> 
+> v1->v2
+> Fixed more typos in dt-bindings files
+> 
+> I've dropped reviewed tags in v1 due to significant
+> changes in v2. So it would be helpful if Laurent Pinchart
+> and Kuan-Wei Chiu could review with the version.
+> 
+> v3
+> Link: https://lore.kernel.org/lkml/20240904125812.2761993-1-eleanor15x@gmail.com/
+> 
+> v2
+> Link: https://lore.kernel.org/lkml/20240903164242.2188895-1-eleanor15x@gmail.com/
+> 
+> v1
+> Link: https://lore.kernel.org/lkml/20240901133046.962263-1-eleanor15x@gmail.com/
+> 
+>  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml   | 2 +-
+>  Documentation/devicetree/bindings/cpu/idle-states.yaml        | 2 +-
+>  Documentation/devicetree/bindings/display/lvds.yaml           | 2 +-
+>  Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt     | 2 +-
+>  Documentation/devicetree/bindings/iio/accel/lis302.txt        | 2 +-
+>  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml  | 2 +-
+>  Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml    | 2 +-
+>  .../devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt    | 2 +-
+>  .../devicetree/bindings/media/i2c/thine,thp7312.yaml          | 2 +-
+>  .../devicetree/bindings/media/samsung,exynos4210-fimc.yaml    | 2 +-
+>  Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml  | 2 +-
+>  Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml    | 2 +-
+>  Documentation/devicetree/bindings/mfd/twl6040.txt             | 2 +-
+>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml | 2 +-
+>  Documentation/devicetree/bindings/phy/apm-xgene-phy.txt       | 2 +-
+>  .../devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml     | 2 +-
+>  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml      | 2 +-
+>  .../devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml     | 2 +-
+>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 ++--
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 2 +-
+>  .../devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml     | 2 +-
+>  Documentation/devicetree/bindings/sound/everest,es8326.yaml   | 2 +-
+>  Documentation/devicetree/bindings/sound/st,sta350.txt         | 2 +-
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml     | 2 +-
+>  24 files changed, 25 insertions(+), 25 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
+> index d50a60368e27..04a8c37b4aff 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
+> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-dummy-source.yaml
+> @@ -17,7 +17,7 @@ description: |
+>    The Coresight dummy source component is for the specific coresight source
+>    devices kernel don't have permission to access or configure. For some SOCs,
+>    there would be Coresight source trace components on sub-processor which
+> -  are conneted to AP processor via debug bus. For these devices, a dummy driver
+> +  are connected to AP processor via debug bus. For these devices, a dummy driver
+>    is needed to register them as Coresight source devices, so that paths can be
+>    created in the driver. It provides Coresight API for operations on dummy
+>    source devices, such as enabling and disabling them. It also provides the
+> diff --git a/Documentation/devicetree/bindings/cpu/idle-states.yaml b/Documentation/devicetree/bindings/cpu/idle-states.yaml
+> index 239480ef7c30..385b0a511652 100644
+> --- a/Documentation/devicetree/bindings/cpu/idle-states.yaml
+> +++ b/Documentation/devicetree/bindings/cpu/idle-states.yaml
+> @@ -385,7 +385,7 @@ patternProperties:
+>  
+>            This property is required in idle state nodes of device tree meant
+>            for RISC-V systems. For more details on the suspend_type parameter
+> -          refer the SBI specifiation v0.3 (or higher) [7].
+> +          refer the SBI specification v0.3 (or higher) [7].
+>  
+>        local-timer-stop:
+>          description:
+> diff --git a/Documentation/devicetree/bindings/display/lvds.yaml b/Documentation/devicetree/bindings/display/lvds.yaml
+> index 224db4932011..b74efbea3be2 100644
+> --- a/Documentation/devicetree/bindings/display/lvds.yaml
+> +++ b/Documentation/devicetree/bindings/display/lvds.yaml
+> @@ -16,7 +16,7 @@ maintainers:
+>  description:
+>    This binding extends the data mapping defined in lvds-data-mapping.yaml.
+>    It supports reversing the bit order on the formats defined there in order
+> -  to accomodate for even more specialized data formats, since a variety of
+> +  to accommodate for even more specialized data formats, since a variety of
+>    data formats and layouts is used to drive LVDS displays.
+>  
+>  properties:
+> diff --git a/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt b/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
+> index 47e477cce6d2..1f9831540c97 100644
+> --- a/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
+> +++ b/Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt
+> @@ -20,7 +20,7 @@ Optional properties:
+>  		memcpy channels in eDMA.
+>  
+>  Notes:
+> -When requesting channel via ti,dra7-dma-crossbar, the DMA clinet must request
+> +When requesting channel via ti,dra7-dma-crossbar, the DMA client must request
+>  the DMA event number as crossbar ID (input to the DMA crossbar).
+>  
+>  For ti,am335x-edma-crossbar: the meaning of parameters of dmas for clients:
+> diff --git a/Documentation/devicetree/bindings/iio/accel/lis302.txt b/Documentation/devicetree/bindings/iio/accel/lis302.txt
+> index 764e28ec1a0a..457539647f36 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/lis302.txt
+> +++ b/Documentation/devicetree/bindings/iio/accel/lis302.txt
+> @@ -36,7 +36,7 @@ Optional properties for all bus drivers:
+>   - st,irq{1,2}-disable:		disable IRQ 1/2
+>   - st,irq{1,2}-ff-wu-1:		raise IRQ 1/2 on FF_WU_1 condition
+>   - st,irq{1,2}-ff-wu-2:		raise IRQ 1/2 on FF_WU_2 condition
+> - - st,irq{1,2}-data-ready:	raise IRQ 1/2 on data ready contition
+> + - st,irq{1,2}-data-ready:	raise IRQ 1/2 on data ready condition
+>   - st,irq{1,2}-click:		raise IRQ 1/2 on click condition
+>   - st,irq-open-drain:		consider IRQ lines open-drain
+>   - st,irq-active-low:		make IRQ lines active low
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> index 0f4a062c9d6f..5f051c666cbe 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> @@ -60,7 +60,7 @@ properties:
+>        The 4th cell is a phandle to a node describing a set of CPUs this
+>        interrupt is affine to. The interrupt must be a PPI, and the node
+>        pointed must be a subnode of the "ppi-partitions" subnode. For
+> -      interrupt types other than PPI or PPIs that are not partitionned,
+> +      interrupt types other than PPI or PPIs that are not partitioned,
+>        this cell must be zero. See the "ppi-partitions" node description
+>        below.
+>  
+> diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+> index 54d6d1f08e24..17e971903ee9 100644
+> --- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+> +++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+> @@ -66,7 +66,7 @@ patternProperties:
+>              IMAXled = 160000 * (592 / 600.5) * (1 / max-current-switch-number)
+>            And the minimum output current formula:
+>              IMINled = 3300 * (592 / 600.5) * (1 / max-current-switch-number)
+> -          where max-current-switch-number is determinated by led configuration
+> +          where max-current-switch-number is determined by led configuration
+>            and depends on how leds are physically connected to the led driver.
+>  
+>  allOf:
+> diff --git a/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt b/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
+> index c80065a1eb97..bf0c998b8603 100644
+> --- a/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt
+> @@ -24,7 +24,7 @@ Required properties:
+>  		number of completion messages for which FlexRM will inject
+>  		one MSI interrupt to CPU.
+>  
+> -		The 3nd cell contains MSI timer value representing time for
+> +		The 3rd cell contains MSI timer value representing time for
+>  		which FlexRM will wait to accumulate N completion messages
+>  		where N is the value specified by 2nd cell above. If FlexRM
+>  		does not get required number of completion messages in time
+> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> index 1978fbb77a6c..535acf2b88a9 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> @@ -16,7 +16,7 @@ description:
+>    can be connected to CMOS image sensors from various vendors, supporting both
+>    MIPI CSI-2 and parallel interfaces. It can also output on either MIPI CSI-2
+>    or parallel. The hardware is capable of transmitting and receiving MIPI
+> -  interlaved data strams with data types or multiple virtual channel
+> +  interleaved data streams with data types or multiple virtual channel
+>    identifiers.
+>  
+>  allOf:
+> diff --git a/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
+> index 271d0577a83c..2ba27b230559 100644
+> --- a/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
+> +++ b/Documentation/devicetree/bindings/media/samsung,exynos4210-fimc.yaml
+> @@ -77,7 +77,7 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+>      maxItems: 2
+>      description: |
+> -      An array specyfing minimum image size in pixels at the FIMC input and
+> +      An array specifying minimum image size in pixels at the FIMC input and
+>        output DMA, in the first and second cell respectively.  Default value
+>        is <16 16>.
+>  
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> index d381125a0a15..efee3de0d9ad 100644
+> --- a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> @@ -25,7 +25,7 @@ properties:
+>      description:
+>        The PMIC provides intb and errb IRQ lines. The errb IRQ line is used
+>        for fatal IRQs which will cause the PMIC to shut down power outputs.
+> -      In many systems this will shut down the SoC contolling the PMIC and
+> +      In many systems this will shut down the SoC controlling the PMIC and
+>        connecting/handling the errb can be omitted. However, there are cases
+>        where the SoC is not powered by the PMIC or has a short time backup
+>        energy to handle shutdown of critical hardware. In that case it may be
+> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+> index bc8b5940b1c5..a4be642de33c 100644
+> --- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+> @@ -53,7 +53,7 @@ properties:
+>    samsung,s2mps11-wrstbi-ground:
+>      description: |
+>        Indicates that WRSTBI pin of PMIC is pulled down. When the system is
+> -      suspended it will always go down thus triggerring unwanted buck warm
+> +      suspended it will always go down thus triggering unwanted buck warm
+>        reset (setting buck voltages to default values).
+>      type: boolean
+>  
+> diff --git a/Documentation/devicetree/bindings/mfd/twl6040.txt b/Documentation/devicetree/bindings/mfd/twl6040.txt
+> index 06e9dd7a0d96..dfd8683ede0c 100644
+> --- a/Documentation/devicetree/bindings/mfd/twl6040.txt
+> +++ b/Documentation/devicetree/bindings/mfd/twl6040.txt
+> @@ -2,7 +2,7 @@ Texas Instruments TWL6040 family
+>  
+>  The TWL6040s are 8-channel high quality low-power audio codecs providing audio,
+>  vibra and GPO functionality on OMAP4+ platforms.
+> -They are connected ot the host processor via i2c for commands, McPDM for audio
+> +They are connected to the host processor via i2c for commands, McPDM for audio
+>  data and commands.
+>  
+>  Required properties:
+> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> index 68c5ed111417..693ac91c5e05 100644
+> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> @@ -72,7 +72,7 @@ properties:
+>      description: VDD_RFA_CMN supply regulator handle
+>  
+>    vddrfa0p8-supply:
+> -    description: VDD_RFA_0P8 suppply regulator handle
+> +    description: VDD_RFA_0P8 supply regulator handle
+>  
+>    vddrfa1p7-supply:
+>      description: VDD_RFA_1P7 supply regulator handle
+> diff --git a/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt b/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
+> index e1bb12711fbf..602cf952b92b 100644
+> --- a/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/apm-xgene-phy.txt
+> @@ -36,7 +36,7 @@ Optional properties:
+>  			  3-tuple setting for each (up to 3) supported link
+>  			  speed on the host. Range is 0 to 273000 in unit of
+>  			  uV. Default is 0.
+> -- apm,tx-pre-cursor2	: 2st pre-cursor emphasis taps control. Two set of
+> +- apm,tx-pre-cursor2	: 2nd pre-cursor emphasis taps control. Two set of
+>  			  3-tuple setting for each (up to 3) supported link
+>  			  speed on the host. Range is 0 to 127400 in unit uV.
+>  			  Default is 0x0.
+> diff --git a/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
+> index cfb3ca97f87c..cc9d0d4eeeeb 100644
+> --- a/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml
+> @@ -41,7 +41,7 @@ properties:
+>      description:
+>        One instance of the T-PHY on MT7988 suffers from a performance
+>        problem in 10GBase-R mode which needs a work-around in the driver.
+> -      This flag enables a work-around ajusting an analog phy setting and
+> +      This flag enables a work-around adjusting an analog phy setting and
+>        is required for XFI Port0 of the MT7988 SoC to be in compliance with
+>        the SFP specification.
+>  
+> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> index acba0720125d..423b7c4e62f2 100644
+> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> @@ -240,7 +240,7 @@ patternProperties:
+>            The force mode is used to manually switch the shared phy mode between
+>            USB3 and PCIe, when USB3 phy type is selected by the consumer, and
+>            force-mode is set, will cause phy's power and pipe toggled and force
+> -          phy as USB3 mode which switched from default PCIe mode. But perfer to
+> +          phy as USB3 mode which switched from default PCIe mode. But prefer to
+>            use the property "mediatek,syscon-type" for newer SoCs that support it.
+>          type: boolean
+>  
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+> index 90d79491e281..d16a543a7848 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+> @@ -43,7 +43,7 @@ properties:
+>  
+>    qcom,tune-usb2-amplitude:
+>      $ref: /schemas/types.yaml#/definitions/uint8
+> -    description: High-Speed trasmit amplitude
+> +    description: High-Speed transmit amplitude
+>      minimum: 0
+>      maximum: 15
+>      default: 8
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> index e1eb45a9eda4..a28d77748095 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> @@ -11,7 +11,7 @@ maintainers:
+>    - Alexandre TORGUE <alexandre.torgue@foss.st.com>
+>  
+>  description: |
+> -  STMicroelectronics's STM32 MCUs intregrate a GPIO and Pin mux/config hardware
+> +  STMicroelectronics's STM32 MCUs integrate a GPIO and Pin mux/config hardware
+>    controller. It controls the input/output settings on the available pins and
+>    also provides ability to multiplex and configure the output of various
+>    on-chip controllers onto these pads.
+> @@ -164,7 +164,7 @@ patternProperties:
+>                This macro is available here:
+>                  - include/dt-bindings/pinctrl/stm32-pinfunc.h
+>                Some examples of using macro:
+> -               /* GPIO A9 set as alernate function 2 */
+> +               /* GPIO A9 set as alternate function 2 */
+>                 ... {
+>                            pinmux = <STM32_PINMUX('A', 9, AF2)>;
+>                 };
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index c5dc3c2820d7..adc6b3f36fde 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -93,7 +93,7 @@ patternProperties:
+>        Each SCP core has own cache memory. The SRAM and L1TCM are shared by
+>        cores. The power of cache, SRAM and L1TCM power should be enabled
+>        before booting SCP cores. The size of cache, SRAM, and L1TCM are varied
+> -      on differnt SoCs.
+> +      on different SoCs.
+>  
+>        The SCP cores do not use an MMU, but has a set of registers to
+>        control the translations between 32-bit CPU addresses into system bus
+> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+> index a5d67563cd53..29d48da81531 100644
+> --- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+> @@ -78,7 +78,7 @@ properties:
+>        we use nvidia,adjust-baud-rates.
+>  
+>        As an example, consider there is deviation observed in TX for baud rates as listed below. 0
+> -      to 9600 has 1% deviation 9600 to 115200 2% deviation. This slight deviation is expcted and
+> +      to 9600 has 1% deviation 9600 to 115200 2% deviation. This slight deviation is expected and
+>        Tegra UART is expected to handle it. Due to the issue stated above, baud rate on Tegra UART
+>        should be set equal to or above deviation observed for avoiding frame errors. Property
+>        should be set like this:
+> diff --git a/Documentation/devicetree/bindings/sound/everest,es8326.yaml b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
+> index 8c82d47375ec..d51431df7acf 100644
+> --- a/Documentation/devicetree/bindings/sound/everest,es8326.yaml
+> +++ b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
+> @@ -32,7 +32,7 @@ properties:
+>      description: |
+>        just the value of reg 57. Bit(3) decides whether the jack polarity is inverted.
+>        Bit(2) decides whether the button on the headset is inverted.
+> -      Bit(1)/(0) decides the mic properity to be OMTP/CTIA or auto.
+> +      Bit(1)/(0) decides the mic property to be OMTP/CTIA or auto.
+>      minimum: 0x00
+>      maximum: 0x0f
+>      default: 0x0f
+> diff --git a/Documentation/devicetree/bindings/sound/st,sta350.txt b/Documentation/devicetree/bindings/sound/st,sta350.txt
+> index 307398ef2317..e3d84864e0e4 100644
+> --- a/Documentation/devicetree/bindings/sound/st,sta350.txt
+> +++ b/Documentation/devicetree/bindings/sound/st,sta350.txt
+> @@ -77,7 +77,7 @@ Optional properties:
+>  
+>    -  st,odd-pwm-speed-mode:
+>  	If present, PWM speed mode run on odd speed mode (341.3 kHz) on all
+> -	channels. If not present, normal PWM spped mode (384 kHz) will be used.
+> +	channels. If not present, normal PWM speed mode (384 kHz) will be used.
+>  
+>    -  st,distortion-compensation:
+>  	If present, distortion compensation variable uses DCC coefficient.
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index 72048c5a0412..f188fd6b6fbf 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -310,7 +310,7 @@ examples:
+>  
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -    // Example 1 (new calbiration data: for pre v1 IP):
+> +    // Example 1 (new calibration data: for pre v1 IP):
+>      thermal-sensor@4a9000 {
+>          compatible = "qcom,msm8916-tsens", "qcom,tsens-v0_1";
+>          reg = <0x4a9000 0x1000>, /* TM */
+> -- 
+> 2.43.0
+> 
 
