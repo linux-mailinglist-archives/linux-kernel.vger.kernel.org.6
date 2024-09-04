@@ -1,162 +1,102 @@
-Return-Path: <linux-kernel+bounces-315546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C21996C409
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:22:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4F596C40F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11F11F26C2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:22:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68E02B236C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243A1E1302;
-	Wed,  4 Sep 2024 16:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370901E0081;
+	Wed,  4 Sep 2024 16:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y9GiyQKL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU19ASe2"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3EB1E0B68
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585142BD0D;
+	Wed,  4 Sep 2024 16:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466896; cv=none; b=oNzs6Fp8GsF3dpIZeOlDTRV/ZIdNyatp56dh+Ea9cw754533gerucOPy2Cl2CK2+EZ5S9kcbwBLtsz6SJ4fG/A8cDoG71Ddxy01ALPdxTbSMVfOfGRRpVK0vW8MHnTgbWixq7Hrqjd4fyRIi6VoUPvn2XuhSTFx1YEe96mLVM+A=
+	t=1725467088; cv=none; b=sx8VROYGvISYtNu27FmNe7YUNmM77ZarysmNV9kiW8FkIRuqBigZqtiVJCgq9ED5Wmw1cEBWKzttasXrJHiMwgFGL1F2UmoGweSwVb0B99xMqcwgWXdh98U2ZhJ8UvNtgMOoSJFagn/grUtBxrBSYJPLIvMFsGWKzNbOqjR0+yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466896; c=relaxed/simple;
-	bh=AyfG3KoGcXrBS4bIRc1AeimFWz9VioSHNRiORIfm/l4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KgfyI891DC3pyESyOtLlfEayqmYOItybiBQOHmGTKEFNzIg/a+9H6YpvctuWjy8cReA4wdHa1dwliOep3NpeT2nf5mKcBTrCPqmUOaVv14mUXd6eO64FqkbXzUxCpktlzm9E1GpeV3qJ/XL1bbfi9AaTweQdyhadGppd2IF0Dvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y9GiyQKL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725466893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/AwjcN6g7I7OiaNfGEcM52WOUchfEeuKfK5Y1ugnA5o=;
-	b=Y9GiyQKL6L5iFp2v1FzFJMw9z48+oRklUfRw2bEjETTdY4N9ihynbWh1u9O++Jkfow2qXG
-	PW0DnwWT4zgJJ05ooOwOetoz/8NeqpFsnjvKIGwLYYKro/Jc6VCfp1IVA4Ck+QLnLFuwLw
-	HBf/rzKdtI+a1JuArM0esQR/yXVzGS0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-Z5TYVDWjMm-Cdn9Q-4Hv0g-1; Wed, 04 Sep 2024 12:21:32 -0400
-X-MC-Unique: Z5TYVDWjMm-Cdn9Q-4Hv0g-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c247f815b3so831080a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:21:32 -0700 (PDT)
+	s=arc-20240116; t=1725467088; c=relaxed/simple;
+	bh=/7cDYAlEqe7bWicn0Va7ROpOHLi0iVmUDmVo+jOORyY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=n7QwOQlsoENaiqX0eNhSYtZjthf4XZDi5IEQGDCV9VIdfg0m6Yoz7aTsh4j2ToYpY6zIc0161Mq3TVUxCKHL8k7kd0WnctBjoPjT7KyBVxjAg1eaVm8xPpCoL7vmngtGXW+MfQ4Adz9qfufuyx9XZ8BLJKsZUZesXyZjSL3XOIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU19ASe2; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a24deca03so241424239f.0;
+        Wed, 04 Sep 2024 09:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725467086; x=1726071886; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+KkAQjjotCRZ4CfWuR8BuZVWPds5hg7Zc/7KBaAAyJM=;
+        b=XU19ASe2NP2Zo5G9ctHPlyLYAqNFUCeR0zn5VtW18GXzvQbNIQ10r/fHNxPmYPik0X
+         RoAVpYxVpBJpdctrvDSYhfrW00hj5ZGNvMufZV4Rq/Dqce4GUt61Cye08rgzoitUHt5x
+         pNubeZPmmh6VOdcO5rfEHkBY8sHyUolm5M3GpUrEUWF4vY+w3+9EYPU9jrrjlSZAsDju
+         2Eb+Dv6Mg7NUbyvTTuv8V+TUzwGiud+YinuwntOdRGAP1s/mWZvY9T0jHKTXGH7I9C0T
+         5b5J5/Xk/GmTZNK5CrQKzjB4HETZec1geFhJetb+GJ/CZSf79VcKN5qDB6B1UqEDUHfl
+         hH2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725466891; x=1726071691;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AwjcN6g7I7OiaNfGEcM52WOUchfEeuKfK5Y1ugnA5o=;
-        b=ZN6tihfFg22Hwpyd258C/nGuXJ70kvy/EdxW6mcX9cj/1tSpVS7QMkkEZ/Mpu59wGN
-         ycBaXpKgCjOaDKFsGgBeIHD7g98h/0Opf/noKiMocbj9V7C0mVST14V1mazCykrwGVtb
-         Np3jQ/an2VyDUvC0Rr0N4nP0CdMxjKI0oWSpZiDatrh/t/2QyJhTjhYMuPVDUzsqMVb1
-         pYa1CyZhjHrZyKxGxzu8woJvTSyGuGCbOfxQ+SgVVReax4yOaDH7WAcZs/M1TWFTb7Nb
-         e+IaBgSyX7upPwwGkj9mlruWBfWXpUadqrDe/2J0XbTtAW3bJ6+tmO+w+eG2pLzmom24
-         GYbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/rDTNEmUkiwfGX6UlCp9y8SeXZdsEFA4WzHzuJK7k9axsgi+joUZr1/lAc5HqbfH07tkSJsnov6HLCUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfyMky7h/iSDoLMLFW98HAriiWo41I0LLyj0iUn/tn8EeXcRwS
-	amhL26Ze2/sHYKoaScQpQeIfjYt6z6Lb38lqpkPcKsx5NPdbOuwBq0CYP9uTpIjAvp4aY7FYVN4
-	90aj5l62sNrqfX/qw/DHvBx5ElJ4MKjsUAjXxnvgpS45Ujz7/rs/J9e6LFE0ktw==
-X-Received: by 2002:a17:907:9812:b0:a86:9fc2:8395 with SMTP id a640c23a62f3a-a8a3f0ef2f3mr269132566b.11.1725466891233;
-        Wed, 04 Sep 2024 09:21:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbBPX1+w5oRxOTBh0kbwluzQ4Wje19SWHUnMncqtuLGzNshFcLaHUrTGFhkiYagd9cssatKg==
-X-Received: by 2002:a17:907:9812:b0:a86:9fc2:8395 with SMTP id a640c23a62f3a-a8a3f0ef2f3mr269129766b.11.1725466890709;
-        Wed, 04 Sep 2024 09:21:30 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a6c68sm10143466b.177.2024.09.04.09.21.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 09:21:30 -0700 (PDT)
-Message-ID: <3b37d693-f465-46ac-b857-ed907420ebb7@redhat.com>
-Date: Wed, 4 Sep 2024 18:21:29 +0200
+        d=1e100.net; s=20230601; t=1725467086; x=1726071886;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+KkAQjjotCRZ4CfWuR8BuZVWPds5hg7Zc/7KBaAAyJM=;
+        b=hxYDaQT6ZgVcYHTQr85co/rIx2jfMIwuX3eGIO8W3BAjWK+JdJFm6i4fjnz7mmfYob
+         drjFXa38EbcaTJf32/sq/2qq9lLnp7q+Xhwkl819Djg0HVZnjLR98d7mnrB4uiSsgAwS
+         QsHWOJXF692psXN6SWG0nq1hlE1NNsTdoyJck7haN438TriePvecjSXuIv8040bYJSKF
+         3TBfD7zIAgeva5Ej76ji1rEMwXV/OQNZs+cE14X24AujywKFI9XiSEtZwXpAbAcWRY1+
+         iINnQpxi+t5P/q3OJ7Aioywr1EoaTrZcSUFMHOuEe5c6QyEXgBy2exMirfltAzY7Csr2
+         TDEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUq2w8H2w10C0Hio01JPjmPSNCf3UqZQk3xHNhoMDQjZTuZ0KQgFrRCcPRWiR9118SIwlIKkvejftSDmI0=@vger.kernel.org, AJvYcCXZgFVOeIT6EAsuRJZeL7k+VKxqxvtzYqy9/BH+WtBGBFVgE0d8FxU9Jh+COIofd0QSAO4ARb6trmJPyJu8@vger.kernel.org, AJvYcCXdoMsYkUd8d3GEqY/D7ICecsgtNu01J4jv8e4yZ1ehYgMG+IMXDbkTi1u+WbLU++w7Cda+MRvhp08Sr9rm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCd7+c+A06QfluBvsCY8hXPSNZo6j+t8nB3j3QK1ImWPKEUIZI
+	pzPVglCM1KYKkWdTSpV+MvIKwphBDCUWQWp/PK2G1Gm/1T+v8KwLsAjvQo6SMReZjIxALEgmwdQ
+	KAWrR0Bv+E7ICcR0lRxmUKDyZhOy8Ij5S
+X-Google-Smtp-Source: AGHT+IG7Vz+T5qXl228WIdHsyu+M/jpDgswlSvzOewXBN7HGjjAubTwZpX8iIycVwNxPh5j/KRpzh0cJdVcgtU6Cnww=
+X-Received: by 2002:a05:6e02:b2c:b0:39a:e9f4:87b7 with SMTP id
+ e9e14a558f8ab-39f4f6ca345mr177420315ab.26.1725467086333; Wed, 04 Sep 2024
+ 09:24:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] extcon: lc824206xa: Fix build error of
- POWER_SUPPLY_PROP_USB_TYPE
-To: chanwoo@kernel.org, linux-kernel@vger.kernel.org
-Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com,
- Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20240904161537.37460-1-chanwoo@kernel.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240904161537.37460-1-chanwoo@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 4 Sep 2024 09:24:34 -0700
+Message-ID: <CAF6AEGvAEgFeoaxpkNw52fkt73RFg4g8+nhdR++m0ZhVsis=mA@mail.gmail.com>
+Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
+To: amhetre@nvidia.com
+Cc: "open list:IOMMU DRIVERS" <iommu@lists.linux.dev>, Joerg Roedel <joro@8bytes.org>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Will Deacon <will@kernel.org>, Rob Clark <robdclark@chromium.org>, 
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chanwoo,
+Btw, this seems to be causing iommu faults for me for what (according
+to a sw pgtable walk) should be a valid mapping, indicating
+missing/incomplete tlb invalidation.  This is with drm/msm (which
+probably matters, since it implements it's own iommu_flush_ops) on
+x1e80100 (which probably doesn't matter.. but it is an mmu-500 in case
+it does).
 
-On 9/4/24 6:15 PM, chanwoo@kernel.org wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> commit 0d9af1e1c93b("power: supply: "usb_type" property may be written to")
-> changes POWER_SUPPLY_PROP_USB_TYPE from read-only to writtable.
-> In order to fix build error,
+I _think_ what is causing this is the change in ordering of
+__arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
+memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
+this patch is supposed to work correctly in the face of other
+concurrent translations (to buffers unrelated to the one being
+unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
+stale data read back into the tlb.
 
-Thank you for preparing a fix for this. The commit which is breaking
-the build actually is this one:
+How is this supposed to work?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git/commit/?id=364ea7ccaef917a3068236a19a4b31a0623b561a
-
-Codewise this looks good to me, so with the commit-msg fixed to
-refer to the correct commit, this is:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/extcon/extcon-lc824206xa.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-lc824206xa.c b/drivers/extcon/extcon-lc824206xa.c
-> index d58a2c369018..56938748aea8 100644
-> --- a/drivers/extcon/extcon-lc824206xa.c
-> +++ b/drivers/extcon/extcon-lc824206xa.c
-> @@ -393,14 +393,6 @@ static int lc824206xa_psy_get_prop(struct power_supply *psy,
->  	return 0;
->  }
->  
-> -static const enum power_supply_usb_type lc824206xa_psy_usb_types[] = {
-> -	POWER_SUPPLY_USB_TYPE_SDP,
-> -	POWER_SUPPLY_USB_TYPE_CDP,
-> -	POWER_SUPPLY_USB_TYPE_DCP,
-> -	POWER_SUPPLY_USB_TYPE_ACA,
-> -	POWER_SUPPLY_USB_TYPE_UNKNOWN,
-> -};
-> -
->  static const enum power_supply_property lc824206xa_psy_props[] = {
->  	POWER_SUPPLY_PROP_ONLINE,
->  	POWER_SUPPLY_PROP_USB_TYPE,
-> @@ -410,8 +402,11 @@ static const enum power_supply_property lc824206xa_psy_props[] = {
->  static const struct power_supply_desc lc824206xa_psy_desc = {
->  	.name = "lc824206xa-charger-detect",
->  	.type = POWER_SUPPLY_TYPE_USB,
-> -	.usb_types = lc824206xa_psy_usb_types,
-> -	.num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
-> +	.usb_types = BIT(POWER_SUPPLY_USB_TYPE_SDP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_CDP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_DCP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_ACA) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN),
->  	.properties = lc824206xa_psy_props,
->  	.num_properties = ARRAY_SIZE(lc824206xa_psy_props),
->  	.get_property = lc824206xa_psy_get_prop,
-
+BR,
+-R
 
