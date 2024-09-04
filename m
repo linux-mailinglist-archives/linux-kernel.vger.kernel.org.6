@@ -1,65 +1,81 @@
-Return-Path: <linux-kernel+bounces-314003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7BE96AD8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B48396ADAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6BB1C24076
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34ECAB240FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C311E1FBA;
-	Wed,  4 Sep 2024 00:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5986524C;
+	Wed,  4 Sep 2024 01:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8GyIKo4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="f3VcjyXX"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218C139B;
-	Wed,  4 Sep 2024 00:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACF220ED;
+	Wed,  4 Sep 2024 01:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725411500; cv=none; b=fdy4mXs2g91AcKTVROHHUsQ/g7kEpITxpw1D31YlVxGpvBAcf1CI053707me/t0+BYmp+V8mbk12cU4G3vrnWPWwfKS8eAWpa7wAAm71hvfOqjpnig3QESbhCUmEa9KuOerhq53eR0liG9knwPQNYa1hRIdd7mBi8hmvamve7vc=
+	t=1725412521; cv=none; b=E5n/MWc5OV0zvi/sGThBTv07zbrmSUEWR5NwklFl+fVeRm7afue8BhR+5lAb11tOET8qDqIWVJkXxSDZQz1p/p3A9iIJ+PnLWzCp5zUlGSpfbFJgkk0v8iOqZrWFRylrHPKXlrROYfbjxFssm9InPY4Mr+z+owaLOb5hTDCL0b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725411500; c=relaxed/simple;
-	bh=3J3/SerQsfmG/eTI3HlBph0qoHr1r/J3cfwrtxFgXWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mHUQ5XZnI/wuXX1CefdPPKbQb+dzBUWM17IPXIMrPSDLE9I8P4CNetKPdKcpkQ8EMuIM0mkzk+kFhkU3wnamUy+T6OZz13sZf3BacifN+z0PCH01lWeDr2mXShLvR8DDQoWS6LaPG4P6zq22sRqyZOEP/PPITcmQr1/T5EAJSkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8GyIKo4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA0EDC4CEC4;
-	Wed,  4 Sep 2024 00:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725411499;
-	bh=3J3/SerQsfmG/eTI3HlBph0qoHr1r/J3cfwrtxFgXWA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y8GyIKo4aQJdavA9FhD8d1dzHGRCMwme5AoKpMI54gNvEXsQZe36J0/srwXGYXGwj
-	 XLC3mwkTZidspM/ZZoHQJvzsvJDRiURXB9PsH7Dhj52o43VkIT/G9FLRXE5/kyxKbW
-	 lwwpC0eISGSUnNuF8fu+5wXo8W03Z8eyTBPBwJNZdxLgpxLe1Bj3Xzb2VyzlLFCG/d
-	 iMi9Q1F5e6CNSV3bprlK40Jki8xgj31V+B0kNe9rNsyIAR/GqANMlVeDQT7Lb2FIiv
-	 NW7sz4WLC1Q0Kgbtln9TtgwrXktuZn1vfRj7FfiLL861+QY/pnz7u/yH628cAbbIzS
-	 PUIXdjWuo5iQQ==
-From: SeongJae Park <sj@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1725412521; c=relaxed/simple;
+	bh=EXMzDbmcyT8Qbv/FeHGnz5g0knYbqB/ouB2ky8UwEgs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=G0JgaY0x6oPU2x1ycdEktb06PtMLCfk+iEqDYo6jNidexxR+2hZ6iwt2b8IYWo6yW4H+buMuMohvCVjLJWH0jc/lILxQNIL3TS/OZy4WaWdDRMJFCFgPHvorm4ZehzT+QzrJDvk74wqKUqmNz7zjmDPIWBgJIRzLIKklca73X60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=f3VcjyXX; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725412515; bh=QJXZJ0i4PPyQs9pLBVhM6Cvr7GCkh2tTTsXYVcn50/s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=f3VcjyXXBodAtU2L2N2FF1YiEjEjss8zKD2YqfQPXAwGAqMw5vSnyxB8UxkYEIQCg
+	 7hCZ/rHfqGz174AXlxmbmdgOSPrbz/AtqEvnhrjf4qsfSih/PZZKkt5K7/c83+7PTH
+	 UDvHWIs4EioFA60BjYgxT7KN/6wEEi8RwaBZtCm0=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 64972BC; Wed, 04 Sep 2024 09:01:36 +0800
+X-QQ-mid: xmsmtpt1725411696tbd4s16ca
+Message-ID: <tencent_472581BA11BB2533E79EA21B964B2A1BC408@qq.com>
+X-QQ-XMAILINFO: NiAdzfE16ND4G/kmn26CnIlyhaFL7BFoNKCJQqM4wJSMCMBfLvHOBYUa0FF4OB
+	 gEiIsHUffKRlg4jM1p6hUdRnlt+46h6w0PnLmdcIFMTvDZUFCXrxUwFYNpAtt7k1DghYYFh9tju2
+	 zjvBrBGL27gyvyV/LDaOe9dgzgVgvnC2DzV5EMmJSd5kIcm3qEc1u/F5qYxOq6yFIR4VoqPbhHDD
+	 KEqAzH7NCNlYdYKmZG1UlR+KzpLJHswLW1ssym0KETcqSc7zxa7cb5nq8hNu+aFeQ1JAROj1kLHa
+	 Slyl7KKWYuXtstFAkjoBY6DStCx0g1IiTz5tHodZBmJ8EthtTwussUghGhvBlkvr5Up11JG3z94Q
+	 dpsSUOyLi58kguToezbaLgk4nkCFMNdh7xHK2UtG4P8cJDAEMcpLV4rhbYRQFGoqYS8PsHzEy3H8
+	 0VbzIc8XIDsbrIi7dgUQ3Noe/P7x/XoTUhh9Fr2zi3GefOvMZuLdcQKh2HFOQqvmpn1yY0FplDvZ
+	 7gXtVDVIgC14VU7jLiP0AfHQ16qTX8sg0eCzU4Z8MUq+1ypeUCSNUBxiKFGv9fKVHc/jxVrxgI/B
+	 VNSyJjShrSY/LI1ENS7nbuPsAzl0Sz23dCZ9XvtFMblEVZjHyjkxjSgm/Ptb0q7ZV0JIoIizIaWk
+	 BnsHykcbLoolQGhnysmFgh/WvnWdS5ERJcfuuHWlj5UeVL4OsRjtRD6g2z4YxQJBdKy1Laomqk96
+	 spm9AMDzlEHiW+h8V/PFInyr9OWKjVwg0bZVRjkVMMTKCDywXIbH5ZxWJ15fXthMhm6ElF0GDena
+	 vTNQgbhsuK9e98X0Eheu/5nLXfQJ7YxL7mGnaLE10unU/qK0PBjtGNGSrPhfxWAKgPIFddA16Gl0
+	 MQVV4tGJzvehtkJswLcUZ8e3h3jqlXVdJD8jQsEUnDq702yPnQET2UXvJ5bmtYhNTjKAtnZJSyhO
+	 IIkoOvDH4J8qgl68T7Jmx31hLCa66G
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: eadavis@qq.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	geliang@kernel.org,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] mm/damon/tests/vaddr-kunit: don't use mas_lock for MM_MT_FLAGS-initialized maple tree
-Date: Tue,  3 Sep 2024 17:58:15 -0700
-Message-Id: <20240904005815.1388-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <jy6263g6em4jsdhp6tknmh2cljpuvq652kvcet4ko3z2xt7pym@ltc5h5twsszu>
-References: 
+	martineau@kernel.org,
+	matttbe@kernel.org,
+	mptcp@lists.linux.dev,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] mptcp: pm: Fix uaf in __timer_delete_sync
+Date: Wed,  4 Sep 2024 09:01:37 +0800
+X-OQ-MSGID: <20240904010136.3443727-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
+References: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,80 +84,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Sep 2024 20:48:53 -0400 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
+There are two paths to access mptcp_pm_del_add_timer, result in a race
+condition:
 
-> * SeongJae Park <sj@kernel.org> [240903 20:45]:
-> > damon_test_three_regions_in_vmas() initializes a maple tree with
-> > MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
-> > mt_lock of the maple tree will not be used.  And therefore the maple
-> > tree initialization code skips initialization of the mt_lock.  However,
-> > __link_vmas(), which adds vmas for test to the maple tree, uses the
-> > mt_lock.  In other words, the uninitialized spinlock is used.  The
-> > problem becomes celar when spinlock debugging is turned on, since it
-> > reports spinlock bad magic bug.  Fix the issue by not using the mt_lock
-> > as promised.
-> 
-> You can't do this, lockdep will tell you this is wrong.
+     CPU1				CPU2
+     ====                               ====
+     net_rx_action
+     napi_poll                          netlink_sendmsg
+     __napi_poll                        netlink_unicast
+     process_backlog                    netlink_unicast_kernel
+     __netif_receive_skb                genl_rcv
+     __netif_receive_skb_one_core       netlink_rcv_skb
+     NF_HOOK                            genl_rcv_msg
+     ip_local_deliver_finish            genl_family_rcv_msg
+     ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
+     tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
+     tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
+     tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
+     tcp_data_queue                     remove_anno_list_by_saddr
+     mptcp_incoming_options             mptcp_pm_del_add_timer
+     mptcp_pm_del_add_timer             kfree(entry)
 
-Hmm, but lockdep was silence on my setup?
+In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
+zone protected by "pm.lock", the entry will be released, which leads to the
+occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
 
-> We need a lock and to use the lock for writes.
+Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/mptcp/pm_netlink.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This code is executed by a single-thread test code.  Do we still need the lock?
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index 3e4ad801786f..d4cbf7dcf983 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -1430,8 +1430,10 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
+ 
+ 	entry = mptcp_pm_del_add_timer(msk, addr, false);
+ 	if (entry) {
++		spin_lock_bh(&msk->pm.lock);
+ 		list_del(&entry->list);
+ 		kfree(entry);
++		spin_unlock_bh(&msk->pm.lock);
+ 		return true;
+ 	}
+ 
+-- 
+2.43.0
 
-> 
-> I'd suggest using different flags so the spinlock is used.
-
-The reporter mentioned simply dropping MT_FLAGS_LOCK_EXTERN from the flags
-causes suspicious RCU usage message.  May I ask if you have a suggestion of
-better flags?
-
-
-Thanks,
-SJ
-
-> 
-> > 
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
-> > Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
-> > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > ---
-> >  mm/damon/tests/vaddr-kunit.h | 10 +++-------
-> >  1 file changed, 3 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-> > index 83626483f82b..c6c7e0e0ab07 100644
-> > --- a/mm/damon/tests/vaddr-kunit.h
-> > +++ b/mm/damon/tests/vaddr-kunit.h
-> > @@ -17,23 +17,19 @@
-> >  static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
-> >  			ssize_t nr_vmas)
-> >  {
-> > -	int i, ret = -ENOMEM;
-> > +	int i;
-> >  	MA_STATE(mas, mt, 0, 0);
-> >  
-> >  	if (!nr_vmas)
-> >  		return 0;
-> >  
-> > -	mas_lock(&mas);
-> >  	for (i = 0; i < nr_vmas; i++) {
-> >  		mas_set_range(&mas, vmas[i].vm_start, vmas[i].vm_end - 1);
-> >  		if (mas_store_gfp(&mas, &vmas[i], GFP_KERNEL))
-> > -			goto failed;
-> > +			return -ENOMEM;
-> >  	}
-> >  
-> > -	ret = 0;
-> > -failed:
-> > -	mas_unlock(&mas);
-> > -	return ret;
-> > +	return 0;
-> >  }
-> >  
-> >  /*
-> > -- 
-> > 2.39.2
-> >
 
