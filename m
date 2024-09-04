@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-314071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DB396AE90
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:28:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3790096AE93
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B078286FEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:28:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80FB286D28
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F2442A90;
-	Wed,  4 Sep 2024 02:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1235811A;
+	Wed,  4 Sep 2024 02:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UUp49BvW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sz6yBN84"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886C7443D;
-	Wed,  4 Sep 2024 02:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF91443D;
+	Wed,  4 Sep 2024 02:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725416924; cv=none; b=aRxVdIDTAcvZpb9dnuqqHuEAA11z/5+wya/WqgJpt7qWKklP595uXdeYYKTmSRCHcUAmgsOdZ4nJHQlSdlMSrKckSMeTgF3oowXgvc5rQL6weFzKbC79f8ONfw6gcwOl0xi353bVwN0Xa2Fq85FbkpapiOThbk3mNqacVly302o=
+	t=1725416932; cv=none; b=pwYUzrvF9/+1Xis+xsTbXI+Oh7qkse4tmYJ2QB3escDRh6Suxw5/lhGZ9f4BWeSbE1pn4+pxVyTxdvEBKpFfhVaOhtsNVzo09kaRMbBGLkvbT4IMJarHDy+PeNtJ2W1CzrNhBT08Ng+DfmkDpUUcQE2eWopnP04VuxA26lMXUgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725416924; c=relaxed/simple;
-	bh=B+wiAafhN1/NEkju++rMTy5n7TvrXrWko3cpU8nfabw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DXLc+Jmbgjlw9UtN59A+EsX/rG3wrFjz44Vr3nwCou3bPAKiAx2nWm/p3BbnS6KUXdleU1Xqv3BT2gz7ofXqRtdR9cAvnYH2w1fOnOHH/pwRmwwIijPVyaxoTd4pQy5fZc05FleVigf9G/lKl0xxLi1u8/YZ0t5Ycjf57vVwP0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UUp49BvW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725416919;
-	bh=IY+G1gOfJT1Qk2FQx74kbsyqWHJN/d34Kpgbt7r1wdM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UUp49BvWTk7KM8rMkhr4CSPbvU64T7sZW7CsfnoGSYZneeITSlASfLxjfMefgPA86
-	 El/GZPTorEqJfNqLtERgbVLr3XoFSAZmHmB4jcDHTypUPsjxVBJBgML7Hs3fo4O8dP
-	 qWKYQ27txuPxQttr8Okht3KIetvUGvRjh7+1gjknY2r9XsUgFI/kKNKrh1G9Lbwc0V
-	 OXN+pb1/FnCr50dOHOv28GpyTchSplorbBbSZ2F2KwDiXDaZBRVxHVzedLqO9W8hce
-	 U3Hdw5RCy48C54I3+8JovXbVj2kQqEb53PDkjP4QxCyqsjrJtwioUxAVyHl1K+SUEg
-	 Hq3ySYo8wU7Jw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1725416932; c=relaxed/simple;
+	bh=qdT2t2Fh9wwW5di1GdgWy0N/m4zZU4E2brtOKXqJf0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EZxAe9QJ+HwFKYkWrdIKLUgvy7cm63DuzrFzOMtqfBGps5k3nc5TOFMv2iW0x2KOuwFUIk6wlvM8obBjXWoiZL/v28VmazLJRTsZ0rkIWWs6qptzHlJ+2+JILAvdJmAM0B8dS+bjf7Uvelk6YU6WbFGKNZH6d/qt3iLvlv0CIOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sz6yBN84; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wz5yp3k5KzlgTWR;
+	Wed,  4 Sep 2024 02:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1725416927; x=1728008928; bh=qdT2t2Fh9wwW5di1GdgWy0N/
+	m4zZU4E2brtOKXqJf0I=; b=sz6yBN84vV6Wz6VnnnubSfMr9ZvarqGglN/3TPVo
+	qiju0AftR9KK2cHdwSmlZaITxKawLBPGBUb4x9q3yv5mbEs02smqB26co2MsOKR5
+	droWAATfmhP6RthQwe365eL8FBB9vk51Cjae5Z/Z1o0yUDJISRoqqQU0axgV3pzL
+	IoecpCIDKsvQNWFcWIN7jJMLuoi+/KJDWt7eSuLIpkxqkg/racA5X+NO+0ae47V2
+	GUbj4GAkd6a8HvGp9omwRM0k7OQzt4AaI+UbEL4GlyymHouXYNAYyG1h84ue9IZ3
+	d7yU9L54DSMoQU5/YrODMN2ZTXmmkgWt7yBsn6jCV/5RPg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ps6vhR84Oy8n; Wed,  4 Sep 2024 02:28:47 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz5yZ4hhzz4wxx;
-	Wed,  4 Sep 2024 12:28:38 +1000 (AEST)
-Date: Wed, 4 Sep 2024 12:28:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20240904122837.41d1cf36@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Wz5yh58hLzlgTWP;
+	Wed,  4 Sep 2024 02:28:44 +0000 (UTC)
+Message-ID: <b5b0e655-fb17-4967-9104-4386710ee8db@acm.org>
+Date: Tue, 3 Sep 2024 19:28:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SeW=mwjGc+vlTXbhLd5yzjk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
+ merging
+To: Yu Kuai <yukuai1@huaweicloud.com>, Jens Axboe <axboe@kernel.dk>,
+ jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, paolo.valente@unimore.it,
+ mauro.andreolini@unimore.it, avanzini.arianna@gmail.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
+ <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
+ <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/SeW=mwjGc+vlTXbhLd5yzjk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 9/3/24 6:32 PM, Yu Kuai wrote:
+> We do have customers are using bfq in downstream kernels, and we are
+> still running lots of test for bfq.
 
-Hi all,
+It may take less time to add any missing functionality to another I/O
+scheduler rather than to keep maintaining BFQ.
 
-The following commits are also in the net tree as different commits
-(but the same patches):
+If Android device vendors would stop using BFQ, my job would become
+easier.
 
-  80d2d2dbcce7 ("Bluetooth: MGMT: Ignore keys being loaded with invalid typ=
-e")
-  4e76e85acacd ("Revert "Bluetooth: MGMT/SMP: Fix address type when using S=
-MP over BREDR/LE"")
-  5785ffa39009 ("Bluetooth: MGMT: Fix not generating command complete for M=
-GMT_OP_DISCONNECT")
-  4dd2c5007a2b ("Bluetooth: hci_sync: Introduce hci_cmd_sync_run/hci_cmd_sy=
-nc_run_once")
-  61bea6923172 ("Bluetooth: qca: If memdump doesn't work, re-enable IBS")
+Thanks,
 
-These are commits
-
-  1e9683c9b6ca ("Bluetooth: MGMT: Ignore keys being loaded with invalid typ=
-e")
-  532f8bcd1c2c ("Revert "Bluetooth: MGMT/SMP: Fix address type when using S=
-MP over BREDR/LE"")
-  227a0cdf4a02 ("Bluetooth: MGMT: Fix not generating command complete for M=
-GMT_OP_DISCONNECT")
-  c898f6d7b093 ("Bluetooth: hci_sync: Introduce hci_cmd_sync_run/hci_cmd_sy=
-nc_run_once")
-  8ae22de9d2ea ("Bluetooth: qca: If memdump doesn't work, re-enable IBS")
-
-in the net tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SeW=mwjGc+vlTXbhLd5yzjk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbXxdUACgkQAVBC80lX
-0Gy9Egf9FeZwA1se09hWcAQlqMYbuaqkmFrucP93s+UrUY+K8/wXHk5FC7xk9Qa0
-DqrwllNxEhsNCMqwQJQXeENDvgDBK0Jl0eG9Yr35SQ+E36Lnx2j3SKzlXdVrKjMP
-F6GTTKxSIRUb+wOm0NWNOdgoKOjxlVJO3aT0wRvqhvE1Pj4mmf354pr4GaRCsKul
-rhtqeo31YZR1GI+SoypU5W1axQv4tnitzXkwfDr5bXXeO7xASZE1xHlXfDPoitWs
-7yD0uDFkIovXxkWEG7uWv9vjuL8/xiFqX+OwdwSr0jGqD9VBeOBaFMQaLKjGX+jD
-HnbFw8vSy3/UeuXcf6ONu+N9oT/YvQ==
-=RXIc
------END PGP SIGNATURE-----
-
---Sig_/SeW=mwjGc+vlTXbhLd5yzjk--
+Bart.
 
