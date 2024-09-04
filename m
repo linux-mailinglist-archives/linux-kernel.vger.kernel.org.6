@@ -1,90 +1,107 @@
-Return-Path: <linux-kernel+bounces-315273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E596C044
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7E896C04C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE3E28ECD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F42161F2687F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBE51DC1B1;
-	Wed,  4 Sep 2024 14:22:26 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBF61DA635;
+	Wed,  4 Sep 2024 14:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Xep+shN9"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7CA323D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84441DCB38
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459745; cv=none; b=X+CZ/v4zwUK0sXA46cAsYPIepWWHwttPYz19fDz8w0XS5YDmhotlQJnp849eQIrp/pNIM2QQYkCxEToSdR5lXKyqrWZm+Af4f7DpfkOarE8R5XDJMiVwkDJGLuFNR0o4838F7/o9MH1ouELK8OzghjPJHwcfH2UIQcPZdu+fM9M=
+	t=1725459799; cv=none; b=jkQVmfK1/0Q60nHas3CM4FUJQC61oUFhUKjCZPKQjnNYAkJ2IkFaBeLbkEE3twKrElFF0QrdHtnIYaRYDegj2KD0RfVV52WRB5BmJ7o0/MSi+SOXNWKGuJr4djL+H0/Rv2UKu7TCk+twYCZD4xn5nJUuuJOX+AUaV4bQ3dMgwrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459745; c=relaxed/simple;
-	bh=gRgRvNNoCpCPZ7MOeaA0wmrhKGOg0ElPGlLUFez3pr4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s4jb6J5oVnL/LgRRTowHlq3u7d4gy2gKlI1h06+oWJAH6AxAuRB3u9hpibX6xh67iYQbflY9nrN94Iz604I9yVbkEKg8R/SpDGh4YKr3n/Jzh2bI8CwqxECBMnZ1K5Ja7xXAJXZbiseOXAdA0Q1RF1RPVVIhadV2g2Wm3bErITU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f510b3f81so12012475ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:22:24 -0700 (PDT)
+	s=arc-20240116; t=1725459799; c=relaxed/simple;
+	bh=uHWFMjkXthFKkwc21Xfpqsjb5Yk5pcnJDRm1kauOd9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QXyZX4SJqT4j3uqvGxVlLMwDc8nBZ4WV5a5lKzlAAMhBViq1g2QnLxgvMTxXY/4hWXbNnr7N7OU6XMXAlMNQbDlJBOOi96UeJN2WAwv6t5e3tpRSxKXD8HU15SWvTBi5tsY7DiPBmH8LZw8vN4iJyt2KPYnrJbKYQ3XWpF3w//c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Xep+shN9; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e1651f48c31so6988602276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725459797; x=1726064597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+m6Q3XqGIlbZjyYooay9Pnx0IaHEWZeV5bCVZM3wfRk=;
+        b=Xep+shN9RaXKXkZChCQ7QnpiYt6KV6+UFufseSbDKtKr6Df4egiNpeLrfjgj75AvSQ
+         vscebkHJc+VeTpGOIoRlMG3nwJWxiCLKuYrJavstN7aeEFZbSrM9f/nfrCxE/T3BQ5WX
+         S7daaVy0np6p4KBViOGnKdk2uKkD6Iw6uUxfFXr5h8oMbFidkctKfF4UJKbciGM19BB+
+         SMeWR5AvpqBs3BoyTP0OzeL2HmcCqIDzm3DvxvYu+l3AHKOoJfH73Xi40mSFGdvNvMES
+         NWmD4ZlrLcCGIhYBqEJDfqlzz/EBECzj9KKPXKLJ0Py2XCHBhSeeJyh1BfFwwARd/ZFp
+         L5AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725459743; x=1726064543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/kz6Bck4HlQlw7EBItThHdws6wLUHokXLC4/YKs8ls=;
-        b=PTLyT09K5FRIcCsVbWyNKbAyrr4PLPDwpQT/azSTi+PWRpOjaHPG+o3phzDfHP5brq
-         TYaqKYT7I8vBksUvocRjnD9B/bMaMf0irQftfQYtrBJmRbbt1aGfaJmO1T5vv5c88ZTJ
-         Jqj5hcG9Q0H5FClpkf1a+CpFkNJ7ouFLX+EzqCLtjc9s519L8Ovcn2FS7s+ISJa+QcGV
-         1ne7g04Gqq74IgI+qDvyDFol416vpPOTcNtRWy8zkvaPuRg4K6KF286vDkh5gCRSV3J2
-         oqlXkaCvzcDSAMWxILJbfQJPxyM1bNGPsQ2r6o6LRIagVSYNHFAo8R3rH9ZnetJ3v2X1
-         rucg==
-X-Gm-Message-State: AOJu0YxZHWZABPYHLgFvdEyY+D/AC1lvpZP8FSlwBsXbjJfX2oJccsnp
-	lK9t01r0e13SZxDfRHVEdS+6sE1yE3H6YvxRuQOBxSg7MEvyJErJVxYlH1sv+VuWT2wtwD9W1D+
-	+mJRQ/1Ye2Mdwgsk+pzPX94Xv6/bkchm3fPx2NNJJwYahKH9751pQvvU=
-X-Google-Smtp-Source: AGHT+IG76uQjw9mRE7EFSi6soz89yXP+2LvVubTco87TZTegCOiyoLzpoJmC288PduTg9GVNW/pQh77QEWq5hRz6Jr2ay3sJuvNA
+        d=1e100.net; s=20230601; t=1725459797; x=1726064597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+m6Q3XqGIlbZjyYooay9Pnx0IaHEWZeV5bCVZM3wfRk=;
+        b=r8F6QNCNIq6/fjZLaRaNiSFziPOycfkYlxlzsxxvp+6Jxj2iEchmP+yA3slmWjtJd1
+         0eLTcVwABZIT5hvUDTDtxMFAegNJGu4RXjMHm62Z5f9TW8K6T9olOgJ7krmEwReKnO/H
+         qjg6Qx2Z4CsF1YufXn4C3mHuCcTY89/SJQDkZpg4jleBWT1qjc4+olfiWIjeyqw98rBY
+         TeqSxZSWWJWnDhsI3HKVrCilGNHDkSWBCkT2JYP3Ebkq1fiQYMbXL/fplgPS1aUs8uQF
+         /0EIBIivLJYr62kXzFDjM+gRj+UYqvHHP2HMv6eQciwvWjC4q7bAOxjWJRGQd0YLOTVj
+         fYiw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7LIDgKGFuFs75fojHILVKJXEeT3gE8BkASPa2zC4cYh5YdYLwqEUlJs8bGLp8CSGXSRWsC7x0TVpPPJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Kyjby3o32QpGQ1CjBPL0c+rlYhQ98Z5wUZHDDV1yH7VACTW5
+	h70EsXnBcJAhPASgB9qRJH5r7xNGWSSkmlTYtZVVyzmCHo8us3QsTekcAc8KPDuytyWvF8ekLuC
+	2mXD5EtGqpXuQDbGomHwV15Dt1wXOJdzut9YG
+X-Google-Smtp-Source: AGHT+IFB5F7DMOWkLKCfWyKdUy8S7YwDbSHdcIxU2ngKOEIFd2UbeJ3ymRqS0hTytMC8ghB8E4xsO9iWyWM25xE8Fhk=
+X-Received: by 2002:a05:6902:98e:b0:e1a:a2cd:5d6c with SMTP id
+ 3f1490d57ef6-e1aa2cd601cmr11495199276.56.1725459796711; Wed, 04 Sep 2024
+ 07:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda4:0:b0:39f:4fa5:de74 with SMTP id
- e9e14a558f8ab-39f797af4dfmr695415ab.3.1725459743765; Wed, 04 Sep 2024
- 07:22:23 -0700 (PDT)
-Date: Wed, 04 Sep 2024 07:22:23 -0700
-In-Reply-To: <000000000000acfa76061fcca330@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a047f06214be71f@google.com>
-Subject: Re: [syzbot] check
-From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+In-Reply-To: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 4 Sep 2024 10:23:05 -0400
+Message-ID: <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me, 
+	tomoyo-users-en@lists.osdn.me
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Sep 4, 2024 at 3:10=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Until 2.6.23, it was officially possible to register/unregister LSM modul=
+es
+> that are implemented as loadable kernel modules.
 
-***
+...
 
-Subject: check
-Author: almaz.alexandrovich@paragon-software.com
+> Paul Moore has commented
+>
+>   I do not intentionally plan to make life difficult for the out-of-tree
+>   LSMs, but if that happens as a result of design decisions intended to
+>   benefit in-tree LSMs that is acceptable as far as I am concerned.
 
-#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+Patches that add complexity to the LSM framework without any benefit
+to the upstream, in-tree LSMs, or the upstream kernel in general, are
+not good candidates for inclusion in the upstream kernel.
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 128d49512f5d..a5df8f4c0150 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1472,7 +1472,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	inode = ntfs_iget5(sb, &ref, &NAME_UPCASE);
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
--		ntfs_err(sb, "Failed to load $UpCase (%d).", err);
-+		ntfs_err(sb, "Failed to load UpCase (%d).", err);
- 		goto out;
- 	}
- 
+--=20
+paul-moore.com
 
