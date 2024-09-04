@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-314941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A30996BB38
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015C196BB3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC96285ADC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342BD1C24951
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DA01CC145;
-	Wed,  4 Sep 2024 11:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69511D1723;
+	Wed,  4 Sep 2024 11:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RWRQVciS"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="QhU2CU5O";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="RW47dMR4"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3451D0DC5
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AD91D04B3;
+	Wed,  4 Sep 2024 11:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725450520; cv=none; b=uHxLNK4AA6dINGKuspbm8e54k2uZxdeXH1MxU32DaBvXZVcjtft/4t2V2y+jzu8ZisJrdApye9dDkl2piBJcbCcAQPUrTaabodl3UhAUAQXatlaWMec4mZuxPcHJ5xScl7in5C+SN10X5ONbsZo8/QLQi3QUmkOdIUebwOYIpJg=
+	t=1725450547; cv=none; b=hZBJcbE2Fus9PRldhH+itVZlBaB99EyOdxzoRMiJBY/kc/bwL7Am+q5Z3JtwjH0J81FRI02JB8phiDz55NqdzRF7VYMq5OhUdD4Vsig3XoD3zlF3nJVbA6IEcM1uTnSXZRWHcPytU4/BCEGUBQmOi3uPdfLfIi/liB6/1OtNWwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725450520; c=relaxed/simple;
-	bh=9grxJBulqA4M7mTry0HLRVP5zF0PSNYxyQ99ICIse5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HAIOAcKF6aREmj7r+4vgE6/ADuLl3RuD+vQgAd8aNS2GdEzg1+uuOGodGxqd/hlP7yp2RcHaHaty7bAS2WJh3mCF007kiSYBlgzwGR0lWnIBDaHvUDIbQTnrK4E3vmERFDsYoa2aXnptOE8ABnkBC+RE+AnS5OYnLij32qks9zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RWRQVciS; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3f163e379so18312501fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:48:38 -0700 (PDT)
+	s=arc-20240116; t=1725450547; c=relaxed/simple;
+	bh=2gOlhhRV2C/00MxCV/AqhWoEpYeVgT9ATkmcgljMQMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V2kuvYEGrYsOkWpHkvtYsJhgirWWtyTCNGUy12DFMx+TMOYlrEdi+osaTLZ2mHywgFEdyL/01CvyN9b1BlTZm5puBhpHcQPmvlSlNo7wKKfsu8GmZZSz6nEY1l4XN/yDgnH/Zh4icCWH2EKI7c+q5mDGljZjVmJB9fx00ZoC+Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=QhU2CU5O; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=RW47dMR4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725450517; x=1726055317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7c+oJIY6rjOiXmpMYXeuDRnxHvChpBfHfXKg9Xvladg=;
-        b=RWRQVciSMykfeypt0UcljqVDSyQsPyDPi2vjphZINHqUmq2sW5GpPCeJUHzibmuL6A
-         mo6hE55jY8b138Yoa5n6Hc/QXYCMHvrwQxJPfg565XJ4WMCqSKa6cKsh/fCVPqT4RxZo
-         Tp6N5J2SHAF+G0YEon2kCf1fFf4N3E4usFW9+VA08QrWFyk+E1fnmxDJiZtlcpZSoMbK
-         26M5f+FxJ+VJjfS0MMV165MUbFal+bYaFX0f1v/FvqvtzIaTrbxoYu0zrDYLMubvbGJ0
-         LV7fS4zNqg8E1rGtA3bQb2VQD8Cm7jxs2U5WhN9DWWWRoLbh7BCvEldaRfSkD9l935wu
-         zSnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725450517; x=1726055317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7c+oJIY6rjOiXmpMYXeuDRnxHvChpBfHfXKg9Xvladg=;
-        b=B7z5S7UmZCy31KQ/aaakScQwAUkyDuaJiuknmK8fO2MBNKgHbUrPybpMIEgRF2Vm/Z
-         NAduK7rElOAyRaJYaGVQB1tBYvdrvmz0bPSlC+/8k7mip6VaZWLMkdrcI6H3w5p5IhVc
-         daJ+Ir19kgGCqJWaTnBtXLAfo03AtVKHNTtsmr2LohuMTcUfinLiUxncVwNMkV9Kq7xv
-         PSXjkZgCchl9LGEwAbMgq15lOWU3lXvODcxmb0pGofVscgPk0uJkaxM4Zqgw8bGhqx6p
-         JZaOeYJzK6A0ihFgh+ieJg0yJMpiPe72lHCWWYwi+WCuPbGjTwGfI8XIYYwaU1DrEY3v
-         0kYA==
-X-Gm-Message-State: AOJu0Yxin9vtFoNoZ19gC5N0u/yBEAFu8bq1hGp8AK8FMlDJxa4t2h6M
-	+bXjpWBXCdjC8GVdGeHGarxoiHMqPoZi8mqRoJcmzuzk5Hrxrf68ZVuc+waJ/XE=
-X-Google-Smtp-Source: AGHT+IGWQuArwLoBWGS3FkJMZjNYcq/QeFma7aPLpSFDWBKQmp/WL+6f16yVurrf2i0A8WqhB+DPoQ==
-X-Received: by 2002:a2e:f19:0:b0:2f3:cd65:cf65 with SMTP id 38308e7fff4ca-2f6107080ccmr150312881fa.28.1725450516688;
-        Wed, 04 Sep 2024 04:48:36 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891dc6a1sm810537966b.175.2024.09.04.04.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 04:48:36 -0700 (PDT)
-Date: Wed, 4 Sep 2024 13:48:34 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Livepatching <live-patching@vger.kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH] Documentation: livepatch: Correct release locks antonym
-Message-ID: <ZthJEsogeqfVj8jg@pathway.suse.cz>
-References: <20240903024753.104609-1-bagasdotme@gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1725450544; x=1756986544;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=PzRpGWmOUix4GzvJgR42aKUg/d33bVXixR5pEp0iclU=;
+  b=QhU2CU5OtGuQN2c7kb3WXmDF2xY/Ea+D5MTozwqAlvXBKXzfQGNrdQCG
+   NEn6nFYtpWk7BQLU8oPrdNxVuX+z3G3rwarHeEQyEeBjmQYyAX4IjJoNi
+   +t286k7i+vuhsTGJbju+2mHhFg8Lj/7/3PwBqzGpsQ0v+VQWOIfOof4dS
+   qp5mBC39aVbgvyynHIK9zbtRC/xd/aQAM3OGkEoRibfLbAvkjy+2T3xy0
+   bBiu/qebM10wHr0MWyyZ8NtWxqDakiRMwUNQLDZjYzjH8ZTHlWeC4fDeN
+   Y4O94VNhb+fya78pTUq27Cs00iWY4Y5dy+B5IM4ZzZ0IvS0CUkBHNxMkQ
+   Q==;
+X-CSE-ConnectionGUID: 9/WIsxHeSR2jvPm7H/3/kg==
+X-CSE-MsgGUID: sap4pEGZRByHLhM8G9AR7g==
+X-IronPort-AV: E=Sophos;i="6.10,201,1719871200"; 
+   d="scan'208";a="38761957"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 04 Sep 2024 13:49:01 +0200
+X-CheckPoint: {66D8492D-2E-5FF8EC80-F6CEE9F8}
+X-MAIL-CPID: FAD731A5A9D3F1B35E470B14FF3F3207_0
+X-Control-Analysis: str=0001.0A782F24.66D8492D.0165,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CEE15168F91;
+	Wed,  4 Sep 2024 13:48:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1725450537;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=PzRpGWmOUix4GzvJgR42aKUg/d33bVXixR5pEp0iclU=;
+	b=RW47dMR4CCCZ6YbXSUgNtokRaSoNQb0UAB6xzuEfd3TxrUPNps1B3PI+dbYayXq2QwRRtZ
+	32roHomfmXWZcoKFDZ0Dh06NvEEdbCMaDIyEMrMPfamxMRQ40I3aDbZFLBWktgP2jE1Jqo
+	QrE3u+AgGmXZi+atF+wisomNM9mgCOYBtU9WaaRtwse75qkHni+WkTyABW8SOQi2Ve7JqD
+	8iQTkUW+1COaBFyTnlpFxthng6s7mngHuGlrLHctW338i8jp7vYNViPHJ6uTfn/6EREZ+X
+	iHeUtCKunTlMyOVC7Mi0DOLeu60AwPZuSnvU8wxeIdtLgAQIBU38A7+KGxLBew==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Cc: linux-pm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] thermal/drivers/imx_sc_thermal: Use dev_err_probe
+Date: Wed, 04 Sep 2024 13:48:55 +0200
+Message-ID: <8423953.T7Z3S40VBb@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240717085517.3333385-1-alexander.stein@ew.tq-group.com>
+References: <20240717085517.3333385-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903024753.104609-1-bagasdotme@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue 2024-09-03 09:47:53, Bagas Sanjaya wrote:
-> "get" doesn't properly fit as an antonym for "release" in the context
-> of locking. Correct it with "acquire".
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Hi,
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Am Mittwoch, 17. Juli 2024, 10:55:16 CEST schrieb Alexander Stein:
+> This adds the error code to the error message and also stores that
+> message in case of probe deferral.
+>=20
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  drivers/thermal/imx_sc_thermal.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_th=
+ermal.c
+> index 7224f8d21db97..88558ce588807 100644
+> --- a/drivers/thermal/imx_sc_thermal.c
+> +++ b/drivers/thermal/imx_sc_thermal.c
+> @@ -111,8 +111,7 @@ static int imx_sc_thermal_probe(struct platform_devic=
+e *pdev)
+>  			if (ret =3D=3D -ENODEV)
+>  				continue;
+> =20
+> -			dev_err(&pdev->dev, "failed to register thermal zone\n");
+> -			return ret;
+> +			return dev_err_probe(&pdev->dev, ret, "failed to register thermal zon=
+e\n");
+>  		}
+> =20
+>  		devm_thermal_add_hwmon_sysfs(&pdev->dev, sensor->tzd);
+>=20
 
-The patch is trivial. I have have committed it into livepatching.git,
-branch for-6.12/trivial.
+Ping! Any feedback?
 
-Best Regards,
-Petr
+Thanks,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
