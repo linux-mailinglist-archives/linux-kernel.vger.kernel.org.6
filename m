@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-314032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1581096ADF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7442A96ADF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800B9B20C2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3481F2598C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDF0C8C0;
-	Wed,  4 Sep 2024 01:32:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14B79DE;
+	Wed,  4 Sep 2024 01:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7hM7RgA"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6232C6FB0;
-	Wed,  4 Sep 2024 01:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A5A567D;
+	Wed,  4 Sep 2024 01:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725413555; cv=none; b=D+/gA2o1/0JDXgmsfC/91izlfElB6Rs624/VEgWzXSpUA6Jk8TdhpYWi0cRbbnF1d+/5wfXoVN3JQCexg8/oCinRmieaHnzVaVvrH/xYRTKJTuHYVc+1GwRGUqg2gIMPmN2KJxXoSTUyPfemPx00YjX6o2NHr+f/XdIWErP284Y=
+	t=1725413654; cv=none; b=CP7hG3zxo1uUtiS9wtEijdFUZdT8ZUTOesoSRrntZUZq85ARJD9mSDrTtJKMoXv8sybopBDv3ABJBBXAmkVJyNPyaZiF023YKCKLVZuijLQ1pnJYwITOis2ATMayT8SDyi5fD56vdU7ERfJTNYPipN0KCLIZGv2aZb7mIM2l3sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725413555; c=relaxed/simple;
-	bh=c/g2fCijm7vhDTdVi4X08YHtHo3UXqy7FGKcKnLcHM0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GH0vZ2GZN9l+upqR8Bhe9kAOqfMTKd/4W88a9Y3aplPM41YhK/xmigi6I1DHaN5XjVat6xG4260efbKVI310yTqppboFTV+WUbUIMwZSA8rb+otCVrgLXcbBDMohVCzAHLtEAJ8y1iKeUVuDTMpO3eUfJT0zrktJEzZLzaCzIlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wz4jT68gZz4f3jdV;
-	Wed,  4 Sep 2024 09:32:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D0D7D1A17B1;
-	Wed,  4 Sep 2024 09:32:28 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCn28equNdm2sdRAQ--.21474S3;
-	Wed, 04 Sep 2024 09:32:28 +0800 (CST)
-Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
- merging
-To: Jens Axboe <axboe@kernel.dk>, Yu Kuai <yukuai1@huaweicloud.com>,
- jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, paolo.valente@unimore.it,
- mauro.andreolini@unimore.it, avanzini.arianna@gmail.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
- <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
-Date: Wed, 4 Sep 2024 09:32:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1725413654; c=relaxed/simple;
+	bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AIgwOivaQyagjPLKJDEExfyyCW3sjtK6NKZ7amHvuszXSAnkbTj/gjyFGf4yxYR3uNZ92/bBmSuzjJacxFfYW8fw6Afv5O9IB0Ny/mI6cRBZ5f9UwJzy/YvRWqYQCGIt38V6niMaUWSEUN/7fk0JK0TdmIPD32ea368ZYcaoVME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7hM7RgA; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c180d123so1944224f8f.3;
+        Tue, 03 Sep 2024 18:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725413651; x=1726018451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
+        b=U7hM7RgA2IutSs23yRxebEsYpVtfH/yAFBZxg9ypylpqGSgdIUIWV13Zh1fAt62cEy
+         6IMIpRtr9Ki0IEEiPGJ6DSlv7d2Rau2L9B4uJYBc5uc2B3cbLstjKBF493A1pyk1wdia
+         0SFXiAPu2A/d0xtzsCLdU3R/JViY4uzb/OvfEexc7WmGL3lwmPZ4y2OGySf00nNBmlVl
+         C1XEUe3adqY7AukE7dcU3pvxLo5QWCapigJY8T25/0U3luz29cOUQBi1t300/vbMXEVo
+         GZXqJBiBRHlCdVVVHNPj9yNqSZrYIDRKpAP3EQ7jnx7oPNC9i5Li1SpmhfkAQGG/YxSM
+         Lw2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725413651; x=1726018451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
+        b=KLnW5qAtw5WzD8qxrjjED5ZD/wC8Hv+QH8uTNBuMEICFfQ4OLHIf0rPl44TOZTtumB
+         aJbt52oX6qzqjEi87qLTFsQeInA098vPGQqKkn7x+C77BZqBix1/ZEPfvJv5Jvw47Y5f
+         zfkOnRzt4HMy1P2/wCv6Itqu3lxbmBXFeOm+QmwP9CZVBYLBbLsKWzLHdwlQC32wkFuD
+         vJ1Y1VU1f3BnvxeM1cPQxhlUPm9oSI+86HcW9fGlcJy2S+Snum1Ny1cB+Vf/MAkKTFLq
+         klpUOVecdh+y/Bln3LK7BCWmX203eYDlOqZwlHBIeOelshyBl9uyWc5FJoUMAxbKdrNx
+         SSlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+VmJsj6FyYtlgydPPHO1Id9cEez0SpmQNHSq5ypB6aHZORMxLOX6Y6zjLHHHCMRdeaeydae2u@vger.kernel.org, AJvYcCUg27Z7UtUjLoFwOmLaBYyr7qfJivomAcwmhAn0T9pQbvmRujfmCX+tsvoJ1ZllXpmSSID3tz+H2Dab3Jg=@vger.kernel.org, AJvYcCVf+ejGX4AxirnhZRSO8eDipg9dNPsDdJlnZRaMlnnvT12+xzR+2ltnCGRMsz8dic2UZotkYfytZkL4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoJvcJXc0OOEzfhwaebqfd0j6/BucVYWesTk/1U7x26T1lzPDo
+	FILWp+bePfHMaDxQxMFE0Cmy5rVAN83eF5PA1YN1BOYfIVA3ctrNwoii7osHbxCn2SvC9Db0MYQ
+	yF8ft4rqYjzf3W6mvxTp+OkRLx6A=
+X-Google-Smtp-Source: AGHT+IG9uqGECrHc4951OxM9JY1Wh54YGaI8TOge11mwJKOFkewOsNpY+jxpyh1CbkS6/cfXB5GcYuoGQob6XsHn+KA=
+X-Received: by 2002:a05:6000:1886:b0:376:65fc:6cbf with SMTP id
+ ffacd0b85a97d-37665fc6d98mr3028566f8f.23.1725413651088; Tue, 03 Sep 2024
+ 18:34:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn28equNdm2sdRAQ--.21474S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFWDuw1DGFyDWrWUKF48Zwb_yoW8JF4xpF
-	ZxKa1YkF1kKr9xAa4fC3W7tryft3yxZry3tw13t34xZryUZF13KFn0y3409FySgrn2gwn8
-	Ww43JF95WF1kAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
+ <CA+fCnZc7qVTmH2neiCn3T44+C-CCyxfCKNc0FP3F9Cu0oKtBRQ@mail.gmail.com> <2024090332-whomever-careless-5b7d@gregkh>
+In-Reply-To: <2024090332-whomever-careless-5b7d@gregkh>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Wed, 4 Sep 2024 03:34:00 +0200
+Message-ID: <CA+fCnZdCwpxc4gL7FeUEJ0cbMESe3d2tRe-NTCyDH9uZTR_tZQ@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
+ softirq context
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Marcello Sylvester Bauer <sylv@sylv.io>, 
+	Dmitry Vyukov <dvyukov@google.com>, Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
+	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org, 
+	andrey.konovalov@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Sep 3, 2024 at 9:09=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> > Hi Greg,
+> >
+> > Could you pick up either this or Marcello's patch
+> > (https://lkml.org/lkml/2024/6/26/969)? In case they got lost.
+>
+> Both are lost now, (and please use lore.kernel.org, not lkml.org), can
+> you resend the one that you wish to see accepted?
 
-在 2024/09/03 23:51, Jens Axboe 写道:
-> On 9/2/24 7:03 AM, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Our syzkaller report a UAF problem(details in patch 1), however it can't
->> be reporduced. And this set are some corner cases fix that might be
->> related, and they are found by code review.
->>
->> Yu Kuai (4):
->>    block, bfq: fix possible UAF for bfqq->bic with merge chain
->>    block, bfq: choose the last bfqq from merge chain in
->>      bfq_setup_cooperator()
->>    block, bfq: don't break merge chain in bfq_split_bfqq()
->>    block, bfq: use bfq_reassign_last_bfqq() in bfq_bfqq_move()
->>
->>   block/bfq-cgroup.c  |  7 +------
->>   block/bfq-iosched.c | 17 +++++++++++------
->>   block/bfq-iosched.h |  2 ++
->>   3 files changed, 14 insertions(+), 12 deletions(-)
-> 
-> BFQ is effectively unmaintained, and has been for quite a while at
-> this point. I'll apply these, thanks for looking into it, but I think we
-> should move BFQ to an unmaintained state at this point.
+Done: https://lore.kernel.org/linux-usb/20240904013051.4409-1-andrey.konova=
+lov@linux.dev/T/#u
 
-Sorry to hear that, we would be willing to take on the responsibility of
-maintaining this code, please let me know if there are any specific
-guidelines or processes we should follow. We do have customers are using
-bfq in downstream kernels, and we are still running lots of test for
-bfq.
-
-Thanks,
-Kuai
-
-
-> 
-
+Thanks!
 
