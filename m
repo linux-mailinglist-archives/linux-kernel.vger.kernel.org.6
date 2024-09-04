@@ -1,116 +1,109 @@
-Return-Path: <linux-kernel+bounces-314368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B254C96B25E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E2996B263
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCE82832E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9445282C2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8572146A7B;
-	Wed,  4 Sep 2024 07:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731F0145FEB;
+	Wed,  4 Sep 2024 07:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w4m0O5OG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FHdtbjZ7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RR91OCh5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAC013B2A4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E4A1EC01C;
+	Wed,  4 Sep 2024 07:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433690; cv=none; b=bZ43kOvMgyrSmZI0lJ3VnwMuQJuRkL1I0NMVmdKQg6TImrRvQ93mwNQv+B0rSP7S4jIL4OUT/d35yXtD1CTBxheYutgGYjdAUXb4D6WyFdE8/qxF732ZvgDDnIqk+FL1m7ZconqnNIGdvwXXwAgy9jXzFX4603uFjQKtjPpnsBw=
+	t=1725433794; cv=none; b=hSFmuZlMx6CbZbCxz32H98lwSIZp6pYERSl8xs7lXCsj85fiICn1hfOoEm1GZMWiGkJlYyx0cYriAdffIKESLe5iBGRNrGo+YTPFAmjaNXP00955jSVZbt3Bz3X5206eDs8QF++QTFjT4C6KC4HLJZxZ45U6nxoiGU96MvVjAkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433690; c=relaxed/simple;
-	bh=L1YWksA4Qgfkm5gADeSXuCFqq3stlYJHn6+4bcBeKug=;
-	h=From:To:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=ntK4WcOqVpJY6QMB2TA4YsvrcOyDmbDs3LgnNPu6QjTCK00OVqz1vZcRQhXeSVyBgB6rcPIHhr/qE6L5RSmuBLdo/3jbIfSaEBQ7osFIGr8w4xoqUS+4pgbJCr6MFi5J90UGnYvbkKdnT4/Sp9vIhAa9m2dJKciiLBCNQz798d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w4m0O5OG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FHdtbjZ7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725433686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=NcwxqMiYAlJMq7og6JEgaOckC0nfrX/KtqBe3bdMiCM=;
-	b=w4m0O5OGruYWceXKo8LM1GVgE/tvKn2Z/22S6ez+TTWCzNBZ6l/1Y3mDVNV4ObTBaiGU9L
-	jxnASqMe/bkwkM8HwNMtnguft8PjFC8YMCmRzkbIGOh3vqhnRFudHXxCTY55a7ajEWNYYa
-	pl3xEqowT6sY//2Wa0m9ZkFypL61HjhuREWolkLn2J0qZ+S0CbTPPB3d4ByOeeMXE1CfIn
-	oRAgUJWdfP8qEKK8NmHkWpFupsFOl/GsBsPLCzzY6G+EwCy5J9OJ+sWStns5Mceu4C6DGG
-	aWa6EiaX4M5CJriYravMGYRKabI/zytUWQmoIFQok5SVWYfLl+3d1KAbrPAavQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725433686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=NcwxqMiYAlJMq7og6JEgaOckC0nfrX/KtqBe3bdMiCM=;
-	b=FHdtbjZ70CmAqtSvkmVzZemOW3LUU7ZKW1BPJkryWxDGI9VLr7Xr4AjbzriEy06jgm1K/B
-	bbdom1eeSicjeCBw==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH] static_call: Handle module init failure correctly in
- static_call_del_module()
-In-Reply-To: <6295c921-7bfe-37d3-dcf6-28676a5b5e9e@huawei.com>
-Date: Wed, 04 Sep 2024 09:08:06 +0200
-Message-ID: <87cylj7v6x.ffs@tglx>
+	s=arc-20240116; t=1725433794; c=relaxed/simple;
+	bh=T5l6QLHUy29hq1aXr7kOmqiti/fIWBIR5NvAWbdKGNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=td2fZFp5rotyoMrKbxakz+vdMNPWP4Q+KQpAx7PswdXWqJYyrJNTJxlNYrUN5QXmwX/2aF2tHC+iGYUZ83ajTFELOJ5t3c2CBIi0OqhuEeNw3PkhMS28opUfTJ0IkkcSwmznSd7rww5Dupia6hzMBs72Vs9bfECPIRe2yPrlEiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RR91OCh5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27887C4CEC2;
+	Wed,  4 Sep 2024 07:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725433794;
+	bh=T5l6QLHUy29hq1aXr7kOmqiti/fIWBIR5NvAWbdKGNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RR91OCh55T+nyIofUoMFXT8y0GFVqjinMsl00LiCaMFqbJo36CrmscW9jWzle1ZvN
+	 6TdqiIMHGODUgqYWFBXyLl/yGstDbMHmosBBs+SYyiXHXxM9VXJriW2GTvSHDrg1De
+	 q/zG1QUl1JOS315/a9gu1/VEgbLwv5jhlz+PJFMJwD1ZKeaB93bB2DTRh6kInDKoT9
+	 hr38sOalnQKG7+I3irZlhkDkL/tH+Y/P1wzNYeh2K4ji/niz8J4tXh+IT3zPogVeXw
+	 2Jb6KhuiuLdsfN7Ns3mx0Ufj8vtvrcZ/DaoDSB2+MqkCnsJHpuEOCZcvc2LGl6Tv0p
+	 07Q+7idLqn7OA==
+Date: Wed, 4 Sep 2024 00:09:52 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240904070952.kkafz2w5m7wnhblh@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
+ <20240904043034.jwy4v2y4wkinjqe4@treble>
+ <CAPhsuW6+6S5qBGEvFfVh7M-_-FntL=Rk=OqZzvQjpZ6MyDhNuA@mail.gmail.com>
+ <20240904063736.c7ru2k5o7x35o2vy@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904063736.c7ru2k5o7x35o2vy@treble>
 
-On Wed, Sep 04 2024 at 11:32, Jinjie Ruan wrote:
-> On 2024/9/4 6:58, Thomas Gleixner wrote:
->> +		/*
->> +		 * If the key was not updated due to a memory allocation
->> +		 * failure in __static_call_init() then treating key::sites
->> +		 * as key::mods in the code below would cause random memory
->> +		 * access and #GP. In that case all subsequent sites have
->> +		 * not been touched either, so stop iterating.
->> +		 */
->> +		if (static_call_key_sites(key))
->> +			break;
->> +
->
-> Hi, Thomas,
->
-> This patch seems not solve the issue, with this patch, the below problem
-> also occurs when inject fault when modprobe amdgpu:
+On Tue, Sep 03, 2024 at 11:37:39PM -0700, Josh Poimboeuf wrote:
+> On Tue, Sep 03, 2024 at 10:26:02PM -0700, Song Liu wrote:
+> > Hi Josh,
+> > 
+> > I have attached the config I used for LLVM and gcc.
+> 
+> !IBT is triggering the ORC bug.  This should fix it:
 
-That's a different problem.
+Also a CONFIG_MODVERSIONS fix:
 
- Oops: general protection fault, probably for
- non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-
-It's dereferencing a NULL pointer at 0x1. That's odd because bit 0 is
-set, which looks like a sites pointer. So static_call_key_sites() should
-return true, but obviously does not. So how does that happen?
-
-It can't be a built-in key, so it's a module local one with key::sites
-== 0x1. So static_call_key_sites() sees bit 0 set, and then returns
-key::sites & ~0x01, which is obviously NULL. So the condition is false
-and the code below uses key::mods == 0x1....
-
-So the check must be:
-
-	if (!static_call_key_has_mods(key))
-        	break;
-
-I missed the module local case completely in my analysis. Can you please
-modify the condition and retest?
-
-Thanks,
-
-        tglx
-
-
-
-
-
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 518c70b8db50..643bfba65d48 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -60,7 +60,8 @@ vmlinux_link()
+ 	# skip output file argument
+ 	shift
+ 
+-	if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_IBT; then
++	if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_IBT ||
++	   is_enabled CONFIG_LIVEPATCH; then
+ 		# Use vmlinux.o instead of performing the slow LTO link again.
+ 		objs=vmlinux.o
+ 		libs=
+diff --git a/scripts/livepatch/klp-build b/scripts/livepatch/klp-build
+index e16584a4b697..385acb955861 100755
+--- a/scripts/livepatch/klp-build
++++ b/scripts/livepatch/klp-build
+@@ -234,6 +234,10 @@ diff_objects() {
+ 		# status "diff: $rel_file"
+ 
+ 		"$SRC/tools/objtool/objtool" klp diff "$orig" "$patched" "$output" || die "objtool klp diff failed"
++
++		if [[ $(basename "$output") = "vmlinux.o" ]] && [[ -e .vmlinux.o.cmd ]]; then
++			cp -f .vmlinux.o.cmd "$OUTPUT_DIR"
++		fi
+ 	done < <(find "$BUILD_DIR" -type f \( -name vmlinux.o -o -name "*.ko" \) -newer "$timestamp")
+ 
+ 	local nr_objs="$(find "$OUTPUT_DIR" -type f \( -name vmlinux.o -o -name "*.ko" \) | wc -l)"
 
