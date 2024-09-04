@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-314769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC1A96B84B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:23:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC4B96B84E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7AF1C21D4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB0228785F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E66D1CF7D2;
-	Wed,  4 Sep 2024 10:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHzbyYeA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39DA1CF5F2;
+	Wed,  4 Sep 2024 10:23:38 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59E7433C8;
-	Wed,  4 Sep 2024 10:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EAE1BD4E9;
+	Wed,  4 Sep 2024 10:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445388; cv=none; b=mVVDFbp2rfbRQgcQNO746OEXCuJvHGmlvfemVeha0hxVS5h4zJiZJTIJ+ThTxlyQpv6l9ad/F/GppX6A5gXZ/7Q3IBrR9skHZ8z0p4E+ZEQopCj0YecISVLM/sXRVokI/e0/ZjeeoNAAD0giYp9x2Zj/I4jPEYXClCsepjM4Wes=
+	t=1725445418; cv=none; b=X7qOpOWXiPrfDUkz8hDJIYk2OHDrDxtRNlyx+2vbTVpklGxADE0nbPFxdlJhr5DKkPk/CCL4AHWvsnZNx93uvdzKq9eO2vUPCRZiP40Ff4TnIF9J0Reifu+w1apQGI1Y6ycwIm/mlmzLUZXwBsEeP6mgluKlOw/CQuI2rnoUq7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445388; c=relaxed/simple;
-	bh=KusyjP40NvPPNolgPZoiAXBlqo5QAWZawLu7DwBCzhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTpiJnnbq6aj0EWALxw/exMU03Nn/hkVthqgMT5ha+ghc25LQg0CdQoNY6pHELap1BK9sfpvgI6kftD1Hzjca1UpA6T8GPl2DO6TCou54u+xqShsILHsoOGLJSQBqlxWBlpTFFnqgcLculee/PYtGj5bzBxgDxJUDyHrO5ZT7m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHzbyYeA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DFCC4CEC2;
-	Wed,  4 Sep 2024 10:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725445388;
-	bh=KusyjP40NvPPNolgPZoiAXBlqo5QAWZawLu7DwBCzhc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fHzbyYeAoq0O0eGXRwa0QXMyEwV9wyAL6PsWkDpyKlREy5/47pC3aKy4ipVL22ixl
-	 4Lx7Y6CM8HPnBwN5eO5SCZ84KuyawoDGPq0bTR/pFPUwLqwfB3+oqzSmuMSXpoldrU
-	 kOdLpwkBLALPf6WrJamCyslVZ6Hq+aWNnU1vWXjtTP1iwM8KOFegQnjk8llIrIJ5mp
-	 gIo92ajWRXa/2l9YRlOv4db5kzFuJvRRNbGGHbFDFvCl114EdD/y+i/28CLdCWRWFX
-	 9EHbDesYf7GZzqkKJv/QlpZeqwOVcbrTyjzbhXOiJknMBEeWI06SvxYs2D1sVdBkJ9
-	 b+kzceb1M4Faw==
-Message-ID: <22657edf-5df9-44dc-b2a8-134ae613d819@kernel.org>
-Date: Wed, 4 Sep 2024 12:23:01 +0200
+	s=arc-20240116; t=1725445418; c=relaxed/simple;
+	bh=a38Jd1/NRnPhHmg1CPPXqGxYX5cTaTZlx/zAtYGpOuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0Dez6vaHDH/oouzR/76E6six/zjMVpampoDRctrOU51klOmLCC3Lwp6GSz8gX0dHfhtAh2kGG3fmyPs08oEEumra+F87x088AOK/63fqpkdDnRPYz6w8Pnz19eK6BoERidiy3uEoJP97Y1s4ekfzEZJGv4YNzBNdUaLP3D+O88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 031EE21A0C;
+	Wed,  4 Sep 2024 10:23:35 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECC20139D2;
+	Wed,  4 Sep 2024 10:23:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VSnKOSY12GbrJwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:23:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7FF20A0968; Wed,  4 Sep 2024 12:23:34 +0200 (CEST)
+Date: Wed, 4 Sep 2024 12:23:34 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v3 04/12] ext4: let __revise_pending() return newly
+ inserted pendings
+Message-ID: <20240904102334.a2th4zv4szuae7by@quack3>
+References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
+ <20240813123452.2824659-5-yi.zhang@huaweicloud.com>
+ <20240904101515.2v2pwvacjltss2zk@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: add base QCS615 RIDE dts
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
- <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
- <22qkvfravm6sxiq3xfavahg2u6b2pwlyzqbqvd55zym5zef3gi@m4bsqkdvggty>
- <17d0017e-b55d-4b32-9fd3-1a1a84e5ebf9@quicinc.com>
- <0ec92d59-0648-40ed-a522-307152b5c37d@kernel.org>
- <148451f2-6b1b-4616-b703-fd52e7afa2be@quicinc.com>
- <90c98fee-770c-4b83-9e05-6f04866094c2@kernel.org>
- <729deff2-d5df-4409-b941-af22de408521@quicinc.com>
- <9ded31cf-5b14-426a-a10c-694f20d4fb9e@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <9ded31cf-5b14-426a-a10c-694f20d4fb9e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904101515.2v2pwvacjltss2zk@quack3>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 031EE21A0C
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-On 4.09.2024 11:32 AM, Krzysztof Kozlowski wrote:
-> On 04/09/2024 10:35, Lijuan Gao wrote:
->>
->>
->> 在 8/28/2024 5:34 PM, Krzysztof Kozlowski 写道:
->>> On 28/08/2024 11:31, Lijuan Gao wrote:
->>>>>>>> +/ {
->>>>>>>> +	model = "Qualcomm Technologies, Inc. QCS615 Ride";
->>>>>>>> +	compatible = "qcom,qcs615-ride", "qcom,qcs615";
->>>>>>>> +
->>>>>>>> +	chosen {
->>>>>>>> +		bootargs = "console=hvc0";
->>>>>>>
->>>>>>> Noooo, last time I agreed on this, you told me later it is different.
->>>>>>>
->>>>>> In the early stages, enabling HVC is to more easily verify clock and
->>>>>> PMIC related functions, as it’s difficult to debug without the console
->>>>>> log. After the clock and PMIC are ready, we will enable the UART console.
->>>>>
->>>>> Working serial is supposed to be part of the early submission.
->>>>>
->>>> Okay, I will remove it in the next patch.
->>>
->>> Can you post next version with proper serial device?
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> Hi Krzysztof,
->>
->> Can we use the dts without console enabled as the first version? When 
->> the clock is ready, we will submit new changes to enable the UART console.
+On Wed 04-09-24 12:15:15, Jan Kara wrote:
+> On Tue 13-08-24 20:34:44, Zhang Yi wrote:
+> > From: Zhang Yi <yi.zhang@huawei.com>
+> > 
+> > Let __insert_pending() return 1 after successfully inserting a new
+> > pending cluster, and also let __revise_pending() to return the number of
+> > of newly inserted pendings.
+> > 
+> > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> It is very surprising not to have console available in the first, early
-> submission, but it is not a blocker for me.
+> AFAICS nothing really uses this functionality in this version of the
+> patchset so we can drop this patch?
 
-Lijuan,
+Now I've realized patch 6 indeed uses the new return value in one place.
+This patch looks good so feel free to add:
 
-I see that the initial submission is very slim. GCC+UART+TLMM is
-usually the smallest we tend to accept.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-While hooking up these drivers may take some time, please consider
-at least describing a subset of the clocks and the QUP UART, as
-everything non-SoC-specific is already in place.
+								Honza
 
-Konrad
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
