@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-315839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E17296C789
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:28:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469F496C78A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001D01F25500
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791481C21FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC9F1E6DF2;
-	Wed,  4 Sep 2024 19:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3A1E6DE0;
+	Wed,  4 Sep 2024 19:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c61TmSxq"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lTqY2YMR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Js8iIcxo"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98D114037F;
-	Wed,  4 Sep 2024 19:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3F11E7648
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725478077; cv=none; b=hPUd7JpQpmoDIcJvfxuNYcTo359ggLgQqW9Y+2x01SK18PYk2cfYMAA7WrahJCYCK/fzWQuHitHbhqhjL2LFFbnsVlYuA+7sWjP/mff6xzzWT5TUwv0wckPO82z+h0CXWi84txialrVfbBUIqDkoXRpyDkoKxs6RwAk+dVhgaK8=
+	t=1725478098; cv=none; b=EmIwBFaVjjWnxqpo1cTEzSkBqeKGnzw6MKSl2mfUAWBBHRVIF/J6gFtG9UUk1xYtE2b9QTOJPTU9YP+q4z4011/n8n1jIfw+QTte9okgErfo9Cwu+IgqgonDAxXAQWUcxgibnYz7Y9anayVVjVb5Uk+FAtC/onRcFL0rs4hD9dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725478077; c=relaxed/simple;
-	bh=9l7M6l8+1s6gJqAZcbJspUFOvEvq6t4AxCwZscOxaH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OZtbxkqigOH0UxE2PaeL63meO/TPhdqn08bbcIbygvKNKgGgZ7gKsrevfk+LFNZTIlCm9riNjNnEaKBG+lCB5I6JAl8Gpb21v7yVqOHx4bZ9eMx76CxsSf+llLhIhMRDJxLVaoGsmdtXRQDn8nZWoBPodCpCJNE2pRAgEkRV+4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c61TmSxq; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42bb81e795bso56917345e9.1;
-        Wed, 04 Sep 2024 12:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725478074; x=1726082874; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HTQfgjsN6xkPuwzyk867uytloUf4CfdMonVobtQI8x0=;
-        b=c61TmSxqt+sKJHt371VrCFhoAYEmYfuH3xQW0ekpiwwgNd2pRGpjpdDGVno6fBOIlj
-         kkIm2neWlYV1+au0IUGrtVcINJnUWV2SyJdFtxduCs6H6M7et87ICwQqNeXfpq55poMa
-         llAcUIPpkaMsGPmvMcpizQ1qSASkMXdB8nOMbDzDSIrIGQIanjDMzW6YpPJE9mQww7PC
-         NjAX9YJWI/SBgqLelIs0fptHLWctgaxRKe/R5zaoyA0assFwHN7qEtJ9lYE3mxg0W9dc
-         mspsVrW+66nXl1mT2N62bNv1Y7nsrje6fTIOLGkPgYzmjCx3ikk8le5i08QPEI/V/obM
-         s1BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725478074; x=1726082874;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTQfgjsN6xkPuwzyk867uytloUf4CfdMonVobtQI8x0=;
-        b=gYE4ds/w7FBurWisfcu4z2TG0W2AVo+V4KggcZ8lDvgVQfdnBgVGhoIx7lmVKbMt8C
-         1XJlUgE05hpk/QS2z37M94Ni3sba66BcYu09SgiELFWkGJ/lnI1+jlS304SQoNiCW70e
-         gB0yWKCe1lWY0St8VEh0emJkEvj4UDP6lWRFhXPlQSoKO6Xlpa5L0kBAPJDwcvjrvRQA
-         D8dxP6e/SK9VN/Rvjqm91k2v77eCwMoTo1kf67StjWM9a6+cAhuCUeQ/p+GRuHe1qt8b
-         l5xdT2kx3MBY2MXrj/eXm7y5m9t5lImlj1ImN6a+mkHVsJ8Y1cAkSxKdgH/mNCJ/5iot
-         botA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvZmptPeauz/7A6taGVwQh6ZSMWoD6/0ge52H49Ut9tLEGiILZqtDhKvBPlsYDOEovFqf+RrsfI/jk0w==@vger.kernel.org, AJvYcCVDWl1D3Y61LFVSzqR7kny2FAII6F33ub2Q+t26IybxIzIZMmboJikD6rQMq1Ek6D0kpNSjXEtPAbBqzn2d@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN6or7IeBjkV5axppcEjBjZZZ2N1NK6mvnE3be1yTqy2U5eb4G
-	GEAYNG7ncYpnJI/COV5Dvn9/wZe8ksqJEWRV5/E53tjD9fXI1+BY
-X-Google-Smtp-Source: AGHT+IEpjylxfihbZ8h8fejxPh361yOFL+c45KgezRCzJw4uBjepa8n/75efX2oE7JiSnlx0qAAzNw==
-X-Received: by 2002:a05:600c:1ca0:b0:424:a2be:c161 with SMTP id 5b1f17b1804b1-42bbb216f26mr139247665e9.20.1725478073846;
-        Wed, 04 Sep 2024 12:27:53 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df0a42sm208524125e9.11.2024.09.04.12.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:27:52 -0700 (PDT)
-Message-ID: <3ff97fb3-27e0-496e-a8b0-0c2d69deeff2@gmail.com>
-Date: Wed, 4 Sep 2024 21:27:52 +0200
+	s=arc-20240116; t=1725478098; c=relaxed/simple;
+	bh=j9JtzA7oZrhdfz4BhQ6rr1o20qdXbxicbEEGWEgUOwk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=OSzxJiAB887cisfX1RQ8G6wRZo4wD3mgJFWFXIcYixM0PcJLmYDrlxkkQ0yvykqq8OtFIR2u08HPAXYukIguqK1iZx/D9IUruHECqaKIkzGttBNeRYCIurvRp2s9NcsZIoKCN8CFJWD+5EV5vhWmti5eKLJ1ExGWOiqV5wdkF5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lTqY2YMR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Js8iIcxo; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id A791313801C6;
+	Wed,  4 Sep 2024 15:28:14 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 04 Sep 2024 15:28:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725478094;
+	 x=1725564494; bh=j9JtzA7oZrhdfz4BhQ6rr1o20qdXbxicbEEGWEgUOwk=; b=
+	lTqY2YMRLHW6kolQpGZrpD6FkJiIave/lqpkCqtATDw6reefHCmgNW+oGPbTasmt
+	zKk9Dw0MTt/wjPZFvuDzbxophzIs4Vibqz2LNyZVS8MiHgQ6RTGHGyqFYJUqwzGX
+	FqVWQ+mNmYy9M+oJD9HchFnsgWqyIyv538F/TfLYL/GI8TpiUYgDE9R4VlQRhjWv
+	aVn9u2LMz21/h4vdGPQZuE/BRcNuUaBkiI+egbGbsvFImU6FSm0fH1LG2RejyO6q
+	fZFZnbjWwcQNnVlyBrezbj9IO/WrgWIL98syh1ZYoCFO2GFko2cWSEEqWvANgTfE
+	JjZCCkVg1zRZM2mHHgBrLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725478094; x=
+	1725564494; bh=j9JtzA7oZrhdfz4BhQ6rr1o20qdXbxicbEEGWEgUOwk=; b=J
+	s8iIcxoivQ9o4636Ov3c5rg9jvNjTo6t9U8G4xF7jCaVbIjMBlB92N4EbisL6f4L
+	7IWR9ydIJKPRpoW2FyZNiFH49p2eg1oYvd2C8KPjdbPC85q7o8LiuZIw6bjN9YLb
+	2rJLrkdG7SuXODH6VwqoqSxwOGqRiMyHWUsu2EBk10t5BvXEuPF7MkmboXczpDax
+	RnD/9CL7QR2iBVUbVdLH0PeGbWMz1/PN7YrYa+Ml1w5hCTuCkmg+/IWJARlWO7ig
+	VlUYflUtGi3OHGWeE8LQaSokLUQ46clH5vbaic70tvhhhrbPRjtDcESieZ1npf2l
+	JxMEl5SWBhfcAftpRwy7g==
+X-ME-Sender: <xms:zrTYZoXbbelOaaVkRT9lRueNA3MmuPAnMEIdEN8bv1_sM9Y4tPSBDQ>
+    <xme:zrTYZskRkhM-WJS943Jv92dbTu7VP__kpSJMB6-uohMD_rcQUUpORSRhOr1eCHyca
+    CHBfzv0wo6xF8lerW4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedgudefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrd
+    horhhgrdgruhdprhgtphhtthhopegtghiiohhnvghssehgohhoghhlvghmrghilhdrtgho
+    mhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zrTYZsaA2DuIevPeUKtPDxjQJXUd1uYhwFeSIAiXz1p0yRxWM40hpQ>
+    <xmx:zrTYZnUkTK561GsxzoVNYRFmQyA2pNC8VVPxvG8JYGREx4LkGIsMmg>
+    <xmx:zrTYZiloTO3TpfrGNfE5Ccwnnz5vcb5X6614jtBBpe76zV95NBi2QQ>
+    <xmx:zrTYZsfLz8MBB9Xm5VO1v-iQ-DFQhyimqGa-CI2knzC3Q1VY2-bO1w>
+    <xmx:zrTYZkhDxT9Ck_40G1fK-sf3rlndx9MI3NQs8m5Cqi2anmi_hIftNmun>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3686E2220083; Wed,  4 Sep 2024 15:28:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/22] Input: regulator-haptic - use guard notation when
- acquiring mutex
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- Ville Syrjala <syrjala@sci.fi>,
- Support Opensource <support.opensource@diasemi.com>,
- Eddie James <eajames@linux.ibm.com>, Andrey Moiseev <o2g.org.ru@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>, Jeff LaBundy <jeff@labundy.com>,
- linux-kernel@vger.kernel.org,
- Javier Carrasco Cruz <javier.carrasco.cruz@gmail.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Sep 2024 19:27:53 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Charlie Jenkins" <charlie@rivosinc.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org
+Message-Id: <c607a122-ebd7-4da1-96a6-be153258f0f4@app.fastmail.com>
+In-Reply-To: 
+ <20240904-xattr_standard_functions-v1-1-60ccfa9d41e0@rivosinc.com>
+References: 
+ <20240904-xattr_standard_functions-v1-1-60ccfa9d41e0@rivosinc.com>
+Subject: Re: [PATCH] fs/xattr: add *at family syscalls to common syscall.tbl
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 04/09/2024 06:49, Dmitry Torokhov wrote:
-> Using guard notation makes the code more compact and error handling
-> more robust by ensuring that mutexes are released in all code paths
-> when control leaves critical section.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/regulator-haptic.c | 23 ++++++++---------------
->  1 file changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/input/misc/regulator-haptic.c b/drivers/input/misc/regulator-haptic.c
-> index 02f73b7c0462..41af6aefaa07 100644
-> --- a/drivers/input/misc/regulator-haptic.c
-> +++ b/drivers/input/misc/regulator-haptic.c
-> @@ -83,12 +83,10 @@ static void regulator_haptic_work(struct work_struct *work)
->  	struct regulator_haptic *haptic = container_of(work,
->  					struct regulator_haptic, work);
->  
-> -	mutex_lock(&haptic->mutex);
-> +	guard(mutex)(&haptic->mutex);
->  
->  	if (!haptic->suspended)
->  		regulator_haptic_set_voltage(haptic, haptic->magnitude);
-> -
-> -	mutex_unlock(&haptic->mutex);
->  }
->  
->  static int regulator_haptic_play_effect(struct input_dev *input, void *data,
-> @@ -207,17 +205,14 @@ static int regulator_haptic_suspend(struct device *dev)
->  	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
+On Wed, Sep 4, 2024, at 19:03, Charlie Jenkins wrote:
+> Commit 6a7fb6ebe371 ("fs/xattr: add *at family syscalls") didn't add the
+> syscalls to the common scripts/syscall.tbl that was also recently
+> introduced in commit 4fe53bf2ba0a ("syscalls: add generic
+> scripts/syscall.tbl") which a handful of architectures use.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-error became an unused variable and can be dropped.
-
->  	int error;
->  
-> -	error = mutex_lock_interruptible(&haptic->mutex);
-> -	if (error)
-> -		return error;
-> -
-> -	regulator_haptic_set_voltage(haptic, 0);
-> -
-> -	haptic->suspended = true;
-> +	scoped_guard(mutex_intr, &haptic->mutex) {
-> +		regulator_haptic_set_voltage(haptic, 0);
-> +		haptic->suspended = true;
->  
-> -	mutex_unlock(&haptic->mutex);
-> +		return 0;
-> +	}
->  
-> -	return 0;
-> +	return -EINTR;
->  }
->  
->  static int regulator_haptic_resume(struct device *dev)
-> @@ -226,7 +221,7 @@ static int regulator_haptic_resume(struct device *dev)
->  	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
->  	unsigned int magnitude;
->  
-> -	mutex_lock(&haptic->mutex);
-> +	guard(mutex)(&haptic->mutex);
->  
->  	haptic->suspended = false;
->  
-> @@ -234,8 +229,6 @@ static int regulator_haptic_resume(struct device *dev)
->  	if (magnitude)
->  		regulator_haptic_set_voltage(haptic, magnitude);
->  
-> -	mutex_unlock(&haptic->mutex);
-> -
->  	return 0;
->  }
->  
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
