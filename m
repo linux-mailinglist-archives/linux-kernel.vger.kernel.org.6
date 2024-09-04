@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-314780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805C096B87A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8057896B87D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1F3282EFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A623282B0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935461CCB24;
-	Wed,  4 Sep 2024 10:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0E31CF7CC;
+	Wed,  4 Sep 2024 10:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flMk+hiU"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xjZLShX6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eeYmRmdz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xjZLShX6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eeYmRmdz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392553FE55;
-	Wed,  4 Sep 2024 10:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21D3FE55;
+	Wed,  4 Sep 2024 10:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445699; cv=none; b=b3fpzl9MgvTJYV2pipVM1uDfQFnT5TKXtKKpIhjNV9J+8gqNjmzw2BRvyDtt3uQZRCETcS710yTYGf/cWvIWGjc/se252JXEKHeL7Aikuw6pbp2zxfr4Nb7EIVwN3EypDnFS2CZg32UEGYlCmIE0OX7Ny4Ge6i+grMhZvjxE1JE=
+	t=1725445707; cv=none; b=abJzJgz35sfm9Xnhe09viKgXyfMfFvK8+fJDHHeelQGRhoqWWae5EShGa3RZ6SjWYBJyn/m2Eb9rrXX1M/T6phvNBPQQeMPabTncFiy+XZ3Ijv1cE/OSO0YBDH9B7QxeuRSJ76XSjnVQtqFVPh0VDkuwzVnv7188e60Bnq1YPHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445699; c=relaxed/simple;
-	bh=bEDwC6P0xjlxvRvvmGGw5C86eeMHSi/vfZxzztdojmI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwyyPM78jnNJ74JKBQeprzvvJEHhEi1EK+OA5L/gWzpTr/xRejlakTC5r8VlepvOM0cFb/WLNiBC9wV2cg+pt7RO/e8Rg0aNcxyRqVXOqLcBl3EKGRB4l0ojgKwBgqicHZYaDqTG4VV83lm+BaJve5VO/q6bMM1rbroIUMi3tbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=flMk+hiU; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334879ba28so8805707e87.3;
-        Wed, 04 Sep 2024 03:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725445696; x=1726050496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYL0sYGdXC/I/pHzO8WanzF6Y9Cg7VaPORJxEUAHEEM=;
-        b=flMk+hiUzR2FwhlhxIsU/SjE7qBnOkrcSX5Ump/2RJm086MTEn4OQDfahaiefba36Z
-         NnDxKNXiFb9IBKx/T7yr/m6G3P8+IuIbfjZWbYCNjxLXP0Wg9vJ41b+agyLdYn17WnQr
-         jiiVetZIHSoR4UEPyCxygfo6obEl3XXLpMNlgDSBqQ4iCeiqxwkUVfJPUqfccofmeqXn
-         9jzKGXE08Bz2FDHIIJCQryOAeUvtpY9TBmwuW1UEBtlGTgiDVA20XYLowG1GDhjPerL4
-         pKMX/X33ElkmwBLKjPTK4QUwonAx+Q5swmxhnXKUV3xIZ72HDUyfBFFSE9i2zpqK4IUK
-         zq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725445696; x=1726050496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SYL0sYGdXC/I/pHzO8WanzF6Y9Cg7VaPORJxEUAHEEM=;
-        b=d3sH9MlN+v7nIOWfITOb/LLTnlVELjcxSGgU0aERMB3oo2mYUMxTnz5KAdpZplOO4E
-         wbc3Lyhg9D6BTg5yUKuImT8UuoSl1/sYlaiAf8UR+qXSOHEhnExeajkxQKgEihmoa1Gx
-         HLaz1JVasSBp/7GpeYYP5N1q3HV5bsCRoyQ/h/ywNdDXnGyIDyzE+Cm9fQOGO4cf8SVD
-         sB55CUj2zgcA+9WMzQcRLESHSSCf0isBmeYTZtlukwfs2KrAizhLDh5H8+9ylbazb3Uz
-         TzFfA94U9TVGx/gS6lS6atAfmHimfIylqYMcqPHjPOaIkoFdUc9yuyPHDNCBHCktZNKO
-         Ca/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbPKrnyKGB7QZHsYwT6Aiu3HtsBSampa6I6JCj2FG2LFpY+fotomjRyx+cympX83xGIx5mBEhVYn74@vger.kernel.org, AJvYcCW9lYKvsQubYIPJ7Q1TEAx890nQnh6bN2G5DLMQsvST2Npl2xuo0EUvuv9AtabwqSaQf6nc9ykhi4j5@vger.kernel.org, AJvYcCWjy9+dbjNR48w9+7ZjsvIX31NuNcHm51G6c2KfOF+JQBg3pgK+NglkKm/dufqKbADPzM6aQ+EV8qjlxBK/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCvEVtk53eSG09te3PL1MFQvQsS0IE48FmMg9MnfZYUybP9x36
-	89smZxxORDimMAkWUg4qgULeNeOG5LrgOQtYXdTyhcTDpvwlGC2Y
-X-Google-Smtp-Source: AGHT+IG0jYC415UmOsI2K9f8so+E1NXCaskDfn0PHPmvNdSFyZkKWPDFpAjwBjE7nv2N7jA8sZB3dg==
-X-Received: by 2002:a05:6512:3352:b0:535:6992:f2cb with SMTP id 2adb3069b0e04-5356992f407mr750590e87.42.1725445695259;
-        Wed, 04 Sep 2024 03:28:15 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:2f85:317:e13:c18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6dc3sm783627266b.156.2024.09.04.03.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 03:28:14 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 4 Sep 2024 12:28:12 +0200
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v5 6/7] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <20240904102812.GB44250@vamoiridPC>
-References: <20240902184222.24874-1-vassilisamir@gmail.com>
- <20240902184222.24874-7-vassilisamir@gmail.com>
- <Ztce3XuXZ-hxwU8h@smile.fi.intel.com>
+	s=arc-20240116; t=1725445707; c=relaxed/simple;
+	bh=umhxUpM+Zq6IHhv/x/708aecux8FbC2pcdJswZT+FP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAi8eFfXJPjw5WhqPL1v2cU9vhSB3zHmWd2d0ZEbnO3hHjtPoPM2Zlk5h2nyQ8PQIC1hdN/JnueAiXvcm7GcmkwcDSsKdjFM5H66c8LEq42S2bQo1/JnaiykN3q/tyDky29UL4Vo7II0Yv6UYnNG478oyGzu/BomFEv2BpFGRs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xjZLShX6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eeYmRmdz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xjZLShX6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eeYmRmdz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 27B9F219D2;
+	Wed,  4 Sep 2024 10:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725445704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnGA4N4BvKwpcdMqHB1IhGKFzGHeaY69yamcpuxJgF4=;
+	b=xjZLShX6B6gQor0VVNG5J+x4E3OWPXYLu6U6bEzpEulb+wEOGq5WY7VYZxK/oRGitRcmKY
+	mlzyqo29ObAFeno6Biqn/PDLU9UM6bFku3JbORMPv+tV+rx9TqIZ0NNArYv1S3Zhu62L4D
+	h0nSGMJ/u/7SrQi7gcfqFNARL1vQdJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725445704;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnGA4N4BvKwpcdMqHB1IhGKFzGHeaY69yamcpuxJgF4=;
+	b=eeYmRmdzwI4D2WtoUAFFQP8vjkS+9acYpcew7rR2NYdhxXgZY3SqM9R6fL4C01GYaDPPxY
+	GOvQ+WsQBf3bhsDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725445704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnGA4N4BvKwpcdMqHB1IhGKFzGHeaY69yamcpuxJgF4=;
+	b=xjZLShX6B6gQor0VVNG5J+x4E3OWPXYLu6U6bEzpEulb+wEOGq5WY7VYZxK/oRGitRcmKY
+	mlzyqo29ObAFeno6Biqn/PDLU9UM6bFku3JbORMPv+tV+rx9TqIZ0NNArYv1S3Zhu62L4D
+	h0nSGMJ/u/7SrQi7gcfqFNARL1vQdJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725445704;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnGA4N4BvKwpcdMqHB1IhGKFzGHeaY69yamcpuxJgF4=;
+	b=eeYmRmdzwI4D2WtoUAFFQP8vjkS+9acYpcew7rR2NYdhxXgZY3SqM9R6fL4C01GYaDPPxY
+	GOvQ+WsQBf3bhsDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1ACB9139D2;
+	Wed,  4 Sep 2024 10:28:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a9yJBkg22GZNKQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:28:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BA2B8A0968; Wed,  4 Sep 2024 12:28:19 +0200 (CEST)
+Date: Wed, 4 Sep 2024 12:28:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v3 10/12] ext4: make extent status types exclusive
+Message-ID: <20240904102819.b5ouynw6k5nj3yff@quack3>
+References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
+ <20240813123452.2824659-11-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,151 +104,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ztce3XuXZ-hxwU8h@smile.fi.intel.com>
+In-Reply-To: <20240813123452.2824659-11-yi.zhang@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 03, 2024 at 05:36:13PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 02, 2024 at 08:42:21PM +0200, Vasileios Amoiridis wrote:
-> > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
-> > a trigger for when there are data ready in the sensor for pick up.
-> > 
-> > This use case is used along with NORMAL_MODE in the sensor, which allows
-> > the sensor to do consecutive measurements depending on the ODR rate value.
-> > 
-> > The trigger pin can be configured to be open-drain or push-pull and either
-> > rising or falling edge.
-> > 
-> > No support is added yet for interrupts for FIFO, WATERMARK and out of range
-> > values.
+On Tue 13-08-24 20:34:50, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> ...
+> Since we don't add delayed flag in unwritten extents, all of the four
+> extent status types EXTENT_STATUS_WRITTEN, EXTENT_STATUS_UNWRITTEN,
+> EXTENT_STATUS_DELAYED and EXTENT_STATUS_HOLE are exclusive now, add
+> assertion when storing pblock before inserting extent into status tree
+> and add comment to the status definition.
 > 
-> > +static int __bmp280_trigger_probe(struct iio_dev *indio_dev,
-> > +				  const struct iio_trigger_ops *trigger_ops,
-> > +				  int (*int_config)(struct bmp280_data *data),
-> > +				  irq_handler_t irq_thread_handler)
-> 
-> Would it make sense (note, I do *not* know the correct answer!) to have
-> something like
-> 
-> struct foo {
-> 	const struct iio_trigger_ops *trigger_ops;
-> 	int (*int_config)(struct bmp280_data *data);
-> 	irq_handler_t irq_thread_handler;
-> };
-> 
-> and pass it around?
-> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-From my point of view it won't be more clear, it might complicate things,
-I feel like this *looks* better.
+Looks good. Feel free to add:
 
-> Also int_config sounds non-related to interrupt, however it's about interrupt
-> pin, right? perhaps name it differently here?
-> 
-> E.g.,
-> 
-> 	interrupt_pin_config
-> 
-> ?
-> 
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This sounds good yes!
+								Honza
 
-> > +{
-> > +	struct bmp280_data *data = iio_priv(indio_dev);
-> > +	struct device *dev = data->dev;
-> > +	struct fwnode_handle *fwnode;
-> > +	u32 irq_type;
-> > +	int ret, irq;
-> > +
-> > +	irq = fwnode_irq_get(dev_fwnode(dev), 0);
-> > +	if (irq < 0)
-> > +		return dev_err_probe(dev, irq, "No interrupt found.\n");
-> > +
-> > +	irq_type = irq_get_trigger_type(irq);
-> > +	switch (irq_type) {
-> > +	case IRQF_TRIGGER_RISING:
-> > +		data->trig_active_high = true;
-> > +		break;
-> > +	case IRQF_TRIGGER_FALLING:
-> > +		data->trig_active_high = false;
-> > +		break;
-> > +	default:
-> > +		return dev_err_probe(dev, -EINVAL, "Invalid interrupt type specified.\n");
-> > +	}
-> > +
-> > +	data->trig_open_drain =
-> > +		fwnode_property_read_bool(fwnode, "int-open-drain");
+> ---
+>  fs/ext4/extents_status.h | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 > 
-> 
-> Where do you initialise fwnode?
-> 
-
-Ok, I need to retest this with the device-tree.
-
-> > +	ret = int_config(data);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
-> > +					    indio_dev->name,
-> > +					    iio_device_id(indio_dev));
-> > +	if (!data->trig)
-> > +		return -ENOMEM;
-> > +
-> > +	data->trig->ops = trigger_ops;
-> > +	iio_trigger_set_drvdata(data->trig, data);
-> > +
-> > +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
-> > +					irq_thread_handler, IRQF_ONESHOT,
-> > +					indio_dev->name, indio_dev);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "request irq failed.\n");
-> 
-> IRQ
-> 
-
-ACK.
-
-> > +	ret = devm_iio_trigger_register(data->dev, data->trig);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "iio trigger register failed.\n");
-> > +
-> > +	indio_dev->trig = iio_trigger_get(data->trig);
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> 
-> > +static int bmp580_data_rdy_trigger_set_state(struct iio_trigger *trig,
-> > +					     bool state)
-> > +{
-> > +	struct bmp280_data *data = iio_trigger_get_drvdata(trig);
-> > +	int ret;
-> > +
-> > +	guard(mutex)(&data->lock);
-> > +
-> > +	ret = regmap_update_bits(data->regmap, BMP580_REG_INT_CONFIG,
-> > +				 BMP580_INT_CONFIG_INT_EN,
-> > +				 FIELD_PREP(BMP580_INT_CONFIG_INT_EN, !!state));
-> > +	if (ret)
-> > +		dev_err(data->dev,
-> > +			"Could not %s interrupt.\n", str_enable_disable(state));
-> > +	return ret;
-> 
-> Somewhere above (or in another patch) you used the style with 'return 0;' at
-> the end. Please, check the resulting code for the consistency and choose one
-> style for all.
-> 
-
-ACK.
-
-> > +}
-> 
+> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
+> index 3ca40f018994..7d7af642f7b2 100644
+> --- a/fs/ext4/extents_status.h
+> +++ b/fs/ext4/extents_status.h
+> @@ -42,6 +42,10 @@ enum {
+>  #define ES_SHIFT (sizeof(ext4_fsblk_t)*8 - ES_FLAGS)
+>  #define ES_MASK (~((ext4_fsblk_t)0) << ES_SHIFT)
+>  
+> +/*
+> + * Besides EXTENT_STATUS_REFERENCED, all these extent type masks
+> + * are exclusive, only one type can be set at a time.
+> + */
+>  #define EXTENT_STATUS_WRITTEN	(1 << ES_WRITTEN_B)
+>  #define EXTENT_STATUS_UNWRITTEN (1 << ES_UNWRITTEN_B)
+>  #define EXTENT_STATUS_DELAYED	(1 << ES_DELAYED_B)
+> @@ -51,7 +55,9 @@ enum {
+>  #define ES_TYPE_MASK	((ext4_fsblk_t)(EXTENT_STATUS_WRITTEN | \
+>  			  EXTENT_STATUS_UNWRITTEN | \
+>  			  EXTENT_STATUS_DELAYED | \
+> -			  EXTENT_STATUS_HOLE) << ES_SHIFT)
+> +			  EXTENT_STATUS_HOLE))
+> +
+> +#define ES_TYPE_VALID(type)	((type) && !((type) & ((type) - 1)))
+>  
+>  struct ext4_sb_info;
+>  struct ext4_extent;
+> @@ -156,7 +162,7 @@ static inline unsigned int ext4_es_status(struct extent_status *es)
+>  
+>  static inline unsigned int ext4_es_type(struct extent_status *es)
+>  {
+> -	return (es->es_pblk & ES_TYPE_MASK) >> ES_SHIFT;
+> +	return (es->es_pblk >> ES_SHIFT) & ES_TYPE_MASK;
+>  }
+>  
+>  static inline int ext4_es_is_written(struct extent_status *es)
+> @@ -228,6 +234,8 @@ static inline void ext4_es_store_pblock_status(struct extent_status *es,
+>  					       ext4_fsblk_t pb,
+>  					       unsigned int status)
+>  {
+> +	WARN_ON_ONCE(!ES_TYPE_VALID(status & ES_TYPE_MASK));
+> +
+>  	es->es_pblk = (((ext4_fsblk_t)status << ES_SHIFT) & ES_MASK) |
+>  		      (pb & ~ES_MASK);
+>  }
 > -- 
-> With Best Regards,
-> Andy Shevchenko
+> 2.39.2
 > 
-> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
