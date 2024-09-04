@@ -1,130 +1,211 @@
-Return-Path: <linux-kernel+bounces-316076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E0F96CAD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015B796CAD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FDE286692
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9921F28494
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5162F17ADFF;
-	Wed,  4 Sep 2024 23:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796CF17B436;
+	Wed,  4 Sep 2024 23:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MPsKM2WV"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1eqaWgET"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295C41779A5
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBB114D703
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725492993; cv=none; b=hGEmw1tW3kckjj0jy8yiI0kmcgnCjZ+6mdgt9nBLOAJzULV1Sjnq6z9lZOpENuOb2QFPsRmaitJSBjbaBnpqjCNer1Q+NYbB9IcbSLwr7JggQ4WhGNAw90EGHmFmK7CLcz64/wteTQ61vGvEKNhNajuHGqOE8xZFasjivo+kL0w=
+	t=1725493027; cv=none; b=CK2/gDYNUtvXslMObsWIrvsdo7ATBpV8R4UgpuwfBZPtYNoEaTMyOn4BeXBEAgRKvA6bd60EHbaKriXLD0KiprEpemzTu/4yzBvUq1uU0bab8NOEQKbLNhCJ5BWy2jd1dtRiJWoodKNbPRg4qNwphKBcn0ysbKYVuojD0v7yeA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725492993; c=relaxed/simple;
-	bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
+	s=arc-20240116; t=1725493027; c=relaxed/simple;
+	bh=2i7jdujG8eIGFsZ+R4bmgK7Z9BWm3NOZw8YsCrlObMA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEUfOfkPOyJ6467RbohGw/ICjyW8m0uD8kBPNJKagbtaW2MBACe1LlnPMyHQJRkGBnPrqvE2MqrrPhCVsn0OFFCYwC309fbLz2LY5VWVoRPMrWI7YH5yeHGiCuEMAUbfJWZrR6IVPz5t2J1XapORHNxVr5vCuLcAsRCJqggdEFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MPsKM2WV; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=K5tLaQEbUjSBQQpqnutSzMnKAAU7GFI/1olt9rhV7SBEWgAtvZk2GxtX8z/uY+m/gER169f7DjcfkPiGIoUKhmmUySXDdPzS6Ur7ki59V1uafheMFbDZXknVqA38095X8zTI25VvDzMLRxRWZTDCsqoxTQu+RB17fuQ7BsqP+lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1eqaWgET; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a80eab3945eso29958866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:36:31 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5353d0b7463so162818e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 16:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725492990; x=1726097790; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
-        b=MPsKM2WVt2sUBm90hKCTyGq0lMMgYb8rN5ZKj2LPs7Oc7D4KBP8sY8zGdsWA3/Tdl3
-         q8o6LJV0k0I11gnyXcAWb4fGrU74CbNvBnqeWHDPwYQ9pWO+u8OmdUZTqPmTdgb3Qaeq
-         9PUedgVeRVU+hvEmHVheNXMt4QM4zRng1cL2LzeNGVnffz/wQRWQCyCyJkaPYPROUalG
-         wy2pYiXsVc3SFUohOJtM45+O6URRQOauuxtjmdtpRkrBkazKFMmVMTDSCGLkE4mNja9z
-         Q/qcjKbOQte4DBaZYaamAUc0U1Qojsos93X6dw0NzJTB6s0Sa33LrtWpv2DGIV4LNGOW
-         zfXA==
+        d=google.com; s=20230601; t=1725493024; x=1726097824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2i7jdujG8eIGFsZ+R4bmgK7Z9BWm3NOZw8YsCrlObMA=;
+        b=1eqaWgETO1xRo2jo5wr+ZAL33aM3GPaNzGCPaYfo6R5cGxS5v99iPGytYIFxd0QOVH
+         p9eRlqYtt+0ASiNsCbSZfZlxu8dKM5yMPquEKPrTlFnNMqP1I5slabllUI/WIBTRegQn
+         9njkFdPPLuBHdAPHAlkEcOiBFEpoZ/2jLe9cdjmpq1qmKKr8As8N9xg4Zm6O4qVQBOgy
+         XMBayZAw5QvXrwcw4C9rri1U5FRVw/PksguoJB+JsuJwsHCT9qXxLFjE2q4/ZTFOA29Z
+         4TJygzfTY5Ou/2HmPoiJtumdkS3zpWWPAST99bDDKUsjza6NIK9lvEPUNsM+ioVjtfY3
+         otDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725492990; x=1726097790;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fOa1Q51qe4eSFjqGABixW/4hdYdiQtGL11hyrEMANlA=;
-        b=smQA7pRjY9GejlppJ7SXuY4PMoedmjjhgpk5VPcnTFwLlLCpgv05fOjdILBuCO9rZm
-         91biMZKfL/ajm2P4SAi+Mw4Y3904zOvLtEuFxfRYH7OIiAXyutC0JAaN/Rd7jHoA4WKv
-         3NqgMrv0+DDpHOd+3LqLlxkRYSgTnvEn0A8kAxAbdufj5UBowWGJV32FotImthUEs1Oj
-         S1BO4VVtxnVwwL3ojGQ0AUSSuXZD4KgjgOstLk/1XWjFnBSw0kb0negERsQfsqofp8M6
-         zxvyAZ7Ms+t9VN0UIMu9Y5OCYmxHiox924QDLchOSACxtdk8csxfjfnEaAjVgLg8P9yj
-         XEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgLGZwB7udhuYKtAqLEHIS1/EKP8WozSrM4Jsw1JBLvZNBZUl5kiPNSczsEk39oeGLri8027yye0xfdaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhmVox4G1o61BCTI0F0ZP6lyrdXBH3cYV6gIweBSP9uAvvN+ZZ
-	WZqeJFAg7VO54eNwRwxxK30unmg6hUBpNRvrBvBkm/jj8ZxQApFH+8pkX2MgXwDoPvcn84Mnmsq
-	Sx+VRdvLAVfVBlNAdeZB23iuB8fK5l6Cd62Cy
-X-Google-Smtp-Source: AGHT+IHDuuc1NSBZcv5eJMmcgD4W2enzMP+OEXUp/tHe1vBeLVIoJgIUtpVBiUuFO4YpWpSbAoDry8IrbZw74IYvlGY=
-X-Received: by 2002:a17:906:db07:b0:a86:ae95:eba3 with SMTP id
- a640c23a62f3a-a89a3823702mr1493644166b.62.1725492989563; Wed, 04 Sep 2024
- 16:36:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725493024; x=1726097824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2i7jdujG8eIGFsZ+R4bmgK7Z9BWm3NOZw8YsCrlObMA=;
+        b=j0IOLTPkSIIM4zjKL83xQ2qybtkpbVZh9eB+ZBr3iECz/+Br6nzRSW1Wj+zRKJN0Ts
+         NcyGvZRj6iQNbB9MtXSetRGnK32bfvj2KwPrna/xFOqK5HcwjwH5zmbqQTpMPWH5WLDQ
+         SKvEPRgBm37gm3JmlUvc9OU6iNNIV1B0AzsRU2ZEloP/3ShGd9Xk9L1wONgZ+ORqzfn4
+         vPqOJKJqpIZvbeQsyzEGhwH4rALdM0gU6oSSJNhHQOuZvulsI9Hem8q2/1zJOI6pTPcl
+         qcvT9Q6nJG9z38XGnslN4U4eKu1+H1EPdn8u4X5cG+RQgHgxco0bFMl4Eb0fjDCgJfeR
+         Wn6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMulFsSP7CSBL+Du3Oai7QkZRvn11IIjEMluBhhy7TiD6EaYg27HulK+xakQ0WrwDaCNZVM3GAhu8XZig=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4tFr5F3QyNYCohn4G3q07PQmnRLja81ww3tpInCQ810PnpzXW
+	Oay+FF18+U1Ka3OsxTd8VpPO9ZXbk8pASNloOAtmg6y7tZnEyUpYIx+m3Fncm0Bd6LY8YZru7w0
+	3OE4DVL/Z2P75cDEw4uocq1eqRCaEKprzDB2G
+X-Google-Smtp-Source: AGHT+IFqfOcvoCbUS5vOqB2O1EnmAuLB1CPavvPvZTFX9sDAQaTS7Ezm3gmoT4QSh8MVYb0iQpBoMJ7C62D7EK12AuY=
+X-Received: by 2002:a05:6512:3a94:b0:52e:936e:a237 with SMTP id
+ 2adb3069b0e04-53546b345a1mr17100135e87.16.1725493023268; Wed, 04 Sep 2024
+ 16:37:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
- <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
- <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
- <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
- <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
- <CAJD7tkaXvm95mRH04OX0KJtiBuTaaDyyJQirbAjUV0B+DjaWJA@mail.gmail.com>
- <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com> <CAGsJ_4yX7xmyDokYgc_H7MaxcOptcLeQs-SB1O22bSRHFdvVhQ@mail.gmail.com>
- <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com>
-In-Reply-To: <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com> <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com> <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com> <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com> <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+ <277CDE7C-7ED8-4840-9C30-533C9327B028@gmail.com> <CAJD7tkaTcnuCFW+dWTzSAuLKBqkkGv9s5uByYm9DaJC=Cp-Xqg@mail.gmail.com>
+ <EF0ABD3E-A239-4111-A8AB-5C442E759CF3@gmail.com> <CAJD7tkZi8Wg+ZCWMy=2YKZ3hLZZ7JYQaCG+w7y=3Tb8wmHC48g@mail.gmail.com>
+ <CAKEwX=PiyvV7AxKESk5zc9TN1n5b0uFR0pr_HGxKsUFUgk0q+Q@mail.gmail.com>
+In-Reply-To: <CAKEwX=PiyvV7AxKESk5zc9TN1n5b0uFR0pr_HGxKsUFUgk0q+Q@mail.gmail.com>
 From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 4 Sep 2024 16:35:52 -0700
-Message-ID: <CAJD7tkYu2v2VnMizVeOTHTNXXbdnd+UqaKhTRfrTC7THUiPPdA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
-	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
-	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
-	ying.huang@intel.com, hch@infradead.org
+Date: Wed, 4 Sep 2024 16:36:27 -0700
+Message-ID: <CAJD7tkZrf_RVT1+LtBMrpL0T==1757WSjHiSOHp7Pio0T-F5OQ@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[..]
+On Tue, Sep 3, 2024 at 3:43=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> On Tue, Sep 3, 2024 at 10:49=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
 > >
-> > On the other hand, if you read the code of zRAM, you will find zRAM has
-> > exactly the same mechanism as zeromap but zRAM can even do more
-> > by same_pages filled. since zRAM does the job in swapfile layer, there
-> > is no this kind of consistency issue like zeromap.
+> > On Mon, Sep 2, 2024 at 1:58=E2=80=AFAM Piotr Oniszczuk
+> > <piotr.oniszczuk@gmail.com> wrote:
+> > >
+> > >
+> > >
+> > > > Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed <yosryahmed@google.c=
+om> w dniu 31.08.2024, o godz. 19:23:
+> > > >
+> > > > On Sat, Aug 31, 2024 at 2:41=E2=80=AFAM Piotr Oniszczuk
+> > > > <piotr.oniszczuk@gmail.com> wrote:
+> > > >>
+> > > >>
+> > > >>
+> > > >>> Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed <yosryahmed@google=
+.com> w dniu 29.08.2024, o godz. 23:54:
+> > > >>>
+> > > >>> I also noticed that you are using z3fold as the zpool. Is the pro=
+blem
+> > > >>> reproducible with zsmalloc? I wouldn't be surprised if there's a
+> > > >>> z3fold bug somewhere.
+> > > >>>
+> > > >>
+> > > >> Hmm - yesterday i recompiled 6.9.12 with zsmalloc and =E2=80=A6. a=
+fter 16h of continuous tests I can=E2=80=99t reproduce issue.
+> > > >> With zsmalloc 6.9.12 looks to me like stable.
+> > > >
+> > > > Interesting, and a little bit what I hoped for tbh.
+> > >
+> > > :-)
+> > >
+> > > I tested mainline 6.10.7 with 26h test and also it is stable with zsm=
+alloc
+> > >
+> > > >
+> > > >>
+> > > >> With this - what will be your advice to move forward?
+> > > >
+> > > > Well, it's possible that some zswap change was not fully compatible
+> > > > with z3fold, or surfaced a dormant bug in z3fold. Either way, my
+> > > > recommendation is to use zsmalloc.
+> > > > I have been trying to deprecate
+> > >
+> > > IMHO - isn=E2=80=99t bug in this report + difficulties to reproduce->=
+fix enough to depreciate z3fold?
 > >
-> > So I feel for zRAM case, we don't need zeromap at all as there are duplicated
-> > efforts while I really appreciate your job which can benefit all swapfiles.
-> > i mean, zRAM has the ability to check "zero"(and also non-zero but same
-> > content). after zeromap checks zeromap, zRAM will check again:
+> > I would say this bug report is yet another reason why we should depreca=
+te it.
+>
+> +100000.
+>
+> This is precisely why I was asking which allocator was being used
+> here. We have also accidentally selected z3fold internally a couple
+> times in the past, which had bitten us as well.
+>
 > >
+> > >
+> > > > z3fold, and honestly you are the only person I have seen use z3fold=
+ in
+> > > > a while -- which is probably why no one else reported such a proble=
+m.
+> > >
+> > > Well - in fact this is ArchLinux - not me.
+> > > I=E2=80=99m using Arch and kernel in builder machine with ArchLinux c=
+onfig + packaging
+> >
+> > According to [1], zsmalloc should be the default allocator for zswap
+> > on ArchLinux. Anyway, I initially thought that no one was using z3fold
+> > and it was bitrot, but apparently some people are using it and it's
+> > actively harming them.
+> >
+> > [1]https://wiki.archlinux.org/title/Zswap
+> >
+> > >
+> > > >
+> > >
+> > > I see benefits already: on very memory demanding qtwebkit compile:
+> > > z3fold: swap frequently gets 6..8G from 16G available
+> > > zsmalloc: can=E2=80=99t see more than 1..2G
 >
-> Yes, so there is a reason for having the zeromap patches, which I have outlined
-> in the coverletter.
+> Exactly :) zsmalloc is better than z3fold in a lot of workloads that I
+> have observed.
 >
-> https://lore.kernel.org/all/20240627105730.3110705-1-usamaarif642@gmail.com/
+> > >
+> > > > doubt that you (or anyone) wants to spend time debugging a z3fold
+> > > > problem :)
+> > >
+> > > lets depreciate it!
+> >
+> > I tried deprecating it before [2] and performed some analysis [3], but
+> > there was some.. resistance. Maybe I will try again and use this bug
+> > report as yet another argument for deprecating z3fold :)
+> >
+> > [2] https://lore.kernel.org/linux-mm/20240112193103.3798287-1-yosryahme=
+d@google.com/
+> > [3] https://lore.kernel.org/lkml/CAJD7tkbRF6od-2x_L8-A1QL3=3D2Ww13sCj4S=
+3i4bNndqF+3+_Vg@mail.gmail.com/
 >
-> There are usecases where zswap/zram might not be used in production.
-> We can reduce I/O and flash wear in those cases by a large amount.
+> I don't wanna sound like a broken record. But this has been the nth
+> time we need to spend extra engineering time and effort unnecessarily
+> because we have not deprecated z3fold.
 >
-> Also running in Meta production, we found that the number of non-zero filled
-> complete pages were less than 1%, so essentially its only the zero-filled pages
-> that matter.
+> If you need more datapoint - here's our last conversation where z3fold
+> was a problem:
 >
-> I believe after zeromap, it might be a good idea to remove the page_same_filled
-> check from zram code? Its not really a problem if its kept as well as I dont
-> believe any zero-filled pages should reach zram_write_page?
+> https://lore.kernel.org/lkml/CAKEwX=3DMo+EaaxBYcLMTHYADB4WhqC3QmWV3WQ0h2K=
+M491FRuQA@mail.gmail.com/
 
-I brought this up before and Sergey pointed out that zram is sometimes
-used as a block device without swap, and that use case would benefit
-from having this handling in zram. That being said, I have no idea how
-many people care about this specific scenario.
+I sent a v2 of the z3fold deprecation attempt:
+https://lore.kernel.org/lkml/20240904233343.933462-1-yosryahmed@google.com/=
+.
 
