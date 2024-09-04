@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-314796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2743B96B8A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E5696B8AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D851C24A50
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:35:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBF42872CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B31B1CF29F;
-	Wed,  4 Sep 2024 10:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5347A1CF5F3;
+	Wed,  4 Sep 2024 10:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C7z2bSfZ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHOAHHhI"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CD7126C01;
-	Wed,  4 Sep 2024 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9CA126C01
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725446151; cv=none; b=Cc4AT3zPEyLu9RX+KjLHOMKlNtB7uJ4HLT1hycFbuF5n4HmfuOYEJiFzjI2v4BwZis4/0RNbKepyKNSTqDnMgC3sNO8SXKB1EsBWYP2HTLlWhFGmp7uNHBckPvHxWEjA1Lf/GP63vdO20UMwSD3iqZOjbIvUmzGtaxwSIih9iaU=
+	t=1725446233; cv=none; b=dAZOSo7KVXPpwObyNykcY5vfbEc2hdhpeTsfPWo2Lvy8T7ekRWW5ctm28XkpavwYpJEfE3Z7aHqE5vlc02RbZIYVzLkdAtOCpW7qTDFOWAvq5BCIQA3u6my26cUGXF+a91XQe4z/1zpOEWs8iLVuTLi3DBY4xTpFrww+4QIjCfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725446151; c=relaxed/simple;
-	bh=sq1HLtAaTzHAr2JrOecqssPZDwWSMAtYsh1WiUbcq1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eDLzhX7fcgsogUV/jdltMgBTdANRw+Hhzj3EL+6BADPHEMJ4/aAlE2PiKAwB1hro25+sDp0e8RprPuAsig9LEeQTfhpBaZm8TG6tMUiJfIawPYYgAiW3Pnsqkp2vUs6yosEsU98vZ+yp1ILE+javXxn1iKvdrJIR7Qppk6HSJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C7z2bSfZ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725446147;
-	bh=sq1HLtAaTzHAr2JrOecqssPZDwWSMAtYsh1WiUbcq1E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C7z2bSfZZsKiH8FBsZ5X23cTwZ1fziilwy4D4NX/akQtgeapI7MueKiylFGcbyV9n
-	 9VCy1L89x0bAn70tE5o8Cue+qScpoXcrZT3hUM3ueolX/vQctj1M3j5AMdI4UPR+UX
-	 Y2RW3sVHpaNJOeDLLQf/cx9xT/z9CrJ+61h+aC7pdEdzdWr8BKODhxWbLY83m/NSTg
-	 Se/m+Y/mop0SsBStfpMALerSjgQfQXjKkoffryaKjZ5YSHJLHCbMpX0GWWujWv6tDa
-	 KvdDa6IpxADxt+e7Ao5wIH+hFileXUwbgHQS1+I+V1icWLeo5BltuduLkX0EBDH7pI
-	 xeKgCJQgLmn5g==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2630E17E0FC7;
-	Wed,  4 Sep 2024 12:35:47 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:35:42 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Mary Guillemard <mary.guillemard@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
- stable@vger.kernel.org, Steven Price <steven.price@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Heiko Stuebner <heiko@sntech.de>,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/panthor: Restrict high priorities on group_create
-Message-ID: <20240904123542.2b22a92e@collabora.com>
-In-Reply-To: <20240903144955.144278-2-mary.guillemard@collabora.com>
-References: <20240903144955.144278-2-mary.guillemard@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725446233; c=relaxed/simple;
+	bh=fRQ9oCyzehCnorfhlXB9yaAyHWrto7yX7Zv/ODIPLjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lIqZvPdF+mDHxKGPAYuUPZlgGHIovqZmOngdLUQdaFB+uRrjtA3ds8pv5CiYr2CfHPn/2ehZuGcCC+TfSQT6aDG49j2LPEgCb+3yLtzyb4gkEWmOS/Y8Mf8Dsb16yEyb6qKoYnj+Z+6qfDZ7yTd8+ERvCqJsWl7Zy7MZqD9Mf40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHOAHHhI; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d877e9054eso462736a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725446231; x=1726051031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pbu/icIc7/hyFZ/DdTfsPV3H3VognL1oCqHfvJ4X8DU=;
+        b=NHOAHHhIEVr5Dwub2S+/bboqD05lo/lf9UkbW8xtpTgOy/3F6re6LfdGnWMR4+ZRk6
+         wSx5GDhGpmhHNhJ9C4Zx276ppKOAx8WlFAuiQDN4crN5hizu18T3gbOkCVP9qwrAqx57
+         RYDqJIGz/x5fRG8D1wij9yqcoG2C4C93s3avbzmBfAVUKVnZM4T5w39llmc3CjDy9/X2
+         6imzx/Hcb6BuWhpTE1RHiNC1AflzrhoSNGaVSyZuoazbT04gUGxvXCsdCIenYRlWd5DB
+         ayjtxOodtjTDgTfxW/4GfyVOqJyiZXaZ5hoM6VXzGAI/0snCwjEMOM2gX1SzBznH1jxm
+         Xm3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725446231; x=1726051031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pbu/icIc7/hyFZ/DdTfsPV3H3VognL1oCqHfvJ4X8DU=;
+        b=eunGJBeK33fLIlEv5FLMptHdAFRSuzYmQtAHRNIMFsBk1UQdNUaoLsBEB9NdseMBMT
+         HqQ0f3onMSjcpQyFbI+yOCBDnnN9jsRmNHXlelzBPdRSPrvpWjxznuVkepUTRtwssAwd
+         CKK3CEnlTR0uV+UU0xmTYDgLhxpXGkO4TWXNb6n4izHowQs5/Vzl7nCfTayPdrIiGHuf
+         EUHNLOOd1JwqUHiOYZ2xrBayrZZ21xRDsCZYlV3WnZvQzzaQ0QU3gtV3enNVS8GuX9Ue
+         Bg5TfYA1gEVnEEoS5ViUUMBsSk1IpL/suq/PHSVDOZN0F7Kx0eRP96JCdyAOYzAoTUJR
+         JrEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXox4xAsJclvLvmZ2uMHLzsiOAe8hjqhcuN0a6uQnIdau9RCmLRCIvDrnJYyv7ibd1AI4EFVZaAUHt79F4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXIHb7KjPO1zzOoRZXYyGdLJz1nZGjGKBSpGA6jv1AE8vy5PqI
+	yxqPp5v3QYWC/YBlPTmewWQ/O4quREngnI9QOHkotDRktzV/mDqf4VT/p7xwOyfB+OeDwBRwuyi
+	5SUCqmyeE16hNtz+MuYNvSXl8GYsHGA==
+X-Google-Smtp-Source: AGHT+IEqnCHpM71TxcCzxlh5HmS53l5IAtHeNDxP7q4z8YV/B7I7l4DlGy62WOJiAHqcnCLGZfdviQfJoLhOumsdlDs=
+X-Received: by 2002:a17:90b:4b45:b0:2d8:b923:b56a with SMTP id
+ 98e67ed59e1d1-2d8b923b62emr10140827a91.41.1725446231190; Wed, 04 Sep 2024
+ 03:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240903013113.139698-1-aford173@gmail.com> <20240903013113.139698-4-aford173@gmail.com>
+ <ZtgaOlHi93b_py7T@atmark-techno.com>
+In-Reply-To: <ZtgaOlHi93b_py7T@atmark-techno.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 4 Sep 2024 05:37:00 -0500
+Message-ID: <CAHCN7xJs1AefLJ1=0FfOs=A2B-gE5sC_VSVS6aGVhnSPOKDuxg@mail.gmail.com>
+Subject: Re: [PATCH V4 3/5] phy: freescale: fsl-samsung-hdmi: Support dynamic integer
+To: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com, 
+	frieder.schrempf@kontron.de, aford@beaconembedded.com, Sandor.yu@nxp.com, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Lucas Stach <l.stach@pengutronix.de>, Marco Felsch <m.felsch@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  3 Sep 2024 16:49:55 +0200
-Mary Guillemard <mary.guillemard@collabora.com> wrote:
+On Wed, Sep 4, 2024 at 3:28=E2=80=AFAM Dominique Martinet
+<dominique.martinet@atmark-techno.com> wrote:
+>
+> Adam Ford wrote on Mon, Sep 02, 2024 at 08:30:45PM -0500:
+> > There is currently a look-up table for a variety of resolutions.
+> > Since the phy has the ability to dynamically calculate the values
+> > necessary to use the intger divider which should allow more
+> > resolutions without having to update the look-up-table.
+> >
+> > If the lookup table cannot find an exact match, fall back to the
+> > dynamic calculator of the integer divider.
+> >
+> > Previously, the value of P was hard-coded to 1, this required an
+> > update to the phy_pll_cfg table to add in the extra value into the
+> > table, so if the value of P is calculated to be something else
+> > by the PMS calculator, the calculated_phy_pll_cfg structure
+> > can be used instead without having to keep track of which method
+> > was used.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> I've rechecked this series with abs() added in the later patch and this
 
-> We were allowing any users to create a high priority group without any
-> permission checks. As a result, this was allowing possible denial of
-> service.
-> 
-> We now only allow the DRM master or users with the CAP_SYS_NICE
-> capability to set higher priorities than PANTHOR_GROUP_PRIORITY_MEDIUM.
-> 
-> As the sole user of that uAPI lives in Mesa and hardcode a value of
-> MEDIUM [1], this should be safe to do.
-> 
-> Additionally, as those checks are performed at the ioctl level,
-> panthor_group_create now only check for priority level validity.
-> 
-> [1]https://gitlab.freedesktop.org/mesa/mesa/-/blob/f390835074bdf162a63deb0311d1a6de527f9f89/src/gallium/drivers/panfrost/pan_csf.c#L1038
-> 
-> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
-> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-> Cc: stable@vger.kernel.org
+Oh shoot, I totally missed your request for the abs patch.
+Sorry about that.  Do you want me to do a V6?
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+adam
 
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c   | 23 +++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_sched.c |  2 +-
->  include/uapi/drm/panthor_drm.h          |  6 +++++-
->  3 files changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index b5e7b919f241..34182f67136c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -10,6 +10,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  
-> +#include <drm/drm_auth.h>
->  #include <drm/drm_debugfs.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_exec.h>
-> @@ -996,6 +997,24 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
->  	return panthor_group_destroy(pfile, args->group_handle);
->  }
->  
-> +static int group_priority_permit(struct drm_file *file,
-> +				 u8 priority)
-> +{
-> +	/* Ensure that priority is valid */
-> +	if (priority > PANTHOR_GROUP_PRIORITY_HIGH)
-> +		return -EINVAL;
-> +
-> +	/* Medium priority and below are always allowed */
-> +	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
-> +		return 0;
-> +
-> +	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
-> +	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-> +		return 0;
-> +
-> +	return -EACCES;
-> +}
-> +
->  static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
->  				      struct drm_file *file)
->  {
-> @@ -1011,6 +1030,10 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
->  	if (ret)
->  		return ret;
->  
-> +	ret = group_priority_permit(file, args->priority);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = panthor_group_create(pfile, args, queue_args);
->  	if (ret >= 0) {
->  		args->group_handle = ret;
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index c426a392b081..91a31b70c037 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3092,7 +3092,7 @@ int panthor_group_create(struct panthor_file *pfile,
->  	if (group_args->pad)
->  		return -EINVAL;
->  
-> -	if (group_args->priority > PANTHOR_CSG_PRIORITY_HIGH)
-> +	if (group_args->priority >= PANTHOR_CSG_PRIORITY_COUNT)
->  		return -EINVAL;
->  
->  	if ((group_args->compute_core_mask & ~ptdev->gpu_info.shader_present) ||
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index 926b1deb1116..e23a7f9b0eac 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -692,7 +692,11 @@ enum drm_panthor_group_priority {
->  	/** @PANTHOR_GROUP_PRIORITY_MEDIUM: Medium priority group. */
->  	PANTHOR_GROUP_PRIORITY_MEDIUM,
->  
-> -	/** @PANTHOR_GROUP_PRIORITY_HIGH: High priority group. */
-> +	/**
-> +	 * @PANTHOR_GROUP_PRIORITY_HIGH: High priority group.
-> +	 *
-> +	 * Requires CAP_SYS_NICE or DRM_MASTER.
-> +	 */
->  	PANTHOR_GROUP_PRIORITY_HIGH,
->  };
->  
-> 
-> base-commit: a15710027afb40c7c1e352902fa5b8c949f021de
-
+> looks fine; all modes I tried properly synced up with my monitor.
+> (except one but I don't see set_rate() being called for it so it's
+> something else)
+>
+> (On a semi-unrelated note on my backport I get a "PLL failed to lock"
+> message for the first sync only, but everything seems to work regardless
+> even if there is no further set_rate(), so I'll pretend I didn't see
+> that... the old code just has a 20ms wait without any check so it's not
+> like it was any better... anyway that's unrelated to this serie)
+>
+> I'm also confident enough set_rate() won't be called in parallel with
+> different rates for my device so I'm fine with the new global, letting
+> others complain if that's a problem for them.
+>
+>
+> So, feel free to add this to all 5 patches:
+> Test-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+>
+> Just one style nitpick:
+>
+> > @@ -453,29 +541,70 @@ static unsigned long phy_clk_recalc_rate(struct c=
+lk_hw *hw,
+> >  static long phy_clk_round_rate(struct clk_hw *hw,
+> >                              unsigned long rate, unsigned long *parent_=
+rate)
+> >  {
+> > +     u32 int_div_clk;
+> >       int i;
+> > +     u16 m;
+> > +     u8 p, s;
+> > +
+> > +     /* If the clock is out of range return error instead of searching=
+ */
+> > +     if (rate > 297000000 || rate < 22250000)
+> > +             return -EINVAL;
+> >
+> > +     /* Check the look-up table */
+> >       for (i =3D ARRAY_SIZE(phy_pll_cfg) - 1; i >=3D 0; i--)
+> >               if (phy_pll_cfg[i].pixclk <=3D rate)
+> > -                     return phy_pll_cfg[i].pixclk;
+> > +                     break;
+> > +     /* If the rate is an exact match, return it now */
+> > +     if (rate =3D=3D phy_pll_cfg[i].pixclk)
+> > +             return phy_pll_cfg[i].pixclk;
+> > +
+> > +     /*
+> > +      * The math on the lookup table shows the PMS math yields a
+> > +      * frequency 5 x pixclk.
+> > +      * When we check the integer divider against the desired rate,
+> > +      * multiply the rate x 5 and then divide the outcome by 5.
+> > +      */
+> > +     int_div_clk =3D fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &=
+s) / 5;
+>
+> I still think it makes more sense to move the * 5, / 5 and comment
+> inside fsl_samsung_hdmi_phy_find_pms -- the other caller doesn't have
+> such the comment so it might look odd depending on where one started
+> looking.
+>
+> --
+> Dominique
 
