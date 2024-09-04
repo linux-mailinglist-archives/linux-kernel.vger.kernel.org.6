@@ -1,183 +1,181 @@
-Return-Path: <linux-kernel+bounces-315720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D096C631
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:19:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB8596C636
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9CA1C25269
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:19:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD241B21442
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB8D1E1A34;
-	Wed,  4 Sep 2024 18:19:28 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A411E1A36;
+	Wed,  4 Sep 2024 18:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LcCtCQhh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DD51D6790
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271B11D6790
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473967; cv=none; b=jhrhXfAppk89i542DRt0a2nNwXNGGfKng6/9uyhlvxHaWPG7jvFLUIqzhpuPH04ZgAvwp2DKfCq56oWl2Efq2J3aZ5ap0s/W/jfYgTmaEbxRzQ45q6oq5do4jHxarQ6gwjCYZK1/x5FjReEdbE0fsfRAkmorkGpMXkWgwvRMB4g=
+	t=1725474034; cv=none; b=fsGpLyjMQHWCn19tXU4EJE4+lukLZ2BIGq9Eb7WrOcvnMA3PGunk6v/xuR296QP5h1crv5sIP9cxqdB4uk+1/+UfJbjEcUK1WmATyQDACM6dT8kvUSzQ9TDimBuq4otr0TIlgNLRGMpAkf4AuVa1YGHN7ME2GtU8tc6uLEReB/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473967; c=relaxed/simple;
-	bh=iFdWUqlGV2PDlljSJX1oZOqtXgVX67X7LRHepQPiK80=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QW2v2C24jZ1ljbKx1GDfs6sJDatyYG2jpOjGEAeQWFcLSzu4RM7wriyiiaBAM/hyPYEm+O0nw+BobmsJ3NnMtJ3fdb77Z3pDAokjWoyLwyn0xjqkYr5RYoch6bgn9ImFYm6FNVfLk7l7XNbhFkrTK+Bt1k4/y9NDslOnsXcO75g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a1c57f4a1so1017902739f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:19:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725473965; x=1726078765;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5v8ecZ4KHwCQtLG0DSvxND0b9364kC606ptb+L6Bap0=;
-        b=gICm9oIPAU3eu4a6Qkzc5vFY3gNtTJ4IgLlQKkLCSaqY5nGgLmkqActz8ctMCW00Dx
-         bPE3RxwHE8Mkiok+W8pdTDqGvHkpa+D+Q/6DEe8RM3naF+8R0zGfhqLmLllJ8kc0jULf
-         Mal8+6YzIfJTtFr7PxC3zAWdoVrX7qdXfTdfKIAfsHLUszzTewhxqW9XBhzUvkTMZtcJ
-         tpSWZ1a4iMKXG5+RqUCs8U9dZsFhCpnUHUbcRXyBVEQ6Q2QI6j3Mt0dIhfkXXg6Y8w4B
-         Q6usQxtGkCtRCeAXZt/dQIFFc/1Sxz8PAGCZgJn9q0PjOYpUcl0/bsub11YDbmyUAsdk
-         eQQg==
-X-Forwarded-Encrypted: i=1; AJvYcCViYzsbYaZIWvYFv4c9b7gv4LRibvIad6mQpCPEIE5MeCoPLUp0v+U+AbDYfdQq/Kbt7J93S21jDU80vkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyu5JB2sTQFp9JEr+wC+a5wwLwNUQFZqo8TteKA7NSin+qnUhR
-	Gm4Wim2UNoTbU5I/uZsQRtmBQ63aZTy0U+i9/BlQ2RGIhaVghxPUOJn01CoK+szXxerGlfM7N5B
-	mMl8SR4IKhwLChvCJ2Qst39+zFrvAMs1w8fNZSWc5cfWeW8Pwgdzv8Xs=
-X-Google-Smtp-Source: AGHT+IF4tLwBuxUrjxjTyFAWaKoWUwEq8Sq5BeP/Yu6wo4u0ow6AM38DImsgwGvv+js/+VpjQtAZTQT+XdcRSyT2lv93PqkArAa9
+	s=arc-20240116; t=1725474034; c=relaxed/simple;
+	bh=I5buvN7KzSdrH21KWSFM58HNRbGIaailfbRnExnRvFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfxvqL26428JG0Exs63bys1Hf2Y9+TgkYwcpNxP2Vei7e4tGdyE8aJqnvu1WYoN3U99KjsrQf9p1FlT4XVTSHRcVgfsSh36ca+nuTcmJntqA+0z7xoR2oPA6Hnox4LRimEmfm678GsDXk2ELmCO4tvtZX29iv5j4Q/Yuxr49xHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LcCtCQhh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725474031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Q33KHwOo6WRVj9CXRGFVD9EbJuDLyRsvydPmGRP2tk=;
+	b=LcCtCQhhyyUZ3LtNKHi8D6e04e2XtSM1tMxe0iy29qLs/wQLmCL7thDmY45NRUwMcl5bvz
+	xKfItESwfdSp4amgVbtCxR1p/6XJJk5j2IgE+O5F/zVlmXtd42dQ+DRBiJ7ULZNg/2Jgqq
+	RX/mmSDf4+u0+Ma89yuttPzD8uKsjmM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-21ntd6BuNselRYYcTaw1fg-1; Wed,
+ 04 Sep 2024 14:20:30 -0400
+X-MC-Unique: 21ntd6BuNselRYYcTaw1fg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B61B419560A2;
+	Wed,  4 Sep 2024 18:20:28 +0000 (UTC)
+Received: from [10.2.16.172] (unknown [10.2.16.172])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 489BD1956052;
+	Wed,  4 Sep 2024 18:20:26 +0000 (UTC)
+Message-ID: <560fdd10-f12b-4ce8-a628-c4952eff93ec@redhat.com>
+Date: Wed, 4 Sep 2024 14:20:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4118:b0:4c0:a90d:4a7c with SMTP id
- 8926c6da1cb9f-4d017f16606mr1050332173.6.1725473965104; Wed, 04 Sep 2024
- 11:19:25 -0700 (PDT)
-Date: Wed, 04 Sep 2024 11:19:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c274f106214f3631@google.com>
-Subject: [syzbot] [net?] WARNING in __dev_queue_xmit (4)
-From: syzbot <syzbot+1a3986bbd3169c307819@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] sched/isolation: Consolidate housekeeping cpumasks
+ that are always identical
+To: Phil Auld <pauld@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240904171441.1048072-1-longman@redhat.com>
+ <20240904171441.1048072-3-longman@redhat.com>
+ <20240904171949.GC136544@pauld.westford.csb>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240904171949.GC136544@pauld.westford.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+On 9/4/24 13:19, Phil Auld wrote:
+> On Wed, Sep 04, 2024 at 01:14:41PM -0400 Waiman Long wrote:
+>> The housekeeping cpumasks are only set by two boot commandline
+>> parameters: "nohz_full" and "isolcpus". When there is more than one of
+>> "nohz_full" or "isolcpus", the extra ones must have the same CPU list
+>> or the setup will fail partially.
+>>
+>> The HK_TYPE_TICK, HK_TYPE_DOMAIN and HK_TYPE_MANAGED_IRQ types are
+>> settable by "isolcpus" and they can be set individually. The other
+>> housekeeping types are all set by "nohz_full" without a way to set them
+>> individually. So they all have identical cpumasks.
+>>
+>> There is actually no point in having different cpumasks for these
+>> "nohz_full" only housekeeping types. Consolidate these types to use the
+>> same cpumask by aliasing them to the same value. If there is a need to
+>> set any of them independently in the future, we can break them out to
+>> their own cpumasks again.
+>>
+>> With this change, the number of cpumasks in the housekeeping structure
+>> drops from 9 to 4.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   include/linux/sched/isolation.h | 18 ++++++++++++------
+>>   kernel/sched/isolation.c        |  9 ++-------
+>>   2 files changed, 14 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+>> index 499d5e480882..e2c42172de82 100644
+>> --- a/include/linux/sched/isolation.h
+>> +++ b/include/linux/sched/isolation.h
+>> @@ -7,15 +7,21 @@
+>>   #include <linux/tick.h>
+>>   
+>>   enum hk_type {
+>> -	HK_TYPE_TIMER,
+>> -	HK_TYPE_RCU,
+>> -	HK_TYPE_MISC,
+>>   	HK_TYPE_TICK,
+>>   	HK_TYPE_DOMAIN,
+>> -	HK_TYPE_WQ,
+>>   	HK_TYPE_MANAGED_IRQ,
+>> -	HK_TYPE_KTHREAD,
+>> -	HK_TYPE_MAX
+>> +	HK_TYPE_KERNEL_NOISE,
+>> +	HK_TYPE_MAX,
+>> +
+>> +	/*
+>> +	 * The following housekeeping types are only set by the nohz_full
+>> +	 * boot commandline option. So they can share the same value.
+>> +	 */
+>> +	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
+>> +	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
+>> +	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
+>> +	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
+>> +	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
+>>   };
+>>   
+>>   #ifdef CONFIG_CPU_ISOLATION
+>> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+>> index 5345e11f3d44..2b654272edcd 100644
+>> --- a/kernel/sched/isolation.c
+>> +++ b/kernel/sched/isolation.c
+>> @@ -9,14 +9,10 @@
+>>    */
+>>   
+>>   enum hk_flags {
+>> -	HK_FLAG_TIMER		= BIT(HK_TYPE_TIMER),
+>> -	HK_FLAG_RCU		= BIT(HK_TYPE_RCU),
+>> -	HK_FLAG_MISC		= BIT(HK_TYPE_MISC),
+>>   	HK_FLAG_TICK		= BIT(HK_TYPE_TICK),
+>>   	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
+>> -	HK_FLAG_WQ		= BIT(HK_TYPE_WQ),
+>>   	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
+>> -	HK_FLAG_KTHREAD		= BIT(HK_TYPE_KTHREAD),
+>> +	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
+>>   };
+>>   
+>>   DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
+>> @@ -194,8 +190,7 @@ static int __init housekeeping_nohz_full_setup(char *str)
+>>   {
+>>   	unsigned long flags;
+>>   
+>> -	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU |
+>> -		HK_FLAG_MISC | HK_FLAG_KTHREAD;
+>> +	flags = HK_FLAG_KERNEL_NOISE;
+>>
+> This does not look equivalent. HK_FLAG_TICK seems to be lost?
 
-syzbot found the following issue on:
+You are right. I will send out v3 to correct that.
 
-HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=161fbc31980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3456bae478301dc8
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a3986bbd3169c307819
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e4f459980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12272ea5980000
+Cheers,
+Longman
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-43db1e03.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0e968f44e2ed/vmlinux-43db1e03.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b371a4faf10a/bzImage-43db1e03.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1a3986bbd3169c307819@syzkaller.appspotmail.com
-
-warning: `syz-executor452' uses wireless extensions which will stop working for Wi-Fi 7 hardware; use nl80211
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5199 at kernel/softirq.c:362 __local_bh_enable_ip+0xc3/0x120 kernel/softirq.c:362
-Modules linked in:
-CPU: 1 PID: 5199 Comm: syz-executor452 Not tainted 6.10.0-rc7-syzkaller-00141-g43db1e03c086 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__local_bh_enable_ip+0xc3/0x120 kernel/softirq.c:362
-Code: 00 e8 01 91 0b 00 e8 ec 30 43 00 fb 65 8b 05 8c dd b1 7e 85 c0 74 52 5b 5d c3 cc cc cc cc 65 8b 05 ce 8c b0 7e 85 c0 75 9e 90 <0f> 0b 90 eb 98 e8 f3 2e 43 00 eb 99 48 89 ef e8 a9 0e 1a 00 eb a2
-RSP: 0018:ffffc900032af368 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000200 RCX: 1ffffffff1fc96eb
-RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffffffff88c4e35d
-RBP: ffffffff88c4e35d R08: 0000000000000000 R09: fffffbfff1fc9092
-R10: ffffffff8fe48497 R11: 000000000000001d R12: ffff888021f9e000
-R13: ffff888021f9e100 R14: ffff88801c1e40b8 R15: ffff88801c1e4000
-FS:  0000555593697380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555638997000 CR3: 0000000026c08000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- rcu_read_unlock_bh include/linux/rcupdate.h:851 [inline]
- __dev_queue_xmit+0x872/0x4130 net/core/dev.c:4420
- dev_queue_xmit include/linux/netdevice.h:3095 [inline]
- __netlink_deliver_tap_skb net/netlink/af_netlink.c:307 [inline]
- __netlink_deliver_tap net/netlink/af_netlink.c:325 [inline]
- netlink_deliver_tap+0xa7d/0xd90 net/netlink/af_netlink.c:338
- __netlink_sendskb net/netlink/af_netlink.c:1279 [inline]
- netlink_broadcast_deliver net/netlink/af_netlink.c:1412 [inline]
- do_one_broadcast net/netlink/af_netlink.c:1499 [inline]
- netlink_broadcast_filtered+0x938/0xf10 net/netlink/af_netlink.c:1544
- nlmsg_multicast_filtered include/net/netlink.h:1125 [inline]
- genlmsg_multicast_netns_filtered include/net/genetlink.h:491 [inline]
- genlmsg_multicast_netns include/net/genetlink.h:508 [inline]
- nl80211_frame_tx_status+0xa6d/0xd00 net/wireless/nl80211.c:18952
- ieee80211_report_ack_skb net/mac80211/status.c:645 [inline]
- ieee80211_report_used_skb+0x1241/0x21c0 net/mac80211/status.c:778
- ieee80211_free_txskb+0x23/0x40 net/mac80211/status.c:1291
- ieee80211_do_stop+0xd5d/0x2200 net/mac80211/iface.c:650
- ieee80211_runtime_change_iftype net/mac80211/iface.c:1873 [inline]
- ieee80211_if_change_type+0x360/0x790 net/mac80211/iface.c:1911
- ieee80211_change_iface+0xa5/0x500 net/mac80211/cfg.c:219
- rdev_change_virtual_intf net/wireless/rdev-ops.h:74 [inline]
- cfg80211_change_iface+0x586/0xdd0 net/wireless/util.c:1215
- cfg80211_wext_siwmode+0x222/0x2b0 net/wireless/wext-compat.c:67
- ioctl_standard_call+0xd0/0x210 net/wireless/wext-core.c:1045
- wireless_process_ioctl+0x4e3/0x5e0 net/wireless/wext-core.c:983
- wext_ioctl_dispatch net/wireless/wext-core.c:1016 [inline]
- wext_ioctl_dispatch net/wireless/wext-core.c:1004 [inline]
- wext_handle_ioctl+0x23d/0x2c0 net/wireless/wext-core.c:1077
- sock_ioctl+0x3ac/0x6c0 net/socket.c:1275
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff609c12199
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdc08407c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ff609c5f48b RCX: 00007ff609c12199
-RDX: 0000000020000000 RSI: 0000000000008b06 RDI: 0000000000000003
-RBP: 00007ff609c5f469 R08: 00007ffdc08408f8 R09: 00007ffdc08408f8
-R10: 00007ffdc08408f8 R11: 0000000000000246 R12: 00007ff609c5f429
-R13: 0000000000000031 R14: 0000000000000047 R15: 0000000000000004
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
