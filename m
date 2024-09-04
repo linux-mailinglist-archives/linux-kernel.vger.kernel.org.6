@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-315909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B2696C8B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:40:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB6496C8B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60DA2896A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671EF1C25314
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6F2148848;
-	Wed,  4 Sep 2024 20:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4393148833;
+	Wed,  4 Sep 2024 20:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PErKCY51"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MpduPxhc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80241146A79;
-	Wed,  4 Sep 2024 20:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272B9146A79
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725482404; cv=none; b=Baf5cinlgkQZIfPZDivcKFr/bVSbceTf+4L+WGqZtU/QUe46VE0YrDqNHx+Sx7NXcx8Dc76VPv2gYOFQOhqI/hlocpM9X3plV7JdsWrEpfMig8CIjdOY+lhohfnLuiX1pLf6ObJFU8xSHUPrA5+KKYLRg/PdYJ981Q76dIiSfSg=
+	t=1725482465; cv=none; b=i6gKnbdve2xGCF4iTA2z2pLs7ythMIGxS8yv63dHbzCEK2nEPeNAaeysjvlHptJtOvFMpEBLt+VWABIrq5CZ1Y2OEOamXZlHyToHKcSRmkOM9rcdWWWWsS+TEspaN62An0xn1NSEPw2dtCjIRObQGjsdtuIh09dm14jq9QBXazc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725482404; c=relaxed/simple;
-	bh=zqe6+b/FTfJHgkE9MkhgaaAsT5L43NyeI82wDMeUKAk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qjK6xX6ASAOq4zAeoNL2+YuyyZ77N3OAxMZUolunUTwvcUdJZF8jWkwuWjMdGZqauytyfzouPnlnkYdSVTjR2WELUjNJ1U+g86sD4wm+3pa6vYcllmroC7aBcycpYsILlWqfk23n3gj/0UQlpQ36l9qRI/wdLeVGNamvhJ1f468=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PErKCY51; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so50914205e9.3;
-        Wed, 04 Sep 2024 13:40:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725482401; x=1726087201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rMC9PyIWnX47bjnEnEHO5NXAPXt5crdtOv8guFK+s5k=;
-        b=PErKCY514ngUKSSN0GrT3UTuExk8foQw/F6qqyRs5YyDvtf+nx2HYO1HbRZo1GD0xd
-         67p/5LdLsr3AbQb9XZ+rqGTzGooENi2BfSCDHHJLieRnD0H52aD3tw4gmqy5VivRUiaQ
-         +N7i3i81coA61STH7KnOAWGuvwxyE2+Hnz739HO1EyrcsbJ9QyCDYVEqezdM8PQLbyO9
-         9YXEAetoBy6JJvaNtvIE+nHetBxA7h5NngBcdUQkREQWK7AWCKR+j7ovi/kWy+auGss+
-         I5/AJ/wKLgIJ6tiu1o4qX4R0lOYjTAfpSezZtpfaI2znvsUVSO4VFUSmJe9xRbDRwEDQ
-         3bFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725482401; x=1726087201;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rMC9PyIWnX47bjnEnEHO5NXAPXt5crdtOv8guFK+s5k=;
-        b=eOs+FDvqiKkNiWFiXeQJCHDaSkEoleSVuSsoWJ7RPi3Nqj1zLk5GPgEZf64BFcZEiX
-         1+qIfUPDKLFjMDKQk2Az47B5bQLgZiIIRTP/pqMo6fVdMec5SqwAZT0ugpTNwRxe50Ig
-         0jlXna20cJTe9iCcUR8+mXynXa1dJZsfpojYPO7JHV9hukQZPPlpPHrw+Knadfn7XA7o
-         Sl8bfsXpNTyr5Gz1hSU06FhUmi/xUiJee+0Y6DV92DWavMQKqDdTO/GAU/1yFWGpBsoI
-         +HHaM4rCfeMnVJtoU27+cxHOoTorVtb1Yc7SPZaMoXHABaYm/NXO7pQ8qC9gBm4iYCTr
-         4s5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVg4k8nuV+jVAG85ANnBf7iNszwAlaaKqeODlwzh8KRRt+vE+aL9KwfWLPsi/XrKVO89aCBARNSFf/d6bY=@vger.kernel.org, AJvYcCWLHctdPDJh0mjjHJmFwbw44peqTqcN1+hnA+sVf1IDse8+7+fjsfkk3V0Q4+V9VSSgojTqi/Jd31dbi24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHq7RErUVa7SiVArX5GNriHofsKfFUJI+5+C0HgoNwyoT4vJ0E
-	locKmcAX8XJ3AVP0RVIZuWttTXr32CpNJlX29MaQ3aYQeSzFB+xg
-X-Google-Smtp-Source: AGHT+IEGXVfuDlPCdE0TrKvq2ls5isaLcHyGYBvzekLbPYPrZI+rDOevIiOOPR/3gKoYxFzozgP+TA==
-X-Received: by 2002:a7b:cb11:0:b0:429:c674:d9de with SMTP id 5b1f17b1804b1-42c9a36029fmr2136315e9.2.1725482400217;
-        Wed, 04 Sep 2024 13:40:00 -0700 (PDT)
-Received: from localhost ([185.220.101.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c7a41bdc8sm158287955e9.3.2024.09.04.13.39.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 13:39:59 -0700 (PDT)
-From: Maxim Mikityanskiy <maxtram95@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Peter Wu <peter@lekensteyn.nl>,
-	Lukas Wunner <lukas@wunner.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maxim Mikityanskiy <maxtram95@gmail.com>
-Subject: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
-Date: Wed,  4 Sep 2024 23:39:55 +0300
-Message-ID: <20240904203955.245085-1-maxtram95@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725482465; c=relaxed/simple;
+	bh=RtHzb2/2jf4vevAr8HjFhrLQINYyj6MKSGehMrPg02M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=O3f6FJS5AvVWEtRkNjsbQkYOvfzYYoPqldW1CNnW/VOdWVBYhO/uHXHfsIPGULxgFH76j1x0dw3+4PHRZFauwNK74gNkJUHtAFov2tAEo4/02cyde1XKrc3+HJT/GYJyacEKcXCG3ZvSxi2JlVcnR+oBrTL64CGVttiLY7a6jo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MpduPxhc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A6BC4CEC2;
+	Wed,  4 Sep 2024 20:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725482464;
+	bh=RtHzb2/2jf4vevAr8HjFhrLQINYyj6MKSGehMrPg02M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MpduPxhcQ3ZWy9hqnZYGup2B22fv+BFtCDYriisMpmcv5Y2F64IzAu3ZEj1B+CmOh
+	 C0BCQViaeg3lbNDJ5783Sa6kA6VBWFpJIX7LOcYrgDzZMMeMxzPzG1Kp7lDeRg71DR
+	 OGdRDwfAiqyJ25ulC8qckIUkHnenQpDDaCOY1Xkc=
+Date: Wed, 4 Sep 2024 13:41:02 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Qiang Liu <liuq131@chinatelecom.cn>
+Cc: rppt@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mm_init.c: add zidcache to the init_reserved_page
+ function
+Message-Id: <20240904134102.a7171fb6676dd95dc3b8ede7@linux-foundation.org>
+In-Reply-To: <20240904115541.6519-1-liuq131@chinatelecom.cn>
+References: <20240904115541.6519-1-liuq131@chinatelecom.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
-the discrete GPU. snd_hda_intel probes the device and schedules
-azx_probe_continue(), which fails at azx_first_init(). The driver ends
-up probed, but calls azx_free() and stops the chip. However, from the
-runtime PM point of view, the device remains active, because the PCI
-subsystem makes it active on probe, and it's still bound. It prevents
-vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
-power management for the video and audio devices).
+On Wed,  4 Sep 2024 19:55:41 +0800 Qiang Liu <liuq131@chinatelecom.cn> wrote:
 
-Fix it by forcing the device to the suspended state in azx_free().
+> Each call to the init_reserved_page function will look up the
+> corresponding zid for the given pfn parameter. Even if subsequent
+> calls have the same zid for the pfn as the current one, the lookup
+> will be repeated.
+> 
+> During system initialization, the memmap_init_reserved_pages function
+> calls init_reserved_page for each contiguous memory region in mem_region.
+> Implementing a cache for zid can significantly improve performance.
+> Tests have shown that adding a zid cache reduces the execution time of
+> the memmap_init_reserved_pages function by over 7%.
+> 
 
-Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
-Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
----
- sound/pci/hda/hda_intel.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+OK, but how much speedup do we see overall?  In other words, is
+memmap_init_reserved_pages() a significant consumer of execution time?
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index b79020adce63..65fcb92e11c7 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
- 	if (use_vga_switcheroo(hda)) {
- 		if (chip->disabled && hda->probe_continued)
- 			snd_hda_unlock_devices(&chip->bus);
--		if (hda->vga_switcheroo_registered)
-+		if (hda->vga_switcheroo_registered) {
- 			vga_switcheroo_unregister_client(chip->pci);
-+
-+			/* Some GPUs don't have sound, and azx_first_init fails,
-+			 * leaving the device probed but non-functional. As long
-+			 * as it's probed, the PCI subsystem keeps its runtime
-+			 * PM status as active. Force it to suspended (as we
-+			 * actually stop the chip) to allow GPU to suspend via
-+			 * vga_switcheroo.
-+			 */
-+			pm_runtime_disable(&pci->dev);
-+			pm_runtime_set_suspended(&pci->dev);
-+			pm_runtime_enable(&pci->dev);
-+		}
- 	}
- 
- 	if (bus->chip_init) {
--- 
-2.46.0
+I'd be surprised if it makes much difference at all - MAX_NR_ZONES is a
+small number.  Maybe we call init_reserved_page() a lot.
 
+
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -710,19 +710,25 @@ static void __meminit init_reserved_page(unsigned long pfn, int nid)
+>  {
+>  	pg_data_t *pgdat;
+>  	int zid;
+> +	struct zone *zone;
+> +	static int zidcache;
+
+What locking protects zidcache?  lock_device_hotplug() and/or
+__init-time serialization?  This might be worth mentioning?
+
+>  
+>  	if (early_page_initialised(pfn, nid))
+>  		return;
+>  
+>  	pgdat = NODE_DATA(nid);
+>  
+> -	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
+> -		struct zone *zone = &pgdat->node_zones[zid];
+> +	zone = &pgdat->node_zones[zidcache];
+
+OK, but if init_reserved_page() was previously called against a
+different node, `zidcache' will refer to a zone in a different node. 
+The code will work OK, but it's worth mentioning somewhere I guess.
+
+
+> +	if (unlikely(zone_spans_pfn(zone, pfn)))
+
+Isn't this wrong?  We need to redo the search if !zone_spans_pfn(...)?
+
+> +		for (zid = 0; zid < MAX_NR_ZONES; zid++) {
+> +			zone = &pgdat->node_zones[zid];
+>  
+> -		if (zone_spans_pfn(zone, pfn))
+> -			break;
+> -	}
+> -	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+> +			if (zone_spans_pfn(zone, pfn)) {
+> +				zidcache = zid;
+> +				break;
+> +			}
+> +		}
+> +	__init_single_page(pfn_to_page(pfn), pfn, zidcache, nid);
+>  }
+>  #else
+>  static inline void pgdat_set_deferred_range(pg_data_t *pgdat) {}
+> -- 
+> 2.27.0
 
