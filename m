@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-314424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA53696B2FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:36:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14D196B300
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 875BA28193E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:36:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2732EB21F72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0DA146A86;
-	Wed,  4 Sep 2024 07:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3B4146A86;
+	Wed,  4 Sep 2024 07:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ON+6qAeX"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZb55oHw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE17813B295;
-	Wed,  4 Sep 2024 07:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777EA824AF;
+	Wed,  4 Sep 2024 07:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435395; cv=none; b=HQQc6pnZKRX1rUWpJ5Q7gZlzOPaeV4Sg0bNACshC+AbHYRjmaWoWAtqYxg9Fa2L8sVZQVPv4EKWJDRqOwhjNQU5ZgQUtFR/6VF2jbUtcSasNQ3+P55zKeqqRubJwdnV2PRcrgQLlFLLBOlcE4slEE+AR1FwYbkfjxZve7nL2QgI=
+	t=1725435425; cv=none; b=H9rjvUVWKmdROTvqMr37yLNMTM/Mo/f3CL0ffOhHx4CCFtKRx92U85bqSbAAowbqTn0uOZafvm2XeTX4uFIoqogZeyzWy4Y32QOZ92CqODEjkFYynt62DAD4XH2UpsacMpSbb/SQPP9jj2QAN0k4UcZYSqkUWIpGaniusedF3NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435395; c=relaxed/simple;
-	bh=CUEv1UkwlTwYYJfodkqCax4W99XlmzRGrc5LXZ5TUdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rpmbvHHRSjpexQDkVxeapTkpbG1tHrsAQnwdd8jnDJ9lcPHaL+DyNcceMQq71Y10J7++TjGdDw0rh/voPkv70HWADjULE+UFsa+EJBvtxqUA7Wi9PCnwKVqqxar8lt0s7idSUo9HhIhDtEJ8Xlfni9K9FL7gqmTT1Q9rbM3aeG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ON+6qAeX; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53346132365so7649525e87.1;
-        Wed, 04 Sep 2024 00:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725435392; x=1726040192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CUEv1UkwlTwYYJfodkqCax4W99XlmzRGrc5LXZ5TUdI=;
-        b=ON+6qAeXAXDiMhLZbkURUGu0N1uXwBQaJF/qE/DR0fygfcXXDn4xO8tzgwfXXvo+JM
-         IpPaMxQTee+MeN/lnVCRLq2fyeXvgLB7U8NFPe3RF7AWYyItbSPn0mZgoFlHjcqqw5Ts
-         7h2xMWVqwvCOtA40YB7tuN0KgkXYB3hLfe9oKG2zj0IxUJT8D5Ljp3PqK8JlGYV2iu3t
-         aSd9GWra4vHmknZtwJMs/FM8lgy6Snu1fxZ6ok5BA11rexD13ubVfibdogmoE5cVe2hV
-         cKhMVxAwjXN7WaGK7S+J0DuhgMQlQ0ecd86B0X7s968Dn0Qd0aIbwSraX3kusJUROUFP
-         jW2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725435392; x=1726040192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CUEv1UkwlTwYYJfodkqCax4W99XlmzRGrc5LXZ5TUdI=;
-        b=q95aOtOJ/izj31UHLU8/BVPIeWRAWD8attMOYJfCvQ95sx0u9Z8u0z/yg6+NSjbO3+
-         H+nHQoZIc1fZtl/qIbjOTaWcJYQjC5n8O1YU+byMR+1yD7ObLZsmbXTqH5W3Zwijv0KN
-         mk4fEaDFGEm5PtzE9Rm72ZqtOKgqGERq7IHXk2fr4osgyqvK6ZIGLwPVzm1K1CqBJzMH
-         /ZhcfCW1xWovf0+/nmCBNIuwSJjmjoQ52Ot/zElfZPjD6AlYNW/cVyReFyyxVLnZzpfM
-         FezdxYWCV6ntYVVzlkqthUh+QrL/SoxvwnZ9R9B9GPSLd6x6ZdJRR/s8mZ00RBQOj5VS
-         0vkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFG9W3ChcoCS6EMaib39JN4DdvFM2nvyuJe3Gnlc7fc+AZJHcMYEvSeSMK2o/w1htwL9S6ddIMDrf0RuU@vger.kernel.org, AJvYcCXlmlJq6jfrc3akPjN4OGPDr7M/27J1ONMgsltFDjDMVHbX+h/FX4VWKaSxC7rQSg0hCjt9plJW2/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOrwm+U/fo/D5mvNlprDCUfGpH2wfotk+Qc6zdtxrtjWFod4Sm
-	wzuJa87tytyLaORnWgFHjTb7DGMclvHdLuiCnpb52lx1YUPDlP6pWsyF2GtlLqdidSKxGNMimcs
-	pdPHbyfYkt26zUDA8MoTwolTL0Hk=
-X-Google-Smtp-Source: AGHT+IGtpildsLq6ZKlKmViCvFkk2PD3suiPL6bTQKehN/78sfI84GD7Jukka47fH3OEkNuIMK7k1FjxZCAoVquiEPM=
-X-Received: by 2002:a05:6512:ea7:b0:530:c323:46a8 with SMTP id
- 2adb3069b0e04-53546b0b7cbmr9835751e87.23.1725435391338; Wed, 04 Sep 2024
- 00:36:31 -0700 (PDT)
+	s=arc-20240116; t=1725435425; c=relaxed/simple;
+	bh=AfxzpX4GHl51hFDB4zqrm6o7GErc6877ymLCUd48txE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNNaIw2c2GCAUzop5gSa761vR6mDUwwCdlRQj5f7qy1KjBb2jiBWu7hVVpaPfkpCXTZCrQh1wuZctqw+L4XCIvXSz/tOpuDjDC+4RLIvbl/hj9IwIvARXBpPewcQ/BF7xeT3sJDLaHwPcdgegRJSVFNkXVm8G03sgBnzUeUWaCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZb55oHw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060FEC4CEC2;
+	Wed,  4 Sep 2024 07:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725435425;
+	bh=AfxzpX4GHl51hFDB4zqrm6o7GErc6877ymLCUd48txE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lZb55oHwrLAB5sjGQkLV4ny7WTr6hEA4VR7hczbYooL5I4DVHFqhRo6jWARP46Q/Y
+	 kE+pi17yhNvs2nA4yQIJ5pqiVFG1GxV7lHPCWigq2VhvUCn20kHxygl+wViq4/iuCd
+	 ChKTsje/b4mVqXMxHDyYfVlWUdArgh27kqE/LQh9auxEAVwFIhnbC/m7tPczdM7gyC
+	 unABFN9RTFQIcHqtLDw8oDU+5K+BWjrLaSR1mXk35ttaSztVav09tJpAUTRK5jvDkH
+	 J8e00gP3VpCgqzmGlO3+cDAkyOL2fGo9Oh8swyqZfPpwPYHsKp65rkPw4aS4FN4Ynh
+	 sBXPpQbPR7Vig==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slkZs-000000001kV-486R;
+	Wed, 04 Sep 2024 09:37:21 +0200
+Date: Wed, 4 Sep 2024 09:37:20 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
+	linux-clk@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
+ at init
+Message-ID: <ZtgOMJ2fmkZO8nDG@hovoldconsulting.com>
+References: <20240828171722.1251587-1-swboyd@chromium.org>
+ <20240828171722.1251587-2-swboyd@chromium.org>
+ <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
+ <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com>
+ <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com>
+ <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+ <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904014253.2435-1-zhangjiao2@cmss.chinamobile.com>
-In-Reply-To: <20240904014253.2435-1-zhangjiao2@cmss.chinamobile.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Sep 2024 10:35:54 +0300
-Message-ID: <CAHp75Vfx5q5GaEGRB0zZv2_Gxc8FMoD1tqmmd43ZVJomZTqmhA@mail.gmail.com>
-Subject: Re: [PATCH v2] tools/counter: Close fd when exit
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: wbg@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
 
-On Wed, Sep 4, 2024 at 4:42=E2=80=AFAM zhangjiao2
-<zhangjiao2@cmss.chinamobile.com> wrote:
+On Tue, Sep 03, 2024 at 12:55:07PM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2024-09-02 00:15:53)
+> > On Fri, Aug 30, 2024 at 03:29:22PM -0700, Stephen Boyd wrote:
+> > > Quoting Stephen Boyd (2024-08-29 09:34:05)
+> > 
+> > > > It sounds like it's better to make the default always park at
+> > > > registration time and special case the one or two places where that
+> > > > isn't possible, i.e. USB because it has special rate requirements. So I
+> > > > should just go back to v1 then and pile on the QUP patches.
+> > > 
+> > > I've done this now and I'll push out clk-fixes with the QUP patches.
+> > 
+> > I assumed you'd fix up all the other SoCs affected by this, but I only
+> > saw fixes for sm8550, sm8650 and x1e80100 in your fixes branch.
+> > 
+> > Just sent a corresponding fix for sc8280xp, which I've confirmed also
+> > needs this for QUP:
+> 
+> Thanks!
+> 
+> >         https://lore.kernel.org/lkml/20240902070830.8535-1-johan+linaro@kernel.org/
+> > 
+> > But what about the sm8550 USB issue? Don't the other platforms also need
+> > a corresponding fix (e.g. for when booting from USB)?
+> 
+> I don't know. Are you seeing USB host issues on other platforms with
+> shared RCG clk_ops for the USB clk? It looks inconsistent that sometimes
+> there's a USB GDSC but the shared clk ops aren't used. If nothing is
+> broken then let's work on the proper fix, which is parking RCGs when the
+> GDSC is turned off so that turning on the GDSC always works. If USB is
+> broken for you then send another patch.
 
-> Since fd is not used in the messaging it's better to
-> close it before printing anything.
+I haven't noticed any USB issues on the two platforms I work on and
+which both have USB GDSCs (sc8280xp and x1e80100), but then again I
+don't test USB booting regularly (if that's when the issue show up).
 
-It was my comment which you addressed. Thanks for that.
-But it does not explain what the problem is.
+I was hoping you would have a theory as to why things broke on sm8550 so
+that you can reason about which platforms need this, rather than have
+multiple users debug these issues and play whack-a-mole with incomplete
+fixes.
 
---=20
-With Best Regards,
-Andy Shevchenko
+I don't see anything SoC specific about the QUP fixes and assume early
+console handover is now broken on all Qualcomm SoCs for example.
+
+Johan
 
