@@ -1,125 +1,194 @@
-Return-Path: <linux-kernel+bounces-314461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BBD96B3A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77FC96B39B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B57082827F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:56:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0421A1C24A0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F32017CA19;
-	Wed,  4 Sep 2024 07:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDD115574C;
+	Wed,  4 Sep 2024 07:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="atGzVY/T"
-Received: from mx0a-00176a03.pphosted.com (mx0a-00176a03.pphosted.com [67.231.149.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PY2vcxuY"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F40417BECB;
-	Wed,  4 Sep 2024 07:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0395AFC12
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436490; cv=none; b=lJT2AoRTsZCoaObfawviqTMcf7bD58qIlvLwPUPP+fveFk8dcSKNjl69KoqQCtp2Z4BkOXzvxR3sTFk4IYU/H3yBj9zTl73OpH5Hu1K5HbC2hBXXehetcI1j01QQKGFJ4MsYxU8x9Gm3IzXt4uoCeU9jRrWWTTGgyNqbAny1x6s=
+	t=1725436478; cv=none; b=SU7RssMoxVypnE77i0YA6WGmkxzARH9+jCfn0zJj1QBQbqGX79wmYMeXC4s5v9J1GDAHz8UmHeYFJx50nGqWE1Yg555ahYhA4sBqUWGRVOsKqEY8Ki9HTl+xBvnrvsAJjx3y/OMSnan7AQ9OseaII0ZVuDEif1IpEKQBm5LUfB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436490; c=relaxed/simple;
-	bh=r0a5AYrIFTg6126FS0HDRo81dWEf9zYSuTdKXXqeSbE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OVcb+nhvBOuzPatAoqxBxbcSgZ0VVM5gcQgLLcmqEBc8H2iN4hKV7boMxzzQ/6v5DOJyVKuVKY0ALgFV9S8XYixp1arsuXW+jtwAWh6Lq9mJhp9h2NN+9rbdOYeYexRU5EDBE7EZ3SuZZe0LUlgHFsyjzuVDSI+YRs7pt+Gx5I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=atGzVY/T; arc=none smtp.client-ip=67.231.149.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gehealthcare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
-Received: from pps.filterd (m0047961.ppops.net [127.0.0.1])
-	by m0047961.ppops.net-00176a03. (8.18.1.2/8.18.1.2) with ESMTP id 4847hbLd036337;
-	Wed, 4 Sep 2024 03:54:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	gehealthcare.com; h=cc:content-transfer-encoding:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	outbound; bh=YgLq/2dBPG+eknMq5HrdJ7VBavF7x7z1tmaFPepaKYE=; b=atG
-	zVY/TKNHFS4XOhbr9ByGV2JUUchfNsJZ9oAJGH8PoeErq9DntD1U46bn246Qn3n9
-	1jqnl7jrhyE8OOXOTcaomJ+RC/gn/B8Xb+59s7znmUw3kYNvhLZ3gDEy3mGe7MRl
-	rZ1xRsCnNnxJlVPwqEoLxqKDfLbSi1/dSOMESpFoXGNtVrNb+6+Ob1Ix7xhYPtNo
-	z8K+397lR+f27hcM4vDCl64UnqdCN2qguomD57e41TJRCPeueNGRW20lIVXcWE/4
-	w2D86V3Iu/vmME4tmlpimBlYHXO38IRUZmlHnxJ1u0LgpddEg3f7x6zpgJfNsQC3
-	VdBaSOOXFLwYH1z69xg==
-From: Paul Pu <hui.pu@gehealthcare.com>
-To: p.zabel@pengutronix.de,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Cc: hui.pu@gehealthcare.com, HuanWang@gehealthcare.com,
-        taowang@gehealthcare.com, sebastian.reichel@collabora.com,
-        ian.ray@gehealthcare.com, stable@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/imx/ipuv3: ipuv3-plane: Round up plane width for IPUV3_CHANNEL_MEM_DC_SYNC
-Date: Wed,  4 Sep 2024 10:54:17 +0300
-Message-Id: <20240904075417.53-1-hui.pu@gehealthcare.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240904024315.120-1-hui.pu@gehealthcare.com>
-References: <20240904024315.120-1-hui.pu@gehealthcare.com>
+	s=arc-20240116; t=1725436478; c=relaxed/simple;
+	bh=4vyNiNiH1v08P0yMcB0Tpdo2B83NyylFDODnvzqYY4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rHzPX+0O36E5V0tRgasgr/7WwlsM6g9QE8tZ9cJ0ed/If7OS4NTUrvMSBa56wG5jiQQB5rkANKahgVaFgX2Ntr/VWUaMkoX1VZHa+fKjpDdX2LcA+IVYGS3DU8+v/+bVGeav2jfvfwA1ypJewRujyYrSx94FbFgLUYecYNtLulw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PY2vcxuY; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-498c3d1d788so1919985137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725436476; x=1726041276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XxP8uxBrxXEUMSrhNgWV8NVY8CGnEdtra3EFMhwcZVE=;
+        b=PY2vcxuYBMnknFGvcg4+zUJApGBgl/FLXWzaodHvKBbZc4kpoa021AfIUfNh5ysN5k
+         bLvoxspaM7hxokjbXAVYPBpGx1VRe2ACzCZhTRIWGMD77bZnN2cf0fBs9mnQQbkl90o3
+         qivpbFTCcU/UTRWC0OQhYMmvIgGvcsE+sKp99t43vmH6KV7dg+6ZMYqJ07Wo76zy7PlM
+         ZLwToTaGZINyms7A2Ck7TjGpUtYOGegR+2ldLZI8uDEtXV5stnJ5T0XCyd6/xKc/XhM+
+         D06OMEEzy5/3OEZA3Y4ON9y8/OznwDaGd10iWZgDAspxNHVoOp/VQXjr1houQOBdi6ju
+         wtvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725436476; x=1726041276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XxP8uxBrxXEUMSrhNgWV8NVY8CGnEdtra3EFMhwcZVE=;
+        b=HqewB/Q9JMGLfYSD6j86Kcsw/Awkw0GY7mQp8Hov4bDlYJbxiyZLPy2mm5XQGnfqbA
+         HNh2s/6dHC4L4wyR0H+MjOAzLZFAQqEReuaV58mGb4IvuG5HkkHsIEmgLEvJeCMlxeUP
+         QN35lYw54uqD7g7nSoJZP0z21JwxPqUIfIzr2gTyTv9Rp7aj1faZbDgfw7SiYWBZiavU
+         RhRKYtj+XT2Z8HMuA79c+kYVX9+FmP5w8NAGEA+qq4RLIPKg8ZdQU+b6q2Kvj7aqBdrp
+         wW2jC1DVpS3Lr1ODwq1EV+pjGNGmhzV1/ZTLvMICiCygR2wIVlXPyb4XUrrSebvf9AQh
+         8PGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWanpLTVU8xzOfNekwBP1oeTE4OamDSQBmBYabINDF5A4747OUFO0KP34ENequCkQ+BbF5UcAmhmjPUHZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+oWmQ50sUcubyY/YG2j5RkpqpzrKjyMI9jk6AMvFV6cjuYD02
+	sIMiePOf3rSKBByLo1OY0M2Jhaa3Jj+c7Azhgv7p/XnuE7N+7ZfUh4xKexaKvUg8Jgk/bv1U6tA
+	AduwcjcuTZbir900wnrZEBAIsfWo=
+X-Google-Smtp-Source: AGHT+IGj3e9LihOyTv2RTKK+ffTsTHLy4Q57XPgdreaMh7p6JHnGSNd1hg/5aRjmybMIvr0brZIQFjh24MDeXcupEtk=
+X-Received: by 2002:a05:6102:c46:b0:493:eebc:d77d with SMTP id
+ ada2fe7eead31-49a779b68eamr10223208137.15.1725436475730; Wed, 04 Sep 2024
+ 00:54:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: I75nH8Kpa7pP6aqOJieVarsOmk_w7FT_
-X-Proofpoint-GUID: I75nH8Kpa7pP6aqOJieVarsOmk_w7FT_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_05,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 mlxscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040059
+References: <20240612124750.2220726-2-usamaarif642@gmail.com>
+ <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
+ <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com> <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
+In-Reply-To: <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 4 Sep 2024 19:54:24 +1200
+Message-ID: <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
+	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
+	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This changes the judgement of if needing to round up the width or not,
-from using the `dp_flow` to the plane's type.
+On Wed, Sep 4, 2024 at 7:22=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
+>
+> On Wed, Sep 4, 2024 at 12:17=E2=80=AFAM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Wed, Sep 4, 2024 at 7:12=E2=80=AFPM Yosry Ahmed <yosryahmed@google.c=
+om> wrote:
+> > >
+> > > [..]
+> > > > > @@ -426,6 +515,26 @@ static void sio_read_complete(struct kiocb *=
+iocb, long ret)
+> > > > >         mempool_free(sio, sio_pool);
+> > > > >  }
+> > > > >
+> > > > > +static bool swap_read_folio_zeromap(struct folio *folio)
+> > > > > +{
+> > > > > +       unsigned int idx =3D swap_zeromap_folio_test(folio);
+> > > > > +
+> > > > > +       if (idx =3D=3D 0)
+> > > > > +               return false;
+> > > > > +
+> > > > > +       /*
+> > > > > +        * Swapping in a large folio that is partially in the zer=
+omap is not
+> > > > > +        * currently handled. Return true without marking the fol=
+io uptodate so
+> > > > > +        * that an IO error is emitted (e.g. do_swap_page() will =
+sigbus).
+> > > > > +        */
+> > > > > +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> > > > > +               return true;
+> > > >
+> > > > Hi Usama, Yosry,
+> > > >
+> > > > I feel the warning is wrong as we could have the case where idx=3D=
+=3D0
+> > > > is not zeromap but idx=3D1 is zeromap. idx =3D=3D 0 doesn't necessa=
+rily
+> > > > mean we should return false.
+> > >
+> > > Good catch. Yeah if idx =3D=3D 0 is not in the zeromap but other indi=
+ces
+> > > are we will mistakenly read the entire folio from swap.
+> > >
+> > > >
+> > > > What about the below change which both fixes the warning and unbloc=
+ks
+> > > > large folios swap-in?
+> > >
+> > > But I don't see how that unblocks the large folios swap-in work? We
+> > > still need to actually handle the case where a large folio being
+> > > swapped in is partially in the zeromap. Right now we warn and unlock
+> > > the folio without calling folio_mark_uptodate(), which emits an IO
+> > > error.
+> >
+> > I placed this in mm/swap.h so that during swap-in, it can filter out an=
+y large
+> > folios where swap_zeromap_entries_count() is greater than 0 and less th=
+an
+> > nr.
+> >
+> > I believe this case would be quite rare, as it can only occur when some=
+ small
+> > folios that are swapped out happen to have contiguous and aligned swap
+> > slots.
+>
+> I am assuming this would be near where the zswap_never_enabled() check
+> is today, right?
 
-The `dp_flow` can be -22(-EINVAL) even if the plane is a PRIMARY one.
-See `client_reg[]` in `ipu-common.c`.
+The code is close to the area, but it doesn't rely on zeromap being
+disabled.
 
-[    0.605141] [drm:ipu_plane_init] channel 28, dp flow -22, possible_crtcs=0x0
+>
+> I understand the point of doing this to unblock the synchronous large
+> folio swapin support work, but at some point we're gonna have to
+> actually handle the cases where a large folio being swapped in is
+> partially in the swap cache, zswap, the zeromap, etc.
+>
+> All these cases will need similar-ish handling, and I suspect we won't
+> just skip swapping in large folios in all these cases.
 
-Per the commit message in commit: 4333472f8d7b, using the plane type for
-judging if rounding up is needed is correct.
+I agree that this is definitely the goal. `swap_read_folio()` should be a
+dependable API that always returns reliable data, regardless of whether
+`zeromap` or `zswap` is involved. Despite these issues, mTHP swap-in should=
+n't
+be held back. Significant efforts are underway to support large folios in
+`zswap`, and progress is being made. Not to mention we've already allowed
+`zeromap` to proceed, even though it doesn't support large folios.
 
-This fixes HDMI cannot work for odd screen resolutions, e.g. 1366x768.
+It's genuinely unfair to let the lack of mTHP support in `zeromap` and
+`zswap` hold swap-in hostage.
 
-Fixes: 4333472f8d7b ("drm/imx: ipuv3-plane: Fix overlay plane width")
-Cc: stable@vger.kernel.org # 5.15+
-Signed-off-by: Paul Pu <hui.pu@gehealthcare.com>
----
-v1 -> v2: Fixed addressed review comments
----
- drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nonetheless, `zeromap` and `zswap` are distinct cases. With `zeromap`, we
+permit almost all mTHP swap-ins, except for those rare situations where
+small folios that were swapped out happen to have contiguous and aligned
+swap slots.
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c b/drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c
-index 704c549750f9..3ef8ad7ab2a1 100644
---- a/drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c
-+++ b/drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c
-@@ -614,7 +614,7 @@ static void ipu_plane_atomic_update(struct drm_plane *plane,
- 		break;
- 	}
- 
--	if (ipu_plane->dp_flow == IPU_DP_FLOW_SYNC_BG)
-+	if (plane->type == DRM_PLANE_TYPE_PRIMARY)
- 		width = ipu_src_rect_width(new_state);
- 	else
- 		width = drm_rect_width(&new_state->src) >> 16;
+swapcache is another quite different story, since our user scenarios begin =
+from
+the simplest sync io on mobile phones, we don't quite care about swapcache.
 
-base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
--- 
-2.39.2
-
+Thanks
+Barry
 
