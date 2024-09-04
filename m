@@ -1,190 +1,101 @@
-Return-Path: <linux-kernel+bounces-316018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A6496CA08
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:02:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A47296CA0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE4528A237
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:02:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBAA9B21F8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6209D15E5D3;
-	Wed,  4 Sep 2024 22:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F1617623F;
+	Wed,  4 Sep 2024 22:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ATDnluL3"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4LLF44U"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8287113CA8A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265BB535D4;
+	Wed,  4 Sep 2024 22:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725487331; cv=none; b=FNXD4UQFRh0eBSjmWgwWMoYhZmn0XmDtJd+U97XJtGQEHERf65h4GxNWZh4c4RFWUngZ66sO9sRIK/WGPCOhVY6xz/uQM5hzYvEpsKsL9Mlrz9wh+vT07dsxR8tvZsE3RnQOO+xt2GDpZo3MEJ+3+T5fJmFwcPcL/rfOzLa7/kg=
+	t=1725487345; cv=none; b=tVtcxg6JYTwNAH5eFgVWzFFMvcdSlBBxRyi8x33pf1MM5aH063PV3bH5AXMQ8s6KHN8ImGNKgW1pNDt86JqT+Dbn2nssta6YLfzg3XxUcRSAFMltdaRG77MeZeca7dr5GUPeU+X/5moPLlaY1E1H5BRvLVmJe8zlYFipDeqvruI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725487331; c=relaxed/simple;
-	bh=mfP2MugdJrOVES2m26Q+kF/3uOuj6ILICQIOU4++hZA=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=VchKb8WqOmOiHipajOOSqNoP1Sy2FA+bbaCi6WhGhADb12UbJR1c2/8GDAqSe6tSacTPBSjxS3iHjhgjWV3eXmomTnl8Q/U4XhS+35g3cwTQY+1qGnF7gO5d4uwgLuGLWSCKvWB3aOKkuyuhwmET747/X86CzcuFSKmksbsfOH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ATDnluL3; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a76faa6f5so2606139f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:02:08 -0700 (PDT)
+	s=arc-20240116; t=1725487345; c=relaxed/simple;
+	bh=OFxToRORFGTs4a6R74AoOJ+6TUbIRUfl2djDeijt2Z8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaOlbPgCWbrS/f/wlvIJL7DVS3/0w3OwRPvvbQWhFZwVEriuK8B2vvjT+2ogx0L+n+0LNUO1Ez3NaEgtLU/whHkQvWjlaOaSSwcmjsYoszAqu35xO3RqvwOQC1G8wyZGe/DLZUAD6esZrvXWi3pVUBxpWhEcwhi2EAv3zchj4Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4LLF44U; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6db20e22c85so430147b3.0;
+        Wed, 04 Sep 2024 15:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725487327; x=1726092127; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7fWh6Nr535svbXE8LjWgX0vFySt81kemsy1ZoWE5KQ=;
-        b=ATDnluL3w8jg7PV7V4agqmU+XAe3fkwG+66BryH/V2xBtlsKEykhx+4WvGViuHTtvA
-         W7ert9lOd802k7k6orgmRta9hmw0f6z5K3W4avPv2ulXKiBPAOWrA3Tj2NCqiXRPBpMV
-         jxQIxX4rwhwA+HBAW3UYvpjG+IRmP00obRVTc=
+        d=gmail.com; s=20230601; t=1725487343; x=1726092143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lq3nKTV9GBiSoFZtqRjMQ2sXfW9rZ91ehlIYVCkFdxc=;
+        b=m4LLF44USrhwUnxko9qxnWnDDosAgUe42yrk2bJSTjXuBfq6we0vpXqGp9Ta339AIj
+         kohV6b+6b0+H1fYtdboOatHq40vmIv1C9JSfT2Mr2VO5k1HeRzK4znsnzKGgE+SyUlhM
+         elAWUzr0pyOU15FR433nmPD2qhmuEARgccgP2dIbJP4Ii3ldk86gKbwb5thJPOBnUOfL
+         Krh1soee35lGLQPhyHYLnQFyCauwiRI8VT3dapyXF82qik/XOnPtyCzWRuLmBT6xagmO
+         o7X4gfq7r6q3vEt82b5AbDkbnGck0VHDeFvsQ5amol74u7vtQsVTh0qnsPyLdaXevwFY
+         xCqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725487327; x=1726092127;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A7fWh6Nr535svbXE8LjWgX0vFySt81kemsy1ZoWE5KQ=;
-        b=mZJPhnJPkUpCXx7ok3VGAYcEhscUQ54nJ+GE3rkHLE2q94CVwgPeateFW/LfCtwYke
-         uGb/j/NQD01wHThBWnQ0oBXNNenkz/NscmYR71G5tPLQFahgwwV5iS4LoJszMCbBm/dv
-         v8fAf+qYHRnPUSiPQBI2Ce7wobANzoszttEcMIq0aoQZQhOY8+zZxaSvAPMDnzcZ+PuO
-         ISWbcQ8Or9AgvsFU7vAtxG94dWWw6M4cRau8TKpjcWEf6aBpbiLK5q/cWF+N/ZJaYaJS
-         HFAdyFeDAa81N8STE6hQbb+c5Ei1hIqhArXERt5XR3go3o67RHlHcgUSTG0KgnlEUlKQ
-         Ow/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWSfwsZMKWFZ7sf6swmZTWcI0w3cIZ9xhunbVVKu3kIACEBFjXZq3gb4G1Nw9qEjtCaMBI3Lc4mrQUzUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvIdTZ932Rhjd9mwXARkM4z2dJHVswMnTvS/jaxFxMgmjUcFBk
-	MlCqWQM0Mv3b+eOs/eJdnVcrXi+OxTumIs8Wi+kOKwY33mZbkAqfz6tGeaI7xY8aNfdzFYnQUqH
-	/
-X-Google-Smtp-Source: AGHT+IExA2/nC/kqatN5O9Jm1D0CL+IoUAf1shwfQkUHmNXOLmUB9Waz4VdhSGlmlSlaN8UhNkTFWg==
-X-Received: by 2002:a05:6602:6410:b0:82a:2053:e715 with SMTP id ca18e2360f4ac-82a36f448c5mr1755806339f.14.1725487327445;
-        Wed, 04 Sep 2024 15:02:07 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e17177sm3269449173.78.2024.09.04.15.02.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 15:02:07 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------OnVhVSukisMPZgdyzfBtoDqk"
-Message-ID: <a226a5ab-b30f-47a8-825b-2ee073cbe28a@linuxfoundation.org>
-Date: Wed, 4 Sep 2024 16:02:06 -0600
+        d=1e100.net; s=20230601; t=1725487343; x=1726092143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lq3nKTV9GBiSoFZtqRjMQ2sXfW9rZ91ehlIYVCkFdxc=;
+        b=vg99O/XjZV3JlLt1vXJxVmsCYuT8mknzcBqljDuxiEVm6hShyrExXL+egpskzwkAmW
+         Nomi4fogNbSpx5fyWDPBKqba633L6OzRcVypmPfO+meH4wgXM76bFMtY+eyhsjVtPuxm
+         vb47vtPSqGeGg5k6AYstlkQXEC65GRBmOblYdj/x5nBAMNIA0PrcADQQ+jTR/gD7+jPH
+         kxsSBOP9IfHFzGEEfEuSV23VzJyICkXrQ22mlrj+f7NRLDDSzggI4v+F1j8Pnh9ugRhm
+         +3IiCSqMbJB28Tkxg7sOiLEGfSOlX3mdFa4KZxlWdkRx3K20JF++pxOuMX3OFW4356fp
+         n++A==
+X-Forwarded-Encrypted: i=1; AJvYcCVlvES2qDxZ95rwreYqNJSwYI2r+40r2EuFVuBq6aFjvlwQS8nXoZJR4V8Y8LEgTZ7ZiONcQ+z7VJsJSxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+B8rurbERdqf5OMwcH8/32mPHFUGZ/lgGrLpINwcfMU/aEBc
+	VzFksolx4TO/e1N6TB6EbZBu0swa3mA7mBbPYA7Gfy55AK0Zs9GtEbEd2Tk8kbYab9PGxoVQ+ec
+	+tjpDZMK25iOBKFSF/ic6advl8VM=
+X-Google-Smtp-Source: AGHT+IE+aC6ebrmZOE2HYjfdJfK9QlKwICZrNFPfJ8ZCKcOm1HrVcVtnSxvfUsRiaqNrtXJ5FIgic6bv6zaUSbbmwr0=
+X-Received: by 2002:a05:690c:81:b0:6b0:d9bc:5a29 with SMTP id
+ 00721157ae682-6d40f62dcf0mr244774897b3.32.1725487343043; Wed, 04 Sep 2024
+ 15:02:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Renninger <trenn@suse.com>, Thomas Renninger <trenn@suse.de>
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] cpupower update for Linux 6.12-rc1
+References: <20240904205659.7470-1-rosenp@gmail.com> <adcde43a-aaa4-4f2f-a415-e15d77ec7c41@lunn.ch>
+In-Reply-To: <adcde43a-aaa4-4f2f-a415-e15d77ec7c41@lunn.ch>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 4 Sep 2024 15:02:11 -0700
+Message-ID: <CAKxU2N8sXUnMvXmJ4s045J6Y0UiQZVufJFaxA4=cXOvnEt=8Bg@mail.gmail.com>
+Subject: Re: [PATCH] net: phy: qca83xx: use PHY_ID_MATCH_EXACT
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org, ansuelsmth@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------OnVhVSukisMPZgdyzfBtoDqk
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Rafael,
-
-Please pull the following cpupower update for Linux 6.12-rc1.
-
-This cpupower update for Linux 6.12-rc1 consists of an enhancement
-to cpuidle tool to display the residency value of cpuidle states.
-This addition provides a clearer and more detailed view of idle
-state information when using cpuidle-info.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.12-rc1
-
-for you to fetch changes up to 76fb981ad6774b82f06703c896b492c8659b543b:
-
-   tools/cpupower: display residency value in idle-info (2024-08-09 10:32:33 -0600)
-
-----------------------------------------------------------------
-linux-cpupower-6.12-rc1
-
-This cpupower update for Linux 6.12-rc1 consists of an enhancement
-to cpuidle tool to display the residency value of cpuidle states.
-This addition provides a clearer and more detailed view of idle
-state information when using cpuidle-info.
-
-----------------------------------------------------------------
-Aboorva Devarajan (1):
-       tools/cpupower: display residency value in idle-info
-
-  tools/power/cpupower/lib/cpuidle.c        | 8 ++++++++
-  tools/power/cpupower/lib/cpuidle.h        | 2 ++
-  tools/power/cpupower/utils/cpuidle-info.c | 4 ++++
-  3 files changed, 14 insertions(+)
-----------------------------------------------------------------
---------------OnVhVSukisMPZgdyzfBtoDqk
-Content-Type: text/x-patch; charset=UTF-8; name="linux-cpupower-6.12-rc1.diff"
-Content-Disposition: attachment; filename="linux-cpupower-6.12-rc1.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2xpYi9jcHVpZGxlLmMgYi90b29s
-cy9wb3dlci9jcHVwb3dlci9saWIvY3B1aWRsZS5jCmluZGV4IDQ3OWM1OTcxYWE2ZC4uMGVj
-YWMwMDkyNzNjIDEwMDY0NAotLS0gYS90b29scy9wb3dlci9jcHVwb3dlci9saWIvY3B1aWRs
-ZS5jCisrKyBiL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2xpYi9jcHVpZGxlLmMKQEAgLTExNiw2
-ICsxMTYsNyBAQCBlbnVtIGlkbGVzdGF0ZV92YWx1ZSB7CiAJSURMRVNUQVRFX1VTQUdFLAog
-CUlETEVTVEFURV9QT1dFUiwKIAlJRExFU1RBVEVfTEFURU5DWSwKKwlJRExFU1RBVEVfUkVT
-SURFTkNZLAogCUlETEVTVEFURV9USU1FLAogCUlETEVTVEFURV9ESVNBQkxFLAogCU1BWF9J
-RExFU1RBVEVfVkFMVUVfRklMRVMKQEAgLTEyNSw2ICsxMjYsNyBAQCBzdGF0aWMgY29uc3Qg
-Y2hhciAqaWRsZXN0YXRlX3ZhbHVlX2ZpbGVzW01BWF9JRExFU1RBVEVfVkFMVUVfRklMRVNd
-ID0gewogCVtJRExFU1RBVEVfVVNBR0VdID0gInVzYWdlIiwKIAlbSURMRVNUQVRFX1BPV0VS
-XSA9ICJwb3dlciIsCiAJW0lETEVTVEFURV9MQVRFTkNZXSA9ICJsYXRlbmN5IiwKKwlbSURM
-RVNUQVRFX1JFU0lERU5DWV0gPSAicmVzaWRlbmN5IiwKIAlbSURMRVNUQVRFX1RJTUVdICA9
-ICJ0aW1lIiwKIAlbSURMRVNUQVRFX0RJU0FCTEVdICA9ICJkaXNhYmxlIiwKIH07CkBAIC0y
-NTQsNiArMjU2LDEyIEBAIHVuc2lnbmVkIGxvbmcgY3B1aWRsZV9zdGF0ZV9sYXRlbmN5KHVu
-c2lnbmVkIGludCBjcHUsCiAJcmV0dXJuIGNwdWlkbGVfc3RhdGVfZ2V0X29uZV92YWx1ZShj
-cHUsIGlkbGVzdGF0ZSwgSURMRVNUQVRFX0xBVEVOQ1kpOwogfQogCit1bnNpZ25lZCBsb25n
-IGNwdWlkbGVfc3RhdGVfcmVzaWRlbmN5KHVuc2lnbmVkIGludCBjcHUsCisJCQkJCSAgdW5z
-aWduZWQgaW50IGlkbGVzdGF0ZSkKK3sKKwlyZXR1cm4gY3B1aWRsZV9zdGF0ZV9nZXRfb25l
-X3ZhbHVlKGNwdSwgaWRsZXN0YXRlLCBJRExFU1RBVEVfUkVTSURFTkNZKTsKK30KKwogdW5z
-aWduZWQgbG9uZyBjcHVpZGxlX3N0YXRlX3VzYWdlKHVuc2lnbmVkIGludCBjcHUsCiAJCQkJ
-CXVuc2lnbmVkIGludCBpZGxlc3RhdGUpCiB7CmRpZmYgLS1naXQgYS90b29scy9wb3dlci9j
-cHVwb3dlci9saWIvY3B1aWRsZS5oIGIvdG9vbHMvcG93ZXIvY3B1cG93ZXIvbGliL2NwdWlk
-bGUuaAppbmRleCAyZTEwZmVhZDJlMWUuLjJhYjQwNGQ0MDI1OSAxMDA2NDQKLS0tIGEvdG9v
-bHMvcG93ZXIvY3B1cG93ZXIvbGliL2NwdWlkbGUuaAorKysgYi90b29scy9wb3dlci9jcHVw
-b3dlci9saWIvY3B1aWRsZS5oCkBAIC04LDYgKzgsOCBAQCBpbnQgY3B1aWRsZV9zdGF0ZV9k
-aXNhYmxlKHVuc2lnbmVkIGludCBjcHUsIHVuc2lnbmVkIGludCBpZGxlc3RhdGUsCiAJCQkJ
-ICAgdW5zaWduZWQgaW50IGRpc2FibGUpOwogdW5zaWduZWQgbG9uZyBjcHVpZGxlX3N0YXRl
-X2xhdGVuY3kodW5zaWduZWQgaW50IGNwdSwKIAkJCQkJCXVuc2lnbmVkIGludCBpZGxlc3Rh
-dGUpOwordW5zaWduZWQgbG9uZyBjcHVpZGxlX3N0YXRlX3Jlc2lkZW5jeSh1bnNpZ25lZCBp
-bnQgY3B1LAorCQkJCQkJdW5zaWduZWQgaW50IGlkbGVzdGF0ZSk7CiB1bnNpZ25lZCBsb25n
-IGNwdWlkbGVfc3RhdGVfdXNhZ2UodW5zaWduZWQgaW50IGNwdSwKIAkJCQkJdW5zaWduZWQg
-aW50IGlkbGVzdGF0ZSk7CiB1bnNpZ25lZCBsb25nIGxvbmcgY3B1aWRsZV9zdGF0ZV90aW1l
-KHVuc2lnbmVkIGludCBjcHUsCmRpZmYgLS1naXQgYS90b29scy9wb3dlci9jcHVwb3dlci91
-dGlscy9jcHVpZGxlLWluZm8uYyBiL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL3V0aWxzL2NwdWlk
-bGUtaW5mby5jCmluZGV4IDQ0MTI2YTg3ZmE3YS4uZTBkMTdmMGRlM2ZlIDEwMDY0NAotLS0g
-YS90b29scy9wb3dlci9jcHVwb3dlci91dGlscy9jcHVpZGxlLWluZm8uYworKysgYi90b29s
-cy9wb3dlci9jcHVwb3dlci91dGlscy9jcHVpZGxlLWluZm8uYwpAQCAtNjQsNiArNjQsOCBA
-QCBzdGF0aWMgdm9pZCBjcHVpZGxlX2NwdV9vdXRwdXQodW5zaWduZWQgaW50IGNwdSwgaW50
-IHZlcmJvc2UpCiAKIAkJcHJpbnRmKF8oIkxhdGVuY3k6ICVsdVxuIiksCiAJCSAgICAgICBj
-cHVpZGxlX3N0YXRlX2xhdGVuY3koY3B1LCBpZGxlc3RhdGUpKTsKKwkJcHJpbnRmKF8oIlJl
-c2lkZW5jeTogJWx1XG4iKSwKKwkJICAgICAgIGNwdWlkbGVfc3RhdGVfcmVzaWRlbmN5KGNw
-dSwgaWRsZXN0YXRlKSk7CiAJCXByaW50ZihfKCJVc2FnZTogJWx1XG4iKSwKIAkJICAgICAg
-IGNwdWlkbGVfc3RhdGVfdXNhZ2UoY3B1LCBpZGxlc3RhdGUpKTsKIAkJcHJpbnRmKF8oIkR1
-cmF0aW9uOiAlbGx1XG4iKSwKQEAgLTExNSw2ICsxMTcsOCBAQCBzdGF0aWMgdm9pZCBwcm9j
-X2NwdWlkbGVfY3B1X291dHB1dCh1bnNpZ25lZCBpbnQgY3B1KQogCQlwcmludGYoXygicHJv
-bW90aW9uWy0tXSBkZW1vdGlvblstLV0gIikpOwogCQlwcmludGYoXygibGF0ZW5jeVslMDNs
-dV0gIiksCiAJCSAgICAgICBjcHVpZGxlX3N0YXRlX2xhdGVuY3koY3B1LCBjc3RhdGUpKTsK
-KwkJcHJpbnRmKF8oInJlc2lkZW5jeVslMDVsdV0gIiksCisJCSAgICAgICBjcHVpZGxlX3N0
-YXRlX3Jlc2lkZW5jeShjcHUsIGNzdGF0ZSkpOwogCQlwcmludGYoXygidXNhZ2VbJTA4bHVd
-ICIpLAogCQkgICAgICAgY3B1aWRsZV9zdGF0ZV91c2FnZShjcHUsIGNzdGF0ZSkpOwogCQlw
-cmludGYoXygiZHVyYXRpb25bJTAyMEx1XSBcbiIpLAo=
-
---------------OnVhVSukisMPZgdyzfBtoDqk--
+On Wed, Sep 4, 2024 at 2:43=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Sep 04, 2024 at 01:56:59PM -0700, Rosen Penev wrote:
+> > No need for the mask when there's already a macro for this.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>
+> The Subject should be [PATCH net-next]. Yes, we all keep forgetting
+> it, but it is important to the CI.
+Procedural mistake. Need to use --subject-prefix looks like. Should I resen=
+d?
+>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>
+>     Andrew
 
