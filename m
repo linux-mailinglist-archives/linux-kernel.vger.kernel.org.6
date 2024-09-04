@@ -1,113 +1,222 @@
-Return-Path: <linux-kernel+bounces-315656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB3A96C574
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BDB96C57D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24EE1C20EC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AF61F25B0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E9B1E008F;
-	Wed,  4 Sep 2024 17:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CD61E1330;
+	Wed,  4 Sep 2024 17:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf8qnOV4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1hbp+hI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415FD10A12;
-	Wed,  4 Sep 2024 17:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA935464E;
+	Wed,  4 Sep 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470982; cv=none; b=o52p+/q5RoFk5z7yRk1yqc53ySnXH3Myw7bKj1B2jEysDGp8ZXANFf7QDznLg/rbbz2P0xLRlf/YWJu6EMSEnWaqK9vvCPj7rPuohIaex+WFw8VjqTG86SJLufndXyfsOEVWaeXnxr8f4yWbOzAWTTgUYCwxn4TXztGX4WvVqd4=
+	t=1725471080; cv=none; b=ep9NpZIIwjHdwSsR0iN47b/IchCTzhknVTZVpjoxkjycmVcLhRIWdUQ2oXqtBxGCmoaS33i++IVLQmIdSA7OzR9GLjbaQPPmqZ5inz+FGX/5OjfrlXC6m5XOlqi+eLq94Wc5SMsktV8CS5WylQcWA4kc0KFpwHHhorwhhrfbGBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470982; c=relaxed/simple;
-	bh=g2SvYEsNRUISamOgyu6CD7Iy+rnUtlzFhcKFNMBbW+o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W3cJ48+6RCXwMjy2WB/XstyM6VMELpXV/kkh1uV97sFtbv9GkwWQvVAcZr9vgOwFEK1Fu1KJag/CvXi26R19F/PGjac7Ts7PEJe2WiEmJ2m3XbLGY7QIL/2Eecr+Eq6JRuuhTjIWRskgDfqfsG7G+4nCV6IiCPNDnnWyyYn13S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf8qnOV4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D39C4CEC2;
-	Wed,  4 Sep 2024 17:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725470981;
-	bh=g2SvYEsNRUISamOgyu6CD7Iy+rnUtlzFhcKFNMBbW+o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zf8qnOV4xVEXtXImMjjoQ/DlyyKTurmsFg3Sn05aCnHyFRrQOWLthCj5ZcGmKdLAh
-	 wFcoCGDddKU40xe0pqdzgyVXOCwQMKv1DQuHhVi2mi406cM53G8vic1HXtCqKnm+Hs
-	 gYcCqMhy+hvi+i0op9ujV83L+n+JktjTMubSLiezAKKoN0BxaN+KbkIJG/4Yn2uPc5
-	 DBVVAwKKkqI0ZrVLN1T/v5xdQ5UtfELgG5BOkjkkUz+/zB7n4ECdc2I1LReLUcfi2r
-	 4U1/sG3ax9xfvJZwYS9Kl4/0e8Y7fLJdkOa+LiGM1kBjwYm9XsDLlba4exX9XFuJ4e
-	 usaZEqvlOLUpw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>
-Subject: [PATCH v2] mm/damon/tests/vaddr-kunit: init maple tree without MT_FLAGS_LOCK_EXTERN
-Date: Wed,  4 Sep 2024 10:29:31 -0700
-Message-Id: <20240904172931.1284-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725471080; c=relaxed/simple;
+	bh=2uQKItW7vt8MX4buVgBQu2rd3/0LezlUPrICrlhrgag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7nwLdiO+ajQAyzq8ZWhWRj7YIWCz1o9f7T13tb6h5LeeK4RfMT+wFb9X/Yp/mXoWPjsngYwLKb/XwlkqOM3waw6n0hg655XYJiQ5cAOjgTNJc2JcBrT6FWDZa0GvW2TQS3C4YSrcNCyYxELTZlDnXn6t1kWKv4u70MYDNl4yGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1hbp+hI; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725471080; x=1757007080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2uQKItW7vt8MX4buVgBQu2rd3/0LezlUPrICrlhrgag=;
+  b=H1hbp+hIRVLunLt+HsD83Zbb7Uc+iC0J+xUBq+jCSqKeHfPbAIbGHC2+
+   DFLXWmpWO4qYyfY4Kfm/Uh5ZxYiwQydHGB1Sog0YTmmnCCmx8i5rIDsZ5
+   CxmGZy+nITbYXu3ioufPTUpGQaGpPixd2m7sFwCbz2RVyoQB/6TBjyjjk
+   /u98PiXDKHwvHOetChn+gLxG3nteHPn+ScyHta0cfec9sB/tUP4LkreNx
+   4tiA26bgoLxVwdrbZONJfVOX2lHTlCdByFjqIFXsy8yzHoDJTDkavBll5
+   1uLaMQQMabV2X/+hQYnlO+lCk0vMVtVkVHC1tysMwQUHY54tcP52Z5E2u
+   g==;
+X-CSE-ConnectionGUID: tF2BjtJRTWie222acjljZA==
+X-CSE-MsgGUID: Dul+PFW6QLyrGN0jFc+/9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="46680518"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="46680518"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 10:31:19 -0700
+X-CSE-ConnectionGUID: B3fIZmSmRNu715JzRHLOiA==
+X-CSE-MsgGUID: bC1PYqJST9Sxw/suC6owEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="69968846"
+Received: from unknown (HELO localhost) ([10.79.232.150])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 10:31:18 -0700
+Date: Wed, 4 Sep 2024 10:31:17 -0700
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v2 4/9] x86/hyperv: Parse the ACPI wakeup mailbox
+Message-ID: <20240904173117.GA20992@yjiang5-mobl.amr.corp.intel.com>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-5-yunhong.jiang@linux.intel.com>
+ <BN7PR02MB4148CC3F9091BC2604E457CFD4922@BN7PR02MB4148.namprd02.prod.outlook.com>
+ <20240903201917.GB105@yjiang5-mobl.amr.corp.intel.com>
+ <SN6PR02MB4157963DE55041D0631188A4D49C2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157963DE55041D0631188A4D49C2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-damon_test_three_regions_in_vmas() initializes a maple tree with
-MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
-mt_lock of the maple tree will not be used.  And therefore the maple
-tree initialization code skips initialization of the mt_lock.  However,
-__link_vmas(), which adds vmas for test to the maple tree, uses the
-mt_lock.  In other words, the uninitialized spinlock is used.  The
-problem becomes clear when spinlock debugging is turned on, since it
-reports spinlock bad magic bug.
+On Wed, Sep 04, 2024 at 02:56:49PM +0000, Michael Kelley wrote:
+> From: Yunhong Jiang <yunhong.jiang@linux.intel.com> Sent: Tuesday, September 3, 2024 1:19 PM
+> > 
+> > On Mon, Sep 02, 2024 at 03:35:13AM +0000, Michael Kelley wrote:
+> > > From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > > >
+> > > > Parse the wakeup mailbox VTL2 TDX guest. Put it to the guest_late_init, so
+> > > > that it will be invoked before hyperv_init() where the mailbox address is
+> > > > checked.
+> > >
+> > > Could you elaborate on the choice to set the wakeup_mailbox_address
+> > > in ms_hyperv_late_init()? The code in hv_common.c is intended to be
+> > > code that is architecture neutral (see the comment at the top of the module),
+> > > so it's a red flag to see #ifdef CONFIG_X86_64. Couldn't the
+> > > wakeup_mailbox_address be set in the x86 version of hyperv_init()
+> > > before it is needed?
+> > 
+> > Sure, will try to put it in hyperv_init() before it's needed.
+> > >
+> > > >
+> > > > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > > > ---
+> > > >  arch/x86/include/asm/mshyperv.h | 3 +++
+> > > >  arch/x86/kernel/cpu/mshyperv.c  | 2 ++
+> > > >  drivers/hv/hv_common.c          | 8 ++++++++
+> > > >  3 files changed, 13 insertions(+)
+> > > >
+> > > > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+> > > > index 390c4d13956d..5178b96c7fc9 100644
+> > > > --- a/arch/x86/include/asm/mshyperv.h
+> > > > +++ b/arch/x86/include/asm/mshyperv.h
+> > > > @@ -10,6 +10,7 @@
+> > > >  #include <asm/nospec-branch.h>
+> > > >  #include <asm/paravirt.h>
+> > > >  #include <asm/mshyperv.h>
+> > > > +#include <asm/madt_wakeup.h>
+> > > >
+> > > >  /*
+> > > >   * Hyper-V always provides a single IO-APIC at this MMIO address.
+> > > > @@ -49,6 +50,8 @@ extern u64 hv_current_partition_id;
+> > > >
+> > > >  extern union hv_ghcb * __percpu *hv_ghcb_pg;
+> > > >
+> > > > +extern u64 wakeup_mailbox_addr;
+> > > > +
+> > > >  bool hv_isolation_type_snp(void);
+> > > >  bool hv_isolation_type_tdx(void);
+> > > >  u64 hv_tdx_hypercall(u64 control, u64 param1, u64 param2);
+> > > > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> > > > index 3d4237f27569..f6b727b4bd0b 100644
+> > > > --- a/arch/x86/kernel/cpu/mshyperv.c
+> > > > +++ b/arch/x86/kernel/cpu/mshyperv.c
+> > > > @@ -43,6 +43,8 @@ struct ms_hyperv_info ms_hyperv;
+> > > >  bool hyperv_paravisor_present __ro_after_init;
+> > > >  EXPORT_SYMBOL_GPL(hyperv_paravisor_present);
+> > > >
+> > > > +u64 wakeup_mailbox_addr;
+> > >
+> > > This value duplicates acpi_mp_wake_mailbox_paddr in
+> > > madt_wakeup.c. It looks like the duplicate value is used
+> > > for two things:
+> > >
+> > > 1) In hv_is_private_mmio_tdx() to control the encrypted
+> > > vs. decrypted mapping (Patch 5 of this series)
+> > >
+> > > 2) As a boolean in hv_vtl_early_init() to avoid overwriting
+> > > the wakeup_secondary_cpu_64 value when
+> > > dtb_parse_mp_wake() has set it to acpi_wakeup_cpu().
+> > > (Patch 9 of this series).
+> > >
+> > > Having a duplicate value is messy, and I'm wondering if
+> > > it can be avoided. For (1), hv_private_mmio_tdx() could call
+> > > into a function added to madt_wakeup.c to make the
+> > > check.  For (2), the check should probably be based on
+> > > hv_isolation_type_tdx() instead of whether the wakeup
+> > > mailbox address is set.  I'll note that Patch 5 of this series
+> > > is using hv_isolation_type_tdx(), so there's a bit of an
+> > > inconsistency in testing the wakeup_mailbox_addr in
+> > > Patch 9.
+> > 
+> > I think your comment includes two points, the duplicated variables and the
+> > incosistency in the testing.
+> > 
+> > Thank you for pointing out the duplication of wakeup_mailbox_addr with
+> > acpi_mp_wake_mailbox_paddr. I didn't realize it. Yes, such duplication should be
+> > avoided and will fix it in next submission.
+> > 
+> > Agree the inconsistency in testing wakeup_mailbox_addr and
+> > hv_isolation_type_tdx() is not good. IMHO, the wakeup_mailbox_addr (or the new
+> > function you proposed) is better than hv_isolation_type_tdx(), since the
+> > wakeup_mailbox_addr is more directly related.  But hv_vtl_init_platform()
+> > happens before DT parse, thus I have to use the hv_isolation_type_tdx() in it. I
+> > don't have a good idea on how to fix this.
+> > 
+> > Thanks
+> > --jyh
+> > 
+> 
+> I don't think there's a requirement to set the "is_private_mmio"
+> function in hv_vtl_init_platform(). It just needs to be set before
+> acpi_wakeup_cpu() is called, which does the memremap() that will
+> invoke the "is_private_mmio" function to decide whether to map
+> as encrypted or decrypted.
+> 
+> So maybe setting the "is_private_mmio" function could be
+> done after dtb_parse_mp_wake() is called in its new location, and
+> you know you have a valid wake mailbox address? Again, I haven't
+> worked out all the details, so this approach might be just as messy,
+> but in a different way. Use your judgment ... :-)
 
-Fix the issue by excluding MT_FLAGS_LOCK_EXTERN from the maple tree
-initialization flags.  Note that we don't use empty flags to make it
-further similar to the usage of mm maple tree, and to be prepared for
-possible future changes, as suggested by Liam.
+Sorry that I didn't explain clearly. The testing in hv_vtl_init_platform() is
+not only for the is_private_mmio, but also for the realmode_reserve(), which
+happens before the DT parse.
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
-Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
-Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
-Changes from v1
-(https://lore.kernel.org/20240904004534.1189-1-sj@kernel.org)
-- Keep lock usage and update the initialization flags (Liam)
-- Fix a typo: s/celar/clear/ (Guenter)
+BTW, I don't know why the trampoline_64.S is put into the real mode blob. I
+don't find any specific requirement in the code, but I'm not sure if I missed
+anything. If this dependency is removed, all the TDX guest will benefit.
 
- mm/damon/tests/vaddr-kunit.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you
+--jyh
 
-diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-index 83626483f82b..a339d117150f 100644
---- a/mm/damon/tests/vaddr-kunit.h
-+++ b/mm/damon/tests/vaddr-kunit.h
-@@ -77,7 +77,7 @@ static void damon_test_three_regions_in_vmas(struct kunit *test)
- 		(struct vm_area_struct) {.vm_start = 307, .vm_end = 330},
- 	};
- 
--	mt_init_flags(&mm.mm_mt, MM_MT_FLAGS);
-+	mt_init_flags(&mm.mm_mt, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
- 	if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
- 		kunit_skip(test, "Failed to create VMA tree");
- 
--- 
-2.39.2
-
+> 
+> Michael
 
