@@ -1,171 +1,269 @@
-Return-Path: <linux-kernel+bounces-315699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFC596C5EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABAF96C5EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DAE284859
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A541F23311
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0031E1324;
-	Wed,  4 Sep 2024 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9471E1A24;
+	Wed,  4 Sep 2024 18:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XbW7O68X"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSS0SXD8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D963D1DFE2D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE43F2AE9F;
+	Wed,  4 Sep 2024 18:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472915; cv=none; b=Oj8jxsWUFGiWc/sgxg2pSLH6mbGlQTkQs8y5mxeSoKdSIyQ0bQ95gPb3ftRIRvqYSLYcs+qgRFuv9NOCGt6Ta79ppJqxddIIJS3rqSV/pqo1ULRJQCg6Y1/5fS5HrBz3bdu7p6WYcvBwOINTZ77mORFYUtqIAhKq9u0lYqPOtJ0=
+	t=1725472926; cv=none; b=hSWwDxNxnwT1cWIqaeKqFzUqXsqbcm+EzBkoqiWrsBrGZ5UvLRbOXFihIKc9rUveGrlGnUf8B2YkWU8JwgIsZj5FU+Chn33CgN6ICI/J9vXt52x28G5zUUmeHZIedwoVUk3bcDJ8+Kzo2wfe0ByyilVr8RZSGXC4HDn/KFKcDmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472915; c=relaxed/simple;
-	bh=kvhqnlfhsbpncUCZEiavCzg2LzA66ExExMNp1OY8eBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sL3N8Zjpn/YOieEIWIpPYor1dkp1ghsQZBjti89i9kv33T+274O6F/7IJY3faUrogkC1qZ5ywRqNkBB5MdVnm0knSroEiOOA9sqrvf6abY2cSkcLWhnnFk29AvVCTxK+me4vCXYVAKYFZODfDYEnMGCAqw1VO8XrOKRW+8Te1kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XbW7O68X; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a1af43502so353452439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725472913; x=1726077713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
-        b=XbW7O68XhAVyoIOcmKTdw5Ilxj7olMPKSD/W+m8mkSQ6eTMdkYM88U5EZfADMX63Kg
-         M6TfB1mLDcmMzE7AeYFnneFWokQozgT/HZ6m2AbGhCcJTyvfJNvNF5SMOaAqY6X1x+xs
-         pyVTLuq7KfkJ3HLxY26RuvZpKJlEBEXgrFYbY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472913; x=1726077713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
-        b=FtXYnfcYfkeNbEpxV4M52vzmzsj1ZfbEkaxl7szDDF7rpZXcWXanNGCfitViV0xDIg
-         DWFmB+ZbBMSSbPw344FZ0bv2o5076447ljdxXPAygygVI9+HngNIkpUS1vDaHcwRmavI
-         RpHHXJPBN77yD3UDl7GxDvUnJ546zPPbrohrVv0qc15GCNhjjWzjg0T8ePgVwY2r1JfR
-         aEYoAgNQAVJf3cMkULdZ5B1DXDpOZ7k06ITX0JkKDtRWavvtNEdj/1cwWtvbDYyNDPdU
-         PAXne/r419sOpU7Q4AKEW+sNkGHvUrB35CHObvCtOCZWj1cH2VNcnUZ+uSFdMQ7L4lk4
-         xwbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVCG/ljOzVgdRSvgMN9e34iWYvAQ+34mXH2Eoo/14CfkEe5PTWr1LDGY8L76EQdoG9XCWvy0/81VViLng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaqTZ5kLT8jwlntLlLhB1xODaRjGW8A+IKsudDLAFwglHbjTQ9
-	7/U9edjSSHbcvGZoMGA1mfDQdMuHFgLs8t/wk9R+ml6iegEt9Bu3sqyU1o5mDPI=
-X-Google-Smtp-Source: AGHT+IE09d+IBeWwgHe5zjgeYzKqlOeVFBKdTyoUXo2CmM5mem85ZvAmg7ax8y1cyKmmP1BgZ4kZOg==
-X-Received: by 2002:a05:6602:60c7:b0:807:f0fb:11a2 with SMTP id ca18e2360f4ac-82a11094588mr2605807839f.13.1725472912591;
-        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a49897bsm366616139f.37.2024.09.04.11.01.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
-Message-ID: <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
-Date: Wed, 4 Sep 2024 12:01:50 -0600
+	s=arc-20240116; t=1725472926; c=relaxed/simple;
+	bh=UMPt90iX+zouFx9RY9Xx20PaJkUiEYb81VHFcIzRgzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LMZyJDpWQduJ1b0dCez5WMd+zAxpK9b9UEQeO3hVUWmoSc6XT15/2kJViU9FFdEsr9IQ3q+M9jpL7jPiad7yppvxjr18kNXKsBhZHgC1m55R0et5+5KcWSxbgJVAovkLpDJUV9Fh3J8J1UirMy12N4ykXZlZcWt9Ab0UXiW29yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSS0SXD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9795BC4CEC2;
+	Wed,  4 Sep 2024 18:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725472926;
+	bh=UMPt90iX+zouFx9RY9Xx20PaJkUiEYb81VHFcIzRgzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JSS0SXD87TcCL1Pq5Owr4FF0VOuFtE6qasNAwaKG2IyDZwSM8LZ+Cy+RPWti5TQYy
+	 WSYv3BHvUjiSi5M7sXFPhBH/CZJv6h8mNic8uGPWHyhUERCK/kYem+Fa4LIP0z1/xx
+	 EHWKhVsuv+LWu3S0rutgMo8f4VOY9gnPmc37Ujwsr2G5syycEJRIiJZ8wqYqCdkOz1
+	 F1jyKVrdPEjhGwJplcWBFfBr1iZZT22IdH7B+hJLA/hZgFCssF6fw94ni/DgQMqdrF
+	 0zhTiMbQ+bl3Bll6bjtK3ypkT1qkVDfscvXZLo9FeZtRCpqHZLBZrsl8PLPN1MKI2C
+	 WJfcXEI0kwpPw==
+Date: Wed, 4 Sep 2024 21:02:01 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	regressions@lists.linux.dev, kernelci@lists.linux.dev,
+	kernel@collabora.com
+Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default ops
+Message-ID: <20240904180201.GQ4026@unreal>
+References: <cover.1721818168.git.leon@kernel.org>
+ <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
+ <10431dfd-ce04-4e0f-973b-c78477303c18@notapiano>
+ <20240904154529.GP4026@unreal>
+ <7e8a6a4e-eb9e-438b-a366-f95de4e88bf8@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
- Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
- Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
- "conduct@kernel.org" <conduct@kernel.org>
-References: <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e8a6a4e-eb9e-438b-a366-f95de4e88bf8@notapiano>
 
-On 9/2/24 03:51, Kent Overstreet wrote:
-> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
->> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
->>> On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
->>>> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
->>>> [...]
->>>>> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
->>>>> in the case of bugs, because that's going to be an improvement w.r.t.
->>>>> system robustness, in exactly the same way we don't use BUG_ON() if it's
->>>>> something that we can't guarantee won't happen in the wild - we WARN()
->>>>> and try to handle the error as best we can.
->>>>
->>>> We have discussed that in a different email thread. And I have to say
->>>> that I am not convinced that returning NULL makes a broken code much
->>>> better. Why? Because we can expect that broken NOFAIL users will not have a
->>>> error checking path. Even valid NOFAIL users will not have one because
->>>> they _know_ they do not have a different than retry for ever recovery
->>>> path.
->>>
->>> You mean where I asked you for a link to the discussion and rationale
->>> you claimed had happened? Still waiting on that
->>
->> I am not your assistent to be tasked and search through lore archives.
->> Find one if you need that.
->>
->> Anyway, if you read the email and even tried to understand what is
->> written there rather than immediately started shouting a response then
->> you would have noticed I have put actual arguments here. You are free to
->> disagree with them and lay down your arguments. You have decided to
->>
->> [...]
->>
->>> Yeah, enough of this insanity.
->>
->> so I do not think you are able to do that. Again...
+On Wed, Sep 04, 2024 at 01:58:16PM -0400, Nícolas F. R. A. Prado wrote:
+> On Wed, Sep 04, 2024 at 06:45:29PM +0300, Leon Romanovsky wrote:
+> > On Wed, Sep 04, 2024 at 10:59:33AM -0400, Nícolas F. R. A. Prado wrote:
+> > > On Wed, Jul 24, 2024 at 09:04:49PM +0300, Leon Romanovsky wrote:
+> > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > > 
+> > > > Most of the arch DMA ops (which often, but not always, involve
+> > > > some sort of IOMMU) are using the same DMA operations, but for all
+> > > > modern platforms dma-iommu implementation is really matters.
+> > > > 
+> > > > So let's make sure to call them directly without need to perform
+> > > > function pointers dereference.
+> > > > 
+> > > > During system initialization, the arch can set its own DMA and in such
+> > > > case, the default DMA operations will be overridden.
+> > > > 
+> > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > > > Signed-off-by: Leon Romanovsky <leon@kernel.org>
+> > > > ---
+> > > 
+> > > Hi,
+> > > 
+> > > KernelCI has identified a boot regression originating from this patch. I've
+> > > verified that reverting the patch fixes the issue.
+> > > 
+> > > Affected platforms:
+> > > * sc7180-trogdor-kingoftown
+> > > * sc7180-trogdor-lazor-limozeen
+> > > 
+> > > Relevant kernel log:
+> > > 
+> > > [    5.790809] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
+> > > [    5.799844] Mem abort info:
+> > > [    5.799846]   ESR = 0x0000000096000006
+> > > [    5.808708]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > > [    5.808712]   SET = 0, FnV = 0
+> > > [    5.808714]   EA = 0, S1PTW = 0
+> > > [    5.818465]   FSC = 0x06: level 2 translation fault
+> > > [    5.818468] Data abort info:
+> > > [    5.818469]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+> > > [    5.827063]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> > > [    5.827065]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> > > [    5.838768] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000d20bb000
+> > > [    5.838771] [0000000000000040] pgd=08000000d20c1003
+> > > [    5.863071] , p4d=08000000d20c1003
+> > > [    5.898011] , pud=08000000d20c2003, pmd=0000000000000000
+> > > [    5.898014] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+> > > [    5.898016] Modules linked in: ipv6 hci_uart venus_core btqca v4l2_mem2mem btrtl qcom_spmi_adc5 sbs_battery btbcm qcom_vadc_common cros_ec_typec videobuf2_v4l2 leds_cros_ec cros_kbd_led_backlight cros_ec_chardev videodev elan_i2c videobuf2_common qcom_stats mc bluetooth coresight_stm stm_core ecdh_generic ecc pwrseq_core panel_edp icc_bwmon ath10k_snoc ath10k_core ath mac80211 phy_qcom_qmp_combo aux_bridge libarc4 coresight_replicator coresight_etm4x coresight_tmc coresight_funnel cfg80211 rfkill coresight qcom_wdt cbmem ramoops reed_solomon pwm_bl coreboot_table backlight crct10dif_ce
+> > > [    5.898057] CPU: 7 UID: 0 PID: 70 Comm: kworker/u32:4 Not tainted 6.11.0-rc6-next-20240903-00003-gdfc6015d0711 #660
+> > > [    5.898061] Hardware name: Google Lazor Limozeen without Touchscreen (rev5 - rev8) (DT)
+> > > [    5.898062] Workqueue: events_unbound deferred_probe_work_func
+> > > [    5.904227] hub 2-1:1.0: 4 ports detected
+> > > [    5.906827]
+> > > [    5.906828] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > [    5.906831] pc : dma_common_alloc_pages+0x54/0x1b4
+> > > [    5.906837] lr : dma_common_alloc_pages+0x4c/0x1b4
+> > > [    5.906839] sp : ffff8000807d3730
+> > > [    5.906840] x29: ffff8000807d3730 x28: ffff02a7d312f880 x27: 0000000000000001
+> > > [    5.906843] x26: 000000000000c000 x25: 0000000000000000 x24: 0000000000000001
+> > > [    5.906845] x23: ffff02a7d23b6898 x22: 0000000000006cc0 x21: 000000000000c000
+> > > [    5.906847] x20: ffff02a7858bf410 x19: fffffe0a60006000 x18: 0000000000000001
+> > > [    5.906850] x17: 00000000000000d5 x16: 1fffe054f0bcc261 x15: 0000000000000001
+> > > [    5.906852] x14: ffff02a7844dc680 x13: 0000000000100180 x12: dead000000000100
+> > > [    5.906855] x11: dead000000000122 x10: 00000000001001ff x9 : ffff02a87f7b7b00
+> > > [    5.906857] x8 : ffff02a87f7b7b00 x7 : ffff405977d6b000 x6 : ffff8000807d3310
+> > > [    5.906860] x5 : ffff02a87f6b6398 x4 : 0000000000000001 x3 : ffff405977d6b000
+> > > [    6.092491] x2 : ffff02a7844dc600 x1 : 0000000100000000 x0 : fffffe0a60006000
+> > > [    6.099809] Call trace:
+> > > [    6.102327]  dma_common_alloc_pages+0x54/0x1b4
+> > > [    6.106895]  __dma_alloc_pages+0x68/0x90
+> > > [    6.110921]  dma_alloc_pages+0x10/0x1c
+> > > [    6.114772]  snd_dma_noncoherent_alloc+0x28/0x8c
+> > > [    6.119514]  __snd_dma_alloc_pages+0x30/0x50
+> > > [    6.123897]  snd_dma_alloc_dir_pages+0x40/0x80
+> > > [    6.128465]  do_alloc_pages+0xb8/0x13c
+> > > [    6.132315]  preallocate_pcm_pages+0x6c/0xf8
+> > > [    6.132317]  preallocate_pages+0x160/0x1a4
+> > > [    6.132319]  snd_pcm_set_managed_buffer_all+0x64/0xb0
+> > > [    6.152964]  lpass_platform_pcm_new+0xc0/0xe8
+> > > [    6.157443]  snd_soc_pcm_component_new+0x3c/0xc8
+> > > [    6.162184]  soc_new_pcm+0x4fc/0x668
+> > > [    6.165853]  snd_soc_bind_card+0xabc/0xbac
+> > > [    6.170063]  snd_soc_register_card+0xf0/0x108
+> > > [    6.174533]  devm_snd_soc_register_card+0x4c/0xa4
+> > > [    6.179361]  sc7180_snd_platform_probe+0x180/0x224
+> > > [    6.184285]  platform_probe+0x68/0xc0
+> > > [    6.188050]  really_probe+0xbc/0x298
+> > > [    6.191717]  __driver_probe_device+0x78/0x12c
+> > > [    6.196186]  driver_probe_device+0x3c/0x15c
+> > > [    6.200481]  __device_attach_driver+0xb8/0x134
+> > > [    6.205047]  bus_for_each_drv+0x84/0xe0
+> > > [    6.208985]  __device_attach+0x9c/0x188
+> > > [    6.212924]  device_initial_probe+0x14/0x20
+> > > [    6.217219]  bus_probe_device+0xac/0xb0
+> > > [    6.221157]  deferred_probe_work_func+0x88/0xc0
+> > > [    6.225810]  process_one_work+0x14c/0x28c
+> > > [    6.229923]  worker_thread+0x2cc/0x3d4
+> > > [    6.233773]  kthread+0x114/0x118
+> > > [    6.237093]  ret_from_fork+0x10/0x20
+> > > [    6.240763] Code: f9411c19 940000c9 aa0003f3 b4000460 (f9402326)
+> > > [    6.247012] ---[ end trace 0000000000000000 ]---
+> > > 
+> > > See below for the suspicious hunk.
+> > > 
+> > > [..]
+> > > > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> > > > index 6832fd6f0796..02451e27e0b1 100644
+> > > > --- a/kernel/dma/mapping.c
+> > > > +++ b/kernel/dma/mapping.c
+> > > [..]
+> > > > @@ -611,6 +662,8 @@ static struct page *__dma_alloc_pages(struct device *dev, size_t size,
+> > > >  	size = PAGE_ALIGN(size);
+> > > >  	if (dma_alloc_direct(dev, ops))
+> > > >  		return dma_direct_alloc_pages(dev, size, dma_handle, dir, gfp);
+> > > > +	if (use_dma_iommu(dev))
+> > > > +		return dma_common_alloc_pages(dev, size, dma_handle, dir, gfp);
+> > > 
+> > > Is this check correct? dma_common_alloc_pages uses the dma_ops, but the comment
+> > > in dma_iommu said it meant that dma_ops wouldn't be used.
+> > > 
+> > > And similarly for dma_common_free_pages below.
+> > > 
+> > > >  	if (!ops->alloc_pages_op)
+> > > >  		return NULL;
+> > > >  	return ops->alloc_pages_op(dev, size, dma_handle, dir, gfp);
+> > > > @@ -635,6 +688,8 @@ static void __dma_free_pages(struct device *dev, size_t size, struct page *page,
+> > > >  	size = PAGE_ALIGN(size);
+> > > >  	if (dma_alloc_direct(dev, ops))
+> > > >  		dma_direct_free_pages(dev, size, page, dma_handle, dir);
+> > > > +	else if (use_dma_iommu(dev))
+> > > > +		dma_common_free_pages(dev, size, page, dma_handle, dir);
+> > > >  	else if (ops->free_pages)
+> > > >  		ops->free_pages(dev, size, page, dma_handle, dir);
+> > > >  }
+> > > [..]
+> > > 
+> > > Please add
+> > > Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+> > > when fixing this.
+> > > 
+> > > Happy to provide any other details necessary.
+> > 
+> > Thanks for the report, can you try the following patch?
+> > I'll prepare patch later today.
+> > 
+> > diff --git a/kernel/dma/ops_helpers.c b/kernel/dma/ops_helpers.c
+> > index af4a6ef48ce0..7e2b36cba61e 100644
+> > --- a/kernel/dma/ops_helpers.c
+> > +++ b/kernel/dma/ops_helpers.c
+> > @@ -4,6 +4,7 @@
+> >   * the allocated memory contains normal pages in the direct kernel mapping.
+> >   */
+> >  #include <linux/dma-map-ops.h>
+> > +#include <linux/iommu-dma.h>
+> >  
+> >  static struct page *dma_common_vaddr_to_page(void *cpu_addr)
+> >  {
+> > @@ -70,8 +71,12 @@ struct page *dma_common_alloc_pages(struct device *dev, size_t size,
+> >  	if (!page)
+> >  		return NULL;
+> >  
+> > -	*dma_handle = ops->map_page(dev, page, 0, size, dir,
+> > -				    DMA_ATTR_SKIP_CPU_SYNC);
+> > +	if (dev->dma_iommu)
+> > +		*dma_handle = iommu_dma_map_page(dev, page, 0, size, dir,
+> > +						 DMA_ATTR_SKIP_CPU_SYNC);
+> > +	else
+> > +		*dma_handle = ops->map_page(dev, page, 0, size, dir,
+> > +					    DMA_ATTR_SKIP_CPU_SYNC);
+> >  	if (*dma_handle == DMA_MAPPING_ERROR) {
+> >  		dma_free_contiguous(dev, page, size);
+> >  		return NULL;
+> > @@ -86,7 +91,10 @@ void dma_common_free_pages(struct device *dev, size_t size, struct page *page,
+> >  {
+> >  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> >  
+> > -	if (ops->unmap_page)
+> > +	if (dev->dma_iommu)
+> > +		iommu_dma_unmap_page(dev, dma_handle, size, dir,
+> > +				     DMA_ATTR_SKIP_CPU_SYNC);
+> > +	else if (ops->unmap_page)
+> >  		ops->unmap_page(dev, dma_handle, size, dir,
+> >  				DMA_ATTR_SKIP_CPU_SYNC);
+> >  	dma_free_contiguous(dev, page, size);
 > 
-> Michal, if you think crashing processes is an acceptable alternative to
-> error handling _you have no business writing kernel code_.
+> Hi,
 > 
-> You have been stridently arguing for one bad idea after another, and
-> it's an insult to those of us who do give a shit about writing reliable
-> software.
+> Indeed this patch fixes the issue.
 > 
-> You're arguing against basic precepts of kernel programming.
+> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thanks a lot for the quick test, I'll prepare the patch and send it.
+
 > 
-> Get your head examined. And get the fuck out of here with this shit.
-> 
-
-Kent,
-
-Using language like this is clearly unacceptable and violates the
-Code of Conduct. This type of language doesn't promote respectful
-and productive discussions and is detrimental to the health of the
-community.
-
-You should be well aware that this type of language and personal
-attack is a clear violation of the Linux kernel Contributor Covenant
-Code of Conduct as outlined in the following:
-
-https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
-
-Refer to the Code of Conduct and refrain from violating the Code of
-Conduct in the future.
-
-thanks,
--- Shuah (On behalf of the Code of Conduct Committee)
+> Thanks,
+> Nícolas
 
