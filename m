@@ -1,134 +1,166 @@
-Return-Path: <linux-kernel+bounces-314799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FA396B8DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:46:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40A396B8EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B181F25313
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 363C8B229B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4881CF29F;
-	Wed,  4 Sep 2024 10:46:29 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94031CF5F5;
+	Wed,  4 Sep 2024 10:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g/gpBgqS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9952B635;
-	Wed,  4 Sep 2024 10:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA87E1482E1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725446789; cv=none; b=QpwfgHFhKNY1Xsx5LwPDWH6yHlT/gaiHGFF81XxTN6dBqEO8A9Gr0iH7848MDaZwPQXfy9TVDTFRRE5fDX/WCk9myy6RTeGg8wu1u9uiWCqlcvczH4VdZnCEjPb1gGZTFzf/k+mdn5nTDYaao10/HwtxdWU24/y6tpCqIufn8X0=
+	t=1725446872; cv=none; b=gIcqUga0lRfJp5VbdYCSzZXQEGXYALT950kXIYSdlsOD44SpICkX5nV3CvZkmfB9ppbbpV1na5/YoiuIIeCdiGzTPkxuoHptxRgnsTFO3e1eX6zdEw4FTtDBrqQloDdhfW7tz5s4CZkz6cdHIJwScsZ+BXDClvVLmZzmEbFaUbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725446789; c=relaxed/simple;
-	bh=C3kWlcL2V1tdfmYpVEgH9f7Fwg9KCEu5d35QHW3LQu0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=JKMn/1xPP/YQjeJzD+lqloOU+xEMjdGlUvr8wQ3SiUbuQquOVqO80Sv2r8vBCibQhlN/Ut/ZySxAr+G1YYMzrfRpnDtOyPHSptxmTps8dMxkT20Kps26UXmUEDdAcAvMR7Eiq73axWOOFoSme9ar3o+r7X6Gh//O+QdeXL2EeRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.179.80] (p54b6ff28.dip0.t-ipconnect.de [84.182.255.40])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1725446872; c=relaxed/simple;
+	bh=B5OVeoqi0NnkvOqpxKgtOWIUB/Oylnn08PSh0Tl3nb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDdMERK5m6+v0y+XH96feU/BHgfg3y3sH/PiJKFMUhAjwv4oyCoFSIDeNrmqfCVI5Wbkgl005NM/LrOxe9QT3XwayD/DQcB/cMZhTY76rVGncRzby0vPnIj77oKbONq5yEwbjt3+pe3DC73AzST1JiD/QcSWf4OkDOMtt4vcK3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g/gpBgqS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6FF6C40E0198;
+	Wed,  4 Sep 2024 10:47:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id VTmnK6Kc6qDf; Wed,  4 Sep 2024 10:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725446862; bh=yo2QHSDYPbCvakwiEIi0T0uCFhXzAGwYYiIKKy/otAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g/gpBgqS1SVkKHdgi0pZozcLcXIBjQGWPjT58ZN9xTc/7nmF7TiF1X7GG1DL4+2rQ
+	 a81NerZgG91RCipv3XE2yK6RDx/dTk733labL3CAYqJZiGH2sjeuG5itOzs18u0zRc
+	 4wiji8xvP4X5eSIkhcru2z2CBIp+ehjtsgvz5iOl0pEELu5Qdr7Y48qTcUjgXDzlcr
+	 o+MFzjwsHG53J96MmSreWfzXTeduQo3S7KO2jfTqGIv752yTz3CRUsEidlVHDu9yp+
+	 c9lkN43QD0ErSWhUR5glJ7eIMQs7qOi8b8W/WFsM0+Yjfm9/JB34sXTXF6mNhMei79
+	 ovUAlmRApWBv51/Z8jAE8afFAKqLx4q45G0u4cBh4tyeXT4Kfdr7fqO9aSfCu47ei1
+	 qB7kWxj5X+qCJsTfopMdxo358tvspd0MI+Xl/Rh3ll2QikRd55NesRcqjz4Mclo1gk
+	 A1oZ4/h3SuZL+ibwlImxxErEkSMDh50XPWpfG9x0F2sc1pHx/k+ETONFck3xAy/ORN
+	 GInzOeqa3Mzl6LgDMyfqwLnuI4CFEfBKP7+dPfwLz83lHs6PXWTpt+QTCutY7Pdh2/
+	 v48m+/PEqaHYEG6G4lgKTX9ZDea4H5Mj+lPoxMCV40Bvw0dG41vfRuRd+agkEade5U
+	 0tKmRk1LC56bAq+IO6BCQfcU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8E5BA61BA1843;
-	Wed,  4 Sep 2024 12:45:34 +0200 (CEST)
-Message-ID: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
-Date: Wed, 4 Sep 2024 12:45:01 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4D5E940E0191;
+	Wed,  4 Sep 2024 10:47:34 +0000 (UTC)
+Date: Wed, 4 Sep 2024 12:47:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v2 1/7] x86/sev: Prepare for using the RMPREAD
+ instruction to access the RMP
+Message-ID: <20240904104728.GBZtg6wIgihDlsIgIS@fat_crate.local>
+References: <cover.1722368407.git.thomas.lendacky@amd.com>
+ <310650b1c5a7936f1ebb0c14579ed23f825c0be3.1722368407.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
- (ETIMEDOUT)
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
- James Prestwood <prestwoj@gmail.com>, linux-wireless@vger.kernel.org,
- ath10k@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <310650b1c5a7936f1ebb0c14579ed23f825c0be3.1722368407.git.thomas.lendacky@amd.com>
 
-Dear Linux folks,
+On Tue, Jul 30, 2024 at 02:40:01PM -0500, Tom Lendacky wrote:
+> The RMPREAD instruction returns an architecture defined format of an
+> RMP entry. This is the preferred method for examining RMP entries.
+> 
+> In preparation for using the RMPREAD instruction, convert the existing
+> code that directly accesses the RMP to map the raw RMP information into
+> the architecture defined format.
+> 
+> RMPREAD output returns a status bit for the 2MB region status. If the
+> input page address is 2MB aligned and any other pages within the 2MB
+> region are assigned, then 2MB region status will be set to 1. Otherwise,
+> the 2MB region status will be set to 0. For systems that do not support
+> RMPREAD, calculating this value would require looping over all of the RMP
+> table entries within that range until one is found with the assigned bit
+> set. Since this bit is not defined in the current format, and so not used
+> today, do not incur the overhead associated with calculating it.
+> 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>  arch/x86/virt/svm/sev.c | 141 ++++++++++++++++++++++++++++------------
+>  1 file changed, 98 insertions(+), 43 deletions(-)
+> 
+> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+> index 0ce17766c0e5..103a2dd6e81d 100644
+> --- a/arch/x86/virt/svm/sev.c
+> +++ b/arch/x86/virt/svm/sev.c
+> @@ -30,11 +30,27 @@
+>  #include <asm/cmdline.h>
+>  #include <asm/iommu.h>
+>  
+> +/*
+> + * The RMP entry format as returned by the RMPREAD instruction.
 
+I'm guessing this is the architectural variant...
 
-Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3 (or 
-unloading and loading the `ath10k_core`/`ath10k_pci` modules) having 
-been connected to an AVM network:
+> + */
+> +struct rmpentry {
+> +	u64 gpa;
+> +	u8  assigned		:1,
+> +	    rsvd1		:7;
+> +	u8  pagesize		:1,
+> +	    hpage_region_status	:1,
+> +	    rsvd2		:6;
+> +	u8  immutable		:1,
+> +	    rsvd3		:7;
+> +	u8  rsvd4;
+> +	u32 asid;
+> +} __packed;
+> +
+>  /*
+>   * The RMP entry format is not architectural. The format is defined in PPR
+>   * Family 19h Model 01h, Rev B1 processor.
 
-     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware 
-(-110)
+... considering this thing?
 
-Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and 
-applied it, and the error is still there (as exepected).
+>   */
+> -struct rmpentry {
+> +struct rmpentry_raw {
 
-Can the warning be improved so the user know, which component is at fault?
+"raw"? Hm.
 
+So what is the goal here?
 
-Kind regards,
+Use rmpentry_raw for the kernel's representation and convert the format that
+gets returned by RMPREAD into rmpentry_raw?
 
-Paul
+Because if so, the _raw thing is what comes from RMPREAD.
 
+Because as it is now, it is begging to confuse people.
 
-[1]: https://lore.kernel.org/all/20240814164507.996303-1-prestwoj@gmail.com/
+Because if you call the *new* entry differently, it won't cause any of the
+churn you have to do below...
 
-```
-Sep 04 07:21:38.469669 abreu kernel: Linux version 
-6.11.0-rc6-00027-ga91d08fcc356 (build@bohemianrhapsody.molgen.mpg.de) 
-(gcc (Debian 14.2.0-4) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) 
-#294 SMP PREEMPT_DYNAMIC Tue Sep  3 23:01:18 CEST 2024
-Sep 04 07:21:38.469718 abreu kernel: Command line: 
-BOOT_IMAGE=/vmlinuz-6.11.0-rc6-00027-ga91d08fcc356 
-root=UUID=32e29882-d94d-4a92-9ee4-4d03002bfa29 ro quiet pci=noaer 
-mem_sleep_default=deep log_buf_len=8M cryptomgr.notests
-[…]
-Sep 04 12:34:55.826218 abreu sudo[25874]:  pmenzel : TTY=pts/7 ; 
-PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe ath10k_pci
-Sep 04 12:34:55.828046 abreu sudo[25874]: pam_unix(sudo:session): 
-session opened for user root(uid=0) by pmenzel(uid=5272)
-Sep 04 12:34:55.869839 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq 
-msi oper_irq_mode 2 irq_mode 0 reset_mode 0
-Sep 04 12:34:56.005202 abreu sudo[25874]: pam_unix(sudo:session): 
-session closed for user root
-Sep 04 12:34:56.161706 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 
-hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
-Sep 04 12:34:56.162591 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig 
-debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
-Sep 04 12:34:56.163115 abreu kernel: ath10k_pci 0000:3a:00.0: firmware 
-ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
-Sep 04 12:34:56.241683 abreu kernel: ath10k_pci 0000:3a:00.0: board_file 
-api 2 bmi_id N/A crc32 d2863f91
-Sep 04 12:34:56.333784 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 
-3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
-Sep 04 12:34:56.417649 abreu kernel: ath: EEPROM regdomain: 0x6c
-Sep 04 12:34:56.417919 abreu kernel: ath: EEPROM indicates we should 
-expect a direct regpair map
-Sep 04 12:34:56.418022 abreu kernel: ath: Country alpha2 being used: 00
-Sep 04 12:34:56.418114 abreu kernel: ath: Regpair used: 0x6c
-Sep 04 12:34:56.422440 abreu NetworkManager[610]: <info> 
-[1725446096.4223] device (wlan0): driver supports Access Point (AP) mode
-[…]
-Sep 04 12:35:12.042484 abreu wpa_supplicant[618]: wlp58s0: WPA: Group 
-rekeying completed with ce:ce:1e:27:bb:e0 [GTK=CCMP]
-Sep 04 12:35:21.800998 abreu sudo[25953]:  pmenzel : TTY=pts/7 ; 
-PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe -r ath10k_pci
-Sep 04 12:35:21.803733 abreu sudo[25953]: pam_unix(sudo:session): 
-session opened for user root(uid=0) by pmenzel(uid=5272)
-Sep 04 12:35:21.881668 abreu kernel: wlp58s0: deauthenticating from 
-ce:ce:1e:27:bb:e0 by local choice (Reason: 3=DEAUTH_LEAVING)
-Sep 04 12:35:22.905717 abreu kernel: ath10k_pci 0000:3a:00.0: failed to 
-install key for vdev 0 peer ce:ce:1e:27:bb:e0: -110
-Sep 04 12:35:22.906604 abreu kernel: wlp58s0: failed to remove key (0, 
-ce:ce:1e:27:bb:e0) from hardware (-110)
-Sep 04 12:35:22.908927 abreu wpa_supplicant[618]: wlp58s0: 
-CTRL-EVENT-DISCONNECTED bssid=ce:ce:1e:27:bb:e0 reason=3 locally_generated=1
-Sep 04 12:35:22.908995 abreu wpa_supplicant[618]: BSSID 
-ce:ce:1e:27:bb:e0 ignore list count incremented to 2, ignoring for 10 
-seconds
-```
+Hmmm?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
