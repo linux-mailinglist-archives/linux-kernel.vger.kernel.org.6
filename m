@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-314522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3197096B476
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB16B96B543
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CEC28A754
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:26:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 652F9B2903F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AFD18593C;
-	Wed,  4 Sep 2024 08:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36AB1CCB5C;
+	Wed,  4 Sep 2024 08:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYWX/bHD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cf/+eqqw"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9875D54BD4;
-	Wed,  4 Sep 2024 08:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49561CCB59;
+	Wed,  4 Sep 2024 08:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438360; cv=none; b=Uq717g1cHLW4AhkCycVApJDBeB2jUXTAiqXv7mulKfTu0P/fEArs83LJAiHX6uoXt5h2Ds9m0j8GstNTbWvWHb2oOjWeN+l0/n7+gGY9FONhADDuuib4zTyQUzS5nxz/LOa2jNgBoAQQo1YwKAhg2quygg8A6h77nDzpYx68tLo=
+	t=1725439209; cv=none; b=Dn9y7LfhLqcjLiB1XKHPrCtgW5D3Bl+n8BwqMk/YJqHAwDjVTwmU0rx3HwRPBtmeB81mz5Q7BNevvlT3xwnbxhIA4dACfwBOn4SKn4gPd9qxhvFqrFtAeYXBA+/6s6ktAi2BDbQPAkO7OrWcxzxk8/mcVwUpByb4EELxbS4WiP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438360; c=relaxed/simple;
-	bh=EhKAV4Qf0Qg5+BI1GAhGDeW8c9VEqh1XWveVsPZ7AtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tuj4LQy6EEf//FfiIesXP42vpZ7tcFoVUDj6MlGRLAjbi82zpQV6SrDJ9VkWSgOEe2uvfMO7LBQ+kDYHFNe7MdWgkAX3LSVbBnwQwF8gT+r3eE7Lnr+Yg/SMSOMhFIp5j/4lM3Jyk1rPk2t+wyi4OA8UUYB/9zqK3esa0CszJF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYWX/bHD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0EAC4CEC5;
-	Wed,  4 Sep 2024 08:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725438360;
-	bh=EhKAV4Qf0Qg5+BI1GAhGDeW8c9VEqh1XWveVsPZ7AtE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DYWX/bHDcEfRV0u7+cpzdekTg5Kzu2TsXTxWC8kTeJ0UsRZocIi6POi3z8cQPcUVu
-	 yytUv5995FV9nhgBwaQa/7GzCFBIscHh2mFpANMPKsfbjiyxF18urVEi9xL468CN12
-	 dQnxMlETnvcFKRciW6YxBrEBOTLOM73EldNEL/1zh0N472w3q7cBuxGWyiAG3rYaPu
-	 ER2ZfspT1l/VOo1dJ0+rPlaXP6cleKGhJBD5dq2MeOZHbSz4fLZUzWBYky6pyR7ocQ
-	 /pgfV6LtY/kZwSCkXUtc42SRqntkQ/aHimdwNh4RCN2MVWseev4kDS3RhdoYW5bIad
-	 VFkWq85niSx7Q==
-Message-ID: <24c1308a-a056-4b5b-aece-057d54262811@kernel.org>
-Date: Wed, 4 Sep 2024 17:25:57 +0900
+	s=arc-20240116; t=1725439209; c=relaxed/simple;
+	bh=v00CV/Izqm2vDJnjz1L9tutf+pvkFbjaJhWGfY682nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h7P50NhIjIr39BFyRP0krrjEK9lREp6xrQKzt9++bFstdsJEXaz2b/NnEIlZHu1ZAATWmq/QfUiqs4jmIgVv8qVGBwML3JyBIe9MIdAA3ppu+cEn3Wf1U6VgPLpld+MKKWWdkaTEg3BOpv5vB/8Clh1ORo3XTTuUWfMQEMc2404=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cf/+eqqw; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 0AE92C0542;
+	Wed,  4 Sep 2024 08:27:16 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 841AC240007;
+	Wed,  4 Sep 2024 08:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725438434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=06yNZMAas3qa1wzVuxc7+kvtibUzV5sjLz3xzS89tAQ=;
+	b=cf/+eqqweQOsre9lGOCoZlwQB82NF5KgHhFDxEBJ3kea7y34PrJG2YOJ8EcobMrFLr2VtP
+	PduHnq68WowKQv/152sHG1bFevwnhehvSy+prbdWCMgvutCVdHy6hQwqymN53Ly4ReT3ci
+	Xcg6OLN+ofMHeZMOiiaJm9bpIcnJ/DfrtNKktx+PmV97fK8zPgvUESZ/c5jtRVPK81gWig
+	Ek2BhzUzPCPPxBIRAxCtXPCcjioKU0i93L1tNkykdVwX8sYRqAU6crvov4Ut1Prsd8bxmm
+	BYi9PlhKUHygMWuQP5kQjUDu9udhOX87jyNXpoKNl/OupRx+dU7PponFQ9axLA==
+Date: Wed, 4 Sep 2024 10:27:11 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
+ Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next v2 3/7] net: ethernet: fs_enet: drop the
+ .adjust_link custom fs_ops
+Message-ID: <20240904102711.1accc8ce@fedora.home>
+In-Reply-To: <480a16fd-a1eb-4ea0-b859-5d874ecc3b15@lunn.ch>
+References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
+	<20240829161531.610874-4-maxime.chevallier@bootlin.com>
+	<480a16fd-a1eb-4ea0-b859-5d874ecc3b15@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-To: Philipp Stanner <pstanner@redhat.com>,
- Alex Williamson <alex.williamson@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725120729.59788-2-pstanner@redhat.com>
- <20240903094431.63551744.alex.williamson@redhat.com>
- <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 2024/09/04 16:06, Philipp Stanner wrote:
-> On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote:
->> On Thu, 25 Jul 2024 14:07:30 +0200
->> Philipp Stanner <pstanner@redhat.com> wrote:
->>
->>> pci_intx() is a function that becomes managed if
->>> pcim_enable_device()
->>> has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
->>> pcim_intx()") changed this behavior so that pci_intx() always leads
->>> to
->>> creation of a separate device resource for itself, whereas earlier,
->>> a
->>> shared resource was used for all PCI devres operations.
->>>
->>> Unfortunately, pci_intx() seems to be used in some drivers'
->>> remove()
->>> paths; in the managed case this causes a device resource to be
->>> created
->>> on driver detach.
->>>
->>> Fix the regression by only redirecting pci_intx() to its managed
->>> twin
->>> pcim_intx() if the pci_command changes.
->>>
->>> Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
->>
->> I'm seeing another issue from this, which is maybe a more general
->> problem with managed mode.  In my case I'm using vfio-pci to assign
->> an
->> ahci controller to a VM.
-> 
-> "In my case" doesn't mean OOT, does it? I can't fully follow.
-> 
->>   ahci_init_one() calls pcim_enable_device()
->> which sets is_managed = true.  I notice that nothing ever sets
->> is_managed to false.  Therefore now when I call pci_intx() from vfio-
->> pci
->> under spinlock, I get a lockdep warning
-> 
-> I suppose you see the lockdep warning because the new pcim_intx() can 
-> now allocate, whereas before 25216afc9db5 it was pcim_enable_device()
-> which allocated *everything* related to PCI devres.
-> 
->>  as I no go through pcim_intx()
->> code after 25216afc9db5 
-> 
-> You alwas went through pcim_intx()'s logic. The issue seems to be that
-> the allocation step was moved.
-> 
->> since the previous driver was managed.
-> 
-> what do you mean by "previous driver"?
+Hi Andrew,
 
-The AHCI driver... When attaching a PCI dev to vfio to e.g. passthrough to a VM,
-the device driver must first be unbound and the device bound to vfio-pci. So we
-switch from ahci/libata driver to vfio. When vfio tries to enable intx with
-is_managed still true from the use of the device by ahci, problem happen.
+On Fri, 30 Aug 2024 23:06:08 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
+> > --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> > +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> > @@ -649,12 +649,7 @@ static void fs_adjust_link(struct net_device *dev)
+> >  	unsigned long flags;
+> >  
+> >  	spin_lock_irqsave(&fep->lock, flags);
+> > -
+> > -	if (fep->ops->adjust_link)
+> > -		fep->ops->adjust_link(dev);
+> > -	else
+> > -		generic_adjust_link(dev);
+> > -
+> > +	generic_adjust_link(dev);
+> >  	spin_unlock_irqrestore(&fep->lock, flags);  
 > 
->>   It seems
->> like we should be setting is_managed to false is the driver release
->> path, right?
-> 
-> So the issue seems to be that the same struct pci_dev can be used by
-> different drivers, is that correct?
-> 
-> If so, I think that can be addressed trough having
-> pcim_disable_device() set is_managed to false as you suggest.
-> 
-> Another solution can could at least consider would be to use a
-> GFP_ATOMIC for allocation in get_or_create_intx_devres().
+> Holding a spinlock is pretty unusual. We are in thread context, and
+> the phydev mutex is held. Looking at generic_adjust_link, do any of
+> the fep->foo variables actually need protecting, particularly from
+> changes in interrupts context?
 
-If it is allowed to call pci_intx() under a spin_lock, then we need GFP_ATOMIC.
-If not, then vfio-pci needs to move the call out of the spinlock.
+Yes there are, the interrupt mask/event registers are being accessed
+from the interrupt handler and the ->restart() hook. I can try to
+rework this a bit for a cleaner interrupt handling, but I don't have
+means to test this on all mac flavors (fec/fcc/scc) :(
 
-Either solution must be implemented regardless of the fix to set is_managed to
-false.
+Thanks for reviewing this,
 
-So what context is allowed to call pci_intx() ? The current kdoc comment does
-not say...
-
-
--- 
-Damien Le Moal
-Western Digital Research
+Maxime
 
 
