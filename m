@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-316010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6643396C9CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:51:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E082D96C9D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F2A2893A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:51:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4EAB247EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E5F1779AB;
-	Wed,  4 Sep 2024 21:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9E21714B2;
+	Wed,  4 Sep 2024 21:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C8B4Pu7m"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eJrN+aHU"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1B1172760
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4089817A599
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725486697; cv=none; b=e95briYFT0lvi7VdIe8SjSS9cfvWfVbRV4UPTffNH09k17Bd4tqmVzBJfrC55RManr9gbFkh8l3F/Blj98ne0WqDxeAuC9ha65zecXppb4vBMFt9q04hMtJGD4iOM3hD6Uc6vVddpyqOwDlaYeGSRJTsjhNr0S5g+Ba1uDf+wDI=
+	t=1725486703; cv=none; b=n95he/V178wGuThm5lF183UFWG3X4ggsOWMXqcKPKzHCdjfNb2rTrkesbXDa9JXfcd7u1Mewq7BegNaiqKU18K+MOc4gWCa4V17k6LOcvpLsBcKiCwlj5AXDmeP2JbNVL2UWYHj3pOUPMwJELPpj1cVR7SeY0de9JSIBSeS7KnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725486697; c=relaxed/simple;
-	bh=52OavEbDbnnXzGVYj1cdimeK3fNcZ3tbnsTSFU90N5o=;
+	s=arc-20240116; t=1725486703; c=relaxed/simple;
+	bh=5z6CC3oEk1DrfjT6IKhNHe/dwtdCYWt9qCgTKqR1DtM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZ6lA5u41vhSsx190z1A5tNX8N08Hdb6kM+RXOxSkfwOh7X9XNFVtBfBAwCRKeKOmp1G3XjJuiT3krJmj1shf1+yL2X+1mqGfMGuK5/lCWxTz6w2bK1PyxM24LmrnidkOdG6b9g6XBLZdAz1wDkbnKAVdBY8aTKD+Cztoqf6aNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C8B4Pu7m; arc=none smtp.client-ip=209.85.167.182
+	 To:Cc:Content-Type; b=KgwD4PuclR8tHvOxVszL4X03BRlMqODjr2UaRNh1puwO5TNdHycEVVxdSHeF/Cw4bQYJBZ0sMmb4+B17Ncogt/+m5aM6OY5gkA7UKdXAWbN64HkbEFAo+pbORwRFwx8z3syTLanzZWS290SRk7YQq1QfSj71mi/7688OIb3r4og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eJrN+aHU; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3df1e26de08so29230b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:51:35 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4567cdf32d8so616731cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:51:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725486693; x=1726091493; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1725486699; x=1726091499; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GEVB0OaxtEANZF8G4JgUXQ7IBpjIjKgmyEACvOZxq44=;
-        b=C8B4Pu7m+yGIBipLecwld/aykc2j6fT05QvwJUKZtzO/gjHu4lqFiM8aCcNcrr3Ayl
-         hTAu+A/hSofKApJOjdK5zRnjzBm/UfVzSeNBHyxXnVlPGuLxJ/tPstfRycF8mo3/gYjF
-         Rz+gkJVntXToufnGfBlMIAd9F0iiMKm9BFflo=
+        bh=5z6CC3oEk1DrfjT6IKhNHe/dwtdCYWt9qCgTKqR1DtM=;
+        b=eJrN+aHUB7FJqfbxr57sfOyaXekzlsROVCKWBKDMWzSr65qFqF2j3sfmmIu1wfsP77
+         sWsVfhpiT8gCPAgvc+cEYus7B/jjj1kd1LvGxEpTQgEkRn+q2Dnp05uxO+GDnoy2KPlf
+         wiMzbujTgzaIhxJ6zxo62ic8fjyXVwrTkOZ5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725486693; x=1726091493;
+        d=1e100.net; s=20230601; t=1725486699; x=1726091499;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GEVB0OaxtEANZF8G4JgUXQ7IBpjIjKgmyEACvOZxq44=;
-        b=pGYZtYpYwuS7PAa9a9sChik0BFotIUNIHdD1LJOV0kQ4rQwHoicEAp78m2j0y0gtJ6
-         eLnOZ80m0iY8ifsoMEDp8nXKpluijTQxWe4q89TOX56MQuLQ04YxC8s2nfuw5+4WDtGA
-         8zCeDGmLKtTgWp6CIg9Y8ZnCjzKynhI7SEWF3ixcQmJ9lqTW9N0FGOsUP6vBULqgnWSW
-         8p46mF60fO8cqBltMR1vjDMJpEvp14J5aj+AgLpIJL2zhg30pyOS1IlB2olMm8t3zLmc
-         qU3IEZhbLE6EfjyeCViKZwjNQDFFULYqrJjjGM6NmBdP3Frm1yYNFoIoLUpZ4lfCFpYx
-         jrfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0OHRIT3qXR7JTXno/BNCkfWb3cYhwnJ/DXN0R9+zQh8yrOfW/7cLCWKXXz8MVvg0VIOtP3L7NHLyEWK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXR2HqsD0C/rKB8rUiHi3Kp8djTjp9Uw0DJVqzVfpUcuRYMYX/
-	XqLKbi6cY1re3UUPr16SO/9hRceGGbJOLb3d/isckFHVjwnKqCtjKSwvHGaHYH23Q4gXAomny1A
+        bh=5z6CC3oEk1DrfjT6IKhNHe/dwtdCYWt9qCgTKqR1DtM=;
+        b=FpOvf3v8nI1P3DDFO3F7YZOoO9QLtmWYg4mYrA5mQ2P2M1eFhUjKKmwYDsl63KBpgM
+         FwKnohU4LU0mDZwV1KTe3sM2iPg0B27vFCZGfFSNvBvVlW3SVay0ZkiHdtpa9rSUL3FX
+         Kd8PG/yxT+H3AMONqAd8RiNel2dRENfXZ4WPi9BtDbrPbT2T6rJAMtZITNNz1fr//R3E
+         IZSD+l248sbFr9yKuYzhQmSfoeiwwJgKTdUVsB5/qpMpTtjPveIPQV2MgH20M+YLE2zd
+         RJEHjIcQ+1O8g3iRwgxqA4oHMuEsFPfKP1F1uhQn8QxoS17d8RjzZZhEZmMEozl6ixm5
+         HXJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhLxmlX9hRHpaTqoLhTgrls2BHIrkXRGRHFpKL4OQNODgkTdZj6PJnyzEc189utN+G+gSiTaWus/Pruo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMRBoIK4wz7TdAquefcglT6NTA3pExjc50Xs71v7kzfPa6oxwY
+	iIUusZmC7GBaMTgNMF7hITroe4l7vtkYWZjdmWhPdLOXmAMl1pYv9RQ0oyJPqLZgWOB6+iA72uw
 	=
-X-Google-Smtp-Source: AGHT+IFQEmE+AabZ1tXzah/3JdY2gVSbiXw13ucxHuWb8GhOmGLGHzqXSFOVjmcjbNyn4HFT4MR5rA==
-X-Received: by 2002:a05:6808:1249:b0:3de:223a:8983 with SMTP id 5614622812f47-3df05d64e25mr21683173b6e.11.1725486692958;
-        Wed, 04 Sep 2024 14:51:32 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3df117c1b56sm2966100b6e.17.2024.09.04.14.51.32
+X-Google-Smtp-Source: AGHT+IGtR9CiZe01eOVokjFoM56GawZDI4FYr05Clfd6TmXdb5a6+ZRp4nYu3V3L6MbB/U/u/qviQA==
+X-Received: by 2002:a05:622a:59c9:b0:451:d859:202d with SMTP id d75a77b69052e-456966924dcmr206434191cf.54.1725486698801;
+        Wed, 04 Sep 2024 14:51:38 -0700 (PDT)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801cbc1easm2069941cf.68.2024.09.04.14.51.37
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 14:51:32 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70f60d73436so84229a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:51:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWK0CFVD0h4W596mh+tDPO6j3TPFzhM5Tk7OUrysL4wvyY4nV6dQtJaAPgGn4Bj0jkb0VoOfJcSpBwWDaU=@vger.kernel.org
-X-Received: by 2002:a05:6830:6d08:b0:70a:988a:b5fd with SMTP id
- 46e09a7af769-70f5c406907mr29012888a34.24.1725486691455; Wed, 04 Sep 2024
- 14:51:31 -0700 (PDT)
+        Wed, 04 Sep 2024 14:51:37 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c355155f8eso533696d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:51:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfW1iVEPfW3PWT3OyVFMlpoJx1zaXgy4uCYkaHgKOLl4rZyAQ0brUQSDHFg47/rLMjRy1TjcKZfYDkoZ4=@vger.kernel.org
+X-Received: by 2002:a05:6214:5f0c:b0:6c3:6ab0:9dab with SMTP id
+ 6a1803df08f44-6c36ab09febmr118827336d6.48.1725486697181; Wed, 04 Sep 2024
+ 14:51:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902152451.862-1-johan+linaro@kernel.org> <20240902152451.862-7-johan+linaro@kernel.org>
-In-Reply-To: <20240902152451.862-7-johan+linaro@kernel.org>
+References: <20240902152451.862-1-johan+linaro@kernel.org> <20240902152451.862-8-johan+linaro@kernel.org>
+In-Reply-To: <20240902152451.862-8-johan+linaro@kernel.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 4 Sep 2024 14:51:15 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XnpPnSToWV3f2Z-DWm2-1rdgYmDZeicGGRQD-_YjS2Bw@mail.gmail.com>
-Message-ID: <CAD=FV=XnpPnSToWV3f2Z-DWm2-1rdgYmDZeicGGRQD-_YjS2Bw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] serial: qcom-geni: fix console corruption
+Date: Wed, 4 Sep 2024 14:51:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UX_knVfrei4UPiR3DT=H81ybSjGeDGAsWc3n6q=PiFJg@mail.gmail.com>
+Message-ID: <CAD=FV=UX_knVfrei4UPiR3DT=H81ybSjGeDGAsWc3n6q=PiFJg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] serial: qcom-geni: disable interrupts during console writes
 To: Johan Hovold <johan+linaro@kernel.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
 	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
 	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
 	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -98,45 +98,18 @@ Hi,
 On Mon, Sep 2, 2024 at 8:26=E2=80=AFAM Johan Hovold <johan+linaro@kernel.or=
 g> wrote:
 >
-> +static void qcom_geni_serial_drain_fifo(struct uart_port *uport)
-> +{
-> +       struct qcom_geni_serial_port *port =3D to_dev_port(uport);
-> +
-> +       if (!qcom_geni_serial_main_active(uport))
-> +               return;
-
-It seems like all callers already do the check and only ever call you
-if the port is active. Do you really need to re-check?
-
-
-> @@ -308,6 +311,17 @@ static bool qcom_geni_serial_poll_bit(struct uart_po=
-rt *uport,
->         return qcom_geni_serial_poll_bitfield(uport, offset, field, set ?=
- field : 0);
->  }
+> Disable the GENI interrupts during console writes to reduce the risk of
+> having interrupt handlers spinning on the port lock on other cores for
+> extended periods of time.
 >
-> +static void qcom_geni_serial_drain_fifo(struct uart_port *uport)
-> +{
-> +       struct qcom_geni_serial_port *port =3D to_dev_port(uport);
-> +
-> +       if (!qcom_geni_serial_main_active(uport))
-> +               return;
-> +
-> +       qcom_geni_serial_poll_bitfield(uport, SE_GENI_M_GP_LENGTH, GP_LEN=
-GTH,
-> +                       port->tx_queued);
+> This can, for example, reduce the total amount of time spent in the
+> interrupt handler during boot of the x1e80100 CRD by up to a factor nine
+> (e.g. from 274 ms to 30 ms) while the worst case processing time drops
+> from 19 ms to 8 ms.
+>
+> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver sup=
+port for GENI based QUP")
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-nit: indent "port->tx_queued" to match open parenthesis?
-
-...also: as the kernel test robot reported, w/ certain CONFIGs this is
-defined / not used.
-
-Aside from the nit / robot issue, this solution looks reasonable to
-me. It's been long enough that I've already paged out much of the past
-digging I did into this driver, but this seems like it should work.
-Feel free to add my Reviewed-by when the robot issue is fixed.
-
-
-
--Doug
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
