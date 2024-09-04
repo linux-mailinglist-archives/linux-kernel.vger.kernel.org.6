@@ -1,204 +1,248 @@
-Return-Path: <linux-kernel+bounces-314013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B04A96ADAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F194096ADAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F5D5B2413B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE342840D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03F911C83;
-	Wed,  4 Sep 2024 01:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qTUiFVvF"
-Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556D5D2FB;
+	Wed,  4 Sep 2024 01:15:25 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87992F9D6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1203ABA2E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725412529; cv=none; b=H2na1KOsfd4NEFABo1T54tzEjjocCsiV2s5+f4Q9qPTfDfTNBe6fjuLsP34pWnl0bie9V5tWqfgkt7xN/KyN7Q7NAaSoj+vuXX6XKholxs7CiLqpbEusD4eE4JaS49bFUDXE+bJo/xt9OAgownD1F47uMeD1v+PADzkdWoI7xf0=
+	t=1725412524; cv=none; b=s5rHqlLrHH7hB1vBJOgff4R6uWWXEQ9kQOfy+/2BHvBmlV7poxY2GdhZYYXGljXTLQEXHYRJ0T5P2jbdBSteNr0RqwitgIb44XtZpeMpY2Gzlf+15tqsdYDrQwzEla1EGAwIYyLN3SfNi8NSisWc8hshnhF3EhRbPD70rafqFtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725412529; c=relaxed/simple;
-	bh=uHVALou1oAwqM8fxiZO2GwA3ylRDLnXc4bDtqGxtylg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GeXRkxYO2gVPuAwO2HfWfVErwcfLhAojEgQU/k6ziS5yNJii2N4BZFeZPk2X2C46LkqEPSJ4vRXgBbTZ91pCI2Bc27vJZvixKa709Eekf7kjIk+XiakMiPwQjQvDKxvmdvcBoI1j4P54AEOw1TE5PxPlRhlosTU0ci0PIHF43CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qTUiFVvF; arc=none smtp.client-ip=66.163.186.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412525; bh=snpXjr+C7r0iS2NCLZtza3wNeKj/q8B2OQyAr4G9X9w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qTUiFVvFk3lkYJM9pjyYM0lIsDJQaxjrcx8sid+pU9ZLZUZRIQhTwi2kUdB25XzJevkY4f8OekvlL6cm/Y5k6KgqtIiYtQGFH+6v44JJG5JS8ABV/mfUu+E683Jwfi0K/pl77f+T0ktSUCCun3WtcdVFUB6fXrRJsXlD9h8/l+tSW3LEqPIJBdVlZFsoX/X52Wktr1PiSBOff4yj/o1mwnUakfx5xfqcKXcLiK+8gn2pRZptNpWaFjF2EFXP4iBS/pU9LrxwK5nhcO6GjMgx2y/Qss6bVoAgcjF8rCXpDuTb/bCRdrvSmCtmgcEnQH/7KtAanhm39mKOD6q6xVQEvA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412525; bh=Dvhr4w48EtKRKLmV0BVSpiCN/AUUc6+ft0yeSVXGbRf=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DoA0D1Kjr3D/ohDPACQnlTDLphNb7toKa72VpQC9A7D5IbJFfDjeG2mNOitlsn3xPc4X+1r+X+XsrECFqQ3yXAmfcTmPwGAE8cT3hcHXwruc0TV/r9Lym6aj0U/OOZS0TPGttQ3nhxA5lP3XLQBBwPu6thsKbv4xNmLb3csMO8ghwUv9eAY5CxyviVAeg1yHKpY8Vtj1s8BuYwp2FfDU67XzBKloIr7mGyxOcvOg3/8CjMRbg8Ed9K7ulJx48l68gS6bwA7dJOfEsyhgj2y3btLry2PVDwsI4hJqB/tx0hpvcBbUVtSxEBLWMTas1Iz6qz57SS5yp0hcyVtODWCEkQ==
-X-YMail-OSG: rCaMIT4VM1lxR6NJqJysi16lYbBYXL_tujfWvu95kBdsdKqoAq4Y1MLBdur146W
- TjuFOkQxiHiCdGuUIV7avgAFhwJw9lb8JZrFVB7Zh6NuAevXxVDQNlbhI4Pk5tdr13f_wEkuIWSs
- PaOOGAEqAKklk3X5N_RtsjZzicjsnYyykcXD_c3gBxdN6zzocH.ssEE2SCRiEdX0frV8p2tREefW
- NLqkhjUoOUbFDwStjUN1nkJtpAWTVAou7gIS4nHa0Sejm50kzZz8HW2EE5OntWqkPahJtZlaOTUF
- qFJemrAvI6fnzVUZhFlO.OCeE98_KZzkOqiEiKdGO8CmKbjsjUb_O3YSCIO.v4TJ_H_B0W8rYGIL
- NBasc9AgtjLnGdTRzc0Xn3NwNYIToqW3AhGYYooJ3Pqm2vmanhWjRNsziylmAypa425uB2gIrqrl
- Wh8k87Aze.tlw3bPiswv1WjQTi6ekC6fW6gi_X_yYnPaQWX1Owy7gN44AM.Cbw2uME8.OUjAd_wi
- yq70Oj3an6jDbsZ12Ygaa1Fldf8hp0JbfO6W2FRDEFL5NSlvd5NjXi8HgPIN4fZgxiE48toYOT_4
- 2i6QF6K73cEGMYqEW4Gq9.jzQ_kvD7iARrrUDuTbbOfMSkrG2Dl83J23h0kOfraQIV4OtKJhvn5p
- dKaL74HlOmkUOIAWpSs34b6c.0SnsaJPRwCxgNNXGcc1HwmD.1WpKNPI2WDSW6PFfTw37HhirTcd
- vioYqYo.DgNdWQmSSu3I_Mir1NUoXUn.1JHVPZ9i28aJ.G9lQxZC4OYeKTlaXDYWl_cWNu6wDP8l
- em9D4lWOTExFvCqXdaJ8krnSWXOzKpuUTETk_3hdgwS49bUXOgKLYSNgbGTFODvXpM2H_JIOXCQM
- eGexxqFUYJMKxue14DP6HHsrvQsS_x_tyjXkMguvl2lwWNVWofjOl1WDEqZ_hmqLtAakxGl8Rtu.
- _a2md3zUPGQaDIDAFnqgxaNfo4hdlGc8srLaREzD1svT7Mo09cZoWJIvcLSVVK1CWqrfzb3Pdznj
- rDPPVN1dKB1YsZipvSe5lKj94gO.6akcOpE2Fxa1vWwOLd_65GLAGC5pBeb1ZyLqxMxHgHzc.EIc
- ZZxIvgUQD5EQJqf9GfsvxTp.kKx3AeIN.CG1fqKNvSvPR0_v.gVxtk7EshqPPKRWjDrDqvt20wYa
- _f0noFoYp1vFyZ9ypmhyu3C3_L7d6pyJiEDmcZy_NA.E52PBSdODEueTDUCdLX2ZGPfZjnpwyATP
- cjT9IEyEAEtOIp9QQP7lob9MUv0eekNJCAjlreZBWj9YV41Vq8XsNj_NI2KCuO6775FvowRfdapq
- sLsZhSYl..DOOxteZPAAhRWncESj0DwFvYrrVZuKg2Yme0O6gSMBS7f7zF3XhKHogMC5AKTRe.QO
- 9524LsufFa.hb3f63emLgN3aCVAQthq71vDKcvao.44dTKWCjuW61iI1nNdeG5klANcjOBvqbxGp
- WDL_.oj.WR_Deyce1cyXCMNTPy97.zAT_gY_B9CzElCOCIi5wr5kDZlZCVHImOJwb9B117Mg6Fck
- S8yOeNzMQDt1OrKc8C4h2a1P9fk_MZAMW3HWWMTubXBubbsHdgnuYnLlaYr5IsQgF6oA.u2uboHz
- Dd4hQoqM29g_WkvIBedAaf3TIQshkMQLdZmxUeZ3g2JceiZp6aRF6uZ1KG6S_k8J0P01Cxn_WyBv
- juhxzrGHBcRxLMul2u60R1FFx_YwYBFMr.5NmZ6fooyRqaPso_pjfFaLPaLU3tvyJv.0cXIyenaA
- O8kJyi7XI2vWbDI.ykoNklrEaFnDtxaW4wG0yMingGJMaIvWGb5N2Z0qGAhvoPDXeZYtBBrhFnvE
- lWpL7BDe1pgf.6jlJO.MM_VIQbQuxGkd4AUJGzbcVLopY.f0R6s2gF5FKWpdwuMGOEXXWNjN8BG9
- v0tHlCddJOHXw6xtK2t_6HSWvo8stoPOHmK54BC3irTGLfKLEZ1Z56JjBowOZhJ4YOauagXwP7wY
- gQR3hWX5vjURfg0aoA_Fmo6r_O0vbKJmOqlxStH8JxvC0lEW.cW.AGY6GrOaPo3GpDe87L7w1BqX
- DPiS4u3sx1ZHQsFQySFMuMzQHQ3FFPPESUnfavJaiTDvgFDXk3reXwjdz8XXVgokLlCDO7HFcndf
- dEtApcsnEhAJspJsOP3NNeAqgAz2bqYMNTrd6i.bdsghzOPO.BmwWa8v9TDB4EXwfXMMdB5wnd54
- LBxSt_UPal8cOI1xqRxRIJNRP7N__kmxV0sxUOHJi8CgvfskLFZigXrED9n56ViCaIZfYHvPkRwg
- xveg_ql4zlQwdbZ4LdeFFDs0yvZQSfpseyT4hYg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: a7ee2418-0d41-4974-9d9d-99101b3bb70d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2024 01:15:25 +0000
-Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 12b4acc5d73ffa7a6d15274920c8ee9a;
-          Wed, 04 Sep 2024 01:15:24 +0000 (UTC)
-Message-ID: <61b60364-72e7-40f2-90dd-255d5714b9e7@schaufler-ca.com>
-Date: Tue, 3 Sep 2024 18:15:22 -0700
+	s=arc-20240116; t=1725412524; c=relaxed/simple;
+	bh=abZBfaJTUen9CeHugLJfdJoi3qcrPTTlRp4YHgo24gg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lDbLz7zzoFf39drlbSPH3fEktz6KRRz7JBm+OC7uYYoRDRRjPelgq+OsP6FlRH9GcaTxCuPYrBxuqqf06xDOaeW1PeXVo15gUkUC78WdTEJGpuAkJ75pKTD3IFTmhPhGHPJvVODe7e0jo/DcT9DJfhb6vuDyYB/KHnwmFmt0StE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a3754a02bso511596939f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 18:15:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725412522; x=1726017322;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D+uIqYknVr2mdJU6dZAKpbhKWysCpthaYDRLFQPVNV0=;
+        b=iObnxePVb6Q7FOlwRxh3faVblfJ6f2WnTmZ2o+Lrmhg2AD7cwlPwcBi3t3qgVm5aut
+         stRyEeVS5Ze2GtZfYzjF8kmcZhB3eri/67pLjmlotFT1Nk1mVtLm8eChGZvEZk/lu2SL
+         AnbfhB4+WoHBCudODL3RjnrXys+y6BPmR+897P8zOrPv4KDOGjnuoW+Tn2Wx0FGOiDaO
+         u1gexTl/fTBcx42Ch4akVvJi9l1Bi29bqL07zZ1D4MJqKEXbrJF0kDVyxggxcWlZuVuw
+         3capRXzGt/ysBnOFydUh8XhtH0NITbPg8SMc4xh0mkZ6u/3Sxz8cuXf4iG7Ommg2i0Gs
+         7zUA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1FCBDq9l/6eCFn9zsGoy5O0rTnx2tt63pxMW3kXuyd/Hy8DOqfxSn/g1ZGrJrZdYYaITVvBzwT4pJt9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjfT5FOUM8Z5v9T1KzvJOLkhaBhqdyaJQMzxQwBf770KJ/p9sb
+	DHF0fHe5ibjSOwYcmRfDFU1nU0EP+Jku846Q6G6wxwzh/A0PJxXmA4Xy2mHBGNoX3wFpsYbf+D1
+	e9X7IhRPR4QkzgvgKgORDwCyL6f9hqLWktYyV95QSbO741g+YNXb9Tcw=
+X-Google-Smtp-Source: AGHT+IGJ4U9ac0R2msnuKQkkA0N7UNzu/vuWu+6O02h7j6g2ECQ6sKnKYNp0NFf/13DZEErmsn8pQ8ng2/VGHZtIKJUZhkadnBQ2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/13] LSM: Add lsmblob_to_secctx hook
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240830003411.16818-4-casey@schaufler-ca.com>
- <faf28485e8d2846e78f89c39d2f737ac@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <faf28485e8d2846e78f89c39d2f737ac@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Received: by 2002:a05:6638:8611:b0:4bd:4861:d7f8 with SMTP id
+ 8926c6da1cb9f-4d017e91f4bmr843201173.4.1725412522217; Tue, 03 Sep 2024
+ 18:15:22 -0700 (PDT)
+Date: Tue, 03 Sep 2024 18:15:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007a66c5062140e8f9@google.com>
+Subject: [syzbot] [ntfs3?] INFO: trying to register non-static key in mark_as_free_ex
+From: syzbot <syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/3/2024 5:18 PM, Paul Moore wrote:
-> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Add a new hook security_lsmblob_to_secctx() and its LSM specific
->> implementations. The LSM specific code will use the lsmblob element
->> allocated for that module. This allows for the possibility that more
->> than one module may be called upon to translate a secid to a string,
->> as can occur in the audit code.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/lsm_hook_defs.h     |  2 ++
->>  include/linux/security.h          | 11 ++++++++++-
->>  security/apparmor/include/secid.h |  2 ++
->>  security/apparmor/lsm.c           |  1 +
->>  security/apparmor/secid.c         | 25 +++++++++++++++++++++++--
->>  security/security.c               | 30 ++++++++++++++++++++++++++++++
->>  security/selinux/hooks.c          | 16 ++++++++++++++--
->>  security/smack/smack_lsm.c        | 31 ++++++++++++++++++++++++++-----
->>  8 files changed, 108 insertions(+), 10 deletions(-)
-> ..
->
->> diff --git a/security/security.c b/security/security.c
->> index 64a6d6bbd1f4..bb541a3be410 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -4192,6 +4192,36 @@ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
->>  }
->>  EXPORT_SYMBOL(security_secid_to_secctx);
->>  
->> +/**
->> + * security_lsmblob_to_secctx() - Convert a lsmblob to a secctx
->> + * @blob: lsm specific information
->> + * @secdata: secctx
->> + * @seclen: secctx length
->> + *
->> + * Convert a @blob entry to security context.  If @secdata is NULL the
->> + * length of the result will be returned in @seclen, but no @secdata
->> + * will be returned.  This does mean that the length could change between
->> + * calls to check the length and the next call which actually allocates
->> + * and returns the @secdata.
->> + *
->> + * Return: Return 0 on success, error on failure.
->> + */
->> +int security_lsmblob_to_secctx(struct lsmblob *blob, char **secdata,
->> +			       u32 *seclen)
->> +{
->> +	struct security_hook_list *hp;
->> +	int rc;
->> +
->> +	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list) {
->> +		rc = hp->hook.lsmblob_to_secctx(blob, secdata, seclen);
->> +		if (rc != LSM_RET_DEFAULT(secid_to_secctx))
-> Wrong default value/hook, but see below ...
->
->> +			return rc;
->> +	}
->> +
->> +	return LSM_RET_DEFAULT(secid_to_secctx);
-> Same problem, I'm guessing a cut-n-paste-o.
->
->> +}
->> +EXPORT_SYMBOL(security_lsmblob_to_secctx);
-> We should be using the call_int_hook() macro instead of open coding using
-> hlist_for_each_entry() and I believe the code above could be converted
-> without any difficulty.
->
-> It should also solve the compile problem seen when using lsm/dev or
-> lsm/next as the base.
+Hello,
 
-Yup, sorry for being sloppy. Will get fixed in v3.
+syzbot found the following issue on:
 
->
->>  /**
->>   * security_secctx_to_secid() - Convert a secctx to a secid
->>   * @secdata: secctx
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 55c78c318ccd..102489e6d579 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -6610,8 +6610,19 @@ static int selinux_ismaclabel(const char *name)
->>  
->>  static int selinux_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
->>  {
->> -	return security_sid_to_context(secid,
->> -				       secdata, seclen);
->> +	return security_sid_to_context(secid, secdata, seclen);
->> +}
->> +
->> +static int selinux_lsmblob_to_secctx(struct lsmblob *blob, char **secdata,
->> +				     u32 *seclen)
->> +{
->> +	u32 secid = blob->selinux.secid;
->> +
->> +	/* scaffolding */
->> +	if (!secid)
->> +		secid = blob->scaffold.secid;
->> +
->> +	return security_sid_to_context(secid, secdata, seclen);
-> We should probably just call selinux_secid_to_secctx() here so we limit
-> the code dup/sync issues.
+HEAD commit:    431c1646e1f8 Linux 6.11-rc6
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10f3370b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3bfd2cc059ab93efcdb4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b809eb980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1495c40d980000
 
-In SELinux code I'll defer to your style choices.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8f73ff24e19d/disk-431c1646.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a9cc8629dafc/vmlinux-431c1646.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/01c91ce5203b/bzImage-431c1646.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/9687e33b346d/mount_0.gz
 
->>  }
-> --
-> paul-moore.com
->
+The issue was bisected to:
+
+commit 110b24eb1a749bea3440f3ca2ff890a26179050a
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Wed Apr 17 07:33:06 2024 +0000
+
+    fs/ntfs3: Taking DOS names into account during link counting
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13aefeb7980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=106efeb7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17aefeb7980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com
+Fixes: 110b24eb1a74 ("fs/ntfs3: Taking DOS names into account during link counting")
+
+loop0: detected capacity change from 0 to 8192
+ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 5231 Comm: syz-executor253 Not tainted 6.11.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ assign_lock_key+0x238/0x270 kernel/locking/lockdep.c:975
+ register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1288
+ __lock_acquire+0xf0/0x2040 kernel/locking/lockdep.c:5019
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1695
+ mark_as_free_ex+0x3e/0x390 fs/ntfs3/fsntfs.c:2484
+ run_unpack+0x7f3/0xda0 fs/ntfs3/run.c:1019
+ run_unpack_ex+0x14b/0x7f0 fs/ntfs3/run.c:1060
+ ni_delete_all+0x2d9/0x9a0 fs/ntfs3/frecord.c:1610
+ ni_clear+0x28e/0x4b0 fs/ntfs3/frecord.c:106
+ evict+0x534/0x950 fs/inode.c:704
+ ntfs_loadlog_and_replay+0x2e8/0x4f0 fs/ntfs3/fsntfs.c:326
+ ntfs_fill_super+0x2c38/0x4730 fs/ntfs3/super.c:1280
+ get_tree_bdev+0x3f9/0x570 fs/super.c:1635
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3f008c4daa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffda8f23918 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffda8f23930 RCX: 00007f3f008c4daa
+RDX: 0000000020020b80 RSI: 0000000020020bc0 RDI: 00007ffda8f23930
+RBP: 0000000000000004 R08: 00007ffda8f23970 R09: 0000000000020b83
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000000
+R13: 00007ffda8f23970 R14: 0000000000000003 R15: 0000000000400000
+ </TASK>
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 1 UID: 0 PID: 5231 Comm: syz-executor253 Not tainted 6.11.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:wnd_is_used+0x58/0x520 fs/ntfs3/bitmap.c:928
+Code: 48 c1 e8 03 80 3c 18 00 74 08 4c 89 ff e8 a0 11 13 ff 49 8b 1f 48 8d 6b 14 48 89 e8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 7b 04 00 00 0f b6 6d 00 4c 8d 75 03 bf 3d
+RSP: 0018:ffffc90009257288 EFLAGS: 00010213
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff88802ebf41f8
+RBP: 0000000000000014 R08: ffff88802ebf420f R09: 1ffff11005d7e841
+R10: dffffc0000000000 R11: ffffed1005d7e842 R12: 0000000000000003
+R13: 0000000000000002 R14: 0000000000000002 R15: ffff88802ebf41f8
+FS:  000055556c297380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f20b8995ed8 CR3: 000000007757a000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ mark_as_free_ex+0x53/0x390 fs/ntfs3/fsntfs.c:2485
+ run_unpack+0x7f3/0xda0 fs/ntfs3/run.c:1019
+ run_unpack_ex+0x14b/0x7f0 fs/ntfs3/run.c:1060
+ ni_delete_all+0x2d9/0x9a0 fs/ntfs3/frecord.c:1610
+ ni_clear+0x28e/0x4b0 fs/ntfs3/frecord.c:106
+ evict+0x534/0x950 fs/inode.c:704
+ ntfs_loadlog_and_replay+0x2e8/0x4f0 fs/ntfs3/fsntfs.c:326
+ ntfs_fill_super+0x2c38/0x4730 fs/ntfs3/super.c:1280
+ get_tree_bdev+0x3f9/0x570 fs/super.c:1635
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3f008c4daa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffda8f23918 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffda8f23930 RCX: 00007f3f008c4daa
+RDX: 0000000020020b80 RSI: 0000000020020bc0 RDI: 00007ffda8f23930
+RBP: 0000000000000004 R08: 00007ffda8f23970 R09: 0000000000020b83
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000000
+R13: 00007ffda8f23970 R14: 0000000000000003 R15: 0000000000400000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:wnd_is_used+0x58/0x520 fs/ntfs3/bitmap.c:928
+Code: 48 c1 e8 03 80 3c 18 00 74 08 4c 89 ff e8 a0 11 13 ff 49 8b 1f 48 8d 6b 14 48 89 e8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 7b 04 00 00 0f b6 6d 00 4c 8d 75 03 bf 3d
+RSP: 0018:ffffc90009257288 EFLAGS: 00010213
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff88802ebf41f8
+RBP: 0000000000000014 R08: ffff88802ebf420f R09: 1ffff11005d7e841
+R10: dffffc0000000000 R11: ffffed1005d7e842 R12: 0000000000000003
+R13: 0000000000000002 R14: 0000000000000002 R15: ffff88802ebf41f8
+FS:  000055556c297380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f20b8995ed8 CR3: 000000007757a000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	48 c1 e8 03          	shr    $0x3,%rax
+   4:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1)
+   8:	74 08                	je     0x12
+   a:	4c 89 ff             	mov    %r15,%rdi
+   d:	e8 a0 11 13 ff       	call   0xff1311b2
+  12:	49 8b 1f             	mov    (%r15),%rbx
+  15:	48 8d 6b 14          	lea    0x14(%rbx),%rbp
+  19:	48 89 e8             	mov    %rbp,%rax
+  1c:	48 c1 e8 03          	shr    $0x3,%rax
+  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
+  27:	fc ff df
+* 2a:	0f b6 04 08          	movzbl (%rax,%rcx,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	0f 85 7b 04 00 00    	jne    0x4b1
+  36:	0f b6 6d 00          	movzbl 0x0(%rbp),%ebp
+  3a:	4c 8d 75 03          	lea    0x3(%rbp),%r14
+  3e:	bf                   	.byte 0xbf
+  3f:	3d                   	.byte 0x3d
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
