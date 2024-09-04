@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-315514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12D096C38F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:11:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBCD96C396
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9638B1F22B0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:11:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07B31B24AC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FBB1E0B66;
-	Wed,  4 Sep 2024 16:10:58 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0211E0093;
+	Wed,  4 Sep 2024 16:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZH+INkP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317A61E009D;
-	Wed,  4 Sep 2024 16:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005791DEFC2;
+	Wed,  4 Sep 2024 16:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466258; cv=none; b=XLHyQVQ2hzDpogUQf1qUSRTUy+z9qlcZtJyPNMpGO5b/eefudlfNIYM4hm9LjBprT05fkPPb0BymqL+JITLw/2TQX7O9XJ9BOSQ3al96iUW9hje2BBhF1WMa2LJop98qNg0kqplL5pp4lRfJ3NEhUrDLC/TgPWb+vRYvwvvruik=
+	t=1725466296; cv=none; b=WyV9lC+Lna6/1xxYzxPg3Yw00m9FnwNGQXTT+RBD8kl5z1fsPPYvVn1xxaCPuCA5X/rdn0J/OV9txxZUYEPIr81icGRnc8VMfmLpCDSgYOB18zZN5EQ3NDL5chZ9obMORVNaI2LpRUtTIGaKx397765thgYFDyDF2/cmGiF0fjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466258; c=relaxed/simple;
-	bh=XebD5sK+T1MpEqeCovOSyAGyoLq0q9hEdTnIDhHPVm8=;
+	s=arc-20240116; t=1725466296; c=relaxed/simple;
+	bh=UWGyaresD4rjeUZpwxnfAeQIXmjnQFTB8ym30NM3pqI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IveZtzLoDxk1Pg2419NKcIm2s97ZXQvNbgwUUbhnPs6YOlJkp2QFZj86GhwfJs/tXq8gB+0seLrRGk/uC1iIhH6C/tNQUnHMDUHmaW5G9e+9ZDHOrZcBcMtNZvPfhvM66j+Oi2f1NbozAimzJkS7iF2fPxoRKky6T3yaxcPp+Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-205909af9b5so23391875ad.3;
-        Wed, 04 Sep 2024 09:10:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725466256; x=1726071056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ulWWIkz506G4MCcxeO/o2OeCBtQ3dEwjtlqjKLNb5zU=;
-        b=V4aHAxY3aEEvbQiC2jVwj/Ynr+JOLRsOMe0/jucGIh3JtNjgubbInC992zxJux/USW
-         UOBTzgMrx9vcZCqpHp/EKelujiEXHlOxONeUyKzeWN5LWAP5eZzbmmRqEG2JV0qT6TLo
-         iIs+vmFhgtwDRRuUP+C1u26moJTekVA0jLAv5jxde4z5XTlK3WZ+xRb2PLS9zxJfA3ia
-         3rC2x49DUw9zjdAHVfMHksNsLTjMYH8iQFVAZMExsXAFhSxla9uD5VY4p4SryB7QVCrH
-         ldKlhcEsk7M3iHYtqhAOfBqDgPQjJnrjQ0ElWe2trFAh4kaIys4MXCyYeTr5/F8GYII/
-         GyRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhx1Qv1/qG3mmHtVIB19eIdO0p+kW2Ue5U+H/cYHifpg4IvghaDQIxSHHjsmi0SyBA4NZfKnanvzEH@vger.kernel.org, AJvYcCWVtkXuNlAjbeoTmrINsm6kV149pXN6JchUCKAyw9st+z8QhT05XX+QQnhLK0LYefKQeqtdLgOvLTXd@vger.kernel.org, AJvYcCXQJveHzkfAiIyf5kI2HZRVqy6rn8TdTD0NAqtWgosr9sSECryBER1ofQtRQmxyPjIKIUj0Ly78wYjUyuBG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZEAchkIqxbCipsCV5PdoyVbIG9SgvhDm9pctpLKc9ek+NV4Qa
-	4AyaMF552rVoGeiFJ1fZobPgbWmHQ4faWDKGAw9VMvehoOQ4F1kV
-X-Google-Smtp-Source: AGHT+IHTWe1QMNcL0j5jcYDzf8fy+jLskTYnyzaqmzwPXo1IqFYKeba0mBTG+0cPpTCwP1g4dxvS6w==
-X-Received: by 2002:a17:902:ce8d:b0:205:5582:d650 with SMTP id d9443c01a7336-205842303c4mr135419155ad.52.1725466256266;
-        Wed, 04 Sep 2024 09:10:56 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea33e3esm15158165ad.138.2024.09.04.09.10.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 09:10:54 -0700 (PDT)
-Date: Thu, 5 Sep 2024 01:10:53 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: matthew.gerlach@linux.intel.com, lpieralisi@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joyce.ooi@intel.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: altera: msi: Convert to YAML
-Message-ID: <20240904161053.GH3032973@rocinante>
-References: <20240717181756.2177553-1-matthew.gerlach@linux.intel.com>
- <20240718-pounce-ferocity-d397d43e3a3f@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=icRydKIh1hLgYPjoxcgS8wVl9PD9rqzgTw1ZaMVXxeoUbBXSnfTGCEU1wZYUUjX0U4VVYF5Xb8nbd06Y0pL/sFrarmLeUwtGGoRJJtvmJb1+lRKgVdButNhHBmt4kYhMoSRONMrb8zyJE/jjqMYWwL57ULFhUJZl6O5fhEqk+JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZH+INkP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 142AFC4CEC5;
+	Wed,  4 Sep 2024 16:11:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725466295;
+	bh=UWGyaresD4rjeUZpwxnfAeQIXmjnQFTB8ym30NM3pqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZH+INkP9NA+KuMNBX5emvTd+JmWWU7qSOowAVli9eVNf/U3KuPNbZ5l4xO/Q46yP
+	 qPjzsU200XAen/EL66p2Vsrr50PnXMZqu9i6mU/+A3q13mbktQYyao2U9OA5AsMv60
+	 n4k6vsZGDa5ya39I/n3jJsAiFu7w9FeRm8bNjjRFBqqnTG3A2Ihd1u1NY0WMD//MeK
+	 ujcmu/05aS2C8v9VUJDdYmEqMkQ0FiFAUUng06MiXmvMqo3SmRkBcqYLw9ZH8tJtrD
+	 OJJWub1wLxGjWdTWW4p91+Gyb+0fQ8GuXyqMdZOssABVWs1d/BVE5CEK75RTiyHusB
+	 5yygtxl2PJuZg==
+Date: Wed, 4 Sep 2024 09:11:33 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 29/31] objtool: Calculate function checksums
+Message-ID: <20240904161133.oyjuwjrm4rjdfivx@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ffe8cd49f291ab710573616ae1d9ff762405287e.1725334260.git.jpoimboe@kernel.org>
+ <20240904075433.GD4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240718-pounce-ferocity-d397d43e3a3f@spud>
+In-Reply-To: <20240904075433.GD4723@noisy.programming.kicks-ass.net>
 
-Hello,
-
-[...]
-> >> +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    msi0: msi@ff200000 {
+On Wed, Sep 04, 2024 at 09:54:33AM +0200, Peter Zijlstra wrote:
+> > +LIBXXHASH_FLAGS := $(shell $(HOSTPKG_CONFIG) libxxhash --cflags 2>/dev/null)
+> > +LIBXXHASH_LIBS  := $(shell $(HOSTPKG_CONFIG) libxxhash --libs 2>/dev/null || echo -lxxhash)
 > 
-> nit: label is not used and should be dropped.
+> This was not installed on my system and I got a nasty build fail. Should
+> we make all this depend on CONFIG_LIVEPATCH or force world+dog to
+> install this as yet another kernel build dependency?
 
-Which bit specifically do you want amended?  I will do it on the branch so
-we merge the final version.
+Hm, that would be nice, but as of now the objtool build is independent
+of the CONFIG stuff and I'm not sure how to integrate them cleanly.
 
-	Krzysztof
+Maybe it could only link to the library if it exists, and then complain
+later at runtime when the feature gets specified on the cmdline?
+
+Or we could try dlopen?
+
+-- 
+Josh
 
