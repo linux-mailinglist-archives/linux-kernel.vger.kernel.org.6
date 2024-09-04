@@ -1,88 +1,191 @@
-Return-Path: <linux-kernel+bounces-314914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F18A96BAF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC1696BAF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7624DB2500E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD721C208E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA271D0169;
-	Wed,  4 Sep 2024 11:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C05E1D0158;
+	Wed,  4 Sep 2024 11:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZUBYXBC0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BihiCRYh"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391111CF7AC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D691D0149
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449957; cv=none; b=Mpe0cJvSrRSXx3JreMwpgAAr+T5VaLHLop0q8U0mUjVb8qW9i10Z7kjao8P4NmfjdVGYlsPI33BS4W5GIylhpAE4euPPPF+N6Bn9jxMl3KK6i7bQw73CZBPYSSVlzKkV6d82F2oCzjXSX1YeiZ14Z8kOsgEEhpGiqHjSY7kYMNY=
+	t=1725449980; cv=none; b=LoOQqcs/M/OxGIKhlKYUp2rSLBEyHr2rwSCH805fapSLZO1pMTyopZ80pQcv2typ4sllkvHBrxX9+CPmcEWlIwWv/OvoKpnaORj4spZ/LGu3ofIf5LevoPNY9YPw57f6ezUsQ8U1xCc4SZ/tBZbvqN377eZtC4Itwi2GTJq4qnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449957; c=relaxed/simple;
-	bh=XavpJsnh34eefCMApdNRk43izI1ZC2052HhAi88XK90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZM9q5eRFjJxQsr+RxAnctAXYe2tvgEqKhuFtdUvZM5MEdKA9OhXFc5jhgYJOfRO3CHDsMaeki5xWHY3ZXJFkSklc/WKJM2D66zV7DOerWowdpetim65s4QsOA//jQqprgQPJPvQxmpDA3ygjajkl+zJ1ZLsnmOi9gSVpXgpS3Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZUBYXBC0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1rE/FFpjeNfOvNwU1UVNjerJRacfvhEURZT1lEeJSMY=; b=ZUBYXBC0ML4e8Msk4ZJqGqjlr0
-	XQT3Wm5Tjo60DycTx7fcuIApyAmpKIKkH47of7PemMNzoFz401aA25u4rSH1Zquwp2vuDfg87ujvt
-	Baxyvyu8s47jGIeypssRTKs0Iper82XjiORBz8adjqkt0SivYRnvfQRcx5OqdXCaJbkQs4CzkqJSf
-	ZcEC5EZeRkXx4Qqn3BKhbAuji23Eqf71FU8dFspnCTipzVRKvUE9/ECPWFsHNtqk+lmPgRiKrJyQL
-	+/YTgDZZVInOyNZ36HBj0QBZrooRg3go338cXlidFOaL84haWArU+bkhm4DFfKMudA8z0Ike3S0+F
-	cUB/uPBw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sloLr-00000000mnP-12CV;
-	Wed, 04 Sep 2024 11:39:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2A54B300642; Wed,  4 Sep 2024 13:39:08 +0200 (CEST)
-Date: Wed, 4 Sep 2024 13:39:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Stephane Eranian <eranian@google.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [RFC/PATCH 4/4] perf/x86: Relax privilege filter restriction on
- AMD IBS
-Message-ID: <20240904113908.GG4723@noisy.programming.kicks-ass.net>
-References: <20240830232910.1839548-1-namhyung@kernel.org>
- <20240830232910.1839548-5-namhyung@kernel.org>
- <20240902091232.GB4723@noisy.programming.kicks-ass.net>
- <CAM9d7cg-7USE-Ofusc1VDpr3qtviX4xZmoKmBjmEfBDw9XJ+nw@mail.gmail.com>
- <20240903085454.GR4723@noisy.programming.kicks-ass.net>
- <CAM9d7ch8fwk-o7W6KrTgtJ5n8-oVMGqzxvW_zd_hrcWFoE2AHg@mail.gmail.com>
+	s=arc-20240116; t=1725449980; c=relaxed/simple;
+	bh=BQJeSS6zRJ+NgR1rjvQRaeNKt6ErNK9rbLSyjBuiAyg=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=kQ0bgydS8UUuOdbQjP6kUPiwT0uL74P5BaDPSzhuYLOnQXSo4qYcRdizKqIB1a9eCaBpabzRWeZFt7mPx0xHl/hy4r8Tp04ajFWfhP70+5clV7u4E275RlpBjTB0S+ZXGEAtAknWBc8FFhpUuxAgMQXL6asDiEEPdDpgYtq1sGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BihiCRYh; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240904113936euoutp0298b120315558aba841b2a6930bdbe9ad~yB5yD2vJB2054620546euoutp02X
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:39:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240904113936euoutp0298b120315558aba841b2a6930bdbe9ad~yB5yD2vJB2054620546euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725449976;
+	bh=EGFj9Lt3U6NEqj732WrUihZyBNzE5JpUCAm9adYfXVA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BihiCRYhZuWs7WsiH0EVUsKUe83dajXPKd7AlreVFfQN1ROVL1lyMBzCS1ovX5XHv
+	 qlRQl2lf1n2N1Oo1PTziPnsqg1rh9bJcE1DJhdx2qwL4r4qDPcwTnyho6bNgj9VuYc
+	 VrYF3I/6Wu8SZLDm10xI6Yjiz9fo5erDcx2hvHAA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240904113935eucas1p19aaff846f2dde90710a991ae1ad85b5d~yB5xwse_Q2497324973eucas1p1W;
+	Wed,  4 Sep 2024 11:39:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 53.06.09620.7F648D66; Wed,  4
+	Sep 2024 12:39:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240904113935eucas1p15916049ce037ad579a1b095e35cbc59c~yB5xGzl211822318223eucas1p1-;
+	Wed,  4 Sep 2024 11:39:35 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240904113935eusmtrp12bce0583f0a63605cc8926dacbf8a6ae~yB5xF6dl11271512715eusmtrp1S;
+	Wed,  4 Sep 2024 11:39:35 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-fb-66d846f75153
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 52.D8.14621.6F648D66; Wed,  4
+	Sep 2024 12:39:34 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240904113934eusmtip23bbd296a6fd04b69addea4babd0ad253~yB5w6o_521668916689eusmtip2Y;
+	Wed,  4 Sep 2024 11:39:34 +0000 (GMT)
+Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 4 Sep 2024 12:39:33 +0100
+Date: Wed, 4 Sep 2024 13:39:30 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Klaus Jensen <its@irrelevant.dk>
+CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
+	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Minwoo Im
+	<minwoo.im@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 6/6] iommu/vt-d: do not require a PASID in
+ page requests
+Message-ID: <20240904113930.zzlrcyui6mwxjzb5@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAM9d7ch8fwk-o7W6KrTgtJ5n8-oVMGqzxvW_zd_hrcWFoE2AHg@mail.gmail.com>
+In-Reply-To: <20240904101916.ia5n7s4tbczkqnws@joelS2.panther.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djPc7rf3W6kGew8q2qxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
+	XBnn/m5kK9jIV3GmYTtLA+NE7i5GTg4JAROJOaf+M3UxcnEICaxglOhb+4UVJCEk8IVR4scL
+	L4jEZ0aJ2YsmMcF0vPmzmgWiaDmjxIU3zhA2UNG+i3IQDVsYJR7dWMoOkmARUJFYOOcgG4jN
+	JqAjcf7NHWYQWwQo/vTfXhaQBmaBBmaJrzfPghUJC0RJfJixAayZV8BB4vTrKUwQtqDEyZlP
+	wDYzAw1asPsTUD0HkC0tsfwfB0iYU8BRYsX3u1CHKkscXHaIHcKulTi15RZUfDanxI9OHwjb
+	ReL41DYWCFtY4tXxLVD1MhKnJ/eA3SYhMJlRYv+/D+wQzmpGiWWNX6EmWUu0XHkC1eEoMaMf
+	ZAMHkM0nceOtIMSdfBKTtk1nhgjzSnS0CUFUq0msvveGZQKj8iwkn81C8tkshM8WMDKvYhRP
+	LS3OTU8tNs5LLdcrTswtLs1L10vOz93ECExZp/8d/7qDccWrj3qHGJk4GA8xSnAwK4nwvha5
+	kSbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7NbUgtQgmy8TBKdXApMXvekAl
+	JmVFmoy6xtUF2Se3tM9dLrJi/b95IqsvtJ4PXOV6plTxxi7/iptmkuumTa4wdzT8UzXR7+mx
+	C/t2cT37cWwB78XCd/2l/WvD1tx/1LHSJqRN282Ml0F8VblL6LTSV6tf8669093w79TWRVPT
+	TzVt2LnYd+++PW2O76Umb9hef2mr4P0z88pvB09w/Lp/p5OE+YtjV79u5/ZPaMsX/Rr8/WRz
+	t8/EK2u+rF64T3iCpd432zVNT3wKa+dzHYhQ1b0bwv6nSVfcYbOloOtWs/QLNVv2xwcanWl4
+	+kJv8UuZK7v+NKrvi7bOnxZzXPBEYC+XkObZcwK5UrskFrz6d1HsnEDvu4gNq69e+rhXiaU4
+	I9FQi7moOBEASnLmlsgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7rf3G6kGZzeZWGxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
+	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehnn/m5kK9jIV3GmYTtLA+NE
+	7i5GTg4JAROJN39Ws3QxcnEICSxllNhyppsFIiEjsfHLVVYIW1jiz7UuNhBbSOAjo8TStmyI
+	hi2MEm29D5lBEiwCKhIL5xwEK2IT0JE4/+YOWFwEKP70316wDcwCDcwSX2+eBSsSFoiS+DBj
+	AzuIzSvgIHH69RQmiKktTBJXPrSwQiQEJU7OfAJ2EjPQ1AW7PwE1cwDZ0hLL/3GAhDkFHCVW
+	fL/LBHGpssTBZYfYIexaic9/nzFOYBSehWTSLCSTZiFMWsDIvIpRJLW0ODc9t9hQrzgxt7g0
+	L10vOT93EyMwercd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4X0tciNNiDclsbIqtSg/vqg0J7X4
+	EKMpMCwmMkuJJucD00deSbyhmYGpoYmZpYGppZmxkjiv2+XzaUIC6YklqdmpqQWpRTB9TByc
+	Ug1MzMYi652sFW6oBz7S17nJXMeXs35T9Ab/aIbCH7En37JwKBW5514wT1I0OyI59eHWSpfF
+	96yOsbwSr5RbuuG19Z8vB87Pad5w1Cxo4Z1rMW4TRAXY73YweG6o76/4r8Kivz3UbbrvzcS2
+	o3uudM3z13itn7o0STiXV9i48LbctcCjb5LSPjvVts78qWT9YeF0PeWKWctenjB/9C/UIu3B
+	8YUTGIPuFJX0Jn7xc5n5ukZ7+cxy62RL671PxTKN7x5a5WUuI/3VpaTvSMJ7q9KMHzPMSzrO
+	9mfbP2Y4/0u4s2Cl4ivXoviZu73Oin3slXV5ZKtf/Esto+/GPLOEc0fKKo7uerk3IaoocDN3
+	wxElluKMREMt5qLiRACwLRodZwMAAA==
+X-CMS-MailID: 20240904113935eucas1p15916049ce037ad579a1b095e35cbc59c
+X-Msg-Generator: CA
+X-RootMTR: 20240826114110eucas1p2de6af1717324c944cd3036826492df44
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826114110eucas1p2de6af1717324c944cd3036826492df44
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+	<CGME20240826114110eucas1p2de6af1717324c944cd3036826492df44@eucas1p2.samsung.com>
+	<20240826-iopf-for-all-v1-6-59174e6a7528@samsung.com>
+	<20240904101916.ia5n7s4tbczkqnws@joelS2.panther.com>
 
-On Tue, Sep 03, 2024 at 09:34:58AM -0700, Namhyung Kim wrote:
-
-> > While the IBS thing only sucks when you use exclude_[user,kernel]
-> > things. Stealth suckage is bad and enrages people.
+On Wed, Sep 04, 2024 at 12:19:16PM +0200, Joel Granados wrote:
+> On Mon, Aug 26, 2024 at 01:40:32PM +0200, Klaus Jensen wrote:
+> > From: Klaus Jensen <k.jensen@samsung.com>
+> > 
+> > PRQ events can now be handled without a PASID being present. Remove the
+> > restriction.
+> > 
+> > Signed-off-by: Klaus Jensen <k.jensen@samsung.com>
+> > ---
+> >  drivers/iommu/intel/prq.c | 12 +++---------
+> >  1 file changed, 3 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
+> > index 2814373e95d8..cc36198ebf91 100644
+> > --- a/drivers/iommu/intel/prq.c
+> > +++ b/drivers/iommu/intel/prq.c
+> > @@ -101,18 +101,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+> >  		req = &iommu->prq[head / sizeof(*req)];
+> >  		address = (u64)req->addr << VTD_PAGE_SHIFT;
+> >  
+> > -		if (unlikely(!req->pasid_present)) {
+> > -			pr_err("IOMMU: %s: Page request without PASID\n",
+> > -			       iommu->name);
+> > -bad_req:
+> > -			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
+> > -			goto prq_advance;
+> > -		}
+> > -
+> >  		if (unlikely(!is_canonical_address(address))) {
+> >  			pr_err("IOMMU: %s: Address is not canonical\n",
+> >  			       iommu->name);
+> > -			goto bad_req;
+> > +bad_req:
+> > +			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
+> > +			goto prq_advance;
+> >  		}
+> >  
+> >  		if (unlikely(req->pm_req && (req->rd_req | req->wr_req))) {
+> > 
+> > -- 
+> > 2.45.2
+> > 
 > 
-> Right, let's make it explicit like the above.
+> I'll squash this commit with the one that introduces the prq.c file.
+On second thought. I'll leave it as a separate commit. The first one
+will be the "copy all the code to a new file" commit and the second one
+will be "remove the pasid check" I'll change the commit message a bit so
+it is clear why they are not together.
 
-Given Ravi's concern, perhaps a whole second PMU instance 'ibs_swfilt'
-or so? Might have more problems than its worth though, but perhaps
-something worth exploring for a bit.
+Best
+
+-- 
+
+Joel Granados
 
