@@ -1,208 +1,204 @@
-Return-Path: <linux-kernel+bounces-315140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9175196BE76
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B07396BE7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404E4283858
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06F02817A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9501DA2F8;
-	Wed,  4 Sep 2024 13:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033CF1DA2E4;
+	Wed,  4 Sep 2024 13:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="apzxV/JX"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODnadG+2"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0741DA10F;
-	Wed,  4 Sep 2024 13:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD681DA61C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456414; cv=none; b=kZCEUeUrp5aJK1jJZOzhqtxeHEVCa66Y3F8QAUZNRHgOX1ccOS68KK4jYVa5DOENgvkj+NEH8r7K03iGB4Ht+0HKEepzTw4Itp6fmXVG/PwhWP/115UMFbxm7baZqBWt7IEQ4EeWZsCo9f0vEdKjO6DZ+WdfMmjxIiM3NqNImsI=
+	t=1725456435; cv=none; b=V9zqcXnWgEc/wsISVd5UjmpJh+Jf4QICrBXgVHcaOeG5iUOQEL+y326E1KU1RrVOSTRg995JXIMS2hLy/IqtHPQLmrgYDoEmZTXegzSUJWkdLMLkqyA/n8MJ6rEyZARos8G51Lx/DzfVYIAjQK0RR+V381k6omqIZXsMFtL/XFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456414; c=relaxed/simple;
-	bh=X3RwhSnOPI7B3SUDwwNDjphzki+yiClyRlfzwMUfMQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QFsYvh8TC/RdOgoPwQ6QgZn31ijLvPhST6+C868tJ4Cr90LgpujtDOx+6z1LOFDpi5XQPJVP37SIe5UAvYl9c9FntHEsqG/FxBRN48F5u3pvq8jOxlJvXeykvaPr9qnBIJ0hquiv6x2tG2jb4LmXSicYV8vkN3EZTmhTYx6bT3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=apzxV/JX; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725456411; x=1756992411;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=X3RwhSnOPI7B3SUDwwNDjphzki+yiClyRlfzwMUfMQ0=;
-  b=apzxV/JXBheW0Z46dX4EgKXtPmn8fZzaPyFYHGzvnXhIEsuDBHZ8g1Qd
-   LgMt4Cjmp4AVIbn5Ga6FD/OOQJaoAMpjcbWoga3gBP7T1zc/vma9JLoES
-   gc8hkcr+Q5VqGgLfFVI4Cmx39m39Q67+eCc1TcXJlGVILCT3HTkAw07yF
-   i3MtFighsakBU3LCWlvrRajeJjo7ACKjgFivI5fBElnjbPfHezN0mM/Iw
-   O0gEdy3VfGV59LvobF+bsqO4fk524AhNsbD/glAoDEWRmxWTyzoTK4QLL
-   h5tyH60ieAifHTkTM8wKC7rXCBmaSbTJ/trxUzR8iQ6B4kcxw5EE9wDHH
-   A==;
-X-CSE-ConnectionGUID: JRh8fRxbQ+6YUqmruMXFWw==
-X-CSE-MsgGUID: VrJ1OOsKTfGljRdVl8vSqQ==
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="34388770"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Sep 2024 06:26:50 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 4 Sep 2024 06:26:26 -0700
-Received: from [10.180.116.161] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 4 Sep 2024 06:26:25 -0700
-Message-ID: <e1371121-8f06-4c36-a950-063ae716b47e@microchip.com>
-Date: Wed, 4 Sep 2024 15:26:45 +0200
+	s=arc-20240116; t=1725456435; c=relaxed/simple;
+	bh=W2l2ceVRHS9n5UQas5i9KqqNz3GWJGVQkmoAWgh+w4c=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FJAxulEdkodIZ25l5Zh4p7Xe3JMqxrk1PrECxEO+zfmuwLz7YyZAQpRD4GgC3WUhFErOdoR673HGTZSu4dQ26rZCGJZ2XAjnOfs6mV77+76PgPr4U12r11fXstAkzt0ADoTR3D26CnWo56Ywsw7rFz2iQ9rsTWmiBbwnqWu5HSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODnadG+2; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f4f8742138so74411701fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725456432; x=1726061232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wPhsht4RSMG4cAcNFfFbtt+XBottqoozru65Pea+viQ=;
+        b=ODnadG+2a+3y8Gplx2oVgq71/mrVgpvLN1K8JQTgSIgTDgjZ5XMNpcWKMoeAwNNzNw
+         pUQSju09CRdSbkfHAWhd/LelQ4p6c3cfMjtNHtTt8pr5EA2b63OcGf6+9r0gnD/db5vk
+         n++M/cLdZMrxq/bfujK6WUcz0lV+k8veqoPncNQF/Xju2IOiPy/9Oiqd7zNaXbCW4ohp
+         UC3pBnDWZOGg7nVHDptwYgmmgWOECUCe7PHQv4ylAzeD197xvryuBA3B9dqEzOw4NRGx
+         IZjX+qhV8lDv3O0uJs8u7jEWDmlWVyjd7MW6cDp0V9u3wvAAY+KyKDHol32SzcQdM7Kd
+         t/ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725456432; x=1726061232;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wPhsht4RSMG4cAcNFfFbtt+XBottqoozru65Pea+viQ=;
+        b=cgG/+QTmjlQgQ7YO8KOwInFudqYbxo7gSlmyyF/3rm7UJIWa0ZIZiWJAlqQluesbEH
+         lIEpNLHVZ1rUJ7AXUBUXFGOHILnlrz2dokTK1CYi8uOmOZgp+lIfOd8czj/VnoQiwF48
+         EEcWrmtmVFNbVTPC137BFhHJUS/wiclsUzdjIwGttFkTGbkGlgkbg396IxlWkWX//suv
+         4bLPiki6NXPh7FeJ2D5v2L0ax4AvVvgOkw8JK5G91Rp+rJAuyWyFYg/CrRFNNAjkWrcY
+         jg3rDlBnmYlcw+YX/w2AkKXEskGeiGnRW7MViYAkvx3moshGXWghWfvMvh2PtkFYJ1Dh
+         c30A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8fRENJ+9xaKxJDM2qlX6Jeb+HYyBn9brvsqPAN8u0e19TvRIcZFtzMIpwtF5fFcbfp/QhPnWSU62rFd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOUxaCxV5RemkewT2sgGML612yz/NxTSkqx5U76cZquhYBLfCg
+	3/XOFdw//whs/Vufo3LhbC2aUB1eYFZtNJBJVOwQuWyngnLdJJfwhz8njV3N75w=
+X-Google-Smtp-Source: AGHT+IFUgUo5Iu1+R6NneiGoGIiNrQREOpD3FhDc+ENaWz8EYawCtNDxV3jfboUgQVd8f6m3vWeVaw==
+X-Received: by 2002:a2e:d09:0:b0:2f3:c0cc:aa37 with SMTP id 38308e7fff4ca-2f64d49f306mr27046371fa.19.1725456430519;
+        Wed, 04 Sep 2024 06:27:10 -0700 (PDT)
+Received: from [127.0.0.1] (85-76-36-142-nat.elisa-mobile.fi. [85.76.36.142])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f660d96cdasm709781fa.96.2024.09.04.06.27.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 06:27:09 -0700 (PDT)
+Date: Wed, 04 Sep 2024 16:27:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>
+CC: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ZthVTC8dt1kSdjMb@hovoldconsulting.com>
+References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org> <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org> <Zqet8iInnDhnxkT9@hovoldconsulting.com> <ZqiyLvP0gkBnuekL@hovoldconsulting.com> <oj4qv5wdxymsgpuy4col2w5gabn6k5blybf2fmrckydjo6sftd@eppcqaqwjn5b> <60aa6833-7e08-4986-93e7-4790a8eb8568@quicinc.com> <CAA8EJpopAYp3Y6cW8B+2cVM=_oAnWeOqS6zygc4o7b+r9Lj1ZQ@mail.gmail.com> <02e3c217-490d-4051-8fb8-6bfcf322e27d@quicinc.com> <ZsbomSG6DXTfYxXZ@hovoldconsulting.com> <ZthVTC8dt1kSdjMb@hovoldconsulting.com>
+Message-ID: <A06D652E-BBAC-4D27-9A6D-507DB8F8B153@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: get, prepare, enable a clock not in DT?
-Content-Language: en-US, fr-FR
-To: claudiu beznea <claudiu.beznea@tuxon.dev>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
- <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
- <20240828-gainfully-cringing-2f420d8882bd@thorsis.com>
- <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
- <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
- <6bc72d8a-c7b8-40de-b4c2-0170dde36d33@tuxon.dev>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <6bc72d8a-c7b8-40de-b4c2-0170dde36d33@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 04/09/2024 at 09:33, claudiu beznea wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hi, Alexander,
-> 
-> On 02.09.2024 11:24, Alexander Dahl wrote:
->> Hello Claudiu,
->>
->> Am Sat, Aug 31, 2024 at 06:49:59PM +0300 schrieb claudiu beznea:
->>> Hi, Alexander,
->>>
->>> On 28.08.2024 09:55, Alexander Dahl wrote:
->>>> Hello Claudiu,
->>>>
->>>> Am Fri, Aug 23, 2024 at 05:29:44PM +0300 schrieb claudiu beznea:
->>>>>
->>>>>
->>>>> On 20.08.2024 15:17, Alexander Dahl wrote:
->>>>>> By chance: I don't have a sama7g5 based board at hand for testing.
->>>>>> The datasheet says the same as for sam9x60.
->>>>>> Does the nvmem_microchip_otpc driver actually work without timeout on
->>>>>> sama7g5?
->>>>>
->>>>> Yes! This should be because system bus is clocked from MCK0 (as mentioned
->>>>> in peripheral identifiers table) which is enabled by bootloader.
->>>>
->>>> Not sure I can follow.  Citing the SAMA7G5 datasheet section 30.4
->>>> (OTPC Product Dependencies):
->>>>
->>>>      "The OTPC is clocked through the Power Management Controller
->>>>      (PMC). The user must power on the main RC oscillator and enable
->>>>      the peripheral clock of the OTPC prior to reading or writing the
->>>>      OTP memory."
->>>
->>> I don't see this in [1]. Only:
->>>
->>> "The OTPC is clocked through the Power Management Controller (PMC), so the
->>> programmer must first to configure the PMC."
->>>
->>>  From this I got that it is about the MCK0 listed in table Table 8-11.
->>> Peripheral Identifiers.
->>>
->>> [1]
->>> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765A.pdf
->>
->> Well, this seems to be an older version revision A from 03/2022.
->> I have DS60001765B (revision B) from 12/2023 and got this here (note
->> the missing 'A' in the filename):
->>
->> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
-> 
-> This version clearly express your findings. The unknown now is the
-> "peripheral clock" that need to be enabled along with the
-> main_rc_oscillator. For that you may want to play around with PMC
-> Peripheral Control Register, PMC peripheral clock status register and see
-> if OTPC fails to work when disabling the peripheral clock with the OTPC ID
-> as there is no information about peripheral clock for OTPC in the
-> peripheral identifers table.
-> 
-> Hope this helps.
+On 4 September 2024 15:40:44 EEST, Johan Hovold <johan@kernel=2Eorg> wrote:
+>On Thu, Aug 22, 2024 at 09:28:26AM +0200, Johan Hovold wrote:
+>> On Tue, Jul 30, 2024 at 11:04:58PM -0700, Chris Lew wrote:
+>>=20
+>> > GLINK has a concept that is called "intents"=2E An intent is an objec=
+t=20
+>> > that signifies that a remote channel is ready to receive a packet=20
+>> > through GLINK=2E Intents can be pre-emptively queued, or they can be=
+=20
+>> > requested by the sending entity=2E GLINK will not try to send or it w=
+ill=20
+>> > block until there is an intent available=2E
+>> >=20
+>> > Intents are exchanged with GLINK_CMD_INTENT packets=2E When Linux rec=
+eives=20
+>> > one of these packets we add it to an idr "riids"=2E
+>> >=20
+>> > Example sending call:
+>> >      pmic_glink_send() --> rpmsg_send() --> qcom_glink_send() -->=20
+>> > __qcom_glink_send() --> qcom_glink_request_intent()
+>> >=20
+>> > In __qcom_glink_send(), we check if there are any available intents i=
+n=20
+>> > "riids", if there aren't any intents we request an intent through=20
+>> > qcom_glink_request_intent()=2E This sends a GLINK_CMD_RX_INTENT_REQ p=
+acket=20
+>> > to the remote and waits for a GLINK_CMD_RX_INTENT_REQ_ACK packet in=
+=20
+>> > return=2E This ack packet will have a field that says whether the int=
+ent=20
+>> > has been granted or not=2E When linux gets this ack packet, we will w=
+ake=20
+>> > up the thread waiting in qcom_glink_request_intent()=2E
+>> >=20
+>> > The ECANCELED comes from qcom_glink_request_intent() when we receive =
+a=20
+>> > GLINK_CMD_RX_INTENT_REQ_ACK that has granted =3D=3D false=2E
+>> >=20
+>> > On the firmware, when a glink channel is registered they can optional=
+ly=20
+>> > fill in a handler for GLINK_CMD_RX_INTENT_REQ packets=2E If this hand=
+ler=20
+>> > is not configured, then a default one will be used where all=20
+>> > GLINK_CMD_RX_INTENT_REQ packets will be responded with=20
+>> > GLINK_CMD_RX_INTENT_REQ_ACK and granted =3D=3D false=2E If a channel =
+is=20
+>> > implemented this way, then the only thing Linux can do is wait and re=
+try=20
+>> > until the remote queues the intents on its own accord=2E
+>> >=20
+>> > This would be my current guess as to what's happening based on this n=
+ot=20
+>> > being consistent and only seen every couple of reboots=2E A stop path=
+=20
+>> > problem sounds like it should happen every time, and we should also s=
+ee=20
+>> > the remoteproc prints related to powering down the adsp=2E The above =
+race=20
+>> > should be applicable to all platforms but depends on the speed of the=
+=20
+>> > ADSP vs the CPU=2E
+>>=20
+>> Thanks for the above=2E This indeed seems to match what I'm seeing as I
+>> also reported here [1]:
+>>=20
+>> [    9=2E539415]  30000000=2Eremoteproc:glink-edge: qcom_glink_handle_i=
+ntent_req_ack - cid =3D 9, granted =3D 0
+>> [    9=2E561750] qcom_battmgr=2Epmic_glink_power_supply pmic_glink=2Epo=
+wer-supply=2E0: failed to request power notifications
+>>=20
+>> [    9=2E448945]  30000000=2Eremoteproc:glink-edge: qcom_glink_handle_i=
+ntent_req_ack - cid =3D 9, granted =3D 0
+>> [    9=2E461267] pmic_glink_altmode=2Epmic_glink_altmode pmic_glink=2Ea=
+ltmode=2E0: failed to send altmode request: 0x10 (-125)
+>> [    9=2E469241] qcom,apr 30000000=2Eremoteproc:glink-edge=2Eadsp_apps=
+=2E-1=2E-1: Adding APR/GPR dev: gprsvc:service:2:1
+>> [    9=2E478968] pmic_glink_altmode=2Epmic_glink_altmode pmic_glink=2Ea=
+ltmode=2E0: failed to request altmode notifications: -125
+>>=20
+>> I assume we do not want to have every client driver implement a retry
+>> loop for the first communication with the remote end, so can this be
+>> handled by the pmic_glink driver somehow? For example, by not forwardin=
+g
+>> state changes until some generic request has gone through?
+>
+>Has there been any progress on this issue? It's already been five weeks
+>since my initial report and we're closing in on the merge window for
+>6=2E12=2E
 
-FYI, I asked internally. I'll keep you posted.
+I have been on vacation for 3 weeks=2E If I can reproduce it on the hardwa=
+re I have access to, I will work on it during the next few days=2E
 
-Regards,
-   Nicolas
-
->> Linked here:
->>
->> https://www.microchip.com/en-us/product/sama7g54
->>
->> The revision history is not very specific, it only says "Updated Power
->> Management".  Errata sheet has nothing interesting on that topic.
->>
->> We both cited what we saw in the datasheets.  Revision A has the
->> section you cited, revision B has the section I cited.
->>
->>>> Table from section 8.5 (Peripheral Clocks …) has no check mark at "PMC
->>>> clock control" but indeed lists MCK0 as main system bus clock.
->>>
->>> This is what I was taking about.
->>>
->>>>   If it
->>>> works on SAMA7G5 without explicitly enabling main RC oscillator, then
->>>> either that clock is on accidentally, or the datasheet is wrong in the
->>>> OTPC section.
->>>
->>> Might be.
->>
->> I don't have a SAMA7G5 at hand.  Someone who has could test if OTPC
->> works with/without MCK0, and with/without main RC osc, all possible
->> combinations would be most helpful: with none of those, with only one,
->> only the other, both.
->>
->> Hope we get this clock stuff sorted out?!
->>
->> Greets
->> Alex
->>
->>>
->>> Thank you,
->>> Claudiu Beznea
->>>
->>>>
->>>> Personally I find the "clocked through PMC" part in the OTPC
->>>> section suspicious, because in the peripheral identifiers table OTPC
->>>> has no "PMC Clock Control" mark.
->>>>
->>>> Not sure what's the difference between SAM9X60 and SAMA7G5 internally,
->>>> though.  From a user's POV it's possible one of them requires the
->>>> main RC osc, and the other does not, but currently you can't tell from
->>>> the datasheets.
->>>>
->>>>> Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
->>>>> thermal calibration packets:
->>>>> https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
->>>>
->>>> Greets
->>>> Alex
->>>>
->>>
+> If this isn't resolved soon, I'll send patch to disable the
+>in-kernel pd-mapper by marking it as broken=2E
+>
+>> And what about the audio service errors:
+>>=20
+>> 	[   14=2E565059] PDR: avs/audio get domain list txn wait failed: -110
+>>	[   14=2E571943] PDR: service lookup for avs/audio failed: -110
+>>=20
+>> Does this seem to be a separate (but related) issue or just a different
+>> symptom?
+>
+>I can confirm that the audio breakage is also related to the in-kernel
+>pd-mapper=2E I hit it after 30 reboots with the in-kernel pd-mapper, but
+>have not seen it with the user space service (e=2Eg=2E after 100+ reboots=
+)=2E
+>
+>> [1] https://lore=2Ekernel=2Eorg/lkml/ZsRGV4hplvidpYji@hovoldconsulting=
+=2Ecom/
+>
+>Johan
 
 
