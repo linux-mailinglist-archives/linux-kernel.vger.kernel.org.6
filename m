@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-314803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A88F96B93A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2174596B948
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D0F1C2176E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A381C24FF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4829B1CDFC8;
-	Wed,  4 Sep 2024 10:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5AB1D1723;
+	Wed,  4 Sep 2024 10:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TJvJqbFg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DbKFNTJR"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0ED3612D;
-	Wed,  4 Sep 2024 10:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E19F1CF7DA;
+	Wed,  4 Sep 2024 10:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725447013; cv=none; b=OhL8L5Ksiw10TKMzgsyQXHzHtPFDxsZtUB7WbOrg/pYTA9tCMhiFIY6YqQJfAkqlxp99NbLHiOCYRpVo6LY+k+VlNUvSHLHhJiqEA7CyTMCUGGU8JGhHOyoYXdQAP73U6D2Z1hs3ZKLJYvyeEKPz9KG5NJhWd5bFjZ8RasErIOA=
+	t=1725447050; cv=none; b=rmMA38x6GEucBLCrvMDnLCZYwgsq4gVFGz/Hs2/vybhhjYfhj1nMqU2GAL/bP7bPJ+bfGvD0TdiRCBSY5l5Vcrq4a2j5BQ0WiwHXRac+oLL10pT+w3BgIrsKQmIHb6y3aQqe8wKBuwnZfmp0XORQTxgAakmdVkrClpmlMlvbKh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725447013; c=relaxed/simple;
-	bh=qCCt6akt6J3+5DzMZX5XwCF3hJaj/F746bDw4hPKOOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WVDIW8y6RAdTW6wYr39qfeDGlH32z0Ih04suR6CqLKKX3oPFsyYQE1Wq90aVjQ5EDuDugNYeXWKonDC25TYYhrngiywDmIFrPMxMWnq8I0tD7Xm90z+/B/3pGTgHlwDPdCYjRThc+wNfShztLSJpkqJByg4hOS13zd4EMqx06o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TJvJqbFg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48484dRl010553;
-	Wed, 4 Sep 2024 10:49:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CukpPXmCtRJOKkmqSDQK/eI6qJTAIFrCRv7rp2CScIk=; b=TJvJqbFgsyMIHqc7
-	nRrx4GbwLM8xOCxlfAb4CJoShVKhusGnYNnvFb94dd5Kwcy0rB1cxPkiP7Z+oMoc
-	BENaQDbNbNNhoTLGQ0Vv1G3JYLER+huW0Cjxk5quM1pU0xh2sKe/bd2u3fINcant
-	IVj8XzbNIDeqF/6ArNDTded4IWkga7mUCWnhVSf7SVd7L8RdgL5xVWPIP2rwEOYm
-	p89mJqFwTFC70RFlUL31/yqAdrmnuYswdKptdiNT8qn5ex+O/0XevWN3ZTh22F9A
-	jr7Q6LU27urexnm3j1NEC1yXTdS8XJJcYLsj4kQ46JrslemhujIPu7g7QM9d5PIQ
-	Dcr7QQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41e0bhkntq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 10:49:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484AnqNB028087
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 10:49:52 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 03:49:51 -0700
-Message-ID: <50dd4471-d364-4ca7-b2ad-4274faf3e6e0@quicinc.com>
-Date: Wed, 4 Sep 2024 18:49:49 +0800
+	s=arc-20240116; t=1725447050; c=relaxed/simple;
+	bh=mKNch3+QXegszsSSzEUYVAwlQVUK/eTsEY9VYCeHyEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JZQYhPt0ERmHQYer0opuYF+oLfCkorQGjOjaQny+UmOWhoMpFPHcu6SnZN5g2sT36m9eAF9AM+ttZRGk6CTG9BehdKfobMdgMAxMNilpTjn7RY7o44vnFtCAMLEYWSBdnbOSe3Urc862BRfAmVnQ5eFrTz3IH5/SQo7FPmViO3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DbKFNTJR; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-534366c194fso5911281e87.0;
+        Wed, 04 Sep 2024 03:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725447047; x=1726051847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nNqCODUpT40uEeijJopg/y6lJF5M2iFuwNynTGFfhxM=;
+        b=DbKFNTJRTRbp3QOmBG77AqV+0uBMRyUkSaAefTBSdTF6ke/GKZdVg/V38VDyD2TdVh
+         3sSNpct7Im7ZS9hSJ8qe17lv/HGevuWW4pMii5LXG8pCGcOSe0XyDKdI7IERnF3L9n0a
+         An8kaLdgv9xYlyeuAcz0CcJo2xATEvZuDZ1IaQVdLT3gyqy9cb/yuQXNtkDMdxkcuhc0
+         h+dI3BgDzcf9JD07gjUsEuiA4jt3k1CTWln3GY5qEe5kfG6ZCopXf7kbBZjkfELsVNEB
+         UXmht5tlFwTHcRTf8NCJQkiy8p5YJeqAcWz5VRw80H41ilxfZPpcCrbX9FxnnBxVuU11
+         M0YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725447047; x=1726051847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNqCODUpT40uEeijJopg/y6lJF5M2iFuwNynTGFfhxM=;
+        b=Czsf5RUD5RzP9buHw3J132ggu6332drnEHDwN1Eu2vBRabeVF0vrPOpgteUoq6ZRWk
+         wIdSfQ+kj1BU3GxHCynCEUYfD0CH9FBYI9fAyM6bLTukizlsFU3nS2CKQYRsBAzdZd78
+         NdWmIEWWkgC+vdutfZlNzuSYfbk5wWRaEIwbecByqW+lDBxYBJZqFSG7ASSJIcMGa9A7
+         4ap298CQRkoSrAfeMApX15Xo7nQ/vFrXm8JPB3dDK2H19mwsS+P7SrESG+ccoFz/fBvQ
+         AVtbDneVacO2aIFjj0Zsy0O0DXqkR8IoGgvFTou34cT7ITqM09fJEAwcytnf7VV4o3zV
+         bydg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcLijgKWTFJw3l9O5sfnvrLd36zD7ZBAaR+JkwSR2jq/RxTw4MNjINuf8CqtBWxmJTX0glUyMl2b/T7shd@vger.kernel.org, AJvYcCWBuuR2/BI1wtFNi2ccmipnyVhXwsTsT9m5k5YWWQbgIcqnUUb8Q8kYyYGpquC3vNMvrnmjKUKmjrvRxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYAkgvIFDsQavwbqxE6Now2LwpNnaWoUFogVatqfkMScH5nhAF
+	eKH1rK8nzECcJQxkshHctiokk1yZ1ugHN1AWLB18garvuhHnrEmx
+X-Google-Smtp-Source: AGHT+IHxbk+krZUUsR0Zl5NFKEJ4y1FAkl+Bz+M4t90ApjmlfY2tpQaDBHpaSHokdKwHIyHsh6pZ8w==
+X-Received: by 2002:a05:6512:138e:b0:52e:9b15:1c60 with SMTP id 2adb3069b0e04-53546ba9d09mr10414358e87.48.1725447046256;
+        Wed, 04 Sep 2024 03:50:46 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989035f02sm790230066b.89.2024.09.04.03.50.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 03:50:45 -0700 (PDT)
+Message-ID: <f0956e79-8261-4bd5-96ca-3795bbe1faaf@gmail.com>
+Date: Wed, 4 Sep 2024 12:50:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,82 +75,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
- (ETIMEDOUT)
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>
-CC: James Prestwood <prestwoj@gmail.com>, <linux-wireless@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
-References: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3rsVhnI6ql7LNGHe3zSdoNTv_eVYY3zk
-X-Proofpoint-GUID: 3rsVhnI6ql7LNGHe3zSdoNTv_eVYY3zk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_09,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040081
+Subject: Re: [PATCH 15/22] Input: iqs7222 - use cleanup facility for fwnodes
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ Ville Syrjala <syrjala@sci.fi>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Eddie James <eajames@linux.ibm.com>, Andrey Moiseev <o2g.org.ru@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>, Jeff LaBundy <jeff@labundy.com>,
+ linux-kernel@vger.kernel.org
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044825.1048256-1-dmitry.torokhov@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240904044825.1048256-1-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Dmitry,
 
+On 04/09/2024 06:48, Dmitry Torokhov wrote:
+> Use __free(fwnode_handle) cleanup facility to ensure that references to
+> acquired fwnodes are dropped at appropriate times automatically.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/misc/iqs7222.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/input/misc/iqs7222.c b/drivers/input/misc/iqs7222.c
+> index 9ca5a743f19f..d9b87606ff7a 100644
+> --- a/drivers/input/misc/iqs7222.c
+> +++ b/drivers/input/misc/iqs7222.c
 
-On 9/4/2024 6:45 PM, Paul Menzel wrote:
-> Dear Linux folks,
-> 
-> 
-> Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3 (or unloading and loading the `ath10k_core`/`ath10k_pci` modules) having been connected to an AVM network:
-> 
->     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
-> 
-> Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and applied it, and the error is still there (as exepected).
-> 
-> Can the warning be improved so the user know, which component is at fault?
-most likely it is firmware not responding to host remove key command.
+...
 
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
-> [1]: https://lore.kernel.org/all/20240814164507.996303-1-prestwoj@gmail.com/
-> 
-> ```
-> Sep 04 07:21:38.469669 abreu kernel: Linux version 6.11.0-rc6-00027-ga91d08fcc356 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-4) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #294 SMP PREEMPT_DYNAMIC Tue Sep  3 23:01:18 CEST 2024
-> Sep 04 07:21:38.469718 abreu kernel: Command line: BOOT_IMAGE=/vmlinuz-6.11.0-rc6-00027-ga91d08fcc356 root=UUID=32e29882-d94d-4a92-9ee4-4d03002bfa29 ro quiet pci=noaer mem_sleep_default=deep log_buf_len=8M cryptomgr.notests
-> […]
-> Sep 04 12:34:55.826218 abreu sudo[25874]:  pmenzel : TTY=pts/7 ; PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe ath10k_pci
-> Sep 04 12:34:55.828046 abreu sudo[25874]: pam_unix(sudo:session): session opened for user root(uid=0) by pmenzel(uid=5272)
-> Sep 04 12:34:55.869839 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq msi oper_irq_mode 2 irq_mode 0 reset_mode 0
-> Sep 04 12:34:56.005202 abreu sudo[25874]: pam_unix(sudo:session): session closed for user root
-> Sep 04 12:34:56.161706 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
-> Sep 04 12:34:56.162591 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
-> Sep 04 12:34:56.163115 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
-> Sep 04 12:34:56.241683 abreu kernel: ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
-> Sep 04 12:34:56.333784 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
-> Sep 04 12:34:56.417649 abreu kernel: ath: EEPROM regdomain: 0x6c
-> Sep 04 12:34:56.417919 abreu kernel: ath: EEPROM indicates we should expect a direct regpair map
-> Sep 04 12:34:56.418022 abreu kernel: ath: Country alpha2 being used: 00
-> Sep 04 12:34:56.418114 abreu kernel: ath: Regpair used: 0x6c
-> Sep 04 12:34:56.422440 abreu NetworkManager[610]: <info> [1725446096.4223] device (wlan0): driver supports Access Point (AP) mode
-> […]
-> Sep 04 12:35:12.042484 abreu wpa_supplicant[618]: wlp58s0: WPA: Group rekeying completed with ce:ce:1e:27:bb:e0 [GTK=CCMP]
-> Sep 04 12:35:21.800998 abreu sudo[25953]:  pmenzel : TTY=pts/7 ; PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe -r ath10k_pci
-> Sep 04 12:35:21.803733 abreu sudo[25953]: pam_unix(sudo:session): session opened for user root(uid=0) by pmenzel(uid=5272)
-> Sep 04 12:35:21.881668 abreu kernel: wlp58s0: deauthenticating from ce:ce:1e:27:bb:e0 by local choice (Reason: 3=DEAUTH_LEAVING)
-> Sep 04 12:35:22.905717 abreu kernel: ath10k_pci 0000:3a:00.0: failed to install key for vdev 0 peer ce:ce:1e:27:bb:e0: -110
-> Sep 04 12:35:22.906604 abreu kernel: wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
-> Sep 04 12:35:22.908927 abreu wpa_supplicant[618]: wlp58s0: CTRL-EVENT-DISCONNECTED bssid=ce:ce:1e:27:bb:e0 reason=3 locally_generated=1
-> Sep 04 12:35:22.908995 abreu wpa_supplicant[618]: BSSID ce:ce:1e:27:bb:e0 ignore list count incremented to 2, ignoring for 10 seconds
-> ```
+> @@ -2818,9 +2813,9 @@ static int iqs7222_parse_reg_grp(struct iqs7222_private *iqs7222,
+>  				 int reg_grp_index)
+>  {
+>  	struct i2c_client *client = iqs7222->client;
+> -	struct fwnode_handle *reg_grp_node;
+>  	int error;
+>  
+
+Nit: reg_grp_node could stay at the top (where it used to be), as you
+are assigning it to NULL because there are no sensible assignments at
+this point.
+
+> +	struct fwnode_handle *reg_grp_node __free(fwnode_handle) = NULL;
+>  	if (iqs7222_reg_grp_names[reg_grp]) {
+>  		char reg_grp_name[16];
+>  
+
+Best regards,
+Javier Carrasco
+
 
