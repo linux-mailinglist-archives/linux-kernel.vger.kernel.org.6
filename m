@@ -1,178 +1,384 @@
-Return-Path: <linux-kernel+bounces-314855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29EE96BA07
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 284D196BA08
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57BB1C21C77
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7401C2243E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978691D2F69;
-	Wed,  4 Sep 2024 11:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071971D04B9;
+	Wed,  4 Sep 2024 11:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vmV8OQ09";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fMXtvkd8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G6nSpGsq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HPKstyY4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAYeaajf"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E01D2235;
-	Wed,  4 Sep 2024 11:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312C11D04AB
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725448463; cv=none; b=fh7gdD8GYCOyQi4C6BvsuHB5xkdYigxfNEHD5M4eg53xNb07QzjHCrBIJ1qj65nSq7pBWT9sMJr98AjkPCVXrqsnQ4eK6m5S8ToBfFD332IEjASBjJvjRaA3D7wmUo9CHtA1+qLy7IetHvnVe4EBRIyK22yRdHJF4b5G7lcZMJU=
+	t=1725448487; cv=none; b=M+xiXvhhOS0Qqf0ZmvCu+XCkU3loG2wQ/CqLCFU0x7uhegWKLJ6DKdY1TJhw3TOctcU/MbrbqErH7/kIrg8chXj1pOjpzDO0wrFgMMiq8RdGqE1kdS+cI9UTJR9twG4tZb4TNA7IDUOBj8aUWhHFNSdSMVMTvlEADHLOw7sGWVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725448463; c=relaxed/simple;
-	bh=AjjPgpJzo2eKfimYCkqQOMZHOdwRWbumpxASTKp4IYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itJwn+LhXDNLxTCd+AlvYKKqTwUjIfZzWRGP7iZT22ellGTGG3frD5EcHH80Lt3OOatbb9WCp3glSEV60LU/yiwCMIDpnZnt/HXxMXsimwQbpRTyVrsIUIo3CezRUV55a4GcQZFBtJCHDwRQOKdV/Oi44sOlaHDwgs4Ovds7E1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vmV8OQ09; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fMXtvkd8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G6nSpGsq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HPKstyY4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EFBB421995;
-	Wed,  4 Sep 2024 11:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725448460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oopo4gGEFFQxxuBDcyFPfasP6UTSXH8j8+SKkx6xPAQ=;
-	b=vmV8OQ09lxbEo00aY3zPtJmzTN0y3VV9rV66C6zZU1Imofx8t1d/nP1BoCr9+5rZ3CjczU
-	oOPUZDqrwxRz2PFoNqqunxdxj8TaO9vMOh0lQoMunXXdmKzu5n+xrm3Z8Rz6fUDFOS5QrV
-	/g9Mnl55u29hyRTYfCwPoifSsjQyef8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725448460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oopo4gGEFFQxxuBDcyFPfasP6UTSXH8j8+SKkx6xPAQ=;
-	b=fMXtvkd8E3gcTJlJZgciJ07Yel8BeSq2D4KFEWQNQIwF1xMSoZrKum68Rzj/PstcAzg+4c
-	dOgIATSGhWmsaOBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725448459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oopo4gGEFFQxxuBDcyFPfasP6UTSXH8j8+SKkx6xPAQ=;
-	b=G6nSpGsqOjxF68BDMygQDOkgO8m1S3FJ2EfMl0rRQxSQ7dsuT8ZBNwmnDiLzdkZVqW4w94
-	mITlKuhkzj4nyvRVYOvj4ShCUWWcfZIRpsmUo9QAx+38dicAN0/2fjozUpJOwMKNQPGqWC
-	A9X5BJGQ0vo/Bvbh1bq9eAwYMEiAKs8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725448459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oopo4gGEFFQxxuBDcyFPfasP6UTSXH8j8+SKkx6xPAQ=;
-	b=HPKstyY4Gz0HuPF2bf6qBOsPKYcq1yURARK+MuBEMtiQnVX2NKvVETcC5qJtqZs8YgAVOs
-	4Qt8ZX/Mucg7oAAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E33AC139E2;
-	Wed,  4 Sep 2024 11:14:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2+WCNwtB2GbENwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 11:14:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 90B11A0968; Wed,  4 Sep 2024 13:14:15 +0200 (CEST)
-Date: Wed, 4 Sep 2024 13:14:15 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] kernel BUG in jbd2_journal_dirty_metadata
-Message-ID: <20240904111415.eo22zmhpggdavlzj@quack3>
-References: <20240904110644.g52vgotsmi4lm56c@quack3>
- <000000000000b8b0b30621492b9d@google.com>
+	s=arc-20240116; t=1725448487; c=relaxed/simple;
+	bh=mgh4hoGG5fIAyFNDfqUr+TXz32mbxPPDkKnzrcdJFjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eXFFaEB02zrk1z4WjYsUp9xs7me5CquwMtCyvrN4lOkxMbhoysc5xmUfa/hGIBmIpvLKKyCEx3rpmXXaToUXF7tmWwPEy3XXDnK6mH/m1xCtLMmMr2fjtstgsD+66tcYYY35K8aLu7mv4358NDdipU5HZ64h+XBgf/6rxqkU9/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAYeaajf; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so753399a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725448483; x=1726053283; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Me3O/kZ+odhMmOaQ3WjDbn57wTW+RVJQ6ZiktI6MK90=;
+        b=kAYeaajfll0yAKkmpYtreMt1EArq6yQRLGdjpxUZodkJmgyMtJbekRKLQtbDe7nxR4
+         DJOsCxsLf2c0Cia0LaQt91NQgT00wxo6i+QY+lC2PQD5S2kL4VaOZRAsPcnEc0zOdImF
+         lJk7HEaEdHIZ7uM6jKQE1tg0OEmEHUzNDJqEDUHntQOIqWu54p4gYlxcwh8H8/mRz90y
+         exiuZBrapoMSpgwtropKQQfA71eYv68YYOt9Ufn+OyiPrlmoRlTo9BJT/c+fRCxJumjv
+         ZetPjg6Qgsk9GimJ2Q/t8NHm0bZi5rUL5BEzddQS9TwKKC2KKOA4oCkqygfdrqjztayV
+         8TZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725448483; x=1726053283;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Me3O/kZ+odhMmOaQ3WjDbn57wTW+RVJQ6ZiktI6MK90=;
+        b=miUD1TP9UpWqiOrcARiAxdioOvk7d3Q9FUCgT4So0BqPT6v75lC2WowzvOlqKKb2wY
+         cmjvZFQo/Jy4oBKDP4CR7rtRNXLN8LStI1cwjSKXSpUX9jVp0HyBBIRPQah+MJWX72TY
+         xDJdINrIQFx6ay8S7TVuqb2DY3krCB/bqTLiKDHDCE7iKzUpymaPZz0TQQSToIA+6v7R
+         a4EUoUcMuu2myO3lJcpluxr48rdYvvmkA8WgfbR60cmxRFlxtRpcRFnjotahqR8UpHqf
+         fChC5Npo28qV8+MpGFsCS2PnjM1/Lr1D24yuxaQyhPMrVc3eq8JGiy+ZFeq5QzheuwgB
+         rBTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCepiM4ncoz2n1uaZxVUO9FZyNx+pnLlU0uQn8QY2flCfSPqbSlG1aZ3jJx5XTFZy+9vGucJyNB1dkJw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq9h/tQ8XJfuxJmjAzz7WqvHV143JXvlTwH7RdkTWZwdbDclWm
+	Ts8U6xXTv6h2EtTQNPGXt8+aogMsDLiUk/JJkWbhsMZAN/hLwMwZ
+X-Google-Smtp-Source: AGHT+IH+yCLKOd1Vd8GUN8WoEMx3Yl/2nFAfnlE3qR4hFA+lOVGZsr8xBSsCs7s9IdWnooVlk6MyHw==
+X-Received: by 2002:a17:907:7d93:b0:a77:b3c4:cd28 with SMTP id a640c23a62f3a-a8a3f0ef33amr167341866b.9.1725448482461;
+        Wed, 04 Sep 2024 04:14:42 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:4d49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feacd7sm797121266b.34.2024.09.04.04.14.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 04:14:42 -0700 (PDT)
+Message-ID: <7a91ff31-1f56-4d0c-a4a7-a305331ba97a@gmail.com>
+Date: Wed, 4 Sep 2024 12:14:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000b8b0b30621492b9d@google.com>
-X-Spam-Score: -1.30
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=996585887acdadb3];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[c28d8da3e83b3cc68dc6];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, chengming.zhou@linux.dev, david@redhat.com,
+ hannes@cmpxchg.org, hughd@google.com, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
+ shakeel.butt@linux.dev, willy@infradead.org, ying.huang@intel.com,
+ yosryahmed@google.com, hanchuanhua@oppo.com
+References: <20240612124750.2220726-2-usamaarif642@gmail.com>
+ <20240904055522.2376-1-21cnbao@gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20240904055522.2376-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed 04-09-24 04:06:50, syzbot wrote:
-> > On Tue 03-09-24 21:50:20, syzbot wrote:
-> >> syzbot found the following issue on:
-> >> 
-> >> HEAD commit:    fb24560f31f9 Merge tag 'lsm-pr-20240830' of git://git.kern..
-> >> git tree:       upstream
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1739530b980000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c28d8da3e83b3cc68dc6
-> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> >> 
-> >> Unfortunately, I don't have any reproducer for this issue yet.
-> >> 
-> >> Downloadable assets:
-> >> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-fb24560f.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/2d39db26a2bc/vmlinux-fb24560f.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/8910481ae16e/bzImage-fb24560f.xz
-> >> 
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com
-> >> 
-> >> loop0: detected capacity change from 0 to 32768
-> >> =======================================================
-> >> WARNING: The mand mount option has been deprecated and
-> >>          and is ignored by this kernel. Remove the mand
-> >>          option from the mount to silence this warning.
-> >> =======================================================
-> >> ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-> >> loop0: detected capacity change from 32768 to 0
-> >> syz.0.0: attempt to access beyond end of device
-> >> loop0: rw=0, sector=10576, nr_sectors = 1 limit=0
-> >> (syz.0.0,5108,0):__ocfs2_xattr_set_value_outside:1385 ERROR: status = -5
-> >
-> > Looks like ocfs2 issue, not ext4.
-> >
-> > #syz set ocfs2
 
-#syz set subsystems: ocfs2
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 04/09/2024 06:55, Barry Song wrote:
+> On Thu, Jun 13, 2024 at 12:48 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>> Approximately 10-20% of pages to be swapped out are zero pages [1].
+>> Rather than reading/writing these pages to flash resulting
+>> in increased I/O and flash wear, a bitmap can be used to mark these
+>> pages as zero at write time, and the pages can be filled at
+>> read time if the bit corresponding to the page is set.
+>> With this patch, NVMe writes in Meta server fleet decreased
+>> by almost 10% with conventional swap setup (zswap disabled).
+>>
+>> [1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> ---
+>>  include/linux/swap.h |   1 +
+>>  mm/page_io.c         | 114 ++++++++++++++++++++++++++++++++++++++++++-
+>>  mm/swapfile.c        |  24 ++++++++-
+>>  3 files changed, 136 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+>> index a11c75e897ec..e88563978441 100644
+>> --- a/include/linux/swap.h
+>> +++ b/include/linux/swap.h
+>> @@ -299,6 +299,7 @@ struct swap_info_struct {
+>>         signed char     type;           /* strange name for an index */
+>>         unsigned int    max;            /* extent of the swap_map */
+>>         unsigned char *swap_map;        /* vmalloc'ed array of usage counts */
+>> +       unsigned long *zeromap;         /* vmalloc'ed bitmap to track zero pages */
+>>         struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
+>>         struct swap_cluster_list free_clusters; /* free clusters list */
+>>         unsigned int lowest_bit;        /* index of first free in swap_map */
+>> diff --git a/mm/page_io.c b/mm/page_io.c
+>> index a360857cf75d..39fc3919ce15 100644
+>> --- a/mm/page_io.c
+>> +++ b/mm/page_io.c
+>> @@ -172,6 +172,88 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
+>>         goto out;
+>>  }
+>>
+>> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
+>> +{
+>> +       unsigned long *data;
+>> +       unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
+>> +       bool ret = false;
+>> +
+>> +       data = kmap_local_folio(folio, i * PAGE_SIZE);
+>> +       if (data[last_pos])
+>> +               goto out;
+>> +       for (pos = 0; pos < PAGE_SIZE / sizeof(*data); pos++) {
+>> +               if (data[pos])
+>> +                       goto out;
+>> +       }
+>> +       ret = true;
+>> +out:
+>> +       kunmap_local(data);
+>> +       return ret;
+>> +}
+>> +
+>> +static bool is_folio_zero_filled(struct folio *folio)
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < folio_nr_pages(folio); i++) {
+>> +               if (!is_folio_page_zero_filled(folio, i))
+>> +                       return false;
+>> +       }
+>> +       return true;
+>> +}
+>> +
+>> +static void folio_zero_fill(struct folio *folio)
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < folio_nr_pages(folio); i++)
+>> +               clear_highpage(folio_page(folio, i));
+>> +}
+>> +
+>> +static void swap_zeromap_folio_set(struct folio *folio)
+>> +{
+>> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>> +       swp_entry_t entry;
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < folio_nr_pages(folio); i++) {
+>> +               entry = page_swap_entry(folio_page(folio, i));
+>> +               set_bit(swp_offset(entry), sis->zeromap);
+>> +       }
+>> +}
+>> +
+>> +static void swap_zeromap_folio_clear(struct folio *folio)
+>> +{
+>> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>> +       swp_entry_t entry;
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < folio_nr_pages(folio); i++) {
+>> +               entry = page_swap_entry(folio_page(folio, i));
+>> +               clear_bit(swp_offset(entry), sis->zeromap);
+>> +       }
+>> +}
+>> +
+>> +/*
+>> + * Return the index of the first subpage which is not zero-filled
+>> + * according to swap_info_struct->zeromap.
+>> + * If all pages are zero-filled according to zeromap, it will return
+>> + * folio_nr_pages(folio).
+>> + */
+>> +static unsigned int swap_zeromap_folio_test(struct folio *folio)
+>> +{
+>> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>> +       swp_entry_t entry;
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < folio_nr_pages(folio); i++) {
+>> +               entry = page_swap_entry(folio_page(folio, i));
+>> +               if (!test_bit(swp_offset(entry), sis->zeromap))
+>> +                       return i;
+>> +       }
+>> +       return i;
+>> +}
+>> +
+>>  /*
+>>   * We may have stale swap cache pages in memory: notice
+>>   * them here and get rid of the unnecessary final write.
+>> @@ -195,6 +277,13 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+>>                 folio_unlock(folio);
+>>                 return ret;
+>>         }
+>> +
+>> +       if (is_folio_zero_filled(folio)) {
+>> +               swap_zeromap_folio_set(folio);
+>> +               folio_unlock(folio);
+>> +               return 0;
+>> +       }
+>> +       swap_zeromap_folio_clear(folio);
+>>         if (zswap_store(folio)) {
+>>                 folio_start_writeback(folio);
+>>                 folio_unlock(folio);
+>> @@ -426,6 +515,26 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>>         mempool_free(sio, sio_pool);
+>>  }
+>>
+>> +static bool swap_read_folio_zeromap(struct folio *folio)
+>> +{
+>> +       unsigned int idx = swap_zeromap_folio_test(folio);
+>> +
+>> +       if (idx == 0)
+>> +               return false;
+>> +
+>> +       /*
+>> +        * Swapping in a large folio that is partially in the zeromap is not
+>> +        * currently handled. Return true without marking the folio uptodate so
+>> +        * that an IO error is emitted (e.g. do_swap_page() will sigbus).
+>> +        */
+>> +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+>> +               return true;
+> 
+> Hi Usama, Yosry,
+> 
+> I feel the warning is wrong as we could have the case where idx==0
+> is not zeromap but idx=1 is zeromap. idx == 0 doesn't necessarily
+> mean we should return false.
+> 
+> What about the below change which both fixes the warning and unblocks
+> large folios swap-in?
+> 
+Hi Barry,
+
+I remembered when resending the zeromap series about the comment Yosry had made earlier, but checked that the mTHP swap-in was not in mm-unstable.
+I should have checked the mailing list and commented!
+
+I have not tested the below diff yet (will do in a few hours). But there might be a small issue with it. Have commented inline.
+
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 4bc77d1c6bfa..7d7ff7064e2b 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -226,26 +226,6 @@ static void swap_zeromap_folio_clear(struct folio *folio)
+>  	}
+>  }
+>  
+> -/*
+> - * Return the index of the first subpage which is not zero-filled
+> - * according to swap_info_struct->zeromap.
+> - * If all pages are zero-filled according to zeromap, it will return
+> - * folio_nr_pages(folio).
+> - */
+> -static unsigned int swap_zeromap_folio_test(struct folio *folio)
+> -{
+> -	struct swap_info_struct *sis = swp_swap_info(folio->swap);
+> -	swp_entry_t entry;
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < folio_nr_pages(folio); i++) {
+> -		entry = page_swap_entry(folio_page(folio, i));
+> -		if (!test_bit(swp_offset(entry), sis->zeromap))
+> -			return i;
+> -	}
+> -	return i;
+> -}
+> -
+>  /*
+>   * We may have stale swap cache pages in memory: notice
+>   * them here and get rid of the unnecessary final write.
+> @@ -524,9 +504,10 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>  
+>  static bool swap_read_folio_zeromap(struct folio *folio)
+>  {
+> -	unsigned int idx = swap_zeromap_folio_test(folio);
+> +	unsigned int nr_pages = folio_nr_pages(folio);
+> +	unsigned int nr = swap_zeromap_entries_count(folio->swap, nr_pages);
+>  
+> -	if (idx == 0)
+> +	if (nr == 0)
+>  		return false;
+>  
+>  	/*
+> @@ -534,7 +515,7 @@ static bool swap_read_folio_zeromap(struct folio *folio)
+>  	 * currently handled. Return true without marking the folio uptodate so
+>  	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
+>  	 */
+> -	if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> +	if (WARN_ON_ONCE(nr < nr_pages))
+>  		return true;
+>  
+>  	folio_zero_range(folio, 0, folio_size(folio));
+> diff --git a/mm/swap.h b/mm/swap.h
+> index f8711ff82f84..2d59e9d89e95 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -80,6 +80,32 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+>  {
+>  	return swp_swap_info(folio->swap)->flags;
+>  }
+> +
+> +/*
+> + * Return the number of entries which are zero-filled according to
+> + * swap_info_struct->zeromap. It isn't precise if the return value
+> + * is larger than 0 and smaller than nr to avoid extra iterations,
+> + * In this case, it means entries haven't consistent zeromap.
+> + */
+> +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry, int nr)
+> +{
+> +	struct swap_info_struct *sis = swp_swap_info(entry);
+> +	unsigned long offset = swp_offset(entry);
+> +	unsigned int type = swp_type(entry);
+> +	unsigned int n = 0;
+> +
+> +	for (int i = 0; i < nr; i++) {
+> +		entry = swp_entry(type, offset + i);
+> +		if (test_bit(offset + i, sis->zeromap)) {
+
+Should this be if (test_bit(swp_offset(entry), sis->zeromap))
+
+
+Also, are you going to use this in alloc_swap_folio?
+You mentioned above that this unblocks large folios swap-in, but I don't see
+it in the diff here. I am guessing there is some change in alloc_swap_info that
+uses swap_zeromap_entries_count?
+
+Thanks
+Usama
+
+> +			if (i != n)
+> +				return i;
+> +			n++;
+> +		}
+> +	}
+> +
+> +	return n;
+> +}
+> +
+>  #else /* CONFIG_SWAP */
+>  struct swap_iocb;
+>  static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+> @@ -171,6 +197,11 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry, int nr)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_SWAP */
+>  
+>  #endif /* _MM_SWAP_H */
+> 
 
