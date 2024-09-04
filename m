@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-315037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A3B96BCFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:50:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C396BCF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202921F26386
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C856C1C24796
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A40E1D9D96;
-	Wed,  4 Sep 2024 12:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF31DA0EA;
+	Wed,  4 Sep 2024 12:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HCm5Cuyn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CIhWxk6F"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2431DA114;
-	Wed,  4 Sep 2024 12:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7081D9345;
+	Wed,  4 Sep 2024 12:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454180; cv=none; b=kzFF4lJbEwQd7vRyrUr081eEpJzONhASQskhyjsF58+ef7GO8HdIHlFz6i5GBqcSDAUfYK42EfMctlUNi4+4gmxYdKTv7Ko4fkM04qwQ9ytVhr6Qg0EuqUO5sfLgPZ7C9MFYHDhTvgXtaXSC61fv537bJAYD1OvnPx9xuPXXv+Q=
+	t=1725454169; cv=none; b=OQd+RVTEqP58RivJLrv/j+HyspRdBOHSZgbdMfXNKPLveaiWrVOVsZJrfu/1Mb0pe80BWVHqCefAesSpHzatrU01WCbN/f5ID+kC8MPkGvW14nZ2tw/Mb1L5wqCsdge7YbTsqiqcjZc4ZbWqcAg+u7gUqrnluPiMWGDLafLvraU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454180; c=relaxed/simple;
-	bh=TsAmiwTBEI8ZRGbyNmWA+DW/Ik/tDwupd5XcMLrgtM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DA/hyYJIfCGpH5bMYHZI5JSQADvJD6Ug2B42CdG9dGJKKth85y9258DnXA7U586AJloeqUqTzqE0v7/YMGhhVHhpJwXKNPY4v7rWJYaBm4F6cpHEUdscl3+j04BKMhrnc+DO+jUL+l4GIxuLx4J6s1drijXfQz7/qpnPkNF8vnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HCm5Cuyn; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725454179; x=1756990179;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TsAmiwTBEI8ZRGbyNmWA+DW/Ik/tDwupd5XcMLrgtM4=;
-  b=HCm5Cuyn2nDV2cgpgZrtE95IT0PVL66Y4Wumsk3pXD49nOLjvGYMKWoo
-   OoKNy3Hc1G31D1mQFwkBvB69QZ58SELNE18ccsNCB7rN4S9LOWihhchi/
-   NB7ZeAt6mNpzBH9qfgHZ2j4LmScQu11assr+4wwq9/nl6blTkwPQl2cxw
-   CM07+PfApgvRxntroh82wwBkQxKGuHt5dQufJl84ynC+xtgVUNQ1bEHbx
-   NZnCKsZlAHM9y1f+a1+pVraJIZC5ycweIX1x32IwoceKk7xc48iAmDD3s
-   R2JW2P0YUtGptsQ+cl6kdvhUrbb/5r8D1oAaACkMVOD/m6c5Red4CfENn
-   A==;
-X-CSE-ConnectionGUID: 4v51tUjASDyKNHriBcFI/A==
-X-CSE-MsgGUID: 9WToUH21T9eXpBbdicf4qA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23913914"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="23913914"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:48:38 -0700
-X-CSE-ConnectionGUID: qhwJsCmZR6y1bQxwZhgCsA==
-X-CSE-MsgGUID: IcByinP9Tme8bnQirqGJLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="65599072"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:48:38 -0700
-Received: from [10.212.20.134] (kliang2-mobl1.ccr.corp.intel.com [10.212.20.134])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 7AF1220B5782;
-	Wed,  4 Sep 2024 05:48:35 -0700 (PDT)
-Message-ID: <90028792-19b0-4371-a8b4-0a37612b4c9b@linux.intel.com>
-Date: Wed, 4 Sep 2024 08:48:34 -0400
+	s=arc-20240116; t=1725454169; c=relaxed/simple;
+	bh=azGb5AfJAgiTEYDuQyHOzUW0J1SqZRGExsvO7T/TmwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gDcO4ceqHCD3Pk/O0wpENLXj7iQUPolfR0r7NCrD+2FIgfirhMPLjNm5pLd8oAQETWJ4WT02IZPuSsMMaa8C4KI9NunJkAqiCD0+tt3wTWDmNcU46oRMgqolGbEV88L6fxbk5Wn23EpFjCerKGVhh6fy2dcw9tClVl+NLR7Q3TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CIhWxk6F; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484AQ995011042;
+	Wed, 4 Sep 2024 12:48:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	drXNeLYBuC6sbfU/KpueXIJR614bjNyR90QeHlTxI98=; b=CIhWxk6FDSFZjc6U
+	s4yNP2NWiicy4BWh7FRdjAM1oGV5bEt5Cix1X8r5M+OOVCWAuWgEd7suY3ezFo75
+	lxx5TCCUNGtt+po2nNu6u3emICh526eLcsAtblWwAa+LxwNx+3uJ+MGxC20NdemZ
+	OP1vSagT5NOtB+pxmifksCkjEX/ZYr7hBqDRRZOnO8c2dQyrrPPSZz6V9mbhfACA
+	tbBotviD2HUeppvyVPo9GVi4eOouGm94No4AfUSBb8YyGK690uiU0Oq1GoSCB+7T
+	ACKVEoolrynf+BenOfVGkdKS6JR1UZgBb0h5oPXadNEVvYhKVo61LRcYF/2Dy2Mn
+	LCpPRQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxfak5t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 12:48:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484Cmdt9028666
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 12:48:39 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 05:48:36 -0700
+Message-ID: <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
+Date: Wed, 4 Sep 2024 05:48:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,126 +64,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
-Cc: gautham.shenoy@amd.com, ravi.bangoria@amd.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240904100934.3260-1-Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240904100934.3260-1-Dhananjay.Ugwekar@amd.com>
-Content-Type: text/plain; charset=UTF-8
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7EhcKdCr4xy2lalYszDfkLbRKP5Nk-Ng
+X-Proofpoint-ORIG-GUID: 7EhcKdCr4xy2lalYszDfkLbRKP5Nk-Ng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409040096
 
 
+On 9/3/2024 11:34 PM, Krzysztof Kozlowski wrote:
+> On Tue, Sep 03, 2024 at 03:02:35PM -0700, Nikunj Kela wrote:
+>> Add compatible representing spi support on SA8255p.
+>>
+>> Clocks and interconnects are being configured in firmware VM
+>> on SA8255p platform, therefore making them optional.
+>>
+> Please use standard email subjects, so with the PATCH keyword in the
+> title.  helps here to create proper versioned patches.
+Where did I miss PATCH keyword in the subject here? It says "[PATCH v2
+16/21] dt-bindings: spi: document support for SA8255p"
+> Another useful tool is b4. Skipping the PATCH keyword makes filtering of
+> emails more difficult thus making the review process less convenient.
+>
+>
+>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>  .../bindings/spi/qcom,spi-geni-qcom.yaml      | 60 +++++++++++++++++--
+>>  1 file changed, 56 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
+>> index 2e20ca313ec1..75b52c0a7440 100644
+>> --- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
+>> @@ -25,10 +25,45 @@ description:
+>>  
+>>  allOf:
+>>    - $ref: /schemas/spi/spi-controller.yaml#
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: qcom,sa8255p-geni-spi
+> Not much improved. All my previous (v1) and other patch (i2c) comments
+> apply.
+>> +    then:
+>> +      required:
+>> +        - power-domains
+>> +        - power-domain-names
+>> +
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 2
+>> +
+>> +    else:
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>> +
+>> +      properties:
+>> +        power-domains:
+>> +          maxItems: 1
+>> +
+>> +        interconnects:
+>> +          minItems: 2
+>> +          maxItems: 3
+>> +
+>> +        interconnect-names:
+>> +          minItems: 2
+>> +          items:
+>> +            - const: qup-core
+>> +            - const: qup-config
+>> +            - const: qup-memory
+>>  
+>>  properties:
+>>    compatible:
+>> -    const: qcom,geni-spi
+>> +    enum:
+>> +      - qcom,geni-spi
+>> +      - qcom,sa8255p-geni-spi
+> You have entire commit msg to explain why this device's programming
+> model is not compatible with existing generic compatible which must
+> cover all variants (because it is crazy generic).
+>
+> Best regards,
+> Krzysztof
 
-On 2024-09-04 6:09 a.m., Dhananjay Ugwekar wrote:
-> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
-> on AMD processors that support extended CPUID leaf 0x80000026, the
-> topology_die_cpumask() and topology_logical_die_id() macros, no longer
-> return the package cpumask and package id, instead they return the CCD
-> (Core Complex Die) mask and id respectively. This leads to the energy-pkg
-> event scope to be modified to CCD instead of package.
-> 
-> So, change the PMU scope for AMD and Hygon back to package.
-> 
-> On a 12 CCD 1 Package AMD Zen4 Genoa machine:
-> 
-> Before:
-> $ cat /sys/devices/power/cpumask
-> 0,8,16,24,32,40,48,56,64,72,80,88.
-> 
-> The expected cpumask here is supposed to be just "0", as it is a package
-> scope event, only one CPU will be collecting the event for all the CPUs in
-> the package.
-> 
-> After:
-> $ cat /sys/devices/power/cpumask
-> 0
-> 
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+I will put more details in the description of the patch, though, I had
+put the description in the cover letter for this entire series.
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
-Thanks,
-Kan
-
-> ---
-> v2 Link: https://lore.kernel.org/all/20240730044917.4680-2-Dhananjay.Ugwekar@amd.com/
-> 
-> Changes from v2:
-> * Rebase on top of kan.liang's PMU scope patchset [1]
-> * Set pmu.scope variable to package for AMD/Hygon CPUs
-> 
-> tip/master + PMU scope patchset [1] to be taken as base for testing this patch. 
-> 
-> [1]: https://lore.kernel.org/all/20240802151643.1691631-1-kan.liang@linux.intel.com/
-> ---
->  arch/x86/events/rapl.c | 33 +++++++++++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index b70ad880c5bc..0c57dd5aa767 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -139,9 +139,32 @@ static unsigned int rapl_cntr_mask;
->  static u64 rapl_timer_ms;
->  static struct perf_msr *rapl_msrs;
->  
-> +/*
-> + * RAPL Package energy counter scope:
-> + * 1. AMD/HYGON platforms have a per-PKG package energy counter
-> + * 2. For Intel platforms
-> + *	2.1. CLX-AP is multi-die and its RAPL MSRs are die-scope
-> + *	2.2. Other Intel platforms are single die systems so the scope can be
-> + *	     considered as either pkg-scope or die-scope, and we are considering
-> + *	     them as die-scope.
-> + */
-> +#define rapl_pmu_is_pkg_scope()				\
-> +	(boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||	\
-> +	 boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-> +
-> +/*
-> + * Helper function to get the correct topology id according to the
-> + * RAPL PMU scope.
-> + */
-> +static inline unsigned int get_rapl_pmu_idx(int cpu)
-> +{
-> +	return rapl_pmu_is_pkg_scope() ? topology_logical_package_id(cpu) :
-> +					 topology_logical_die_id(cpu);
-> +}
-> +
->  static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
->  {
-> -	unsigned int rapl_pmu_idx = topology_logical_die_id(cpu);
-> +	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
->  
->  	/*
->  	 * The unsigned check also catches the '-1' return value for non
-> @@ -617,7 +640,7 @@ static void __init init_rapl_pmu(void)
->  		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
->  		rapl_hrtimer_init(pmu);
->  
-> -		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
-> +		rapl_pmus->pmus[get_rapl_pmu_idx(cpu)] = pmu;
->  	}
->  
->  	cpus_read_unlock();
-> @@ -646,6 +669,12 @@ static int __init init_rapl_pmus(void)
->  	rapl_pmus->pmu.module		= THIS_MODULE;
->  	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
->  	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
-> +
-> +	if (rapl_pmu_is_pkg_scope()) {
-> +		rapl_pmus->nr_rapl_pmu	= topology_max_packages();
-> +		rapl_pmus->pmu.scope	= PERF_PMU_SCOPE_PKG;
-> +	}
-> +
->  	return 0;
->  }
->  
+>
 
