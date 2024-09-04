@@ -1,227 +1,341 @@
-Return-Path: <linux-kernel+bounces-314377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A1796B282
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F94E96B288
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B40283DCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:12:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1598B23DE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8400D1482E3;
-	Wed,  4 Sep 2024 07:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2044114658C;
+	Wed,  4 Sep 2024 07:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxAVgAiy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fF36zebq"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4EF14659C;
-	Wed,  4 Sep 2024 07:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF8683CA3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433922; cv=none; b=MF6ZVwdPRxq2IvUgFTA0JSFPhEn9YEoA+ln2TRtRY+r1puIxGyIMMDnOsNfO+1E+R94RgXjByDkqFS7jvPpPcgMMJlQwfRngsmkMRBrGe6Lw68xl0gdHqu1U+o07LQONvnn8CViU7uqAOYldI41JfhvUOO1ZbPac2NvmDlBYqq8=
+	t=1725433974; cv=none; b=WbNrFinD6olIlhbF3x2tiunhVS68+9TewL4y3CeoqVb/+qZeCrdlIFHsU4WIsB9MR75QnovEr6ztCkDvmurvhphTCEnevKKX6Wy9kzZABGX00VB+Q492POcR6L1wXwJ64KMUBdpzRNrfaNk+AEqK6DeQowrm77WeOFqqgujDgzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433922; c=relaxed/simple;
-	bh=fByxYHe/OXVj/eHBrGGRG8NwOR5K7E48NNBb5OSzu0k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W5f7O+VuztPl+mMsec3BUkLJXZgMpQOjMhXNn8fL8HyZj3JK28vm5c0qBqx8BiPnvisr3azihtQxEMh0s8RenIg2S/n0oZfyCWgh2lrJrybD91H3AicFdGJIRbFomOz6qMh0yBQDAQo81m8dp6pf2KlwD/cCen2BvviBOLv4gl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxAVgAiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46A00C4CECF;
-	Wed,  4 Sep 2024 07:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725433922;
-	bh=fByxYHe/OXVj/eHBrGGRG8NwOR5K7E48NNBb5OSzu0k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IxAVgAiyKknQ/ye7phmarHhB2kbjaDwS8YI8VfldfQlyuI8ZWr5yFbY3KA1+AxUee
-	 Rw1dM3b0e4GNF+hjj8y4tZ/8WWl5EAngFeM81To+N94fN5OlSUSQQlzFee+pv4hGmD
-	 HQGKjrE3QqCtQxlsRsAhAs6Nx3V2pxpc37R7yDoeD/+DUrCWgjqgEAWuOARoxEiWz5
-	 q48sqkGe6jwoolN3qraNmpsrRfGQXzJ1ExQU4JgKWnmW7KAC3eE/VmQ+d4HS7T4LoY
-	 wp/hS/QopQd2qsePe63ctxJo1JNYir6tSNmqSWLcagJMiezA8nB86Fes0VvgbqEDVb
-	 cqF+XJzC/p92g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C05DCD3431;
-	Wed,  4 Sep 2024 07:12:02 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Wed, 04 Sep 2024 12:42:00 +0530
-Subject: [PATCH v6 4/4] PCI: qcom: Add RX margining settings for 16.0 GT/s
+	s=arc-20240116; t=1725433974; c=relaxed/simple;
+	bh=2tGsZYQUgcA/aT+AaxW1gVv062mbeC5r4UF7TsePd+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qa+dx4my41xUnue5/BL7Ae9AwnBt8KmKX+hTFvAQm6iNg8FX+TEnz3kzzb3CbP1mwXGQ/RRSpduseoPbe6flB+L3UC12aFXHn4P0440DlxicpnYiPwr3yHI9R0kos7RC6knZtvSZObYVjTPhXyohYttAoCbZL0lo78MeUONWVWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fF36zebq; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a866cea40c4so719457766b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725433970; x=1726038770; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sF9gTMDRoHUxjCGKUN8c1P0f0J3cAsJjaAYSD6V8Zuc=;
+        b=fF36zebqAuFbcIPREnqJ0ystiUVRWg/uac+NAfdZfmywERdp4BZ61WEW0KatmkrjVK
+         GgJtLiMn52k/VOHFasnkH03eX8lkiqJNrMfmYKxx/5CiSA9ll6cTAgdD6NCwdwKfn3du
+         +NGQmEeP4MoZNhzw8ZZ0pA+SVU/q2KJ9rm5c3/oHZ/T6E+7dmFtD2UDvIcvI7VrYo1w7
+         fgiLAaLgiTgbMIPGeSnCYpBrbOWvt1RcsG7P+LRT9hi5ZMJxTmbHU2tv3trP/r07E2sB
+         H8Yg5r11O/reVVgJWVzfNvMCG70gfYKLd6oHMSEsxmGuKpxqsXhYsRC/S+yeq2PuhEIw
+         pg9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725433970; x=1726038770;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sF9gTMDRoHUxjCGKUN8c1P0f0J3cAsJjaAYSD6V8Zuc=;
+        b=J/jlQimeugUtyGMDthw4yKUL+lBlGDJi8AecIfV795oTBnxXub8nZiCvMF6x4T4rtY
+         Daz9GstIWon7Cw7DCSjIYZkHrQVGGMUra+3eVzaBjbYqLS9v4DwHIxyPciIGKcqA19BA
+         kIuyo6Lbi4vz4Gg8OvajHmupo4KiISyRVmQDJz16dZ9hOmczVUkgIrnvZNNXduQhXgDe
+         AHSvZy+QnJpe4LwKXsNNbX7Rg4zCMT7zCyggjmuQKEFsjkB04jVi4mRb7z7Kky/J9cNC
+         d8wJQbkwQkcc8MRIsHf4X8LF+kN9sXzaUM+49c2tbH5ZOP/CM4OO1YW1oQxUTjtgDcBb
+         2ojg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQEPKLR8t+IHxZl+8ZrpP/gvcJmGNncUMaQJucAfSyOqWE7HimIMzCyvn5pb0Bfpns3G/JRcHKw0RPbWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+WowzPGdmmM4KiRjgRdltybJdvQ+zECKH1cy5jpU0YSUctS9s
+	uHXlOFvoHRcBScGq+cUjt73Wla/WdE9a3c86zmvSEzsSbmRO8FfgpTdaUPGQk6C3ceJQ+lw8nXk
+	pCOanisye3OSaotKeMSESzMwMBpydcyKcU8Qn
+X-Google-Smtp-Source: AGHT+IGiKM8mRZKEWT/jJk3tEjBXHT0LpeR7ppkJxsh5gN6YpzFOyN1Wbo9+rxShvu6DKlg4OS7p30BqqlN/dPBXoOk=
+X-Received: by 2002:a17:907:7290:b0:a86:ac86:1e17 with SMTP id
+ a640c23a62f3a-a8a1d4c3496mr419921866b.54.1725433969516; Wed, 04 Sep 2024
+ 00:12:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-pci-qcom-gen4-stability-v6-4-ec39f7ae3f62@linaro.org>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
-In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, 
- Chuanhua Lei <lchuanhua@maxlinear.com>, 
- Marek Vasut <marek.vasut+renesas@gmail.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- abel.vesa@linaro.org, johan+linaro@kernel.org, 
- Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5581;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=+UyPXoBEoMHThbW48iMeb9Epx8yMpHkZz7Vs41Qi22Y=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBm2Ag/CKqFkchoOhfhcoyHVeR3YDPEC2OUGEWKm
- 6WLB/Ag6VaJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZtgIPwAKCRBVnxHm/pHO
- 9T9aB/0cOOobTwlsF0wmCW6pgspvSb7L5UPaZJLD9me+c+UTbkKm+gmOC/7F0uhZc0mk91W104B
- 7uqxEJOqSw585He5P6MCADmUTIV52H+sBvRQKQ9gEHrUd8GdC4neN+Je/JQMJKrldwkDj59AUvV
- NhiLjHvqT9p/xfskS0QpnO161HeZU3Qa0GcEXwqpL9jGAz1gjzVsUbcGffGGuilzGJtbvxar9YT
- HktzXUuO2QX2etlTpsm6qRmZD4DdzQaVpZ68hW/oxYjiiebbya9VKk+t6nwHIvRhqIznGDKFHrY
- +Vh7w8QtIvvWul1i7Z58hfnF1TeZTuO++OOnhhDw9ApQUHV9
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+References: <20240612124750.2220726-2-usamaarif642@gmail.com> <20240904055522.2376-1-21cnbao@gmail.com>
+In-Reply-To: <20240904055522.2376-1-21cnbao@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 4 Sep 2024 00:12:13 -0700
+Message-ID: <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Barry Song <21cnbao@gmail.com>
+Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
+	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
+	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+[..]
+> > @@ -426,6 +515,26 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+> >         mempool_free(sio, sio_pool);
+> >  }
+> >
+> > +static bool swap_read_folio_zeromap(struct folio *folio)
+> > +{
+> > +       unsigned int idx = swap_zeromap_folio_test(folio);
+> > +
+> > +       if (idx == 0)
+> > +               return false;
+> > +
+> > +       /*
+> > +        * Swapping in a large folio that is partially in the zeromap is not
+> > +        * currently handled. Return true without marking the folio uptodate so
+> > +        * that an IO error is emitted (e.g. do_swap_page() will sigbus).
+> > +        */
+> > +       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> > +               return true;
+>
+> Hi Usama, Yosry,
+>
+> I feel the warning is wrong as we could have the case where idx==0
+> is not zeromap but idx=1 is zeromap. idx == 0 doesn't necessarily
+> mean we should return false.
 
-Add RX lane margining settings for 16.0 GT/s (GEN 4) data rate. These
-settings improve link stability while operating at high date rates and
-helps to improve signal quality.
+Good catch. Yeah if idx == 0 is not in the zeromap but other indices
+are we will mistakenly read the entire folio from swap.
 
-Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-[mani: dropped the code refactoring and minor changes]
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/dwc/pcie-designware.h  | 18 ++++++++++++++++
- drivers/pci/controller/dwc/pcie-qcom-common.c | 31 +++++++++++++++++++++++++++
- drivers/pci/controller/dwc/pcie-qcom-common.h |  1 +
- drivers/pci/controller/dwc/pcie-qcom-ep.c     |  4 +++-
- drivers/pci/controller/dwc/pcie-qcom.c        |  4 +++-
- 5 files changed, 56 insertions(+), 2 deletions(-)
+>
+> What about the below change which both fixes the warning and unblocks
+> large folios swap-in?
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 51744ad25575..f5be99731f7e 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -209,6 +209,24 @@
- 
- #define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
- 
-+/*
-+ * 16.0 GT/s (GEN4) lane margining register definitions
-+ */
-+#define GEN4_LANE_MARGINING_1_OFF		0xb80
-+#define MARGINING_MAX_VOLTAGE_OFFSET		GENMASK(29, 24)
-+#define MARGINING_NUM_VOLTAGE_STEPS		GENMASK(22, 16)
-+#define MARGINING_MAX_TIMING_OFFSET		GENMASK(13, 8)
-+#define MARGINING_NUM_TIMING_STEPS		GENMASK(5, 0)
-+
-+#define GEN4_LANE_MARGINING_2_OFF		0xb84
-+#define MARGINING_IND_ERROR_SAMPLER		BIT(28)
-+#define MARGINING_SAMPLE_REPORTING_METHOD	BIT(27)
-+#define MARGINING_IND_LEFT_RIGHT_TIMING		BIT(26)
-+#define MARGINING_IND_UP_DOWN_VOLTAGE		BIT(25)
-+#define MARGINING_VOLTAGE_SUPPORTED		BIT(24)
-+#define MARGINING_MAXLANES			GENMASK(20, 16)
-+#define MARGINING_SAMPLE_RATE_TIMING		GENMASK(13, 8)
-+#define MARGINING_SAMPLE_RATE_VOLTAGE		GENMASK(5, 0)
- /*
-  * iATU Unroll-specific register definitions
-  * From 4.80 core version the address translation will be made by unroll
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
-index dc7d93db9dc5..99b75e7f085d 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-common.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
-@@ -43,3 +43,34 @@ void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
- 	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
- }
- EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
-+
-+void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci)
-+{
-+	u32 reg;
-+
-+	reg = dw_pcie_readl_dbi(pci, GEN4_LANE_MARGINING_1_OFF);
-+	reg &= ~(MARGINING_MAX_VOLTAGE_OFFSET |
-+		MARGINING_NUM_VOLTAGE_STEPS |
-+		MARGINING_MAX_TIMING_OFFSET |
-+		MARGINING_NUM_TIMING_STEPS);
-+	reg |= FIELD_PREP(MARGINING_MAX_VOLTAGE_OFFSET, 0x24) |
-+		FIELD_PREP(MARGINING_NUM_VOLTAGE_STEPS, 0x78) |
-+		FIELD_PREP(MARGINING_MAX_TIMING_OFFSET, 0x32) |
-+		FIELD_PREP(MARGINING_NUM_TIMING_STEPS, 0x10);
-+	dw_pcie_writel_dbi(pci, GEN4_LANE_MARGINING_1_OFF, reg);
-+
-+	reg = dw_pcie_readl_dbi(pci, GEN4_LANE_MARGINING_2_OFF);
-+	reg |= MARGINING_IND_ERROR_SAMPLER |
-+		MARGINING_SAMPLE_REPORTING_METHOD |
-+		MARGINING_IND_LEFT_RIGHT_TIMING |
-+		MARGINING_VOLTAGE_SUPPORTED;
-+	reg &= ~(MARGINING_IND_UP_DOWN_VOLTAGE |
-+		MARGINING_MAXLANES |
-+		MARGINING_SAMPLE_RATE_TIMING |
-+		MARGINING_SAMPLE_RATE_VOLTAGE);
-+	reg |= FIELD_PREP(MARGINING_MAXLANES, pci->num_lanes) |
-+		FIELD_PREP(MARGINING_SAMPLE_RATE_TIMING, 0x3f) |
-+		FIELD_PREP(MARGINING_SAMPLE_RATE_VOLTAGE, 0x3f);
-+	dw_pcie_writel_dbi(pci, GEN4_LANE_MARGINING_2_OFF, reg);
-+}
-+EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_rx_margining_settings);
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
-index 259e04b7bdf9..e9ddc901082e 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-common.h
-+++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
-@@ -6,3 +6,4 @@
- #include "pcie-designware.h"
- 
- void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
-+void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci);
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-index af83470216e8..5c220f2ecafe 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-@@ -487,8 +487,10 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
- 		goto err_disable_resources;
- 	}
- 
--	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT)
-+	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT) {
- 		qcom_pcie_common_set_16gt_eq_settings(pci);
-+		qcom_pcie_common_set_16gt_rx_margining_settings(pci);
-+	}
- 
- 	/*
- 	 * The physical address of the MMIO region which is exposed as the BAR
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 2742e82fdcb3..b0b1d8d34279 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -284,8 +284,10 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
- {
- 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
- 
--	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT)
-+	if (pcie_link_speed[pci->max_link_speed] == PCIE_SPEED_16_0GT) {
- 		qcom_pcie_common_set_16gt_eq_settings(pci);
-+		qcom_pcie_common_set_16gt_rx_margining_settings(pci);
-+	}
- 
- 	/* Enable Link Training state machine */
- 	if (pcie->cfg->ops->ltssm_enable)
+But I don't see how that unblocks the large folios swap-in work? We
+still need to actually handle the case where a large folio being
+swapped in is partially in the zeromap. Right now we warn and unlock
+the folio without calling folio_mark_uptodate(), which emits an IO
+error.
 
--- 
-2.25.1
-
-
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 4bc77d1c6bfa..7d7ff7064e2b 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -226,26 +226,6 @@ static void swap_zeromap_folio_clear(struct folio *folio)
+>         }
+>  }
+>
+> -/*
+> - * Return the index of the first subpage which is not zero-filled
+> - * according to swap_info_struct->zeromap.
+> - * If all pages are zero-filled according to zeromap, it will return
+> - * folio_nr_pages(folio).
+> - */
+> -static unsigned int swap_zeromap_folio_test(struct folio *folio)
+> -{
+> -       struct swap_info_struct *sis = swp_swap_info(folio->swap);
+> -       swp_entry_t entry;
+> -       unsigned int i;
+> -
+> -       for (i = 0; i < folio_nr_pages(folio); i++) {
+> -               entry = page_swap_entry(folio_page(folio, i));
+> -               if (!test_bit(swp_offset(entry), sis->zeromap))
+> -                       return i;
+> -       }
+> -       return i;
+> -}
+> -
+>  /*
+>   * We may have stale swap cache pages in memory: notice
+>   * them here and get rid of the unnecessary final write.
+> @@ -524,9 +504,10 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>
+>  static bool swap_read_folio_zeromap(struct folio *folio)
+>  {
+> -       unsigned int idx = swap_zeromap_folio_test(folio);
+> +       unsigned int nr_pages = folio_nr_pages(folio);
+> +       unsigned int nr = swap_zeromap_entries_count(folio->swap, nr_pages);
+>
+> -       if (idx == 0)
+> +       if (nr == 0)
+>                 return false;
+>
+>         /*
+> @@ -534,7 +515,7 @@ static bool swap_read_folio_zeromap(struct folio *folio)
+>          * currently handled. Return true without marking the folio uptodate so
+>          * that an IO error is emitted (e.g. do_swap_page() will sigbus).
+>          */
+> -       if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
+> +       if (WARN_ON_ONCE(nr < nr_pages))
+>                 return true;
+>
+>         folio_zero_range(folio, 0, folio_size(folio));
+> diff --git a/mm/swap.h b/mm/swap.h
+> index f8711ff82f84..2d59e9d89e95 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -80,6 +80,32 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+>  {
+>         return swp_swap_info(folio->swap)->flags;
+>  }
+> +
+> +/*
+> + * Return the number of entries which are zero-filled according to
+> + * swap_info_struct->zeromap. It isn't precise if the return value
+> + * is larger than 0 and smaller than nr to avoid extra iterations,
+> + * In this case, it means entries haven't consistent zeromap.
+> + */
+> +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry, int nr)
+> +{
+> +       struct swap_info_struct *sis = swp_swap_info(entry);
+> +       unsigned long offset = swp_offset(entry);
+> +       unsigned int type = swp_type(entry);
+> +       unsigned int n = 0;
+> +
+> +       for (int i = 0; i < nr; i++) {
+> +               entry = swp_entry(type, offset + i);
+> +               if (test_bit(offset + i, sis->zeromap)) {
+> +                       if (i != n)
+> +                               return i;
+> +                       n++;
+> +               }
+> +       }
+> +
+> +       return n;
+> +}
+> +
+>  #else /* CONFIG_SWAP */
+>  struct swap_iocb;
+>  static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+> @@ -171,6 +197,11 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+>  {
+>         return 0;
+>  }
+> +
+> +static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry, int nr)
+> +{
+> +       return 0;
+> +}
+>  #endif /* CONFIG_SWAP */
+>
+>  #endif /* _MM_SWAP_H */
+>
+> > +
+> > +       folio_zero_fill(folio);
+> > +       folio_mark_uptodate(folio);
+> > +       return true;
+> > +}
+> > +
+> >  static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
+> >  {
+> >         struct swap_info_struct *sis = swp_swap_info(folio->swap);
+> > @@ -515,8 +624,9 @@ void swap_read_folio(struct folio *folio, bool synchronous,
+> >                 psi_memstall_enter(&pflags);
+> >         }
+> >         delayacct_swapin_start();
+> > -
+> > -       if (zswap_load(folio)) {
+> > +       if (swap_read_folio_zeromap(folio)) {
+> > +               folio_unlock(folio);
+> > +       } else if (zswap_load(folio)) {
+> >                 folio_mark_uptodate(folio);
+> >                 folio_unlock(folio);
+> >         } else if (data_race(sis->flags & SWP_FS_OPS)) {
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index f1e559e216bd..48d8dca0b94b 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -453,6 +453,8 @@ static unsigned int cluster_list_del_first(struct swap_cluster_list *list,
+> >  static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+> >                 unsigned int idx)
+> >  {
+> > +       unsigned int i;
+> > +
+> >         /*
+> >          * If scan_swap_map_slots() can't find a free cluster, it will check
+> >          * si->swap_map directly. To make sure the discarding cluster isn't
+> > @@ -461,6 +463,13 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+> >          */
+> >         memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >                         SWAP_MAP_BAD, SWAPFILE_CLUSTER);
+> > +       /*
+> > +        * zeromap can see updates from concurrent swap_writepage() and swap_read_folio()
+> > +        * call on other slots, hence use atomic clear_bit for zeromap instead of the
+> > +        * non-atomic bitmap_clear.
+> > +        */
+> > +       for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> > +               clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+> >
+> >         cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
+> >
+> > @@ -482,7 +491,7 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
+> >  static void swap_do_scheduled_discard(struct swap_info_struct *si)
+> >  {
+> >         struct swap_cluster_info *info, *ci;
+> > -       unsigned int idx;
+> > +       unsigned int idx, i;
+> >
+> >         info = si->cluster_info;
+> >
+> > @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
+> >                 __free_cluster(si, idx);
+> >                 memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >                                 0, SWAPFILE_CLUSTER);
+> > +               for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> > +                       clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+> >                 unlock_cluster(ci);
+> >         }
+> >  }
+> > @@ -1059,9 +1070,12 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+> >  {
+> >         unsigned long offset = idx * SWAPFILE_CLUSTER;
+> >         struct swap_cluster_info *ci;
+> > +       unsigned int i;
+> >
+> >         ci = lock_cluster(si, offset);
+> >         memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+> > +       for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> > +               clear_bit(offset + i, si->zeromap);
+> >         cluster_set_count_flag(ci, 0, 0);
+> >         free_cluster(si, idx);
+> >         unlock_cluster(ci);
+> > @@ -1336,6 +1350,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+> >         count = p->swap_map[offset];
+> >         VM_BUG_ON(count != SWAP_HAS_CACHE);
+> >         p->swap_map[offset] = 0;
+> > +       clear_bit(offset, p->zeromap);
+> >         dec_cluster_info_page(p, p->cluster_info, offset);
+> >         unlock_cluster(ci);
+> >
+> > @@ -2597,6 +2612,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
+> >         free_percpu(p->cluster_next_cpu);
+> >         p->cluster_next_cpu = NULL;
+> >         vfree(swap_map);
+> > +       bitmap_free(p->zeromap);
+> >         kvfree(cluster_info);
+> >         /* Destroy swap account information */
+> >         swap_cgroup_swapoff(p->type);
+> > @@ -3123,6 +3139,12 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+> >                 goto bad_swap_unlock_inode;
+> >         }
+> >
+> > +       p->zeromap = bitmap_zalloc(maxpages, GFP_KERNEL);
+> > +       if (!p->zeromap) {
+> > +               error = -ENOMEM;
+> > +               goto bad_swap_unlock_inode;
+> > +       }
+> > +
+> >         if (p->bdev && bdev_stable_writes(p->bdev))
+> >                 p->flags |= SWP_STABLE_WRITES;
+> >
+> > --
+> > 2.43.0
+> >
+> >
 
