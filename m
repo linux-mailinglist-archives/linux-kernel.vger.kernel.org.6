@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-315793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A28496C70D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E7F96C70E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B981F23DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7321F231AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3B61422D5;
-	Wed,  4 Sep 2024 19:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B141448FA;
+	Wed,  4 Sep 2024 19:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="G7TwooNM"
-Received: from mx08lb.world4you.com (mx08lb.world4you.com [81.19.149.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="io1BvRbd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97D313E409;
-	Wed,  4 Sep 2024 19:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8649140E37;
+	Wed,  4 Sep 2024 19:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476735; cv=none; b=QP3NJSFX6kixpIrBvdQEuwIaiGe0tpWhL+rY6nQMpjbFCAbDmdeZCo2Y67KlRZA6kEASy9QikZFyGDCwAtgOdDrBon2roOCf12swPx2499zlISzpT7bDfyUUwqGk363Ew+XyEOD0D+Y4ufg+whApQ364Wi0LoN04RoYE+IuFvDE=
+	t=1725476743; cv=none; b=UDXRUeCsr2EdKMWXO0v0wsiL1+1468JxPs5Y32Z7o4RRgy1F1oV6X/jGSCApBBFQf8UBzlyoXQRdpOxm7oDR8JCK/10fPpFWAume1BX5EQGhuvIX3eDiZptSlwwqlP/zQzP25gGOpbiGXd/vPI0RqQkkh2Rsy3qWYk3c3OYRW4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476735; c=relaxed/simple;
-	bh=udAqtoaRC/SZRiVlHYjDz69dZCVfDadiSZvuLLCKLt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSk957pFCiswFXn5+XOjnMal0KZpn57o3xDLWH608vqPgFupjSJLfWjtLM9BO6i/Pbzd6E2odOInSXjX/ALYZWOzKC3H9TgBEL2l96FSEjJOghWvB3xJatPPxqBiX3RczbGDo4qnQRkxoXTp4UZBBefTO+s5dhSGy6ZUSML+mFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=G7TwooNM; arc=none smtp.client-ip=81.19.149.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AxYohhgnAu4PLvnfed/ve57jItrbBbytOljsqVlPTm4=; b=G7TwooNMRe5YbP3u+Am0TZsMz+
-	ZCiWlKD+st6VQa/hKSSohSjtzDf5VOdm3xmwm0OF0yvtyXWuvt//VmDpdeT86X0s3xPuco/VTXMVz
-	9OboDqQG3a+spkUUlKrZmrLTrb4u+BnlD+y+zR6b5zy9lylBImVmY5zkRsVer7llw5sQ=;
-Received: from [88.117.52.244] (helo=[10.0.0.160])
-	by mx08lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1slvJj-0003Rb-1n;
-	Wed, 04 Sep 2024 21:05:23 +0200
-Message-ID: <beffd557-7e58-4841-a930-03c271d243a2@engleder-embedded.com>
-Date: Wed, 4 Sep 2024 21:05:21 +0200
+	s=arc-20240116; t=1725476743; c=relaxed/simple;
+	bh=luk6gtaB7f7vYu1sx+cmxl7AuSMpS2NE1lnhPOz4NaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FdefA9R/bVbDnwo9tFk/LHTIjeOv5ES8uBg1PNBLpyGXIwAAcJszd3GWgaAOkbtqsC1EEfOBasBvjbKGFNWk5eIUOJcz3OYFYMWVmMAqY204Q3/2fxAeIlbm3FhoSyT9U2ZL30TegR233T8C5ONvPOgEfzDI5wbDU3Lld7ei7h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=io1BvRbd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732F9C4CEC2;
+	Wed,  4 Sep 2024 19:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725476743;
+	bh=luk6gtaB7f7vYu1sx+cmxl7AuSMpS2NE1lnhPOz4NaA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=io1BvRbd4wOD5RcY+qw0KqB8DaLaXGiJjGudf8tm9fQmcoqBmEOVLdvCNndaDaEvg
+	 rB1a38fnyox+i9+XDgFI0CIt6m8uEuJ6ED3PHMuwk/pJFWDnGGS2BainojZZTbFW+t
+	 vEmnlAYp5p1FPwIhkgIEXTMKXbUDIleCwW41pZ0lojUZHot04BnponovAtmryzCqch
+	 Bwpeg8JowJZgiuf46AX8se92qf+QBed+6g6IZzCmsT1NX00Yae5/MVt95TYEozEth6
+	 6VL6CXSSTg6JBdnlgPl0iJUEfmLY/A1AxFMaur/ualbn/w39TQ3S9GdcJyvBW5jYqr
+	 uYGJxBQo1nbxg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] perf-tools fixes for v6.11-rc7
+Date: Wed,  4 Sep 2024 12:05:40 -0700
+Message-ID: <20240904190540.4086525-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: mana: Improve mana_set_channels() in low
- mem conditions
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
- Simon Horman <horms@kernel.org>, Konstantin Taranov
- <kotaranov@microsoft.com>,
- Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
- Erick Archer <erick.archer@outlook.com>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
- Colin Ian King <colin.i.king@gmail.com>,
- Shradha Gupta <shradhagupta@microsoft.com>
-References: <1725248734-21760-1-git-send-email-shradhagupta@linux.microsoft.com>
-Content-Language: en-US
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <1725248734-21760-1-git-send-email-shradhagupta@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+Content-Transfer-Encoding: 8bit
 
-On 02.09.24 05:45, Shradha Gupta wrote:
-> The mana_set_channels() function requires detaching the mana
-> driver and reattaching it with changed channel values.
-> During this operation if the system is low on memory, the reattach
-> might fail, causing the network device being down.
-> To avoid this we pre-allocate buffers at the beginning of set operation,
-> to prevent complete network loss
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> ---
->   Changes in v2
->   * Pass num_queues as argument in mana_pre_alloc_rxbufs()
-> ---
->   drivers/net/ethernet/microsoft/mana/mana_en.c |  6 ++--
->   .../ethernet/microsoft/mana/mana_ethtool.c    | 28 ++++++++++---------
->   include/net/mana/mana.h                       |  2 +-
->   3 files changed, 19 insertions(+), 17 deletions(-)
+Hi Linus,
 
-Looks better now with the argument for the queue number.
+Please consider pulling the following changes in perf tools for v6.11.
 
-Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
+Thanks,
+Namhyung
+
+
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git perf-tools-fixes-for-v6.11-2024-09-04
+
+for you to fetch changes up to e162cb25c410afc42051a582c46a47dde597f51c:
+
+  perf daemon: Fix the build on more 32-bit architectures (2024-09-02 11:59:24 -0700)
+
+----------------------------------------------------------------
+Small perf tools fixes for v6.11
+
+A number of small fixes for the late cycle:
+
+* Two more build fixes on 32-bit archs
+* Fixed a segfault during perf test
+* Fixed spinlock/rwlock accounting bug in perf lock contention
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (1):
+      perf daemon: Fix the build on more 32-bit architectures
+
+Namhyung Kim (1):
+      perf lock contention: Fix spinlock and rwlock accounting
+
+Veronika Molnarova (1):
+      perf test pmu: Set uninitialized PMU alias to null
+
+Xu Yang (1):
+      perf python: include "util/sample.h"
+
+ tools/perf/builtin-daemon.c           | 8 ++++----
+ tools/perf/tests/pmu.c                | 4 +++-
+ tools/perf/util/bpf_lock_contention.c | 3 +++
+ tools/perf/util/python.c              | 1 +
+ 4 files changed, 11 insertions(+), 5 deletions(-)
 
