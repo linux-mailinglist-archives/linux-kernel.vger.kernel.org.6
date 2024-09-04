@@ -1,201 +1,181 @@
-Return-Path: <linux-kernel+bounces-314991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C410D96BBD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:18:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FACD96BBD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E631F2498F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D64A1F2613F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509AD1D9331;
-	Wed,  4 Sep 2024 12:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5629E1D88BB;
+	Wed,  4 Sep 2024 12:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LkL1edlR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6mGRgEz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LkL1edlR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6mGRgEz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dYJdOnWT"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDC81D88C5;
-	Wed,  4 Sep 2024 12:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5251D79B3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452262; cv=none; b=KyJ9uq7jNW8Q67EirM5wYoQbSSVW40BAZkkf1cVctX4OzjDAiRTWRIAPi4p3rlXYtHeAhsv19M4C8p5ZEZLPTS9x3OWPxsgVKex8DUMT0smbiWEve1qscY7m/hJWYhzLklAhmH9MrgT9jAftFN4U1jZNspZOlA7flu2UUUpPCUE=
+	t=1725452259; cv=none; b=K4CO4mVTeE1dXDrvP2fPSK/uV+rTofxs8kNsewrKlUqdxs8EbEB7vQfxFlYl1roT5w/We30AGVfTV8GAsGNEGb+L5/Eqt5UMQun39D/RgXOWDzfUAT9HavWMHK5OpUe1XlAnRUlhXKTCpDRjA9NmSJNu/ZXG2poTzu07UA4+wL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452262; c=relaxed/simple;
-	bh=3CZ+w+fMqcMb61N7WhboSrSzA3buCKvlmhjogmi+5Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIXjwDcBY13CzFAlAO2hMCAXJKAX5TsfOjubqPqvbrqDOeHEWuDSZh9VFx5UjIIXSIDFPQEz4pkZ+ZHTlPbcHpAoQAVSkyUp4ryTJLR+T8OSxdGdbyN7vYxmi5qq5vxLc50FG8qqaHyOxO+DVWmrZTI7lp6m3IgJ4Q3C2ZM9qSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LkL1edlR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6mGRgEz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LkL1edlR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6mGRgEz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F21E721989;
-	Wed,  4 Sep 2024 12:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725452259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3VsW8QFH025hlOmFkcorfhqr2hOQOtApRVi7d+teVSk=;
-	b=LkL1edlRLaXYpiMxjRv0UHdvA4RgkulkEKQ5RdQ3SWWEVroa+G5ZOx+GrYbKLyHI/Qul+n
-	slJftbkONeG2oba/bySVHLw4tuKCouMXYWGDF/FIF+0dm3A0MI111bl38vBWfU/W4/qv1j
-	2VknFu4EezUPgkNwq2JhZ4Mcw63hf7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725452259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3VsW8QFH025hlOmFkcorfhqr2hOQOtApRVi7d+teVSk=;
-	b=t6mGRgEzSPviXhpNbPJJm1c4onn64Kgsrg3uqEUENWBKWCv0h5K+svWCSA7gV2idral1ps
-	yaCkAYQylwby5OAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725452259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3VsW8QFH025hlOmFkcorfhqr2hOQOtApRVi7d+teVSk=;
-	b=LkL1edlRLaXYpiMxjRv0UHdvA4RgkulkEKQ5RdQ3SWWEVroa+G5ZOx+GrYbKLyHI/Qul+n
-	slJftbkONeG2oba/bySVHLw4tuKCouMXYWGDF/FIF+0dm3A0MI111bl38vBWfU/W4/qv1j
-	2VknFu4EezUPgkNwq2JhZ4Mcw63hf7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725452259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3VsW8QFH025hlOmFkcorfhqr2hOQOtApRVi7d+teVSk=;
-	b=t6mGRgEzSPviXhpNbPJJm1c4onn64Kgsrg3uqEUENWBKWCv0h5K+svWCSA7gV2idral1ps
-	yaCkAYQylwby5OAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E02BA13A5F;
-	Wed,  4 Sep 2024 12:17:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L2u2NuJP2GZpTAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 12:17:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4FDB5A0968; Wed,  4 Sep 2024 14:17:23 +0200 (CEST)
-Date: Wed, 4 Sep 2024 14:17:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
-	paolo.valente@unimore.it, mauro.andreolini@unimore.it,
-	avanzini.arianna@gmail.com, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH for-6.12 2/4] block, bfq: choose the last bfqq from merge
- chain in bfq_setup_cooperator()
-Message-ID: <20240904121723.elseqvr277hzmnd6@quack3>
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
- <20240902130329.3787024-3-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1725452259; c=relaxed/simple;
+	bh=qYsm8565woFnw1fHRK+sts6GjAK52KGTUSLhgkbr1Ts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TXFz15XDBog2V09twsjLqY/SmJFxqN8uPzE/79TDo7y44J766P1CFJ7ckQfUq2aSZPCNPYt0+qPSawF0bbk3QRALERJSBhlk5H4TkVJzA+gjs86MUAnihHlprpGS0aFykpnarFfXPt65QrYWH5dQNpxDfl22o3vdvfn1M7KiUL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dYJdOnWT; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53346132365so8018121e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1725452256; x=1726057056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jlAAsB7SoUZZgOYwhXzTNmhBITwqQOW3TbtLYgYnb60=;
+        b=dYJdOnWT4olSrGBwJXdnsjBFgU4j5y5nfHaI1FRevh5VXPaTfCDolFjtNFJSuk9pCW
+         M2LqglnYgSeyywQyKuUn1R/+jgAnAyBniKVZuNy7Q9n3aBXGA+PiC0NZxbYLKtmPtrBs
+         KQrT7xn8GRIlB7cF8zg57dRBIYBdLKaQYIlfgs3X7jKz/kSeYX9l6jFgk9nMlRi9hvvv
+         H+dwS6ha2pfqCsgyhOoew5HQtsY7NIYB9cpFuh2xYN92oeAE3WDR1uc8CuVWs3fST5hE
+         sX9UqsRKkFixlAViL+HMGzLjLVpxBdRaJDCFu9yBeM6XjEMnIoxMbzjx/RN8nV2PbAoC
+         m/UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725452256; x=1726057056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jlAAsB7SoUZZgOYwhXzTNmhBITwqQOW3TbtLYgYnb60=;
+        b=rZK3wEjYgWjhnztCbk4gND/FwLX19FnU2y8k/dsZBdLtFl6tiuEOAvBYI4mJmx22GC
+         Y6lxRWnc5N8hcD4PrJP67cCG5MkoSyfWH+8VDhHqa0xlXv4ObJnY8XIPRdieoZ5Lkamv
+         Mh4PD+xY59+LP5p2Woms/MfwpMdlCzVbquDSEPMow9X7CmKHUw1a9vyu105D2cq1iIc7
+         Q66Z9HxiuMQhgoO8K1uFa6eeCwgXNtY3uZP2+uTpPGuDUg23QNmPiH3UKTKJmP6DW0kc
+         TfLRfnfaucsHf7ERX+/x7vxhVAdg2jkvY4aecrWjawbqOhJ6O4SsOzYC67i3C3FmoJIz
+         YAjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUoxatzJvD5PwSJIN4Zt7iARJKEDJR9b/9lOFI2aPrr0qSRMiaYwSTdkarqDkHuELk4RAZrsVD6Kmshk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDMt1mOk49fNlJmn8b5PBCUXtJtsaPr03nB6VfITDUB+FPs2rR
+	9GuwCBqlBcv8oeSfegUP8NKnfqM4aiOjot/TJC1lXHcPuguoy6RWDPhDWH6WQ2L5OvZ+tFGn+IW
+	KcRM2oYhbJYdD+oQ6ZHxZJtvNlB6mdmzbbvC1oQ==
+X-Google-Smtp-Source: AGHT+IHONA2kh/9cuUHglAMjIqImf7K09nF2SZfCubD5ZSJYCibfpv2CbmuIEnueZFBXb2pJWbIKdkcALwOvnjG7oMU=
+X-Received: by 2002:a05:6512:2211:b0:534:3cdc:dbef with SMTP id
+ 2adb3069b0e04-53546b8d6d5mr11049948e87.43.1725452254963; Wed, 04 Sep 2024
+ 05:17:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902130329.3787024-3-yukuai1@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,toxicpanda.com,kernel.dk,unimore.it,gmail.com,vger.kernel.org,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240829010151.2813377-1-samuel.holland@sifive.com> <20240829010151.2813377-10-samuel.holland@sifive.com>
+In-Reply-To: <20240829010151.2813377-10-samuel.holland@sifive.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 4 Sep 2024 17:47:24 +0530
+Message-ID: <CAK9=C2WjraWjuQCeU2Y4Jhr-gKkOcP42Sza7wVp0FgeGaD923g@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions
+ for guests
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
+	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, 
+	Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 02-09-24 21:03:27, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Consider the following merge chain:
-> 
-> Process 1       Process 2       Process 3	Process 4
->  (BIC1)          (BIC2)          (BIC3)		 (BIC4)
->   Λ                |               |               |
->    \--------------\ \-------------\ \-------------\|
->                    V               V		   V
->   bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
-> 
-> IO from Process 1 will get bfqf2 from BIC1 first, then
-> bfq_setup_cooperator() will found bfqq2 already merged to bfqq3 and then
-> handle this IO from bfqq3. However, the merge chain can be much deeper
-> and bfqq3 can be merged to other bfqq as well.
-> 
-> Fix this problem by iterating to the last bfqq in
-> bfq_setup_cooperator().
-> 
-> Fixes: 36eca8948323 ("block, bfq: add Early Queue Merge (EQM)")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-
-Good catch. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Thu, Aug 29, 2024 at 6:32=E2=80=AFAM Samuel Holland
+<samuel.holland@sifive.com> wrote:
+>
+> The interface for controlling pointer masking in VS-mode is henvcfg.PMM,
+> which is part of the Ssnpm extension, even though pointer masking in
+> HS-mode is provided by the Smnpm extension. As a result, emulating Smnpm
+> in the guest requires (only) Ssnpm on the host.
+>
+> Since the guest configures Smnpm through the SBI Firmware Features
+> interface, the extension can be disabled by failing the SBI call. Ssnpm
+> cannot be disabled without intercepting writes to the senvcfg CSR.
+>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 > ---
->  block/bfq-iosched.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-> index 83adac3e71db..ffaa0d56328a 100644
-> --- a/block/bfq-iosched.c
-> +++ b/block/bfq-iosched.c
-> @@ -2911,8 +2911,12 @@ bfq_setup_cooperator(struct bfq_data *bfqd, struct bfq_queue *bfqq,
->  	struct bfq_iocq_bfqq_data *bfqq_data = &bic->bfqq_data[a_idx];
->  
->  	/* if a merge has already been setup, then proceed with that first */
-> -	if (bfqq->new_bfqq)
-> -		return bfqq->new_bfqq;
-> +	new_bfqq = bfqq->new_bfqq;
-> +	if (new_bfqq) {
-> +		while (new_bfqq->new_bfqq)
-> +			new_bfqq = new_bfqq->new_bfqq;
-> +		return new_bfqq;
-> +	}
->  
->  	/*
->  	 * Check delayed stable merge for rotational or non-queueing
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> (no changes since v2)
+>
+> Changes in v2:
+>  - New patch for v2
+>
+>  arch/riscv/include/uapi/asm/kvm.h | 2 ++
+>  arch/riscv/kvm/vcpu_onereg.c      | 3 +++
+>  2 files changed, 5 insertions(+)
+>
+> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
+asm/kvm.h
+> index e97db3296456..4f24201376b1 100644
+> --- a/arch/riscv/include/uapi/asm/kvm.h
+> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> @@ -175,6 +175,8 @@ enum KVM_RISCV_ISA_EXT_ID {
+>         KVM_RISCV_ISA_EXT_ZCF,
+>         KVM_RISCV_ISA_EXT_ZCMOP,
+>         KVM_RISCV_ISA_EXT_ZAWRS,
+> +       KVM_RISCV_ISA_EXT_SMNPM,
+> +       KVM_RISCV_ISA_EXT_SSNPM,
+>         KVM_RISCV_ISA_EXT_MAX,
+>  };
+>
+> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
+> index b319c4c13c54..6f833ec2344a 100644
+> --- a/arch/riscv/kvm/vcpu_onereg.c
+> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> @@ -34,9 +34,11 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
+>         [KVM_RISCV_ISA_EXT_M] =3D RISCV_ISA_EXT_m,
+>         [KVM_RISCV_ISA_EXT_V] =3D RISCV_ISA_EXT_v,
+>         /* Multi letter extensions (alphabetically sorted) */
+> +       [KVM_RISCV_ISA_EXT_SMNPM] =3D RISCV_ISA_EXT_SSNPM,
+
+Why not use KVM_ISA_EXT_ARR() macro here ?
+
+>         KVM_ISA_EXT_ARR(SMSTATEEN),
+>         KVM_ISA_EXT_ARR(SSAIA),
+>         KVM_ISA_EXT_ARR(SSCOFPMF),
+> +       KVM_ISA_EXT_ARR(SSNPM),
+>         KVM_ISA_EXT_ARR(SSTC),
+>         KVM_ISA_EXT_ARR(SVINVAL),
+>         KVM_ISA_EXT_ARR(SVNAPOT),
+> @@ -129,6 +131,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsign=
+ed long ext)
+>         case KVM_RISCV_ISA_EXT_M:
+>         /* There is not architectural config bit to disable sscofpmf comp=
+letely */
+>         case KVM_RISCV_ISA_EXT_SSCOFPMF:
+> +       case KVM_RISCV_ISA_EXT_SSNPM:
+
+Why not add KVM_RISCV_ISA_EXT_SMNPM here ?
+
+Disabling Smnpm from KVM user space is very different from
+disabling Smnpm from Guest using SBI FWFT extension.
+
+The KVM user space should always add Smnpm in the
+Guest ISA string whenever the Host ISA string has it.
+
+The Guest must explicitly use SBI FWFT to enable
+Smnpm only after it sees Smnpm in ISA string.
+
+>         case KVM_RISCV_ISA_EXT_SSTC:
+>         case KVM_RISCV_ISA_EXT_SVINVAL:
+>         case KVM_RISCV_ISA_EXT_SVNAPOT:
+> --
+> 2.45.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+Regards,
+Anup
 
