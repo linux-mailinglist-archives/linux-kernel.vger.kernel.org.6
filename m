@@ -1,153 +1,148 @@
-Return-Path: <linux-kernel+bounces-314320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64FE96B1D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7999696B1EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0019B1C255B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6041C2113A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EF013D8B3;
-	Wed,  4 Sep 2024 06:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995E913A88D;
+	Wed,  4 Sep 2024 06:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRoLNiOV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bNGV+pWW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E04AEE6;
-	Wed,  4 Sep 2024 06:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7090612C549
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431681; cv=none; b=k6w/QVa7gssaY8Qx6mNTTnNgHlGY/OCP9pGncVJJVSLTHS0medtXQRPjDQWLpdYLswxnkVHgQdEo8EJauROSP0D1wLlLq/FAE0GEXJjTSrDiFy/kzSLgQuQzcRASklXmdvB24hVaSpm0sX7ey8ghmzI6QPspntTwj93Ny37bWCg=
+	t=1725431877; cv=none; b=P12peh/HYwzKK4jxp0vLHM1a7ofREnsk0cH+UIN4TGqBjk0Lh1uJOQAVehKhUtsXQkChQ4Tvv0GNSERE3UQJhwhp7LaunOOjJDPxZQHiAyVCVVIGVwOg8sOLV04k1+s4NbsGbJhkYDW6I7V/y7EMUorI/GndP+j5Z/B8P0867mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431681; c=relaxed/simple;
-	bh=59IuPyYeHUT6I4DfEN8S5tmVreRkgQpuZU3P0+eeQaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLY2f2wAcAyJ6LZvdtMQFQT2mRX3/WOQwpUyZvp6JNxM6sAEkBx9Mmp4E22vOMQsbQI6YpoI3uI0TeDpLOqUS0hEd8pDkt9qsVm9EbOgFaPjTugo0jpAyvIpHFjqlkVQgvoxw/oG4P/GZetxKRS7HxcX6/QRRMIA4CEd8wvDJok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRoLNiOV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DD1C4CEC2;
-	Wed,  4 Sep 2024 06:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725431680;
-	bh=59IuPyYeHUT6I4DfEN8S5tmVreRkgQpuZU3P0+eeQaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VRoLNiOV5XhECZrIKF5orhVO4gvPvZSaogdOy3gesWN4Ftg0AghOKFnFa4aPKfMLA
-	 rkSFgTHoYTTSySDAmZUA6UKnISgHjBjwoytgDeWg65YtB4/pcqH+JfxcUVlM4Q3Fjg
-	 zQ265OZKFajFBuWq17kNDkA4uKkNsFcGa2xUP8NyUIhXlkYr6i2HRaV474e51lhSL+
-	 jBKh5RDJ2ibtczJe1Ni3mQ7SxoLgCQka4NX9Q92NQ7wDIxdRLuJ61OiuEEokvCN/ZC
-	 Vr8fEDHTNg6rp3JaRHgMF2YQolbZSjRWOK86ruUEgtyD3C/qw/ibm94uIYzXBcRyr9
-	 gSvjrgfhKMG7g==
-Date: Wed, 4 Sep 2024 08:34:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
-	tglx@linutronix.de, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
-	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
-	Praveen Talari <quic_ptalari@quicinc.com>
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-Message-ID: <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
+	s=arc-20240116; t=1725431877; c=relaxed/simple;
+	bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kRaR/Lco/5Zqh+PviAJd9/YEMAoYiznDf/3d5Hy9k3PauCF5pPDg5w6IgAQoJ2PGzoewYSEF44eZf9sVZNMFHUgG7W7GgIujhCq7KUyzKEozm0y7qlA9arj7y+oQeQ1Nl1om2okp8zei+WA72R2VY3jLO5woQ90eSr4dNzR0SIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bNGV+pWW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725431874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
+	b=bNGV+pWWw5PkKRWLvaQaOub1/rNrcRy/NaMVuKzOWWczPKzQrjOuktJ75k+vFVqMxUC1Jm
+	2WwvdF/yjZAXOlUZy1mgeJKW1S1qkNyhO+/r3l/MH6Hp8DQsfa8AXOKd4eZKF5XrEi4oaO
+	+DetWoRHaQ1gMcwNq3FVOic3oVugvb4=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-444-z5DfV5WyONaIYm-DGDhX8Q-1; Wed, 04 Sep 2024 02:37:53 -0400
+X-MC-Unique: z5DfV5WyONaIYm-DGDhX8Q-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7143af9568bso5352495b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:37:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725431692; x=1726036492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nib65CS/jKWraWvQ+DYxRru/c/gctxD1oYSNGhN1rv4=;
+        b=GxBskCp/kqOWYs3usXt/MjcdbarWS+g+QcOQMgahw3FlTH5cbCbR5VCAbm+6HndOv6
+         H1SwoJYJCFNFsEa10aYCADQsDB0q7NkBw5/X73H9qobOPGX4UZeASNQye/VGN6PWJIzB
+         hqYmMbeGehZUSfKf4WmeiCKEysfIPljhpkAYHkEOHxwVyNElkMKB+/0rL1H1yvb5rVrT
+         xfJ/+AAZYrFk8Lo2yOpn27QFuMFWZDPFMXzjSdjpTQyrqx8+bIoj2VE6bh4tcpCsSxeT
+         S+qfv2hrRmSyMUmKsbEvGvctRaT8LHSolnO0+UEyHeVbFY5CbmG0cGci+Mu07cjQpHCV
+         RNeg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9rbu+x0ZI+t7xv1aRwQkm9nvRuddiOhNY2LHg4lCJ3/NcSi6dEhlBuCXRASI+8nxoZwvp2+dg0esroYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuUk9084B+T1TL8r1ux8m8ltVNuliitM1I1u4I6g4A4/Lpw2e4
+	AUyEvKjBJ1w8lx+otdnQyJDps1eP/VmUBIu3jMW3Qdunt+JVEwPNRjgo3zaeckRXsx1e1mc7W8a
+	QOQKu1HExSW5iIYMbtRtd3Xwv4m4H5l0+km610E06EIQ7D+5Iobqn6PaxYNLEooE5huZkVKLPqX
+	J8QeHxeAFFVJdYsDoAq29fiF4SOvHknUk8uMf6
+X-Received: by 2002:a05:6a21:1706:b0:1c2:8f50:b450 with SMTP id adf61e73a8af0-1cece502d52mr12321290637.18.1725431692598;
+        Tue, 03 Sep 2024 23:34:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELt1GC768sylfd9cTaGwknyMDJpOCJXkmNL6NeitKqFXTFJKiRjDvxPjGsHsp/dkBeUZBjUFKz563x6JqMgvo=
+X-Received: by 2002:a05:6a21:1706:b0:1c2:8f50:b450 with SMTP id
+ adf61e73a8af0-1cece502d52mr12321276637.18.1725431691959; Tue, 03 Sep 2024
+ 23:34:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240903220240.2594102-17-quic_nkela@quicinc.com>
+References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
+ <20240903171514.201569-3-carlos.bilbao.osdev@gmail.com> <CACGkMEvHU0VnOEZbVnEr1SvmOF5PhMtKk=M2o7Wwq-DUO9p7Uw@mail.gmail.com>
+ <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com>
+In-Reply-To: <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 4 Sep 2024 14:34:41 +0800
+Message-ID: <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com, shannon.nelson@amd.com, 
+	sashal@kernel.org, alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr, 
+	steven.sistare@oracle.com, bilbao@vt.edu, xuanzhuo@linux.alibaba.com, 
+	johnah.palmer@oracle.com, eperezma@redhat.com, cratiu@nvidia.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Carlos Bilbao <cbilbao@digitalocean.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 03, 2024 at 03:02:35PM -0700, Nikunj Kela wrote:
-> Add compatible representing spi support on SA8255p.
-> 
-> Clocks and interconnects are being configured in firmware VM
-> on SA8255p platform, therefore making them optional.
-> 
+On Wed, Sep 4, 2024 at 1:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com>=
+ wrote:
+>
+>
+>
+> On 04.09.24 05:38, Jason Wang wrote:
+> > On Wed, Sep 4, 2024 at 1:15=E2=80=AFAM Carlos Bilbao
+> > <carlos.bilbao.osdev@gmail.com> wrote:
+> >>
+> >> From: Carlos Bilbao <cbilbao@digitalocean.com>
+> >>
+> >> Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementations
+> >> with vdpa_config_ops->set_config(). This is needed per virtio spec
+> >> requirements; virtio-spec v3.1 Sec 5.1.4 states that "All of the devic=
+e
+> >> configuration fields are read-only for the driver."
+> >>
+> >> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+> >
+> > Note that only the config space of the modern device is read only. So
+> > it should be fine to remove vp_vdpa which only works for modern
+> > devices.
+> Just out of curiosity: how will this work for devices that are not
+> v1.3 compliant but are v1.2 compliant?
 
-Please use standard email subjects, so with the PATCH keyword in the
-title.  helps here to create proper versioned patches.
-Another useful tool is b4. Skipping the PATCH keyword makes filtering of
-emails more difficult thus making the review process less convenient.
+Devices don't know the version of the spec, it works with features.
+For example, most devices mandate ACCESS_PLATFORM which implies a
+mandatory VERSION_1. So they are modern devices.
 
+> Or is this true of all devices
+> except eni?
 
-> CC: Praveen Talari <quic_ptalari@quicinc.com>
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  .../bindings/spi/qcom,spi-geni-qcom.yaml      | 60 +++++++++++++++++--
->  1 file changed, 56 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> index 2e20ca313ec1..75b52c0a7440 100644
-> --- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> @@ -25,10 +25,45 @@ description:
->  
->  allOf:
->    - $ref: /schemas/spi/spi-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sa8255p-geni-spi
+ENI depends on the virtio-pci legacy library, so we know it's a legacy
+device implementation which allows mac address setting via config
+space.
 
-Not much improved. All my previous (v1) and other patch (i2c) comments
-apply.
+Thanks
 
-> +    then:
-> +      required:
-> +        - power-domains
-> +        - power-domain-names
-> +
-> +      properties:
-> +        power-domains:
-> +          minItems: 2
-> +
-> +    else:
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +
-> +      properties:
-> +        power-domains:
-> +          maxItems: 1
-> +
-> +        interconnects:
-> +          minItems: 2
-> +          maxItems: 3
-> +
-> +        interconnect-names:
-> +          minItems: 2
-> +          items:
-> +            - const: qup-core
-> +            - const: qup-config
-> +            - const: qup-memory
->  
->  properties:
->    compatible:
-> -    const: qcom,geni-spi
-> +    enum:
-> +      - qcom,geni-spi
-> +      - qcom,sa8255p-geni-spi
-
-You have entire commit msg to explain why this device's programming
-model is not compatible with existing generic compatible which must
-cover all variants (because it is crazy generic).
-
-Best regards,
-Krzysztof
+>
+> Thanks,
+> Dragos
+> >
+> > And for eni, it is a legacy only device, so we should not move the
+> > set_config there.
+> >
+> > For the rest, we need the acks for those maintainers.
+> >
+> > Thanks
+> >
+>
 
 
