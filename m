@@ -1,81 +1,170 @@
-Return-Path: <linux-kernel+bounces-315902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673AA96C85A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C844796C8EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9635F1C2291D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F301F22DA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28758148304;
-	Wed,  4 Sep 2024 20:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FE016EC19;
+	Wed,  4 Sep 2024 20:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akgS+hOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UP6u6QPc"
+Received: from sonic305-27.consmr.mail.gq1.yahoo.com (sonic305-27.consmr.mail.gq1.yahoo.com [98.137.64.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA4612C54B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FF7155A4F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725481641; cv=none; b=NgdwOHbpWNRI0Yf7X36z47qsIpUdb1Tdq/EEqwIww8iR/1l47TRzKwxashtSGnagBAFba5cKoIfxiwDWY+MQcf3Fk8rstngqbkkzZKffLok9pBJhTdj3yETcRh/XEaEy5tYwQ2LvMdgGbQ0YoRruC+QNH5DroN0KMJFCKTn0GGc=
+	t=1725482904; cv=none; b=KtPjETbT9vYnNKNnQhOFEa+oiTwECAANGxdSqqsvWVoFIjcsN/mTHVxTeivmxYLSiePzuOY3E1XTlX0aeGM5e83jrvz6mggWn1R1UIgP+BVkoHAXqXSWIAYIqqOxLqeYzJ47MMpSEUM9itfg331UG8Hp6pyS74MXHSOKLpA9qOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725481641; c=relaxed/simple;
-	bh=Tu6xZXP9z9EHz1Y3zLb69vyH04xM96AwgolmnF7AcHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9vYZin12Utmab7Q0/My6UOsMLqbakUDsCkya4MdJ9vlEkvq5EhcofvvEw6Rx92d9U/PCV9lsMOc7UQJZHWZ+9zfclxGSjQFI/Li3dyYoOLGQLS9wODN4DYLq4O28fE8vw1zWXP7t49AiJYzWkpGQCPwsQae0kskcZ+cF6TaPMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akgS+hOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22A6C4CEC2;
-	Wed,  4 Sep 2024 20:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725481641;
-	bh=Tu6xZXP9z9EHz1Y3zLb69vyH04xM96AwgolmnF7AcHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akgS+hOcdtfBBawAXnMnvG8ouT8cjBLEOKWKGsFDXVnu/wSoOcguWixFDNMI2jya+
-	 07HRIMzd94wTfixmXq94aa5z374l1PuRSdaDvGVSP1WfR3mddLY+fsDW12IAOsGRe5
-	 D7/BOHTLba3bBFBfyf8QLcmudjE+J+PWJmycDdgpL5NgrQwtjby4ACXnE3/YyrbnDS
-	 wqJm/8t5EdJw4AYbpJ5+colpvBxH2J+ND7yqTYfgFO1QFXf76DHyq7AOlXOxYri+cI
-	 WVr01duIBp91EbtDaKM06gwRkLuTMBV898z8JnfgSjQFVz3V8Jezt/L1WsPpNre6uw
-	 3i+Nci17cgGJg==
-Date: Wed, 4 Sep 2024 10:27:20 -1000
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHSET v2 sched_ext/for-6.12] sched_ext: Implement
- scx_bpf_dispatch[_vtime]_from_dsq()
-Message-ID: <ZtjCqM0-dZJOIOcB@slm.duckdns.org>
-References: <20240901164417.779239-1-tj@kernel.org>
+	s=arc-20240116; t=1725482904; c=relaxed/simple;
+	bh=E1GNZbUPmkfrCWmehaycqrNbz1lI4lHJFxdmRmuu1Z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pSNNfSUyVZVrOZO0oTsw+D6Phk89GtZzO7WN2+1ANcBeF2JZpIdjnWlktsHWPgyWmI7zP8yJLUYyWv/voN/NkhWaj/1RKOG2lhC3SdG5sWAHg+obR+atdjJMmuIXkubHpE2kYc33Q9AzbQ4+JhieMraAeAboZl5gT2H3L6Pppmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UP6u6QPc; arc=none smtp.client-ip=98.137.64.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725482902; bh=DN2PMD7ooQWCce4DDuNiRNl3h7nt8oxL1iT5+JSd7Kc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UP6u6QPcHwisEMaYXpxG2w7q/iSzA8Xz+lAuL3WJWMNF7/xgyeXNQ6BX32o7QIPW+qLV5J8tseOSyxmbnNFwDayL8ZO2OXGHw8KNwv7DUUPGfMiSA/ExbSGzv/5+qBJ7+DFeNe0a2+VdXyeT6Vn047pvfR2ypJ085jD4ckGJct+9FrMzBkQbsHjXkSzCbZwCHHhmUaKhk7V6JrB0ghxvYwG2iRrNGI6UptKyGJcTX4CgTfYU61q4zZK2qIYwaejZgeTy1LGrEyWWu81TB+yqamQ0A33ddmquVWKktVbFVMWdyxP4OJg5EjgwUsau+0oNEuPHzq8lgTJZnBHnMzAQUA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725482902; bh=74NFypbRCc26s7p73wL88Q/buwC4e84uL/+Nvb+l/Dj=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UBPNF11JHZ+60hr0zYrQO0Cg9Rf65e7acjPVz2K3Pn2eHYtEP3gux3CftDTVsN51x/YcHVFECKNfRnYzs459Oy57M8BzdE2vTDNDENkecOmNHuWz7bi6EXMXcc3QXnyISX7kndeGs/hGoJs7ZF2fRyWSiMtqMpng1KNqDdnW8KALnDV2dXVhefg2JxupmaVxlxTp/inCQ4BlIcK3txShab9GF4O6vRMs/0q5kThZB7FmivDQqunE5nnwEjrNqUOe7wQow/bAoEFLTec6PM05MC8/FcsPn6MGcpplDLSgLtH8TJ9x97F2G9uXwGdnwNZWqlw6rv6K1WSspugz0JnNPQ==
+X-YMail-OSG: kaCSSqoVM1nZuHWHUTpccJZtqg15.HQWHswVMbzvJHzcpBCtW7JW6jAtkpLM3qs
+ vOu_0PzP9Y47oPvVO6S5gtZ_FfZp0EogbXUTPHAIctCWpl1bROpypfSOq5abBeaZ6xAZ5JchotaU
+ 3KNjtmsrbKneqNs8TpQK.N93H0kLqDg72nvpuYyH.5RtMQxNyS_xjNq.dr_yWsPAMnVzElRPTdcO
+ zT7MW_nbZC3srttXSGeLhDsUpLlua4w76HAbqPpRNTOAnJsMe.XzEH7x0SCe4O8SGGwUiDFLVoRV
+ fI9fSlP.Jg5n3GGz4dh8RlDQpv82HlhiyND2Re1Xt7SPluFolDFyFrM4IokRQUUwAAzE2mKJ5rsX
+ GvUzAzZ9OuuTia5SQsc.2iV2gCKyF43kgZHHwzmzVXoRQ0bndRxl5yjb1BAX8VK55IBDSBQryH9Q
+ S24EK3Jpyus5uBlV7iiu3DB35irpWJOEAMaCNbkQ8JJAx2GtDcYp_kzOqEfAT3YpleAUBObcc7kn
+ SyMOW0Nvnv3JdmrPyZh4KqSYWI52WcqTY2mN_9W28Giub0PSnN3JUKzG6lwgZjQMbD4ZLeVWLCZn
+ s3W.Ia.N95IwfBn6nhQRgcfEohScU__hOLTJjhg5DI81z12czqTkJKmtGbSsnJXmW7GD3XoMtwMw
+ XVrkVkubRXqxdLSmLLQCTmpgEvMivyWUwadGF3AiXbBvZN1eVFV7zII51ffDwG.jQBxKuvRKzAGR
+ M.HA.ikJG.SQvQ30GnB_qStTN38HylUBzlv1aHoFriecsTlE9e3ifzQApmsTQtVy220jmMm4MMoL
+ cJvcpigNSI083Lv2hjuDThf.aGCfAH9lvwilIDvjByiN3z4aj9mhfwuSuSMRxkLbAnIwSxflMgq_
+ .J6bRtl54WA3CavxOQ2i09XcS8FVaxF0ruQfz1j3RprMdik52oOO_VyrVCU2dh6VHHux6lYbMpcL
+ jfmvlXMukWDVyY0oeWUrJa972HTA.vPvLUW1hR5P39dKvOLAbHIPyFtlb3Rcsam_57Incaewcr0V
+ Sra7kRqmGHaDKJeYx6x7AgacdJNRQRD.aPMGBIphdWNxYiQKW4Croc0rsn4sU3s8rlrLnoXCCag.
+ hu..xyQLO0nywpGmLie0_L4bkdjeH40yVAmsjfJKA50BjPT_Ien9gw3s1KNcOFzYQu8OLOyftpak
+ dx2brVfbf9ULnBK6UV_rbSemR4OmIwFBE4JCEKs7mxXNL4272ZO6sqWUGZjrmte6U2K4YeJSPUaR
+ dwcXqjD740LgA13ZTptjyTrFN4s0QurI26pUe3u9VjbgSRc4vd6t2W_jXbEAxQCE7UydYYc7Ap1V
+ TYHfaYIiQekePfEMaYPjvxPTLu4B2p7NCJD2VLpMkeZ3zD3VyKVWYVRXM.wAnB6n58ngBJQGffAZ
+ 6p4VT.Xy0KJWnlMQy3ZPd30H3.Q_8O4CuN0_1WuPYGGhx1aMOROtfUJhO8MdmsGJbs5v40bsuSqH
+ GSG9qn4IxVxLjWZQyV0cBUe9Ld3XPM.810b4WsK92dF6E_XJ7x_vpRuy79pz4lILWrUgNZ_OU0tK
+ l8H_XdEfiKyXsgvXeScoMgObhrTl7PDupqNXCKEMagd7wT4KRBx7gYWUE5fQQu_0jY8WQbesd5yl
+ 6435hlRD6OQVmh0RzEIeN3ajVroNCB5hcxaeO8WmJ._SNVyXilgt44q1kZTszsFO.FhclrkUG2.l
+ yYVo0iofH7uFK2nT_kgpPBudZTlt_HuxvFG1edqnn9JpKNL0dvbMkFG1K7F3yRz5lwo94YZVs.65
+ 1B2h1MDDmq5n3S6QG72Tm4X_om31rLSmqwZApoZWXhdzh00r0.Jtv8shhHtsJxY1VbexLadyXfq4
+ MsvtAFCoShrRnfTSzoi6_Si2O.aq25e2Y3mXxEWSholYWC1k4ekOMR4HudjnZZjELFxTunkJopzd
+ WAekzhCek0G8r3VRUQ4RU.B0_ZivGJ3GxP7m6az1q3lRzLBFEaloUbwkGcM0seiAW5M1XU5B28DM
+ i0JBdQDuRZA.XZLt0K42okBWE793ZLvoowoXqzJNCNNlZX7oGJ4auLnn9tiOw1THIm.JFD1dXSuT
+ nJqYRyDiAA1G0jt9ho45VXhOHEazUcnym8RE7IJntsre_uMkRgGjl52THDkx9M1ukDpyhogYp68e
+ SsURfue0og5Izm8lM0z9cn3AI1X0_3rB07GztXtwxA9.PqowoRHveyDyf87L4p2wYa0dLQgsUMMB
+ nWAfRIcQH5q2e4e4Z6u2RayLk7_wEyt23oW7iJJtvM2N6Ud74GhOZU9jqixeNDNDWWBfXMpMEYcl
+ IYiLdbAfYfodItH15ciJXUA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 90a6bc51-f164-4d44-bae4-d5f2c5da24f7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Wed, 4 Sep 2024 20:48:22 +0000
+Received: by hermes--production-gq1-5d95dc458-c8wt4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2f35ee425e5918734f7690c9cc8e23d9;
+          Wed, 04 Sep 2024 20:28:02 +0000 (UTC)
+Message-ID: <93952b9f-2e40-42fc-9a61-749b9c8ee306@schaufler-ca.com>
+Date: Wed, 4 Sep 2024 13:28:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901164417.779239-1-tj@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
+ serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+ penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
+ apparmor@lists.ubuntu.com, bpf@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240830003411.16818-2-casey@schaufler-ca.com>
+ <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com>
+ <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
+ <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Sun, Sep 01, 2024 at 06:43:37AM -1000, Tejun Heo wrote:
->  0001-sched_ext-Rename-scx_kfunc_set_sleepable-to-unlocked.patch
->  0002-sched_ext-Refactor-consume_remote_task.patch
->  0003-sched_ext-Make-find_dsq_for_dispatch-handle-SCX_DSQ_.patch
->  0004-sched_ext-Fix-processs_ddsp_deferred_locals-by-unify.patch
->  0005-sched_ext-Restructure-dispatch_to_local_dsq.patch
->  0006-sched_ext-Reorder-args-for-consume_local-remote_task.patch
->  0007-sched_ext-Move-sanity-check-and-dsq_mod_nr-into-task.patch
->  0008-sched_ext-Move-consume_local_task-upward.patch
->  0009-sched_ext-Replace-consume_local_task-with-move_local.patch
->  0010-sched_ext-Compact-struct-bpf_iter_scx_dsq_kern.patch
->  0011-sched_ext-Implement-scx_bpf_dispatch-_vtime-_from_ds.patch
->  0012-scx_qmap-Implement-highpri-boosting.patch
+On 9/4/2024 1:00 PM, Paul Moore wrote:
+> On Tue, Sep 3, 2024 at 8:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/3/2024 5:18 PM, Paul Moore wrote:
+>>> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> ..
+>
+>>>> +/*
+>>>> + * Data exported by the security modules
+>>>> + */
+>>>> +struct lsmblob {
+>>>> +    struct lsmblob_selinux selinux;
+>>>> +    struct lsmblob_smack smack;
+>>>> +    struct lsmblob_apparmor apparmor;
+>>>> +    struct lsmblob_bpf bpf;
+>>>> +    struct lsmblob_scaffold scaffold;
+>>>> +};
+>>> Warning, top shelf bikeshedding follows ...
+>> Not unexpected. :)
+>>
+>>> I believe that historically when we've talked about the "LSM blob" we've
+>>> usually been referring to the opaque buffers used to store LSM state that
+>>> we attach to a number of kernel structs using the `void *security` field.
+>>>
+>>> At least that is what I think of when I read "struct lsmblob", and I'd
+>>> like to get ahead of the potential confusion while we still can.
+>>>
+>>> Casey, I'm sure you're priority is simply getting this merged and you
+>>> likely care very little about the name (as long as it isn't too horrible),
+>> I would reject lsmlatefordinner out of hand.
+> Fair enough :)
+>
+>>> but what about "lsm_ref"?  Other ideas are most definitely welcome.
+>> I'm not a fan of the underscore, and ref seems to imply memory management.
+>> How about "struct lsmsecid", which is a nod to the past "u32 secid"?
+>> Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
+>> I could live with "struct lsmref", I suppose, although it pulls me toward
+>> "struct lsmreference", which is a bit long.
+> For what it's worth, I do agree that "ref" is annoyingly similar to a
+> reference counter, I don't love it here, but I'm having a hard time
+> coming up with something appropriate.
+>
+> I also tend to like the underscore, at least in the struct name, as it
+> matches well with the "lsm_ctx" struct we have as part of the UAPI.
+> When we use the struct name in function names, feel free to drop the
+> underscore, for example: "lsm_foo" -> "security_get_lsmfoo()".
+>
+> My first thought was for something like "lsmid" (ignoring the
+> underscore debate), but we already have the LSM_ID_XXX defines which
+> are something entirely different and I felt like we would be trading
+> one source of confusion for another.  There is a similar problem with
+> the LSM_ATTR_XXX defines.
+>
+> We also already have a "lsm_ctx" struct which sort of rules out
+> "lsmctx" for what are hopefully obvious reasons.
+>
+> I'd also like to avoid anything involving "secid" or "secctx" simply
+> because the whole point of this struct is to move past the idea of a
+> single integer or string representing all of the LSM properties for an
+> entity.
+>
+> I can understand "lsm_data", but that is more ambiguous than I would like.
+>
+> What about "lsm_prop" or "lsm_cred"?
 
-Applied to sched_ext/for-6.12.
+If we ever do the same sort of thing for the existing blobs we're
+going to need to have lsm_cred for the cred blob, so I shan't use
+it here. I can live with lsm_prop, which shouldn't confuse too many
+developers. We can start saying "property" in place of secid, which
+would be a good thing.
 
-Thanks.
-
--- 
-tejun
 
