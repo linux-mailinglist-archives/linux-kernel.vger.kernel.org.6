@@ -1,200 +1,119 @@
-Return-Path: <linux-kernel+bounces-315628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E92E96C51E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:18:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA24096C524
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13F61C21AEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:18:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA7B1F28E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57DF1E0B70;
-	Wed,  4 Sep 2024 17:17:34 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5BD1E0B8C;
+	Wed,  4 Sep 2024 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kXoHkyYr"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76C35473E;
-	Wed,  4 Sep 2024 17:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C1A4778C;
+	Wed,  4 Sep 2024 17:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470254; cv=none; b=T3+XvUR6hb7V8EcRlmZ9wlUUSAg+TzKSzK+omS8+8mecKczM9IcwhSk+xDGSvYEJ0jJKPz0AgUrgr7dwVniVoOSXRsYNthphqqGD8iDRXP4Xve/lvMWzHx0DZB3uzs56P9UEtLQ+mBhtEaiPuRJOVHyErofFP5hDI3MmQEKNnV0=
+	t=1725470310; cv=none; b=fAqk3CBdYA93OIx8aHB2vGA5srvZwyyI/v/a29isynGKnD6YBuba0X6fyP3V4ZJVD52cSWbF55qdVyyASBG3mMortZGYIxlRgDWvXADRoUFVC+k+nEb0mhKsIy2/0NhVH8BiPzR4deqGUeKmMQl9Vzvmo6fAnMJOBn4DCnqxAOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470254; c=relaxed/simple;
-	bh=X4/4PpYe9Wm0Hy9XexLX1Fk65/zF/vpp8G89yVAXhz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJEXVqw9Jv96/QTPTcwykB91RcaV4Ic/rxqVdEGTH7j1Kpe0FTQbjsoOtewAfzA77nwVa6k4p9e3s1f/ZIa4rhsewAWtlVDa26sOd1BFa1t9Y4uHEI8LfkBDoJZ74xi5IHdX3C9q0ekE8rRMFLYdL61Eukb9ubgIsqJ+IElUzPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzThB6wRTz9sST;
-	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 23q8UjPNxB-l; Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzThB5g1Yz9sSS;
-	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AC51E8B77A;
-	Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id paQV1BysDOD5; Wed,  4 Sep 2024 19:17:30 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C71548B778;
-	Wed,  4 Sep 2024 19:17:29 +0200 (CEST)
-Message-ID: <b78eab34-61f5-4c9e-b080-d2524cd30eb8@csgroup.eu>
-Date: Wed, 4 Sep 2024 19:17:29 +0200
+	s=arc-20240116; t=1725470310; c=relaxed/simple;
+	bh=E/E5JhbrfT57vP8uFB1keC/eE1gu7TCG6Aj5vvTUcKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MOElj/dW4/dwUGFOSSE9muRnpZ2KpcpGhCSkcnqdtxIe1qn5rWQxRpuDEQ1PPOFKoCG7wdKRaIbIVzUR3A+T67BgPjcP7QVjppeAbewoilo9NpiM3UBBWC8+kWB77V+tuQ36YQNgccAWtnRf5Z/RphAiyQIfcUs0u6mkw66tSrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kXoHkyYr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2EBB31BF207;
+	Wed,  4 Sep 2024 17:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725470305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b5GPOiRWglxmB+1s+UM7/QwT5TJ9jmKJ77MFU2A6G9o=;
+	b=kXoHkyYrjZc3bzBJ+Hy6K7klwuT/Yy3gwaBaKzoxSu8SEMgH3PI4RfnHb2Op3qodkVXA5I
+	Gc8FGaposZQHUKPcfVXS+27HpKH9AxXdFWzjeLP+MZmuCK9kyBtNzt4dvxsPIzoCTAbzI5
+	kyK7vc6GMRfH9q6gwAjyyoXCa+MCR/41W7h4qeJXTjBtd+JCuU6aEqC4l+zvJ1kujjHfu9
+	eb4Qp4gP30/KZcsCHtwk/k783BscSQ41mu7GDpAICndx736DJD0o+oUgVSJDVVl9oomadk
+	0sFVS0OomQxXutr91dQfPscDdjZaeFvFd3JtpJOH5ufW8eRQeE6vjsUFvWFv7Q==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH net-next v3 0/8] net: ethernet: fs_enet: Cleanup and phylink conversion
+Date: Wed,  4 Sep 2024 19:18:13 +0200
+Message-ID: <20240904171822.64652-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] vdso: Split linux/minmax.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-6-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240903151437.1002990-6-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hi everyone,
 
+This is V3 of a series that cleans-up fs_enet, with the ultimate goal of
+converting it to phylink (patch 8).
 
-Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
-> 
-> Split linux/minmax.h to make sure that the generic library
-> uses only the allowed namespace.
+The main changes compared to V2 are :
+ - Reviewed-by tags from Andrew were gathered
+ - Patch 5 now includes the removal of now unused includes, thanks
+   Andrew for spotting this
+ - Patch 4 is new, it reworks the adjust_link to move the spinlock
+   acquisition to a more suitable location. Although this dissapears in
+   the actual phylink port, it makes the phylink conversion clearer on
+   that point
+ - Patch 8 includes fixes in the tx_timeout cancellation, to prevent
+   taking rtnl twice when canceling a pending tx_timeout. Thanks Jakub
+   for spotting this.
 
-It is probably easier to just don't use min_t() in VDSO. Can be open 
-coded without impeeding readability.
+Link to V2: https://lore.kernel.org/netdev/20240829161531.610874-1-maxime.chevallier@bootlin.com/
+Link to V1: https://lore.kernel.org/netdev/20240828095103.132625-1-maxime.chevallier@bootlin.com/
 
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   include/linux/minmax.h | 28 +---------------------------
->   include/vdso/minmax.h  | 38 ++++++++++++++++++++++++++++++++++++++
->   2 files changed, 39 insertions(+), 27 deletions(-)
->   create mode 100644 include/vdso/minmax.h
-> 
-> diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-> index 98008dd92153..846e3fa65c96 100644
-> --- a/include/linux/minmax.h
-> +++ b/include/linux/minmax.h
-> @@ -6,6 +6,7 @@
->   #include <linux/compiler.h>
->   #include <linux/const.h>
->   #include <linux/types.h>
-> +#include <vdso/minmax.h>
->   
->   /*
->    * min()/max()/clamp() macros must accomplish three things:
-> @@ -84,17 +85,6 @@
->   #define __types_ok3(x,y,z,ux,uy,uz) \
->   	(__sign_use(x,ux) & __sign_use(y,uy) & __sign_use(z,uz))
->   
-> -#define __cmp_op_min <
-> -#define __cmp_op_max >
-> -
-> -#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
-> -
-> -#define __cmp_once_unique(op, type, x, y, ux, uy) \
-> -	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-> -
-> -#define __cmp_once(op, type, x, y) \
-> -	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-> -
->   #define __careful_cmp_once(op, x, y, ux, uy) ({		\
->   	__auto_type ux = (x); __auto_type uy = (y);	\
->   	BUILD_BUG_ON_MSG(!__types_ok(x,y,ux,uy),	\
-> @@ -204,22 +194,6 @@
->    * Or not use min/max/clamp at all, of course.
->    */
->   
-> -/**
-> - * min_t - return minimum of two values, using the specified type
-> - * @type: data type to use
-> - * @x: first value
-> - * @y: second value
-> - */
-> -#define min_t(type, x, y) __cmp_once(min, type, x, y)
-> -
-> -/**
-> - * max_t - return maximum of two values, using the specified type
-> - * @type: data type to use
-> - * @x: first value
-> - * @y: second value
-> - */
-> -#define max_t(type, x, y) __cmp_once(max, type, x, y)
-> -
->   /*
->    * Do not check the array parameter using __must_be_array().
->    * In the following legit use-case where the "array" passed is a simple pointer,
-> diff --git a/include/vdso/minmax.h b/include/vdso/minmax.h
-> new file mode 100644
-> index 000000000000..26724f34c513
-> --- /dev/null
-> +++ b/include/vdso/minmax.h
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_MINMAX_H
-> +#define __VDSO_MINMAX_H
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <linux/compiler.h>
-> +
-> +#define __cmp_op_min <
-> +#define __cmp_op_max >
-> +
-> +#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
-> +
-> +#define __cmp_once_unique(op, type, x, y, ux, uy) \
-> +	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-> +
-> +#define __cmp_once(op, type, x, y) \
-> +	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-> +
-> +/**
-> + * min_t - return minimum of two values, using the specified type
-> + * @type: data type to use
-> + * @x: first value
-> + * @y: second value
-> + */
-> +#define min_t(type, x, y) __cmp_once(min, type, x, y)
-> +
-> +/**
-> + * max_t - return maximum of two values, using the specified type
-> + * @type: data type to use
-> + * @x: first value
-> + * @y: second value
-> + */
-> +#define max_t(type, x, y) __cmp_once(max, type, x, y)
-> +
-> +#endif /* !__ASSEMBLY__ */
-> +
-> +#endif /* __VDSO_MINMAX_H */
+Maxime Chevallier (8):
+  net: ethernet: fs_enet: convert to SPDX
+  net: ethernet: fs_enet: cosmetic cleanups
+  net: ethernet: fs_enet: drop the .adjust_link custom fs_ops
+  net: ethernet: fs_enet: only protect the .restart() call in
+    .adjust_link
+  net: ethernet: fs_enet: drop unused phy_info and mii_if_info
+  net: ethernet: fs_enet: use macros for speed and duplex values
+  net: ethernet: fs_enet: simplify clock handling with devm accessors
+  net: ethernet: fs_enet: phylink conversion
+
+ .../net/ethernet/freescale/fs_enet/Kconfig    |   2 +-
+ .../ethernet/freescale/fs_enet/fs_enet-main.c | 444 ++++++++----------
+ .../net/ethernet/freescale/fs_enet/fs_enet.h  |  27 +-
+ .../net/ethernet/freescale/fs_enet/mac-fcc.c  |  17 +-
+ .../net/ethernet/freescale/fs_enet/mac-fec.c  |  15 +-
+ .../net/ethernet/freescale/fs_enet/mac-scc.c  |  11 +-
+ .../ethernet/freescale/fs_enet/mii-bitbang.c  |   5 +-
+ .../net/ethernet/freescale/fs_enet/mii-fec.c  |   5 +-
+ 8 files changed, 219 insertions(+), 307 deletions(-)
+
+-- 
+2.46.0
+
 
