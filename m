@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-315371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1207A96C1C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:09:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5600B96C1D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07281B22A35
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A691F23909
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EDF1DCB07;
-	Wed,  4 Sep 2024 15:07:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6272CDDCD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94D61DCB27;
+	Wed,  4 Sep 2024 15:10:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E820D55898
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462442; cv=none; b=sXCYMoLUPluxe1Oh2LgGfmBxV5n7WMWQMLevgrSv6RfkQQLEWAlos/En63Q9g7pwCTOFhNjU6ZSiO4PUNISjopSu1mUKp2N/g+gSyOfas1yoZdHHmbGujT2QlWWcL7h+DxzYkIVLjDybIi+qpG5Py0nGyz5YlP8608vJ20WxuCY=
+	t=1725462650; cv=none; b=IEtyZTmBR/pnJytyIXzxdq9vMU6yOMaBlxO49L5/whvzuepOMXXYy6u2Nz5CfeQEuQyj5jpARHKAFJe3VyHM59oBpiB6Olo4lQ92216+mMb3yKErgs18XE4nZMrWoT+H9AgFaQk9ki/iU9I05DbSv9NK/wy+6x9UBkCKTWuctP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462442; c=relaxed/simple;
-	bh=VC1zM/aX0T1GFC2qC5H4DS84+Tz6GAaLaLkOLyEfq7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qU4+A0jK8D0K2178PE5qOPxRuz1IrdioZvuqqN4d+G3Mk4xZHS97EYvgoYsZ0+jhTcCXm6wwklegz3n/wcuE0pD3Ay5Ahwix/DdGXvmM6hrEGal/ezeuTtNsQJav1Q+ncaA5UeiiAild8iOcSqiAw0qqVxkAyXQ65bkK2TUe+vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6C50FEC;
-	Wed,  4 Sep 2024 08:07:45 -0700 (PDT)
-Received: from [192.168.1.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 042A23F73F;
-	Wed,  4 Sep 2024 08:07:16 -0700 (PDT)
-Message-ID: <4b5a6038-3b1e-4983-814b-280938173a2d@arm.com>
-Date: Wed, 4 Sep 2024 17:07:15 +0200
+	s=arc-20240116; t=1725462650; c=relaxed/simple;
+	bh=Iu0nb6RTyrZkNvrkjSU5wjTALNRtvGB9NlsFVHRzYl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRA0lPCFWoPr27J4Tcq5NRKPb6/qZpiDyLLnE/nAx/GW5cmLirh2FMUHg5DaEoKRnA2g2SA3biO057xeKUsQFCQgdOHLHquEwbQxYi0Rba2/nGRcI4wJBZ5EIsbzBN04Y+ubw4ZYKo3XRl55Fen3zgmZES1ILbafVuviqW2mnn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slre8-0005tl-7h; Wed, 04 Sep 2024 17:10:12 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slre4-005TzF-TK; Wed, 04 Sep 2024 17:10:08 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6C417332A4A;
+	Wed, 04 Sep 2024 15:10:08 +0000 (UTC)
+Date: Wed, 4 Sep 2024 17:10:08 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
+	David Jander <david.jander@protonic.nl>, Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH can-next v5 00/20] can: rockchip_canfd: add support for
+ CAN-FD IP core found on Rockchip RK3568
+Message-ID: <20240904-imposing-determined-mayfly-ba6402-mkl@pengutronix.de>
+References: <20240904-rockchip-canfd-v5-0-8ae22bcb27cc@pengutronix.de>
+ <86274585.BzKH3j3Lxt@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] sched/fair: Rework feec() to use cost instead of
- spare capacity
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
- linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-4-vincent.guittot@linaro.org>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <20240830130309.2141697-4-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="izku447zxf4ptlhk"
+Content-Disposition: inline
+In-Reply-To: <86274585.BzKH3j3Lxt@diego>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--izku447zxf4ptlhk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/30/24 15:03, Vincent Guittot wrote:
-> feec() looks for the CPU with highest spare capacity in a PD assuming that
-> it will be the best CPU from a energy efficiency PoV because it will
-> require the smallest increase of OPP. Although this is true generally
-> speaking, this policy also filters some others CPUs which will be as
-> efficients because of using the same OPP.
-> In fact, we really care about the cost of the new OPP that will be
-> selected to handle the waking task. In many cases, several CPUs will end
-> up selecting the same OPP and as a result using the same energy cost. In
-> these cases, we can use other metrics to select the best CPU for the same
-> energy cost.
-> 
-> Rework feec() to look 1st for the lowest cost in a PD and then the most
-> performant CPU between CPUs.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
->   1 file changed, 244 insertions(+), 222 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e67d6029b269..2273eecf6086 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> -/*
-> - * compute_energy(): Use the Energy Model to estimate the energy that @pd would
-> - * consume for a given utilization landscape @eenv. When @dst_cpu < 0, the task
-> - * contribution is ignored.
-> - */
-> -static inline unsigned long
-> -compute_energy(struct energy_env *eenv, struct perf_domain *pd,
-> -	       struct cpumask *pd_cpus, struct task_struct *p, int dst_cpu)
-> +/*Check if the CPU can handle the waking task */
-> +static int check_cpu_with_task(struct task_struct *p, int cpu)
->   {
-> -	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
-> -	unsigned long busy_time = eenv->pd_busy_time;
-> -	unsigned long energy;
-> +	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
-> +	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
-> +	unsigned long util_min = p_util_min;
-> +	unsigned long util_max = p_util_max;
-> +	unsigned long util = cpu_util(cpu, p, cpu, 0);
-> +	struct rq *rq = cpu_rq(cpu);
->   
-> -	if (dst_cpu >= 0)
-> -		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
-> +	/*
-> +	 * Skip CPUs that cannot satisfy the capacity request.
-> +	 * IOW, placing the task there would make the CPU
-> +	 * overutilized. Take uclamp into account to see how
-> +	 * much capacity we can get out of the CPU; this is
-> +	 * aligned with sched_cpu_util().
-> +	 */
-> +	if (uclamp_is_used() && !uclamp_rq_is_idle(rq)) {
-> +		unsigned long rq_util_min, rq_util_max;
-> +		/*
-> +		 * Open code uclamp_rq_util_with() except for
-> +		 * the clamp() part. I.e.: apply max aggregation
-> +		 * only. util_fits_cpu() logic requires to
-> +		 * operate on non clamped util but must use the
-> +		 * max-aggregated uclamp_{min, max}.
-> +		 */
-> +		rq_util_min = uclamp_rq_get(rq, UCLAMP_MIN);
-> +		rq_util_max = uclamp_rq_get(rq, UCLAMP_MAX);
-> +		util_min = max(rq_util_min, p_util_min);
-> +		util_max = max(rq_util_max, p_util_max);
-> +	}
-> +	return util_fits_cpu(util, util_min, util_max, cpu);
-> +}
->   
-> -	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
+On 04.09.2024 10:55:21, Heiko St=C3=BCbner wrote:
+[...]
+> How/when are you planning on applying stuff?
+>=20
+> I.e. if you're going to apply things still for 6.12, you could simply take
+> the whole series if the dts patches still apply to your tree ;-)
 
-I think em_cpu_energy() would need to be removed with this patch,
-if there are no more references to it.
+The DTS changes should not go via any driver subsystem upstream, so
+here's a dedicated PR:
 
+https://patch.msgid.link/20240904-rk3568-canfd-v1-0-73bda5fb4e03@pengutroni=
+x.de
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--izku447zxf4ptlhk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbYeE0ACgkQKDiiPnot
+vG/NCggAhHZEOGnOwc1rPZrwVIaf2Vk/TKCuDRfTsGiUyyxbdDW+wuoYfftH2EBc
+oHFMu3yMYRK83BqZJkyoXOoqdJaxbYnn5Km4uAx6/6mZBRDVecl+NzZajLFOd8Zr
+4jAn4NyJobWCkbYqTUF10RKpQXPOMqvP3DmZ0Mo+6Z1fSYRKKCYUXXBkQ/nOyo+7
+Kk4ZhppEJA5EPKCn8uflLkypS/y9VqAY22LhIX3t/PlJKU1/H2wuHxOZxsMSac+x
++VZEdQPeqCYzmkZH0Fab6GLhBWQJcRpubtTMFm28J/DjSg3RI+SiOuQjLgwsjIAu
+JdlEyGYVRhVLmtPifpYaHUK1YMdLkA==
+=o39j
+-----END PGP SIGNATURE-----
+
+--izku447zxf4ptlhk--
 
