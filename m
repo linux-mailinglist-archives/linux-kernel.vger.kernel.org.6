@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-314994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D1C96BBDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:19:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A3696BBE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2DB1F26405
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D6F288411
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4470A1D9330;
-	Wed,  4 Sep 2024 12:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2061D88BB;
+	Wed,  4 Sep 2024 12:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H1H4sKvM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="fapWj3os"
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3C1D79B7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41031D4175;
+	Wed,  4 Sep 2024 12:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452315; cv=none; b=Xt+PQKC1lvoLnAXNHpU10Iggs46wzMBVvNspw/+3w+CNBldWdDFhXkzmV0pska9WGVX5Io0t4HmR+ZU3F6wk9R11qlJRBiDAqWWAeS5iMP40PlUnpBD0zEUzoPKDzJyqonYZ+KfqOV1b5D1mtCXICn0kmNedySWV4mzM48K/7UQ=
+	t=1725452408; cv=none; b=prekScTBgCkhn8KQOZzGM84sJKI+XCbgUvzfboAtjMU0L5sb3GwfZ8nBjubaAI6og2uHkA85WM/r1FlG4tD00dtlh2vBHeaYxV/c7dQnuT0dTjTLei5maa9vhzlMRDNKcKpQHBfZxQ8OdmXgRYstouppi3pUsKDLJRBDJ2WLnqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452315; c=relaxed/simple;
-	bh=aDfOCfO2pRprM4ipOkB4bYUPfKw3QrJjVh9Hmr4gZGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=juvTMafx3ZMDhYYcN16y93Z01cRePcPp9SLd4g1W5THmqMBx+H7i9IrOt85rydOU0xttp+gWxZjvYPOqnz2o+SEA6htN3k64ydnPDyevmXdUNEaNeYdGKK1BO/GaqF7Ug1SfWvL74d9ZvWh3CVLJyJI85rHGMaoPwXUZcFTYg2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H1H4sKvM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725452312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ff0y4X+QVhf0p/VEjOvJFSOlimmYM5QTv85PADhlasE=;
-	b=H1H4sKvMqFB4fcIV38aTvch2MGJ56EE4CQENI/83Bwzy348kYHT+FB1RtlSKR2iqAiTLdj
-	11cnbjEiCMeTlGbPW+YveDtbuXHLrTfGQRT13fzXf2MJhtQHa+bXrja4uv/eG+IEUbEQk6
-	Y9oR2/dyK3YrOh0wGneI5BSnYzV2obQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-aWGYhaXKNGibeVw4T7qyNQ-1; Wed, 04 Sep 2024 08:18:29 -0400
-X-MC-Unique: aWGYhaXKNGibeVw4T7qyNQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42bbf928882so45464535e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:18:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725452308; x=1726057108;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ff0y4X+QVhf0p/VEjOvJFSOlimmYM5QTv85PADhlasE=;
-        b=jF2Ctx52jiR3nCRnCtnVpUQoCyv1fNlNmcITxLbzx9Qb+Tg8tmVSC3FOWCUEpWyHbt
-         EJLYmbFGlG8qc/cM5WnLsQVs2ZHfT9bSUPHKJY+Bd7ydKB9voO3zBurrvC71yV+ohrkw
-         gmibjxr3r+7kNquX9UVZPUW7YCRUuULMa5oUVIgqufEhEGulqwlEQp5V3osmE43FW/JL
-         KzVAVPc4hi8kiZ11aPALtOOANT5EXDJvSNYKojqURpxIIlZnZEU7zph2f5Wf/+CaygQt
-         BWp4Hhuxqz6DMVc8PV4k69TJk2AIBvZNi0pqR1BuV5W4ySFVgP36sPfMZykQi/6zM5E0
-         zqOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrE58nBHO3iEgGF1qQY5/JGWn2NCvhTRd++lY8+cyrVctUJePNarQMYuLFuMfAun7Iu6VZaWLpCChE8Cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw/FDG8hYqr9qhVNvzbe8rc69hL0bsH1GrsR43PxajhJgJCQlT
-	6xRC00fHudeZy+Z8V88E7BnFOlvo8/UNbf7uZS57i1gahBarIGMpYiHP4omhSi21E0x/Qw6ECDH
-	a6tf46mKm81b3JQgI4G+fVqN/FOohn3W0+rGVJXLiZoC8SBR6Fj0Vpl9NVvIJxw==
-X-Received: by 2002:a5d:5484:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-376dd15a9c0mr2962478f8f.19.1725452308149;
-        Wed, 04 Sep 2024 05:18:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFM58SacVW6qB3OGbwInnBlOw+x1XdCaBLKOjGAVJ7DXNTIXZ7mf0D4cAdkVzP6Q8BUhRUNrQ==
-X-Received: by 2002:a5d:5484:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-376dd15a9c0mr2962449f8f.19.1725452307586;
-        Wed, 04 Sep 2024 05:18:27 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ba30d5b8sm13069521f8f.15.2024.09.04.05.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 05:18:27 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
- neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com, skhan@linuxfoundation.org,
- rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel test
- robot <lkp@intel.com>
-Subject: Re: [PATCH v2] drm/panel: hx83112a: Transition to wrapped mipi_dsi
- functions
-In-Reply-To: <20240903173130.41784-1-abhishektamboli9@gmail.com>
-References: <20240903173130.41784-1-abhishektamboli9@gmail.com>
-Date: Wed, 04 Sep 2024 14:18:26 +0200
-Message-ID: <87v7zbboj1.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1725452408; c=relaxed/simple;
+	bh=BzSR+iF80WBX+uueKwT7tQdRcX9cS6wGP+R5wlC6WBI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=oWFrtncrGCpQHkNrWvnJYQTd1HzOGawXo/1R5ofImvax2k6T4qCTURFsj7x8JBZQd25E4FUwSaKgTLplN5uB1Ypjx/MfpU/0NzuaC+7Z186Hr9W4B8urbh6L1QZqaJ+SaWQj/Gkc2w9w3ND5Uf4aFR1co8vJqK92Aq7C3Q1sFc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=fapWj3os; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1725452396;
+	bh=mD6Sm4uUq8ujV/RDO5ndOtiCjedlBdoHLSnc4vE9J64=;
+	h=From:To:Cc:Subject:Date;
+	b=fapWj3osGaeAAuxVZqzmosZWl9pZ6YWpzDoTFV829xnvynRIJvW0y9DrrnZCfWu7P
+	 SYU18D+XMhV9oCErPrGKyJu95B1s5f9kKyb5qxguOBjq2tYvDBGMCKK6nC6dAX1MIz
+	 eM9mSpnM3qUNUdPK/NBIvPNoVgEgKHG1SGIS9e8w=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 4AB12AD4; Wed, 04 Sep 2024 20:18:43 +0800
+X-QQ-mid: xmsmtpt1725452323t1inlzbgz
+Message-ID: <tencent_DE4D2D0FE82F3CA9294AEEB3A949A44F6008@qq.com>
+X-QQ-XMAILINFO: MmpliBmRb3iCZG+tszeXk1rzRTEAY7Bed4qo4m+KlRYfIVoyBGpwOVX4mO77ZY
+	 b+Xqy7SLZGWfrwnRHtOZNdCwN0OniQ7xIFUh/h7DIjjwpabvomfISJlDDVQNTPZMEgs5X9jDXHVt
+	 EI6aJ0+4YZKMbbgGdZLsivYIdrX6Ntu+8P/CvzP+jBaUBDvJXQ6RbfvFbQuSFD5K5vztokPsFVvP
+	 rJx/qdevWPaI1vUP+yng0vTrlBElocp2DV3z/X3ur7ydURKBzJ2kyPsTX07Fn4Y6UmMi2Bo3scwg
+	 qoz/FupAX3gyrTLU7nfmAO+aqaZotXR8XUH0s3hv0dhPwm0vfvxMbDrEVPqZTsp9+NFSN5pDCJnR
+	 3fFSkfTi3nOaz3ovfcIrnFxXkEqsx0FQkgO4wCNSf48uT9Lel2SfYoo+3QYtnYBewEbzesiQxOVN
+	 VtY2RuwN4zCB/IqS7m5FFsWGTi7gC0OFydSJYTtxFuB2r0nC0ak9tVTG0TcEAzHI9vE9I2MIoG4k
+	 7jylnykNoETtb3+CTTCoQ6oeMkdb0WuqXpDefxtGJVbl6fCn915yRD1qYi52rsJYLRMNSr15L3/2
+	 /qS4sZ5a8X4HdrN0YhSCLrFakVTx9PkZp0Z/+i32jcy2p4eOMHKbCITYZaFg3b0ZL3SUXSJszdl9
+	 yJtMYM1jzGtNr2hnYTgvOFNbZc4AvB/IANS21jaYztmeeCizsRnel5+qSDayX/2HAHCFdSzZ/Wq4
+	 w3YCvqoEgYv1tc1vIaS+GAScGfAtixgoAToaMdNassMj3OBVNWq9h8IDspXkO/279ix7+zdDL443
+	 M4X2oCQvv35/uBifzzqsw3GadbkipXnQISvF+3fN1Iz3I6A8NvvNlDHN+2MGfSMrZbtbxAcce4dd
+	 WmNz9LbIGPB+rIbG02VImw0wrspwCZ7wuYbw+LU7ZTdk3n4KWjgTuKgN/R9QZ4gZFN2yF1XijfMK
+	 iDKB+CW4LYhfKP1VsnoDgJmhLJr45tN4wEm/Pc2lm7/+DdIbdmfmcU0HKwHOYcGQvGoNEDEWyKme
+	 Rs4Y83ST+9oJMc2RwDahIs3S/buMKkJXxGUTYMEalA8PGxdi27g9gagYQ6PS8=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: pablo@netfilter.org,
+	kadlec@netfilter.org,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	fw@strlen.de
+Cc: netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] netfilter: tproxy: Add RCU protection in nf_tproxy_laddr4
+Date: Wed,  4 Sep 2024 12:18:42 +0000
+X-OQ-MSGID: <20240904121842.981264-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Abhishek Tamboli <abhishektamboli9@gmail.com> writes:
+In the `nf_tproxy_laddr4` function, both the `__in_dev_get_rcu()` call
+and the `in_dev_for_each_ifa_rcu()` macro are used to access
+RCU-protected data structures. Previously, these accesses were not
+enclosed within an RCU read-side critical section, which violates RCU
+usage rules and can lead to race conditions, data inconsistencies, and
+memory corruption issues.
 
-Hello Abhishek,
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-> Transition to mipi_dsi_dcs_write_seq_multi() macros for initialization
-> sequences. The previous mipi_dsi_dcs_write_seq() macros were
-> non-intuitive and use other wrapped MIPI DSI functions in the
-> driver code to simplify the code pattern.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202409040049.2hf8jrZG-lkp@intel.com/
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
-> Changes in v2:
-> - Update the commit message to explain the reason for the change.
+To address this, `rcu_read_lock()` and `rcu_read_unlock()` are added
+around the RCU-protected operations in the `nf_tproxy_laddr4` function by
+acquiring the RCU read lock before calling `__in_dev_get_rcu()` and
+iterating with `in_dev_for_each_ifa_rcu()`. This change prevents
+potential RCU issues and adheres to proper RCU usage patterns.
 
-Thanks for improving the commit message. The change looks good to me.
+Fixes: b8d19572367b ("netfilter: use in_dev_for_each_ifa_rcu")
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+---
+ net/ipv4/netfilter/nf_tproxy_ipv4.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Acked-by: Javier Martinez Canillas <javierm@redhat.com>
-
+diff --git a/net/ipv4/netfilter/nf_tproxy_ipv4.c b/net/ipv4/netfilter/nf_tproxy_ipv4.c
+index 73e66a088e25..51ff9c337e71 100644
+--- a/net/ipv4/netfilter/nf_tproxy_ipv4.c
++++ b/net/ipv4/netfilter/nf_tproxy_ipv4.c
+@@ -57,8 +57,10 @@ __be32 nf_tproxy_laddr4(struct sk_buff *skb, __be32 user_laddr, __be32 daddr)
+ 		return user_laddr;
+ 
+ 	laddr = 0;
++	rcu_read_lock();
+ 	indev = __in_dev_get_rcu(skb->dev);
+ 	if (!indev)
++		rcu_read_unlock();
+ 		return daddr;
+ 
+ 	in_dev_for_each_ifa_rcu(ifa, indev) {
+@@ -68,6 +70,7 @@ __be32 nf_tproxy_laddr4(struct sk_buff *skb, __be32 user_laddr, __be32 daddr)
+ 		laddr = ifa->ifa_local;
+ 		break;
+ 	}
++	rcu_read_unlock();
+ 
+ 	return laddr ? laddr : daddr;
+ }
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.34.1
 
 
