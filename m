@@ -1,172 +1,168 @@
-Return-Path: <linux-kernel+bounces-314696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1B296B702
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:39:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4AA96B74A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF24287EB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96627B27EB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58D51CEEA9;
-	Wed,  4 Sep 2024 09:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83271CEE86;
+	Wed,  4 Sep 2024 09:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIEaRZP1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ibhhi6aX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAEA145B35;
-	Wed,  4 Sep 2024 09:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6D01EC008
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442767; cv=none; b=Aj2RVPZcDxWNNiqzFuCy8izAV8fKYufwQAgOuQQDN2God8rwtTjVQQhsnx3gTUqDyfNWMPIyT1/5uG9hs+hyW+bON01rqnT//3WRzIoGjxxaV8kilBsyCUQC6wZYdSA/zQW4tAwszTsaMvVRetoAtaiJSui1p2dRUFw/zukLoQE=
+	t=1725442800; cv=none; b=oB1IY5LC1Gh0GnP7+2gqfTZO7H/ip0GI28YgyGcnc7v2FUHMXyrGzILwcxSDsFnyIN7zQUtEZISC05Nugbg52xpnPXbcHJhGlUYPw2TQgaz7/mz63crFeBrHEjFcNRz4j2Wtt+CcsNOgzOwJCpixiQWU6grOwR6Pi7ndQz0yES4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442767; c=relaxed/simple;
-	bh=KYJzv/JgvF+3JCuKxVNSBMqfNqctJKRJIYxK6Z9pzek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jH9q44xduCetRK3PRiphzlpmZvJXhqsmvcG8G5moOooV1ZGb/un1TWy4PU/QPsAQpkxNXf2+CDGaxtlyuMVIY1xfBrkqJ26SkBBVY6fdv+Jg4ecwHYBwSCrrcIjmUW6SmRPwYL9kmwsUWNULYiFTUILqJGBYAFcb1Z3s83Df6i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIEaRZP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B04C4CEC6;
-	Wed,  4 Sep 2024 09:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725442766;
-	bh=KYJzv/JgvF+3JCuKxVNSBMqfNqctJKRJIYxK6Z9pzek=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fIEaRZP1IZ5ZNKKaO5mjiWzy4/1MuwpOV8O761wu/XbQu8rAmK7KUXx+pBWdFbPbe
-	 5fMsVH2rpZc1cF1K2G7XXLoSM7AfkKcrV8klWur6EkKUc7bYUep0fjyRB+B37ZvoVo
-	 hydyFJPpc6YIBSs8MaQKva8MIBM9KjF7ItvyUOth41eBaVe3bXW/dEItJoOvuVtjPo
-	 Nhh2mIlIbQ0KwDh+l1wy7+Dlquwk7pjG7cIB3zQOc/gxbV4pzc6ppAit1PBQjK2khT
-	 rfcpBSSeiJyACV5jN50LD8D6qrQXPjibmBZNgK/nWUNK2P5tjM5DaP0AO0m1//leh4
-	 NWDdneF19HQaA==
-Message-ID: <851566fe-4802-41c7-bb35-d6d1e9cf9bdf@kernel.org>
-Date: Wed, 4 Sep 2024 11:39:13 +0200
+	s=arc-20240116; t=1725442800; c=relaxed/simple;
+	bh=BrIwzAIyfCZk/juxHhZ+m7U4Kfgm9cdIXvoqtr3prmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzB497fgvujxBVkVjK29nElqH7DJu/Ple4Vi7Dr7k878fwitwjsuecKzTvFXf2LwKn2OcytAg0XSnRVdRWVcgOFjqkNxIFU/8+GmI33rKW15MhRrZLC2gzBZ/2nXhVql9FSVdRQgoxWpiHaBtuM8X/DjzQftTtha/wF829Codjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ibhhi6aX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725442797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7W9oltKFXttPL8GJSRJ98yRABp613Ij+tZra8U77GSo=;
+	b=Ibhhi6aX35fsDVIWJlRDwRY/l/SZDGVTj1o1qk9lz3TJtnv2y9+tE2BtahL1TvpNSnZ9SN
+	9kNtOhvWc1i3/Py2lRnMDwLgL14zUdilTXbKWI1ubcPSm4GwH3JLokgaRlnJPlwUD1DzSd
+	1FifXc3bYISGnkR0AGba1voB1jIQlOE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-oxcLcZgzPCyf0KdeXNAYhA-1; Wed,
+ 04 Sep 2024 05:39:54 -0400
+X-MC-Unique: oxcLcZgzPCyf0KdeXNAYhA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71D2A195608B;
+	Wed,  4 Sep 2024 09:39:51 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.45.224.188])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6D00A19560AA;
+	Wed,  4 Sep 2024 09:39:44 +0000 (UTC)
+From: Michal Schmidt <mschmidt@redhat.com>
+To: Wojciech Drewek <wojciech.drewek@intel.com>,
+	Marcin Szycik <marcin.szycik@intel.com>,
+	Timothy Miskell <timothy.miskell@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Daniel Machon <daniel.machon@microchip.com>
+Cc: Petr Oros <poros@redhat.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH iwl-net v2] ice: fix VSI lists confusion when adding VLANs
+Date: Wed,  4 Sep 2024 11:39:22 +0200
+Message-ID: <20240904093924.24368-1-mschmidt@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/19] arm64: defconfig: enable clock controller,
- interconnect and pinctrl for QCS8300
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
- <20240904-qcs8300_initial_dtsi-v1-17-d0ea9afdc007@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-17-d0ea9afdc007@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 04/09/2024 10:33, Jingyi Wang wrote:
-> Enable clock controller, interrconnect and pinctrl for QCS8300.
+The description of function ice_find_vsi_list_entry says:
+  Search VSI list map with VSI count 1
 
-NXP QCS8300? What is QCS8300? Which products use it? That's a defconfig
-for entire kernel, not your Qualcomm one.
+However, since the blamed commit (see Fixes below), the function no
+longer checks vsi_count. This causes a problem in ice_add_vlan_internal,
+where the decision to share VSI lists between filter rules relies on the
+vsi_count of the found existing VSI list being 1.
 
-> It needs to be built-in for UART to provide a console.
-> 
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 81ca46e3ab4b..a9ba6b25a0ed 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -606,6 +606,7 @@ CONFIG_PINCTRL_MSM8996=y
->  CONFIG_PINCTRL_MSM8998=y
->  CONFIG_PINCTRL_QCM2290=y
->  CONFIG_PINCTRL_QCS404=y
-> +CONFIG_PINCTRL_QCS8300=y
->  CONFIG_PINCTRL_QDF2XXX=y
->  CONFIG_PINCTRL_QDU1000=y
->  CONFIG_PINCTRL_SA8775P=y
-> @@ -1317,6 +1318,7 @@ CONFIG_MSM_MMCC_8998=m
->  CONFIG_QCM_GCC_2290=y
->  CONFIG_QCM_DISPCC_2290=m
->  CONFIG_QCS_GCC_404=y
-> +CONFIG_QCS_GCC_8300=y
->  CONFIG_QDU_GCC_1000=y
->  CONFIG_SC_CAMCC_8280XP=m
->  CONFIG_SC_DISPCC_7280=m
-> @@ -1618,6 +1620,7 @@ CONFIG_INTERCONNECT_QCOM_MSM8996=y
->  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
->  CONFIG_INTERCONNECT_QCOM_QCM2290=y
->  CONFIG_INTERCONNECT_QCOM_QCS404=m
-> +CONFIG_INTERCONNECT_QCOM_QCS8300=y
+The reproducing steps:
+1. Have a PF and two VFs.
+   There will be a filter rule for VLAN 0, referring to a VSI list
+   containing VSIs: 0 (PF), 2 (VF#0), 3 (VF#1).
+2. Add VLAN 1234 to VF#0.
+   ice will make the wrong decision to share the VSI list with the new
+   rule. The wrong behavior may not be immediately apparent, but it can
+   be observed with debug prints.
+3. Add VLAN 1234 to VF#1.
+   ice will unshare the VSI list for the VLAN 1234 rule. Due to the
+   earlier bad decision, the newly created VSI list will contain
+   VSIs 0 (PF) and 3 (VF#1), instead of expected 2 (VF#0) and 3 (VF#1).
+4. Try pinging a network peer over the VLAN interface on VF#0.
+   This fails.
 
-Why this cannot be a module?
+Reproducer script at:
+https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/test-vlan-vsi-list-confusion.sh
+Commented debug trace:
+https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/ice-vlan-vsi-lists-debug.txt
+Patch adding the debug prints:
+https://gitlab.com/mschmidt2/linux/-/commit/f8a8814623944a45091a77c6094c40bfe726bfdb
+(Unsafe, by the way. Lacks rule_lock when dumping in ice_remove_vlan.)
 
+Michal Swiatkowski added to the explanation that the bug is caused by
+reusing a VSI list created for VLAN 0. All created VFs' VSIs are added
+to VLAN 0 filter. When a non-zero VLAN is created on a VF which is already
+in VLAN 0 (normal case), the VSI list from VLAN 0 is reused.
+It leads to a problem because all VFs (VSIs to be specific) that are
+subscribed to VLAN 0 will now receive a new VLAN tag traffic. This is
+one bug, another is the bug described above. Removing filters from
+one VF will remove VLAN filter from the previous VF. It happens a VF is
+reset. Example:
+- creation of 3 VFs
+- we have VSI list (used for VLAN 0) [0 (pf), 2 (vf1), 3 (vf2), 4 (vf3)]
+- we are adding VLAN 100 on VF1, we are reusing the previous list
+  because 2 is there
+- VLAN traffic works fine, but VLAN 100 tagged traffic can be received
+  on all VSIs from the list (for example broadcast or unicast)
+- trust is turning on on VF2, VF2 is resetting, all filters from VF2 are
+  removed; the VLAN 100 filter is also removed because 3 is on the list
+- VLAN traffic to VF1 isn't working anymore, there is a need to recreate
+  VLAN interface to readd VLAN filter
 
+One thing I'm not certain about is the implications for the LAG feature,
+which is another caller of ice_find_vsi_list_entry. I don't have a
+LAG-capable card at hand to test.
 
-Best regards,
-Krzysztof
+Fixes: 23ccae5ce15f ("ice: changes to the interface with the HW and FW for SRIOV_VF+LAG")
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+---
+v2: Corrected the Fixes commit ID (the ID in v1 was of a centos-stream-9
+    backport accidentally).
+    Added the extended explanation from Michal Swiatkowski.
+    Fixed some typos.
+---
+ drivers/net/ethernet/intel/ice/ice_switch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
+index fe8847184cb1..4e6e7af962bd 100644
+--- a/drivers/net/ethernet/intel/ice/ice_switch.c
++++ b/drivers/net/ethernet/intel/ice/ice_switch.c
+@@ -3264,7 +3264,7 @@ ice_find_vsi_list_entry(struct ice_hw *hw, u8 recp_id, u16 vsi_handle,
+ 
+ 	list_head = &sw->recp_list[recp_id].filt_rules;
+ 	list_for_each_entry(list_itr, list_head, list_entry) {
+-		if (list_itr->vsi_list_info) {
++		if (list_itr->vsi_count == 1 && list_itr->vsi_list_info) {
+ 			map_info = list_itr->vsi_list_info;
+ 			if (test_bit(vsi_handle, map_info->vsi_map)) {
+ 				*vsi_list_id = map_info->vsi_list_id;
+-- 
+2.45.2
 
 
