@@ -1,157 +1,184 @@
-Return-Path: <linux-kernel+bounces-316037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A598296CA3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:24:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0D296CA73
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA62B1C25248
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26461C22719
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD58188A32;
-	Wed,  4 Sep 2024 22:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DAB17D8A6;
+	Wed,  4 Sep 2024 22:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3IUX93i5"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jafjgz/d"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A18188A10
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 22:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B20F17B4E5;
+	Wed,  4 Sep 2024 22:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725488584; cv=none; b=kZwpYVmvUb1D+t6xrF5Nykmu/TsrOZv+hoka8Tq8jZsdnTNj4K/40ODc/SzOFBgO8n3xlNi/1yhzP+Jh6n3jklMaV518DijWGjYTHYKnWZfTszvP3/i6CylpVO+yRZHPTd9Cy5Xlp50uLkguGjLuUqY4IdryOQ1/ixBrnjNcn6A=
+	t=1725488925; cv=none; b=IqlW4oXwlkkFyo7seq2PuhehMuY7lCdo8uYrSFYTo5bi7egHKvT3Is6SKXFdbap5+iNVXRVKkOrLcIjIlfv6Di2dMLLNtjAM3051yQW8C+CWlnPWtzcdnNzKY8OBvHdi82V3wji3EUyr+bSJU9IddszezmOCIglsCrKP6pZ5lH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725488584; c=relaxed/simple;
-	bh=s5xmMC/cnwws6ZlQFHDlWeIFR1CUFKwSJ6PBP2ziMGM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LL43pvQU5d5yEJt7ro9/03jLvh3vaB7aj0zXjKUUy0/GHv/o1vgobYDUoCKLVI6RLpwoMDyuElVn7xSdim2fEtZ+leCxzcox1CLe92ZGD4NNKiCLDd/RvKQxrloxbcmD58yuDj8JoLlNIkWYqyXWoP5Jrp624Supzig/KmDqrro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3IUX93i5; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d3e062dbeeso3387647b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 15:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725488581; x=1726093381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4IcbwmmlOLf0klhujBPied779n3Fl3qlNEilivTVgvc=;
-        b=3IUX93i5i+b7svnPiNBtELHyIjur0EeB9FfJJ+lx4JvK4+cKup2TVoeTah6EUk3Pju
-         Ofb2TULlJCe7TbT/QQzNIwKzYvYesOPE+L4CXwnQY23kv2kDk1dAV6CbeMxRqDnstmAc
-         olAd8GtyJDdjZDvi8KvbFg5b8VfX16bkOvq0E2jVc1nNKLqeKJqcNVarnAiSHkf3yfab
-         v+VPVJ6/M/kIciqc+SzQa37JbPC0GUiZCAmzVrPAFHbFGfMHSWxnZwSYB9FED/PgglUi
-         +8H+lglcv2HdVer8ecTC3pD5CoLOq23GOlYDsMLJrQKeeCcjv0SNipuhJqi6bFrXaPo8
-         NkOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725488581; x=1726093381;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4IcbwmmlOLf0klhujBPied779n3Fl3qlNEilivTVgvc=;
-        b=FWPlF2/lTP+mSSaagLS3Jniuxra14G7E05WqRPB/qmEQfJ7kGs0DcbA2ez/K746QR1
-         7lHMvqRNRRC4NMHo1Ohetv8E5af82BTqcO8nIepCte6RhPME48jJ1tj2cBb0rcvCnYIl
-         /XtSSibo3Prcf+iQJso5+Y+VZv4O4fo9L40nRUfQ430CXmCymXk7qNFvbonoFH9mBh3w
-         gvM0Yw1mcTnPipw2sdgZXfzXVRSlYpRsMOpoQIilvCqDUY1Iihl/9cmZ5RLFTsZuTCAw
-         VyiISMa+uK9vL+6tkm+nFKoiL+I/KPRykmnSTayNzXqZGiS+NxpzBv5xRq1l0CxGpb+A
-         VHug==
-X-Forwarded-Encrypted: i=1; AJvYcCWIECiXY/XW2Gz6zFqh7IA1DJXVJnv4rdhD99QCiYmprVDsTcAayMGoQ6kni7SrhLsYQkQkN1WA5HfTIhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8QhhhKuv61fLpNLX/RirzClg3wZgX4Vekpwzwis9x4Y/iK7k+
-	dsf+wDYswqhRCGyUZ5kNzxqFGAE1/Hwti277/9lALgOEYNMnkpyKKkAFBzTO2mbDBV+WgmJZZvZ
-	6vQ==
-X-Google-Smtp-Source: AGHT+IGYeTai88fqs4PTMdPKSg8MaUYgkkisjxloKq27r7jXpBOr3zwINpKcQRS2VjU6U9JC53KdXYeYceY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2009:b0:6be:523:af53 with SMTP id
- 00721157ae682-6db26026aaamr1583987b3.3.1725488581437; Wed, 04 Sep 2024
- 15:23:01 -0700 (PDT)
-Date: Wed, 4 Sep 2024 15:23:00 -0700
-In-Reply-To: <c24deb49-4369-4dcf-bb71-3160f2466ac3@amd.com>
+	s=arc-20240116; t=1725488925; c=relaxed/simple;
+	bh=rkuS0CNBwRkRGF+lfyerI7rntJEW3arkWBmA4TUMIcg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cLgPdCooNlP13AJYZ3QwvNo8JSt2ZZKVEL1G97vvoNxUpVbM8R/cigJot2k5K3kzyvlo6x18ypFQhSt82GG3jrxp5iKd4OzqIsjyvDSBme/PIXSFPA6Zd8vjf1pwERfn/n70YS4MGOSMPeY3f4TyDXBD4Eb7WCjkvEtsgP9eDYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jafjgz/d; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KSjAivHlg5cFDajG1oCwI0Dhjh9+yTX2k4XmuHn6kME=; b=jafjgz/dLo82epmN2dJPeOiiG2
+	S9q6xwR+XDVUJAQoJ87qvKHMUjIEm5BDmnQc/YkzJP9/UK7FEH7EpbsI7i/Og36lPlL8x9VVC5PoZ
+	25Jp+BBDYwTkkip9tOAov17p3TmijF66rH0kipfw/1ioGR0MD7xCCSx2kHHXdbtsURt4kv8ZO5q02
+	KiyI+RVd0BDewsoyhHsErN99jwRwB1KhLaIb7+M2NEHeHZT5pOWf7dpt5RQMpjS47SFS1QelI0W1V
+	dpJy4avtnYK2KJSuWt4oO/5Iyvruh7XOuLbn+F+MabcxJ1wGjjBZ1KdjSUt5zigJaE7FzF+QS6r2r
+	EaG/x3WA==;
+Received: from [177.172.122.98] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1slyUB-009gve-2F; Thu, 05 Sep 2024 00:28:22 +0200
+Message-ID: <500ff1ba-d8db-4f4d-9084-6d59401992da@igalia.com>
+Date: Wed, 4 Sep 2024 19:28:16 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240903191033.28365-1-Ashish.Kalra@amd.com> <ZtdpDwT8S_llR9Zn@google.com>
- <fbde9567-d235-459b-a80b-b2dbaf9d1acb@amd.com> <25ca73c9-e4ba-4a95-82c8-0d6cf8d0ff78@redhat.com>
- <14b0bc83-f645-408f-b8af-13f49fe6155d@amd.com> <20240904195408.wfaukcphpw5iwjcg@amd.com>
- <c24deb49-4369-4dcf-bb71-3160f2466ac3@amd.com>
-Message-ID: <ZtjdxNTBJymcx2Lq@google.com>
-Subject: Re: [PATCH v2] x86/sev: Fix host kdump support for SNP
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, x86@kernel.org, hpa@zytor.com, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, thomas.lendacky@amd.com, 
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: Re: [PATCH v2 6/8] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs
+ dirs
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Hugh Dickins <hughd@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ krisman@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
+ Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
+ Christoph Hellwig <hch@lst.de>
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+ <20240902225511.757831-7-andrealmeid@igalia.com>
+ <87jzfshfwn.fsf@mailhost.krisman.be>
+Content-Language: en-US
+In-Reply-To: <87jzfshfwn.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024, Ashish Kalra wrote:
-> On 9/4/2024 2:54 PM, Michael Roth wrote:
-> >   - Sean inquired about making the target kdump kernel more agnostic to
-> >     whether or not SNP_SHUTDOWN was done properly, since that might
-> >     allow for capturing state even for edge cases where we can't go
-> >     through the normal cleanup path. I mentioned we'd tried this to som=
-e
-> >     degree but hit issues with the IOMMU, and when working around that
-> >     there was another issue but I don't quite recall the specifics.
-> >     Can you post a quick recap of what the issues are with that approac=
-h
-> >     so we can determine whether or not this is still an option?
->=20
-> Yes, i believe without SNP_SHUTDOWN, early_enable_iommus() configure the
-> IOMMUs into an IRQ remapping configuration causing the crash in
-> io_apic.c::check_timer().
->=20
-> It looks like in this case, we enable IRQ remapping configuration *earlie=
-r*
-> than when it needs to be enabled and which causes the panic as indicated:
->=20
-> EMERGENCY [=C2=A0=C2=A0=C2=A0 1.376701] Kernel panic - not syncing: timer=
- doesn't work
-> through Interrupt-remapped IO-APIC
+Hi Krisman,
 
-I assume the problem is that IOMMU setup fails in the kdump kernel, not tha=
-t it
-does the setup earlier.  That's that part I want to understand.
+Thanks for the feedback!
 
-Based on the SNP ABI:
+Em 03/09/2024 13:15, Gabriel Krisman Bertazi escreveu:
+> André Almeida <andrealmeid@igalia.com> writes:
+> 
+>> Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
+>> mounted with casefold support. A special check is need for this flag,
+>> since it can't be set for non-empty directories.
+>>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 
-  The firmware initializes the IOMMU to perform RMP enforcement. The firmwa=
-re also
-  transitions the event log, PPR log, and completion wait buffers of the IO=
-MMU to
-  an RMP page state that is read only to the hypervisor and cannot be assig=
-ned to
-  guests.
+[...]
 
-and commit f366a8dac1b8 ("iommu/amd: Clean up RMP entries for IOMMU pages d=
-uring
-SNP shutdown"), my understanding is that the pages used for the IOMMU logs =
-are
-forced to read-only for the IOMMU, and so attempting to access those pages =
-in the
-kdump kernel will result in an RMP #PF.
+>> +
+>> +	if (fsflags & FS_CASEFOLD_FL) {
+>> +		if (!sb->s_encoding)
+>> +			return -EOPNOTSUPP;
+>> +
+>> +		if (!S_ISDIR(inode->i_mode))
+>> +			return -ENOTDIR;
+>> +
+>> +		if (dentry && !simple_empty(dentry))
+>> +			return -ENOTEMPTY;
+>> +
+>> +		i_flags |= S_CASEFOLD;
+>> +	} else if (old & S_CASEFOLD) {
+>> +		if (dentry && !simple_empty(dentry))
+>> +			return -ENOTEMPTY;
+> 
+> We don't want to fail if a directory already has the S_CASEFOLD
+> flag and we are not flipping it in the current operation.  Something like:
+> 
+> if ((fsflags ^ old) & S_CASEFOLD) {
+> 	if (!sb->s_encoding)
+> 		return -EOPNOTSUPP;
+> 
+> 	if (!S_ISDIR(inode->i_mode))
+> 		return -ENOTDIR;
+> 
+> 	if (dentry && !simple_empty(dentry))
+> 		return -ENOTEMPTY;
+>          i_flags |= fsflags & S_CASEFOLD;
+> }
+> 
 
-That's quite unfortunate, as it means my idea of eating RMP #PFs doesn't re=
-ally
-work, because that idea is based on the assumption that only guest private =
-memory
-would generate unexpected RMP #PFs  :-(
+You are right, it's broken and failing for directories with S_CASEFOLD. 
+Here's a small test showing that we can't add the +d attribute to a 
+non-empty CI folder (+d doesn't require the directory to be empty):
 
-> Next, we tried with amd_iommu=3Doff, with that we don't get the irq remap=
-ping
-> panic during crashkernel boot, but boot still hangs before starting kdump
-> tools.
->=20
-> So eventually we discovered that irqremapping is required for x2apic and =
-with
-> amd_iommu=3Doff we don't enable irqremapping at all.
+folder ) mkdir A
+folder ) mkdir A/B
+folder ) chattr +d A/B
+folder ) chattr +d A
+chattr: Directory not empty while setting flags on A
 
-Yeah, that makes sense, as does failing to boot if the system isn't configu=
-red
-properly, i.e. can't send interrupts to all CPUs.
+However, FS_CASEFOLD_FL != S_CASEFOLD and the set of values for 
+inode->i_flags (var old) and fsflags aren't the same, so your proposed 
+snippet didn't work. I see that ext4 has a very similar code as your 
+proposal, but I think they do something different with the flag values.
+
+I rewrote my code separating the three possible paths and it worked:
+
+/* inheritance from parent dir/keeping the same flags path */
+if ((fsflags & FS_CASEFOLD_FL) && (old & S_CASEFOLD))
+	i_flags |= S_CASEFOLD;
+
+/* removing flag path */
+if (!(fsflags & FS_CASEFOLD_FL) && (old & S_CASEFOLD))
+	if (dentry && !simple_empty(dentry))
+		return -ENOTEMPTY;
+
+/* adding flag path */
+if ((fsflags & FS_CASEFOLD_FL) && !(old & S_CASEFOLD)) {
+	if (!sb->s_encoding)
+		return -EOPNOTSUPP;
+
+	if (!S_ISDIR(inode->i_mode))
+		return -ENOTDIR;
+
+	if (dentry && !simple_empty(dentry))
+		return -ENOTEMPTY;
+
+	i_flags |= S_CASEFOLD;
+}
+
+In that way, the `chattr +d` call doesn't fall into the simple_empty() 
+check. I simplified the code like this for the v3:
+
+if (fsflags & FS_CASEFOLD_FL) {
+	if (!(old & S_CASEFOLD)) {
+		if (!sb->s_encoding)
+			return -EOPNOTSUPP;
+
+		if (!S_ISDIR(inode->i_mode))
+			return -ENOTDIR;
+
+		if (dentry && !simple_empty(dentry))
+			return -ENOTEMPTY;
+	}
+
+	i_flags |= S_CASEFOLD;
+} else if (old & S_CASEFOLD) {
+	if (dentry && !simple_empty(dentry))
+		return -ENOTEMPTY;
+}
 
