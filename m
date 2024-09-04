@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-314953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBAA96BB6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:01:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F2296AE6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40E3CB255D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA71286F26
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89001D47AA;
-	Wed,  4 Sep 2024 12:00:26 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9186E1D094E;
-	Wed,  4 Sep 2024 12:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A522575F;
+	Wed,  4 Sep 2024 02:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a1vAexCN"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCAB1A276
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 02:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451226; cv=none; b=iG7W97sayLQuTAAYm8+k7auAg0OrtjSgjYKgs3vtsTa7URB0vJWYDJaxJIpeft8dFWxNRNaH30hm/n7yAAJ7CbknBH1tdM5ZbRw6SZYu+cAXmWXepYgE5E+73RpO/JQ7MkKyrKsCk1JLBBepRGcugzAOKZ0DEgHBBNaSmn+hk0I=
+	t=1725415802; cv=none; b=PkgN8VvUqasAb0zYDGnsTxQIXlSZSRdEWIqsgkaOMxlVRML2gYXPojO4HX8aSEgH/DTvFXQaUI1n2V9Y1J1VFI54ox05/2Fqa6cSW2rzjh/cNU6e4jThn41k2qNsajCyz3zRloJUi3RKVaLddlapRnIqMxyjrPYbeKxyx8LKod0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451226; c=relaxed/simple;
-	bh=+LKAWV+yd6HYMK8m16dXiMcOrMNreTXUOH3UUbaBXts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dp2wUH2c8QDC+/nsZp/lEnak5xXz8IosNxCclrmiurq/BjRwzNSyhGcClky7oF7JDxA2Rqt0HFIBzwSpTC1DpPBkyZyjpoHrg42xluYyMDbMRrWYZVYLQv4of3l4GNCY3fSjtbN1Arpxh1J8BZ/RgONyNzbFq3k6oyvxTz6rjv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee866d84bd1190-211c4;
-	Wed, 04 Sep 2024 20:00:18 +0800 (CST)
-X-RM-TRANSID:2ee866d84bd1190-211c4
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.99])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee966d84bd1b7d-29021;
-	Wed, 04 Sep 2024 20:00:18 +0800 (CST)
-X-RM-TRANSID:2ee966d84bd1b7d-29021
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: patrice.chotard@foss.st.com
-Cc: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
+	s=arc-20240116; t=1725415802; c=relaxed/simple;
+	bh=n5bTpT5frNM9Jwcxv3Nosmu7yeUu+JDDIUU+YjUDCDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pQRzbLVASPdkwR1rednNa25p8vzOKxHey8UDD/Ey9dPSK2DzPnnBliAiKFPhGUqwtfO304hs7W361i29zfjZ0xy4I1FZ79MBn6o8enkcZkxmvLYTrAxlFclQe5eYj7YMkTOY08g+2co7oMVy3kn1kXPChSF5eifUwmFpAGGSUwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a1vAexCN; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725415791; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ryfGgkG71Erc80lluxJYGk+3yB5pONNaisoQGI5POVw=;
+	b=a1vAexCNUB/6Wseg8Zg1bCLxrWPvY8IUdAJbrxFtFYvMkR7IHAn4v7vpK4wafktIuo/6qF/lT/DYpCpGiRJ8RQIbYQHDwirg7s1ecE43j/5WyndqpTSZtMliUbaHi10UwNtPJPzBqCW6oD3KBej8F35GndgqgmUVtA78qorv41c=
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEEqKxH_1725415790)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Sep 2024 10:09:51 +0800
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Heming Zhao <heming.zhao@suse.com>
+Cc: ocfs2-devel@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] remoteproc:remove redundant dev_err message
+	syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: cancel dqi_sync_work before freeing oinfo
 Date: Wed,  4 Sep 2024 10:09:49 +0800
-Message-Id: <20240904020949.11193-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+Message-Id: <20240904020949.1685198-1-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +55,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-devm_ioremap_resource already contains error message, so remove
-the redundant dev_err message
+ocfs2_global_read_info() will schedule dqi_sync_work. So any error
+occurs after it, we have to cancel this delayed work first before
+freeing oinfo, otherwise it will trigger the following warning with
+CONFIG_DEBUG_OBJECTS_* enabled:
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index d17719384c16..a6e50f51c794 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -251,7 +251,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
- 
- 		slim_rproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(slim_rproc->mem[i].cpu_addr)) {
--			dev_err(&pdev->dev, "devm_ioremap_resource failed\n");
- 			err = PTR_ERR(slim_rproc->mem[i].cpu_addr);
- 			goto err;
- 		}
-@@ -262,7 +261,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "slimcore");
- 	slim_rproc->slimcore = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(slim_rproc->slimcore)) {
--		dev_err(&pdev->dev, "failed to ioremap slimcore IO\n");
- 		err = PTR_ERR(slim_rproc->slimcore);
- 		goto err;
+ODEBUG: free active (active state 0) object: 00000000d8b0ce28 object type: timer_list hint: qsync_work_fn+0x0/0x16c
+
+Link: https://syzkaller.appspot.com/bug?extid=f7af59df5d6b25f0febd
+Reported-by: syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
+Tested-by: syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
+Fixes: 171bf93ce11f ("ocfs2: Periodic quota syncing")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+---
+ fs/ocfs2/quota_local.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+index 8ce462c64c51..ebe0dbc8db4a 100644
+--- a/fs/ocfs2/quota_local.c
++++ b/fs/ocfs2/quota_local.c
+@@ -782,6 +782,7 @@ static int ocfs2_local_read_info(struct super_block *sb, int type)
+ 		if (locked)
+ 			ocfs2_inode_unlock(lqinode, 1);
+ 		ocfs2_release_local_quota_bitmaps(&oinfo->dqi_chunk);
++		cancel_delayed_work_sync(&oinfo->dqi_sync_work);
+ 		kfree(oinfo);
  	}
-@@ -270,7 +268,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "peripherals");
- 	slim_rproc->peri = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(slim_rproc->peri)) {
--		dev_err(&pdev->dev, "failed to ioremap peripherals IO\n");
- 		err = PTR_ERR(slim_rproc->peri);
- 		goto err;
- 	}
+ 	brelse(bh);
 -- 
-2.33.0
-
-
+2.39.3
 
 
