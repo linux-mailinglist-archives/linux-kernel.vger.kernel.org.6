@@ -1,84 +1,98 @@
-Return-Path: <linux-kernel+bounces-314699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5444A96B709
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 748B396B3E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 876B41C2088B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CB21C244D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E541CDA3E;
-	Wed,  4 Sep 2024 09:40:35 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B32018784F;
-	Wed,  4 Sep 2024 09:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9839317C9B9;
+	Wed,  4 Sep 2024 08:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcqUN6KA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E264417C990;
+	Wed,  4 Sep 2024 08:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442834; cv=none; b=k5JQQZGf8ZD4P8WjvljmW6s1BkEUmRqfDs+NlOkCSqcssPgrGbKPsQdtj+s9mUscUOdJRKP6E7bjGhLr5VD10ecRyrDIJdxO7nq0aHMnwYKDWCbY+FGEysvxUv9eIEGqUtw/EGRufQoF/D+yJIILK5SaEO2wVGykefV3FaPSc/E=
+	t=1725437130; cv=none; b=SXNDQOSrkID8BIckM2GdpBQgqX8VtppTefpej+55bNB4cXDD8VgcBr8o5z9oJwhkWCd6CzyxHT3gyH/hSItacVbOJWJji0yErmQ9LfUsjEsNZLvy64XwMFI4LApRsS6UUCNCJj7+Cibt6Tgf0CCUfailaZAopZlUw+Dy4uD5T8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442834; c=relaxed/simple;
-	bh=yEZAi3PPGeQQ5kqNWhLHDSpcZqLF9wXEtsG/2XNXLT4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jCUJax+2zYFJyh8uJ6cOz0Br8J/U/nOwQZGWGcfPUq10F1CuTVYP6GPoKaILZH0bxtGKzvB0SYIDu84Z0hvOtg6fRYFP5AfbdSQMcCda5hPjVPm/ZoI3XgpzaCUmMMhQr6orRrFyoLSynFBFMFB4aARhfNLq/s45/yKr1nIhI8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166d82b069ae-b52b0;
-	Wed, 04 Sep 2024 17:40:22 +0800 (CST)
-X-RM-TRANSID:2ee166d82b069ae-b52b0
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee266d82b05f65-27856;
-	Wed, 04 Sep 2024 17:40:22 +0800 (CST)
-X-RM-TRANSID:2ee266d82b05f65-27856
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] iio: event_monitor: Fix missing free in main
-Date: Wed,  4 Sep 2024 16:05:33 +0800
-Message-Id: <20240904080533.104279-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725437130; c=relaxed/simple;
+	bh=7qgWRytiyCO7SWQTn1LaW2tQh6Df8ICaF+PLtw4lLsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TykxNjZCZEFXfG/9o+YUYSLEZ/WLvE5inrKRJyayyzsfv2LPFP2PwyVfuU08Jc4ql9fRu6APtpVYSobzMs+s28eks5xsw7fiFaFka5TO6Scq31Apq3dBKyCZ0BObqs27fmeGRI6HSJilhAzqnymT+OcggkPAz6/MK3YH/fe+nQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcqUN6KA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A40C4CEC5;
+	Wed,  4 Sep 2024 08:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725437129;
+	bh=7qgWRytiyCO7SWQTn1LaW2tQh6Df8ICaF+PLtw4lLsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EcqUN6KAi2o90T+wVIBwV8S83o3xLRsfDfxmBPLM6Y7vYtWe8O6QbMXDrr1eUD1Vh
+	 Q9D+pBdKG47gGnSpO271e/wwAFXhePE+5iuBYoZIvAjU2C4lELzZH1zwRWuP33X50p
+	 WfdrJpnATbu2S5ywHKNexualvVpNIGie/m5yB50du8GWwjEmn0Kqw+GOH//Or+xM57
+	 TauL/adJ31PdPqiykIM7786VpBpkPUUbqnvd+4oNwBuVlgA6Q8kHEI2mVO8peNX+2V
+	 fpNPpESZJndlU//p35Oi52z5jUeKfQXm7KZ8nv+Y3/SdbSCF807eVYGpt0XnqZPevD
+	 ZgjUj5Tfy7E7Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sll1O-0000000054Y-1kjo;
+	Wed, 04 Sep 2024 10:05:46 +0200
+Date: Wed, 4 Sep 2024 10:05:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	konradybcio@kernel.org
+Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
+Message-ID: <ZtgU2kwBBl1q1Oh2@hovoldconsulting.com>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-3-quic_sibis@quicinc.com>
+ <ZtgHw1RrZTZLr7Mw@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtgHw1RrZTZLr7Mw@hovoldconsulting.com>
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Wed, Sep 04, 2024 at 09:09:56AM +0200, Johan Hovold wrote:
+> On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
+> > Ensure that the bad duplicates reported by the platform firmware doesn't
+> > get added to the opp-tables.
 
-Free string allocated by asprintf().
+> But with this patch applied, instead of the above warnings I now get two
+> *errors* at boot:
+> 
+> 	[    8.952173] cpu cpu4: EM: non-increasing freq: 0
+>	[    8.979460] cpu cpu8: EM: non-increasing freq: 0
+> 
+> Can you do something about that as well? At least make sure to highlight
+> this in the commit message as this is information that is needed to be
+> able to evaluate the patch.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- tools/iio/iio_event_monitor.c | 1 +
- 1 file changed, 1 insertion(+)
+I tried running with just this patch (i.e. without patch 1/2), but then
+cpufreq fails already during boot with eight of these errors:
 
-diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-index 8073c9e4fe46..d0b8e484826d 100644
---- a/tools/iio/iio_event_monitor.c
-+++ b/tools/iio/iio_event_monitor.c
-@@ -449,6 +449,7 @@ int main(int argc, char **argv)
- 		enable_events(dev_dir_name, 0);
- 
- 	free(chrdev_name);
-+	free(dev_dir_name);
- 
- 	return ret;
- }
--- 
-2.33.0
+[    9.258577] cpufreq: cpufreq_online: ->get() failed	
+...
+[    9.405603] cpufreq: cpufreq_online: ->get() failed
 
+and seven of these messages:
 
+[   12.322987] energy_model: Accessing cpu4 policy failed
+...
+[   18.462780] energy_model: Accessing cpu4 policy failed
 
+Johan
 
