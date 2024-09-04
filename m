@@ -1,149 +1,228 @@
-Return-Path: <linux-kernel+bounces-315192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A184A96BF08
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:49:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA61896BF0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68141C24A21
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCEA288E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AF51D9357;
-	Wed,  4 Sep 2024 13:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420FB1D9357;
+	Wed,  4 Sep 2024 13:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WJ6w3pf6"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PtMWiDg6"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552EC1D0169
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457772; cv=none; b=ELm8Qw2Pq2zkx3x6CFlY58Hx11m2Cx8VNcgq8IgCXPRoVTI/J4BZtgzo+gOwuaUvWkdFZftJ9Pqzr7z52fbQxuhcBHYYvNvALUSnJSctVNjdckKojRQ0e+VaczOv/xviss1hGk79teuo0n0n/9eauA3AxJ5FGvaqyCxwZnHhWLQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457772; c=relaxed/simple;
-	bh=YMNwSkqEJW9uN7bSMftt+qatI3avzVnQiPt2E71884o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqY2XaJEH6Yv6JkW06jDtb4hSGUIearI1cJaewcP0hyhAj/z9Tv4PZCWCx0LM5q4ZDeiu64ZUM+SSaDbPHM2pc8RxrBWbDJEyeH7GTqVLuaFB3j4dvcHEzHYqgGH4bEM2ANc+jjPLE+GpMJmC8Xm8/PXkjiB8664mM4sKmmtopQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=WJ6w3pf6; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-82a73aad00bso55868139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725457769; x=1726062569; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m3OzM6yNBga43RZi596yJbd4sFGmjuH68EJYXdCc694=;
-        b=WJ6w3pf6W8VidYgqQ953quYRg0VvCiE/ixf2+h67LNBe0Ot2QZI/1TgIWEIJ4piM2L
-         mfAC+w2YRvJxKtWaUvHxFtdH1exmdayQHPsu5+HTCuyEaQYBqjivjB6f8QQ05MhrGJQm
-         YnfAPjq5TXMjHxdJzV18/htxDuRx9G0rub9qjtF04EhhlaHo4K3g2738KVAmsUkzx+Dc
-         fOMNDL2JuS9hy8TiC3ZjzvZrOP7eE8hX4nbeRD5heka621SuN6zS3n17829WSLW0v+oe
-         rka55tlb9pWROWbOIqUp4jIRaWRdePL7ItHL9ns0TPwYva/ilmVJWjQuKezxP7K41NX2
-         DQTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725457769; x=1726062569;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3OzM6yNBga43RZi596yJbd4sFGmjuH68EJYXdCc694=;
-        b=vvW3iILnmOqQvOxrHI6mzavWaMmDkn8oSlURlYcOWJmRs3iOkoHHbLY0XDgFZ3nFYZ
-         6ZyzzXQAbCi19FAZTcId4KXIUMubgXB1qnWaiFy35+TadkuFwrhiw1pT/F6nnXtLXM2q
-         uG4EmTz3BJRf5vxMZToRX/T77MP0C9dzae+DXwi+xs+P4g78uWoNEuduHeHy6lJo2Lfd
-         eNpkZfQDasmQEHk6jzFrnNsEf1zmsDoE9AWMrjBDPOQgvLBClVVPrOeSTOhImyVtNaMB
-         tRFpS5+9kHmjlMZSJycbyOCSID5z27vB5gqVWZRpbfquZ489DAC/BsqGAtEZIpdnKMWH
-         MJLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXXrcXib/ig6IzyWSQwvuDfaowm8h9hDtpJJKRmhuoWlexZqMyc5goJEffn2X0AwJC/l6weQ3QgnOmY28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx/GNF8gw5pIbjayC30NhpCdIhb7yIUdd0ZKsq1Eyqy6pKF92s
-	seRYBiB3BHqz7dhXECNiWZGpGIayta+O/1mKyobcGAPT7q+jYUJIjpsdqZTtc0c=
-X-Google-Smtp-Source: AGHT+IH2T9+Rvn5lvq34B/1/vEVjOaoiI5vLsNmFeQ2xw9WWhAETa9+lwOKBoTbedzjte9E4G4daJg==
-X-Received: by 2002:a05:6e02:180e:b0:39b:3a44:fe8a with SMTP id e9e14a558f8ab-39f6a97897fmr86244235ab.4.1725457769293;
-        Wed, 04 Sep 2024 06:49:29 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d05da81bc9sm351855173.104.2024.09.04.06.49.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:49:28 -0700 (PDT)
-Message-ID: <c7d9d97b-991c-4b84-a99a-60473f8ce929@kernel.dk>
-Date: Wed, 4 Sep 2024 07:49:27 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92301D04AF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725457810; cv=fail; b=gOZb+5tuuWDpY8TOJtxNVsj1O0428QOwZUPs8WywTK87h4S9RaXHcpGuMZ0B1V2/Xl+lUmdHXQkqzkDW9Xp1wcTkQnPUFXUlm+Yv1vPRrJAHvowbOPT5Usz6TOR58+OmsrQuOVONjqat2lm30L49LadVoAV5UMHQdoReCyc3dUg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725457810; c=relaxed/simple;
+	bh=GGJe181Wgd0Z2LJj4tezKVw76TDblLWgyBBNaWtFcCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gS1R6D0Fo4ihgIJPJ3CZ2igWh1HMadk5dnFHMyFP8WdpRuMhk4RbT8/pJKRD7g9iB0zh+8ZcHufvkZtsLJn/EQnN2v4TjPHSZTXQmqz/IeE7oJDc4ThbiR2ZmyDsBGYzIgPEGSm0nrVz9zKwonhBZPVmvOIYa/HBESs+FQbls6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PtMWiDg6; arc=fail smtp.client-ip=40.107.95.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T+Fk1M9d5AgEDbkyotUuAC9ApFZ7Xn9++6tZcCMB6hJoutpErbpq48GZJhJDlmPGkCWyvqRsWyZN37k17/dQHl5G7VKewi1Il/Ix580XPQnFLmGc772wUEQHFuF6tVkrjZNliuWw/PJ3EezHj5wesE+LcwHLQKjTwsM/wppzo8KPNI8rEJg4PSgdgvvXktyhP9eluc5KC9+DRU2YrIl+ihOfrKVyLFpWiyZi8wGDgfZHHZFqL115geA18VHk0Z01UGpNJ5ze0He18B+QZs2QkEUj1nYDBrM4EG4+pCxLXgK5wcdlL6BL46UGNtBrJvuwfPWPF/Y7w5MpHQTboSyuWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kQzDM8DIOdYRcqgA1M+VuCbRRTFHvVbwinOGtYRtjqQ=;
+ b=EWJIF5K/5zJUphcL6KykWPFjISv5Z0UYm7qmKQcmiMqwT5GxWNHFZpFLNTM1qVr9cMk0PA1JsIcZDwwq+IhGeFn5SQSN6iHfPvMuL0mUDroP5W7QRFbhhYsneYdDnVr0TpbF1TBUpxiWvr32ixOOO0ryG0ffuJ5PvrbRpokvpRNtIarVkvREz09oDJfcmX7J29cp8Ba0Nw40YEOCr4E+Iq/h3DN3BJ9dFIO9qWsqCbj3OgUtWOyDrIqzyfJbOrUW4AXWkT7XSilkp3CZ99cQYYT/OfCKL8uxo7i6MlH0gVRmkLARe/x2DF96S5j/iuGLDmh9yLKNg+UbktJ/7Z0ucw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kQzDM8DIOdYRcqgA1M+VuCbRRTFHvVbwinOGtYRtjqQ=;
+ b=PtMWiDg6GSPanovmEYk6BORUzbkdXX4k2avxjjDva4UGGC53kApmMKTzZ7tv9ddvHM82VT/2eXNCOzOsfjb6UbS6Y5jhuMjLmmw+23Xl/tdPW+9ZQrOVIKCGcECOu1E27e4sd7kDc23Z/dcP7SzcwXVEE2sgif+VWdcDCjTrxRI=
+Received: from BN9PR03CA0215.namprd03.prod.outlook.com (2603:10b6:408:f8::10)
+ by DM4PR12MB5721.namprd12.prod.outlook.com (2603:10b6:8:5c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 13:50:03 +0000
+Received: from BN1PEPF00006001.namprd05.prod.outlook.com
+ (2603:10b6:408:f8:cafe::ef) by BN9PR03CA0215.outlook.office365.com
+ (2603:10b6:408:f8::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
+ Transport; Wed, 4 Sep 2024 13:50:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN1PEPF00006001.mail.protection.outlook.com (10.167.243.233) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Wed, 4 Sep 2024 13:50:03 +0000
+Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Sep
+ 2024 08:49:55 -0500
+Message-ID: <fdce27c2-ecf0-6c89-a372-3f93ce99ca61@amd.com>
+Date: Wed, 4 Sep 2024 19:19:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
- merging
-To: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, paolo.valente@unimore.it,
- mauro.andreolini@unimore.it, avanzini.arianna@gmail.com,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
- <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
- <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
- <20240904122953.fkwyfsfwhrwwmnbs@quack3>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [RFC PATCH v2 0/5] Idle Load Balance fixes and softirq
+ enhancements
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240904122953.fkwyfsfwhrwwmnbs@quack3>
-Content-Type: text/plain; charset=UTF-8
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
+ Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>
+CC: Leonardo Bras <leobras@redhat.com>, "Paul E. McKenney"
+	<paulmck@kernel.org>, Rik van Riel <riel@surriel.com>, Thorsten Blum
+	<thorsten.blum@toblux.com>, Zqiang <qiang.zhang1211@gmail.com>, Tejun Heo
+	<tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, Caleb Sander Mateos
+	<csander@purestorage.com>, <linux-kernel@vger.kernel.org>, "Gautham R .
+ Shenoy" <gautham.shenoy@amd.com>, Chen Yu <yu.c.chen@intel.com>, Julia Lawall
+	<Julia.Lawall@inria.fr>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20240904111223.1035-1-kprateek.nayak@amd.com>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20240904111223.1035-1-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB03.amd.com
+ (10.181.40.144)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006001:EE_|DM4PR12MB5721:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0813a6a0-7c07-4808-72ab-08dccce87a52
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UVNGNWxnenhkaW5RT2JSb21OVG1jZmFWMmM4REtZM1l2LzZFK2JSVWZIYjJp?=
+ =?utf-8?B?Q0ZGVjA3WkdDK0l1bVA1clRyU1Q3MWtISnJCYVI3UUlHMTQwOVhpblYxaldD?=
+ =?utf-8?B?R3FUL3M5SmFqVVR4MnpqU01Qb3U2MFFFTmhkT0ozSXR3Qnk4eVVkdlF3cFg2?=
+ =?utf-8?B?V2M2VUZYL09ZVUdwb0dwaTdJZFdmdFphVU9oRHNGVVVIaHdRS0xleU9rTCs1?=
+ =?utf-8?B?ZE1BVGllOFkweWdieEcyT2orTkFZUGhPU2RQM3R2UTQ4OVpWVU9LditsR2lV?=
+ =?utf-8?B?ZGdBenJJSElrYStqL2Z3K0hxMTE0aTJJUE8rTFpHRzkvVEE2R0xVN1U3VFFC?=
+ =?utf-8?B?eGVnenFGNUx5SGd5dm55NFlkZmxxZzFBaFdYZzhKdElILy9CUlQ0akIyUlZu?=
+ =?utf-8?B?eGtWMWFTeU5RaHNySDNlUjlJRUMzSzI1cDVGRjgva2Y3eGl4bDdkWVJCR1FL?=
+ =?utf-8?B?MzlDMXBEa0Yvd3lrUGFNc3dQTGRoaC82QTE5cHR4aEZrc3NoVmYvNkpvdXlh?=
+ =?utf-8?B?M1VDbEpXNmo5T29kK3AxR3VqNHcxVnNWL1Y1ZFM2cW1Tbjl3YmYyZzZ0WFFa?=
+ =?utf-8?B?WFhZU3pYamFoa2VsbnZ4SytnSkNqQXUyU04rcEY3UFhHaFRKcXlyNmd4THNL?=
+ =?utf-8?B?SGFtc05WUVlsLzQ4MkhaNzd0aGo2UFZwM3kzTzFCSzVNTE93TFVwVW9YUGdU?=
+ =?utf-8?B?WXUyUkc3MXVnRDlGMkpsTGRaaFR3RzJSSjhxZk1ScGlpbXlKa0wvMGtQOUEz?=
+ =?utf-8?B?VSs4NzlkOXpvdFh2ZGsvTzUvZ1MyS2ErMUxWMTVXQXZsVWowM2E1UDhwK1VH?=
+ =?utf-8?B?TC8wd0RvZXVwTlAyV0E2cUtwWTFWRThuTjNXR2MzY3RSd0ZyY1FBVkdEbkNQ?=
+ =?utf-8?B?eFlKZXlWaldTSUZYR2kzQ2NDT3l4N0xmU3gzVWtYSkx5UVRsWk5ieFRicGdk?=
+ =?utf-8?B?OWpSam9xVk5YL0YycWhndDFqbngwR1Z3RHNDdTlvakVOZmk5K3RLMEttNFR1?=
+ =?utf-8?B?UlQ2dmZTeEpUUzlVN2x4YlgraG9QcGcwVG84RXE5ZWcyOWJBM21kMmoxL1RO?=
+ =?utf-8?B?eGlwSDNZOG9FclVNNjNGZ2h0T1NUWVlzNXRzcFFHRWNINzFrVk9XSThISnpS?=
+ =?utf-8?B?MEU0R2NYY0R3bm9QZUhHdCtQOHlvNnRjeGg4UmdZTFpDajdCVnBJZ3l0aHpH?=
+ =?utf-8?B?ZHZ3S3diS0dxTEVyOHExYkUvSHhFc1JhMTE0eHA2QkJXOGg5ZUJyd1hzVjBr?=
+ =?utf-8?B?aU9PUzBTNVA2SjAwRkExQjhMSmZqY2RPVlV4WTQ1Wm1sdCtBcmEvQzhEQ01J?=
+ =?utf-8?B?NTRVbFFGQXUwdnF1amxYc3JPZ2VpcjhqTDRxZGFHWEM5Z2wybTdyalZjYW1u?=
+ =?utf-8?B?VmxzN3RCNklNSlRlVWQvODV4aWthUGx2blhCVmNGZUxoQTFyN2hsSVNhRUMy?=
+ =?utf-8?B?QXg5SzdOZm9IYUtDbEJzNnRlYW1kRGc3TW1OMFZEVGRXUjVPaXhFV3NQeWpq?=
+ =?utf-8?B?ckl6K2VVYmRIKzlnY0xhQnZ1SklwKzNkWUp4OVVEY0ZOa2pMTzNaczRsUGRM?=
+ =?utf-8?B?RU9DZW9YK0ZxS05ZL0w1U0lIKzgzbEwwUzlFQ1JDTWtFVjVIRmVUanVQcXRz?=
+ =?utf-8?B?L3VIaG9mZzQ2Ni93dmx1dnZyZFZoK0tBbEV5NUY1OWxDd0ZnSnZaMnlyOTNs?=
+ =?utf-8?B?cjF5eEhMQ2I4L0pSOVExUFVWbE9sZlJMSG9IZ0xYN1B3MlRZbzdjcE9pekVZ?=
+ =?utf-8?B?eFhsalhxQlRJczFaV0I5bFRGMFliVXk3VE5aRVRETXE0Y0NBaUJtenZ5OWJL?=
+ =?utf-8?B?a0luZTUyc2xxWlpvRlBDZVpkeFY0Sk04OXBuR1djTlZ3VW5kdlorcW12SlFt?=
+ =?utf-8?B?L0o3NTJHdjR0cDVwUzVBdjR3alJVRlh1VW9lOGtaVy8zSUY1eWpRdDUySVRj?=
+ =?utf-8?Q?Ujx+3pfMUBA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 13:50:03.5845
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0813a6a0-7c07-4808-72ab-08dccce87a52
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00006001.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5721
 
-On 9/4/24 6:29 AM, Jan Kara wrote:
-> On Wed 04-09-24 09:32:26, Yu Kuai wrote:
->> ? 2024/09/03 23:51, Jens Axboe ??:
->>> On 9/2/24 7:03 AM, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> Our syzkaller report a UAF problem(details in patch 1), however it can't
->>>> be reporduced. And this set are some corner cases fix that might be
->>>> related, and they are found by code review.
->>>>
->>>> Yu Kuai (4):
->>>>    block, bfq: fix possible UAF for bfqq->bic with merge chain
->>>>    block, bfq: choose the last bfqq from merge chain in
->>>>      bfq_setup_cooperator()
->>>>    block, bfq: don't break merge chain in bfq_split_bfqq()
->>>>    block, bfq: use bfq_reassign_last_bfqq() in bfq_bfqq_move()
->>>>
->>>>   block/bfq-cgroup.c  |  7 +------
->>>>   block/bfq-iosched.c | 17 +++++++++++------
->>>>   block/bfq-iosched.h |  2 ++
->>>>   3 files changed, 14 insertions(+), 12 deletions(-)
->>>
->>> BFQ is effectively unmaintained, and has been for quite a while at
->>> this point. I'll apply these, thanks for looking into it, but I think we
->>> should move BFQ to an unmaintained state at this point.
->>
->> Sorry to hear that, we would be willing to take on the responsibility of
->> maintaining this code, please let me know if there are any specific
->> guidelines or processes we should follow. We do have customers are using
->> bfq in downstream kernels, and we are still running lots of test for
->> bfq.
+On 9/4/2024 4:42 PM, K Prateek Nayak wrote:
+> Hello folks,
 > 
-> That would be awesome. I don't think there's much of a process to follow
-> given there's not much happening in BFQ. You can add yourself to
-> MAINTAINERS file under "BFQ I/O SCHEDULER" entry and then do your best to
-> keep BFQ alive by fixing bugs and responding to reports :) I'm not sure if
-> Jens would prefer you'd create your git tree from which he will pull or
-> whether merging patches is fine - he has to decide.
+> [..snip..]
+> 
+> Chenyu had reported a regression when running a modified version of
+> ipistorm that performs a fixed set of IPIs between two CPUs on his
+> setup with the whole v1 applied. I've benchmarked this series on both an
+> AMD and an Intel system to catch any significant regression early.
+> Following are the numbers from a dual socket Intel Ice Lake Xeon server
+> (2 x 32C/64T) and 3rd Generation AMD EPYC system (2 x 64C/128T) running
+> ipistorm between CPU8 and CPU16 (unless stated otherwise with *):
+> 
+> base: tip/master at commit 5566819aeba0 ("Merge branch into tip/master:
+>        'x86/timers'") based on v6.11-rc6 + Patch from [1]
 
-The usual process is that you start actually maintaining it, and after a
-bit of a track record has been proven, then add the maintainers entry.
-Too many times people start by adding a maintainers entry and then don't
-really do anything. Not saying that'd necessarily be the case here, but
-maintaining first and then adding an entry down the line seems like the
-better approach.
+So that should have been the SM_IDLE fast path patch in [3]
+https://lore.kernel.org/lkml/20240809092240.6921-1-kprateek.nayak@amd.com/
 
-I prefer people sending patches, as there's less risk there for messing
-it up. Maintaining a git tree may seem easy, but lots of people end up
-messing it up, particularly as a new maintainer.
+> 
+>     ==================================================================
+>     Test          : ipistorm (modified)
+>     Units         : % improvement over base kernel
+>     Interpretation: Higher is better
+>     ======================= Intel Ice Lake Xeon ======================
+>     kernel:					[pct imp]
+>     performance gov, boost on			  -3%
+>     powersave gov, boost on			  -2%
+>     performance gov, boost off			  -3%
+>     performance gov, boost off, cross node *	  -3%
+>     ==================== 3rd Generation AMD EPYC =====================
+>     kernel:					[pct imp]
+>     performance gov, boost on, !PREEMPT_RT	  36%
+>     performance gov, boost on,  PREEMPT_RT	  54%
+>     ==================================================================
+
+PREEMPT_RT kernel is based on:
+
+     git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git linux-6.11.y-rt-rebase
+
+at commit 01ab72c93f63 ("Add localversion for -RT release") with the
+addition of commit e68ac2b48849 ("softirq: Remove unused 'action'
+parameter from action callback") from tip:irq/core and the SM_IDLE
+fast-path patch from [3].
+
+> 
+> * cross node setup used CPU 16 on Node 0 and CPU 17 on Node 1 on the
+>    dual socket Intel Ice Lake Xeon system.
+> 
+> Improvements on PREEMPT_RT can perhaps be attributed to cacheline
+> aligning the per-cpu softirq_ctrl variable.
+> 
+> This series has been marked RFC since this is my first attempt at
+> dealing with PREEMPT_RT nuances. Any and all feedback is appreciated.
+> 
+> [1] https://lore.kernel.org/lkml/20240710090210.41856-1-kprateek.nayak@amd.com/
+> [2] https://lore.kernel.org/lkml/fcf823f-195e-6c9a-eac3-25f870cb35ac@inria.fr/
+> [3] https://lore.kernel.org/lkml/20240809092240.6921-1-kprateek.nayak@amd.com/
+> [4] https://lore.kernel.org/lkml/225e6d74-ed43-51dd-d1aa-c75c86dd58eb@amd.com/
+> [5] https://lore.kernel.org/lkml/20240710150557.GB27299@noisy.programming.kicks-ass.net/
+> ---
+> [..snip..]
+> 
 
 -- 
-Jens Axboe
-
+Thanks and Regards,
+Prateek
 
