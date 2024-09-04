@@ -1,141 +1,175 @@
-Return-Path: <linux-kernel+bounces-314282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F8096B114
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8CD96B0FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E86DB24E8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 732511F266AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4950D84D29;
-	Wed,  4 Sep 2024 06:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2931512C489;
+	Wed,  4 Sep 2024 06:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8pPL0f0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbOdppse"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B849F9D6;
-	Wed,  4 Sep 2024 06:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DC084A36;
+	Wed,  4 Sep 2024 06:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725430269; cv=none; b=i9NwFhru/uT+jowmCC4KT3L/GT8fObjCVUVBoiYt0zSxtBmE6Dl/HWkUa0/eH/LXTlUh0ZRhHNtLybfN+BgRCa3+cJF3xp+3mo1k4lfD1pHPW3wmRMWrnZSxFmKPQ3AbjkZ0QVXPFT0szBrUCkhPXApYLyfx8EQbI8+fH3XkY9M=
+	t=1725430064; cv=none; b=UMT2guDJyKy6LQKfUolomz0E2L4RLVJOp6HWPK+SiGEQ1CLRMjW/mpyj3yLks2XGvOFUvpxjV87soxTG9sgdF0ip0oWpQ0aJVYkWGQYc94uFz144hYxrCZB0if1ePDudcfW3Rd3EM1q3P18iJognWXyaDMlS3Ez6dqOsopo/zwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725430269; c=relaxed/simple;
-	bh=aCL6Zb5OWsKvfMi2Mef+7SbyF16Z/0kioNzL8s98yzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dfO2k/8nGMeSKgzXzaEtXxU8OSopDKEpZTiYZGKgLbRjTUBcgO/RwpazMDhLDIvroTWeMnB3FgKlFQeAL5tJ8Jm3AwZmAQB0GTZgeNkCWK9UAyWcm0H6GAMENBXJiwhLWhnMGFFUdF4BnJvmRb71GCZm94GmvsCKAYOOub42rCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8pPL0f0; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725430267; x=1756966267;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aCL6Zb5OWsKvfMi2Mef+7SbyF16Z/0kioNzL8s98yzY=;
-  b=C8pPL0f0bZh+fYb4u05yMbJXBDC0B60FMb9nSHZI3Q0yyJOAZmKKyqQc
-   SJBxQcvSIwiQPTJVrUpFESi0Yrzv9cyN7tpzfqfMtZfz+hX4lzedvPJ8c
-   L7weEBDA/XeNCa2EWJZGTZ4Np1Fs2NIPqRLr6QwZd4gC95X9bDXxIb2Rt
-   HqqjCj3ihueWffCQA7JH3Oo/bGvvmQjiFUtRo77QGWT8PgoMRtnj1FUFv
-   2L/5s21oCFZlcXGKpb+fh7UMknLRB91iLXSarmhLGQNL7ZH0SxUah1Xci
-   wD2kCL9P2LVWwvSApWmRb6kJenjXVW/qwqOFjb+RQAR01kzSytP7zic1q
-   w==;
-X-CSE-ConnectionGUID: L4rp+t4TTEmrMIgwx4DfBQ==
-X-CSE-MsgGUID: 0B6NOFdNS6KnXQlYgxTC/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24228420"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="24228420"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 23:11:07 -0700
-X-CSE-ConnectionGUID: KzfF9kMAQ0OqQa6Zrw86Ig==
-X-CSE-MsgGUID: 9BOHvZ2FQ4G8g0K6TXpRig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="70018930"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 23:11:04 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: jani.saarinen@intel.com,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices requiring ATS
-Date: Wed,  4 Sep 2024 14:07:05 +0800
-Message-Id: <20240904060705.90452-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725430064; c=relaxed/simple;
+	bh=EPR34i1ApP1W3IN8ZGV5gYeG+Qdt78uCwjXb2+lkZ7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TSIE2/HprRnwFkUdfg4GgKp6641Cfy3WvhnqqpMCaQzssbM5sANOUP/AF8oujc55I8PQNhN1wmdPKqbTLQxJONOKXl+KBxeivQX9GFT5XdjuQlfABWZTE0vHmna+IUEvc3eOBHinyG1S/t0nGOd624Rj78hTQaOROxm46KAqbPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbOdppse; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC72C4CECA;
+	Wed,  4 Sep 2024 06:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725430064;
+	bh=EPR34i1ApP1W3IN8ZGV5gYeG+Qdt78uCwjXb2+lkZ7E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hbOdppseLYiL43y+tAVIiYWL2VdtT043qE/WzBHwrFRYQk6vUA2QrqxoQPuaM+6JK
+	 2ZbU0w3Vavl8lhwfSoe7VY13CRmoS9lfNZlb7k8SbENTUpiMWrj35TUUPZ8XgJvJrg
+	 Fyz4E1a/lZnxBsjwypa55JgLao0rgc6rPC+seKwuch2ZDO0HMACYUnjVn5mojUjWL6
+	 H+Cr8MRwd9Jj70aWbMnRB+zg67VQ8v1ABL60JrXqpYIskCQO1iRUQ9+tMboh19GjJt
+	 QE14MJdgPt0HbWrzHan8id3Q6dfO7Akhj/nPHtYuNVomEQocI1y9EPbYF3vZYtTsMM
+	 eBDXUoaU/QvCA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1sljB8-00000006Ite-04Ih;
+	Wed, 04 Sep 2024 08:07:42 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Ard Biesheuvel <mchehab+huawei@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Len Brown <mchehab+huawei@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] Fix issues with ARM Processor CPER records
+Date: Wed,  4 Sep 2024 08:07:13 +0200
+Message-ID: <cover.1725429659.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-SOC-integrated devices on some platforms require their PCI ATS enabled
-for operation when the IOMMU is in scalable mode. Those devices are
-reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
-field.
+This is needed for both kernelspace and userspace properly handle
+ARM processor CPER events.
 
-The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
-ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
-can cause a conflict, leading to boot failure, especially if the device
-is a graphics device.
+Patch 1 of this series fix the UEFI 2.6+ implementation of the ARM
+trace event, as the original implementation was incomplete.
+Changeset e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+added such event, but it reports only some fields of the CPER record
+defined on UEFI 2.6+ appendix N, table N.16.  Those are not enough
+actually parse such events on userspace, as not even the event type
+is exported.
 
-To prevent this issue, check PCI ATS support before enumerating the IOMMU
-devices. If any device requires PCI ATS, but PCI ATS is disabled by
-'pci=noats', switch the IOMMU to operate in legacy mode to ensure
-successful booting.
+Patch 2 fixes a compilation breakage when W=1;
 
-Fixes: 97f2f2c5317f ("iommu/vt-d: Enable ATS for the devices in SATC table")
-Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12036
-Cc: stable@vger.kernel.org
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Patch 3 adds a new helper function to be used by cper and ghes drivers to
+display CPER bitmaps;
+
+Patch 4 fixes CPER logic according with UEFI 2.9A errata. Before it, there
+was no description about how processor type field was encoded. The errata
+defines it as a bitmask, and provides the information about how it should
+be encoded.
+
+Patch 5 adds CPER functions to Kernel-doc.
+
+This series was validated with the help of an ARM EINJ code for QEMU:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/tree/qemu_submission
+
+$ scripts/ghes_inject.py -d arm -p 0xdeadbeef -t cache,bus,micro-arch
+
+[   11.094205] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 0
+[   11.095009] {1}[Hardware Error]: event severity: recoverable
+[   11.095486] {1}[Hardware Error]:  Error 0, type: recoverable
+[   11.096090] {1}[Hardware Error]:   section_type: ARM processor error
+[   11.096399] {1}[Hardware Error]:   MIDR: 0x00000000000f0510
+[   11.097135] {1}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000080000000
+[   11.097811] {1}[Hardware Error]:   running state: 0x0
+[   11.098193] {1}[Hardware Error]:   Power State Coordination Interface state: 0
+[   11.098699] {1}[Hardware Error]:   Error info structure 0:
+[   11.099174] {1}[Hardware Error]:   num errors: 2
+[   11.099682] {1}[Hardware Error]:    error_type: 0x1a: cache error|bus error|micro-architectural error
+[   11.100150] {1}[Hardware Error]:    physical fault address: 0x00000000deadbeef
+[   11.111214] Memory failure: 0xdeadb: recovery action for free buddy page: Recovered
+
+- 
+
+I also tested the ghes and cper reports both with and without this
+change, using different versions of rasdaemon, with and without
+support for the extended trace event. Those are a summary of the
+test results:
+
+- adding more fields to the trace events didn't break userspace API:
+  both versions of rasdaemon handled it;
+
+- the rasdaemon patches to handle the new trace report was missing
+  a backward-compatibility logic. I fixed already. So, rasdaemon
+  can now handle both old and new trace events.
+
+Btw, rasdaemon has gained support for the extended trace since its
+version 0.5.8 (released in 2021). I didn't saw any issues there
+complain about troubles on it, so either distros used on ARM servers
+are using an old version of rasdaemon, or they're carrying on the trace
+event changes as well.
+
 ---
- drivers/iommu/intel/iommu.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 4aa070cf56e7..8f275e046e91 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3127,10 +3127,26 @@ int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
- 					(void *)satc + satc->header.length,
- 					satc->segment, satcu->devices,
- 					satcu->devices_cnt);
--			if (ret > 0)
--				break;
--			else if (ret < 0)
-+			if (ret < 0)
- 				return ret;
-+
-+			if (ret > 0) {
-+				/*
-+				 * The device requires PCI/ATS when the IOMMU
-+				 * works in the scalable mode. If PCI/ATS is
-+				 * disabled using the pci=noats kernel parameter,
-+				 * the IOMMU will default to legacy mode. Users
-+				 * are informed of this change.
-+				 */
-+				if (intel_iommu_sm && satcu->atc_required &&
-+				    !pci_ats_supported(info->dev)) {
-+					pci_warn(info->dev,
-+						 "PCI/ATS not supported, system working in IOMMU legacy mode\n");
-+					intel_iommu_sm = 0;
-+				}
-+
-+				break;
-+			}
- 		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
- 			if (dmar_remove_dev_scope(info, satc->segment,
- 					satcu->devices, satcu->devices_cnt))
+v3:
+ - history of patch 1 improved with a chain of co-developed-by;
+ - add a better description and an example on patch 3;
+ - use BIT_ULL() on patch 3;
+ - add a missing include on patch 4.
+
+v2:
+  - removed an uneeded patch adding #ifdef for CONFIG_ARM/ARM64;
+  - cper_bits_to_str() now returns the number of chars filled at the buffer;
+  - did a cosmetic (blank lines) improvement at include/linux/ras.h;
+  - arm_event trace dynamic arrays renamed to pei_buf/ctx_buf/oem_buf.
+    
+
+
+Jason Tian (1):
+  RAS: Report all ARM processor CPER information to userspace
+
+Mauro Carvalho Chehab (4):
+  efi/cper: Adjust infopfx size to accept an extra space
+  efi/cper: Add a new helper function to print bitmasks
+  efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
+  docs: efi: add CPER functions to driver-api
+
+ .../driver-api/firmware/efi/index.rst         | 11 +++-
+ drivers/acpi/apei/ghes.c                      | 27 ++++----
+ drivers/firmware/efi/cper-arm.c               | 52 ++++++++--------
+ drivers/firmware/efi/cper.c                   | 62 ++++++++++++++++++-
+ drivers/ras/ras.c                             | 41 +++++++++++-
+ include/linux/cper.h                          | 12 ++--
+ include/linux/ras.h                           | 16 ++++-
+ include/ras/ras_event.h                       | 48 ++++++++++++--
+ 8 files changed, 210 insertions(+), 59 deletions(-)
+
 -- 
-2.34.1
+2.46.0
+
 
 
