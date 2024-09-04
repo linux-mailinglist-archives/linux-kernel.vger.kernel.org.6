@@ -1,241 +1,193 @@
-Return-Path: <linux-kernel+bounces-315682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AA096C5BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF01D96C5C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C31C24CB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CDDD1F27B99
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6A31E1339;
-	Wed,  4 Sep 2024 17:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1FC1E133D;
+	Wed,  4 Sep 2024 17:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NsqWqNa9"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqD5lzdC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B631D6790
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472132; cv=fail; b=BM7CMCQKtcoJYS7x3H9FjTnjQiFpViPPXvoXbvVID+D1vpYEF1hQ8QXj1gNErWrkj/EGhytDSPNIcKKsitktFZPyeKMHTrfGH42IECTOweHfptazRfrOueSe72n5W1AXJmIePDYAx3eZ6FhEUWlbX6mTqlXRyHz757Tecp22AuU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472132; c=relaxed/simple;
-	bh=r8gPil1w2Pt8uJcdbqhO0m4lb7/UuoaSVivgHQaijaY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LhdL39Mq9Vj/Y8dg7XI/ihiSdbeHaCEMUpkn138sKgpiWjgkhHD2eTz5qSF05QA48QFJZ2kJWXNo9MQq6IrHkOrJpseqElRISy+vrS/zE5uvUiZeIASu63r/EY7uCs1mBUQP+HvUo3HgBaFjiSoTnqD6c4gFZ9qQWCeMUcAMJwU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NsqWqNa9; arc=fail smtp.client-ip=40.107.237.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P1Ug8Ov4E7oxwv7XlX5MVkTHjzCe01REl5FRuyWUXDscjEwV2QyIdgFEE58LtWT5TObJF6b2L8CYr0Uj3GUtriuepZVzaLID4Ye4n22Bb6aPpgy72ycuTLpJNX2Bw6+N+nOhItExbhvoxkz0EeFCOfWMAN5FEyjp2xqaAYZ633A7J6kDC0qVvGyKenWe320XR+8UsFwu33ltAmGxxcr9kOYONvFXu0nYDuWZ7LTDT5aIGnhLVAf2gKQHlTOP4w9iE4WZrp1Cer9M0Rg/trw2xNPVvfSHmpIoc9D49txck3XD4yF2aHF9Go4Mwhnm0K2UN0IBedP87z0BdvBRMI0D3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hlw9kj0rYRWH2OVXLkp9KtXFoj30xQD5Cm1Zctme3Lo=;
- b=XwWQVMrRcBmXOHWTganLnMTxbf6a0OCo19nQkF/3miAoy1cosmXRAtGU75eKnUmVUS0o3aJkeEWxcZtZahGvv+IDnBuEc39d04gWkDFxspEg2G4jnQiPaKvJrhaoFSlNJR/4PnJiLdOT9DJ2gE3Ahc9E27bLqFlfqNplxnAGDlNrdT9+i+FW4D/1j5M73ogRhrzfv+/Wbfk9bmBDPeyVRd4oGubGKXJjG1MKSl6Iln+fBhsyWWxuP6XvBLxg07y1OF0tQkTXG62MYZqRTLmPFg4gFbik1s4hTF50kvBdo+vwK+a5tn2rXRH+nTalqJVfSGNlxThuLYBLtmaHZnno+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hlw9kj0rYRWH2OVXLkp9KtXFoj30xQD5Cm1Zctme3Lo=;
- b=NsqWqNa9KQjC4qjSnZgbhy5KWD/6XoTN37cMReo7474+Gjfidz4zrAWlNU84YNPUY7vg5BzhWNavQMyEK+IcxA46pyv+tCDWvzhlnQFVIiAhLtLtwp25tld5i4yzPolwjthaoYf/IU+S82C6NaiW/lp9Ii++56tXfylqeYswtZyhUg+z/gQZ9bVKBeHkfNB38asl6tVXR3zTcyvopMERprKDTInGr8eVxLs8Gf3g2fMJT2WRO2eLSN5ik+0NpvI+zriokv2Lh0ViaAO/wvlOXCxQWHeeD3dez+TokBUPKHu+9QGpjptPdycguONE0HGFsQkXzI5bXIKNfYVoqRJWJA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
- by DS7PR12MB8082.namprd12.prod.outlook.com (2603:10b6:8:e6::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Wed, 4 Sep
- 2024 17:48:46 +0000
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 17:48:43 +0000
-Message-ID: <ea0010cc-1028-4fe6-9f95-26677142fe42@nvidia.com>
-Date: Wed, 4 Sep 2024 19:48:36 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec
- compliance
-To: Jason Wang <jasowang@redhat.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
- shannon.nelson@amd.com, sashal@kernel.org, alvaro.karsz@solid-run.com,
- christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com, bilbao@vt.edu,
- xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com, eperezma@redhat.com,
- cratiu@nvidia.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Carlos Bilbao <cbilbao@digitalocean.com>
-References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
- <20240903171514.201569-3-carlos.bilbao.osdev@gmail.com>
- <CACGkMEvHU0VnOEZbVnEr1SvmOF5PhMtKk=M2o7Wwq-DUO9p7Uw@mail.gmail.com>
- <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com>
- <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
-Content-Language: en-US
-From: Dragos Tatulea <dtatulea@nvidia.com>
-In-Reply-To: <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0177.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b7::14) To CY8PR12MB8297.namprd12.prod.outlook.com
- (2603:10b6:930:79::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E584778C;
+	Wed,  4 Sep 2024 17:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725472204; cv=none; b=ZCb/S8v98QL/ZeMaYuWqbsz4fqTmnLUDh5FK2vc+bYAmpuYXE3RJtXrgvesSdZBQEuO3x0b+j1hvEH97D0waaAQofrd0/JfMjBSeAhOAZa4lmba/qaOwkAvSgfRjdmzRaP79YuQp32qCEROajKyaZlclSuPvzOaw/O+kvI69mPM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725472204; c=relaxed/simple;
+	bh=hHxVrQSEsPsgYlnyrf6ReJTTCLd0pbkf38E+5RYV1og=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PTcLyOkJLpx+DUD4GxkVgLyp7MQ2w1l78fhigXEve0Ywp3pJ3QdLJ8Aue3+vN4EyAeQZF2t7BckJe0TA4GQSqngSuuh99hG45jnC0VQD/38AOphSkbzTCoY1zY8g0I1TCBaAxRPe4bagA9zIGV4aVaDSPMUJ8DjEDFoFicOBAXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqD5lzdC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0821DC4CEC5;
+	Wed,  4 Sep 2024 17:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725472204;
+	bh=hHxVrQSEsPsgYlnyrf6ReJTTCLd0pbkf38E+5RYV1og=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kqD5lzdCeou6euYUG/Awz9d8i6P9riIdPT9Aegf0Ci71RpgbcssQQ0bTxSpPEsl+J
+	 mjupBVxbdjPOrjQL8yg8TE13FDM2+ZWMu8b/Ww9mcDcLNnjZ7THvhPNF0uYwh6Nimv
+	 v9K8h3JkIVoFK1glwLDGN8QLYqEM9hK5kuMh2rC/KNAPuqbAfSZtT4CE9bAt+AUO5C
+	 1hFEyslBw2VGEV9kIHXq/yjKuSKyX/dTnSqWRYRa48ZWsXF3sUACCgl1/xJhEPqhCo
+	 ZNPDTH2QUNtoTkH0NpyF6vCF1UfWyexV06VEoqAvO4yHmaWO7M9ZgfP3gTMIuKr2xQ
+	 7VBA3OjUenhSw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533488ffaf7so9529962e87.0;
+        Wed, 04 Sep 2024 10:50:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5N9I3tOid8NbYICm3dbJiv/ww3J3V18h0nAQK/Vcz/rTAqg++v63/SHpUUka87U7lm3KMsDfPGMGB@vger.kernel.org, AJvYcCVjWhxqTWqzcOCQHmgdiKARzjr218EFHWVgjlj0l9VnOca/1do63mWBcu/dSoSE2sLDUv2xYFTiczWi@vger.kernel.org, AJvYcCWZ04S+Zob4BQp3tbKK1H8nKW+E9AXR0c/3pZk8VaH/MSdroMM0O0u71KhG+UaxV6XGzXzkAgjq8EzOgID6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+s6IW6VkVE68sY2nCPzDt5+vO1US1net6nxUg0VxTa8fHVF9H
+	Y+14RcLBOfVSfr4RLN5Avz/GwuHWj3ZydbPZUQonTsAXSqvpD4LO9uCwnKWxu9u+mEd411NhxSp
+	dGbzTQTxR1JsREqdabweR9dpDRw==
+X-Google-Smtp-Source: AGHT+IGSQCWllSjVNUht9/hBiRn31t2hIqomRO4roXkiMDVa92ly9RGxw/tcqHJN+GBOFtCZbBxj7IpMjDy0TIfTxaU=
+X-Received: by 2002:a05:6512:2521:b0:533:41ec:bff1 with SMTP id
+ 2adb3069b0e04-53546bb3d58mr14192203e87.52.1725472202353; Wed, 04 Sep 2024
+ 10:50:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|DS7PR12MB8082:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1819e0f6-6dc5-45b7-0b8b-08dccd09d0ea
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?RWZJYzdNdjRIdUg2UGczRFQ5b0dreHI5K2R1TkdseWk4MmFUaGZSbVA1NHVx?=
- =?utf-8?B?RXNxUTVNL2UvQkthMjVVeXEwcGQ0RVFpSWF1cGV2UUtBVDRWeEEreUt0aHZi?=
- =?utf-8?B?Nm9JM2NOMEQ5cFBxSmxBSHV2ckYxcmE2WkdGVyt6SFV6M3VWSHFqQk81VmlH?=
- =?utf-8?B?Y2t3OGlBaUJDei9ud09QQWhxd25YOGNqRkV5REw3VStiRzBPRHh4QjB6M0JE?=
- =?utf-8?B?MmNBVStTeC9laUwrVUtxZXlRTHFiaEZEMWdZY1lMSXZLdVhHYngvNkZzU0pS?=
- =?utf-8?B?dW5mMkNSZWNuVjdJdU5ac2k5L0NWbktmTlBvcHBZdHhJYStENnI4ZTlGaFhp?=
- =?utf-8?B?S0FKV09BTnRVQ1VsV2FSaUhJaTJXY3JIQzdQMHZsa05wazljMGUvdVo0VnNK?=
- =?utf-8?B?dDNWTnUwQnlxcVBEZ0ZmTjA3UXZUWFdCcG14aURsdkNlRUk4UjNZUVdFWVQy?=
- =?utf-8?B?RkQ2aTJ6dVpPOGU1QmlGdk55QXQ4ZU4xVmE4UVV2a1lSVEM4TVlLOGpVQ0V5?=
- =?utf-8?B?bmRUcFlhcndtZ3lsSEhBZVcwajFicUZUVURmNnBMMGhPQ01HM0ZwcUhyRlJM?=
- =?utf-8?B?T1lkQTNkN3QyT2dRMUpGMG9JUGdJYzVlR3A4MUUrREF0YWZPTWZLbW9JREtE?=
- =?utf-8?B?dWZ0UEpOc2xqSjJqUHJtL2ZlWklRQWRoMGN3SEZaU2dBd1FLU0ZxUEppbG9s?=
- =?utf-8?B?RE9UZHJ6SnZDczE4RHNWQytKeTdqMFh6ZzVRZ2orYWhyRmFjUG90V09qK2tx?=
- =?utf-8?B?elpkcjNGcHg1Ui9BRitxNStiM05iRmlWdHlxcWFSZGF4ZGJWYUc3WmRlTjRs?=
- =?utf-8?B?Nzg4S1E2UVVHazJBYUd3RzE3OVNVWG82OEhIdGl0ZzNBWUZrai9NbWpDZ3M0?=
- =?utf-8?B?a0xpZHRvUkM3aStBZWdOcWV4bHlkcXhHRkFIRzVRQ2xXNk1ld2xaUjJKb2Rv?=
- =?utf-8?B?b2FnTjlEcUViU1UwemUwVVB1YWFEd08vdUdQTnpOZWdyYXltVDd0NXlMQWU0?=
- =?utf-8?B?SWtGTkNkL25ld2dtVDhtMU9GOU9sYml4K01wbithN2dMMjJ3a09HUjFEYXhi?=
- =?utf-8?B?UGpVdTJHSC9uRkNUcUw2L3hDYkJTaXBTVUVPMnpXcGxLN04rNGZJZnlQaFdy?=
- =?utf-8?B?QlhZOHJRYVZtWFAvQjV5NTVwMGlPdmd6a2RBQlFRWWpnd25jUUw2WjA2ejV0?=
- =?utf-8?B?Q3RiZFRFVUNaRy85OW1wejVNQVc0MElTbU9SVjU2bjJHMzFCSStTYlVDS3Yw?=
- =?utf-8?B?MUV0Mk8yeWVEcW15dFV1K3U0VkVLbFZoaUsyRlJrRUk0SnNpRnR2TE1uNENO?=
- =?utf-8?B?UHZORG1teDVvb1VHRnRUSTlZU2t5U0xzT3JmbmttMGdDYXFzdFB6THFEVXVY?=
- =?utf-8?B?VUZ0a1llQSt0WDBBMWxqR3lGMUFKUDhtaFFhR0FDRm53c20vUHBiYXk3QzVL?=
- =?utf-8?B?ZHlzeE1vMjBzeUlTeE91NTk2QnNpc3I1c1gxMVh6SVo5UElXSE14d1BZZHhW?=
- =?utf-8?B?cURkVFl3bXEvY3NIS2Zxd0VnbStBRlhZaHZVQkowUDdCTVJJMFN0MmNXdDBm?=
- =?utf-8?B?cEpuQU50dFoxenY0cU1sWHkvc01qaFcwYWdqM0IzeTVjczcvTWZKNFM4Ymlk?=
- =?utf-8?B?V29jQXhwNytBWnJuSkxzVnA2SUt3YWZyTmtuRmloRFhqcDhtRmVRaG5LMU54?=
- =?utf-8?B?UWdRNFZJSUprNUNvSFY2NGJyY2Yzcnd2NEpmeCt5T3lRYUYwdTJDdEhyRkJX?=
- =?utf-8?B?WmEyRDdQWCtRM1ZLVzJoRWR6UFdlMU42ZnFDNW9QSDcvN3MxWHJTdTdqZGNU?=
- =?utf-8?B?cm5jcVhHQWtiVTJ2VlFVdz09?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?cmZ1RkhmdVZSdGNXVU1NaDNXdzR0OVpadVVYVXFjYm9ZcGRwcDJZWHVZSUNt?=
- =?utf-8?B?eGJZRXlXQ2x4NmYrWkNlYW1BZGZ3QVlVdmNLTERwVUpjZFZlQTA0S3p3c3Qr?=
- =?utf-8?B?S05pOWhHdkhoNWF0Lzd6QU5GbWRNaTdtWWprOFgxVys1ZWl5M2prdDMrMXlp?=
- =?utf-8?B?UUJYYUJza3pzVWdOQ2hWMXYwdk54bU5FNXhZNW5WQ3I0c0tsVjRSdk1qTTFq?=
- =?utf-8?B?R0J4M0tGRytIeGpQNHNpU0I1Q0FWMExhQ1pHSVZRL3UrZ3V1bnp4WEhFbGdx?=
- =?utf-8?B?eFA0TG9ISkcrRjM0UXBjWXhibEdDWVVmU25NRUoxSnpmbXlFaExYWVlvVWlI?=
- =?utf-8?B?NkYrbE5tRnVrYlA1YjduT0JCekN1eGFPU0I1cDhOSTFBRUFXR0d4b1JpRzFP?=
- =?utf-8?B?c0loaVhqWVRzTzRpZldLRUw2MDJHd1B6NUpvVjBhSkVsaklQVUVhS2pYTm1i?=
- =?utf-8?B?TGhxUVJ6TkFBdWhpeS9lOG5FdDdNbFhkbyttRk5HQXhsNzc0UzNCcWQ5NUIv?=
- =?utf-8?B?SUV1Q05FRzVJVGt5NnNVZ0FhdWVEZzYwM3VLTFJGdVdiMDZJcVF6bDJBdzlY?=
- =?utf-8?B?TzUyNCtNdG9zc1cxWlhwdVJtV0x1dFBMY3YzMWNCR1B5V0JsbHJNVVZmMW5J?=
- =?utf-8?B?V2tMVk02ZHBRVHBNbWVwa09MUElkemZXQ3FKNThGcXdLOW9XaGZ3aXhkK2VR?=
- =?utf-8?B?QXJ3b3JuUnVxbFNCWXAyeC83VlBHbGMva3VMWks5ZGtoQ2w1UnRVK2lzRUZU?=
- =?utf-8?B?d1JnbzNpU24vMVY4MlhveU9McGd0MnE4QTFITUNmUGdqdmE1cW5MUjJXNmZ4?=
- =?utf-8?B?OXRLN0o0MXNtVi8zU042NVhpK3lMc1hZNVhzdStwd0N6NnRTVGhKMXBDbFRa?=
- =?utf-8?B?TUdvUW1sc1pqOXZFd2UwUU1vRnhmRW9QdHcwM1VFUXNxMmtrcWhOZHIyYzRp?=
- =?utf-8?B?akpla3lkaGVsb2l3TXFOeFlRYXczcG1HZk9OeFc5Y1dPMnNyeDNMb1lkeUor?=
- =?utf-8?B?SWlnK1FFOC8wWHJMYlFnYlQ1SzVlTGRId2xDYXNMQ29RWW9BVXhWZmJYUWMv?=
- =?utf-8?B?aHU0NXpreEJGNXJkU09yc2JvTDhqZUZ1UkF0dWxJTkp4ZVA1R3A2ZnBOU1JC?=
- =?utf-8?B?UmZJUitKY1ROVlFxMXhNRzBjSTlnbVZySE8weGE2MlRMRHl4MUZ2RWttL1hW?=
- =?utf-8?B?RjRGZjdYaHJIUU9PWTIxeVcxdnd4TDJ6aWdaZ0pnL09iV1ZOT3JvdjJoWGlT?=
- =?utf-8?B?bU1PaG1UM25FU0lIaVZCM05oanFDS1hCaWZhVDFWYTFIc3QwYU9SMjMvOWdy?=
- =?utf-8?B?WmxoVmV6bDF1OGxyOU1qZGYyR1RHU3hGVUV0czlycTkzNGJDV25IL2NHOUZ2?=
- =?utf-8?B?eHJIN09xRTRQWTZjajdKOFE3OVc3eHV2NmluVkRRbVk2V3dKWXRiVU1CM2kx?=
- =?utf-8?B?MW9CcXdRRXJNUEVZdDE1ZEZFSEdtcmV1N1ZIek1TdEFPSDRLMXRNTFcwcVAr?=
- =?utf-8?B?bnFKNlJPdUR6ZEs3S0lEeEVkRURqVEFtYithdGc0SlRlb01Ca2RnVGJ5aDZ4?=
- =?utf-8?B?ZjErY2d3UWsyMEgwV0hWYm9EaWZOTWdMa0lZT0NyTi9KR2hYMWZMMXNCZnpS?=
- =?utf-8?B?MGs1eDFEWTBUV1g5TnZNRVliTXhDdkRQY25wSk94RWk2b3Vlb1NnUzBITDNs?=
- =?utf-8?B?V28xb3lINTQwUXZDbHBOYTdrMVVZY3BXZ3dMTE1yOXVCbWxubW54dTZQNVVT?=
- =?utf-8?B?cXVFd0tOcURoN1luUHNPS1NuQXppSUp2WHJoZ2NjeVB6K2ppV3BaVzlQT0NR?=
- =?utf-8?B?N1EwdnAycXpPWG8zeDZKRTl4OXc0disyWkRFbkNwcEFxRFdSd1FMK1NlWk90?=
- =?utf-8?B?YmpLNjFRYWI4RjZuTjR5Mnp4RlF5cUFqWlkweU54Z3ZrcDJaZWVZVDRScVNR?=
- =?utf-8?B?cDM1Nk50MlUxQ1JBb2htOW1XVzM2VEN1RVFIcEJnVUtRVDFydmxqYURHbjhi?=
- =?utf-8?B?MWRRUFBETkt5TEltZHZ3SUlrZnc5NmNzdXdzYXV2WXFVSVhSajlUYzA1RGtI?=
- =?utf-8?B?U3hrWFM5VUpQWkpWM2xMbWtEQWdVMGRIOFY1UFJNaW1FSlVLZFl1d0NVbkFn?=
- =?utf-8?Q?4Dzoox8gZW84nVVTbFHJuoSkv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1819e0f6-6dc5-45b7-0b8b-08dccd09d0ea
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 17:48:42.6509
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DIaG6IBbLVTi0HVg4HerhUnbiZHIkL+SxzpscPNxlz06HILE7MpC3TmqYteLCT0MfhtAGFlby7MLppePbYEhZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8082
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org> <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
+ <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org> <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+ <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com> <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
+In-Reply-To: <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 4 Sep 2024 12:49:49 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
+Message-ID: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Vaishnav M A <vaishnav@beagleboard.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 4, 2024 at 12:09=E2=80=AFPM Ayush Singh <ayush@beagleboard.org>=
+ wrote:
+>
+> >> gpio-map is what you are looking for. It's documented in the DT spec.
+> >> It was created exactly for this purpose of remapping GPIO lines on a
+> >> connector.
+> >>
+> >> Rob
+>
+>
+> Hi. I found docs on nexus nodes [1] and tried using it for mikroBUS, but
+> it does not seem to be working. Here is my connector:
+>
+> ```
+>
+>      mikrobus_gpio0: mikrobus-gpio0 {
+>          #gpio-cells =3D <2>;
+>          gpio-map =3D
+>          <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
+>          <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
+>          <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
+>          <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
+>          <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
+>          <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
+>          gpio-map-mask =3D <0xf 0x0>;
+>          gpio-map-pass-thru =3D <0x0 0x1>;
+>      };
+>
+> ...
+>
+> &main_uart5 {
+>      status =3D "okay";
+>      pinctrl-names =3D "default";
+>      pinctrl-0 =3D <&mikrobus_uart_pins_default>;
+>
+>      gnss {
+>          compatible =3D "u-blox,neo-8";
+>          reset-gpios =3D <&mikrobus_gpio0 10 GPIO_ACTIVE_LOW>;
+>      };
+> };
+>
+> ```
+>
+>
+> After some fdtdump, I can see that at least the dtc compiler does not
+> seem to do the forwarding at dt compile time. Here is the dump:
 
+dtc knows nothing about it.
 
-On 04.09.24 08:34, Jason Wang wrote:
-> On Wed, Sep 4, 2024 at 1:59 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>
->>
->>
->> On 04.09.24 05:38, Jason Wang wrote:
->>> On Wed, Sep 4, 2024 at 1:15 AM Carlos Bilbao
->>> <carlos.bilbao.osdev@gmail.com> wrote:
->>>>
->>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
->>>>
->>>> Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementations
->>>> with vdpa_config_ops->set_config(). This is needed per virtio spec
->>>> requirements; virtio-spec v3.1 Sec 5.1.4 states that "All of the device
->>>> configuration fields are read-only for the driver."
->>>>
->>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
->>>
->>> Note that only the config space of the modern device is read only. So
->>> it should be fine to remove vp_vdpa which only works for modern
->>> devices.
->> Just out of curiosity: how will this work for devices that are not
->> v1.3 compliant but are v1.2 compliant?
-> 
-> Devices don't know the version of the spec, it works with features.
-> For example, most devices mandate ACCESS_PLATFORM which implies a
-> mandatory VERSION_1. So they are modern devices.
-> 
-And modern devices should not write to the device config space. This
-was discouraged in v1.x until v1.3 which now prohibits it. Did I get
-this right?
+> ```
+>
+> mikrobus-gpio0 {
+>          #gpio-cells =3D <0x00000002>;
+>          gpio-map =3D <0x00000000 0x00000000 0x00000025 0x0000000b
+> 0x00000000 0x00000001 0x00000000 0x00000025 0x00000009 0x00000000
+> 0x00000002 0x00000000 0x00000025 0x00000018 0x00000000 0x00000003
+> 0x00000000 0x00000025 0x00000019 0x00000000 0x00000004 0x00000000
+> 0x00000025 0x00000016 0x00000000 0x00000005 0x00000000 0x00000025
+> 0x00000017 0x00000000 0x00000006 0x00000000 0x00000025 0x00000007
+> 0x00000000 0x00000007 0x00000000 0x00000025 0x00000008 0x00000000
+> 0x00000008 0x00000000 0x00000025 0x0000000e 0x00000000 0x00000009
+> 0x00000000 0x00000025 0x0000000d 0x00000000 0x0000000a 0x00000000
+> 0x00000025 0x0000000c 0x00000000 0x0000000b 0x00000000 0x00000025
+> 0x0000000a 0x00000000>;
+>          gpio-map-mask =3D <0x0000000f 0x00000000>;
+>          gpio-map-pass-thru =3D <0x00000000 0x00000001>;
+>          phandle =3D <0x0000000e>;
+>      };
 
-Thanks,
-Dragos
+You might need "gpio-controller" here. Though if you do, I think
+that's a mistake in the kernel. It should work like interrupt-map and
+generally you have either interrupt-controller or interrupt-map, but
+not both (though that is allowed now too).
 
->> Or is this true of all devices
->> except eni?
-> 
-> ENI depends on the virtio-pci legacy library, so we know it's a legacy
-> device implementation which allows mac address setting via config
-> space.
-> 
-> Thanks
-> 
->>
->> Thanks,
->> Dragos
->>>
->>> And for eni, it is a legacy only device, so we should not move the
->>> set_config there.
->>>
->>> For the rest, we need the acks for those maintainers.
->>>
->>> Thanks
->>>
->>
-> 
+> ...
+>
+> serial@2850000 {
+>              compatible =3D "ti,am64-uart", "ti,am654-uart";
+>              reg =3D <0x00000000 0x02850000 0x00000000 0x00000100>;
+>              interrupts =3D <0x00000000 0x000000b7 0x00000004>;
+>              power-domains =3D <0x00000003 0x0000009c 0x00000001>;
+>              clocks =3D <0x00000002 0x0000009c 0x00000000>;
+>              clock-names =3D "fclk";
+>              status =3D "okay";
+>              pinctrl-names =3D "default";
+>              pinctrl-0 =3D <0x0000000d>;
+>              phandle =3D <0x00000081>;
+>              gnss {
+>                  compatible =3D "u-blox,neo-8";
+>                  reset-gpios =3D <0x0000000e 0x0000000a 0x00000001>;
+>              };
+>   };
+>
+> ```
+>
+>
+> So I am a bit unsure. Is the dtc parser in the kernel supposed to do the
 
+No such thing as "dtc parser in the kernel".
+
+> mapping, or is it supposed to be done by `dtc` at compile time?
+
+No.
+
+> Maybe we
+> do not have support for it in upstream kernel yet?
+
+Yes, there is upstream support. Grep for of_parse_phandle_with_args_map.
+
+Rob
 
