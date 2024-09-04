@@ -1,187 +1,228 @@
-Return-Path: <linux-kernel+bounces-314018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC84496ADB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:19:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB5C96ADBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962851F2157F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:19:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7CCB2458C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF2FC2E3;
-	Wed,  4 Sep 2024 01:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E9D8C11;
+	Wed,  4 Sep 2024 01:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6vaW8G9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tsAdRym/"
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B094BA50;
-	Wed,  4 Sep 2024 01:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987CF28F1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725412724; cv=none; b=XWFzx+1nDZNwmsqmwWEfAjJHvym8/HyKbv+eYJtjueFI/j8PZON6avNcvtdr+wlpoQY7HwLK6gEIX5RSPGqy8+bS5TaxLinziobKyDXL8jHDg09RMc5ohDXvOxLdrk73LoI3UvRkgI2dcsXqMu/PqX8DYFPBQX4Vl11kpYB79W8=
+	t=1725412735; cv=none; b=nAWj0Mr9dSAIfaFAOFrAmKfhnEoBd6HO3npPPQrwFAa+fjBecwF/X95COtUbEtkMXu7zvZRnVOwilcoaWqgDLjPZfZiOJR0MkML5SEkTU8Lk5LBeIbZ6zfRarJq/rKiRuvY7Xjtyc7NDOf7o474i0rVEZkutvX+xfOFiYC/4nkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725412724; c=relaxed/simple;
-	bh=y/3yN1UyvYk8Wq999clT14OsLdRzhWfqeZkW6GvxlHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XH+QWqH58r02FZJZkhtqARNM1wGYs5i88VtZfSEvX5SIsrqWhOAniS8V+22eCCmX8lo33krEILxNte4lkE8cdzaCZW+7vLqmsNC8gOyVyXjg/Cz6wBmQQtIRdUUU4A98juEA1J9ic9jeYCJ+Krkts93mrL6QyaeJ+ZEbLemkb1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6vaW8G9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F76C4CEC4;
-	Wed,  4 Sep 2024 01:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725412724;
-	bh=y/3yN1UyvYk8Wq999clT14OsLdRzhWfqeZkW6GvxlHo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a6vaW8G9clbLDlTrj5RrieA6o0MP9RhjYpO5XdSMVRsEzfTWOTQCmNXcFNt29K/IE
-	 Ii6ZGn7bfMcRf9/BxwyraAucHwdFQ6+7gAQoraG9nsZ6hYFSgoQZaFsRCknIYjQQ3t
-	 nBvL7hYmdoj2l2F/sOXP89SfG8UwffnmELIKoFrW2Jyt/TMEIj6cPP2xdQJ0dvs5y9
-	 1ljtUwltwh4os+Om2vmyvBo05lsV9t6Cl0lO9NOYBns/dXhyzy7LQTR6dvnqAg7Ys8
-	 cg6xSdBi5FKzEDciSnQDxuvFj+IllEa9oFoFHzDAcr6R3v7CJsDHuZKHuq/IFP6OqZ
-	 B+7265UR+Cssg==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] mm/damon/tests/vaddr-kunit: don't use mas_lock for MM_MT_FLAGS-initialized maple tree
-Date: Tue,  3 Sep 2024 18:18:40 -0700
-Message-Id: <20240904011840.973-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240904005815.1388-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1725412735; c=relaxed/simple;
+	bh=yNs/1T5HEKuYw3butknZxMSzlK71t80xJgmUI08RvpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iaQxvJqHUzCeaHZykfFAy9UoQrCwuLjRxtQH/v4/DaDvCRgUAHcln8c/PyCdwic6azwNQPBsbwEox38oSxtVwyWoucyahRdqRFbMT6JoxhaC7rL670CjBETWWTAa+B39i2yl6yXi83eEuxGkZa9dqFRH+bKUTWpICd6Bm0nQsfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tsAdRym/; arc=none smtp.client-ip=66.163.190.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412727; bh=+F1gdXx2llHjfLSdb7DiIsvu2+e0ubmkCeOlGInmv24=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tsAdRym/Niytq25mpqJbWRVFIivtx4NF76stWbPB+KEZoHKM8zeXT1eZzorZULYvhW0dWOfq0rhXH11t8z/5Tc/dsfbcMyMoNs+yrv6/tEFNef4SFE1JXHuTl9rPMHopu8txtiRxKJiP0GVK+CXfigmEbrwyb9LkEcmIVi2iQ1LYjd07vE2Bcy9Tj/RTEqx1ku4+dWyYApa/uNIRdK1+8Ua8zxz3SuLW3441zenQ63EDg0CY4d4HtEJq9F9+ztPpB7JUKdX8Tm9Mn2LvD5tlnbDr/ctAlU/TJ5CcYkQqpinTTtsC2w09Qevr+hM3ngignSBhGQj7iJLldiARIxHtOA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412727; bh=FMDCe7+1+swmeLJWcZd63dmuPT0xDVMwdUwCLUFUjSm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=MuRxmVIS+dbXVS65hWWXv733XYvL9gjJFpSDQmTcq7VkL0dZCDpTC1l2RQSnV8RTwl3h96lfnNRQNxGUYXIGrTVvG1N25nvJzcKOKJFacVpOyMbGQzT691lBcGx9E2QSfwNzsrRVo9K7YWovfDZN1dm0XhbrRP/8TfSB73XvDKYJk0oCOqfot06kJ51BJzQyMcOvKLInHcan4JIJTO9c/u/y+ObiqaHzId4ZZGz58bB5y69PdI+zySGDbmYjG467kGaIK6D+H3RcOn2SqbWN/tIfzn8krHEM6oNLSP/pkt88/sVty5IzVCbySyKDBfVnNudk6iYjqf8Bt3P2LBxdSg==
+X-YMail-OSG: sWivKUcVM1lE_IiAxBNJTIfcBPpURTyUAx5r5HCy2XL6T3cp8PvRtLxmjlgvrbH
+ 27qXMjEMM1_8qSLNUOufF4seADeBsH7y3Vy76AJVVHqqRcRH0FqoGYj3ALgrV2I4OEPsA2COLRSj
+ eZ4kzbqfmtKHQA65wwKIOszIvp_OQ9B4a.vRchCwzl_WcSgEJVF71i.R_Brs9PMpjAtub3m_p54Z
+ ip61Or0HrH2Mv7D31q2NnczwMsMvuPz.N0ozIef6dLzOXJxi.vQj9b3hSJa5HCB8F9pz08eo09rk
+ yZyy1yvC1Rwwpv0EmU8H1uYJbuolSHpwp.lpOpoZAvE73nkBIeRF7baKrM1ywxms_TpUAVOFkmKJ
+ NjjfRqWtz6rSSe96.lx9x6TRvox7Vmu8debR0o6bIE0w7djc3oK3V8_2QQIaRE8Qc00Vb6i6ODfD
+ HhL9qufPsmDdHQr2663FRWLY.ld_jLgl3Emsd5eu_KmknVWRDpS4c8JIwpi_FX.a8m.dS5dnWIrg
+ 6s_1ds65n8IqUbwr1Iugj_24z6g2vwOmEpF9Pswz5rwHMZO4W3LIcaNYoQ2KWbNoF.e1AOQwR2rG
+ i9K_R1K_fOjfDXFXEbeCCSKAEA75aDizdCK16Pn5OISI83SwOBfhsoQv1BltMIsj.9HS3WTMwNyc
+ 481dQcU9AviRpVlq8rertIzoadtZkEgQk..I4GywYTWH7IpKKhu4oVS8NwhBkN9YIqSZ8FvTv1ZA
+ 8tWjkJyXZ0HbHFY3Q2YbbWIauHob.Q0xpw1BZ0RTuMynfQVUkwTBKrf2zWSP34CGezn7cL7AKs1q
+ XYypXWvMgZ_BtK0L9C02h.a9sZd9bKREjkQ.ASwCdix5ELstIOndvT9UTK8.w3xeFPQ1r6kjBFv4
+ wdOdQOm24SXUFUR3hMUz97UzibFMGFzyeaIDIENHD7SOp3OT_aVkR.HEkTkdohEXV4mS3csQ93nE
+ kanuHnSGiU8lEkfXUvR7cIauF5uPGwnIMnNGNVrykkmp.foRCUZLOZHR_IUE6Jg4UIdMqMi40Kcr
+ MFTjeBhXzmoc.VgbZwqG.PU2HU49jGBYr3TKChr.8_WT_RusNxvkKhAiwUes0ACglOJVNAIX9dOl
+ Exy0hoBZX1vUDfvq56GkLSl8cABD4Gnv2DfPI5lrEdN1_Uje9ILRtiEEzLW2q9rKsQDnUdyrtn1o
+ GD.rbxfjXRGTD5P8pNsf7h9LWp9CfpkLQhkW6KYKV26yHZiDA1jFGiFGTdm4x5ocLNZ1us2HAijm
+ ZhijTpHfWC83CfC7lncnEFfRRliw0gg35VLF64H9vvXCfjk2BU3nAA1PwOZ.F8lWZmjlqKSbIoqy
+ nzvdeETIhtqN2FjSU92IXTXQKBsQ5e4SlHtOKituiHDE9mj2kYnmqCTuXVJFIZZUPmqWdRsZh5sj
+ 7aGLsPum60exn9M4nrukQj2PQwkQN1hJTIsCAU1TDsmkQ8s1b3AjAK6OXco07MDPZ0HVEuUYoxYW
+ 6MiDEC4yAPH83W5LbU0EIwzBknz5K.Y4dCvuTAfXTN9EQq8v2B9Muq8IaDmqJWu9OtQ0VH35v475
+ YHFO.YEMaODkObFPMdcIvi6wwFKbjItzLtjDQmTuYK6a5eE.hHsRZe22v_y1Mwy7lCrJFwAShTPP
+ 8tYYmhr_ymFVeda13VTDcKyl66xSlmGcklUJZUYPoil6DK0BsOAVq2nJqccH.cu5PuOKRAMxa2Gn
+ LUbfI.67y_4W_uY0JBRQACifLMdC9DKNh0UCqzYd42jET7FQ1zST5EHGbwJ6K1G4dYgFTR8e_2ZZ
+ PD3zWI69MD9NxDgPJfd0OQo2tWfqMQwfzVbpDyu_HCvPwv4DlKjEtgDqK6VLxdLxgxTGPXLnS_Sd
+ QpSAsz9jaZHDiIPeEDkHMcZUZowSDmWKQ1a4cnuTONV5hFGOFmgmuN9gwAfJsnDT0Fs16FFTLSvG
+ WxYlhclc8R8sz9DZQtjzLo0QdujbtKSC9jBM9fdoFxrcuWjPvsHF4NwnFxc6X_m4820tZV.BQzNb
+ 3ndjIFEb0Ms0RBjvJZF.iWCNes.NHIh.oJc1NcU1BJ0zCiVqGJtNsIiAxZ9GDUjS6NF151TZwXeT
+ TziS.rubW1qLrQAa6DEpG1UDXm4ObcgqbF0YBDjxeSzeFlIPAABLiqbd1phxirL5pWhx0C7eSEGz
+ 3777ZdiFt7REkza49tnGpvQdMIL1_0cjwVgOEWVCAdWmdpzC_9qEVlEQJ5KMh1tj2.H59b_gKJqW
+ MJTCMhht05qlaGi96tdSMw944YujSc6xr3rWWj16UoPNGO7dkErbHqASY65D8Zu19XK2WfrZtxn9
+ GJsKM4Gf9Tw8DJpMj6tpBYB6mDh9A7qwO2ACaFw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2a6852c9-3ea1-4fa7-9ffe-6faf840d5e4a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2024 01:18:47 +0000
+Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa61bd69138485d742123d35d89a14b4;
+          Wed, 04 Sep 2024 01:18:44 +0000 (UTC)
+Message-ID: <56cfa89c-1a62-4c48-a67a-186226de1843@schaufler-ca.com>
+Date: Tue, 3 Sep 2024 18:18:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/13] Audit: maintain an lsmblob in audit_context
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240830003411.16818-5-casey@schaufler-ca.com>
+ <9c8268660e3c07af7edab592e8249276@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <9c8268660e3c07af7edab592e8249276@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue,  3 Sep 2024 17:58:15 -0700 SeongJae Park <sj@kernel.org> wrote:
+On 9/3/2024 5:18 PM, Paul Moore wrote:
+> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Replace the secid value stored in struct audit_context with a struct
+>> lsmblob. Change the code that uses this value to accommodate the
+>> change. security_audit_rule_match() expects a lsmblob, so existing
+>> scaffolding can be removed. A call to security_secid_to_secctx()
+>> is changed to security_lsmblob_to_secctx().  The call to
+>> security_ipc_getsecid() is scaffolded.
+>>
+>> A new function lsmblob_is_set() is introduced to identify whether
+>> an lsmblob contains a non-zero value.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/security.h | 13 +++++++++++++
+>>  kernel/audit.h           |  3 ++-
+>>  kernel/auditsc.c         | 19 ++++++++-----------
+>>  3 files changed, 23 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 457fafc32fb0..a0b23b6e8734 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+>>  	return kernel_load_data_str[id];
+>>  }
+>>  
+>> +/**
+>> + * lsmblob_is_set - report if there is a value in the lsmblob
+>> + * @blob: Pointer to the exported LSM data
+>> + *
+>> + * Returns true if there is a value set, false otherwise
+>> + */
+>> +static inline bool lsmblob_is_set(struct lsmblob *blob)
+>> +{
+>> +	const struct lsmblob empty = {};
+>> +
+>> +	return !!memcmp(blob, &empty, sizeof(*blob));
+>> +}
+>> +
+>>  #ifdef CONFIG_SECURITY
+> We probably want a !CONFIG_SECURITY variant of this too.
 
-> On Tue, 3 Sep 2024 20:48:53 -0400 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
-> 
-> > * SeongJae Park <sj@kernel.org> [240903 20:45]:
-> > > damon_test_three_regions_in_vmas() initializes a maple tree with
-> > > MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
-> > > mt_lock of the maple tree will not be used.  And therefore the maple
-> > > tree initialization code skips initialization of the mt_lock.  However,
-> > > __link_vmas(), which adds vmas for test to the maple tree, uses the
-> > > mt_lock.  In other words, the uninitialized spinlock is used.  The
-> > > problem becomes celar when spinlock debugging is turned on, since it
-> > > reports spinlock bad magic bug.  Fix the issue by not using the mt_lock
-> > > as promised.
-> > 
-> > You can't do this, lockdep will tell you this is wrong.
-> 
-> Hmm, but lockdep was silence on my setup?
-> 
-> > We need a lock and to use the lock for writes.
-> 
-> This code is executed by a single-thread test code.  Do we still need the lock?
-> 
-> > 
-> > I'd suggest using different flags so the spinlock is used.
-> 
-> The reporter mentioned simply dropping MT_FLAGS_LOCK_EXTERN from the flags
-> causes suspicious RCU usage message.  May I ask if you have a suggestion of
-> better flags?
+I'll check, but I expect you're right.
 
-I was actually thinking replacing the mt_init_flags() with mt_init(), which
-same to mt_init_flags() with zero flag, like below.
-
-```
---- a/mm/damon/tests/vaddr-kunit.h
-+++ b/mm/damon/tests/vaddr-kunit.h
-@@ -77,7 +77,7 @@ static void damon_test_three_regions_in_vmas(struct kunit *test)
-                (struct vm_area_struct) {.vm_start = 307, .vm_end = 330},
-        };
-
--       mt_init_flags(&mm.mm_mt, MM_MT_FLAGS);
-+       mt_init(&mm.mm_mt);
-        if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
-                kunit_skip(test, "Failed to create VMA tree");
-```
-
-And just confirmed it also convinces the reproducer.  But because I'm obviously
-not familiar with maple tree, would like to hear some comments from Liam or
-others first.
-
-FYI, I ended up writing v1 to simply remove lock usage based on my humble
-understanding of the documetnation.
-
-    The maple tree uses a spinlock by default, but external locks can be used for
-    tree updates as well.  To use an external lock, the tree must be initialized
-    with the ``MT_FLAGS_LOCK_EXTERN flag``, this is usually done with the
-    MTREE_INIT_EXT() #define, which takes an external lock as an argument.
-
-(from Documentation/core-api/maple_tree.rst)
-
-I was thinking the fact that the test code is executed in single thread is same
-to use of external lock.  I will be happy to learn if I missed something.
-
-
-Thanks,
-SJ
-
-> 
-> 
-> Thanks,
-> SJ
-> 
-> > 
-> > > 
-> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > Closes: https://lore.kernel.org/1453b2b2-6119-4082-ad9e-f3c5239bf87e@roeck-us.net
-> > > Fixes: d0cf3dd47f0d ("damon: convert __damon_va_three_regions to use the VMA iterator")
-> > > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > > ---
-> > >  mm/damon/tests/vaddr-kunit.h | 10 +++-------
-> > >  1 file changed, 3 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-> > > index 83626483f82b..c6c7e0e0ab07 100644
-> > > --- a/mm/damon/tests/vaddr-kunit.h
-> > > +++ b/mm/damon/tests/vaddr-kunit.h
-> > > @@ -17,23 +17,19 @@
-> > >  static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
-> > >  			ssize_t nr_vmas)
-> > >  {
-> > > -	int i, ret = -ENOMEM;
-> > > +	int i;
-> > >  	MA_STATE(mas, mt, 0, 0);
-> > >  
-> > >  	if (!nr_vmas)
-> > >  		return 0;
-> > >  
-> > > -	mas_lock(&mas);
-> > >  	for (i = 0; i < nr_vmas; i++) {
-> > >  		mas_set_range(&mas, vmas[i].vm_start, vmas[i].vm_end - 1);
-> > >  		if (mas_store_gfp(&mas, &vmas[i], GFP_KERNEL))
-> > > -			goto failed;
-> > > +			return -ENOMEM;
-> > >  	}
-> > >  
-> > > -	ret = 0;
-> > > -failed:
-> > > -	mas_unlock(&mas);
-> > > -	return ret;
-> > > +	return 0;
-> > >  }
-> > >  
-> > >  /*
-> > > -- 
-> > > 2.39.2
-> > >
+>
+>>  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
+>> diff --git a/kernel/audit.h b/kernel/audit.h
+>> index a60d2840559e..b1f2de4d4f1e 100644
+>> --- a/kernel/audit.h
+>> +++ b/kernel/audit.h
+>> @@ -11,6 +11,7 @@
+>>  
+>>  #include <linux/fs.h>
+>>  #include <linux/audit.h>
+>> +#include <linux/security.h>
+>>  #include <linux/skbuff.h>
+>>  #include <uapi/linux/mqueue.h>
+>>  #include <linux/tty.h>
+>> @@ -160,7 +161,7 @@ struct audit_context {
+>>  			kuid_t			uid;
+>>  			kgid_t			gid;
+>>  			umode_t			mode;
+>> -			u32			osid;
+>> +			struct lsmblob		oblob;
+>>  			int			has_perm;
+>>  			uid_t			perm_uid;
+>>  			gid_t			perm_gid;
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index 23adb15cae43..84f6e9356b8f 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+>>  				/* Find ipc objects that match */
+>>  				if (!ctx || ctx->type != AUDIT_IPC)
+>>  					break;
+>> -				/* scaffolding */
+>> -				blob.scaffold.secid = ctx->ipc.osid;
+>> -				if (security_audit_rule_match(&blob,
+>> +				if (security_audit_rule_match(&ctx->ipc.oblob,
+>>  							      f->type, f->op,
+>>  							      f->lsm_rule))
+>>  					++result;
+>> @@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *context, int *call_panic)
+>>  			audit_log_format(ab, " a%d=%lx", i,
+>>  				context->socketcall.args[i]);
+>>  		break; }
+>> -	case AUDIT_IPC: {
+>> -		u32 osid = context->ipc.osid;
+>> -
+>> +	case AUDIT_IPC:
+>>  		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+>>  				 from_kuid(&init_user_ns, context->ipc.uid),
+>>  				 from_kgid(&init_user_ns, context->ipc.gid),
+>>  				 context->ipc.mode);
+>> -		if (osid) {
+>> +		if (lsmblob_is_set(&context->ipc.oblob)) {
+>>  			char *ctx = NULL;
+>>  			u32 len;
+>>  
+>> -			if (security_secid_to_secctx(osid, &ctx, &len)) {
+>> -				audit_log_format(ab, " osid=%u", osid);
+>> +			if (security_lsmblob_to_secctx(&context->ipc.oblob,
+>> +						       &ctx, &len)) {
+>>  				*call_panic = 1;
+>>  			} else {
+>>  				audit_log_format(ab, " obj=%s", ctx);
+>> @@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *context, int *call_panic)
+>>  				context->ipc.perm_gid,
+>>  				context->ipc.perm_mode);
+>>  		}
+>> -		break; }
+>> +		break;
+>>  	case AUDIT_MQ_OPEN:
+>>  		audit_log_format(ab,
+>>  			"oflag=0x%x mode=%#ho mq_flags=0x%lx mq_maxmsg=%ld "
+>> @@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>>  	context->ipc.gid = ipcp->gid;
+>>  	context->ipc.mode = ipcp->mode;
+>>  	context->ipc.has_perm = 0;
+>> -	security_ipc_getsecid(ipcp, &context->ipc.osid);
+>> +	/* scaffolding */
+>> +	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
+>>  	context->type = AUDIT_IPC;
+>>  }
+>>  
+>> -- 
+>> 2.46.0
+> --
+> paul-moore.com
+>
 
