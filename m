@@ -1,193 +1,218 @@
-Return-Path: <linux-kernel+bounces-315683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF01D96C5C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:50:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81AB96C5C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CDDD1F27B99
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D131C2150F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1FC1E133D;
-	Wed,  4 Sep 2024 17:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435211D6790;
+	Wed,  4 Sep 2024 17:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqD5lzdC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OEvgEQaI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E584778C;
-	Wed,  4 Sep 2024 17:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9CD4778C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472204; cv=none; b=ZCb/S8v98QL/ZeMaYuWqbsz4fqTmnLUDh5FK2vc+bYAmpuYXE3RJtXrgvesSdZBQEuO3x0b+j1hvEH97D0waaAQofrd0/JfMjBSeAhOAZa4lmba/qaOwkAvSgfRjdmzRaP79YuQp32qCEROajKyaZlclSuPvzOaw/O+kvI69mPM=
+	t=1725472275; cv=none; b=a2OmhAAmKqFajWrIQALfl1tRaH+HK5QwusvBx7bGzoBzouG3sPsj/2ZZ3Y+5w5GVdy/vsSvv/NaYDaY90rWgS2ToWcFa9Qv60aQrtIcNr5gmXXJT3kLmqcflB+UnocRLwF2abhXl9qJEG0TCpcV7JyjW6QCfiu4SdQNzbd/D5nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472204; c=relaxed/simple;
-	bh=hHxVrQSEsPsgYlnyrf6ReJTTCLd0pbkf38E+5RYV1og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTcLyOkJLpx+DUD4GxkVgLyp7MQ2w1l78fhigXEve0Ywp3pJ3QdLJ8Aue3+vN4EyAeQZF2t7BckJe0TA4GQSqngSuuh99hG45jnC0VQD/38AOphSkbzTCoY1zY8g0I1TCBaAxRPe4bagA9zIGV4aVaDSPMUJ8DjEDFoFicOBAXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqD5lzdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0821DC4CEC5;
-	Wed,  4 Sep 2024 17:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725472204;
-	bh=hHxVrQSEsPsgYlnyrf6ReJTTCLd0pbkf38E+5RYV1og=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kqD5lzdCeou6euYUG/Awz9d8i6P9riIdPT9Aegf0Ci71RpgbcssQQ0bTxSpPEsl+J
-	 mjupBVxbdjPOrjQL8yg8TE13FDM2+ZWMu8b/Ww9mcDcLNnjZ7THvhPNF0uYwh6Nimv
-	 v9K8h3JkIVoFK1glwLDGN8QLYqEM9hK5kuMh2rC/KNAPuqbAfSZtT4CE9bAt+AUO5C
-	 1hFEyslBw2VGEV9kIHXq/yjKuSKyX/dTnSqWRYRa48ZWsXF3sUACCgl1/xJhEPqhCo
-	 ZNPDTH2QUNtoTkH0NpyF6vCF1UfWyexV06VEoqAvO4yHmaWO7M9ZgfP3gTMIuKr2xQ
-	 7VBA3OjUenhSw==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533488ffaf7so9529962e87.0;
-        Wed, 04 Sep 2024 10:50:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5N9I3tOid8NbYICm3dbJiv/ww3J3V18h0nAQK/Vcz/rTAqg++v63/SHpUUka87U7lm3KMsDfPGMGB@vger.kernel.org, AJvYcCVjWhxqTWqzcOCQHmgdiKARzjr218EFHWVgjlj0l9VnOca/1do63mWBcu/dSoSE2sLDUv2xYFTiczWi@vger.kernel.org, AJvYcCWZ04S+Zob4BQp3tbKK1H8nKW+E9AXR0c/3pZk8VaH/MSdroMM0O0u71KhG+UaxV6XGzXzkAgjq8EzOgID6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+s6IW6VkVE68sY2nCPzDt5+vO1US1net6nxUg0VxTa8fHVF9H
-	Y+14RcLBOfVSfr4RLN5Avz/GwuHWj3ZydbPZUQonTsAXSqvpD4LO9uCwnKWxu9u+mEd411NhxSp
-	dGbzTQTxR1JsREqdabweR9dpDRw==
-X-Google-Smtp-Source: AGHT+IGSQCWllSjVNUht9/hBiRn31t2hIqomRO4roXkiMDVa92ly9RGxw/tcqHJN+GBOFtCZbBxj7IpMjDy0TIfTxaU=
-X-Received: by 2002:a05:6512:2521:b0:533:41ec:bff1 with SMTP id
- 2adb3069b0e04-53546bb3d58mr14192203e87.52.1725472202353; Wed, 04 Sep 2024
- 10:50:02 -0700 (PDT)
+	s=arc-20240116; t=1725472275; c=relaxed/simple;
+	bh=LGQLyd/+Aw5K1p8dY58/6VCzzrzjIX7s8gz3pCMOVjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ez5+u6eHrQXQahHVKJGWb/dxy1MyhDpIRJ4aRNLIJdMMCnASyfHdPGdZp5LOXqyyLI55uz50kRh93MD/gOmhfkwJxd2k8E0qX3VpN8Ay+npYKWvqQ2MvzuS5dcWzTwNrRP6NW7xyzA4s8P8ug7BdeHZW1dDz8EojH1q51nrgHvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OEvgEQaI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725472272;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ftdH73Ix9wDNM7yMKsfpwwMJeknPg5Z/1RRp5Jzhr1s=;
+	b=OEvgEQaI3DF8DA8YXjw0TrKZfVxZgtdy9A58yGsgUh1i00rmArPngKXbxas6V6Zs/THTi0
+	vuRUtey2bPwX3BcJJ0aSzY7LTGOcYko0wU/mGCq7KSJ5PLuB7nYpFW2ntc5RQlgMa7GB4M
+	NwA10wS++uRVKWYZYUuz/sloTN4DNHI=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-48-byN5U8hdNJWXhUL18WVztQ-1; Wed, 04 Sep 2024 13:51:11 -0400
+X-MC-Unique: byN5U8hdNJWXhUL18WVztQ-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c24f1e3933so3358625a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:51:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725472270; x=1726077070;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftdH73Ix9wDNM7yMKsfpwwMJeknPg5Z/1RRp5Jzhr1s=;
+        b=NMkBgm4ZX0tfcEjl+2IhOYwiYDcudxGWNGo4EyzMw6n+Nv5PtyaBc9VW8gfZxjs2tQ
+         LHpH/3E9tAQWxEerM1bbCucm4lKwaT4PeKboFaldMIzMAg+25PUSAQ7XicZN2Y9OQgQv
+         zn9LOkDmBdfmpEB3dQyMp/xeKhtUZux7eSSXxp7KF6m08n/R1h3dgYEERCHHS4Sn8weG
+         BwVK81MD4f/D6+qmh6ItPk8rpGlkd8m4GvsLEvjV4T19B8jxrPiaro0FTynf88KDcu4g
+         2IqsqVgi43jxG62QgfV7GKpyUjwaaaXuNjBwG5A7eZ4Bou4sHoTHNtEGiagGF0AnKKf7
+         HaDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2WX5ojNQUVup5HqD/Ms/2ScuANR7E1Tok2JzrP2GdfwbXq6nTtzBsNXZADuAV28nRUsDziHH4PnKyyZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuiK3k4PUIHMcs5HXXmsoMcskdIJV6JS321pwTrWyvjAUJmjLm
+	L4Ait4E69dfX90f258AZ5s5qlJgLxmPC8yRpEO2AfIvb18RL/ekPpvsFLTYHjP8/k9gPNVcduao
+	rvmR0MGOyoO8/hx2aoei/153gLa3zWon0jtzImiGeu92PxoIkxKzpoaMONLOghw==
+X-Received: by 2002:a17:906:db06:b0:a86:a481:248c with SMTP id a640c23a62f3a-a89a35a0a09mr1267444666b.19.1725472270276;
+        Wed, 04 Sep 2024 10:51:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFB8IC0UdlIJ+hJ0d9y5+/CBU4kSUxb8RZ30hHavApi1zOjLggaKC+EPD9xD4iWA/K0Gqc1Cg==
+X-Received: by 2002:a17:906:db06:b0:a86:a481:248c with SMTP id a640c23a62f3a-a89a35a0a09mr1267442366b.19.1725472269741;
+        Wed, 04 Sep 2024 10:51:09 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d26esm18871966b.140.2024.09.04.10.51.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 10:51:09 -0700 (PDT)
+Message-ID: <d45d47dd-8a8c-4a70-a65b-eeb7bd815f8c@redhat.com>
+Date: Wed, 4 Sep 2024 19:51:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
- <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org> <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
- <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org> <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
- <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com> <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
-In-Reply-To: <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 4 Sep 2024 12:49:49 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
-Message-ID: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Vaishnav M A <vaishnav@beagleboard.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] Documentation: admin-guide: pm: Add efficiency vs.
+ latency tradeoff to uncore documentation
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Tero Kristo <tero.kristo@linux.intel.com>
+Cc: srinivas.pandruvada@linux.intel.com, platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240828153657.1296410-1-tero.kristo@linux.intel.com>
+ <20240828153657.1296410-2-tero.kristo@linux.intel.com>
+ <d4939d77-8fab-f4b6-f1f7-4af05951d3eb@linux.intel.com>
+ <e1d7028e69cb226acf30ed5c316e5fea20546bc4.camel@linux.intel.com>
+ <71e6475c99e193c4ae6e5d45b72b528cdf5f3f62.camel@linux.intel.com>
+ <858a908e-8218-3925-ea06-f3da256110e9@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <858a908e-8218-3925-ea06-f3da256110e9@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 12:09=E2=80=AFPM Ayush Singh <ayush@beagleboard.org>=
- wrote:
->
-> >> gpio-map is what you are looking for. It's documented in the DT spec.
-> >> It was created exactly for this purpose of remapping GPIO lines on a
-> >> connector.
-> >>
-> >> Rob
->
->
-> Hi. I found docs on nexus nodes [1] and tried using it for mikroBUS, but
-> it does not seem to be working. Here is my connector:
->
-> ```
->
->      mikrobus_gpio0: mikrobus-gpio0 {
->          #gpio-cells =3D <2>;
->          gpio-map =3D
->          <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
->          <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
->          <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
->          <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
->          <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
->          <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
->          gpio-map-mask =3D <0xf 0x0>;
->          gpio-map-pass-thru =3D <0x0 0x1>;
->      };
->
-> ...
->
-> &main_uart5 {
->      status =3D "okay";
->      pinctrl-names =3D "default";
->      pinctrl-0 =3D <&mikrobus_uart_pins_default>;
->
->      gnss {
->          compatible =3D "u-blox,neo-8";
->          reset-gpios =3D <&mikrobus_gpio0 10 GPIO_ACTIVE_LOW>;
->      };
-> };
->
-> ```
->
->
-> After some fdtdump, I can see that at least the dtc compiler does not
-> seem to do the forwarding at dt compile time. Here is the dump:
+Hi,
 
-dtc knows nothing about it.
+On 8/30/24 12:12 PM, Ilpo Järvinen wrote:
+> On Fri, 30 Aug 2024, Tero Kristo wrote:
+> 
+>>    1. On Thu, 2024-08-29 at 14:39 +0300, Tero Kristo wrote:
+>>> On Thu, 2024-08-29 at 12:18 +0300, Ilpo Järvinen wrote:
+>>>> On Wed, 28 Aug 2024, Tero Kristo wrote:
+>>>>
+>>>>> Added documentation about the functionality of efficiency vs.
+>>>>> latency tradeoff
+>>>>> control in intel Xeon processors, and how this is configured via
+>>>>> sysfs.
+>>>>>
+>>>>> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+>>>>> ---
+>>>>> v2:
+>>>>>   * Largely re-wrote the documentation
+>>>>>
+>>>>>  .../pm/intel_uncore_frequency_scaling.rst     | 59
+>>>>> +++++++++++++++++++
+>>>>>  1 file changed, 59 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/admin-
+>>>>> guide/pm/intel_uncore_frequency_scaling.rst
+>>>>> b/Documentation/admin-
+>>>>> guide/pm/intel_uncore_frequency_scaling.rst
+>>>>> index 5ab3440e6cee..26ded32b06f5 100644
+>>>>> --- a/Documentation/admin-
+>>>>> guide/pm/intel_uncore_frequency_scaling.rst
+>>>>> +++ b/Documentation/admin-
+>>>>> guide/pm/intel_uncore_frequency_scaling.rst
+>>>>> @@ -113,3 +113,62 @@ to apply at each uncore* level.
+>>>>>  
+>>>>>  Support for "current_freq_khz" is available only at each fabric
+>>>>> cluster
+>>>>>  level (i.e., in uncore* directory).
+>>>>> +
+>>>>> +Efficiency vs. Latency Tradeoff
+>>>>> +-------------------------------
+>>>>> +
+>>>>> +The Efficiency Latency Control (ELC) feature improves
+>>>>> performance
+>>>>> +per watt. With this feature hardware power management algorithms
+>>>>> +optimize trade-off between latency and power consumption. For
+>>>>> some
+>>>>> +latency sensitive workloads further tuning can be done by SW to
+>>>>> +get desired performance.
+>>>>> +
+>>>>> +The hardware monitors the average CPU utilization across all
+>>>>> cores
+>>>>> +in a power domain at regular intervals and decides an uncore
+>>>>> frequency.
+>>>>> +While this may result in the best performance per watt, workload
+>>>>> may be
+>>>>> +expecting higher performance at the expense of power. Consider
+>>>>> an
+>>>>> +application that intermittently wakes up to perform memory reads
+>>>>> on an
+>>>>> +otherwise idle system. In such cases, if hardware lowers uncore
+>>>>> +frequency, then there may be delay in ramp up of frequency to
+>>>>> meet
+>>>>> +target performance.
+>>>>> +
+>>>>> +The ELC control defines some parameters which can be changed
+>>>>> from
+>>>>> SW.
+>>>>> +If the average CPU utilization is below a user defined threshold
+>>>>> +(elc_low_threshold_percent attribute below), the user defined
+>>>>> uncore
+>>>>> +frequency floor frequency will be used (elc_floor_freq_khz
+>>>>> attribute
+>>>>
+>>>> Consider the following simplification:
+>>>>
+>>>> "the user defined uncore frequency floor frequency" ->
+>>>> "the user-defined uncore floor frequency"
+>>>>
+>>>> I think it tells the same even without that first "frequency".
+>>>>
+>>>> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>>>>
+>>>
+>>> Yeah, it looks kind of silly. I think that's just a typo from my
+>>> side,
+>>> thanks for catching.
+>>
+>> Do you want me to send a new version of this patch or do you fix it
+>> locally? Rest of the patches don't seem to need any changes atm.
+> 
+> That's up to Hans but that looks trivial change so probably he can fix
+> that while applying.
+> 
+> Hans, v2 of this series seems ready to go (with the small change into
+> the documentation patch as discussed above).
 
-> ```
->
-> mikrobus-gpio0 {
->          #gpio-cells =3D <0x00000002>;
->          gpio-map =3D <0x00000000 0x00000000 0x00000025 0x0000000b
-> 0x00000000 0x00000001 0x00000000 0x00000025 0x00000009 0x00000000
-> 0x00000002 0x00000000 0x00000025 0x00000018 0x00000000 0x00000003
-> 0x00000000 0x00000025 0x00000019 0x00000000 0x00000004 0x00000000
-> 0x00000025 0x00000016 0x00000000 0x00000005 0x00000000 0x00000025
-> 0x00000017 0x00000000 0x00000006 0x00000000 0x00000025 0x00000007
-> 0x00000000 0x00000007 0x00000000 0x00000025 0x00000008 0x00000000
-> 0x00000008 0x00000000 0x00000025 0x0000000e 0x00000000 0x00000009
-> 0x00000000 0x00000025 0x0000000d 0x00000000 0x0000000a 0x00000000
-> 0x00000025 0x0000000c 0x00000000 0x0000000b 0x00000000 0x00000025
-> 0x0000000a 0x00000000>;
->          gpio-map-mask =3D <0x0000000f 0x00000000>;
->          gpio-map-pass-thru =3D <0x00000000 0x00000001>;
->          phandle =3D <0x0000000e>;
->      };
+Ack, I've applied the series to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-You might need "gpio-controller" here. Though if you do, I think
-that's a mistake in the kernel. It should work like interrupt-map and
-generally you have either interrupt-controller or interrupt-map, but
-not both (though that is allowed now too).
+with the suggested improvement to intel_uncore_frequency_scaling.rst
+sqaushed in.
 
-> ...
->
-> serial@2850000 {
->              compatible =3D "ti,am64-uart", "ti,am654-uart";
->              reg =3D <0x00000000 0x02850000 0x00000000 0x00000100>;
->              interrupts =3D <0x00000000 0x000000b7 0x00000004>;
->              power-domains =3D <0x00000003 0x0000009c 0x00000001>;
->              clocks =3D <0x00000002 0x0000009c 0x00000000>;
->              clock-names =3D "fclk";
->              status =3D "okay";
->              pinctrl-names =3D "default";
->              pinctrl-0 =3D <0x0000000d>;
->              phandle =3D <0x00000081>;
->              gnss {
->                  compatible =3D "u-blox,neo-8";
->                  reset-gpios =3D <0x0000000e 0x0000000a 0x00000001>;
->              };
->   };
->
-> ```
->
->
-> So I am a bit unsure. Is the dtc parser in the kernel supposed to do the
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
 
-No such thing as "dtc parser in the kernel".
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
 
-> mapping, or is it supposed to be done by `dtc` at compile time?
+Regards,
 
-No.
+Hans
 
-> Maybe we
-> do not have support for it in upstream kernel yet?
 
-Yes, there is upstream support. Grep for of_parse_phandle_with_args_map.
 
-Rob
 
