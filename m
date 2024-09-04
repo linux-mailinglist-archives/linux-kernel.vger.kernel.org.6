@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-314224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E243796B036
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:58:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5E996B040
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A465B21C39
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BEE1F237CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AC482486;
-	Wed,  4 Sep 2024 04:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A2D82486;
+	Wed,  4 Sep 2024 05:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXCyRG7T"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CalP10dm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313C5286A6;
-	Wed,  4 Sep 2024 04:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D5126AC3;
+	Wed,  4 Sep 2024 05:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725425908; cv=none; b=fRat/3Bzxo7v6TvFVGdiJp8kV5G9BCk3WXEjDxoeJJBFbN8piX6AV5PI9sIOk0XpyL+Ajmp8qn9dNGB48jEizXq+VqI8xYnQ6rbildX8qe02/kjXazi5vCjEl/uFwwwUURezsSUuu4di1UhBXdUZ0la7tfIHVB0NkfLAP9J2y84=
+	t=1725426133; cv=none; b=R0ra4jgCca2oZzRqzd0JmP/UziONU2Fz+NW5FRBYlxUclwYG+YZIiqYEFBAhZ8w8LlzNvg1sUvqqi4kt5sUeixxTh3tsSuW/AxBVG92M6osrBD7QRbKrM5es/50VIej7OvPeJqojTIkK7M3Al/EF4valm//4534QDbWTBej3bJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725425908; c=relaxed/simple;
-	bh=LhI4B56slGs9YPgAwlbHmUKmiqFYCpgK6OupcKSiUJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CtLy/iI1fxZfJTI6TzhbT9h7IFTGysZBPPU2dV9AvsmmOQes9oe6crOuVK0i1YcoC2Sort46xUHqky4+jT7WO4Tw16UgXr1pKYDFEPUNEFtWx8TUVC/NX9WC/QdGVrIOSxoHOeimx9qKTA8hxgYW6Kja8XhadxJhkS142ioCGJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXCyRG7T; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d8818337a5so247665a91.1;
-        Tue, 03 Sep 2024 21:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725425906; x=1726030706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dc+SrEyI9sxhQZvqFrCZSaR00xZLH9W3lK7EOUusxxU=;
-        b=RXCyRG7T9HzO9qd2E+3wW9MaiwobllggYUo/UjNRt2gXFW78VdORjoQnGGtq+o3iQ3
-         wQvQRb3s9B3j+XE9ZbQCvRA1X7/aaxc9JUfQSU6tAOMBwsrzdZL7FKz8K1HVdq7iDNin
-         QLSTYVgwhe+ii6MlefHQLnjeNRrOc4u6U6qzRrrH6htst8o4g1129lmXC0Z92VWcpl+l
-         lgXAH7MzqGo9pl3IzgzazUdsQVASU2892BVbNEmMkQihYde3QC9Rmj/sge5BOWz/SrJk
-         5xGOQoc/nZni0XiWLgGUbyVkfrvYKLaa15BWlIuDiLp1V1J6R1sR8Bcevph7sWgqDP46
-         xD7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725425906; x=1726030706;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dc+SrEyI9sxhQZvqFrCZSaR00xZLH9W3lK7EOUusxxU=;
-        b=jllkOGite6JBMsLis72CROx6cFwWXtKdOFbQ688FQFvNbJbxYuFE1H0PUfTwy3QjQb
-         q7cXVeRkys4mF+/HrGqW4DXHoTfM2p2YdTbGauKApsi8zTddGZIp6urnI2c7Z/zKgKmg
-         1oXUHe3L6e9jioEHQSptsMhOHsINFw1sn0cOZVFHVjlivvf5+Lq3mgLDg5u5jU0JTlBz
-         6G7c3175CAVrCv/dp5jdEEBC8nYwoxpujzQRExJcSppaJcTlTUfU74rnJtjcBq5yH26+
-         Z7sEmgpuMhEQkDGvMOLgkLCqnOUXrv7gBmeF1nNQIkxV66ZgjxRhDGZjndpwCpv5aKeG
-         jdkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxvPlDvYvQRo9foH3Z9To2huQqBEUq/FpscwqnNIbZBnCiCXl5ZMqrndcIx+pBjE67l2VXBPj9HPAJpwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0F3lubZlILSnfVnZHxsgc1wFI5Me8gvZOT540P77wI0HzJHVE
-	BGeOf1oTywasdWJZp7/w9VxfbtP2u5iexBtRpgrCnRxnRcDv/cc8NRIm7chHETw=
-X-Google-Smtp-Source: AGHT+IHxcvPeN3R2FI7JuFZ+OXwq4fOXwwv1cilWhl0siVVpuZLiDTm3IlD0Mqd54DDDF8w7dKyvBA==
-X-Received: by 2002:a17:90b:4b07:b0:2da:6e46:ad48 with SMTP id 98e67ed59e1d1-2da8e9cf76dmr1491007a91.1.1725425906215;
-        Tue, 03 Sep 2024 21:58:26 -0700 (PDT)
-Received: from fedora.. ([106.219.164.163])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b0fe17bsm12378511a91.10.2024.09.03.21.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 21:58:25 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: bvanassche@acm.org,
-	aacraid@microsemi.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: aacraid: Fix memory leak in open_getadapter_fib function
-Date: Wed,  4 Sep 2024 10:28:18 +0530
-Message-ID: <20240904045820.5510-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <bf6746d0-d8cc-412e-ac7b-6f17c3e3de9d@acm.org>
-References: <bf6746d0-d8cc-412e-ac7b-6f17c3e3de9d@acm.org>
+	s=arc-20240116; t=1725426133; c=relaxed/simple;
+	bh=Yd9Jt5H6kqUswcUBovMB6X+MxDq0pfwHs2nZ6xATBjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKkEQA+xgDtNd3dDhdXaFhJ0NXfnUG9AO35Lr3fkcnqKwdb7rZBfmeYLwltwwpTOgd8mlbUcUYgXKenThnVAkDIX/9Njf/NMwK27YQ/3WAtnf3S4r9cenbtfVHufH0DfSp+BExtnzZs/Hmkl9vEGpW1GhN1PTQScgyHp3UBV9vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CalP10dm; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725426132; x=1756962132;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yd9Jt5H6kqUswcUBovMB6X+MxDq0pfwHs2nZ6xATBjc=;
+  b=CalP10dmhLexlw4TMK4abl9BJMAULd/rHEvGM1Eg2YB56bs7qaGW8H9e
+   DYItlQBIGVqLofa2mGIjJaoqK3jxpX6zUSDFQwn8gt+uqpZYuNaFTkBRf
+   AZ0IexBIll4AHPAj8PGIL4b08AwIVdGx0DZKKmp6kRFpoy2adWRwle6g8
+   dK6hhjOk21UoZovtctb6LlzJeLPsZ1NQwSztSoNVFXwOB0A/IPIsfWwgb
+   ZY2ywxFRFbwHJRfA/u0HT6PdspFTOMSw8D/R78LVUoasrm2HvRNfxOU1V
+   41T40oL/C/iARu3itO/U/zzyTkctAnP/o0B2ry9o8qvQO1RYklEuY0rc7
+   A==;
+X-CSE-ConnectionGUID: ReqrOP2RSlGQYNjlFldjhw==
+X-CSE-MsgGUID: i5+cwwmER7O3XwJBwyefSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="46589207"
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="46589207"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 22:02:11 -0700
+X-CSE-ConnectionGUID: Dbw2Z8BFTCKsJ8NEvyn6Rg==
+X-CSE-MsgGUID: pgEoj2/vTiy8PMgtfnIZsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,200,1719903600"; 
+   d="scan'208";a="70001305"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 22:02:10 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 9024D128; Wed, 04 Sep 2024 08:02:08 +0300 (EEST)
+Date: Wed, 4 Sep 2024 08:02:08 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: baytrail: Drop duplicate return statement
+Message-ID: <20240904050208.GA1532424@black.fi.intel.com>
+References: <20240903154755.3460442-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903154755.3460442-1-andriy.shevchenko@linux.intel.com>
 
->>> Just above the copy_to_user() call there is the following statement:
->>>
->>> 	list_add_tail(&fibctx->next, &dev->fib_list);
->>>
->>> Does that mean that the above kfree() will cause list corruption?
->> 
->> Yes, you are correct. I overlooked that fibctx is part of a list, and freeing the
->> memory without removing the list entry would corrupt the list.
->> The list entry should be deleted before freeing the memory if copy_to_user() fails.
->
-> Are you sure that this is what the code should do?
+On Tue, Sep 03, 2024 at 06:47:55PM +0300, Andy Shevchenko wrote:
+> No need to repeat 'return ret;' inside and outside conditional.
+> Just use one outside conditional for both cases.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-If copy_to_user function fails that means data was not copied to args successfully, which can leads to 
-issue as args might remain unchanged or in an uninteded state. Since we are returning an -EFAULT error, 
-we should free fibctx and remove the list entry in the case of an error. If there are any other methods, 
-additional checks, or potential issues with this approach that I should consider, 
-please let me know, and I'll make the necessary adjustments promptly.
-
-Regards,
-Riyan Dhiman
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
