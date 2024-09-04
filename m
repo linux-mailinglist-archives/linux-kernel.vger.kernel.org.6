@@ -1,123 +1,190 @@
-Return-Path: <linux-kernel+bounces-314936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B75C96BB47
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:52:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A31296BB29
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21289B2A1BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC6B1C222D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A37A1D799B;
-	Wed,  4 Sep 2024 11:44:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC01D2231;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC761D416C;
 	Wed,  4 Sep 2024 11:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mK2HEZW8"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8901D1F5B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725450240; cv=none; b=sfDEQJDmXXIVgTlHW4ODErIunOhv/7EkAOuQIa7clc0tzhbuZd45qkAJvDMwSQQVoLDT3X3WUxsREqBaM9/ZNGG8tyN2en9q9Dz6fQarSJW15TYwICXP3zgiBMMQdZAC3IN6TaaYEGsuiZE9rnjSMvMst8Jx+zxnY5pFMQURlRs=
+	t=1725450236; cv=none; b=nqlG8msPmQ8pSoYrQo6AYAND810mKI5cHY1TxXiTSujCLXFvUCJnImkV9ccKfghd+slD274n2P72u+/4dqBc0t8g+hXfLzBNvVY/vYkPO4UIs8mrboynti95vJxb7SSNoaPKjXhWjLIJDlYsO+GGqxVQlyhEgJK2t3DKQy0vD94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725450240; c=relaxed/simple;
-	bh=K6OnJGxaAcsZ9MDkNmmQ1YWuZNbfYpWFDlarjgU69BA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lu4uwf9plPOifu11K9+YFFIufFAOp+qivxdm3TKEPl2noMLPK/M34Cx40TSZRS7/NYVQjGAJFZxU5w39tcJlYOFjkPBi59gUW9lISEoV346TIQwGL9hxMAh63ZBn04L0J1tOLntZMho39rKEIFPkrnbd9Uz/JMkVbvh/ATehHwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WzLGq2CRBz4f3jXJ;
-	Wed,  4 Sep 2024 19:43:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4E3C01A07B6;
-	Wed,  4 Sep 2024 19:43:46 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusbwR9hm8396AQ--.60910S3;
-	Wed, 04 Sep 2024 19:43:46 +0800 (CST)
-Subject: Re: [PATCH v3 05/12] ext4: passing block allocation information to
- ext4_es_insert_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
- <20240813123452.2824659-6-yi.zhang@huaweicloud.com>
- <20240904102103.3lss7s5yxavcnjwm@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <0d8ffff7-6b51-16fe-bf11-a6f126a81c58@huaweicloud.com>
-Date: Wed, 4 Sep 2024 19:43:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1725450236; c=relaxed/simple;
+	bh=TcvvGUzUyW7y66QoYl9NDBgaKlbsu4UGU0sFU9wFjBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G65CVJ0YGndjcGCGKUxrNIHHnuR5IKJv7+vd7DeGh9bE2i6AsKGBigjsqlFDT4YDcEahIUiQKSq2u+Q0fl/cn2oRcj75FMuZ5/eOd1yYpo9C7MlyRdA0OrHwf/mNcyikcjNaHgXb37exf5BUJYVtR05OroIDGqTUW/UWa1SxbHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mK2HEZW8; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86a69bfcdaso37163966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725450233; x=1726055033; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/59KpQl/ENj5YnZpXPnbSALUPXSSb5VrZ9vlG/9vrBQ=;
+        b=mK2HEZW8wQpgglhp2jtn0eLt4O97fC84gi4uifiInt4nv/a/7+swAKhtGyhjZjZsoZ
+         c2LCN7R+SQddz89FhnDxoqofTAgzG41Ll0DsQwcIcfTbRQ19itpRQBcjwUfCOx7pMciX
+         j9QqGFUq9wcPZEhN1tjwQOr4Qwq4bc9VJ2TdganfUa37WnY0/Fw3T/0Nou4nZNJTxW/b
+         qLBX4WhUYfqVkPDKCHBfsEtR7EsbFPJA6/Aktt0BwbhZ5cHXiqEHLLx5Uw6U9GSu7Tuy
+         5frmeN2+DxBMZgvyfx/IflBocPsZFKsiqNiznhDPEtgFSIQrBRtP/F/v5fWT58szTqI5
+         zLuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725450233; x=1726055033;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/59KpQl/ENj5YnZpXPnbSALUPXSSb5VrZ9vlG/9vrBQ=;
+        b=OqT0RmKJpvQoWtAwVoCq48R9f+1v+B192a+LZtvw5SvVDV/7ouWOYNFWkB6KWsVVkX
+         1RRdHNmxAYo062HRFYtDTkT317OGvAMtAll5veTnOLWXX+7KI2sy/rOolAO3P+VHLzuR
+         aqEjqkRW2qUnXydT67t3shjsNg1zBkk2Bl5xlAJXmXDm1jkDpmrjVyo61G87evDrbsjW
+         jQoXUBeiaN5N1Clw91dhJUlWvhlR/NGQRE4gAW1WH0X6LTjhG9hYRS5NRrTWuKRvqNdD
+         omEi14BJ28wo1BxR8JPvdswhgQ5FAY2i7T8ihBkFsjxDLrpsFtkBvFz5CXo7341Oq/oS
+         Q3hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfoHW9MFRpWlRXIbUMUYO/FIOq/AfGtrghgqynhsi/yweg60Ie6VtPimQQGr2eM6KLoHW1vz7SFGOXfRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypm+Tg24kLkeJPTUhNwsJv29xaaAHLpxoBCHCK+VVX5LxCyShi
+	KHvhdBeZlXlQTkJ2XJB/jgbGL5LNABH85RGvU98XjXnmBuLi11/wyZuA4HydRvg=
+X-Google-Smtp-Source: AGHT+IGaWHDAbUbWROpXtvL3TzWtVqhkdhe/CfKY06N3Rz/z/TeQIlpyigCEhXFcyZnadufk631/bg==
+X-Received: by 2002:a17:907:eac:b0:a79:a1b8:257b with SMTP id a640c23a62f3a-a89a3958e1dmr522577966b.10.1725450232555;
+        Wed, 04 Sep 2024 04:43:52 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1900d4fcsm266703266b.144.2024.09.04.04.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 04:43:51 -0700 (PDT)
+Message-ID: <acec443c-f9ab-4c1d-b1ab-b8620dfef77f@linaro.org>
+Date: Wed, 4 Sep 2024 13:43:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240904102103.3lss7s5yxavcnjwm@quack3>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+To: "Liao, Bard" <bard.liao@intel.com>,
+ "Liao, Bard" <yung-chuan.liao@linux.intel.com>, Vinod Koul
+ <vkoul@kernel.org>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: "Kale, Sanyog R" <sanyog.r.kale@intel.com>,
+ Shreyas NC <shreyas.nc@intel.com>,
+ "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+ <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
+ <ZqngD56bXkx6vGma@matsya>
+ <b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com>
+ <f5110f23-6d73-45b5-87a3-380bb70b9ac8@linaro.org>
+ <SJ2PR11MB84242BC3EAED16BEE6B46F85FF932@SJ2PR11MB8424.namprd11.prod.outlook.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <SJ2PR11MB84242BC3EAED16BEE6B46F85FF932@SJ2PR11MB8424.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHusbwR9hm8396AQ--.60910S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CrW5tF1kXw4fCFy8KF1rJFb_yoW8GF4rpF
-	Z3ua48GF4UXw429FW0ya13Jr4fKa18J3y7ArWSgw1rXay5Casa9F97KFWjq3WvqrWI9Fn0
-	vFW5Kw15Wa1YyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/9/4 18:21, Jan Kara wrote:
-> On Tue 13-08-24 20:34:45, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+On 03/09/2024 17:17, Liao, Bard wrote:
+
+>>>
+>>> then dpn_prop[0].num = 1 and dpn_prop[1].num = 3. And we need to go
+>>>
+>>> throuth dpn_prop[0] and dpn_prop[1] instead of dpn_prop[1] and
+>> dpn_prop[3].
+>>>
 >>
->> Just pass the block allocation flag to ext4_es_insert_extent() when we
->> replacing a current extent after an actually block allocation or extent
->> status conversion, this flag will be used by later changes.
+>> What are the source or sink ports in your case? Maybe you just generate
+>> wrong mask?
+> 
+> I checked my mask is 0xa when I do aplay and it matches the sink_ports of
+> the rt722 codec.
+> 
 >>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> It's not only my patch which uses for_each_set_bit(). sysfs_slave_dpn
+>> does the same.
 > 
-> Looks good. Just one suggestion below. With that feel free to add:
+> What sysfs_slave_dpn does is 
+>         i = 0;                          
+>         for_each_set_bit(bit, &mask, 32) {
+>                 if (bit == N) {
+>                         return sprintf(buf, format_string,
+>                                        dpn[i].field);
+>                 }
+>                 i++;
+>         }                         
+> It uses a variable "i" to represent the array index of dpn[i].
+> But, it is for_each_set_bit(i, &mask, 32) in your patch and the variable "i"
+> which represents each bit of the mask is used as the index of dpn_prop[i].
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
->> @@ -848,7 +848,7 @@ static int __es_insert_extent(struct inode *inode, struct extent_status *newes,
->>   */
->>  void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  			   ext4_lblk_t len, ext4_fsblk_t pblk,
->> -			   unsigned int status)
->> +			   unsigned int status, int flags)
-> 
-> Since you pass flags to ext4_es_insert_extent() only from one place, let's
-> not pretend these are always full mapping flags and just make this new
-> argument:
-> 
-> bool delalloc_reserve_used
-> 
-> and from ext4_map_blocks_create() you can pass flags &
-> EXT4_GET_BLOCKS_DELALLOC_RESERVE.
-> 
+> Again, the point is that the bits of mask is not the index of the dpn_prop[]
+> array.
 
-Sure, it's a better idea than passing full mapping flags, thanks for your
-suggestion, but since I've noticed that Ted had already picked this series
-into his dev branch, I can send another patch to do this. Thanks a lot for
-reviewing this series again!
+Yes, you are right. I think I cannot achieve my initial goal of using
+same dpn array with different indices. My patch should be reverted, I
+believe.
 
-Yi.
+I'll send a revert, sorry for the mess.
+
+Best regards,
+Krzysztof
 
 
