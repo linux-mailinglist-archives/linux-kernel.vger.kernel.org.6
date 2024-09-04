@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-314739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3487996B7D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:07:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8952296B7DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E678D285AD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2CC1C246CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DAA1CF2A9;
-	Wed,  4 Sep 2024 10:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382FB1CF5EB;
+	Wed,  4 Sep 2024 10:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z36tg/QI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AiBCvM1F"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC111BD4E9;
-	Wed,  4 Sep 2024 10:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48F1CF2BC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444445; cv=none; b=Wo1cz1xZHWFWjkM0iIHLRetr+fTEAZPGBPr+r2LhpGG2SLujDxLyEmXRfL7ncRNXOAB8pkMeICMgVBfZOO7CZhx8Dp4SW4HtI5fyZ3p5AASliF38BGa33U2d30O4IO4drSyAgG9j5Ag3FYibEtitTHyuHndo9VqULoFYSyFL9R0=
+	t=1725444490; cv=none; b=bg9Fc9tp+UuE1MOv2CFfO2CrjNGAzIzN0jNz9kIJvihLVN2B/QKwO0q7t5Q2nK21sT7D+XrADVDl5yF3mW3aMHT1n3kbS/Tfqhfj9okWF6vHJ9VlV2sSQ6OUI8+12EKrCCKVhfMCNsQsc4+Q10te6UhhB8m6zLi3ZfAOflsKSyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444445; c=relaxed/simple;
-	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lNTvo2a4vnDCuLEWQnPEetNCiSbldXWwKwARNHYfyeIUYPQrpbZ42bgHoGRuWsL2P1tP9TQsp5PvD8ZKZg9ZQa2wXWpjJEAs3WP7pNOJfMh7sRTxVhOBfCzOnu8yCD0GRl8c6i5hK8IDV+Dnjm6VCq+ULDttGaXAl0gyXATePQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z36tg/QI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709ADC4CEC6;
-	Wed,  4 Sep 2024 10:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725444444;
-	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z36tg/QIYQwgHt5hLJvoCZe76y4qUDqYhof0zxWtITF/s4mEBKeW3UnSXEJgap8YU
-	 RGyQgyXqinVHWTBC1J3bnX4tN0I87Sj3N6Z1JBIMJAGphAg2zqbKLyMBSatnGtUiAH
-	 h7uRaBbbgVyIZ6LbMuN1iT2k8GcZG4CxpTA4JwpkfsyyYjFoNR1qXvzziKXIk3AQbJ
-	 Ok6yXgpwYyy6lm0FxQMz49Tx/eizrJacziY1Mc3Nzij58g7g6gbhtaPUm6wlZ4Y9Wz
-	 o95ttTR8rW/i3nYqgpJR+AJDMOW8NhOT1WQa1DiYDtDZzLBCQKfGzlPtpmvfFhpOtU
-	 97Z2bx5KsPhFw==
-Message-ID: <77a75021-bb84-416b-9eb2-254724e77b86@kernel.org>
-Date: Wed, 4 Sep 2024 12:07:18 +0200
+	s=arc-20240116; t=1725444490; c=relaxed/simple;
+	bh=zio+a0ruwSHwDzq4IpOiQijKnnS41D2V7N1DIsEFam0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKZMLyRDtuFEO+iMzjNXaPce87Ym22PJi8yzphNk43LQqJPB6WfXTY6feRN/wlpdstUsa3X8BiIHAcj+Vewzu3JIZ8jMH7Na5d2dsaAaYqqMRDZ0xqdiCz+HuzGKkEPJbIfkNs8WEQTSbiWg4mz0xuO293x/tmoFF7SwG7j4eks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AiBCvM1F; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86e5e9ff05so738964766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725444486; x=1726049286; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dR1M+3gWwkz1AwnSNcxXU0EUhSSon/LIBkGrYtHf2ps=;
+        b=AiBCvM1FRYac3EnoC2V8yMOQxd39CpBMTM2EEe9Ol8wpLtSyRfdt+ewsahrA8H3Vji
+         jgZTunExehkTFcQrJWtqO5lYT46ZsWfP1rSn1eAE7D3jtx13wDayI5vGmggTmV13Fvq/
+         zajnAFZFueXuEMYzMEGXECdmpzT2HLDKe9XrzGhG361TmbPMrCGxbJsVT9MBACMlW7yW
+         9HVpSfEKOsma28RLz506Tl9GzFEP9KmTRy91VQlRJWw27GijXUvJ3px0nf/rhpaOtQO3
+         V+f4ovlCqoE/8PgBEy3LTEc58OGCDwBnT2rzGlZgZ083tf9NrcHvpgdm0LCPS3z7wQPO
+         uDQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725444486; x=1726049286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dR1M+3gWwkz1AwnSNcxXU0EUhSSon/LIBkGrYtHf2ps=;
+        b=XgiN3PnW6rsuZRgNkGG/zf+/J9qVbSWHkTbEhn+EViyWndMOP9Cga/OuKtufZ+efUl
+         6/kUcJotFblRRyp58XP4G6oMdbpLYBthHnQD0Lryc5CwRewnKyTdrhn0Cq0Sb37SAmKN
+         Ej3TeZHKnX3QWlb19HZESz2Arzf+IiDTNO0TDrA9r5gJYI5Khl2sT7HFJ6aYw1/nHFZP
+         K3BUU2TKYH/Nhe1tstPiPfOM6cVi3erahSh0om4zxge9Ez+qijTTF+zKwZFdVJtdI5aG
+         xhtq9uRN+RENghqFKfUqtUSn2m/s9oUQfMCA/gzYPfJIlA0Ku4KPKhT0mlJFKXWWb7F2
+         kDhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmSmQk1Bi0BeI0nMlSPPxBr0PnsGB0Rj3KIAihMwLWnZHAmb1W9zzyZmZ6Ddw0WnKK6eWX16p5t33EOL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJM3A8CQZBUhOcu4JbJZxDpLd1OV+J4LpqugYKRwjmWJCYkCI9
+	2pvFY50HYMZd48sH1NJIQL0VB2KK3zL3Hd+FUPpl+yjBHzsDWhK8VeSqb1RMpkFnddkG51IRntn
+	p
+X-Google-Smtp-Source: AGHT+IHmj/JiGbJvtc5bJERYQCNjeeiYu04Tlb0ms5vEl1yROFVony/cBFRozI3jj6zAJF6Ufv17ow==
+X-Received: by 2002:a17:906:c155:b0:a86:a909:4f67 with SMTP id a640c23a62f3a-a8a32f9f1edmr272904266b.52.1725444485983;
+        Wed, 04 Sep 2024 03:08:05 -0700 (PDT)
+Received: from localhost (p5dc68f76.dip0.t-ipconnect.de. [93.198.143.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89890229b5sm795006166b.51.2024.09.04.03.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:08:05 -0700 (PDT)
+Date: Wed, 4 Sep 2024 12:08:03 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, aardelean@baylibre.com
+Subject: Re: [PATCH 4/8] pwm: Export pwm_get_state_hw
+Message-ID: <g2x7a4jmlbziciyctf5qgmcpztobvduds6psoaelnludermkjv@6nlxvbws7eo4>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+ <20240815-ad7606_add_iio_backend_support-v1-4-cea3e11b1aa4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/4] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
- andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com,
- quic_varada@quicinc.com, quic_srichara@quicinc.com, quic_gokulsri@quiconc.com
-References: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
- <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ufhpggxbgc5feny"
+Content-Disposition: inline
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-4-cea3e11b1aa4@baylibre.com>
 
-On 29/08/2024 15:40, Gokul Sriram Palanisamy wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> 
-> Add new binding document for hexagon based WCSS secure PIL remoteproc.
-> IPQ5332, IPQ9574 follows secure PIL remoteproc.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--2ufhpggxbgc5feny
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Thu, Aug 15, 2024 at 12:11:58PM +0000, Guillaume Stols wrote:
+> This function can be used in some other drivers, for instance when we
+> want to retrieve the real frequency vs the one that was asked.
 
+I'd write:
+
+	For some drivers (here: the upcoming ad7606 adc driver) it's important
+	to know the actually configured PWM state. This is in general different
+	from the state returned by pwm_get_state() (i.e. the last applied state)
+	because most hardware doesn't have nano second granularity. So make
+	pwm_get_state_hw() a public function.
+
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index 21fca27bb8a3..82e05ed88310 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -651,7 +651,7 @@ int pwm_apply_atomic(struct pwm_device *pwm, const st=
+ruct pwm_state *state)
+>  }
+>  EXPORT_SYMBOL_GPL(pwm_apply_atomic);
+> =20
+> -static int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *st=
+ate)
+> +int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *state)
+>  {
+>  	struct pwm_chip *chip =3D pwm->chip;
+>  	const struct pwm_ops *ops =3D chip->ops;
+> @@ -685,6 +685,7 @@ static int pwm_get_state_hw(struct pwm_device *pwm, s=
+truct pwm_state *state)
+> =20
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(pwm_get_state_hw);
+
+Now that this is a public function, a kernel doc for it would be nice.
+
+>  /**
+>   * pwm_adjust_config() - adjust the current PWM config to the PWM argume=
+nts
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index fd100c27f109..d48ea3051e28 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -369,6 +369,7 @@ int pwm_apply_might_sleep(struct pwm_device *pwm, con=
+st struct pwm_state *state)
+>  int pwm_apply_atomic(struct pwm_device *pwm, const struct pwm_state *sta=
+te);
+>  int pwm_adjust_config(struct pwm_device *pwm);
+> =20
+> +int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *state);
+
+Nitpick: pwm_get_state_hw() is defined in core.c before
+pwm_adjust_config(). Please keep this order in the header.
+
+>  /**
+>   * pwm_config() - change a PWM device configuration
+>   * @pwm: PWM device
+
+Your patch was PGP signed, but I failed to find your key in the kernel
+key repo and on https://keys.openpgp.org. To make your signature
+actually useful, you might want to fix that.
+
+Best regards
+Uwe
+
+--2ufhpggxbgc5feny
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbYMYEACgkQj4D7WH0S
+/k4+lAf/ah+hVdNth3Gbh1+IZ9TszwkpZoa2BArFKNaI6fg4kzBnP4jdK/9YoYxK
+8aV7YXMFTNLZ7B8kdZ1pQ3/gYFvHwPWiGGvMsysEnRj0TKOTw7iTSruScJq9qmMC
+WCcJf3TiVd5Jp8JRi9EDaTN5K6pz4a4nF1+8Zf0sPNhubcClQ62RrfUOwgqiYi+O
+/zsKhoQIFDrc9qX0BUwU5gK3FxgIXqNXt437y1O5X0PWAeZhnQXpyW4GbXnofQFt
+wPqjzS3DUigiDXkUWKImXXGXM5f9SERlGvWjVlqomK29NWzzXugauCfyDxVQUa+Q
+pny5/ar13n7yoHt/42iTfwc99oY0/w==
+=e96/
+-----END PGP SIGNATURE-----
+
+--2ufhpggxbgc5feny--
 
