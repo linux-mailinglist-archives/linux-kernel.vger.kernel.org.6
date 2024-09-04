@@ -1,614 +1,617 @@
-Return-Path: <linux-kernel+bounces-315783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EF396C6E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D4396C6E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26DE81C242F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA5AD283BBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4BB1E410C;
-	Wed,  4 Sep 2024 18:55:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75541E0B81
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FA01E203E;
+	Wed,  4 Sep 2024 18:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sT2DyTsz"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055DB1CCB5C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476118; cv=none; b=W+8IHIynfbmMH4EzPRtrXkL5SgveRokNvOJUDoOv+Vv5lg1eEC+XbYDQM880bXvpvEc1IiOfxvNOdm+4RNkcQSlL/dXnRi9RqzxXrJFD3Fj7+MtNWpC3tVK2k+0n5W5+wf0Hu8ZMKuK0L+INpHqwIog8kRsCdS7R7X9cCYRoI1U=
+	t=1725476116; cv=none; b=K2AWfDXdkXwbOxMa9vLw4oZhFo6GvSEMk6LYV5LsYRsh3UyDZwpX8ptqOD1h2MFffGbDI6QtbP9TLUMA8Fzhbv+PV7nnxDBUX/JKP8GmxE3ajQ+GIHBV+bS1BtasC+SvZWmUAlrwvCwq78lAz1OaDKhWLMcAEjaSdTj9ByE/3eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476118; c=relaxed/simple;
-	bh=21mSyGHw1tmSjUnIBLjzZbXB2Sk44ebXBjh/YWzGh/U=;
+	s=arc-20240116; t=1725476116; c=relaxed/simple;
+	bh=xyH6QfeKEcqi+ighZ1bR3+c3TUJ5S3B+Wd59sd5LGho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLb4Q3xYuFEsrQNOVKIAfHvOQhp0tZSPfFiEATpCYBQ4V495m2urM7begbD47z2OEvkqI4kVTmSKOVzyW54OvqXZPlVYdklWcT9ZJ1ITZceLBRABCLWUA9EMZMQBsFK2CHWmatUKjrJjFS6TC6oomd9gNRhOt+vZnMIz+7Tjg90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27FBEFEC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:55:41 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7B6E33F73B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:55:14 -0700 (PDT)
-Date: Wed, 4 Sep 2024 19:55:00 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	kernel@collabora.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp
- accounting
-Message-ID: <ZtitBNgn1eHSE74z@e110455-lin.cambridge.arm.com>
-References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
- <20240903202541.430225-2-adrian.larumbe@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oR/Z5XnEpMGLmozfVqO5M+Lenf+uBYyE+vqX8XqfPbcsqzCb0R+mkosUeH+CrJGtQxQLhpiJXa/79w5D1BZNs/N84AZMumpsrnfA3DN6Wih4n21U1A1/dbot2o5KSNt3y95Sf7P8ghRS39bHoiLARCgtydF9iAe6QK7UB2JhAKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sT2DyTsz; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb8c6e250so9657035e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725476112; x=1726080912; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BnJNWWxj9Y5CcR/wzSsqQQXnJ8gVicv7euXtJqtTNI=;
+        b=sT2DyTszNAw1D3v0wjSOQ/t4eR/Xk1+0Z4RrEIhu/7g2P7E0rAdv3jNVbRj3QutTZU
+         8rTyNE2Kpno+7GD1ZunL+qNTzx0sEy1NWxSlB6G3EFtxoHUvbkc+IwMxN+T5liUfHUrR
+         ss8e/66UqUyXLxfa7KGEvvLPgwrUeCd4ed1gWL5mVRW22D6w5Zcv289ZzKglySxa5/9z
+         QLHvCodKW9b/x4fpHgvmfgUDinMIEZ8RtNMBNBVHeRwfokPLBXptflWDCczJOu6anIdo
+         Tpk0GoqkfAIpYdvYT7z4ZK+7vZ6FjIhy0UexsxXvPA5ck8k0j3pJclWmyrH77VWoV8R/
+         gx0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725476112; x=1726080912;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5BnJNWWxj9Y5CcR/wzSsqQQXnJ8gVicv7euXtJqtTNI=;
+        b=oCRkpko3doH6A2oNmjqBGq8wp0andbP4iuZ4//hlHXIoOErqC3mBJ8h2wNluZbpc45
+         PxSALg4RKOJ1qPuDChr3JXGvesIAe/2X/UHa+f+Wl+FKCjArvyJuEsQjpcmYYZPpqu0C
+         I+pVMkE6hjdknuRJdvSe5JACoTfyL0rBYBPacGsxr1AmO7RnQSobyugoXLBirssk/k8u
+         /TNeDjkSL1PRLeGsdFhrHVRLo0dO63Uny680Ore2zPZIATmbbM2qYm9e44I3OWUv6n2p
+         yxjmqnG463qPwD2NVAR+XLLMPAC7nX5JrbMb7G2nwHygCsDvheRvOXsez8+q5fdSdqpo
+         2r7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Db9gTKD8iO/cICuLO+aj1MsKi2IY/OGYZdahs1fwJa8OsHFfsAqcQvEmLHp+1I14QUxGmnfLIePO6Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypyk2JphlEQeHdOt956k/WMhkYnhLQEiXyvRslGLUTp62KUe6S
+	+V8zuL8Yn1tNd0LB4XN2/doqQFvHh0Qfe+2nOJLgCvPEjNKAFOYwSE7bbMyKEsp8ilP2PXACe7A
+	S
+X-Google-Smtp-Source: AGHT+IG9MzAiKjiiz8mSz1v+ffHxE0mtmepMzP466hIyOXTY314HonwSWI/rdMK63kivSXjoXq6sLg==
+X-Received: by 2002:a5d:4c49:0:b0:374:b6f3:728d with SMTP id ffacd0b85a97d-37770c702famr2183950f8f.46.1725476112057;
+        Wed, 04 Sep 2024 11:55:12 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c71140bbsm10351836f8f.110.2024.09.04.11.55.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 11:55:11 -0700 (PDT)
+Date: Wed, 4 Sep 2024 21:55:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] soc: qcom: pbs: Simplify with dev_err_probe()
+Message-ID: <6267a1fe-0073-4aca-ab19-a63a7565f116@stanley.mountain>
+References: <20240829124813.3264437-1-yujiaoliang@vivo.com>
+ <894145dc-46fb-451f-a461-d0b9ff1e50dd@kernel.org>
+ <10fad15b-d2a6-4ec1-8af7-bde8f7bf39be@kernel.org>
+ <63162b67-22ef-482f-9600-861e9dbaf4fc@stanley.mountain>
+ <08e8f26a-d87e-4d3e-9896-b809d5f0c3a0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed; boundary="BtPCO9uUB2+Ay3RA"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903202541.430225-2-adrian.larumbe@collabora.com>
+In-Reply-To: <08e8f26a-d87e-4d3e-9896-b809d5f0c3a0@kernel.org>
 
-On Tue, Sep 03, 2024 at 09:25:35PM +0100, Adrián Larumbe wrote:
-> Enable calculations of job submission times in clock cycles and wall
-> time. This is done by expanding the boilerplate command stream when running
-> a job to include instructions that compute said times right before an after
 
-s/an/and/
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> a user CS.
+On Fri, Aug 30, 2024 at 05:31:14PM +0200, Konrad Dybcio wrote:
+> > 
+> > There are a few things which we could do:
+> > 
+> > 1) Returning -EPROBE_DEFER to an ioctl or something besides a probe()
+> >    This is a bug right?  -EPROBE_DEFER is basically kernel internal for probe()
+> >    functions.  It tried to write this but it was complicated so I gave up.
 > 
-> A separate kernel BO is created per queue to store those values. Jobs can
-> access their sampled data through a slots buffer-specific index different
-
-s/slots/slot's/ ?
-
-> from that of the queue's ringbuffer. The reason for this is saving memory
-> on the profiling information kernel BO, since the amount of simultaneous
-> profiled jobs we can write into the queue's ringbuffer might be much
-> smaller than for regular jobs, as the former take more CSF instructions.
-> 
-> This commit is done in preparation for enabling DRM fdinfo support in the
-> Panthor driver, which depends on the numbers calculated herein.
-> 
-> A profile mode mask has been added that will in a future commit allow UM to
-> toggle performance metric sampling behaviour, which is disabled by default
-> to save power. When a ringbuffer CS is constructed, timestamp and cycling
-> sampling instructions are added depending on the enabled flags in the
-> profiling mask.
-> 
-> A helper was provided that calculates the number of instructions for a
-> given set of enablement mask, and these are passed as the number of credits
-> when initialising a DRM scheduler job.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.h |  22 ++
->  drivers/gpu/drm/panthor/panthor_sched.c  | 327 ++++++++++++++++++++---
->  2 files changed, 305 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index e388c0472ba7..a48e30d0af30 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -66,6 +66,25 @@ struct panthor_irq {
->  	atomic_t suspended;
->  };
->  
-> +/**
-> + * enum panthor_device_profiling_mode - Profiling state
-> + */
-> +enum panthor_device_profiling_flags {
-> +	/** @PANTHOR_DEVICE_PROFILING_DISABLED: Profiling is disabled. */
-> +	PANTHOR_DEVICE_PROFILING_DISABLED = 0,
-> +
-> +	/** @PANTHOR_DEVICE_PROFILING_CYCLES: Sampling job cycles. */
-> +	PANTHOR_DEVICE_PROFILING_CYCLES = BIT(0),
-> +
-> +	/** @PANTHOR_DEVICE_PROFILING_TIMESTAMP: Sampling job timestamp. */
-> +	PANTHOR_DEVICE_PROFILING_TIMESTAMP = BIT(1),
-> +
-> +	/** @PANTHOR_DEVICE_PROFILING_ALL: Sampling everything. */
-> +	PANTHOR_DEVICE_PROFILING_ALL =
-> +	PANTHOR_DEVICE_PROFILING_CYCLES |
-> +	PANTHOR_DEVICE_PROFILING_TIMESTAMP,
-> +};
-> +
->  /**
->   * struct panthor_device - Panthor device
->   */
-> @@ -162,6 +181,9 @@ struct panthor_device {
->  		 */
->  		struct page *dummy_latest_flush;
->  	} pm;
-> +
-> +	/** @profile_mask: User-set profiling flags for job accounting. */
-> +	u32 profile_mask;
->  };
->  
->  /**
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index c426a392b081..b087648bf59a 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -93,6 +93,9 @@
->  #define MIN_CSGS				3
->  #define MAX_CSG_PRIO				0xf
->  
-> +#define NUM_INSTRS_PER_CACHE_LINE		(64 / sizeof(u64))
-> +#define MAX_INSTRS_PER_JOB			32
-> +
->  struct panthor_group;
->  
->  /**
-> @@ -476,6 +479,18 @@ struct panthor_queue {
->  		 */
->  		struct list_head in_flight_jobs;
->  	} fence_ctx;
-> +
-> +	/** @profiling_info: Job profiling data slots and access information. */
-> +	struct {
-> +		/** @slots: Kernel BO holding the slots. */
-> +		struct panthor_kernel_bo *slots;
-> +
-> +		/** @slot_count: Number of jobs ringbuffer can hold at once. */
-> +		u32 slot_count;
-> +
-> +		/** @profiling_seqno: Index of the next available profiling information slot. */
-> +		u32 profiling_seqno;
-> +	} profiling_info;
->  };
->  
->  /**
-> @@ -661,6 +676,18 @@ struct panthor_group {
->  	struct list_head wait_node;
->  };
->  
-> +struct panthor_job_profiling_data {
-> +	struct {
-> +		u64 before;
-> +		u64 after;
-> +	} cycles;
-> +
-> +	struct {
-> +		u64 before;
-> +		u64 after;
-> +	} time;
-> +};
-> +
->  /**
->   * group_queue_work() - Queue a group work
->   * @group: Group to queue the work for.
-> @@ -774,6 +801,12 @@ struct panthor_job {
->  
->  	/** @done_fence: Fence signaled when the job is finished or cancelled. */
->  	struct dma_fence *done_fence;
-> +
-> +	/** @profile_mask: Current device job profiling enablement bitmask. */
-> +	u32 profile_mask;
-> +
-> +	/** @profile_slot: Job profiling information index in the profiling slots BO. */
-> +	u32 profiling_slot;
->  };
->  
->  static void
-> @@ -838,6 +871,7 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
->  
->  	panthor_kernel_bo_destroy(queue->ringbuf);
->  	panthor_kernel_bo_destroy(queue->iface.mem);
-> +	panthor_kernel_bo_destroy(queue->profiling_info.slots);
->  
->  	/* Release the last_fence we were holding, if any. */
->  	dma_fence_put(queue->fence_ctx.last_fence);
-> @@ -1982,8 +2016,6 @@ tick_ctx_init(struct panthor_scheduler *sched,
->  	}
->  }
->  
-> -#define NUM_INSTRS_PER_SLOT		16
-> -
->  static void
->  group_term_post_processing(struct panthor_group *group)
->  {
-> @@ -2815,65 +2847,211 @@ static void group_sync_upd_work(struct work_struct *work)
->  	group_put(group);
->  }
->  
-> -static struct dma_fence *
-> -queue_run_job(struct drm_sched_job *sched_job)
-> +struct panthor_job_ringbuf_instrs {
-> +	u64 buffer[MAX_INSTRS_PER_JOB];
-> +	u32 count;
-> +};
-> +
-> +struct panthor_job_instr {
-> +	u32 profile_mask;
-> +	u64 instr;
-> +};
-> +
-> +#define JOB_INSTR(__prof, __instr) \
-> +	{ \
-> +		.profile_mask = __prof, \
-> +		.instr = __instr, \
-> +	}
-> +
-> +static void
-> +copy_instrs_to_ringbuf(struct panthor_queue *queue,
-> +		       struct panthor_job *job,
-> +		       struct panthor_job_ringbuf_instrs *instrs)
-> +{
-> +	ssize_t ringbuf_size = panthor_kernel_bo_size(queue->ringbuf);
-> +	u32 start = job->ringbuf.start & (ringbuf_size - 1);
-> +	ssize_t size, written;
-> +
-> +	/*
-> +	 * We need to write a whole slot, including any trailing zeroes
-> +	 * that may come at the end of it. Also, because instrs.buffer had
-
-s/had/has/
-
-> +	 * been zero-initialised, there's no need to pad it with 0's
-> +	 */
-> +	instrs->count = ALIGN(instrs->count, NUM_INSTRS_PER_CACHE_LINE);
-> +	size = instrs->count * sizeof(u64);
-> +	written = min(ringbuf_size - start, size);
-> +
-> +	memcpy(queue->ringbuf->kmap + start, instrs->buffer, written);
-> +
-> +	if (written < size)
-> +		memcpy(queue->ringbuf->kmap,
-> +		       &instrs->buffer[(ringbuf_size - start)/sizeof(u64)],
-> +		       size - written);
-> +}
-> +
-> +struct panthor_job_cs_params {
-> +	u32 profile_mask;
-> +	u64 addr_reg; u64 val_reg;
-> +	u64 cycle_reg; u64 time_reg;
-> +	u64 sync_addr; u64 times_addr;
-> +	u64 cs_start; u64 cs_size;
-> +	u32 last_flush; u32 waitall_mask;
-> +};
-> +
-> +static void
-> +get_job_cs_params(struct panthor_job *job, struct panthor_job_cs_params *params)
->  {
-> -	struct panthor_job *job = container_of(sched_job, struct panthor_job, base);
->  	struct panthor_group *group = job->group;
->  	struct panthor_queue *queue = group->queues[job->queue_idx];
->  	struct panthor_device *ptdev = group->ptdev;
->  	struct panthor_scheduler *sched = ptdev->scheduler;
-> -	u32 ringbuf_size = panthor_kernel_bo_size(queue->ringbuf);
-> -	u32 ringbuf_insert = queue->iface.input->insert & (ringbuf_size - 1);
-> -	u64 addr_reg = ptdev->csif_info.cs_reg_count -
-> -		       ptdev->csif_info.unpreserved_cs_reg_count;
-> -	u64 val_reg = addr_reg + 2;
-> -	u64 sync_addr = panthor_kernel_bo_gpuva(group->syncobjs) +
-> -			job->queue_idx * sizeof(struct panthor_syncobj_64b);
-> -	u32 waitall_mask = GENMASK(sched->sb_slot_count - 1, 0);
-> -	struct dma_fence *done_fence;
-> -	int ret;
->  
-> -	u64 call_instrs[NUM_INSTRS_PER_SLOT] = {
-> +	params->addr_reg = ptdev->csif_info.cs_reg_count -
-> +			   ptdev->csif_info.unpreserved_cs_reg_count;
-> +	params->val_reg = params->addr_reg + 2;
-> +	params->cycle_reg = params->addr_reg;
-> +	params->time_reg = params->val_reg;
-> +
-> +	params->sync_addr = panthor_kernel_bo_gpuva(group->syncobjs) +
-> +			    job->queue_idx * sizeof(struct panthor_syncobj_64b);
-> +	params->times_addr = panthor_kernel_bo_gpuva(queue->profiling_info.slots) +
-> +			     (job->profiling_slot * sizeof(struct panthor_job_profiling_data));
-> +	params->waitall_mask = GENMASK(sched->sb_slot_count - 1, 0);
-> +
-> +	params->cs_start = job->call_info.start;
-> +	params->cs_size = job->call_info.size;
-> +	params->last_flush = job->call_info.latest_flush;
-> +
-> +	params->profile_mask = job->profile_mask;
-> +}
-> +
-> +static void
-> +prepare_job_instrs(const struct panthor_job_cs_params *params,
-> +		   struct panthor_job_ringbuf_instrs *instrs)
-> +{
-> +	const struct panthor_job_instr instr_seq[] = {
->  		/* MOV32 rX+2, cs.latest_flush */
-> -		(2ull << 56) | (val_reg << 48) | job->call_info.latest_flush,
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (2ull << 56) | (params->val_reg << 48) | params->last_flush),
->  
->  		/* FLUSH_CACHE2.clean_inv_all.no_wait.signal(0) rX+2 */
-> -		(36ull << 56) | (0ull << 48) | (val_reg << 40) | (0 << 16) | 0x233,
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (36ull << 56) | (0ull << 48) | (params->val_reg << 40) | (0 << 16) | 0x233),
-> +
-> +		/* MOV48 rX:rX+1, cycles_offset */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
-> +			  (1ull << 56) | (params->cycle_reg << 48) |
-> +			  (params->times_addr +
-> +			   offsetof(struct panthor_job_profiling_data, cycles.before))),
-> +		/* STORE_STATE cycles */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
-> +			  (40ull << 56) | (params->cycle_reg << 40) | (1ll << 32)),
-> +		/* MOV48 rX:rX+1, time_offset */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
-> +			  (1ull << 56) | (params->time_reg << 48) |
-> +			  (params->times_addr +
-> +			   offsetof(struct panthor_job_profiling_data, time.before))),
-> +		/* STORE_STATE timer */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
-> +			  (40ull << 56) | (params->time_reg << 40) | (0ll << 32)),
->  
->  		/* MOV48 rX:rX+1, cs.start */
-> -		(1ull << 56) | (addr_reg << 48) | job->call_info.start,
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (1ull << 56) | (params->addr_reg << 48) | params->cs_start),
->  		/* MOV32 rX+2, cs.size */
-> -		(2ull << 56) | (val_reg << 48) | job->call_info.size,
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (2ull << 56) | (params->val_reg << 48) | params->cs_size),
->  		/* WAIT(0) => waits for FLUSH_CACHE2 instruction */
-> -		(3ull << 56) | (1 << 16),
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED, (3ull << 56) | (1 << 16)),
->  		/* CALL rX:rX+1, rX+2 */
-> -		(32ull << 56) | (addr_reg << 40) | (val_reg << 32),
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (32ull << 56) | (params->addr_reg << 40) | (params->val_reg << 32)),
-> +
-> +		/* MOV48 rX:rX+1, cycles_offset */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
-> +			  (1ull << 56) | (params->cycle_reg << 48) |
-> +			  (params->times_addr +
-> +			   offsetof(struct panthor_job_profiling_data, cycles.after))),
-> +		/* STORE_STATE cycles */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
-> +			  (40ull << 56) | (params->cycle_reg << 40) | (1ll << 32)),
-> +
-> +		/* MOV48 rX:rX+1, time_offset */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
-> +			  (1ull << 56) | (params->time_reg << 48) |
-> +			  (params->times_addr +
-> +			   offsetof(struct panthor_job_profiling_data, time.after))),
-> +		/* STORE_STATE timer */
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
-> +			  (40ull << 56) | (params->time_reg << 40) | (0ll << 32)),
->  
->  		/* MOV48 rX:rX+1, sync_addr */
-> -		(1ull << 56) | (addr_reg << 48) | sync_addr,
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (1ull << 56) | (params->addr_reg << 48) | params->sync_addr),
->  		/* MOV48 rX+2, #1 */
-> -		(1ull << 56) | (val_reg << 48) | 1,
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (1ull << 56) | (params->val_reg << 48) | 1),
->  		/* WAIT(all) */
-> -		(3ull << 56) | (waitall_mask << 16),
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (3ull << 56) | (params->waitall_mask << 16)),
->  		/* SYNC_ADD64.system_scope.propage_err.nowait rX:rX+1, rX+2*/
-> -		(51ull << 56) | (0ull << 48) | (addr_reg << 40) | (val_reg << 32) | (0 << 16) | 1,
-> -
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
-> +			  (51ull << 56) | (0ull << 48) | (params->addr_reg << 40) |
-> +			  (params->val_reg << 32) | (0 << 16) | 1),
->  		/* ERROR_BARRIER, so we can recover from faults at job
->  		 * boundaries.
->  		 */
-> -		(47ull << 56),
-> +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED, (47ull << 56)),
-> +	};
-> +	u32 pad;
-> +
-> +	/* NEED to be cacheline aligned to please the prefetcher. */
-> +	static_assert(sizeof(instrs->buffer) % 64 == 0,
-> +		      "panthor_job_ringbuf_instrs::buffer is not aligned on a cacheline");
-> +
-> +	/* Make sure we have enough storage to store the whole sequence. */
-> +	static_assert(ALIGN(ARRAY_SIZE(instr_seq), NUM_INSTRS_PER_CACHE_LINE) <=
-> +		      ARRAY_SIZE(instrs->buffer),
-> +		      "instr_seq vs panthor_job_ringbuf_instrs::buffer size mismatch");
-> +
-> +	for (u32 i = 0; i < ARRAY_SIZE(instr_seq); i++) {
-> +		/* If the profile mask of this instruction is not enabled, skip it. */
-> +		if (instr_seq[i].profile_mask &&
-> +		    !(instr_seq[i].profile_mask & params->profile_mask))
-> +			continue;
-> +
-> +		instrs->buffer[instrs->count++] = instr_seq[i].instr;
-> +	}
-> +
-> +	pad = ALIGN(instrs->count, NUM_INSTRS_PER_CACHE_LINE);
-> +	memset(&instrs->buffer[instrs->count], 0,
-> +	       (pad - instrs->count) * sizeof(instrs->buffer[0]));
-> +	instrs->count = pad;
-> +}
-> +
-> +static u32 calc_job_credits(u32 profile_mask)
-> +{
-> +	struct panthor_job_ringbuf_instrs instrs;
-> +	struct panthor_job_cs_params params = {
-> +		.profile_mask = profile_mask,
->  	};
->  
-> -	/* Need to be cacheline aligned to please the prefetcher. */
-> -	static_assert(sizeof(call_instrs) % 64 == 0,
-> -		      "call_instrs is not aligned on a cacheline");
-> +	prepare_job_instrs(&params, &instrs);
-> +	return instrs.count;
-> +}
-> +
-> +static struct dma_fence *
-> +queue_run_job(struct drm_sched_job *sched_job)
-> +{
-> +	struct panthor_job *job = container_of(sched_job, struct panthor_job, base);
-> +	struct panthor_group *group = job->group;
-> +	struct panthor_queue *queue = group->queues[job->queue_idx];
-> +	struct panthor_device *ptdev = group->ptdev;
-> +	struct panthor_scheduler *sched = ptdev->scheduler;
-> +	struct panthor_job_ringbuf_instrs instrs;
-> +	struct panthor_job_cs_params cs_params;
-> +	struct dma_fence *done_fence;
-> +	int ret;
->  
->  	/* Stream size is zero, nothing to do except making sure all previously
->  	 * submitted jobs are done before we signal the
-> @@ -2900,17 +3078,23 @@ queue_run_job(struct drm_sched_job *sched_job)
->  		       queue->fence_ctx.id,
->  		       atomic64_inc_return(&queue->fence_ctx.seqno));
->  
-> -	memcpy(queue->ringbuf->kmap + ringbuf_insert,
-> -	       call_instrs, sizeof(call_instrs));
-> +	job->profiling_slot = queue->profiling_info.profiling_seqno++;
-> +	if (queue->profiling_info.profiling_seqno == queue->profiling_info.slot_count)
-> +		queue->profiling_info.profiling_seqno = 0;
-> +
-> +	job->ringbuf.start = queue->iface.input->insert;
-> +
-> +	get_job_cs_params(job, &cs_params);
-> +	prepare_job_instrs(&cs_params, &instrs);
-> +	copy_instrs_to_ringbuf(queue, job, &instrs);
-> +
-> +	job->ringbuf.end = job->ringbuf.start + (instrs.count * sizeof(u64));
->  
->  	panthor_job_get(&job->base);
->  	spin_lock(&queue->fence_ctx.lock);
->  	list_add_tail(&job->node, &queue->fence_ctx.in_flight_jobs);
->  	spin_unlock(&queue->fence_ctx.lock);
->  
-> -	job->ringbuf.start = queue->iface.input->insert;
-> -	job->ringbuf.end = job->ringbuf.start + sizeof(call_instrs);
-> -
->  	/* Make sure the ring buffer is updated before the INSERT
->  	 * register.
->  	 */
-> @@ -3003,6 +3187,24 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
->  	.free_job = queue_free_job,
->  };
->  
-> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
-> +				       u32 cs_ringbuf_size)
-> +{
-> +	u32 min_profiled_job_instrs = U32_MAX;
-> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
-> +
-> +	for (u32 i = 0; i < last_flag; i++) {
-> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
-> +			min_profiled_job_instrs =
-> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
-> +	}
-> +
-> +	drm_WARN_ON(&ptdev->base,
-> +		    !IS_ALIGNED(min_profiled_job_instrs, NUM_INSTRS_PER_CACHE_LINE));
-> +
-> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
-> +}
-> +
->  static struct panthor_queue *
->  group_create_queue(struct panthor_group *group,
->  		   const struct drm_panthor_queue_create *args)
-> @@ -3056,9 +3258,38 @@ group_create_queue(struct panthor_group *group,
->  		goto err_free_queue;
->  	}
->  
-> +	queue->profiling_info.slot_count =
-> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
-> +
-> +	queue->profiling_info.slots =
-> +		panthor_kernel_bo_create(group->ptdev, group->vm,
-> +					 queue->profiling_info.slot_count *
-> +					 sizeof(struct panthor_job_profiling_data),
-> +					 DRM_PANTHOR_BO_NO_MMAP,
-> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
-> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
-> +					 PANTHOR_VM_KERNEL_AUTO_VA);
-> +
-> +	if (IS_ERR(queue->profiling_info.slots)) {
-> +		ret = PTR_ERR(queue->profiling_info.slots);
-> +		goto err_free_queue;
-> +	}
-> +
-> +	ret = panthor_kernel_bo_vmap(queue->profiling_info.slots);
-> +	if (ret)
-> +		goto err_free_queue;
-> +
-> +	memset(queue->profiling_info.slots->kmap, 0,
-> +	       queue->profiling_info.slot_count * sizeof(struct panthor_job_profiling_data));
-> +
-> +	/*
-> +	 * Credit limit argument tells us the total number of instructions
-> +	 * across all CS slots in the ringbuffer, with some jobs requiring
-> +	 * twice as many as others, depending on their profiling status.
-> +	 */
->  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
->  			     group->ptdev->scheduler->wq, 1,
-> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
-> +			     args->ringbuf_size / sizeof(u64),
->  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
->  			     group->ptdev->reset.wq,
->  			     NULL, "panthor-queue", group->ptdev->base.dev);
-> @@ -3354,6 +3585,7 @@ panthor_job_create(struct panthor_file *pfile,
->  {
->  	struct panthor_group_pool *gpool = pfile->groups;
->  	struct panthor_job *job;
-> +	u32 credits;
->  	int ret;
->  
->  	if (qsubmit->pad)
-> @@ -3407,9 +3639,16 @@ panthor_job_create(struct panthor_file *pfile,
->  		}
->  	}
->  
-> +	job->profile_mask = pfile->ptdev->profile_mask;
-> +	credits = calc_job_credits(job->profile_mask);
-> +	if (credits == 0) {
-> +		ret = -EINVAL;
-> +		goto err_put_job;
-> +	}
-> +
->  	ret = drm_sched_job_init(&job->base,
->  				 &job->group->queues[job->queue_idx]->entity,
-> -				 1, job->group);
-> +				 credits, job->group);
->  	if (ret)
->  		goto err_put_job;
->  
-> -- 
-> 2.46.0
+> Maybe call_tree.pl can somehow be used with an if name[-5:] == "probe"
+> or something along those lines..
 > 
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+I wrote the call_tree.pl script before I had the database.  These days I tend to
+use the database instead.
 
-Best regards,
-Liviu
+I've implemented this check but it only looks at ioctls.  I'll test it tonight.
 
+> > 
+> > 2) Printing an error message for -EPROBE_DEFER warnings
+> >    I've written this check and I can test it tonight.
+> > 
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+I've done this.  See the attached check and the dont_print.list file attached.
+The line numbers are based on linux next.  The false positives from here are
+pretty harmless because calling dev_err_probe() is fine.
+
+> > 3) Not propagating the -EPROBE_DEFER returns
+> >    This shouldn't be too hard to write.
+> > 
+
+I've done this too.  The false positives from this could be bad, because we only
+want to propagate -EPROBE_DEFER back from probe() functions.
+
+See propagate.list.
+
+regards,
+dan carpenter
+
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="check_returning_EPROBE_DEFER.c"
+
+/*
+ * Copyright 2024 Linaro Ltd.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
+
+#include "smatch.h"
+#include "smatch_slist.h"
+#include "smatch_extra.h"
+
+static int my_id;
+
+static unsigned long is_ioctl;
+
+static void function_start(struct symbol *sym)
+{
+	struct string_list *ptrs;
+	char *ptr;
+
+	ptrs = get_caller_ptrs(sym);
+	FOR_EACH_PTR(ptrs, ptr) {
+		if (strcmp(ptr, "(struct file_operations)->unlocked_ioctl") == 0 ||
+		    strcmp(ptr, "(struct file_operations)->compat_ioctl") == 0) {
+			is_ioctl = true;
+			return;
+		}
+	} END_FOR_EACH_PTR(ptr);
+}
+
+static void match_return(struct expression *expr)
+{
+	char *name;
+
+	if (!is_ioctl)
+		return;
+	if (!is_EPROBE_DEFER(expr))
+		return;
+
+	name = expr_to_str(expr);
+	sm_warning("EPROBE_DEFER is only for probe functions '%s'", name);
+	free_string(name);
+}
+
+void check_returning_EPROBE_DEFER(int id)
+{
+	my_id = id;
+
+	if (option_project != PROJ_KERNEL)
+		return;
+
+	add_function_data(&is_ioctl);
+
+	add_hook(&function_start, FUNC_DEF_HOOK);
+	add_hook(&match_return, RETURN_HOOK);
+}
+
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="check_eprobe_defer_is_silent.c"
+
+/*
+ * Copyright 2023 Linaro Ltd.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
+
+#include "smatch.h"
+#include "smatch_slist.h"
+#include "smatch_extra.h"
+
+static int my_id;
+
+static struct statement *get_if_statement(struct expression *expr)
+{
+	struct statement *stmt, *parent;
+	struct expression *tmp;
+	int count = 0;
+
+	stmt = get_parent_stmt(expr);
+	if (!stmt)
+		return NULL;
+	stmt = stmt_get_parent_stmt(stmt);
+	while (stmt &&
+	       stmt->pos.line == expr->pos.line &&
+	       stmt->pos.pos == expr->pos.pos) {
+		if (count++ >= 5)
+			break;
+		parent = stmt_get_parent_stmt(stmt);
+		if (!parent) {
+			tmp = stmt_get_parent_expr(stmt);
+			parent = get_parent_stmt(tmp);
+		}
+		stmt = parent;
+	}
+
+	if (!stmt)
+		return NULL;
+	if (stmt->type == STMT_COMPOUND)
+		stmt = stmt_get_parent_stmt(stmt);
+	if (!stmt || stmt->type != STMT_IF)
+		return NULL;
+
+	return stmt;
+}
+
+static struct expression *get_condition_var(struct expression *expr)
+{
+	expr = strip_expr(expr);
+
+	if (expr->type == EXPR_COMPARE &&
+	    (expr->op == SPECIAL_NOTEQUAL || expr->op == '<') &&
+	    expr_is_zero(expr->right))
+		return expr->left;
+
+	return expr;
+}
+
+static void match_warn(const char *fn, struct expression *expr, void *_unused)
+{
+	struct statement *stmt;
+	struct expression *var;
+
+	stmt = get_if_statement(expr);
+	if (!stmt)
+		return;
+	var = get_condition_var(stmt->if_conditional);
+	if (!is_EPROBE_DEFER(var))
+		return;
+
+	sm_msg("EPROBE_DEFER path should not print warnings");
+}
+
+void check_eprobe_defer_is_silent(int id)
+{
+	const char *warn_fn[] = {
+		"_dev_emerg", "_dev_crit", "_dev_alert", "_dev_err",
+		"_dev_warn", "_dev_notice", "printk", "_printk"};
+	int i;
+
+	my_id = id;
+
+	if (option_project != PROJ_KERNEL)
+		return;
+
+	for (i = 0; i < ARRAY_SIZE(warn_fn); i++)
+		add_function_hook(warn_fn[i], &match_warn, NULL);
+}
+
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="dont_print.list"
+
+drivers/rpmsg/rpmsg_core.c:569 rpmsg_dev_probe() EPROBE_DEFER path should not print warnings
+drivers/platform/x86/x86-android-tablets/core.c:107 x86_acpi_irq_helper_get() EPROBE_DEFER path should not print warnings
+drivers/platform/surface/surface_hotplug.c:237 surface_hotplug_probe() EPROBE_DEFER path should not print warnings
+drivers/input/joystick/as5011.c:274 as5011_probe() EPROBE_DEFER path should not print warnings
+drivers/input/keyboard/gpio_keys.c:551 gpio_keys_setup_key() EPROBE_DEFER path should not print warnings
+drivers/input/keyboard/imx_sc_key.c:157 imx_sc_key_probe() EPROBE_DEFER path should not print warnings
+drivers/input/keyboard/matrix_keypad.c:283 matrix_keypad_init_gpio() EPROBE_DEFER path should not print warnings
+drivers/input/keyboard/matrix_keypad.c:296 matrix_keypad_init_gpio() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:174 sun8i_dw_hdmi_bind() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/tegra/output.c:158 tegra_output_probe() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c:171 acp_genpd_add_device() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/omapdrm/omap_drv.c:723 omapdrm_init() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/i915/i915_driver.c:426 i915_pcode_init() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/i915/intel_pcode.c:237 intel_pcode_init() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/vc4/vc4_hdmi.c:2300 vc4_hdmi_audio_init() EPROBE_DEFER path should not print warnings
+drivers/gpu/drm/bridge/sil-sii8620.c:2332 sii8620_probe() EPROBE_DEFER path should not print warnings
+drivers/gpu/host1x/context.c:72 host1x_memory_context_list_init() EPROBE_DEFER path should not print warnings
+drivers/gpu/host1x/dev.c:612 host1x_probe() EPROBE_DEFER path should not print warnings
+drivers/tty/serial/serial_mctrl_gpio.c:243 mctrl_gpio_init() EPROBE_DEFER path should not print warnings
+drivers/memory/samsung/exynos5422-dmc.c:1503 exynos5_dmc_probe() EPROBE_DEFER path should not print warnings
+drivers/usb/common/usb-conn-gpio.c:229 usb_conn_probe() EPROBE_DEFER path should not print warnings
+drivers/usb/common/usb-conn-gpio.c:246 usb_conn_probe() EPROBE_DEFER path should not print warnings
+drivers/usb/misc/brcmstb-usb-pinmap.c:311 brcmstb_usb_pinmap_probe() EPROBE_DEFER path should not print warnings
+drivers/usb/typec/tcpm/fusb302.c:1640 init_gpio() EPROBE_DEFER path should not print warnings
+drivers/usb/typec/anx7411.c:1340 anx7411_get_gpio_irq() EPROBE_DEFER path should not print warnings
+drivers/vfio/fsl-mc/vfio_fsl_mc.c:474 vfio_fsl_mc_init_device() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-usb-gpio.c:154 usb_extcon_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-usb-gpio.c:172 usb_extcon_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-max3355.c:93 max3355_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-ptn5150.c:273 ptn5150_i2c_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-palmas.c:287 palmas_usb_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-palmas.c:338 palmas_usb_probe() EPROBE_DEFER path should not print warnings
+drivers/extcon/extcon-intel-int3496.c:147 int3496_probe() EPROBE_DEFER path should not print warnings
+drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c:347 ns2_drd_phy_probe() EPROBE_DEFER path should not print warnings
+drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c:353 ns2_drd_phy_probe() EPROBE_DEFER path should not print warnings
+drivers/phy/motorola/phy-mapphone-mdm6600.c:486 phy_mdm6600_deferred_power_on() EPROBE_DEFER path should not print warnings
+drivers/soc/rockchip/io-domain.c:677 rockchip_iodomain_probe() EPROBE_DEFER path should not print warnings
+drivers/hte/hte-tegra194-test.c:140 tegra_hte_test_probe() EPROBE_DEFER path should not print warnings
+drivers/devfreq/devfreq.c:1318 devfreq_add_governor() EPROBE_DEFER path should not print warnings
+drivers/devfreq/devfreq.c:1482 governor_store() EPROBE_DEFER path should not print warnings
+drivers/devfreq/devfreq.c:1489 governor_store() EPROBE_DEFER path should not print warnings
+drivers/devfreq/devfreq.c:1910 timer_store() EPROBE_DEFER path should not print warnings
+drivers/devfreq/mtk-cci-devfreq.c:54 mtk_ccifreq_set_voltage() EPROBE_DEFER path should not print warnings
+drivers/devfreq/mtk-cci-devfreq.c:60 mtk_ccifreq_set_voltage() EPROBE_DEFER path should not print warnings
+drivers/devfreq/mtk-cci-devfreq.c:158 mtk_ccifreq_target() EPROBE_DEFER path should not print warnings
+drivers/firmware/imx/imx-scu.c:333 imx_scu_probe() EPROBE_DEFER path should not print warnings
+drivers/firmware/imx/imx-scu.c:337 imx_scu_probe() EPROBE_DEFER path should not print warnings
+drivers/firmware/arm_scmi/driver.c:2708 scmi_txrx_setup() EPROBE_DEFER path should not print warnings
+drivers/uio/uio_dfl.c:42 uio_dfl_probe() EPROBE_DEFER path should not print warnings
+drivers/uio/uio_pdrv_genirq.c:250 uio_pdrv_genirq_probe() EPROBE_DEFER path should not print warnings
+drivers/uio/uio_hv_generic.c:340 hv_uio_probe() EPROBE_DEFER path should not print warnings
+drivers/nfc/nfcmrvl/main.c:121 nfcmrvl_nci_register_dev() EPROBE_DEFER path should not print warnings
+drivers/net/wireless/intersil/p54/p54spi.c:613 p54spi_probe() EPROBE_DEFER path should not print warnings
+drivers/net/wireless/intersil/p54/p54spi.c:619 p54spi_probe() EPROBE_DEFER path should not print warnings
+drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c:542 stm32_dwmac_probe() EPROBE_DEFER path should not print warnings
+drivers/net/ethernet/mellanox/mlx4/main.c:4013 mlx4_devlink_reload_up() EPROBE_DEFER path should not print warnings
+drivers/net/ethernet/mellanox/mlx4/main.c:4263 mlx4_restart_one_up() EPROBE_DEFER path should not print warnings
+drivers/net/ethernet/mellanox/mlx4/main.c:4400 mlx4_pci_resume() EPROBE_DEFER path should not print warnings
+drivers/net/can/m_can/tcan4x5x-core.c:452 tcan4x5x_can_probe() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/scmi-cpufreq.c:388 scmi_cpufreq_probe() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq-hw.c:329 mtk_cpufreq_hw_driver_probe() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/amd-pstate.c:1948 amd_pstate_init() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:89 mtk_cpufreq_voltage_tracking() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:96 mtk_cpufreq_voltage_tracking() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:224 mtk_cpufreq_set_target() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:257 mtk_cpufreq_set_target() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:299 mtk_cpufreq_set_target() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/mediatek-cpufreq.c:336 mtk_cpufreq_opp_notifier() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/qcom-cpufreq-hw.c:725 qcom_cpufreq_hw_driver_probe() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/cpufreq-dt.c:327 dt_cpufreq_probe() EPROBE_DEFER path should not print warnings
+drivers/cpufreq/scpi-cpufreq.c:204 scpi_cpufreq_probe() EPROBE_DEFER path should not print warnings
+drivers/media/platform/amphion/vpu_imx8q.c:206 vpu_imx8q_get_fuse() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp/mtk_mdp_core.c:200 mtk_mdp_probe() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp/mtk_mdp_vpu.c:69 mtk_mdp_vpu_register() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c:1102 mtk_mdp_m2m_open() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c:132 mdp_vpu_register() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c:114 mdp_vpu_get_locked() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c:169 mdp_m2m_start_streaming() EPROBE_DEFER path should not print warnings
+drivers/media/platform/mediatek/vpu/mtk_vpu.c:875 mtk_vpu_probe() EPROBE_DEFER path should not print warnings
+drivers/media/usb/em28xx/em28xx-dvb.c:742 em28xx_pctv_290e_set_lna() EPROBE_DEFER path should not print warnings
+drivers/media/usb/em28xx/em28xx-dvb.c:1713 em28xx_dvb_init() EPROBE_DEFER path should not print warnings
+drivers/media/dvb-frontends/tc90522.c:583 tc90522_sleep() EPROBE_DEFER path should not print warnings
+drivers/media/dvb-frontends/tc90522.c:616 tc90522_init() EPROBE_DEFER path should not print warnings
+drivers/media/pci/sta2x11/sta2x11_vip.c:902 vip_gpio_reserve() EPROBE_DEFER path should not print warnings
+drivers/media/i2c/hi556.c:1336 hi556_probe() EPROBE_DEFER path should not print warnings
+drivers/media/i2c/ov13b10.c:1505 ov13b10_probe() EPROBE_DEFER path should not print warnings
+drivers/media/cec/platform/seco/seco-cec.c:549 secocec_acpi_probe() EPROBE_DEFER path should not print warnings
+drivers/cxl/pci.c:840 cxl_pci_probe() EPROBE_DEFER path should not print warnings
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:847 gmin_v1p8_ctrl() EPROBE_DEFER path should not print warnings
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:928 gmin_v2p8_ctrl() EPROBE_DEFER path should not print warnings
+drivers/bluetooth/hci_intel.c:1171 intel_probe() EPROBE_DEFER path should not print warnings
+drivers/pci/controller/dwc/pcie-tegra194.c:2050 tegra_pcie_config_ep() EPROBE_DEFER path should not print warnings
+drivers/regulator/vctrl-regulator.c:195 vctrl_set_voltage_sel() EPROBE_DEFER path should not print warnings
+drivers/regulator/vctrl-regulator.c:502 vctrl_probe() EPROBE_DEFER path should not print warnings
+drivers/regulator/max5970-regulator.c:634 max597x_regulator_probe() EPROBE_DEFER path should not print warnings
+drivers/power/supply/olpc_battery.c:540 olpc_bat_eeprom_read() EPROBE_DEFER path should not print warnings
+drivers/power/supply/lt3651-charger.c:159 lt3651_charger_probe() EPROBE_DEFER path should not print warnings
+drivers/power/supply/lt3651-charger.c:169 lt3651_charger_probe() EPROBE_DEFER path should not print warnings
+drivers/power/supply/lt3651-charger.c:179 lt3651_charger_probe() EPROBE_DEFER path should not print warnings
+drivers/power/supply/sc27xx_fuel_gauge.c:1239 sc27xx_fgu_probe() EPROBE_DEFER path should not print warnings
+drivers/mfd/arizona-irq.c:367 arizona_irq_init() EPROBE_DEFER path should not print warnings
+drivers/mfd/aat2870-core.c:373 aat2870_i2c_probe() EPROBE_DEFER path should not print warnings
+drivers/mfd/si476x-i2c.c:725 si476x_core_probe() EPROBE_DEFER path should not print warnings
+drivers/mfd/wm8994-irq.c:211 wm8994_irq_init() EPROBE_DEFER path should not print warnings
+drivers/hwtracing/intel_th/sth.c:230 intel_th_sth_probe() EPROBE_DEFER path should not print warnings
+drivers/hwtracing/stm/ftrace.c:72 stm_ftrace_init() EPROBE_DEFER path should not print warnings
+drivers/gpio/gpiolib-acpi.c:463 acpi_gpiochip_alloc_event() EPROBE_DEFER path should not print warnings
+drivers/gpio/gpiolib.c:1386 gpiochip_set_hierarchical_irqchip() EPROBE_DEFER path should not print warnings
+drivers/gpio/gpiolib.c:1466 gpiochip_hierarchy_irq_domain_alloc() EPROBE_DEFER path should not print warnings
+drivers/iio/adc/stm32-adc-core.c:544 stm32_adc_core_hw_start() EPROBE_DEFER path should not print warnings
+drivers/iio/adc/stm32-adc-core.c:652 stm32_adc_core_switches_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/adc/stm32-adc-core.c:773 stm32_adc_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/adc/meson_saradc.c:692 meson_sar_adc_iio_info_read_raw() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ltc1660.c:62 ltc1660_read_raw() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ad7293.c:845 ad7293_init() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ad7293.c:854 ad7293_init() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ad8801.c:139 ad8801_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ad8801.c:162 ad8801_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/stm32-dac-core.c:135 stm32_dac_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/ad5761.c:324 ad5761_get_vref() EPROBE_DEFER path should not print warnings
+drivers/iio/dac/max5821.c:346 max5821_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/proximity/srf04.c:304 srf04_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/proximity/ping.c:121 ping_read() EPROBE_DEFER path should not print warnings
+drivers/iio/light/gp2ap002.c:539 gp2ap002_probe() EPROBE_DEFER path should not print warnings
+drivers/iio/humidity/dht11.c:311 dht11_probe() EPROBE_DEFER path should not print warnings
+sound/soc/rockchip/rockchip_i2s_tdm.c:1369 rockchip_i2s_tdm_probe() EPROBE_DEFER path should not print warnings
+sound/soc/rockchip/rockchip_pdm.c:642 rockchip_pdm_probe() EPROBE_DEFER path should not print warnings
+sound/soc/rockchip/rockchip_i2s.c:835 rockchip_i2s_probe() EPROBE_DEFER path should not print warnings
+sound/soc/rockchip/rockchip_spdif.c:354 rk_spdif_probe() EPROBE_DEFER path should not print warnings
+sound/soc/amd/acp/acp-legacy-mach.c:168 acp_asoc_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/atmel-i2s.c:715 atmel_i2s_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/mchp-spdifrx.c:1161 mchp_spdifrx_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/mchp-pdmc.c:1098 mchp_pdmc_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/mchp-spdiftx.c:857 mchp_spdiftx_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/mchp-i2s-mcc.c:1078 mchp_i2s_mcc_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/atmel-pdmic.c:659 atmel_pdmic_probe() EPROBE_DEFER path should not print warnings
+sound/soc/atmel/atmel-classd.c:586 atmel_classd_probe() EPROBE_DEFER path should not print warnings
+sound/soc/bcm/bcm2835-i2s.c:904 bcm2835_i2s_probe() EPROBE_DEFER path should not print warnings
+sound/soc/fsl/lpc3xxx-pcm.c:65 lpc3xxx_pcm_register() EPROBE_DEFER path should not print warnings
+sound/soc/fsl/fsl_xcvr.c:1402 fsl_xcvr_probe() EPROBE_DEFER path should not print warnings
+sound/soc/fsl/fsl_aud2htx.c:242 fsl_aud2htx_probe() EPROBE_DEFER path should not print warnings
+sound/soc/fsl/fsl_micfil.c:1246 fsl_micfil_probe() EPROBE_DEFER path should not print warnings
+sound/soc/samsung/speyside.c:156 speyside_wm8996_init() EPROBE_DEFER path should not print warnings
+sound/soc/samsung/aries_wm8994.c:376 aries_late_probe() EPROBE_DEFER path should not print warnings
+sound/soc/sunxi/sun4i-codec.c:1795 sun4i_codec_probe() EPROBE_DEFER path should not print warnings
+sound/soc/sunxi/sun4i-i2s.c:1610 sun4i_i2s_probe() EPROBE_DEFER path should not print warnings
+sound/soc/starfive/jh7110_tdm.c:618 jh7110_tdm_probe() EPROBE_DEFER path should not print warnings
+sound/soc/sof/imx/imx8.c:235 imx8_probe() EPROBE_DEFER path should not print warnings
+sound/soc/intel/avs/boards/hdaudio.c:151 avs_probing_link_init() EPROBE_DEFER path should not print warnings
+sound/soc/intel/keembay/kmb_platform.c:892 kmb_plat_dai_probe() EPROBE_DEFER path should not print warnings
+sound/soc/dwc/dwc-i2s.c:1027 dw_i2s_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tlv320aic32x4.c:1386 aic32x4_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/twl4030.c:266 twl4030_init_chip() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tas2764.c:726 tas2764_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tlv320dac33.c:1507 dac33_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tas2770.c:680 tas2770_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/cs42l52.c:1148 cs42l52_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/arizona-jack.c:1331 arizona_jack_codec_dev_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/arizona-jack.c:1363 arizona_jack_codec_dev_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tas2780.c:615 tas2780_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/tpa6130a2.c:261 tpa6130a2_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/cs42l73.c:1321 cs42l73_i2c_probe() EPROBE_DEFER path should not print warnings
+sound/soc/codecs/cs42l56.c:1206 cs42l56_i2c_probe() EPROBE_DEFER path should not print warnings
+
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="check_propagate_EPROBE_DEFER2.c"
+
+/*
+ * Copyright 2023 Linaro Ltd.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
+
+#include "smatch.h"
+#include "smatch_slist.h"
+#include "smatch_extra.h"
+
+static int my_id;
+
+static unsigned long warned;
+
+static void match_return(struct expression *expr)
+{
+	static int eprobe_id;
+	struct symbol *type;
+	struct sm_state *sm;
+	sval_t sval;
+
+	if (warned)
+		return;
+
+	if (!expr || !get_value(expr, &sval))
+		return;
+	if (sval.value == -517)
+		return;
+
+	type = cur_func_return_type();
+	if (type != &int_ctype)
+		return;
+
+	if (eprobe_id == 0)
+		eprobe_id = id_from_name("register_kernel_EPROBE_DEFER");
+
+	FOR_EACH_MY_SM(eprobe_id, __get_cur_stree(), sm) {
+		if (strncmp(sm->name, "__fake_", 7) == 0)
+			continue;
+		if (!is_EPROBE_DEFER_name_sym(sm->name, sm->sym))
+			continue;
+		if (sm->state != &undefined) {
+			sm_warning("why not propogate EPROBE_DEFER from '%s'", sm->name);
+			warned = 1;
+		}
+		return;
+	} END_FOR_EACH_SM(sm);
+}
+
+void check_propagate_EPROBE_DEFER2(int id)
+{
+	my_id = id;
+
+	if (option_project != PROJ_KERNEL)
+		return;
+
+	add_function_data(&warned);
+	add_hook(&match_return, RETURN_HOOK);
+}
+
+--BtPCO9uUB2+Ay3RA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="propagate.list"
+
+drivers/platform/cznic/turris-omnia-mcu-trng.c:102 omnia_mcu_register_trng() warn: why not propogate EPROBE_DEFER from 'irq'
+drivers/input/misc/soc_button_array.c:149 soc_button_lookup_gpio() warn: why not propogate EPROBE_DEFER from '*irq_ret'
+drivers/input/keyboard/mpr121_touchkey.c:252 mpr_touchkey_probe() warn: why not propogate EPROBE_DEFER from 'vdd_uv'
+drivers/gpu/drm/panel/panel-novatek-nt35950.c:354 nt35950_sharp_init_vregs() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/gpu/drm/omapdrm/dss/dsi.c:4328 omap_dsi_register_te_irq() warn: why not propogate EPROBE_DEFER from 'te_irq'
+drivers/gpu/drm/bridge/samsung-dsim.c:1697 samsung_dsim_register_te_irq() warn: why not propogate EPROBE_DEFER from 'te_gpio_irq'
+drivers/gpu/drm/bridge/display-connector.c:381 display_connector_probe() warn: why not propogate EPROBE_DEFER from 'conn->hpd_irq'
+drivers/gpu/drm/bridge/ti-tpd12s015.c:179 tpd12s015_probe() warn: why not propogate EPROBE_DEFER from 'tpd->hpd_irq'
+drivers/gpu/drm/nouveau/nvkm/subdev/volt/gk20a.c:104 gk20a_volt_vid_get() warn: why not propogate EPROBE_DEFER from 'uv'
+drivers/gpu/drm/nouveau/nvkm/subdev/volt/gk20a.c:171 gk20a_volt_ctor() warn: why not propogate EPROBE_DEFER from 'uv'
+drivers/clk/clk-si5341.c:1381 si5341_dt_parse_dt() warn: why not propogate EPROBE_DEFER from 'vdd'
+drivers/usb/gadget/udc/pch_udc.c:1401 pch_vbus_gpio_init() warn: why not propogate EPROBE_DEFER from 'irq_num'
+drivers/mmc/core/regulator.c:157 mmc_regulator_set_voltage_if_supported() warn: why not propogate EPROBE_DEFER from 'current_uV'
+drivers/mmc/core/regulator.c:274 mmc_regulator_get_supply() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/phy/allwinner/phy-sun4i-usb.c:901 sun4i_usb_phy_probe() warn: why not propogate EPROBE_DEFER from 'data->id_det_irq'
+drivers/base/dd.c:1134 device_driver_attach() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/uio/uio_aec.c:120 probe() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/nfc/trf7970a.c:2135 trf7970a_probe() warn: why not propogate EPROBE_DEFER from 'uvolts'
+drivers/net/phy/broadcom.c:1170 bcm54xx_phy_probe() warn: why not propogate EPROBE_DEFER from 'priv->wake_irq'
+drivers/net/mdio/acpi_mdio.c:59 __acpi_mdiobus_register() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/net/ethernet/broadcom/cnic.c:1340 cnic_alloc_bnx2x_resc() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c:171 mdp_m2m_start_streaming() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/media/cec/platform/seco/seco-cec.c:550 secocec_acpi_probe() warn: why not propogate EPROBE_DEFER from 'irq'
+drivers/media/cec/platform/cec-gpio/cec-gpio.c:255 cec_gpio_probe() warn: why not propogate EPROBE_DEFER from 'cec->cec_irq'
+drivers/hwmon/sht15.c:1008 sht15_probe() warn: why not propogate EPROBE_DEFER from 'data->supply_uv'
+drivers/hwmon/gpio-fan.c:91 fan_alarm_init() warn: why not propogate EPROBE_DEFER from 'alarm_irq'
+drivers/hwmon/ads7828.c:134 ads7828_probe() warn: why not propogate EPROBE_DEFER from '__x'
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:932 gmin_v2p8_ctrl() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/staging/greybus/arche-platform.c:545 arche_platform_probe() warn: why not propogate EPROBE_DEFER from 'arche_pdata->wake_detect_irq'
+drivers/bluetooth/hci_bcm.c:1173 bcm_get_resources() warn: why not propogate EPROBE_DEFER from 'dev->irq'
+drivers/bluetooth/hci_intel.c:1191 intel_probe() warn: why not propogate EPROBE_DEFER from 'idev->irq'
+drivers/bluetooth/hci_nokia.c:751 nokia_bluetooth_serdev_probe() warn: why not propogate EPROBE_DEFER from 'btdev->wake_irq'
+drivers/pci/controller/dwc/pcie-qcom-ep.c:754 qcom_pcie_ep_enable_irq_resources() warn: why not propogate EPROBE_DEFER from 'pcie_ep->perst_irq'
+drivers/regulator/vctrl-regulator.c:142 vctrl_set_voltage() warn: why not propogate EPROBE_DEFER from 'orig_ctrl_uV'
+drivers/regulator/core.c:3565 _regulator_call_set_voltage() warn: why not propogate EPROBE_DEFER from 'data.old_uV'
+drivers/regulator/core.c:3589 _regulator_call_set_voltage_sel() warn: why not propogate EPROBE_DEFER from 'data.old_uV'
+drivers/power/supply/gpio-charger.c:350 gpio_charger_probe() warn: why not propogate EPROBE_DEFER from 'charge_status_irq'
+drivers/power/supply/lt3651-charger.c:184 lt3651_charger_probe() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/power/supply/sbs-battery.c:1222 sbs_probe() warn: why not propogate EPROBE_DEFER from 'irq'
+drivers/mfd/stmpe.c:1450 stmpe_probe() warn: why not propogate EPROBE_DEFER from 'stmpe->irq'
+drivers/gpio/gpiolib-cdev.c:1062 debounce_setup() warn: why not propogate EPROBE_DEFER from 'irq'
+drivers/gpio/gpiolib-cdev.c:1177 edge_detector_setup() warn: why not propogate EPROBE_DEFER from 'irq'
+drivers/gpio/gpiolib-sysfs.c:181 gpio_sysfs_request_irq() warn: why not propogate EPROBE_DEFER from 'data->irq'
+drivers/iio/adc/vf610_adc.c:907 vf610_adc_probe() warn: why not propogate EPROBE_DEFER from 'info->vref_uv'
+drivers/iio/adc/rcar-gyroadc.c:230 rcar_gyroadc_read_raw() warn: why not propogate EPROBE_DEFER from 'vref'
+drivers/iio/adc/imx7d_adc.c:324 imx7d_adc_read_raw() warn: why not propogate EPROBE_DEFER from 'info->vref_uv'
+drivers/iio/adc/max11100.c:91 max11100_read_raw() warn: why not propogate EPROBE_DEFER from 'vref_uv'
+drivers/iio/adc/ad4130.c:1707 ad4310_parse_fw() warn: why not propogate EPROBE_DEFER from 'avdd_uv'
+drivers/iio/adc/ti-ads1100.c:148 ads1100_set_scale() warn: why not propogate EPROBE_DEFER from 'microvolts'
+drivers/iio/adc/ad7173.c:852 ad7173_read_raw() warn: why not propogate EPROBE_DEFER from '*val'
+drivers/iio/adc/npcm_adc.c:181 npcm_adc_read_raw() warn: why not propogate EPROBE_DEFER from 'vref_uv'
+drivers/iio/adc/ad7298.c:258 ad7298_read_raw() warn: why not propogate EPROBE_DEFER from '*val'
+drivers/iio/dac/max5522.c:91 max5522_read_raw() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/iio/dac/ad5592r-base.c:449 ad5592r_read_raw() warn: why not propogate EPROBE_DEFER from 'ret'
+drivers/iio/addac/ad74413r.c:666 ad74413r_get_output_current_scale() warn: why not propogate EPROBE_DEFER from '*val'
+drivers/iio/humidity/dht11.c:312 dht11_probe() warn: why not propogate EPROBE_DEFER from 'dht11->irq'
+sound/soc/samsung/aries_wm8994.c:377 aries_late_probe() warn: why not propogate EPROBE_DEFER from 'irq'
+
+--BtPCO9uUB2+Ay3RA--
 
