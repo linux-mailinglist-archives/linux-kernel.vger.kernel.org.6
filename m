@@ -1,55 +1,63 @@
-Return-Path: <linux-kernel+bounces-315355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B1596C180
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E1896C188
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436AD281669
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2D41C20E2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74BA1DC1AE;
-	Wed,  4 Sep 2024 14:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9A91DC1A2;
+	Wed,  4 Sep 2024 14:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCd1uN4G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgcM3t41"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085081DC04A;
-	Wed,  4 Sep 2024 14:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEBB1DC05F;
+	Wed,  4 Sep 2024 14:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461885; cv=none; b=BfljD7tt/YbY/DLyAvZA4Hi62JusfIsGrW87e1smNwnbW79bYpvRzAArB3ugE67eOneM2gLGeyhbivD5YvvBTS61NXURtsfnaonCYxJjsaBAIonWWqww86M6YC8qm8Mc/lVOOeN/CiaZtVx4bfU10Wc45ic03vvkJr4Y14iHX6A=
+	t=1725461907; cv=none; b=A/P7yayBtXwClwDrxc/nOGWmbhF/xIkudvi2E2X3KRRklRNV57s6aVTbIO05XElMOkYRqsu20XX1tTVIhjqn2pHJ/nfgIzPrYUUww7LpmxcX5gen6k7DA4cG5bSQIL17AI/mG9M7GezMOYNbZfT1PHfyYZ4Fk9zhdHikkG3tdHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461885; c=relaxed/simple;
-	bh=oGZHZwM6HjGaDxnYT+XVCkxdCNgyq0qFSfTnY4Dp+kk=;
+	s=arc-20240116; t=1725461907; c=relaxed/simple;
+	bh=UQnaAY6AWhM20C0iIDyykUuqjm6xEAysthXGZe2Wos4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDfq4qjfro8zxrtom5LxX9KJD7Yx7VaMwfTJLu+TTKoWJ7AhXgm32+n1e6tU2ueAs7t+nkfS0e1VBBlph4VEk4+MESQTfbfJ6SdNA/0dHbQp7YpzhD5lY7KpF+7NK8HevRp/p6O/MhG+wFxYYtxv5lnqgbWacRNRHD/Sye96Sm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCd1uN4G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6760CC4CEC2;
-	Wed,  4 Sep 2024 14:58:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+mDvcg6qpIC5OJcB9oanofwlREb16/P1LKwNu1RU1w+IsSiFZ1gmBHkf2rTQeUs3cgaFHfMdhrErhJX00bTADF2VpEiyQyL6ht12Gzy0+3yNOd/rH1coWVid4Qb8lhyY5Lagto/GUQLwVpoBfwvhzqdY69fS2lDOHUW2mYMnnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgcM3t41; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F71C4CEC2;
+	Wed,  4 Sep 2024 14:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725461884;
-	bh=oGZHZwM6HjGaDxnYT+XVCkxdCNgyq0qFSfTnY4Dp+kk=;
+	s=k20201202; t=1725461907;
+	bh=UQnaAY6AWhM20C0iIDyykUuqjm6xEAysthXGZe2Wos4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SCd1uN4GDdY9vbNIDR+7eKQmL6a1gLuRFCfEJ97YTLF+RuEVhVUi3Y9UWaZ/wSZZr
-	 gQTfBqVSuLNlgge847wbYelcVggWYxx6/XUca1o1LIki1jp1knTuaEx7XnbR6Kcnw0
-	 bX5M0aaNTRS5M5FK2WgpGhw3FaE89tWVPA5ohBOkrFiT2Pw9Q3Og7Ga6jas8GLvhFa
-	 mUx/hKd76CziOQvZDtHASQ5UzximKG8CTelpcfX3PDdSmEJ8nr3PeuBz+iUAQJUycF
-	 W9zL3+7HrBFnXn0VVXKUa28CRt9V7M8Zldy7iI4A6qqBmAloqahzS1Q04Zgg0+DBIY
-	 P5kcX/8H6YZIw==
-Date: Wed, 4 Sep 2024 09:58:03 -0500
+	b=QgcM3t41c0e2L97gdbL3uR6WCSplPsdOCaVX2IOGW0VTzUTMQmcogvAfF0xnP9t/j
+	 qGRPURbXva4htrayPRZU5b9gms2oVZctYwCSJRB0PMOPIBrpnmiOSrq22tC4/z78C3
+	 JqpJkSkR4rQZv8yOGv98P2DvB/xAeprr7/agV8DDjr9ggQQVJ9qWSe/bjPSCrYtZwV
+	 Jl0l1kOLkkHTw/OaHnfi2YHrLSTwWDD/FUlOy/VZ3eCzJZqaWpHL6kOqEJLjbK9Igp
+	 Z+K2GVtUyQpzVhMC5lnEQuD1HEbbQY/Y1RfZmS5jWMpkNuoq1bnhGQf3i1EONhqo7w
+	 WzRLxvCui0gcw==
+Date: Wed, 4 Sep 2024 09:58:26 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: sboyd@kernel.org, linux-arm-msm@vger.kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, andersson@kernel.org, krzk+dt@kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: drop sm8250 lpass gfm driver
-Message-ID: <172546188216.2558140.18362854925367403125.robh@kernel.org>
-References: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: linux-mtd@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
+	Enric Balletbo i Serra <eballetbo@gmail.com>, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Weinberger <richard@nod.at>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] dt-bindings: mtd: ti, gpmc-nand: support partitions
+ node
+Message-ID: <172546190582.2558699.15930679272303980998.robh@kernel.org>
+References: <20240903-gpmc-dtb-v2-1-8046c1915b96@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,38 +66,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240903-gpmc-dtb-v2-1-8046c1915b96@kernel.org>
 
 
-On Mon, 02 Sep 2024 15:52:03 +0100, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Tue, 03 Sep 2024 19:29:57 +0300, Roger Quadros wrote:
+> Allow fixed-partitions to be specified through a partitions
+> node.
 > 
-> There is no real use for this driver on this platform for below reasons.
+> Fixes the below dtbs_check warning:
 > 
-> - codec drivers can directly use dsp clocks using the static mux setting.
-> - none of the consumers really switch parents and do not handle low power usecases.
-> - all users of this drivers are now removed in next
+> arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: nand@0,0: Unevaluated properties are not allowed ('partitions' was unexpected)
 > 
-> Remove this driver and associated device tree bindings to aviod any
-> confusion.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
 > ---
->  .../bindings/clock/qcom,aoncc-sm8250.yaml     |  61 ----
->  .../bindings/clock/qcom,audiocc-sm8250.yaml   |  61 ----
->  drivers/clk/qcom/Kconfig                      |   7 -
->  drivers/clk/qcom/Makefile                     |   1 -
->  drivers/clk/qcom/lpass-gfm-sm8250.c           | 318 ------------------
->  .../clock/qcom,sm8250-lpass-aoncc.h           |  11 -
->  .../clock/qcom,sm8250-lpass-audiocc.h         |  13 -
->  7 files changed, 472 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
->  delete mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
->  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
->  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> Changes in v2:
+> - reference mtd.yaml for standard mtd properties like partition as
+>   suggested by Rob Herring.
+> - Link to v1: https://lore.kernel.org/r/20240830-gpmc-dtb-v1-1-792cac1ef3cc@kernel.org
+> ---
+>  Documentation/devicetree/bindings/mtd/ti,gpmc-nand.yaml | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
