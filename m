@@ -1,126 +1,221 @@
-Return-Path: <linux-kernel+bounces-314451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D2596B37C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:52:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D24E96B387
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543FA284221
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7441F267DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746517279E;
-	Wed,  4 Sep 2024 07:51:17 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4243165F0E;
+	Wed,  4 Sep 2024 07:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FTA1Ld3s"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04A61482FE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A301494AB
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 07:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436277; cv=none; b=nsgzO8Bo56RtQEA+/1abz8rhJKe/EOC78nJcIkNKXxMXKgwQpm/ONdOZ2SCV1KCBRE1KCZ/zw9tNE5hPG+/ygqvbu6vwuxDsCZ8E8JyyeGWaXcEQ9mOUTN+XQlWioLBwBCNiLtdgGm6wNbqVzzfJOKnOi5L4t758S/bCxRKFGJc=
+	t=1725436326; cv=none; b=f+eVnS4yd1FAiUPDerTDIEvRdRjLILqoq8O37kFBUKw4aJYrPgGrdGVuAfVC1dt9YPmZ0YtunJhFCV9JEDy83Snsoutr2pTjVgQevTCm1LNJ+XEpZ/jgiRn5U3P/ysvrl5IdbiCBNKKMrY8GYRcmEZEzdmbhHyq2DmOhTv+YbbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436277; c=relaxed/simple;
-	bh=rryD/qsb8DpQ62iy4z1sC76lv2cKkZWtVUpI7BBhplw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKOW/XbnBZ4L/uOxTh8MFdRdtMuM7TV8gQXkHGR0CfLwc96Zlokxiyj76HwInngoP0HsANywFtRsJhfiNpkTTlNTUbON/4cTy9MTf/xOt0EU958vLXYbe0DB0fpJfJBrY51pW3BSGBoPJmSgGoADiyZmVExBuOrQMgIFRd/RaGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzF6p01Lkz9sSK;
-	Wed,  4 Sep 2024 09:51:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qYpIcXmvmtsx; Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzF6n6Qj6z9sSH;
-	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD9C48B77A;
-	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id kKaLfropVvtH; Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6886D8B778;
-	Wed,  4 Sep 2024 09:51:13 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH] soc: fsl: cpm1: qmc: Fix dependency on fsl_soc.h
-Date: Wed,  4 Sep 2024 09:51:09 +0200
-Message-ID: <fcca0369d0bcd527aa77bccdfc0894faa029cead.1725431771.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1725436326; c=relaxed/simple;
+	bh=XlTIUbn1Mep0bKbMFbS0L2TutkBucy3kWAGcWXdoArw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IubHzw5qH25Cpnf53kmozZcmAIS9G4g7ZONnn8btcff39fvuqgy4kwDYLjUcd2xK6cl3zJUO+zANTkL12FoCgFT6hhiKkNCHzt2SBsapfsJQ4j3QLLR0k0fkCoSJRObh/P3o6kNW0cg/3V5xTj6j6EIZD1s1ypLQlSRYc7g9esE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FTA1Ld3s; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-709340f1cb1so1888218a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 00:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1725436323; x=1726041123; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfyB8TiIbc9wTFMFFJC/xReObRPNUC9QjHtcNn56KQA=;
+        b=FTA1Ld3siaOom4JlLMAXFqCTnsO8rHjmGYsBC1s6/n2y6TFUOofBkIx7l/qMqHFDAc
+         /dEH7km6kw2FYPgdc2AtMEWvDJ2W7BBXZ6rvKhyi7hqJUP3xGG4LHXxryLidQoGE0+q0
+         3ASflZQAmtZ0gzAO290aQ8XvfZV7GfGfR9prKg4Y/pWS661u4puozjkzxYp7NRw7acqJ
+         l+uQ65VHq/F2sLu8EmDBcKPdA4g0nZRk8etMmRegTTuH0JqTAw+/V0PivZ+m0PWvPdOL
+         e7FefUztI2bjckzQ/h5qy5CYjKEeWuNF6Q7HN2GaF2XbUDTwQxTb4MxwD0O0o7+Cpbyt
+         aMuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725436323; x=1726041123;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bfyB8TiIbc9wTFMFFJC/xReObRPNUC9QjHtcNn56KQA=;
+        b=Gz2KQo//fATt7fyUXkhX3ek3HL3FsIxyS5wUjBz7g0zgP9uxifmzzvFednwPp4wSgu
+         stXvAM4yExqMZTFSQrEObmPX5HMyWCC5ZMitZvYmTcopfOi42ABboBUPoZ2hoBpnAEwH
+         145ulsALUhT6rDXc0yCpZ3hQkp0qQxHsWsG3KQ3P/CrVki1mVj3Sa4I/co5YjpkRZwW5
+         ko7f5pQv1mcwyATM5tkPAIF6b6nTjjU33i1IVUay2Hk/hJd/Qxxqda9BKCLjLW2pbMFy
+         9VslZj9RrXnyY/xivSbEroSxtaXf45Qo1DZFievjXumhda1wIvs4AJalGFv/+hxf7fiE
+         SB4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXuucXtrS8NW1kRcDw7H1sNRtoFdObiVIkWHM1eTk/Pjvc50TCpRNvV6W1S3AOlAdETGsqmJogs6B83hLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0TUExEADr1IjtIOoGlobk340WH+tFm4fLNBWzh9IqDsiR8Vkl
+	3W7yBKNKfNjIzN6UlhuoyAx1+cYQDX0DrbOJm3wbv2UeCFKkPr2XttlU5O9VRnY=
+X-Google-Smtp-Source: AGHT+IG652SFWHwBqEQjGzp7WbwcxYCsCWumiQr3uHJxnBiYGLnAeBTDteRRsBG1TzYF486FAdHplg==
+X-Received: by 2002:a05:6870:a44c:b0:278:1b05:eda9 with SMTP id 586e51a60fabf-2781b066212mr5124716fac.17.1725436323108;
+        Wed, 04 Sep 2024 00:52:03 -0700 (PDT)
+Received: from [10.254.132.181] ([139.177.225.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177858be66sm1037612b3a.120.2024.09.04.00.51.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 00:52:02 -0700 (PDT)
+Message-ID: <845e22c1-84ee-47f8-b335-346b21d3216c@bytedance.com>
+Date: Wed, 4 Sep 2024 15:51:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725436270; l=1853; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=rryD/qsb8DpQ62iy4z1sC76lv2cKkZWtVUpI7BBhplw=; b=MoREKiPaV3SOEi6ZoLBSiakHPY29fDl3VZo5OxZ7yS4wsedLZM56lTJcG7q0NEx3Y/32lEuWl rxHnulqNuMsAr43O7Yx4A8IYxOOiajrhd8br9uf6JzrT0P7k2RsPM/X
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH v2] virtio_net: Fix mismatched buf address
+ when unmapping for small packets
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiahui Cen <cenjiahui@bytedance.com>,
+ Ying Fang <fangying.tommy@bytedance.com>, mst@redhat.com,
+ jasowang@redhat.com, eperezma@redhat.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+References: <20240904061009.90785-1-liwenbo.martin@bytedance.com>
+ <1725432304.274084-1-xuanzhuo@linux.alibaba.com>
+ <CABwj4+hMwUQ+=m+XyG=66e+PUbOzOvHEsQzboB17DE+3aBHA3g@mail.gmail.com>
+ <1725435002.9733856-1-xuanzhuo@linux.alibaba.com>
+From: Wenbo Li <liwenbo.martin@bytedance.com>
+In-Reply-To: <1725435002.9733856-1-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-QMC driver requires fsl_soc.h to use function get_immrbase().
-This header is provided by powerpc architecture and the functions
-it declares are defined only when FSL_SOC is selected.
+Thank you. I'll fix these in v3.
 
-Today the dependency is the following:
-
-	depends on CPM1 || QUICC_ENGINE || \
-		   (FSL_SOC && (CPM || QUICC_ENGINE) && COMPILE_TEST)
-
-This dependency tentatively ensure that FSL_SOC is there when doing a
-COMPILE_TEST.
-
-CPM1 is only selected by PPC_8xx and cannot be selected manually.
-CPM1 selects FSL_SOC
-
-QUICC_ENGINE on the other hand can be selected by ARM or ARM64 which
-doesn't select FSL_SOC. QUICC_ENGINE can also be selected with just
-COMPILE_TEST.
-
-It is therefore possible to end up with CPM_QMC selected
-without FSL_SOC.
-
-So fix it by making it depend on FSL_SOC at all time.
-
-The rest of the above dependency is the same as the one for CPM_TSA on
-which CPM_QMC also depends, so it can go away, leaving only a simple
-dependency on FSL_SOC.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/lkml/20240904104859.020fe3a9@canb.auug.org.au/
-Fixes: 8655b76b7004 ("soc: fsl: cpm1: qmc: Handle QUICC Engine (QE) soft-qmc firmware")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/soc/fsl/qe/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-index 5e3c996eb19e..eb03f42ab978 100644
---- a/drivers/soc/fsl/qe/Kconfig
-+++ b/drivers/soc/fsl/qe/Kconfig
-@@ -48,8 +48,7 @@ config CPM_TSA
- config CPM_QMC
- 	tristate "CPM/QE QMC support"
- 	depends on OF && HAS_IOMEM
--	depends on CPM1 || QUICC_ENGINE || \
--		   (FSL_SOC && (CPM || QUICC_ENGINE) && COMPILE_TEST)
-+	depends on FSL_SOC
- 	depends on CPM_TSA
- 	help
- 	  Freescale CPM/QE QUICC Multichannel Controller
--- 
-2.44.0
-
+On 9/4/24 15:30, Xuan Zhuo wrote:
+> On Wed, 4 Sep 2024 15:21:28 +0800, =?utf-8?b?5paH5Y2a5p2O?= <liwenbo.martin@bytedance.com> wrote:
+>> When SWIOTLB is enabled, a DMA map will allocate a bounce buffer for real
+>> DMA operations,
+>> and when unmapping, SWIOTLB copies the content in the bounce buffer to the
+>> driver-allocated
+>> buffer (the `buf` variable). Such copy only synchronizes data in the buffer
+>> range, not the whole page.
+>> So we should give the correct offset for DMA unmapping.
+> I see.
+>
+> But I think we should pass the "correct" buf to virtio core as the "data" by
+> virtqueue_add_inbuf_ctx().
+>
+> In the merge mode, we pass the pointer that points to the virtnet header.
+> In the small mode, we pass the pointer that points to the virtnet header - offset.
+>
+> But this is not the only problem, we try to get the virtnet header by the buf
+> inside receive_buf(before receive_small).
+>
+> 	flags = ((struct virtio_net_common_hdr *)buf)->hdr.flags;
+>
+> So I think it is time to unify the buf that passed to the virtio core into a
+> pointer pointed to the virtnet header.
+>
+> Thanks.
+>
+>
+>> Thanks.
+>>
+>> On Wed, Sep 4, 2024 at 2:46 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
+>>> On Wed,  4 Sep 2024 14:10:09 +0800, Wenbo Li <liwenbo.martin@bytedance.com>
+>> wrote:
+>>>> Currently, the virtio-net driver will perform a pre-dma-mapping for
+>>>> small or mergeable RX buffer. But for small packets, a mismatched
+>> address
+>>>> without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
+>>> Will used virt_to_head_page(), so could you say more about it?
+>>>
+>>>          struct page *page = virt_to_head_page(buf);
+>>>
+>>> Thanks.
+>>>
+>>>> That will result in unsynchronized buffers when SWIOTLB is enabled, for
+>>>> example, when running as a TDX guest.
+>>>>
+>>>> This patch handles small and mergeable packets separately and fixes
+>>>> the mismatched buffer address.
+>>>>
+>>>> Changes from v1: Use ctx to get xdp_headroom.
+>>>>
+>>>> Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling
+>> mergeable buffers")
+>>>> Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
+>>>> Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
+>>>> Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
+>>>> ---
+>>>>   drivers/net/virtio_net.c | 29 ++++++++++++++++++++++++++++-
+>>>>   1 file changed, 28 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>> index c6af18948..cbc3c0ae4 100644
+>>>> --- a/drivers/net/virtio_net.c
+>>>> +++ b/drivers/net/virtio_net.c
+>>>> @@ -891,6 +891,23 @@ static void *virtnet_rq_get_buf(struct
+>> receive_queue *rq, u32 *len, void **ctx)
+>>>>        return buf;
+>>>>   }
+>>>>
+>>>> +static void *virtnet_rq_get_buf_small(struct receive_queue *rq,
+>>>> +                                   u32 *len,
+>>>> +                                   void **ctx,
+>>>> +                                   unsigned int header_offset)
+>>>> +{
+>>>> +     void *buf;
+>>>> +     unsigned int xdp_headroom;
+>>>> +
+>>>> +     buf = virtqueue_get_buf_ctx(rq->vq, len, ctx);
+>>>> +     if (buf) {
+>>>> +             xdp_headroom = (unsigned long)*ctx;
+>>>> +             virtnet_rq_unmap(rq, buf + VIRTNET_RX_PAD + xdp_headroom,
+>> *len);
+>>>> +     }
+>>>> +
+>>>> +     return buf;
+>>>> +}
+>>>> +
+>>>>   static void virtnet_rq_init_one_sg(struct receive_queue *rq, void
+>> *buf, u32 len)
+>>>>   {
+>>>>        struct virtnet_rq_dma *dma;
+>>>> @@ -2692,13 +2709,23 @@ static int virtnet_receive_packets(struct
+>> virtnet_info *vi,
+>>>>        int packets = 0;
+>>>>        void *buf;
+>>>>
+>>>> -     if (!vi->big_packets || vi->mergeable_rx_bufs) {
+>>>> +     if (vi->mergeable_rx_bufs) {
+>>>>                void *ctx;
+>>>>                while (packets < budget &&
+>>>>                       (buf = virtnet_rq_get_buf(rq, &len, &ctx))) {
+>>>>                        receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
+>> stats);
+>>>>                        packets++;
+>>>>                }
+>>>> +     } else if (!vi->big_packets) {
+>>>> +             void *ctx;
+>>>> +             unsigned int xdp_headroom = virtnet_get_headroom(vi);
+>>>> +             unsigned int header_offset = VIRTNET_RX_PAD +
+>> xdp_headroom;
+>>>> +
+>>>> +             while (packets < budget &&
+>>>> +                    (buf = virtnet_rq_get_buf_small(rq, &len, &ctx,
+>> header_offset))) {
+>>>> +                     receive_buf(vi, rq, buf, len, ctx, xdp_xmit,
+>> stats);
+>>>> +                     packets++;
+>>>> +             }
+>>>>        } else {
+>>>>                while (packets < budget &&
+>>>>                       (buf = virtqueue_get_buf(rq->vq, &len)) != NULL) {
+>>>> --
+>>>> 2.20.1
+>>>>
 
