@@ -1,154 +1,196 @@
-Return-Path: <linux-kernel+bounces-314000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC4596AD7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:52:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29DA96AD82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AB51286135
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6991F25849
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B8D1FBA;
-	Wed,  4 Sep 2024 00:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588431EBFF6;
+	Wed,  4 Sep 2024 00:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xED9GSa6"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DucihuOh"
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A975228;
-	Wed,  4 Sep 2024 00:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F265C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 00:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725411153; cv=none; b=Y6idzH0O31KiFg4G5Ym23mx0kSB+ZDJbOX2t9KCVMbkHz+MSzRDezgufyyUPseboQkjnVr/r//ABEQpjFkDCNdh4jDuJ8FOnZYrUPHLdzGTyHI/o09tNqRhcnSIgcvf9LqvhUwKSBWcC5APlTimsKjZleZD4f2Rq4VWuln4Y0xo=
+	t=1725411207; cv=none; b=VanKAokRwvOa6cgVRwre8aW9NDvKwCpIWTExY4x28/jn7HtvU26LA3e+9yYEOC7CmO4CH2FtpZHRMHDvL/5wC+u35MhWvGaRwXA/sCzy0Dqe0Ax+3hKSz/yMiVwxdy+acGm1jLtwiej8r/mcjYWzdUZrLjc9IQo+U3kGWj8CWQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725411153; c=relaxed/simple;
-	bh=wS44eKjROLyrNyCwdb3ChF22PoKCUzMqRJHJOb0e91I=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rpT2cQNoLbvIckSLB5UWIwlDinT4B77JK8xMm3OSxO8SMDjCfWx5w6OGuZ6xtM6XCRHt60QlP7fciwkTA+g+4pBK1D8R1vJlo5fHt66z6FuZE3Wu6rlybi51R5YUrVK2TmXZ8ti46LQdtu4ke6l8IX3YS9vuUoh7novh1KLOMf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xED9GSa6; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725411147; bh=FmBx03Jk7fYdr507CwNO/tgnyEwzvtVETwaQDfGeKAI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xED9GSa6NEZ1p8qnQ4InTk/+l+ReZzei5JHfXOhbOoQ9bhJqHVZLGFJKb9EIcFUJ/
-	 urT20xzd5PKjhU2h8tXaQNAY3wFCsr+tM4gm3/bF1P1rTY/0NhS1VnPrjJQE6JHOpt
-	 zSilvIl1uw0dUGRZrB08IHlH3zlTfSZTYsy7JYag=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id D1702074; Wed, 04 Sep 2024 08:52:23 +0800
-X-QQ-mid: xmsmtpt1725411143td8mxr5u3
-Message-ID: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
-X-QQ-XMAILINFO: MR/iVh5QLeiemLhHaQrYOE0dp61XO1j8hrZ6A/geSS4oPsVNAA4c39ictKjTo/
-	 Go8eg+R8IIxjg9r7dPK8H5H6XtxY6Rce+V7LoFIqWqYIrpoQZ7jXlTFZWPHfulRAJxGoXmEdHNfv
-	 aeOmsuQxP0p7GhCAYS7OJcLUJ5BEy2VJu8DuyE+LSI6pqpCjU6t6QN27jMg3+JSHylm2RykbN+5t
-	 gEwaTT42S/QBrHl7gFxLMFxraMQRwOTi6N1QzXvCAvQm5bon/Ei0d7WZ+FK91sjSbGGUygpuol0A
-	 AzXJavoeve3KLXEbxTrxscXZUaFL/s9+3O4RNGDcRFT8iEiWPSJgcot+DoybcOEg69LVEfovOWpu
-	 4ScwQtrXu4ppF9OdK3VdBDvyfL+Y0QZIYTRa5llBqW8YoHaByfnt4uUtnWTucxPxiQwZ7QRsrGu0
-	 hyOIClb0HdT1TARfXDC6sy18tIYjsHz889dHG461dSSkhIv8QjMXoO7XhElJmW1nXwcvZbryzth8
-	 JCkLXpI5CRk+ykCqNyneZujoHKqrlSAgSklaqIOvlv2K5DylbS1FeUIr0ZsNIgDTYHqMNu7k0358
-	 pObsHVicp/7OlZzWk0At60FI2PBkf5+kTOCsG2QOuR4AmmABP3/3wPkxXIVREk1hLWsMVsxmPpKD
-	 5z8nTBDkL/LPRwV8lhjtLcn7RqxEKrZeKDLC8hVCSiWUVRpGCLJ4Bv2ROIcz1nb/Hw0m6cCQwTAk
-	 TbowVCGfCabEET7o7aa2qZi71bgBDNgeXRCT/P1ioR63rh1ST04bjiD5rYVMe9fa6mn2a0SoOevO
-	 KLHH/b4TmfNLOZlbXGdxWvLlEf8ZQAL1jV48nufeX4E2NNFlrYu0y35hWUfgYeZCST1vwIm50QfQ
-	 BE4mvybSZ2nFTwmmyO4mKxMVMW3P3MYYAB6EDEusrfJIlh39nBI58RPlbY3TylOXc7FPV326ZyMF
-	 Ef55WovRWFlKCXYCXTbw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: edumazet@google.com
-Cc: davem@davemloft.net,
-	eadavis@qq.com,
-	geliang@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martineau@kernel.org,
-	matttbe@kernel.org,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] mptcp: pm: Fix uaf in __timer_delete_sync
-Date: Wed,  4 Sep 2024 08:52:19 +0800
-X-OQ-MSGID: <20240904005222.3438071-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <CANn89i+93oK80FtHijdYJMid=ChsXP+2F1=Dn7K8tuvLy7xNHA@mail.gmail.com>
-References: <CANn89i+93oK80FtHijdYJMid=ChsXP+2F1=Dn7K8tuvLy7xNHA@mail.gmail.com>
+	s=arc-20240116; t=1725411207; c=relaxed/simple;
+	bh=PICU/c4IzyFbj5kShebHmcrkZo8eNAWBTOUHveubbI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b1WcYmdK2LShuCu1R8f+ylYuZLC0/9gjm/PzCpoRVxU+csvuLm/X2e1LzG2vf2RnOQKtSJNAvpx0rKbG25Gvct0TZXVGJDF4H60+JzJbwOf2fwlno0uRF3yXqM2aKbiltf2G6X0ECttnS2XIYFYTOTIG95iDGGip3nJBCkja24Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=DucihuOh; arc=none smtp.client-ip=66.163.186.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725411199; bh=cJEmUh/NbvsOKNf1MEOgEwDsYaVPBLk5V1GXeWksbcI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=DucihuOhzDv+8iuDi7ZQeMbDYX4YQBT2XKS3nny5/xuz54OyMBNpbVNe8HY9bb7LfdFCW6j8vL2bV0iQ4XcXNZTfoAddCuyCoEbVts+lgBVmA1YwF2GAeywzmxHgtOtqAdbaAoyHZHlu3mCLC9Kpal7VvhPYxxxGLr8g9T1p3lA+9Xrp/5b50cuB7YhM0+i1RpsvCfffORT896MqR96MsLuktiDdQvH0NZuZ6YNNBCOBJgra/QRFRZpX/w/HD4UXS3b1YjP47wl6Pq4E4K65p1B6ONWSaRN8b1hO9UO7sB9e8itiY54o2c0Znfsx3Puw6Eff5E8PTgwSkcxar/4SYg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725411199; bh=UAq6MNu4Ra62a0AA66ys+4LWE1FM3YUGCwQq7bovjei=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=TUUBGnsat4f+qZwlq/a92qrjUq+QODMGcK+jxcE6Skx9DeWmR80EdgVPuhK3C+ePe9nM1SrUtXYpjpWVqNwNYRfaZNXzXQVxhnJc14KpLJI3x4VqaJWaE28oDyYiWr3fSM0JS+Fs+Vq2SIDQQ4cdZmxMLQDCTjX/Fgyt+WfgGPL1hCaUPYTIGqUGCHATqY8p5MlhG+eLVpgo77paZv2ZKPUz92k1cJhxBnnya5hLmnIfpbrYP5oTgJIqj2lCFn5JQXWVMGbnkvUNram8V0gGaMCH1X2YCWw7CB3Cy6o3mqO7U9X3shlybaih/hTh/vRdcDVltYhPR8Bqjk8sdf9rRA==
+X-YMail-OSG: zTBjjQ8VM1nuq9mM9y5d2bPogM7qTRfA.ojLrRY0Z2GGZ5KVv95rImdCAbyUcRK
+ EHPp5OICSdJ4KbE12c93_rgVTjiXOm83AnUL.aDMNZxBRd1JxMoasyjAUtGSc9zK99.t5ldpd8UO
+ _cwASC27NkmBtsTg.7Z0oHvW9TikJKhTvRVbhK7A8bFJ6t_vLxqyDnjVqNbZESInNWQJVLRzNoEu
+ O72lUkEtTYY.kwu1PcjgP5qVu5lnfpywmaGTtzN6aIhcwKfnz27AuheE5o9e_Dwj.79AkR6JzLGD
+ KKvOfbfqJkIX5.1oeMjaGo33clSuMGKULc_3BGwKoNTrnCdLB2nsE0WU9sWM0flx988qkpzFakjM
+ xaqDWJv_0HV_pp6ikZReRmglf0XeY_aBinat698e20_PkhU5F26mxshq6aSDI.qCPd62q.U3xSDS
+ 0INwM2XkpLS782RYiJfsHR6kZMBLBSQQO90GZNTQh2ptStPtq9Kqm82eFcX757tqA9oB.7iRBSoK
+ pE3sL9d7vPXrdwscltlFnf.s44FbNGLg2BiMRlwe42ihVwTcqmQWX6G0Vzt6IrBsfjl2pwPZxJo9
+ .HU5TuEZqHcrCfMRZJrLXVSSyzU6yj4h675uFQgJ6juOrhI7b.AlNueJgTj8pjCRn1Cbv6ofOsVj
+ cko6w0XoflyLB9osLliHwA_C83FMUl0fGwS9Lbke6mWYIrtogtjkEmg14EDNS9W5ftDyu_PE6ajZ
+ Ut78OtsMKx6Z3.o.HkADCHv5aOKR4zfFQxB0QRC8AOrgClo1Wv3tc5Ghx0p.aaZXkUvu7fld5ml7
+ rDew.pkhZT8aJpPLEgbkEzmANp4.ht57FhxSZPZ90LCHlvynAqqD.zNx2qWQ9ZY9UQGT1uFH7zcT
+ JLOQ.mHudCqglegb2Ei2Dj9AGxLcCNPUovPnbYNij7Kmqo9BZ9ptKJdX1iW7uDMXHnEwqIFMjEKC
+ 6tOScd2oesfq9P.QyV4nng34epW3Rp4lhD.7n5_EZMGL_cqgDCVChZ.9CqFccnNjcVXFjV2IvnI2
+ OA7DSra0Z2nWUKRJjS88ViiKcOuENnE7CsIYSEH7masH3fug.yoaZvEfMYMg54EDVWAB0lwhwQPh
+ KxPhrHW0uOuQbVbLhn9S97UyKzXqTuC8VafOUCRslmsl_uBJ.TSUUV5nT6TUHiwVgDCIDKHdd4YQ
+ cr7K2sCICmoj8ZK_B6PyUhZ4XEnDHWyNM1sAEiiqt3muZ1VCUp3.eTdn5Em56gfC6D1Ofuu1zFK1
+ WR0RxsToCC2UAyobSt89jdYR2N8.jaICHkvRRWznnER2iQd.LztuoX55nqKXI6S0Ce7dcMsJ_PCk
+ N2fo2qKHWDif7wY0vVAPtat0UyomqWVFQ0gs0F4G..tzHTklOxcHk0ZK.pnWp_6CNPcXM_cmpn__
+ lH6K8jIaME8OblvcYKoHs9Dl.BcDBKjetQjN4Ta0LObfWpSIlF.rQF5cbIJzcBuLDlKMf5rLAB2a
+ KHEQOb4a3IsSNopLVaO14MQvB2v3.e4jM_fZui6OcFhiNsCDiTmVvmd5ea_a.WrMOs_7liKGoZke
+ pLrw3FYyGKVAvaTy0fGHywkxBjkT9MYnhBPHs1h5udr3SrKZqaL4qnu8FKGxxiZBgVkAcX8NDcJi
+ e__E4W6VfMZnt9RBTwj3oURfl4j6H.GySoUJMmMUFGwORBNMAh313BLpuHWqK4pEdgaBM_LXeJbT
+ Uh0EO7AmL0drqOqloTXLBbQBVoru5pKuqimsO0FUAPfxLaXpcPb6bR0kZuZ5jRp4qCS08bpxOYkq
+ p.iXc.ulxP1xlWkCQB3gpgT1Ng_qy6yYCoLCSTMxcV3bXABQB50wH1a3b5MMXs2y5FD68vgLlgoa
+ wg7kKFJE3fkGzEicyTeftXEun5XGLpDsSS_lxFTez6I3UXMKXTgBO9Gn7O4OrrLNRVcyOGStshuR
+ 5oTL0BDmsWDNZ0OO99YO4w5vYRjezizZ5sbXaac7ip6rqvw.V23Qz7UJ99wlbGjRjpoqJ8D8bVYD
+ sDsmDWZgRTz4HXJySouAzcwUDGj39w__pFKkDY4km1DFqsgadt1xfjOdjgtWwXa35WBjpfzlfRU4
+ ufDLstxdb8uAgiY7URWoMHKh18AppX7eLJoypFBKwYQ6c8n8LQKNkfAPXLYGXUlQi3nwOoPNRFmW
+ 4T02Z2nD4.wtIrWHxGZwSilm_FeC.HTAsvegJJ4ntbUTTi2iLQGP4ZNAge1Xj5ev2SjNxnOYDX_F
+ jW8an43vQ5KbopaNjcjiLFbPOamdI4zz8q.eS2dQ2QOy0K2zjmqb3WPgmaAuYGmKVjcFX4ITCWot
+ MgXj0kTrHVtdW_K2PqjteyFXhDju.sydo
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 674286a3-8968-4a56-b0e8-2745b80b1b69
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2024 00:53:19 +0000
+Received: by hermes--production-gq1-5d95dc458-sd55t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 038bc3b4eb896bb153065162065cdc85;
+          Wed, 04 Sep 2024 00:53:15 +0000 (UTC)
+Message-ID: <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
+Date: Tue, 3 Sep 2024 17:53:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net, apparmor@lists.ubuntu.com,
+ bpf@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20240830003411.16818-2-casey@schaufler-ca.com>
+ <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 3 Sep 2024 17:18:42 +0200, Eric Dumazet <edumazet@google.com> wrote:
->On Tue, Sep 3, 2024 at 5:10 PM Edward Adam Davis <eadavis@qq.com> wrote:
+On 9/3/2024 5:18 PM, Paul Moore wrote:
+> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> When more than one security module is exporting data to audit and
+>> networking sub-systems a single 32 bit integer is no longer
+>> sufficient to represent the data. Add a structure to be used instead.
 >>
->> There are two paths to access mptcp_pm_del_add_timer, result in a race
->> condition:
+>> The lsmblob structure definition is intended to keep the LSM
+>> specific information private to the individual security modules.
+>> The module specific information is included in a new set of
+>> header files under include/lsm. Each security module is allowed
+>> to define the information included for its use in the lsmblob.
+>> SELinux includes a u32 secid. Smack includes a pointer into its
+>> global label list. The conditional compilation based on feature
+>> inclusion is contained in the include/lsm files.
 >>
->>      CPU1                               CPU2
->>      ====                               ====
->>      net_rx_action
->>      napi_poll                          netlink_sendmsg
->>      __napi_poll                        netlink_unicast
->>      process_backlog                    netlink_unicast_kernel
->>      __netif_receive_skb                genl_rcv
->>      __netif_receive_skb_one_core       netlink_rcv_skb
->>      NF_HOOK                            genl_rcv_msg
->>      ip_local_deliver_finish            genl_family_rcv_msg
->>      ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
->>      tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
->>      tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
->>      tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
->>      tcp_data_queue                     remove_anno_list_by_saddr
->>      mptcp_incoming_options             mptcp_pm_del_add_timer
->>      mptcp_pm_del_add_timer             kfree(entry)
->>
->> In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
->> zone protected by "pm.lock", the entry will be released, which leads to the
->> occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
->>
->> Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>> Suggested-by: Paul Moore <paul@paul-moore.com>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: apparmor@lists.ubuntu.com
+>> Cc: bpf@vger.kernel.org
+>> Cc: selinux@vger.kernel.org
+>> Cc: linux-security-module@vger.kernel.org
 >> ---
->>  net/mptcp/pm_netlink.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
->> index 3e4ad801786f..d28bf0c9ad66 100644
->> --- a/net/mptcp/pm_netlink.c
->> +++ b/net/mptcp/pm_netlink.c
->> @@ -336,11 +336,12 @@ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
->>         entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
->>         if (entry && (!check_id || entry->addr.id == addr->id))
->>                 entry->retrans_times = ADD_ADDR_RETRANS_MAX;
->> -       spin_unlock_bh(&msk->pm.lock);
->>
->>         if (entry && (!check_id || entry->addr.id == addr->id))
->>                 sk_stop_timer_sync(sk, &entry->add_timer);
->>
->> +       spin_unlock_bh(&msk->pm.lock);
+>>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
+>>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
+>>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
+>>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
+>>  include/linux/security.h     | 20 ++++++++++++++++++++
+>>  5 files changed, 86 insertions(+)
+>>  create mode 100644 include/linux/lsm/apparmor.h
+>>  create mode 100644 include/linux/lsm/bpf.h
+>>  create mode 100644 include/linux/lsm/selinux.h
+>>  create mode 100644 include/linux/lsm/smack.h
+> ..
 >
->
->mptcp_pm_add_timer() needs to lock msk->pm.lock
->
->Your patch might add a deadlock, because sk_stop_timer_sync() is
-Got it. MPTCP CI reported it.
->calling del_timer_sync()
->
->What is preventing this ?
-I will change the strategy for protecting entry and use pm.lock to
-synchronize when it is released in remove_anno_list_by_saddr.
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 1390f1efb4f0..0057a22137e8 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -34,6 +34,10 @@
+>>  #include <linux/sockptr.h>
+>>  #include <linux/bpf.h>
+>>  #include <uapi/linux/lsm.h>
+>> +#include <linux/lsm/selinux.h>
+>> +#include <linux/lsm/smack.h>
+>> +#include <linux/lsm/apparmor.h>
+>> +#include <linux/lsm/bpf.h>
+>>  
+>>  struct linux_binprm;
+>>  struct cred;
+>> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>>  };
+>>  
+>> +/* scaffolding */
+>> +struct lsmblob_scaffold {
+>> +	u32 secid;
+>> +};
+>> +
+>> +/*
+>> + * Data exported by the security modules
+>> + */
+>> +struct lsmblob {
+>> +	struct lsmblob_selinux selinux;
+>> +	struct lsmblob_smack smack;
+>> +	struct lsmblob_apparmor apparmor;
+>> +	struct lsmblob_bpf bpf;
+>> +	struct lsmblob_scaffold scaffold;
+>> +};
+> Warning, top shelf bikeshedding follows ...
 
-Link: https://syzkaller.appspot.com/text?tag=Patch&x=124282ab980000
+Not unexpected. :)
 
-BR,
-Edward
+> I believe that historically when we've talked about the "LSM blob" we've
+> usually been referring to the opaque buffers used to store LSM state that
+> we attach to a number of kernel structs using the `void *security` field.
+>
+> At least that is what I think of when I read "struct lsmblob", and I'd
+> like to get ahead of the potential confusion while we still can.
+>
+> Casey, I'm sure you're priority is simply getting this merged and you
+> likely care very little about the name (as long as it isn't too horrible),
 
+I would reject lsmlatefordinner out of hand.
+
+> but what about "lsm_ref"?  Other ideas are most definitely welcome.
+
+I'm not a fan of the underscore, and ref seems to imply memory management.
+How about "struct lsmsecid", which is a nod to the past "u32 secid"?
+Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
+I could live with "struct lsmref", I suppose, although it pulls me toward
+"struct lsmreference", which is a bit long.
+
+> I'm not going to comment on all the other related occurrences in the
+> patchset, but all the "XXX_lsmblob_XXX" functions should be adjusted based
+> on what we name the struct, e.g. "XXX_lsmref_XXX".
+>
+> --
+> paul-moore.com
+>
 
