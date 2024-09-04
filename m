@@ -1,111 +1,104 @@
-Return-Path: <linux-kernel+bounces-315009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA36996BC69
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E92C96BC76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E331C22A19
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17DE1C21E4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1CB1D88AC;
-	Wed,  4 Sep 2024 12:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED8D1D933A;
+	Wed,  4 Sep 2024 12:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D8A192px"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0jnbcwr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F63A1D9341
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488631D0491;
+	Wed,  4 Sep 2024 12:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453197; cv=none; b=h25m2qSdm74sP3kpGedewJXKijSMG0qpVeeUF1mHA0IvsHkHSZ1gTTsSUyI49HBhfJX8willucghcE94YLXCbCYDk+tHqrhEr4Qj0W/9jLpTGIvuhLuYPiG1wWvu/Q5tRiDrpaahwPZ+yasv03s/ACTjbNGf8MyW+Xsdjy+CXLo=
+	t=1725453213; cv=none; b=lspSCXPQ626N7UfHd6V+sgBJIlzAWA5ixnOmPQqCo0CW+Fh6LwbNuO2JwZ4Je6rv4SOHMtSxRfopmbaLkgdxuDY8IbtDjSnbQXk/AfQitffN66vZshxnyKm6G+YPD5Lzd+vsQeTxOa8y8w7JfMpcfZJnFEVW7zUGgh5TanPcRrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453197; c=relaxed/simple;
-	bh=7UoD9XiCpvi6y1xEyB8+5f+ERh25lzqVSxkvy5h5/dA=;
+	s=arc-20240116; t=1725453213; c=relaxed/simple;
+	bh=YKDCZscyU2vQ/uLd3Ew3F0b96EzQTeTNQOivdxV+9qw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QKhPB6K0VJyYZ1wf0DKpOFFr/TK9KLDKKR+LxCKpoG2Y5zEiQgXPrgfmhld/KAXL/lRU28gthLaXllB11tF/acmj7XCAuAMebXMJv8blEoLRNLPzkuuwHGfOIWCMEPtcUkn4gvTPr34qXIIJFyhKk10INGAC1lqXgam/3iNDNVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D8A192px; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a867a564911so769048466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725453194; x=1726057994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5bXLYQrAn55qVHKqCMDfrSJuD7so3yQzO4aIvtH++AM=;
-        b=D8A192pxxQ7LzkjSwfZ1WOOlnl4xz1WO5LuMdC9o1inymEoHYM2Bfx+lEyfI6nQP8G
-         3m5MiyDGexZUXqrmH5VaovppbcyBIpKtYlT7iKdwn1OPw857GgRSwapGVz8aXckKWMJC
-         eHrA6cJCkdi0uL4+1+WxAJWlhSF65guFcCaiuqNwxNedM9Uqb1/iJgi3RHGLbWM4LTN+
-         ewZlnXWVtFMpgKi86zF1nrAln6KgcMIAhVflDDHetysVw/mIU56ZQ6ttTB3tYAiTq1E1
-         noLFXyiI/5CH2x2h2wrV79uBgnYc2fTEXIGi8rT7QDV8L/D8f+LZ4jKUO3vUbU5qy3CW
-         J2Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725453194; x=1726057994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5bXLYQrAn55qVHKqCMDfrSJuD7so3yQzO4aIvtH++AM=;
-        b=POU0YfMG5JkCZbetX9Yqj5On6MkZOQpM3jG/5TLXaLy+bT1M0urh8jr38MY3EPxKYU
-         hAsTAVxZjPibsWgf1HNEpARaWoxT6aLRGqsy5cXgi/c7Vj3Bt0ge51KzRaDs0out4F0o
-         7PbRpdHakahs+4XsE6UTSErazgPgohRPinH0uBZ6vze8voBLOP0fvhsluwLOiWwkXBp3
-         9l7R3PkrQjNSqgSHwjieYZ2qTNxkdsYFIrnKGqTcyp73O0nSjUsLQNKKs5nNz7gtooPJ
-         qO9flVIbse4SJlUrBs2FcDHmv+Pg+0EJX7Rx1phgzgMH2snUBwT6EYVRfwzuUotuBDRX
-         VJZw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/amGx1fGjn7hBRNkoDohfdRyRh6IS0tEV7I5xhCGsfwJ2wT6vGsHwruWtp9b2BMjYbxzku+jv3mGKyhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE3kQBHoSjDjQagxcS5Boxtd2hoWN8h9PKwR3iZc+RYhIQgKxG
-	xwh5PfqFHaRoNwi8iEGOhEepLB9YdTYEQdawsJcJZcU6HA2dJTO1lxaWfo9KSSq+M66mF1daTCG
-	SGotAaZrgdAT3QJXaZLZk5DA1zIqq1vPUticp
-X-Google-Smtp-Source: AGHT+IHSWhhfEGVLU8gtaJv8edwr6ndZX9ujHluP3FBkuXM39Jrx2YzM0lBdfRG5k5PfLNmwX1DTQ6QqlRxSWW25Nz8=
-X-Received: by 2002:a17:907:9409:b0:a7a:ab1a:2d67 with SMTP id
- a640c23a62f3a-a89b93d963amr1059288466b.1.1725453193678; Wed, 04 Sep 2024
- 05:33:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=jWfpO/IYEq5nwvixTZDQkI7m3MwMFfmZfW8BrhjeXz6tL4VGAiNOZTNNZ2CwvF1JKHrdOGi6TQPqep6dnDHLe1tN7aNrz3xZpOKLJisC0y1+sCi8anfP8Ef5ocXG93plGSVWoY8pSp+cQzAE+JTJLKH1BkuwcgijzU3Hc68dVKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0jnbcwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62E0C4CEC6;
+	Wed,  4 Sep 2024 12:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725453211;
+	bh=YKDCZscyU2vQ/uLd3Ew3F0b96EzQTeTNQOivdxV+9qw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D0jnbcwreHF+LGgrT/u2MTlQc+X0mxwzp02dzQqwE8vqdEllSvDDnKCpf6oD/3tiN
+	 DurEWDIfWrTf4yX80idaQHAoclBhCj5/lAZoeEe0Fmchm+OdYyeiKs+NfLsk0YwKFu
+	 qpxriyGlxdasAbsmq4mdttpj9C9B7BGm1rNf1JooEmUQNq3Cdfos2KgYq6lyDMcX2k
+	 QmRksXEf4rC6IQ/BTTbUVGsZmML+xIaU2Wp5RnnSGs5bqG8uNowNjMijp6vKXYr/ta
+	 gAapOsQNuqJG4I77BFPsu6MtRIMVU9Es6jRtKAa0HUR67Nk9Ou5P/F5p9qW4zPYr4y
+	 Vdcq+DnnMudnw==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-277e6002b7dso1657182fac.1;
+        Wed, 04 Sep 2024 05:33:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVcc3UmdM2JU8mIfVUkCZWZ6Ull3BIuDXbTLwQth6Fc+C4Eem86GLcmN4uRGt9bqK7XrqjsEzegLlRNSy4=@vger.kernel.org, AJvYcCWmrSfzuZPLYe0VwsjO+xyxJXUqGvKCLyNhsyQgLiaJnBTjyjcDfgWaDDfpWXGzdEzlenvvan6isOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV15vz8HVdIKsHEvj3I47ihfjpgb6S4oVUEytTtag5rCBJS8B6
+	1xRyIdeVhg39Wq+IV8oEmc/Y/0SliwIr8MoOfljGYPfrTS08S+MUZT/q0WO8SbwQmc4DsJK+Cmd
+	tAKlK+tHXJIDCwF/hVYZ0VAjsrWQ=
+X-Google-Smtp-Source: AGHT+IGU0sxnm3qPEJXMW7b58le6Sz6zJEsfDbYFrUu3U5GQqzrJJXRZV7t23N9424rvR6g9wQBMpRvdlUY9vBnlkxY=
+X-Received: by 2002:a05:6870:3d8c:b0:270:1dab:64a9 with SMTP id
+ 586e51a60fabf-277c8055c7dmr14711515fac.14.1725453211209; Wed, 04 Sep 2024
+ 05:33:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_DE4D2D0FE82F3CA9294AEEB3A949A44F6008@qq.com>
-In-Reply-To: <tencent_DE4D2D0FE82F3CA9294AEEB3A949A44F6008@qq.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Sep 2024 14:32:59 +0200
-Message-ID: <CANn89iLQuBYht_jMx7WwtbDP-PTnhBvNu2FWW1uGnKkcqnvT+w@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: tproxy: Add RCU protection in nf_tproxy_laddr4
-To: Jiawei Ye <jiawei.ye@foxmail.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net, 
-	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, fw@strlen.de, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240825095353.7578-1-0xff07@gmail.com> <7ea23975329e4a22fd235cc28d365296fec47739.camel@linux.intel.com>
+In-Reply-To: <7ea23975329e4a22fd235cc28d365296fec47739.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Sep 2024 14:33:20 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iW5_NcJ8wXQkuObw4nhJbViBim7uLiGz5PghMDKYybOw@mail.gmail.com>
+Message-ID: <CAJZ5v0iW5_NcJ8wXQkuObw4nhJbViBim7uLiGz5PghMDKYybOw@mail.gmail.com>
+Subject: Re: [PATCH] pm-graph: ignore sleepgraph.py artifacts
+To: todd.e.brandt@linux.intel.com, "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net, 
+	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 2:25=E2=80=AFPM Jiawei Ye <jiawei.ye@foxmail.com> wr=
-ote:
+On Mon, Aug 26, 2024 at 10:49=E2=80=AFPM Todd Brandt
+<todd.e.brandt@linux.intel.com> wrote:
 >
-> In the `nf_tproxy_laddr4` function, both the `__in_dev_get_rcu()` call
-> and the `in_dev_for_each_ifa_rcu()` macro are used to access
-> RCU-protected data structures. Previously, these accesses were not
-> enclosed within an RCU read-side critical section, which violates RCU
-> usage rules and can lead to race conditions, data inconsistencies, and
-> memory corruption issues.
+> On Sun, 2024-08-25 at 17:53 +0800, Yo-Jung (Leo) Lin wrote:
+> > By default, sleepgraph.py creates suspend-{date}-{time} directories
+> > to store artifacts, or suspend-{date}-{time}-xN if the --multi option
+> > is used. Ignore those directories by adding a .gitignore file.
+> >
+> > Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
+> > ---
+> >  tools/power/pm-graph/.gitignore | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >  create mode 100644 tools/power/pm-graph/.gitignore
+> >
+> > diff --git a/tools/power/pm-graph/.gitignore b/tools/power/pm-
+> > graph/.gitignore
+> > new file mode 100644
+> > index 000000000000..37762a8a06d6
+> > --- /dev/null
+> > +++ b/tools/power/pm-graph/.gitignore
+> > @@ -0,0 +1,3 @@
+> > +# sleepgraph.py artifacts
+> > +suspend-[0-9]*-[0-9]*
+> > +suspend-[0-9]*-[0-9]*-x[0-9]*
+> This seems fine. If you run the tool inside the tools/power/pm-graph
+> folder I can see how it would be annoying to have all those output
+> directories show up in git status. (re-send with Acked-by)
 >
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
->
-> To address this, `rcu_read_lock()` and `rcu_read_unlock()` are added
-> around the RCU-protected operations in the `nf_tproxy_laddr4` function by
-> acquiring the RCU read lock before calling `__in_dev_get_rcu()` and
-> iterating with `in_dev_for_each_ifa_rcu()`. This change prevents
-> potential RCU issues and adheres to proper RCU usage patterns.
+> Acked-by: Todd Brandt <todd.e.brandt@linux.intel.com>
 
-Please share with us the complete  stack trace where you think rcu is not h=
-eld,
-because your static tool is unknown to us.
-
-nf_tproxy_get_sock_v4() would have a similar issue.
+Applied as 6.12 material, thanks!
 
