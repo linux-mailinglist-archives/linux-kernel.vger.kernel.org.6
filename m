@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-315731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB9396C654
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127F796C655
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E35B21283
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B8E284581
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FC91E1A3D;
-	Wed,  4 Sep 2024 18:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8145C1E202C;
+	Wed,  4 Sep 2024 18:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEUDkT3a"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="V78vCTsN"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480012BEBB;
-	Wed,  4 Sep 2024 18:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9F91E2019
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725474393; cv=none; b=pNMu+AOC0avI3AFpRq2WyUFAOQV5rUzGEV1t9NKMqjgrwRneuesK7lGA9Ko0NjTQZCQUuIjJjzyel5A6/O18pb8+q6+b5/WGgdc7be/eSprvMxTtj4+RndbD5jCoiE18O7Llz+0zHM29qJuW2SfwYYGLgNWelttmNAuh4j/8dJQ=
+	t=1725474396; cv=none; b=i4KeAlIv3/6INiv0mzqqJsqpUYScLMMy4K/oBRRBP/N0vE5twsVhwCYWKIg/Fi05CeaansUTdlOfaVPYMV2rTRpjUsXqevcuT3VAixecgdds8k40v0GPRewcPDhcdVECbs9fD3n+I+58CDeX6/5FIifknjLoQrTnb3cD3dmDKtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725474393; c=relaxed/simple;
-	bh=tWO0wEGpUS/7MzqeG2otdCtiNvnkNqeg6JHRBSN51UM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=aTwu7qEDe8YAv9xtFlBqmJEB2bgzOeZNwx++635CoG7stNZFMaBohjeKwbUBwliSCKU+LLFcZ61BZkv9gB3BIifne3Z7KbWiLCQ5KLrgH1vIy9XPVTYIBIqMjiujKVM3EszkMrqTSDVkjQCEP/8zWrHV2Lh4FIVB4F24h5DHjs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEUDkT3a; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c1324be8easo790820a12.1;
-        Wed, 04 Sep 2024 11:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725474390; x=1726079190; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ciIY1oc6o7N91wyFURsBsFlambVxY2VkVsuF4KKa76U=;
-        b=WEUDkT3akGB/93FKsG6kyKL2ohIKe4ArEdFWuFAnX1jqWcbrPTlCKb3EcOm8X8qd/F
-         +dOGbCMbiEThS4an1ZVtxk/eUPut2IF9wtdhPj9W82R1t1F0AOP1QutPUUShoKesQ9+s
-         cx3SMYlmqA80OIRcdXunaswxJuivXBKgmlHjausGH9McF1Il2Gl3AyCvl5I2lrzfzNgp
-         4ncKhptr5bo5PmG/FnXFaxlV/qpc1snGhlQ8mfFvsxnnHm5ZSfF9zvnzCRpQC5t3tQau
-         3oFNzhGTX50jqLpoUfrGz0PQiVt4pJlYWcwRZ8uZ/B5HjZXXTNF/34DeRxvZM3XzgM0z
-         GVQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725474390; x=1726079190;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ciIY1oc6o7N91wyFURsBsFlambVxY2VkVsuF4KKa76U=;
-        b=TKUTOYrDY1Go+BdHS340srptVIq9ZNjl6ppB+FFC6Jx5C3ryVrfettQd2jNVxgX0sU
-         IMp/o+rvBrLyxmi8Y9igHCn5iXOaEksPtbcoOLu+z5i+NuYbJNEmi2eakGXpXlEgADaC
-         VC50HnKpgkKen3j67ViqfN51YtJfiDJc6fWpG3T/c9Y778x/duePxySwDIzNNEQcAVeZ
-         VTJ6Jj0VowWVGzhO1UfTjjO65nIXrTe2t8T2JtCJaF0MhKLZZUuUSS6YhVJSBAe3WWl6
-         gYP4xhQ0CpfWjk0pWgH9RcBR+6c45D7YZvODydtwpWCIIN2+Qqu7UE60lF9MKjdj8/Re
-         cP3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1OwiffRI8TE150KhFRVX6/ou4CN7rDAb6uRY7y4/R0ZBQcoW685PZNl6WwXowVLjkB+TBhD+KqdeO@vger.kernel.org, AJvYcCUPpewgndbE5bJOfEv/Qo5NIHw02Egjrcgs+IJDXEgF6Ck9RWOazEcAN+tKDHpimNswBdpCf0yndklxPm7U@vger.kernel.org, AJvYcCX9CynaJPWoQIzBzIYsXtyhGDW77QW4qu0h5WwO9ua8MXGnf7joLJoT7wpN7aiL1+TLVqdhAQpg0kVxC4lF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdbWtq0jWbzc+1MAkSYEzV6dKLLl6bZZ559+svuz3fFIgrDUHD
-	ioUZ4YlNJ3K1JKeNz6zSsKM2cNqi/tK3OjK2FeDcHUnXL9NTWMaM
-X-Google-Smtp-Source: AGHT+IF/JZ9++ANi1ZisC4hye8nq1DbRVMgUkn6rO4K3wMGTIB+ycbiYLZmu8zcia5qqq+4ttO+5mg==
-X-Received: by 2002:a17:903:283:b0:205:656d:5f46 with SMTP id d9443c01a7336-206b8461b10mr51217835ad.28.1725474389898;
-        Wed, 04 Sep 2024 11:26:29 -0700 (PDT)
-Received: from dw-tp ([171.76.86.74])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea53efasm16424885ad.195.2024.09.04.11.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:26:29 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, hch@lst.de
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com, martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 04/14] xfs: make EOF allocation simpler
-In-Reply-To: <20240813163638.3751939-5-john.g.garry@oracle.com>
-Date: Wed, 04 Sep 2024 23:55:05 +0530
-Message-ID: <87ed5z2s5a.fsf@gmail.com>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com> <20240813163638.3751939-5-john.g.garry@oracle.com>
+	s=arc-20240116; t=1725474396; c=relaxed/simple;
+	bh=LmoqPMydPkqri6UTLapaQSsSa+2+cXFQg9obs7qRHsI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s97ZVXCVtYbZX3GcwHvMrUMjMsbByU1AccY44B4Ui3Afti99HTHQbTtKlpco1InYscnN0dRsjcmTVmcnz+agcQXnTFC0y4aNQhN0Jyx+tu/IsLHQbbaWv47gSCAWkoYRMwtH0FgOKKctx8Etoaz4aSW7KmvEfQQFvF8czmKfRUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=V78vCTsN; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484HZw47031921;
+	Wed, 4 Sep 2024 11:26:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=9tP4dx79zoZsiDcBgNxes3v
+	/QTiBOiCbvxndNVPHuts=; b=V78vCTsNGZOXYrwxY4E1ToN47dWJVLmBw6sFSZB
+	abfoDtqYVnB5QY2LFfzlqILEqT/f+kWIQLs89oujeSmlly0tKnoEoPWdd18Cn029
+	zRP65x4VHwEmyVQF2lG9rxCXQ7eRK7yAs/AodJhVZ1B3reffYN5qs5S/CB/yMh24
+	H+OAhWgsLp3BSq8ESbUZw+UNqVSsG/ihi2YURiNsrhsYFVIJrAynHbfbmYWq18pG
+	U5ZlgVSZfoKavkXFDLWQR0xMeUyy/20JDH004xK9W9N+XHS43pAAwa/rIxfDRCG7
+	1NXGJUk5yD0VZiiINguPTjyE8YXt91Z4m3yvX9+mFt4ykTw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41ev31r6fd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 11:26:25 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 4 Sep 2024 11:26:24 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 4 Sep 2024 11:26:24 -0700
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id DB5623F7044;
+	Wed,  4 Sep 2024 11:26:21 -0700 (PDT)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <gcherian@marvell.com>, <bbhushan2@marvell.com>, <sgoutham@marvell.com>,
+        Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Subject: [PATCH v7 0/6] Marvell Odyssey uncore performance monitor support
+Date: Wed, 4 Sep 2024 23:55:59 +0530
+Message-ID: <20240904182605.953927-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: q_-X9WBHhbH9k30u0bYHb6g9sQWbJp9S
+X-Proofpoint-GUID: q_-X9WBHhbH9k30u0bYHb6g9sQWbJp9S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_16,2024-09-04_01,2024-09-02_01
 
-John Garry <john.g.garry@oracle.com> writes:
+Odyssey is a 64 bit ARM based SoC with multiple performance monitor
+units for various blocks.
 
-> From: Dave Chinner <dchinner@redhat.com>
->
-> Currently the allocation at EOF is broken into two cases - when the
-> offset is zero and when the offset is non-zero. When the offset is
-> non-zero, we try to do exact block allocation for contiguous
-> extent allocation. When the offset is zero, the allocation is simply
-> an aligned allocation.
->
-> We want aligned allocation as the fallback when exact block
-> allocation fails, but that complicates the EOF allocation in that it
-> now has to handle two different allocation cases. The
-> caller also has to handle allocation when not at EOF, and for the
-> upcoming forced alignment changes we need that to also be aligned
-> allocation.
->
-> To simplify all this, pull the aligned allocation cases back into
-> the callers and leave the EOF allocation path for exact block
-> allocation only. This means that the EOF exact block allocation
-> fallback path is the normal aligned allocation path and that ends up
-> making things a lot simpler when forced alignment is introduced.
->
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/libxfs/xfs_bmap.c   | 129 +++++++++++++++----------------------
->  fs/xfs/libxfs/xfs_ialloc.c |   2 +-
->  2 files changed, 54 insertions(+), 77 deletions(-)
->
-<..>
+This series of patches introduces support for uncore performance monitor
+units (PMUs) on the Marvell Odyssey platform. The PMUs covered in this
+series include the DDR PMU and LLC-TAD PMU.
 
-> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 2fa29d2f004e..c5d220d51757 100644
-> --- a/fs/xfs/libxfs/xfs_ialloc.c
-> +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> @@ -780,7 +780,7 @@ xfs_ialloc_ag_alloc(
->  		 * the exact agbno requirement and increase the alignment
->  		 * instead. It is critical that the total size of the request
->  		 * (len + alignment + slop) does not increase from this point
-> -		 * on, so reset minalignslop to ensure it is not included in
-> +		 * on, so reset alignslop to ensure it is not included in
->  		 * subsequent requests.
->  		 */
->  		args.alignslop = 0;
+v6->v7:
+- Split the refactor patches
+- Added documentation
+- Addressed minor review comments
 
-minor comment: Looks like this diff got leftover from previous patch
-where we cleanup minalignslop/alignslop.
+Gowthami Thiagarajan (6):
+  perf/marvell: Refactor to extract platform data - no functional change
+  perf/marvell: Refactor to extract platform specific ops - no
+    functional change
+  perf/marvell: Refactor to add version - no functional change
+  perf/marvell: Odyssey DDR Performance monitor support
+  perf/marvell : Refactor to extract platform data - no functional
+    change
+  perf/marvell : Odyssey LLC-TAD performance monitor support
 
--ritesh
+ Documentation/admin-guide/perf/index.rst      |   2 +
+ .../admin-guide/perf/mrvl-odyssey-ddr-pmu.rst |  80 +++
+ .../admin-guide/perf/mrvl-odyssey-tad-pmu.rst |  37 ++
+ drivers/perf/marvell_cn10k_ddr_pmu.c          | 533 +++++++++++++++---
+ drivers/perf/marvell_cn10k_tad_pmu.c          |  66 ++-
+ 5 files changed, 642 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
+
+-- 
+2.25.1
+
 
