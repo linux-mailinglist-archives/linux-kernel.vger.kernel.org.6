@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-315337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18F396C141
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:51:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC0C96C146
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCE9281579
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:51:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F494B27F52
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4732D1DC07B;
-	Wed,  4 Sep 2024 14:51:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7361EB44;
-	Wed,  4 Sep 2024 14:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD991DC73E;
+	Wed,  4 Sep 2024 14:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WuimmfVs"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C421DC053
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461493; cv=none; b=sHUelnoXvkfjZ2n2xh5LUP0ACsfp+Qsmjr/JViNnnwmnHJ342jopQnoD1XHGcc+Nst3LiAP0kqtUc80CUR/OOzRHQ3SyNfiVZcTsAt5KUFoXJuDmZrepRcO/cVb69p2Fi4Q4JMd9RtWfycfEAnO6LZaFdPzbCAykyB6dH+FyPyo=
+	t=1725461519; cv=none; b=pJMPWhKi6HBHZHqun7NXGH+e44fkvdRf9nuALw2b3JJIC0gbLsnA7r3qaLdGzdzXdJ7CYqijbtcjDxvXW50UXIDwecDffrNGpeH/SqMtSywUBN+AwU6NyIZVFJlp27b2ZDMhqqBl5Q6GSr35wv4KsJ9yuZ9JhnOaLhPVjVJHcyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461493; c=relaxed/simple;
-	bh=o8v/rQNAQIK86jePZEox/Q5xxIeCYH9BaBX2L+kOPx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGpEzEdta+uZmU0dfL13ZFEa9gY3R692DRgzOOdDXxwqEoVOWWpboK98o3s73m6JWo4sF4RK6mKcuJmXqBx7iWVUwt3IxmLA8eTfUrIfFriZ+ATJN2De06Dc3YZ0CGJgVEM6RoVopNqJdDIYS+tGsrvuvbWvrJLCPodx+hDBb08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EAECFEC;
-	Wed,  4 Sep 2024 07:51:50 -0700 (PDT)
-Received: from [10.57.74.1] (unknown [10.57.74.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A1E43F73F;
-	Wed,  4 Sep 2024 07:51:20 -0700 (PDT)
-Message-ID: <21e9e78e-f25c-40e9-8131-17478b6b717f@arm.com>
-Date: Wed, 4 Sep 2024 15:51:19 +0100
+	s=arc-20240116; t=1725461519; c=relaxed/simple;
+	bh=fTcMzEM3kY2M4Wu7inQydguZGW3DdMh82Z4JBMmoWbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oemNxjAJthektz9wZX7H7dmJezkUlAOPh1YePEx2fllOvv7qFDXL2+I1HsHbmkfy2IaWMboONHKSY0fCIFjaTC2kGSpChC7uR7f6c/hzvTfSulNv8opD3mpvzdusTjODZcIX4dJMM1u3vh+m1BeeKkSsd3wzeqy1eTFPz3Hb9JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WuimmfVs; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3780c8d689aso353426f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725461516; x=1726066316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fTcMzEM3kY2M4Wu7inQydguZGW3DdMh82Z4JBMmoWbs=;
+        b=WuimmfVsFpAlpSKkvdrb8VlvbyZh7ePyK2mQePJLoQcDKSS+MPeOZWYtPLQpnACn0W
+         H4mJeuKr3+VuT2npssV5dEO632HqjUKW2YLdpAn6E9V7EQLZPqDrIFnHZMflxXpH9PZv
+         cUDfrfXQhq3RMBlATtxN7NWBXR1qsfNzINfE81O3MeYB79+W1UzcDMnsaa3ATx6HgAot
+         oRt9/WB7jDf+V3qYBvUoEkGWni3/Rfjc1VuifgeBtPYp/Ps2vAER9nNGwb3lv2xiXXG2
+         b4jEJwgiQK69AEBnRsVzIrrjP1qjyJKajTiFaCpW7lvulSuYuZBzFD2f9HgQmV2JToAY
+         PFDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725461516; x=1726066316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fTcMzEM3kY2M4Wu7inQydguZGW3DdMh82Z4JBMmoWbs=;
+        b=Zxyu8ogGs+yl+8dPYDbIGIW2ZaL/ZphuMmXkD4cU/RbxJ8sWIg6ilOkmYmKxDw5ER1
+         DZlIfi/FCD/HuFPzTGsNogBUtJBCtCq7pAC7tNJSTAnblwHhUVBR8piYNc4Mp9BZu5Pp
+         2jKe3/m/4icgyKxtyFTjAPLkhpCP2O5IaLYHFHE83bH/sD37VdxB55GhFU3gKXeM7z4D
+         1/6QXmHT06P0rZI1yuS3YmhElnuuauLaCLAcsa9EfcFBcmVGEUajKhunSlYAtxlIlR8T
+         hSJ7EEIXi/q/uESnBibriejzbI9X9tyKeb4k1peGJivYfmNyyWJ/8wMw2MBPenIUS1dI
+         hEXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVucNeEoIepXNKDO8Rx8G/pzErCt+AN4nEtFDW0cV5ACzFmjGUXpEjvxSWssy6v+Sd6JJypbjtcdPweZwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Vbcru7sw72529aEP+bMJylQjKnbOZxZPX6N6zbGwgAK1/u1a
+	iySn9jMEZq6ke9KDx9gpunDph9zYBthO0Y2OxuO5pBfx6v8GNXXneYNebY26g9kChecUwz9BmHK
+	zgqMgmicZafGxQqjPFQnuVSgPagm0I8oVZE/g
+X-Google-Smtp-Source: AGHT+IFXPAh2KSM2xuEfDScmUTQ5Z1aIkAVoWtDzFq1bPY0Emcyx6SFJqfvHty1VlGwlCi7nvRts08h8nqWzteKFlg4=
+X-Received: by 2002:a5d:514c:0:b0:374:bdd7:f848 with SMTP id
+ ffacd0b85a97d-376df0055acmr3106240f8f.59.1725461515451; Wed, 04 Sep 2024
+ 07:51:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-Content-Language: en-GB
-To: James Clark <james.clark@linaro.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: coresight@lists.linaro.org, gankulkarni@os.amperecomputing.com,
- mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com,
- James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240722101202.26915-1-james.clark@linaro.org>
- <ZqOwGWcYosGe9ru4@x1> <6476a228-847b-4804-9229-c11a881663c7@arm.com>
- <ZqOzio8Oco9ZFsDm@x1> <8068c8ff-a8ce-4bcd-bb19-2c25b45cf6f3@arm.com>
- <ZqO3gPcCCVh1r5WM@x1> <aab886f3-ebbf-4853-b26b-5cf70c801683@arm.com>
- <7b96894c-f5df-473b-be50-ee118ce3cfaf@linaro.org> <ZtCUUsJNj9Z1CRLK@x1>
- <8afae0a6-5322-47a8-a189-68629ea1991f@linaro.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <8afae0a6-5322-47a8-a189-68629ea1991f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240904144229.18592-1-ojeda@kernel.org>
+In-Reply-To: <20240904144229.18592-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 4 Sep 2024 16:51:42 +0200
+Message-ID: <CAH5fLgizixTZ8nytkSzSLA67+f=zWZZKt8xTJ2BQg5K0ivAAmQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: avoid `box_uninit_write` feature
+To: Miguel Ojeda <ojeda@kernel.org>, Matt Gilbride <mattgilbride@google.com>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/08/2024 09:37, James Clark wrote:
-> 
-> 
-> On 29/08/2024 4:31 pm, Arnaldo Carvalho de Melo wrote:
->> On Thu, Aug 29, 2024 at 10:05:02AM +0100, James Clark wrote:
->>>
->>>
->>> On 22/08/2024 3:35 pm, Suzuki K Poulose wrote:
->>>> Hi Arnaldo,
->>>>
->>>> On 26/07/2024 15:49, Arnaldo Carvalho de Melo wrote:
->>>>> On Fri, Jul 26, 2024 at 03:38:13PM +0100, Suzuki K Poulose wrote:
->>>>>> On 26/07/2024 15:32, Arnaldo Carvalho de Melo wrote:
->>>>>>> On Fri, Jul 26, 2024 at 03:26:04PM +0100, Suzuki K Poulose wrote:
->>>>>>>> On 26/07/2024 15:18, Arnaldo Carvalho de Melo wrote:
->>>>>>>>> On Mon, Jul 22, 2024 at 11:11:42AM +0100, James Clark wrote:
->>>>>>>>>> This will allow sessions with more than 
->>>>>>>>>> CORESIGHT_TRACE_IDS_MAX ETMs
->>>>>>>>>> as long as there are fewer than that many ETMs
->>>>>>>>>> connected to each sink.
->>>>>>>>>
->>>>>>>>> Hey, may I take the tools part, i.e. patches 0-7 and
->>>>>>>>> someone on the ARM
->>>>>>>>> kernel team pick the driver bits?
->>>>>
->>>>>>>> I plan to pick the kernel driver bits for v6.12
->>>>>
->>>>>>> Perhaps it is better for me to wait for that?
->>>>>
->>>>>> Yes, please.
->>>>>
->>>>> Please let me know when you do so so that I can merge the tooling 
->>>>> bits.
->>>>
->>>> I have now merged the driver changes to coresight/next, they will be
->>>> sent to Greg for v6.12. [0]
->>>>
->>>> You may go ahead and merge the tool bits.
->>
->> I'm taking this as an Acked-by: Suzuki, ok?
+On Wed, Sep 4, 2024 at 4:43=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Like commit 0903b9e2a46c ("rust: alloc: eschew
+> `Box<MaybeUninit<T>>::write`"), but for the new `rbtree` and `alloc` code=
+.
+>
+> That is, `feature(new_uninit)` [1] got partially stabilized [2]
+> for Rust 1.82.0 (expected to be released on 2024-10-17), but it
+> did not include `Box<MaybeUninit<T>>::write`, which got split into
+> `feature(box_uninit_write)` [3].
+>
+> To avoid relying on a new unstable feature, rewrite the `write` +
+> `assume_init` pair manually.
+>
+> Link: https://github.com/rust-lang/rust/issues/63291 [1]
+> Link: https://github.com/rust-lang/rust/pull/129401 [2]
+> Link: https://github.com/rust-lang/rust/issues/129397 [3]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
+Good catch!
 
->>
-> 
-> Suzuki is out of office at the moment and can't email but he said it was 
-> ok for the acked-by.
-
-Thanks James for conveying the message.
-
-For the record:
-
-For patches 1-8:
-
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
