@@ -1,250 +1,101 @@
-Return-Path: <linux-kernel+bounces-314718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED11C96B783
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8528996B77F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A537D282010
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17960281940
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972D11CEE91;
-	Wed,  4 Sep 2024 09:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66241CEE96;
+	Wed,  4 Sep 2024 09:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H0oQ2+ni"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnJ9Bzqj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FEC1CCEE3;
-	Wed,  4 Sep 2024 09:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CF11EBFEA;
+	Wed,  4 Sep 2024 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443794; cv=none; b=PCUL6Sxu6yq0iGA3pyDUQPNKSFMIWUQoIsZXpDv6I92coTkXn43cdi5/M0o7JNIrrNVgwkSXY3IgTcWC81yLb+rIFUHhDWPLVoCwaasIA5Dn73uc6dUr8oL0ObCXDyvG6M0Kdw5pvHo3zRpEugDL8RUWfKgUDnum7Ydauu8Ufps=
+	t=1725443751; cv=none; b=X725wPmfhPDbwmRHQTjFeNWPhlW9YD3PkyToQFhLRg6wXWympEyAMV0Cg1PuZTvW0iLderuwqtUosuvGrjrar/oJQii39yaZWz0FTd4uGVGHXBN5w2GhSoAXNgoHoX0Pq/wo/KaT8dUXwyCp/DN1pW5gJ0V1o16n7As3faHnsO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443794; c=relaxed/simple;
-	bh=b+VG+y8/EeELaj+DVH73S5jqCe4g2c1FGRO/OQSnkBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sekq9/DEVvV6QhweCeO5DJHj9WCn6I3GeF/939cxfRlLoY8ZqGo/fHtdTCpNr1GFf/wsgkUEh+KZr6NyZWa9KIbd6mya43fRVV1CON2DLY10llBIDi/28v3jiRKwpKOUpaHoFC4Ze/0dsNIpZYQPhYgfQMR8nLh+bDfcPupDUdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H0oQ2+ni; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4849t4gR015914;
-	Wed, 4 Sep 2024 04:55:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725443704;
-	bh=leQqt0S+BZ+0AYSKerK6oNOErEuBl/fdVJ+s3xmPtZY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=H0oQ2+niyv12xQo3I/wmT4r6MDzVFhx+CaqwNTEj4wJBkqH71MUw1T3dklu5VNJ93
-	 rUo7dksI772ovMz87eF2gWlIWlSJNBSvxNdKnSfN2np0bblv/akpoC6Xb1iUGq5qM0
-	 hZfZkx0Kkt0ZBREn4Wdp2jOnyMlgSEg7j/YwAO14=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4849t4mO005543;
-	Wed, 4 Sep 2024 04:55:04 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Sep 2024 04:55:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Sep 2024 04:55:03 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4849swTp061080;
-	Wed, 4 Sep 2024 04:54:59 -0500
-Message-ID: <69cb37ae-0f38-487d-bb16-a3709353fc09@ti.com>
-Date: Wed, 4 Sep 2024 15:24:57 +0530
+	s=arc-20240116; t=1725443751; c=relaxed/simple;
+	bh=EuDZd0Ya7FrnlxmHNJIyAGIIKpdgej/0oZFl2tmBO2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AojEIzmlT+S8d5F3AgSDNHDH/gWDhCMRxsxuV6A7shIPAlclbDfY6C5PYHJJyr9TJYqBxPUvN4OEg5cMqZRW6BIUaJQCAL1tauom8+uCtooWCbxN8U4PlbAvoXDMNyE9WiJ/pHpo8awQINTMPX1+VCcFKRQu2Sqbe90u4tn6Dn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnJ9Bzqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE7CC4CEC8;
+	Wed,  4 Sep 2024 09:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725443750;
+	bh=EuDZd0Ya7FrnlxmHNJIyAGIIKpdgej/0oZFl2tmBO2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qnJ9Bzqj4RYCZ9vf9dPFdvK6SEXNfaLlJjoorGOIZuEBUsBE9da1HKpbJrsC+Yj3I
+	 RWmHoWsR1yaqCbSSOORbumQ8xYz/u+JfLUn/KIEEkYt59RITwu2aQAKQUmR3doW6+c
+	 LLJgkV/tbK5msO2lmTqCZjgSY87pWUVsDFReimQ+cRKDQ6hAR6Rkw0x2RzsHA5umrp
+	 Hypz8KqoYhS4L39wzqwGnE6NOKfls7VrnqhBCT6idvxKuB/nKK+V9fLWcXE8FE4yCU
+	 IbTAwS3RikXTJ9EsMH1e0SjZzIoc+XmRWDjDTBL3GVjXoJVmZsIjQOe+iVYF9pb9IL
+	 M0T3dSbjXZdrA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slmkB-000000002Fn-1v3g;
+	Wed, 04 Sep 2024 11:56:07 +0200
+Date: Wed, 4 Sep 2024 11:56:07 +0200
+From: Johan Hovold <johan@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Subject: Re: [PATCH v6 0/4] PCI: qcom: Add 16.0 GT/s equalization and
+ margining settings
+Message-ID: <ZtgutzysJ-3GeSDE@hovoldconsulting.com>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/6] net: ti: icssg-prueth: Add support for
- HSR frame forward offload
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Javier Carrasco
-	<javier.carrasco.cruz@gmail.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
-        Richard
- Cochran <richardcochran@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>
-References: <20240828091901.3120935-1-danishanwar@ti.com>
- <20240828091901.3120935-4-danishanwar@ti.com>
- <728d4ad3-bd32-4bbe-bbd1-cd2c62df1fad@intel.com>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <728d4ad3-bd32-4bbe-bbd1-cd2c62df1fad@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
 
-Hi Alexander
+On Wed, Sep 04, 2024 at 12:41:56PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
 
-On 30/08/24 7:37 pm, Alexander Lobakin wrote:
-> From: Md Danish Anwar <danishanwar@ti.com>
-> Date: Wed, 28 Aug 2024 14:48:58 +0530
-> 
->> Add support for offloading HSR port-to-port frame forward to hardware.
->> When the slave interfaces are added to the HSR interface, the PRU cores
->> will be stopped and ICSSG HSR firmwares will be loaded to them.
->>
->> Similarly, when HSR interface is deleted, the PRU cores will be stopped
->> and dual EMAC firmware will be loaded to them.
->>
->> This commit also renames some APIs that are common between switch and
->> hsr mode with '_fw_offload' suffix.
-> 
-> [...]
-> 
->> @@ -726,6 +744,19 @@ static void emac_ndo_set_rx_mode(struct net_device *ndev)
->>  	queue_work(emac->cmd_wq, &emac->rx_mode_work);
->>  }
->>  
->> +static int emac_ndo_set_features(struct net_device *ndev,
->> +				 netdev_features_t features)
->> +{
->> +	netdev_features_t hsr_feature_present = ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
-> 
-> Maybe you could give this definition and/or this variable shorter names,
-> so that you won't cross 80 cols?
-> 
+> This series adds 16.0 GT/s specific equalization and RX lane margining settings
+> to the Qcom RC and EP drivers. This series is mandatory for the stable operation
+> of the PCIe link at 16.0 GT/s on the Qcom platforms.
 
-I will use Roger's feedback here [1] and modify this API. This will
-contain this line within 80 cols.
+> Changes in v6:
+> 
+> - Dropped the code refactoring patch as suggested by Johan
+> - Added 2 patches to fix the caching of maximum supported link speed value that
+>   is needed to apply the equalization/margining settings
+> - Updated the commit message of patch 3 as per Bjorn's suggestion
 
-I will  try to containig line length within 80 cols wherever possible.
-There are however some instances where line length of 80 cols is not
-possible. There the line length will exceed.
+Thanks for the update. This series fixes the NVMe link errors on the
+x1e80100 CRD:
 
->> +	netdev_features_t hsr_feature_wanted = features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
-> 
-> (same)
-> 
->> +	bool hsr_change_request = ((hsr_feature_wanted ^ hsr_feature_present) != 0);
-> 
-> You don't need to compare with zero. Just = a ^ b. Type `bool` takes
-> care of this.
-> 
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-Sure.
-
->> +
->> +	if (hsr_change_request)
->> +		ndev->features = features;
-> 
-> Does it mean you reject any feature change except HSR?
-> 
-
-Currently only HSR features are supported. So we will modify
-ndev->features only for HSR features request. For any other feature
-request ndev->features will not be modified.
-
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct net_device_ops emac_netdev_ops = {
->>  	.ndo_open = emac_ndo_open,
->>  	.ndo_stop = emac_ndo_stop,
->> @@ -737,6 +768,7 @@ static const struct net_device_ops emac_netdev_ops = {
->>  	.ndo_eth_ioctl = icssg_ndo_ioctl,
->>  	.ndo_get_stats64 = icssg_ndo_get_stats64,
->>  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
->> +	.ndo_set_features = emac_ndo_set_features,
->>  };
->>  
->>  static int prueth_netdev_init(struct prueth *prueth,
->> @@ -865,6 +897,7 @@ static int prueth_netdev_init(struct prueth *prueth,
->>  	ndev->ethtool_ops = &icssg_ethtool_ops;
->>  	ndev->hw_features = NETIF_F_SG;
->>  	ndev->features = ndev->hw_features;
->> +	ndev->hw_features |= NETIF_F_HW_HSR_FWD;
-> 
-> Why not HSR_OFFLOAD right away, so that you wouldn't need to replace
-> this line with the mentioned def a commit later?
-> 
-
-Sure Will do that.
-
->>  
->>  	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
->>  	hrtimer_init(&emac->rx_hrtimer, CLOCK_MONOTONIC,
-> 
-> [...]
-> 
->> +	prueth->hsr_members |= BIT(emac->port_id);
->> +	if (!prueth->is_switch_mode && !prueth->is_hsr_offload_mode) {
->> +		if (prueth->hsr_members & BIT(PRUETH_PORT_MII0) &&
->> +		    prueth->hsr_members & BIT(PRUETH_PORT_MII1)) {
->> +			if (!(emac0->ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES) &&
->> +			    !(emac1->ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES))
->> +				return -EOPNOTSUPP;
->> +			prueth->is_hsr_offload_mode = true;
->> +			prueth->default_vlan = 1;
->> +			emac0->port_vlan = prueth->default_vlan;
->> +			emac1->port_vlan = prueth->default_vlan;
->> +			icssg_change_mode(prueth);
->> +			dev_dbg(prueth->dev, "Enabling HSR offload mode\n");
-> 
-> netdev_dbg()?
-> 
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void prueth_hsr_port_unlink(struct net_device *ndev)
->> +{
->> +	struct prueth_emac *emac = netdev_priv(ndev);
->> +	struct prueth *prueth = emac->prueth;
->> +	struct prueth_emac *emac0;
->> +	struct prueth_emac *emac1;
->> +
->> +	emac0 = prueth->emac[PRUETH_MAC0];
->> +	emac1 = prueth->emac[PRUETH_MAC1];
->> +
->> +	prueth->hsr_members &= ~BIT(emac->port_id);
->> +	if (prueth->is_hsr_offload_mode) {
->> +		prueth->is_hsr_offload_mode = false;
->> +		emac0->port_vlan = 0;
->> +		emac1->port_vlan = 0;
->> +		prueth->hsr_dev = NULL;
->> +		prueth_emac_restart(prueth);
->> +		dev_dbg(prueth->dev, "Enabling Dual EMAC mode\n");
-> 
-> (same here and in all the places below)
-> 
-
-Sure will use netdev_dbg instead of dev_dbg.
-
->> +	}
->> +}
-> 
-> Thanks,
-> Olek
-
-
-[1]
-https://lore.kernel.org/all/22f5442b-62e6-42d0-8bf8-163d2c4ea4bd@kernel.org/
-
--- 
-Thanks and Regards,
-Danish
+Johan
 
