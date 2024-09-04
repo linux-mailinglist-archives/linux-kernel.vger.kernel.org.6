@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-314809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3930796B955
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A88F96B93A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE2F2811DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D0F1C2176E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231B81D016A;
-	Wed,  4 Sep 2024 10:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4829B1CDFC8;
+	Wed,  4 Sep 2024 10:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AjO+zJcz"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TJvJqbFg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A29D1CF280;
-	Wed,  4 Sep 2024 10:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0ED3612D;
+	Wed,  4 Sep 2024 10:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725447214; cv=none; b=kRfmvcawTgIV2u0H/lzMhk5cSu+I+1EHSyPk93vPgngVeCqFbaDPqVzplA4hFe/WZZ6Jy6KnfJBv3dLfSrQaYjYPMaFWnG/0QCj6ZmvgBuIaJs5KaUJK8oDWTrszcUL07WRitfatoIsZX5GtIVYPtANj5TlIXvyMeJWdoBCG4zw=
+	t=1725447013; cv=none; b=OhL8L5Ksiw10TKMzgsyQXHzHtPFDxsZtUB7WbOrg/pYTA9tCMhiFIY6YqQJfAkqlxp99NbLHiOCYRpVo6LY+k+VlNUvSHLHhJiqEA7CyTMCUGGU8JGhHOyoYXdQAP73U6D2Z1hs3ZKLJYvyeEKPz9KG5NJhWd5bFjZ8RasErIOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725447214; c=relaxed/simple;
-	bh=IAvCk1yjCPWRHhJhJZGE3McWze1Xp4mYQh62iJBq51I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bxLUr67GnHaY9s64bapNMdvk5HhaCQmYieh8bCHRoQtyImK+M8Omj7XFCjMb++dfmt/qH1FDS4x+K1LU0DvluTAS38NTjkcpYfATr6JMFFo4DegPn8zj2DDfGT3KwLCj5SLIAQGRphQmSDsNihoTjZLpjo23Zl3VUNBhMSH6OgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AjO+zJcz; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay8-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::228])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id C278EC37F8;
-	Wed,  4 Sep 2024 10:49:59 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 805841BF206;
-	Wed,  4 Sep 2024 10:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725446992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OlQwp//l7+YMqCwEc62IbsKJVaVaIN0kbujxzcaSERM=;
-	b=AjO+zJczyrIU9K82FhJ8IfAofM+yJtFx1/tB0Usq8CuxFJmN/lqMvG7f4uaUqRzzKIg32Y
-	072cQqb2AYT+TcGFLby8CWj4hKXnCXptPUgIIXJ1a8KYaP8UNSiIFSV52DXfCMuy7V8Jbd
-	67ZvV/uH0AlmbJ81czvB2WNIuDTpqwhNrOm2OUUojHecup2yvlEtUGdmNT6GUyJd3JihgY
-	GjBlIAQUEwsCJoElvHxaqzCoGfd5HvX/ZgCtb3r5sM9HKrd/Y1q+k3RXuoL3bUPtv+xFt6
-	RCfqul/llDwO58QjXYaEAQJF0+rROiGIUJskuUOfy9c8UGZN1Z7qFCCkeJHrCA==
-Date: Wed, 4 Sep 2024 12:49:49 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
- Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2 7/7] net: ethernet: fs_enet: phylink
- conversion
-Message-ID: <20240904124949.563f1343@fedora.home>
-In-Reply-To: <20240902185543.48d91e87@kernel.org>
-References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
-	<20240829161531.610874-8-maxime.chevallier@bootlin.com>
-	<20240902185543.48d91e87@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725447013; c=relaxed/simple;
+	bh=qCCt6akt6J3+5DzMZX5XwCF3hJaj/F746bDw4hPKOOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WVDIW8y6RAdTW6wYr39qfeDGlH32z0Ih04suR6CqLKKX3oPFsyYQE1Wq90aVjQ5EDuDugNYeXWKonDC25TYYhrngiywDmIFrPMxMWnq8I0tD7Xm90z+/B/3pGTgHlwDPdCYjRThc+wNfShztLSJpkqJByg4hOS13zd4EMqx06o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TJvJqbFg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48484dRl010553;
+	Wed, 4 Sep 2024 10:49:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CukpPXmCtRJOKkmqSDQK/eI6qJTAIFrCRv7rp2CScIk=; b=TJvJqbFgsyMIHqc7
+	nRrx4GbwLM8xOCxlfAb4CJoShVKhusGnYNnvFb94dd5Kwcy0rB1cxPkiP7Z+oMoc
+	BENaQDbNbNNhoTLGQ0Vv1G3JYLER+huW0Cjxk5quM1pU0xh2sKe/bd2u3fINcant
+	IVj8XzbNIDeqF/6ArNDTded4IWkga7mUCWnhVSf7SVd7L8RdgL5xVWPIP2rwEOYm
+	p89mJqFwTFC70RFlUL31/yqAdrmnuYswdKptdiNT8qn5ex+O/0XevWN3ZTh22F9A
+	jr7Q6LU27urexnm3j1NEC1yXTdS8XJJcYLsj4kQ46JrslemhujIPu7g7QM9d5PIQ
+	Dcr7QQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41e0bhkntq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 10:49:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484AnqNB028087
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 10:49:52 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 03:49:51 -0700
+Message-ID: <50dd4471-d364-4ca7-b2ad-4274faf3e6e0@quicinc.com>
+Date: Wed, 4 Sep 2024 18:49:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
+ (ETIMEDOUT)
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>
+CC: James Prestwood <prestwoj@gmail.com>, <linux-wireless@vger.kernel.org>,
+        <ath10k@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
+References: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3rsVhnI6ql7LNGHe3zSdoNTv_eVYY3zk
+X-Proofpoint-GUID: 3rsVhnI6ql7LNGHe3zSdoNTv_eVYY3zk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_09,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040081
 
-Hi Jakub,
 
-On Mon, 2 Sep 2024 18:55:43 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
 
-> On Thu, 29 Aug 2024 18:15:30 +0200 Maxime Chevallier wrote:
-> > @@ -582,15 +591,12 @@ static void fs_timeout_work(struct work_struct *work)
-> >  
-> >  	dev->stats.tx_errors++;
-> >  
-> > -	spin_lock_irqsave(&fep->lock, flags);
-> > -
-> > -	if (dev->flags & IFF_UP) {
-> > -		phy_stop(dev->phydev);
-> > -		(*fep->ops->stop)(dev);
-> > -		(*fep->ops->restart)(dev);
-> > -	}
-> > +	rtnl_lock();  
+On 9/4/2024 6:45 PM, Paul Menzel wrote:
+> Dear Linux folks,
 > 
-> so we take rtnl_lock here..
 > 
-> > +	phylink_stop(fep->phylink);
-> > +	phylink_start(fep->phylink);
-> > +	rtnl_unlock();
-> >  
-> > -	phy_start(dev->phydev);
-> > +	spin_lock_irqsave(&fep->lock, flags);
-> >  	wake = fep->tx_free >= MAX_SKB_FRAGS &&
-> >  	       !(CBDR_SC(fep->cur_tx) & BD_ENET_TX_READY);
-> >  	spin_unlock_irqrestore(&fep->lock, flags);  
+> Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3 (or unloading and loading the `ath10k_core`/`ath10k_pci` modules) having been connected to an AVM network:
 > 
-> > @@ -717,19 +686,18 @@ static int fs_enet_close(struct net_device *dev)
-> >  	unsigned long flags;
-> >  
-> >  	netif_stop_queue(dev);
-> > -	netif_carrier_off(dev);
-> >  	napi_disable(&fep->napi);
-> >  	cancel_work_sync(&fep->timeout_work);  
+>     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
 > 
-> ..and cancel_work_sync() under rtnl_lock here?
+> Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and applied it, and the error is still there (as exepected).
 > 
-> IDK if removing the the "dev->flags & IFF_UP" check counts as
-> meaningfully making it worse, but we're going in the wrong direction.
-> The _sync() has to go, and the timeout work needs to check if device
-> has been closed under rtnl_lock ?
+> Can the warning be improved so the user know, which component is at fault?
+most likely it is firmware not responding to host remove key command.
 
-Arg that's true, I didn't consider that call path at all... Sorry about
-that, I'll indeed rework that to address this deadlock waiting to
-happen.
-
-Thanks,
-
-Maxime
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> 
+> [1]: https://lore.kernel.org/all/20240814164507.996303-1-prestwoj@gmail.com/
+> 
+> ```
+> Sep 04 07:21:38.469669 abreu kernel: Linux version 6.11.0-rc6-00027-ga91d08fcc356 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-4) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #294 SMP PREEMPT_DYNAMIC Tue Sep  3 23:01:18 CEST 2024
+> Sep 04 07:21:38.469718 abreu kernel: Command line: BOOT_IMAGE=/vmlinuz-6.11.0-rc6-00027-ga91d08fcc356 root=UUID=32e29882-d94d-4a92-9ee4-4d03002bfa29 ro quiet pci=noaer mem_sleep_default=deep log_buf_len=8M cryptomgr.notests
+> […]
+> Sep 04 12:34:55.826218 abreu sudo[25874]:  pmenzel : TTY=pts/7 ; PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe ath10k_pci
+> Sep 04 12:34:55.828046 abreu sudo[25874]: pam_unix(sudo:session): session opened for user root(uid=0) by pmenzel(uid=5272)
+> Sep 04 12:34:55.869839 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq msi oper_irq_mode 2 irq_mode 0 reset_mode 0
+> Sep 04 12:34:56.005202 abreu sudo[25874]: pam_unix(sudo:session): session closed for user root
+> Sep 04 12:34:56.161706 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+> Sep 04 12:34:56.162591 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+> Sep 04 12:34:56.163115 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
+> Sep 04 12:34:56.241683 abreu kernel: ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
+> Sep 04 12:34:56.333784 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+> Sep 04 12:34:56.417649 abreu kernel: ath: EEPROM regdomain: 0x6c
+> Sep 04 12:34:56.417919 abreu kernel: ath: EEPROM indicates we should expect a direct regpair map
+> Sep 04 12:34:56.418022 abreu kernel: ath: Country alpha2 being used: 00
+> Sep 04 12:34:56.418114 abreu kernel: ath: Regpair used: 0x6c
+> Sep 04 12:34:56.422440 abreu NetworkManager[610]: <info> [1725446096.4223] device (wlan0): driver supports Access Point (AP) mode
+> […]
+> Sep 04 12:35:12.042484 abreu wpa_supplicant[618]: wlp58s0: WPA: Group rekeying completed with ce:ce:1e:27:bb:e0 [GTK=CCMP]
+> Sep 04 12:35:21.800998 abreu sudo[25953]:  pmenzel : TTY=pts/7 ; PWD=/home/pmenzel ; USER=root ; COMMAND=/usr/sbin/modprobe -r ath10k_pci
+> Sep 04 12:35:21.803733 abreu sudo[25953]: pam_unix(sudo:session): session opened for user root(uid=0) by pmenzel(uid=5272)
+> Sep 04 12:35:21.881668 abreu kernel: wlp58s0: deauthenticating from ce:ce:1e:27:bb:e0 by local choice (Reason: 3=DEAUTH_LEAVING)
+> Sep 04 12:35:22.905717 abreu kernel: ath10k_pci 0000:3a:00.0: failed to install key for vdev 0 peer ce:ce:1e:27:bb:e0: -110
+> Sep 04 12:35:22.906604 abreu kernel: wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware (-110)
+> Sep 04 12:35:22.908927 abreu wpa_supplicant[618]: wlp58s0: CTRL-EVENT-DISCONNECTED bssid=ce:ce:1e:27:bb:e0 reason=3 locally_generated=1
+> Sep 04 12:35:22.908995 abreu wpa_supplicant[618]: BSSID ce:ce:1e:27:bb:e0 ignore list count incremented to 2, ignoring for 10 seconds
+> ```
 
