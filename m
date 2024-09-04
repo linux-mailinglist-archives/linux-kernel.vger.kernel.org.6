@@ -1,141 +1,250 @@
-Return-Path: <linux-kernel+bounces-315952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45C696C909
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D91496C90D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924BD284574
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4562882D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4781487DD;
-	Wed,  4 Sep 2024 20:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01644146D7F;
+	Wed,  4 Sep 2024 20:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vo+WnXcf"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOV768ya"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21AC62A02;
-	Wed,  4 Sep 2024 20:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AD062A02;
+	Wed,  4 Sep 2024 20:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725483424; cv=none; b=ipqbz+naGvi3WxEFd6JeW6LkmqsFVgYt4e6wLPSdhv2XAlcUtGj4hqgtmhf0Udlx7KCJGztrQV19aUiV9wadcqy+1e68vMARbAIUZbizq8W39t/QjvdlI9qrWrljzmPwTT1DrGWBnE9n97uCNBojgAFkQsSAIPe9FJ0aoVcXaPY=
+	t=1725483564; cv=none; b=nXUH+1qfmZ1ZLzlU1ObH1iAngmoZjq9+9RwDY5WM/WptNc1dsb8IuGf6sa9icDH2AvFWh9SGJs6eMFFDk3OsYOfrOB8sx//urd7eWNJ9r63zBwULqZTCsyYcskuOGAMXt6Od1Qnl53Y6wMHOt3uwx3sWRsBCC+AdWlFaoLNvbhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725483424; c=relaxed/simple;
-	bh=VupcdStpyc7EtIYDrzaVslr/S3ydzdLj+0xdraUd9hU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTyAMzogDDz0hd+CmY2SEJuRFjnKjevNBUxVYDud6woL55O9YXaF/F99Faz79R7DgKXbvpHQHz0krb2HJBWTejofIaZEyL5capGb1/su/rZEV++LVDNJRENSeST3pSEi3OYh9+dWvMDvNiY/87ozgjBaaWbr1McqfUyiUjgVrHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vo+WnXcf; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1725483564; c=relaxed/simple;
+	bh=B+4SUieOV0kPO2Q6uYMR5/Q+4ouEMOo9s+x1Grwb9W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dv0Bw+2sTgidiNCb2EbYNSQdJcyV+ynwTb3ayWgDG4MN7Sk0gsj1QS0+u16qu4n4vNTc8YkK89n7syXuy9ff2IyCzczWwLnb7koBn7u95pCAPzt7QN/nkpzrRnz102lql73wecWcSbtSpypKTOKS9USCER3IAqVrI5LQ+4vY83Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOV768ya; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-715cdc7a153so53885b3a.0;
-        Wed, 04 Sep 2024 13:57:02 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so65600a12.3;
+        Wed, 04 Sep 2024 13:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725483422; x=1726088222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6eUNo9P+fL7OnZzluk8DnXPpvIOhLsMJ+xFQf0Ca1s=;
-        b=Vo+WnXcfRWaqbC0JINcLsxV5SUxvk1CbyQoybwLAyEyrN4YSzkwCae/ItT/9hzuhXv
-         3pz3gtTmsnghavqFea2kQzfOmuYVgciM4zOTEVhA6Mnb0EVBHmg8zBSeSEcTh2xqe/YB
-         N8qXuxaK38k4xTuuSC08cCuQFgbme1F6BD/n41j3F4Z8WIgtxwSM2OrBHnTLzhIs7hwr
-         /6fgyHglfEfk4hgGH82omlbVQQcpWtjnQ4Kxeqysn9vnTuGDPPdyMf5kRQJvT7H2W9Qo
-         pZHVLlAHw2e+HqYuWwKL3pSwDL3RrBHN941ZtbQQtTTQEDah/QxrsVoeVHjyA53oXuQJ
-         JM5w==
+        d=gmail.com; s=20230601; t=1725483562; x=1726088362; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oamAtP00j9UzIW/E2M7cxd5f60RNaXNx3cnEHxE4DSY=;
+        b=cOV768ya7lGts6hqYV1ZfnswcTn9UpOXc4DK2AgnBBjUnZftOY4mDUfNeDN7+j/uG6
+         Btjb71i67JEq2bCYLdZY0n+cUpov56kBirQFHFVUJxSzeoN6pDd+UFs8AyOPLg/liQia
+         sNWv4Cb5GRYj9MJnxPYYx6v4phbb6hNv4HELv/5BfEO5iovjjKEEZtcYbOFDUrF683l1
+         zFq86LJOY/xoqgqC6AFoihOT+V/RdojztXFRjkcL35PIlD5oKKtMoPGaIMiPuEC7Cq51
+         GpM2tO3aG7Hl75Fivx/8diTragUCFsjEraTYsUpstvSFX0RXd95QoAGEcL5DiCqpo0Fc
+         zJKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725483422; x=1726088222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F6eUNo9P+fL7OnZzluk8DnXPpvIOhLsMJ+xFQf0Ca1s=;
-        b=lRQDUm3IzOQKzahRz4WtltbsS4QOLtLmAGX0xbWxBHNg9vaThbRx6EKnkOOf7EHXKy
-         gjeYBnCg1cC9VRb93nGTcSDUU21lwX2aimh+0J1zQ45FbtBgQEy59gpwsVbMqRxZrYeP
-         86lsa+eQ+VPGYD1J+wxNkUkfhvGE35eyNmXXf6QBxmyZHp81SjCL+jy1CaSivGdzzBG/
-         NRvY9otsXEnusSwwZ0wlhJIdaxX80W4gUGxSclS1UurZNqNxOV++cGlZK5XIiC3pbqBU
-         1P9kPDMnnSUx52F4RA+lqD6GqlE+ubHqvfV2usfFbFoU3HFrJ44/t7YL1xh7kVflNpDM
-         /5VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ4WbQyC+wsB6uUCPolRhmmX4dtAFZHdEIi7FO5smK8LCejy8JEpdd4Bt84g9ieWU6QKESe22dzeVHapg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhQVSHcLznxWl7zoxPZHgR3mQctjyrB7pddwXm8tU8w6GIFBnM
-	PdjdEFTp2U3L6xyE12qp4uMJWT0gX9DX49Lu9WdqpEUBLQNOD74I4ATmmu59
-X-Google-Smtp-Source: AGHT+IH/BZwH4UrsEYWDfFunVT/72Gq7R+ke4UZZXEP93Ag/q3PpWYktGhGYkSUtunV+7xajBVzthg==
-X-Received: by 2002:a05:6a00:3213:b0:717:83bc:6df3 with SMTP id d2e1a72fcca58-71783bc6f5cmr3025752b3a.11.1725483421698;
-        Wed, 04 Sep 2024 13:57:01 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778533221sm2026166b3a.47.2024.09.04.13.57.00
+        d=1e100.net; s=20230601; t=1725483562; x=1726088362;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oamAtP00j9UzIW/E2M7cxd5f60RNaXNx3cnEHxE4DSY=;
+        b=JM/2RbK7Tdna6/7yDiX0/iOnTzUzUrS6pWAAEaXUxvku+KYivZTAXTo4Rpw3C0QiJ4
+         Hg8/NjC1mPPSiUZ4w9mv0xyeHrZoq+fl7AzYHNkf7UJWXpUmiNVKa1CDYJtcXp45GNNV
+         tPOhwDxVW3ljR0SsWLD2gi2SgjWr3vuoDXJ4YU2znV/SZYr58giodMCjKNcjutR9UqCJ
+         KU8p84YDyD2Ec59IryKb8cr5F5reqfoKVktYt78F8mM6z3zp44+HTDXMvYu7vCj4mqtN
+         4pUsfAla7He2wODTOcwhy1P5IpL8KlDnFh3WNfRvxYaQXcGLZnV2Q519Huh2lz1WuLXB
+         FZeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdw8E4/TTlKc1FuROhXdAKm4zRINXPtz8xJTeF+4woj0lkEzxUkQTeshfvzmEv50RA5DnLcIHamqKOBMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRxb1ybOiP2MOmzV+k4Js6thSa4yMft94gz5uzYBmyljlfDZKz
+	NkfTSvi6p5kMcc+opEouowiqUUiibqlrTB1wwvTuv6IUN7N8traC5nys9w==
+X-Google-Smtp-Source: AGHT+IHMdOiLyJKdAYb9+dUc8xM/SQBZuAjhSxnu8uI7AcF5eXpixoQqbh6BeBpKHX/Y7hT01Y/Tlw==
+X-Received: by 2002:a05:6a21:1693:b0:1ce:d6ea:2163 with SMTP id adf61e73a8af0-1ced6ea3fd6mr16323971637.25.1725483562104;
+        Wed, 04 Sep 2024 13:59:22 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177859518esm2028458b3a.151.2024.09.04.13.59.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 13:57:01 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	ansuelsmth@gmail.com
-Subject: [PATCH] net: phy: qca83xx: use PHY_ID_MATCH_EXACT
-Date: Wed,  4 Sep 2024 13:56:59 -0700
-Message-ID: <20240904205659.7470-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        Wed, 04 Sep 2024 13:59:21 -0700 (PDT)
+Date: Wed, 4 Sep 2024 13:59:18 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 17/22] Input: pegasus_notetaker - use guard notation when
+ acquiring mutex
+Message-ID: <ZtjKJsArLu3byTU6@google.com>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044842.1048638-1-dmitry.torokhov@gmail.com>
+ <a41bb88a-b624-4b5b-a2ea-b49761c45a93@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a41bb88a-b624-4b5b-a2ea-b49761c45a93@gmail.com>
 
-No need for the mask when there's already a macro for this.
+Using guard notation makes the code more compact and error handling
+more robust by ensuring that mutexes are released in all code paths
+when control leaves critical section.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/net/phy/qcom/qca83xx.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/phy/qcom/qca83xx.c b/drivers/net/phy/qcom/qca83xx.c
-index 5d083ef0250e..a05d0df6fa16 100644
---- a/drivers/net/phy/qcom/qca83xx.c
-+++ b/drivers/net/phy/qcom/qca83xx.c
-@@ -15,7 +15,6 @@
- #define QCA8327_A_PHY_ID			0x004dd033
- #define QCA8327_B_PHY_ID			0x004dd034
- #define QCA8337_PHY_ID				0x004dd036
--#define QCA8K_PHY_ID_MASK			0xffffffff
+V2: fixed whitespace issues, added Reviewed-by from Javier
+
+ drivers/input/tablet/pegasus_notetaker.c |   86 +++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/input/tablet/pegasus_notetaker.c b/drivers/input/tablet/pegasus_notetaker.c
+index a68da2988f9c..8d6b71d59793 100644
+--- a/drivers/input/tablet/pegasus_notetaker.c
++++ b/drivers/input/tablet/pegasus_notetaker.c
+@@ -214,6 +214,28 @@ static void pegasus_init(struct work_struct *work)
+ 			error);
+ }
  
- #define QCA8K_DEVFLAGS_REVISION_MASK		GENMASK(2, 0)
- 
-@@ -216,8 +215,7 @@ static int qca8327_suspend(struct phy_device *phydev)
- static struct phy_driver qca83xx_driver[] = {
++static int __pegasus_open(struct pegasus *pegasus)
++{
++	int error;
++
++	guard(mutex)(&pegasus->pm_mutex);
++
++	pegasus->irq->dev = pegasus->usbdev;
++	if (usb_submit_urb(pegasus->irq, GFP_KERNEL))
++		return -EIO;
++
++	error = pegasus_set_mode(pegasus, PEN_MODE_XY, NOTETAKER_LED_MOUSE);
++	if (error) {
++		usb_kill_urb(pegasus->irq);
++		cancel_work_sync(&pegasus->init);
++		return error;
++	}
++
++	pegasus->is_open = true;
++
++	return 0;
++}
++
+ static int pegasus_open(struct input_dev *dev)
  {
- 	/* QCA8337 */
--	.phy_id			= QCA8337_PHY_ID,
--	.phy_id_mask		= QCA8K_PHY_ID_MASK,
-+	PHY_ID_MATCH_EXACT(QCA8337_PHY_ID),
- 	.name			= "Qualcomm Atheros 8337 internal PHY",
- 	/* PHY_GBIT_FEATURES */
- 	.probe			= qca83xx_probe,
-@@ -231,8 +229,7 @@ static struct phy_driver qca83xx_driver[] = {
- 	.resume			= qca83xx_resume,
- }, {
- 	/* QCA8327-A from switch QCA8327-AL1A */
--	.phy_id			= QCA8327_A_PHY_ID,
--	.phy_id_mask		= QCA8K_PHY_ID_MASK,
-+	PHY_ID_MATCH_EXACT(QCA8327_A_PHY_ID),
- 	.name			= "Qualcomm Atheros 8327-A internal PHY",
- 	/* PHY_GBIT_FEATURES */
- 	.link_change_notify	= qca83xx_link_change_notify,
-@@ -247,8 +244,7 @@ static struct phy_driver qca83xx_driver[] = {
- 	.resume			= qca83xx_resume,
- }, {
- 	/* QCA8327-B from switch QCA8327-BL1A */
--	.phy_id			= QCA8327_B_PHY_ID,
--	.phy_id_mask		= QCA8K_PHY_ID_MASK,
-+	PHY_ID_MATCH_EXACT(QCA8327_B_PHY_ID),
- 	.name			= "Qualcomm Atheros 8327-B internal PHY",
- 	/* PHY_GBIT_FEATURES */
- 	.link_change_notify	= qca83xx_link_change_notify,
--- 
-2.46.0
-
+ 	struct pegasus *pegasus = input_get_drvdata(dev);
+@@ -223,39 +245,25 @@ static int pegasus_open(struct input_dev *dev)
+ 	if (error)
+ 		return error;
+ 
+-	mutex_lock(&pegasus->pm_mutex);
+-	pegasus->irq->dev = pegasus->usbdev;
+-	if (usb_submit_urb(pegasus->irq, GFP_KERNEL)) {
+-		error = -EIO;
+-		goto err_autopm_put;
++	error = __pegasus_open(pegasus);
++	if (error) {
++		usb_autopm_put_interface(pegasus->intf);
++		return error;
+ 	}
+ 
+-	error = pegasus_set_mode(pegasus, PEN_MODE_XY, NOTETAKER_LED_MOUSE);
+-	if (error)
+-		goto err_kill_urb;
+-
+-	pegasus->is_open = true;
+-	mutex_unlock(&pegasus->pm_mutex);
+ 	return 0;
+-
+-err_kill_urb:
+-	usb_kill_urb(pegasus->irq);
+-	cancel_work_sync(&pegasus->init);
+-err_autopm_put:
+-	mutex_unlock(&pegasus->pm_mutex);
+-	usb_autopm_put_interface(pegasus->intf);
+-	return error;
+ }
+ 
+ static void pegasus_close(struct input_dev *dev)
+ {
+ 	struct pegasus *pegasus = input_get_drvdata(dev);
+ 
+-	mutex_lock(&pegasus->pm_mutex);
+-	usb_kill_urb(pegasus->irq);
+-	cancel_work_sync(&pegasus->init);
+-	pegasus->is_open = false;
+-	mutex_unlock(&pegasus->pm_mutex);
++	scoped_guard(mutex, &pegasus->pm_mutex) {
++		usb_kill_urb(pegasus->irq);
++		cancel_work_sync(&pegasus->init);
++
++		pegasus->is_open = false;
++	}
+ 
+ 	usb_autopm_put_interface(pegasus->intf);
+ }
+@@ -411,10 +419,10 @@ static int pegasus_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+ 	struct pegasus *pegasus = usb_get_intfdata(intf);
+ 
+-	mutex_lock(&pegasus->pm_mutex);
++	guard(mutex)(&pegasus->pm_mutex);
++
+ 	usb_kill_urb(pegasus->irq);
+ 	cancel_work_sync(&pegasus->init);
+-	mutex_unlock(&pegasus->pm_mutex);
+ 
+ 	return 0;
+ }
+@@ -422,31 +430,33 @@ static int pegasus_suspend(struct usb_interface *intf, pm_message_t message)
+ static int pegasus_resume(struct usb_interface *intf)
+ {
+ 	struct pegasus *pegasus = usb_get_intfdata(intf);
+-	int retval = 0;
+ 
+-	mutex_lock(&pegasus->pm_mutex);
++	guard(mutex)(&pegasus->pm_mutex);
++
+ 	if (pegasus->is_open && usb_submit_urb(pegasus->irq, GFP_NOIO) < 0)
+-		retval = -EIO;
+-	mutex_unlock(&pegasus->pm_mutex);
++		return -EIO;
+ 
+-	return retval;
++	return 0;
+ }
+ 
+ static int pegasus_reset_resume(struct usb_interface *intf)
+ {
+ 	struct pegasus *pegasus = usb_get_intfdata(intf);
+-	int retval = 0;
++	int error;
++
++	guard(mutex)(&pegasus->pm_mutex);
+ 
+-	mutex_lock(&pegasus->pm_mutex);
+ 	if (pegasus->is_open) {
+-		retval = pegasus_set_mode(pegasus, PEN_MODE_XY,
++		error = pegasus_set_mode(pegasus, PEN_MODE_XY,
+ 					  NOTETAKER_LED_MOUSE);
+-		if (!retval && usb_submit_urb(pegasus->irq, GFP_NOIO) < 0)
+-			retval = -EIO;
++		if (error)
++			return error;
++
++		if (usb_submit_urb(pegasus->irq, GFP_NOIO) < 0)
++			return -EIO;
+ 	}
+-	mutex_unlock(&pegasus->pm_mutex);
+ 
+-	return retval;
++	return 0;
+ }
+ 
+ static const struct usb_device_id pegasus_ids[] = {
 
