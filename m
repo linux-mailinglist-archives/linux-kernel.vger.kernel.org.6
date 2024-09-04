@@ -1,209 +1,189 @@
-Return-Path: <linux-kernel+bounces-314640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3806996B63A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:13:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5586196B640
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D0541C21F38
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:13:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7641B28B0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5006B1CC8A2;
-	Wed,  4 Sep 2024 09:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB67A1CC174;
+	Wed,  4 Sep 2024 09:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vb6oO/A4"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DJQVWazL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KMkSGSUb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63715188A03
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1BE146A71
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725441158; cv=none; b=ls9AT8sb2LWskMDcSoelBl1BAKNn5tkfQ0O89tfZxTf/uZ6pD8qQG9o6ikkDm6PI5QNwi8Mld22zAvCPjUD6B69IKVnyOsSHvhXQ8sDoBwVMPSrHo/Vc9XVPgIIq0LheoCBAw4A1HCfxGTDcQZPqHL2fLohDJ46oVERddwbGkYA=
+	t=1725441237; cv=none; b=bQubmQKRj1jkwUfNqxM4NBsGI04Wg4kMxWl/SNSaMjTYXNjU7gAfa6jufjbsg1YYDE02Lz9VwUgCu4MCuH0T3cegx85CUyPAJ3M3ukAG5dwvEcpXRpYvS8Bw0K7HLtcqQ0LrP32pYH6OvsRHoczIOsekSvdqZxFcl/ntnqXUZfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725441158; c=relaxed/simple;
-	bh=8uIojRuUuh/ITTtgr6KCPgIS+H0p20N1kXWqEKyAHtk=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=iUx5+KsBn0elJVokgFW7cQaz1inEhdaGwX1HKcGgRadWnEi5gMNaNnTiOvcXozJ2S5EfisOfFWOPVU3bSBSRPdx5voq1VmHolhybpF5cUb50rIuLd6BMsI7WntfN6/o69eUnBsLvY3yLxTXJ04ywp4wIRY2GpihDaIOAC0/OdQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vb6oO/A4; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240904091233euoutp023fab0c7533e35fad74861db5e54bfac3~x-5ZlK0mq1970219702euoutp02e
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:12:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240904091233euoutp023fab0c7533e35fad74861db5e54bfac3~x-5ZlK0mq1970219702euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725441153;
-	bh=qNCe5lDbU9IwCknv8oknYeAE3i96AqlNVmC+nptC8QU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Vb6oO/A4HE0MLLSeOQxKPwAB9jF1YHsvxwCryCn42rZ1x7bY9UEsAIDR983dQj1Vc
-	 nprMHSIinTp8g0/54PWp3MX2mhXVNdwknAiov3JZEsy8gD3e5ppI2FRC0hFMBVZHVm
-	 +kbVIInOumTHW36KjXU6RYXrXWcJGXZnaZWQm51Q=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240904091233eucas1p14c334c438221935d3334208e3b47aadb~x-5ZRbd762523625236eucas1p1e;
-	Wed,  4 Sep 2024 09:12:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id E7.39.09875.18428D66; Wed,  4
-	Sep 2024 10:12:33 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240904091232eucas1p23cc532e9cd4acdbb7f3d2c7ad0073eca~x-5Yt0Oj72250522505eucas1p2j;
-	Wed,  4 Sep 2024 09:12:32 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240904091232eusmtrp1f68797bd09f4a3efe112ec34e912568d~x-5YtLCaH1929319293eusmtrp1h;
-	Wed,  4 Sep 2024 09:12:32 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-41-66d82481ad97
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 12.A3.19096.08428D66; Wed,  4
-	Sep 2024 10:12:32 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240904091232eusmtip1b77e812b7d40ab4f8927fb666b12dad3~x-5YfRP6s0064500645eusmtip1c;
-	Wed,  4 Sep 2024 09:12:32 +0000 (GMT)
-Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 4 Sep 2024 10:12:27 +0100
-Date: Wed, 4 Sep 2024 11:12:23 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
-	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
-	<k.jensen@samsung.com>
-Subject: Re: [PATCH RFC PREVIEW 1/6] iommu/vt-d: Separate page request queue
- from SVM
-Message-ID: <20240904091223.f3olpzrv5lkgekfe@joelS2.panther.com>
+	s=arc-20240116; t=1725441237; c=relaxed/simple;
+	bh=u8bhYvFnT49IG7xZfLJh/uFddGsWzyZvqrW0GdBNfuc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AiQsnNZa4PtKS/LbErLTQfAP4amTkZ1dBAl6mYx/Jf+/+MrznZv3xLzgccLpBS86T6tsxlIdfHsalhu8hnAj6HGe/JugPhndhgAercwmBZyf61S76yruHgMDrKLfeP5jAlmOhlQzV94A6Zuktl48/sJYHoPouLAAGJ+xB3kwU30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DJQVWazL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KMkSGSUb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725441233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8eUE+MWdCemRs8b2uzFkg+N2nJstBw9EI43hLn/xT3Q=;
+	b=DJQVWazLg99HhUMOD4TItzRfFEARK6kMFUhsqXBQ1DZrECNTeSBdU+SPb2dMShxGQhQ9U+
+	fJdN5hJb2n05mgBsKfGpgE9v9BywgNaGdygusUzsz1tEYziLgOJ+rggP7BuNXE1UVLDD1E
+	0zfFDtHEJc9q3E63oB6iwtSaB3+yf7WMYazkpWrG97TFARX//bjwLRBMH1EnuCHfGUbc3O
+	fTi/CzjNd1yEm5u3gZ6BikKtJc1ZAFHBJH9r8/9cCykc/1CZX15WXM24cIH9+w+879tH6E
+	3ouh+E5y79+uD79VOPej7rueXCSdwsrvRLAjQ5vweruluBE1scVBi1TWEILHCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725441233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8eUE+MWdCemRs8b2uzFkg+N2nJstBw9EI43hLn/xT3Q=;
+	b=KMkSGSUbX8CplDSjECSqx2eY9DfGzdkwa8H69YIadC/AJlIqL3uF5ocm6Ves7x8ef0J2ke
+	tSpyEkuE8TGmluAQ==
+To: linux-kernel@vger.kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH v2] timers: Annotate possible non critical data race of next_expiry
+Date: Wed,  4 Sep 2024 11:13:40 +0200
+Message-Id: <20240904091340.33558-1-anna-maria@linutronix.de>
+In-Reply-To: <20240829154305.19259-1-anna-maria@linutronix.de>
+References: <20240829154305.19259-1-anna-maria@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <242056a5-9d16-415a-9913-0add5b050f47@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7qNKjfSDO7dZ7fYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
-	rozt/x6xFvwTrZh/bS5TA+NkwS5GTg4JAROJWbeusHcxcnEICaxglHg86zkThPOFUWLfvH5W
-	COczo8Sm/x2MMC13P82GalnOKDG39TUjXNW5ucuYQaqEBLYwSqydXgZiswioSGyeeB0sziag
-	I3H+zR0wW0RAXaKpcS8bSDOzwF8miaW7n7CDJIQFwiVar+xnAbF5BRwkGrs6mSFsQYmTM5+A
-	xZmBBi3Y/QmomQPIlpZY/o8DJMwp4Cxx9/ApqEuVJQ4uO8QOYddKnNpyC+w3CYHZnBKtl16w
-	QiRcJG42zIcqEpZ4dXwLlC0jcXpyDwtEw2RGif3/PrBDOKsZJZY1fmWCqLKWaLnyBKrDUeL/
-	/80sIBdJCPBJ3HgrCHEon8SkbdOZIcK8Eh1tQhDVahKr771hmcCoPAvJa7OQvDYL4bUFjMyr
-	GMVTS4tz01OLjfJSy/WKE3OLS/PS9ZLzczcxAhPX6X/Hv+xgXP7qo94hRiYOxkOMEhzMSiK8
-	r0VupAnxpiRWVqUW5ccXleakFh9ilOZgURLnVU2RTxUSSE8sSc1OTS1ILYLJMnFwSjUwTdlW
-	M/XitcOBkbsC7itxFSy2dDc69vDG0wU7xPfKqz0In/M/ZldrvISg3z2l2/es5B7u5r0flOcz
-	ozr1P0PTD9vsjoJgK62YVfwbCqK+nWrYvW6js2sb/5Q5T7yWcKUmvIy5JsT5kVW6frXveeHH
-	mzckWEfoHjIIn5e5plj6UFT7k8D0PyfNb7LKeOtMjuu+92XjdIng7NWc0gp2R1/snvBl+uPJ
-	E4Lkglg7jBasdfF+zuj2bfeV3VycLY9XFobvjfQLT/Jbc7B6YePxqTE7pPIz/yj8jHvsljKT
-	he/D4urOz9cE2f+G6qpJvmKuPLCjY7uScepRnVX9NlvsfU5bm75e+eq9tsyE7jUn9zmvV2Ip
-	zkg01GIuKk4EAKymABXLAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7oNKjfSDP5OV7XYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
-	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYzt/x6xFvwTrZh/bS5TA+Nk
-	wS5GTg4JAROJu59ms4PYQgJLGSXObpWEiMtIbPxylRXCFpb4c62LrYuRC6jmI6PE438n2SGc
-	LYwS3fMesoBUsQioSGyeeJ0ZxGYT0JE4/+YOmC0ioC7R1LgXrJtZ4C+TxNLdT8DWCQuES7Re
-	2Q/WzCvgINHY1ckMMbWNSeLN7MeMEAlBiZMzn4AVMQNNXbD7E9AkDiBbWmL5Pw6QMKeAs8Td
-	w6cYIU5Vlji47BA7hF0r8fnvM8YJjMKzkEyahWTSLIRJCxiZVzGKpJYW56bnFhvpFSfmFpfm
-	pesl5+duYgRG77ZjP7fsYFz56qPeIUYmDsZDjBIczEoivK9FbqQJ8aYkVlalFuXHF5XmpBYf
-	YjQFhsVEZinR5Hxg+sgriTc0MzA1NDGzNDC1NDNWEudlu3I+TUggPbEkNTs1tSC1CKaPiYNT
-	qoEpS/dl+utpnkG1U1fUtgcyTrVjO3iTo3yWAWv/tytZPA7hGonuGifumKacC6yR6K8X3Nm+
-	1+3PkZmqjX99PwRPnvSG+YnKf5ejpU7Kdp9qlk/T+hd+3cfnvOPKF5eO8rRrW2StlJi1a84y
-	VYWNGRH57ydKnQzYlNWyPSO7+8e1GCbrg+c8H7x5+fUtO+POeXt9pj/czCs9jyvev8tveve8
-	x9s3/IrVPrOgWOD1HqEH39WXBZcubnicln9b722IlmO+zoKlL6q011+78+O/TI6wR+eHXH7f
-	xpA0tfSW9j9HFxbKHZA1OX16PWNP/pWXTYd6Wvk0/dQDmGzT7zvPtfnxpLotKtLw3eLWR+Ib
-	zjIqsRRnJBpqMRcVJwIAvV2NrWcDAAA=
-X-CMS-MailID: 20240904091232eucas1p23cc532e9cd4acdbb7f3d2c7ad0073eca
-X-Msg-Generator: CA
-X-RootMTR: 20240826130923eucas1p285627a5a210e62fbb0187962b1f8dde5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240826130923eucas1p285627a5a210e62fbb0187962b1f8dde5
-References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
-	<20240826-iopf-for-all-v1-1-59174e6a7528@samsung.com>
-	<CGME20240826130923eucas1p285627a5a210e62fbb0187962b1f8dde5@eucas1p2.samsung.com>
-	<242056a5-9d16-415a-9913-0add5b050f47@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 09:09:14PM +0800, Baolu Lu wrote:
-> On 2024/8/26 19:40, Klaus Jensen wrote:
-> > From: Joel Granados<j.granados@samsung.com>
-> > 
-> > IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM. Move
-> > all Page Request Queue (PRQ) functions that handle prq events to a new
-> > file in drivers/iommu/intel/prq.c. The page_req_des struct is made
-> > available in drivers/iommu/intel/iommu.h.
-> > 
-> > No functional changes are intended. This is a preparation patch to
-> > enable the use of IO page faults outside the SVM and nested use cases.
-> > 
-> > Signed-off-by: Joel Granados<j.granados@samsung.com>
-> > ---
-> >   drivers/iommu/intel/Makefile |   2 +-
-> >   drivers/iommu/intel/iommu.c  |  18 +--
-> >   drivers/iommu/intel/iommu.h  |  40 +++++-
-> >   drivers/iommu/intel/prq.c    | 290 ++++++++++++++++++++++++++++++++++++++++
-> >   drivers/iommu/intel/svm.c    | 308 -------------------------------------------
-> >   5 files changed, 331 insertions(+), 327 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel/Makefile b/drivers/iommu/intel/Makefile
-> > index c8beb0281559..d3bb0798092d 100644
-> > --- a/drivers/iommu/intel/Makefile
-> > +++ b/drivers/iommu/intel/Makefile
-> > @@ -1,6 +1,6 @@
-> >   # SPDX-License-Identifier: GPL-2.0
-> >   obj-$(CONFIG_DMAR_TABLE) += dmar.o
-> > -obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o
-> > +obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o prq.o
-> >   obj-$(CONFIG_DMAR_TABLE) += trace.o cap_audit.o
-> >   obj-$(CONFIG_DMAR_PERF) += perf.o
-> >   obj-$(CONFIG_INTEL_IOMMU_DEBUGFS) += debugfs.o
-> 
-> Thanks for the patch! Now that IOPF is separate from SVA, the Kconfig
-> needs to be updated accordingly.
-> 
-> diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
-> index f52fb39c968e..2888671c9278 100644
-> --- a/drivers/iommu/intel/Kconfig
-> +++ b/drivers/iommu/intel/Kconfig
-> @@ -15,6 +15,7 @@ config INTEL_IOMMU
->          select DMA_OPS
->          select IOMMU_API
->          select IOMMU_IOVA
-> +       select IOMMU_IOPF
-This will force IOMMU_IOPF when INTEL_IOMMU is selected. You do this in
-order to use IOPF if available, but it wont conflict with Intel IOMMU's
-that do not support IOPF. right?
+Global timers could be expired remotely when the target CPU is idle. After
+a remote timer expiry, the remote timer_base->next_expiry value is updated
+while holding the timer_base->lock. When the formerly idle CPU becomes
+active at the same time and checks whether timers need to expire, this
+check is done lockless as it is on the local CPU. This could lead to a data
+race, which was reported by sysbot:
 
->          select IOMMUFD_DRIVER if IOMMUFD
->          select NEED_DMA_MAP_STATE
->          select DMAR_TABLE
-> @@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
->          depends on X86_64
->          select MMU_NOTIFIER
->          select IOMMU_SVA
-> -       select IOMMU_IOPF
-I already had this one
->          help
->            Shared Virtual Memory (SVM) provides a facility for devices
->            to access DMA resources through process address space by
-> 
-> Thanks,
-> baolu
+  https://lore.kernel.org/r/000000000000916e55061f969e14@google.com
 
-Thx for the review
+When the value is read lockless but changed by the remote CPU, only two non
+critical scenarios could happen:
 
-best
+1) The already updated value is read -> everything is perfect
+
+2) The old value is read -> a superfluous timer soft interrupt is raised
+
+The same situation could happen when enqueueing a new first pinned timer by
+a remote CPU also with non critical scenarios:
+
+1) The already updated value is read -> everything is perfect
+
+2) The old value is read -> when the CPU is idle, an IPI is executed
+nevertheless and when the CPU isn't idle, the updated value will be visible
+on the next tick and the timer might be late one jiffie.
+
+As this is very unlikely to happen, the overhead of doing the check under
+the lock is a way more effort, than a superfluous timer soft interrupt or a
+possible 1 jiffie delay of the timer.
+
+Document and annotate this non critical behavior in the code by using
+READ/WRITE_ONCE() pair when accessing timer_base->next_expiry.
+
+Reported-by: syzbot+bf285fcc0a048e028118@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/000000000000916e55061f969e14@google.com
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/time/timer.c | 41 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index d8eb368a5a5b..c74d78aa5543 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -672,7 +672,7 @@ static void enqueue_timer(struct timer_base *base, struct timer_list *timer,
+ 		 * Set the next expiry time and kick the CPU so it
+ 		 * can reevaluate the wheel:
+ 		 */
+-		base->next_expiry = bucket_expiry;
++		WRITE_ONCE(base->next_expiry, bucket_expiry);
+ 		base->timers_pending = true;
+ 		base->next_expiry_recalc = false;
+ 		trigger_dyntick_cpu(base, timer);
+@@ -1966,7 +1966,7 @@ static void next_expiry_recalc(struct timer_base *base)
+ 		clk += adj;
+ 	}
+ 
+-	base->next_expiry = next;
++	WRITE_ONCE(base->next_expiry, next);
+ 	base->next_expiry_recalc = false;
+ 	base->timers_pending = !(next == base->clk + NEXT_TIMER_MAX_DELTA);
+ }
+@@ -2020,7 +2020,7 @@ static unsigned long next_timer_interrupt(struct timer_base *base,
+ 	 * easy comparable to find out which base holds the first pending timer.
+ 	 */
+ 	if (!base->timers_pending)
+-		base->next_expiry = basej + NEXT_TIMER_MAX_DELTA;
++		WRITE_ONCE(base->next_expiry, basej + NEXT_TIMER_MAX_DELTA);
+ 
+ 	return base->next_expiry;
+ }
+@@ -2464,8 +2464,39 @@ static void run_local_timers(void)
+ 	hrtimer_run_queues();
+ 
+ 	for (int i = 0; i < NR_BASES; i++, base++) {
+-		/* Raise the softirq only if required. */
+-		if (time_after_eq(jiffies, base->next_expiry) ||
++		/*
++		 * Raise the softirq only if required.
++		 *
++		 * timer_base::next_expiry can be written by a remote CPU while
++		 * holding the lock. If this write happens at the same time than
++		 * the lockless local read, sanity checker could complain about
++		 * data corruption.
++		 *
++		 * There are two possible situations where
++		 * timer_base::next_expiry is written by a remote CPU:
++		 *
++		 * 1. Remote CPU expires global timers of this CPU and updates
++		 * timer_base::next_expiry of BASE_GLOBAL afterwards in
++		 * next_timer_interrupt() or timer_recalc_next_expiry(). The
++		 * worst outcome is a superfluous raise of the timer softirq
++		 * when the not yet updated value is read.
++		 *
++		 * 2. A new first pinned timer is enqueued by a remote CPU and
++		 * therefore timer_base::next_expiry of BASE_LOCAL is
++		 * updated. When this update is missed, this isn't a problem, as
++		 * an IPI is executed nevertheless when the CPU was idle
++		 * before. When the CPU wasn't idle but the update is missed,
++		 * then the timer would expire one jiffie late - bad luck.
++		 *
++		 * Those unlikely corner cases where the worst outcome is only a
++		 * one jiffie delay or a superfluous raise of the softirq are
++		 * not that expensive as doing the check always while holding
++		 * the lock.
++		 *
++		 * Possible remote writers are using WRITE_ONCE(). Local reader
++		 * uses therefore READ_ONCE().
++		 */
++		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
+ 		    (i == BASE_DEF && tmigr_requires_handle_remote())) {
+ 			raise_softirq(TIMER_SOFTIRQ);
+ 			return;
 -- 
+2.39.2
 
-Joel Granados
 
