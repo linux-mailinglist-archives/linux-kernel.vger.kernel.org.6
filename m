@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-314649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFA096B657
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9228E96B659
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6298F1C24732
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42781C24906
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6AC1CC16B;
-	Wed,  4 Sep 2024 09:19:54 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638851CCEC1;
+	Wed,  4 Sep 2024 09:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WP+udyLc"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165DB405C9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7703A189911;
+	Wed,  4 Sep 2024 09:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725441594; cv=none; b=FH89dzwAGDPnuj+4JOluwCvrorK4YPLGWOI7WvpoN/hR1gj3vf2pn/6/Ufuub2mfZ/83tpA+RpKz299wt9wTVtFz3+wUfYCHaLK0ppG3+zhhNsERs5ZdCa6B+uqopGRkIKIc+alODvn6G4rf7qftuxOOSPgKvtiL4e8HNSjaufA=
+	t=1725441601; cv=none; b=ZcxrIDAfHwglSZpJvSVWJWuiT33dlc5EhxDerKrVLitTP6OaLlS1VSm7MRf4SEh1irLrjfpuBsA9HUoVoDhC5nQcGCYMCj/z6uDlZGCfZ4G/L/sLzfPGanS/ps0nYjmzspdMSJHuJ0DlnTcPgGQ6lxBpgJAanfo5oiz1ktkn2jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725441594; c=relaxed/simple;
-	bh=USPPGjr96n8O2xL2B62X77NHhPpSSdjESlTCwhaL/oQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XoLXxcMzEtXRspoVmpoLuTBSsI95b6kXnd15KVBePd3wcRhk9YP/U42e9rgTojpTyVnWlFaGFYPgTpqewqSqqNTEfA7VH+k+QMxQJzFkUByYQr3u8P3ATb/sWnGNEi2Ml10a5yIlAYPnA+SxTnqkCEWdC2lxyTtS8mZI6Jw/+rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzH4c3GdMz1j7rs;
-	Wed,  4 Sep 2024 17:19:28 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 83D7814011D;
-	Wed,  4 Sep 2024 17:19:48 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 4 Sep 2024 17:19:47 +0800
-Message-ID: <ede19a0d-4070-568f-becb-13872a7191a5@huawei.com>
-Date: Wed, 4 Sep 2024 17:19:47 +0800
+	s=arc-20240116; t=1725441601; c=relaxed/simple;
+	bh=6razxB3XTRNpTtjx5k2asc6Vi4m/sy8jDxjHmpj8T+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iqxywc4tsANj8YEvi275ldzQY04bNtQGrxpOBkS1a1GKK0WQZK0ASUV9Ki+DWRw51082TprBpEPOM6rKiTf2vmLxUWwXLIzv8rLTJGlKLdgHaxllLTvPoCV2jwDWPY8R3o9lffW7MIonx2J0NOB6HFJdRyUzDLeQi+iq0lKKl3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WP+udyLc; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71446767885so808453b3a.1;
+        Wed, 04 Sep 2024 02:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725441600; x=1726046400; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OxhuHC0JvOevWNQu8AZfhKCuLUtBcUPOpy8EHD7yMss=;
+        b=WP+udyLc0+SxFZ0GWLpDzczZW8hXbwWl0ifW6nXFN3nsUTHMkDPC/N9q82X3/mpoHe
+         F1MvqGNApa/Ftiq6M4D/RmtiNuWp4sSekp+cZ9F4PHNyCsNrqf0u+G99YoLWjcrIJUsg
+         umEs8nwBNm+Ia4PlugGxN/RDByg/g1ltyNOQAwX6OB1BrTg18neXPwgzVnI7/07mAbb/
+         6CKyKx7YrHiaeTwQXQmrqDSPP8aN8pJAa8eCyR580pqYiJqateO55D71lQxXIrGensaE
+         W56MxOn0WIUP6XNhR/iibj4agVR9j8ztjj4Jp+ZIjns4vkzxakMfkmJ7YERmpdp8Ns5y
+         KzGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725441600; x=1726046400;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxhuHC0JvOevWNQu8AZfhKCuLUtBcUPOpy8EHD7yMss=;
+        b=b7c7FiRoF9YxVXdrsRPksPKaFoaMJbB6e/qXUF6JGu8YMt+VqbSuazt9zOMoIhTWaK
+         s+z5jzt2xAOfd3NTrBBXiBTEvS71UBWqZT7z2PLUOmkv1giBnjc7IC3U4uQbdnxzLFmn
+         2xWZkOfighwAJMV5x/hct8PuDpVX+RLud10CzoRpUh6+UaR1h7O9f90d7+zJ/KnuiCcl
+         PBBQjnPLgF26639/KiKAbLzTX1gQ514AclcZPzRHRt0c9RD24XiKuJzgI1UEPCgWINdt
+         iIuyzLDf20k7GLSz1DbfmTILYoSBX9Pz5rYF9pD3Cb38irOkU5D1qMBIpFD6aiD6sJHe
+         ItNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/pfMsqXguh2R+SAQ76+mCxWHrpss+2lNEBpfAtqL9EzA4ngXz0MeDwky/YgZYqdCxb3cW6v6g2hq2PQol@vger.kernel.org, AJvYcCWBXz5tb5ZIm0N1WqgtTpGlIqGLi1ysLGkROCZuh/KyNAZ4S3DGG62zy9fdMj7qny0JDyz0AjQvN8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOy5bj04mQPhRWyIXjtc/k7MNGRKk4ir1GLFt/OOnifex/I7J4
+	bKAnLf0CZsmjIJgG7tLz+fZceORgVUf9y2uDR4L+1mqnh9zj8nec
+X-Google-Smtp-Source: AGHT+IG5r6LxxwSLcNuPIJYghUjnmKjDnBlTWOs1dfy7rWXAbChhgR1aoLhCrrGTbYXoCyfbbXZqDQ==
+X-Received: by 2002:a05:6a00:949f:b0:710:5d11:ec2e with SMTP id d2e1a72fcca58-71730436186mr9661376b3a.0.1725441599555;
+        Wed, 04 Sep 2024 02:19:59 -0700 (PDT)
+Received: from [100.116.227.126] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717785227cfsm1196764b3a.34.2024.09.04.02.19.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 02:19:58 -0700 (PDT)
+Message-ID: <e477448a-6bf9-4ef6-bf53-25a278430f24@gmail.com>
+Date: Wed, 4 Sep 2024 17:19:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] static_call: Handle module init failure correctly in
- static_call_del_module()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: proximity: hx9023s: Use 'CLOCK_BOOTTIME' as the
+ default clock source
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: jic23@kernel.org, dan.carpenter@linaro.org, nuno.sa@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902103210.31369-1-yasin.lee.x@gmail.com>
+ <e2106a4f-ed3a-4b02-b1d2-d54c096fcab8@metafoo.de>
 Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
-References: <87cylj7v6x.ffs@tglx>
- <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <87zfon6b0s.ffs@tglx>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <87zfon6b0s.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+From: Yasin Lee <yasin.lee.x@gmail.com>
+In-Reply-To: <e2106a4f-ed3a-4b02-b1d2-d54c096fcab8@metafoo.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 9/2/24 18:43, Lars-Peter Clausen wrote:
+> On 9/2/24 12:32, Yasin Lee wrote:
+>> Override the default (CLOCK_REALTIME) clock source to 'CLOCK_BOOTTIME'.
+> Why? Won't this break existing applications that rely on the current 
+> default?
+>
+Dear Lars-Peter,
+
+Thank you very much for your careful review. After careful 
+consideration, I agree that changing the clock source from 
+CLOCK_REALTIME to CLOCK_BOOTTIME was not the right approach.
+
+This submission is incorrect and will be discarded.
+
+Best regards,
+Yasin Lee
 
 
-
-On 2024/9/4 17:09, Thomas Gleixner wrote:
-> Module insertion invokes static_call_add_module() to initialize the static
-> calls in a module. static_call_add_module() invokes __static_call_init(),
-> which allocates a struct static_call_mod to either encapsulate the built-in
-> static call sites of the associated key into it so further modules can be
-> added or to append the module to the module chain.
-> 
-> If that allocation fails the function returns with an error code and the
-> module core invokes static_call_del_module() to clean up eventually added
-> static_call_mod entries.
-> 
-> This works correctly, when all keys used by the module were converted over
-> to a module chain before the failure. If not then static_call_del_module()
-> causes a #GP as it blindly assumes that key::mods points to a valid struct
-> static_call_mod.
-> 
-> The problem is that key::mods is not a individual struct member of struct
-> static_call_key, it's part of a union to save space:
-> 
->         union {
->                 /* bit 0: 0 = mods, 1 = sites */
->                 unsigned long type;
->                 struct static_call_mod *mods;
->                 struct static_call_site *sites;
-> 	};
-> 
-> key::sites is a pointer to the list of built-in usage sites of the static
-> call. The type of the pointer is differentiated by bit 0. A mods pointer
-> has the bit clear, the sites pointer has the bit set.
-> 
-> As static_call_del_module() blidly assumes that the pointer is a valid
-> static_call_mod type, it fails to check for this failure case and
-> dereferences the pointer to the list of built-in call sites, which is
-> obviously bogus.
-> 
-> Cure it by checking whether the key has a sites or a mods pointer. 
-> 
-> If it's a sites pointer then the key is not to be touched. As the sites are
-> walked in the same order as in __static_call_init() the site walk can be
-> terminated because all subsequent sites have not been touched by the init
-> code due to the error exit.
-> 
-> If it was converted before the allocation fail, then the inner loop which
-> searches for a module match will find nothing.
-> 
-> A fail in the second allocation in __static_call_init() is harmless and
-> does not require special treatment. The first allocation succeeded and
-> converted the key to a module chain. That first entry has mod::mod == NULL
-> and mod::next == NULL, so the inner loop of static_call_del_module() will
-> neither find a module match nor a module chain. The next site in the walk
-> was either already converted, but can't match the module, or it will exit
-> the outer loop because it has a static_call_site pointer and not a
-> static_call_mod pointer.
-> 
-> Fixes: 9183c3f9ed71 ("static_call: Add inline static call infrastructure")
-> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com
-> ---
-> V2: Use static_call_key_has_mods() instead
-> ---
->  kernel/static_call_inline.c |   11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> --- a/kernel/static_call_inline.c
-> +++ b/kernel/static_call_inline.c
-> @@ -411,6 +411,17 @@ static void static_call_del_module(struc
->  
->  	for (site = start; site < stop; site++) {
->  		key = static_call_key(site);
-> +
-> +		/*
-> +		 * If the key was not updated due to a memory allocation
-> +		 * failure in __static_call_init() then treating key::sites
-> +		 * as key::mods in the code below would cause random memory
-> +		 * access and #GP. In that case all subsequent sites have
-> +		 * not been touched either, so stop iterating.
-> +		 */
-> +		if (!static_call_key_has_mods(key))
-> +			break;
-> +
-
-Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
-
->  		if (key == prev_key)
->  			continue;
->  
+>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+>> ---
+>>   drivers/iio/proximity/hx9023s.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/iio/proximity/hx9023s.c 
+>> b/drivers/iio/proximity/hx9023s.c
+>> index 8b9f84400e00..5363357a9a46 100644
+>> --- a/drivers/iio/proximity/hx9023s.c
+>> +++ b/drivers/iio/proximity/hx9023s.c
+>> @@ -1074,6 +1074,10 @@ static int hx9023s_probe(struct i2c_client 
+>> *client)
+>>                            "iio trigger register failed\n");
+>>       }
+>>   +    ret = iio_device_set_clock(indio_dev, CLOCK_BOOTTIME);
+>> +    if (ret)
+>> +        return dev_err_probe(dev, ret, "clock boottime set failed\n");
+>> +
+>>       ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+>>                             iio_pollfunc_store_time,
+>>                             hx9023s_trigger_handler,
+>
+>
 
