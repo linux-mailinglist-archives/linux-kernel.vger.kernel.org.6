@@ -1,89 +1,111 @@
-Return-Path: <linux-kernel+bounces-314042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346D696AE0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F68896AE1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE96028722C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520681C24684
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1E6FBF0;
-	Wed,  4 Sep 2024 01:45:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FA5FC12;
+	Wed,  4 Sep 2024 01:50:22 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6A78479
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B5A3211;
+	Wed,  4 Sep 2024 01:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725414304; cv=none; b=PYigWr1xAJREkk1lTXcacCibrlq4NZn8anMSfL9jirjQv5W5D3YlPH8I3i35gzhDKYFIFf1SeZSycAPNiZZ75/kqvO3yEPdrVtdnGlQB2BbAsX60ITBb11LD3Od9D1vpwdMBccPszA8JzIi2G6bBD8zLsUOOqYl8kxTKJOv76+k=
+	t=1725414622; cv=none; b=GnHSBwi5yU5ejisVhKdPzESwtupsRlnoGiUub7t3SfIaH2aNTsv8VMosgsI4JT4tcWzd9G6QXeTihX4PP7yMYeGL7ZY3Cxc/kc9BZWRik4inChxJacxXWrkjMHnlIF7buzRY1Ol5VAyAtfz2QImfOQ+3mr2vv4Gahq8Zl69VnJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725414304; c=relaxed/simple;
-	bh=m1mXIEDr/IbwS9GlrrzzwAngVdTAdbhIZSYB8Z1CfG8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V3ffA0xGbg+T/UQX7+HdBBrX+ferMGF9uEGQ+NjCBQdaAwd07BdfbppHqHPWALcUeYISVRersFE2exb6NtRmMYlgmWw5qlptFgVVgUnjCmNWGTNAv/3+dKfxBIKEF6w7hIe0jbG74VNbbP/4L9FbnzRSCONBdOZhEScSO+egMag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a2723a5aeso616626839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 18:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725414302; x=1726019102;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pZoQfu8oqTiOj2fV5vz8MzHgkTCXFalaNffJTpuCLY=;
-        b=F+2lVqJ0NFF4dXoaRCWmUJM4R0qdMDNSb2MiCl04x+4pyS7H0DOvghsRfBetERixJH
-         j87ZAla+qRuyg+Ip07nnQzFz+uEArtDXK7HrZTuOS5pk+q0dS4RxGvTqz27+kaWcFzLg
-         6MdlzLGzI9rXUyMqTi0KIEFijq88o4xgrrPNGrtPjjxPGTCf7i/cfvQStu0hduOryB/Z
-         5RAis9t4Adf6GrDVMiBQcs3hz84amP9MUg1us+usc8iwqQNzPRUIgLmcYMZvJu7axPi1
-         z80N4LGMitXZCEsvZjhFaL2G6JojGCFv+tVto2WAcax/myriO59VJQwFAjYjbhktF1Ev
-         CnGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlGsHcZnak2YAvWIE/5Y3aFfphHNHuh4ZtQQR/QALBWGvJY7OQEHDyUjCLZ6JH2K0xrOLiAIp9+hlQ+hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEuXupX4cd1OjZxbEYBtKwH6M4qVgYo9Q5Plb0xC210324BgaQ
-	gZugxfj6sglLLU/vUgYJ3jEkQCRBI514ZMACYP2rqjLzA4RoOshyDANCpUiYXUQfr6yLJTCwIhe
-	EZODDhSkBKxxhJUYpAU1ksmwVfIC0zESzQvpRRpQJmoa9wManlJSGCJQ=
-X-Google-Smtp-Source: AGHT+IH/ht6BsylWpDgyQ95sEtKZSp9Xp6m0ldMmnCpQOByiFDTHr/A2/uC2Qd8O/uAKOr4m2k3PuEdRl/7RURLNcj0WMB6XHtRC
+	s=arc-20240116; t=1725414622; c=relaxed/simple;
+	bh=84VRkPJTtA9jez+1Ca+HJo77sFU4+bGKeT4ApDxyVVY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CHAqtRhAZItXxSB1jiLoEhSl9AO8ggIyaBGt62n3tLFibYdRWgxHn0Tv29WKmECIEiCtLzoPCwKJNy/V3R8bYTwkD+f60+5Y55aqjHSSgk0MDoK1yQistb3262XxtoEd+bsAGbab/TV+IPypkaKXCc7Gmvn4Gb+8Z8REEjleZo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAB3f3_WvNdm9sn1AA--.50551S2;
+	Wed, 04 Sep 2024 09:50:14 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: richardcochran@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
+Date: Wed,  4 Sep 2024 09:50:03 +0800
+Message-Id: <20240904015003.1065872-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1549:b0:82a:4ec9:9b12 with SMTP id
- ca18e2360f4ac-82a4ec99e12mr61069039f.1.1725414302222; Tue, 03 Sep 2024
- 18:45:02 -0700 (PDT)
-Date: Tue, 03 Sep 2024 18:45:02 -0700
-In-Reply-To: <CAG-Bmoeb3T5h2oqUFkB2D-rZw--xG4gdg7BGWv0Ke_q261VbWA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009324720621415223@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_root_node
-From: syzbot <syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com>
-To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAB3f3_WvNdm9sn1AA--.50551S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4kZF4UCFg_yoW8Jw1Upr
+	yqya9Iyr4ktFWjva9rKanxXry5Wan3W3yxJrW5twnIy3W0yF17Zr1Fkr15ArZ8W3y8KrWx
+	Ar1xAryjyF4Fv3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I
+	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+	GVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
+	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJbIYCTnIWIevJa73UjIFyTuYvjfUbuWlDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hello,
+Replace comma between expressions with semicolons.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-failed to apply patch:
-checking file fs/btrfs/ref-verify.c
-Hunk #1 FAILED at 1002.
-1 out of 1 hunk FAILED
+Found by inspection.
+No functional change intended.
+Compile tested only.
 
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changelog:
 
+v1 -> v2:
 
-Tested on:
+1. Update commit message.
+---
+ drivers/ptp/ptp_idt82p33.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-commit:         88fac175 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=124b14ab980000
+diff --git a/drivers/ptp/ptp_idt82p33.c b/drivers/ptp/ptp_idt82p33.c
+index 92bb42c43fb2..d5732490ed9d 100644
+--- a/drivers/ptp/ptp_idt82p33.c
++++ b/drivers/ptp/ptp_idt82p33.c
+@@ -1171,10 +1171,10 @@ static void idt82p33_caps_init(u32 index, struct ptp_clock_info *caps,
+ 	caps->owner = THIS_MODULE;
+ 	caps->max_adj = DCO_MAX_PPB;
+ 	caps->n_per_out = MAX_PER_OUT;
+-	caps->n_ext_ts = MAX_PHC_PLL,
+-	caps->n_pins = max_pins,
+-	caps->adjphase = idt82p33_adjwritephase,
+-	caps->getmaxphase = idt82p33_getmaxphase,
++	caps->n_ext_ts = MAX_PHC_PLL;
++	caps->n_pins = max_pins;
++	caps->adjphase = idt82p33_adjwritephase;
++	caps->getmaxphase = idt82p33_getmaxphase;
+ 	caps->adjfine = idt82p33_adjfine;
+ 	caps->adjtime = idt82p33_adjtime;
+ 	caps->gettime64 = idt82p33_gettime;
+-- 
+2.25.1
 
 
