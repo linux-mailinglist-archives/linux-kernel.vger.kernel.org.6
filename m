@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-315940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544DE96C8E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47D596C8F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023D01F28793
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035191C25BB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D5D530;
-	Wed,  4 Sep 2024 20:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5930517B514;
+	Wed,  4 Sep 2024 20:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="G8TI0Z9i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C+FVqOBN"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7D1C2F2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209251714C1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725482793; cv=none; b=r+TsRoOsUQpaV4TulN1cYcwzvb/R3jkUoNaGF1V+eNjJRys7FNgWDZL3hBpmvcwUHhiUiYXNymc9YYsq+90xVOexbY3pyQP7EY1nUQids3imdPitaYuBXcIniTaPfUDTRcIOVPCOE6Ly39uUwF+/bY4q9YE4napELlXKH9opLxM=
+	t=1725482910; cv=none; b=JlxieXwNBRNjpKx9G5UE359ymXj3Xr8CUdXECadEMnFvvSQZ7Jlf1V5qv9L/xs2+Swm0r7JKy8SFoJrE8RO4cQAwY1d4nKPAQ57AUtn2qAk47CEIkmq2EaAMoeEjjt+UAXMUJh5Kt/FrzQljyAFwN42sUotd/CV0HK8wZwz471E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725482793; c=relaxed/simple;
-	bh=jLJ6mKIo3HkW7nk29ShAZtA3mgb0x2uwBj+JNND4bB8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=K4/wy8d5OOJvUNgeEX8WQbQQZRvE+qka2ojOxJS6Q/N7rljNny/V7rUi3o919l6rqwaaZqb16wSX73BLTscPvtag5bpjtZsRuIuMM7093h8QXKcOOqIRBHCCT5qOuQjb8ZbNPKDIX5f0QxVCID9/Uw2teixZ0XXkZVOcIwdZTlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=G8TI0Z9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB1AC4CEC5;
-	Wed,  4 Sep 2024 20:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725482793;
-	bh=jLJ6mKIo3HkW7nk29ShAZtA3mgb0x2uwBj+JNND4bB8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G8TI0Z9iyV7aD8ODKdg3+t6z2OhUN531PgCCXIxmXHyFN22XizUeEOuQtutODlpwF
-	 n5KzFrIeQ6Af/U89Fel5aEfbp4Kt2JTphVVrAp50l0GgY22ME7WFYrWl+PYD6FsH3+
-	 te9O/fK6+6n1mZEnoVoN81t2rh/6VwqNC8SB8c7g=
-Date: Wed, 4 Sep 2024 13:46:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins
- <hughd@google.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, David
- Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, Lance Yang
- <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 2/2] mm: Tidy up shmem mTHP controls and stats
-Message-Id: <20240904134631.4dd7a0bde6439aad3a275002@linux-foundation.org>
-In-Reply-To: <f7ced14c-8bc5-405f-bee7-94f63980f525@arm.com>
-References: <20240808111849.651867-1-ryan.roberts@arm.com>
-	<20240808111849.651867-3-ryan.roberts@arm.com>
-	<747d1319-f746-4379-bf88-a0f6c3f558b4@linux.alibaba.com>
-	<f7ced14c-8bc5-405f-bee7-94f63980f525@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725482910; c=relaxed/simple;
+	bh=IlJyInQbVE7u36t+XXgKiK53ANBHKwwMMhwzf2pzfBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=emLDyDpBbkvWSD8y43n+fi7HlZrAqQKfydO/lNtt7BAUDUFXl0ROBxBsBUZCcZdB88QbQgbxM62P4imjNC7wbUqwvNIydYvfhHsQzQUEGzr87wgr0j1oyeUVbjduMAhSnyPpBFcjFnldMCTXDYtfXCxylujMflJwdnEqB478AqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C+FVqOBN; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4567fe32141so28051cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 13:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725482907; x=1726087707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlJyInQbVE7u36t+XXgKiK53ANBHKwwMMhwzf2pzfBs=;
+        b=C+FVqOBNOxx7XkHDFlPxba1pKcW+FPVRZ1XczH35o1arUNEmTAt/yA961yMdFV7FX7
+         Ih97totuYdKbOWzaiqikj9hjUTjY0yobopDRhO7BEeZMZGxaJXK+Yq0qubLNbunnmLJv
+         BNY90s19C8iY8Q2/IoE31XCC6/xDgtysogXItJjFiwYeODdC66eom57HndQcTo/28Vnj
+         8wCCy8noCcTbNNmfRb9bvPfcqggRN4gwiJfeOy6LOYJu9ZwIm+mnyw9QAtkDiyqzh/CF
+         L9+aWnpQl8x/AfiUXyp+KqQ+CQqAFn/o+/oOWXE+5v4zenSLepeaSyK+jx3lzml/MCdt
+         83Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725482907; x=1726087707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IlJyInQbVE7u36t+XXgKiK53ANBHKwwMMhwzf2pzfBs=;
+        b=N05Bb9c6E5M9Fpg4RSUwo0uvVwOdubO1bQCZvcX+fG6oNtoFjKmXorhZ3nWgZEt/GG
+         FarnAIj9WS2hqMDzK2tYHb6qaL8yMO2x5JgS5cNIjSd7QrREfunOxVQrDY+q8xYuIItA
+         mpIJcIyCexv1ivbXCxnAO9ITyBob9b6l+EDfwM9mbm7U9JBSYC1h6EEiPADclZcR/4Aa
+         4FonfseaUM3IDT8Tjfiz0ZVYDLcTleYqpNf9Upj1TyRyiz98cNQizYp1vCPGog5FQYlw
+         LmafTjiedRi4G3R8d30lD0cVWso4/Hqn2hPOKj46kvXMd255mTf7Ymlgrm3em+tEWJQ1
+         okwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOC4xIeaakH9Z+dYoeGCAmQxUfhoHqMIDiuhTfPGv0cztJNtu6dvVI+1HTAPyCKSM3y+DVRcwuTzfUaYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjP3PnI8kTcGBqoTntH0pWvAp6NDIzrl5rLQMjEPWyvZEeMgmS
+	JGyMaU3vjGHp1hIRtriPPNSITCEsKtHpYPx90Z00Ch7zixVklm+720p9sscM8J1mABRlX03i6wq
+	HBESHa5pNC8S1xB2Hz4wKWu60AQEKXYZ7kK3C
+X-Google-Smtp-Source: AGHT+IH29w72UxfNOmF+cOkn6nGTKhQJqTJySHQ6AISmMgpemfPBBYnt6mkLOYyAZK7vuhZ4wOocZ3LTTemcXVPpeUk=
+X-Received: by 2002:a05:622a:64e:b0:453:581f:f29e with SMTP id
+ d75a77b69052e-45801f21252mr1019391cf.24.1725482906905; Wed, 04 Sep 2024
+ 13:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-39-samitolvanen@google.com> <CAK7LNAQ4Qy-Z7Z2ads7JNRs+aTP5BrRTqCZgmm51e+_6mU3sYg@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ4Qy-Z7Z2ads7JNRs+aTP5BrRTqCZgmm51e+_6mU3sYg@mail.gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 4 Sep 2024 20:47:48 +0000
+Message-ID: <CABCJKuccRnMAn4VUWjD4=2NXOR1a=wpHp-iNNUTv_Eh4e8155A@mail.gmail.com>
+Subject: Re: [PATCH v2 18/19] x86/asm-prototypes: Include <asm/ptrace.h>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 4 Sep 2024 11:47:29 +0100 Ryan Roberts <ryan.roberts@arm.com> wrote:
+Hi Masahiro,
 
-> >> +static struct attribute *any_ctrl_attrs[] =3D {
-> >> +=A0=A0=A0 NULL,
-> >> +};
-> >> +
-> >> +static const struct attribute_group any_ctrl_attr_grp =3D {
-> >> +=A0=A0=A0 .attrs =3D any_ctrl_attrs,
-> >> =A0 };
-> >=20
-> > I wonder why adding a NULL group?
-
-Was this review comment addressed?
-
+On Sun, Sep 1, 2024 at 10:51=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 >
-> ...
+> On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
+e.com> wrote:
+> >
+> > <asm/ftrace.h> refers to struct pt_regs, make sure it's visible.
+> >
+> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 >
-> >> +=A0=A0=A0 &shmem_alloc_attr.attr,
-> >> +=A0=A0=A0 &shmem_fallback_attr.attr,
-> >> +=A0=A0=A0 &shmem_fallback_charge_attr.attr,
-> >> +#endif
-> >> +=A0=A0=A0 NULL,
-> >> +};
-> >> +
-> >> +static struct attribute_group file_stats_attr_grp =3D {
-> >> +=A0=A0=A0 .name =3D "stats",
-> >> +=A0=A0=A0 .attrs =3D file_stats_attrs,
-> >> +};
-> >> +
-> >> +static struct attribute *any_stats_attrs[] =3D {
-> >> +#ifdef CONFIG_SHMEM
-> >> +=A0=A0=A0 &swpout_attr.attr,
-> >> +=A0=A0=A0 &swpout_fallback_attr.attr,
-> >> +#endif
-> >=20
-> > Sorry I did not point it out in early version. I think file pages and s=
-hmem can
-> > also be split, while 'split_deferred' is only for anonymous page. So I =
-think the
-> > any_stats_attrs should be:
-> > static struct attribute *any_stats_attrs[] =3D {
-> > #ifdef CONFIG_SHMEM
-> > =A0=A0=A0=A0&swpout_attr.attr,
-> > =A0=A0=A0=A0&swpout_fallback_attr.attr,
-> > #endif
-> > =A0=A0=A0=A0&split_attr.attr,
-> > =A0=A0=A0=A0&split_failed_attr.attr,
-> > =A0=A0=A0=A0NULL,
-> > };
->=20
-> Could you please squash the following into this patch, which is already in
-> mm-unstable? I'm hoping this sufficient and I don't need to send a whole =
-new
-> revision since there are changes on top of this in mm-unstable, which mak=
-es
-> things tricky.
+>
+> Then, why don't you include <asm/ptrace.h>
+> from arch/x86/include/asm/ftrace.h
+> instead of from arch/x86/include/asm/asm-prototypes.h
+>
+>
+> And, this patch can get in independently.
+>
+> You should send it as a standalone patch
+> to the x86 ML.
 
-I did that.  Please send along a Signoff and a changelog?
+Sure, that works too. I'll send a separate patch for this.
 
-
+Sami
 
