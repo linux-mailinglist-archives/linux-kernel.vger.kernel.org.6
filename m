@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-314794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4FF96B8A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:33:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A9496B8A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779EE286BE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:33:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 287DAB21A5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7791CF5EB;
-	Wed,  4 Sep 2024 10:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EB21CCEE3;
+	Wed,  4 Sep 2024 10:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfBp447m"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SO6odcXg"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF0126C01
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A284A40
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445983; cv=none; b=ODmSVJbzIsi0O6YvKRZGIGiiLFQCDzsp5WL+KiPn9jR5J8q9hdxwW5mHuNGeXLxP14D1RYWeKhHp17cGAcXEtlGaWJ4FYwxPVj53A6z8vVnCx3jH2DhJKC4R28Vx9ElSwDAwoQOgc8ZXxrPqX5UsbeyFqBErzb4wzASGz6Ca7Bg=
+	t=1725446057; cv=none; b=ovWGCkK5eqMfRflYnhjW6/uca9Ci3h3yHhj244YMEqEeb5HfFVqgfCQ3cv5gkD0bSHbqX8bBCa00Vla2nyI6xFO/PNyHb9oxwseAkt7EX3T+9QDCm7EdDns7d+AswcwSRKsYWQyswxcI2Dh36HrEQpaIeQwZxTQ8lDmiZMSBOf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445983; c=relaxed/simple;
-	bh=3AvC/HvopHDKWAFbhonJNcdID+9j3PuDBg2EN9cYUXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y4OvpF+SonQnmNGPtBkriqZYMjabFq4OiIjlBdEOybYZemoabsr2qJWI+Ault8N1WYDhdZ28fNDXY/N8sDmmd9ke99gDBzMhEMnVXb6YEXjstncIJ4k8MX94q8lMvghfWUKX51e7ZiSl+XNGunLDTqgmcGN2z702/ISVRG7Utm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfBp447m; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so3158956f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:33:01 -0700 (PDT)
+	s=arc-20240116; t=1725446057; c=relaxed/simple;
+	bh=dLmnx1TF4SiaKL4QOrvyrbwA7Guxd3AQOia6Omz2e0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozdOr9YwX4UAMFa2qOYNBKuMmpj1lOKi9elNb36a7VdXQdnyQepdMzFywUflRrARRC9zpzZOYnrejNTrZuKzkiwuFcU4cpF0sCDQwCvwBPi0/pCLL+SSlW/q+HBDLk74E7m9PTE6F22PkRs/S7HafOwXV1GdHcrUMplPJFl9la8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SO6odcXg; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c26a52cf82so1256718a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725445980; x=1726050780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KE1/Hq11uOxchKULHphyn5S0kqPZsHWqE0/VF8WLruQ=;
-        b=SfBp447mlIMOS2J7bGY3nhmcX0FnsiMWMJ+worm0mBjeh2AgS6bkC7iWTHSlFl/IcV
-         fCl79wYB/NCwbiIm33h0bWoGpgiVvv/Wyk9SkeUrQZQ7ncdWxyrh7UD58RnuUWOquVVX
-         Xm3YxyETuDzGaJvpX4kZlXk7IMSZGQPmb36llwMrmweltIXgEgD0K/NKhhU/RH8G/U2w
-         iH2lxb2pDZpt6GDIRReyV/nwAXsGlpQaLyeNxo+eM/35DA9hhUFpX9Jh9dxAt41f8Kar
-         6Aek3u5IbP6m1hRAhRciUP0WWgPItoRxj/kEWjFUB+rkaidqrQj8YcfrJ4ocDaydwAf5
-         pBzA==
+        d=suse.com; s=google; t=1725446054; x=1726050854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUsWBUhOnHC+ub+4Jhy0Mx4GpfwgZi2d8Xn0uLNWsSQ=;
+        b=SO6odcXgbAlGkA9FbvXHbLetaLzg+lwc36pynDWRV9kZjYCNwUxj0cnM76t+P3bXGu
+         0FIDUFreRlbruDoaapBwjTIjQ9kGmeMzxqe5oO2Az0HJ4FdITSmEAiu+bv8LPeQuskem
+         rf81PEtI0/p/QVt3zansBK6aiOGPSR47aSedHLhi+J1gDJolSp1DmIs+t2Q3zwvByArn
+         AOXU02wsZNv3CZsKZaL0WwLCPK8BCPQjXRjMq9Fbogx7p+kfpHpaEo+WPYYJ7fUHaIT8
+         c8GkKZGXM6X4NpT89Sq4pJD0jZB85ZwDE0pvy6OkRkPKM7+przfgRC4LHXZGbFZTmcve
+         BAUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725445980; x=1726050780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KE1/Hq11uOxchKULHphyn5S0kqPZsHWqE0/VF8WLruQ=;
-        b=qh21EGQUMe4B3Z05EHrj7qjAHzhj3rFE+8b6eoKpRbu0HMviCqNybEoncm342nSAl/
-         M8ELU0DRm8NC/gnZ/wH2mtwgWBe8whZ81sVR3XwlPDJRyBNVUlMod874v/vop1cUiEOy
-         FWufkIgHKf4PUeLTz/27PeZgSj455jyvrjOjbiBBjEm0PBgMShoKKW7LI8lXos0xZff+
-         1K7UFHFQUMoGc730T0TPc5ttNQ/LEWFc7Q3C4jId00OalTU0SOGl2sl+rWw8AUc6KFK3
-         ooQZjIZp/a9VdcXzTBNTfUcoqtHHnauLhJvRIZTS1BzubQCxJCLHSHCW5LWtMbvALL9h
-         fcrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc9mbfM9GI68+1jD9hz4/nUKW/gXiTBs/5vg8eiLjfcRLaR6vZqcVSNH8z7xgD+mAq05HE2bmjCR70M5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8sIfVhjhX9IIWnyqyrNZ7SBHWzdPnMEEasNRIAFqjPNsRs7BG
-	KYzCFkQw1NZsWCCiHoc8AulawTJ0VppyQp/HdkaLvwsGvAxD+KbWapY0T2XR4z+YGIjMfaiYBj6
-	wAt2kmbMg7Zmt3PCQlbeSmjIDU4jHuJGzwEqr
-X-Google-Smtp-Source: AGHT+IGsqhG20Xuaq75zLs5w9BXHd/1bEmZIuRJUXywMO5FqOhq7bmlArA7HxcoGVRmCM6y/SVZXTSj+THt/5F5OvRo=
-X-Received: by 2002:adf:cd0e:0:b0:374:bfb2:39d with SMTP id
- ffacd0b85a97d-374bfb204e6mr9160088f8f.38.1725445979513; Wed, 04 Sep 2024
- 03:32:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725446054; x=1726050854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XUsWBUhOnHC+ub+4Jhy0Mx4GpfwgZi2d8Xn0uLNWsSQ=;
+        b=mleGmxm87XS26FeNiRddY2tGq0iyUOR5HAKt6M8gAT0pjwathIfjip2eFV+n27u3Ox
+         LkSjhEe3WlxH+QQmqD9F1+fC2DeVnmdX2jRzwBwaEV54a6tUYpTUaAu1gPilzVU3/rom
+         CpBpaEGDSdeBZTCcg9xtp3vfOIeK9+rTT5Ha2p49aTeXeI8hzA6w90D/siI1cWCRTzCH
+         espvTMammjnM7cR4UsWuT/xjSkfTaOKWTtw/srEr9/IypIHRW6hnvZ9N4UQu8GKfmpBS
+         NA1XVwHXxwNh9n4n5pc3LeOBsn909TfM/7aZImXKoPf8KizPANfRW9hFnH0yZ4wvSKIT
+         CGwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtxdTdbF0em7Ccg9U50QbhwTrZXZqloYKPrJw/dZqyRd9nyw9uunZu2BRpQCuyAMurvY9nuM843nuXrio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHp2PUho5D6mj8QiBmz2y08NrRXi+/qHgg8DJJ+IBrlN4LZlXc
+	IKhTL6chmfdH8sS+ohRfOGl8/+L3UMaSGQALX5ZsW0wUQD4gvHXkgRpLkbtWAYw=
+X-Google-Smtp-Source: AGHT+IGu3TDU8L1KStejfuYJBVuEylGK40m2V5OVnQro6QhzeL116r5dXj/B0Cx8EzLWOpT+s4jv2Q==
+X-Received: by 2002:a05:6402:268d:b0:5c2:6a73:d13b with SMTP id 4fb4d7f45d1cf-5c26a73d3c7mr5679631a12.34.1725446053854;
+        Wed, 04 Sep 2024 03:34:13 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c2455908eesm5264270a12.55.2024.09.04.03.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:34:13 -0700 (PDT)
+Date: Wed, 4 Sep 2024 12:34:12 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH printk v8 31/35] printk: nbcon: Implement emergency
+ sections
+Message-ID: <Ztg3pFoYERN4GuWf@pathway.suse.cz>
+References: <20240820063001.36405-1-john.ogness@linutronix.de>
+ <20240820063001.36405-32-john.ogness@linutronix.de>
+ <87plpum4jw.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827-static-mutex-v2-1-17fc32b20332@google.com>
- <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com>
- <3b557f61-cead-4568-b2b4-4a56c4cbff52@proton.me> <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com>
- <CAH5fLgiZt3uVZiU1xXPcvYNR-Em2V3y+-C9EbsqrNvkScbiAYA@mail.gmail.com> <0030a292-49f4-4575-846f-424b098c7f1a@proton.me>
-In-Reply-To: <0030a292-49f4-4575-846f-424b098c7f1a@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 4 Sep 2024 12:32:47 +0200
-Message-ID: <CAH5fLgh9kHm4XbcH2X4y6nwZ9VLYuUeu3hNmQBcdZ+Vx1H1L9w@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: add global lock support
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87plpum4jw.fsf@jogness.linutronix.de>
 
-On Tue, Sep 3, 2024 at 12:17=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 02.09.24 13:42, Alice Ryhl wrote:
-> > On Mon, Sep 2, 2024 at 1:37=E2=80=AFPM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >>
-> >> On Fri, Aug 30, 2024 at 3:22=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
-> >>>
-> >>> On 30.08.24 07:34, Alice Ryhl wrote:
-> >>>> On Thu, Aug 29, 2024 at 8:17=E2=80=AFPM Benno Lossin <benno.lossin@p=
-roton.me> wrote:
-> >>>>>
-> >>>>> On 27.08.24 10:41, Alice Ryhl wrote:
-> >>>>>> For architectures that don't use all-zeros for the unlocked case, =
-we
-> >>>>>> will most likely have to hard-code the correct representation on t=
-he
-> >>>>>> Rust side.
-> >>>>>
-> >>>>> You mean in `unsafe_const_init`?
-> >>>>
-> >>>> No, I mean we would have `unsafe_const_new` directly set `state` to
-> >>>> the right value and let `unsafe_const_init` be a no-op.
-> >>>
-> >>> But how do you set the right value of a list_head? The value will be
-> >>> moved.
-> >>
-> >> Right ... we probably can't get around needing a macro. Can statics
-> >> even reference themselves?
-> >
-> > Looks like they can:
-> >
-> > use std::ptr::addr_of;
-> >
-> > struct MyStruct {
-> >     ptr: *const MyStruct,
-> > }
-> >
-> > static mut MY_STRUCT: MyStruct =3D MyStruct {
-> >     ptr: addr_of!(MY_STRUCT),
-> > };
->
-> That's useful to know...
-> But I don't see a way to get pinned-init to work with this. I would need
-> a lot of currently experimental features (const closures, const traits)
-> and a way to initialize a static without providing a direct value, since
-> I can't just do
->
->     static mut MY_STRUCT: MyStruct =3D {
->         unsafe { __pinned_init(addr_of_mut!(MY_STRUCT), /* initializer */=
-) };
->         unsafe { addr_of!(MY_STRUCT).read() }
->     };
->
-> It (rightfully) complains that I am initializing the static with itself.
->
-> We /might/ be able to do something special for `Mutex`/ other locks, but
-> I haven't tried yet. So the unsafe approach seems the best at the moment.
+On Tue 2024-08-27 16:25:31, John Ogness wrote:
+> Hi Petr,
+> 
+> On 2024-08-20, John Ogness <john.ogness@linutronix.de> wrote:
+> > +static __ref unsigned int *nbcon_get_cpu_emergency_nesting(void)
+> > +{
+> > +	/*
+> > +	 * The value of __printk_percpu_data_ready gets set in normal
+> > +	 * context and before SMP initialization. As a result it could
+> > +	 * never change while inside an nbcon emergency section.
+> > +	 */
+> > +	if (!printk_percpu_data_ready())
+> > +		return &early_nbcon_pcpu_emergency_nesting;
+> > +
+> > +	/* Open code this_cpu_ptr() without checking migration. */
+> > +	return per_cpu_ptr(&nbcon_pcpu_emergency_nesting, raw_smp_processor_id());
+> > +}
+> 
+> It was pointed out to me that raw_cpu_ptr() exists exactly for this
+> purpose. There is no need to open code it.
 
-It sounds like we'll just want a macro that generates a global wrapped
-in a Mutex/SpinLock for now ...
+Good to know!
 
-If we're going to do that, we could take the extra step and have it
-generate special Guard and LockedBy types so that you can have a
-LockedBy that doesn't need to make any runtime checks.
+> ------------8<--------------
+> >From fe50e9646c44360d88749c2c24c109405b27ad9e Mon Sep 17 00:00:00 2001
+> From: John Ogness <john.ogness@linutronix.de>
+> Date: Tue, 27 Aug 2024 14:06:19 +0000
+> Subject: [PATCH] printk: nbcon: Use raw_cpu_ptr() instead of open coding
+> 
+> There is no need to open code a non-migration-checking
+> this_cpu_ptr(). That is exactly what raw_cpu_ptr() is.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Alice
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+I wanted to avoid rebase when it was not really necessary. So, I have
+committed the patch into printk/linux.git, branch rework/write_atomic
+on top of the existing patches.
+
+Best Regards,
+Petr
 
