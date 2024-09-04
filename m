@@ -1,262 +1,145 @@
-Return-Path: <linux-kernel+bounces-315842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EA896C790
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8564596C799
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CCA2B2146E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4131E284337
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565B71E500F;
-	Wed,  4 Sep 2024 19:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C476D1E6DC3;
+	Wed,  4 Sep 2024 19:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="apO17jy0"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="pZh2AzMR"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1AB40C03;
-	Wed,  4 Sep 2024 19:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C1B40C03;
+	Wed,  4 Sep 2024 19:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725478231; cv=none; b=f3Hr6HBWaGRQHwU/TWy1feNXmp1N7n7g8sui++ZGzMW+p+/+wdymoAnZ6fkVLvfORWE2RU9FylQloS/J7GV5Bjto5BsecR6Ej1YqfiSiMJxeAMMe4i9eZGecwO5EbldkDnYSYJ7/+/uPCGo4JbXFlFlDiGLHkUaXfl9Rem9ehGs=
+	t=1725478359; cv=none; b=A/eBa0BnAo0Y9ReqcI+g9TGh9wRrWA7zVlD8aEN4jVXp/bipxgj3RfnHxoAm3JEqKHJdKhdi651K9VpevAyWxBywlRNWUGGFYWDZN45f5jpcYuS53JjV6VfCo4hlv0ugP5+DOfIvAutiaUr9vqcnzpv/6FB+oIOfGJ09xicfe+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725478231; c=relaxed/simple;
-	bh=xuWU4fNWuIMwcErWy1ouDNdrXHxOAwxWeFLxiPrwxt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LNcUwdPDGxzsnHaoZYmxQ76OFvp/j5u6DvzMf/+l5+6qOCi2AGSWeqH8zWMX4oUMSvgfihDPKqWetgYGv216K3SoKaBycqwFc4kC2ZZWqbKNX3hbFvWfAuwV4LLMugjIsrzKbKcBwQt8qTMPansNNOeyIpL9ueDUmcR1sBJoAmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=apO17jy0; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1725478216; x=1726083016; i=wahrenst@gmx.net;
-	bh=1pVy4z5VJnH23WU57VpJ/n65Q4tXoZAIuqpbRwgYadA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=apO17jy0UF7oCFITLMYv0l0uyCXROFwYdi2dhM18/j6aMqlaKfv9F7bspsEmbQt1
-	 UmTOWBjmnshmJuDDn9BPrleQfpsnj2bUtxvRNHeDVImXRcuP2KvSGHvUx1KcetYJC
-	 MmSFokn9RpQNNRRIBMOoQOg70xrIkhi18xujJktK+EZw9bGdacY3kPdDfEqoGiuX0
-	 JfkPkWFgTyREbo+n/s3pY5co3vTtejCnPoXRtCNFgfN7aTWPfevkvG+UFQhyn9eb2
-	 +/wumvxOeDOE+DhwuOW20UACMZra880xKTrwBtoiktmHJIR3qJbMGXJU38hJNROtR
-	 qgl7NeONuPq1kLyk1w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MatVh-1sBEJI3tJj-00oXhK; Wed, 04
- Sep 2024 21:30:16 +0200
-Message-ID: <17340b72-b0e4-47bc-ae8a-fcd11e36c99b@gmx.net>
-Date: Wed, 4 Sep 2024 21:30:14 +0200
+	s=arc-20240116; t=1725478359; c=relaxed/simple;
+	bh=1BsfqSYBZBusIv1VPB8MyWxdGEMUcVXrmZ9yEtuQZg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRcHgy+Hu6Hx65m1lS81hQ1O7NGAN3ti9tXW/c+rHgrX6l7+rAOlLcE+3LUKuLG3MP+vgf42nltzTK3hhFK/07KCd56yUlLFkM6sFPYru6Dh45DZE8FLmTgmf5BwzizC6PSM2mcidaPfBYXRPPYgOmZcUzzZJ7D41pGrpDHYGqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=pZh2AzMR; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UcHZ5CTv4mKFksQdsvPKwDXzMVb8f/RnarAvgSKCoGI=; b=pZh2AzMRSB1aGFIVzn1u/ZRfmg
+	2ClmQClSdEusW4Yt8bAV3os45uPmOw2TVKbxvHRJtCQLRbh7+7rVirnSXkMYtuV0B0ySv6neLetxM
+	VaNQSocRoPZpfKewd4Qvsg4e6Qis9QtBk0E9Zo4r9ewJaAPPufwuisrLqCcDibVrWVb0Y+eC6QxAz
+	uWiuu9dGTNjhQUstDF2Ck/4CWJ12HxcXFC0kLICFZYLYxv8XlePvK3Lz2VOhHw9m+j43VHP2Iors+
+	K4N/US6DXABAkoKkNe1jrSANbH28heN7mn8tpOiPTiJw6psbaeT8JO6hFOBuJ4z99CIa7gNtY2QRF
+	GOunnGAQ==;
+Received: from [2001:9e8:9c9:f01:3235:adff:fed0:37e6] (port=49090 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1slvjv-004FVt-Ge;
+	Wed, 04 Sep 2024 21:32:27 +0200
+Date: Wed, 4 Sep 2024 21:32:17 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v2 0/6] `RUSTC_VERSION` and re-config/re-build support on
+ compiler change
+Message-ID: <20240904-cordial-zircon-grebe-ba4806@lindesnes>
+References: <20240902165535.1101978-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] staging: vchiq_core: Factor out bulk transfer for
- blocking mode
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Phil Elwell <phil@raspberrypi.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20240901061808.187895-1-umang.jain@ideasonboard.com>
- <20240901061808.187895-4-umang.jain@ideasonboard.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240901061808.187895-4-umang.jain@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N2f8xGOWdRD+al7hwuvP2dUqZ4dNhh/ABOi5xiZNGsN6ePY2fyk
- 5Tb/bCLD18NwA1vOcqCSj7HvgE2s7Q1X2Ple0WEFuKe3D+5D79xHoa6bs45gc5YW+0Z5tLH
- JqHYRCR+aaq73SGVA8hG6wGpdMm0JnutwkcndNeP+OkLAvulwLJu+IlsDrk2AAVDQmtb1Pn
- 22O30HBbPi3JYN++PGdTg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3AQL0F35Z1w=;1zDT8yYOc0+RcCgLaOPWGuIgASq
- zqk/R49DG0uyihCvFvGt8vfgdhLhoED19jll4nHs4YC1lBpY3gzxXKnd7qtGGxKnQlN3Zw5GU
- t9qnEcduCPACd2g1HDfwHsPEUEzJgA8qiptLwHfV+xQv3QaCa1opubCB9fLDQIJmnE23hlJSt
- f67ybmnBNAJrNNb4jP+1O2CwNzP0rXMkvXzRkcY4Hqbj8SK9/W2gZyy1s/Eldg++PnaqjikSB
- P0kv11Fdzjpci4XkiacNVvqMR5Xmbjb7i2jb6m0g9/8wOTGWhbsXrcPeFRiFXVt6d4Arh2nAy
- YTUd0f363Pxb3/FSJvQ33yqlq6txNGi3pgj/fu4/2AwL50hjrfyqOZUg7E959MOoEs3kgVKCx
- nHHvVdaM5QIZrg0A18krmuCtLnKva3BcwUUDkWQzt/PtQTWR9h4s9hkpo3+mpYprNlQ9DTgo+
- 4/9JN2gSFMKIwsEpFYx2gl8Bad/fVNQ4eRjnr9YNPaRGEdYp6uCLfOFEs3ejRNitQXNJmRudP
- ixFZ1ONqO5fqJL8J/FmfW0chNgQ+JuZppy4iBG7TbDYFJoVExAzSZZgejKjwtjQDWIHXJhA2Z
- u1AX6wM09zGo/kTtEo1DFt2KuCSLPoXa8fbtSwk9MioVoLli+36CQNQ3Cjevhf2NCwKv5fWUV
- n9or5DLJfcphnCwb+gOLq657DE8/8LRavlixNWxGQRFVZfL0lj8IPeKj7p/EPSqj8Jp12+OnU
- 3KrEapUigFVrLx7aUyuXMZBdkyKg7+8ybQQ6YdkXaF3f/0i9BzS9dr6VENAdlLGVKtHVUkAcR
- RV6IUslPIeZfPQEQ4lzCq4mQ==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902165535.1101978-1-ojeda@kernel.org>
 
-Hi Umang,
+On Mon, Sep 02, 2024 at 06:55:27PM +0200, Miguel Ojeda wrote:
+> This series mainly adds support for `CONFIG_RUSTC_VERSION` (which is needed for
+> other upcoming series) as well as support for rebuilding the kernel when the
+> Rust compiler version text changes, plus other secondary improvements.
+> 
+> v1: https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-ojeda@kernel.org/
+> v2:
+> 
+>   - Dropped patch #2 "kbuild: rust: make command for `RUSTC_VERSION_TEXT` closer
+>     to the `CC` one" (Masahiro, Björn).
+> 
+>     In other words, now the `RUSTC_VERSION_TEXT` command is kept as it
+>     was, without `LC_ALL=1` nor `| head -n1`.
+> 
+>   - Replaced `macros` crate dependency with a comment in the code that `fixdep`
+>     will find, since we can do it for that one, unlike `core` (Masahiro,
+>     Nicolas).
+> 
+>   - Added patch (here #5) to add a warning when the Rust compiler used to build
+>     the kernel differs from the one used to build an out-of-tree module, like
+>     the C side does (Nicolas).
+> 
+>     If the patch is not wanted, then it can be skipped without much loss, since
+>     anyway Rust will fail to compile in that case. However, it would be nice to
+>     have to prevent potentially unexpected situations and to clarify the errors
+>     that `rustc` would emit later. See the commit message for more details.
+> 
+>   - Rewrapped comment to stay under 80 lines (Nicolas).
+> 
+>   - Picked up a couple tags that could more or less be reasonably taken given
+>     the changes to v2. Re-runs of tests welcome!
+> 
+> Miguel Ojeda (6):
+>   kbuild: rust: add `CONFIG_RUSTC_VERSION`
+>   kbuild: rust: re-run Kconfig if the version text changes
+>   kbuild: rust: rebuild if the version text changes
+>   kbuild: rust: replace proc macros dependency on `core.o` with the
+>     version text
+>   kbuild: rust: warn if the out-of-tree compiler differs from the kernel
+>     one
+>   docs: rust: include other expressions in conditional compilation
+>     section
+> 
+>  Documentation/rust/general-information.rst |  8 +++++++
+>  Makefile                                   | 18 ++++++++++-----
+>  init/Kconfig                               | 11 ++++++++-
+>  rust/Makefile                              |  7 +++---
+>  rust/macros/lib.rs                         |  4 ++++
+>  scripts/rustc-version.sh                   | 26 ++++++++++++++++++++++
+>  6 files changed, 64 insertions(+), 10 deletions(-)
+>  create mode 100755 scripts/rustc-version.sh
+> 
+> 
+> base-commit: a335e95914046c6bed45c0d17cabcd483682cf5e
+> --
+> 2.46.0
+> 
 
-Am 01.09.24 um 08:18 schrieb Umang Jain:
-> Factor out bulk transfer for blocking mode into a separate dedicated
-> function bulk_xfer_blocking_interruptible(). It is suffixed by
-> "_interruptible" to denote that it can be interrupted and -EAGAIN
-> can be returned. It would be up to the users of the function to retry
-> the call in those cases.
->
-> Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
-> for blocking bulk transfers.
->
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->   .../interface/vchiq_arm/vchiq_arm.c           |  5 +--
->   .../interface/vchiq_arm/vchiq_core.c          | 44 ++++++++++++++++---
->   .../interface/vchiq_arm/vchiq_core.h          |  5 +++
->   .../interface/vchiq_arm/vchiq_dev.c           |  6 +++
->   4 files changed, 50 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm=
-.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> index c4d97dbf6ba8..688c9b1be868 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> @@ -968,9 +968,8 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *=
-instance, unsigned int handl
->   			return -ENOMEM;
->   	}
->
-> -	ret =3D vchiq_bulk_transfer(instance, handle, data, NULL, size,
-> -				  &waiter->bulk_waiter,
-> -				  VCHIQ_BULK_MODE_BLOCKING, dir);
-> +	ret =3D vchiq_bulk_xfer_blocking_interruptible(instance, handle, data,=
- NULL, size,
-> +						     &waiter->bulk_waiter, dir);
->   	if ((ret !=3D -EAGAIN) || fatal_signal_pending(current) || !waiter->b=
-ulk_waiter.bulk) {
->   		struct vchiq_bulk *bulk =3D waiter->bulk_waiter.bulk;
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index 6e3d24d4b720..c46634f39f4b 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -2985,6 +2985,42 @@ vchiq_remove_service(struct vchiq_instance *insta=
-nce, unsigned int handle)
->   	return status;
->   }
->
-> +int
-> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance,=
- unsigned int handle,
-> +				       void *offset, void __user *uoffset, int size,
-> +				       void __user *userdata, enum vchiq_bulk_dir dir)
-> +{
-> +	struct vchiq_service *service =3D find_service_by_handle(instance, han=
-dle);
-> +	struct bulk_waiter *bulk_waiter =3D NULL;
-my comment in v1 about init of bulk_waiter applied to this one ...
-> +	enum vchiq_bulk_mode mode =3D VCHIQ_BULK_MODE_BLOCKING;
-> +	int status =3D -EINVAL;
-> +
-> +	if (!service)
-> +		return -EINVAL;
-> +
-> +	if (service->srvstate !=3D VCHIQ_SRVSTATE_OPEN)
-> +		goto error_exit;
-> +
-> +	if (!offset && !uoffset)
-> +		goto error_exit;
-> +
-> +	if (vchiq_check_service(service))
-> +		goto error_exit;
-> +
-> +	bulk_waiter =3D userdata;
-> +	init_completion(&bulk_waiter->event);
-> +	bulk_waiter->actual =3D 0;
-> +	bulk_waiter->bulk =3D NULL;
-> +
-> +	status =3D vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uo=
-ffset, size,
-> +							 userdata, mode, dir);
-> +
-> +error_exit:
-> +	vchiq_service_put(service);
-> +
-> +	return status;
-> +}
-> +
->   /*
->    * This function may be called by kernel threads or user threads.
->    * User threads may receive -EAGAIN to indicate that a signal has been
-> @@ -2998,7 +3034,7 @@ int vchiq_bulk_transfer(struct vchiq_instance *ins=
-tance, unsigned int handle,
->   			enum vchiq_bulk_mode mode, enum vchiq_bulk_dir dir)
->   {
->   	struct vchiq_service *service =3D find_service_by_handle(instance, ha=
-ndle);
-> -	struct bulk_waiter *bulk_waiter =3D NULL;
-> +	struct bulk_waiter *bulk_waiter;
-and not to this one. I think this one here should be kept at least in
-this patch.
->   	struct vchiq_bulk *bulk;
->   	int status =3D -EINVAL;
->
-> @@ -3018,12 +3054,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *in=
-stance, unsigned int handle,
->   	case VCHIQ_BULK_MODE_NOCALLBACK:
->   	case VCHIQ_BULK_MODE_CALLBACK:
->   		break;
-> -	case VCHIQ_BULK_MODE_BLOCKING:
-> -		bulk_waiter =3D userdata;
-> -		init_completion(&bulk_waiter->event);
-> -		bulk_waiter->actual =3D 0;
-> -		bulk_waiter->bulk =3D NULL;
-> -		break;
->   	default:
->   		goto error_exit;
->   	}
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> index 985d9ea3a06a..2dd89101c1c6 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> @@ -474,6 +474,11 @@ extern int
->   vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
->   				      unsigned int handle, struct bulk_waiter *userdata);
->
-> +extern int
-> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance,=
- unsigned int handle,
-> +				       void *offset, void __user *uoffset, int size,
-> +				       void __user *userdata, enum vchiq_bulk_dir dir);
-> +
->   extern int
->   vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int hand=
-le, void *offset,
->   		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_=
-mode mode,
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev=
-.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> index 550838d2863b..830633f2326b 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> @@ -304,6 +304,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_=
-instance *instance,
->   		}
->
->   		userdata =3D &waiter->bulk_waiter;
-> +
-> +		status =3D vchiq_bulk_xfer_blocking_interruptible(instance, args->han=
-dle,
-> +								NULL, args->data, args->size,
-> +								userdata, dir);
-> +
-> +		goto bulk_transfer_handled;
->   	} else if (args->mode =3D=3D VCHIQ_BULK_MODE_WAITING) {
->   		mutex_lock(&instance->bulk_waiter_list_mutex);
->   		list_for_each_entry(iter, &instance->bulk_waiter_list,
+the whole series looks good to me.  Thanks for the good explanations.
+
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+
+Kind regards,
+Nicolas
 
 
