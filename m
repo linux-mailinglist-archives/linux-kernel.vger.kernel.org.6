@@ -1,387 +1,251 @@
-Return-Path: <linux-kernel+bounces-315869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B9B96C7F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE37696C7E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7786F1F20ED2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9921F23155
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFDD1E8B74;
-	Wed,  4 Sep 2024 19:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7BF1E6DF9;
+	Wed,  4 Sep 2024 19:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Qo0vJlNC"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OfeH11ES"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E6C1E6DFE;
-	Wed,  4 Sep 2024 19:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479342; cv=none; b=dhuGjnmHoWfUYZWuI8Wc1wpsimNqogaF5AuHehZX7AOaw+Tx3PwY597WKaQ4AXBZu4BeV6MMoEpQDlCX79Pn1DApkxet/a2Q3RPvyCDyfQ7MtWfttZ8EBsvpndJqsin6lbs4SppIWefFISPVfibMi4dDvTcuNPH6a+Xvr5lj1oQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479342; c=relaxed/simple;
-	bh=2K+VX4p3uDGakxs+L7o+AlNEOWnCPpWPn3F8rdwgk9g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QHNNi2/H2C/Q/aHj09CyylcuP8pWw/oKSNgUnI8Gxmc2ovmzLB8xAVa3pqvTcRhMzixbhdI7ri4HAcUcGPHNw75G1tI36ql09Z2Xu+yo5DzX0dx9D8uyYR5BdicR3Dw/HP0ynyr9r51hRYDda+Zq1AUBu6X1gmhk7Plach3xHqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Qo0vJlNC; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WzY2q2HrJz9spS;
-	Wed,  4 Sep 2024 21:48:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725479331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8BSu2Q0T9+xOgt78zbEntYoVoIo9mHWjBB4iqf/3dj8=;
-	b=Qo0vJlNCJJoL3PC5OALfFqchf+wlFA0F7M9SUTN8Jec2MfCzteYQ/k8Xu2Lt07V1TTDTJ7
-	lyrgByXi7LeHIWu/qVWkoH+VyUqqpE27WDfLjH8ZyOUqhLvgsIve9Oecij8ub327KyyZai
-	MJMQuNWK9G3wSKcJfmcmaYt0DNatskjHCD2Fn2dgVmESTOfMDOhHZz5gkKkoN4XHJRtZGH
-	0QEXM2XozeEDaFxyGvwm8YxT6i+uPrSDM76RE0ylXF5tldfDerIABMOhFnbcLcMm9LncPO
-	enMpMFkeP615NTNoFFUrHhDgAm2Rej6frEG44KSyqfHN/TT/xy54kLg7iOdUcQ==
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: fstests@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH xfstests v4 2/2] generic/756: test name_to_handle_at(AT_HANDLE_MNT_ID_UNIQUE) explicitly
-Date: Thu,  5 Sep 2024 05:48:23 +1000
-Message-ID: <20240904194823.2456471-2-cyphar@cyphar.com>
-In-Reply-To: <20240904194823.2456471-1-cyphar@cyphar.com>
-References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
- <20240904194823.2456471-1-cyphar@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEA540C03;
+	Wed,  4 Sep 2024 19:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725479318; cv=fail; b=t0KNzPIfdOeD4hiPIFZh6PGx5JHfrkeCGhz97kQ2MSRoWzuFpZJ1/kIE3yoZJRlFMvNaTFa3clJLneBVWkBJ0nJPKGzwm6gG+Aan9tWhT8IBebA1q+NRpfFEZ9jGDY7Xx+g409AdCU/5wvpSZtExAxZEljzr9rkbqkBOZuqUiXs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725479318; c=relaxed/simple;
+	bh=8LXZFt5EfxQQ/q1PH5CPTHR44adOdGZvuPZA+d711s8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=omPZak6b0oeMvJWZEf9/F8lY6QMhueog5xKvMRY3DPCxNnJ4ZUmvEwl01mqZ1VzeobjCtHmGgyRN46kwx2fwSeklIFYN2JceWNJ6cpOC3cTa6MSOgBfvq2QhtD5qSe9hiqSG67CKTlFUCS7N8tcxRFhK85UQ/FkVL0bbqbV0o3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OfeH11ES; arc=fail smtp.client-ip=40.107.92.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QGI1+GCPZLwgoBQUM5ActachixWHU69HMPBcu+37u9XXOFfpFmXfgwKziXzJ5eby6Su6YLcted3iC3qevPwM/yrkYWGCbYUfg9ontFxph0/IvuJSTgkk8PXWMMqGFIsJ2AxPqxF/JaW9/NveU1lJHhfmAB2nf7xKKS1Dm5Fp3iD6U8dcgIMz5ggips9tKRcocy69ay9+MhEEeES5UTAXFv11wWuN4PmN7jjm2IrzzaI2F5ret3NFBMSLJKZ+SRDYUCFEoqdmAOWYQ+svgxkwIJc3oGoq2edvPQTM153dy9MBmvjxOlYGz8CA1QWtLL1F0MOeQbj3qgAvIdVT19O4Jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=op+7j+ot4mXqYGCk9uiBNnkra+Tx822j9uajDFeC3EA=;
+ b=vYaCc8WxUWB396GjMAsWudDzqdbDW9ruW9+DBu6nebFjTdnipet1lvifqlPKgOaG6QKRFy4UE7cegf4j2LX/AgjiDvRNmd/bA5FyHwA2xobi3/4RjFPIQVeajonAGVr6JnfZIPWyxOGMKm4Ql4gSQun39qOOBc3k3LejjnB/KKTjXy+guycaq4dksg4zQlU+V8VvXqCHfzSdED0p1SlqkwyewuO3Q2cv210SrQtaJ/C3ICh/ykdoGsTLMj4GobUQuYFdnusKEA4M8s8lFJFg70k/YIcL34qD0YPYVLS5MOLrIqjFBnB91CzuAbClYs+qBzDEZZk3mPJHocECbdsTcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=op+7j+ot4mXqYGCk9uiBNnkra+Tx822j9uajDFeC3EA=;
+ b=OfeH11ESOUC1dcBnPORQ1g2Z8M6cfVcbvgaJKluSWu6TaNzd+Z78dNJL134sPEMuMxhQzpzQKcL1dISbTTUyaaq7uU1J1khl7Ni4jMlnxqFG0ZuPcTPF0lXptgzBKnQDX0ME1zOsDRJYCyp+6tKdXc5vINuzsSMI6D7LFlr6d8o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
+ by MN0PR12MB6176.namprd12.prod.outlook.com (2603:10b6:208:3c3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Wed, 4 Sep
+ 2024 19:48:33 +0000
+Received: from DM6PR12MB4877.namprd12.prod.outlook.com
+ ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
+ ([fe80::92ad:22ff:bff2:d475%5]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 19:48:33 +0000
+Message-ID: <a1459350-f458-470b-a288-a92e2085f93a@amd.com>
+Date: Wed, 4 Sep 2024 14:48:30 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 00/12] PCIe TPH and cache direct injection support
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+ Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
+ ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
+ andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com,
+ Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
+ bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
+ paul.e.luse@intel.com, jing2.liu@intel.com
+References: <20240904184911.GA340610@bhelgaas>
+Content-Language: en-US
+From: Wei Huang <wei.huang2@amd.com>
+In-Reply-To: <20240904184911.GA340610@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR16CA0044.namprd16.prod.outlook.com
+ (2603:10b6:805:ca::21) To DM6PR12MB4877.namprd12.prod.outlook.com
+ (2603:10b6:5:1bb::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4877:EE_|MN0PR12MB6176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ad6b8ba-2c0c-4649-7649-08dccd1a8eed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VEZPLzJXWXdzRTh6VHpPQzRQNWtKbnAwM1crdytKaE1ka0RkNEhUNWRMUnY5?=
+ =?utf-8?B?VllZYWU4eEllVUdWbWx4NGFKTjJFanRUTmxSLysvc3NhOWl4YmtWMDNKZEpY?=
+ =?utf-8?B?WnZUQ3NUUE1tU2hiM1puVjFDZVFqTlM4WThMVDYxSWZrWC8xZTNuUDZJeFBv?=
+ =?utf-8?B?MFgwMjJvVFg0MDZ4LzlnMmdDSVhLZnVHYUx1SnFXeHlScUpnc2lYdnp6dVdm?=
+ =?utf-8?B?d2pGL2NGa2crYmxkQTBhUUhDZThjb2pNRHMxZDhUSmxIbGR2MGxuKzByVnll?=
+ =?utf-8?B?OEl4TWpMcXduVFhXek9uVitRdUk0ZDBSNEd3VmVWS0lYK2tnbzZWVjlrRGNC?=
+ =?utf-8?B?NVdmOFNYZThmdE1IWkZoZWdLYXlJa2E3T1hUemdGNVQrdWNkUzVBRFAxdUhM?=
+ =?utf-8?B?VEpHNXh5RTJDbElBMjB5a2UwazYzRThLSmV4bGI2R3J6eGNSNEprRDhaNGF6?=
+ =?utf-8?B?cDlFT05ZdFh4VmZrVCtzeHk3WGJINkFIbFNJelVrTkpTSDNJMHM4VFFrNTZO?=
+ =?utf-8?B?SDNjZGFSWHBTWkk5eEQwRU9xYTdhcFVtWlcyVEJ4TG1ENENzMjB4Mko2VmZu?=
+ =?utf-8?B?dEdvR0J2Z1JQMFJubjFleVAxZGdDWlJ4YjdXeU1GWGY3aUtYb1NWeXlPWW43?=
+ =?utf-8?B?emZRbmhZZCtVUUt6ajBBNW1IUWtEcWVKZHVOd042ZU44QWpvMjRtNWpRRVZW?=
+ =?utf-8?B?Z2ZWQ0hoSUNROXlIdktXemJ5cFZNUG9rK0VZUysvYXZMa3hHN3B6b0tyREI3?=
+ =?utf-8?B?ekpSS1kweklKWnhIR2Jpa0REVHBCTmJrRlVWMm5uUTc4c2pvVWZHMzB2VGdE?=
+ =?utf-8?B?MWpwM0V6TE1XRW5WbXkxU0QwM3ROUTlEdEg5d1A4Y3g4WFMycm50TllaSCtn?=
+ =?utf-8?B?WE95VXg0ZTZER1lRY012TkFSTjdLUjVlbkpRTENzdGhOc0xoOXhpVHRMMTl6?=
+ =?utf-8?B?b29NTzBJQUxZcUhWUjM2NXJ2dUQ5bFd1RmNsbmNVbjkrOU9UcTFOeHlNZU0x?=
+ =?utf-8?B?c2VWaGxINVRFc1YvNUZiTjBZV0tnWUkrWXg4UWJEK2pxN1B2T2UrSG9LMlpk?=
+ =?utf-8?B?anlQcWdDN01JQkR5Q2tDOWV3Ym03RHNZMHUrTXpWRk9NUlJ6cy92RDNUaUdH?=
+ =?utf-8?B?OVIzSlZlNVFmZFVyL3oyM0RQREg5RXh6QmNsQ3ZWTmdGbGJyMkxOb1hwUzhO?=
+ =?utf-8?B?ZklicDlNb1lxR1BBTnRuZ1daeFdQMGJQSy85YmVCWjZMNWNwNHBOZWpDeGth?=
+ =?utf-8?B?SWlDYjhnNUJ0Y25XNm01L28yVjVvd1dOSEl5VHp1Ym1Ybko1UkxrRTVjd0R4?=
+ =?utf-8?B?ZlRDelIyTnBJcXZ0cnpwbUFpNTk5Q2lLRFh3VlZmU0ZQWTJkeHE3ZmtZRzRM?=
+ =?utf-8?B?SnJYdXEzYjA2M1V5ZDhDQ2lrNXVxZFk4QVpEU1dRV3E4c2hkdVJrMHc0UU9N?=
+ =?utf-8?B?Rk1QQk9YWWZKWjYzZHdFRVlvM2xRbDdtN291SU9XcTZOaDRIUlcxK3hjak12?=
+ =?utf-8?B?d1g0elI0SEVkUmJSTU1RQ1piam1qaHdPMU5yQVZja0JxSnU2NE0zTUhIYzRG?=
+ =?utf-8?B?SUoxYVRPTlJUdUY1VkxmaU1wbjk5ckNmNVBSN2hBYStJSGR0VWpQMzB6V2cz?=
+ =?utf-8?B?dHhXeVpjeU1ublNrZnJmcFI2NDh3RGRmYnlETHZFNkNlL281T1ZqdjZYQUl6?=
+ =?utf-8?B?bXpMUWN4eGlTYkdHa043VTJEQlBuQlgxUmlvSlI5QUl0cXpvMjhVL2k5NzNM?=
+ =?utf-8?B?M3lib3VNNWhqazd0SVc3ZmJWY1hyYkQrNHFFamkrM3N6UnVvakV5VlNQZWh5?=
+ =?utf-8?B?N1JzK2xYL2RRNnd5MWZ0Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bndPSkRKSnQydnJRZXY1aTlBa1F6Q2l1NHh4c1ZyWWhYM1N4Vm5HVkxiNVQ4?=
+ =?utf-8?B?UmpWSFc3TnJXeHZYdmdXVDVWaTJDVTlDdTBjWk9TTExjOXYwSlBoU2xaZW9t?=
+ =?utf-8?B?NzYrRGtTOUlFempnYTM2YjZEU3YvZnVFVHRLdFVaVXN4VndyT2RDYVRmWDV6?=
+ =?utf-8?B?K0FNcFNrVEtvNGd4Vm9aS2hoZStxT1BGV1lRTitzLzJQbG9ldWFQM0w2YmRE?=
+ =?utf-8?B?SlpaQy91Um1INkc3Y0VrVDRxMzU2eVhtY3RWd2lLekFkN05TRXVMTjJIS1o2?=
+ =?utf-8?B?YTErMnNNT1NhangreHVGUjJudmYyWFA2UjFKYWpYS0VRcW5BZXVoSDc2SFJz?=
+ =?utf-8?B?bDdlSHNRNC9hNWl0amlOQ1lmVkNwVkk0cWcrZVZFVFhjUVpHMVFjbnQ2cW13?=
+ =?utf-8?B?SDlseTdYdzFoSnpZSVh4Y2VLMzNHRHR3M0JlUmtjbUQ1dXdWbldtbjdjanFp?=
+ =?utf-8?B?WFdrd3hMRk5uZm9uZkpWYmwyc3ZEZkd2c3BCVVlzdGR5cER0SmxvNkE5UEpE?=
+ =?utf-8?B?dHpIUjBqaUs2S2tGZzNPWmNtUkFZQlk3UFAxUWRzZEFxelBCdEZkTnlUWDgz?=
+ =?utf-8?B?cERzT0dOTEdMV0xXUkdTajk5QnhlR0ZtZkJ2QXhwVVBIMmx5SzJDNE9WR2Fx?=
+ =?utf-8?B?cnZLNGpSSVNwajI3SjQ2QWpxYTZuWTI0MnQvK3hpZGNkVkFHMDZ5WjlkMUpt?=
+ =?utf-8?B?VHZQNHpMNDM3dk9zdFBobjlYdEt6QkxJMm42b0EyTzlaVE8zVXcrWElUWVpS?=
+ =?utf-8?B?TER5R3Y4TVlPWUVTUUVCUzZRNzcwOE5wVlQxaHUvMVdvUUpYTEJQZ1lJODVS?=
+ =?utf-8?B?YW5PK3hvQWtqcXMyaXZYSmtaWkVBM0VKa3dBOFJuN2lpaFRjUTQ0MXRMVW9Z?=
+ =?utf-8?B?YWxoZ2ZlK0xDZG0yZUExQ29SNVJXaGZINjdJQTdheG05ZTlHRGVhdFhxR1Jn?=
+ =?utf-8?B?SnlLdUNGWVd0aDdCMVFnOVRhUHdNK1R4Vk5OZE5NeDVuRHVQRU0zalRKaElO?=
+ =?utf-8?B?OTlPVlE2d0JmTmxqQ29MbWc3L090dGJlNXlTWlFVSmRONk1TRithYUZ2WWla?=
+ =?utf-8?B?RmdPWEFqS3FmU1E2VnY4VnBXdHAvNGdUU3lhVHBCQi96TDRhQU1va0JsWFJP?=
+ =?utf-8?B?Z2ZiM1VLTmsrUllvbGJ6cmxtbGwrWkFOdGlQS0FMTXd2ODJpTEJRK01wTm5i?=
+ =?utf-8?B?SXhLeFdkK0o1czBpVkNuRWN0VG5WcGxNc1NJaTd3K3dwTnF4RHYvNUVkV0xY?=
+ =?utf-8?B?SG9QOEhVUHZpTHNJOXJRVU5TTmpMNHNmNnYrWjIwYkM1N3FNdEU1VktGelcy?=
+ =?utf-8?B?K2xsTFZ3UkhLSjd5YVdQUS9rN2FVQ0R6TlArd1ZabzlqTERqaTBQN2hZV1JM?=
+ =?utf-8?B?T3hkZitMM1hJWUdEdkUzR01lRkZ1MmFNUzJJMWFZTDlKTWxTS283STVBeld3?=
+ =?utf-8?B?TFdvMkVpb2s1cTI4R0ljU1l6QkJtLy81dGJmVWUwditCT3ZUdWF1UkJQb2Ns?=
+ =?utf-8?B?a3RzOHpSZUMyK2xxam9waHJuVWlwSE1HNVNkZjJ0MFd2Q1VQdjAweHo2NlRl?=
+ =?utf-8?B?NGxCenI3aGRGTEYzT1hSK1p3RTh3S2d1S2J2Rnlvcm1kcmEycjY2K0JzL0w5?=
+ =?utf-8?B?ZDQzWk4vSGZPMVJ2OVVkUURPY3llVW1LN0pHVmh5Tjg4SHZCYjRGZnhUWHNi?=
+ =?utf-8?B?VzJTUnRFWTJrTXN3aDh5N0pXV0p0aVpoVzBHNTYzc1hraUZGQzNScTFVa1Nm?=
+ =?utf-8?B?RjNvM1NJeU42YXlwSDJSRmtIME9GQ3pkMWJ4ajFSWUpPVkRUdy9RMWRRNzgy?=
+ =?utf-8?B?V0F6aWtWbG5Hd0tRTmYycXpmRHI2Y2RYbldXL3hpTUlJSGwvclcwRDVhRjdX?=
+ =?utf-8?B?Rmpnb2pESVYvQmJEQklkNHlRWmRLcm9Ecm9HeWd6dHF1UjNLMEtyREF3SnBL?=
+ =?utf-8?B?NEUycGR3RUs1a3NDRTN4Y0NZVkNNWTVmMnBiWWdXWVZOTTY2M2duQktERWtF?=
+ =?utf-8?B?S3FVWVdqV25EbHI1bWYybGZCY2tpSGNOUGVxcjJMWDNzVFVxYlJpQ3hHUy9a?=
+ =?utf-8?B?N0hGSUlEcmhaSXY1MTZYOStRMVI5TGVDemZhWHlKQUY3VUp6UXYza294K25W?=
+ =?utf-8?Q?1Y8U=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ad6b8ba-2c0c-4649-7649-08dccd1a8eed
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 19:48:33.4853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ym3J5Vqi/VY5VS7XVKrgkNKDHAtW7UTiEpq7eGGy81p2PBQCP99V5nfivDZP5rc0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6176
 
-In order to make sure we are actually testing AT_HANDLE_MNT_ID_UNIQUE,
-add a test (based on generic/426) which runs the open_by_handle in a
-mode where it will error out if there is a problem with getting mount
-IDs. The test is skipped if the kernel doesn't support the necessary
-features.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- common/rc             | 24 ++++++++++++++++
- src/open_by_handle.c  | 61 ++++++++++++++++++++++++++++++++++------
- tests/generic/756     | 65 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/756.out |  5 ++++
- 4 files changed, 146 insertions(+), 9 deletions(-)
- create mode 100755 tests/generic/756
- create mode 100644 tests/generic/756.out
 
-diff --git a/common/rc b/common/rc
-index 9da9fe188297..0beaf2ff1126 100644
---- a/common/rc
-+++ b/common/rc
-@@ -5178,6 +5178,30 @@ _require_fibmap()
- 	rm -f $file
- }
- 
-+_require_statx_unique_mountid()
-+{
-+	# statx(STATX_MNT_ID=0x1000) was added in Linux 5.8.
-+	# statx(STATX_MNT_ID_UNIQUE=0x4000) was added in Linux 6.9.
-+	# We only need to check the latter.
-+
-+	export STATX_MNT_ID_UNIQUE=0x4000
-+	local statx_mask=$(
-+		${XFS_IO_PROG} -c "statx -m $STATX_MNT_ID_UNIQUE -r" "$TEST_DIR" |
-+		sed -En 's/stat\.mask = (0x[0-9a-f]+)/\1/p'
-+	)
-+
-+	[[ $(( statx_mask & STATX_MNT_ID_UNIQUE )) == $((STATX_MNT_ID_UNIQUE)) ]] ||
-+		_notrun "statx does not support STATX_MNT_ID_UNIQUE on this kernel"
-+}
-+
-+_require_open_by_handle_unique_mountid()
-+{
-+	_require_test_program "open_by_handle"
-+
-+	$here/src/open_by_handle -C AT_HANDLE_MNT_ID_UNIQUE 2>&1 \
-+		|| _notrun "name_to_handle_at does not support AT_HANDLE_MNT_ID_UNIQUE"
-+}
-+
- _try_wipe_scratch_devs()
- {
- 	test -x "$WIPEFS_PROG" || return 0
-diff --git a/src/open_by_handle.c b/src/open_by_handle.c
-index dcbcd35561fb..a99cce4b3558 100644
---- a/src/open_by_handle.c
-+++ b/src/open_by_handle.c
-@@ -106,7 +106,8 @@ struct handle {
- 
- void usage(void)
- {
--	fprintf(stderr, "usage: open_by_handle [-cludmrwapknhs] [<-i|-o> <handles_file>] <test_dir> [num_files]\n");
-+	fprintf(stderr, "usage: open_by_handle [-cludmMrwapknhs] [<-i|-o> <handles_file>] <test_dir> [num_files]\n");
-+	fprintf(stderr, "       open_by_handle -C <feature>\n");
- 	fprintf(stderr, "\n");
- 	fprintf(stderr, "open_by_handle -c <test_dir> [N] - create N test files under test_dir, try to get file handles and exit\n");
- 	fprintf(stderr, "open_by_handle    <test_dir> [N] - get file handles of test files, drop caches and try to open by handle\n");
-@@ -119,16 +120,21 @@ void usage(void)
- 	fprintf(stderr, "open_by_handle -u <test_dir> [N] - unlink (hardlinked) test files, drop caches and try to open by handle\n");
- 	fprintf(stderr, "open_by_handle -d <test_dir> [N] - unlink test files and hardlinks, drop caches and try to open by handle\n");
- 	fprintf(stderr, "open_by_handle -m <test_dir> [N] - rename test files, drop caches and try to open by handle\n");
-+	fprintf(stderr, "open_by_handle -M <test_dir> [N] - do not silently skip the mount ID verifications\n");
- 	fprintf(stderr, "open_by_handle -p <test_dir>     - create/delete and try to open by handle also test_dir itself\n");
- 	fprintf(stderr, "open_by_handle -i <handles_file> <test_dir> [N] - read test files handles from file and try to open by handle\n");
- 	fprintf(stderr, "open_by_handle -o <handles_file> <test_dir> [N] - get file handles of test files and write handles to file\n");
- 	fprintf(stderr, "open_by_handle -s <test_dir> [N] - wait in sleep loop after opening files by handle to keep them open\n");
- 	fprintf(stderr, "open_by_handle -z <test_dir> [N] - query filesystem required buffer size\n");
-+	fprintf(stderr, "\n");
-+	fprintf(stderr, "open_by_handle -C <feature>      - check if <feature> is supported by the kernel.\n");
-+	fprintf(stderr, "  <feature> can be any of the following values:\n");
-+	fprintf(stderr, "  - AT_HANDLE_MNT_ID_UNIQUE\n");
- 	exit(EXIT_FAILURE);
- }
- 
- static int do_name_to_handle_at(const char *fname, struct file_handle *fh,
--				int bufsz)
-+				int bufsz, bool force_check_mountid)
- {
- 	int ret;
- 	int mntid_short;
-@@ -144,10 +150,15 @@ static int do_name_to_handle_at(const char *fname, struct file_handle *fh,
- 			fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n", fname);
- 			return EXIT_FAILURE;
- 		}
--		if (!(statxbuf.stx_mask & STATX_MNT_ID))
-+		if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
-+			if (force_check_mountid) {
-+				fprintf(stderr, "%s: statx(STATX_MNT_ID) not supported by running kernel\n", fname);
-+				return EXIT_FAILURE;
-+			}
- 			skip_mntid = true;
--		else
-+		} else {
- 			statx_mntid_short = statxbuf.stx_mnt_id;
-+		}
- 	}
- 
- 	if (!skip_mntid_unique) {
-@@ -159,10 +170,15 @@ static int do_name_to_handle_at(const char *fname, struct file_handle *fh,
- 		 * STATX_MNT_ID_UNIQUE was added fairly recently in Linux 6.8, so if the
- 		 * kernel doesn't give us a unique mount ID just skip it.
- 		 */
--		if (!(statxbuf.stx_mask & STATX_MNT_ID_UNIQUE))
-+		if (!(statxbuf.stx_mask & STATX_MNT_ID_UNIQUE)) {
-+			if (force_check_mountid) {
-+				fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE) not supported by running kernel\n", fname);
-+				return EXIT_FAILURE;
-+			}
- 			skip_mntid_unique = true;
--		else
-+		} else {
- 			statx_mntid_unique = statxbuf.stx_mnt_id;
-+		}
- 	}
- 
- 	fh->handle_bytes = bufsz;
-@@ -203,6 +219,10 @@ static int do_name_to_handle_at(const char *fname, struct file_handle *fh,
- 				return EXIT_FAILURE;
- 			}
- 			/* EINVAL means AT_HANDLE_MNT_ID_UNIQUE is not supported */
-+			if (force_check_mountid) {
-+				fprintf(stderr, "%s: name_to_handle_at(AT_HANDLE_MNT_ID_UNIQUE) not supported by running kernel\n", fname);
-+				return EXIT_FAILURE;
-+			}
- 			skip_mntid_unique = true;
- 		} else {
- 			if (mntid_unique != statx_mntid_unique) {
-@@ -215,6 +235,22 @@ static int do_name_to_handle_at(const char *fname, struct file_handle *fh,
- 	return 0;
- }
- 
-+static int check_feature(const char *feature)
-+{
-+	if (!strcmp(feature, "AT_HANDLE_MNT_ID_UNIQUE")) {
-+		int ret = name_to_handle_at(AT_FDCWD, ".", NULL, NULL, AT_HANDLE_MNT_ID_UNIQUE);
-+		/* If AT_HANDLE_MNT_ID_UNIQUE is supported, we get EFAULT. */
-+		if (ret < 0 && errno == EINVAL) {
-+			fprintf(stderr, "name_to_handle_at(AT_HANDLE_MNT_ID_UNIQUE) not supported by running kernel\n");
-+			return EXIT_FAILURE;
-+		}
-+		return 0;
-+	}
-+
-+	fprintf(stderr, "unknown feature name '%s'\n", feature);
-+	return EXIT_FAILURE;
-+}
-+
- int main(int argc, char **argv)
- {
- 	int	i, c;
-@@ -234,16 +270,20 @@ int main(int argc, char **argv)
- 	int	create = 0, delete = 0, nlink = 1, move = 0;
- 	int	rd = 0, wr = 0, wrafter = 0, parent = 0;
- 	int	keepopen = 0, drop_caches = 1, sleep_loop = 0;
-+	int	force_check_mountid = 0;
- 	int	bufsz = MAX_HANDLE_SZ;
- 
- 	if (argc < 2)
- 		usage();
- 
--	while ((c = getopt(argc, argv, "cludmrwapknhi:o:sz")) != -1) {
-+	while ((c = getopt(argc, argv, "cC:ludmMrwapknhi:o:sz")) != -1) {
- 		switch (c) {
- 		case 'c':
- 			create = 1;
- 			break;
-+		case 'C':
-+			/* Check kernel feature support. */
-+			return check_feature(optarg);
- 		case 'w':
- 			/* Write data before open_by_handle_at() */
- 			wr = 1;
-@@ -270,6 +310,9 @@ int main(int argc, char **argv)
- 		case 'm':
- 			move = 1;
- 			break;
-+		case 'M':
-+			force_check_mountid = 1;
-+			break;
- 		case 'p':
- 			parent = 1;
- 			break;
-@@ -402,7 +445,7 @@ int main(int argc, char **argv)
- 				return EXIT_FAILURE;
- 			}
- 		} else {
--			ret = do_name_to_handle_at(fname, &handle[i].fh, bufsz);
-+			ret = do_name_to_handle_at(fname, &handle[i].fh, bufsz, force_check_mountid);
- 			if (ret)
- 				return EXIT_FAILURE;
- 		}
-@@ -432,7 +475,7 @@ int main(int argc, char **argv)
- 				return EXIT_FAILURE;
- 			}
- 		} else {
--			ret = do_name_to_handle_at(test_dir, &dir_handle.fh, bufsz);
-+			ret = do_name_to_handle_at(test_dir, &dir_handle.fh, bufsz, force_check_mountid);
- 			if (ret)
- 				return EXIT_FAILURE;
- 		}
-diff --git a/tests/generic/756 b/tests/generic/756
-new file mode 100755
-index 000000000000..c7a82cfd25f4
---- /dev/null
-+++ b/tests/generic/756
-@@ -0,0 +1,65 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2017 CTERA Networks. All Rights Reserved.
-+# Copyright (C) 2024 Aleksa Sarai <cyphar@cyphar.com>
-+#
-+# FS QA Test No. 756
-+#
-+# Check stale handles pointing to unlinked files and non-stale handles pointing
-+# to linked files while verifying that u64 mount IDs are correctly returned.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick exportfs
-+
-+# Import common functions.
-+. ./common/filter
-+
-+
-+# Modify as appropriate.
-+_require_test
-+# _require_exportfs and  already requires open_by_handle, but let's not count on it
-+_require_test_program "open_by_handle"
-+_require_exportfs
-+# We need both STATX_MNT_ID_UNIQUE and AT_HANDLE_MNT_ID_UNIQUE.
-+_require_statx_unique_mountid
-+_require_open_by_handle_unique_mountid
-+
-+NUMFILES=1024
-+testdir=$TEST_DIR/$seq-dir
-+mkdir -p $testdir
-+
-+# Create empty test files in test dir
-+create_test_files()
-+{
-+	local dir=$1
-+
-+	mkdir -p $dir
-+	rm -f $dir/*
-+	$here/src/open_by_handle -c $dir $NUMFILES
-+}
-+
-+# Test encode/decode file handles
-+test_file_handles()
-+{
-+	local dir=$1
-+	local opt=$2
-+
-+	echo test_file_handles $* | _filter_test_dir
-+	$here/src/open_by_handle $opt $dir $NUMFILES
-+}
-+
-+# Check stale handles to deleted files
-+create_test_files $testdir
-+test_file_handles $testdir -Md
-+
-+# Check non-stale handles to linked files
-+create_test_files $testdir
-+test_file_handles $testdir -M
-+
-+# Check non-stale handles to files that were hardlinked and original deleted
-+create_test_files $testdir
-+test_file_handles $testdir -Ml
-+test_file_handles $testdir -Mu
-+
-+status=0
-+exit
-diff --git a/tests/generic/756.out b/tests/generic/756.out
-new file mode 100644
-index 000000000000..48aed88d87b9
---- /dev/null
-+++ b/tests/generic/756.out
-@@ -0,0 +1,5 @@
-+QA output created by 756
-+test_file_handles TEST_DIR/756-dir -Md
-+test_file_handles TEST_DIR/756-dir -M
-+test_file_handles TEST_DIR/756-dir -Ml
-+test_file_handles TEST_DIR/756-dir -Mu
--- 
-2.46.0
+On 9/4/24 13:49, Bjorn Helgaas wrote:
+> On Thu, Aug 22, 2024 at 03:41:08PM -0500, Wei Huang wrote:
+>> Hi All,
+>>
+>> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint
+>> devices to provide optimization hints for requests that target memory
+>> space. These hints, in a format called steering tag (ST), are provided
+>> in the requester's TLP headers and allow the system hardware, including
+>> the Root Complex, to optimize the utilization of platform resources
+>> for the requests.
+>>
+>> Upcoming AMD hardware implement a new Cache Injection feature that
+>> leverages TPH. Cache Injection allows PCIe endpoints to inject I/O
+>> Coherent DMA writes directly into an L2 within the CCX (core complex)
+>> closest to the CPU core that will consume it. This technology is aimed
+>> at applications requiring high performance and low latency, such as
+>> networking and storage applications.
+> 
+> Thanks for this example, it's a great intro.  Suggest adding something
+> similar to a patch commit log, since the cover letter is harder to
+> find after this appears in git.
 
+I'll incorporate some of these descriptions into the TPH patches where
+relevant. Additionally, I'll enhance the commit log for bnxt.c (patch
+11) with examples of the benefits.
+
+> 
+>> This series introduces generic TPH support in Linux, allowing STs to be
+>> retrieved and used by PCIe endpoint drivers as needed. As a
+>> demonstration, it includes an example usage in the Broadcom BNXT driver.
+>> When running on Broadcom NICs with the appropriate firmware, it shows
+>> substantial memory bandwidth savings and better network bandwidth using
+>> real-world benchmarks. This solution is vendor-neutral and implemented
+>> based on industry standards (PCIe Spec and PCI FW Spec).
+>>
+>> V3->V4:
+>>  * Rebase on top of the latest pci/next tree (tag: 6.11-rc1)
+> 
+> No need to rebase to pci/next; pci/main is where it will be applied.
+> But it currently applies cleanly to either, so no problem.
+
+Got it, will rebase to pci/main in next spin anyway.
+
+> 
+>>  * Add new API functioins to query/enable/disable TPH support
+>>  * Make pcie_tph_set_st() completely independent from pcie_tph_get_cpu_st()
+>>  * Rewrite bnxt.c based on new APIs
+>>  * Remove documentation for now due to constantly changing API
+> 
+> I'd like to see this documentation included.  And updated if the API
+> changes, of course.
+
+Will do.
+
+> 
+>>  * Remove pci=notph, but keep pci=nostmode with better flow (Bjorn)
+> 
+> This seems backward to me.  I think "pci=notph" makes sense as a way
+> to completely disable the TPH feature in case a user trips over a
+> hardware or driver defect.
+> 
+> But "pci=nostmode" is advertised as a way to quantify the benefit of
+> Steering Tags, and that seems like it's of interest to developers but
+> not users.
+> 
+> So my advice would be to keep "pci=notph" and drop "pci=nostmode".
+
+OK, I will replace the "nostmode" patch with "notph" in V5.
+
+> 
+> Bjorn
 
