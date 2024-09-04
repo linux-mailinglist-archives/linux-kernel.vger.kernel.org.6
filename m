@@ -1,70 +1,87 @@
-Return-Path: <linux-kernel+bounces-314747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDAF96B7EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:10:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C1996B7F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA781C24795
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9751F28386
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C6F1CEEB7;
-	Wed,  4 Sep 2024 10:10:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99231CC16B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444603; cv=none; b=K3LIK6dsZ6uTcYp9AYmdEl/QnAmWFXuSKgqEob7bJuuyq4fNUCfhUN68fyLvUlwrh3tp+AXHm43W8xpb+C/go0FVpxvgqYp2H8OF4b+OPb817fyWsBB8W6SeQhcr/yYaszANMYmaeivjCRfJLzxA9+363JKEzQzKNPcAMBWXJBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444603; c=relaxed/simple;
-	bh=wdjTJ6/cIZpF1sNXD5he56c6m2NRRcUAvqeORXpl9ZQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hhe6uGkJi2jvRTV0AlG05yI5UsF17o/SBIOaMYDYM3f1mx6ClMGxsLuwiThuJP1Ud/gKtRzJw5/LwR1VA54HWijtmRE709RCbfRMb21e/4Lvqs19BvwsfVFo1cZzqFsMbeOuHLpDeEt/CDdyPMORvVg8Lo3gOLjWo4f6bBAmgqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DEC1FEC;
-	Wed,  4 Sep 2024 03:10:27 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.43.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9251E3F66E;
-	Wed,  4 Sep 2024 03:09:52 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	mark.rutland@arm.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	jglisse@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
-Date: Wed,  4 Sep 2024 15:39:23 +0530
-Message-Id: <20240904100923.290042-3-dev.jain@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F2C1CF5C9;
+	Wed,  4 Sep 2024 10:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lZnH8Zbj"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0491547E0;
+	Wed,  4 Sep 2024 10:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725444676; cv=fail; b=ku4Xq9pomtg4fbOMHUf67pvEQQnsjnjFtiRa92Cr/ryu/wINSEDaQnp8EnCKvlqlY7ATEcT7CLwKZBWxSS7aN/W1gwb1qEiALnrqRc7v81aPHWToUEU4wWiTMfpIO6MFrhHceAv2CUELM+VherY8dcsom2x9f9rMQadwcWlxovY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725444676; c=relaxed/simple;
+	bh=jzVhRBEHa/tSZ9iJgs6TlRoUtCynLYezo4OWX+AXGfE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uw+lScs9TAMn8jA+8oHj5yCg913uVaab8XYMgWWyDUD/tFuAdyzYUAMVF4hA88ce3T2HEz5CeEx5spQegVfVw5ohTfIuF69Mu+0/I0XeErvXk6BQL38AqEDWfMm8BbgBzkJ1Jv8/Rp2pRcmc+3CEUVDLsUoee+FpjMiQAwvb/MY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lZnH8Zbj; arc=fail smtp.client-ip=40.107.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SazLf7UtmAYVMS9hg06APACTv0tA/jIjZSeTq73t5i82iv+w6q3mcsvfx4DgkS+WygYgJ+xX+/E+liq07lIRBTDctbXBy50kHFBJsoLWQ17DJWrUxG85en9f9OdN1Ne4IMnV0or2QCMhK7LE0PrHza2lm3xf0byLpHK+rl8BwCQVT97KVYnIP4tfacMogybBYIqUrOEqSAjUzxIFbbHD5oTGOYLCNMxFoaJQEXMxKDkH77qiE25uwHgv39n3YDV/HDvfd7RNcajCd3EhgVLdHwlWB1wbZzucWX9RANwC8pDUclQczWmilMZ+/wF0I8hKm8mYewcvxmLePN0VKuqZaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x3+KbocuzLw1rLNArlL567qL7mSuPM+1jfeOTdLJZZU=;
+ b=uOA5dwzl53ePGFj7qtpGcxHNoju9PQvWu0G/ROwDnd+rb/vogvClQ8PZBhSEajIk08ICAlL+fjagrf3agrLNhHEYWDeMUkjh/i87T0N8+nMYyQVa2VJRAWH0I1f3UtlX21cbDrIRmjZF9e4+Yhc4aqoFcgArSXJWGX6DJBArHQ63Ki/v2UUVomzX8rUlvxhDblDcT3FIaAbb8DoVsoPry9Q7lBHfV8OvFEoaiekhnyPlEbiIlI1ga3BA3GZTNe39IGFpa2wjfkboUo2KolSN/jJJzLngIYf62ScjxxQmmabHisA/NSiy3nZhZgzNx0UQTOP6GkhUvRf5gdFu7cb7bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x3+KbocuzLw1rLNArlL567qL7mSuPM+1jfeOTdLJZZU=;
+ b=lZnH8ZbjqzeMSOYoNc+17ZzvwMv44Qcz1PCaexV7vGaLxqC8RhEua4I5IIf9NRvYIJU6QAG2oGpsXGAmbUnUK0K+weFVQiEmuYDqd2emrdaXwXsOjAQAfs+qPGMP+t102H3nFXP6r2hEKcB5INeNALPsDmrPJmpu0q32JLABC8Q=
+Received: from SA1PR04CA0019.namprd04.prod.outlook.com (2603:10b6:806:2ce::26)
+ by PH8PR12MB6892.namprd12.prod.outlook.com (2603:10b6:510:1bc::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Wed, 4 Sep
+ 2024 10:11:12 +0000
+Received: from SA2PEPF000015C9.namprd03.prod.outlook.com
+ (2603:10b6:806:2ce:cafe::fd) by SA1PR04CA0019.outlook.office365.com
+ (2603:10b6:806:2ce::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
+ Transport; Wed, 4 Sep 2024 10:11:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SA2PEPF000015C9.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Wed, 4 Sep 2024 10:11:11 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Sep
+ 2024 05:11:05 -0500
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>
+CC: <gautham.shenoy@amd.com>, <ravi.bangoria@amd.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Dhananjay Ugwekar" <Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH v3] perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+Date: Wed, 4 Sep 2024 10:09:35 +0000
+Message-ID: <20240904100934.3260-1-Dhananjay.Ugwekar@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240904100923.290042-1-dev.jain@arm.com>
-References: <20240904100923.290042-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,176 +89,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
+ (10.181.40.144)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C9:EE_|PH8PR12MB6892:EE_
+X-MS-Office365-Filtering-Correlation-Id: 27ae8d96-c00f-4dac-41eb-08dcccc9e741
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BapVGQrjwe1XmZK461mF/6YKPMX7Ij/bM92tKMHdbFSD0uQl8uPMq33MU1o3?=
+ =?us-ascii?Q?FJE+DeopqeWd9J/Bnh42Lsks831iQwlSBo/Q6dHQYUUtaOZjR5tkBkhK1Nf5?=
+ =?us-ascii?Q?CR9i5cZKa0YFzZzyGApNIo9MV354MTuQZ4a2yE8AFD8XcndQiNooLWCp2lKY?=
+ =?us-ascii?Q?LaoI+UvHSo3qgZFo66tg1k/x0vGFGkFasesfFWjJ3xSfL48+Hry1qpz77hhH?=
+ =?us-ascii?Q?e6tjS9JZ3TG2iz4DVjhOTNYoS3+5DWzqsPaYLTxwhocJradSygU4B1lpW3Rb?=
+ =?us-ascii?Q?lvP5Be2aESNp03i7jf92Ip+85RuYGxvRIP0y+mqONPvfcz+QhMUtyX5+goXg?=
+ =?us-ascii?Q?W/WvyAy5ZHhmhPw1TiYZTQyplwCymHkHw7vIcGmYdBb1bJTIA8PvEd115VU0?=
+ =?us-ascii?Q?Qcwo5xeQsfNkkfmiVkeJny52aMW31Oq/gZa8OmO81leXuZSW2U1sz6OJIR7X?=
+ =?us-ascii?Q?yjrnQlS2UxxclNsIo3kI/zd8P2IgL2WfoA5/vWbAGxritqNfGK0JNSy/wb2W?=
+ =?us-ascii?Q?epjdIFXzRvw2NGpNIk/iPhJnOYqNrKnsGOK69HaiyfOJSdsHrU+4Ef36+5lO?=
+ =?us-ascii?Q?XFiyTh5dAAicSvC9rokQ+SNoF3QJwi1TuZHU26wYdWGDAH/3+NlKehspzAzj?=
+ =?us-ascii?Q?XS2FwC1xBZSRKQm0OwZy89vAnZOH7n0nC4Ol5v9rL/0R0NK1RzpvY7JhQYxZ?=
+ =?us-ascii?Q?WOOiUX+/DjqvJTLJ1F5PKtFwbixFlq1RoCfM21aTnr0+pQI60du2XKpkDaCU?=
+ =?us-ascii?Q?fsVT3VN3fTg2Cz8j40BMYyt+ufy44QN8R17b1NxKmZ4tS6P19BrkNzSuDDMi?=
+ =?us-ascii?Q?TXEq+35NAVfN8hWmlswWnHpqm5viIEzUONhjrjp4o4erOmbNz/ozmeeyL3GB?=
+ =?us-ascii?Q?y2q0mMp468rUXDChRUDYWxNy+pybBNMsqCHqMBz9zesTIB0PzOQwsBE9m9uP?=
+ =?us-ascii?Q?9JIUIa/W2gvUw0dph/GutaaLqI83pcAVKpk3vLmIslhpbBNSgnXPWdGbyIyf?=
+ =?us-ascii?Q?/mBlmERJ1JLLvAt/+CeqEJZdRh+HFgufpFvi6t1ogiL1Pm4+v4Tk+4zW03jF?=
+ =?us-ascii?Q?yiQz0ICs0tCJeTHmauFxIepw2fe+bmTtH8zPW1vV1fgRUZ0NIikXXAjThjjO?=
+ =?us-ascii?Q?w08+kwlEhZj8QuA8TmNxgfSj+ta+TJsMpQTlQtvOYIPwnEfhXSoG0tP0i5kD?=
+ =?us-ascii?Q?WPg3LNA1rl9PQgWTSSV0yWEfgUlPGj3zO95hSN3GRkEZ/UrRJ6SFhLvIZ6ZB?=
+ =?us-ascii?Q?DjKdWFeTMWSJDGuoAeuqn/mH+lB6GIQ02QF4HGdWlbNXH9USH4O5OdE9F1OS?=
+ =?us-ascii?Q?Fp1H1Qn5lVwparfxOSj5AE5YU/g3jZKliOD5IFmSj6vzjRJjEvyyU4yhMry/?=
+ =?us-ascii?Q?EYsI4WiamgAIEMP+KSIcCRqYmTF/UXpXUjQR5lyYRvtKHmvEBkvOb2laDRrF?=
+ =?us-ascii?Q?iRyRG8T0AW68LF9Quo2DGq0eYDr6SV1wD58pL0+M9IViX8npzQLM4A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 10:11:11.9292
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27ae8d96-c00f-4dac-41eb-08dcccc9e741
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6892
 
-Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-replace it with a PMD-mapped THP. Change the helpers introduced in the
-previous patch to flush TLB entry corresponding to the hugezeropage,
-and preserve PMD uffd-wp marker. In case of failure, fallback to
-splitting the PMD.
+After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
+on AMD processors that support extended CPUID leaf 0x80000026, the
+topology_die_cpumask() and topology_logical_die_id() macros, no longer
+return the package cpumask and package id, instead they return the CCD
+(Core Complex Die) mask and id respectively. This leads to the energy-pkg
+event scope to be modified to CCD instead of package.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
+So, change the PMU scope for AMD and Hygon back to package.
+
+On a 12 CCD 1 Package AMD Zen4 Genoa machine:
+
+Before:
+$ cat /sys/devices/power/cpumask
+0,8,16,24,32,40,48,56,64,72,80,88.
+
+The expected cpumask here is supposed to be just "0", as it is a package
+scope event, only one CPU will be collecting the event for all the CPUs in
+the package.
+
+After:
+$ cat /sys/devices/power/cpumask
+0
+
+Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
 ---
- include/linux/huge_mm.h |  6 ++++
- mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
- mm/memory.c             |  5 +--
- 3 files changed, 78 insertions(+), 12 deletions(-)
+v2 Link: https://lore.kernel.org/all/20240730044917.4680-2-Dhananjay.Ugwekar@amd.com/
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e25d9ebfdf89..fdd2cf473a3c 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -9,6 +9,12 @@
- #include <linux/kobject.h>
+Changes from v2:
+* Rebase on top of kan.liang's PMU scope patchset [1]
+* Set pmu.scope variable to package for AMD/Hygon CPUs
+
+tip/master + PMU scope patchset [1] to be taken as base for testing this patch. 
+
+[1]: https://lore.kernel.org/all/20240802151643.1691631-1-kan.liang@linux.intel.com/
+---
+ arch/x86/events/rapl.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index b70ad880c5bc..0c57dd5aa767 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -139,9 +139,32 @@ static unsigned int rapl_cntr_mask;
+ static u64 rapl_timer_ms;
+ static struct perf_msr *rapl_msrs;
  
- vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
-+vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-+			   unsigned long haddr, struct folio **foliop,
-+			   unsigned long addr);
-+void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-+		 struct vm_area_struct *vma, unsigned long haddr,
-+		 pgtable_t pgtable);
- int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
- 		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 58125fbcc532..150163ad77d3 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
- 
--static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
--				  unsigned long haddr, struct folio **foliop,
--				  unsigned long addr)
-+vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-+			   unsigned long haddr, struct folio **foliop,
-+			   unsigned long addr)
- {
- 	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
- 
-@@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
- 	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
- }
- 
--static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
--			struct vm_area_struct *vma, unsigned long haddr,
--			pgtable_t pgtable)
-+void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-+		 struct vm_area_struct *vma, unsigned long haddr,
-+		 pgtable_t pgtable)
- {
--	pmd_t entry;
-+	pmd_t entry, old_pmd;
-+	bool is_pmd_none = pmd_none(*vmf->pmd);
- 
- 	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
- 	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
- 	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
- 	folio_add_lru_vma(folio, vma);
--	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
-+	if (!is_pmd_none) {
-+		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-+		if (pmd_uffd_wp(old_pmd))
-+			entry = pmd_mkuffd_wp(entry);
-+	}
-+	if (pgtable)
-+		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
- 	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
- 	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
- 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
--	mm_inc_nr_ptes(vma->vm_mm);
-+	if (is_pmd_none)
-+		mm_inc_nr_ptes(vma->vm_mm);
- }
- 
- static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
-@@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
- 	spin_unlock(vmf->ptl);
- }
- 
-+static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
-+					     unsigned long haddr,
-+					     struct folio *folio)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	vm_fault_t ret = 0;
++/*
++ * RAPL Package energy counter scope:
++ * 1. AMD/HYGON platforms have a per-PKG package energy counter
++ * 2. For Intel platforms
++ *	2.1. CLX-AP is multi-die and its RAPL MSRs are die-scope
++ *	2.2. Other Intel platforms are single die systems so the scope can be
++ *	     considered as either pkg-scope or die-scope, and we are considering
++ *	     them as die-scope.
++ */
++#define rapl_pmu_is_pkg_scope()				\
++	(boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||	\
++	 boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
 +
-+	ret = check_stable_address_space(vma->vm_mm);
-+	if (ret)
-+		goto out;
-+	map_pmd_thp(folio, vmf, vma, haddr, NULL);
-+out:
-+	return ret;
++/*
++ * Helper function to get the correct topology id according to the
++ * RAPL PMU scope.
++ */
++static inline unsigned int get_rapl_pmu_idx(int cpu)
++{
++	return rapl_pmu_is_pkg_scope() ? topology_logical_package_id(cpu) :
++					 topology_logical_die_id(cpu);
 +}
 +
-+static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	gfp_t gfp = vma_thp_gfp_mask(vma);
-+	struct mmu_notifier_range range;
-+	struct folio *folio = NULL;
-+	vm_fault_t ret = 0;
-+
-+	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
-+			      vmf->address);
-+	if (ret)
-+		goto out;
-+
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-+				haddr + HPAGE_PMD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-+		goto unlock;
-+	ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
-+	if (!ret)
-+		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
-+unlock:
-+	spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+out:
-+	return ret;
-+}
-+
- vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+ static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
  {
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-@@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
+-	unsigned int rapl_pmu_idx = topology_logical_die_id(cpu);
++	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
  
--	if (is_huge_zero_pmd(orig_pmd))
-+	if (is_huge_zero_pmd(orig_pmd)) {
-+		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
-+
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+
-+		/* Fallback to splitting PMD if THP cannot be allocated */
- 		goto fallback;
-+	}
+ 	/*
+ 	 * The unsigned check also catches the '-1' return value for non
+@@ -617,7 +640,7 @@ static void __init init_rapl_pmu(void)
+ 		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+ 		rapl_hrtimer_init(pmu);
  
- 	spin_lock(vmf->ptl);
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 3c01d68065be..c081a25f5173 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 	if (vma_is_anonymous(vma)) {
- 		if (likely(!unshare) &&
- 		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
--			if (userfaultfd_wp_async(vmf->vma))
-+			if (!userfaultfd_wp_async(vmf->vma))
-+				return handle_userfault(vmf, VM_UFFD_WP);
-+			if (!is_huge_zero_pmd(vmf->orig_pmd))
- 				goto split;
--			return handle_userfault(vmf, VM_UFFD_WP);
- 		}
- 		return do_huge_pmd_wp_page(vmf);
+-		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
++		rapl_pmus->pmus[get_rapl_pmu_idx(cpu)] = pmu;
  	}
+ 
+ 	cpus_read_unlock();
+@@ -646,6 +669,12 @@ static int __init init_rapl_pmus(void)
+ 	rapl_pmus->pmu.module		= THIS_MODULE;
+ 	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
+ 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
++
++	if (rapl_pmu_is_pkg_scope()) {
++		rapl_pmus->nr_rapl_pmu	= topology_max_packages();
++		rapl_pmus->pmu.scope	= PERF_PMU_SCOPE_PKG;
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-2.30.2
+2.34.1
 
 
