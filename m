@@ -1,147 +1,385 @@
-Return-Path: <linux-kernel+bounces-315973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DE496C953
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:11:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557F896C961
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4291C25912
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D79928B6D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFAD15E88;
-	Wed,  4 Sep 2024 21:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A7B154BE0;
+	Wed,  4 Sep 2024 21:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GuWgbZ3s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrNcxayl"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C6BC2F2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E9984047;
+	Wed,  4 Sep 2024 21:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725484229; cv=none; b=KTcmDvWTu4NnrJiVU7eAYm2uFi3Um6QafeosBnuDmr7vFXX/LXusltg60gmXGRZd8k4jo0KW8B7okq3gKBe18rDGl86WnPB+xnOrizuzU/bYnofV3X+WoEvsXw+lpTqnn8orwFhGVlxK/te8LyDnCVTbGIUPmuwUKy+oXGEIYtM=
+	t=1725484308; cv=none; b=AwVLfnnuCsOZCeokPhF/ShqE4zdR8/a3kFAY5d2g0KFo+6mv7ZLeVmuiAh97faf/C8dYnOduvV5kanLMX9Td8HLtF0fTJEX8dWtA6Vc2Rlfao85BpXQsp68QnxkhduH+g6vYB6SkI9MehSqyCj4jWeWf6REWNzNBteAvLAnyu/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725484229; c=relaxed/simple;
-	bh=AaWK/QPXRZfLzR92qjHxzhe3iEAWiYE2gFeSf6BoHes=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sD/QOzc+6stimwPq5wRG9pUzy7SU6GBnc1FVFNlhn94vsRvuVLGan+K1Xfb2Qkv4eIP0JLjLqft/sGshWQeBHom1ug2EBFycWxJhx+UNqaDnWajaSK0lEf3XPbEPVOgyAT+tWLGg2tk0yDkifNatL8wic8pg/oyhe95/2Z8G56g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GuWgbZ3s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725484226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmlDgdck4DQOj2zQLq7yI2rKc9oAlzHGpi1D8CJZoNo=;
-	b=GuWgbZ3s3QOc4SLGKbWwxA8apnb+Qrllf6ab8EebkV4AN6gFr6PGW4xsAuqrd2OfS1ooyR
-	2mtahPvW19cxZC84omzOJec+OX5sxfiMVg8HqtzfGkTjXh9kYf7fP365EWgW05rgX/Il6k
-	p7qUWlo8Z65wf3tuWGYoIIw5uZ4+cDU=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-98-FAt6QmIUMGu1ZGPnylJcRw-1; Wed, 04 Sep 2024 17:10:24 -0400
-X-MC-Unique: FAt6QmIUMGu1ZGPnylJcRw-1
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a5b3341a1so107339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:10:24 -0700 (PDT)
+	s=arc-20240116; t=1725484308; c=relaxed/simple;
+	bh=SH+L3rB/khEoF6XjAAaXUYc53ekBjksTFPF9lDOwH18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGyoxXvrDz9J/syUHvfHCBa4SpUx5PcjEnAbAWPC7zmkVmYGGV3bwqCo0u7Q6kExkPMxzWt/OdznZmTpEIdz+qypgdCR/+Em2ieTZuVQGFfgJtm4l/+Xi5F1nbgyG1sB1k2Llz61g9Heo524rx0pNXMq+OXyOnKLazKxWTCkNqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrNcxayl; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6d5a4615a56so12883407b3.0;
+        Wed, 04 Sep 2024 14:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725484306; x=1726089106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6F5DN8VG4etoFkTw4aSiBhFWv4u4w1haZzJw1wqLHPw=;
+        b=SrNcxayln8X/1oU4va6gV+hbKU2DnRIGeTNRFIVJMMuAYF4aSGXtLIQ7/7VNy3qCLC
+         /hIAgSRXznC7sWLa66c7WpjQ2anoBg5K/wgNnnqPI4MesEY4S1A6LOsACdQnTcH2EM9G
+         gSsDoOAh5KqCqvMArWOOU9hZl0mt7qGTSUvMHA1gHdSwfANFYncgNO6rBePtGcOrYtqU
+         ZC3WSzZoZKomh4CSSBnlCVIWwKUSUJptRFIhoo0PivCThZn5fSdeeXDRDJB0cVFGnFIN
+         mCBUfnCrThUPN6BxwPkeNHsEd46PaweXoKOOWXpjyE8L3O2jTj8GWq1KlgV5wiz+uVOQ
+         663Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725484223; x=1726089023;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EmlDgdck4DQOj2zQLq7yI2rKc9oAlzHGpi1D8CJZoNo=;
-        b=T5mNvYFGZKmhi6Trt2yB5VG8KcAhZVmqcMorl7MSbhzpxqt8EaO+hcCLn9C+SuFB5b
-         LpiWd4TZU1OnvoF6xtx+6k0a0XWvh9MiWDNyOB+OUTesrd/N8M1eICGtgoaP1Bqh5z8r
-         hCD81cZGwSBwdtpLnd4Td9+G5PO+pChysv6Prid0ADscSosl8bRkrf31bpkD+2Qt21jd
-         OlaQ4Pbkj4Yg/Ghcc6ak/oF8dEE16CMMG9X3Biycqh9LPr8izSjiML248hkRKbUmsUOp
-         3YqlJZ3fwa4TVjXreObrM4Lj9w+R4Auou2Ofobg9ypgYgoOAt6hcr1hDtogjZy6bMFZB
-         H49Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQT9/lwLuXPzle8veHesKw6NIcOu2qavVXDNEHVvgkehCObh88OvwaTMeshowk30KOTkvC4xuGYDZxm8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXgMM8mVXL7cftqKPwdpkhKp97FQ2qk9BDRuLAlsgo7vutOu9J
-	CU1PtHDvx5AcetlWw76oF4IBXHTzc+m7w56pmkkQTPN+wbKSeY/iupKy13x3rpoZH7/oA+mzBIa
-	1kShPS43b8RvhmdBGj3bskqHNNhGjS3EVLyMpkCQZVuN2d/NykthUsCMo9mKxSA==
-X-Received: by 2002:a5e:8a0c:0:b0:81f:86e1:5a84 with SMTP id ca18e2360f4ac-82a262dccfcmr1147221139f.2.1725484223562;
-        Wed, 04 Sep 2024 14:10:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZYsadPqPXpc7RvQuadK1TsaP01DtwjD+z0URp/pH4uIMb05QskHkC3t5HSszJ5KAhNNz0jw==
-X-Received: by 2002:a5e:8a0c:0:b0:81f:86e1:5a84 with SMTP id ca18e2360f4ac-82a262dccfcmr1147219139f.2.1725484223197;
-        Wed, 04 Sep 2024 14:10:23 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a2f071fsm379684939f.6.2024.09.04.14.10.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 14:10:22 -0700 (PDT)
-Date: Wed, 4 Sep 2024 15:10:20 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Philipp Stanner <pstanner@redhat.com>, Damien Le Moal
- <dlemoal@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-Message-ID: <20240904151020.486f599e.alex.williamson@redhat.com>
-In-Reply-To: <ZtjCFR3kd5GfV_6m@surfacebook.localdomain>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	<20240903094431.63551744.alex.williamson@redhat.com>
-	<2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-	<24c1308a-a056-4b5b-aece-057d54262811@kernel.org>
-	<dcbf9292616816bbce020994adb18e2c32597aeb.camel@redhat.com>
-	<20240904120721.25626da9.alex.williamson@redhat.com>
-	<ZtjCFR3kd5GfV_6m@surfacebook.localdomain>
-Organization: Red Hat
+        d=1e100.net; s=20230601; t=1725484306; x=1726089106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6F5DN8VG4etoFkTw4aSiBhFWv4u4w1haZzJw1wqLHPw=;
+        b=qeASymz7OQpDBGUYte+Z2GzyMo0OcBytUcPjv1qTW3v0r5rED3yo7GF7Z1ekfdA9c/
+         joozZG5xmgHiP6za6TnQbTkhlyqPLQxH3HCWGkwiqwDd/Uuxg2ymWQAo26Jz5qxiEgBI
+         KbAdau2lNLWXp0O+IzAISy/y2IeGJBsO/uvNk6u/OPxmtwv0z9fOSBdNxQC0IKjvTzjp
+         rYbdXPx9ivi7C/vgRF207LkMzCbSp6xAQShAQHq6D4xhR02rye4DgijTVRIXEvps7Mt0
+         t99BUvEHUXrJm80SFgMGimJL8NvYFud1JoNNlwqeweCLK+WDup7aPceG3voxSKyLplJZ
+         EZhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfN8M4gLYrZ4hdF37MCBpceDgvelczFlQ5yXS5xKBzXcTe8VD5QywyHHlrxkNzzj9ekBXHEqgO9aMZKVRYWrFJOg==@vger.kernel.org, AJvYcCVfSFre355lwS2Q9PfaIgW4Rsi7McLiGzu824ejKM2hcHwNsuvdLr2jqlgTWaQQJD/TUzZ5GKI0lOSzar0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgy9ZRuScLozyywTZEqEMMgJDPXs+wyHD//xywU9bMJdKhU9iH
+	+s7bD+TOIB+pGNg/XU2B44BnPWT8IU6rY0ohtxnI+IUEw0MoalnVPFPLdbnRMmXjwlx6UrReLmV
+	yb3W5ZNHA6GRKN7F5tZQiPLtRYhA=
+X-Google-Smtp-Source: AGHT+IFC9FBEyB4E58BcbWrE8kJhWa503in7k0Hew0aHWs0f/gFLefKmGDwvp2AnSC2VIjLTXsV+PfV7M9CMpeegz2w=
+X-Received: by 2002:a05:690c:6c13:b0:6b0:70fc:f6e4 with SMTP id
+ 00721157ae682-6db234bf55emr43468167b3.15.1725484305865; Wed, 04 Sep 2024
+ 14:11:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240824163322.60796-1-howardchu95@gmail.com> <20240824163322.60796-7-howardchu95@gmail.com>
+ <Zti6mc3Lt5jC1owY@x1>
+In-Reply-To: <Zti6mc3Lt5jC1owY@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 4 Sep 2024 14:11:35 -0700
+Message-ID: <CAH0uvojWQz_K5S7nLavGW6K6mU6Y7TKoZAWpcut=AgbXtr6Wng@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] perf trace: Collect augmented data using BPF
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, namhyung@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 4 Sep 2024 23:24:53 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+Hello Arnaldo,
 
-> Wed, Sep 04, 2024 at 12:07:21PM -0600, Alex Williamson kirjoitti:
-> > On Wed, 04 Sep 2024 15:37:25 +0200
-> > Philipp Stanner <pstanner@redhat.com> wrote:  
-> > > On Wed, 2024-09-04 at 17:25 +0900, Damien Le Moal wrote:  
-> 
-> ...
-> 
-> > > If vfio-pci can get rid of pci_intx() alltogether, that might be a good
-> > > thing. As far as I understood Andy Shevchenko, pci_intx() is outdated.
-> > > There's only a hand full of users anyways.  
-> > 
-> > What's the alternative?  
-> 
-> From API perspective the pci_alloc_irq_vectors() & Co should be used.
+On Wed, Sep 4, 2024 at 12:53=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Sun, Aug 25, 2024 at 12:33:20AM +0800, Howard Chu wrote:
+> > Include trace_augment.h for TRACE_AUG_MAX_BUF, so that BPF reads
+> > TRACE_AUG_MAX_BUF bytes of buffer maximum.
+> >
+> > Determine what type of argument and how many bytes to read from user sp=
+ace, us ing the
+> > value in the beauty_map. This is the relation of parameter type and its=
+ corres ponding
+> > value in the beauty map, and how many bytes we read eventually:
+> >
+> > string: 1                          -> size of string (till null)
+> > struct: size of struct             -> size of struct
+> > buffer: -1 * (index of paired len) -> value of paired len (maximum: TRA=
+CE_AUG_ MAX_BUF)
+> >
+> > After reading from user space, we output the augmented data using
+> > bpf_perf_event_output().
+> >
+> > If the struct augmenter, augment_sys_enter() failed, we fall back to
+> > using bpf_tail_call().
+> >
+> > I have to make the payload 6 times the size of augmented_arg, to pass t=
+he
+> > BPF verifier.
+> >
+> > Committer notes:
+> >
+> > It works, but we need to wire it up to the userspace specialized pretty
+> > printer, otherwise we get things like:
+> >
+> >   root@number:~# perf trace -e connect ssh localhost
+> >        0.000 ( 0.010 ms): :784442/784442 connect(fd: 3, uservaddr: {2,}=
+, addrlen: 16)                          =3D 0
+> >        0.016 ( 0.006 ms): :784442/784442 connect(fd: 3, uservaddr: {10,=
+}, addrlen: 28)                         =3D 0
+> >        0.033 ( 0.096 ms): :784442/784442 connect(fd: 3, uservaddr: {10,=
+}, addrlen: 28)                         =3D 0
+> >   root@localhost's password:     71.292 ( 0.037 ms): ssh/784442 connect=
+(fd: 4, uservaddr: {1,{['/','v','a','r','/','r','u','n','/','.','h','e','i'=
+,'m',],},}, addrlen: 110) =3D 0
+> >       72.087 ( 0.013 ms): ssh/784442 connect(fd: 4, uservaddr: {1,{['/'=
+,'v','a','r','/','r','u','n','/','.','h','e','i','m',],},}, addrlen: 110) =
+=3D 0
+> >
+> >   root@number:~#
+> >
+> > When we used to have:
+> >
+> >   root@number:~# perf trace -e connect ssh localhost
+> >        0.000 ( 0.011 ms): ssh/786564 connect(fd: 3, uservaddr: { .famil=
+y: INET, port: 22, addr: 127.0.0.1 }, addrlen: 16) =3D 0
+> >        0.017 ( 0.006 ms): ssh/786564 connect(fd: 3, uservaddr: { .famil=
+y: INET6, port: 22, addr: ::1 }, addrlen: 28) =3D 0
+> >        0.263 ( 0.043 ms): ssh/786564 connect(fd: 3, uservaddr: { .famil=
+y: INET6, port: 22, addr: ::1 }, addrlen: 28) =3D 0
+> >       63.770 ( 0.044 ms): ssh/786564 connect(fd: 4, uservaddr: { .famil=
+y: LOCAL, path: /var/run/.heim_org.h5l.kcm-socket }, addrlen: 110) =3D 0
+> >       65.467 ( 0.042 ms): ssh/786564 connect(fd: 4, uservaddr: { .famil=
+y: LOCAL, path: /var/run/.heim_org.h5l.kcm-socket }, addrlen: 110) =3D 0
+> >   root@localhost's password:
+> >
+> > That is closer to what strace produces:
+> >
+> >   root@number:~# strace -e connect ssh localhost
+> >   connect(3, {sa_family=3DAF_INET, sin_port=3Dhtons(22), sin_addr=3Dine=
+t_addr("127.0.0.1")}, 16) =3D 0
+> >   connect(3, {sa_family=3DAF_INET6, sin6_port=3Dhtons(22), sin6_flowinf=
+o=3Dhtonl(0), inet_pton(AF_INET6, "::1", &sin6_addr), sin6_scope_id=3D0}, 2=
+8) =3D 0
+> >   connect(3, {sa_family=3DAF_INET6, sin6_port=3Dhtons(22), sin6_flowinf=
+o=3Dhtonl(0), inet_pton(AF_INET6, "::1", &sin6_addr), sin6_scope_id=3D0}, 2=
+8) =3D 0
+> >   connect(4, {sa_family=3DAF_UNIX, sun_path=3D"/var/run/.heim_org.h5l.k=
+cm-socket"}, 110) =3D 0
+> >   connect(4, {sa_family=3DAF_UNIX, sun_path=3D"/var/run/.heim_org.h5l.k=
+cm-socket"}, 110) =3D 0
+> >   root@localhost's password:
+> >
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Link: https://lore.kernel.org/r/20240815013626.935097-10-howardchu95@gm=
+ail.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 114 +++++++++++++++++-
+> >  1 file changed, 113 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/to=
+ols/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > index 0acbd74e8c76..f29a8dfca044 100644
+> > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > @@ -7,6 +7,8 @@
+> >   */
+> >
+> >  #include "vmlinux.h"
+> > +#include "../trace_augment.h"
+> > +
+> >  #include <bpf/bpf_helpers.h>
+> >  #include <linux/limits.h>
+> >
+> > @@ -124,6 +126,25 @@ struct augmented_args_tmp {
+> >       __uint(max_entries, 1);
+> >  } augmented_args_tmp SEC(".maps");
+> >
+> > +struct beauty_payload_enter {
+> > +     struct syscall_enter_args args;
+> > +     struct augmented_arg aug_args[6];
+> > +};
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ pahole -C augmented_arg /tmp/bui=
+ld/perf-tools-next/util/bpf_skel/.tmp/augmented_raw_syscalls.bpf.o
+> struct augmented_arg {
+>         unsigned int               size;                 /*     0     4 *=
+/
+>         int                        err;                  /*     4     4 *=
+/
+>         char                       value[4096];          /*     8  4096 *=
+/
+>
+>         /* size: 4104, cachelines: 65, members: 3 */
+>         /* last cacheline: 8 bytes */
+> };
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ pahole -C syscall_enter_args /tm=
+p/build/perf-tools-next/util/bpf_skel/.tmp/augmented_raw_syscalls.bpf.o
+> struct syscall_enter_args {
+>         unsigned long long         common_tp_fields;     /*     0     8 *=
+/
+>         long                       syscall_nr;           /*     8     8 *=
+/
+>         unsigned long              args[6];              /*    16    48 *=
+/
+>
+>         /* size: 64, cachelines: 1, members: 3 */
+> };
+>
+> So the entry has the theoretical max limit for the augmented payload
+> which would be 6 * sizeof(struct augmented_arg) + the common header for
+> tracepoints (unaugmented), a lot of space, but...
 
-We can't replace a device level INTx control with a vector allocation
-function.
- 
-> > vfio-pci has a potentially unique requirement
-> > here, we don't know how to handle the device interrupt, we only forward
-> > it to the userspace driver.  As a level triggered interrupt, INTx will
-> > continue to assert until that userspace driver handles the device.
-> > That's obviously unacceptable from a host perspective, so INTx is
-> > masked at the device via pci_intx() where available, or at the
-> > interrupt controller otherwise.  The API with the userspace driver
-> > requires that driver to unmask the interrupt, again resulting in a call
-> > to pci_intx() or unmasking the interrupt controller, in order to receive
-> > further interrupts from the device.  Thanks,  
-> 
-> I briefly read the discussion and if I understand it correctly the problem here
-> is in the flow: when the above mentioned API is being called. Hence it's design
-> (or architectural) level of issue and changing call from foo() to bar() won't
-> magically make problem go away. But I might be mistaken.
+Yes, if I don't use this much space, and try to do a flexible payload
+length, I won't be able to pass the BPF verifier. I will try to fix
+this wasting problem.
 
-Certainly from a vector allocation standpoint we can change to whatever
-is preferred, but the direct INTx manipulation functions are a
-different thing entirely and afaik there's nothing else that can
-replace them at a low level, nor can we just get rid of our calls to
-pci_intx().  Thanks,
+>
+> > +static int augment_sys_enter(void *ctx, struct syscall_enter_args *arg=
+s)
+> > +{
+> > +     bool augmented, do_output =3D false;
+> > +     int zero =3D 0, size, aug_size, index, output =3D 0,
+> > +         value_size =3D sizeof(struct augmented_arg) - offsetof(struct=
+ augmented_arg, value);
+> > +     unsigned int nr, *beauty_map;
+> > +     struct beauty_payload_enter *payload;
+> > +     void *arg, *payload_offset;
+> > +
+> > +     /* fall back to do predefined tail call */
+> > +     if (args =3D=3D NULL)
+> > +             return 1;
+> > +
+> > +     /* use syscall number to get beauty_map entry */
+> > +     nr             =3D (__u32)args->syscall_nr;
+> > +     beauty_map     =3D bpf_map_lookup_elem(&beauty_map_enter, &nr);
+>
+> If we don't set up the entry for this syscall, then there are no
+> pointers to collect, we return early and the tracepoint will not filter
+> it and there it goes, up unmodified, if not already filtered by a
+> tracepoint filter, ok, I'll add these comments here.
 
-Alex
+Thank you.
 
+>
+> > +     /* set up payload for output */
+> > +     payload        =3D bpf_map_lookup_elem(&beauty_payload_enter_map,=
+ &zero);
+> > +     payload_offset =3D (void *)&payload->aug_args;
+> > > +   if (beauty_map =3D=3D NULL || payload =3D=3D NULL)
+> > +             return 1;
+>
+> We can save the lookup for payload if the one for beauty_map returned
+> NULL, I'll do this fixup.
+
+Thanks that makes sense.
+
+>
+> > +     /* copy the sys_enter header, which has the syscall_nr */
+> > +     __builtin_memcpy(&payload->args, args, sizeof(struct syscall_ente=
+r_args));
+>
+>
+> > +     /*
+> > +      * Determine what type of argument and how many bytes to read fro=
+m user space, using the
+> > +      * value in the beauty_map. This is the relation of parameter typ=
+e and its corresponding
+> > +      * value in the beauty map, and how many bytes we read eventually=
+:
+> > +      *
+> > +      * string: 1                          -> size of string
+> > +      * struct: size of struct             -> size of struct
+> > +      * buffer: -1 * (index of paired len) -> value of paired len (max=
+imum: TRACE_AUG_MAX_BUF)
+>
+> 'paired_len'? Ok, 1, size of string or struct
+
+I mean the buffer always comes with a size indicator. For instance
+read syscall's 'buf' and 'count', in this case 'count' will pair with
+'buf'. Sorry for the confusion. See below:
+
+read: (unsigned int fd, char *buf, size_t count)
+
+>
+>
+> Will continue the detailed analysis later, as I need to change the
+> existing BPF collector, before applying this, to match the protocol here
+> (that will always have the size of each argument encoded in the ring
+> buffer, easier, but uses more space).
+
+Thank you for adding the protocol data size fix.
+
+>
+> - Arnaldo
+>
+> > +      */
+> > +     for (int i =3D 0; i < 6; i++) {
+> > +             arg =3D (void *)args->args[i];
+> > +             augmented =3D false;
+> > +             size =3D beauty_map[i];
+> > +             aug_size =3D size; /* size of the augmented data read fro=
+m user space */
+> > +
+> > +             if (size =3D=3D 0 || arg =3D=3D NULL)
+> > +                     continue;
+> > +
+> > +             if (size =3D=3D 1) { /* string */
+> > +                     aug_size =3D bpf_probe_read_user_str(((struct aug=
+mented_arg *)payload_offset)->value, value_size, arg);
+> > +                     /* minimum of 0 to pass the verifier */
+> > +                     if (aug_size < 0)
+> > +                             aug_size =3D 0;
+> > +
+> > +                     augmented =3D true;
+> > +             } else if (size > 0 && size <=3D value_size) { /* struct =
+*/
+> > +                     if (!bpf_probe_read_user(((struct augmented_arg *=
+)payload_offset)->value, size, arg))
+> > +                             augmented =3D true;
+> > +             } else if (size < 0 && size >=3D -6) { /* buffer */
+> > +                     index =3D -(size + 1);
+> > +                     aug_size =3D args->args[index];
+> > +
+> > +                     if (aug_size > TRACE_AUG_MAX_BUF)
+> > +                             aug_size =3D TRACE_AUG_MAX_BUF;
+> > +
+> > +                     if (aug_size > 0) {
+> > +                             if (!bpf_probe_read_user(((struct augment=
+ed_arg *)payload_offset)->value, aug_size, arg))
+> > +                                     augmented =3D true;
+> > +                     }
+> > +             }
+> > +
+> > +             /* write data to payload */
+> > +             if (augmented) {
+> > +                     int written =3D offsetof(struct augmented_arg, va=
+lue) + aug_size;
+> > +
+> > +                     ((struct augmented_arg *)payload_offset)->size =
+=3D aug_size;
+> > +                     output +=3D written;
+> > +                     payload_offset +=3D written;
+> > +                     do_output =3D true;
+> > +             }
+> > +     }
+> > +
+> > +     if (!do_output)
+> > +             return 1;
+> > +
+> > +     return augmented__beauty_output(ctx, payload, sizeof(struct sysca=
+ll_enter_args) + output);
+>
+> We end up pushing up to the ring buffer all the way to
+
+Thanks,
+Howard
 
