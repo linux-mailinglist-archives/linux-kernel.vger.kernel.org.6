@@ -1,49 +1,66 @@
-Return-Path: <linux-kernel+bounces-315903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D8496C89A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2159A96C89D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6281C25B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D146528990C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1737815574C;
-	Wed,  4 Sep 2024 20:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4898A149DE8;
+	Wed,  4 Sep 2024 20:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYnTW1ev"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c2s4C/xz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7133E62A02;
-	Wed,  4 Sep 2024 20:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C335D1EBFEC;
+	Wed,  4 Sep 2024 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725481832; cv=none; b=oNNGM6M+BZcvavoXflHjEKw6KXT3CIYhCDzduSFtyXQmpoVTynCUHi6XsmLF+qNt+X2WP/Tnz1pfjjAmKAPcnbUAHfgQ8yLwHUmvotQpHkGPbgpkMLUCLABEoA6SQmlBbAk5Q6RMA6gE5fKOy8dEfzwp6vbJ2+y3meKOzbLyFnI=
+	t=1725481925; cv=none; b=tlaTDQn7zThVrF1VJw6Yg3/ST8kwtE1RstTTGBEpOGI7BiEz67p2FconAipuPdH4Qk0rrLum76jzMh+5GQTmUYxS+DHFStFXxrsZqn0wQAGbGgthUiQkmn4hC5rSSu6QdzV5BX0okfGBfWPVDhPSDtZyCsvC7p8MyfvOvzWaHVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725481832; c=relaxed/simple;
-	bh=2FeNiLbsQe/94HyRbvl5xiOZZe5KxKxfYZU0jFSsaPA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rNGGeADtmzoC0QPRAoMPNTyh0UD5j0Vjkngzl9Sf/xNkvHzQrhsU6jF9+j5+tPBsADjb/bG59Uu8uFIdyDdKcR5UbGAfzj3rmt8MJUl8FpK+K7+furUQLNyM5Yd0FNQymJr0zCi7eFTMKnLb47NE8ZCl8mPbg6UqDnYzN11+gfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYnTW1ev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92F9C4CECA;
-	Wed,  4 Sep 2024 20:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725481832;
-	bh=2FeNiLbsQe/94HyRbvl5xiOZZe5KxKxfYZU0jFSsaPA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pYnTW1evBmUFfQLOcu9bV6tMSxDPPri++QwMWq2Zqnto2cF4X58zsd5rSoeKbFoEU
-	 N8VgmhFZoCisgrVozJnlDFy4wU1UuKE4EHnlXaApry33kK2CIpiJVCWNzZD9w/jC0d
-	 j+8avtmXDZafDrhzq2s2FVNZ2vF3tVwwwQJ/a/AiGmtT6fdCA+4WVljb0uToEGgJLG
-	 /mwylo/tnKrqSVp2M6OpHWW6gfp4Vb0hbjbOSick+pEnlJ1pcmkBiOXM6xLypjdem2
-	 BTn2Rbplg2hfiZ78GrBwDZg7AL8yyxOzDDwveyHcFXA9dfgHwtLvlHFvlxk7PWdxP+
-	 wqAiK1TSLIzbA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB11E3822D30;
-	Wed,  4 Sep 2024 20:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725481925; c=relaxed/simple;
+	bh=gqJFPZ5TBT3uU2PefWaM8pDxQC85HpNqtSQ8CnSk3Ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lfctCokpr1qwIOXn05FhgA7pWAqGwf8XNpgyWi1/9LjRRGUSxylujzBICSZAkPnPRj7kBzPK092zAhUP6Y0OZS1+QUDulbhT/yitWDpByS3y3pX+e26lKIHe8peoeO8NwfW3Tl59w3JaFLnH1zLdvksRJK3AFplX7u789r+PIlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c2s4C/xz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725481921;
+	bh=gqJFPZ5TBT3uU2PefWaM8pDxQC85HpNqtSQ8CnSk3Ug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c2s4C/xzjyixldE8BZdQJTeIqZln2iWf5pEFZX6+fZsDXYFH5iZhLq13RzUKnVn/x
+	 kXsTO19oOZWCK2/oeVGo2JU+RXpdBR52VzZ96TSAqZJwNkNEA3jd2i+PvDT0l6GHvQ
+	 4TPmPBt7jue6y7+JbI0A6IWg7wmV3+QfNv5dbkralZFxooOlHRVbIG9lHZzizWaUB0
+	 4yOLxpG7oXmZXRx34ZGcRP5buUZVocZYJM3Iga3OPSucvtblV1lNWhRJHxEv6IUdgJ
+	 B8z11h67lMbIZjsORsGibnPUSCbmo799jPeyNaT2hMixFgp9bRLuoCU3IqH2Mx0RJx
+	 IqVs8SiVcUxgA==
+Received: from bootstrap.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 59DE117E0AE5;
+	Wed,  4 Sep 2024 22:32:00 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v4 0/1] dt-bindings: mmc: Add support for rk3576 eMMC
+Date: Wed,  4 Sep 2024 16:30:57 -0400
+Message-ID: <20240904203154.253655-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,54 +68,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests: bpf: Replace sizeof(arr)/sizeof(arr[0]) with
- ARRAY_SIZE
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172548183250.1158691.8977955400396448785.git-patchwork-notify@kernel.org>
-Date: Wed, 04 Sep 2024 20:30:32 +0000
-References: <20240903072559.292607-1-yangfeng59949@163.com>
-In-Reply-To: <20240903072559.292607-1-yangfeng59949@163.com>
-To: yangfeng <yangfeng59949@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+This patch has been extracted from the [0] patch set to be rebased on
+the next branch of the mmc tree as requested in [1].
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+[0]: https://lore.kernel.org/all/010201919989e3de-60b56341-85e0-4869-89d1-362407c4f2ec-000000@eu-west-1.amazonses.com/
+[1]: https://lore.kernel.org/all/CAPDyKFoJoqwNTKvpK93QtK1wA9vzVUTzCrP32s_HEZcrujN2Mg@mail.gmail.com/
 
-On Tue,  3 Sep 2024 15:25:59 +0800 you wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> The ARRAY_SIZE macro is more compact and more formal in linux source.
-> 
-> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> ---
->  tools/testing/selftests/bpf/prog_tests/fexit_stress.c        | 3 ++-
->  tools/testing/selftests/bpf/prog_tests/log_buf.c             | 5 +++--
->  .../testing/selftests/bpf/prog_tests/module_fentry_shadow.c  | 3 ++-
->  .../bpf/prog_tests/raw_tp_writable_reject_nbd_invalid.c      | 3 ++-
->  .../selftests/bpf/prog_tests/raw_tp_writable_test_run.c      | 5 +++--
->  tools/testing/selftests/bpf/prog_tests/tc_opts.c             | 2 +-
->  tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c | 3 ++-
->  tools/testing/selftests/bpf/progs/syscall.c                  | 3 ++-
->  tools/testing/selftests/bpf/progs/test_rdonly_maps.c         | 3 ++-
->  tools/testing/selftests/bpf/progs/verifier_bits_iter.c       | 2 +-
->  10 files changed, 20 insertions(+), 12 deletions(-)
+Changes since v3:
+- Rebased on mmc tree's next branch
+- Improve power-domains requirements
+- Removed Reviewed-by: tag
 
-Here is the summary with links:
-  - selftests: bpf: Replace sizeof(arr)/sizeof(arr[0]) with ARRAY_SIZE
-    https://git.kernel.org/bpf/bpf-next/c/23457b37ec3f
+Changes since v2:
+- Move the allOf: after the required: block
 
-You are awesome, thank you!
+Detlev.
+
+Detlev Casanova (1):
+  dt-bindings: mmc: Add support for rk3576 eMMC
+
+ .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 37 +++++++++++++++----
+ 1 file changed, 29 insertions(+), 8 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
