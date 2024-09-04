@@ -1,111 +1,141 @@
-Return-Path: <linux-kernel+bounces-314274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B73C96B0EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:07:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F8096B114
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E43E1C23E5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E86DB24E8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E8E84A5C;
-	Wed,  4 Sep 2024 06:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4950D84D29;
+	Wed,  4 Sep 2024 06:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p1TWR20J"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8pPL0f0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550F91EC00B;
-	Wed,  4 Sep 2024 06:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B849F9D6;
+	Wed,  4 Sep 2024 06:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725430030; cv=none; b=NIfxZbZUh5Q5VA9B9J0KmBf9hhPkwbPhyR54CB88xe7RAs+PNhS0FV9ixqEzjBJfClifDiA6/iCA+xM3qYDTWlD8QmBOMl4V9KBxdvRK2J3XVPR50A0IV1QGfNgMpzAQMla4Sk8zpE8vt+GA4eR/GWo6/MDEtMeBgjdwJdW8uJs=
+	t=1725430269; cv=none; b=i9NwFhru/uT+jowmCC4KT3L/GT8fObjCVUVBoiYt0zSxtBmE6Dl/HWkUa0/eH/LXTlUh0ZRhHNtLybfN+BgRCa3+cJF3xp+3mo1k4lfD1pHPW3wmRMWrnZSxFmKPQ3AbjkZ0QVXPFT0szBrUCkhPXApYLyfx8EQbI8+fH3XkY9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725430030; c=relaxed/simple;
-	bh=ptj0vR5+/+WV8NkK8DLkADsVWUeSufMuadxsig6hA78=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d8vaA4YAUG3oZdJNpxyAtWm4Hz6lDIGGthTEsvVHvYHBxOlHjlYJ6eifiFASzOyZr7ufPlT//66BgYfqFY8WdwDGvIQs11O3P9u2TqId/lZLIbHqgZW/LubpG35inZkcKLIyaVFfMVSb3tC6nVLRHrlqJyP1lWhwmVJqF627yJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p1TWR20J; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725430020;
-	bh=SAGoOF6qurBm6IrIHxM8opo70XqvwtO1qqbWel1pNLI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=p1TWR20JagUZTIIACW3eZLMd5rIlIWwYBtMZdP5PbkEz+d5o2uSwWBE0DC/EVPUJQ
-	 zwQx94c87Etb7jHa2XB/CvxqRt+jjjOEusPKEFLR7mbUvZm4qWx9LirAoHwsrkg4ke
-	 xiEvkE/SjUktzclArzu0yvzXEBkwKC+4kSYEr7dlvlwRVTvqW3gEvsL74e1kTxCCAA
-	 6Fx66lSesgPtX+nyRKUjkJulrDc9RjaGkGrlmasV08Lcbcecw2+Yyg3bzH1fu4Y/D+
-	 7nySorNw3pAeG0ZbDk0K8NszdEAlcrIUFubU5X57RuUMFbjZrIU0gb5pJOEe/j7Zzp
-	 QcMA7z1WHolhA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WzBpX35zGz4wj1;
-	Wed,  4 Sep 2024 16:07:00 +1000 (AEST)
-Date: Wed, 4 Sep 2024 16:06:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Greg KH
- <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the nvmem tree
-Message-ID: <20240904160659.3c0f7b54@canb.auug.org.au>
+	s=arc-20240116; t=1725430269; c=relaxed/simple;
+	bh=aCL6Zb5OWsKvfMi2Mef+7SbyF16Z/0kioNzL8s98yzY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dfO2k/8nGMeSKgzXzaEtXxU8OSopDKEpZTiYZGKgLbRjTUBcgO/RwpazMDhLDIvroTWeMnB3FgKlFQeAL5tJ8Jm3AwZmAQB0GTZgeNkCWK9UAyWcm0H6GAMENBXJiwhLWhnMGFFUdF4BnJvmRb71GCZm94GmvsCKAYOOub42rCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8pPL0f0; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725430267; x=1756966267;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aCL6Zb5OWsKvfMi2Mef+7SbyF16Z/0kioNzL8s98yzY=;
+  b=C8pPL0f0bZh+fYb4u05yMbJXBDC0B60FMb9nSHZI3Q0yyJOAZmKKyqQc
+   SJBxQcvSIwiQPTJVrUpFESi0Yrzv9cyN7tpzfqfMtZfz+hX4lzedvPJ8c
+   L7weEBDA/XeNCa2EWJZGTZ4Np1Fs2NIPqRLr6QwZd4gC95X9bDXxIb2Rt
+   HqqjCj3ihueWffCQA7JH3Oo/bGvvmQjiFUtRo77QGWT8PgoMRtnj1FUFv
+   2L/5s21oCFZlcXGKpb+fh7UMknLRB91iLXSarmhLGQNL7ZH0SxUah1Xci
+   wD2kCL9P2LVWwvSApWmRb6kJenjXVW/qwqOFjb+RQAR01kzSytP7zic1q
+   w==;
+X-CSE-ConnectionGUID: L4rp+t4TTEmrMIgwx4DfBQ==
+X-CSE-MsgGUID: 0B6NOFdNS6KnXQlYgxTC/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24228420"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="24228420"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 23:11:07 -0700
+X-CSE-ConnectionGUID: KzfF9kMAQ0OqQa6Zrw86Ig==
+X-CSE-MsgGUID: 9BOHvZ2FQ4G8g0K6TXpRig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="70018930"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 23:11:04 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: jani.saarinen@intel.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices requiring ATS
+Date: Wed,  4 Sep 2024 14:07:05 +0800
+Message-Id: <20240904060705.90452-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ddiTiH0aaYq7OhnnqBt5NIW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/ddiTiH0aaYq7OhnnqBt5NIW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+SOC-integrated devices on some platforms require their PCI ATS enabled
+for operation when the IOMMU is in scalable mode. Those devices are
+reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
+field.
 
-Hi all,
+The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
+ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
+can cause a conflict, leading to boot failure, especially if the device
+is a graphics device.
 
-The following commits are also in the char-misc.current tree as different
-commits (but the same patches):
+To prevent this issue, check PCI ATS support before enumerating the IOMMU
+devices. If any device requires PCI ATS, but PCI ATS is disabled by
+'pci=noats', switch the IOMMU to operate in legacy mode to ensure
+successful booting.
 
-  6eabcb1b4fed ("dt-bindings: nvmem: Use soc-nvmem node name instead of nvm=
-em")
-  cd6acd8a1903 ("nvmem: Fix return type of devm_nvmem_device_get() in kerne=
-ldoc")
-  0a55faea9c90 ("nvmem: u-boot-env: error if NVMEM device is too small")
+Fixes: 97f2f2c5317f ("iommu/vt-d: Enable ATS for the devices in SATC table")
+Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12036
+Cc: stable@vger.kernel.org
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/iommu.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-These are commits
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 4aa070cf56e7..8f275e046e91 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -3127,10 +3127,26 @@ int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
+ 					(void *)satc + satc->header.length,
+ 					satc->segment, satcu->devices,
+ 					satcu->devices_cnt);
+-			if (ret > 0)
+-				break;
+-			else if (ret < 0)
++			if (ret < 0)
+ 				return ret;
++
++			if (ret > 0) {
++				/*
++				 * The device requires PCI/ATS when the IOMMU
++				 * works in the scalable mode. If PCI/ATS is
++				 * disabled using the pci=noats kernel parameter,
++				 * the IOMMU will default to legacy mode. Users
++				 * are informed of this change.
++				 */
++				if (intel_iommu_sm && satcu->atc_required &&
++				    !pci_ats_supported(info->dev)) {
++					pci_warn(info->dev,
++						 "PCI/ATS not supported, system working in IOMMU legacy mode\n");
++					intel_iommu_sm = 0;
++				}
++
++				break;
++			}
+ 		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
+ 			if (dmar_remove_dev_scope(info, satc->segment,
+ 					satcu->devices, satcu->devices_cnt))
+-- 
+2.34.1
 
-  a759d1f25182 ("dt-bindings: nvmem: Use soc-nvmem node name instead of nvm=
-em")
-  c69f37f6559a ("nvmem: Fix return type of devm_nvmem_device_get() in kerne=
-ldoc")
-  8679e8b4a1eb ("nvmem: u-boot-env: error if NVMEM device is too small")
-
-in the char-misc.current tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ddiTiH0aaYq7OhnnqBt5NIW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbX+QMACgkQAVBC80lX
-0Gw+xQf+Jk5iLq5DK42dbc7xVjRg77zPmNFzMXcn0kF5NW5HIcZY49iCmK9dpO+e
-3z/M9xOI9uhIgJrWIGewWbzaDFcIHK8zhtP2E0LxLadud4ygS9062gS/INH+ym16
-dsa2Mb/TsnfZoHl8rJJSSYWbhM6i9k+Xk6kEfmA4OBqjjOg/QtQPMAmso4rW83+1
-A9P0cilIg8XFE0mky322rmQ+s1YaFrMG9pO8AAHoyWF0kZAGpMoiHjiz2xFnZWBB
-ns784FZ6yoyL0JDNDsmvHp0lXHWaNC97+Bnh90cFWcXbEuEdVpjRZ9fyK+yTzVnY
-V+5UshalzKKhuDXQGHfdFzQpHtF7hA==
-=MDBt
------END PGP SIGNATURE-----
-
---Sig_/ddiTiH0aaYq7OhnnqBt5NIW--
 
