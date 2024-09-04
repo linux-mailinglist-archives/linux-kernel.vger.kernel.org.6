@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-315277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7174396C04E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F9096C065
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9731F23B60
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99801C20E5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F5D1DC058;
-	Wed,  4 Sep 2024 14:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9412C1DC1BB;
+	Wed,  4 Sep 2024 14:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A3Qc/M+g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBozVtzi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AF61DC04A;
-	Wed,  4 Sep 2024 14:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30031DC198;
+	Wed,  4 Sep 2024 14:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459825; cv=none; b=YfpHOyvmpwz+0Q9CL04o5lLsmY8d5qmnOr9DEDnITrQOWtyCGVJGZaBtn61Y3eLKe/JkfdszUVvaGXbBpvMVq+PBcNiruok63v/xAgbTQVXKO1IlgLixk2Aj4TM5NBuAKqUBX5JXcyRMP3oeVJA1yZw+f5uNruSRuwVKuGMb15o=
+	t=1725459962; cv=none; b=qFTbWHbw8Gu8ddYKUm/6dtmqU5T9urHwMEmC+wmeXpTXRO0rd2pEMf3lCqhRCKGGYMYABQMr+0RfOOPU+TjrwKik9CG0iC+Y83jHyvAMpDKJrYZdl9QEH7S1MMjGNYTwgwT2Em5HegJhNhNgGZmWUkfziX2z6EDGLmkbhvpd/Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459825; c=relaxed/simple;
-	bh=upyMFhK2PT2U7+0NWGDIv0m1IqeBZy+daOSAhTHxgec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f67753J6XhGs96XpIPZ8jinIX71Y8EzfVQ+b/+06S36qoreLkWHcepFag1kJ/5MVdjjJ3ahpVaPeylHeojpl8ETULU5U6NtNeZ6D/iNtzjHtiJA+KLUauuFsTbRHpNz+G4MO3SoZNMlj140fQxJD6D2g/SVBFQH95pmp0GNRPio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A3Qc/M+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C84AC4CEC2;
-	Wed,  4 Sep 2024 14:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725459825;
-	bh=upyMFhK2PT2U7+0NWGDIv0m1IqeBZy+daOSAhTHxgec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A3Qc/M+gEmKz7lWfvOBFjTNaY0JATLI3xxWYhw9DIf7cxKEWTyNA1g/W1ILhwVeKd
-	 DLqApFksvp/PPYuneJqwWioAP6pTolRgqxX3SxijUBHP9YjkiRAY+piN1nNhNZMjEp
-	 eeLDk57jvbLgj7kzgwX66osETYWGSUNhFvqzAQ9I=
-Date: Wed, 4 Sep 2024 16:23:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Richard Narron <richard@aaazen.com>
-Cc: Linux stable <stable@vger.kernel.org>,
-	Linux kernel <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
-Message-ID: <2024090413-unwed-ranging-befe@gregkh>
-References: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
- <2024090419-repent-resonant-14c1@gregkh>
- <fc713222-f7b1-d1c0-2aa2-c15f42d3873e@aaazen.com>
+	s=arc-20240116; t=1725459962; c=relaxed/simple;
+	bh=IWU/5vUW/co70eztiWwvLMjG3Rr6wvuy04MQhdILmFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jmcv51kUDmflYC2vLXh2G5MH27i4Vic8/2RW7ajCPLPaWUo6EpjGi28NGXevlF571sGScRsOomcb7NxOZrSmzKNmWtoXUUrznXqFmA2GaaT54rcEUe9iDN99Rw93MMDNbRBSG4oCcTtZ+6YK1hzvXAbNl1cK/x7IEkk6y5wxyjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBozVtzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C796C4CEC2;
+	Wed,  4 Sep 2024 14:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725459961;
+	bh=IWU/5vUW/co70eztiWwvLMjG3Rr6wvuy04MQhdILmFA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lBozVtzive0diJ/t/qMDqf/mXXvlmnA48DTrNJYvgqkkbvffLerAvZYhyJvTePFhk
+	 rEmHm7FOfnp/RPbgt2CjTfvjbo1ulSeo5lrRCgTItSDJJLClmBzLChD60UPa4ni6X+
+	 g2b7SX3kjvpIvtDZIEkTS+cjlMOlVmyM+12QjqKZ8MtEUF2MK3eyzmZ0zf8mK57WWe
+	 IGIt/RMejt6+0z1cp0+XsWUXcQ6A6+8kLiPH7SmOG15431iiOT3oMc7xGIurMG+yhg
+	 g7T8FQsJ7vsMh/UlIDJdCejRwBC76xGC+abrjn2QpSwwSGyS0TX540deIU1DhENHjQ
+	 USM/q+fF0Lvdw==
+Message-ID: <26d8ecbe-0d85-4be2-a142-861088e43918@kernel.org>
+Date: Wed, 4 Sep 2024 16:25:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc713222-f7b1-d1c0-2aa2-c15f42d3873e@aaazen.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
+References: <20240903145615.9302-1-detlev.casanova@collabora.com>
+ <6077666.lOV4Wx5bFT@trenzalore>
+ <0d4d40cc-9885-4933-a6d6-933e4705a68c@linaro.org>
+ <1896150.tdWV9SEqCh@trenzalore>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1896150.tdWV9SEqCh@trenzalore>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 05:48:09AM -0700, Richard Narron wrote:
-> On Wed, 4 Sep 2024, Greg KH wrote:
+On 04/09/2024 16:20, Detlev Casanova wrote:
+>>>>> +      properties:
+>>>>> +        power-domains:
+>>>>> +          minItems: 1
+>>>>
+>>>> Why minItems? This does not look right. I don't get what you are trying
+>>>> to say here.
+>>>
+>>> I'm saying that for the rockchip,rk3576-dwcmshc compatible, 1 power-domain
+>>> node has to be set.
+>>
+>> The top-level property already says this. You need to disallow it for
+>> other variants (:false).
 > 
-> > On Mon, Sep 02, 2024 at 03:39:49PM -0700, Richard Narron wrote:
-> > > I get an "out of memory" error when building Linux kernels 5.15.164,
-> > > 5.15.165 and 5.15.166-rc1:
-> > > ...
-> > > cc1: out of memory allocating 180705472 bytes after a total of 283914240
-> > > bytes
-> > > ...
-> > > make[4]: *** [scripts/Makefile.build:289:
-> > > drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o]
-> > > Error 1
-> > > ...
-> > >
-> > > I found a work around for this problem.
-> > >
-> > > Remove the six minmax patches introduced with kernel 5.15.164:
-> > >
-> > > minmax: allow comparisons of 'int' against 'unsigned char/short'
-> > > minmax: allow min()/max()/clamp() if the arguments have the same
-> > > minmax: clamp more efficiently by avoiding extra comparison
-> > > minmax: fix header inclusions
-> > > minmax: relax check to allow comparison between unsigned arguments
-> > > minmax: sanity check constant bounds when clamping
-> > >
-> > > Can these 6 patches be removed or fixed?
-> >
-> > It's a bit late, as we rely on them for other changes.
-> >
-> > Perhaps just fixes for the files that you are seeing build crashes on?
-> > I know a bunch of them went into Linus's tree for this issue, but we
-> > didn't backport them as I didn't know what was, and was not, needed.  If
-> > you can pinpoint the files that cause crashes, I can dig them up.
-> >
+> Ok, something like this:
 > 
-> The first one to fail on 5.15.164 was:
-> drivers/media/pci/solo6x10/solo6x10-core.o
+> allOf:
+>   - if:
+>       properties:
+>         compatible:
+>           contains:
+>             const: rockchip,rk3576-dwcmshc
 > 
-> So I found and applied this patch to 5.15.164:
-> [PATCH] media: solo6x10: replace max(a, min(b, c)) by clamp(b, a, c)
+>     then:
+>       required:
+>         - power-domains
+> 
+>     else:
+>       properties:
+>         power-domains: false
 
-What is the git commit id of that change?  I can't seem to find it.
+Yes, if they are required. Otherwise use "if: not:" and just disallow them.
 
-> Then the next to fail on 5.15.164 was:
-> drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o
+Best regards,
+Krzysztof
 
-What .c file is this happening for?
-
-thanks,
-
-greg k-h
 
