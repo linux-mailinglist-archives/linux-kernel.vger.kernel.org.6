@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-314255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143BB96B0AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80E496B0AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361A01C21164
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADEB1C203B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE77584A35;
-	Wed,  4 Sep 2024 05:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB5984A39;
+	Wed,  4 Sep 2024 05:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAft2zyn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="tIagIxSM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF0539B;
-	Wed,  4 Sep 2024 05:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E5A58ABC;
+	Wed,  4 Sep 2024 05:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725429079; cv=none; b=jIMiARg7BK/25D3tm6CfVQ0WqLycmzXSr2+c2DeA+b6msdwynJHxmdhClwhvD09sw6A+fuW4/I0XZ2fu9srw1+C0kA+8wGMhRFRd+9Oapg2QmzSf922sK9CrqEpZLfDWl/u0LJV0dpDlEOyoNDPhJDCPc+R5auTvmDW3Agoozzc=
+	t=1725429109; cv=none; b=PAzhpLuK5VGay8BDFnXetLa72AZXBX8YIf7h9whFYrt2n8q7wi8BepUiw/sD5ew3Jl24kmhLgq5ZuBC/By66MAYac09oaKdSoGmMRosaGc4IKd+3JMeSWXLYlNB/Woy4mK0UUgp1NlYF28Ss8pJK+z2fH5PVpUB7aiOuouI7Xn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725429079; c=relaxed/simple;
-	bh=P4g0iQGNZ4cx+61xUubmEryiNPN142m5EO71H8hhrDQ=;
+	s=arc-20240116; t=1725429109; c=relaxed/simple;
+	bh=B6vUTJlBWUgdrkS3GVZtEq/UvdzcZ0+0UBAI73i9AcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PwyWEEAk+DxZ7VwW2s/7o5b41uFwxYNSHtBBw/KXycpg8I8hDnA6+DwYlwnVvtrEWshkScpsaF1+c11IvURReBIAfs32GAcgZ52nmoolsjEvunLfpQI+CjQfBC77gBfrUtqLpmTPgvJRxOoC5ffHNZVQLKoXzOSr8L6vWrNLoOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAft2zyn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B9AC4CEC2;
-	Wed,  4 Sep 2024 05:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725429078;
-	bh=P4g0iQGNZ4cx+61xUubmEryiNPN142m5EO71H8hhrDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HAft2zyniMdQ/7FwR1yYZbiuqnsSthmUpzXqZLxsCG0VoSU8gbNDdfKMMzwpIY2hn
-	 mx1Z3i0zk5JgjdaXD32bF1QnSLAeiPiCWHteE96LFnO10Fweiy0McPkpx2L0v/oLv7
-	 qy0HHI6UWk+C1oTSvbwxXQFIIN6y+4Gb/VA/u2Fj6nyIwzpTAJB2gx2uTmwzXxUvGB
-	 Zm1Zdzf7sRM8Sq3tS/ep2PGzqWYJ7da4HVkAkM9N6cM/Z50jB2ftnTCnFRft2LkNlT
-	 TutYu5K8SV3O5VSDH/s9yVTW7ukSZdIbIx/wGZ7sbQOxZD/W7Os5BH3CcHVIuPAKvN
-	 LI08Els7v4ZFg==
-Message-ID: <c1508929-2e44-497d-b54a-285a3e74ba2d@kernel.org>
-Date: Wed, 4 Sep 2024 07:51:12 +0200
+	 In-Reply-To:Content-Type; b=pf+M+v2y7MEe7EvnvgNa7GCLkpGY8wqniof6ni+ZcleK1kKWvAvXE773+NF3K4p8e//CmJoMK0Q4O0DAgL2YHqb1rDi1u5PcgpnnvwX+sJeX3H36NZMCmh6FHxG6FpGaNDp8ZDml1/IYJwsTnj9DL0m/W4pqN5SCLz+xCWZgigg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=tIagIxSM; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1725429098; x=1726033898; i=quwenruo.btrfs@gmx.com;
+	bh=KQOUVXBgj26dw6UvtJFYt+fSxbDXafd4iAgGkdPwyd0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tIagIxSMGygNsE9BvxAQBgfL3BPjgCx6Z0WtlwBKUPfmgAKlyWYJbs6E+0n3ltO8
+	 C0XdskVZyqW+7PPmqVQN+fjJ9BXabahh2jEtQIzfoFr9rk5MQzN84BEiKHlRe9BYc
+	 bqczRWv0v8op6pyA+Pba0iqtPTDcBDVGbzbdIwgNfWXcQHVY4TarZc52OgMI8VgCV
+	 1WGY6/F5Yyos1ipVKRAdakcD4J/T7UcXTAhWW/6R05up2U0nUGJ+5lkmouIYJ2kmJ
+	 laZ/PZOP5rHvFBgLh3yDVtEd5cDpsMNPo3mOUwciYbUJoETFg5T9FKwhCKcVjQuRI
+	 6CPE6gzV9xU+ZBOzQA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MtwUm-1rvpED3uGa-00uElJ; Wed, 04
+ Sep 2024 07:51:38 +0200
+Message-ID: <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+Date: Wed, 4 Sep 2024 15:21:34 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +57,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/2] dt-bindings: EDAC for ls3a5000 memory controller
-To: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903114714.11428-1-zhaoqunqin@loongson.cn>
- <20240903114714.11428-2-zhaoqunqin@loongson.cn>
- <c901ff6b-2e4d-4dd1-82da-e2e3d5db7988@kernel.org>
- <32aded46-86ce-59cf-e8b4-2621c0dd9ebe@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
+To: Ghanshyam Agrawal <ghanshyam1898@gmail.com>, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+References: <20240904023721.8534-1-ghanshyam1898@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <32aded46-86ce-59cf-e8b4-2621c0dd9ebe@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20240904023721.8534-1-ghanshyam1898@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6U4dPh0NtRC48oKhM8fS5ZlpzDgimM9d8vM3vT4sDSLnAPcExH4
+ LNwHjbUYgsTYEQCMeZ61QpK3DphzA6a13roRk/MZzjgIILpA5zoGwp8A6axNUbeaLPjtjL3
+ 7cqt6cVRG1vCF7dlJZ7kHNj13y2TNdZGZU1VrpR1hjC8Umf+g5eby5FQ3chCngy12x+CgQy
+ fxFZ2cBdl/GFnG6bQAJ0Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oUR49U5JCY4=;DXLTjo2lN2vutEwmjPycfFthzF9
+ rWRWsVWfUET7jPVTmXwbDw+udvRO6dh2oqSxwVvsLfH4WfSljCdcWQYoFivf5kobhVFM/LFXc
+ K+a4jRkinfTt7ddbKuUPABDc3pmqO29i/24PCCC9Hoz0r5REkNtFWtJ0qiXG9eWpi/Hh017Jb
+ RryIPPZPF2aipgmyRIYiodTBJ9YJNiSCzAjc9yxQ4i//46z70EfJX2P18T6DsLBW7JQEBUO8k
+ 8ZEzLIaHac/gfwHAMGMj3Hv2rixPrq+mfsG4uFdMNwV1BrA4ZKlang71pn7tOBPBNJvsTgROF
+ 9sk7Cczfhd+nvBlwSXs/Ntq+Ed5MCjywdLlMuocYwl38C4Kko7MXvcWCJ788Qs9a87cY6b9Ae
+ f9xLw7ISzWIm/hz5Jq3hH8KkTxEhovRycXD1pYldNz6LseM0mvEX32e01mADpMzUuqBEwwHvd
+ YcamvCNnF8wXvNRKMAvQ+oUolF5mOpRjdTnUtTKUSKbw+Hu8kmP3Ys7xCVgAufJxIBDFP6VXB
+ PGPA23AapWh3hD1ahafSBS8P2W0k7ZJ1lWkeNDIb4mmkWQijseIUihroKlyreC08AreJfoabp
+ mI5gdA9U8tR26jJHPIaQLMIUMyhcUKEt6n9evzWYSEYHIQOs/UHmbtClWH44s9dZhbBtM57/l
+ Yt8P2gBmYer21QIiFTodyx9NivU7U89IdC2QEgrIckZzQmwK4Nj1a4zq2xHtpS9McTwhZhYPG
+ aj6uH+hhDvFFw9ho4wCt0fhlwWn4wR6mx07C8V81EBVE75xjkNdhLe2yJTj7HxSyBoVUBhfGL
+ 1n3TOHzeWjGFcMbS798iF+IQ==
 
-On 04/09/2024 03:15, Zhao Qunqin wrote:
-> 
-> 在 2024/9/3 下午8:29, Krzysztof Kozlowski 写道:
->> On 03/09/2024 13:47, Zhao Qunqin wrote:
->>> add device tree bindings for ls3a5000 EDAC driver.
->>>
->>> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
->> So no improvements? No changes? Why do you send the same?
-> 
-> I'm sorry,  I thought if you hadn't raised any issues with the previous 
-> version of dt binding, I wouldn't need to make any changes.
-> 
-> For this version of the patch, I only changed the driver.
 
-So what changed? Where is the changelog? Where is the tag? Did you get one?
 
-Did you read submitting patches document?
+=E5=9C=A8 2024/9/4 12:07, Ghanshyam Agrawal =E5=86=99=E9=81=93:
+> Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+> Closes:https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
+> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+> ---
+>   fs/btrfs/ref-verify.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+> index 9522a8b79d22..4e98ddf5e8df 100644
+> --- a/fs/btrfs/ref-verify.c
+> +++ b/fs/btrfs/ref-verify.c
+> @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *fs_=
+info)
+>   		return -ENOMEM;
+>
+>   	extent_root =3D btrfs_extent_root(fs_info, 0);
+> +	if (!extent_root)
+> +		return -EIO;
+> +
 
-Best regards,
-Krzysztof
+Can you reproduce the original bug and are sure it's an NULL extent tree
+causing the problem?
 
+At least a quick glance into the console output shows there is no
+special handling like rescue=3Dibadroots to ignore extent root, nor any
+obvious corruption in the extent tree.
+
+If extent root is really empty, we should error out way earlier.
+
+Mind to explain the crash with more details?
+
+Thanks,
+Qu
+
+>   	eb =3D btrfs_read_lock_root_node(extent_root);
+>   	level =3D btrfs_header_level(eb);
+>   	path->nodes[level] =3D eb;
 
