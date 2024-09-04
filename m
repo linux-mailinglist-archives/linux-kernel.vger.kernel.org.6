@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-314397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C0D96B2AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939C596B2B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4628228415C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBDF284318
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E189B145FE8;
-	Wed,  4 Sep 2024 07:20:19 +0000 (UTC)
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795F713AD3F;
+	Wed,  4 Sep 2024 07:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTd51cB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04D56BFA3;
-	Wed,  4 Sep 2024 07:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C840213B290;
+	Wed,  4 Sep 2024 07:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725434419; cv=none; b=qnPFB/QBNkv+8dVP77yud/AuBOp7ShNbpzIQIo3nChrBdovZpep/i/NzMn3W/TkzV4EmD2/b4XS7SlSNH5hOnrLgLXQ/+1kG0I2GVYMLSaHBkmpcybB4Q21yVhzTprOC5CPMWkjVESiUw7stTlBKr6UkE4s4cKAMjyT91hDKSB0=
+	t=1725434448; cv=none; b=sLoIq0GS2LQWsfhPGd7h3o0XKHSoCYEG2hi2JWBj4n2YWD6FPuzYdBvQ31YUsuDz+QGL29gVgqEpLYJSjHQlBzAesc3UgHqQ9POOC0KQNfsJFpuAMzpw2xL5wt0sBGMPAkXKoy5vJq3eXhPH24c6OcEYYdYxizkesiE7f3vYV5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725434419; c=relaxed/simple;
-	bh=2iTGxmMVH5VUA5RDc42DEOgj73k0zWC3IueoJohCP0Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GImQrwtvfl2JYsgHlX8q7+6bb6zxDMmvAtqjnFYtd7MrS0WL7saCPsMYZhlSGrYlIN7CMIUlYwmR9rl77TDQkeE+M2tbG19pP3m2hr6fC+CyxT011i9ii2HCoJnNwuhC9N05QKf837Iu+rVH7YZkQYK7V2wCgbqhnz1Z/ybcBGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from droid02-cd.amlogic.com (10.98.11.201) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Wed, 4 Sep 2024
- 15:20:14 +0800
-From: <chuan.liu@amlogic.com>
-To: <chuan.liu@amlogic.com>, <xianwei.zhao@amlogic.com>
-CC: <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/5] clk: meson: Fix an issue with inaccurate hifi_pll frequency
-Date: Wed, 4 Sep 2024 15:20:13 +0800
-Message-ID: <20240904072013.517905-1-chuan.liu@amlogic.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1725434448; c=relaxed/simple;
+	bh=7LNfFiXbjo7lumWI/Ys4K1KVKj5QLLQTvPgzMihTVLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjamIWp3UEsBSXJKFn8i3K6voLSeN2fj96w0aeckw2ucfrCihn/mtN0Zke1YX1FnfZIjK6qSlQu45qcc1M6UxtoAVGxPE489LQdDFIAKMskMua2uWT+My97iAzrhFl3RFymewdIDHRO54c2m7KmAvErF27zPh7rkuAzKeYUCQgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTd51cB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B1CC4CEC2;
+	Wed,  4 Sep 2024 07:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725434448;
+	bh=7LNfFiXbjo7lumWI/Ys4K1KVKj5QLLQTvPgzMihTVLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LTd51cB0yGAuYjeno1J2UWEv7/7gArrZ7IBToGz6QzZsNCKj+QbqAYJdMQ3/dyYRN
+	 YL/dwbAjpfUvR9VPsAYy0vHyZ4XPALgWbspaasFM9940SSFqaCf8eEF5Ho57E9YDG7
+	 gChUFcggE6rh25N63HE2IdPyeGTpwVkUtpS0TT36XIAFq947IT9352ZZtVP54I3KZS
+	 nejZ8FR6lRoDstltzzwnH148Yw110UOD4lmeLpUoZ9VQ5WAGfCw1yobjBobAnEwNj1
+	 BuXJoEzc+JKJbJvnUshTIrS3pIT6jXZBSWFRnHirTm092x0bsZdLTaAYhl6ZCHiTzC
+	 fyA6VviQS4dfw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slkK8-000000001SQ-1Ggi;
+	Wed, 04 Sep 2024 09:21:05 +0200
+Date: Wed, 4 Sep 2024 09:21:04 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: ulf.hansson@linaro.org, sudeep.holla@arm.com, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com
+Subject: Re: [PATCH] pmdomain: arm: Fix debugfs node creation failure
+Message-ID: <ZtgKYD87GF0fDucE@hovoldconsulting.com>
+References: <20240703110741.2668800-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703110741.2668800-1-quic_sibis@quicinc.com>
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On Wed, Jul 03, 2024 at 04:37:41PM +0530, Sibi Sankar wrote:
+> The domain attributes returned by the perf protocol can end up
+> reporting identical names across domains, resulting in debugfs
+> node creation failure. Fix this duplication by appending the
+> domain-id to the domain name.
+> 
+> Logs:
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> 
+> Fixes: 2af23ceb8624 ("pmdomain: arm: Add the SCMI performance domain")
 
-Some PLLs with fractional multipliers have fractional denominators that
-are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
+Please include:
 
-The hifi_pll for both C3 and S4 supports a fractional multiplier and has
-a fixed fractional denominator of "100000".
+Reported-by: Johan Hovold <johan+linaro@kernel.org>
+Link: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
 
-Here are the results of the C3-based command tests (already defined
-CLOCK_ALLOW_WRITE_DEBUGFS):
-# echo 491520000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
-# cat /sys/kernel/debug/clk/hifi_pll/clk_rate
-491520000
-# echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
-# cat /sys/kernel/debug/meson-clk-msr/clks/hifi_pll_clk
-491515625       +/-15625Hz
-# devmem 0xfe008100 32
-0xD00304A3
-# devmem 0xfe008104 32
-0x00014820
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 
-Based on the register information read above, it can be obtained:
-m = 0xA3 = 0d163;
-n = 0x1 = 0d1
-frac = 0x14820 = 0d84000
-od = 0x3 = 0d3
+I now that this patch is being reworked, but please note that the
+following warnings that I reported are seen also with this patch:
 
-hifi_pll calculates the output frequency:
-calc_rate = xtal_rate / n * (m + (frac / frac_max)) >> od;
-calc_rate = 24000000 / 1 * (163 + (84000 / 100000)) >> 3;
-calc_rate = 491520000
+[    9.119117] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.129146] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.160328] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    9.175229] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
 
-clk_rate, msr_rate, and calc_rate all match.
+which seems to suggest that the approach taken by this patch is not
+necessarily the right one.
 
-The test and calculation results of S4 are consistent with those of C3,
-which will not be repeated here.
+Can you please also comment on why this is an issue on x1e80100 in the
+commit message?
 
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:  <linux-amlogic@lists.infradead.org>
-Cc:  <linux-clk@vger.kernel.org>
-Cc:  <linux-arm-kernel@lists.infradead.org>
-Cc:  <linux-kernel@vger.kernel.org>
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-
-
---- b4-submit-tracking ---
-# This section is used internally by b4 prep for tracking purposes.
-{
-  "series": {
-    "revision": 1,
-    "change-id": "20240904-fix_clk-668f7a1a2b16",
-    "prefixes": []
-  }
-}
--- 
-2.42.0
-
+Johan
 
