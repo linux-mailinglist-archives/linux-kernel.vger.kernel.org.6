@@ -1,152 +1,155 @@
-Return-Path: <linux-kernel+bounces-314651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2679296B65B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:20:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFA096B657
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C539A1F22ABD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6298F1C24732
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37CB1CCB29;
-	Wed,  4 Sep 2024 09:20:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6AC1CC16B;
+	Wed,  4 Sep 2024 09:19:54 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BBA194C82
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165DB405C9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725441614; cv=none; b=B14V/x52jUaQc34ZrwjGCfLGl6daDbVonBXM0bGb2cAHBu4HantaPU4nrJTVpzHDHVMk3L38WQOeJaMY8ZczcTtGJNmZfvqBAGBs8ZTXMSoxvovcjbuYIqNsVoiYVNClGhB/SRgek4OkQA7KaoXcGOKqRYK/3v5w7zxBGKxiEEA=
+	t=1725441594; cv=none; b=FH89dzwAGDPnuj+4JOluwCvrorK4YPLGWOI7WvpoN/hR1gj3vf2pn/6/Ufuub2mfZ/83tpA+RpKz299wt9wTVtFz3+wUfYCHaLK0ppG3+zhhNsERs5ZdCa6B+uqopGRkIKIc+alODvn6G4rf7qftuxOOSPgKvtiL4e8HNSjaufA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725441614; c=relaxed/simple;
-	bh=WuRMqP+opsdPUvNSiW70+emfjDzD9Qgliwa3GLm0GmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apvUSbpSlKiSt1tvba8J+eA4Z3DqRpfj8ZcHLeLaC7SR8Nlto4mD1kIRoTMmzIpjCyq8djmgBr9DZPNXgJ95PinnG1ZKnwUqoHhJ0rztt2lc4wTonbesFAO655WJpW69CSJtExslA3lT5o9zWdwbfrvxJ9++6xaiu4ZurD2JJYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slmAz-0002tc-Pd; Wed, 04 Sep 2024 11:19:45 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1slmAx-005PrZ-1z; Wed, 04 Sep 2024 11:19:43 +0200
-Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A4329332301;
-	Wed, 04 Sep 2024 09:19:42 +0000 (UTC)
-Date: Wed, 4 Sep 2024 11:19:42 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
-	David Jander <david.jander@protonic.nl>, Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
-Subject: Re: [PATCH can-next v5 00/20] can: rockchip_canfd: add support for
- CAN-FD IP core found on Rockchip RK3568
-Message-ID: <20240904-meticulous-original-sturgeon-ad2db3-mkl@pengutronix.de>
-References: <20240904-rockchip-canfd-v5-0-8ae22bcb27cc@pengutronix.de>
- <86274585.BzKH3j3Lxt@diego>
+	s=arc-20240116; t=1725441594; c=relaxed/simple;
+	bh=USPPGjr96n8O2xL2B62X77NHhPpSSdjESlTCwhaL/oQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XoLXxcMzEtXRspoVmpoLuTBSsI95b6kXnd15KVBePd3wcRhk9YP/U42e9rgTojpTyVnWlFaGFYPgTpqewqSqqNTEfA7VH+k+QMxQJzFkUByYQr3u8P3ATb/sWnGNEi2Ml10a5yIlAYPnA+SxTnqkCEWdC2lxyTtS8mZI6Jw/+rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzH4c3GdMz1j7rs;
+	Wed,  4 Sep 2024 17:19:28 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 83D7814011D;
+	Wed,  4 Sep 2024 17:19:48 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 4 Sep 2024 17:19:47 +0800
+Message-ID: <ede19a0d-4070-568f-becb-13872a7191a5@huawei.com>
+Date: Wed, 4 Sep 2024 17:19:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ss46ydut665ggdf"
-Content-Disposition: inline
-In-Reply-To: <86274585.BzKH3j3Lxt@diego>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] static_call: Handle module init failure correctly in
+ static_call_del_module()
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
+References: <87cylj7v6x.ffs@tglx>
+ <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <87zfon6b0s.ffs@tglx>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <87zfon6b0s.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
---2ss46ydut665ggdf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 04.09.2024 10:55:21, Heiko St=C3=BCbner wrote:
-> Hi Marc,
->=20
-> Am Mittwoch, 4. September 2024, 10:12:44 CEST schrieb Marc Kleine-Budde:
-> > This series adds support for the CAN-FD IP core found on the Rockchip
-> > RK3568.
-> >=20
-> > The IP core is a bit complicated and has several documented errata.
-> > The driver is added in several stages, first the base driver including
-> > the RX-path. Then several workarounds for errata and the TX-path, and
-> > finally features like hardware time stamping, loop-back mode and
-> > bus error reporting.
-> >=20
-> > regards,
-> > Marc
-> >=20
-> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
->=20
-> I have neither CAN knowledge, nor hardware to test, but the integration
-> itself looks pretty easy and straight-forward.
->=20
-> Not sure how much it helps, but at this moment I assume you know what
-> you're doing with respect to the CAN controller ;-)
+On 2024/9/4 17:09, Thomas Gleixner wrote:
+> Module insertion invokes static_call_add_module() to initialize the static
+> calls in a module. static_call_add_module() invokes __static_call_init(),
+> which allocates a struct static_call_mod to either encapsulate the built-in
+> static call sites of the associated key into it so further modules can be
+> added or to append the module to the module chain.
+> 
+> If that allocation fails the function returns with an error code and the
+> module core invokes static_call_del_module() to clean up eventually added
+> static_call_mod entries.
+> 
+> This works correctly, when all keys used by the module were converted over
+> to a module chain before the failure. If not then static_call_del_module()
+> causes a #GP as it blindly assumes that key::mods points to a valid struct
+> static_call_mod.
+> 
+> The problem is that key::mods is not a individual struct member of struct
+> static_call_key, it's part of a union to save space:
+> 
+>         union {
+>                 /* bit 0: 0 = mods, 1 = sites */
+>                 unsigned long type;
+>                 struct static_call_mod *mods;
+>                 struct static_call_site *sites;
+> 	};
+> 
+> key::sites is a pointer to the list of built-in usage sites of the static
+> call. The type of the pointer is differentiated by bit 0. A mods pointer
+> has the bit clear, the sites pointer has the bit set.
+> 
+> As static_call_del_module() blidly assumes that the pointer is a valid
+> static_call_mod type, it fails to check for this failure case and
+> dereferences the pointer to the list of built-in call sites, which is
+> obviously bogus.
+> 
+> Cure it by checking whether the key has a sites or a mods pointer. 
+> 
+> If it's a sites pointer then the key is not to be touched. As the sites are
+> walked in the same order as in __static_call_init() the site walk can be
+> terminated because all subsequent sites have not been touched by the init
+> code due to the error exit.
+> 
+> If it was converted before the allocation fail, then the inner loop which
+> searches for a module match will find nothing.
+> 
+> A fail in the second allocation in __static_call_init() is harmless and
+> does not require special treatment. The first allocation succeeded and
+> converted the key to a module chain. That first entry has mod::mod == NULL
+> and mod::next == NULL, so the inner loop of static_call_del_module() will
+> neither find a module match nor a module chain. The next site in the walk
+> was either already converted, but can't match the module, or it will exit
+> the outer loop because it has a static_call_site pointer and not a
+> static_call_mod pointer.
+> 
+> Fixes: 9183c3f9ed71 ("static_call: Add inline static call infrastructure")
+> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com
+> ---
+> V2: Use static_call_key_has_mods() instead
+> ---
+>  kernel/static_call_inline.c |   11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> --- a/kernel/static_call_inline.c
+> +++ b/kernel/static_call_inline.c
+> @@ -411,6 +411,17 @@ static void static_call_del_module(struc
+>  
+>  	for (site = start; site < stop; site++) {
+>  		key = static_call_key(site);
+> +
+> +		/*
+> +		 * If the key was not updated due to a memory allocation
+> +		 * failure in __static_call_init() then treating key::sites
+> +		 * as key::mods in the code below would cause random memory
+> +		 * access and #GP. In that case all subsequent sites have
+> +		 * not been touched either, so stop iterating.
+> +		 */
+> +		if (!static_call_key_has_mods(key))
+> +			break;
+> +
 
-I hope so :) The controller has some flaws :/
+Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-> Rest of the series (that hasn't got a Rb):
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-
-Thanks.
-
-> How/when are you planning on applying stuff?
->=20
-> I.e. if you're going to apply things still for 6.12, you could simply take
-> the whole series if the dts patches still apply to your tree ;-)
-
-Actually I've already started my PR workflow, but I'll address your
-review feedback, add your tags and send a new PR today. This will go via
-net-next into v6.12.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---2ss46ydut665ggdf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbYJioACgkQKDiiPnot
-vG8qKwf/e6qNy9jnMMR4a2ZA/TwN7Gvr9EtSz4YN78xGfPErfDaPjMMw11WRNBA0
-foCcQRuNrOh/JoM+LcOO+bFM35p+M5GoPnXZreAuHolU7OZzSrCC6CVIFwuQKVDm
-qVnmgnt5AU3YjFvU79RyPUHCtxsFQQPqDUKusLRgevAkXDtc2GwNDNumKrOaQGe2
-8A+NSKRHYzpd1NYm2K/RV6VmbxrjWe8Zd3TlaFAQTjIaDadCmjbo2qA+3HjIwenm
-CKYMxixTvEjEffTEBRy0AX2Cnp6j5xX7VmYdCDYrPzfvhWZx1vm2KFQ+pDWk+mNa
-18dciG/5BLFa6hiFAx+agcVetZGWiA==
-=Wdm5
------END PGP SIGNATURE-----
-
---2ss46ydut665ggdf--
+>  		if (key == prev_key)
+>  			continue;
+>  
 
