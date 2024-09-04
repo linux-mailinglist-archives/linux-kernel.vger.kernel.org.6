@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-315844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8564596C799
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:32:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF87196C796
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4131E284337
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFCB1F2184D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C476D1E6DC3;
-	Wed,  4 Sep 2024 19:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325491E6DCF;
+	Wed,  4 Sep 2024 19:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="pZh2AzMR"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1ykBlfb"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C1B40C03;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90D15B555;
 	Wed,  4 Sep 2024 19:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725478359; cv=none; b=A/eBa0BnAo0Y9ReqcI+g9TGh9wRrWA7zVlD8aEN4jVXp/bipxgj3RfnHxoAm3JEqKHJdKhdi651K9VpevAyWxBywlRNWUGGFYWDZN45f5jpcYuS53JjV6VfCo4hlv0ugP5+DOfIvAutiaUr9vqcnzpv/6FB+oIOfGJ09xicfe+E=
+	t=1725478352; cv=none; b=e/43Xk+EQja+n89ki31bnwlMwy+LYUq8Favu+mfbUglojMALJ50ZPUm29XMApIlW9LDz8HZBCmA1UM1llJE9ied4BRvWvJ+CuMtXJA/L1t7NC/SbbvDsoDgXdnpzCocYWGoMKlcCTP6LoS4i+ElQ1+juW06px6KxgkU56d6jIqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725478359; c=relaxed/simple;
-	bh=1BsfqSYBZBusIv1VPB8MyWxdGEMUcVXrmZ9yEtuQZg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRcHgy+Hu6Hx65m1lS81hQ1O7NGAN3ti9tXW/c+rHgrX6l7+rAOlLcE+3LUKuLG3MP+vgf42nltzTK3hhFK/07KCd56yUlLFkM6sFPYru6Dh45DZE8FLmTgmf5BwzizC6PSM2mcidaPfBYXRPPYgOmZcUzzZJ7D41pGrpDHYGqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=pZh2AzMR; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UcHZ5CTv4mKFksQdsvPKwDXzMVb8f/RnarAvgSKCoGI=; b=pZh2AzMRSB1aGFIVzn1u/ZRfmg
-	2ClmQClSdEusW4Yt8bAV3os45uPmOw2TVKbxvHRJtCQLRbh7+7rVirnSXkMYtuV0B0ySv6neLetxM
-	VaNQSocRoPZpfKewd4Qvsg4e6Qis9QtBk0E9Zo4r9ewJaAPPufwuisrLqCcDibVrWVb0Y+eC6QxAz
-	uWiuu9dGTNjhQUstDF2Ck/4CWJ12HxcXFC0kLICFZYLYxv8XlePvK3Lz2VOhHw9m+j43VHP2Iors+
-	K4N/US6DXABAkoKkNe1jrSANbH28heN7mn8tpOiPTiJw6psbaeT8JO6hFOBuJ4z99CIa7gNtY2QRF
-	GOunnGAQ==;
-Received: from [2001:9e8:9c9:f01:3235:adff:fed0:37e6] (port=49090 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1slvjv-004FVt-Ge;
-	Wed, 04 Sep 2024 21:32:27 +0200
-Date: Wed, 4 Sep 2024 21:32:17 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v2 0/6] `RUSTC_VERSION` and re-config/re-build support on
- compiler change
-Message-ID: <20240904-cordial-zircon-grebe-ba4806@lindesnes>
-References: <20240902165535.1101978-1-ojeda@kernel.org>
+	s=arc-20240116; t=1725478352; c=relaxed/simple;
+	bh=PyQrDfXI4pIKyfzh+YcSygARqjBWQaMniKKisbOo8oQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LPw0FY08YlE30jSuuoDUbmDI4hXpI0+9QPu5yOiRWYebpmej2Ez7TEXNNhFhX8pCYm1UkkyaclbX9vmWeDzhXRMtrrPoa28i4+DFP3v4guoy28vTNTaJzjo4JI623sJUp3MKSgIWGjODqxIJYpnadX+9JUEoT3338FmB6HBhjSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1ykBlfb; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c35427935eso29383516d6.3;
+        Wed, 04 Sep 2024 12:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725478350; x=1726083150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQs3zpvLguyufYMw2L58yxG9r/VbEIBK+iwTQGmJNWY=;
+        b=G1ykBlfb7wtJ7vzSlemTTVucSO5PXduzqLp2+Jsyfeif7306HT3AstSxb1S/rjx32C
+         0wr2kNISp7zxldOLdvq5SflqU0LUTh59WULJJAXotAIhfA2RBe5i5+OrLwd3JFkegjy1
+         un9TflTYqfP5jRf2j+vw4HLOpRQlBQr18We2g+1z8/3oUwTVZ0Pqug66x04WcU3pZ+j/
+         KV9xzeDNrhOAYTiV4kZIW9G3KpvvHvJ2YZ9gfBUzOQvWeYKBF5h49vqQVUStcWj8rqR3
+         fnUPyupgawYh6CP3AnODdiZw60bdnmzWb++T0mtJxxRt54oCWnQCbsDy88Z37TVRkTbU
+         jKSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725478350; x=1726083150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UQs3zpvLguyufYMw2L58yxG9r/VbEIBK+iwTQGmJNWY=;
+        b=rZLKz+ALHljXJCUCAMtDPWYE+ZOvzwYIO6mx3fy7XIrMrbLINyrXYTnsZhcHk3YEOT
+         PQAE3bs/eoYEFcOPoZiMpEqVuVJGasG6GchRCIWaT7Nh1Vqt0RDq5R0y7UYkuYpQyiRj
+         9ogMF23IPu0ZwvyzfrGVy6DM6Z+mkLSL9hFSP4bJ4dmoFAAhN+2a7VfzYKWrkaUnzKcI
+         IP3SGIspqE6j5hBxKGXROGDI8Dy6mHiiXBFVPGyqNpqxSfBfpJZreXMkaF/30bZzl42J
+         kZl39RDzmjUonfRIWQsF5Qd/+2k9fUxFrw7cyvhKIPnKBZkjgs3lPMt4vZBJLV3X5sLs
+         7/mg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/g1YN/ZNqfYR+tmHMa+pQogPikuX8q3Ab9HUTe36AxzRGJKcvNlG1aeFSvibobLpSQ718Rcx8qBMUBhorYg==@vger.kernel.org, AJvYcCUWpCxibm9XPN7OkWA1g0Sas4eKvqNbCk5Rg5nHJGUUC8Dz6riPdlp02t4qJTSa1lbjf5++UpAbHvKElwT1@vger.kernel.org, AJvYcCVwIDmpnh1ciQRcaeJyRATkYZ8pz0KCTxodUEaF3aUra4nJmm8cDvG63DFa2UD4s6tWtcr9Myf2GWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9hhaH3Wp6Pru8qYDzsemFXa3+VWcUI0v6DcmDp5RjCcSiLVDN
+	Fm15oXcTpT6pwp6r+TwSSXXHVCjm6G2FpVShYuo0X9Wj4JnfPCM3RS3hlwaqde0Yby5AGxUypOF
+	71TXn1PPUMrP/gbLWcpfvEyNCndw=
+X-Google-Smtp-Source: AGHT+IGRHjuOzYuw5iOar6gfXgnmHzCjlMooE6P9uwZGw4HYM+s7dZ/ezw4PlCGXkIkz6W4zgKk7VvfRZHckbaxEa1E=
+X-Received: by 2002:a05:6214:4585:b0:6c3:53fe:8182 with SMTP id
+ 6a1803df08f44-6c355836c09mr204191836d6.44.1725478349745; Wed, 04 Sep 2024
+ 12:32:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902165535.1101978-1-ojeda@kernel.org>
+References: <CAOQ4uxiRGcPNsad==MtLFGrrwg_Sv-6g0tNwSVtvoSH+2VR5Lw@mail.gmail.com>
+ <20240904165431.13974-1-yuriybelikov1@gmail.com>
+In-Reply-To: <20240904165431.13974-1-yuriybelikov1@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 4 Sep 2024 21:32:18 +0200
+Message-ID: <CAOQ4uxiaokAp4P+ADxX40onTxqBjR=2Gc=iagtVN3MW66QSc9Q@mail.gmail.com>
+Subject: Re: [PATCH v2] Update metacopy section in overlayfs documentation
+To: Yuriy Belikov <yuriybelikov1@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jonathan Corbet <corbet@lwn.net>, 
+	"open list:OVERLAY FILESYSTEM" <linux-unionfs@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 06:55:27PM +0200, Miguel Ojeda wrote:
-> This series mainly adds support for `CONFIG_RUSTC_VERSION` (which is needed for
-> other upcoming series) as well as support for rebuilding the kernel when the
-> Rust compiler version text changes, plus other secondary improvements.
-> 
-> v1: https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-ojeda@kernel.org/
-> v2:
-> 
->   - Dropped patch #2 "kbuild: rust: make command for `RUSTC_VERSION_TEXT` closer
->     to the `CC` one" (Masahiro, Björn).
-> 
->     In other words, now the `RUSTC_VERSION_TEXT` command is kept as it
->     was, without `LC_ALL=1` nor `| head -n1`.
-> 
->   - Replaced `macros` crate dependency with a comment in the code that `fixdep`
->     will find, since we can do it for that one, unlike `core` (Masahiro,
->     Nicolas).
-> 
->   - Added patch (here #5) to add a warning when the Rust compiler used to build
->     the kernel differs from the one used to build an out-of-tree module, like
->     the C side does (Nicolas).
-> 
->     If the patch is not wanted, then it can be skipped without much loss, since
->     anyway Rust will fail to compile in that case. However, it would be nice to
->     have to prevent potentially unexpected situations and to clarify the errors
->     that `rustc` would emit later. See the commit message for more details.
-> 
->   - Rewrapped comment to stay under 80 lines (Nicolas).
-> 
->   - Picked up a couple tags that could more or less be reasonably taken given
->     the changes to v2. Re-runs of tests welcome!
-> 
-> Miguel Ojeda (6):
->   kbuild: rust: add `CONFIG_RUSTC_VERSION`
->   kbuild: rust: re-run Kconfig if the version text changes
->   kbuild: rust: rebuild if the version text changes
->   kbuild: rust: replace proc macros dependency on `core.o` with the
->     version text
->   kbuild: rust: warn if the out-of-tree compiler differs from the kernel
->     one
->   docs: rust: include other expressions in conditional compilation
->     section
-> 
->  Documentation/rust/general-information.rst |  8 +++++++
->  Makefile                                   | 18 ++++++++++-----
->  init/Kconfig                               | 11 ++++++++-
->  rust/Makefile                              |  7 +++---
->  rust/macros/lib.rs                         |  4 ++++
->  scripts/rustc-version.sh                   | 26 ++++++++++++++++++++++
->  6 files changed, 64 insertions(+), 10 deletions(-)
->  create mode 100755 scripts/rustc-version.sh
-> 
-> 
-> base-commit: a335e95914046c6bed45c0d17cabcd483682cf5e
+On Wed, Sep 4, 2024 at 6:54=E2=80=AFPM Yuriy Belikov <yuriybelikov1@gmail.c=
+om> wrote:
+>
+> Changes since v1:
+> - Provide info about trusted.overlay.metacopy extended attribute.
+> - Minor rephrasing regarding copy-up operation with
+>   metacopy=3Don
+> Signed-off-by: Yuriy Belikov <yuriybelikov1@gmail.com>
+> ---
+>  Documentation/filesystems/overlayfs.rst | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/file=
+systems/overlayfs.rst
+> index 165514401441..e5ad43f4f4d7 100644
+> --- a/Documentation/filesystems/overlayfs.rst
+> +++ b/Documentation/filesystems/overlayfs.rst
+> @@ -367,8 +367,11 @@ Metadata only copy up
+>
+>  When the "metacopy" feature is enabled, overlayfs will only copy
+>  up metadata (as opposed to whole file), when a metadata specific operati=
+on
+> -like chown/chmod is performed. Full file will be copied up later when
+> -file is opened for WRITE operation.
+> +like chown/chmod is performed. An upper file in this state is marked wit=
+h
+> +"trusted.overlayfs.metacopy" xattr which indicates that the upper file
+> +contains no data. Full data will be copied up later when file is opened =
+for
+> +WRITE operation. After the lower file's data is copied up,
+> +the "trusted.overlayfs.metacopy" xattr is removed from the upper file.
+>
+>  In other words, this is delayed data copy up operation and data is copie=
+d
+>  up when there is a need to actually modify data.
 > --
-> 2.46.0
-> 
+> 2.43.5
+>
 
-the whole series looks good to me.  Thanks for the good explanations.
+Pushed to overlayfs-next with minor rephrasing of commit message.
+(v1 is irrelevant in the context of git history)
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
-
-Kind regards,
-Nicolas
-
+Thanks,
+Amir.
 
