@@ -1,189 +1,358 @@
-Return-Path: <linux-kernel+bounces-314703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E3196B73D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:46:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB31796B73F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9751C221EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2995E1F25F85
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A8C1CF5E7;
-	Wed,  4 Sep 2024 09:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5AD1CF7D8;
+	Wed,  4 Sep 2024 09:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J8I8UmSx"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpmcJQP2"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBB0158873
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452E81CEEAB
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443085; cv=none; b=RW73PCIZQ9AZtoMXG1LrvK+xzSiZBpBKZnojX/QIPUD9Sw0ePMIWZFXQiks5O+DCa2AO2qkXIHqyn3ECcCT1ZLBq47QxZCpXTQcInpL3Ldprkx8Q24b+3uffSdWPUaRD3Ks2fVUUDlqdqrIXLir3hzt0siJSPaS1ylyEbnuBbCo=
+	t=1725443088; cv=none; b=SUq3TkQL7IYG6ymeBVo8RtCFIvtHDOgUtLCKgUuredt4yXVNpwStB5n6bJUc+U/Y0dBUcvoXj7R1DoerIgvEFukY3W1CAt+QyjJw+GPjxRX1Zi2kKuKU+ZuzYtYIyqZAs9lWCjED141G6ztmaugaep01hkSuuc51Y/W603xuzfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443085; c=relaxed/simple;
-	bh=pEjJo9w+OQGCfFs5ci6p4FBPg9h0vwHF3mqobw06WSU=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=hscD8sf7MLA9aexpB5k23y4kx7TWxoVohitKJlktipfmJo61ATA92laNj34N1Er/1eUXgUtZRt70Qaj65orDH1QJ9qe6QhGIvmm1Y0TiY8p+gSFH9GF/GcC663t7QcFw828V4afm4oT0WEvtEg96bDmvrZhZXDshRJRAju9uc4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J8I8UmSx; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240904094441euoutp018c91d60532b666299edc296fad808030~yAVc_xhv42044420444euoutp01E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:44:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240904094441euoutp018c91d60532b666299edc296fad808030~yAVc_xhv42044420444euoutp01E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725443081;
-	bh=cis/h+2GNZMbK0VnPVfWVXy9Bsg9Qt9GelL3ICKUMy8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=J8I8UmSx4SqdY5Vvnf45uqroRKtcQfH96ZlhL3mdd0791RudGY2B0HeGaHyrqxYQV
-	 d5kP+0jExYJ+F1xfyCtw1ewpU8J22vKnq4HB8bqQRrbhUtCtpgcjv/4pYiFQ9D4THI
-	 PHaXTKqIXkiDfQxxAXwVKhLnalJ1w1aelgCOEhdw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240904094441eucas1p22ece35d7e84bfdf861cda3c6974249b9~yAVcqasTV1101111011eucas1p2f;
-	Wed,  4 Sep 2024 09:44:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 2D.A2.09624.80C28D66; Wed,  4
-	Sep 2024 10:44:41 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240904094440eucas1p1dc4f682d5f39faa90aec5b0cac15761f~yAVcQVghL3131531315eucas1p1E;
-	Wed,  4 Sep 2024 09:44:40 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240904094440eusmtrp25de335df8a0a9215d032ab1037e2595e~yAVcPJdUD2986129861eusmtrp2t;
-	Wed,  4 Sep 2024 09:44:40 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-f5-66d82c083beb
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E5.57.14621.80C28D66; Wed,  4
-	Sep 2024 10:44:40 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240904094440eusmtip2eca1b404d6a3f6d0e1ea474d9e81b910~yAVcC3QxV1538915389eusmtip2y;
-	Wed,  4 Sep 2024 09:44:40 +0000 (GMT)
-Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 4 Sep 2024 10:44:33 +0100
-Date: Wed, 4 Sep 2024 11:44:28 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
-	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
-	<k.jensen@samsung.com>
-Subject: Re: [PATCH RFC PREVIEW 2/6] iommu: Make IOMMU_IOPF selectable in
- Kconfig
-Message-ID: <20240904094428.vmzu43ituehn4qo4@joelS2.panther.com>
+	s=arc-20240116; t=1725443088; c=relaxed/simple;
+	bh=53KQMKdddkRzVChyYYieGDdAE3/h5i7iLJdjg5YVy20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rIn15soJgFHF3v2WnCEThdNSqLSctv9DDZIiPjbyDyArx1tuP9GtR0/Xu2pa6sn70jnN28PAJydjP3LhqntXIn7Yq8efxe8oF+pr18eTMmeheFfOP/TGUtLUH8kot4k0Pr9QTiKRLl0VCyiRjSXBdwRm6FCbGNqt4Tm/BbXEW04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QpmcJQP2; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-277c861d9f6so2545409fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 02:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725443085; x=1726047885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G2jCB3Mh2D7e/fKcpdcpOCelHevV01EHEW0KXFzYpnE=;
+        b=QpmcJQP26+JgfBVQ/EU7q+YCy9PTEpGrJYaLCwAjMl5eMNxh+ZbzCvrgJHG6be2tf8
+         g7aw+G02hc4uc8lUTqWHt9oMSP3AcfOhl4UOiKJlMSNN7vrTWw0x5w7HqsIUQhMGJqlt
+         QdbkrsFl6rpt4aLj/2S0uh9IUxBCculv0ZEhX08BmNaCnEVwTpHuag6DkPQqVPeY5+Pj
+         /wg8ODF/5x14wQCxxfpypHG2WzVPbgitbST9PoykXoZjQ+sd068Zs1bXQe+890WMokB7
+         IvCbYDfyHFYT1J7rnh8Db8VcdTTdqwExckO46NB2L7yHvTydswkTwiB+6myGgyT/RJmk
+         uaYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725443085; x=1726047885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G2jCB3Mh2D7e/fKcpdcpOCelHevV01EHEW0KXFzYpnE=;
+        b=TSQWYiVOAFoShEIVbuFBoMn7075Hv0iH5S67brqxrLsu5zJa4Si+GPAUcFG71DpJUZ
+         WiKdUa0t7lkYnbZaGw+31lWLJ6RHo3x6RMIkzw25eyThYhv2PKL0mQTmjT9F+CZqPvle
+         kn2/UP6E5DwGz5jWH7uG/ADo6gkDU0JhYgQoUnjKiC4haY/weBUerc/JzMrjB4gkgENk
+         lxpRKveAv8xcaiWR7FbJNSBl870aHp9C+MB//yKQZxtDjlg5oCNzXYxM6ZIbp/1tVg/F
+         QikNgoV284yUn6Sf+BDZhtn6lhtjE4BFcfKFJAFnnM1l+A96wP2RzVUnf7VttnJ+C2Iq
+         5GcQ==
+X-Gm-Message-State: AOJu0YwL0WN5p7TJgT5WV+qxw/KQ20ATPjLOWhHwSXs68QqY46jUw2xm
+	i5i3lx0i3VyRAtY6k7JeeC7kEhPnfNF+cDifTlE4ef7YsNFIDLImvIlI7l/lBCMavnOjL+Za6zV
+	/RXVSWzIGktg5heBpwJCHNgIAkWA2RuVMhwwYzQ==
+X-Google-Smtp-Source: AGHT+IGYbHJdBZDqXfJaLvPa+cheRpz0nZvpY4lYVwTEuIeN+wJEbeHIAIs0Kb9fRcKIKf3+GKU49MLlqIZtGriKRJU=
+X-Received: by 2002:a05:6870:171d:b0:25d:f0ba:eab7 with SMTP id
+ 586e51a60fabf-27810b95f26mr7655971fac.18.1725443085257; Wed, 04 Sep 2024
+ 02:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240826140558.GJ3468552@ziepe.ca>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7qcOjfSDPofM1psnriVzWLiysnM
-	Fr++WFjsP/iN1WLmjBOMFp2zN7BbLH27ld3i8q45bBYHPzxhtWi5Y+rA5fHk4DwmjzXz1jB6
-	bF6h5bF4z0smj3M7zrN7bFrVyeYx72Sgx4vNMxk9Pm+S89j6+TZLAFcUl01Kak5mWWqRvl0C
-	V8bKJy3MBft5Kx51zmZrYDzK1cXIySEhYCLR/+0PE4gtJLCCUeL/hJouRi4g+wujxMtDDxkh
-	nM+MEsvfnmOD6Vj2fAo7RGI5o8TXmy+Z4KrOfJ8HldnCKHHs6QRmkBYWARWJXwcbGUFsNgEd
-	ifNv7oDFRQSUJPbtmgjWwCzQwiyx+20z0A4ODmGBYImbe3RBangFHCSurHrMBmELSpyc+YQF
-	xGYGmrNg9yewcmYBaYnl/zhAwpwCBhIXLmxghrhUWeLgskPsEHatxKktt8AOlRCYzSmxfvZO
-	FoiEi8SO46ehioQlXh3fAmXLSPzfOR+qYTKjxP5/H9ghnNWMEssavzJBVFlLtFx5AtXhKPFg
-	5kRGkIskBPgkbrwVhDiUT2LStunMEGFeiY42IYhqNYnV996wTGBUnoXktVlIXpuF8NoCRuZV
-	jOKppcW56anFhnmp5XrFibnFpXnpesn5uZsYgWnr9L/jn3Ywzn31Ue8QIxMH4yFGCQ5mJRHe
-	1yI30oR4UxIrq1KL8uOLSnNSiw8xSnOwKInzqqbIpwoJpCeWpGanphakFsFkmTg4pRqYel79
-	nasRPvW9RYTA/8j5UjNfFF2TSJ92MrntytT6nLdzeSOefVUx6+n2vSrxdLqXbdiXe3+L6u5x
-	7/o+jXnplpkFt94IJFvvUNn47sqs+PPlvWf8i1+2CQiqfZ3zx/ZT8axGRY+lHqxm3h2r6xlC
-	K5N+RTBN8rv7Iq72WchD5giefNeNdo0BPh9jdnvLmQg1REueXrWiJmNzZVXbYYmEFyx3l5/o
-	f3E+SqDyqyiHr712WOKlS/YXl3puPSgoPO/knV+frAsZ4gXfrxA9tEBh+mFNtwOOIg/VV9pc
-	WXrzLpv44nK+m9/PXleeoKmSsLh55rnCr5Gfk3d0THm+6pSj4WvZt7Y5PwSEdmcpZPv6KrEU
-	ZyQaajEXFScCAP9lgCjKAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7ocOjfSDI5vULHYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
-	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyVT1qYC/bzVjzqnM3WwHiU
-	q4uRk0NCwERi2fMp7F2MXBxCAksZJQ7f/s8EkZCR2PjlKiuELSzx51oXG0TRR0aJyVOeQnVs
-	YZQ40fSTGaSKRUBF4tfBRkYQm01AR+L8mztgcREBJYl9uyaCNTALtDBL7H7bDDSKg0NYIFji
-	5h5dkBpeAQeJK6seQ234zCixvWklG0RCUOLkzCcsIDYz0NAFuz+B9TILSEss/8cBEuYUMJC4
-	cGEDM8SlyhIHlx1ih7BrJT7/fcY4gVF4FpJJs5BMmoUwaQEj8ypGkdTS4tz03GJDveLE3OLS
-	vHS95PzcTYzA6N127OfmHYzzXn3UO8TIxMF4iFGCg1lJhPe1yI00Id6UxMqq1KL8+KLSnNTi
-	Q4ymwKCYyCwlmpwPTB95JfGGZgamhiZmlgamlmbGSuK8bpfPpwkJpCeWpGanphakFsH0MXFw
-	SjUwFVV5SjZLNewq/65QrPL7nEhpY9FbhvoEpjgXvzsN99/9nMc9x6Cr1jNylgtz5MdNC6cd
-	mlf+1/p2U4HTn8DLv9k0L/70/pXLYmDWl3jyk1JOFcf5/UoXQn4/vT91/8SE0mmWflfEVf9L
-	2F/hDZopwqh50+5V7dMdP1ZuWhh0Z4n4Ew7+9gnPbPhychc9DVkZrvr+xPrllkFeKoGxOWrP
-	rlzycblqN933/KWk8MZSpagPW9e+7Jj/0OZdxAQFva1K0iolGr9vlTjt5Dh508x6QaCuUcD1
-	wLlyeww0L8d2xTVsOihWzL7y/e/Wnil2f+uLP5+Rjtp9S00jID/myr/oBBPnnclBF8sij19P
-	YX6mxFKckWioxVxUnAgAgRKfpmcDAAA=
-X-CMS-MailID: 20240904094440eucas1p1dc4f682d5f39faa90aec5b0cac15761f
-X-Msg-Generator: CA
-X-RootMTR: 20240826140602eucas1p2024399b3fa6c41a7939bd4ee7cc7e888
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240826140602eucas1p2024399b3fa6c41a7939bd4ee7cc7e888
-References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
-	<20240826-iopf-for-all-v1-2-59174e6a7528@samsung.com>
-	<CGME20240826140602eucas1p2024399b3fa6c41a7939bd4ee7cc7e888@eucas1p2.samsung.com>
-	<20240826140558.GJ3468552@ziepe.ca>
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <20240830070351.2855919-5-jens.wiklander@linaro.org> <CABdmKX2KzswmiDY4oWw69_rPWs8d_Cqp7OXouSeMQaYX1SDSmw@mail.gmail.com>
+In-Reply-To: <CABdmKX2KzswmiDY4oWw69_rPWs8d_Cqp7OXouSeMQaYX1SDSmw@mail.gmail.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Wed, 4 Sep 2024 11:44:33 +0200
+Message-ID: <CAHUa44FYYFVQWf0DGUXNHoOVQEC0-HRyYa0386dHNjo4y1qSiQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] dma-buf: heaps: add Linaro restricted dmabuf heap support
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 11:05:58AM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 26, 2024 at 01:40:28PM +0200, Klaus Jensen wrote:
-> > From: Joel Granados <j.granados@samsung.com>
-> > 
-> > IOMMU_IOPF is no longer selectable through INTEL_IOMMU_SVM effectively
-> > severing their relation and allowing them to be used independently.
-> > 
-> > Signed-off-by: Joel Granados <j.granados@samsung.com>
+On Tue, Sep 3, 2024 at 7:50=E2=80=AFPM T.J. Mercier <tjmercier@google.com> =
+wrote:
+>
+> On Fri, Aug 30, 2024 at 12:04=E2=80=AFAM Jens Wiklander
+> <jens.wiklander@linaro.org> wrote:
+> >
+> > Add a Linaro restricted heap using the linaro,restricted-heap bindings
+> > implemented based on the generic restricted heap.
+> >
+> > The bindings defines a range of physical restricted memory. The heap
+> > manages this address range using genalloc. The allocated dma-buf file
+> > descriptor can later be registered with the TEE subsystem for later use
+> > via Trusted Applications in the secure world.
+> >
+> > Co-developed-by: Olivier Masse <olivier.masse@nxp.com>
+> > Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 > > ---
-> >  drivers/iommu/Kconfig       | 2 +-
-> >  drivers/iommu/intel/Kconfig | 1 -
-> >  2 files changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> > index a82f10054aec..d3ee8a0ad4a6 100644
-> > --- a/drivers/iommu/Kconfig
-> > +++ b/drivers/iommu/Kconfig
-> > @@ -164,7 +164,7 @@ config IOMMU_SVA
-> >  	bool
-> >  
-> >  config IOMMU_IOPF
-> > -	bool
-> > +	bool "Enable IO page fault in IOMMU"
-> 
-> 
-> Currently IOMMU_IOPF indicates that the driver wants to consume the
-> library functions around IOPF, it is not a user selectable because any
-> driver that links to those functions should have them working. If you
-> want to make the core driver use them then the select should be moved
-> from the SVM sub config to the core driver config.
-This is in line with the feedback that I got from Lu. I'll put
-IOMMU_IOPF under INTEL_IOMMU and drop this commit from the set.
+> >  drivers/dma-buf/heaps/Kconfig                 |  10 ++
+> >  drivers/dma-buf/heaps/Makefile                |   1 +
+> >  .../dma-buf/heaps/restricted_heap_linaro.c    | 165 ++++++++++++++++++
+> >  3 files changed, 176 insertions(+)
+> >  create mode 100644 drivers/dma-buf/heaps/restricted_heap_linaro.c
+> >
+> > diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kcon=
+fig
+> > index 58903bc62ac8..82e2c5d09242 100644
+> > --- a/drivers/dma-buf/heaps/Kconfig
+> > +++ b/drivers/dma-buf/heaps/Kconfig
+> > @@ -28,3 +28,13 @@ config DMABUF_HEAPS_RESTRICTED_MTK
+> >         help
+> >           Enable restricted dma-buf heaps for MediaTek platform. This h=
+eap is backed by
+> >           TEE client interfaces. If in doubt, say N.
+> > +
+> > +config DMABUF_HEAPS_RESTRICTED_LINARO
+> > +       bool "Linaro DMA-BUF Restricted Heap"
+> > +       depends on DMABUF_HEAPS_RESTRICTED
+> > +       help
+> > +         Choose this option to enable the Linaro restricted dma-buf he=
+ap.
+> > +         The restricted heap pools are defined according to the DT. He=
+aps
+> > +         are allocated in the pools using gen allocater.
+> > +         If in doubt, say N.
+> > +
+> > diff --git a/drivers/dma-buf/heaps/Makefile b/drivers/dma-buf/heaps/Mak=
+efile
+> > index 0028aa9d875f..66b2f67c47b5 100644
+> > --- a/drivers/dma-buf/heaps/Makefile
+> > +++ b/drivers/dma-buf/heaps/Makefile
+> > @@ -2,4 +2,5 @@
+> >  obj-$(CONFIG_DMABUF_HEAPS_CMA)         +=3D cma_heap.o
+> >  obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED)  +=3D restricted_heap.o
+> >  obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED_MTK)      +=3D restricted_heap_mt=
+k.o
+> > +obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED_LINARO)   +=3D restricted_heap_li=
+naro.o
+> >  obj-$(CONFIG_DMABUF_HEAPS_SYSTEM)      +=3D system_heap.o
+> > diff --git a/drivers/dma-buf/heaps/restricted_heap_linaro.c b/drivers/d=
+ma-buf/heaps/restricted_heap_linaro.c
+> > new file mode 100644
+> > index 000000000000..4b08ed514023
+> > --- /dev/null
+> > +++ b/drivers/dma-buf/heaps/restricted_heap_linaro.c
+> > @@ -0,0 +1,165 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * DMABUF secure heap exporter
+> > + *
+> > + * Copyright 2021 NXP.
+> > + * Copyright 2024 Linaro Limited.
+> > + */
+> > +
+> > +#define pr_fmt(fmt)     "rheap_linaro: " fmt
+> > +
+> > +#include <linux/dma-buf.h>
+> > +#include <linux/err.h>
+> > +#include <linux/genalloc.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_fdt.h>
+> > +#include <linux/of_reserved_mem.h>
+> > +#include <linux/scatterlist.h>
+> > +#include <linux/slab.h>
+> > +
+> > +#include "restricted_heap.h"
+> > +
+> > +#define MAX_HEAP_COUNT 2
+>
+> Are multiple supported because of what Cyrille mentioned here about permi=
+ssions?
+> https://lore.kernel.org/lkml/DBBPR04MB7514E006455AEA407041E4F788709@DBBPR=
+04MB7514.eurprd04.prod.outlook.com/
 
-Thx.
+Yes, I kept that as is.
 
-> 
-> If you want to change IOMMU_IOPF to a user configurable then it should
-> have a full help text and all the kconfig places touching it should be
-> turned into
-> 
->   depends IOMMU_IOPF
-> 
-> Ie you can't enable any drivers SVA kconfig without also picking
-> IOMMU_IOPF.
-> 
-> This is doing neither fully.. Pick one :)
-> 
-> Jason
+>
+> So this is just some arbitrary limit? I'd prefer to have some sort of
+> documentation about this.
 
--- 
+How about removing the limit and using dynamic allocation instead?
 
-Joel Granados
+Thanks,
+Jens
+
+>
+>
+> > +#define HEAP_NAME_LEN  32
+> > +
+> > +struct resmem_restricted {
+> > +       phys_addr_t base;
+> > +       phys_addr_t size;
+> > +
+> > +       char name[HEAP_NAME_LEN];
+> > +
+> > +       bool no_map;
+> > +};
+> > +
+> > +static struct resmem_restricted restricted_data[MAX_HEAP_COUNT] =3D {0=
+};
+> > +static unsigned int restricted_data_count;
+> > +
+> > +static int linaro_restricted_memory_allocate(struct restricted_heap *h=
+eap,
+> > +                                            struct restricted_buffer *=
+buf)
+> > +{
+> > +       struct gen_pool *pool =3D heap->priv_data;
+> > +       unsigned long pa;
+> > +       int ret;
+> > +
+> > +       buf->size =3D ALIGN(buf->size, PAGE_SIZE);
+> > +       pa =3D gen_pool_alloc(pool, buf->size);
+> > +       if (!pa)
+> > +               return -ENOMEM;
+> > +
+> > +       ret =3D sg_alloc_table(&buf->sg_table, 1, GFP_KERNEL);
+> > +       if (ret) {
+> > +               gen_pool_free(pool, pa, buf->size);
+> > +               return ret;
+> > +       }
+> > +
+> > +       sg_set_page(buf->sg_table.sgl, phys_to_page(pa), buf->size, 0);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void linaro_restricted_memory_free(struct restricted_heap *heap=
+,
+> > +                                         struct restricted_buffer *buf=
+)
+> > +{
+> > +       struct gen_pool *pool =3D heap->priv_data;
+> > +       struct scatterlist *sg;
+> > +       unsigned int i;
+> > +
+> > +       for_each_sg(buf->sg_table.sgl, sg, buf->sg_table.nents, i)
+> > +               gen_pool_free(pool, page_to_phys(sg_page(sg)), sg->leng=
+th);
+> > +       sg_free_table(&buf->sg_table);
+> > +}
+> > +
+> > +static const struct restricted_heap_ops linaro_restricted_heap_ops =3D=
+ {
+> > +       .alloc =3D linaro_restricted_memory_allocate,
+> > +       .free =3D linaro_restricted_memory_free,
+> > +};
+> > +
+> > +static int add_heap(struct resmem_restricted *mem)
+> > +{
+> > +       struct restricted_heap *heap;
+> > +       struct gen_pool *pool;
+> > +       int ret;
+> > +
+> > +       if (mem->base =3D=3D 0 || mem->size =3D=3D 0) {
+> > +               pr_err("restricted_data base or size is not correct\n")=
+;
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       heap =3D kzalloc(sizeof(*heap), GFP_KERNEL);
+> > +       if (!heap)
+> > +               return -ENOMEM;
+> > +
+> > +       pool =3D gen_pool_create(PAGE_SHIFT, -1);
+> > +       if (!pool) {
+> > +               ret =3D -ENOMEM;
+> > +               goto err_free_heap;
+> > +       }
+> > +
+> > +       ret =3D gen_pool_add(pool, mem->base, mem->size, -1);
+> > +       if (ret)
+> > +               goto err_free_pool;
+> > +
+> > +       heap->no_map =3D mem->no_map;
+> > +       heap->priv_data =3D pool;
+> > +       heap->name =3D mem->name;
+> > +       heap->ops =3D &linaro_restricted_heap_ops;
+> > +
+> > +       ret =3D restricted_heap_add(heap);
+> > +       if (ret)
+> > +               goto err_free_pool;
+> > +
+> > +       return 0;
+> > +
+> > +err_free_pool:
+> > +       gen_pool_destroy(pool);
+> > +err_free_heap:
+> > +       kfree(heap);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static int __init rmem_restricted_heap_setup(struct reserved_mem *rmem=
+)
+> > +{
+> > +       size_t len =3D HEAP_NAME_LEN;
+> > +       const char *s;
+> > +       bool no_map;
+> > +
+> > +       if (WARN_ONCE(restricted_data_count >=3D MAX_HEAP_COUNT,
+> > +                     "Cannot handle more than %u restricted heaps\n",
+> > +                     MAX_HEAP_COUNT))
+> > +               return -EINVAL;
+> > +
+> > +       no_map =3D of_get_flat_dt_prop(rmem->fdt_node, "no-map", NULL);
+> > +       s =3D strchr(rmem->name, '@');
+> > +       if (s)
+> > +               len =3D umin(s - rmem->name + 1, len);
+> > +
+> > +       restricted_data[restricted_data_count].base =3D rmem->base;
+> > +       restricted_data[restricted_data_count].size =3D rmem->size;
+> > +       restricted_data[restricted_data_count].no_map =3D no_map;
+> > +       strscpy(restricted_data[restricted_data_count].name, rmem->name=
+, len);
+> > +
+> > +       restricted_data_count++;
+> > +       return 0;
+> > +}
+> > +
+> > +RESERVEDMEM_OF_DECLARE(linaro_restricted_heap, "linaro,restricted-heap=
+",
+> > +                      rmem_restricted_heap_setup);
+> > +
+> > +static int linaro_restricted_heap_init(void)
+> > +{
+> > +       unsigned int i;
+> > +       int ret;
+> > +
+> > +       for (i =3D 0; i < restricted_data_count; i++) {
+> > +               ret =3D add_heap(&restricted_data[i]);
+> > +               if (ret)
+> > +                       return ret;
+> > +       }
+> > +       return 0;
+> > +}
+> > +
+> > +module_init(linaro_restricted_heap_init);
+> > +MODULE_DESCRIPTION("Linaro Restricted Heap Driver");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.34.1
+> >
 
