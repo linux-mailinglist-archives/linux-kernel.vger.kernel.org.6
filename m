@@ -1,51 +1,74 @@
-Return-Path: <linux-kernel+bounces-314714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF7B96B772
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:53:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FB196B776
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12E61C2242E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4411C22007
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0511CDA09;
-	Wed,  4 Sep 2024 09:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286601CF29F;
+	Wed,  4 Sep 2024 09:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YaSfZaoE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsSlsSsk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1C1EBFEA;
-	Wed,  4 Sep 2024 09:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70F1CEEBB;
+	Wed,  4 Sep 2024 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443602; cv=none; b=SPb6CZe9XLcv2uCo65g6xDjJ05s5qDclMLxVmPv5v/1wj+0Ixsjzl/Rgifnyu6NW7ddYnwpO86VrYP+EipU7gp5CcWi6HBICpAdMXccASWgRiSqL2SBAZ/kMGUsDGGugBcvC1MFOwpnI6uzK5IXk2n39jcy+WOjDa+M56E+eCQ0=
+	t=1725443606; cv=none; b=umGoIkAXSv7dRxK4P/lDLgvzDKMbvAdNLpspdOf6DnrFf8pmjBeuTQU7KZ5vS+Jmtu0y945FM54tXzoP8KpYB/CHvsRERDZ2uyN7E/obFVp3XmDzwVWz/ezqLuMEm7BWtZd6aurWBoOTZXSHHDuAMuEHM1R1qM+cBXpcz7WIkPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443602; c=relaxed/simple;
-	bh=NBh72CSFH3xrTu5kazoMl9N+ejgQmT44qsc98DLhg8g=;
+	s=arc-20240116; t=1725443606; c=relaxed/simple;
+	bh=Rs/7CNs57mYMKC518TOwDxf97qBOBf04kquglQP1lwc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnaRdU1IwBf6ZhSVfigG37mI6DijR0TyOjHDBkpnIEKD51BCRgfMEET+N3AQl832vH+0xfcBuHtJVqsodMM1RGZCMtof8+FI3upRzfnWEckAmrWEBbfUHqeg8gvRhiRXRyjkwb8nzNW5XfDd6HqG9MBiiBGMJjj9tVkuCv52Ido=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YaSfZaoE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F3BC4CEC6;
-	Wed,  4 Sep 2024 09:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725443601;
-	bh=NBh72CSFH3xrTu5kazoMl9N+ejgQmT44qsc98DLhg8g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKXyY4t8vP1MX1WPY/BEF8amMSV8+I0bXT/fu6GtClcyDkUdF0GJ6akO6lJG1dB9pgdRJP7Y2hD52jwuHEyqGcnk+hYzboQgQEP7VESChP7N0X4CKOiiStIFTeBrM3IttDJJBTYkgI+JLr8OYcmDtY2mWKSu3LLSY+rznQ0xATU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsSlsSsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E849DC4CEC2;
+	Wed,  4 Sep 2024 09:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725443606;
+	bh=Rs/7CNs57mYMKC518TOwDxf97qBOBf04kquglQP1lwc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YaSfZaoENlPebWPb53Xjtvae3OqpsrD/7wvZUVtYVvb02xCj9EW91hzSzj+Qmlfky
-	 vcMui7R7v2fRy63fxB+3nhjs1mGF1egWObarP7pAOGADjxTk4/vwIsmk/923wuu+0G
-	 uaWfRCbx98sJeY4UXQXp0t4vm7sNCsE+suDodY+g=
-Date: Wed, 4 Sep 2024 11:53:18 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Richard Narron <richard@aaazen.com>
-Cc: Linux stable <stable@vger.kernel.org>,
-	Linux kernel <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
-Message-ID: <2024090419-repent-resonant-14c1@gregkh>
-References: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
+	b=UsSlsSskbJHuC+h8APdYWUHWE27EWWoS5s+VzmxiB2D3IPWTRipWpIKtn5zyni497
+	 hVP+Ox7LqqiXOGEFtPsrAJZdEExcCBqzCxaqqgOE3kpzKjfJRZsoFGT29mYI8m5Iqw
+	 rZ0zCfCTVztes5x+XnObG6NHo9bJwDiCtpeflbGcddmKgwqEpCu6SF/qpHVPh9ni1W
+	 ppDs8jvB+vds1Aih5gTRYLgyGZ/opjK/46+emlH4fin2rM9HKedQuMGGy+q3a8UKng
+	 bPzCsVAgywe3ywpnlWsmkHQ8qY0/f+totvXZS/nscbccko+yJ9Z0oBge2FV1+Fh4PX
+	 GGhZptjpW3lFg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slmhq-000000002Dc-0ROQ;
+	Wed, 04 Sep 2024 11:53:42 +0200
+Date: Wed, 4 Sep 2024 11:53:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Subject: Re: [PATCH v6 4/4] PCI: qcom: Add RX margining settings for 16.0 GT/s
+Message-ID: <ZtguJs128O-N07Eg@hovoldconsulting.com>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
+ <20240904-pci-qcom-gen4-stability-v6-4-ec39f7ae3f62@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,69 +77,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8c0d05-19e-de6d-4f21-9af4229a7e@aaazen.com>
+In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-4-ec39f7ae3f62@linaro.org>
 
-On Mon, Sep 02, 2024 at 03:39:49PM -0700, Richard Narron wrote:
-> I get an "out of memory" error when building Linux kernels 5.15.164,
-> 5.15.165 and 5.15.166-rc1:
-> ...
->   LD [M]  drivers/mtd/tests/mtd_stresstest.o
->   LD [M]  drivers/pcmcia/pcmcia_core.o
->   LD [M]  drivers/mtd/tests/mtd_subpagetest.o
+On Wed, Sep 04, 2024 at 12:42:00PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
 > 
-> cc1: out of memory allocating 180705472 bytes after a total of 283914240
-> bytes
->   LD [M]  drivers/mtd/tests/mtd_torturetest.o
->   CC [M]  drivers/mtd/ubi/wl.o
->   LD [M]  drivers/pcmcia/pcmcia.o
->   CC [M]  drivers/gpu/drm/nouveau/nvkm/engine/disp/headgv100.o
->   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dce/dmub_hw_lock_mgr.o
->   LD [M]  drivers/mtd/tests/mtd_nandbiterrs.o
->   CC [M]  drivers/mtd/ubi/attach.o
->   LD [M]  drivers/staging/qlge/qlge.o
-> make[4]: *** [scripts/Makefile.build:289:
-> drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.o]
-> Error 1
-> make[3]: *** [scripts/Makefile.build:552: drivers/staging/media/atomisp]
-> Error 2
-> make[2]: *** [scripts/Makefile.build:552: drivers/staging/media] Error 2
-> make[2]: *** Waiting for unfinished jobs....
->   LD [M]  drivers/pcmcia/pcmcia_rsrc.o
->   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dce/dmub_outbox.o
-> make[1]: *** [scripts/Makefile.build:552: drivers/staging] Error 2
-> make[1]: *** Waiting for unfinished jobs....
->   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dml/calcs/dce_calcs.o
->   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dml/calcs/custom_float.o
->   CC [M]  drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.o
-> ...
+> Add RX lane margining settings for 16.0 GT/s (GEN 4) data rate. These
+> settings improve link stability while operating at high date rates and
+> helps to improve signal quality.
 > 
-> #uname -a
-> Linux aragorn 5.15.166-rc1-smp #1 SMP PREEMPT Mon Sep 2 14:03:00 PDT 2024
-> i686 AMD Ryzen 9 5900X 12-Core Processor AuthenticAMD GNU/Linux
+> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> [mani: dropped the code refactoring and minor changes]
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.h  | 18 ++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom-common.c | 31 +++++++++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom-common.h |  1 +
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  4 +++-
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  4 +++-
+>  5 files changed, 56 insertions(+), 2 deletions(-)
 > 
-> Attached is my config file.
-> 
-> I found a work around for this problem.
-> 
-> Remove the six minmax patches introduced with kernel 5.15.164:
-> 
-> minmax: allow comparisons of 'int' against 'unsigned char/short'
-> minmax: allow min()/max()/clamp() if the arguments have the same
-> minmax: clamp more efficiently by avoiding extra comparison
-> minmax: fix header inclusions
-> minmax: relax check to allow comparison between unsigned arguments
-> minmax: sanity check constant bounds when clamping
-> 
-> Can these 6 patches be removed or fixed?
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 51744ad25575..f5be99731f7e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -209,6 +209,24 @@
+>  
+>  #define PCIE_PL_CHK_REG_ERR_ADDR			0xB28
+>  
+> +/*
+> + * 16.0 GT/s (GEN4) lane margining register definitions
 
-It's a bit late, as we rely on them for other changes.
+nit: Gen 4?
 
-Perhaps just fixes for the files that you are seeing build crashes on?
-I know a bunch of them went into Linus's tree for this issue, but we
-didn't backport them as I didn't know what was, and was not, needed.  If
-you can pinpoint the files that cause crashes, I can dig them up.
+> + */
+> +#define GEN4_LANE_MARGINING_1_OFF		0xb80
 
-thanks,
+nit: upper case hex
 
-greg k-h
+> +#define MARGINING_MAX_VOLTAGE_OFFSET		GENMASK(29, 24)
+> +#define MARGINING_NUM_VOLTAGE_STEPS		GENMASK(22, 16)
+> +#define MARGINING_MAX_TIMING_OFFSET		GENMASK(13, 8)
+> +#define MARGINING_NUM_TIMING_STEPS		GENMASK(5, 0)
+> +
+> +#define GEN4_LANE_MARGINING_2_OFF		0xb84
+
+Same here
+
+> +#define MARGINING_IND_ERROR_SAMPLER		BIT(28)
+> +#define MARGINING_SAMPLE_REPORTING_METHOD	BIT(27)
+> +#define MARGINING_IND_LEFT_RIGHT_TIMING		BIT(26)
+> +#define MARGINING_IND_UP_DOWN_VOLTAGE		BIT(25)
+> +#define MARGINING_VOLTAGE_SUPPORTED		BIT(24)
+> +#define MARGINING_MAXLANES			GENMASK(20, 16)
+> +#define MARGINING_SAMPLE_RATE_TIMING		GENMASK(13, 8)
+> +#define MARGINING_SAMPLE_RATE_VOLTAGE		GENMASK(5, 0)
+>  /*
+>   * iATU Unroll-specific register definitions
+>   * From 4.80 core version the address translation will be made by unroll
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> index dc7d93db9dc5..99b75e7f085d 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> @@ -43,3 +43,34 @@ void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
+>  	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
+> +
+> +void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci)
+
+I'd try to find a shorter symbol name here, "settings" seems redundant
+after "set". Perhaps just
+
+	qcom_pcie_common_enable_lane_margining()
+
+or
+
+	qcom_pcie_common_enable_16gt_lane_margining()?
+
+if these settings are indeed specific to 16 GT/s. But perhaps it's
+better to let the helper honour pci->max_link_speed if different
+settings will later be needed for higher speeds:
+
+	if (pcie_link_speed[pci->max_link_speed] >= PCIE_SPEED_16_0GT)
+		qcom_pcie_common_enable_lane_margining(pci)
+
+>  void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
+> +void qcom_pcie_common_set_16gt_rx_margining_settings(struct dw_pcie *pci);
+
+And maybe something similar for the eq settings for symmetry.
+
+Johan
 
