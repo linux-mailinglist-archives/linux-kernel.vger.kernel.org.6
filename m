@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-314634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A080096B62B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:11:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEF796B61C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491921F25B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5F31C2495B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630391CDA0A;
-	Wed,  4 Sep 2024 09:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5111CC887;
+	Wed,  4 Sep 2024 09:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b368OBVG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Ky4oO3XV"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F9C1CCEDA;
-	Wed,  4 Sep 2024 09:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248CA17CA1D;
+	Wed,  4 Sep 2024 09:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725441051; cv=none; b=b29yx2zZpesKI40R+jScK+6GgURH6GNZYTwSjT+5uP3YJZLI7vUDq83ByQDcdoxelwx2bmGkVZgEuntT4Zs/d0CbQTWpgy8K+5w43VgowGoSR3USoy2V7lDJUVEruT2pOKA4qVGyI78nZKMYTOexGUIKChy/bhW1uwx/LOKzMis=
+	t=1725440989; cv=none; b=bQLyA9P8fZM/WY53pOJcHshD5D0uG2Y4/0yXExwLCWb9JFNc89Fb/j32pJaqINriiU1SPoQil4QZGIiyi+Z9Y8Cbmlxo2jjD/ImorwZOYWwyYHuvUG54xjWBtSyFau8D9sCaIVLyW/nVxGlw2hoO5zN6VTaXNlhgKO0OBDWDHLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725441051; c=relaxed/simple;
-	bh=qQdj5io8WhOjytcaHec8EnLMlt0GCgYP5levN+qpTg0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bc8VEMrOfRP/ZV06aYAX2xOhiUllDf8i0X6cKlKek3oEQ88+oSuPaZ3rk3x4czQdGuhPJR4Z4mNtmvgkzlJBa0yKn1D4zxHSoxQDhfLHMkAimd4TK9Vgyh+Y7U1ijyW3PT25vzVIB5osFcGhiksxhnxb1F0nIznRKMlK4ialVhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b368OBVG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C451FC4CEC8;
-	Wed,  4 Sep 2024 09:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725441051;
-	bh=qQdj5io8WhOjytcaHec8EnLMlt0GCgYP5levN+qpTg0=;
-	h=Date:From:To:Subject:From;
-	b=b368OBVGzqEQeguKTcPGgw1yZ9ii8zoVPqHgk8VqyL8uk/7yGDoJ7fkAS2kLONUpa
-	 xMLQfie7u0I57ke/3JCU+bl12IDKxBgBM5PrTEs6Hju9ygJrLxJj5qU5x7e7rEo5hA
-	 xwM5BlzC34ClITpZBIJJw1HUlNEydI4XDnWFexWSWRJv1jIr320DXWKDh4QcZxWW3N
-	 yJdzKxvjWlipfpM7EZhE04/a2DjlllQI4cu5SmJYC4WjMMPu6+cEA1sU8bJAE9OvfF
-	 3XDsLtLB23LvbXIYbbAlI3OZNcENTE6AJO5p0Ua5uzp6+EJ2HJ4tkje8zcg4V8PyIG
-	 LG8uzy/IE+H9g==
-Date: Wed, 4 Sep 2024 11:10:47 +0200
-From: Helge Deller <deller@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	John David Anglin <dave.anglin@bell.net>
-Subject: [GIT PULL] parisc architecture fix for v6.11-rc7
-Message-ID: <ZtgkFznSCnkAREgA@p100>
+	s=arc-20240116; t=1725440989; c=relaxed/simple;
+	bh=5pmD9c3B417IKDW7NCpXURYRShMC2cQ9g/e4h40dOyA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XnCeRkHXk3yjZ7kUxqpCD8mrRJ1ssBRG2j1bTmUsYdugTyY7/5ChFcUji2v0nk3HwVEKebAcMOJdVkokpgUJUNvbg6pQLsq3++L7Ai6U8ZXHVCL4ZbyNfX0yG/e1vzdnwhpH878tr/6BtHDrMz8Rry0WNu32pHXnyeEQ2gVEuRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Ky4oO3XV; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WRwluVRMOa7IzLDu5O+B9iAsJQjcJHexkQ03u6Hw6+4=; b=Ky4oO3XV8dX69lb6SQW69m+Lq8
+	JB1QaLV6ugb/GXc79OPlVLe9BRzMRPFo9OrNTBSR8J/Vrx8fhc0eLZnIWQmHow6mID4JqEUNTcpJN
+	y7IzD1EDeH7WUmJLu1eeo0BRFWzUZ7eGB9XpZ8nA7olWBQ2etTZbJvw70eAaDReoAvoU9WJef3kK6
+	9JN7y/qNhjT7rdWCEz4dMlSchmqJETe7UWx4+0O0FOgUSAzUad6tV4BkKG/v4YyfrSMWNEO4Tv8AG
+	k6r++fGZsvpqGc1FArFgnNBel5b6LmhLZaOl56SJuXusTjMFM7tOvIResHsdrctZ/OXKc5lNHlN19
+	sSS6ByUg==;
+Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1slm1G-0006jf-Pm; Wed, 04 Sep 2024 11:09:42 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alexandre.belloni@bootlin.com,
+ Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Subject: Re: [PATCH v2 4/8] ARM: dts: rockchip: Add watchdog node for RV1126
+Date: Wed, 04 Sep 2024 11:11:27 +0200
+Message-ID: <6440792.jCCqRG4XHG@diego>
+In-Reply-To: <20240903105245.715899-5-karthikeyan@linumiz.com>
+References:
+ <20240903105245.715899-1-karthikeyan@linumiz.com>
+ <20240903105245.715899-5-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Linus,
+Am Dienstag, 3. September 2024, 12:52:41 CEST schrieb Karthikeyan Krishnasamy:
+> Add watchdog node for Rockchip RV1126
+> 
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 
-Please pull one fix for the parisc architecture to fix a boot issue.
+this needs a separate patch for adding a watchdog compatible to
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml#n33
 
-Thanks!
-Helge
+see for example
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dcd615ee6fd3651ab0357364c4cf65b1148a40be
 
-----------------------------------------------------------------
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+Thanks
+Heiko
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+> ---
+> 
+> Notes:
+>     v2:
+>     - No change
+> 
+>  arch/arm/boot/dts/rockchip/rv1126.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/rockchip/rv1126.dtsi b/arch/arm/boot/dts/rockchip/rv1126.dtsi
+> index abf442804d27..283985608428 100644
+> --- a/arch/arm/boot/dts/rockchip/rv1126.dtsi
+> +++ b/arch/arm/boot/dts/rockchip/rv1126.dtsi
+> @@ -544,6 +544,14 @@ timer0: timer@ff660000 {
+>  		clock-names = "pclk", "timer";
+>  	};
+>  
+> +	wdt: watchdog@ff680000 {
+> +		compatible = "snps,dw-wdt";
+> +		reg = <0xff680000 0x100>;
+> +		clocks = <&cru PCLK_WDT>;
+> +		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +		status = "disabled";
+> +	};
+> +
+>  	i2s0: i2s@ff800000 {
+>  		compatible = "rockchip,rv1126-i2s-tdm";
+>  		reg = <0xff800000 0x1000>;
+> 
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.11-rc7
 
-for you to fetch changes up to 213aa670153ed675a007c1f35c5db544b0fefc94:
 
-  parisc: Delay write-protection until mark_rodata_ro() call (2024-09-03 12:59:21 +0200)
-
-----------------------------------------------------------------
-parisc architecture fix for kernel v6.11-rc7:
-
-- Fix boot issue where boot memory is marked read-only too early
-
-----------------------------------------------------------------
-Helge Deller (1):
-      parisc: Delay write-protection until mark_rodata_ro() call
-
- arch/parisc/mm/init.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
 
