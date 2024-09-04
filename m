@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-315715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DC296C622
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41C796C627
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93FBAB222B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A861281FE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D721E1A0F;
-	Wed,  4 Sep 2024 18:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EB21E1A34;
+	Wed,  4 Sep 2024 18:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTn8Qs6t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8gHIkcz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD761E00B6;
-	Wed,  4 Sep 2024 18:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB411DC1A2;
+	Wed,  4 Sep 2024 18:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473756; cv=none; b=WiUO9DiIat7H4+eDgncnOcvm2W8T0biVvWWivaLv/ffjbj2OUMvB2UgWY2Ro84pM7B218fTqQVqctVUymjlM3z/tgkNIQaIrV2I7neCY75ZDuiwSeRVhNNMF/rM5gboFqVpp8R3X23Y7lYqYFdOXyXK93W/bRAKP48YubKhotyA=
+	t=1725473790; cv=none; b=rIGv1obDIMfVYCMsA4dvAia2YtyArp/fuze0g6T95cTDBiUXiKtsg51XMkR+wp9WCwFDkkK86H2DlVx6FtVoauuM2LrixiyUPSOttuMGsdrt3c+fKh+DATpWOMHnU8kQ4c8GwscyhC7HdQroViCS6+SFnblsJDKTG6w+qzj33hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473756; c=relaxed/simple;
-	bh=yti34NQLp3z26/2GmTL1llnQu5VorhQFs8/RIojmn5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMvwhvNrW53KGOQCcUMV+7laHMuKiE2fEPh6D/s1eWHa624F8b0YaHp6CnzzZv8pDT6I4AbdL3+k3Me0p6lu2RfSl4d5y0bob3ewA63AhjX+IQyTVf7vnO9Nougk8K/PkSEIwEUqc1bMiNzhWGMA+WnYHGSguf4tTBom+bDWLjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTn8Qs6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB046C4CEC2;
-	Wed,  4 Sep 2024 18:15:55 +0000 (UTC)
+	s=arc-20240116; t=1725473790; c=relaxed/simple;
+	bh=mtx1u1ixv5Azx4m3nJAArYmfaHcyt0YeqfamjYc1Nks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lBZpzFPFUKOrgOLqu4UHBz6Du+aNFEMlSB8R+hSqUQBRNOOH/NG0siJ7j9Q9zN0RrZj2zf1T8GeHXifcaG17Yg/Dtem6J3ja5/uo3HvsPQnW3BH9Z+Dk2fis6qL7ez9UNFnmihaPI7C0iEnrir7pTw8xdI5hkQ2uRH0QGCQI2Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8gHIkcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8C8C4CEC2;
+	Wed,  4 Sep 2024 18:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725473756;
-	bh=yti34NQLp3z26/2GmTL1llnQu5VorhQFs8/RIojmn5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DTn8Qs6t83kgEnt8WxIiz+sR0BjVfd0t0v+2+cO9JDYgEGJ+i+6YCXj13tNM7KfjK
-	 brAE4kJMaihidAcTe73L59tn6hd9bdy1ZgupVZqbbIg73flCNM9YNpls+3vGC6xUyK
-	 bbZmkThbQVLKFdUqksKhckHj6G3tXvVhDRbJJ2Ss7MnvpQimIW0sAPC94AVPkcd4Ue
-	 zUQoruEJBHW/xcRkw3Fjk09wKygVNMo2RUPAPBRQwHcA5R6AqiM+RIXm+FGIMQ7toe
-	 aEH8kwLzW6liYHsYbkv1LxijVc19iYiitpAlqQTHG40LKNj/LcnpesFoaDgPqP73SX
-	 f5TVS+ULx14aQ==
-Date: Wed, 4 Sep 2024 11:15:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH 8/8] perf tools: Check fallback error and order
-Message-ID: <Ztij2o6O9jbAdMiJ@google.com>
-References: <20240904064131.2377873-1-namhyung@kernel.org>
- <20240904064131.2377873-9-namhyung@kernel.org>
- <CAP-5=fWnAwVumJgypta=RJV4JBN7A82bn4aUuNJX4G3Xi0zfhg@mail.gmail.com>
+	s=k20201202; t=1725473790;
+	bh=mtx1u1ixv5Azx4m3nJAArYmfaHcyt0YeqfamjYc1Nks=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s8gHIkcz2xOM4HbTOVNS3t/CSjJuiz/SquZcIAE4+9oFfraveIyH7bnKzDde+xfRh
+	 57GCS6SzxY/QRQKZEfwoaGEJjA+ieEV6OhJ39RHOCeH7+Z/kxMSD0yVemGs24qowkI
+	 RPrlQVIUL5Kf251NRVS0Y2lulCFuO1SGzasQc9Z7ioivIoOaJhzfKRtIxGWfspEUDG
+	 Ehbu/9BrafykCwSNTNvL+zGLnqbbQsVP/CPIX4O8vKH3gSqYLPkl4F6bObRUxSAKSs
+	 ihJRipmGJUx0IIJeeaNIJNe61zF/Or7jzmrwF+sw+SJ5tr+EJ4SUCmJypfCXzaMniW
+	 mBtDUTzN+a4rw==
+Message-ID: <ec59c6d0-0ef9-482f-8aa6-42d36c3420e5@kernel.org>
+Date: Wed, 4 Sep 2024 20:16:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWnAwVumJgypta=RJV4JBN7A82bn4aUuNJX4G3Xi0zfhg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/6] dt-bindings: phy: qcom,uniphy-pcie: Document PCIe
+ uniphy
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, p.zabel@pengutronix.de,
+ dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, robimarko@gmail.com
+References: <20240830081132.4016860-1-quic_srichara@quicinc.com>
+ <20240830081132.4016860-2-quic_srichara@quicinc.com>
+ <e2qgpvfccpo2sd4mbrynxruvt5attqmtd5oik26of7tv7u4lq6@kvb63sglwa5b>
+ <de17d37f-ed0c-4e73-91d5-fc902573212a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <de17d37f-ed0c-4e73-91d5-fc902573212a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 09:19:25AM -0700, Ian Rogers wrote:
-> On Tue, Sep 3, 2024 at 11:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The perf_event_open might fail due to various reasons, so blindly
-> > reducing precise_ip level might not be the best way to deal with it.
-> >
-> > It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
-> > given precise level.  Let's try again with the correct error code.
+On 04/09/2024 19:20, Sricharan Ramabadhran wrote:
 > 
-> We also have pmu's max_precise:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmu.h?h=perf-tools-next#n91
-> The reducing the precision approach was iirc taken for AMD who will
-> forward some precise events to IBS, but the max_precise on the cpu PMU
-> is 0. I think because of this, reducing the precision below
-> evsel->pmu->max_precise shouldn't be necessary and another fallback
-> may help better.
+> 
+> On 8/30/2024 1:53 PM, Krzysztof Kozlowski wrote:
+>> On Fri, Aug 30, 2024 at 01:41:27PM +0530, Sricharan R wrote:
+>>> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+>>>
+>>> Document the Qualcomm UNIPHY PCIe 28LP present in IPQ5018.
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+>>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>> ---
+>>>   [v3] Added reviewed-by tags
+>>>
+>>>   .../phy/qcom,ipq5018-uniphy-pcie.yaml         | 70 +++++++++++++++++++
+>>>   1 file changed, 70 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/phy/qcom,ipq5018-uniphy-pcie.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,ipq5018-uniphy-pcie.yaml b/Documentation/devicetree/bindings/phy/qcom,ipq5018-uniphy-pcie.yaml
+>>> new file mode 100644
+>>> index 000000000000..c04dd179eb8b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/phy/qcom,ipq5018-uniphy-pcie.yaml
+>>> @@ -0,0 +1,70 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/phy/qcom,ipq5018-uniphy-pcie.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm UNIPHY PCIe 28LP PHY controller for genx1, genx2
+>>> +
+>>> +maintainers:
+>>> +  - Nitheesh Sekar <quic_nsekar@quicinc.com>
+>>> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - qcom,ipq5018-uniphy-pcie-gen2x1
+>>> +      - qcom,ipq5018-uniphy-pcie-gen2x2
+>>
+>> ... and now I wonder why there are two compatibles. Isn't the phy the
+>> same? We talk about the same hardware?
+>   We have 2 different physical phys. One with single lane and another
+>   with dual lane. Its same IP, but for 2 lanes, 2 sets of the phy
+>   specific registers needs to configured. So differentiating that here.
 
-Internally IBS has max_precise of 2 and I think it should have that in
-the sysfs.
+What you described, suggests using phy mode or num-lanes in PCI
+controller, not separate compatible. It's the same IP.
 
-But I found a problem with this code.  Now cycles:P would stop at 2
-because after that it won't return EOPNOTSUPP.  Instead, it returns
-EINVAL because of exclude_kernel and PERF_PMU_CAP_NO_EXCLUDE.
+Best regards,
+Krzysztof
 
-Maybe we need something like this.. :(
-
-Thanks,
-Namhyung
-
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 0133c9ad3ce07a24..6157dc68044eb389 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2587,6 +2587,13 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
-        if (err == -EINVAL && evsel__detect_missing_features(evsel))
-                goto fallback_missing_features;
- 
-+       /* HACK: AMD IBS doesn't accept exclude_*, forwarding it back to core PMU */
-+       if (err == -EINVAL && evsel->precise_max && evsel->core.attr.precise_ip &&
-+                       evsel->core.attr.exclude_kernel) {
-+               evsel->core.attr.precise_ip = 0;
-+               goto fallback_missing_features;
-+       }
-+
- out_close:
-        if (err)
-                threads->err_thread = thread;
 
