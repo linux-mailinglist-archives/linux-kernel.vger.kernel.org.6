@@ -1,139 +1,90 @@
-Return-Path: <linux-kernel+bounces-315650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06DC96C561
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:25:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C00796C56B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B28F281979
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D37288308
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F3C1E200A;
-	Wed,  4 Sep 2024 17:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201211E008F;
+	Wed,  4 Sep 2024 17:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="h1s4T6m4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NhO+4sF9"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kOXDNfJR"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5B1D0169;
-	Wed,  4 Sep 2024 17:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004DC4778C;
+	Wed,  4 Sep 2024 17:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470629; cv=none; b=ZbGgf7n8WAw/NBiiOyn7WOveK5fxOIu/fhPsmnCy7Qykhb4xaHZSD061Rm6VPVi6pm37xt05s0JvmJzNClKmtEiiwUr6szwMgiZE0L9YVC89T8kCgiIoeN+eBqlteYtCBdZaaz0xJtKlP660fAjCe4GX8Xj/l9vqKIbhnKQf3PU=
+	t=1725470859; cv=none; b=LlcJK1d2sLrvUZmsBcXUZYTZASLUDVTkx4+NDyk4/kxwyujVZCEVGg7u9zvjdexGEBvYrT8DiuUHVv0DQY2gWZVTxEL+FAqQfL6dnmKbjb9wxCOXZZADArkPV2Jb6dvpM67kK98CLzxuJEHojsxKzoTb9Umbw1h4DVflJALU2oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470629; c=relaxed/simple;
-	bh=s2efDce6CDX31pgQiN32+eqcS1MxoqBaGVtMSiBMXWI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=FvNOW2LPY5aruw5typNs9BLpImCUcSnNtO3HTSOFgGrLD/UkCYOGX9Cfg3+Y7r/Nmh2xLwl1HXhFNVMXTIaKn0ocHXRkenykbkDRQ1Hw86jkR19c0pn53bk2W0H4Mb4Exn61eKKvtR9ooVpaA9l0denz91SYtg50xz0olTfbDa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=h1s4T6m4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NhO+4sF9; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id D83CE13801B5;
-	Wed,  4 Sep 2024 13:23:45 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Wed, 04 Sep 2024 13:23:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725470625;
-	 x=1725557025; bh=gejL7XLc5uyclMWWJdGk4rD+yPLuNoi/CA2jk7RUBJw=; b=
-	h1s4T6m4iK2zaF3B0ZwkXrMbhPP2nwgbKVXxqnhCfSQEnjN53s8t3yVDUSAev9KC
-	3AEjGSgDaLKTQNRwoi7fbJSG9C1QJJ8tp/5HWeDe4Zzyocfh8wKIBihi+b6Orcfc
-	ieLkV2zyWCko+STaBJqUHF/aO3SxLPtfQotKAUbJVPkchcd3zLu1Iu7YKMJ3rqVo
-	elLg5YnOCQvFQiRSAQZ492Dn4eDuhvrEZCbOFvKBEVu1rsgp5dqrFdu8xHpmo79L
-	xTiK0stcIwKi0Ihsk8ubKPfQKVbEb9+a9lgYUIzimL4YoTq2gfkEiqUdSqN1WyU3
-	GLMs5zBfBLKmuN81Phay2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725470625; x=
-	1725557025; bh=gejL7XLc5uyclMWWJdGk4rD+yPLuNoi/CA2jk7RUBJw=; b=N
-	hO+4sF9227F3QJuwaq7xvDb0H7crblJIVyuynjtvnBEZasu6OX4UfSHw4p6QhIRO
-	zJ7sjUw61uKsQrJHxW4wXM0U6TwJOYckamYvSA9CQUXnjCnqxRF1Pa7W4IuhphpC
-	1tfe0mT89Gi0+WmjVz0gFwtgNWkOlVnSY1IIAVZ9AeHaWOyl16UuxEWUaiToDHTi
-	hqAtJ5mA9FzKktpUQHjG2z1QWU5hBVXjzILIVP0JAq+Db3Lp9x4sTzvSc26dVcYj
-	Ix4v79rY+WHgh0F1kp0f6rpUgRW2nbvFKuOQGVHiiDsVEpn4qdua+X3yVua1Ujdo
-	YMG/Wx2YChwU1gFE4cgnQ==
-X-ME-Sender: <xms:oJfYZlJz4HzYpfZ91WDDlaWdiSSdqb_coPO9POqoTUSa1LQCbpkrVQ>
-    <xme:oJfYZhLiuoaPqIJCtbig3f9vp8AG6NdBrMb0lfVOc-ankVT7f5nqhLSd-I4xbGZGv
-    Vgnkd5bLjBfqTYhE3I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
-    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprhgt
-    phhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtg
-    hpthhtohepmhgrthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhm
-    pdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepnh
-    hpihhgghhinhesghhmrghilhdrtghomhdprhgtphhtthhopehrohhsthgvughtsehgohho
-    ughmihhsrdhorhhgpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:oJfYZtvFpkA9rcBOZ1jgUYe9gHISIPWjwZQkBUvRmnhvmUE7iX0JDA>
-    <xmx:oJfYZmZsjPErShFS0ldf-_fntBtiV7un_d1OH7s6vBvsrwzHo-Rwwg>
-    <xmx:oJfYZsaPeaCFve5BbPMgCQm116oWRLhYnb7skgTJ1EiQQFebW6_OXA>
-    <xmx:oJfYZqC3XEp3bkHYUUlEHZVtxwhrcCy0VoW-bkQffQnhMuhZeoKtbQ>
-    <xmx:oZfYZsOv0G6dQMMz0hfmsvPCpUPxnHW-PNR-ysEkGjd3t6UCzd2wmjYS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 960A82220083; Wed,  4 Sep 2024 13:23:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725470859; c=relaxed/simple;
+	bh=VQ223ilrFFH7zKvc6PthtoYS7EGrHcAq9Q+MJXwcVVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f9JQxRqPJHIgnXKk5a4V4hc8ud7wl0ycSEkuvj4egboSp+fXxD+lvF81TacEkWSyFK/GJPGKmyM4/HZZCIuCDysIBQ/Yl7y8FvUfqaNHUNy2+5XCpbfiacNPSdiX4D6wkjKYUfeNq0xV+VOVO9zJr3bYeAe3jAgC0p48BBCS6AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kOXDNfJR; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WzTqm1D9tzlgVnF;
+	Wed,  4 Sep 2024 17:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1725470642; x=1728062643; bh=VQ223ilrFFH7zKvc6PthtoYS
+	7EGrHcAq9Q+MJXwcVVE=; b=kOXDNfJRgEcFWlU2caNsaMAIaP3vG8q/Y51siSCl
+	mXxFNMtuZizXHtSC3DlhES+lU9DmoX1vIQjSR5Uoc9sNIKiLm/QJ1Ok26eAlENeB
+	WbNjfTzvHmkjAQ8ANn5Ixgds5FrYJVO0niY6l5+90n47KthM+Pqe23qu7//0y64p
+	baIBGzx7czTN5mLJcSBv7J+6oC9z2EB51/IVQsxLEcWmuhghKDN3yhzBqu+0uCbS
+	lg2a/UTir15qF1UAMFXIjMdHYffrekueG0vzUW2IXsY68Jy4CHMT0X2ZITMvkQSk
+	DiWjAUa1X1pFEjOo02moCZzJKctsLaBpCM7+FB/a3YxFMA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id SI-Aex0YBMhJ; Wed,  4 Sep 2024 17:24:02 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WzTqj0TC1zlgTWP;
+	Wed,  4 Sep 2024 17:24:00 +0000 (UTC)
+Message-ID: <ea4c9e8d-e34f-4488-b3ed-3c78401f0837@acm.org>
+Date: Wed, 4 Sep 2024 10:23:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Sep 2024 17:23:24 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
-Message-Id: <780d969f-8057-41aa-901f-08a5fbebcba9@app.fastmail.com>
-In-Reply-To: <b78eab34-61f5-4c9e-b080-d2524cd30eb8@csgroup.eu>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-6-vincenzo.frascino@arm.com>
- <b78eab34-61f5-4c9e-b080-d2524cd30eb8@csgroup.eu>
-Subject: Re: [PATCH 5/9] vdso: Split linux/minmax.h
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: aacraid: Fix memory leak in open_getadapter_fib
+ function
+To: Riyan Dhiman <riyandhiman14@gmail.com>, aacraid@microsemi.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <bf6746d0-d8cc-412e-ac7b-6f17c3e3de9d@acm.org>
+ <20240904045820.5510-1-riyandhiman14@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240904045820.5510-1-riyandhiman14@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 4, 2024, at 17:17, Christophe Leroy wrote:
-> Le 03/09/2024 =C3=A0 17:14, Vincenzo Frascino a =C3=A9crit=C2=A0:
->> The VDSO implementation includes headers from outside of the
->> vdso/ namespace.
->>=20
->> Split linux/minmax.h to make sure that the generic library
->> uses only the allowed namespace.
->
-> It is probably easier to just don't use min_t() in VDSO. Can be open=20
-> coded without impeeding readability.
+On 9/3/24 9:58 PM, Riyan Dhiman wrote:
+> If there are any other methods, additional checks, or potential
+> issues with this approach that I should consider, please let me know,
+> and I'll make the necessary adjustments promptly.
+I'm not familiar with the aacraid driver. I will let someone who is
+familiar with this driver answer your question.
 
-Right, or possibly the even simpler MIN()/MAX() if the arguments
-have no side-effects.
+Thanks,
 
-       Arnd
+Bart.
 
