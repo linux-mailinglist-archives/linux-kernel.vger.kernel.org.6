@@ -1,331 +1,165 @@
-Return-Path: <linux-kernel+bounces-315418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555E396C28A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573AE96C28B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795491C2187E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC81E1F2646C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE61DC07B;
-	Wed,  4 Sep 2024 15:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203991DCB10;
+	Wed,  4 Sep 2024 15:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CpwMVFfB"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chbGAVR0"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE91DA608
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAD11EC017
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725463975; cv=none; b=IcVsNzH1R0a3POXjvnguBEjCI9ZgpXq6lwdedlLWSRbdhKEq7Er/TCFN+pJ/4jrHYYJzWoF/0WC5pNxDTMPTm96gqaoalGMfqFAnEvGQsGWRvKQDg2E1UpfVpm5waXSfg6lsJdRMMBfU+7FnQG7R1efTCsAyidC5PNJ8tnZKyKc=
+	t=1725463993; cv=none; b=WnH2QviNQzmlEVZv2nloQR2Exid2bJyL0BIWDvQ8DrPoSXZtbWJACD3TLTiG52aw7MXPWrwGB1Arl5pJjnBeVu1YaqxDoD8j+Wd9elVeqMP+gqdzNhNngYWsVdY3q3HULi1ic5uWB+KqmFnBldicdMqZGOSC5SWbNpZFA49ePCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725463975; c=relaxed/simple;
-	bh=L2CxG4uSXLFjPz6ojyIYyKdahKnRcDqOBb2XNahmM5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMO7+GywCgqIDzrHYPWI/qH05+blGLgjRII8HE37aH1ulmviJsfP78Snpzph6KBYAy/kwcfdSsjgjgAa2EeI8wHrQ3vGUk9UzbCC0CdTxPHwFVjAdVLnswrhjZdv/d+SSs8DaMcEuzXVBFbew25MjQdjtpzdf6KJnXm3uDKD9AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CpwMVFfB; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso9410764e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:32:53 -0700 (PDT)
+	s=arc-20240116; t=1725463993; c=relaxed/simple;
+	bh=mVse9Q5sFVCg9ti1xl+pGf2TEkCbAvMAkL3VmLDv9jA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MWmPUutjvFUC6UCKmBfpldITqTqGSuXWPzqY4GONgL2UH7Z+OTXaQoB5Gr3Tgd8sRwvAX6yLvOgznq8phIAKy26+DnJSXz1BjU/uCrNX8CxWfeyFMDMAcZgsn2trZSEPMbwsYFbCeN5cPCEqraYFlrj27IiaM7jJr26OyaiGEC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chbGAVR0; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7176645e4daso2219524b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:33:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725463971; x=1726068771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1b3Ig2Hog+Y/V6WlZWEgPgpsrW3qHKomzY9wB6HePvc=;
-        b=CpwMVFfBX9vl1G60JD7BiZtIYFqsBEPvYCY/L0kXoGA/hpMOX2moETUWwypwg5ifwV
-         /MLjp7kvwq/UPYZXpYCUYVWlifJKE+I5NfrzESnobe2rkQRv+6CODPtdZ9fT5qQ3xOEv
-         1BrREzA+Ras9snYIq735Bx2z6Qou2PZAaSQ3yOXVdEJll6MBpSdZjE49WVxmthJ50TB8
-         bz9qx4BiKEzKuqdYkApnL1KT9vWUlfGIepOuhOcUkbbYGvupirswMMlIQhZLbs0Z+rPJ
-         tqC4kRzlMsxkx5sF9n6+Y5Da8X8x8sTVcPuz1ksFA3wZIZSxSKCt9n6VfZNaENe+Y4AO
-         I8lA==
+        d=gmail.com; s=20230601; t=1725463991; x=1726068791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=43ydKagFmOiArusbTnepvZXequK3FKBWJc82HDWyEIw=;
+        b=chbGAVR0yg2djXYlBaFP37/oKEfK0iu5HhycuEqTAJYdh6kZ6Hhsq4/g2ImESIJQUv
+         ECs5HTwamqjOD294vqqWhokbF+QhkntWSlNEQz2MMm1PD8oOhFwNLJBDmCA4YcSi4nVe
+         Xi90elbDBfDvfTOGZ/AXVlCS3BvcLOTe5mUzPRqW1qmP9Klc/pGgy5HKUt39AVwCBtsn
+         zXhkkS0JdvO3bnkwZ3Ho0BfiFUN5hoGhUXRySXsCrr9dOPjBDSEjSJkAucJjSOpRTVGj
+         j7FRVRNPqnMdSdY62Mb5Ga+4b+Y2h9NQH2emQfGCDppczY/chZsXOwjz3GRws7w5kLtj
+         NsWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725463971; x=1726068771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1b3Ig2Hog+Y/V6WlZWEgPgpsrW3qHKomzY9wB6HePvc=;
-        b=BTsUfKqaMVLbM7TGz+6rT6JC2eSGqjMMEbjAaAgPSv522CEFw/5AX1Bk38V8PZbCt8
-         lV/IRUOA0NLteXtY4EmEQd/yxFiRn4tH6gk4iyhewxRkZpEgPLRUhKi47PTXsfxXc/h3
-         5G/3caaYILVOr4VOIe86KHq47bSUYGhtiZSOwdJAXbbadzM0xN5JSSApuuBZAoQXTBWo
-         1YRas9NF/0PGsbTm+Dde2a84Vq13TyD82AyR1GRM+9uCyNPAjwJbO6913hud8iQsZZox
-         KzAMxgBRuOEmgYndwf8uIwrbdfhazH8hJbkZEgAWI+QyIJl2T/4/m0B6J7MpalyWODZ5
-         /b6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX3q7fQPje8zCNmIsdQDueFbJOecjIJ7m4ijIZkBgIljKv8AR8IqoapPRtATJQzwd9+hmSlreoYmW4BQs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdVJd9u3VH98p1pOZ5mN8PTGrh7nTHaua8FQvdoio7YgZPJRVz
-	73CU79yYFjaNjFGzIYLPOouqKuA7u2sYawIEuSFzYLxoBLEIMDPcCUUkj25HW0mS9IG4Cxz1kVA
-	wn42LmvanlTV01EV0VXxOTV/QII4fF6UUlmjq
-X-Google-Smtp-Source: AGHT+IE2X9ISx84xTY816bRxYCEkZj0kJKXRG56mLLLtdoDhYXq9GLpG5LVugUSQzfhxqYrypcSMfZkhhoSrIkut8Tw=
-X-Received: by 2002:a05:6512:2387:b0:533:4656:d503 with SMTP id
- 2adb3069b0e04-53546b92e32mr12626396e87.37.1725463970387; Wed, 04 Sep 2024
- 08:32:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725463991; x=1726068791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=43ydKagFmOiArusbTnepvZXequK3FKBWJc82HDWyEIw=;
+        b=WScESMSAxn9zM6qjXxMXyo2Imy83oFsLdR5z8Idvp9snB9yByzkaXT1Su83w84WLBe
+         SSz6jtcdFfT3SmJE9wXUlJ5tkCpAwkaH1FE21KSxDY/YCWdnCXy4cG3pW5jfrauslI/q
+         xDLFxJsNTFyi2zOTxaXt7x/w7oDoqbdVHC72FsUwcHejBviTMTH/MV5sHjWtS8JRkbcl
+         gSef+qduMaZVsEyAjYeKmbUiyMRTQGERUchYVMUE+LYm6+elQmV9AsqaBKkUK5K6hwD3
+         l6bSDVqw9N6JdLKebuiEj+T2DWa+c/fI716FLzsCwkFX4IbB0vR5Dnm+Uxa5YCakexNE
+         t6jg==
+X-Gm-Message-State: AOJu0YyhDXvSB2CUDwkyWV+Q2VUPzp9pXhQzbI4E+issE1eqiIYrU4bK
+	j8QGw26OUaTdCFArkUR8/BlQwj7n5IaAYSVzzXNroRDhtC2XHUYxQ49xKA==
+X-Google-Smtp-Source: AGHT+IHcrIN+v0zbJWwqosxZZmctTqjPG/EVSh/Yn6r1MBARV8oNa7qPLWr1N3y7upuaJDJeGoOz1g==
+X-Received: by 2002:a05:6a20:438e:b0:1cc:ea85:a60a with SMTP id adf61e73a8af0-1cece5e24e4mr13664285637.49.1725463991107;
+        Wed, 04 Sep 2024 08:33:11 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:85f3:1406:4b87:9708])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8d52esm1815791a12.32.2024.09.04.08.33.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 08:33:10 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH v2] f2fs: prevent atomic file from being dirtied before commit
+Date: Wed,  4 Sep 2024 08:33:06 -0700
+Message-ID: <20240904153306.816988-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000083b05a06214c9ddc@google.com>
-In-Reply-To: <00000000000083b05a06214c9ddc@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Sep 2024 17:32:39 +0200
-Message-ID: <CANn89iKt9Z7rOecB_6SgcqHOMOqhAen6_+eE0=Sc9873rrqXzg@mail.gmail.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in
- unix_stream_read_actor (2)
-To: syzbot <syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>, 
-	Rao Shoaib <rao.shoaib@oracle.com>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 5:13=E2=80=AFPM syzbot
-<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    fbdaffe41adc Merge branch 'am-qt2025-phy-rust'
-> git tree:       net-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D13d7c44d98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D996585887acda=
-db3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D8811381d455e3e9=
-ec788
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14b395db980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16d3fc5398000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/feaa1b13b490/dis=
-k-fbdaffe4.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/8e5dccd0377a/vmlinu=
-x-fbdaffe4.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/75151f74f4c9/b=
-zImage-fbdaffe4.xz
->
-> Bisection is inconclusive: the first bad commit could be any of:
->
-> 06ab21c3cb6e dt-bindings: net: mediatek,net: add top-level constraints
-> 70d16e13368c dt-bindings: net: renesas,etheravb: add top-level constraint=
-s
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D11d42e6398=
-0000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-use-after-free in unix_stream_read_actor+0xa6/0xb0 net/u=
-nix/af_unix.c:2959
-> Read of size 4 at addr ffff8880326abcc4 by task syz-executor178/5235
->
-> CPU: 0 UID: 0 PID: 5235 Comm: syz-executor178 Not tainted 6.11.0-rc5-syzk=
-aller-00742-gfbdaffe41adc #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  unix_stream_read_actor+0xa6/0xb0 net/unix/af_unix.c:2959
->  unix_stream_recv_urg+0x1df/0x320 net/unix/af_unix.c:2640
->  unix_stream_read_generic+0x2456/0x2520 net/unix/af_unix.c:2778
->  unix_stream_recvmsg+0x22b/0x2c0 net/unix/af_unix.c:2996
->  sock_recvmsg_nosec net/socket.c:1046 [inline]
->  sock_recvmsg+0x22f/0x280 net/socket.c:1068
->  ____sys_recvmsg+0x1db/0x470 net/socket.c:2816
->  ___sys_recvmsg net/socket.c:2858 [inline]
->  __sys_recvmsg+0x2f0/0x3e0 net/socket.c:2888
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f5360d6b4e9
-> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff29b3a458 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
-> RAX: ffffffffffffffda RBX: 00007fff29b3a638 RCX: 00007f5360d6b4e9
-> RDX: 0000000000002001 RSI: 0000000020000640 RDI: 0000000000000003
-> RBP: 00007f5360dde610 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007fff29b3a628 R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
-> Allocated by task 5235:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->  unpoison_slab_object mm/kasan/common.c:312 [inline]
->  __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
->  kasan_slab_alloc include/linux/kasan.h:201 [inline]
->  slab_post_alloc_hook mm/slub.c:3988 [inline]
->  slab_alloc_node mm/slub.c:4037 [inline]
->  kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4080
->  __alloc_skb+0x1c3/0x440 net/core/skbuff.c:667
->  alloc_skb include/linux/skbuff.h:1320 [inline]
->  alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6528
->  sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2815
->  sock_alloc_send_skb include/net/sock.h:1778 [inline]
->  queue_oob+0x108/0x680 net/unix/af_unix.c:2198
->  unix_stream_sendmsg+0xd24/0xf80 net/unix/af_unix.c:2351
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
->  ___sys_sendmsg net/socket.c:2651 [inline]
->  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Freed by task 5235:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
->  poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
->  __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
->  kasan_slab_free include/linux/kasan.h:184 [inline]
->  slab_free_hook mm/slub.c:2252 [inline]
->  slab_free mm/slub.c:4473 [inline]
->  kmem_cache_free+0x145/0x350 mm/slub.c:4548
->  unix_stream_read_generic+0x1ef6/0x2520 net/unix/af_unix.c:2917
->  unix_stream_recvmsg+0x22b/0x2c0 net/unix/af_unix.c:2996
->  sock_recvmsg_nosec net/socket.c:1046 [inline]
->  sock_recvmsg+0x22f/0x280 net/socket.c:1068
->  __sys_recvfrom+0x256/0x3e0 net/socket.c:2255
->  __do_sys_recvfrom net/socket.c:2273 [inline]
->  __se_sys_recvfrom net/socket.c:2269 [inline]
->  __x64_sys_recvfrom+0xde/0x100 net/socket.c:2269
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> The buggy address belongs to the object at ffff8880326abc80
->  which belongs to the cache skbuff_head_cache of size 240
-> The buggy address is located 68 bytes inside of
->  freed 240-byte region [ffff8880326abc80, ffff8880326abd70)
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x326a=
-b
-> ksm flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
-> page_type: 0xfdffffff(slab)
-> raw: 00fff00000000000 ffff88801eaee780 ffffea0000b7dc80 dead000000000003
-> raw: 0000000000000000 00000000800c000c 00000001fdffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(=
-GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4686, tgid 4686 (ude=
-vadm), ts 32357469485, free_ts 28829011109
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
->  prep_new_page mm/page_alloc.c:1501 [inline]
->  get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
->  __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
->  __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
->  alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
->  alloc_slab_page+0x5f/0x120 mm/slub.c:2321
->  allocate_slab+0x5a/0x2f0 mm/slub.c:2484
->  new_slab mm/slub.c:2537 [inline]
->  ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
->  __slab_alloc+0x58/0xa0 mm/slub.c:3813
->  __slab_alloc_node mm/slub.c:3866 [inline]
->  slab_alloc_node mm/slub.c:4025 [inline]
->  kmem_cache_alloc_node_noprof+0x1fe/0x320 mm/slub.c:4080
->  __alloc_skb+0x1c3/0x440 net/core/skbuff.c:667
->  alloc_skb include/linux/skbuff.h:1320 [inline]
->  alloc_uevent_skb+0x74/0x230 lib/kobject_uevent.c:289
->  uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
->  kobject_uevent_net_broadcast+0x2fd/0x580 lib/kobject_uevent.c:410
->  kobject_uevent_env+0x57d/0x8e0 lib/kobject_uevent.c:608
->  kobject_synth_uevent+0x4ef/0xae0 lib/kobject_uevent.c:207
->  uevent_store+0x4b/0x70 drivers/base/bus.c:633
->  kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xa72/0xc90 fs/read_write.c:590
-> page last free pid 1 tgid 1 stack trace:
->  reset_page_owner include/linux/page_owner.h:25 [inline]
->  free_pages_prepare mm/page_alloc.c:1094 [inline]
->  free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
->  kasan_depopulate_vmalloc_pte+0x74/0x90 mm/kasan/shadow.c:408
->  apply_to_pte_range mm/memory.c:2797 [inline]
->  apply_to_pmd_range mm/memory.c:2841 [inline]
->  apply_to_pud_range mm/memory.c:2877 [inline]
->  apply_to_p4d_range mm/memory.c:2913 [inline]
->  __apply_to_page_range+0x8a8/0xe50 mm/memory.c:2947
->  kasan_release_vmalloc+0x9a/0xb0 mm/kasan/shadow.c:525
->  purge_vmap_node+0x3e3/0x770 mm/vmalloc.c:2208
->  __purge_vmap_area_lazy+0x708/0xae0 mm/vmalloc.c:2290
->  _vm_unmap_aliases+0x79d/0x840 mm/vmalloc.c:2885
->  change_page_attr_set_clr+0x2fe/0xdb0 arch/x86/mm/pat/set_memory.c:1881
->  change_page_attr_set arch/x86/mm/pat/set_memory.c:1922 [inline]
->  set_memory_nx+0xf2/0x130 arch/x86/mm/pat/set_memory.c:2110
->  free_init_pages arch/x86/mm/init.c:924 [inline]
->  free_kernel_image_pages arch/x86/mm/init.c:943 [inline]
->  free_initmem+0x79/0x110 arch/x86/mm/init.c:970
->  kernel_init+0x31/0x2b0 init/main.c:1476
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Memory state around the buggy address:
->  ffff8880326abb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8880326abc00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
-> >ffff8880326abc80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                            ^
->  ffff8880326abd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
->  ffff8880326abd80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+From: Daeho Jeong <daehojeong@google.com>
 
+Keep atomic file clean while updating and make it dirtied during commit
+in order to avoid unnecessary and excessive inode updates in the previous
+fix.
 
-Another af_unix OOB issue.
+Fixes: 4bf78322346f ("f2fs: mark inode dirty for FI_ATOMIC_COMMITTED flag")
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+v2: take the original logic not to change inode size by inode dirtying
+    from VFS layer
+---
+ fs/f2fs/f2fs.h    | 2 +-
+ fs/f2fs/inode.c   | 5 +++++
+ fs/f2fs/segment.c | 8 ++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-Rao can you take a look ?
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ac19c61f0c3e..4ef6d877aa36 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -802,6 +802,7 @@ enum {
+ 	FI_ALIGNED_WRITE,	/* enable aligned write */
+ 	FI_COW_FILE,		/* indicate COW file */
+ 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
++	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
+ 	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+ 	FI_OPENED_FILE,		/* indicate file has been opened */
+ 	FI_MAX,			/* max flag, never be used */
+@@ -3041,7 +3042,6 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
+ 	case FI_COMPRESS_RELEASED:
+-	case FI_ATOMIC_COMMITTED:
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+ 	}
+ }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index aef57172014f..4729c49bf6d7 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -35,6 +35,11 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ 	if (f2fs_inode_dirtied(inode, sync))
+ 		return;
+ 
++	if (f2fs_is_atomic_file(inode)) {
++		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
++		return;
++	}
++
+ 	mark_inode_dirty_sync(inode);
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 78c3198a6308..2f6ee9afd3ad 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -199,6 +199,10 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
+ 	clear_inode_flag(inode, FI_ATOMIC_COMMITTED);
+ 	clear_inode_flag(inode, FI_ATOMIC_REPLACE);
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
++	if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
++		clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
++		f2fs_mark_inode_dirty_sync(inode, true);
++	}
+ 	stat_dec_atomic_inode(inode);
+ 
+ 	F2FS_I(inode)->atomic_write_task = NULL;
+@@ -366,6 +370,10 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+ 	} else {
+ 		sbi->committed_atomic_block += fi->atomic_write_cnt;
+ 		set_inode_flag(inode, FI_ATOMIC_COMMITTED);
++		if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
++			clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
++			f2fs_mark_inode_dirty_sync(inode, true);
++		}
+ 	}
+ 
+ 	__complete_revoke_list(inode, &revoke_list, ret ? true : false);
+-- 
+2.46.0.469.g59c65b2a67-goog
 
-Thanks.
 
