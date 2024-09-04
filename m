@@ -1,130 +1,87 @@
-Return-Path: <linux-kernel+bounces-315148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92F996BED0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A61A96BE90
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC953B2D978
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15042284FF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5201D88BF;
-	Wed,  4 Sep 2024 13:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RAAu4oN7"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA8B1D932E;
+	Wed,  4 Sep 2024 13:33:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED41B433BB
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE021433BB
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456676; cv=none; b=kbLsE7gCs/yC0x3iz7r0ZOYR1cuKPFYDflgT3g4MPfdjCUsH4DB5JezBViFe8AIpL1057M5qK2yRua2vUxmZxZZFJsJ5F91+Mam0lJrmNccMFkVoQpV2YGSDaQvwHWUiE3G8EJpISfz5FveHiFPmv0dKsMDUs+QSw9vSitsbrXY=
+	t=1725456785; cv=none; b=GEAXT6O3vDPNdLjoyKRZLLhnkdXswBy4UL4viliVoXzoMHyb7Xv+LhnetoWmYrTW7c1fGZEsRSMIqrhlCFrzUi8z/ZcG+jIsgg8Hph+ZZ7HASjnuw7qvY1Tfy0LaFVl2mBNz23EA2JAbRZZdLHakTRJc/V6GBspdLAFCp/DESIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456676; c=relaxed/simple;
-	bh=eUtqvTHj3pBbLbztYBD+mtym0DievVmYTEHm5UTttkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWgAAF8NsoP1BCNjEiX+lBMhbOdo79xZ4YUvOlLrg/2ZBrmxoPq1FmNZ1tAlsEdyDuka+RUiCZFdf/dHxXgOz2XpOKXyeWDjaYCEz+yl7xw0dVfv3ryx6mQDfnzHlFSTlWxbHgQ2+oP8INswDLmNzD9pnLrvw/jM8s8P3X7XwRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RAAu4oN7; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso3559990a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725456672; x=1726061472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgr6oTd7dax0YYHgJjdFWhxSkHqEn6wRiq9zk9zlyD8=;
-        b=RAAu4oN7Y7UKMd/wXtuUO8v1WiDeNFAaLHj3dKq+a8VTxvNJSI+BzX+ak/hOb7KpTK
-         zw9IjRat01Tw3GddakPN9nbTZdFNQbFOhlBTUZuJ6VVObhYCOphkiM8yebKhPZ5sHCsy
-         kDTUiMmqY3ad/o5B6+fFqzptgzE1KRgMs7hDYV4Sfbq1mY9M7Uy0r++lMT11DtaLvj/r
-         zz9G45WLsTlCYLgQtymhC/njUiypwe0X3MSJuDiWJTZifx1xuUKPgdiQEUms+BEPbLz0
-         d+npqDCSL0CEIqQbDCo7s4hpzlZBTiFHg8joc3aQiP8FP43xnI3Rca1dGsEbfl4vrd+s
-         emyA==
+	s=arc-20240116; t=1725456785; c=relaxed/simple;
+	bh=8XyjIeJP/69tfec6n0CteUTXKrXNFubvghLCQzIFmD4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oU6ExDhpAI7qgnVjQoTQmi6IWLYO50bH3MvDm1geNvyfOvB1fXbJdvvH/qYllNyC7b+hhtM9d2eFlx9TRmsa3uUjmWSbD/LUObT4GTToJoA5M+jXEbD2JfcBSgohqIh1FulLZxiQdFDac9W+kVn7fKBRpNWFbuufEh+kV02VbZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso7813605ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725456672; x=1726061472;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgr6oTd7dax0YYHgJjdFWhxSkHqEn6wRiq9zk9zlyD8=;
-        b=uEsExA/tDyANhumP28Zx1MOoRZe5nz6ntq+mdHVaH48ROHocC0IfztQkVP+rQR6QWx
-         s7SUXR4XrtoXaVoS0JduomY2lZyr9Az0975ycUWGvp8aX4Q0MnbrT3dC74dzDkhiO3GV
-         aB8Gqn/HQc+L67qx1bKEQ5bbpVv6XwRy0uj/qjJoUoj5A6rKso2S9ZVpLPDoPWPj11n3
-         gSwz4OAG+0esjvzEEB54l+SJT6HCxv0GfjCWOulb0k4k63bfJyp+ZECUXAAVwS7/fGJ2
-         vD2G/XWTZ2/l/4sPk6B4QW+aXDbLnBN87uwkbFXq6WFliH6xqUowsgUCAPdRHVrEFk6V
-         utMA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/u5iVExq/QIY5WBE3jtTXlZo+HFTU2HW90AsZ1ALa3VgXY+xxNA5WWETaLfTDiL8IMl9YLHsN6ecRYmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaQ4VAGTIh9/nhe5djX15GnZw2OcRcYkxJixzCltu0sL3RSplm
-	5kyWAdJdiWVv1DW4LIApXpdcwk3Ic3RlY722AMWr1H2xnbNLLlocLET+H+UroO0=
-X-Google-Smtp-Source: AGHT+IE6LQBRVOzDZ8qweHUloTSD5XS8PQtCmUy4Ig2Pf8z837LSCohOUk8iEoiMKTTrhJyS8cy8rQ==
-X-Received: by 2002:a17:907:2da4:b0:a7a:9447:3e8c with SMTP id a640c23a62f3a-a89b93dc610mr1067998966b.3.1725456672198;
-        Wed, 04 Sep 2024 06:31:12 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3dc8sm808563366b.137.2024.09.04.06.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 06:31:11 -0700 (PDT)
-Date: Wed, 4 Sep 2024 15:31:10 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v6 09/17] printk: nbcon: Rely on kthreads for
- normal operation
-Message-ID: <ZthhHrESqU9KFXrz@pathway.suse.cz>
-References: <20240904120536.115780-1-john.ogness@linutronix.de>
- <20240904120536.115780-10-john.ogness@linutronix.de>
+        d=1e100.net; s=20230601; t=1725456783; x=1726061583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZWNK+6ZKtX6J3rcFlU9bLRhlaWqG3Owor6zKqfdnyw=;
+        b=eE06mhD+gp8SiLr8M/rsGwp5EMsgsUaT2z+nlnB5iN2Gyzkq30ClIhex6k0Kq455hy
+         Li0HpsKRgodLhpSpSCTucf/whuOWhUBK6QAktRckRwNYJiQPxVJ26ILs5/tOicf76l/f
+         H3yrP27HNazFIxyEcU97s1htbNkwXWoSrZpL7Qu2inHTSRUnCRHVMX5NOtF4p5aq0X50
+         lUlfRagXFti7ooCUp517ecX+urVN5+Vp/4vNX2Mx1pnkeaHICgDjkGoRx6KQdxCpgpgx
+         aJtWnS9BeD/HkSX3QBCdAG0pmmwFV6KSfL+5cP/706uuogglLbXn3TBtgJsx7A0nEYXE
+         dSkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEtFKLyWm6UnRH8cvQ3rV8dVcobJkr3z6O5pf9hvjQI13bezXGNe+29xYChuPjxxDY6Tol9ZtRnl+2QJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZS+/J29FBRiShLfIc/ww1ViWohfBh59BccUQU2zWCzoZdyUAw
+	f3nfoOKjljL5l5/HUhu/xIC73xfOepi85LJG/nSI9inZtY/66+QyR/lA405HrEWFjuzWWARGOZd
+	QgXFtaYnMYu/RUQlsdlZKhk17YnVF6INAikzYaV0SFQaimlK7gi0FL3c=
+X-Google-Smtp-Source: AGHT+IGTxJC7cQDHpUUK/M/7oI/mIu/+T2a+XqRRL1jD58V6Bk3wphzd8zRzTXzULvMkUFy6e+6ky3bDYfM5eYHTGsYcJP3K/n9D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904120536.115780-10-john.ogness@linutronix.de>
+X-Received: by 2002:a05:6602:13ce:b0:829:eeca:d4b8 with SMTP id
+ ca18e2360f4ac-82a262ff6f1mr59727839f.4.1725456782846; Wed, 04 Sep 2024
+ 06:33:02 -0700 (PDT)
+Date: Wed, 04 Sep 2024 06:33:02 -0700
+In-Reply-To: <tencent_CE76CFE28DD5A5A20DF7121F5DDBDDB71907@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009e05ab06214b36a9@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 2024-09-04 14:11:28, John Ogness wrote:
-> Once the kthread is running and available
-> (i.e. @printk_kthreads_running is set), the kthread becomes
-> responsible for flushing any pending messages which are added
-> in NBCON_PRIO_NORMAL context. Namely the legacy
-> console_flush_all() and device_release() no longer flush the
-> console. And nbcon_atomic_flush_pending() used by
-> nbcon_cpu_emergency_exit() no longer flushes messages added
-> after the emergency messages.
-> 
-> The console context is safe when used by the kthread only when
-> one of the following conditions are true:
-> 
->   1. Other caller acquires the console context with
->      NBCON_PRIO_NORMAL with preemption disabled. It will
->      release the context before rescheduling.
-> 
->   2. Other caller acquires the console context with
->      NBCON_PRIO_NORMAL under the device_lock.
-> 
->   3. The kthread is the only context which acquires the console
->      with NBCON_PRIO_NORMAL.
-> 
-> This is satisfied for all atomic printing call sites:
-> 
-> nbcon_legacy_emit_next_record() (#1)
-> 
-> nbcon_atomic_flush_pending_con() (#1)
-> 
-> nbcon_device_release() (#2)
-> 
-> It is even double guaranteed when @printk_kthreads_running
-> is set because then _only_ the kthread will print for
-> NBCON_PRIO_NORMAL. (#3)
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Hello,
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Best Regards,
-Petr
+Reported-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         88fac175 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ac62ab980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17bf7f2f980000
+
+Note: testing is done by a robot and is best-effort only.
 
