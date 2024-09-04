@@ -1,144 +1,116 @@
-Return-Path: <linux-kernel+bounces-314758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7C496B80D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:15:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F47E96B810
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD91CB23581
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EAA1285D6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848FA1CF5DC;
-	Wed,  4 Sep 2024 10:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CB71CEE99;
+	Wed,  4 Sep 2024 10:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quOWyWhm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiXTxOEZ"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37C6126C08
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91F51EBFEB;
+	Wed,  4 Sep 2024 10:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444940; cv=none; b=kt832nvpEp22J111EFbM6a4p/q3KWwkWwquCJKkF4xTgsorfZZpuzSj7NeKkVob99RJwuHdxwnk+1ezohZCfVWCushs84ckF6E0HYFJ5smxJyuKc7Nw/ZKabjsKzz7Le0wMrFmekuqRiUy34IHIY+HW/UHf81O/eVosUlNO2rt0=
+	t=1725444987; cv=none; b=rLEghVW4GgAcIqKSlZZmu7xQ0uvc4gCaHKZkmeU2Af8KEIF23b1QsOCkGcc3wANB87oXxWJnGuEr611uZvspSibsZq+WMYOil9UgDBPv8RPVf5UKGIHkid3cTULjywtNsvPMOU5MUvA/uhTv5n+oTchWGzzMQHB+rRRBdqIjxQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444940; c=relaxed/simple;
-	bh=wMRgd+zwB0aXoTGxwXzh3t2qA3Lqhwut8iVdWmvlx8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NI/uigxYkaCmkR9vlxtepH29U2vAbUrWLTUaeyavp222iWOrw/hDjlkgqixzVq9tyaoa5EChKqWfnafQ65yJ3BksyrX0q10BiykvDCMKG96a0lfMbdAVh6VNHRl7OR+pYWKgKYHPPt2/EoXYka4zUzqWi0R9XfGfwuLT2FThK90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quOWyWhm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so43754375e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:15:35 -0700 (PDT)
+	s=arc-20240116; t=1725444987; c=relaxed/simple;
+	bh=c5zgwRervJYJS/Dl+adZ4J/D5Z27/zxX6bPB+ouHVpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BttsayqxOVTSHtdJvkcuRG1ZVW0WjyZ4aPuDwC8rJYag1oFNnx0sQrGvyz83gqLXb8awmUBAuwI34SeaL++xOPpuLMo4YDIzs3Cx20gIl3jwIDVxL551rX1cGcJysYf2VXijHIEupSMnYNnDeTrmwkAS6jkv5aAhel4tpQkf+8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiXTxOEZ; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e017808428so2121130eaf.1;
+        Wed, 04 Sep 2024 03:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725444934; x=1726049734; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YpjVKN5cWQhj45jb1EGlvgKVJ/zrno7xEZ0+EzIrPcA=;
-        b=quOWyWhmGBln/H0u2I6G6WBgqWiWlNoGxPRjIh1VqjR7ubNhHDhWbfECy3+F8ckrPG
-         pFsIyvelG5xI5QG3Bo9O/iJeOdtClhKXQDoi2/ZsO+175ip19rfyClRfWqNWGAklQsmg
-         O9i1jObq+/mS0RXsnCQNPPnSPDWNsOyOi5gduumIC/PxXkWGdb7nXo3i1dln+3M4IfjC
-         F9/QBUYwNrcFl/0XiCHhttItnZz5PJgdMI52+GuGVM8JqxK47SLgsMdC+EGJtMQxkgwE
-         qq2RviTRkf4BNYF4qO8tnDVshwCcA9cAvUJmba+O9QHSCFCK9kPh9gI5UUWof3SAqpZT
-         XplA==
+        d=gmail.com; s=20230601; t=1725444984; x=1726049784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QFfJDopo08396zla94L1PBabmTdXxT+6aOW8equ/pAo=;
+        b=iiXTxOEZonaQKv/Q6S2ZtlBIpELtkfKmR8dc+Ffp5FNc8z0lWcExI+JClmFLYZkeeR
+         j5wj42R2Bw9VGnHcnU833fvN7j75YUYo2XsNfceDtL90/+KYjvmq0YIba81Uj+fXqipD
+         hShS2WMpeF/Nm3h/CG8gSIjVyaPMoZJRdvVh8Dc9sm9E1dgL65EsEKCOkJe08tZHQkQj
+         hl1pf0Zx95EyLwnHmY3ykQLlbY4d9Q9wT+pDDUci6gAqc8oD/HPzIycaaPEfgX+JlvMv
+         YxCVeJZ3XFuVirs+5nTPzUhU2zW3pLHF8FEFTproUNCYhnZT2vesN+T7HkUAm319LnVq
+         y/lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725444934; x=1726049734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpjVKN5cWQhj45jb1EGlvgKVJ/zrno7xEZ0+EzIrPcA=;
-        b=UR5B59MDfK6ZYk9vdpLE/65mP1USJyOQstImJnUxdF1L5pdpVzFNGPcNtqvo3WVFcX
-         gB5RwVpUrCr2GKyvv3U+D0m+3gQ5yRuq1SgnXTAP6DkoC9NvxEPVOa8dMulf24O0wx5L
-         MwOa70VUGkkm/8t6EXr01SFvyieWx058BXG2Vr/mjbGqtjiEEKKXY3ExYnw4tsRbM0/3
-         nDuEPn2xuOOLVurX+Ox1uQBt9qqFUHQH+HC4rD5llT95N7sVuUML757ZxhNbX8Bfz4tU
-         sdcJLuT/U0ifjsZFIT96f7YhQFJNeTx72lQGIs47pdciU+meZW2Pp8q6N3AMRUNLN6qL
-         g7Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG1rHS6XfHBo+VcSoY8WRhzlOTbxV6AcB8ze9NuscSRPI66a2ELakJk4oYwOiYP2RdIFDw6+RBf4LGo88=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz78PmYcc9VcNgz47AAZbuBKvHRAhkU/6TreqfE4ElvarN3hPQ+
-	+OZTJKJ0lTVC5WwZjrzghrtf+mM6eZgJ3uL+hluJNmM6ZmDviaXxhGHfuzq7oS9pIBJKD706DOq
-	gvPnAcE5SkF/RQR+xe762xohUpGmVozMUL2d/
-X-Google-Smtp-Source: AGHT+IFvgcolurGoupUJmeWy+d85GiYNEpCVqFra1ZIgUnTNUb7A0YTAJ4BFYzV8MAI5ROTmbcvMlPgqAZlqbhn09Pk=
-X-Received: by 2002:a05:600c:3509:b0:426:62c5:473e with SMTP id
- 5b1f17b1804b1-42c8de9deb8mr25799725e9.26.1725444933762; Wed, 04 Sep 2024
- 03:15:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725444984; x=1726049784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QFfJDopo08396zla94L1PBabmTdXxT+6aOW8equ/pAo=;
+        b=M1e8Kc2X861/52DFqjAQMS4TEX4lBsmhli3IsdnhVc+Xe6i+O08344zY1Wf+YZ49ZP
+         Z5xc9r3KJSzY1LrKqV5hPAkns2ZTed9mSert0YtZJVdstKktUarJqJaPwN4NT2VLlehm
+         /4sATxK+RnNgSacNGZMQ9KJRIKgOe+loqNbSz/mmsrqGl14cLVKl3Um7NA/YJT0ceFRK
+         b5f5rHR1xruKNXZ6V8DOul+hOr7OlOmVq7g+mYhi3Jw8/hUrt0Ui5W8byRjqyMwfbMIU
+         I5gzLC/FVSWm9c4qa67iUDBTSu8la7Ldx2ti8Jzeo5FcZa4Hp5BS/S1maYnXTWijeKri
+         gaUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0HyFRZU7n9kANCqOfBsfuSqgQ/2N35BszwvQWGqkgM8hO85lLO4Oqs5ByUYI9RARTQ81BAREmkv0mmoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEhSZRRfiqVrA01pqG0jMhbCJkr0na6cMq8w7CveDAygMT+/Hi
+	VQorjP+canwGGL+uLdP2iXMeX4ArZegWauJAy/6k+JndYZbgQfbMtgDezA==
+X-Google-Smtp-Source: AGHT+IEapMITuaq2WwM91qAfDzjqmN/GNuW9F67mqywWSvXbN59GgQNmG+GrcdJzSw4Jag36U4b9dg==
+X-Received: by 2002:a05:6358:989d:b0:1b5:fa6e:4606 with SMTP id e5c5f4694b2df-1b8117c47f3mr698249355d.14.1725444983641;
+        Wed, 04 Sep 2024 03:16:23 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8aab2sm1332102a12.20.2024.09.04.03.16.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 03:16:22 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] nilfs2: Remove duplicate 'unlikely()' usage
+Date: Wed,  4 Sep 2024 19:16:03 +0900
+Message-ID: <20240904101618.17716-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-27-dakr@kernel.org>
- <20240831135712.0d7366b6.gary@garyguo.net> <Ztb6_XW3ccnHQDmw@pollux>
-In-Reply-To: <Ztb6_XW3ccnHQDmw@pollux>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 4 Sep 2024 12:15:21 +0200
-Message-ID: <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com>
-Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc` module
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024 at 2:03=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> On Sat, Aug 31, 2024 at 01:57:12PM +0100, Gary Guo wrote:
-> > On Fri, 16 Aug 2024 02:11:08 +0200
-> > Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > > Add maintainers entry for the Rust `alloc` module.
-> > >
-> > > Currently, this includes the `Allocator` API itself, `Allocator`
-> > > implementations, such as `Kmalloc` or `Vmalloc`, as well as the kerne=
-l's
-> > > implementation of the primary memory allocation data structures, `Box=
-`
-> > > and `Vec`.
-> > >
-> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > > ---
-> > >  MAINTAINERS | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 42decde38320..560516b3aaf4 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -19925,6 +19925,13 @@ F: scripts/*rust*
-> > >  F: tools/testing/selftests/rust/
-> > >  K: \b(?i:rust)\b
-> > >
-> > > +RUST [ALLOC]
-> > > +M: Danilo Krummrich <dakr@kernel.org>
-> > > +L: rust-for-linux@vger.kernel.org
-> > > +S: Maintained
-> > > +F: rust/kernel/alloc.rs
-> > > +F: rust/kernel/alloc/
-> >
-> > It feels like we should use `mod.rs`.
->
-> The same would be true for:
->
-> - rust/kernel/sync.rs
-> - rust/kernel/net.rs
-> - rust/kernel/init.rs
-> - rust/kernel/fs.rs
-> - ...
->
-> Do you propose to change it for all of them?
+From: Kunwu Chan <chentao@kylinos.cn>
 
-I do actually think `mod.rs` is superior in general, but it's probably
-not worth changing it right now.
+nested unlikely() calls, IS_ERR already uses unlikely() internally
 
-Alice
+Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+Andrew, please add this to the queue for the next cycle.
+
+An additional cleanup patch.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/page.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 7797903e014e..9c0b7cddeaae 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -262,7 +262,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+ 			NILFS_FOLIO_BUG(folio, "inconsistent dirty state");
+ 
+ 		dfolio = filemap_grab_folio(dmap, folio->index);
+-		if (unlikely(IS_ERR(dfolio))) {
++		if (IS_ERR(dfolio)) {
+ 			/* No empty page is added to the page cache */
+ 			folio_unlock(folio);
+ 			err = PTR_ERR(dfolio);
+-- 
+2.43.0
+
 
