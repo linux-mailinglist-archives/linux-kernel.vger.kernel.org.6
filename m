@@ -1,563 +1,156 @@
-Return-Path: <linux-kernel+bounces-314373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45D596B26C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2211C96B27F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6C11F2569F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0563B2609A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A014659C;
-	Wed,  4 Sep 2024 07:10:19 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47F2146A97;
+	Wed,  4 Sep 2024 07:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnRwcbBO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03B71465B4;
-	Wed,  4 Sep 2024 07:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2257083CA3;
+	Wed,  4 Sep 2024 07:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433818; cv=none; b=cIJxida9MeUAeygry45vgodMmfwD1Ikrl826aE0AdostG1sccujXYS5eOVhZS7gCsc3k01VHLXnTBJ8Ov1QkJDCgvBpH7B/VPnR3o0TrCslHnY2Bn9BMB3ZkFSuzE5w+vPUib5LK7203EwCWoLnbmaOTShe3nY6KYXnzuT4+/sY=
+	t=1725433922; cv=none; b=If82lOvlQjZpRQeEc5EO9jzGOazW/lfQxGEHuup7CPuP/YlOBBueXUDRWqnni31vJBbVKV/adGFD64ryhGC7uE5e9d96OCoUaKp7jnRqC0WyOqQjKzMHPQLPC+h1B6plwxUOs6o3wbJK9DHp8k0rjgYJBZj5Ew1o1RLf2l/5MzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433818; c=relaxed/simple;
-	bh=QkfiDhNRI/jOE7+dep8lo0MoPE4+l9UksHSgYqmO3K0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NPRs/5xYDMLJZuN5DwyPME/0Sc7D/Fu6gOw29cDgkcl0sMXO+8zCLRUjNAL+OTpGj9uZmDwcp17BftqVIAV1tRTpPEOF0utXpTapTWyVNza9asGUJy7iPJO7m5BeTi6HOmMmzfLOQiySD9sTubE2PdfKcv1gQV0BFt+xX0HXG5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4847A5lO001031;
-	Wed, 4 Sep 2024 16:10:05 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
- Wed, 04 Sep 2024 16:10:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4847A4RD001027
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 4 Sep 2024 16:10:04 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
-Date: Wed, 4 Sep 2024 16:10:05 +0900
+	s=arc-20240116; t=1725433922; c=relaxed/simple;
+	bh=cLb2NYLXwStX/LKCjvnBpOqyb4PG6V2tb9fd5zD3pBU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k/FD6cwmDCaRINPpmsaDmb5/tyi+hgMvd4igt5ksbNPywjG/NhwQos8a91gzilbYNWIp2/qAhyoVgEN1QwojUQc42Mtl0UVjPOyk4GH/jO4+d7ygf8uOy+XnzC2kDFjuN8GjbACAn4JTl33cr61ceeHnVu758toGDAjz8d+Fi+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnRwcbBO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D62EDC4CEC8;
+	Wed,  4 Sep 2024 07:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725433921;
+	bh=cLb2NYLXwStX/LKCjvnBpOqyb4PG6V2tb9fd5zD3pBU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=FnRwcbBO4efSleljAkNSmQi1LC5M8d4zWKC0RG/Q27KGaSkGyodJ6cKG3CpdKsOIk
+	 /YDToeGOoyVHdQMa+YJIyspFgawDMeV6dGIxaocEqM39c9qfhbF4I7tdCmUrpjKd4m
+	 JpNS6bh7yoTMvM/7hHc8RULo4aGUcTmFDpWGpG0KLxyKJzFYUPyl6CeDFCdvMP2o9r
+	 BuS3R88yGeXpa2czuGxdEoEsj5qfoXDTxv3xNW7e/Iic6CbtrKuUHagIBfW1IRIgB8
+	 MWZlC+1oTibAUsTiF40APdpECEBnvGB4XYDLq/bvrWwTS6w2EgGxFfJxttH930Q9sP
+	 vym3NL4vZmx9g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB5ACD3431;
+	Wed,  4 Sep 2024 07:12:01 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH v6 0/4] PCI: qcom: Add 16.0 GT/s equalization and margining
+ settings
+Date: Wed, 04 Sep 2024 12:41:56 +0530
+Message-Id: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: tomoyo-dev-en@lists.osdn.me, tomoyo-users-en@lists.osdn.me
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] LSM: allow loadable kernel module based LSM modules
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADwI2GYC/x3MQQqDMBBG4avIrDsQQoy0VykuYvy1A23UJIgiu
+ buhy2/x3kUJUZDo1VwUsUuSJVTYR0P+48IMlrGatNJGPZXh1QtvfvnxjGA4ZTfIV/LJSsPb1nW
+ wMFTrNWKS439+96Xccvbe6WkAAAA=
+To: Richard Zhu <hongxing.zhu@nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, 
+ Chuanhua Lei <lchuanhua@maxlinear.com>, 
+ Marek Vasut <marek.vasut+renesas@gmail.com>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ abel.vesa@linaro.org, johan+linaro@kernel.org, 
+ Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2406;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=cLb2NYLXwStX/LKCjvnBpOqyb4PG6V2tb9fd5zD3pBU=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBm2Ag+yXw76QSloqji0A8dUGvbGecOjKDwzo19V
+ gChmcyzYReJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZtgIPgAKCRBVnxHm/pHO
+ 9QBoB/40W7x6SSRfFEQvwB1+Lx05sntI/Ecem96LKwXC0adZ62tG7DZcnlrBOHu/Yv/gMxxLb4K
+ hr2epksRdMTtqaQ0nDTXn+3oiwA0Q9WEzst3bydA7yMtYLRcJa0+BfLsc28z58fEHTA2Zojogcg
+ kaCDyFsjo6vwzuD+eE7PWgFtMJGMAjXfb2XcMnolL9RJirnLZ1bZfZjW/5AJ2iwHPkCUsMvqaFP
+ n6ibN4qXxgfXODKqbUrvqbDUDQWcbYJvfqQxMt8nn0QaaxmgmJrIKXBapriYTb4bY+xkQczG8Ih
+ Rds1yh9PZCYFNVq++7Z/H/svXcvpMEk0K9hOzny43boAID1f
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-Until 2.6.23, it was officially possible to register/unregister LSM modules
-that are implemented as loadable kernel modules. But from 2.6.24 to 6.11,
-it is not officially possible to do so due to commit 20510f2f4e2d
-("security: Convert LSM into a static interface"). When that commit was
-discussed, effectively SELinux was the only in-tree LSM user, and therefore
-out-of-tree LSM users were not able to express opinions.
+Hi,
 
-But that commit missed realities that
+This series adds 16.0 GT/s specific equalization and RX lane margining settings
+to the Qcom RC and EP drivers. This series is mandatory for the stable operation
+of the PCIe link at 16.0 GT/s on the Qcom platforms.
 
-  how difficult/unrealistic for Linux users who are using prebuilt kernel
-  packages provided by Linux distributors to replace their kernels
+NOTE:
+=====
 
-  how difficult for Linux distributors to allow their users to use in-tree
-  LSM modules which that distributor is not familiar with [1] because Linux
-  distributors are supposed to support kernel packages they built and
-  shipped
+I've taken over the series from Shashank based on the discussion [1]. In order
+to apply the equalization/margining settings properly in the Qcom driver, I
+added the first 2 patches to the series which inevitably touches other vendor
+drivers also.
 
-  Linux distributors do not want to enable out-of-tree code due to upstream
-  first policy, while Linux kernel development community can not afford
-  accepting whatever proposed code due to limited resources
+- Mani
 
-. These realities keep away out-of-tree LSMs (or even in-tree LSMs) which
-are not built into vmlinux, and caused unhappy times for Linux users who
-want to try a new LSM module. An approach that can survive is that LSM
-modules that cannot be built into vmlinux is to provide as a loadable
-kernel module.
+Changes in v6:
 
-Therefore, I had been providing a workaround called AKARI that allows Linux
-users to use TOMOYO as a loadable kernel module [2] from 2.6.0 to 6.11. But
-commit 417c5643cd67 ("lsm: replace indirect LSM hook calls with static
-calls") made it difficult to use AKARI due to replacing the linked list
-(which can allow registering more than number of built-in LSM modules) with
-static call slots (which cannot allow registering more than number of
-built-in LSM modules).
+- Dropped the code refactoring patch as suggested by Johan
+- Added 2 patches to fix the caching of maximum supported link speed value that
+  is needed to apply the equalization/margining settings
+- Updated the commit message of patch 3 as per Bjorn's suggestion
 
-I considered trying Kprobes and BPF-LSM for reimplementing TOMOYO, but the
-conclusion is that Kprobes and BPF-LSM are too restricted to reimplement
-TOMOYO.
+For previous changelogs, please refer [2]
 
-Paul Moore has commented
+[1] https://lore.kernel.org/linux-pci/af65b744-7538-4929-9ab4-8ee42e17b8d1@quicinc.com/
+[2] https://lore.kernel.org/linux-pci/20240821170917.21018-1-quic_schintav@quicinc.com/
 
-  I do not intentionally plan to make life difficult for the out-of-tree
-  LSMs, but if that happens as a result of design decisions intended to
-  benefit in-tree LSMs that is acceptable as far as I am concerned.
-
-at [3]. But the static calls change suddenly jumped in, and that made life
-difficult for the in-tree but not built-in LSMs as a result of design
-decisions intended to benefit in-tree and built-in LSMs.
-
-Now that the static calls change is going to be merged into Linux 6.12,
-I propose this patch for recovering life for "in-tree but not built-in"
-LSMs, by officially allowing loadable kernel module based LSM modules.
-
-I'm not planning to propose a change for allowing unregistration of LSM
-modules after boot, for I agree one of concerns
-
-  the ability to unload a security module is not required by in-tree
-  users and potentially complicates the overall security architecture
-
-in "security: Convert LSM into a static interface" change. But I assert
-that the ability to load a security module (i.e. loadable kernel module
-based LSMs) is inevitable due to unsolvable realities.
-
-The LSM hooks for loadable kernel module based LSMs are enabled only if
-the kernel is booted with 'dynamic_lsm' kernel command line option added
-in order to honer the administrator's decision and avoid overhead when
-the administrator does not plan to use loadable kernel module based LSMs.
-
-Of course, Linux distributors might revert this patch in their kernels if
-their kernels are intended for very specific/dedicated purposes. But what
-is important is that we again officially support LSM modules that are
-implemented as loadable kernel modules in accordance with upstream first
-policy.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=542986 [1]
-Link: https://tomoyo.sourceforge.net/akari/comparison.html [2]
-Link: https://lkml.kernel.org/r/CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com [3]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-I'll start updating security/tomoyo after this change is accepted. For
-those who want to try this change now, an example module is shown below.
------
-#include <linux/lsm_hooks.h>
+Manivannan Sadhasivam (2):
+      PCI: dwc: Rename 'dw_pcie::link_gen' to 'dw_pcie::max_link_speed'
+      PCI: dwc: Always cache the maximum link speed value in dw_pcie::max_link_speed
 
-static void test_bprm_committed_creds(const struct linux_binprm *bprm)
-{
-        pr_info_once("%s() is called\n", __func__);
-}
+Shashank Babu Chinta Venkata (2):
+      PCI: qcom: Add equalization settings for 16.0 GT/s
+      PCI: qcom: Add RX margining settings for 16.0 GT/s
 
-static int test_file_open(struct file *f)
-{
-        pr_info_once("%s() is called\n", __func__);
-        return 0;
-}
+ MAINTAINERS                                   |  4 +-
+ drivers/pci/controller/dwc/Kconfig            |  5 ++
+ drivers/pci/controller/dwc/Makefile           |  1 +
+ drivers/pci/controller/dwc/pci-imx6.c         |  8 +--
+ drivers/pci/controller/dwc/pcie-designware.c  | 22 +++++---
+ drivers/pci/controller/dwc/pcie-designware.h  | 32 ++++++++++-
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  4 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c | 76 +++++++++++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-qcom-common.h |  9 ++++
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  6 +++
+ drivers/pci/controller/dwc/pcie-qcom.c        |  6 +++
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  6 +--
+ 12 files changed, 162 insertions(+), 17 deletions(-)
+---
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+change-id: 20240904-pci-qcom-gen4-stability-02ec65a7e6e4
 
-static const struct lsm_id test_lsmid = {
-        .name = "test",
-};
-
-static struct security_dynamic_hook_list test_hooks[] = {
-        LSM_HOOK_INIT(file_open, test_file_open),
-        LSM_HOOK_INIT(bprm_committed_creds, test_bprm_committed_creds),
-};
-
-static int __init test_init(void)
-{
-        return security_add_dynamic_hooks(test_hooks, ARRAY_SIZE(test_hooks),
-                                          &test_lsmid);
-}
-
-module_init(test_init);
-MODULE_LICENSE("GPL");
------
-
- include/linux/lsm_hooks.h |  24 +++++
- security/security.c       | 200 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 210 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 090d1d3e19fed..afe4eeeb7bd52 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -71,6 +71,12 @@ struct lsm_static_calls_table {
- 	#undef LSM_HOOK
- } __packed __randomize_layout;
- 
-+struct security_dynamic_hook_heads {
-+	#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
-+	#include "lsm_hook_defs.h"
-+	#undef LSM_HOOK
-+} __randomize_layout;
-+
- /**
-  * struct lsm_id - Identify a Linux Security Module.
-  * @lsm: name of the LSM, must be approved by the LSM maintainers
-@@ -98,6 +104,13 @@ struct security_hook_list {
- 	const struct lsm_id *lsmid;
- } __randomize_layout;
- 
-+struct security_dynamic_hook_list {
-+	struct hlist_node		list;
-+	struct hlist_head		*head;
-+	union security_list_options	hook;
-+	const struct lsm_id		*lsmid;
-+} __randomize_layout;
-+
- /*
-  * Security blob size or offset data.
-  */
-@@ -130,14 +143,24 @@ struct lsm_blob_sizes {
-  * care of the common case and reduces the amount of
-  * text involved.
-  */
-+#ifndef MODULE
- #define LSM_HOOK_INIT(NAME, HOOK)			\
- 	{						\
- 		.scalls = static_calls_table.NAME,	\
- 		.hook = { .NAME = HOOK }		\
- 	}
-+#else
-+#define LSM_HOOK_INIT(NAME, HOOK)			\
-+	{						\
-+		.head = &security_hook_heads.NAME,	\
-+		.hook = { .NAME = HOOK }		\
-+	}
-+#endif
- 
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 			       const struct lsm_id *lsmid);
-+extern int security_add_dynamic_hooks(struct security_dynamic_hook_list *hooks, int count,
-+				      const struct lsm_id *lsmid);
- 
- #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
- #define LSM_FLAG_EXCLUSIVE	BIT(1)
-@@ -170,6 +193,7 @@ struct lsm_info {
- /* DO NOT tamper with these variables outside of the LSM framework */
- extern char *lsm_names;
- extern struct lsm_static_calls_table static_calls_table __ro_after_init;
-+extern struct security_dynamic_hook_heads security_hook_heads;
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
- extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 
-diff --git a/security/security.c b/security/security.c
-index 7272bbea05cb8..1b6c64c631ac0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -130,6 +130,10 @@ static __initdata struct lsm_info *exclusive;
- #undef LSM_HOOK
- #undef DEFINE_LSM_STATIC_CALL
- 
-+struct security_dynamic_hook_heads security_hook_heads;
-+EXPORT_SYMBOL_GPL(security_hook_heads);
-+static DEFINE_STATIC_KEY_FALSE_RO(security_dynamic_hook_key);
-+
- /*
-  * Initialise a table of static calls for each LSM hook.
-  * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
-@@ -644,6 +648,32 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 	}
- }
- 
-+static int __init enable_dynamic_hooks(char *str)
-+{
-+	static_branch_enable(&security_dynamic_hook_key);
-+	pr_info("Dynamic LSM hook enabled.\n");
-+	return 1;
-+}
-+__setup("dynamic_lsm", enable_dynamic_hooks);
-+
-+int security_add_dynamic_hooks(struct security_dynamic_hook_list *hooks, int count,
-+			       const struct lsm_id *lsmid)
-+{
-+	int i;
-+
-+	if (!static_key_enabled(&security_dynamic_hook_key)) {
-+		pr_info("Boot with 'dynamic_lsm' kernel command line option to enable dynamic LSM hook.\n");
-+		return -EINVAL;
-+	}
-+	pr_info("Dynamic LSM hook: adding '%s' module.\n", lsmid->name);
-+	for (i = 0; i < count; i++) {
-+		hooks[i].lsmid = lsmid;
-+		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(security_add_dynamic_hooks);
-+
- int call_blocking_lsm_notifier(enum lsm_event event, void *data)
- {
- 	return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
-@@ -952,9 +982,15 @@ do {									     \
- 	}								     \
- } while (0);
- 
--#define call_void_hook(HOOK, ...)                                 \
--	do {                                                      \
-+#define call_void_hook(HOOK, ...)					\
-+	do {								\
- 		LSM_LOOP_UNROLL(__CALL_STATIC_VOID, HOOK, __VA_ARGS__); \
-+		if (static_key_enabled(&security_dynamic_hook_key)) { \
-+			struct security_dynamic_hook_list *P;		\
-+									\
-+			hlist_for_each_entry(P, &security_hook_heads.HOOK, list) \
-+				P->hook.HOOK(__VA_ARGS__);		\
-+		}							\
- 	} while (0)
- 
- 
-@@ -973,6 +1009,15 @@ do {									     \
- 	int RC = LSM_RET_DEFAULT(HOOK);					\
- 									\
- 	LSM_LOOP_UNROLL(__CALL_STATIC_INT, RC, HOOK, OUT, __VA_ARGS__);	\
-+	if (static_key_enabled(&security_dynamic_hook_key)) {	\
-+		struct security_dynamic_hook_list *P;			\
-+									\
-+		hlist_for_each_entry(P, &security_hook_heads.HOOK, list) { \
-+			RC = P->hook.HOOK(__VA_ARGS__);			\
-+			if (RC != LSM_RET_DEFAULT(HOOK))		\
-+				goto OUT;				\
-+		}							\
-+	}								\
- OUT:									\
- 	RC;								\
- })
-@@ -1230,9 +1275,21 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 		rc = scall->hl->hook.vm_enough_memory(mm, pages);
- 		if (rc < 0) {
- 			cap_sys_admin = 0;
--			break;
-+			goto done;
- 		}
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
-+			rc = hp->hook.vm_enough_memory(mm, pages);
-+			if (rc <= 0) {
-+				cap_sys_admin = 0;
-+				break;
-+			}
-+		}
-+	}
-+ done:
- 	return __vm_enough_memory(mm, pages, cap_sys_admin);
- }
- 
-@@ -1385,6 +1442,18 @@ int security_fs_context_parse_param(struct fs_context *fc,
- 		else if (trc != -ENOPARAM)
- 			return trc;
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-+				     list) {
-+			trc = hp->hook.fs_context_parse_param(fc, param);
-+			if (trc == 0)
-+				rc = 0;
-+			else if (trc != -ENOPARAM)
-+				return trc;
-+		}
-+	}
- 	return rc;
- }
- 
-@@ -1616,8 +1685,20 @@ int security_sb_set_mnt_opts(struct super_block *sb,
- 		rc = scall->hl->hook.sb_set_mnt_opts(sb, mnt_opts, kern_flags,
- 					      set_kern_flags);
- 		if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
--			break;
-+			goto done;
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.sb_set_mnt_opts,
-+				     list) {
-+			rc = hp->hook.sb_set_mnt_opts(sb, mnt_opts, kern_flags,
-+						      set_kern_flags);
-+			if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
-+				break;
-+		}
- 	}
-+ done:
- 	return rc;
- }
- EXPORT_SYMBOL(security_sb_set_mnt_opts);
-@@ -1826,17 +1907,28 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 			return -ENOMEM;
- 	}
- 
-+	/*
-+	 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
-+	 * means that the LSM is not willing to provide an xattr, not
-+	 * that it wants to signal an error. Thus, continue to invoke
-+	 * the remaining LSMs.
-+	 */
- 	lsm_for_each_hook(scall, inode_init_security) {
- 		ret = scall->hl->hook.inode_init_security(inode, dir, qstr, new_xattrs,
- 						  &xattr_count);
- 		if (ret && ret != -EOPNOTSUPP)
- 			goto out;
--		/*
--		 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
--		 * means that the LSM is not willing to provide an xattr, not
--		 * that it wants to signal an error. Thus, continue to invoke
--		 * the remaining LSMs.
--		 */
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.inode_init_security,
-+				     list) {
-+			ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
-+							   &xattr_count);
-+			if (ret && ret != -EOPNOTSUPP)
-+				goto out;
-+		}
- 	}
- 
- 	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
-@@ -3681,9 +3773,22 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 		if (thisrc != LSM_RET_DEFAULT(task_prctl)) {
- 			rc = thisrc;
- 			if (thisrc != 0)
--				break;
-+				goto done;
- 		}
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
-+			thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
-+			if (thisrc != LSM_RET_DEFAULT(task_prctl)) {
-+				rc = thisrc;
-+				if (thisrc != 0)
-+					break;
-+			}
-+		}
-+	}
-+ done:
- 	return rc;
- }
- 
-@@ -4144,8 +4249,38 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
- 		total += entrysize;
- 		count += rc;
- 		if (single)
--			break;
-+			goto done;
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
-+			if (single && lctx.id != hp->lsmid->id)
-+				continue;
-+			entrysize = left;
-+			if (base)
-+				uctx = (struct lsm_ctx __user *)(base + total);
-+			rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
-+			if (rc == -EOPNOTSUPP) {
-+				rc = 0;
-+				continue;
-+			}
-+			if (rc == -E2BIG) {
-+				rc = 0;
-+				left = 0;
-+				toobig = true;
-+			} else if (rc < 0)
-+				return rc;
-+			else
-+				left -= entrysize;
-+
-+			total += entrysize;
-+			count += rc;
-+			if (single)
-+				break;
-+		}
-+	}
-+ done:
- 	if (put_user(total, size))
- 		return -EFAULT;
- 	if (toobig)
-@@ -4202,8 +4337,17 @@ int security_setselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
- 	lsm_for_each_hook(scall, setselfattr)
- 		if ((scall->hl->lsmid->id) == lctx->id) {
- 			rc = scall->hl->hook.setselfattr(attr, lctx, size, flags);
--			break;
-+			goto free_out;
- 		}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.setselfattr, list)
-+			if ((hp->lsmid->id) == lctx->id) {
-+				rc = hp->hook.setselfattr(attr, lctx, size, flags);
-+				break;
-+			}
-+	}
- 
- free_out:
- 	kfree(lctx);
-@@ -4231,6 +4375,15 @@ int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
- 			continue;
- 		return scall->hl->hook.getprocattr(p, name, value);
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+			if (lsmid != 0 && lsmid != hp->lsmid->id)
-+				continue;
-+			return hp->hook.getprocattr(p, name, value);
-+		}
-+	}
- 	return LSM_RET_DEFAULT(getprocattr);
- }
- 
-@@ -4255,6 +4408,15 @@ int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
- 			continue;
- 		return scall->hl->hook.setprocattr(name, value, size);
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+			if (lsmid != 0 && lsmid != hp->lsmid->id)
-+				continue;
-+			return hp->hook.setprocattr(name, value, size);
-+		}
-+	}
- 	return LSM_RET_DEFAULT(setprocattr);
- }
- 
-@@ -5399,8 +5561,18 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	 */
- 	lsm_for_each_hook(scall, xfrm_state_pol_flow_match) {
- 		rc = scall->hl->hook.xfrm_state_pol_flow_match(x, xp, flic);
--		break;
-+		goto out;
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
-+				     list) {
-+			rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
-+			break;
-+		}
- 	}
-+ out:
- 	return rc;
- }
- 
+Best regards,
 -- 
-2.43.5
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
 
 
