@@ -1,300 +1,144 @@
-Return-Path: <linux-kernel+bounces-314757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B0D96B809
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:15:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7C496B80D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2325328652C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD91CB23581
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73041CF5F4;
-	Wed,  4 Sep 2024 10:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848FA1CF5DC;
+	Wed,  4 Sep 2024 10:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZczpRZnH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ffk22BFs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZczpRZnH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ffk22BFs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quOWyWhm"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF2E18890D;
-	Wed,  4 Sep 2024 10:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37C6126C08
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444924; cv=none; b=LDz2thjznU25ix0HteGEIDuIKVGkocniVtknXRUXhdt3RDamxZiWNaaAxzYgjgC/UjQ15CMPwBWlZ+VsSL6JabuZBmWuICZ1r6gf5z5Y4am3yYQmHuXMrJm7W1RMayB3C0mGmwWzgUOOFlJ7CaOmiOH0rm23URmcvsqZychHVfI=
+	t=1725444940; cv=none; b=kt832nvpEp22J111EFbM6a4p/q3KWwkWwquCJKkF4xTgsorfZZpuzSj7NeKkVob99RJwuHdxwnk+1ezohZCfVWCushs84ckF6E0HYFJ5smxJyuKc7Nw/ZKabjsKzz7Le0wMrFmekuqRiUy34IHIY+HW/UHf81O/eVosUlNO2rt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444924; c=relaxed/simple;
-	bh=KYXQSZAv+DfchmGmNWljAxqBAcAoYvO11cNyrR/rvp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiyHz0SdwxfOJHHdtwpHDw06WtedVIN08kBrPqoV2grNKLq+YylmG4PwElPBUuoYbB5U1Cx8CvZ63C6ZI1AQwCdHeJ3wSu4wFU9jTDzlZQRzJqEXJfzeKJQ5K/6VuCAWgL/c1+rHMDpi9sw95ka7nUVqVLRHYAmknuqALOqDG50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZczpRZnH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ffk22BFs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZczpRZnH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ffk22BFs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 161A01F7B6;
-	Wed,  4 Sep 2024 10:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725444920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SyVy7B/FxJoOnTZ9bGv/WBLncJ7QZuFKKufblO0aj9E=;
-	b=ZczpRZnHZWSXrR54mHw/xaynmDFLQ/JDVpn8VYWPDG99MXPluvojUTtvy+ZSACAe1nz2cE
-	ymtu9ExgGPY0QrCKEqxA2luQtWnL9pqKE4KUo6z/Qeb59iGKaRcHQF9h1rJJDJmglGyA30
-	/q2FQc3KjQNV1YmgTUFu/SK/pIJce30=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725444920;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SyVy7B/FxJoOnTZ9bGv/WBLncJ7QZuFKKufblO0aj9E=;
-	b=Ffk22BFsCTL4maHtLZudMnRqqpKBgtASxmg+hchUjPhbpKpchoeNW3K2XXq9lWeidYAGAa
-	IHjARTIVG42w3PCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725444920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SyVy7B/FxJoOnTZ9bGv/WBLncJ7QZuFKKufblO0aj9E=;
-	b=ZczpRZnHZWSXrR54mHw/xaynmDFLQ/JDVpn8VYWPDG99MXPluvojUTtvy+ZSACAe1nz2cE
-	ymtu9ExgGPY0QrCKEqxA2luQtWnL9pqKE4KUo6z/Qeb59iGKaRcHQF9h1rJJDJmglGyA30
-	/q2FQc3KjQNV1YmgTUFu/SK/pIJce30=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725444920;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SyVy7B/FxJoOnTZ9bGv/WBLncJ7QZuFKKufblO0aj9E=;
-	b=Ffk22BFsCTL4maHtLZudMnRqqpKBgtASxmg+hchUjPhbpKpchoeNW3K2XXq9lWeidYAGAa
-	IHjARTIVG42w3PCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07171139D2;
-	Wed,  4 Sep 2024 10:15:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hRtpATgz2GbKJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 10:15:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 96D28A0968; Wed,  4 Sep 2024 12:15:15 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:15:15 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 04/12] ext4: let __revise_pending() return newly
- inserted pendings
-Message-ID: <20240904101515.2v2pwvacjltss2zk@quack3>
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
- <20240813123452.2824659-5-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1725444940; c=relaxed/simple;
+	bh=wMRgd+zwB0aXoTGxwXzh3t2qA3Lqhwut8iVdWmvlx8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NI/uigxYkaCmkR9vlxtepH29U2vAbUrWLTUaeyavp222iWOrw/hDjlkgqixzVq9tyaoa5EChKqWfnafQ65yJ3BksyrX0q10BiykvDCMKG96a0lfMbdAVh6VNHRl7OR+pYWKgKYHPPt2/EoXYka4zUzqWi0R9XfGfwuLT2FThK90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quOWyWhm; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so43754375e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725444934; x=1726049734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YpjVKN5cWQhj45jb1EGlvgKVJ/zrno7xEZ0+EzIrPcA=;
+        b=quOWyWhmGBln/H0u2I6G6WBgqWiWlNoGxPRjIh1VqjR7ubNhHDhWbfECy3+F8ckrPG
+         pFsIyvelG5xI5QG3Bo9O/iJeOdtClhKXQDoi2/ZsO+175ip19rfyClRfWqNWGAklQsmg
+         O9i1jObq+/mS0RXsnCQNPPnSPDWNsOyOi5gduumIC/PxXkWGdb7nXo3i1dln+3M4IfjC
+         F9/QBUYwNrcFl/0XiCHhttItnZz5PJgdMI52+GuGVM8JqxK47SLgsMdC+EGJtMQxkgwE
+         qq2RviTRkf4BNYF4qO8tnDVshwCcA9cAvUJmba+O9QHSCFCK9kPh9gI5UUWof3SAqpZT
+         XplA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725444934; x=1726049734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YpjVKN5cWQhj45jb1EGlvgKVJ/zrno7xEZ0+EzIrPcA=;
+        b=UR5B59MDfK6ZYk9vdpLE/65mP1USJyOQstImJnUxdF1L5pdpVzFNGPcNtqvo3WVFcX
+         gB5RwVpUrCr2GKyvv3U+D0m+3gQ5yRuq1SgnXTAP6DkoC9NvxEPVOa8dMulf24O0wx5L
+         MwOa70VUGkkm/8t6EXr01SFvyieWx058BXG2Vr/mjbGqtjiEEKKXY3ExYnw4tsRbM0/3
+         nDuEPn2xuOOLVurX+Ox1uQBt9qqFUHQH+HC4rD5llT95N7sVuUML757ZxhNbX8Bfz4tU
+         sdcJLuT/U0ifjsZFIT96f7YhQFJNeTx72lQGIs47pdciU+meZW2Pp8q6N3AMRUNLN6qL
+         g7Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUG1rHS6XfHBo+VcSoY8WRhzlOTbxV6AcB8ze9NuscSRPI66a2ELakJk4oYwOiYP2RdIFDw6+RBf4LGo88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz78PmYcc9VcNgz47AAZbuBKvHRAhkU/6TreqfE4ElvarN3hPQ+
+	+OZTJKJ0lTVC5WwZjrzghrtf+mM6eZgJ3uL+hluJNmM6ZmDviaXxhGHfuzq7oS9pIBJKD706DOq
+	gvPnAcE5SkF/RQR+xe762xohUpGmVozMUL2d/
+X-Google-Smtp-Source: AGHT+IFvgcolurGoupUJmeWy+d85GiYNEpCVqFra1ZIgUnTNUb7A0YTAJ4BFYzV8MAI5ROTmbcvMlPgqAZlqbhn09Pk=
+X-Received: by 2002:a05:600c:3509:b0:426:62c5:473e with SMTP id
+ 5b1f17b1804b1-42c8de9deb8mr25799725e9.26.1725444933762; Wed, 04 Sep 2024
+ 03:15:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813123452.2824659-5-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-27-dakr@kernel.org>
+ <20240831135712.0d7366b6.gary@garyguo.net> <Ztb6_XW3ccnHQDmw@pollux>
+In-Reply-To: <Ztb6_XW3ccnHQDmw@pollux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 4 Sep 2024 12:15:21 +0200
+Message-ID: <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com>
+Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc` module
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 13-08-24 20:34:44, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Let __insert_pending() return 1 after successfully inserting a new
-> pending cluster, and also let __revise_pending() to return the number of
-> of newly inserted pendings.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Sep 3, 2024 at 2:03=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> On Sat, Aug 31, 2024 at 01:57:12PM +0100, Gary Guo wrote:
+> > On Fri, 16 Aug 2024 02:11:08 +0200
+> > Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > > Add maintainers entry for the Rust `alloc` module.
+> > >
+> > > Currently, this includes the `Allocator` API itself, `Allocator`
+> > > implementations, such as `Kmalloc` or `Vmalloc`, as well as the kerne=
+l's
+> > > implementation of the primary memory allocation data structures, `Box=
+`
+> > > and `Vec`.
+> > >
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > ---
+> > >  MAINTAINERS | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 42decde38320..560516b3aaf4 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -19925,6 +19925,13 @@ F: scripts/*rust*
+> > >  F: tools/testing/selftests/rust/
+> > >  K: \b(?i:rust)\b
+> > >
+> > > +RUST [ALLOC]
+> > > +M: Danilo Krummrich <dakr@kernel.org>
+> > > +L: rust-for-linux@vger.kernel.org
+> > > +S: Maintained
+> > > +F: rust/kernel/alloc.rs
+> > > +F: rust/kernel/alloc/
+> >
+> > It feels like we should use `mod.rs`.
+>
+> The same would be true for:
+>
+> - rust/kernel/sync.rs
+> - rust/kernel/net.rs
+> - rust/kernel/init.rs
+> - rust/kernel/fs.rs
+> - ...
+>
+> Do you propose to change it for all of them?
 
-AFAICS nothing really uses this functionality in this version of the
-patchset so we can drop this patch?
+I do actually think `mod.rs` is superior in general, but it's probably
+not worth changing it right now.
 
-								Honza
-
-> ---
->  fs/ext4/extents_status.c | 28 ++++++++++++++++++----------
->  1 file changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index 024cd37d53b3..4d24b56cfaf0 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -887,7 +887,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  		es1 = __es_alloc_extent(true);
->  	if ((err1 || err2) && !es2)
->  		es2 = __es_alloc_extent(true);
-> -	if ((err1 || err2 || err3) && revise_pending && !pr)
-> +	if ((err1 || err2 || err3 < 0) && revise_pending && !pr)
->  		pr = __alloc_pending(true);
->  	write_lock(&EXT4_I(inode)->i_es_lock);
->  
-> @@ -915,7 +915,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  
->  	if (revise_pending) {
->  		err3 = __revise_pending(inode, lblk, len, &pr);
-> -		if (err3 != 0)
-> +		if (err3 < 0)
->  			goto error;
->  		if (pr) {
->  			__free_pending(pr);
-> @@ -924,7 +924,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  	}
->  error:
->  	write_unlock(&EXT4_I(inode)->i_es_lock);
-> -	if (err1 || err2 || err3)
-> +	if (err1 || err2 || err3 < 0)
->  		goto retry;
->  
->  	ext4_es_print_tree(inode);
-> @@ -1933,7 +1933,7 @@ static struct pending_reservation *__get_pending(struct inode *inode,
->   * @lblk - logical block in the cluster to be added
->   * @prealloc - preallocated pending entry
->   *
-> - * Returns 0 on successful insertion and -ENOMEM on failure.  If the
-> + * Returns 1 on successful insertion and -ENOMEM on failure.  If the
->   * pending reservation is already in the set, returns successfully.
->   */
->  static int __insert_pending(struct inode *inode, ext4_lblk_t lblk,
-> @@ -1977,6 +1977,7 @@ static int __insert_pending(struct inode *inode, ext4_lblk_t lblk,
->  
->  	rb_link_node(&pr->rb_node, parent, p);
->  	rb_insert_color(&pr->rb_node, &tree->root);
-> +	ret = 1;
->  
->  out:
->  	return ret;
-> @@ -2098,7 +2099,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
->  		es1 = __es_alloc_extent(true);
->  	if ((err1 || err2) && !es2)
->  		es2 = __es_alloc_extent(true);
-> -	if (err1 || err2 || err3) {
-> +	if (err1 || err2 || err3 < 0) {
->  		if (lclu_allocated && !pr1)
->  			pr1 = __alloc_pending(true);
->  		if (end_allocated && !pr2)
-> @@ -2128,7 +2129,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
->  
->  	if (lclu_allocated) {
->  		err3 = __insert_pending(inode, lblk, &pr1);
-> -		if (err3 != 0)
-> +		if (err3 < 0)
->  			goto error;
->  		if (pr1) {
->  			__free_pending(pr1);
-> @@ -2137,7 +2138,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
->  	}
->  	if (end_allocated) {
->  		err3 = __insert_pending(inode, end, &pr2);
-> -		if (err3 != 0)
-> +		if (err3 < 0)
->  			goto error;
->  		if (pr2) {
->  			__free_pending(pr2);
-> @@ -2146,7 +2147,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
->  	}
->  error:
->  	write_unlock(&EXT4_I(inode)->i_es_lock);
-> -	if (err1 || err2 || err3)
-> +	if (err1 || err2 || err3 < 0)
->  		goto retry;
->  
->  	ext4_es_print_tree(inode);
-> @@ -2256,7 +2257,9 @@ unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
->   *
->   * Used after a newly allocated extent is added to the extents status tree.
->   * Requires that the extents in the range have either written or unwritten
-> - * status.  Must be called while holding i_es_lock.
-> + * status.  Must be called while holding i_es_lock. Returns number of new
-> + * inserts pending cluster on insert pendings, returns 0 on remove pendings,
-> + * return -ENOMEM on failure.
->   */
->  static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			    ext4_lblk_t len,
-> @@ -2266,6 +2269,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  	ext4_lblk_t end = lblk + len - 1;
->  	ext4_lblk_t first, last;
->  	bool f_del = false, l_del = false;
-> +	int pendings = 0;
->  	int ret = 0;
->  
->  	if (len == 0)
-> @@ -2293,6 +2297,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			ret = __insert_pending(inode, first, prealloc);
->  			if (ret < 0)
->  				goto out;
-> +			pendings += ret;
->  		} else {
->  			last = EXT4_LBLK_CMASK(sbi, end) +
->  			       sbi->s_cluster_ratio - 1;
-> @@ -2304,6 +2309,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  				ret = __insert_pending(inode, last, prealloc);
->  				if (ret < 0)
->  					goto out;
-> +				pendings += ret;
->  			} else
->  				__remove_pending(inode, last);
->  		}
-> @@ -2316,6 +2322,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			ret = __insert_pending(inode, first, prealloc);
->  			if (ret < 0)
->  				goto out;
-> +			pendings += ret;
->  		} else
->  			__remove_pending(inode, first);
->  
-> @@ -2327,9 +2334,10 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			ret = __insert_pending(inode, last, prealloc);
->  			if (ret < 0)
->  				goto out;
-> +			pendings += ret;
->  		} else
->  			__remove_pending(inode, last);
->  	}
->  out:
-> -	return ret;
-> +	return (ret < 0) ? ret : pendings;
->  }
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Alice
 
