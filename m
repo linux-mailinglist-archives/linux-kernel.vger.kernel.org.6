@@ -1,167 +1,223 @@
-Return-Path: <linux-kernel+bounces-315883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C51596C819
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D8A96C81C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CB01F25F92
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FEE1C21568
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FCF1E7674;
-	Wed,  4 Sep 2024 20:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8540D1E7642;
+	Wed,  4 Sep 2024 20:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DSUaYCWr"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzWDwDl2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D0113B59E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAADC13A276;
+	Wed,  4 Sep 2024 20:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725480070; cv=none; b=ozyIRNbZKJ8PCeZc+5mI9RQSfmCM6+HlBZ44NcP0KS9WuOxgwur1eg7waeaxdbDJpiJcU6ou5HDcZDOeJsPwOuc54mmCIUvWiZIr2dFmxyWUKce4ZjTCcDPkXKitUX1OGzS/MX5O6S7hjTJc+Nd/YNtcmSS+fNi/tqZZ1iQD3vQ=
+	t=1725480180; cv=none; b=GMpmGom7Gn80doZ0Ft6J/uVNY+ZRz2GVMXB5fK7wMQocoIf/mYww47QEFjG1l6fC2mDXx9q9/5dGmBciAbkieyhgREC5ywx4P3PiOI7t/Opkh9Wgd1EGQ8tZSKz9YM6zBF47/f3OqevkZBzrs5JTZiZPpo6H1LOrA4JXfAxwpsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725480070; c=relaxed/simple;
-	bh=4ZW9uYBRy1l5v3eg2vwYnWmQtnxuduXzhYgb0NI7pac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fYavvGsDzaK9gOqpXWj1noO4hoCSMBVSprx99Ufba+7PbxuQUQwwwHWshh0Whn7Dg4qnp41m9gyGNXe5TKpz7RnqMQGdY4qjjZuxKx09z3+EBokXGae+WyzPXboOY+inGMaSCDQCIlgEhFTv6xzVjJIogXH98LxU9jMOpJLBM8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DSUaYCWr; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b6b9867f81so57336687b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 13:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725480068; x=1726084868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bj31Cc7yUKdv/FGIF8ZxPGEVE5FVuiVNrp+0ISWDt4c=;
-        b=DSUaYCWr/prACtzyg/rPSUvm30yKQ0V+ubT7ZcPSXOQZrWHKdL2v6lCjM/hTEPDtE0
-         sqVlA/wLifJgfoU7GeeLALd/fPen2C7kHUFzlntnDXlarJSTTI/UX0v1hEXUIrrcSIfV
-         4c2upEGc4WamL5D1Vt300uOrSwbx8ytzKILJLwR0yIjXCON37wB110LKDv1j2j/JehXn
-         bzAe/gcx6lzajTXH0V24JE5VH6x92U4rberLWfedRvfS9ghSQv0j6VPPrx3LqtEnQooD
-         uFLi2BHXKgpBFmJ8uMgI54nUdksi1sl+l/ZJ6NMD2mHs59cLJo3dzmJW8CRwpeeC1nZb
-         rUXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725480068; x=1726084868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bj31Cc7yUKdv/FGIF8ZxPGEVE5FVuiVNrp+0ISWDt4c=;
-        b=laI3c0WoBUf/VNUWRuYyPdFPYQvYI99msQFlQkQCGx8WeQArwa8WLZURJZLIHYu1vW
-         JTWJA+xcVIE4COPJ+E/9F4vBwdxfmbIXa5GflTFLPQ7PA2729ibto+Ny4m+zIe2Z/lJ7
-         YEtDsGW1OrLyneAT9LexNk9Rcpo5o6O57rwHhLAvtnrDNfp1BbpkfizNvgSFgJ0EP0ss
-         28/nfdHgam7pvZKZekc4ZV1PHbLZrl8y/d/IIEddYcYi9XfzHmKTzWJRssAPDbOnZsFL
-         cIE9CIxzHGwUJcXPc3JoZHbdBTl/FakaAogg4LARpnWwsXLbm3V6V/MPvhzvouPXp6d7
-         1hqA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9KFLbz/WLiE45KEuqQco8CzsfRrkoI4jWoYSHi0tpbQEhrI55n+FqpX1sd0ZQ82jlk1dI4ss2uIu3Yo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMwKJ3XIGhCJAbW9xqV45avaM+2sB0sZuodRD8qbgqG9VGYl35
-	n5vKMFULT0qiFhtgpPCA9+SmurCvF1YmfKf3Wk3Mh3tR6gCQKunvoCLTI3DsB9+d091QF8ODFeB
-	NKP99qei6XfzojPWKO7XEzmvRRBmJZodgdiNT
-X-Google-Smtp-Source: AGHT+IHwvQ13BznmsQbX7s8QKh0hPJ3ZlsV9dmecF5yPb9RpjrIRg7UHuPNLul3M/O4Vy1wrYN7rj/2T9vkcOmYq8W8=
-X-Received: by 2002:a05:690c:3693:b0:6b1:135:4d84 with SMTP id
- 00721157ae682-6d40df8a252mr200806537b3.16.1725480068164; Wed, 04 Sep 2024
- 13:01:08 -0700 (PDT)
+	s=arc-20240116; t=1725480180; c=relaxed/simple;
+	bh=fYVQ/zRfKE+0rCdvMJekDiqUL1tFTV5VdRnogTlWfYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k3KsuYT/fD9LfHn5wALqBn75a0Ace3AB/FnivwMCFm1ZvYqloHUlPcWBp4WjGtD4Rijk8I4o4g81zK38STmI5parp/7JQqNZCNlYSjjoBVPqCRpJFsEBbI8122+EC27L8g6YSvBVTkE0i6u2izBLd4N8FKt+8b0WfJ/rng+hnCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzWDwDl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44708C4CEC2;
+	Wed,  4 Sep 2024 20:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725480179;
+	bh=fYVQ/zRfKE+0rCdvMJekDiqUL1tFTV5VdRnogTlWfYc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GzWDwDl2f/K6etW4fb/vidLs6wq+W0xt5goPiwhHpnUhMSCiFEFK99Zl2iCEPC09B
+	 Fj43wdHBz2MEc44ZX9xFEecvQsQUuPc2dQwJWBxhNY/bAphBzjOBCip57Hpm0jYvTR
+	 gX39QyFsLUANdXaNk5m2Y2rxImqXZ9JMICiInTNP8zTxCMKNA3uGhj+m4i270sPXCX
+	 o/ghooMijNynTasTlfutuW4q5FbCRU7pOvr2d5FWF7rzmGbfTvF7rs19qFiqrxJj6/
+	 LXpHl8WSiFRkKo069V4oA2c1BryCdITlUeGY0+ghEvSc2NzN+7XTZhhoa9Ky0TZFGS
+	 5cDQIHrZ0QNig==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: incomplete-devices: And another batch of compatibles
+Date: Wed,  4 Sep 2024 15:02:52 -0500
+Message-ID: <20240904200253.3112699-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830003411.16818-2-casey@schaufler-ca.com>
- <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com> <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
-In-Reply-To: <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 4 Sep 2024 16:00:57 -0400
-Message-ID: <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	apparmor@lists.ubuntu.com, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024 at 8:53=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 9/3/2024 5:18 PM, Paul Moore wrote:
-> > On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+Another batch of compatibles unlikely to ever be documented. It's
+mostly old PowerMAC stuff found in DT compatible API calls.
 
-...
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/incomplete-devices.yaml          | 101 ++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-> >> +/*
-> >> + * Data exported by the security modules
-> >> + */
-> >> +struct lsmblob {
-> >> +    struct lsmblob_selinux selinux;
-> >> +    struct lsmblob_smack smack;
-> >> +    struct lsmblob_apparmor apparmor;
-> >> +    struct lsmblob_bpf bpf;
-> >> +    struct lsmblob_scaffold scaffold;
-> >> +};
-> >
-> > Warning, top shelf bikeshedding follows ...
->
-> Not unexpected. :)
->
-> > I believe that historically when we've talked about the "LSM blob" we'v=
-e
-> > usually been referring to the opaque buffers used to store LSM state th=
-at
-> > we attach to a number of kernel structs using the `void *security` fiel=
-d.
-> >
-> > At least that is what I think of when I read "struct lsmblob", and I'd
-> > like to get ahead of the potential confusion while we still can.
-> >
-> > Casey, I'm sure you're priority is simply getting this merged and you
-> > likely care very little about the name (as long as it isn't too horribl=
-e),
->
-> I would reject lsmlatefordinner out of hand.
+diff --git a/Documentation/devicetree/bindings/incomplete-devices.yaml b/Documentation/devicetree/bindings/incomplete-devices.yaml
+index cfc1d39441b1..289f7c3b91c3 100644
+--- a/Documentation/devicetree/bindings/incomplete-devices.yaml
++++ b/Documentation/devicetree/bindings/incomplete-devices.yaml
+@@ -35,22 +35,116 @@ properties:
+ 
+       - description: Legacy compatibles used on Macintosh devices
+         enum:
++          - AAPL,3500
++          - AAPL,7500
++          - AAPL,8500
++          - AAPL,9500
++          - AAPL,accelerometer_1
++          - AAPL,e411
++          - AAPL,Gossamer
++          - AAPL,PowerBook1998
++          - AAPL,ShinerESB
+           - adm1030
+           - bmac+
++          - burgundy
++          - cy28508
++          - daca
++          - fcu
++          - gatwick
++          - gmac
++          - heathrow
++          - heathrow-ata
+           - heathrow-media-bay
++          - i2sbus
++          - i2s-modem
++          - iMac
++          - K2-GMAC
++          - k2-i2c
++          - K2-Keylargo
++          - K2-UATA
++          - kauai-ata
++          - Keylargo
++          - keylargo-ata
+           - keylargo-media-bay
+           - lm87cimt
+           - MAC,adm1030
+           - MAC,ds1775
++          - MacRISC
++          - MacRISC2
++          - MacRISC3
++          - MacRISC4
+           - max6690
++          - ohare
+           - ohare-media-bay
+           - ohare-swim3
++          - PowerBook1,1
++          - PowerBook2,1
++          - PowerBook2,2
++          - PowerBook3,1
++          - PowerBook3,2
++          - PowerBook3,3
++          - PowerBook3,4
++          - PowerBook3,5
++          - PowerBook4,1
++          - PowerBook4,2
++          - PowerBook4,3
++          - PowerBook5,1
++          - PowerBook5,2
++          - PowerBook5,3
++          - PowerBook5,4
++          - PowerBook5,5
++          - PowerBook5,6
++          - PowerBook5,7
++          - PowerBook5,8
++          - PowerBook5,9
++          - PowerBook6,3
++          - PowerBook6,5
++          - PowerBook6,7
++          - PowerMac10,1
++          - PowerMac10,2
++          - PowerMac1,1
++          - PowerMac11,2
++          - PowerMac12,1
++          - PowerMac2,1
++          - PowerMac2,2
++          - PowerMac3,1
++          - PowerMac3,4
++          - PowerMac3,5
++          - PowerMac3,6
++          - PowerMac4,1
++          - PowerMac4,2
++          - PowerMac4,4
++          - PowerMac4,5
++          - PowerMac7,2
++          - PowerMac7,3
++          - PowerMac8,1
++          - PowerMac8,2
++          - PowerMac9,1
++          - paddington
++          - RackMac1,1
++          - RackMac1,2
++          - RackMac3,1
++          - screamer
++          - shasta-ata
++          - sms
++          - smu-rpm-fans
+           - smu-sat
++          - smu-sensors
++          - snapper
+           - swim3
++          - u3-agp
++          - u3-dart
++          - u3-ht
++          - u4-dart
++          - u4-pcie
++          - U4-pcie
+ 
+       - description: Legacy compatibles used on other PowerPC devices
+         enum:
+           - 1682m-rng
++          - direct-mapped
++          - display
++          - hawk-pci
+           - IBM,lhca
+           - IBM,lhea
+           - IBM,lhea-ethernet
+@@ -60,6 +154,7 @@ properties:
+           - ohci-be
+           - ohci-bigendian
+           - ohci-le
++          - soc
+ 
+       - description: Legacy compatibles used on SPARC devices
+         enum:
+@@ -68,7 +163,10 @@ properties:
+           - isa-m5819p
+           - isa-m5823p
+           - m5819
++          - qcn
+           - sab82532
++          - su
++          - sun4v
+           - SUNW,bbc-beep
+           - SUNW,bbc-i2c
+           - SUNW,CS4231
+@@ -96,9 +194,12 @@ properties:
+           - compat1
+           - compat2
+           - compat3
++          - gpio-mockup
++          - gpio-simulator
+           - linux,spi-loopback-test
+           - mailbox-test
+           - regulator-virtual-consumer
++          - test-device
+ 
+       - description:
+           Devices on MIPS platform, without any DTS users.  These are
+-- 
+2.45.2
 
-Fair enough :)
-
-> > but what about "lsm_ref"?  Other ideas are most definitely welcome.
->
-> I'm not a fan of the underscore, and ref seems to imply memory management=
-.
-> How about "struct lsmsecid", which is a nod to the past "u32 secid"?
-> Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
-> I could live with "struct lsmref", I suppose, although it pulls me toward
-> "struct lsmreference", which is a bit long.
-
-For what it's worth, I do agree that "ref" is annoyingly similar to a
-reference counter, I don't love it here, but I'm having a hard time
-coming up with something appropriate.
-
-I also tend to like the underscore, at least in the struct name, as it
-matches well with the "lsm_ctx" struct we have as part of the UAPI.
-When we use the struct name in function names, feel free to drop the
-underscore, for example: "lsm_foo" -> "security_get_lsmfoo()".
-
-My first thought was for something like "lsmid" (ignoring the
-underscore debate), but we already have the LSM_ID_XXX defines which
-are something entirely different and I felt like we would be trading
-one source of confusion for another.  There is a similar problem with
-the LSM_ATTR_XXX defines.
-
-We also already have a "lsm_ctx" struct which sort of rules out
-"lsmctx" for what are hopefully obvious reasons.
-
-I'd also like to avoid anything involving "secid" or "secctx" simply
-because the whole point of this struct is to move past the idea of a
-single integer or string representing all of the LSM properties for an
-entity.
-
-I can understand "lsm_data", but that is more ambiguous than I would like.
-
-What about "lsm_prop" or "lsm_cred"?
-
---=20
-paul-moore.com
 
