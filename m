@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-314897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74D996BAB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DCC96BABB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A481F24923
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70617283FE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501311D0965;
-	Wed,  4 Sep 2024 11:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C911CF7BC;
+	Wed,  4 Sep 2024 11:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEMRaWvE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsK9OeS9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25F05B1E0;
-	Wed,  4 Sep 2024 11:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFC91CFED1;
+	Wed,  4 Sep 2024 11:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725449433; cv=none; b=BbbLzrhhDFW/pQBRRGkd70ijuphVdtTFJmcLXnycjJyK8HAtSK6UzIWkGMxs8TNUUbicl5SXAb54687A4K1xVKk5uA2IUdYINIGOwgu2wv/faHSxyZhSQs6vagtt3vhqe0cylI5bMW+vuxUEW5ER3wjCG0ZdrpK5gpiE4xzsHrs=
+	t=1725449469; cv=none; b=nih6nwok9BcKEuKoOcDDI5m6S7Rf2N8O99clpd0DhN9InIFOr/tWfoGTuq/RG7QUgllX61sSyRY44LWSL1SyxsqIVKUm99Vwr7ALfaEz8K0zGzW/YjgxVEdmNZHLtLLU5WbQBhwvIxysNyxwqoLbnCzZWbQXeU6pMM84QXZ23OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725449433; c=relaxed/simple;
-	bh=5Aj+Yl/rXBgCGweDXox10GeE9CAueq0f0fU8ZeIbr1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPlCxm7XXR5ZWljyxOenPjLCrdAm0LLu9rsj6u6GtBaE5XF0fCFcNGUDezuF6vHcupCKef/2kMbcBTLAlrttmUusLBFnQpPPFcbgEn9IpqNbMXHKVQlTETS3X4wZvOnaoYfOrzoM/op9JP4f9FNPQURz2fIcibnUnME8r7/gjG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEMRaWvE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA969C4CEC2;
-	Wed,  4 Sep 2024 11:30:31 +0000 (UTC)
+	s=arc-20240116; t=1725449469; c=relaxed/simple;
+	bh=MkyMpmO/PXogmhxNVvz1q1S51Ajlc5jfq4s2NDuILmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jemW45OAXWFo/kAFxROxKFqM2rY2UEWYKhUGtFdT6VXYBqgHbUqYXxYyyM9akfivP7dwm6TOKqr6vMU95MBWJIvdN0psUDiZ2W9ZQsbv93mZ0vX/Ml8lS4wBtPAwCqfU66+2fu22xni8MQDz8JJhN6jaLw2FBlHgDtCV0BPUwr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsK9OeS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476F8C4CEC2;
+	Wed,  4 Sep 2024 11:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725449433;
-	bh=5Aj+Yl/rXBgCGweDXox10GeE9CAueq0f0fU8ZeIbr1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEMRaWvEgpMx1JiXXMbipWn7gT/SWrsvX834OdcJnZ8wMadYaGYPBTiO9+p8tPEAE
-	 qXkj0XD32K/6wc01wlrwIh2u7KjmnK5X4nJdEhwbCvMqqNIq5NhNbXqNTywDF+dSEm
-	 IxPHUMKOw1R3NzBl/IRFAAOmd6K9FFQ00KmE5cfejxNKEPBs4a3BoGcl3sLWHNiBvI
-	 +B5BqW9MDovr3IV3Y1xzNql+ICypBxyLR3yXNgO5rOG4af0/mHORJvka7wZ/BitjFg
-	 Y/+K6zHo6lDgOTrugMvolroZHNSuElel6EUkFgv4Foy3mACDoB6Sabu5+2QNfzvcDE
-	 CuTYX0uD/50jA==
-Date: Wed, 4 Sep 2024 12:30:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: submitting-patches: Advertise b4
-Message-ID: <bbe54c4e-dd0c-488c-bffd-f9dddf6b13f8@sirena.org.uk>
-References: <20240903-documentation-b4-advert-v1-1-c89d6f5db7b1@kernel.org>
- <20240904044443.309aabb1@foz.lan>
+	s=k20201202; t=1725449469;
+	bh=MkyMpmO/PXogmhxNVvz1q1S51Ajlc5jfq4s2NDuILmk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hsK9OeS95yLNzd4xSNg5EUKYjcRUVy9W7rGdY54R7/ikcN94B/kXYu5h/iQtWftAy
+	 vyJOKePdR/3GMg2hI0PDgPeqkIbugoIt/D+vYnzYbF2+AxsPA1ZwsV05PkQ0eTZI2a
+	 EPP+S2/ZdKa2pKWqtQm3BipwYntCPz8c0OxU3yMI0VUZZ5C/Za5R4lHwpcggiUpTSU
+	 qq8NpnCn4RutygcefxTWUGZxO78ybA+Hi33srGDZZQeUi5lcwXNfT6JzjiQ90LfCAU
+	 jcZ3DYbzbRxu/ZUMoHH+Z/S99YlC+2ZBCGWOVv3nUUCjNkXpDVL53wrsG7v0Jgcc0R
+	 +LlbZ1Zba+nEw==
+Message-ID: <c2dc5341-755f-42da-93c9-9cf540a0f140@kernel.org>
+Date: Wed, 4 Sep 2024 13:31:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fmW3RxZUn8nqYSox"
-Content-Disposition: inline
-In-Reply-To: <20240904044443.309aabb1@foz.lan>
-X-Cookie: Linux is obsolete
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] arm64: dts: qcom: sc7280: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ cros-qcom-dts-watchers@chromium.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Suresh Vankadara <quic_svankada@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
+ <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-7-b18ddcd7d9df@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-7-b18ddcd7d9df@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 04/09/2024 13:10, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the SC7280.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 175 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 175 insertions(+)
+> 
 
---fmW3RxZUn8nqYSox
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This does not follow DTS coding style.
 
-On Wed, Sep 04, 2024 at 04:44:51AM +0200, Mauro Carvalho Chehab wrote:
-> Mark Brown <broonie@kernel.org> escreveu:
+Best regards,
+Krzysztof
 
-> > +Tooling
-> > +-------
-
-> > +Many of the technical aspects of this process can be automated using
-> > +b4, documented at <https://b4.docs.kernel.org/en/latest/>. This can
-> > +help with things like tracking dependencies, running checkpatch and
-> > +with formatting and sending mails.
-> > +
-> > +
-
-> No need for two blank lines (yeah, there's a mix on this file of using
-> one or two blank lines for paragraphs).
-
-I have to say that the double lines between sections do help with
-native readability of the document.
-
-> I would also add quick example(s) on how to use it for common workflows.
-
-The b4 documentation is already pretty good and the submitter side is
-focused on a single task so it's much easier for people to navigate
-than something like git where there's a lot of flexibility, I'm not sure
-rewriting an abbreviated version is a great idea.  Someone with a better
-idea of what would be useful could always follow up and add that.
-
---fmW3RxZUn8nqYSox
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbYRNQACgkQJNaLcl1U
-h9AKXAf/QfT66Emr7d698Cu3+HT2XqcZ6wCEE3BdchyCYPCaEUMbjC5Bb9QosL2U
-+/lcM6MnBZ/4j9w0UktlzKiduYVnhwi5pbls8EJAgB65pERpCJ8wLqSG6rI+hkn5
-Ge/X3m1VTHZ/i/ChgRGd4LmzmTxfSQHxazCXq0jvw5kmBqeM/Rb8y4P85eek7c+m
-XF3A+4dmNxRRaGVlrkBWll4wXqy0S3uSAqTFtTsDqimWcmipZlP3nsBx6T9t6f9o
-wWq8Jb6KjTD6Sqwy+QOmYL6kN/kWqsUsOpbajjeHfFtRdzFN9IvYGY4HHKfXelr9
-crf5HyEDFWelacDK15Co3G/fbwp3Xg==
-=cTQF
------END PGP SIGNATURE-----
-
---fmW3RxZUn8nqYSox--
 
