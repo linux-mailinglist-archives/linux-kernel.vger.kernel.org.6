@@ -1,97 +1,145 @@
-Return-Path: <linux-kernel+bounces-315801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D0E96C728
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B5996C71E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC791F240CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DF01F24C36
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30C1E4131;
-	Wed,  4 Sep 2024 19:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82DD145A14;
+	Wed,  4 Sep 2024 19:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jhLp3WHs"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="O83/Gbf8"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332281E412D;
-	Wed,  4 Sep 2024 19:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F6144D1F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 19:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725476850; cv=none; b=hapQLYPlo39cd0GU/0++NfCA9uUXcR9MouQ5qjzgus2jOAsT1vLo6vFWuke5j3vs5BznZeg19GMV4P1zkjQwN5DjYyzJhVkcWAc7PLlrPGrx1e6wKu4ZQR/+dwq/7CABElFxyeUzMouFXZ2H15Z94nZvXMIsK/I3P4OfApZWhA8=
+	t=1725476839; cv=none; b=fvgaGRunIbcIgqUQSrr49mwrHRm7xSwhmWYnwgNSELW8I22uwvwSJbDrgLpodWgjcqk0D7v9Fc6uqAYKnMTS4SkJgZiGb88y5wx2IAmcsvgOpHq3Ry59Bviii2EA88jqSB4PYVfTbPZw+5jH1NN/veVgVJWTDb6CYABZRPvCk5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725476850; c=relaxed/simple;
-	bh=I7+cgrE+rn4bBBFXLPig4HthUyuVfUv7TFU7VBXdYK8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rgLCkbR9cg4NTNIwVYDQnJRbvedjQwBIBgfw9D9ZJM1c7AmdQvTl3YzNBlJT27tyDX+dHxekU5dCNzHoYdez+NFSWvR3mbRepZ5c9d9fHcHQ0bTGNPVo17lqrnuO137u0ekWHs+XdIXxxVi51xQW1X1MOoulkvOdulX+t3OglI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jhLp3WHs; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YLYNjnT/IKCKvjMfxNgrcLACsIljWuuAqppXEoSA080=; b=jhLp3WHsxJv+bA8hQ7QijhyMsi
-	JSqQkzGb2x4zr/eujOXTcxTSPNHs5COFt/Kp5mspKLCM/837+Mp2SSMmnvJ7ytuEUnqD7HRDizIqs
-	vAZRUwQCAo9hfF4GsKweU3oY4dKXMoEQb1GYSYU06csphLoke4TZQH0a5InJN8P5p6ivebJkRyO+4
-	t0Q4doz1cNpTcKVXbB2DN0OTF1ayG2o6+QYTZ6/hR+GfIHX2Jatqid+S0g9XyGD9vHcsAiWudw6yH
-	aZ29bPJ28URCVKVtJ5njXRMihG7ANKMzJ0iGQaamUzKv9DSUhRV/tDngV96ELtUsRia4t8X5q7ezO
-	lUOgSvmA==;
-Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1slvLY-0002Po-D9; Wed, 04 Sep 2024 21:07:16 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>,
-	linux-rockchip@lists.infradead.org
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 0/1] media: rockchip: rga: Add rk3588 support
-Date: Wed,  4 Sep 2024 21:07:01 +0200
-Message-ID: <172547678275.2721598.8597776431776777488.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240831182424.758816-1-liujianfeng1994@gmail.com>
-References: <20240831182424.758816-1-liujianfeng1994@gmail.com>
+	s=arc-20240116; t=1725476839; c=relaxed/simple;
+	bh=hLtrV9fo2ENFsppI3EM5//2a1v6xLdR6UciGmLp3E0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAjn+6z914rrce6MLO3Xq+T91w5t54fccLBHV/Y5CAD/A9KBTQAe2vnZoYb695i1PSfFF4Rdvh3MoBUsqRU5skF+Hz9ueb2FIk9GQVFn+HgDqB4lxAd+t+5Urj/245FUqNurrc0HxWPRTth71EBoonpIlVsQ1h0WNgZnTidXlu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=O83/Gbf8; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d8a4bad409so3098233a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 12:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725476837; x=1726081637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o2U7wgEbLS4i4a8ingcWCBDQrhNmwXrz+ffgx64j+qE=;
+        b=O83/Gbf8QHytDjtKBC2VP1NHGE69K97QzsnnPLhood4y27NcYWvbRpAYJZHt9lWN5L
+         piIbJArzYN5Qf7SPBI49vUE2VjW4GYvYSSeWevifsRIo2JwxWESaOWjUw9KNQUlcAOjW
+         M57C0o6ln8DywnEEETUAFokbAoSyohPtRCDiZcplIwBMyuz2tior5wk9DBWcDqSCynVu
+         jAvaHC4YqJY0ofPBytPoIllLrn/HiP7br0fsxdsL6Iq9qfvJZ6jQmTfrZAaTKNkj8iqz
+         t2z+vruq/jHHUU7ujoGLdO82BtEDxwSzFDLuOmaaNt8DQwT2aKkt8z2EJBcsRPlrEHcB
+         kXQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725476837; x=1726081637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o2U7wgEbLS4i4a8ingcWCBDQrhNmwXrz+ffgx64j+qE=;
+        b=hCitRmZJNgyGYKiBSNmw/JwnraiZ2K4U0d5lpmgn+YrjobMZATbjl78po2hMqbcHQh
+         HtR4PiaRejyykiaZPqrXFAD4T8h7IHtaBm3Yql6It/1uGt90oEG4HPq9lVIJnZm0Mtg/
+         CeAZzV0CpXlw1yg9HIBcGQ1bm0EdD0qegL6pfwzIHol5/NeuGJKVcEVyN8Gpvd9NF6ic
+         mfWIgYSguVoITYuhlbbHLZke0zFdE42R7Cq21sO0FS0ICv7SF+DhTrsunf+FnxnZRSte
+         fn+lVKfc2FqDO/4YQFSXJ0ADICIw5VNZq5t/pfRfBUrrBaZfjd3JkgbkUbb0ys6Az66r
+         a9Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXC73J4aVbsrKCSB5CIGZtPgy/9tUBz0xh2YTKbyqng+mY9nLJEKMIP7B2kbAijUUQ7aT1f/3gpThX8Mvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHnDuSMKvapi2332KJgen6WINtiIYrGp1TMJVdCSsi8zM9BqGG
+	XACMgMqZdlvsgXz9KPeNncVoLKeQizRcLrtkTdIfG5LyF40pE6SbpDlGGGEvlkg=
+X-Google-Smtp-Source: AGHT+IGRXMFw8eODDeHuSZGixob1QmbWy894YR3dac/q8kTYt2afjYPzXJiDq5qdDnRm4AHLgT4d4Q==
+X-Received: by 2002:a17:90b:300e:b0:2d8:27c3:87d7 with SMTP id 98e67ed59e1d1-2d893284ebdmr13545892a91.8.1725476836620;
+        Wed, 04 Sep 2024 12:07:16 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2da53740084sm4858056a91.32.2024.09.04.12.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 12:07:16 -0700 (PDT)
+Date: Wed, 4 Sep 2024 12:07:12 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-mm@kvack.org, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH 3/3] mm: Care about shadow stack guard gap when getting
+ an unmapped area
+Message-ID: <Ztiv4NtsIkKnyiLO@debug.ba.rivosinc.com>
+References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
+ <20240902-mm-generic-shadow-stack-guard-v1-3-9acda38b3dd3@kernel.org>
+ <is6ewj3bhtqy3zadj6lbdv6maupx4kmduvhny66ntifkji6hoj@xmhcf5jt4o66>
+ <dbaf5653-df46-4e17-bce1-aec7fb168197@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <dbaf5653-df46-4e17-bce1-aec7fb168197@sirena.org.uk>
 
-On Sun, 1 Sep 2024 02:24:23 +0800, Jianfeng Liu wrote:
-> This enables support for rga2 in the RK3588 base devicetree.
-> Dt-binding of rockchip,rk3588-rga is already merged to v6.11.
-> 
-> Changes in v3:
-> - Rebase commit to next-20240830
-> 
-> Changes in v2:
-> - Sort node by bus-address based on next-20240604
-> 
-> [...]
+On Tue, Sep 03, 2024 at 08:57:20PM +0100, Mark Brown wrote:
+>On Tue, Sep 03, 2024 at 03:41:49PM -0400, Liam R. Howlett wrote:
+>> * Mark Brown <broonie@kernel.org> [240902 15:09]:
+>
+>> > +static inline unsigned long stack_guard_placement(vm_flags_t vm_flags)
+>> > +{
+>> > +	if (vm_flags & VM_SHADOW_STACK)
+>> > +		return PAGE_SIZE;
+>
+>> Is PAGE_SIZE is enough?
+>
+>It's what x86 currently uses so it'll be no worse off if it gets moved
+>to the generic code (there's a comment in the arch code explaing what's
+>needed there) and it's enough for arm64, we only do single record
+>pushes/pops or (optionally) writes to unconstrained addresses.
 
-Applied, thanks!
+It's enough for RISC-V too.
 
-[1/1] arm64: dts: rockchip: Add RGA2 support to rk3588
-      commit: 13066fc101ca2deec1c9619e2f82ca437f38a6da
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
 
