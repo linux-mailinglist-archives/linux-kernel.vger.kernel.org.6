@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-314107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D081896AEEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:13:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD0196AEEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D97671C214A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:13:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399DDB244D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619B350A80;
-	Wed,  4 Sep 2024 03:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C947A6A;
+	Wed,  4 Sep 2024 03:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OlOqiMpz"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DAEECgvZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182764EB51
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1668F44376;
+	Wed,  4 Sep 2024 03:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725419579; cv=none; b=QeEdLy7hxJVUW6sYCDeCHXQBnM6anyF1j2+WdT7FrcD3n/3KH+PUK4zvvDz113Ks/64wQtrru8o/XH9AxjCQki9rKMV3znacK91bWQomDoj24vWaD14FGeMPq+NvS3/tY6yeksLP7uFFOKZThpLbSX0xMNBngI5MjixkiaV6aJU=
+	t=1725419652; cv=none; b=XQ9uJOa9jms22hi7snnviZ2JDTpuFs3YdT1hldoeWALlH6x3c53klndlD8PtJe8o92NlYG3VGMAKxpGW7aB8ntKHnIpF/Pp0InVeRbRB9zJHScY1HUQgAak3BQAH0HsgjgvmbUJ2B6lFB94MR6OdtlJN1kKQeEbZBLTqMUV6ctE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725419579; c=relaxed/simple;
-	bh=SPQo202uUuJG+JmR0EvjstYyCdAd9ZrJg8PJZ7Brx0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JptGvnrZRDGXHdEYmlEni6pG+TT2TYUTkP3BL3jp+rjJhmQk5Jxg6WLnO6kE2cDTKUWDK3cp7493UUabJ0naz+sXjM/NB0yhoLyKKCCASfGW8jTP8VLXHXFMCgfSCQWkzlmJ7WroGGbaAzeRL8QgNs4rqcP/5JjWke8Y6WCZ5ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OlOqiMpz; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7176645e440so197766b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 20:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725419577; x=1726024377; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVPWu9sUqLbHT5iyV7ZfxkiCdl2In90sWFTTzj0LOBA=;
-        b=OlOqiMpzxd1WAqIDSoQ50ufJu4GeAGcznGylOQMY/0m6OMOkMIU0TfWnPRHw1HQHc9
-         nW2E6IKYox860MFDOFx773ytjwRM7JjzmMygizWm/8RIjpk1/VaVITJ/EMhSrtWyClP4
-         UPhQIee32H/A4UeBj1L9S7uQNzTbXUp3/13BQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725419577; x=1726024377;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TVPWu9sUqLbHT5iyV7ZfxkiCdl2In90sWFTTzj0LOBA=;
-        b=F/Wjk4ZxfkPPUCLzmc68qcJUMb8lic0+7WINFm03N228bi3vlnaPCw8xHfGhsfx5md
-         PK/D5+wGRq8zA5o2jsLrzuOAH2aHLEFJxSIwRq9cF7eoYPLn5S0pTBNXafXxOGLFZ5a+
-         vWi0+XjIuLIPRNdBnctbnJPXhLO+4s810VRJlKxrfSU9QOE23nmjZ6inH29WCuwN37ST
-         dIE8USlDv413n9xg8Y631XwlkFd6AimdJ2JgnaspZ8DeFogbumyCC8vO4vbWKJswhFhQ
-         cwrZoLTQGBVXZH9QnsYgbzaXi5HAhHa6NOKlEs01LJGrPn0sOdJHcvLsBN7fPdDj02Wo
-         N/ug==
-X-Forwarded-Encrypted: i=1; AJvYcCXtVd+42ngg2BWJasncS4hHZSC9zNInlYeoLTNNyR1H0PyQLpfHjMiWzurvSOyEA+1WA8dPUXD+/MeKeAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXT3HPV4jyMujxxewW0Xn5YjCifEPqtMgEoLLTaKrQzT9YHmf/
-	oeu5lRD0capKDvmc/sGp7UtquWL6yXyiIstl/hV28uidbjGMu+IVtb2po7mNag==
-X-Google-Smtp-Source: AGHT+IFvkHAwDXcuJE+SuxW74G8xVLUNQ0a7z7IakAQfJsKRjR1RkSpDa5RGzx9oZKjbHyQbyUU4Zw==
-X-Received: by 2002:a05:6a00:1895:b0:710:9d5e:1154 with SMTP id d2e1a72fcca58-7177a91f845mr1429191b3a.2.1725419577304;
-        Tue, 03 Sep 2024 20:12:57 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:51ae:4bbd:c856:6cf0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717785b9609sm569140b3a.215.2024.09.03.20.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 20:12:56 -0700 (PDT)
-Date: Wed, 4 Sep 2024 12:12:52 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Kconfig: fixup zsmalloc configuration
-Message-ID: <20240904031252.GB1602548@google.com>
-References: <20240903040143.1580705-1-senozhatsky@chromium.org>
- <20240903175528.GA1190078@cmpxchg.org>
- <20240903142847.f03362654cac51bf4617fe18@linux-foundation.org>
+	s=arc-20240116; t=1725419652; c=relaxed/simple;
+	bh=z6T3uj9S2hkRxDxkKdsAyCx06x8HiMo2ZXpBW1azHJk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=njqgi+zjRuP8Z1SS4Nc6yT8NIFeXYgDkDmhh3wsQn2wstaJqK0tJmWbu6A1aoQW/6gWrHV6t/sjGWVjxM6Fc7rSCVP02lNKcSN3q33QWZDy7sDn5Ql/CQQx/Cu330nF0dvKifKpOGABDWfti6igeZKgK3OqAQOCGvT18tvgLwBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DAEECgvZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LYgM8032298;
+	Wed, 4 Sep 2024 03:14:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=p0p3mrIyNtI+cSSSwYLOPw
+	qjUVw7xDUfKE1j1PtrrJs=; b=DAEECgvZmZatNwQ6h8EMjD8Bz/D+uQYO7vz2Bh
+	9GEj7JDElzmURR3GGR6rlHte5BHRG6r4s/E2qTYjkPTb3RxKPWhPULeR8oTLHMKd
+	KXb1eGMy+ueWU0ylDBeZ7DKK/51Y9+ciXKWuGzEwDhGMGJKcPTZtIQFEHcJn4lvX
+	TBSbVsVyg32NHAoGnSOLZepInfQZvhAM90jwx4GKQRm3XDRNEFXwa9OwQv0FVG5C
+	9Mz7o7ltvp4RVElKoH2UNP0Sn9ri79syDk0O9eSx5Z5hCyGiI2QuJ2Wq3K7F8pY6
+	CjVgu7/EboG/sQCadOC7IC+TSjxSvLbY+fFkccq6pfrajpHw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxf97cr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 03:14:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4843Dxho004531
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 03:13:59 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 3 Sep 2024 20:13:56 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <johan@kernel.org>, <konradybcio@kernel.org>
+Subject: [PATCH V2 0/2] firmware: arm_scmi: Misc Fixes
+Date: Wed, 4 Sep 2024 08:43:22 +0530
+Message-ID: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903142847.f03362654cac51bf4617fe18@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3optl2gflhvMaeSm-vpRaecqybq2S-uz
+X-Proofpoint-ORIG-GUID: 3optl2gflhvMaeSm-vpRaecqybq2S-uz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_01,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 mlxlogscore=668 lowpriorityscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409040022
 
-On (24/09/03 14:28), Andrew Morton wrote:
-> On Tue, 3 Sep 2024 13:55:28 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> 
-> > On Tue, Sep 03, 2024 at 01:00:22PM +0900, Sergey Senozhatsky wrote:
-> > > zsmalloc is not exclusive to zswap. Commit aa3ba6d72ce0
-> > > ("mm: Kconfig: fixup zsmalloc configuration") made CONFIG_ZSMALLOC
-> > > only visible when CONFIG_ZSWAP is selected, which makes it
-> > > impossible to menuconfig zsmalloc-specific features (stats,
-> > > chain-size, etc.) on systems that use ZRAM but don't have ZSWAP
-> > > enabled.
-> > > 
-> > > Make zsmalloc depend on both ZRAM and ZSWAP.
-> > > 
-> > > Fixes: Fixes: aa3ba6d72ce0 ("mm: Kconfig: fixup zsmalloc configuration")
-> > 
-> > I can't find this commit upstream.
-> > 
-> > It looks like this was actually broken by
-> > 
-> > commit b3fbd58fcbb10725a1314688e03b1af6827c42f9
-> > Author: Johannes Weiner <hannes@cmpxchg.org>
-> > Date:   Thu May 19 14:08:53 2022 -0700
-> > 
-> >     mm: Kconfig: simplify zswap configuration
-> > 
-> > instead?
-> 
-> Agree, I edited that into the changelog.
+The series addresses a couple of kernel warnings that are required to [1]
+to land.
 
-My bad, I didn't pay attention to what checkpatch suggested as an edit.
-Thanks for spotting this Johannes and thanks for fixing this up Andrew!
+[1] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
+
+V1:
+* add missing MSG_SUPPORTS_FASTCHANNEL definition.
+
+Base branch: next-20240903
+
+Sibi Sankar (2):
+  firmware: arm_scmi: Ensure that the message-id supports fastchannel
+  firmware: arm_scmi: Skip adding bad duplicates
+
+ drivers/firmware/arm_scmi/driver.c    |  9 +++++++++
+ drivers/firmware/arm_scmi/perf.c      | 13 +++++++++++--
+ drivers/firmware/arm_scmi/protocols.h |  2 ++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
