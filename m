@@ -1,62 +1,69 @@
-Return-Path: <linux-kernel+bounces-315998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FA196C99B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:39:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4CC96C99E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C92BB233F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914681C22709
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F40158DC0;
-	Wed,  4 Sep 2024 21:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8618E155A26;
+	Wed,  4 Sep 2024 21:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YkSTikQP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LfdQJv+U"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3B14F9D6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C78914F9D6
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725485956; cv=none; b=nFaKC8FmVXDmk+E4D34PofzwVPGyrW/nXzUjG8sXHMYx24LB3B5Ik4set3R7u6fjS6dl6AjWLCCe+MrCBSazZU2fGKCuEgpgYZH7e3AU9GrHhztZCW7Msd+NB4F4zZM30yEdooMKNX0a1Bg2+tIHqf0rhlbr+VadA1/qfPFvNQg=
+	t=1725485986; cv=none; b=IyHErE1RsQjXXHb5rfN5XSbMXuKmCRfKrSNVMsSUHif+GnzWLsC/A4gEX1ll9ZGL1MjY/UgoP6IEcP3I/vHeFLzyh92rNMIdwn5FEURixeCjaU714235Py+xYPEpZuFljsFbjR43ZWrqBqdJ6m/+tAttMeOzIlL/cFWyh5kWAJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725485956; c=relaxed/simple;
-	bh=rilxRBy8H/TW9SQb3Jd3rlJ4uWvpZ3oeAmSp0ONbM5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jikIjgdWFPcxfjF2XB0cbqYt62YwmjopP09OBLBYDR71bDXy2drVQyLWWSUvpTrRakqSvLQJ/pjbYjWMTFVw2qcNLzM+JAKW+VvtcWO5sAiC9A1UOS2vBuPkgWTFM+NmDKfaT8s7Rhs7RgSHrDH0jxNjBghSDAKPLJa+xViFj3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YkSTikQP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725485953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7sVZRygMt8WVBp9EDmrb53irfdcUMzJKYJx8kYK3v4=;
-	b=YkSTikQP5mN58zcIzcpSo4LYRkTPxDI/qTMdYLg9mdKvbYFZf6f6ww/EwquFz9UF6vsweY
-	uajiptZqIxItuV4g8Llp5as9NByUDRJEEU689UdiY+h2+4rUXyRoMZDpOtFbD5dBoNBhiZ
-	IQg56ydU95Sm0djHOQF1S4T0Gk/WPUU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-X8Ry8Vj1N_27BdOOg6-sbQ-1; Wed,
- 04 Sep 2024 17:39:10 -0400
-X-MC-Unique: X8Ry8Vj1N_27BdOOg6-sbQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CEF601955F65;
-	Wed,  4 Sep 2024 21:39:06 +0000 (UTC)
-Received: from [10.2.16.172] (unknown [10.2.16.172])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7B88F1956052;
-	Wed,  4 Sep 2024 21:39:02 +0000 (UTC)
-Message-ID: <f69793ab-41c3-4ae2-a8b1-355e629ffd0b@redhat.com>
-Date: Wed, 4 Sep 2024 17:39:01 -0400
+	s=arc-20240116; t=1725485986; c=relaxed/simple;
+	bh=Paag6BFcURhpeWfK5i4jM43Qb7+H9a1yCp9aenH53Dc=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=b+MhjgqjP70bTLPfpnwIITkDExdnLKI2lLloKTBCnNf0co3579uKtaUoPQNFU4ijaQmV5EtBF8u080RX5yIv8dhpse8IXUtKQyFk+RDA+l73wRU4RyTFm/uokIshfsRlk5DmSycwzH1oyrnLKKV6dSH6lBPTrmAtg4KAaUZRT9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LfdQJv+U; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2054e22ce3fso1154715ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725485983; x=1726090783; darn=vger.kernel.org;
+        h=subject:from:cc:to:content-language:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cwfWMshAqNAR3bH5Ykm0ByElNf5VG1mmbiGlzTqRPs8=;
+        b=LfdQJv+UXJA8Z+DSdub+7zmGuwie5n5AlOBr48FA02GAiLH1ZILl4aO9tl3XQww6Gy
+         oZdkDm7RmpfzOqVNd9ez3N8sQq/YQCF8t4qobt3z6wR4DV0NS6o5vdbz+uWlCJZjhaaB
+         nFBCY3DQK1ef6eCY0xj+E+JAjUsKEYU856hag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725485983; x=1726090783;
+        h=subject:from:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cwfWMshAqNAR3bH5Ykm0ByElNf5VG1mmbiGlzTqRPs8=;
+        b=azFdtavrBdVGASNpDMR6Ng9lG80V1i0pfAYKn2ju/lmAtpPKsWEaT8iUjwmAXhdegH
+         3ccD72xIgfoBkxQZqXzIZ8c03NA29SvzXoSFT8/bfowc0q4cotr2uxI+kufULbBh0Jgw
+         6BPwfmcynRorFHL4qMVx9imjjf0KbCaudb/6cOm2rZN5wOdiSZo4YzW1tR/ohNjZZpID
+         FBylO4gRON1inYgUs9uL50XyjbTz/kcDGMQ6Aywc9riUMQnfV0qQxFTzrkdFI7KY2Wbt
+         exsGbP+iCGa5Mqzr90AOfeRi9wS4rsz6+ImZ6HQqARZFbiol0AXTIc+zgvngAzqwPIvb
+         U5pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWveoScAWQQ2Lkottd7EAvAHPS0oMbRBXZ6YomJeDgNespEmiLQpRn2K+7uIpu8h9kd/LqzLJCp1dSSCsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt9dJZBX8IbxlUIPFX4z/T3/DiSe6+2ntacoX23GU+S2J7NP1N
+	MBdoLU7fM0TLvngxAyBf7FomFggLTvAv6mZAsYfi4dC1ooHpq7579VqUwcw0IDc=
+X-Google-Smtp-Source: AGHT+IEAA/h6f7ZFoMxwlg93ax03CUs3H89eXgOqsXr1R5YPu/3D7usW9VI0KLRUK5HfFeHTqxrFNw==
+X-Received: by 2002:a17:902:e5ce:b0:202:3a78:5d8a with SMTP id d9443c01a7336-20699acb74bmr79460275ad.8.1725485982330;
+        Wed, 04 Sep 2024 14:39:42 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae913b24sm17881555ad.12.2024.09.04.14.39.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 14:39:41 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------N7RuZE1AN07S4lT9ll8A81eC"
+Message-ID: <4fa8a1d6-ac65-477a-aab4-814e02eea2b8@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 15:39:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,188 +71,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/4] Introducing qpw_lock() and per-cpu queue &
- flush work
-To: Leonardo Bras <leobras@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
-References: <20240622035815.569665-1-leobras@redhat.com>
- <20240622035815.569665-2-leobras@redhat.com>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240622035815.569665-2-leobras@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ David Gow <davidgow@google.com>, Brendan Higgins
+ <brendanhiggins@google.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] KUnit fixes update for Linux 6.11-rc7
+
+This is a multi-part message in MIME format.
+--------------N7RuZE1AN07S4lT9ll8A81eC
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 6/21/24 23:58, Leonardo Bras wrote:
-> Some places in the kernel implement a parallel programming strategy
-> consisting on local_locks() for most of the work, and some rare remote
-> operations are scheduled on target cpu. This keeps cache bouncing low since
-> cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> kernels, even though the very few remote operations will be expensive due
-> to scheduling overhead.
->
-> On the other hand, for RT workloads this can represent a problem: getting
-> an important workload scheduled out to deal with some unrelated task is
-> sure to introduce unexpected deadline misses.
->
-> It's interesting, though, that local_lock()s in RT kernels become
-> spinlock(). We can make use of those to avoid scheduling work on a remote
-> cpu by directly updating another cpu's per_cpu structure, while holding
-> it's spinlock().
->
-> In order to do that, it's necessary to introduce a new set of functions to
-> make it possible to get another cpu's per-cpu "local" lock (qpw_{un,}lock*)
-> and also the corresponding queue_percpu_work_on() and flush_percpu_work()
-> helpers to run the remote work.
->
-> On non-RT kernels, no changes are expected, as every one of the introduced
-> helpers work the exactly same as the current implementation:
-> qpw_{un,}lock*()        ->  local_{un,}lock*() (ignores cpu parameter)
-> queue_percpu_work_on()  ->  queue_work_on()
-> flush_percpu_work()     ->  flush_work()
->
-> For RT kernels, though, qpw_{un,}lock*() will use the extra cpu parameter
-> to select the correct per-cpu structure to work on, and acquire the
-> spinlock for that cpu.
->
-> queue_percpu_work_on() will just call the requested function in the current
-> cpu, which will operate in another cpu's per-cpu object. Since the
-> local_locks() become spinlock()s in PREEMPT_RT, we are safe doing that.
->
-> flush_percpu_work() then becomes a no-op since no work is actually
-> scheduled on a remote cpu.
->
-> Some minimal code rework is needed in order to make this mechanism work:
-> The calls for local_{un,}lock*() on the functions that are currently
-> scheduled on remote cpus need to be replaced by qpw_{un,}lock_n*(), so in
-> RT kernels they can reference a different cpu. It's also necessary to use a
-> qpw_struct instead of a work_struct, but it just contains a work struct
-> and, in PREEMPT_RT, the target cpu.
->
-> This should have almost no impact on non-RT kernels: few this_cpu_ptr()
-> will become per_cpu_ptr(,smp_processor_id()).
->
-> On RT kernels, this should improve performance and reduce latency by
-> removing scheduling noise.
->
-> Signed-off-by: Leonardo Bras <leobras@redhat.com>
-> ---
->   include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 88 insertions(+)
->   create mode 100644 include/linux/qpw.h
->
-> diff --git a/include/linux/qpw.h b/include/linux/qpw.h
-> new file mode 100644
-> index 000000000000..ea2686a01e5e
-> --- /dev/null
-> +++ b/include/linux/qpw.h
-> @@ -0,0 +1,88 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_QPW_H
-> +#define _LINUX_QPW_H
-> +
-> +#include "linux/local_lock.h"
-> +#include "linux/workqueue.h"
-> +
-> +#ifndef CONFIG_PREEMPT_RT
-> +
-> +struct qpw_struct {
-> +	struct work_struct work;
-> +};
-> +
-> +#define qpw_lock(lock, cpu)					\
-> +	local_lock(lock)
-> +
-> +#define qpw_unlock(lock, cpu)					\
-> +	local_unlock(lock)
-> +
-> +#define qpw_lock_irqsave(lock, flags, cpu)			\
-> +	local_lock_irqsave(lock, flags)
-> +
-> +#define qpw_unlock_irqrestore(lock, flags, cpu)			\
-> +	local_unlock_irqrestore(lock, flags)
-> +
-> +#define queue_percpu_work_on(c, wq, qpw)			\
-> +	queue_work_on(c, wq, &(qpw)->work)
-> +
-> +#define flush_percpu_work(qpw)					\
-> +	flush_work(&(qpw)->work)
-> +
-> +#define qpw_get_cpu(qpw)					\
-> +	smp_processor_id()
-> +
-> +#define INIT_QPW(qpw, func, c)					\
-> +	INIT_WORK(&(qpw)->work, (func))
-> +
-> +#else /* !CONFIG_PREEMPT_RT */
-> +
-> +struct qpw_struct {
-> +	struct work_struct work;
-> +	int cpu;
-> +};
-> +
-> +#define qpw_lock(__lock, cpu)					\
-> +	do {							\
-> +		migrate_disable();				\
-> +		spin_lock(per_cpu_ptr((__lock), cpu));		\
-> +	} while (0)
-> +
-> +#define qpw_unlock(__lock, cpu)					\
-> +	do {							\
-> +		spin_unlock(per_cpu_ptr((__lock), cpu));	\
-> +		migrate_enable();				\
-> +	} while (0)
+Hi Linus,
 
-Why there is a migrate_disable/enable() call in qpw_lock/unlock()? The 
-rt_spin_lock/unlock() calls have already include a 
-migrate_disable/enable() pair.
+Please pull the following KUnit fixes update for Linux 6.11-rc7.
 
-> +
-> +#define qpw_lock_irqsave(lock, flags, cpu)			\
-> +	do {							\
-> +		typecheck(unsigned long, flags);		\
-> +		flags = 0;					\
-> +		qpw_lock(lock, cpu);				\
-> +	} while (0)
-> +
-> +#define qpw_unlock_irqrestore(lock, flags, cpu)			\
-> +	qpw_unlock(lock, cpu)
-> +
-> +#define queue_percpu_work_on(c, wq, qpw)			\
-> +	do {							\
-> +		struct qpw_struct *__qpw = (qpw);		\
-> +		WARN_ON((c) != __qpw->cpu);			\
-> +		__qpw->work.func(&__qpw->work);			\
-> +	} while (0)
-> +
-> +#define flush_percpu_work(qpw)					\
-> +	do {} while (0)
-> +
-> +#define qpw_get_cpu(w)						\
-> +	container_of((w), struct qpw_struct, work)->cpu
-> +
-> +#define INIT_QPW(qpw, func, c)					\
-> +	do {							\
-> +		struct qpw_struct *__qpw = (qpw);		\
-> +		INIT_WORK(&__qpw->work, (func));		\
-> +		__qpw->cpu = (c);				\
-> +	} while (0)
-> +
-> +#endif /* CONFIG_PREEMPT_RT */
-> +#endif /* LINUX_QPW_H */
+This kunit update for Linux 6.11-rc7 consist of one single fix to
+a use-after-free bug resulting from kunit_driver_create() failing
+to copy the driver name leaving it on the stack or freeing it.
 
-You may also consider adding a documentation file about the 
-qpw_lock/unlock() calls.
+diff is attached.
 
-Cheers,
-Longman
+thanks,
+-- Shuah
 
+----------------------------------------------------------------
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-fixes-6.11-rc7
+
+for you to fetch changes up to f2c6dbd220170c2396fb019ead67fbada1e23ebd:
+
+   kunit: Device wrappers should also manage driver name (2024-08-26 07:03:46 -0600)
+
+----------------------------------------------------------------
+linux_kselftest-kunit-fixes-6.11-rc7
+
+This kunit update for Linux 6.11-rc7 consist of one single fix to
+a use-after-free bug resulting from kunit_driver_create() failing
+to copy the driver name leaving it on the stack or freeing it.
+
+----------------------------------------------------------------
+David Gow (1):
+       kunit: Device wrappers should also manage driver name
+
+  include/kunit/test.h | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+  lib/kunit/device.c   |  7 +++++--
+  lib/kunit/test.c     | 19 +++++++++++++++++++
+  3 files changed, 72 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
+--------------N7RuZE1AN07S4lT9ll8A81eC
+Content-Type: text/x-patch; charset=UTF-8;
+ name="linux_kselftest-kunit-fixes-6.11-rc7.diff"
+Content-Disposition: attachment;
+ filename="linux_kselftest-kunit-fixes-6.11-rc7.diff"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUva3VuaXQvdGVzdC5oIGIvaW5jbHVkZS9rdW5pdC90ZXN0
+LmgKaW5kZXggZTJhMWYwOTI4ZThiLi41YWMyMzdjOTQ5YTAgMTAwNjQ0Ci0tLSBhL2luY2x1
+ZGUva3VuaXQvdGVzdC5oCisrKyBiL2luY2x1ZGUva3VuaXQvdGVzdC5oCkBAIC0yOCw2ICsy
+OCw3IEBACiAjaW5jbHVkZSA8bGludXgvdHlwZXMuaD4KIAogI2luY2x1ZGUgPGFzbS9yd29u
+Y2UuaD4KKyNpbmNsdWRlIDxhc20vc2VjdGlvbnMuaD4KIAogLyogU3RhdGljIGtleTogdHJ1
+ZSBpZiBhbnkgS1VuaXQgdGVzdHMgYXJlIGN1cnJlbnRseSBydW5uaW5nICovCiBERUNMQVJF
+X1NUQVRJQ19LRVlfRkFMU0Uoa3VuaXRfcnVubmluZyk7CkBAIC00ODAsNiArNDgxLDUzIEBA
+IHN0YXRpYyBpbmxpbmUgdm9pZCAqa3VuaXRfa2NhbGxvYyhzdHJ1Y3Qga3VuaXQgKnRlc3Qs
+IHNpemVfdCBuLCBzaXplX3Qgc2l6ZSwgZ2ZwCiAJcmV0dXJuIGt1bml0X2ttYWxsb2NfYXJy
+YXkodGVzdCwgbiwgc2l6ZSwgZ2ZwIHwgX19HRlBfWkVSTyk7CiB9CiAKKworLyoqCisgKiBr
+dW5pdF9rZnJlZV9jb25zdCgpIC0gY29uZGl0aW9uYWxseSBmcmVlIHRlc3QgbWFuYWdlZCBt
+ZW1vcnkKKyAqIEB4OiBwb2ludGVyIHRvIHRoZSBtZW1vcnkKKyAqCisgKiBDYWxscyBrdW5p
+dF9rZnJlZSgpIG9ubHkgaWYgQHggaXMgbm90IGluIC5yb2RhdGEgc2VjdGlvbi4KKyAqIFNl
+ZSBrdW5pdF9rc3RyZHVwX2NvbnN0KCkgZm9yIG1vcmUgaW5mb3JtYXRpb24uCisgKi8KK3Zv
+aWQga3VuaXRfa2ZyZWVfY29uc3Qoc3RydWN0IGt1bml0ICp0ZXN0LCBjb25zdCB2b2lkICp4
+KTsKKworLyoqCisgKiBrdW5pdF9rc3RyZHVwKCkgLSBEdXBsaWNhdGVzIGEgc3RyaW5nIGlu
+dG8gYSB0ZXN0IG1hbmFnZWQgYWxsb2NhdGlvbi4KKyAqCisgKiBAdGVzdDogVGhlIHRlc3Qg
+Y29udGV4dCBvYmplY3QuCisgKiBAc3RyOiBUaGUgTlVMTC10ZXJtaW5hdGVkIHN0cmluZyB0
+byBkdXBsaWNhdGUuCisgKiBAZ2ZwOiBmbGFncyBwYXNzZWQgdG8gdW5kZXJseWluZyBrbWFs
+bG9jKCkuCisgKgorICogU2VlIGtzdHJkdXAoKSBhbmQga3VuaXRfa21hbGxvY19hcnJheSgp
+IGZvciBtb3JlIGluZm9ybWF0aW9uLgorICovCitzdGF0aWMgaW5saW5lIGNoYXIgKmt1bml0
+X2tzdHJkdXAoc3RydWN0IGt1bml0ICp0ZXN0LCBjb25zdCBjaGFyICpzdHIsIGdmcF90IGdm
+cCkKK3sKKwlzaXplX3QgbGVuOworCWNoYXIgKmJ1ZjsKKworCWlmICghc3RyKQorCQlyZXR1
+cm4gTlVMTDsKKworCWxlbiA9IHN0cmxlbihzdHIpICsgMTsKKwlidWYgPSBrdW5pdF9rbWFs
+bG9jKHRlc3QsIGxlbiwgZ2ZwKTsKKwlpZiAoYnVmKQorCQltZW1jcHkoYnVmLCBzdHIsIGxl
+bik7CisJcmV0dXJuIGJ1ZjsKK30KKworLyoqCisgKiBrdW5pdF9rc3RyZHVwX2NvbnN0KCkg
+LSBDb25kaXRpb25hbGx5IGR1cGxpY2F0ZXMgYSBzdHJpbmcgaW50byBhIHRlc3QgbWFuYWdl
+ZCBhbGxvY2F0aW9uLgorICoKKyAqIEB0ZXN0OiBUaGUgdGVzdCBjb250ZXh0IG9iamVjdC4K
+KyAqIEBzdHI6IFRoZSBOVUxMLXRlcm1pbmF0ZWQgc3RyaW5nIHRvIGR1cGxpY2F0ZS4KKyAq
+IEBnZnA6IGZsYWdzIHBhc3NlZCB0byB1bmRlcmx5aW5nIGttYWxsb2MoKS4KKyAqCisgKiBD
+YWxscyBrdW5pdF9rc3RyZHVwKCkgb25seSBpZiBAc3RyIGlzIG5vdCBpbiB0aGUgcm9kYXRh
+IHNlY3Rpb24uIE11c3QgYmUgZnJlZWQgd2l0aAorICoga3VuaXRfa2ZyZWVfY29uc3QoKSAt
+LSBub3Qga3VuaXRfa2ZyZWUoKS4KKyAqIFNlZSBrc3RyZHVwX2NvbnN0KCkgYW5kIGt1bml0
+X2ttYWxsb2NfYXJyYXkoKSBmb3IgbW9yZSBpbmZvcm1hdGlvbi4KKyAqLworY29uc3QgY2hh
+ciAqa3VuaXRfa3N0cmR1cF9jb25zdChzdHJ1Y3Qga3VuaXQgKnRlc3QsIGNvbnN0IGNoYXIg
+KnN0ciwgZ2ZwX3QgZ2ZwKTsKKwogLyoqCiAgKiBrdW5pdF92bV9tbWFwKCkgLSBBbGxvY2F0
+ZSBLVW5pdC10cmFja2VkIHZtX21tYXAoKSBhcmVhCiAgKiBAdGVzdDogVGhlIHRlc3QgY29u
+dGV4dCBvYmplY3QuCmRpZmYgLS1naXQgYS9saWIva3VuaXQvZGV2aWNlLmMgYi9saWIva3Vu
+aXQvZGV2aWNlLmMKaW5kZXggMjVjODFlZDQ2NWZiLi41MjBjMWZjY2VlOGEgMTAwNjQ0Ci0t
+LSBhL2xpYi9rdW5pdC9kZXZpY2UuYworKysgYi9saWIva3VuaXQvZGV2aWNlLmMKQEAgLTg5
+LDcgKzg5LDcgQEAgc3RydWN0IGRldmljZV9kcml2ZXIgKmt1bml0X2RyaXZlcl9jcmVhdGUo
+c3RydWN0IGt1bml0ICp0ZXN0LCBjb25zdCBjaGFyICpuYW1lKQogCWlmICghZHJpdmVyKQog
+CQlyZXR1cm4gRVJSX1BUUihlcnIpOwogCi0JZHJpdmVyLT5uYW1lID0gbmFtZTsKKwlkcml2
+ZXItPm5hbWUgPSBrdW5pdF9rc3RyZHVwX2NvbnN0KHRlc3QsIG5hbWUsIEdGUF9LRVJORUwp
+OwogCWRyaXZlci0+YnVzID0gJmt1bml0X2J1c190eXBlOwogCWRyaXZlci0+b3duZXIgPSBU
+SElTX01PRFVMRTsKIApAQCAtMTkyLDggKzE5MiwxMSBAQCB2b2lkIGt1bml0X2RldmljZV91
+bnJlZ2lzdGVyKHN0cnVjdCBrdW5pdCAqdGVzdCwgc3RydWN0IGRldmljZSAqZGV2KQogCWNv
+bnN0IHN0cnVjdCBkZXZpY2VfZHJpdmVyICpkcml2ZXIgPSB0b19rdW5pdF9kZXZpY2UoZGV2
+KS0+ZHJpdmVyOwogCiAJa3VuaXRfcmVsZWFzZV9hY3Rpb24odGVzdCwgZGV2aWNlX3VucmVn
+aXN0ZXJfd3JhcHBlciwgZGV2KTsKLQlpZiAoZHJpdmVyKQorCWlmIChkcml2ZXIpIHsKKwkJ
+Y29uc3QgY2hhciAqZHJpdmVyX25hbWUgPSBkcml2ZXItPm5hbWU7CiAJCWt1bml0X3JlbGVh
+c2VfYWN0aW9uKHRlc3QsIGRyaXZlcl91bnJlZ2lzdGVyX3dyYXBwZXIsICh2b2lkICopZHJp
+dmVyKTsKKwkJa3VuaXRfa2ZyZWVfY29uc3QodGVzdCwgZHJpdmVyX25hbWUpOworCX0KIH0K
+IEVYUE9SVF9TWU1CT0xfR1BMKGt1bml0X2RldmljZV91bnJlZ2lzdGVyKTsKIApkaWZmIC0t
+Z2l0IGEvbGliL2t1bml0L3Rlc3QuYyBiL2xpYi9rdW5pdC90ZXN0LmMKaW5kZXggZThiMWI1
+MmExOWFiLi4wODljODMyZTNjZGIgMTAwNjQ0Ci0tLSBhL2xpYi9rdW5pdC90ZXN0LmMKKysr
+IGIvbGliL2t1bml0L3Rlc3QuYwpAQCAtODc0LDYgKzg3NCwyNSBAQCB2b2lkIGt1bml0X2tm
+cmVlKHN0cnVjdCBrdW5pdCAqdGVzdCwgY29uc3Qgdm9pZCAqcHRyKQogfQogRVhQT1JUX1NZ
+TUJPTF9HUEwoa3VuaXRfa2ZyZWUpOwogCit2b2lkIGt1bml0X2tmcmVlX2NvbnN0KHN0cnVj
+dCBrdW5pdCAqdGVzdCwgY29uc3Qgdm9pZCAqeCkKK3sKKyNpZiAhSVNfTU9EVUxFKENPTkZJ
+R19LVU5JVCkKKwlpZiAoIWlzX2tlcm5lbF9yb2RhdGEoKHVuc2lnbmVkIGxvbmcpeCkpCisj
+ZW5kaWYKKwkJa3VuaXRfa2ZyZWUodGVzdCwgeCk7Cit9CitFWFBPUlRfU1lNQk9MX0dQTChr
+dW5pdF9rZnJlZV9jb25zdCk7CisKK2NvbnN0IGNoYXIgKmt1bml0X2tzdHJkdXBfY29uc3Qo
+c3RydWN0IGt1bml0ICp0ZXN0LCBjb25zdCBjaGFyICpzdHIsIGdmcF90IGdmcCkKK3sKKyNp
+ZiAhSVNfTU9EVUxFKENPTkZJR19LVU5JVCkKKwlpZiAoaXNfa2VybmVsX3JvZGF0YSgodW5z
+aWduZWQgbG9uZylzdHIpKQorCQlyZXR1cm4gc3RyOworI2VuZGlmCisJcmV0dXJuIGt1bml0
+X2tzdHJkdXAodGVzdCwgc3RyLCBnZnApOworfQorRVhQT1JUX1NZTUJPTF9HUEwoa3VuaXRf
+a3N0cmR1cF9jb25zdCk7CisKIHZvaWQga3VuaXRfY2xlYW51cChzdHJ1Y3Qga3VuaXQgKnRl
+c3QpCiB7CiAJc3RydWN0IGt1bml0X3Jlc291cmNlICpyZXM7Cg==
+
+--------------N7RuZE1AN07S4lT9ll8A81eC--
 
