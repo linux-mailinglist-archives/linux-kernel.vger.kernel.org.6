@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-315390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E690996C205
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:18:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CC196C207
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE6D1C247A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:18:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDED1F2383F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BAF1DEFD0;
-	Wed,  4 Sep 2024 15:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB011DFE15;
+	Wed,  4 Sep 2024 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxSZiuXe"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9CI1Y9/"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A624D1DA608
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE411DEFC0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725463103; cv=none; b=crvAZ76W9+kf0tI7AM4R7f7NdVH6+jqPLZ1RT/BBny+oxgkbGD4xCeroAP4NH40GkPPVWtd/QwP5spCzjzIKiuXqhsdROQjR7+WsDS2RF6KgBV0PkMNf7jOt8z9TrFzzGf1m69w+enNhAdMn2N8QcjeYyVdntzWlbCxpXoPwLLw=
+	t=1725463105; cv=none; b=DbPlPMjinlz5VfkweKqlz5vg6gqTrqdQ56VlQH4PZxNug0chwce1qH3w92Ur0GNrF0ObhQGSSIzFVI5C8x3VHy1j3138g5A1Kxa3i6+gMvqfuaz1rAaFxCOb/OwiXjRTvAV6ZpKdz53x1Uh/wuKA8IPpiG+f07VmEaDUSizrDBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725463103; c=relaxed/simple;
-	bh=hfy/rgIIPDC5YMhAasDnsWW4tqAqTW97g74OJxZy/NE=;
+	s=arc-20240116; t=1725463105; c=relaxed/simple;
+	bh=n5b9G0+Y/RrgEQcdH2Hokzr9vzO3959ZC8lNAhQ3N+Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kdakA6xkBBUMUdLIGLWwrYYw6FUABrLGYzE4y6z6UclNzET2RZMDlJRHRHkgzD29kvlZhmkdLNUzOxq2NN3YJuUhR+rhuBkpeZKJA067miUvsVkM/EqJimzyNzOhwzq2WIHK+jbjp8v8qs4zxzHzZwukU4ewN3njjIdKV5Wlv04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxSZiuXe; arc=none smtp.client-ip=209.85.210.49
+	 MIME-Version; b=Ptvcfj3J4XtiAas79yXIYVvrpHnC/P4ECh2LB8iCgg/PDY5b/NWxn7F4r2oJ/3oxrUf5FqR8vDHpCXuAvEjtHtv5M47ypdNIMLIs2F2zg3K4qRd5eNoAiudvw4tYZFCbVvY1KFvH/5g1CK2nZgQMA9XYp1ijRMHMIaJ4Vhxhnzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9CI1Y9/; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7094641d4e6so2652837a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:18:21 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70f60d73436so3768057a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725463100; x=1726067900; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725463102; x=1726067902; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g1PEqwqIKP4NM5bMSR2b34sKqyNHaAPvN22LwlO+2ok=;
-        b=CxSZiuXeesz50q5kAOeUxX3qG3giCavZ2QfLnacVV4/RXp8O0FEChxafbEXDaCtMil
-         i3uIJzaWjqXKDw7O8djlDWDvycrGjApvHqLJW4DiXo/kCxC3EHPuOggEl/uVGBnQhq/C
-         NlCg3JbXc30Mxyb015MyM6AqrjWsrDr/981rwnzWamFtIho9/qzn1AJeR1tbBz+XgueZ
-         1FnnyYRkmbxIEmAGTm9cM8H6PlAF4G91r3BHy2iZdtPbJH528jKD3T+971udAX+T+f/+
-         mZq1wc5BwFRtwspCIFf2cgmR3ZOQHhQ2MOD/hlQUGOiVU1X9QpldoiCCe4tda79xigfW
-         bH4Q==
+        bh=5eNsui7Fa+rY/jtC8BKPiUjnxeoWmpi4+sMEvN8zPeo=;
+        b=k9CI1Y9/23C0/HX3goDo98r5vM+FaAnS6TkRQvkEMe3czXAXVRi5rlEVApGQbyvQp6
+         p74PFrkroHETlTBKseNTKrW3N1QItKSsDLRET/38CS/L1S3qOVnm2wwG4wKpCRZH4TI2
+         EWl2CNhXOQTCcsnJ42surfBK7uO6We6fhG0cT1+Pc+qX108oPPs9SxQGmDIRQPFFzwAp
+         QJPMEuYEK+yiv4aU8o++B30CwL/fSZnG7rY6C9wN4XPsf8eKlme1/aOsXmra8CeFF3fz
+         HUVlePxXJENWJ3FglAqT70m2DP+YZDIJAohjMjk3cmYGaqsU6vJh5nscdk6VhZRdoGAo
+         JqvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725463100; x=1726067900;
+        d=1e100.net; s=20230601; t=1725463102; x=1726067902;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g1PEqwqIKP4NM5bMSR2b34sKqyNHaAPvN22LwlO+2ok=;
-        b=wQVLfcdVW0N1AZzq2PEiV1jJsl0sM98L5CyhosbkfLAx005k27zYzxlsWGC2auTiSc
-         VDZVIK8sMinz2wGMKnB2hqBuL2RPlzVUJp4aIidEERvLppBLVUkhyEXotMSL5L586j6J
-         ppKTRectCInQdFJlMC++KMhJlFjXiDJPFItldBt7p6iS+MTl+iKmQPzEL8ozEjGa5eig
-         9F4GKHSPmhgixtweRIpftL0m2YMCTk0w8dc/5gpKviye1JevcLMCJdan/UFbUmCFKCf8
-         vap0TzEAYGZPj6qreIWFOf5Grn2T2otdpmI+51yEPmbZdGaPBCDEZoWT4NDnlYeAqaaJ
-         KbWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSk1IeOAHaChqgcaYyYxZ9kr/sgs89OIOibge4BQmtPT34FQIY9xKf7zincUMDc3v1xirhSS9Ae0l8ubE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9V9i1wPjueEFT4bakI+IppcimbpBdQ/MSy/eRpU1LrUBK9dT3
-	/F7RPlV1iAnP8J84S0XoMz7QOTIjWIiZ0f65oQOS+N6lahRFX9bJ
-X-Google-Smtp-Source: AGHT+IEJpXAOYwS2mKFK6HgoKBqnJHyNpR9had8i5M1YX72q29HtYb9hQQZPQRA7BfYu1Z/3OrUajg==
-X-Received: by 2002:a05:6808:4492:b0:3d9:30a2:f8f1 with SMTP id 5614622812f47-3df1d5b90d2mr14894855b6e.8.1725463100702;
-        Wed, 04 Sep 2024 08:18:20 -0700 (PDT)
+        bh=5eNsui7Fa+rY/jtC8BKPiUjnxeoWmpi4+sMEvN8zPeo=;
+        b=exUV/cCQMi/o37qGTAWRRm7cUDiYsZrJxIsEIE1xN162MkeSdgWskGq39FbhgJkCWs
+         xsTVPnyJNeC+v6q14ADXzKYS3hP5Uh+PoJE4d+egQg5sFCzHTlTAh5TBqqp1vzJWUbA4
+         QgaIZ1euxU0hou+lOqqDEVTRls3Z3mK1Ph8gxPTgn5oyjC92OWCzbQ8BmQ8oCM0GLffF
+         4fMqHxK62mUPYRJTtK3l0X7dPI0b9LDuv/HrTyUN0H2rz7lwXxQ1LM6rPpHNfpL5RYwv
+         dcS+8Ubi0O+n1OdZFBjWRb1ecRumKIqdrCRdgOEjOn8P0LPR8O5FNxuBjUZxrSsQa+zN
+         Zy8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWymoufe9gusApkuK/wyQ0eH+y2Rwi+677JQsrN78z2en2eryUNx3YfYp2jPdcGB9wiSnOkhNVmfrJ7zt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxcSYOoBG/SdgRYbJpL/OVDrCAguSwM5sWNhTyPSWyLD049bnh
+	2tNiiqh6SXftGNCMj+e0iyP5TUEgdxsYYF4nsQQeH6UOQv8PX0pV
+X-Google-Smtp-Source: AGHT+IGWyC05ZNcwaeJftczG4VpiVo1epiLVuHQFEmoF7Vd6MOOA9QqjlvdUWPPG4Xat19zdBaPCjg==
+X-Received: by 2002:a05:6808:2393:b0:3d6:2e85:5c34 with SMTP id 5614622812f47-3df05e5eb49mr24377879b6e.38.1725463102022;
+        Wed, 04 Sep 2024 08:18:22 -0700 (PDT)
 Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3df117db1f2sm2831040b6e.32.2024.09.04.08.18.19
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3df117db1f2sm2831040b6e.32.2024.09.04.08.18.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:18:20 -0700 (PDT)
+        Wed, 04 Sep 2024 08:18:21 -0700 (PDT)
 From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 To: dtatulea@nvidia.com,
 	mst@redhat.com,
@@ -83,9 +83,9 @@ Cc: bilbao@vt.edu,
 	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Carlos Bilbao <cbilbao@digitalocean.com>
-Subject: [PATCH v3 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices to UNKNOWN
-Date: Wed,  4 Sep 2024 10:11:14 -0500
-Message-ID: <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH v3 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
+Date: Wed,  4 Sep 2024 10:11:15 -0500
+Message-ID: <20240904151115.205622-3-carlos.bilbao.osdev@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
 References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
@@ -99,47 +99,422 @@ Content-Transfer-Encoding: 8bit
 
 From: Carlos Bilbao <cbilbao@digitalocean.com>
 
-Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
-This is needed because mlx5_vdpa vDPA devices currently do not support the
-VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex. Add
-needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
+Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementations with
+vdpa_config_ops->set_config(). This is needed per virtio spec requirements:
+virtio-spec v1.3 Sec 5.1.4 states that "All of the device configuration
+fields are read-only for the driver.". This excludes legacy Alibaba's ENI
+so make it use vda_config_ops->set_config_legacy() to avoid future
+confusion.
 
 Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
 ---
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/vdpa/alibaba/eni_vdpa.c    |  2 +-
+ drivers/vdpa/ifcvf/ifcvf_main.c    | 10 ----------
+ drivers/vdpa/mlx5/net/mlx5_vnet.c  |  7 -------
+ drivers/vdpa/pds/vdpa_dev.c        | 16 ----------------
+ drivers/vdpa/solidrun/snet_main.c  | 18 ------------------
+ drivers/vdpa/vdpa.c                | 16 ----------------
+ drivers/vdpa/vdpa_sim/vdpa_sim.c   | 16 ----------------
+ drivers/vdpa/vdpa_sim/vdpa_sim.h   |  1 -
+ drivers/vdpa/vdpa_user/vduse_dev.c |  7 -------
+ drivers/vdpa/virtio_pci/vp_vdpa.c  | 14 --------------
+ drivers/vhost/vdpa.c               | 26 --------------------------
+ drivers/virtio/virtio_vdpa.c       |  9 ---------
+ include/linux/vdpa.h               |  7 ++++---
+ include/uapi/linux/vhost.h         |  8 ++++----
+ 14 files changed, 9 insertions(+), 148 deletions(-)
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index b56aae3f7be3..41ca268d43ff 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
- 	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
+diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
+index cce3d1837104..64b0c0be89ae 100644
+--- a/drivers/vdpa/alibaba/eni_vdpa.c
++++ b/drivers/vdpa/alibaba/eni_vdpa.c
+@@ -429,7 +429,7 @@ static const struct vdpa_config_ops eni_vdpa_ops = {
+ 	.get_vq_align	= eni_vdpa_get_vq_align,
+ 	.get_config_size = eni_vdpa_get_config_size,
+ 	.get_config	= eni_vdpa_get_config,
+-	.set_config	= eni_vdpa_set_config,
++	.set_config_legacy = eni_vdpa_set_config,
+ 	.set_config_cb  = eni_vdpa_set_config_cb,
+ 	.get_vq_irq	= eni_vdpa_get_vq_irq,
+ };
+diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
+index e98fa8100f3c..7cbac787ad5f 100644
+--- a/drivers/vdpa/ifcvf/ifcvf_main.c
++++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+@@ -568,15 +568,6 @@ static void ifcvf_vdpa_get_config(struct vdpa_device *vdpa_dev,
+ 	ifcvf_read_dev_config(vf, offset, buf, len);
  }
  
-+static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
-+{
-+	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
-+}
-+
- static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
+-static void ifcvf_vdpa_set_config(struct vdpa_device *vdpa_dev,
+-				  unsigned int offset, const void *buf,
+-				  unsigned int len)
+-{
+-	struct ifcvf_hw *vf = vdpa_to_vf(vdpa_dev);
+-
+-	ifcvf_write_dev_config(vf, offset, buf, len);
+-}
+-
+ static void ifcvf_vdpa_set_config_cb(struct vdpa_device *vdpa_dev,
+ 				     struct vdpa_callback *cb)
  {
- 	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
-@@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
- 	init_rwsem(&ndev->reslock);
- 	config = &ndev->config;
+@@ -640,7 +631,6 @@ static const struct vdpa_config_ops ifc_vdpa_ops = {
+ 	.get_vq_group	= ifcvf_vdpa_get_vq_group,
+ 	.get_config_size	= ifcvf_vdpa_get_config_size,
+ 	.get_config	= ifcvf_vdpa_get_config,
+-	.set_config	= ifcvf_vdpa_set_config,
+ 	.set_config_cb  = ifcvf_vdpa_set_config_cb,
+ 	.get_vq_notification = ifcvf_get_vq_notification,
+ };
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index 41ca268d43ff..35ed46c65b4d 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -2918,12 +2918,6 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+ 		memcpy(buf, (u8 *)&ndev->config + offset, len);
+ }
  
-+	/*
-+	 * mlx5_vdpa vDPA devices currently don't support reporting or
-+	 * setting the speed or duplex.
-+	 */
-+	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
-+	config->duplex = DUPLEX_UNKNOWN;
-+
- 	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
- 		err = config_func_mtu(mdev, add_config->net.mtu);
- 		if (err)
+-static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+-				 unsigned int len)
+-{
+-	/* not supported */
+-}
+-
+ static u32 mlx5_vdpa_get_generation(struct vdpa_device *vdev)
+ {
+ 	struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
+@@ -3218,7 +3212,6 @@ static const struct vdpa_config_ops mlx5_vdpa_ops = {
+ 	.reset = mlx5_vdpa_reset,
+ 	.get_config_size = mlx5_vdpa_get_config_size,
+ 	.get_config = mlx5_vdpa_get_config,
+-	.set_config = mlx5_vdpa_set_config,
+ 	.get_generation = mlx5_vdpa_get_generation,
+ 	.set_map = mlx5_vdpa_set_map,
+ 	.set_group_asid = mlx5_set_group_asid,
+diff --git a/drivers/vdpa/pds/vdpa_dev.c b/drivers/vdpa/pds/vdpa_dev.c
+index 25c0fe5ec3d5..553dcd2aa065 100644
+--- a/drivers/vdpa/pds/vdpa_dev.c
++++ b/drivers/vdpa/pds/vdpa_dev.c
+@@ -553,21 +553,6 @@ static void pds_vdpa_get_config(struct vdpa_device *vdpa_dev,
+ 	memcpy_fromio(buf, device + offset, len);
+ }
+ 
+-static void pds_vdpa_set_config(struct vdpa_device *vdpa_dev,
+-				unsigned int offset, const void *buf,
+-				unsigned int len)
+-{
+-	struct pds_vdpa_device *pdsv = vdpa_to_pdsv(vdpa_dev);
+-	void __iomem *device;
+-
+-	if (offset + len > sizeof(struct virtio_net_config)) {
+-		WARN(true, "%s: bad read, offset %d len %d\n", __func__, offset, len);
+-		return;
+-	}
+-
+-	device = pdsv->vdpa_aux->vd_mdev.device;
+-	memcpy_toio(device + offset, buf, len);
+-}
+ 
+ static const struct vdpa_config_ops pds_vdpa_ops = {
+ 	.set_vq_address		= pds_vdpa_set_vq_address,
+@@ -595,7 +580,6 @@ static const struct vdpa_config_ops pds_vdpa_ops = {
+ 	.reset			= pds_vdpa_reset,
+ 	.get_config_size	= pds_vdpa_get_config_size,
+ 	.get_config		= pds_vdpa_get_config,
+-	.set_config		= pds_vdpa_set_config,
+ };
+ static struct virtio_device_id pds_vdpa_id_table[] = {
+ 	{VIRTIO_ID_NET, VIRTIO_DEV_ANY_ID},
+diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
+index 99428a04068d..141740269b6c 100644
+--- a/drivers/vdpa/solidrun/snet_main.c
++++ b/drivers/vdpa/solidrun/snet_main.c
+@@ -478,23 +478,6 @@ static void snet_get_config(struct vdpa_device *vdev, unsigned int offset,
+ 		*buf_ptr++ = ioread8(cfg_ptr + i);
+ }
+ 
+-static void snet_set_config(struct vdpa_device *vdev, unsigned int offset,
+-			    const void *buf, unsigned int len)
+-{
+-	struct snet *snet = vdpa_to_snet(vdev);
+-	void __iomem *cfg_ptr = snet->cfg->virtio_cfg + offset;
+-	const u8 *buf_ptr = buf;
+-	u32 i;
+-
+-	/* check for offset error */
+-	if (offset + len > snet->cfg->cfg_size)
+-		return;
+-
+-	/* Write into PCI BAR */
+-	for (i = 0; i < len; i++)
+-		iowrite8(*buf_ptr++, cfg_ptr + i);
+-}
+-
+ static int snet_suspend(struct vdpa_device *vdev)
+ {
+ 	struct snet *snet = vdpa_to_snet(vdev);
+@@ -548,7 +531,6 @@ static const struct vdpa_config_ops snet_config_ops = {
+ 	.get_status             = snet_get_status,
+ 	.set_status             = snet_set_status,
+ 	.get_config             = snet_get_config,
+-	.set_config             = snet_set_config,
+ 	.suspend		= snet_suspend,
+ 	.resume			= snet_resume,
+ };
+diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+index a7612e0783b3..a9eac31f3757 100644
+--- a/drivers/vdpa/vdpa.c
++++ b/drivers/vdpa/vdpa.c
+@@ -401,22 +401,6 @@ void vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+ }
+ EXPORT_SYMBOL_GPL(vdpa_get_config);
+ 
+-/**
+- * vdpa_set_config - Set one or more device configuration fields.
+- * @vdev: vdpa device to operate on
+- * @offset: starting byte offset of the field
+- * @buf: buffer pointer to read from
+- * @length: length of the configuration fields in bytes
+- */
+-void vdpa_set_config(struct vdpa_device *vdev, unsigned int offset,
+-		     const void *buf, unsigned int length)
+-{
+-	down_write(&vdev->cf_lock);
+-	vdev->config->set_config(vdev, offset, buf, length);
+-	up_write(&vdev->cf_lock);
+-}
+-EXPORT_SYMBOL_GPL(vdpa_set_config);
+-
+ static bool mgmtdev_handle_match(const struct vdpa_mgmt_dev *mdev,
+ 				 const char *busname, const char *devname)
+ {
+diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+index 421ab01ef06b..c2e14bcc01f6 100644
+--- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
++++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+@@ -546,20 +546,6 @@ static void vdpasim_get_config(struct vdpa_device *vdpa, unsigned int offset,
+ 	memcpy(buf, vdpasim->config + offset, len);
+ }
+ 
+-static void vdpasim_set_config(struct vdpa_device *vdpa, unsigned int offset,
+-			     const void *buf, unsigned int len)
+-{
+-	struct vdpasim *vdpasim = vdpa_to_sim(vdpa);
+-
+-	if (offset + len > vdpasim->dev_attr.config_size)
+-		return;
+-
+-	memcpy(vdpasim->config + offset, buf, len);
+-
+-	if (vdpasim->dev_attr.set_config)
+-		vdpasim->dev_attr.set_config(vdpasim, vdpasim->config);
+-}
+-
+ static u32 vdpasim_get_generation(struct vdpa_device *vdpa)
+ {
+ 	struct vdpasim *vdpasim = vdpa_to_sim(vdpa);
+@@ -754,7 +740,6 @@ static const struct vdpa_config_ops vdpasim_config_ops = {
+ 	.resume			= vdpasim_resume,
+ 	.get_config_size        = vdpasim_get_config_size,
+ 	.get_config             = vdpasim_get_config,
+-	.set_config             = vdpasim_set_config,
+ 	.get_generation         = vdpasim_get_generation,
+ 	.get_iova_range         = vdpasim_get_iova_range,
+ 	.set_group_asid         = vdpasim_set_group_asid,
+@@ -792,7 +777,6 @@ static const struct vdpa_config_ops vdpasim_batch_config_ops = {
+ 	.resume			= vdpasim_resume,
+ 	.get_config_size        = vdpasim_get_config_size,
+ 	.get_config             = vdpasim_get_config,
+-	.set_config             = vdpasim_set_config,
+ 	.get_generation         = vdpasim_get_generation,
+ 	.get_iova_range         = vdpasim_get_iova_range,
+ 	.set_group_asid         = vdpasim_set_group_asid,
+diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.h b/drivers/vdpa/vdpa_sim/vdpa_sim.h
+index bb137e479763..b48bf954a3bb 100644
+--- a/drivers/vdpa/vdpa_sim/vdpa_sim.h
++++ b/drivers/vdpa/vdpa_sim/vdpa_sim.h
+@@ -46,7 +46,6 @@ struct vdpasim_dev_attr {
+ 
+ 	void (*work_fn)(struct vdpasim *vdpasim);
+ 	void (*get_config)(struct vdpasim *vdpasim, void *config);
+-	void (*set_config)(struct vdpasim *vdpasim, const void *config);
+ 	int (*get_stats)(struct vdpasim *vdpasim, u16 idx,
+ 			 struct sk_buff *msg,
+ 			 struct netlink_ext_ack *extack);
+diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+index df7869537ef1..4fe69cb5b156 100644
+--- a/drivers/vdpa/vdpa_user/vduse_dev.c
++++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+@@ -698,12 +698,6 @@ static void vduse_vdpa_get_config(struct vdpa_device *vdpa, unsigned int offset,
+ 	memcpy(buf, dev->config + offset, len);
+ }
+ 
+-static void vduse_vdpa_set_config(struct vdpa_device *vdpa, unsigned int offset,
+-			const void *buf, unsigned int len)
+-{
+-	/* Now we only support read-only configuration space */
+-}
+-
+ static int vduse_vdpa_reset(struct vdpa_device *vdpa)
+ {
+ 	struct vduse_dev *dev = vdpa_to_vduse(vdpa);
+@@ -790,7 +784,6 @@ static const struct vdpa_config_ops vduse_vdpa_config_ops = {
+ 	.set_status		= vduse_vdpa_set_status,
+ 	.get_config_size	= vduse_vdpa_get_config_size,
+ 	.get_config		= vduse_vdpa_get_config,
+-	.set_config		= vduse_vdpa_set_config,
+ 	.get_generation		= vduse_vdpa_get_generation,
+ 	.set_vq_affinity	= vduse_vdpa_set_vq_affinity,
+ 	.get_vq_affinity	= vduse_vdpa_get_vq_affinity,
+diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
+index 281287fae89f..5e8ff91475e3 100644
+--- a/drivers/vdpa/virtio_pci/vp_vdpa.c
++++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
+@@ -400,19 +400,6 @@ static void vp_vdpa_get_config(struct vdpa_device *vdpa,
+ 	} while (old != new);
+ }
+ 
+-static void vp_vdpa_set_config(struct vdpa_device *vdpa,
+-			       unsigned int offset, const void *buf,
+-			       unsigned int len)
+-{
+-	struct vp_vdpa *vp_vdpa = vdpa_to_vp(vdpa);
+-	struct virtio_pci_modern_device *mdev = vp_vdpa_to_mdev(vp_vdpa);
+-	const u8 *p = buf;
+-	int i;
+-
+-	for (i = 0; i < len; i++)
+-		vp_iowrite8(*p++, mdev->device + offset + i);
+-}
+-
+ static void vp_vdpa_set_config_cb(struct vdpa_device *vdpa,
+ 				  struct vdpa_callback *cb)
+ {
+@@ -457,7 +444,6 @@ static const struct vdpa_config_ops vp_vdpa_ops = {
+ 	.get_vq_align	= vp_vdpa_get_vq_align,
+ 	.get_config_size = vp_vdpa_get_config_size,
+ 	.get_config	= vp_vdpa_get_config,
+-	.set_config	= vp_vdpa_set_config,
+ 	.set_config_cb  = vp_vdpa_set_config_cb,
+ 	.get_vq_irq	= vp_vdpa_get_vq_irq,
+ };
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index fb590e346e43..c6fcd54f59be 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -350,29 +350,6 @@ static long vhost_vdpa_get_config(struct vhost_vdpa *v,
+ 	return 0;
+ }
+ 
+-static long vhost_vdpa_set_config(struct vhost_vdpa *v,
+-				  struct vhost_vdpa_config __user *c)
+-{
+-	struct vdpa_device *vdpa = v->vdpa;
+-	struct vhost_vdpa_config config;
+-	unsigned long size = offsetof(struct vhost_vdpa_config, buf);
+-	u8 *buf;
+-
+-	if (copy_from_user(&config, c, size))
+-		return -EFAULT;
+-	if (vhost_vdpa_config_validate(v, &config))
+-		return -EINVAL;
+-
+-	buf = vmemdup_user(c->buf, config.len);
+-	if (IS_ERR(buf))
+-		return PTR_ERR(buf);
+-
+-	vdpa_set_config(vdpa, config.off, buf, config.len);
+-
+-	kvfree(buf);
+-	return 0;
+-}
+-
+ static bool vhost_vdpa_can_suspend(const struct vhost_vdpa *v)
+ {
+ 	struct vdpa_device *vdpa = v->vdpa;
+@@ -719,9 +696,6 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+ 	case VHOST_VDPA_GET_CONFIG:
+ 		r = vhost_vdpa_get_config(v, argp);
+ 		break;
+-	case VHOST_VDPA_SET_CONFIG:
+-		r = vhost_vdpa_set_config(v, argp);
+-		break;
+ 	case VHOST_GET_FEATURES:
+ 		r = vhost_vdpa_get_features(v, argp);
+ 		break;
+diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+index 06ce6d8c2e00..481ded50c916 100644
+--- a/drivers/virtio/virtio_vdpa.c
++++ b/drivers/virtio/virtio_vdpa.c
+@@ -62,14 +62,6 @@ static void virtio_vdpa_get(struct virtio_device *vdev, unsigned int offset,
+ 	vdpa_get_config(vdpa, offset, buf, len);
+ }
+ 
+-static void virtio_vdpa_set(struct virtio_device *vdev, unsigned int offset,
+-			    const void *buf, unsigned int len)
+-{
+-	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
+-
+-	vdpa_set_config(vdpa, offset, buf, len);
+-}
+-
+ static u32 virtio_vdpa_generation(struct virtio_device *vdev)
+ {
+ 	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
+@@ -462,7 +454,6 @@ virtio_vdpa_get_vq_affinity(struct virtio_device *vdev, int index)
+ 
+ static const struct virtio_config_ops virtio_vdpa_config_ops = {
+ 	.get		= virtio_vdpa_get,
+-	.set		= virtio_vdpa_set,
+ 	.generation	= virtio_vdpa_generation,
+ 	.get_status	= virtio_vdpa_get_status,
+ 	.set_status	= virtio_vdpa_set_status,
+diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+index 0e652026b776..9346fa9e3d97 100644
+--- a/include/linux/vdpa.h
++++ b/include/linux/vdpa.h
+@@ -259,7 +259,8 @@ struct vdpa_map_file {
+  *				@buf: buffer used to read to
+  *				@len: the length to read from
+  *				configuration space
+- * @set_config:			Write to device specific configuration space
++ * @set_config_legacy:		Write to device specific configuration space
++ *				Legacy functionality for virtio-spec < v1.3
+  *				@vdev: vdpa device
+  *				@offset: offset from the beginning of
+  *				configuration space
+@@ -378,8 +379,8 @@ struct vdpa_config_ops {
+ 	size_t (*get_config_size)(struct vdpa_device *vdev);
+ 	void (*get_config)(struct vdpa_device *vdev, unsigned int offset,
+ 			   void *buf, unsigned int len);
+-	void (*set_config)(struct vdpa_device *vdev, unsigned int offset,
+-			   const void *buf, unsigned int len);
++	void (*set_config_legacy)(struct vdpa_device *vdev,
++			unsigned int offset, const void *buf, unsigned int len);
+ 	u32 (*get_generation)(struct vdpa_device *vdev);
+ 	struct vdpa_iova_range (*get_iova_range)(struct vdpa_device *vdev);
+ 	int (*set_vq_affinity)(struct vdpa_device *vdev, u16 idx,
+diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+index f5c48b61ab62..b7977f9ae596 100644
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@ -157,13 +157,13 @@
+  */
+ #define VHOST_VDPA_GET_STATUS		_IOR(VHOST_VIRTIO, 0x71, __u8)
+ #define VHOST_VDPA_SET_STATUS		_IOW(VHOST_VIRTIO, 0x72, __u8)
+-/* Get and set the device config. The device config follows the same
+- * definition of the device config defined in virtio-spec.
++/* Get the device config. The device config follows the same
++ * definition of the device config defined in virtio-spec. According to
++ * virtio-spec v1.3, all device configuration fields are read-only for the
++ * driver, and thus we do not have VHOST_VDPA_SET_CONFIG.
+  */
+ #define VHOST_VDPA_GET_CONFIG		_IOR(VHOST_VIRTIO, 0x73, \
+ 					     struct vhost_vdpa_config)
+-#define VHOST_VDPA_SET_CONFIG		_IOW(VHOST_VIRTIO, 0x74, \
+-					     struct vhost_vdpa_config)
+ /* Enable/disable the ring. */
+ #define VHOST_VDPA_SET_VRING_ENABLE	_IOW(VHOST_VIRTIO, 0x75, \
+ 					     struct vhost_vring_state)
 -- 
 2.34.1
 
