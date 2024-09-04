@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-314306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928CF96B198
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F0996B1E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6A01F21826
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2941F2786C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D2984A5B;
-	Wed,  4 Sep 2024 06:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MfnFYDnh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7605F1369BC;
+	Wed,  4 Sep 2024 06:36:51 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E6FD2FB;
-	Wed,  4 Sep 2024 06:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBD14AEE6;
+	Wed,  4 Sep 2024 06:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431425; cv=none; b=AC05GMHOST2dxFKe6bNt5fjDw0JZZskNgDk3rF/oY05Mt5m8t06VpERH47I1y0kjlulHHs3KD53ZxwzVXp0AJ+8U3MFOooDS3E03CmcucpNBhZBDlemk9VLFTtMySKttk9yoilH/xywG1VOdz1f+d2YZKlxoC4cGLi+3rMLYVUg=
+	t=1725431811; cv=none; b=HsMU2qJJGB064F+mWY0s99DgPdRO05Gv8UM2XSWL04kE++7KmIWfCBjPKUXCOyQSnXScTYA/DTU//o0/1L6ZVkueoC7pOq0Wy1NiY2m2P7HjeyzuSScZPjgpLjkJhg/AVnoNVVs7KX9KzlccUzXAWYw86CCsgm7gmBQCUUIphSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431425; c=relaxed/simple;
-	bh=ie1KJgbgWeaIntePrcrJmPJ4mJ1n8hijXhwA5ztfCnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=enmWr9oe/iu4L+Pk+ZeES6s1DNw9BXORbHRt/0OOj6Vril1MfPgQUyNfjS/VyVGNB6Wm32kAx9dYBPFhbFdLC63qStHoCDd3m6XZTUoudAi+YFWCNy016icZ8Fek4LF6Wg0j/Z8YJqQFW62rKNIvjYHpuRBNJbRnEkoUMzCqjBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MfnFYDnh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725431419;
-	bh=JGgIk/EiekwZAX0A7RvQM/XMomC9Q+y6SpRBDDwzKfY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MfnFYDnhyd05wDe6EwHfZN9jS7Zq1GPWTXdYkcxMya6T6D6u4J+pDYc7iVgA9GT+h
-	 g/iqhjsZNvsbCdt0G4IOuKUPPVLI+USXgTuVhgiwvTWw++e3GHfkrmH/65IlW7HxbA
-	 OjcgZKFLfXexFwbHCOF+G6/us6n7mE/ibdyJqo2QH3s6UO/ot/tq7PSncahy8DPSfo
-	 Su5GUwzq6UMzc70cn+CJk7zmfy6+nB18wCmEt4zt+nZD+VwL+c478J+lz3ulkCxdoI
-	 xW3BjiXx1OOmJAQIEwKhobsOSDUKQmQKl/Bh4VYMjW8/2ty6dgmQvAQ9Hgd2d0kccg
-	 BqSedoDUU4CPQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WzCKR2z0zz4wb0;
-	Wed,  4 Sep 2024 16:30:19 +1000 (AEST)
-Date: Wed, 4 Sep 2024 16:30:18 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Maxime Ripard
- <mripard@kernel.org>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drm-misc-fixes tree
-Message-ID: <20240904163018.214efaa7@canb.auug.org.au>
+	s=arc-20240116; t=1725431811; c=relaxed/simple;
+	bh=yTQAtWSN+H6CwtlGTvMxcSNJp+zg837c7qKrJvoxv2o=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=AaUHnNJn7vpVxBEKH20oYL7gUmKIP0aJk694aYXDXXJPfJrPZboBmgBFXMhGpFsSqQ7zB7QjrsoIBzCwpMgIkC/84IuHeirBbgejPT/Rx2ZQ+6WhytkZ6vX05MZoIMWoA7ODCWrAPs44paWCiQxU6OeeI/n4Zcf8NH1JE2lUaqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+X-QQ-GoodBg: 2
+X-QQ-SSF: 0040000000000000
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: OQm4EXGVKR2Oi9rv6sl4DkRIfGeVZtz/Q1z144JBBmn4VyPdhStewz9M
+	GIvx/vnIau9b/DBMNZxu+YlfFS9qxnQN0X2LrmJGb6V3DikgzoFLuKcqJ09Bjo+BEK7OpXx
+	c9ej1lwVLycdDpBL1v1P4j3MrYd0Bz5JghktiE5tMrpN8/k/EpJ3PgP0tvqt5ziH+cLU8bj
+	qUXlUGPk5veAy13BWEmjdKzzxCGJwMCSbOUQscIZdlE0CAcSrzHV+3oTp+IqmMQR3yz7vpi
+	F8JdX/SVNOeRBsh0TgHFEDJnY55NtZLmfGwo7Kh1xkgEw7XLtl6LRORFR2Sp3PdY4axKCTN
+	dJIv8wl/eYt4lSO/khTjrjiv5vqpcDHYHLA4CFPrVCdnzZ5octQnWgWNYd0Sg6G9idghpZx
+	Z5noOKeTZyajJWQoh3Ik3aQNtq7n9yiKtnzhe0/zl+zOvNi48cgRJcyWV4mq8nz4V/Yzdco
+	vHu4C3+cjIBILKhRN/67KbAMJFjaHOJOCDq03uvQCTHVQ88Ij5QUWsDnboWNiS7SCYU9Knf
+	bKF9jlalslqUxpm6j2RiHpC5QAiDf9Qs8UII6x59ax1Fz+Ehp2QzS3bLmvOCnQBef//OPPE
+	tfZ6cg+UyVko/HJWpYUtBlC7j3FlrZlVVh3o7vv9fVSVCUmGbCa6F/ZR7Kki1pOplZFYuPp
+	mtybIowxREj7ujWah/NF5qnY5NNk/UBFjqWAaBCuOagTwj9d7YnBtWEKq98qD0HOq8/yoAb
+	pNI4SkJOtfULD7ZoQyJF++2WsYirjpUoXSbKJP5oN8xsJtFo0OYLxCsWP9mwXwpHdnZDbjs
+	rVKvh1mkOOqNxcsfS88B1eLth7YGUDlNDuMCiZO4SGPkIWKMWDqtpG/wXXk3w5jmy0O/Kz9
+	K1k8xzRFo85lQMmTzAiVeC7UhLfy7hZxjMR9AnjVziXkpYRRc11q1iRATWH/gn3nXgc6SI0
+	VQ10=
+X-QQ-FEAT: 2Rmh/KmsIngruwTONLJY3WAWKAdbrRsw
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: iZHtMiyoMlMNLJlu7TpFOQdK10Qt68zyKSRrmqbkLWk=
+X-QQ-STYLE: 
+X-QQ-mid: t6sz3a-0t1725431490t1929350
+From: "=?utf-8?B?V2VudGFpIERlbmc=?=" <wtdeng24@m.fudan.edu.cn>
+To: "=?utf-8?B?QW5kcmV3IEx1bm4=?=" <andrew@lunn.ch>
+Cc: "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>, "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?utf-8?B?bGludXgtYXJtLWtlcm5lbA==?=" <linux-arm-kernel@lists.infradead.org>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5p2c6Zuq55uI?=" <21210240012@m.fudan.edu.cn>
+Subject: Re: [BUG] Possible Use-After-Free Vulnerability in ether3 Driver Due to Race Condition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5HyTQZioDubndSE4yOjw/8D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 4 Sep 2024 14:31:29 +0800
+X-Priority: 3
+Message-ID: <tencent_19E6DD6B2F73B82009E04699@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <tencent_48E7914150CBB05A03CD68C4@qq.com>
+	<5d028583-07b5-4b4a-ba93-d9078084d502@lunn.ch>
+In-Reply-To: <5d028583-07b5-4b4a-ba93-d9078084d502@lunn.ch>
+X-QQ-ReplyHash: 3606267199
+X-BIZMAIL-ID: 17366199070996424716
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Wed, 04 Sep 2024 14:31:30 +0800 (CST)
+Feedback-ID: t:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz7a-0
 
---Sig_/5HyTQZioDubndSE4yOjw/8D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+PiBQbGVhc2Ugc3VibWl0IGFuIGFjdHVhbCBwYXRjaCBmaXhpbmcgdGhlIGlzc3VlLiBXZSBj
+YW4gdGhlbiBkZWNpZGUgaWYgaXQgaXMgdGhlIGNvcnJlY3QgZml4Lg0KDQpUaGFuayB5b3Ug
+Zm9yIHRoZSBmZWVkYmFjay4gV2Ugd2lsbCBwcmVwYXJlIGFuZCBzdWJtaXQgYW4gYWN0dWFs
+IHBhdGNoIHRoYXQgYWRkcmVzc2VzIHRoZSBpc3N1ZSBmb3IgeW91ciByZXZpZXcuDQoNCiAg
+ICBXZW50YWk=
 
-Hi all,
-
-After merging the drm-misc-fixes tree, today's linux-next build (htmldocs)
-produced this warning:
-
-Error: Cannot open file drivers/gpu/drm/drm_bridge_connector.c
-
-Introduced by commit
-
-  9da7ec9b19d8 ("drm/bridge-connector: move to DRM_DISPLAY_HELPER module")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5HyTQZioDubndSE4yOjw/8D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbX/noACgkQAVBC80lX
-0Gw71Af/U8tOm4G12SSD3WRwgEEgCXPW8uJN48HMl/i9OgHwzXPXRFp5smIVHpOL
-hKn7n/wB8xbKRe6nGmfENARWh9LHdSDLABrR8DYWUUs3yOLzMSnujpuGz3hIpTjA
-OimdN0/GdmBPQsD/3K02ybAaLI+uDdR1NzOQs6QbfFk0pvvKIM252zq7bsVtlDpx
-KYDAwEGHB0NkujENwrL1gD09kZZDStdx4VVw15RBivi4t5pgE5zC0H4Q3N/5t7jR
-l5luvwacoZDASk4vMeVxKZuHPfULH46kMit2OLVDuAy6UZOmJ6MLd3fF+Ksqn6QJ
-RA0ffY/DwWxB62m29AP7bjWEeJaJDQ==
-=MFbq
------END PGP SIGNATURE-----
-
---Sig_/5HyTQZioDubndSE4yOjw/8D--
 
