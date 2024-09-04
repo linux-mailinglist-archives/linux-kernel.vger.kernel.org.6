@@ -1,130 +1,98 @@
-Return-Path: <linux-kernel+bounces-314917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930F396BAF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D404996BAFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492BD1F253C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901D028A08D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46851D0174;
-	Wed,  4 Sep 2024 11:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXqCs5yb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594191D0173;
+	Wed,  4 Sep 2024 11:41:23 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD9C1CCB43;
-	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783351CCB43
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725450074; cv=none; b=Clz/uI024Kha/CfQkNW3JlVhmPYliV260+iT5W3IYCC9q7h++lUk8T6Vjlnm9Crv/MMM0rjdKlu5cnMdBbOaRWULTCa08Peoegjrrrqyt0aXF4u6jx/iOMbmnRbeBx29EQjZ4CXJW8CjCayVS0UsrIZ2O2h3gMTCGOUcAUUd4/U=
+	t=1725450083; cv=none; b=Uc9iYsLOsnyrGqVb24cEiIFWeDyP+DnyUYG+gbwJ/260oCF8HGOEoCG0Tq6Eqq6kxHDg91j89T4ROMpMimO90gYs1YwEnnigGPrgwGYCARPDKZQZAEAwSveE/JZG7jHSRam97agHoLwiyiGNIevarn9SWCzdexZoVDB6Yd0F61M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725450074; c=relaxed/simple;
-	bh=LbFW91VPcN5CCwLrLiHjJBysPMZp8cnj63xvRHHWltc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ps56uH8Osf/WubFin6KT0cfYeskcN5GBdC+S6KPoaNZUnBIS02EPr0/65xRhWbp//HdUlm4MnV5dP/4mHeEDCJ8bPVYR1WjTbBYwi4kreqFL0346Uth+Qzvm+JUapK9mfUmZF9B3RTwe77aRtjV4zqk8Uxad67J8l9LMRq84k0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXqCs5yb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D058C4CEC2;
-	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725450073;
-	bh=LbFW91VPcN5CCwLrLiHjJBysPMZp8cnj63xvRHHWltc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=rXqCs5ybpYlZBHRwTbH3RbO3VvWuuvS8vB7qIUZGHBrNDfvGIwcpR5AR/sJ+vKATw
-	 Hon0z/3iP/E/KAScigYcMesxjCRRAYkLHHsYZnO+VqIK94DBYllCcwodyE3uX2qiiv
-	 cenGU/yUVscdISjEO/ihG5kRp/wtA+iDYw3lM4uDlUXuNZzi6AZLxzC79swd18WENP
-	 SkQogcoatP3wNvPLjFwR8UnSL4nqjAqbLdXqOW/r0A59wlzhzGgG8j68wH/mHLJt2k
-	 4jOYw5Cid0m+MCgQ5ggVnQT6B5bCSmrhk8mPbzutTUKRVVx5iuAjhnEDsI1RyK+aao
-	 EG5FiT8rzbIxw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B788CD37B4;
-	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Wed, 04 Sep 2024 14:41:07 +0300
-Subject: [PATCH] clk: fixed-rate: add
- devm_clk_hw_register_fixed_rate_parent_data()
+	s=arc-20240116; t=1725450083; c=relaxed/simple;
+	bh=5U/sAfu6fDMYladg7S1N6V5lZi8WcZqMGbiIgzWx6P8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iviN+sQyb1SdPpseumngeofGaVS4XImIXdOEu+HgnRCyILtE+wYEd929XzQ8bLBUxO35UrpLXCHmjpOOied0aB+XWlsOL6QkfpKQ5fhIwSVx1uSL7Aky16DMkTOu4dEynlhRhoz5LfxGFwSmyRjd3jdp83snvywBBWh15ZIdWH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WzLDH5M27z9sS7;
+	Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id AUxpvlBysyoS; Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzLDH4b6Gz9sRr;
+	Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8E07B8B77A;
+	Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id EpWSv8U77IeF; Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+Received: from [192.168.234.246] (unknown [192.168.234.246])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 478688B778;
+	Wed,  4 Sep 2024 13:41:19 +0200 (CEST)
+Message-ID: <30e9575c-a53e-4e17-bbbd-7127798efb05@csgroup.eu>
+Date: Wed, 4 Sep 2024 13:41:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: fr-FR
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+ Xi Ruoyao <xry111@xry111.site>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Profiling of vdso_test_random
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-devm_clk_hw_register_fixed_rate_parent_data-v1-1-7f14d6b456e5@maquefel.me>
-X-B4-Tracking: v=1; b=H4sIAFJH2GYC/xWNUQqDMBAFryL73UCSBsRepZQlmKcubVPZBFsQ7
- 974NwPDezsVqKDQrdtJsUmRT27iLh2NS8wzjKTm5K0PdrDBJGxvHl9PXr6smKVUKE/yQ2KNFbx
- GRa6cYo0m+dC7q3VDA2qLq+Isz7f74zj+9tGLEX0AAAA=
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nikita Shubin <nikita.shubin@maquefel.me>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725450072; l=1857;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=J7DnDW2A1MJFcbrAhVPLzVkKMJjwXrfE3ffVHEB0sZk=;
- b=6R2yziTvOZcOMtb4T1iRVn+0YljewW1VpSDEBwPBRoKPOwJuM9m5JVIHPVlr+OiLsyX+vUztfo8P
- Hbn+Gd+YA8FU/lpKFKd0cUCeN3tlYwgkIFo3hFFdju+tLwI8Mo+J
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Hi,
 
-Add devm_clk_hw_register_fixed_rate_parent_data(), devres-managed helper
-to register fixed-rate clock with parent_data.
+I'm done a 'perf record' on vdso_test_random reduced to vdso test only, 
+and I get the following function usage profile.
 
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
-Hello Stephen!
+Do you see the same type of percentage on your platforms ?
 
-Sending devm version of clk_hw_register_fixed_rate_parent_data(),
-as promised in:
+I would have expected most of the time to be spent in 
+__arch_chacha20_blocks_nostack() but that's in fact not the case.
 
-https://lore.kernel.org/lkml/79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org/
----
- include/linux/clk-provider.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+# Samples: 61K of event 'task-clock:ppp'
+# Event count (approx.): 15463500000
+#
+# Overhead  Command          Shared Object        Symbol 
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 4a537260f655..7e43caabb54b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -393,6 +393,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- #define devm_clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
- 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
- 				     NULL, (flags), (fixed_rate), 0, 0, true)
-+/**
-+ * devm_clk_hw_register_fixed_rate_parent_data - register fixed-rate clock with
-+ * the clock framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_data: parent clk data
-+ * @flags: framework-specific flags
-+ * @fixed_rate: non-adjustable clock rate
-+ */
-+#define devm_clk_hw_register_fixed_rate_parent_data(dev, name, parent_data, flags, \
-+						    fixed_rate)			   \
-+	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,		   \
-+				     (parent_data), (flags), (fixed_rate), 0,	   \
-+				     0, true)
- /**
-  * clk_hw_register_fixed_rate_parent_hw - register fixed-rate clock with
-  * the clock framework
-
----
-base-commit: 88fac17500f4ea49c7bac136cf1b27e7b9980075
-change-id: 20240904-devm_clk_hw_register_fixed_rate_parent_data-d24713019d24
-
-Best regards,
--- 
-Nikita Shubin <nikita.shubin@maquefel.me>
+# ........  ...............  ................... 
+....................................
+#
+     57.74%  vdso_test_getra  [vdso]               [.] __c_kernel_getrandom
+     22.49%  vdso_test_getra  [vdso]               [.] 
+__arch_chacha20_blocks_nostack
+     10.80%  vdso_test_getra  vdso_test_getrandom  [.] test_vdso_getrandom
+      8.89%  vdso_test_getra  [vdso]               [.] __kernel_getrandom
+      0.01%  vdso_test_getra  [kernel.kallsyms]    [k] 
+finish_task_switch.isra.0
 
 
+Christophe
 
