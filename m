@@ -1,187 +1,103 @@
-Return-Path: <linux-kernel+bounces-315697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7273296C5E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7839C96C5EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB848284332
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219EF1F23B36
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05751E1A04;
-	Wed,  4 Sep 2024 18:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53DB1E1A29;
+	Wed,  4 Sep 2024 18:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="qqQgpnx5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T3/Qllhn"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnC9JJFH"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256161DFE2D;
-	Wed,  4 Sep 2024 18:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E162AE9F;
+	Wed,  4 Sep 2024 18:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472859; cv=none; b=UmAjkjstRleJSqdkUpo147ygpZFFHPrD4jmt1GBUjF094no2/3nhVtscQfvZnAphCxNlNiLvjx2S2bDL4+YtcbvwNrdCzYo/m4ThBxLO4YI9RQ5Tcf310zBKxj6HmKpPVoIsBR5aVcBDVWzMAK4C0c9/J5wfxn3dgNXOrVPDsvY=
+	t=1725472888; cv=none; b=oxx6sCixIMR4boF552KJiCEI2Ror8RsxBkFT8PjkMv+H8hw+bD3dru2UwIm/0f5v6sEdScOunIdxeFzVwOANPKbUoHm1p1FDfGqX/LmdK4UwZ5PxHdwvc7utnlygsebouMVfqr/RuxOBqY+mhWcN0XjumEKgnIJSb86vYDTz3Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472859; c=relaxed/simple;
-	bh=OFxSGvAjXNZ7ytB4MYeQGtkeD+O3f4xSW3UPNBksefU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=mz0Au2GoWpuiScowUHWp0ih4CGrmJ8mpZk/qfjJhyxLJYFO+Lf+ynPrbIAilxhyX6hMtUsRyLuYd1nfEo2oeW659HfuSj3FTRmUwvZAg7Zn7ENllSAN7yIK4Ss4utvGIB8rx15V8jWEoZtbaxdmNhMpLmWhQChlxcfyVISUCKE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=qqQgpnx5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T3/Qllhn; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 37449138021D;
-	Wed,  4 Sep 2024 14:00:56 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-02.internal (MEProxy); Wed, 04 Sep 2024 14:00:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725472856;
-	 x=1725559256; bh=j8W5SCKmD2R4b08np+tquZ9l2yUGtvyX0ThJStovGYA=; b=
-	qqQgpnx5OYTDqNRXZuaw1y098hknUIfwEgHyKJxcLRByMeYZB3YspG0DlWZRj4+8
-	2QASCOrKtJJ6C2h0TKelO+1Jz7OdSpSKAdRXfIkphFRKA7sNi3f4M2aqy0uJtCtB
-	/6xQXJwrlaztkb2KXfR+5wCBK5nfSZ/nT82kSBYULSaORXWANlTnvc+op3cK/oE6
-	11ouu4Rzj6Xk2ip3U/5q2xeQtvlkQIhJ1ieWLRwhf2JbLu8tI2Rnnm1Das9cSczh
-	L5vKkL9Zexh404JP9Ym7zCwwBYWofQxjSxIDXv6bi2XjHeRPyFmcvPm7J1lE43cQ
-	MFKfX/YWqjwWxAaH78qBaA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725472856; x=
-	1725559256; bh=j8W5SCKmD2R4b08np+tquZ9l2yUGtvyX0ThJStovGYA=; b=T
-	3/QllhntLycXOjsBG88GsrNnVkj2At0YjRQWRF6F4Jz7WIxoc0iLz9db3N9sNywn
-	mgjLYugwLWntv6wHq1ggITcWbkaqaAv2Znn0uoiGkXO1mh/NzxIM8ryLcvCoXDhy
-	ZqOcitaXOvLYC2wJ5rL9Y0Zs5fuJaTO0AdBfxlkIh3kg2+r9ksqBHxm9GzjP9iHB
-	mvsWWRRr6WxleAtznHYJ3H8R/unQOiWcGQGfFbP+i6YR6fNbgJZghw/DS8Jd4jWW
-	xKTodoUvQm65uDF/1PUbGIhG0LeROjolZjYwMMmRuls9dOkkDNiEy+hVQ/UsuQFI
-	JahD7HVrOnZs/RUNbffaA==
-X-ME-Sender: <xms:V6DYZpCB7yQyuqUNho4T5rIlN7h-6d59W2CX_hPVeAIN1_DY4e8XxQ>
-    <xme:V6DYZnimF4EiyVElbPFZerQk9h1N3u5dYX1a2Eal3yVyQiz5gRjr24C2yrxg_pIAk
-    saKH6aCuDWMcxJwWIE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedguddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhepleeutdfgueejheev
-    fffgvdfgtdelkefgteeukeejhefgfeeigeevueeileekffehnecuffhomhgrihhnpehfrh
-    gvvgguvghskhhtohhprdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
-    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhho
-    rhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrg
-    hrmhdrtghomhdprhgtphhtthhopehjrghnihdrshgrrghrihhnvghnsehinhhtvghlrdgt
-    ohhmpdhrtghpthhtohepkhgvvhhinhdrthhirghnsehinhhtvghlrdgtohhmpdhrtghpth
-    htohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrgholhhurdhluhes
-    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehiohhmmhhusehlihhsthhsrd
-    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:V6DYZkkJorRd6dWTqyBOAq0ZEF41RINmvjD0mGXgOWB9ilH-YYG0ZA>
-    <xmx:V6DYZjz2hJ_Lqq_QpQeVv-RT5cV7j0Nczz1hRdTsU9ZljuzBXaIslQ>
-    <xmx:V6DYZuSDaqSVkEdr0ZSCgITEnvwrPP6r3oa09C4g8cDhXHId52KE6w>
-    <xmx:V6DYZmac74LpCaxqsl7XCI8WJbrMGbhOEwjQMySWio5VyjK46jjx6A>
-    <xmx:WKDYZhHW-e0egGswZQfGQQ7IHEyZAHAidoVjXoXVf-FAG5QSEmZi1dZa>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7CD053C0066; Wed,  4 Sep 2024 14:00:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725472888; c=relaxed/simple;
+	bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=moA4Hnml7Z+57mfFBDsziO1UA8Cl/pQVjM/M4YswkEHS7jplfKp3V4VsoTmYFZYA1NDxLXjw7JS4YGtEnUr8ngJ8DUNQFQF3hsip2R32AzTkDSz/8GtxJS+TPpitosBjiEJuT2cVzJpyXFxq75kw3fKBA7Ka1xVZCMoCqWyUY9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnC9JJFH; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso4615425a12.1;
+        Wed, 04 Sep 2024 11:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725472886; x=1726077686; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
+        b=lnC9JJFHxL3yFR5F3iyKb1ZUO4NPUEwc6Rp1T82w4RvBAQGcD/46crVNdMla5nXA3r
+         TlhUlzKlAZqvYamF7gTJNtYX6a9Ereo5lLMwOadEmA34eRp92UtfCf5bVpldPwNdihNs
+         UciwDOiC/GyqgDROXnztsYVi1P8ERKxhpSPEcI/Dih3CsT2VhDaVe+5aTXc7KRfeVrx0
+         BH8YDbG/JvYLNSCB4TcLz7X85N0T9n6IVigADB/KVE70dGiANajxqVqhXc9zLHvyQWLW
+         W9/UyNkvGhOiQbj3G6XMNrr3mQ3rWLV01R4nhxlgSAs/g6xBxNH85eqrauS6Dj1+tjrT
+         lAWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725472886; x=1726077686;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e0itC/l8ORY1vxm0UOzYZbPYO3+1x+eJ4hAa9b87GG0=;
+        b=c+P6OgjHKrvnXn57CNdirCsfBMXk6ZrqPLu+3v2PZGP53oaBBjzeiHd2DHkSfSBmG3
+         DIPp5ZeG+4dSIMXy52aPhzLOTiKSKYvYUk/ZsabENqOpZ4fGHNQ75Ksh4fdPWmveJ6Hv
+         EXok2ABOnGh6uElM3B9bFu/cVkSIMl45DPyknM32jllcypz1rp2EzQo5MED6/f3lP/O2
+         GOz5cUCGaf8LDpLar+7s+5q1mTdXBBFA7w4kxapzrXxjDUps5zYKVQrGOKccWX8+Sgel
+         jNKspAjJ8sJkZ4oJJWm4sAGYmyZ5HKT97bxQZjJTzHgHBOeYBrRfJ3qBrUDj+gH7kkl7
+         veNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWYpWiWa8xkeVxXlnxUQmiRFUd95w1P8LGx80OxYaaVD+CAPqp/29TUjlUrMEsLHsXs7Q=@vger.kernel.org, AJvYcCV5q/4Prn656GEjNrZg2qVIN8bKSQbT0W7TkesLWdai8tXN4ImURn9qAC0LTvriGtGoQHnh/+G4o7aTwGg9@vger.kernel.org, AJvYcCXkmmcOtt5Ye6qmA+6Hyy45SZLX0wX+yZ50qLTyxJU5bJMtj/I09qvbiOX1OSe/FDrFm2vz2AOIjZZ/dZonSHOG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcBd2qZ9eXOlosuuG7HaNoKw0fLjdYBaPkk0MSCY9iw9Hg4DIx
+	T2h8jxzJnLCF9KM92ckAX91CdlNzxGh9dWLar0ctWCxgIgk5NyMt
+X-Google-Smtp-Source: AGHT+IFOA5S9ZL41D7ESXarGq3JXM7szdODlLGvWURgGPa3hq8cCWJIzW8RGSayR90J/ig4Dz/SVaQ==
+X-Received: by 2002:a05:6a20:9f91:b0:1c3:b0b5:cbd1 with SMTP id adf61e73a8af0-1cece5d1354mr16087939637.38.1725472885669;
+        Wed, 04 Sep 2024 11:01:25 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778521165sm1896887b3a.20.2024.09.04.11.01.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 11:01:25 -0700 (PDT)
+Message-ID: <20942a8e9a23e4cc6def8ff8cc59b30e18f07962.camel@gmail.com>
+Subject: Re: [PATCH bpf,v2,0/2] bpf: fix incorrect name check pass logic in
+ btf_name_valid_section
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Jeongjun Park <aha310510@gmail.com>, martin.lau@linux.dev,
+ ast@kernel.org,  daniel@iogearbox.net, andrii@kernel.org
+Cc: song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	mykolal@fb.com, shuah@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Date: Wed, 04 Sep 2024 11:01:20 -0700
+In-Reply-To: <20240831054525.364353-1-aha310510@gmail.com>
+References: <20240831054525.364353-1-aha310510@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Sep 2024 14:00:35 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Lu Baolu" <baolu.lu@linux.intel.com>, "Joerg Roedel" <joro@8bytes.org>,
- "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
- "Kevin Tian" <kevin.tian@intel.com>
-Cc: jani.saarinen@intel.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Message-Id: <0dc9ac00-1148-4c64-8c12-4d08a2a27429@app.fastmail.com>
-In-Reply-To: <20240904060705.90452-1-baolu.lu@linux.intel.com>
-References: <20240904060705.90452-1-baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices requiring ATS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
 
-Hi Lu,
+On Sat, 2024-08-31 at 14:45 +0900, Jeongjun Park wrote:
+> This patch was written to fix an issue where btf_name_valid_section() wou=
+ld=20
+> not properly check names with certain conditions and would throw an OOB v=
+uln.=20
+> And selftest was added to verify this patch.
 
-Tested this on an X1 Carbon G12 with a kernel built form drm-tip and this patch - and was able to boot successfully with pci=noats
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
 
-Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+[...]
 
-Mark
-
-PS - note on small typo below.
-
-On Wed, Sep 4, 2024, at 2:07 AM, Lu Baolu wrote:
-> SOC-integrated devices on some platforms require their PCI ATS enabled
-> for operation when the IOMMU is in scalable mode. Those devices are
-> reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
-> field.
->
-> The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
-> ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
-
-pci=noats
-
-> can cause a conflict, leading to boot failure, especially if the device
-> is a graphics device.
->
-> To prevent this issue, check PCI ATS support before enumerating the IOMMU
-> devices. If any device requires PCI ATS, but PCI ATS is disabled by
-> 'pci=noats', switch the IOMMU to operate in legacy mode to ensure
-> successful booting.
->
-> Fixes: 97f2f2c5317f ("iommu/vt-d: Enable ATS for the devices in SATC table")
-> Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12036
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel/iommu.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 4aa070cf56e7..8f275e046e91 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -3127,10 +3127,26 @@ int dmar_iommu_notify_scope_dev(struct 
-> dmar_pci_notify_info *info)
->  					(void *)satc + satc->header.length,
->  					satc->segment, satcu->devices,
->  					satcu->devices_cnt);
-> -			if (ret > 0)
-> -				break;
-> -			else if (ret < 0)
-> +			if (ret < 0)
->  				return ret;
-> +
-> +			if (ret > 0) {
-> +				/*
-> +				 * The device requires PCI/ATS when the IOMMU
-> +				 * works in the scalable mode. If PCI/ATS is
-> +				 * disabled using the pci=noats kernel parameter,
-> +				 * the IOMMU will default to legacy mode. Users
-> +				 * are informed of this change.
-> +				 */
-> +				if (intel_iommu_sm && satcu->atc_required &&
-> +				    !pci_ats_supported(info->dev)) {
-> +					pci_warn(info->dev,
-> +						 "PCI/ATS not supported, system working in IOMMU legacy mode\n");
-> +					intel_iommu_sm = 0;
-> +				}
-> +
-> +				break;
-> +			}
->  		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
->  			if (dmar_remove_dev_scope(info, satc->segment,
->  					satcu->devices, satcu->devices_cnt))
-> -- 
-> 2.34.1
 
