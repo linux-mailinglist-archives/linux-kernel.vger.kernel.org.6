@@ -1,193 +1,221 @@
-Return-Path: <linux-kernel+bounces-315372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF16096C1BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E60496C1CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0121F22A83
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2606C282B5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977501DCB01;
-	Wed,  4 Sep 2024 15:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949301DC75F;
+	Wed,  4 Sep 2024 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C6Muc5j+"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="XM7egI0r";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="G3IvoCYd"
+Received: from smtpout42.security-mail.net (smtpout42.security-mail.net [85.31.212.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA60DDCD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7705F441D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462447; cv=fail; b=g8CJRr3IwD0OM00ykSPGjT3hFobX9EGun0IGHa11RQpv70FnToKWrkwQ+gD5JsNJsUQQ2oADbikB7aBYc7rpmphTZ1xaAOA5AqprENQ6RIqSH04sgTcCdqgU5HQkktzDIZR0w2SzUXoaIK7mAELLzE6fvYcZBRql6kNE7YizSY0=
+	t=1725462605; cv=fail; b=kuhz+sOusIxm0OsRJ8BZ6PtiY1Q7qHzmONIHPMbuixgMHeKxO9vYSRl67khiarAZZzirHYDc4bvx30jJjsfHlGDlqwACkuq8N+cTVqD+Bvj86P4lgZx2TlZ9kU8t+DDSKtRPPh0fo3hBP9KLVzyp3WhmL1LNhF/yz9Z2OeftlRQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462447; c=relaxed/simple;
-	bh=wgQ4jpCDvtLmRSAsKTAV8P8bfz1ta9yU7pz2c8lCAZU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tho3w4rtulYYrO2moPOARjc16yycK2H49ELFoxQuvZmV7Vy9o+7qpUtpqk/rWU7Gwqq1IfdZS98xurRs+Q2nJD426BXFsXeQlvlYNAqlPj2oPvtvv7NHCNg+Al7WAs9/fsejaxXjTgpJrVxrrdEV2Gpx9VZz7N/GnzluXBXVn/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C6Muc5j+; arc=fail smtp.client-ip=40.107.93.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XYsDs6GkaEM01cy+m6tJMrYXBusyhddfnQv/mYh+wxQl7T7+aoIEHNgLv7A2YuZcD2JJOr1WllIdkdyxc3BrQlIl267ZEqmlgpNFNo1lvvSgzJ6Jzck3p4Zk5hF68HebxS5od25YPJc4GSCI1v0kbb5QuG7J/+ikKbZkUi0XYugG+vb45t38bm2PZ9lbMJrd0PN5fxXL9jN1h2JhNt4qf/d78ulOlc3EvyUImLSsLW6TyDa/HOI4hzGIZmhGzF7KvQgRGSei1+yFELbHrk8//60qjn0NL4eNDxixa1lWNR7h9y5vJvn2auPT16P5SXT98nYzfbVucsSNKLJ01Jr9mA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+C3Q6g88NRdLVdBqWfiv7kMsP4cnVn6VDpBzFQzl/9w=;
- b=rWrD2j/eBVNlxqZz3RUXUBi39t5k6sZj15an7bb4uaWLLBvdSgyIXq8SKiQZUzHGEGxlX9rclaNqbc0GGV4oMMR1/1EOmApnsT3ptbAZHcVged0KJqg0vRuVy7en+GdjKXPgGbm5HPGLSZMgpAltUwMwoDngnImk2UCM37TBQSeq/WDjiH+YYgRIN7e6aYrmfZFHwcHIPa/YaZ0KaiPNm2EBaaA2l2fFdm6QCtsl64CjlD9B7ngCmpiQD/xubqkVlaxvWkDAC66WruiYSYKTB5OLORYTwgB32j1tIZxMNI7ikd0ndt4OEO4kvpOjR9ykCO2tlQCKebWbSFrY6nL7fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+C3Q6g88NRdLVdBqWfiv7kMsP4cnVn6VDpBzFQzl/9w=;
- b=C6Muc5j+PwOf8/Qe6PngBnGjn9FYM3aNqxZHUde9HSCCr47oBLDHMiHA0IBDMdqB6+DPwaSFe3cutvFMpF64vEnmG4AGb7Z6R/ap29EyJEPaiI+6uj2JsLQoXTFOtkYCFHXkGlJj23THpuLKKtcuMtVlPL8Uo47Vrz0dn3Zf9Ug=
-Received: from CH5PR04CA0021.namprd04.prod.outlook.com (2603:10b6:610:1f4::14)
- by IA1PR12MB8553.namprd12.prod.outlook.com (2603:10b6:208:44e::5) with
+	s=arc-20240116; t=1725462605; c=relaxed/simple;
+	bh=CQxiSpa3VlhZxAsNM9PPjjaLFmtcKvnoPbK4PYsbyuA=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=P72JrF7/z5bNQSX/XhVwxVb8qgfP/A2/RBZyx9uOImDoPM3ZyE43obimbxdbPSgR7A/WI7gcmSbgNWOc3RWnA7aeObPvXhcjqXd0MUPCGiwMENxS2lIxXl2oZhop5rf7l2vIeiI1uQbJZLedbSNiNTVEazeOw9WN5FjJPersGE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=XM7egI0r; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=G3IvoCYd reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx302.security-mail.net (Postfix) with ESMTP id 45D80620B20
+	for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 17:07:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1725462436;
+	bh=CQxiSpa3VlhZxAsNM9PPjjaLFmtcKvnoPbK4PYsbyuA=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=XM7egI0rDYq+TJYYRXlZLswUaHCOBNYWs65yrCstl9+dW+jvxYDWGBqEucb+rOHFc
+	 6egAtZ2Yh3Z/kT351Y2/sxpg9RCLxTpSBhwKqd3JL1H3SB4kxDSQhwFmNWNAUvH4Fm
+	 JS6RleSufi5sLm0D9wudqd+Sy1NG/06xirrO/8KM=
+Received: from fx302 (localhost [127.0.0.1]) by fx302.security-mail.net
+ (Postfix) with ESMTP id 1D39C62036C; Wed, 04 Sep 2024 17:07:16 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011025.outbound.protection.outlook.com
+ [40.93.76.25]) by fx302.security-mail.net (Postfix) with ESMTPS id
+ 84F146209A8; Wed, 04 Sep 2024 17:07:15 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by MR1P264MB2706.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:37::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Wed, 4 Sep
- 2024 15:07:21 +0000
-Received: from DS2PEPF00003442.namprd04.prod.outlook.com
- (2603:10b6:610:1f4:cafe::f2) by CH5PR04CA0021.outlook.office365.com
- (2603:10b6:610:1f4::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.14 via Frontend
- Transport; Wed, 4 Sep 2024 15:07:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DS2PEPF00003442.mail.protection.outlook.com (10.167.17.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 4 Sep 2024 15:07:21 +0000
-Received: from tiny.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Sep
- 2024 10:07:20 -0500
-From: David Kaplan <david.kaplan@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/bugs: Fix handling when srso mitigation is disabled
-Date: Wed, 4 Sep 2024 10:07:11 -0500
-Message-ID: <20240904150711.193022-1-david.kaplan@amd.com>
-X-Mailer: git-send-email 2.34.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Wed, 4 Sep
+ 2024 15:07:13 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 15:07:13 +0000
+X-Secumail-id: <4723.66d877a3.83e23.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XoaK9MhrKjRsKqGpbAG3VkucTqEe6kNKuD9Szz3iHh8NTDE+a/bCS+j201rXROz8TX0Q7TbXe5pP7zCG6VCSh6pnouWSdDh+0+pVW+99d0RLiK4dVH0YW0nb1pZTql7h/aErv0z/Imok3fV54KU/Sk1L53v/yELLlGsmUCz0IvLztfY4evkCWCyvmMP1J22DY0DcQKJqlGGooHTL3Owx2BZ+SuAIAybYmtbikcGeM8LQpXn8lRwTUgcoop6OHqhZz3YY0qH3hMSItc0Lpg68tTDQRjAVcHAzEpVQE0lHADKdRLkalmOYTwim+ry+fBlg5f5yQ5qTyxz3opgo5ygTRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qqqpPaWK3JXATFvKZVIblpsrwAGC2wfU5v9mJOfYFgA=;
+ b=OJVnk40t/0b05WJcwQv4Wa3Jc0Z1ZDMUmRgpziW5O0c2SeccKYkgdVgnmCxHspXBIGcUTw7P8GU+hGO8FiSSIg95dc/YsCk9vw+osHGGDy4Xw8IQAGihNxHsNlg3we/V8Trk1A/9LGz1wBItA/eoeoze4ezs6TtJCE+sapiZ+OaFnHR6oiUH741EDjD88Y6nCzFCy2Y2sh5MpoIGQskFYUshwUzgG/GByraNjXsWO5qaax620Qx173jkW+p7FCg2rjDIdSXrP6cwiw03v/5TGyn3UfyrsrXZod9t44PkoWxSxpKSj1H/lzi5JUx0x+X2pGxsuFCcx+CSxjenJnRRow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qqqpPaWK3JXATFvKZVIblpsrwAGC2wfU5v9mJOfYFgA=;
+ b=G3IvoCYdwiGhpIfTtthP//gbfJV+ysIWN3i1jhEMjzwMIq3cSZhWANQ9GI8ory6cr+BubSdjCvM93qKmFBCnSh7bDzTE8SEAJWncebkkaGZMHzKkdiB0+QjA8zDVUIINqQfxcRWDJYD0QLQGV2r/BL0qs4PNxxvRbIqQk3emmnj1YX9Y19E+oZdHZRoUGS9RHQuNhDHpTOIfEgr5JlTUR1U23JA4wk2enq6us272rs33/jH7kq/zgvLP4lYD9L97JTiSN4IEoMJWmdgAufPh1itfELi+9KTG71/pKiWoR9Yr++i7DwXcW2WHVNcLtepggYrI8+6pbKk55TU2AkPD8g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <05e23438-9842-4bd7-8ec7-a6a1a04d6353@kalrayinc.com>
+Date: Wed, 4 Sep 2024 17:07:12 +0200
+User-Agent: Mozilla Thunderbird
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: Re: [RFC PATCH v3 05/37] dt-bindings: Add binding for
+ kalray,coolidge-apic-mailbox
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Jules Maselbas <jmaselbas@zdiv.net>,
+ devicetree@vger.kernel.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-6-ysionneau@kalrayinc.com>
+ <20240722204723.GA61731-robh@kernel.org>
+Content-Language: fr
+In-Reply-To: <20240722204723.GA61731-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PAZP264CA0159.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:1f9::23) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003442:EE_|IA1PR12MB8553:EE_
-X-MS-Office365-Filtering-Correlation-Id: 777815de-8e40-4d55-35f4-08dcccf3469b
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|MR1P264MB2706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c2e0d9a-a47d-4136-b4bd-08dcccf341dd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?26Aq9u5r0U/GFSEkd+dI/Kh45TLT2Q5kAvlnsXdl2TrlY+nmUsnzrLVM6MS/?=
- =?us-ascii?Q?zJohL/LuMHodWyZHO2Qtbnj4CjnIehfCSU3RBn5zC/YQ8a7g7TnRaHDbve5Q?=
- =?us-ascii?Q?Ti3x6BBhsCRixDWzwG3gJGj5WZCR/3yAE8fdvwNOz0E0mQmKg/66u9U8ufPQ?=
- =?us-ascii?Q?ouxWje5bkPTRmKikjLcFJSWhtN6tXKQJASlEc1soYajCzLmtlm1vwg1uKQ9i?=
- =?us-ascii?Q?oOlCEfRTkObwUPmsRdF4Jr/IHkhMdovU9UJbVkBrcGC1/6rChjoIDgYBsXGO?=
- =?us-ascii?Q?bFRj8Vm+QtmuTC5lM4hz2N13juxVZppzoOZhnD+JVfsHcIjUdg6g8yBukvDt?=
- =?us-ascii?Q?PS9+PsBccnjkUPRmV1wUJ3fV1uaew0Ac4J3ZDkiPbPAYFOd0pHw6Aw1bJKNS?=
- =?us-ascii?Q?x1ZN3QHjjhoZzAONIQLXMvS3YvNL6s/xbpxYsX0jA7B7vwtDS9bsZrjNNVFD?=
- =?us-ascii?Q?vEDLpMgdzpI4cVhqwXxJNQv50Qqkv2/XlQaTHasaGBoaoXQD2hxO+DQkonyJ?=
- =?us-ascii?Q?itg5hdhNRfT3WLfl2+f8KhTiTj4BVTBGXU3pGrMWASizwf8oFuLrlUUyEqp0?=
- =?us-ascii?Q?/68PSfyO6k5b+/Yx7fFnR4cS5iHPFEY/DmrpUYj5gKXJkrtWDCtxQEj9317s?=
- =?us-ascii?Q?C2oeW50r/pvqgrG8evwF54ZJVwLp8jUK5UfcyoMf+ISQwNJ54thqviR7exHO?=
- =?us-ascii?Q?J2r3NE30P0RVhL3jjswnVrOspH3n9lcNA/fj5SJ2tE9WK4388r2XP04iCVXT?=
- =?us-ascii?Q?NFdcVd0MbLBqXZSQl0okqbM7CCynAOa1CfHIGgZydPxFg/uF1Re9il3JO+pQ?=
- =?us-ascii?Q?SswoCY+pYzA9cWi+IKAMrdHTaDc4SVwNQmkN0cB7Cjn++N6k4LbkmwjXns6+?=
- =?us-ascii?Q?u2FQjYuCu1KMCBdeIPhGIQwlBxk67W7bOznvGjnM6il+0uwEhKV0xAz03GTN?=
- =?us-ascii?Q?wvb8gAOk67CT5Cy25Sbf+yvG0U3kQ58gUOXlXNrrIg4cj9Nm7edS77W/Pc34?=
- =?us-ascii?Q?vdJ+RpVKbCKnavrmcjlfGHPiLjY5HCYOe3jlUmFTnwkPYKuCwcHTtNMcwr6h?=
- =?us-ascii?Q?OMTOQHAxkYjuuzIIff5LBuGUVATtFvrkjJkVcA4rK/6N6+QGhlWZbm6XwoVn?=
- =?us-ascii?Q?VwDytjTaydV3hwD1f/JkHAQdjURk0TFc4G8ZBmp+W3RpKquuzMDxqUhG1kym?=
- =?us-ascii?Q?emrfLzw7nPMifpjcONmtnXmUUScQ8whVK3C6Cjn00Pxyj3xQPDNRZXa3osI0?=
- =?us-ascii?Q?AhOF63IzftSWvbaU91jEZO+E9kJmzMYNFzcr+0NiLQcADa8/7Ns7PoRwRG49?=
- =?us-ascii?Q?WRiaMJ5h1WwiS6mbgzeAFXXX2QyVOVIAiL3iQ13n/BARmV8D3fcU6tU9f4uE?=
- =?us-ascii?Q?9Phr2fs36Yo8mxMtcrFM0nr36DSaHz1fHY3x4pphEQiw+8tfvnVto106iFEM?=
- =?us-ascii?Q?sj0Yg32rGVK2hICy2fGCrnc26mVaxeGD?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 15:07:21.2370
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: 6cfa970dWK8e0nDJltfCcBb5vlXfCbHYcMAQw1XohR9mbokkK121fxRRIxAviYlekodvItPi04tyiOw6yukv1+5WuA9SotGI448W5vTqY2FgkweY0ftWB6CFjX2iLHE8znY9uHSDpBlW9ntFD6H7vzAY6smCdzNY3vLHCZNTfWEdq0k9Km9HUCdVmRx4G3iJV0j6AgDOiDNyuX5+q96mySCWpKHTEoC3Sw3Yox2kKzW2KaoZXmrrWPmhdszn3C6A5+1NpBSaVOjdX9Z6SWFNiiUiSsaiFL7I+rKvqXddZj5S0YP8AXZxnv5jit8KA9eXZju/LrPH3YnbBBIJs7RzUqHg2EFNwAQckJa+10Jv8lf5bbsv3fnu3yr6EMJMyKUvza1avKBHjnT/uhu48LJYLgt9pUIwOl7NmXHmgrBhq2IfozU3Jv8dirfMUAcCxTAvo3Y529UDCOYj6RU+kUC1l2L18w+45854bc2lTc9A2I9RaTMqCec8Htale9dI4TKjxuecoNkeOs5Crulkn673BFwCtNzYUfxJbHVrm9TL9iSACwhud1LSizAHcOhZWGtHXMrIjny1LrZqBB0O9lKttFdcx8sC5oHDCLjKKP/ISKUgQLagnkKGRN31XxsT/UfUx2O7qIQX9YV1xzgQd0fKhYp1wcYpu6KTph1IGI/lpqN1WdKBOfQ+I0HWPWhgD4VV3eFW68tlDmvWsvT5HNA3n4SeYMbBKNmgl3rGyGypDacifilPdYoo1PSVlC499D9dZyyDP7wiXXygyGhC9gkq1B8TMmg1Gssx+nUIiyj13CIJ+GzeURFSOyR2i9iK5TRckW5x60axda0LojTu25Mnn6/V1Hv6vOQD8cUZ76j5nxPNF8yTuj5W2bhhzrGEwCwFTrofUwIaazbwcees1w3iIGF+HjHGKZ7SYzcL8I8PSlMqb/+S0+xB+5futPTdb3lKXVK
+ h40MkVzF/yu/9FHccfGTsxH1mTxIvpG+xnshAP2c+TnvXSAq5gJO8dHAikCVohHcu2LkafVRrv6Li/MSRnhHNloHz2rERIOxecrLRmQlfW/9EShzrl6wqzzLHePovAh0zbpdwXRYG8g1brTa1kmPjWGiQ0YNo5kLyxu0x5IxQM9pV/KEzT9UMgN2ov9mgenpXXOZNFif/Djdryyx8kPicyy4JEVZGdopfsxLqgCKQN729ZoJ4MGVOBdp12fj2OMYZS2M3f2g+pxCo+5rlWHaWn8w/H4pu0m9fA4LCCc0TMaYBpDTKczJ1AAM1owFlT5w4laKWq6KvlCxdU8LXcG+V2WhKMWN1KjaX9fGn6yWzrBne2aPA5sDSp0hcBrBgWzee/AISRXsmF08IbkKKXw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: C1/5eNmKJhkxbfz8DzJIHCPnqEkl8hy2kvhk2TCo5HNbt7NIfKp0dfAKNvST45K4lQxo2J+c6/Q6Cv7L5gjFSJNwOkwNVvyaW3fanfrCm/yUIVQwsCCkyjBy0XY8KCEyhQ9k4I4qBy/S5/YiSIKO6msJDuapj/hROl+CTurYE8qR6SgzwymySYO6si2AHU3z+GbW+2/30TF4QPW+R+wAGQMT0LIniaDaZIERUbQwgNGj6OGiiEUTjwz8T1gGqkDCBKNHGupeMv09SW037NLgkPnIZtUER1l3UE0yb0ayYNMahe3hF5VP2DaFfBQT+kKvAVh1SGKZCNoWxnFxlBsLhnwPavN03ji1jrEKhMDLa5wNaBbx89VdrX/AUx8qjWrPyj55FqHkbS1fGTnwcDsYhPuOFDLwhiRdBUCp9jZZHc2VryJvueUghXBB8hqgLB/sUtfWM74WcsjCgW01bvbGIME7MSlrxdz812XnjT4sI5M1EAdpzfVmqoBRDJtq3oE+U7u+RYfNr+FqAWahQhCGO4G8YrGKJYB0wz4md1Mu0qixMGTQCPBHGN1nUZdbkt4zOV7DHOTL/k6sMNQXm61zBNLVRO1XVi/8NkJF/Zl1ePvvoPz3d+iYNRBNe3Z0JJMelYF97oP5WxdvLDrI9eSrLNI1CoiUMocS36FlTcvCujkgUrNRJeIS2wwAfDz5fL0T+Kqfh//5nGuS/gHqSzJFJTrfqaCaLdeUwWJNFMKkEUbVoYOBihz0AkPYOQno6ysywkVARAzDU+QghntIHhxPkHLP2arzIaiERUSdh3xHQQAdXooBK0hf9n+q7uEUiceYbnp6+7dcStvrZ9l1YVmg/zQszmnLlTtk+N79Mb05VhYtApSWWbD52gvOgEa1hMMzeMswR6d7sVw5lXkYwTF1wioSL6Lq84caODYHzbfFen3T5vUGKGB5/ezpzIvMDsE9
+ iy5V1XauZn4RDEdHhk77i+/pYAk2GJxi7WzNmVyYD7dAwh58bs16bRuZihUjPNq3vweJd03zIWi2cbnOa9AapBlKhnLSHQ4VUDvLs/jO/VS21ZlFTSbSIi9C+gIvljSuW7a1oiItpUsKCWLxWlJdK7tc0lErHI25pFs5mjZPbbq3mXI1FS9lYIj9sZWnofC/MaUn2P9zQFqgeDtlfHl6Z9mqGovNOJVQjbrBguOdlgPC3f4dS9TyXjwgoaOtYNMwB4UvJ8h1EX86TyUO0CzPXA0lOSlpd6D8eTETHGb1Wxevtk8c2BwBCj+odo/kJjw0ecUf+igAy6f1AXjGkAImVv7Qhs5tw4w+QrdbcFJtGQtnmIXQEDLzYHQxNZYekjbZX/Fe1F/ZI3JRjiz8GogjHzQC5b/4g/NiY3PBEdXDWfed/B8UsER2cy6l9LbU3x9gZUiHwJBfM+WvQueV2CuaoWJYjAgKFx5Ph7200jBhLE6eSkJNjkMlPqkw11m9MmZbq+skuTKhjQpsePlp2AoqbQ1Nl14Fy8Sz6aAjQWEbh6rd1XuoKUPYSrwRwSllIO9j1RHlb9pKzl4DSXE2omszxSgotGbDl2NciXYLu6RyEW/yPLhtScF+M9fQggw1JcykAygqPbaBShr1KF+08QG4hAkMFPPvCOEXCbT5dVuZxcxIj1VItrzOfUgUXPsqdFyyFZiVXfXohHJX+NTqmcONJA==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c2e0d9a-a47d-4136-b4bd-08dcccf341dd
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 15:07:13.5011
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 777815de-8e40-4d55-35f4-08dcccf3469b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003442.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8553
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QGpgEQpEzSgYArgv8Q21B4dcvmnMHH+DUiP461E4+gsAZXvDIQ84pccZdSNfv3rWM+LAFTINhUUCjhENbCLKog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB2706
+X-ALTERMIMEV2_out: done
 
-When the srso mitigation is disabled, either via mitigations=off or
-spec_rstack_overflow=off, SBPB should be used instead of IBPB if
-possible.  Additionally, move the check earlier in the function so no
-warning is printed about the lack of IBPB-enhancing microcode since the
-user has turned off the mitigation.
+Hello Rob,
 
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
----
- arch/x86/kernel/cpu/bugs.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Le 7/22/24 à 22:47, Rob Herring a écrit :
+> On Mon, Jul 22, 2024 at 11:41:16AM +0200, ysionneau@kalrayinc.com wrote:
+>> From: Yann Sionneau <ysionneau@kalrayinc.com>
+>>
+>> Add binding for Kalray Coolidge APIC Mailbox interrupt-controller.
+>>
+>> Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
+>> Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
+>> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+>> ---
+>>
+>> Notes:
+>>
+>> V2 -> V3: Fixed bindings to adhere to dt-schema
+>> ---
+>>  .../kalray,coolidge-apic-mailbox.yaml         | 90 +++++++++++++++++++
+>>  1 file changed, 90 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+>> new file mode 100644
+>> index 0000000000000..334b816b80583
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+>> [...]
+>> +
+>> +  interrupts:
+>> +    maxItems: 128
+>> +    minItems: 1
+>> +    description: |
+>> +     Specifies the interrupt line(s) in the interrupt-parent controller node;
+>> +     valid values depend on the type of parent interrupt controller
+> Your description applies to all 'interrupts' properties and is therefore 
+> redundant. What you should explain is what are the 1-128 possible 
+> interrupts. Normally, you have to list each one out unless they are all 
+> instances of the same type of interrupt.
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 189840db2f8d..10d0775e7aa5 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2557,10 +2557,9 @@ static void __init srso_select_mitigation(void)
- {
- 	bool has_microcode = boot_cpu_has(X86_FEATURE_IBPB_BRTYPE);
- 
--	if (cpu_mitigations_off())
--		return;
--
--	if (!boot_cpu_has_bug(X86_BUG_SRSO)) {
-+	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
-+	     cpu_mitigations_off() ||
-+	     srso_cmd == SRSO_CMD_OFF) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
- 		return;
-@@ -2591,11 +2590,6 @@ static void __init srso_select_mitigation(void)
- 	}
- 
- 	switch (srso_cmd) {
--	case SRSO_CMD_OFF:
--		if (boot_cpu_has(X86_FEATURE_SBPB))
--			x86_pred_cmd = PRED_CMD_SBPB;
--		return;
--
- 	case SRSO_CMD_MICROCODE:
- 		if (has_microcode) {
- 			srso_mitigation = SRSO_MITIGATION_MICROCODE;
-@@ -2649,6 +2643,8 @@ static void __init srso_select_mitigation(void)
- 			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
-                 }
- 		break;
-+	default:
-+		break;
- 	}
- 
- out:
--- 
-2.34.1
+Oops I understand what you mean, this description could work on any .yaml indeed.
+
+I propose this instead:
+
+Each of the 128 mailboxes generates an interrupt on the APIC-GIC.
+
+The interrupt is triggered according to the mailbox input mode and
+
+its trigger condition.
+
+>> +
+>> +  msi-controller: true
+> "#msi-cells" should be specified too.
+Ok.
+>
+>> +
+>> +additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - "#interrupt-cells"
+>> +  - "#address-cells"
+>> +  - interrupt-controller
+>> +  - interrupts
+>> +  - msi-controller
+>> +
+>> +examples:
+>> +  - |
+>> +    apic_mailbox: interrupt-controller@a00000 {
+>> +        compatible = "kalray,coolidge-apic-mailbox";
+>> +        reg = <0 0xa00000 0 0x0f200>;
+>> +        #interrupt-cells = <0>;
+>> +        interrupt-controller;
+>> +        interrupt-parent = <&apic_gic>;
+>> +        interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>, <9>;
+>> +        msi-controller;
+>> +    };
+>> +
+>> +...
+>> -- 
+>> 2.45.2
+>>
+>>
+>>
+>>
+>>
+>
+
+
+
 
 
