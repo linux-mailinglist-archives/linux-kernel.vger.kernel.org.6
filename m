@@ -1,114 +1,242 @@
-Return-Path: <linux-kernel+bounces-315322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE29296C10F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9EE96C112
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06061C230EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306BF286E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800831DCB0A;
-	Wed,  4 Sep 2024 14:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DD71DA2FD;
+	Wed,  4 Sep 2024 14:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="vUL5bGVq"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="x/vq+qV4"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9881DC1BA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E231D88C3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461104; cv=none; b=muXqXpp0ZEASOYxi5jZ4trI3CKLEIk3MM2EBkuURyEHryupEsQaRyTWvA6pxDRl84+nluQj/6F1MICqE3gGbNBuTag9orao/SMTYR0TeG5mLVC5D4No4muOkfKJTx6Dky4/BEUvSNROmovUE+7wu6pOwARhmCUPar1dakcyGBHQ=
+	t=1725461140; cv=none; b=hs6k6kDy/gmAomvKLBdryO+hEYnZWxBdqSisnfVG6vEt0z9UIMa643i+yUeWjjCcV0UXWqbe+dHrnjmKoexkXFIIzdVpFjFU/75URzLV40ZtOrK+pAIAej0t2NVfHb8GSjS8GhfMy05TsMdRkDL8K3eG6OMP3yJd3LaBEVV9QkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461104; c=relaxed/simple;
-	bh=B29IRw+UCEYcVNyBksrJ0DRzaF5TIW1T+MkONM+dbsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LioGRHoV/VzKIjiz1hEKsrHDX/cAAH6NUB+hsFYH+TzVoMbzGn0DxccwvIVSPeBXxYccMQ9DhQK8otvMSo8IFU6DVmI1CChrG2T4y7ABdcYPT+Rf4LJ5YaJWfJ1duucbeSf3MXM/Ezcw2onaCrvhFo6UFDjXNJ1bnfRwoMm6yUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=vUL5bGVq; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86e9db75b9so744105466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:45:01 -0700 (PDT)
+	s=arc-20240116; t=1725461140; c=relaxed/simple;
+	bh=wHE3mxOuhHRAxL4MQT/wGmdv7vx15O2tUkIuYmup3TU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QHTB8Qy5XxzZwvvEggntVM9lVQfQF+3N9s1H9ncaHObnXSkv5zrFv2lJdQwFTf/jXhF2QQfPvk+5sMXkqESR0o5XNBfmPBvkwWvKnWwau8TUgCnG9T87Z4u54/VT/n3dBiuMNptmUNLR7mj4JB4epk3NmHo5mT6H0uNVMfxBd8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=x/vq+qV4; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a0220c2c6bso1979955ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:45:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1725461100; x=1726065900; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w/kYvp33pxGDjRpRIJw+Cd3vyUH8fk3GhcxNhxFr24c=;
-        b=vUL5bGVqzN4huSqkARkLY8w92QbvWcAp2VpZfUlNjPa3AoivPpmUisuOqLe9BCdsWQ
-         nYsEUbXVquhhe/ptxUgRKHg3wcYbqAul0BUaBTKkJFYJxugJDqxG554v4CunyCVk6RVd
-         GruByJnhWgROWRfqfOGrPojyW6Sl+pte8M/WVHgI4KJAlkrBkFexCLSRoHIY3LcBfjF2
-         kW3s/TERvtIqBWalp2sls0VQSD8JXXbKRCfflDWACeqnjcQqRz9MOMEvYfpCr8w7GOYn
-         RAQpV3FFOjIsbnhMZlshv9J6RK4OeIdJ5WCE0bwI29SwJ/aXfsoCxxdrzCZDNLd8+FjX
-         EN6A==
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1725461138; x=1726065938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=51nJ3+dnXamTe1z0PXS6eJAv/Sucabjt3mu+GvHMgUs=;
+        b=x/vq+qV4k2oKHTpj3aDaE1sz2egjycwuklt3ZiHVMSvStYtysOWTwkI6y6F/5C+/hr
+         uDykHKL6Cxdr8fj0NaN7EeQFikZnj8aZVcAW0ygY7aTjBrYLYPbIjN7inZlhGY2I0Toa
+         HSRVsckwERGKzL2BRhYfmqUdDG0NCkWoNTGTU/Tnca4zrcS2kxClkpQ0ITPK6IWZ8+2Z
+         exsswTALbfY8G3CaG+p2R5YbmuW4YqGrtkbhfc7rGZWVz6OM90zmd49pNJcrZl1FGxcr
+         sFGDrnaunKciRYfQXNAXbdh4fD/uRzY02oTU6bYHwXhwjTa8z6dKJJhkRYVbUBXdLtIV
+         Xfdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725461100; x=1726065900;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w/kYvp33pxGDjRpRIJw+Cd3vyUH8fk3GhcxNhxFr24c=;
-        b=BOUeXyHyLZhYuNHW97kJQrPDJpk4hJY9Ls0kA2S9DF6qBKygPZ4zZbhjCHsujRLdM4
-         xWNlO1mHfY3/XmXMxd8ki4ygU6b/9Gx3vhW0nP7pT/ML0TBgE5bFphbPM6mt/6915JVl
-         231dEC9+82HQLu0xZ6R0gO4KtetraTpJ/XnjuVQlX0oMkFWKxIbD8G9/eQVIN51E6juv
-         nHU0qFlxGkr+rV8BmGP5WRvlOP6uyWXH2UgMXfQRYbEqMO3RkWEtc/x7RG4Fc7EufH9s
-         APbqnLLCDlzdGSQqje5oUiOnSW/DzWgbDhcoVF9nOBj+m3zoFtzVEbhTnHqCU99kWQP/
-         ZBpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWANv1XoUvxJkErKWyoajaXSiqvbiIxDy5zqlrKS0Rl3fe3CYpvtzt4cuJ+E8J3vLjBNr0wXYCvWtBCzSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmnqP7RguhFURrBdks6stj/6MV+zLELtuu5C5do+TmS4qv830X
-	Gq76ux0GpdXTO2u0q8vWrAfyN5B4azMXEQm+Kxi6IS5hIqxHv6qsOLCae5Ae0YE=
-X-Google-Smtp-Source: AGHT+IHKKGZCOMTNOifmLU7XC2AAO6pro54NRxIGJ/Wgh6Uuq/ZCIGg4bEYaQf3nQEl+RmcJ5Bxizg==
-X-Received: by 2002:a17:907:ea5:b0:a86:6a2b:3e57 with SMTP id a640c23a62f3a-a8a1d31ef60mr526331166b.29.1725461100004;
-        Wed, 04 Sep 2024 07:45:00 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a61fbae35sm1592066b.34.2024.09.04.07.44.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 07:44:59 -0700 (PDT)
-Message-ID: <f210bbce-d133-4376-878f-586e6f78fcdf@nexus-software.ie>
-Date: Wed, 4 Sep 2024 15:44:57 +0100
+        d=1e100.net; s=20230601; t=1725461138; x=1726065938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=51nJ3+dnXamTe1z0PXS6eJAv/Sucabjt3mu+GvHMgUs=;
+        b=vwFA5PUcg4P9zjNciqcHldKtcW+W/ASIHGRLy1JbllGpEoDEAMn/hCATHg6JdxVjtO
+         ZRxs5iphYG73U3K4zJ6V4tVSvGKuAJgQVPkskfHc4kDDuxYNJxbpYwc+CPx/XYbeCmDk
+         m1KmFs1EXGoIa0sLHTbFAlM5bvZQpTZ/TfwcWR2Bql3Xi9serEPvwsgRPGnJWY4s6nBm
+         2WxSM0/uFXqDMXe9kRAAZ9GWP/QCdJiR7woZ1iokvCC84XN4T9LwknzdxKNwKUdlduNU
+         dROloSqnfLL/4YVlT5nnw0PeVvTL4HuuSmm6L0m+d7kLHsGrDLTzjOQRjlKuKMwvhec0
+         0KhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjBTjOdU4VsW9RU+jv9ZDzi+vg0hoFJ0pYqNbZxxYm37EuqUr0YO7k9GXrT8tpUNfYvhyJsoR91o6Watw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTBq5thtuYJdPayldvI5biEEU2G8vuGEDQWQ79YKkuOX1A31yw
+	MO/+XZdhSBfMZqe9KlaJam7zodrSahrTjCk42hpy7cEkJL3IphU385MlSulljsCYH7SLLjettdQ
+	k35SPsdKhPu34kbIKktnX85P3DGjE1dtbDBsn1A==
+X-Google-Smtp-Source: AGHT+IFLJd6RqOOTfo+W5iDNyY9QHqf9y/6hYcTKnLONyt7tLaod+XWb5F7JfdnatN+pTnZbGN1pwsF1i8OPhTP7U0c=
+X-Received: by 2002:a05:6e02:52c:b0:39f:558a:e404 with SMTP id
+ e9e14a558f8ab-39f558ae637mr120606115ab.4.1725461138110; Wed, 04 Sep 2024
+ 07:45:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/10] media: qcom: camss: Sort CAMSS version enums and
- compatible strings
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- cros-qcom-dts-watchers@chromium.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Suresh Vankadara <quic_svankada@quicinc.com>,
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
- <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-4-b18ddcd7d9df@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-4-b18ddcd7d9df@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240829010151.2813377-1-samuel.holland@sifive.com>
+ <20240829010151.2813377-10-samuel.holland@sifive.com> <CAK9=C2WjraWjuQCeU2Y4Jhr-gKkOcP42Sza7wVp0FgeGaD923g@mail.gmail.com>
+ <b6de8769-7e4e-4a19-b239-a39fd424e0c8@sifive.com>
+In-Reply-To: <b6de8769-7e4e-4a19-b239-a39fd424e0c8@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 4 Sep 2024 20:15:27 +0530
+Message-ID: <CAAhSdy08SoDoZCii9R--BK7_NKLnRciW7V3mo2aQRKW1dbOgNg@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions
+ for guests
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, 
+	Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/09/2024 12:10, Vikram Sharma wrote:
-> Sort CAMSS version enums and compatible strings alphanumerically.
-> 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+On Wed, Sep 4, 2024 at 8:01=E2=80=AFPM Samuel Holland <samuel.holland@sifiv=
+e.com> wrote:
+>
+> Hi Anup,
+>
+> On 2024-09-04 7:17 AM, Anup Patel wrote:
+> > On Thu, Aug 29, 2024 at 6:32=E2=80=AFAM Samuel Holland
+> > <samuel.holland@sifive.com> wrote:
+> >>
+> >> The interface for controlling pointer masking in VS-mode is henvcfg.PM=
+M,
+> >> which is part of the Ssnpm extension, even though pointer masking in
+> >> HS-mode is provided by the Smnpm extension. As a result, emulating Smn=
+pm
+> >> in the guest requires (only) Ssnpm on the host.
+> >>
+> >> Since the guest configures Smnpm through the SBI Firmware Features
+> >> interface, the extension can be disabled by failing the SBI call. Ssnp=
+m
+> >> cannot be disabled without intercepting writes to the senvcfg CSR.
+> >>
+> >> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> >> ---
+> >>
+> >> (no changes since v2)
+> >>
+> >> Changes in v2:
+> >>  - New patch for v2
+> >>
+> >>  arch/riscv/include/uapi/asm/kvm.h | 2 ++
+> >>  arch/riscv/kvm/vcpu_onereg.c      | 3 +++
+> >>  2 files changed, 5 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/ua=
+pi/asm/kvm.h
+> >> index e97db3296456..4f24201376b1 100644
+> >> --- a/arch/riscv/include/uapi/asm/kvm.h
+> >> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> >> @@ -175,6 +175,8 @@ enum KVM_RISCV_ISA_EXT_ID {
+> >>         KVM_RISCV_ISA_EXT_ZCF,
+> >>         KVM_RISCV_ISA_EXT_ZCMOP,
+> >>         KVM_RISCV_ISA_EXT_ZAWRS,
+> >> +       KVM_RISCV_ISA_EXT_SMNPM,
+> >> +       KVM_RISCV_ISA_EXT_SSNPM,
+> >>         KVM_RISCV_ISA_EXT_MAX,
+> >>  };
+> >>
+> >> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg=
+.c
+> >> index b319c4c13c54..6f833ec2344a 100644
+> >> --- a/arch/riscv/kvm/vcpu_onereg.c
+> >> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> >> @@ -34,9 +34,11 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
+> >>         [KVM_RISCV_ISA_EXT_M] =3D RISCV_ISA_EXT_m,
+> >>         [KVM_RISCV_ISA_EXT_V] =3D RISCV_ISA_EXT_v,
+> >>         /* Multi letter extensions (alphabetically sorted) */
+> >> +       [KVM_RISCV_ISA_EXT_SMNPM] =3D RISCV_ISA_EXT_SSNPM,
+> >
+> > Why not use KVM_ISA_EXT_ARR() macro here ?
+>
+> Because the extension name in the host does not match the extension name =
+in the
+> guest. Pointer masking for HS mode is provided by Smnpm. Pointer masking =
+for VS
+> mode is provided by Ssnpm at the hardware level, but this needs to appear=
+ to the
+> guest as if Smnpm was implemented, since the guest thinks it is running o=
+n bare
+> metal.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Okay, makes sense.
 
+>
+> >>         KVM_ISA_EXT_ARR(SMSTATEEN),
+> >>         KVM_ISA_EXT_ARR(SSAIA),
+> >>         KVM_ISA_EXT_ARR(SSCOFPMF),
+> >> +       KVM_ISA_EXT_ARR(SSNPM),
+> >>         KVM_ISA_EXT_ARR(SSTC),
+> >>         KVM_ISA_EXT_ARR(SVINVAL),
+> >>         KVM_ISA_EXT_ARR(SVNAPOT),
+> >> @@ -129,6 +131,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(uns=
+igned long ext)
+> >>         case KVM_RISCV_ISA_EXT_M:
+> >>         /* There is not architectural config bit to disable sscofpmf c=
+ompletely */
+> >>         case KVM_RISCV_ISA_EXT_SSCOFPMF:
+> >> +       case KVM_RISCV_ISA_EXT_SSNPM:
+> >
+> > Why not add KVM_RISCV_ISA_EXT_SMNPM here ?
+> >
+> > Disabling Smnpm from KVM user space is very different from
+> > disabling Smnpm from Guest using SBI FWFT extension.
+>
+> Until a successful SBI FWFT call to KVM to enable pointer masking for VS =
+mode,
+> the existence of Smnpm has no visible effect on the guest. So failing the=
+ SBI
+> call is sufficient to pretend that the hardware does not support Smnpm.
+>
+> > The KVM user space should always add Smnpm in the
+> > Guest ISA string whenever the Host ISA string has it.
+>
+> I disagree. Allowing userspace to disable extensions is useful for testin=
+g and
+> to support migration to hosts which do not support those extensions. So I=
+ would
+> only add extensions to this list if there is no possible way to disable t=
+hem.
+
+I am not saying to disallow KVM user space disabling Smnpm.
+
+The presence of Smnpm in ISA only means that it is present in HW
+but it needs to be explicitly configured/enabled using SBI FWFT.
+
+KVM user space can certainly disable extensions by not adding it to
+ISA string based on the KVMTOOL/QEMU-KVM command line option.
+Additionally, when SBI FWFT is added to KVM RISC-V. It will have its
+own way to explicitly disable firmware features from KVM user space.
+
+>
+> > The Guest must explicitly use SBI FWFT to enable
+> > Smnpm only after it sees Smnpm in ISA string.
+>
+> Yes, exactly, and the purpose of not including Smnpm in the switch case h=
+ere is
+> so that KVM user space can control whether or not it appears in the ISA s=
+tring.
+>
+> Regards,
+> Samuel
+>
+> >>         case KVM_RISCV_ISA_EXT_SSTC:
+> >>         case KVM_RISCV_ISA_EXT_SVINVAL:
+> >>         case KVM_RISCV_ISA_EXT_SVNAPOT:
+> >> --
+> >> 2.45.1
+> >>
+> >>
+> >> _______________________________________________
+> >> linux-riscv mailing list
+> >> linux-riscv@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >
+> > Regards,
+> > Anup
+>
+
+Regards,
+Anup
 
