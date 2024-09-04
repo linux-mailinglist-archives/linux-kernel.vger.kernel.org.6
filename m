@@ -1,203 +1,319 @@
-Return-Path: <linux-kernel+bounces-315146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22ABF96BE86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE5F96BE88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46DA91C231E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D378A1C238C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5361DA115;
-	Wed,  4 Sep 2024 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BD21CF7B9;
+	Wed,  4 Sep 2024 13:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ov/XTk/n"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/9RN6ZY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E9F1DA101
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD4B1E884
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456563; cv=none; b=eLuUpL2EqGDY/eErezibaJ7nrG1YUI6AadBtrRFcT1nUDiUXIaQkfJaMZhonveIcWLJIfVWNPBk0p5ezDS+NOHIXOJS3XWa8oBLc5dK71bm1oGtaXNfKvBB7I++SaUBRzgUWTqd/vi84F/iF/90ImulVqKaV7PCu9D0lgfbUJlM=
+	t=1725456579; cv=none; b=BNdYGfeS3ca5TsZ0sU3cxaPrUUrX2QF1+JydTnui/xFz0Hl/1Wk+rAi+daXCvSt+sjmue+jbR/1IBBUviG/0krhX7E/KY+f/V7wcdZ2imCeqexgHQkg8yqxE7S35E8lzGayjmjCkVVFRxxc91x5hpW5lxZy7LzAjhHy3b+DidjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456563; c=relaxed/simple;
-	bh=hTwz7T+kA1ZdMphX8cn3RJOdysmUSUewq+ktL3MQIpU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z7qSC/2d/NPO4IUIl22DrSlTBAINZnUxWDQ+hfVhT/jYUM+X4hJPgIGfxjhwe0OGX3R+h8OWAGqK0Mc4MZBenhY/yWrgZ8hwScyIK53Rs4l0q2u9kcPmnVUXxxHLbM6Tg5CDKK4/pRGfHaMg6OWgJitshCBX7Ey1s00nLQzApF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ov/XTk/n; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371941bbfb0so4226695f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725456560; x=1726061360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Xj+Wgvo3JkMcqvVd3ksJTTHYIece7AGFEnbRLynw6+s=;
-        b=ov/XTk/nsb33mRfYMR95y0apTMBbtVmHnxwuCiQpZK0mNiO0F7XcX3WOFYkw1dTknw
-         JfwC4JObLrVzhdo2UBZDlOX8LGBPaJEBtEEHWhddY2LzfHCx4+XNFpnXDSYbKU8o2+ad
-         jokdaAEz5FcKaUehluRGv1phEixlrX59QCr3wdWD0JVCSwlhxJL361soehnbX5rN9gjV
-         1fBQhSwGU8yFod02RmzERNH0fW4NTk+evwKeOOG2weAiyivr2OCMACTx22TFxxlFuyMS
-         D8sWBgpoYC2RBQ8YoD9KivNc302p/xvU0y1iyc4wbq8SHtrRsL1cvyRJ/hJjkcHWEK9l
-         LNxA==
+	s=arc-20240116; t=1725456579; c=relaxed/simple;
+	bh=BSz60P1IrsR7U2d5P+R2ikILGxiRJcRQZaxSjdr0EAE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f40ecbzzD/D1p0gLDxfP8g9AOMTrjKsuP9OYhJLz9V6CReAowULSwToSP/N0Jwnu4WhfKLgq2Hz4VfLTV3wE7RAUBJxLe5qASXhPAIjbX4DbQgo2ZEIsHcMF9ohm4U1Dyqvh1QkgyIO+D4nfEgw/c1rX5CNg+dQbw5pN22UHKgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/9RN6ZY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725456576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sLYHw9iWqzWp7KnKRWoIkY5cQ6gZDO+n4+MBojwCGY8=;
+	b=Z/9RN6ZYxlbx+7SzeVRfuxooqh2DZzVYjHJ/OpXgxC3utfKOy2zJxNjT2VnnwofG3qdHzj
+	YnN7C3+IEz228eCjsu4qN3/XfB43O13DW9/UEQtFJ869fkGfqtkEtTU7lYg1g+sguTxIqk
+	3juK5qG3s+1lirI+aucHRsuqsTWU+pE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-BvL7RfJQMJ6cL0v4sREImg-1; Wed, 04 Sep 2024 09:29:35 -0400
+X-MC-Unique: BvL7RfJQMJ6cL0v4sREImg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42c827c4d3aso7983395e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:29:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725456560; x=1726061360;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xj+Wgvo3JkMcqvVd3ksJTTHYIece7AGFEnbRLynw6+s=;
-        b=JN+RW2xM4qC9aqngVxlCMli8m3aDHD32y13bf2HtkVg7/Ip+CCleGWf5gBVPN8JkOT
-         QCY4aiMqenjEmMr8KSn1aLsAbP0RYcSnKdxF3OBwrHZiRyah+O7ggN4FYxmNeyVALtEH
-         VSQuHazVc1wHh1zQH2TN1UpUkENYnte6iv610v8jKYrv94teXIadXcy50I/ws0Q2D4et
-         +NwYm9B1AR4e9dmfwRFq0FGseYZGOHm4cDr0SQblstiXaIRyFlgEvfZTTwK7NbxyMlAB
-         jOWsR40E0tpQUZFXcynBOm3kY9rbI38iN3LbUV90EouNTcok+igUehHU28wTvRl4d2Hh
-         ETcw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+FPk9SD/5w2rQUgey2GRCfQ4/7qbyHsrrSEeRA74WA0SKJyjttYA1NG0hcv+MtwxHraaMo4tRyoA5Gbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziS4HCGG6GIEToc/bLCqj8lAf4Keqygl0CvjTItJi80mOLxGE0
-	LZPNYZh7e5ozUVHUT6RM2Tfo9wZJau8jIySSiHxjaPPSd21gkM/SK2ZEujjCZw4=
-X-Google-Smtp-Source: AGHT+IH4ZFL2+hN2XCv+e/8g7SeM4o2fEGG1dQ4/Uh11y3ctyio8U+lxhaPAht3QfOXq4fDudCTE7Q==
-X-Received: by 2002:a5d:4576:0:b0:374:c654:204a with SMTP id ffacd0b85a97d-374c6542086mr7291508f8f.61.1725456559282;
-        Wed, 04 Sep 2024 06:29:19 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c1b0a62esm11591070f8f.47.2024.09.04.06.29.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 06:29:18 -0700 (PDT)
-Message-ID: <9cdc97eb-a194-454a-916c-2acf64f0c726@linaro.org>
-Date: Wed, 4 Sep 2024 14:29:17 +0100
+        d=1e100.net; s=20230601; t=1725456574; x=1726061374;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sLYHw9iWqzWp7KnKRWoIkY5cQ6gZDO+n4+MBojwCGY8=;
+        b=Fh6ZAx5ACf4yAPQjXPWHXjH4B0OI/ZV4RvCXaK4ZXbNgJReqiSI/io2R4Yt3PeYL/A
+         PncSKSwIOts8ON+d/fItN+KwwYmYGayyDImn+wboQsJ/x1nj29WlcxPn1+OB11dLBHaD
+         sqSZu3CzLFZTHTjF4ec8BWMKA7TUE24Ih0QwW/N6C919SYw/WiX1pbvAsBV+YJNVbWHX
+         qa5oQIoJwRRCYS0y2yaF3b3q+DlFc11pbE2tE+kQ7M9U293KZ0NMXN+8ICAtZkchEJyy
+         odH3AbvmIttH4IoFAT9pZEy2B84NOF5gveOvR2bRAe5aUn3kmd/VnzEjkTVsOBaahgUD
+         pdxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCsxY6QQJ5Y+kOZqnWbZCFa8ZlAi7pDgqqfFqRSdaxmOZ2dXVQG0gp+FHUvg/uVJAm5EMJEpvRYGy2hPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqEkqzD5Pcp4YlGUYZDXIW2zu84PEIDqpqsp8niKR7yVT9iuu0
+	YrWZXzKhPahI3/lXwZ0kkFnAgQJ1faM68+7n1jwMKdHQoTcYFoBJyLsAsp2jN9Zu5zXm/8yg8Js
+	KU3Bb8p6g6GB4GMeSpXKYFamMT0nu8cxouVD9UfRdzMLi/PHkwZ/uqAuk/QEuafS/BVawWA==
+X-Received: by 2002:a05:600c:5125:b0:426:6667:bbbe with SMTP id 5b1f17b1804b1-42c9544f182mr21474885e9.9.1725456573978;
+        Wed, 04 Sep 2024 06:29:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHik21ZJ3vWD7/R0bF3eBiU2vdlbN43GCOhBudbhWvH6uYy2AYEX29uwzkfipqdixElqtt8EA==
+X-Received: by 2002:a05:600c:5125:b0:426:6667:bbbe with SMTP id 5b1f17b1804b1-42c9544f182mr21474505e9.9.1725456573277;
+        Wed, 04 Sep 2024 06:29:33 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb85ffbadsm197858155e9.12.2024.09.04.06.29.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 06:29:32 -0700 (PDT)
+Message-ID: <717e86b10072f7c69f2f9534eb4649f4effe0eb5.camel@redhat.com>
+Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?=
+	 <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
+Date: Wed, 04 Sep 2024 15:29:31 +0200
+In-Reply-To: <20240904065726.1f7275b6.alex.williamson@redhat.com>
+References: <20240725120729.59788-2-pstanner@redhat.com>
+	 <20240903094431.63551744.alex.williamson@redhat.com>
+	 <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
+	 <20240904065726.1f7275b6.alex.williamson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] perf tools: Add fallback for exclude_guest
-From: James Clark <james.clark@linaro.org>
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain
- <kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@rivosinc.com>,
- Mingwei Zhang <mizhang@google.com>, Ian Rogers <irogers@google.com>,
- Kan Liang <kan.liang@linux.intel.com>
-References: <20240904064131.2377873-1-namhyung@kernel.org>
- <20240904064131.2377873-8-namhyung@kernel.org>
- <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org>
-Content-Language: en-US
-In-Reply-To: <8c47cb2a-2bea-422d-b16c-f304ab4ff470@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+
+On Wed, 2024-09-04 at 06:57 -0600, Alex Williamson wrote:
+> On Wed, 04 Sep 2024 09:06:37 +0200
+> Philipp Stanner <pstanner@redhat.com> wrote:
+>=20
+> > On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote:
+> > > On Thu, 25 Jul 2024 14:07:30 +0200
+> > > Philipp Stanner <pstanner@redhat.com> wrote:
+> > > =C2=A0=20
+> > > > pci_intx() is a function that becomes managed if
+> > > > pcim_enable_device()
+> > > > has been called in advance. Commit 25216afc9db5 ("PCI: Add
+> > > > managed
+> > > > pcim_intx()") changed this behavior so that pci_intx() always
+> > > > leads
+> > > > to
+> > > > creation of a separate device resource for itself, whereas
+> > > > earlier,
+> > > > a
+> > > > shared resource was used for all PCI devres operations.
+> > > >=20
+> > > > Unfortunately, pci_intx() seems to be used in some drivers'
+> > > > remove()
+> > > > paths; in the managed case this causes a device resource to be
+> > > > created
+> > > > on driver detach.
+> > > >=20
+> > > > Fix the regression by only redirecting pci_intx() to its
+> > > > managed
+> > > > twin
+> > > > pcim_intx() if the pci_command changes.
+> > > >=20
+> > > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")=C2=A0=20
+> > >=20
+> > > I'm seeing another issue from this, which is maybe a more general
+> > > problem with managed mode.=C2=A0 In my case I'm using vfio-pci to
+> > > assign
+> > > an
+> > > ahci controller to a VM.=C2=A0=20
+> >=20
+> > "In my case" doesn't mean OOT, does it? I can't fully follow.
+>=20
+> "OOT" Out Of Tree?=C2=A0 No, "In my case" is simply introducing the
+> scenario
+> in which I see the issue.=C2=A0 vfio-pci is an in-tree driver used to
+> attach
+> devices to userspace drivers, such as QEMU.=C2=A0 The ahci driver is
+> loaded
+> during system boot, setting the is_managed flag.=C2=A0 The ahci driver is
+> then unbound from the device and the vfio-pci driver is bound.=C2=A0 The
+> vfio-pci driver provides a uAPI for userspace drivers to operate a
+> device in an an IOMMU protected context.
+
+Alright, thx for the clarification.
+
+> =C2=A0
+> > > =C2=A0 ahci_init_one() calls pcim_enable_device()
+> > > which sets is_managed =3D true.=C2=A0 I notice that nothing ever sets
+> > > is_managed to false.=C2=A0 Therefore now when I call pci_intx() from
+> > > vfio-
+> > > pci
+> > > under spinlock, I get a lockdep warning=C2=A0=20
+> >=20
+> > I suppose you see the lockdep warning because the new pcim_intx()
+> > can=20
+> > now allocate, whereas before 25216afc9db5 it was
+> > pcim_enable_device()
+> > which allocated *everything* related to PCI devres.
+> >=20
+> > > =C2=A0as I no go through pcim_intx()
+> > > code after 25216afc9db5=C2=A0=C2=A0=20
+> >=20
+> > You alwas went through pcim_intx()'s logic. The issue seems to be
+> > that
+> > the allocation step was moved.
+>=20
+> Unintentionally, yes, I believe so.=C2=A0 vfio-pci is not a managed,
+> devres
+> driver and therefore had no expectation of using the managed code
+> path.
+
+Yes, I agree this needs to be fixed through the solution you proposed.
+
+>=20
+> > > since the previous driver was managed.=C2=A0=20
+> >=20
+> > what do you mean by "previous driver"?
+>=20
+> As noted, the ahci driver is first bound to the device at boot,
+> unbound, and the vfio-pci driver bound to the device.=C2=A0 The ahci
+> driver
+> is the previous driver.
+>=20
+> > > =C2=A0 It seems
+> > > like we should be setting is_managed to false is the driver
+> > > release
+> > > path, right?=C2=A0=20
+> >=20
+> > So the issue seems to be that the same struct pci_dev can be used
+> > by
+> > different drivers, is that correct?
+>=20
+> Yes, and more generically, the driver release should undo everything
+> that has been configured by the driver probe.
+>=20
+> > If so, I think that can be addressed trough having
+> > pcim_disable_device() set is_managed to false as you suggest.
+>=20
+> If that's sufficient and drivers only call pcim_disable_device() in
+> their release function.
+
+pcim_disable_device() is not intended to be used directly by drivers.
+It's basically the devres callback for pcim_enable_device() and is
+called in everyone's release path automatically by devres.
+(I agree that the naming is not superbe)
+
+> =C2=A0 I also note that f748a07a0b64 ("PCI: Remove
+> legacy pcim_release()") claims that:
+>=20
+> =C2=A0 Thanks to preceding cleanup steps, pcim_release() is now not neede=
+d
+> =C2=A0 anymore and can be replaced by pcim_disable_device(), which is the
+> =C2=A0 exact counterpart to pcim_enable_device().
+>=20
+> However, that's not accurate as pcim_enable_device() adds a devm
+> action, unconditionally calls pci_enable_device() and sets is_managed
+> to true.
+
+It's not accurate in regards with is_managed.
+
+The rest is fine IMO. The devres callback shall be added, and the
+unconditional call to pci_enable_device() is also desired.
+
+> =C2=A0 If we assume pcim_pin_device() is a valid concept, don't we
+> still need to remove the devm action as well?
+
+No. As pcim_disable_device() is the very devres callback, it does not
+need to remove itself. Devres calls it once and then it's gone.
+
+However, pcim_pin_device() IMO is not a valid concept. Who wants such
+behavior IMO shall use pci_enable_device() and pci_disable_device()
+manually.
+I proposed removing it here:
+https://lore.kernel.org/all/20240822073815.12365-2-pstanner@redhat.com/
+
+(Note that previously it could not be removed because
+pcim_enable_device() also allocated all the stuff needed by
+pci_request_region() etc.)
+
+>=20
+> > Another solution can could at least consider would be to use a
+> > GFP_ATOMIC for allocation in get_or_create_intx_devres().
+>=20
+> If we look at what pci_intx() does without devres, it's simply
+> reading
+> and setting or clearing a bit in config space.=C2=A0 I can attest that a
+> driver author would have no expectation that such a function
+> allocates
+> memory
+
+A driver author would not have any expectation of a function implicitly
+doing anything with devres. That's the reason why I did all this work
+in the first place, to, ultimately, remove this hybrid behavior from
+all pci_ functions.
+So that devres functions are clearly marked with pcim_
+
+That is, however, not that easy because everyone who uses
+pcim_enable_device() in combination with pci_intx() first has to be
+ported to a pci_intx()-version that has nothing to do with devres.
 
 
+>  and there are scenarios where we want to call this with
+> interrupts disabled, such as within an interrupt context.=C2=A0 So, TBH,
+> it
+> might make sense to consider whether an allocation in this path is
+> appropriate at all, but I'm obviously no expert in devres.
 
-On 04/09/2024 2:28 pm, James Clark wrote:
-> 
-> 
-> On 04/09/2024 7:41 am, Namhyung Kim wrote:
->> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUPP
->> if not.  Let's add a fallback so that it can work with default events.
->>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: James Clark <james.clark@linaro.org>
->> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->> ---
->>   tools/perf/util/evsel.c | 21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
->>
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index 0de0a72947db3f10..8c4d70f7b2f5b880 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -3400,6 +3400,27 @@ bool evsel__fallback(struct evsel *evsel, 
->> struct target *target, int err,
->>                 "to fall back to excluding hypervisor samples", 
->> paranoid);
->>           evsel->core.attr.exclude_hv = 1;
->> +        return true;
->> +    } else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
->> +           !evsel->exclude_GH) {
->> +        const char *name = evsel__name(evsel);
->> +        char *new_name;
->> +        const char *sep = ":";
->> +
->> +        /* Is there already the separator in the name. */
->> +        if (strchr(name, '/') ||
->> +            (strchr(name, ':') && !evsel->is_libpfm_event))
->> +            sep = "";
->> +
->> +        if (asprintf(&new_name, "%s%su", name, sep) < 0)
->> +            return false;
->> +
->> +        free(evsel->name);
->> +        evsel->name = new_name;
->> +        /* Apple M1 requires exclude_guest */
->> +        scnprintf(msg, msgsize, "trying to fall back to excluding 
->> guest samples");
->> +        evsel->core.attr.exclude_guest = 1;
->> +
->>           return true;
->>       }
-> 
-> Not sure if this is working, for some reason it doesn't try the 
-> fallback. With exclude guest made mandatory in the Arm PMU, then:
-> 
->   $ perf stat -e cycles -vvv -- true
-> 
->    Control descriptor is not initialized
->    Opening: cycles
->    ------------------------------------------------------------
->    perf_event_attr:
->      type                             0 (PERF_TYPE_HARDWARE)
->      size                             136
->      config                           0xb00000000
->      sample_type                      IDENTIFIER
->      read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->      disabled                         1
->      inherit                          1
->      enable_on_exec                   1
->    ------------------------------------------------------------
->    sys_perf_event_open: pid 698  cpu -1  group_fd -1  flags 0x8
->    sys_perf_event_open failed, error -95
->    Warning:
->    cycles event is not supported by the kernel.
->    Opening: cycles
->    ------------------------------------------------------------
->    perf_event_attr:
->      type                             0 (PERF_TYPE_HARDWARE)
->      size                             136
->      config                           0xa00000000
->      sample_type                      IDENTIFIER
->      read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->      disabled                         1
->      inherit                          1
->      enable_on_exec                   1
->    ------------------------------------------------------------
->    sys_perf_event_open: pid 698  cpu -1  group_fd -1  flags 0x8
->    sys_perf_event_open failed, error -95
->    Warning:
->    cycles event is not supported by the kernel.
->    failed to read counter cycles
->    failed to read counter cycles
-> 
->     Performance counter stats for 'true':
-> 
->       <not supported>      armv8_cortex_a53/cycles/
->       <not supported>      armv8_cortex_a57/cycles/
-> 
-> 
-> 
-> Other than that, all the tests are passing on Juno (without the 
-> exclude_guest requirement).
+The entire hybrid nature from pci_intx() should be removed.
+I'm working on that.
 
-Sorry one other thing, I think this commit would also need to come 
-before the change to the exclude_guest default to keep bisect working.
+The hybrid nature was always there, but the allocation was not. It
+would be removed later together with the hybrid devres usage.
+
+>=20
+> > I suppose your solution is the better one, though.
+>=20
+> I see you've posted a patch, I'll test it as soon as I'm able.=C2=A0
+
+If it works from what I understand that should solve those issues for
+now until we can phase out pci_intx() usage that relies on the device
+resource.
+
+---
+btw. I just looked into the old code and found that this one also
+already had a similar half-bug with is_managed. It never sets it to
+false again, but pci_intx() runs into:
+
+static struct pci_devres *find_pci_dr(struct pci_dev *pdev)
+{
+	if (pci_is_managed(pdev))
+		return devres_find(&pdev->dev, pcim_release, NULL,
+NULL);
+	return NULL;
+}
+
+
+So in your case pci_is_managed() would have also been true and the only
+reason no problem occurred is that devres_find() doesn't find the
+device resource of the previous driver anymore, so pci_intx() won't use
+that memory.
+---
+
+
+Thanks for debugging,
+P.
+
+> Thanks,
+>=20
+> Alex
+>=20
+
 
