@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-314033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7442A96ADF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 214CC96ADF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3481F2598C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14CA1F258A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14B79DE;
-	Wed,  4 Sep 2024 01:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7hM7RgA"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE76CA6F;
+	Wed,  4 Sep 2024 01:34:52 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A5A567D;
-	Wed,  4 Sep 2024 01:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7A16FB0;
+	Wed,  4 Sep 2024 01:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725413654; cv=none; b=CP7hG3zxo1uUtiS9wtEijdFUZdT8ZUTOesoSRrntZUZq85ARJD9mSDrTtJKMoXv8sybopBDv3ABJBBXAmkVJyNPyaZiF023YKCKLVZuijLQ1pnJYwITOis2ATMayT8SDyi5fD56vdU7ERfJTNYPipN0KCLIZGv2aZb7mIM2l3sU=
+	t=1725413692; cv=none; b=pf7EFxoeSSReZRXsylwraf30ocwsaKzodL5u0aR0eoK79/ju7JemZ4PZ3amNSchDs10vEerzkz8i12uQaunA8s1CKXSMt1VgVTOnHtHGQV0UVCaWCA7Xgk8rclX0apUo2GfyKMPuMsUncq2ilSiDukagWMgbAXvgCThHMoKyI1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725413654; c=relaxed/simple;
-	bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AIgwOivaQyagjPLKJDEExfyyCW3sjtK6NKZ7amHvuszXSAnkbTj/gjyFGf4yxYR3uNZ92/bBmSuzjJacxFfYW8fw6Afv5O9IB0Ny/mI6cRBZ5f9UwJzy/YvRWqYQCGIt38V6niMaUWSEUN/7fk0JK0TdmIPD32ea368ZYcaoVME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7hM7RgA; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c180d123so1944224f8f.3;
-        Tue, 03 Sep 2024 18:34:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725413651; x=1726018451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
-        b=U7hM7RgA2IutSs23yRxebEsYpVtfH/yAFBZxg9ypylpqGSgdIUIWV13Zh1fAt62cEy
-         6IMIpRtr9Ki0IEEiPGJ6DSlv7d2Rau2L9B4uJYBc5uc2B3cbLstjKBF493A1pyk1wdia
-         0SFXiAPu2A/d0xtzsCLdU3R/JViY4uzb/OvfEexc7WmGL3lwmPZ4y2OGySf00nNBmlVl
-         C1XEUe3adqY7AukE7dcU3pvxLo5QWCapigJY8T25/0U3luz29cOUQBi1t300/vbMXEVo
-         GZXqJBiBRHlCdVVVHNPj9yNqSZrYIDRKpAP3EQ7jnx7oPNC9i5Li1SpmhfkAQGG/YxSM
-         Lw2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725413651; x=1726018451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=93FgyLKkVo2N1tBHkMC3aUUtyplqFSBZGLIS2ASQJQE=;
-        b=KLnW5qAtw5WzD8qxrjjED5ZD/wC8Hv+QH8uTNBuMEICFfQ4OLHIf0rPl44TOZTtumB
-         aJbt52oX6qzqjEi87qLTFsQeInA098vPGQqKkn7x+C77BZqBix1/ZEPfvJv5Jvw47Y5f
-         zfkOnRzt4HMy1P2/wCv6Itqu3lxbmBXFeOm+QmwP9CZVBYLBbLsKWzLHdwlQC32wkFuD
-         vJ1Y1VU1f3BnvxeM1cPQxhlUPm9oSI+86HcW9fGlcJy2S+Snum1Ny1cB+Vf/MAkKTFLq
-         klpUOVecdh+y/Bln3LK7BCWmX203eYDlOqZwlHBIeOelshyBl9uyWc5FJoUMAxbKdrNx
-         SSlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+VmJsj6FyYtlgydPPHO1Id9cEez0SpmQNHSq5ypB6aHZORMxLOX6Y6zjLHHHCMRdeaeydae2u@vger.kernel.org, AJvYcCUg27Z7UtUjLoFwOmLaBYyr7qfJivomAcwmhAn0T9pQbvmRujfmCX+tsvoJ1ZllXpmSSID3tz+H2Dab3Jg=@vger.kernel.org, AJvYcCVf+ejGX4AxirnhZRSO8eDipg9dNPsDdJlnZRaMlnnvT12+xzR+2ltnCGRMsz8dic2UZotkYfytZkL4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoJvcJXc0OOEzfhwaebqfd0j6/BucVYWesTk/1U7x26T1lzPDo
-	FILWp+bePfHMaDxQxMFE0Cmy5rVAN83eF5PA1YN1BOYfIVA3ctrNwoii7osHbxCn2SvC9Db0MYQ
-	yF8ft4rqYjzf3W6mvxTp+OkRLx6A=
-X-Google-Smtp-Source: AGHT+IG9uqGECrHc4951OxM9JY1Wh54YGaI8TOge11mwJKOFkewOsNpY+jxpyh1CbkS6/cfXB5GcYuoGQob6XsHn+KA=
-X-Received: by 2002:a05:6000:1886:b0:376:65fc:6cbf with SMTP id
- ffacd0b85a97d-37665fc6d98mr3028566f8f.23.1725413651088; Tue, 03 Sep 2024
- 18:34:11 -0700 (PDT)
+	s=arc-20240116; t=1725413692; c=relaxed/simple;
+	bh=/yxz+pWqjJQREexM5ADMn9Lt93zR1fHFhywmxz3jKfU=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hVijrrLbHtBJEkcN9fY/OXZuJ/irBV/TGnoBnRZakwilAWd12idCB1muXclu/Ap7WEonsJmxGLnX3z5rd+Q6bwTWNlhClozRvm85bvQYcX3uUuqj/+w17n4/9E8QrMaVK+wRHX4CtHQyZoXeOKMakn+05DocDwERntAG8XYVRWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wz4lL4zDwzyR7Q;
+	Wed,  4 Sep 2024 09:33:50 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id D44DF180105;
+	Wed,  4 Sep 2024 09:34:47 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 4 Sep 2024 09:34:46 +0800
+Message-ID: <a86835c6-24d8-4f04-979e-a77d35776467@huawei.com>
+Date: Wed, 4 Sep 2024 09:34:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
- <CA+fCnZc7qVTmH2neiCn3T44+C-CCyxfCKNc0FP3F9Cu0oKtBRQ@mail.gmail.com> <2024090332-whomever-careless-5b7d@gregkh>
-In-Reply-To: <2024090332-whomever-careless-5b7d@gregkh>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 4 Sep 2024 03:34:00 +0200
-Message-ID: <CA+fCnZdCwpxc4gL7FeUEJ0cbMESe3d2tRe-NTCyDH9uZTR_tZQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
- softirq context
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Marcello Sylvester Bauer <sylv@sylv.io>, 
-	Dmitry Vyukov <dvyukov@google.com>, Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
-	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org, 
-	andrey.konovalov@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, Paolo Abeni <pabeni@redhat.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V6 net-next 03/11] net: hibmcge: Add mdio and hardware
+ configuration supported in this module
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20240830121604.2250904-1-shaojijie@huawei.com>
+ <20240830121604.2250904-4-shaojijie@huawei.com>
+ <0ff20687-74de-4e63-90f4-57cf06795990@redhat.com>
+ <0341f08c-fe8b-4f9c-961e-9b773d67d7bf@huawei.com>
+ <20240903104407.31a7cde6@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20240903104407.31a7cde6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Tue, Sep 3, 2024 at 9:09=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> > Hi Greg,
-> >
-> > Could you pick up either this or Marcello's patch
-> > (https://lkml.org/lkml/2024/6/26/969)? In case they got lost.
->
-> Both are lost now, (and please use lore.kernel.org, not lkml.org), can
-> you resend the one that you wish to see accepted?
 
-Done: https://lore.kernel.org/linux-usb/20240904013051.4409-1-andrey.konova=
-lov@linux.dev/T/#u
+on 2024/9/4 1:44, Jakub Kicinski wrote:
+> On Tue, 3 Sep 2024 20:13:58 +0800 Jijie Shao wrote:
+>>>> +{
+>>>> +    struct hbg_priv *priv = netdev_priv(netdev);
+>>>> +    struct phy_device *phydev = priv->mac.phydev;
+>>> Minor nit: please respect the reverse x-mas tree order
+>> Here, I need to get the *priv first, so I'm not following the reverse x-mas tree order here.
+>> I respect the reverse x-mas tree order everywhere else.
+> In this case you should move the init into the body of the function.
 
-Thanks!
+ok， Thanks! Jijie Shao
+
 
