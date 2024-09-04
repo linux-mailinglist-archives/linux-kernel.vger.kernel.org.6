@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-314435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C969E96B335
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:46:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C9996B34B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40FC11F24893
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:46:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FCDFB20EED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8EF1482E9;
-	Wed,  4 Sep 2024 07:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+UiyguN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4215148FF9;
+	Wed,  4 Sep 2024 07:48:15 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C142823DE;
-	Wed,  4 Sep 2024 07:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122FE146588;
+	Wed,  4 Sep 2024 07:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725435975; cv=none; b=O9M41Ie+pjY3wojLr0DBkWydFkTKstqgDiU3uwI0sp6YekkbqxJBZB6ybQcJf7bdWxQNorEFCalrSUQNjgsfoYmi3J+mqhFLZybs76g3qbyclHCLUV3/LC/R/nN6JHrjxZQ3AcTzHTne0sHFy+umHqcQ1FXEzo6W119LGWmQMP8=
+	t=1725436095; cv=none; b=hm8WuoNgHWrEjQMMEolCYbTUakHaF72aVx9DQr05KeYlIo4j1nfpO1+34LSe2w8ctF7RMtdx08G09cmiVOHTTCtuqPfRUXAyxUmR4PbWh0xgt7aQo2Sa539fgvXjBiRewxhH+rX9AzJ1MXRpUMHW4cgOuEXJo2xsNIKOI1tZZFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725435975; c=relaxed/simple;
-	bh=fKem71+e4185IwFYS10I37wk8xRt5F8UjqvaVikFVBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QlrtJHZDw6PYWLveDDzN2ya6hIZMckrvgxNX9a719UcIEnJkEMEVR/TYO/xOJ68YghEk5lesB8RQImaYsQEW4svB22zhTI5tZP/EYJoaFc3XK/1QLvl20jiN2Rn2reN5yEYE1YyYva7nO3P/ycs0WlYjhsPijU3IL6tbtquYZio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+UiyguN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04326C4CEC2;
-	Wed,  4 Sep 2024 07:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725435974;
-	bh=fKem71+e4185IwFYS10I37wk8xRt5F8UjqvaVikFVBE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R+UiyguNmzX7E9c/x0Bf023yRk1S+3wv7SuRDdHXocV1pIjTn6znVmBK0CzAf8jQm
-	 e6WQH2Tjx8PsWap4earLT/MV8pcBKLDLkdp9T5+qO8S2/wiQxhxRYSSJVPy1c6RQOP
-	 EFFR974PcO40pHubGYmMQy3g1h7QYSJwxmRxr432JlQuEzjSmru2fqrZ2ab3DmWsgH
-	 NdSSQqyUFpQv9QHKGFHQDmWWiydYyQ+GfoCxMYiMVSk/pi3Artge+5JpgbVAtDITwA
-	 Wopp6pqbv3afOyjpraVzFs/v43wKB3qkPZjmM3a9VgkB1VG71oiN28JfanlaR3kaGU
-	 0GSAQC3wdaXkA==
-Message-ID: <9a2b9e55-2bbb-4b91-8d81-1f1f82347125@kernel.org>
-Date: Wed, 4 Sep 2024 09:46:09 +0200
+	s=arc-20240116; t=1725436095; c=relaxed/simple;
+	bh=jPUHbEFRlioacszj1Y1QLmf9zGOBWuwFLQ3AY59fBGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RBi1gOlXKdp7Pu2LvhAX0kUwUL1HqzfcaWW3FEz0yaAuKG8AD05Xf3pk403EuLQ/3pfwLCzVLnO5SNQkIN0MxQfcD5UgP63+aYwajGoOPmDc0LOYcaSy6buPprQWZdTkxrH9dfYMowAjhhackh7/rF5vAUBmnPOpaprq3/uA8es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABHLiGXENhmb0EmAQ--.3968S2;
+	Wed, 04 Sep 2024 15:47:35 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: arend.vanspriel@broadcom.com,
+	kvalo@kernel.org,
+	johannes.berg@intel.com,
+	kees@kernel.org,
+	a@bayrepo.ru,
+	wsa+renesas@sang-engineering.com,
+	quic_alokad@quicinc.com,
+	marcan@marcan.st,
+	j@jannau.net
+Cc: linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] wifi: brcmfmac: cfg80211: Convert comma to semicolon
+Date: Wed,  4 Sep 2024 15:46:37 +0800
+Message-Id: <20240904074637.1352864-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sc8280xp: Add Microsoft Surface Pro
- 9 5G
-To: =?UTF-8?Q?J=C3=A9r=C3=B4me_de_Bretagne?= <jerome.debretagne@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240903224252.6207-1-jerome.debretagne@gmail.com>
- <20240903224252.6207-5-jerome.debretagne@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903224252.6207-5-jerome.debretagne@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABHLiGXENhmb0EmAQ--.3968S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoW8Jryrpr
+	W8Xa4qyF1UWws8Ka1fKFs7Aa4rtanxGas2k3yjyas3uFyDXr18Ja1v9Fy3Wr1kAr4Iyay2
+	9Fs0qFnrXrsxGrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbp6wtUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 04/09/2024 00:42, Jérôme de Bretagne wrote:
-> Add an initial devicetree for the Microsoft Surface Pro 9 5G, based
-> on SC8280XP.
-> 
-> It enables the support for Wi-Fi, NVMe, the two USB Type-C ports,
-> Bluetooth, 5G cellular modem, audio output (via Bluetooth headsets),
-> external display via DisplayPort over Type-C (only the bottom USB
-> Type-C port is working so far, corresponding to the usb1 / dp1 nodes),
-> charging, the Surface Aggregator Module (SAM) to get keyboard and
-> touchpad working with the Surface Type Cover accessories.
-> 
-> Some key features not supported yet:
-> - built-in display (but software fallback is working with efifb
->   when blacklisting the msm module)
-> - built-in display touchscreen
-> - external display with the top USB Type-C port
-> - speakers and microphones
-> - physical volume up and down keys
-> - LID switch detection
-> 
-> This devicetree is based on the other SC8280XP ones, for the Lenovo
-> ThinkPad X13s and the Qualcomm CRD.
-> 
+Replace comma between expressions with semicolons.
 
-...
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-> +
-> +&swr0 {
-> +	status = "okay";
-> +};
-> +
-> +&swr1 {
-> +	status = "okay";
-> +
-> +	wcd_rx: wcd9380-rx@0,4 {
+Found by inspection.
+No functional change intended.
+Compile tested only.
 
-codec@
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		compatible = "sdw20217010d00";
-> +		reg = <0 4>;
-> +		qcom,rx-port-mapping = <1 2 3 4 5>;
-> +	};
-> +};
-> +
-> +&swr2 {
-> +	status = "okay";
-> +
-> +	wcd_tx: wcd9380-tx@0,3 {
-
-codec@
-
-
-Rest looks good, except ordering of nodes/overrides/phandles. They
-should go alphabetically, AFAIR, so your &tlmm is placed in wrong spot.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 815f6b3c79fc..349aa3439502 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -1135,7 +1135,7 @@ static void brcmf_escan_prep(struct brcmf_cfg80211_info *cfg,
+ 		offset = offsetof(struct brcmf_scan_params_v2_le, channel_list) +
+ 				n_channels * sizeof(u16);
+ 		offset = roundup(offset, sizeof(u32));
+-		length += sizeof(ssid_le) * n_ssids,
++		length += sizeof(ssid_le) * n_ssids;
+ 		ptr = (char *)params_le + offset;
+ 		for (i = 0; i < n_ssids; i++) {
+ 			memset(&ssid_le, 0, sizeof(ssid_le));
+-- 
+2.25.1
 
 
