@@ -1,104 +1,76 @@
-Return-Path: <linux-kernel+bounces-315178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0526D96BEE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E0196BEF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7574C280C48
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:43:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CCA1C24A3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B5C1DAC50;
-	Wed,  4 Sep 2024 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ExMSmYtE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3AF1DB936;
+	Wed,  4 Sep 2024 13:43:11 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283CE1D0167;
-	Wed,  4 Sep 2024 13:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4466D1DA2F7;
+	Wed,  4 Sep 2024 13:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457335; cv=none; b=LvKo8r3iDEDoawM5oS8uHFuabg558B7ZVr/GEQo0SzWuj5KUPul8LolWDZzsm1sgO6Yp951Tyad0hNumOt6psmvjaBU4wQkVXj2iTNGqI6C433Wv1HI6lDZ3O/Ae7z17CPDzQIhFtSEPovx1X9ajM7Uic3Jdf/6FqT6s25mC/hA=
+	t=1725457390; cv=none; b=lgbwZGb9zd9yq1bWXnbHOobL3EtvsJgaJcAJ2SBt5QLatTlrlP8yx+7DbgGMb883Enp+bFyKLOpCN5nksXFn/7lhK9HWWmA9nzhlrboMtgdXb4Y6Gbf9kjaMWOPknEcwDc3FvnGYrHwlpVTCI6jwNICINYOOURlLXDTKSMc4lXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457335; c=relaxed/simple;
-	bh=NINj+1oq4hrfppG9fWwkMRuDXoIUekzuXgqNElLQs0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQpCu+x8hMnH+OFfPU+W43p7iFC2LU+rjDji2pL447eKKNkmBTC5SYF4xYBQ26CqVpwwVxRGhqUbix6Uq2xsueAnE8tKbc5YoQYuJ3lpLKvtXx2C4lcl8IGNtLt8oIGxiELjzxNe7DHsOdkdT0fRubYbT/cPBebNxA/YEyu88t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ExMSmYtE; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725457333; x=1756993333;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NINj+1oq4hrfppG9fWwkMRuDXoIUekzuXgqNElLQs0M=;
-  b=ExMSmYtEjiTuTRLZRzTjdiRp1iqMaRKxxr+CZJBn9TOMALh7LjWIqB3i
-   UWbAqTpTf+CTWIuwPWOQlAGujo0xYqfCOk1IOjxKABX+z5bZt1s7xbwQX
-   um1ZDH6Tcb+5267BZC1dUD92ovPe1m3kjWdv8vm0VkkhtJfrZguYJqzME
-   bl3bGiesMXzGGIqpWJr8wkhHocaWdg69r5cw8N3LglnUpxxjU3LYDN5ip
-   rK5UiWdy9iNZrug4ZARsnVbXj69E5kRVnAI64qOgSYB3uziWYSm1CLpAZ
-   X8sj2UIfHRmfbSogYe/UZOuNU75mbwdTh1tt1HN/YEnaj6MiykraymEhd
-   g==;
-X-CSE-ConnectionGUID: eGj92t8yTk6Ta/GQ5Q09Vg==
-X-CSE-MsgGUID: TvwICvb4TKexDuPmKp0X/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24070512"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="24070512"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:42:12 -0700
-X-CSE-ConnectionGUID: 9OjySTKyQw6NDxzamnIErA==
-X-CSE-MsgGUID: 0+LQUU0fQKa5kG2MyEgvgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="65618042"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:42:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slqGq-000000054o4-3OEs;
-	Wed, 04 Sep 2024 16:42:04 +0300
-Date: Wed, 4 Sep 2024 16:41:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 07/12] i2c: core: Remove extra space in Makefile
-Message-ID: <ZthjkJwtpz9gU9hI@smile.fi.intel.com>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-8-wenst@chromium.org>
+	s=arc-20240116; t=1725457390; c=relaxed/simple;
+	bh=/3VH3DWsAa3brp4Q4CK/f35/uVdfNvQWVsRqLAUx9O0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=twh5pOWPLOyPw9xchHJ461tCluDl/c6EwqxBwGLlMhXYvR2hwei6l7Rs0WRy3EiFiBa/Wub0fmiE6KrKvq4SOkluqMczDka8Gtc77sDkpWLH5Buo1RA8Btr6/nZ2qkxel7fMHC2Uh4UPwl+AAT58Kh6I18YUt2VBB31ie+V66sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WzNvj1tKsz1BLkL;
+	Wed,  4 Sep 2024 21:42:09 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id CCBED1400FF;
+	Wed,  4 Sep 2024 21:43:06 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 4 Sep 2024 21:43:06 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
+	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>, David Gow
+	<davidgow@google.com>, <linux-kselftest@vger.kernel.org>,
+	<kunit-dev@googlegroups.com>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 0/3] debugobjects: Add hlist_cut_number() and use it to optimize code
+Date: Wed, 4 Sep 2024 21:41:49 +0800
+Message-ID: <20240904134152.2141-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904090016.2841572-8-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Wed, Sep 04, 2024 at 05:00:09PM +0800, Chen-Yu Tsai wrote:
-> Some lines in the Makefile have a space before tabs. Remove those.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Zhen Lei (3):
+  list: add hlist_cut_number()
+  list: test: Add a test for hlist_cut_number()
+  debugobjects: Use hlist_cut_number() to optimize performance and
+    improve readability
+
+ include/linux/list.h |  44 +++++++++++++++++
+ lib/debugobjects.c   | 115 ++++++++++++++++++-------------------------
+ lib/list-test.c      |  51 +++++++++++++++++++
+ 3 files changed, 143 insertions(+), 67 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
