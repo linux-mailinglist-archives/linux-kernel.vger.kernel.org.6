@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-314518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A09996B467
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343DB96B45E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 414081F2839F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F3B289640
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9949A18D65A;
-	Wed,  4 Sep 2024 08:19:08 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B32518950D;
+	Wed,  4 Sep 2024 08:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iheBNwT/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0746E3F9D5;
-	Wed,  4 Sep 2024 08:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357D517C203
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725437948; cv=none; b=alwPC+hUyhuKtykeX5tajfnZW3yZFao8nYeBK9bmQqDJIoBUHu8JXXLv9dN7mTdscxHwRLQyMzbTZlE5zaVyhSQRe6wW8HIu8xrrAU59YjDb72ztkZcILroOpiItNML8opnW5W/KvyTOOngZEUEDxWVihzhYc49guamoQJjr7Gw=
+	t=1725437869; cv=none; b=ZQWq7iWNX+yDV8ryNZZs5naM/g9gMQoEVBR8CEKrm0+wOTuhS4IjXc2bGD8t3Re8e9T6HM83pBQZnsyOUMKtwEWC7HY7WQySgOR7R1d93/POFC2hvpwWZMaDZiLYhioPoXZE788b1DMZTIUa6AXrrMni5MOiN4lGqx5sOro4QgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725437948; c=relaxed/simple;
-	bh=jVtS6nvwU8vVVn+pBIWHXO9OZg+fZnTF+s7TWc2HnWw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XpBWDuZZXg8EdBqsCHxul2ORFUw1dHOAxRkLpMjvtV9YXSmw1jxupCTEw8Yaz8Tqqdexi//ocMaTw9Z9Jl/IxvUmB46MqnIEErnjwgNRb8XYCedTRWlv4mivRdIdyQC5muvpSCrqGbh+rF6wpMtXiv/b31wJCCeiyA/BbKHQ4mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowABXOuruF9hmZ9knAQ--.4818S2;
-	Wed, 04 Sep 2024 16:18:54 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: shannon.nelson@amd.com,
-	brett.creeley@amd.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH net-next] ionic: Convert comma to semicolon
-Date: Wed,  4 Sep 2024 16:17:28 +0800
-Message-Id: <20240904081728.1353260-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725437869; c=relaxed/simple;
+	bh=dnd0GzUhmSEHNnmiMaEYVjWzbhS2M2DZ9ZiWsxE0o0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dp8mNnOOmgQPlNQvb5wKnVnFbz99C5kEud8+zB9wHUXv30OISg1CG0aYLk5w/3hmxis0zJ48B24wC2xbzOCzoB2ejQ/UtCVCTIpTkTFFx/MRlS5rCEQS216j2chP1Pmm2r69E092iUe3DpRYltD9D9ZXZHAW63V6FgLMEIHWLO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iheBNwT/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=o/SaEGh8+cMIA7SBKPiC/ZFF8zdmm9+iX54U3DNJJ/4=; b=iheBNwT/MR86q2CwUnbfz0jCYi
+	BzAJbFRMSKb7KA6dfueZBhucQtd9U7QhmYGzXnkPHDYVKPjfy7R2Aly2RP5P4tSlltXfX+bWJptwM
+	4PhEAy5ikgHTXuAK20PM6J4xBc60FP8bfLa/KJwr154ARgEYQ6xCtE+nZmHifm6ksjvDN+AqA9rIt
+	3KGUH7ZUHBFZka6HnDa/TuNK6PK56YqpVXSDK80yRKhQ3g5yl7t03sgeYJJ4nFSZv8lIK4XKrO4sH
+	0TA4UoDNRskHo0zuU9fvSXzUF6fiqF1p087xI/uXU1IBChGEO4dRFRy7j8Ilu0cPY19OapFIMKFv/
+	2Bse/EVQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sllCw-00000000YRz-3P5y;
+	Wed, 04 Sep 2024 08:17:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B5192300642; Wed,  4 Sep 2024 10:17:43 +0200 (CEST)
+Date: Wed, 4 Sep 2024 10:17:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: [PATCH] static_call: Handle module init failure correctly in
+ static_call_del_module()
+Message-ID: <20240904081743.GF4723@noisy.programming.kicks-ass.net>
+References: <87cylj7v6x.ffs@tglx>
+ <87a5gn7sqz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXOuruF9hmZ9knAQ--.4818S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4ktF1xGrg_yoW8JFy5pw
-	43G34qqF17Xa4UW3WkJF18ur95X398uryDur4DC3yrua4kAFyxCa1Iqa4fJa4kXr4UAr40
-	qr42ywn8XFn5A3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
-	xVWUtVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfU518BUUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5gn7sqz.ffs@tglx>
 
-Replace comma between expressions with semicolons.
+On Wed, Sep 04, 2024 at 10:00:52AM +0200, Thomas Gleixner wrote:
+> On Wed, Sep 04 2024 at 09:08, Thomas Gleixner wrote:
+> > On Wed, Sep 04 2024 at 11:32, Jinjie Ruan wrote:
+> > So the check must be:
+> >
+> > 	if (!static_call_key_has_mods(key))
+> >         	break;
+> >
+> > I missed the module local case completely in my analysis. Can you please
+> > modify the condition and retest?
+> 
+> That said. This code is pointlessly noisy for the failure case.
+> 
+> Allocation fails are not a reason to warn about. -ENOMEM is propagated
+> all the way to the caller, so it's sufficient to emit a pr_warn().
+> 
+> Peter?
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+Yeah, I think that should do.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
-
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c b/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
-index 1ee2f285cb42..528114877677 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
-@@ -312,8 +312,8 @@ static int ionic_lif_filter_add(struct ionic_lif *lif,
- 	int err = 0;
- 
- 	ctx.cmd.rx_filter_add = *ac;
--	ctx.cmd.rx_filter_add.opcode = IONIC_CMD_RX_FILTER_ADD,
--	ctx.cmd.rx_filter_add.lif_index = cpu_to_le16(lif->index),
-+	ctx.cmd.rx_filter_add.opcode = IONIC_CMD_RX_FILTER_ADD;
-+	ctx.cmd.rx_filter_add.lif_index = cpu_to_le16(lif->index);
- 
- 	spin_lock_bh(&lif->rx_filters.lock);
- 	f = ionic_rx_filter_find(lif, &ctx.cmd.rx_filter_add);
--- 
-2.25.1
-
+> Thanks,
+> 
+>         tglx
+> ---
+> --- a/kernel/static_call_inline.c
+> +++ b/kernel/static_call_inline.c
+> @@ -453,7 +453,7 @@ static int static_call_module_notify(str
+>  	case MODULE_STATE_COMING:
+>  		ret = static_call_add_module(mod);
+>  		if (ret) {
+> -			WARN(1, "Failed to allocate memory for static calls");
+> +			pr_warn("Failed to allocate memory for static calls\n");
+>  			static_call_del_module(mod);
+>  		}
+>  		break;
 
