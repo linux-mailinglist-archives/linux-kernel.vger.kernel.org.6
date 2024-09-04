@@ -1,198 +1,191 @@
-Return-Path: <linux-kernel+bounces-314173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87DD96AFB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:14:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B6B96AFB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58E79B23030
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824D01F2531F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CEE6BB4B;
-	Wed,  4 Sep 2024 04:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CC36F067;
+	Wed,  4 Sep 2024 04:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Atgw5p+o"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ntcj8PtI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00BB3D6B;
-	Wed,  4 Sep 2024 04:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585292E401;
+	Wed,  4 Sep 2024 04:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725423242; cv=none; b=VzxKpdsBIbZOJUnyC9kHqM38CBKHeLm1jAis/mZEKb67iU8jYglnxoOnK+QqWFKD+67gfrnE/kSHgpVRaTMPxQ4xtvOqzvl82f20YmueQArOdO80ZQXYkhusGYHG/81NogTmHpdqt3d8Oq+l0CL2mxRbx/ogrOGOsZvMhfa/mr0=
+	t=1725423328; cv=none; b=KNrrNloFglNxWx44PlkHVxyjaQrNlqb7HxWyPz8dax1a8pzdhNVzmQrjdwH7QEVs3I0coLOFqf5EiXPZgOZHTH0CtyeGhEWPDsbktFNCAWrodIpd+5A3hj543qCYTDk3gtqCfohBT+L39SDeTOnJDQ3Qm1y0tiec+0P6kKdCjzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725423242; c=relaxed/simple;
-	bh=BLJDIM+UhFjsEpA2gm+jsKfoSlgXOmwgzm0WXa5YV/w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=itL54jqwsB48te3WRGyqZSmCgt131o370ekvM8IRESaRIShNtkfkX9nUNy2+ZoJzmJ4msoEfeWFxKrkFSH3AK11Xm/y2oku/jxDBmOpOMU2AoZTzeuFjKRu5mM/2c4ARQFO6jhFLqbXd2yeReW5Y7jiyXblNwaHe0hvFbzq6aQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Atgw5p+o; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725423237;
-	bh=eMgOBDwTX8trwBbhMUy1qHUpMDhdRlVDIssPJb8Gsmo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Atgw5p+ous8ponaujRBR9zeHm87YGXlWFJw/APeKvwTJfN+vDA+MA/XCf729+PnVA
-	 yIoWrvR8Tg01Q4kTrqjbf+6l9UmkC2+E2eKeM0lpnBzHzQLZr6WfUF+RwlGDv9na7Y
-	 VJ6SDLZrN5hF4Pw9qE+168Zj3QWww8gocoC1nJ966vxltqaxwrFOfSbul6kyFfi2d0
-	 JlXz4kSSwijD4hHUrXsf8IlpvudZE3CIHAEjc3DtzlAKa/tvrIdpfiNxgF0xas/YL4
-	 mHLB2qUie8SKPjqF5MpzhdViqlVcFcXog5f66aL4m0C5o/rSTOnJ5fJzWnRTdDtt9J
-	 XaxynAPBdZR7w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz8Hv4YYPz4wb7;
-	Wed,  4 Sep 2024 14:13:47 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mark Brown <broonie@kernel.org>, Richard Henderson
- <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
- <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
- <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max
- Filippov <jcmvbkbc@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Deepak Gupta <debug@rivosinc.com>,
- linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
- Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] mm: Pass vm_flags to generic_get_unmapped_area()
-In-Reply-To: <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
-References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
- <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
-Date: Wed, 04 Sep 2024 14:13:47 +1000
-Message-ID: <87plpk5a4k.fsf@mail.lhotse>
+	s=arc-20240116; t=1725423328; c=relaxed/simple;
+	bh=04cXRNVhzxjuM3K45RH8+pyf4XyvBDyMQBZtKwITLPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JpTd2xKdlud6Dmo/1jh9eXJJhEuESl1AikUyh3keczjqcf9La4luCzRdXrlk2P+b7pST3OVMNzRyIh91ES91TUocqEBng3g0U3g6NN++9cfUq6zLTvJ6AXI4jtXkEgvec4LGesgX+yycgaBlXrgczbKuO4Th57VR5ngFcKggnqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ntcj8PtI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LwKZV028269;
+	Wed, 4 Sep 2024 04:15:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7OwV9q54UMJ6Ji6Evf3mn018rjPxWeTlzaxGAmoj8x4=; b=ntcj8PtIJErq78mW
+	PjFcNJ3pD55ac5x/QQL9X3Lxi4x6Cdn29M9sPh+QIY1YKH3Y1zZBubaMGvS0eP8J
+	DnEhm2y7QnWSHv42I7tsiM8OTVbTB1y8isFB+1G11Sz2E/Ok83tLpL6vh22vpUVw
+	LU9jDv2qTU6Z5KEb6Z67+r6EjV7BTCsS3GXy3LV1Xx/5ilpkmVMFNb6MH1LqfCwd
+	JOgaID4b1qC465TxRTSX/ghUoR/PAwfxYo8hVWBCqr6vYhDC29L2eczSDUEvRfpK
+	dH0S+rzWGuvl02H+jcIJ9dWIPDNv4ePhLidAfbZxrfmy2KX/Xu1I6d8kWWXUZcYb
+	9JCi1w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxsfwu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 04:15:15 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4844FEtW019077
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 04:15:14 GMT
+Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 21:15:08 -0700
+Message-ID: <a4b30cf0-3432-475c-9266-51b79780a666@quicinc.com>
+Date: Wed, 4 Sep 2024 09:45:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Add Qualcomm QCS8300 DT
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>,
+        Danila Tikhonov
+	<danila@jiaxyga.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Vladimir
+ Lypak" <vladimir.lypak@gmail.com>,
+        Adam Skladowski <a39.skl@gmail.com>,
+        "Sibi
+ Sankar" <quic_sibis@quicinc.com>,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Andrew Halaney
+	<ahalaney@redhat.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
+        <quic_okukatla@quicinc.com>
+References: <20240827151622.305-1-quic_rlaggysh@quicinc.com>
+ <20240827151622.305-2-quic_rlaggysh@quicinc.com>
+ <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qOEMVR2bohbJmNxDGHLge5sbfItYPJtA
+X-Proofpoint-ORIG-GUID: qOEMVR2bohbJmNxDGHLge5sbfItYPJtA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_02,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1011 suspectscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409040029
 
-Mark Brown <broonie@kernel.org> writes:
-> In preparation for using vm_flags to ensure guard pages for shadow stacks
-> supply them as an argument to generic_get_unmapped_area(). The only user
-> outside of the core code is the PowerPC book3s64 implementation which is
-> trivially wrapping the generic implementation in the radix_enabled() case.
+
+On 8/27/2024 9:02 PM, Krzysztof Kozlowski wrote:
+> On 27/08/2024 17:16, Raviteja Laggyshetty wrote:
+>> The Qualcomm QCS8300 SoC has several bus fabrics that could be
+>> controlled and tuned dynamically according to the bandwidth demand.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+> A nit, subject: drop second/last, redundant "DT bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 >
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/powerpc/mm/book3s64/slice.c |  4 ++--
->  include/linux/sched/mm.h         |  4 ++--
->  mm/mmap.c                        | 10 ++++++----
->  3 files changed, 10 insertions(+), 8 deletions(-)
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-cheers
-
-> diff --git a/arch/powerpc/mm/book3s64/slice.c b/arch/powerpc/mm/book3s64/slice.c
-> index ada6bf896ef8..87307d0fc3b8 100644
-> --- a/arch/powerpc/mm/book3s64/slice.c
-> +++ b/arch/powerpc/mm/book3s64/slice.c
-> @@ -641,7 +641,7 @@ unsigned long arch_get_unmapped_area(struct file *filp,
->  				     vm_flags_t vm_flags)
->  {
->  	if (radix_enabled())
-> -		return generic_get_unmapped_area(filp, addr, len, pgoff, flags);
-> +		return generic_get_unmapped_area(filp, addr, len, pgoff, flags, vm_flags);
->  
->  	return slice_get_unmapped_area(addr, len, flags,
->  				       mm_ctx_user_psize(&current->mm->context), 0);
-> @@ -655,7 +655,7 @@ unsigned long arch_get_unmapped_area_topdown(struct file *filp,
->  					     vm_flags_t vm_flags)
->  {
->  	if (radix_enabled())
-> -		return generic_get_unmapped_area_topdown(filp, addr0, len, pgoff, flags);
-> +		return generic_get_unmapped_area_topdown(filp, addr0, len, pgoff, flags, vm_flags);
->  
->  	return slice_get_unmapped_area(addr0, len, flags,
->  				       mm_ctx_user_psize(&current->mm->context), 1);
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index c4d34abc45d4..07bb8d4181d7 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -204,11 +204,11 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm_struct *mm,
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
-> -			  unsigned long flags);
-> +			  unsigned long flags, vm_flags_t vm_flags);
->  unsigned long
->  generic_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  				  unsigned long len, unsigned long pgoff,
-> -				  unsigned long flags);
-> +				  unsigned long flags, vm_flags_t vm_flags);
->  #else
->  static inline void arch_pick_mmap_layout(struct mm_struct *mm,
->  					 struct rlimit *rlim_stack) {}
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 7528146f886f..b06ba847c96e 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1789,7 +1789,7 @@ unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info)
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
-> -			  unsigned long flags)
-> +			  unsigned long flags, vm_flags_t vm_flags)
->  {
->  	struct mm_struct *mm = current->mm;
->  	struct vm_area_struct *vma, *prev;
-> @@ -1823,7 +1823,8 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
->  		       unsigned long len, unsigned long pgoff,
->  		       unsigned long flags, vm_flags_t vm_flags)
->  {
-> -	return generic_get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return generic_get_unmapped_area(filp, addr, len, pgoff, flags,
-> +					 vm_flags);
->  }
->  #endif
->  
-> @@ -1834,7 +1835,7 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
->  unsigned long
->  generic_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  				  unsigned long len, unsigned long pgoff,
-> -				  unsigned long flags)
-> +				  unsigned long flags, vm_flags_t vm_flags)
->  {
->  	struct vm_area_struct *vma, *prev;
->  	struct mm_struct *mm = current->mm;
-> @@ -1887,7 +1888,8 @@ arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  			       unsigned long len, unsigned long pgoff,
->  			       unsigned long flags, vm_flags_t vm_flags)
->  {
-> -	return generic_get_unmapped_area_topdown(filp, addr, len, pgoff, flags);
-> +	return generic_get_unmapped_area_topdown(filp, addr, len, pgoff, flags,
-> +						 vm_flags);
->  }
->  #endif
->  
+> And you do not add "Qualcomm QCS8300" here. QCS8300 is a SoC. You add
+> here specific device, right?
+Agreed, QCS8300 should be enough, I will update the commit text, addressing the comments.
 >
-> -- 
-> 2.39.2
+>>  .../interconnect/qcom,qcs8300-rpmh.yaml       |  50 +++++
+>>  .../interconnect/qcom,qcs8300-rpmh.h          | 189 ++++++++++++++++++
+>>  2 files changed, 239 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+>>  create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+>> new file mode 100644
+>> index 000000000000..ac75eeb6a6b4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+>> @@ -0,0 +1,50 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/interconnect/qcom,qcs8300-rpmh.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Technologies, Inc. RPMh Network-On-Chip Interconnect on QCS8300
+>> +
+>> +maintainers:
+>> +  - Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> +
+>> +description: |
+>> +  RPMh interconnect providers support system bandwidth requirements through
+>> +  RPMh hardware accelerators known as Bus Clock Manager (BCM).
+>> +
+>> +  See also:: include/dt-bindings/interconnect/qcom,qcs8300.h
+> Just one ':'
+Will address this in next revision of patch.
+>
+>> +required:
+>> +  - compatible
+>> +
+>> +allOf:
+>> +  - $ref: qcom,rpmh-common.yaml#
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    gem_noc: interconnect-gem-noc {
+>> +        compatible = "qcom,qcs8300-gem-noc";
+> Hm, no reg?
+>
+> Where is your DTS? Please follow standard upstream process, which means
+> you send DTS separately. Your internal guideline already should cover
+> that. If it does not, please look at upstreaming of SM8650, update your
+> guideline and then follow SM8650 process. That way we can verify that
+> what you send is true.
+
+Thanks for the review !
+
+I will share the link to DTSi change and will update the yaml in the next revision.
+
+> Best regards,
+> Krzysztof
+
+Thanks,
+
+Raviteja.
+
 
