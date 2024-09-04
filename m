@@ -1,53 +1,47 @@
-Return-Path: <linux-kernel+bounces-315130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8118996BE5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:24:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E0A96BEBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A61F26258
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ADC4B2D0F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3501D9D8C;
-	Wed,  4 Sep 2024 13:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6D41DA31D;
+	Wed,  4 Sep 2024 13:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CWFPRWOv"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaZA3Zoc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104F71D9321;
-	Wed,  4 Sep 2024 13:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4601441D;
+	Wed,  4 Sep 2024 13:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456237; cv=none; b=hVaNOh+jjpoWlf9hmQ0F6se/qDymUUMbPHJnpqoZpD0NChc46IieHX66hudHjjACwkNd/yhImaZyWGkoVl9Rrxb2bTnTfiV6I6Tdw9x1iWZC5BzlulN+d7IHqeLidxYuxXF+PAgU/e8iT4LWqa27FjVSpnMSvRvpqid1agxPrI0=
+	t=1725456279; cv=none; b=TYiZEJgQbe8VKIBQ6JL3TyFvN7pWohxe3sDbUZEdgMLJC7MnLxdgWjp/W2qjacWtQDMVzFyNjLa408jwiknJZ+DDC7jEzpWtom6xsh8JemdYmxE5o/WNqQxvgDcNjbfRTkjwzyT5tV9Io5Xq0hZc8NrzCpAKh1NTtHy3yEvOCtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456237; c=relaxed/simple;
-	bh=z/6x6HxIH7lyVMLfedwKLVfYeqbo5dz4ARrxodKWaGA=;
+	s=arc-20240116; t=1725456279; c=relaxed/simple;
+	bh=VD4Uy7oAc+nT7ov65tbrV4jCOunVuSnuaZX67sZ/AD8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k0qK9hXs+wI+4XlKwH4c7l/8lZNOvz3Dz82CWYptuAq4cviZ3dAPM9famigYzLDs0vZHmjhKFxqL6day3ERP/Xx4Yspej4vWtm920TdgUd2OdzUCQi2EjcCcvApKkmfpKZf13GtvAeG5GrSiuWvh5fl7rlQcnpiuv2US4g67Ctk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CWFPRWOv; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3NFOAj+YITGbfqpTG/opvnFh0aZiVcPLLOMCI+yzbOk=; b=CWFPRWOvcrBLl2epmgxOBK+14F
-	dEQApEgNExEwBZ14+CgbVTnnDQ4K+7BuxBSDUNCmg1ldMcD5BKMBmO4riT2D4v3/qKNGZNNppqtzT
-	vEegc936UAvgoK+YXt+NjWTHZYO2FtVT+nb7R58EtCCnXn9VT4fbZFCt+7Ksx3j3XzQkw2oYAdvhm
-	HalhWYyKBvlZToyj8t4oyrwwZBL40CCtb8ptWVxggb4iHHCSDstX+jtsgNZY2Xzyco0i78Y1ynVrC
-	AUCJthxzO4RdPKfcP1c8VS6BII5N4rEZUEucV8wbBGYii6dSE0bu02rS4WlXAPSb3b5kAPqlg1a76
-	unFA51Kg==;
-Received: from [177.172.122.98] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1slpyy-009WNA-HT; Wed, 04 Sep 2024 15:23:36 +0200
-Message-ID: <63bbeec6-718f-49ad-974d-fb3958bd1564@igalia.com>
-Date: Wed, 4 Sep 2024 10:23:26 -0300
+	 In-Reply-To:Content-Type; b=m/k9WmPo6ukG+AyIYsZePL1fC2ZYXADdg9QaVGncD/XT68LmNvbF3TcOaVn1FjdMAujXRCXhL3gtPGnFbE1dE0q+5lGD3ADTX+/yCMhiSgeqLNDGh1evwEQoUIExOxkb7pWcY3XP5q47NirJvajzrD1SXvmhXzImeq+O3fekVxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaZA3Zoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF76C4CEC2;
+	Wed,  4 Sep 2024 13:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725456279;
+	bh=VD4Uy7oAc+nT7ov65tbrV4jCOunVuSnuaZX67sZ/AD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EaZA3ZocO9yeFcLWnQAMtGEkip86DBt1O5MM3Zi+MIiWlMApYGZLT71+bvGX4QX0s
+	 GzBGd9kEpW3E4pKUA6YDOPUgHm3Z81C/b18Nzgg4oT+G1LWPjiAYum78+jItZd72EO
+	 gj5xBz5Fk2ts+TNEta4t0cTkDj1paLqxjCXH040xSXtye+xXtm3faE8B8mXAIXeP0A
+	 FyKLBPpFTpPW1iJ5Ugh9taN9x2d9+U+iJNEx7VD+99J7IOCNCQLjofSBU7olyHNeaH
+	 QP+Z1eaYSJlC4gLKcNSgQB4hLoiQBfsDEE/jS43+FQ46wAXjppCl3vz+VpvLPmM3um
+	 ClLE8oJQvyGDA==
+Message-ID: <e352a836-82ef-4031-ac46-3ac7e0cb77ec@kernel.org>
+Date: Wed, 4 Sep 2024 15:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,53 +49,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] selftests/futex: Order calls in futex_requeue
-To: Edward Liaw <edliaw@google.com>
-Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
- Bill Wendling <morbo@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Shuah Khan <shuah@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Marco Elver <elver@google.com>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Nathan Chancellor <nathan@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Justin Stitt <justinstitt@google.com>, Dmitry Vyukov <dvyukov@google.com>,
- Darren Hart <dvhart@infradead.org>, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Davidlohr Bueso <dbueso@suse.de>, llvm@lists.linux.dev,
- John Stultz <jstultz@google.com>
-References: <20240903203915.3383774-1-edliaw@google.com>
+Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
+ SA8255p
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
+ viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+ will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+ jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+ amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
+ cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+ wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ kernel@quicinc.com, quic_psodagud@quicinc.com,
+ Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-18-quic_nkela@quicinc.com>
+ <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
+ <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20240903203915.3383774-1-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Edward,
+On 04/09/2024 14:54, Nikunj Kela wrote:
+> 
+> On 9/3/2024 11:36 PM, Krzysztof Kozlowski wrote:
+>> On Tue, Sep 03, 2024 at 03:02:36PM -0700, Nikunj Kela wrote:
+>>> Add compatibles representing UART support on SA8255p.
+>>>
+>>> Clocks and interconnects are being configured in the firmware VM
+>>> on SA8255p platform, therefore making them optional.
+>>>
+>>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>>> ---
+>>>  .../serial/qcom,serial-geni-qcom.yaml         | 53 ++++++++++++++++---
+>>>  1 file changed, 47 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>>> index dd33794b3534..b63c984684f3 100644
+>>> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>>> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>>> @@ -10,14 +10,13 @@ maintainers:
+>>>    - Andy Gross <agross@kernel.org>
+>>>    - Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>  
+>>> -allOf:
+>>> -  - $ref: /schemas/serial/serial.yaml#
+>>> -
+>>>  properties:
+>>>    compatible:
+>>>      enum:
+>>>        - qcom,geni-uart
+>>>        - qcom,geni-debug-uart
+>>> +      - qcom,sa8255p-geni-uart
+>>> +      - qcom,sa8255p-geni-debug-uart
+>> Why devices are not compatible? What changed in programming model?
+> 
+> The cover-letter explains what is changed for devices in this platform.
+> I will add the description in this patch too.
 
-Thanks for your patch!
+Many of us do not read cover letters. They don't really matter,
+especially that serial tree will not include it. Each commit must stand
+on its own.
 
-Em 03/09/2024 17:39, Edward Liaw escreveu:
-> Similar to fbf4dec70277 ("selftests/futex: Order calls to
-> futex_lock_pi"), which fixed a flake in futex_lock_pi due to racing
-> between the parent and child threads.
 > 
-> The same issue can occur in the futex_requeue test, because it expects
-> waiterfn to make progress to futex_wait before the parent starts to
-> requeue. This is mitigated by the parent sleeping for WAKE_WAIT_US, but
-> it still fails occasionally. This can be reproduced by adding a sleep in
-> the waiterfn before futex_wait:
 > 
-> TAP version 13
-> 1..2
-> not ok 1 futex_requeue simple returned: 0
-> not ok 2 futex_requeue simple returned: 0
-> not ok 3 futex_requeue many returned: 0
-> not ok 4 futex_requeue many returned: 0
+>>
+>>>  
+>>>    clocks:
+>>>      maxItems: 1
+>>> @@ -51,18 +50,49 @@ properties:
+>>>        - const: sleep
+>>>  
+>>>    power-domains:
+>>> -    maxItems: 1
+>>> +    minItems: 1
+>>> +    maxItems: 2
+>>> +
+>>> +  power-domain-names:
+>> This does not match power-domains anymore.
 > 
-> Instead, replace the sleep with barriers to make the sequencing
-> explicit.
-> 
+> Single power domain doesn't need to use power-domain-names binding as it
+> is not needed however for multiple(in this case 2), you need to provide
+> names. I will add this property to if block and only keep maxItems here.
 
-Reviewed-by: André Almeida <andrealmeid@igalia.com>
+The xxx and xxx-names properties always go in sync. Otherwise we do not
+really know what is the power domain for other variants.
+
+You are allowed to be unspecific about power domain (so maxItems: 1) if
+it is obvious. You now made it non-obvious, so above flexibility does
+not apply anymore.
+
+Best regards,
+Krzysztof
+
 
