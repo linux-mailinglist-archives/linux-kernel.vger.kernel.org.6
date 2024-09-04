@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-315437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A1796C2BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2368096C2BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B43E1C24A54
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28EE1F22107
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C891C1DEFDD;
-	Wed,  4 Sep 2024 15:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611931DEFED;
+	Wed,  4 Sep 2024 15:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMn3OmPk"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GO/SZRhc"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA81DCB1A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A571DB55A;
+	Wed,  4 Sep 2024 15:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464653; cv=none; b=k+nQGVgBmmjKWSryQtC7rZV2V1fu+fqp8hjjyMZBEo1R8IJFMxxdFCrYUEgE+Rb/TCbk29mbUTT7l5lTAS0f2916GkQuXZNsFdAFlkHL3wNpj4adKE8yyxjku3gI5Ftl720LJXlPFklmleAUEyaYAv+T+HcPuOxQ/DvtEkDkdvY=
+	t=1725464673; cv=none; b=leQDNMUMWDXVgNMGD9VBWU1LXZKxY28O4QKYw7eWf/9v2H88aCXItY4mh3AdXJue5XwBwoOxsLyH4++OOlR7pXoMuMaQ7xKe9yuSaU/ns0KB5jO6h8epaBAT9fVENQL8Hncd32lf7JGEbOH6CgeToxgkAsauY+Bvv/Fb3claZRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464653; c=relaxed/simple;
-	bh=zkWE9eHQtAP59JThyXzFthwkywAghmi5eg1TtaGzNAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAEavAVqSy3ZTrWIKakaKVXwZ4WNE/KKuhaxmA+CV+Prw02axmPU6VoXE6xl9dOmtpwZRY67a1PdjFjfZr11NyPuy8QfRmDTTAS4I3OXbf/BvfZtX+4XhL7Oede84ZJ9F+RR2UEWIHnAHo/20GaP9Z7TT661sQ3Ml2Jxy1lggE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMn3OmPk; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7177e6cd298so533464b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:44:11 -0700 (PDT)
+	s=arc-20240116; t=1725464673; c=relaxed/simple;
+	bh=OnxPN/+AbrFrxcLgrBGr7w5CtUTVTvAlqoV+BjHQDZg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Gx5qkFC8DZ9nvrMZZnPpucR+co+Dxy0ibt0XU6RGLbwlb0oqib0QIHS7dX2dlL8DSny2obuvpPCA4kuLddynwiSWvVqzeGuWHna8BMbXFapYqTt8MaWNo1imMQUu3yreGxd46dAKL7msxN5HuBG0ZS2pHJLsP6Je8l+YLaK9dSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GO/SZRhc; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c3400367so3054838f8f.2;
+        Wed, 04 Sep 2024 08:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725464651; x=1726069451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lvq181bt53++X2ipAJuBWwtoz5tjcNktNxin7O2M81s=;
-        b=qMn3OmPkvu1FF6CuPoBq7k/O2X7FK44VgljeHSoaCD3mZ/z3I0/uLKs8r5/arh8yHj
-         vwHnUPiREUOYsYA1Oc1vtKj3owusGVBPzUrXWfNHoZICGKA2FSRdG9J2WejRA0EHEBdC
-         lml/M5TO/1E6ccjGpi8z+YLUPpRnJpWd/SwXsFcx+UnMdK6H/hrnaR42sT7qEhwyW/H4
-         2q0SMUiRVBKlmOBZ2JZVntbVPWGRb2RXbzLaPFpsS5OEoKzbVIR0Zfkr8yWvbGfb72SA
-         msXrgf24k64JeZkNH64+ATm3XL6NkCThTPpkxkxUNErnP17/rCHLbg8HWDDBK5DCL4N5
-         uPdQ==
+        d=gmail.com; s=20230601; t=1725464670; x=1726069470; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q0/m9gfxAidcZmmSBa07F5tUNXyuTt8w6eXaConl8Dg=;
+        b=GO/SZRhcla9tWe25LJkM7IPBfXPmkbR2AyQu9WJKlEUMcMrBYOk86No+kYEWS8pSp7
+         LuCsswxR/QZAWDcRt+M4EzR9+23iHi2qhQEH8zCVn+jtrs2JCczfkQUYOli1mFUjqACb
+         FJZd3ErUio7Aj6ksvpkTELF/RMkJoA1Oo3gCRr0Kweuk4+Z0tJslHgxM5zJTlWRspnwj
+         0pDZOHC4dtQCHbbQjHQnxiTmI91UEBv7RrZDK2/YbY8yQ9YGdR+6738LItHlrq7c+40U
+         L3ZNLiz7eXuZHP248xkHgDWgCdTuxiYntc9EdG1VAFG1iS8jliTLiVxKP++KccsM2RG5
+         AXng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725464651; x=1726069451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lvq181bt53++X2ipAJuBWwtoz5tjcNktNxin7O2M81s=;
-        b=IB65SruMa1speQcuMaIp5lPb8sLBjmWl4VjzfUl87WaUdWbudcc4iHptCaxHujt1NT
-         ZI7TKl21jhidsIucvDAIHbAB/9mZpqJJZKdtjsW+HMldGkZzuXy88mgKh4TNQPbzt2Uw
-         3D52FwDPZJaTI7Toisb7RiYW+SbujPi0iC6VkLVbCu2YwZiy6tFx3FA7Zj5bqQl0JffM
-         zZneG7gveA+vHEJ5bbYFCCQQt1wvrqeylRnHEL6ZtvvJLqLkPY9LrWoQu6X9xFEAFsQh
-         pW4KKigW5AfAJRac9w8t1kjCnvlUxxRjMm7h+IttNJjByklX8Z0MaWDpvR4JmYKAS6bn
-         T6yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsgNte6FF1rxk5ZBK3Io9CcUOEMFgDGSmhwqbGnbYiUjrpYbUg+3FQgKnQKI9MmILjLsBN3hWoJgsIQXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFtI37xAouPcXYoVlFG+fslydr2iqbBZuP6dc12lDKW9mVoWFJ
-	pYk4YprKbn9iwwMAioZBceMqYnHop35+o4bF9YhtWYC5CxXAC0vXWVaQ1aQAGvA=
-X-Google-Smtp-Source: AGHT+IEzkhU1NY+b/rFo3CUIWLkNeW1QOlR8kkj/gEDVFHDtok9gvgAxeDuYVkH4KCg7NBQoom+p7w==
-X-Received: by 2002:a05:6a20:9f89:b0:1c6:fb2a:4696 with SMTP id adf61e73a8af0-1cce100b917mr22074760637.19.1725464650872;
-        Wed, 04 Sep 2024 08:44:10 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8490:5dd6:5f49:1365])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778530830sm1761671b3a.49.2024.09.04.08.44.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:44:10 -0700 (PDT)
-Date: Wed, 4 Sep 2024 09:44:07 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: patrice.chotard@foss.st.com, andersson@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc:remove redundant dev_err message
-Message-ID: <ZtiAR7Tp2jVOWb2g@p14s>
-References: <20240904020949.11193-1-liujing@cmss.chinamobile.com>
+        d=1e100.net; s=20230601; t=1725464670; x=1726069470;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q0/m9gfxAidcZmmSBa07F5tUNXyuTt8w6eXaConl8Dg=;
+        b=r0zj6Tqz/YuGcDfA4JEmRx86jms8fH59E9HmEIesALsoI+mXSr8ut8MmYh3m2mHt3q
+         B7z1WZ1NX9Jo4+NxeXGTBCZzxa6AAsPwXGsSUQNOe0K0OuB62TzlngzowoCTIyXK1JvM
+         k58IGd192v7pufwuS16rV1QQIynIMR/10C2CWeWrPCJ3cVHXGvSyb4xBuXt3WPqHe5ft
+         eMXQcjcjU9X+64KAWAAnF9UO0OttuGmz3aH+YXU/3lf9A4ltKSUyBoRGVHAuEdWUl45w
+         pQct0JvcBMXQCvU4vxfNK1X7eB5o3WsQSr5yraokCGB1kJjnfb3YfevUoxpu5BTu7sYK
+         g8yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVswFEzH4aq+eXpS3uncHDafle7pCBXLHOEHZf/kyxpewRc/ZiBF8st2QTl/oUEt0HbAoKZtepFxSjcYdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw38k4D8jhy+0BrWEldZrNZ9FzeM4v6cgYNqog3pFGsJcSGkf8m
+	yHN15V0JnC1u1jiXJPsy9FHwzXsbQktubTs2NWU6jpiPGIrBnV2xIXGC4A==
+X-Google-Smtp-Source: AGHT+IGpJCjpT1qfXUmSb9iCWFqq6pK5v6aS6Z1hND2gE1k864IMDMT3VSxYAyMgJhm4Ujs7aJcrHg==
+X-Received: by 2002:adf:e6c8:0:b0:374:c3cd:73de with SMTP id ffacd0b85a97d-374c3cd74d5mr10796637f8f.35.1725464670068;
+        Wed, 04 Sep 2024 08:44:30 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a45b0sm6743666b.143.2024.09.04.08.44.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 08:44:29 -0700 (PDT)
+Subject: Re: [PATCH net-next] sfc: convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, habetsm.xilinx@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org
+References: <20240904084951.1353518-1-nichen@iscas.ac.cn>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <f1007430-0c62-310f-8de1-362096bf2b1e@gmail.com>
+Date: Wed, 4 Sep 2024 16:44:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904020949.11193-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20240904084951.1353518-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-There are several other instances such as these in the remoteproc subsystem.
-Please send another revision that is addressing them all.
-
-Thanks,
-Mathieu
-
-On Wed, Sep 04, 2024 at 10:09:49AM +0800, Liu Jing wrote:
-> devm_ioremap_resource already contains error message, so remove
-> the redundant dev_err message
+On 04/09/2024 09:49, Chen Ni wrote:
+> Replace comma between expressions with semicolons.
 > 
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-> index d17719384c16..a6e50f51c794 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -251,7 +251,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
+> 
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+> 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+
+Acked-by: Edward Cree <ecree.xilinx@gmail.com>
+
+> ---
+>  drivers/net/ethernet/sfc/ptp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
+> index 6fd2fdbaa418..aaacdcfa54ae 100644
+> --- a/drivers/net/ethernet/sfc/ptp.c
+> +++ b/drivers/net/ethernet/sfc/ptp.c
+> @@ -884,7 +884,7 @@ static void efx_ptp_read_timeset(MCDI_DECLARE_STRUCT_PTR(data),
+>  	timeset->host_start = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTSTART);
+>  	timeset->major = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_MAJOR);
+>  	timeset->minor = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_MINOR);
+> -	timeset->host_end = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTEND),
+> +	timeset->host_end = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_HOSTEND);
+>  	timeset->wait = MCDI_DWORD(data, PTP_OUT_SYNCHRONIZE_WAITNS);
 >  
->  		slim_rproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
->  		if (IS_ERR(slim_rproc->mem[i].cpu_addr)) {
-> -			dev_err(&pdev->dev, "devm_ioremap_resource failed\n");
->  			err = PTR_ERR(slim_rproc->mem[i].cpu_addr);
->  			goto err;
->  		}
-> @@ -262,7 +261,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "slimcore");
->  	slim_rproc->slimcore = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(slim_rproc->slimcore)) {
-> -		dev_err(&pdev->dev, "failed to ioremap slimcore IO\n");
->  		err = PTR_ERR(slim_rproc->slimcore);
->  		goto err;
->  	}
-> @@ -270,7 +268,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "peripherals");
->  	slim_rproc->peri = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(slim_rproc->peri)) {
-> -		dev_err(&pdev->dev, "failed to ioremap peripherals IO\n");
->  		err = PTR_ERR(slim_rproc->peri);
->  		goto err;
->  	}
-> -- 
-> 2.33.0
+>  	/* Ignore seconds */
 > 
-> 
-> 
+
 
