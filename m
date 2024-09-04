@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-314460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1BF96B39E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:56:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2461496B390
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B1A1C24A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7621F22496
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B786617BEB6;
-	Wed,  4 Sep 2024 07:54:48 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DA015532A;
+	Wed,  4 Sep 2024 07:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PSAF30T1"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57507158A2E;
-	Wed,  4 Sep 2024 07:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986E7FC12;
+	Wed,  4 Sep 2024 07:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436488; cv=none; b=eb5KSgUNPJfOLuQ0IqB5j+joHEfB9RI9q+6aPUHfJDpnRj/qHgDathB1wjr3RXvUc00z7V98AB4ncTDLeClLqSE6aS6KOKAejyJYOmIDrdNoVemktTyYkghAmU773iihQm/6bWsPVk/3uyqWZeZXRyhxYL5khLQHUMxQNsr8ewU=
+	t=1725436401; cv=none; b=ZTJ8YC65fVKMoL6ijoVMddHM5DAnyFouRgMpgIbtaL1hcNR8WHCpF+dIPJjGBeVa3BuFGX52h31MdT/ueXpBU1JrnghexkLVvMbKNkLGcDhn0evTnb6dlZBU4LO5lj0AzB4HZmqrYrqGTXTum5Aiii8CHI5/39e0zrv1bjval/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436488; c=relaxed/simple;
-	bh=JBXg7CfQ3VIG9HLAsM4cdCYg8LEz/4+0/h6UDJ8qPWc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ac4Q9ervZiWI24Fj2V1K0tNNUbs+R94sVutw2RhKkND7KmVOHKiTaAS4MaCrFc81+EwTPiXcSKlVSDptw317XOcQWwo5fZnC6ce5uxWl1yGyZwuszyFYIVyjY/xMbtosE6fqM1TJgO0gAx2ZVQNQngOibq4ebdnysTqVxfTjOAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4847rEPP033233;
-	Wed, 4 Sep 2024 15:53:14 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WzF0z3lVBz2PHTwk;
-	Wed,  4 Sep 2024 15:46:11 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 4 Sep 2024 15:53:12 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang
-	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCHv2 1/1] fs: ext4: Don't use CMA for buffer_head
-Date: Wed, 4 Sep 2024 15:53:00 +0800
-Message-ID: <20240904075300.1148836-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725436401; c=relaxed/simple;
+	bh=/xAKm5UKzMTbbYVOSWXVBmyYpYA9sihdEbzsl/IXnmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTEOKJiJ0GG08w6rVTcevhC1ZrzWs23HGy3R4GL7aMfwIIfQOkHshgvXMic+K3uAw740BwtC0wq/jj4AOZL++k6UgRmQ0JQXs1HzthXCJllS2HsAus1zKThOAPJfZ7x+prbqIFiEAVcT8jMusKGdzkWcNQ3unLtE5tVOhsZUwtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PSAF30T1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y2m2XSa0eMafOcEahfOdCWs/9WntdPeN4Fcyu8FOAK8=; b=PSAF30T10WkjcEapl3XsAOK1ox
+	6UYBCuCEEJOkd1PoQSqCproPM/WEHEKohL6Iz3pqVXZZBaZZytxLjMMMZ91N7KK/h4Ca5DNW0uv/Y
+	JZJ/qwU53DMtUW6qgpj5VhqakBiTOvhUHTzSyO8d+jRYW5pIHqkheqPCTpXzKBeBA2gU5Ij2PGxWX
+	fvGIKVZlz88dcZhdxj4ZMSExH6rYhY/ewazXT7/mmCDkCTkN9X85QCqRbogZkjOpDJfyT1Xbwpw62
+	zh8md3OaCffUB8lasiYZH/qjr3lkkR58RZHye7iAY4/+EwABVIfJN12q3fUhUpU1oXKFAM7NT1frh
+	/jFsUXeg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1slkpH-00000000Wol-1nnm;
+	Wed, 04 Sep 2024 07:53:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 94EE4300642; Wed,  4 Sep 2024 09:53:15 +0200 (CEST)
+Date: Wed, 4 Sep 2024 09:53:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 07/31] kbuild: Remove "kmod" prefix from __KBUILD_MODNAME
+Message-ID: <20240904075315.GC4723@noisy.programming.kicks-ass.net>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <d781bcac7ddd4563ed7849b5d644849760ad8109.1725334260.git.jpoimboe@kernel.org>
+ <20240903075813.GM4723@noisy.programming.kicks-ass.net>
+ <20240904021124.tgzwu3ob37ibjja4@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 4847rEPP033233
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904021124.tgzwu3ob37ibjja4@treble>
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Tue, Sep 03, 2024 at 07:11:24PM -0700, Josh Poimboeuf wrote:
+> On Tue, Sep 03, 2024 at 09:58:13AM +0200, Peter Zijlstra wrote:
+> > On Mon, Sep 02, 2024 at 08:59:50PM -0700, Josh Poimboeuf wrote:
+> > > Remove the arbitrary "kmod" prefix from __KBUILD_MODNAME and add it back
+> > > manually in the __initcall_id() macro.
+> > > 
+> > > This makes it more consistent, now __KBUILD_MODNAME is just the
+> > > non-stringified version of KBUILD_MODNAME.  It will come in handy for
+> > > the upcoming "objtool klp diff".
+> > > 
+> > > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > > ---
+> > >  include/linux/init.h | 3 ++-
+> > >  scripts/Makefile.lib | 2 +-
+> > >  2 files changed, 3 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/include/linux/init.h b/include/linux/init.h
+> > > index 58cef4c2e59a..b1921f4a7b7e 100644
+> > > --- a/include/linux/init.h
+> > > +++ b/include/linux/init.h
+> > > @@ -206,12 +206,13 @@ extern struct module __this_module;
+> > >  
+> > >  /* Format: <modname>__<counter>_<line>_<fn> */
+> > >  #define __initcall_id(fn)					\
+> > > +	__PASTE(kmod_,						\
+> > >  	__PASTE(__KBUILD_MODNAME,				\
+> > >  	__PASTE(__,						\
+> > >  	__PASTE(__COUNTER__,					\
+> > >  	__PASTE(_,						\
+> > >  	__PASTE(__LINE__,					\
+> > > -	__PASTE(_, fn))))))
+> > > +	__PASTE(_, fn)))))))
+> > 
+> > :-(
+> 
+> Yeah, I was just keeping the existing format here.
+> 
+> But actually, I strongly prefer it compared to this:
+> 
+> /* Format: <modname>__<counter>_<line>_<fn> */
+> #define __initcall_id(fn)						\
+> 	__PASTE(kmod_,							\
+> 		__PASTE(__KBUILD_MODNAME,				\
+> 			__PASTE(__,					\
+> 				__PASTE(__COUNTER__,			\
+> 					__PASTE(_,			\
+> 						__PASTE(__LINE__,	\
+> 							__PASTE(_, fn)))))))
+> 
+> That gives headaches.  Sure, the vertically aligned version is a bit
+> unorthodox but it *much* easier to read if you know how to read it: just
+> scan down.
+> 
+> And the "Format:" comment at the top clarifies the result.
 
-cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
-can not be migrated out of CMA area[1] as the jh has one cp_transaction
-pending on it because of j_free > j_max_transaction_buffers[2][3][4][5][6].
-We temporarily solve this by launching jbd2_log_do_checkpoint forcefully
-somewhere. Since journal is common mechanism to all JFSs and
-cp_transaction has a little fewer opportunity to be launched, the
-cma_alloc() could be affected under the same scenario. This patch
-would like to have buffer_head of ext4 not use CMA pages when doing
-sb_getblk.
-
-[1]
-crash_arm64_v8.0.4++> kmem -p|grep ffffff808f0aa150(sb->s_bdev->bd_inode->i_mapping)
-fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020 lru,private
-fffffffe03d189c0 174627000 ffffff808f0aa150        4  2 2004000000008020 lru,private
-fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2 2008000000008020 lru,private
-fffffffe03d88e40 176239000 ffffff808f0aa150        6  2 2008000000008020 lru,private
-fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2 2008000000008020 lru,private
-fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2 2008000000008020 lru,private
-fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2 2008000000008020 lru,private
-fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2 2004000000008020 lru,private
-
-[2] page -> buffer_head
-crash_arm64_v8.0.4++> struct page.private fffffffe01a51c00 -x
-      private = 0xffffff802fca0c00
-
-[3] buffer_head -> journal_head
-crash_arm64_v8.0.4++> struct buffer_head.b_private 0xffffff802fca0c00
-  b_private = 0xffffff8041338e10,
-
-[4] journal_head -> b_cp_transaction
-crash_arm64_v8.0.4++> struct journal_head.b_cp_transaction 0xffffff8041338e10 -x
-  b_cp_transaction = 0xffffff80410f1900,
-
-[5] transaction_t -> journal
-crash_arm64_v8.0.4++> struct transaction_t.t_journal 0xffffff80410f1900 -x
-  t_journal = 0xffffff80e70f3000,
-
-[6] j_free & j_max_transaction_buffers
-crash_arm64_v8.0.4++> struct journal_t.j_free,j_max_transaction_buffers 0xffffff80e70f3000 -x
-  j_free = 0x3f1,
-  j_max_transaction_buffers = 0x100,
-
-Suggested-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
-v2: switch to use getblk_unmoveable as suggested by Theodore Ts'o
----
----
- fs/ext4/inode.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 941c1c0d5c6e..a0f48840c5c1 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -869,7 +869,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
- 	if (nowait)
- 		return sb_find_get_block(inode->i_sb, map.m_pblk);
- 
--	bh = sb_getblk(inode->i_sb, map.m_pblk);
-+	/*
-+	 * Since bh could introduce extra ref count such as referred by
-+	 * journal_head etc. Try to avoid using __GFP_MOVABLE here
-+	 * as it may fail the migration when journal_head remains.
-+	 */
-+	bh = getblk_unmovable(inode->i_sb->s_bdev, map.m_pblk,
-+				inode->i_sb->s_blocksize);
-+
- 	if (unlikely(!bh))
- 		return ERR_PTR(-ENOMEM);
- 	if (map.m_flags & EXT4_MAP_NEW) {
--- 
-2.25.1
-
+Yeah, I suppose you're right.
 
