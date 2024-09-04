@@ -1,147 +1,262 @@
-Return-Path: <linux-kernel+bounces-315013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9350D96BC7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2777796BC83
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF83282503
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5034282786
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEE41D9334;
-	Wed,  4 Sep 2024 12:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063011D9337;
+	Wed,  4 Sep 2024 12:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpkgEkRc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkeHXF8L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE0185935;
-	Wed,  4 Sep 2024 12:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35519185935;
+	Wed,  4 Sep 2024 12:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453354; cv=none; b=mC3Ra4oZbDkgJkpC5eGCDQJiq1PwVuGVxEzVxXp+1gJ6sEu3iq4iohkazZnM9lROTaPIg5oD2A4DkBIg6n9PJjoRLHh76gfVPinSRl0DKmP6a/a/EXGlS52IQbNc0ENEoovdQ8QZ1TOiJKfH8G1UZIgqq2uRRmTvHP+nGcAfM3Q=
+	t=1725453379; cv=none; b=IiSFGQ8QhQXpQ+JqG9QvrIx2YPc+OBOgEa7+W1rSEyb/vYHGZyUXn8lnfMnRVjPgu36KkDTgeuoA+cYRWlrREGmHnBYQYyqmBACq5uxk9qJKrQ8kqlVkueKynj8BD7rLLg7aTD7l38oN41WNUILX6vi8aAIn5LpruYHpbWix96U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453354; c=relaxed/simple;
-	bh=fjWW4m3Ll2ydWjHg6gzxX2V7+q9bKZYwiViXSnn/3Ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1rqh/BTsrGlD8gZv83AFUzmDcgjOpzKP74bL9FiZrdEPUmzmpCXOyzjUFMKJDvuL6GpYz5cH3ihqL3npGJdeNY0gTuBts6i922E2nkiIwHLY0/xyrqcRA3YP0MRWjlVTyxHqJscj0j6IYDhj5Y8NVDz6XUGxJin18l6HOF+K5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpkgEkRc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0932C4CEC6;
-	Wed,  4 Sep 2024 12:35:50 +0000 (UTC)
+	s=arc-20240116; t=1725453379; c=relaxed/simple;
+	bh=JjA2/JsNXGExkeE2K/FQZhVSrIrSq/U99uy6B88D6YY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZEM1cTIx8ren6t7uKl7MWqFDUG939CUU2cB/toRwdKHD3K6GkAgjUAE+dMQ1OdZ26sxSJkvq7tANWcJgzm8OWV85K9P1z8FPRNHhmVJ4ihw7tEkpcPu3v8kQRQ5VUFqhQygY5Ru1wqlj/AH1/zbfSyHLKpGuntLnouTg8Z6g1jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkeHXF8L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08FB1C4CEC6;
+	Wed,  4 Sep 2024 12:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725453353;
-	bh=fjWW4m3Ll2ydWjHg6gzxX2V7+q9bKZYwiViXSnn/3Ac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CpkgEkRc+CChmGCkYFkh1y56Dld92UgaWYbJ00E28R0XnsGC6NyORq5U+a7/eMjQe
-	 3K3r28UGRqlCK+gz2JyR3QPSRmtP8NpcRxUfI84sRUXtaqvoxniVdZmaC22ovYWAGv
-	 qWWTvYs2OF8nb+CuvzKIo4ZR+oVeMrukJ3vffBJT9VCCtbqkpngIu7OfEy/tmJa8sc
-	 WiccfciL75imt4RyDkcMJnOt0Pfns6YQP0+p6KWydop0JcmqnydRz4zyrNXlvohDY4
-	 Foge2izuF1WNAy4zGcOURTQXJvWxTYTZvTJWaq8Qqo0NYtvxL9lJkbEZsBq6O1CzEq
-	 u6WrZ6mafocOQ==
-Date: Wed, 4 Sep 2024 13:35:47 +0100
-From: Will Deacon <will@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
-Message-ID: <20240904123544.GG13550@willie-the-truck>
-References: <20240827164417.3309560-1-leo.yan@arm.com>
- <20240827164417.3309560-2-leo.yan@arm.com>
- <20240830103834.GA8000@willie-the-truck>
- <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
- <20240830130930.GA8615@willie-the-truck>
- <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
+	s=k20201202; t=1725453379;
+	bh=JjA2/JsNXGExkeE2K/FQZhVSrIrSq/U99uy6B88D6YY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nkeHXF8L2lNOc60N7//9fxgBgJtS6EEGvC3WgGFxLVKe8op3GKltWb/m2W9tOXd7a
+	 +Q2s36NAVfYyDq60G9yzMjvJYKlLjKsaT18cqDypW0w2NVeI4jZ9KiUIOtHC1TUrbz
+	 5+5DuZF4MNuswDoLF2VEFGSdXi7tZZh/AnDGUr904xXwHyXMCbvl5YluCDin54f+hq
+	 vltxV/WDrpSiGw/gMEw45UL0T/G8oCrHTemmq5EMLX9dQQv1Xwkt3YJCSP0eFtcTd+
+	 6ZEksCjnTRSZrYjzYcFecdXWsipgn1mIe9w5i7iT1mABdY5UbR4bbBoSRPx1GaE840
+	 x2YDJa2uHutiQ==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5d5f24d9df8so3692543eaf.2;
+        Wed, 04 Sep 2024 05:36:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqQVDADduz2Oy7aThNKQjxuETEXPJmYU7ZXZrpwzsysJhys4NdI2bfinwESzHxbUaHFfQE/F8tCsw=@vger.kernel.org, AJvYcCX0gJcZnZ8DNTMPXbLnRFX06neRSL/3NgyeSwCSbVApOdKgxEvH35ck0WST803Kqwnqel7c8Iry3kRCWpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6xzeWGmFbqyyXPN9wTT2F8ZEJ8g4kd05ogf8mzqNlUWlpeIRQ
+	IiTJgs+JuylZjtEGkruEv6tczmmX5nNp9pkYrlhJ///BpGB8Y47LEvfAM00PwzdzMc0nvM5YROA
+	uF7JfpzC0PODlQh4+qXOpHpPtsw8=
+X-Google-Smtp-Source: AGHT+IEYd6wVrgfuqGaHEwztbvHD7RfPKDJ5M427MVlwc3gD1WA6CqJ4z9GYwZy84CTPZzdP0I3E7s7Uzt0me2R21cU=
+X-Received: by 2002:a05:6870:3909:b0:278:2d12:9f13 with SMTP id
+ 586e51a60fabf-2782d12b186mr4130715fac.44.1725453378349; Wed, 04 Sep 2024
+ 05:36:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240825110620.30109-1-av2082000@gmail.com> <dd30094d963ec559d444aee6d0c26a5cd4c1e432.camel@linux.intel.com>
+In-Reply-To: <dd30094d963ec559d444aee6d0c26a5cd4c1e432.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Sep 2024 14:36:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iftq5S_=zcna1zwSSYk7d_4XWaAh1q9WVTy98gxDtR0A@mail.gmail.com>
+Message-ID: <CAJZ5v0iftq5S_=zcna1zwSSYk7d_4XWaAh1q9WVTy98gxDtR0A@mail.gmail.com>
+Subject: Re: [PATCH] pm-graph: Update directory handling and installation
+ process in Makefile
+To: todd.e.brandt@linux.intel.com, Amit Vadhavana <av2082000@gmail.com>
+Cc: skhan@linuxfoundation.org, ricardo@marliere.net, 
+	linux-kernel-mentees@lists.linux.dev, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 31, 2024 at 12:37:29PM +0100, Leo Yan wrote:
-> On 8/30/2024 2:09 PM, Will Deacon wrote:
-> 
-> [...]
-> 
-> >>>> @@ -160,6 +162,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
-> >>>>
-> >>>>   static struct attribute *arm_spe_pmu_cap_attr[] = {
-> >>>>        SPE_CAP_EXT_ATTR_ENTRY(arch_inst, SPE_PMU_CAP_ARCH_INST),
-> >>>> +     SPE_CAP_EXT_ATTR_ENTRY(lds, SPE_PMU_CAP_LDS),
-> >>>>        SPE_CAP_EXT_ATTR_ENTRY(ernd, SPE_PMU_CAP_ERND),
-> >>>>        SPE_CAP_EXT_ATTR_ENTRY(count_size, SPE_PMU_CAP_CNT_SZ),
-> >>>>        SPE_CAP_EXT_ATTR_ENTRY(min_interval, SPE_PMU_CAP_MIN_IVAL),
-> >>>
-> >>> What will userspace do with this? I don't think you can turn LDS on/off,
-> >>> so either you'll get the data source packet or you won't.
-> >>
-> >> Yes, LDS bit does not work as a switch.
-> >>
-> >> The tool in the userspace will record the LDS bit into the metadata. During
-> >> decoding phase, it reads out the LDS from metadata. Based on it, the perf
-> >> tool can know if the data source is supported or not, if yes then decode the
-> >> data source packet.
-> > 
-> > Why not just decode a data source packet when you see it? i.e. assume LDS
-> > is always set.
-> 
-> The current tool works this way to directly decode a data source packet.
-> 
-> However, as Arm ARM section D17.2.4 "Data Source packet" describes, the loaded
-> data source is implementation dependent, the data source payload format also
-> is implementation defined.
-> 
-> We are halfway here in using the LDS bit to determine if the data source is
-> implemented. However, we lack information on the data source format
-> implementation. As a first step, we can use the LDS bit for sanity checking in
-> the tool to detect any potential silicon implementation issues. Once we have
-> an architectural definition for the data source format, we can extend the tool
-> accordingly.
+On Mon, Aug 26, 2024 at 10:51=E2=80=AFPM Todd Brandt
+<todd.e.brandt@linux.intel.com> wrote:
+>
+> On Sun, 2024-08-25 at 16:36 +0530, Amit Vadhavana wrote:
+> > - Standardize directory variables to support more flexible
+> > installations.
+> > - Add copyright and licensing information to the Makefile.
+> > - Introduce ".PHONY" declarations to ensure that specific targets are
+> > always
+> >   executed, regardless of the presence of files with matching names.
+> > - Add a help target to provide usage instructions.
+> >
+> > Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
+> > ---
+> >  tools/power/pm-graph/Makefile | 111 ++++++++++++++++++++++----------
+> > --
+> >  1 file changed, 73 insertions(+), 38 deletions(-)
+> >
+> > diff --git a/tools/power/pm-graph/Makefile b/tools/power/pm-
+> > graph/Makefile
+> > index b5310832c19c..aeddbaf2d4c4 100644
+> > --- a/tools/power/pm-graph/Makefile
+> > +++ b/tools/power/pm-graph/Makefile
+> > @@ -1,51 +1,86 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > -PREFIX         ?=3D /usr
+> > -DESTDIR                ?=3D
+> > +#
+> > +# Copyright (c) 2013, Intel Corporation.
+> > +#
+> > +# This program is free software; you can redistribute it and/or
+> > modify it
+> > +# under the terms and conditions of the GNU General Public License,
+> > +# version 2, as published by the Free Software Foundation.
+> > +#
+> > +# This program is distributed in the hope it will be useful, but
+> > WITHOUT
+> > +# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+> > or
+> > +# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+> > License for
+> > +# more details.
+> > +#
+> > +# Authors:
+> > +#       Todd Brandt <todd.e.brandt@linux.intel.com>
+> > +
+> > +# Prefix to the directories we're installing to
+> > +DESTDIR ?=3D
+> > +
+> > +# Directory definitions. These are default and most probably
+> > +# do not need to be changed. Please note that DESTDIR is
+> > +# added in front of any of them
+> > +
+> > +BINDIR ?=3D      /usr/bin
+> > +MANDIR ?=3D      /usr/share/man
+> > +LIBDIR ?=3D      /usr/lib
+> > +
+> > +# Toolchain: what tools do we use, and what options do they need:
+> > +INSTALL =3D /usr/bin/install
+> > +INSTALL_DATA  =3D ${INSTALL} -m 644
+> >
+> >  all:
+> >         @echo "Nothing to build"
+> >
+> >  install : uninstall
+> > -       install -d  $(DESTDIR)$(PREFIX)/lib/pm-graph
+> > -       install sleepgraph.py $(DESTDIR)$(PREFIX)/lib/pm-graph
+> > -       install bootgraph.py $(DESTDIR)$(PREFIX)/lib/pm-graph
+> > -       install -d  $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/cgskip.txt $(DESTDIR)$(PREFIX)/lib/pm-
+> > graph/config
+> > -       install -m 644 config/freeze-callgraph.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/freeze.cfg $(DESTDIR)$(PREFIX)/lib/pm-
+> > graph/config
+> > -       install -m 644 config/freeze-dev.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/standby-callgraph.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/standby.cfg $(DESTDIR)$(PREFIX)/lib/pm-
+> > graph/config
+> > -       install -m 644 config/standby-dev.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/suspend-callgraph.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/suspend.cfg $(DESTDIR)$(PREFIX)/lib/pm-
+> > graph/config
+> > -       install -m 644 config/suspend-dev.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -       install -m 644 config/suspend-x2-proc.cfg
+> > $(DESTDIR)$(PREFIX)/lib/pm-graph/config
+> > -
+> > -       install -d  $(DESTDIR)$(PREFIX)/bin
+> > -       ln -s ../lib/pm-graph/bootgraph.py
+> > $(DESTDIR)$(PREFIX)/bin/bootgraph
+> > -       ln -s ../lib/pm-graph/sleepgraph.py
+> > $(DESTDIR)$(PREFIX)/bin/sleepgraph
+> > -
+> > -       install -d  $(DESTDIR)$(PREFIX)/share/man/man8
+> > -       install bootgraph.8 $(DESTDIR)$(PREFIX)/share/man/man8
+> > -       install sleepgraph.8 $(DESTDIR)$(PREFIX)/share/man/man8
+> > +       $(INSTALL) -d  $(DESTDIR)$(LIBDIR)/pm-graph
+> > +       $(INSTALL) sleepgraph.py $(DESTDIR)$(LIBDIR)/pm-graph
+> > +       $(INSTALL) bootgraph.py $(DESTDIR)$(LIBDIR)/pm-graph
+> > +       $(INSTALL) -d  $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/cgskip.txt $(DESTDIR)$(LIBDIR)/pm-
+> > graph/config
+> > +       $(INSTALL_DATA) config/freeze-callgraph.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/freeze.cfg $(DESTDIR)$(LIBDIR)/pm-
+> > graph/config
+> > +       $(INSTALL_DATA) config/freeze-dev.cfg $(DESTDIR)$(LIBDIR)/pm-
+> > graph/config
+> > +       $(INSTALL_DATA) config/standby-callgraph.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/standby.cfg $(DESTDIR)$(LIBDIR)/pm-
+> > graph/config
+> > +       $(INSTALL_DATA) config/standby-dev.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/suspend-callgraph.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/suspend.cfg $(DESTDIR)$(LIBDIR)/pm-
+> > graph/config
+> > +       $(INSTALL_DATA) config/suspend-dev.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +       $(INSTALL_DATA) config/suspend-x2-proc.cfg
+> > $(DESTDIR)$(LIBDIR)/pm-graph/config
+> > +
+> > +       $(INSTALL) -d  $(DESTDIR)$(BINDIR)
+> > +       ln -s ../lib/pm-graph/bootgraph.py
+> > $(DESTDIR)$(BINDIR)/bootgraph
+> > +       ln -s ../lib/pm-graph/sleepgraph.py
+> > $(DESTDIR)$(BINDIR)/sleepgraph
+> > +
+> > +       $(INSTALL) -d  $(DESTDIR)$(MANDIR)/man8
+> > +       $(INSTALL) bootgraph.8 $(DESTDIR)$(MANDIR)/man8
+> > +       $(INSTALL) sleepgraph.8 $(DESTDIR)$(MANDIR)/man8
+> >
+> >  uninstall :
+> > -       rm -f $(DESTDIR)$(PREFIX)/share/man/man8/bootgraph.8
+> > -       rm -f $(DESTDIR)$(PREFIX)/share/man/man8/sleepgraph.8
+> > +       rm -f $(DESTDIR)$(MANDIR)/man8/bootgraph.8
+> > +       rm -f $(DESTDIR)$(MANDIR)/man8/sleepgraph.8
+> >
+> > -       rm -f $(DESTDIR)$(PREFIX)/bin/bootgraph
+> > -       rm -f $(DESTDIR)$(PREFIX)/bin/sleepgraph
+> > +       rm -f $(DESTDIR)$(BINDIR)/bootgraph
+> > +       rm -f $(DESTDIR)$(BINDIR)/sleepgraph
+> >
+> > -       rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/config/*
+> > -       if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph/config ] ; then \
+> > -               rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/config; \
+> > +       rm -f $(DESTDIR)$(LIBDIR)/pm-graph/config/*
+> > +       if [ -d $(DESTDIR)$(LIBDIR)/pm-graph/config ] ; then \
+> > +               rmdir $(DESTDIR)$(LIBDIR)/pm-graph/config; \
+> >         fi;
+> > -       rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__/*
+> > -       if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__ ] ; then
+> > \
+> > -               rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__; \
+> > +       rm -f $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__/*
+> > +       if [ -d $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__ ] ; then \
+> > +               rmdir $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__; \
+> >         fi;
+> > -       rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/*
+> > -       if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph ] ; then \
+> > -               rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph; \
+> > +       rm -f $(DESTDIR)$(LIBDIR)/pm-graph/*
+> > +       if [ -d $(DESTDIR)$(LIBDIR)/pm-graph ] ; then \
+> > +               rmdir $(DESTDIR)$(LIBDIR)/pm-graph; \
+> >         fi;
+> > +
+> > +help:
+> > +       @echo  'Building targets:'
+> > +       @echo  '  all             - Nothing to build'
+> > +       @echo  '  install         - Install the program and create
+> > necessary directories'
+> > +       @echo  '  uninstall       - Remove installed files and
+> > directories'
+> > +
+> > +.PHONY: all install uninstall help
+> This does look much nicer, and it's good to use the absolute path of
+> install in case the system doesn't have the PATH setup. Thank you for
+> cleaning this up! (re-send with Acked-by)
+>
+> Acked-by: Todd Brandt <todd.e.brandt@linux.intel.com>
 
-I don't think we shyould expose UAPI from the driver to detect potential
-hardware bugs. Let's add it when we know it's useful for something instead.
-
-> 
-> >> Another point is how to decide the data source packet format. Now we maintain
-> >> a CPU list for tracking CPU variants which support data source trace. For long
-> >> term, I would like the tool can based on hardware feature (e.g. a ID register
-> >> in Arm SPE) to decide the data source format, so far it is absent. This is why
-> >> LDS bit + CPU list is a more reliable way. See some discussion [1].
-> > 
-> > Huh. Why would you have a CPU in the list if it _doesn't_ have LDS?
-> 
-> Yeah, this is what we don't expect - we can verify the implementation based on
-> LDS bit.
-> 
-> E.g. if users ask data source related questions, we can use LDS bit (saved in
-> the perf metadata) to confirm the feature has been implemented in a silicon.
-
-What exactly do you mean by this?
-
-As far as I can tell:
-
-  - Data source packets are either present or absent depending on LDS
-  - You need CPU-specific information to decode them it they are present
-
-So it's neither necessary nor sufficient to expose the LDS bit to
-userspace.
-
-Will
+Applied as 6.12 material, thanks!
 
