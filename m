@@ -1,90 +1,152 @@
-Return-Path: <linux-kernel+bounces-315029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5821696BCB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30CB96BCB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B88E1C22208
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B30286FA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDDC1D221B;
-	Wed,  4 Sep 2024 12:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DD41D9344;
+	Wed,  4 Sep 2024 12:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+lsso+K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lx6Esf6p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98611D58B0;
-	Wed,  4 Sep 2024 12:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2AE1D58B0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453886; cv=none; b=LMW/aZPAZmILQNSaFctVPVzPUM79ZweVR6G1c/YmbuB8TPfeJeH3L1GoJZ/rb6UyrDH0pBC40gur9zaI2Ir5FFBlfnKN21XG9L2GrZJWpRFTHpd2Y1p7om8m6yGecRogBy+rj0Ja3J8g0g7jePmVMWApLJ9HNv9aXk6DGFDOw28=
+	t=1725453891; cv=none; b=dDYrraMwJQkF5mCDkQFtVUAYshyv/VlvWeLcHgk+D+t9Xh+pleKttvbD8k+l/SABJ92chEH5KOCG2VfDS5NTTsO/wOLHmBhIY1pF5OFPE+i/N84lNkdL0NtzkWZzu76puertZdKRg81VTeknocQLpUKSQF/Ofkd8j3OOB0yKPec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453886; c=relaxed/simple;
-	bh=gWBcDXpnwV66JzP9agnNz1yjQNRH/lnU5CCm2VgO5ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X1VMLe8kQOFFq7+wAsM/O6uq0u+yYfSEmbOMA0tdfDNaGSs69kreQUxGCFMFr0bNPlb+YaQT2IasDiUytzxSQwIE+H1x3isYJeXOyEH1ODVpwAQgMkHWyZ4rJAFTuUkSW1UT1Nko4E+VInE6V4LIF26y5laDJCciFuw0QHrqu5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+lsso+K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72FE9C4CEC6;
-	Wed,  4 Sep 2024 12:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725453885;
-	bh=gWBcDXpnwV66JzP9agnNz1yjQNRH/lnU5CCm2VgO5ZU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V+lsso+KGn5IEHcldCoBJPqtLQMGdt8IjSTnQkiE4v6bhrPkZPpNvY1idL1JR8eMn
-	 AVFwFvKHetRQ5Ksdl/ZsW0IREm7jqNeGgXPHVEdeKMbyqtSKE36KOkhzuFi3q5y14c
-	 A0hlDPOPTmxna/4P6ZqUCYjf/nMUJDWdMNJB/aGzZw8TZi4I9Lxk9ZWHkvxkZ8SJlc
-	 CuqusVLI4XJGQhOaym6obkFaFYRccsxdb+WgLacf5bFVaiBH9nQv2uAXG4qW/nifsC
-	 BIsi+guLIUmNoWDNUO3kU85vOoycKyEm8g5QawDk46F6j17P1UdNfLPmdsCRylObAZ
-	 9d5hTwEWW4TOQ==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5df9343b5b8so4188069eaf.0;
-        Wed, 04 Sep 2024 05:44:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX2jgdEvLHGnjzKE1Vl5Xp4VTK6s+vRUALM/hrFp5BoCTpICVH4KbQLq1N7g3Nb29UWUTJPx/LSPmBTlfO2@vger.kernel.org, AJvYcCXPD5lfNcqh9IpCi5YzW01SkGHH3XBZN9gURUPlyAlQ3OMrAv+0aG2k3yOwm90BkslwgIarGQZAgSZ2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtGB7ZIaGyKL7hGLpE3K2g8pfkDx2NH4HAkj2MeMcH9u51KjvS
-	P9KGzXPaQioTMd0ahgbmSK9URTERpVt18w6bmfVwSQou6fr3stFH9NJifSTaCpLSmUQNiQpnfqI
-	jpj2SSpUa1+FNF15rZy2Cjvcbed4=
-X-Google-Smtp-Source: AGHT+IEp499+TpEPUrVKQyS4saF7KGklaNfDvGSGHqxz1J8u892Paq6EOcylAGzZQjNDOFGKD6Li9hTms7relqG+Btg=
-X-Received: by 2002:a05:6820:545:b0:5d5:a343:d135 with SMTP id
- 006d021491bc7-5dfacddf0a9mr18406823eaf.1.1725453884784; Wed, 04 Sep 2024
- 05:44:44 -0700 (PDT)
+	s=arc-20240116; t=1725453891; c=relaxed/simple;
+	bh=v7fVXR7pVzAugjJ5b6domRUKEYCHm+1h1VQHWRwd2Vg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IGd1FSn0VFmPf9qZgNNryA5ZcdtuuUUEXqgjHSSbLgE07y/9b57IF1jG5cKeVuGPa0s2r77Fgbgx6f/snjAJMqjGg8ZjIucBCDLPFKcEWrjtITvmyTMCFyJkZ33VVxmq8BNkG6IoKqKchmoU8BR6llqH8KazD1SgwjTbf6KVWb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lx6Esf6p; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725453890; x=1756989890;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=v7fVXR7pVzAugjJ5b6domRUKEYCHm+1h1VQHWRwd2Vg=;
+  b=lx6Esf6p/1/+3w5+LIDqGO1NCo2aFRzHYFjxtVG2KtJpII8jtg+IUHaE
+   O1878IPx6z5+7PFFjAk0FL6GXlpXpWGUQwZjmc6mUWHyRSgmP+3zVjOSN
+   +Xay/jLjLSblWoJiZdHUfjKAaIxEn3GDCssRrgKbj29gYZk0W1X6pZkHC
+   28OF7uLKTSLD6/Gctka0oConlMiEIK9yuhIE7BwfEhR0g+PKQEZ7KMYt8
+   U4E1oViYFz1ye82tj8mgXHpnDfQcxzHbQUb3ZtNgkoPy7fELnNcfR4lG9
+   H6gkB0uDq3IdtIwRE98tybTEfTFYBoL2V/zlmVwRyEaZGWQWYedTOTEab
+   A==;
+X-CSE-ConnectionGUID: 1MVfnLrzRZG2DIekZcchfA==
+X-CSE-MsgGUID: tZucLqe5TWGCvDKEagPeLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24219674"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="24219674"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:44:49 -0700
+X-CSE-ConnectionGUID: aJHqLRxrQhO8y7pAYXrO7w==
+X-CSE-MsgGUID: L1ZXSVr7QVygV7LyWjuc+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="70054527"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:44:49 -0700
+Received: from [10.212.20.134] (kliang2-mobl1.ccr.corp.intel.com [10.212.20.134])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 5912520B5782;
+	Wed,  4 Sep 2024 05:44:48 -0700 (PDT)
+Message-ID: <b97ab074-3889-47ae-a66f-46a2f8a99005@linux.intel.com>
+Date: Wed, 4 Sep 2024 08:44:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904-acpi-battery-cleanups-v1-0-a3bf74f22d40@weissschuh.net>
-In-Reply-To: <20240904-acpi-battery-cleanups-v1-0-a3bf74f22d40@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Sep 2024 14:44:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gAaMLrSyva_cZBxJpzAFM3Lb_SiuTxESjAmHJLxnThGA@mail.gmail.com>
-Message-ID: <CAJZ5v0gAaMLrSyva_cZBxJpzAFM3Lb_SiuTxESjAmHJLxnThGA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] ACPI: battery: various cleanups
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Generic hotplug support for a PMU with a scope
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org
+References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 4, 2024 at 9:13=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Thomas Wei=C3=9Fschuh (5):
->       ACPI: battery: check result of register_pm_notifier()
->       ACPI: battery: allocate driver data through devm_ APIs
->       ACPI: battery: initialize mutexes through devm_ APIs
->       ACPI: battery: use DEFINE_SIMPLE_DEV_PM_OPS
->       ACPI: battery: install notify handler through ACPI core
->
->  drivers/acpi/battery.c | 41 +++++++++++------------------------------
->  1 file changed, 11 insertions(+), 30 deletions(-)
-> ---
+Hi Peter,
 
-Since it is a bit late in the cycle and this material does not appear
-to be urgent, I'd prefer to defer it until 6.12-rc1 is out.
+Gentle ping.
+
+The patch set provides a generic hotplug support to facilitate various
+specific PMU drivers. Could you please take a look?
+
+Thanks,
+Kan
+On 2024-08-02 11:16 a.m., kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> The perf subsystem assumes that the counters of a PMU are per-CPU. So
+> the user space tool reads a counter from each CPU in the system wide
+> mode. However, many PMUs don't have a per-CPU counter. The counter is
+> effective for a scope, e.g., a die or a socket. To address this, a
+> cpumask is exposed by the kernel driver to restrict to one CPU to stand
+> for a specific scope. In case the given CPU is removed,
+> the hotplug support has to be implemented for each such driver.
+> 
+> The codes to support the cpumask and hotplug are very similar.
+> - Expose a cpumask into sysfs
+> - Pickup another CPU in the same scope if the given CPU is removed.
+> - Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
+> - In event init, always set the CPU in the cpumask to event->cpu
+> - Usually, an event can be read from any CPU of the scope. (For now,
+>   it is only supported by the pkg scope PMU, via
+>   PERF_EV_CAP_READ_ACTIVE_PKG, e.g., cstate_pkg, rapl, etc)
+> 
+> Similar duplicated codes are implemented for each such PMU driver. It
+> would be good to introduce a generic infrastructure to avoid such
+> duplication.
+> 
+> The patch series introduce 5 popular scopes, core, die, cluster, pkg,
+> and the system-wide. The PMU drivers for cstate, iommu, idxd and rapl
+> are updated to apply the new infrastructure. The new infrastructure
+> can also be applied for other PMU drivers from different ARCHs as well.
+> But I don't have such platforms. It's not done in this patch series.
+> They can be added later separately.
+> 
+> The uncore driver isn't updated either. Because a per-PMU cpumask is
+> required since commit c74443d92f68 ("perf/x86/uncore: Support per PMU
+> cpumask"). Since different types of PMU share the same hotplug codes,
+> more factor out works and verification are expected. The cleanup of the
+> uncore driver can be done later separately.
+> 
+> Kan Liang (7):
+>   perf: Generic hotplug support for a PMU with a scope
+>   perf: Add PERF_EV_CAP_READ_SCOPE
+>   perf/x86/intel/cstate: Clean up cpumask and hotplug
+>   iommu/vt-d: Clean up cpumask and hotplug
+>   dmaengine: idxd: Clean up cpumask and hotplug
+>   perf/x86/rapl: Move the pmu allocation out of CPU hotplug
+>   perf/x86/rapl: Clean up cpumask and hotplug
+> 
+>  arch/x86/events/intel/cstate.c | 140 +-------------------------
+>  arch/x86/events/rapl.c         | 119 ++++++----------------
+>  drivers/dma/idxd/idxd.h        |   7 --
+>  drivers/dma/idxd/init.c        |   3 -
+>  drivers/dma/idxd/perfmon.c     |  98 +-----------------
+>  drivers/iommu/intel/iommu.h    |   2 -
+>  drivers/iommu/intel/perfmon.c  | 111 +--------------------
+>  include/linux/cpuhotplug.h     |   3 -
+>  include/linux/perf_event.h     |  21 ++++
+>  kernel/events/core.c           | 176 ++++++++++++++++++++++++++++++++-
+>  10 files changed, 229 insertions(+), 451 deletions(-)
+> 
 
