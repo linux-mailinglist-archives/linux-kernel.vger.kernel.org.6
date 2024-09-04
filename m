@@ -1,108 +1,154 @@
-Return-Path: <linux-kernel+bounces-313997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD3C96AD78
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC4596AD7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892042867BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AB51286135
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7A86AA7;
-	Wed,  4 Sep 2024 00:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B8D1FBA;
+	Wed,  4 Sep 2024 00:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="moE8o/b5"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xED9GSa6"
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465FC65C;
-	Wed,  4 Sep 2024 00:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A975228;
+	Wed,  4 Sep 2024 00:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725410950; cv=none; b=VM3bpMfrk5G4w/oJOTtelF+EFdGyhJV2cFJS869rEKfxtqZkBq9wRCpl0KEfQ44Kq9PARi/0HnBA9gSwLXlG6GU9YkFwFuoUVGh/pF5DaJld+v+Hh9w1oSkJPyrGYLPKzaIZefHiCTgnucAc+3MU0zlvS88xrLzyqawMZUx6ja8=
+	t=1725411153; cv=none; b=Y6idzH0O31KiFg4G5Ym23mx0kSB+ZDJbOX2t9KCVMbkHz+MSzRDezgufyyUPseboQkjnVr/r//ABEQpjFkDCNdh4jDuJ8FOnZYrUPHLdzGTyHI/o09tNqRhcnSIgcvf9LqvhUwKSBWcC5APlTimsKjZleZD4f2Rq4VWuln4Y0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725410950; c=relaxed/simple;
-	bh=fHOWPassQ0uJo6ImFLuJSSxhu9VkXo/wTvhsG3ytJgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PlXnTwEo8uRAiwqU/jAFd9jEby/lOkh5iCiultkHEQ+REco/U9D8iqOF3gY8yRVMQ198uxXGRhlsiDBeHtn7Sr4NeshqoeZd4+4AXiuuKyxgSM8TIhe3+gk6k2dZw+PsoLGE+TCor4IcGzim+kcyggymJkqCp3kSz7zcvkAUe8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=moE8o/b5; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725410941;
-	bh=RjISWToipsRFPj/NlmChzdQ56QeI0mSC7uktuJ7U9pU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=moE8o/b57zoUOosn7Zkx5U8FCfov5CSvNiDPX9hiE8/aysuhAlW8snCPYG4MNKVYO
-	 D5ntCI6Dh+u1ptu5fUP8sqkpnRthtgmtCals99tDqL5/zDtNcN80NyQ0wg5iuTQpo9
-	 DL7LkrPgyfJ9vznRt6LGjkys/zREZ/PNx0A/5Z3fhvBafEPJt74bsffKouLLbhAtgD
-	 qZLc7LpU0wDFcyrowpfefoRv3mfc0OS7XOrGozX7iea2o8bpDf0/c5ksEImKgqus5B
-	 pIkmNce4BZXkLzban00uDl9NRZ0rYFIzKDZYAEYhILOnYb5MJpQUqEsSzZoqFOgnBL
-	 llWmDoabrk/9Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz3lc2CQRz4wnt;
-	Wed,  4 Sep 2024 10:49:00 +1000 (AEST)
-Date: Wed, 4 Sep 2024 10:48:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, ARM <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the arm-soc tree
-Message-ID: <20240904104859.020fe3a9@canb.auug.org.au>
+	s=arc-20240116; t=1725411153; c=relaxed/simple;
+	bh=wS44eKjROLyrNyCwdb3ChF22PoKCUzMqRJHJOb0e91I=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rpT2cQNoLbvIckSLB5UWIwlDinT4B77JK8xMm3OSxO8SMDjCfWx5w6OGuZ6xtM6XCRHt60QlP7fciwkTA+g+4pBK1D8R1vJlo5fHt66z6FuZE3Wu6rlybi51R5YUrVK2TmXZ8ti46LQdtu4ke6l8IX3YS9vuUoh7novh1KLOMf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xED9GSa6; arc=none smtp.client-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725411147; bh=FmBx03Jk7fYdr507CwNO/tgnyEwzvtVETwaQDfGeKAI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xED9GSa6NEZ1p8qnQ4InTk/+l+ReZzei5JHfXOhbOoQ9bhJqHVZLGFJKb9EIcFUJ/
+	 urT20xzd5PKjhU2h8tXaQNAY3wFCsr+tM4gm3/bF1P1rTY/0NhS1VnPrjJQE6JHOpt
+	 zSilvIl1uw0dUGRZrB08IHlH3zlTfSZTYsy7JYag=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id D1702074; Wed, 04 Sep 2024 08:52:23 +0800
+X-QQ-mid: xmsmtpt1725411143td8mxr5u3
+Message-ID: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeiemLhHaQrYOE0dp61XO1j8hrZ6A/geSS4oPsVNAA4c39ictKjTo/
+	 Go8eg+R8IIxjg9r7dPK8H5H6XtxY6Rce+V7LoFIqWqYIrpoQZ7jXlTFZWPHfulRAJxGoXmEdHNfv
+	 aeOmsuQxP0p7GhCAYS7OJcLUJ5BEy2VJu8DuyE+LSI6pqpCjU6t6QN27jMg3+JSHylm2RykbN+5t
+	 gEwaTT42S/QBrHl7gFxLMFxraMQRwOTi6N1QzXvCAvQm5bon/Ei0d7WZ+FK91sjSbGGUygpuol0A
+	 AzXJavoeve3KLXEbxTrxscXZUaFL/s9+3O4RNGDcRFT8iEiWPSJgcot+DoybcOEg69LVEfovOWpu
+	 4ScwQtrXu4ppF9OdK3VdBDvyfL+Y0QZIYTRa5llBqW8YoHaByfnt4uUtnWTucxPxiQwZ7QRsrGu0
+	 hyOIClb0HdT1TARfXDC6sy18tIYjsHz889dHG461dSSkhIv8QjMXoO7XhElJmW1nXwcvZbryzth8
+	 JCkLXpI5CRk+ykCqNyneZujoHKqrlSAgSklaqIOvlv2K5DylbS1FeUIr0ZsNIgDTYHqMNu7k0358
+	 pObsHVicp/7OlZzWk0At60FI2PBkf5+kTOCsG2QOuR4AmmABP3/3wPkxXIVREk1hLWsMVsxmPpKD
+	 5z8nTBDkL/LPRwV8lhjtLcn7RqxEKrZeKDLC8hVCSiWUVRpGCLJ4Bv2ROIcz1nb/Hw0m6cCQwTAk
+	 TbowVCGfCabEET7o7aa2qZi71bgBDNgeXRCT/P1ioR63rh1ST04bjiD5rYVMe9fa6mn2a0SoOevO
+	 KLHH/b4TmfNLOZlbXGdxWvLlEf8ZQAL1jV48nufeX4E2NNFlrYu0y35hWUfgYeZCST1vwIm50QfQ
+	 BE4mvybSZ2nFTwmmyO4mKxMVMW3P3MYYAB6EDEusrfJIlh39nBI58RPlbY3TylOXc7FPV326ZyMF
+	 Ef55WovRWFlKCXYCXTbw==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: edumazet@google.com
+Cc: davem@davemloft.net,
+	eadavis@qq.com,
+	geliang@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martineau@kernel.org,
+	matttbe@kernel.org,
+	mptcp@lists.linux.dev,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] mptcp: pm: Fix uaf in __timer_delete_sync
+Date: Wed,  4 Sep 2024 08:52:19 +0800
+X-OQ-MSGID: <20240904005222.3438071-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <CANn89i+93oK80FtHijdYJMid=ChsXP+2F1=Dn7K8tuvLy7xNHA@mail.gmail.com>
+References: <CANn89i+93oK80FtHijdYJMid=ChsXP+2F1=Dn7K8tuvLy7xNHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qiS_Gxe4VjCx=owKBkW+PIE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/qiS_Gxe4VjCx=owKBkW+PIE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 3 Sep 2024 17:18:42 +0200, Eric Dumazet <edumazet@google.com> wrote:
+>On Tue, Sep 3, 2024 at 5:10 PM Edward Adam Davis <eadavis@qq.com> wrote:
+>>
+>> There are two paths to access mptcp_pm_del_add_timer, result in a race
+>> condition:
+>>
+>>      CPU1                               CPU2
+>>      ====                               ====
+>>      net_rx_action
+>>      napi_poll                          netlink_sendmsg
+>>      __napi_poll                        netlink_unicast
+>>      process_backlog                    netlink_unicast_kernel
+>>      __netif_receive_skb                genl_rcv
+>>      __netif_receive_skb_one_core       netlink_rcv_skb
+>>      NF_HOOK                            genl_rcv_msg
+>>      ip_local_deliver_finish            genl_family_rcv_msg
+>>      ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
+>>      tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
+>>      tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
+>>      tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
+>>      tcp_data_queue                     remove_anno_list_by_saddr
+>>      mptcp_incoming_options             mptcp_pm_del_add_timer
+>>      mptcp_pm_del_add_timer             kfree(entry)
+>>
+>> In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
+>> zone protected by "pm.lock", the entry will be released, which leads to the
+>> occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+>>
+>> Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>> ---
+>>  net/mptcp/pm_netlink.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+>> index 3e4ad801786f..d28bf0c9ad66 100644
+>> --- a/net/mptcp/pm_netlink.c
+>> +++ b/net/mptcp/pm_netlink.c
+>> @@ -336,11 +336,12 @@ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
+>>         entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
+>>         if (entry && (!check_id || entry->addr.id == addr->id))
+>>                 entry->retrans_times = ADD_ADDR_RETRANS_MAX;
+>> -       spin_unlock_bh(&msk->pm.lock);
+>>
+>>         if (entry && (!check_id || entry->addr.id == addr->id))
+>>                 sk_stop_timer_sync(sk, &entry->add_timer);
+>>
+>> +       spin_unlock_bh(&msk->pm.lock);
+>
+>
+>mptcp_pm_add_timer() needs to lock msk->pm.lock
+>
+>Your patch might add a deadlock, because sk_stop_timer_sync() is
+Got it. MPTCP CI reported it.
+>calling del_timer_sync()
+>
+>What is preventing this ?
+I will change the strategy for protecting entry and use pm.lock to
+synchronize when it is released in remove_anno_list_by_saddr.
 
-Hi all,
+Link: https://syzkaller.appspot.com/text?tag=Patch&x=124282ab980000
 
-After merging the arm-soc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+BR,
+Edward
 
-drivers/soc/fsl/qe/qmc.c:25:10: fatal error: sysdev/fsl_soc.h: No such file=
- or directory
-   25 | #include <sysdev/fsl_soc.h>
-      |          ^~~~~~~~~~~~~~~~~~
-
-Probably caused by commit
-
-  eb680d563089 ("soc: fsl: cpm1: qmc: Add support for QUICC Engine (QE) imp=
-lementation")
-
-I have used the arm-soc tree from next-20240903 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qiS_Gxe4VjCx=owKBkW+PIE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbXrnsACgkQAVBC80lX
-0Gz/ggf+M4Hek83RZJwrOPiZAPsXsSdrdGJiTbwlzZhMN8rbFilT4bJIuD0S7LYL
-y3I43OwNYWstaI/Ley2w8pB0l4VLR4gpcvNRvxxu/0RkbbCG3lnBMzWcz5wLUa4S
-djNnWsk9tcmexEEpxE7ScuSOfppb5InQxQd3rW9PifhCoy6m34dmu9SEbp4PCpOJ
-5oWLyMLnOdJvCHxkzL7hzanavih136gjMn/yj25QunKrSrngTynv/CBAktpxqbSv
-gtB90v7XAsZg/uoc9fCZPGsIe3wE/ZfQjVRf+OPi7Y9j66af+yw49gsxV6wpyy8L
-sqyuSJzmhk325nMS/urOWFpMcaRObQ==
-=peiV
------END PGP SIGNATURE-----
-
---Sig_/qiS_Gxe4VjCx=owKBkW+PIE--
 
