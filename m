@@ -1,97 +1,143 @@
-Return-Path: <linux-kernel+bounces-314072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3790096AE93
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2996AE99
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80FB286D28
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210EB1F2672A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1235811A;
-	Wed,  4 Sep 2024 02:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3D43F9D5;
+	Wed,  4 Sep 2024 02:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sz6yBN84"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="VhoP9wit"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF91443D;
-	Wed,  4 Sep 2024 02:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDB7CA6F;
+	Wed,  4 Sep 2024 02:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725416932; cv=none; b=pwYUzrvF9/+1Xis+xsTbXI+Oh7qkse4tmYJ2QB3escDRh6Suxw5/lhGZ9f4BWeSbE1pn4+pxVyTxdvEBKpFfhVaOhtsNVzo09kaRMbBGLkvbT4IMJarHDy+PeNtJ2W1CzrNhBT08Ng+DfmkDpUUcQE2eWopnP04VuxA26lMXUgg=
+	t=1725417084; cv=none; b=TFbXzkGSPDolWe4Th0fgUxSEdO53NN+/FobF7MCcQ3vVCdOPRW3p2JB+dmREu6uGRjm9DZsENTGZDY4lW3tJ3fTIAqO6efJaeUjk30oitxh+HU86I74vDdQBgPe4L2S575mF0CzK54SiW4myG9FzGgFfgiRfnxRk/sZJvRXZDII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725416932; c=relaxed/simple;
-	bh=qdT2t2Fh9wwW5di1GdgWy0N/m4zZU4E2brtOKXqJf0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EZxAe9QJ+HwFKYkWrdIKLUgvy7cm63DuzrFzOMtqfBGps5k3nc5TOFMv2iW0x2KOuwFUIk6wlvM8obBjXWoiZL/v28VmazLJRTsZ0rkIWWs6qptzHlJ+2+JILAvdJmAM0B8dS+bjf7Uvelk6YU6WbFGKNZH6d/qt3iLvlv0CIOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sz6yBN84; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wz5yp3k5KzlgTWR;
-	Wed,  4 Sep 2024 02:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725416927; x=1728008928; bh=qdT2t2Fh9wwW5di1GdgWy0N/
-	m4zZU4E2brtOKXqJf0I=; b=sz6yBN84vV6Wz6VnnnubSfMr9ZvarqGglN/3TPVo
-	qiju0AftR9KK2cHdwSmlZaITxKawLBPGBUb4x9q3yv5mbEs02smqB26co2MsOKR5
-	droWAATfmhP6RthQwe365eL8FBB9vk51Cjae5Z/Z1o0yUDJISRoqqQU0axgV3pzL
-	IoecpCIDKsvQNWFcWIN7jJMLuoi+/KJDWt7eSuLIpkxqkg/racA5X+NO+0ae47V2
-	GUbj4GAkd6a8HvGp9omwRM0k7OQzt4AaI+UbEL4GlyymHouXYNAYyG1h84ue9IZ3
-	d7yU9L54DSMoQU5/YrODMN2ZTXmmkgWt7yBsn6jCV/5RPg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ps6vhR84Oy8n; Wed,  4 Sep 2024 02:28:47 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Wz5yh58hLzlgTWP;
-	Wed,  4 Sep 2024 02:28:44 +0000 (UTC)
-Message-ID: <b5b0e655-fb17-4967-9104-4386710ee8db@acm.org>
-Date: Tue, 3 Sep 2024 19:28:42 -0700
+	s=arc-20240116; t=1725417084; c=relaxed/simple;
+	bh=Fnr7pQfn98ey0o3IKxo4X4ToVB48gfBWfZKcSQqR3Ak=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rELKsyIh+pcGxK5OrOGf8Wka8zoiCTnFJnOdYY6vgvjQsRrPO0Btuuhb/FCX6oUXYjG6MVnIlA7zY09E4Vdyjk4+mdCuM5lo1wBzouV3U18S6OWX0hNtU4KOuBjUONW/GZ2T2G1uoorP7UP3EswO5ypTLL3sOZqcsVCSD+9HtPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=VhoP9wit; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483JmxH7011481;
+	Tue, 3 Sep 2024 22:31:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=XblLSBqZhlYBcCyJvCH5qEcXMqj
+	shkxYhWV0V9vXQrA=; b=VhoP9witv39r16PGTGnauSnpoF5Xo7hNZQOm9OKEOE5
+	sViaHZ6obm9F6eB6E9TJ7G50XqvI54N0YLWRTXoNpmZWtjhqJgQO+X5bmSqs8mWF
+	BaGI47pLbBNVml+uB6uYT1/+ihLWxwCIl+Auox56NosFbEbAriDTaGohgD+MuBU7
+	n2AEv+aN+5RoyGgenaaJ1lMJG46olnhx+ZnVvGBQXmQ+zW02PbMfa+CXHpeuwNED
+	ErDgwFtO0omFuMC0YQcQ/QNdpqvKHHUdAuBIyp5YHgdGsgTzKZsui1By0k69jL07
+	rPs8FTDZWaNycx9r0N+jGPl+u76euOtR1HR+PjSpckw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 41c0325t4e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 22:31:06 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4842V4Q0037366
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 3 Sep 2024 22:31:04 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 3 Sep 2024
+ 22:31:03 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 3 Sep 2024 22:31:03 -0400
+Received: from MTINACO-L03.ad.analog.com (MTINACO-L03.ad.analog.com [10.117.116.121])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4842Ujtq000342;
+	Tue, 3 Sep 2024 22:30:48 -0400
+From: Mariel Tinaco <Mariel.Tinaco@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marcelo
+ Schmitt <marcelo.schmitt1@gmail.com>,
+        Dimitri Fedrau <dima.fedrau@gmail.com>,
+        David Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<noname.nuno@gmail.com>
+Subject: [PATCH v3 0/2] Add support to AD8460 Waveform Generator DAC
+Date: Wed, 4 Sep 2024 10:30:38 +0800
+Message-ID: <20240904023040.23352-1-Mariel.Tinaco@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
- merging
-To: Yu Kuai <yukuai1@huaweicloud.com>, Jens Axboe <axboe@kernel.dk>,
- jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, paolo.valente@unimore.it,
- mauro.andreolini@unimore.it, avanzini.arianna@gmail.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
- <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
- <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: vyLneMN1VqojX8QbxX8ZrxpahABuzDPM
+X-Proofpoint-GUID: vyLneMN1VqojX8QbxX8ZrxpahABuzDPM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_01,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
+ clxscore=1011 suspectscore=0 adultscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409040016
 
-On 9/3/24 6:32 PM, Yu Kuai wrote:
-> We do have customers are using bfq in downstream kernels, and we are
-> still running lots of test for bfq.
+Apply comments for adding support to AD8460 Waveform Generator DAC
 
-It may take less time to add any missing functionality to another I/O
-scheduler rather than to keep maintaining BFQ.
+ad8460:
+  * Fixed errors detected by test bot
+  * Applied proper masking of fixed values
+  * Applied proper wrapping to get close to 80 chars
+  * Applied proper comment formatting
+  * Applied proper placement of breaks in switch cases
+  * Removed channel properties unused by IIO buffer interface
+  * Simplified property getting on probe function
+  * Fixed error handlings on probe function
+  * Fixed setting of overvoltage, overcurrent and overtemperature ranges;
+    If value provided is invalid, default state of the register will not
+    be rewritten
 
-If Android device vendors would stop using BFQ, my job would become
-easier.
+Bindings:
+  * Dropped unnecessary descriptions
+  * Updated property descriptions to describe functionality properly
+  * Added multiple selection of values for adi,range-microvolt property
+  * Fixed formatting errors to follow DTS coding style
+  * Lifted GPIO naming from gpio-consumer-common yaml
 
-Thanks,
+Patch:
+  * Wrapped patches to 75 chars
 
-Bart.
+Mariel Tinaco (2):
+  dt-bindings: iio: dac: add docs for ad8460
+  iio: dac: support the ad8460 Waveform DAC
+
+ .../bindings/iio/dac/adi,ad8460.yaml          | 154 +++
+ MAINTAINERS                                   |   8 +
+ drivers/iio/dac/Kconfig                       |  13 +
+ drivers/iio/dac/Makefile                      |   1 +
+ drivers/iio/dac/ad8460.c                      | 932 ++++++++++++++++++
+ 5 files changed, 1108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
+ create mode 100644 drivers/iio/dac/ad8460.c
+
+
+base-commit: c4b43d8336e52dce6d124e428aa3b71703e62647
+-- 
+2.34.1
+
 
