@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-314682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652EA96B6BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:32:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B767D96B6C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F231C203B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7090E28C945
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB621CEE8E;
-	Wed,  4 Sep 2024 09:31:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEE81CCB41
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F1E1CCEC7;
+	Wed,  4 Sep 2024 09:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwgJAiAq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9341474B9;
+	Wed,  4 Sep 2024 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442304; cv=none; b=NCBVR451OR7abqsGl8hoSzwErdzyO+oFN4oHBRTeaAwyU70gty/1UaP7JNbKl40vFAE3EjBmAtwGT8h9/32ewYwuFlDzZ9LFFg2mV1nvFn9tACzWYXfpBzn8zy2+kQSWBmj88N74N6pxxlLCu6kDKE+SxuUrifw6wY6uhikqcsM=
+	t=1725442337; cv=none; b=fsH6zFJj3pUSLR9bZTr1c9ahbI4uVX9OyDpGBsDp5YHL/yc/m9gFJOMAcRBDxhKBm/Bc4ClUEzIKIVBUyofc8ppuBEDU3PptcNUuYcGdFtqCFuO2kZuLfGjlOAbJbgvGs6szBJ1Q/xCgRuyJJLQ/N8OhhzuQm2ddMAeEnNX6qvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442304; c=relaxed/simple;
-	bh=ZY95MzZC/ErkvabUYkoWpGa7uXvhfoKUpA2e5IAPGAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=b2PsDhRqUfrx9DGVmz5q+qZNZBq6JVsspMbfHyXbJYt9ruF9e4uRiZaz5ERDNK7W+G7x0Wa32SPftYGfxPMa4Jws12dTa/Rt8oc1L1eSCEUWPNHJPXejRTDYH26lHRBEVyxgeAU/o37eJWYvX1B/oCvcQfl3cxQEuIy5pwkqtcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55DF7FEC;
-	Wed,  4 Sep 2024 02:32:07 -0700 (PDT)
-Received: from [10.57.75.163] (unknown [10.57.75.163])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B8CB3F73F;
-	Wed,  4 Sep 2024 02:31:38 -0700 (PDT)
-Message-ID: <80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
-Date: Wed, 4 Sep 2024 10:31:36 +0100
+	s=arc-20240116; t=1725442337; c=relaxed/simple;
+	bh=vMhXTwuzFDBEhgkm2eb0WFEuRfHRt5XTdZs/o6M685w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJVdk+1wLVorB6ZPzvyI+AFH+y6Ddf8aMBkXkBlG0bQoxXqLyjDHqMbYNNE6bSkMHgQR7IknUv1qeUUQl8wO+pCyb17sWv8lWV6xT4oxtbNGCumhK1gypI+a9Be2B2JEf/c9LcYCcDqPWqDUO2cdAnTlpLyuAjT6qhaAf8KDOYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwgJAiAq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBD5C4CEC2;
+	Wed,  4 Sep 2024 09:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725442337;
+	bh=vMhXTwuzFDBEhgkm2eb0WFEuRfHRt5XTdZs/o6M685w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CwgJAiAqfnfh6zw982JVrCq0NC1kGhi2H9uXJYAm7hZCmF0oD4d98k8hKIXvOGrvY
+	 n/AGDhlpgW8rv7JBOFq0GstAjKV0+59XVZRJV58F4s8JhW4sxV3yi9XeXyqUx98EHN
+	 Hj4iVCKZJzSiEan81+VzIWi53StjDfqJA4crgjEA/Jc0DCaaaQTjErehcsXdbubQAd
+	 JAVfNifFfkJK1IB1UX3gN/rOyaaUl4Pn//s+yCtgznloQ8FN5cFtjA/LXZC6WE3x+q
+	 V7nkg5shdkAx/TIt/VoeHVpUTx9tZkjQeb6sdGGV/8ij66zmkT5bmKSWRq1Y5ttuzK
+	 jNzd4Vhwapjxg==
+Message-ID: <9ded31cf-5b14-426a-a10c-694f20d4fb9e@kernel.org>
+Date: Wed, 4 Sep 2024 11:32:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,282 +49,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Mihail Atanassov <mihail.atanassov@arm.com>, linux-kernel@vger.kernel.org,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- Shashank Sharma <shashank.sharma@amd.com>,
- Ketil Johnsen <ketil.johnsen@arm.com>, Akash Goel <akash.goel@arm.com>
-References: <20240828172605.19176-1-mihail.atanassov@arm.com>
- <c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
- <a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
- <96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
- <Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
- <090ae980-a944-4c00-a26e-d95434414417@amd.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <090ae980-a944-4c00-a26e-d95434414417@amd.com>
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: add base QCS615 RIDE dts
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
+ <22qkvfravm6sxiq3xfavahg2u6b2pwlyzqbqvd55zym5zef3gi@m4bsqkdvggty>
+ <17d0017e-b55d-4b32-9fd3-1a1a84e5ebf9@quicinc.com>
+ <0ec92d59-0648-40ed-a522-307152b5c37d@kernel.org>
+ <148451f2-6b1b-4616-b703-fd52e7afa2be@quicinc.com>
+ <90c98fee-770c-4b83-9e05-6f04866094c2@kernel.org>
+ <729deff2-d5df-4409-b941-af22de408521@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <729deff2-d5df-4409-b941-af22de408521@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 04/09/2024 08:49, Christian König wrote:
-> Am 03.09.24 um 23:11 schrieb Simona Vetter:
->> On Tue, Sep 03, 2024 at 03:46:43PM +0200, Christian König wrote:
->>> Hi Steven,
->>>
->>> Am 29.08.24 um 15:37 schrieb Steven Price:
->>>> Hi Christian,
->>>>
->>>> Mihail should be able to give more definitive answers, but I think I
->>>> can
->>>> answer your questions.
->>>>
->>>> On 29/08/2024 10:40, Christian König wrote:
->>>>> Am 28.08.24 um 19:25 schrieb Mihail Atanassov:
->>>>>> Hello all,
+On 04/09/2024 10:35, Lijuan Gao wrote:
+> 
+> 
+> 在 8/28/2024 5:34 PM, Krzysztof Kozlowski 写道:
+>> On 28/08/2024 11:31, Lijuan Gao wrote:
+>>>>>>> +/ {
+>>>>>>> +	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>>>>>>> +	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+>>>>>>> +
+>>>>>>> +	chosen {
+>>>>>>> +		bootargs = "console=hvc0";
 >>>>>>
->>>>>> This series implements a mechanism to expose Mali CSF GPUs' queue
->>>>>> ringbuffers directly to userspace, along with paraphernalia to allow
->>>>>> userspace to control job synchronisation between the CPU and GPU.
+>>>>>> Noooo, last time I agreed on this, you told me later it is different.
 >>>>>>
->>>>>> The goal of these changes is to allow userspace to control work
->>>>>> submission to the FW/HW directly without kernel intervention in the
->>>>>> common case, thereby reducing context switching overhead. It also
->>>>>> allows
->>>>>> for greater flexibility in the way work is enqueued in the ringbufs.
->>>>>> For example, the current kernel submit path only supports indirect
->>>>>> calls, which is inefficient for small command buffers. Userspace can
->>>>>> also skip unnecessary sync operations.
->>>>> Question is how do you guarantee forward progress for fence signaling?
->>>> A timeout. Although looking at it I think it's probably set too high
->>>> currently:
+>>>>> In the early stages, enabling HVC is to more easily verify clock and
+>>>>> PMIC related functions, as it’s difficult to debug without the console
+>>>>> log. After the clock and PMIC are ready, we will enable the UART console.
 >>>>
->>>>> +#define JOB_TIMEOUT_MS                5000
->>>> But basically the XGS queue is a DRM scheduler just like a normal GPU
->>>> queue and the jobs have a timeout. If the timeout is hit then any
->>>> fences
->>>> will be signalled (with an error).
->>> Mhm, that is unfortunately exactly what I feared.
->>>
->>>>> E.g. when are fences created and published? How do they signal?
->>>>>
->>>>> How are dependencies handled? How can the kernel suspend an userspace
->>>>> queue?
->>>> The actual userspace queue can be suspended. This is actually a
->>>> combination of firmware and kernel driver, and this functionality is
->>>> already present without the user submission. The firmware will
->>>> multiplex
->>>> multiple 'groups' onto the hardware, and if there are too many for the
->>>> firmware then the kernel multiplexes the extra groups onto the ones the
->>>> firmware supports.
->>> How do you guarantee forward progress and that resuming of suspended
->>> queues
->>> doesn't end up in a circle dependency?
-
-I'm not entirely sure what you mean by "guarantee" here - the kernel by
-itself only guarantees forward progress by the means of timeouts. User
-space can 'easily' shoot itself in the foot by using a XGS queue to
-block waiting on a GPU event which will never happen.
-
-However dependencies between applications (and/or other device drivers)
-will only occur via dma fences and an unsignalled fence will only be
-returned when there is a path forward to signal it. So it shouldn't be
-possible to create a dependency loop between contexts (or command stream
-groups to use the Mali jargon).
-
-Because the groups can't have dependency cycles it should be possible to
-suspend/resume them without deadlocks.
-
->>>> I haven't studied Mihail's series in detail yet, but if I understand
->>>> correctly, the XGS queues are handled separately and are not suspended
->>>> when the hardware queues are suspended. I guess this might be an area
->>>> for improvement and might explain the currently very high timeout (to
->>>> deal with the case where the actual GPU work has been suspended).
+>>>> Working serial is supposed to be part of the early submission.
 >>>>
->>>>> How does memory management work in this case?
->>>> I'm not entirely sure what you mean here. If you are referring to the
->>>> potential memory issues with signalling path then this should be
->>>> handled
->>>> by the timeout - although I haven't studied the code to check for
->>>> bugs here.
->>> You might have misunderstood my question (and I might misunderstand the
->>> code), but on first glance it strongly sounds like the current
->>> approach will
->>> be NAKed.
->>>
->>>> The actual new XGS queues don't allocate/free memory during the queue
->>>> execution - so it's just the memory usage related to fences (and the
->>>> other work which could be blocked on the fence).
->>> But the kernel and the hardware could suspend the queues, right?
->>>
->>>> In terms of memory management for the GPU work itself, this is handled
->>>> the same as before. The VM_BIND mechanism allows dependencies to be
->>>> created between syncobjs and VM operations, with XGS these can then be
->>>> tied to GPU HW events.
->>> I don't know the details, but that again strongly sounds like that won't
->>> work.
->>>
->>> What you need is to somehow guarantee that work doesn't run into memory
->>> management deadlocks which are resolved by timeouts.
->>>
->>> Please read up here on why that stuff isn't allowed:
->>> https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#indefinite-dma-fences
->> panthor doesn't yet have a shrinker, so all memory is pinned, which means
->> memory management easy mode.
-> 
-> Ok, that at least makes things work for the moment.
-
-Ah, perhaps this should have been spelt out more clearly ;)
-
-The VM_BIND mechanism that's already in place jumps through some hoops
-to ensure that memory is preallocated when the memory operations are
-enqueued. So any memory required should have been allocated before any
-sync object is returned. We're aware of the issue with memory
-allocations on the signalling path and trying to ensure that we don't
-have that.
-
-I'm hoping that we don't need a shrinker which deals with (active) GPU
-memory with our design. Memory which user space thinks the GPU might
-need should be pinned before the GPU work is submitted. APIs which
-require any form of 'paging in' of data would need to be implemented by
-the GPU work completing and being resubmitted by user space after the
-memory changes (i.e. there could be a DMA fence pending on the GPU work).
-
->> But also this means there might be an uapi design bug in here, and we
->> really don't want to commit to that. My stance is that panthor should
->> gain
->> a proper shrinker first, which means there will be some changes here too.
->> And then we can properly evaluate this. As-is it's a bit too much on the
->> toy end of things.
-> 
-> I wouldn't say toy end, it looks rather fleshed out to me.
-> 
-> But I agree that the people who design the UAPI needs to be aware of the
-> restrictions.
-
-Yes, I'm aware this could restrict the design in the future. This is of
-course why it's an RFC as we welcome discussion on what problems we
-could be setting ourselves up for!
-
+>>> Okay, I will remove it in the next patch.
 >>
->> That aside, I've thought this all through with tons of people, and I do
->> think it's all possible.
-> 
-> It's certainly possible, we have user queue patches for amdgpu in the
-> pipeline as well.
-> 
-> It's just really really really hard to get right without creating some
-> circle dependencies and deadlocks in between.
-> 
-> If I would get free beer every time somebody came up with a broken
-> dma_fence design I would probably end up as alcoholic without spending a
-> single penny.
-
-I'll try hard to restrict your beer intake ;)
-
-Thanks,
-Steve
-
-> Christian.
-> 
->> -Sima
+>> Can you post next version with proper serial device?
 >>
->>> Regards,
->>> Christian.
->>>
->>>>
->>>> Fundamentally (modulo bugs) there is little change compared to kernel
->>>> submission - it's already fairly trivial to write GPU job which will
->>>> make no forward progress (a 'while (1)' equivalent job). The only
->>>> difference here is that XGS makes this 'easy' and doesn't involve the
->>>> GPU spinning. Either way we rely on a timeout to recover from these
->>>> situations.
->>>>
->>>> Thanks,
->>>> Steve
->>>>
->>>>> Regards,
->>>>> Christian.
->>>>>
->>>>>> This is still a work-in-progress, there's an outstanding issue with
->>>>>> multiple processes using different submission flows triggering
->>>>>> scheduling bugs (e.g. the same group getting scheduled twice), but
->>>>>> we'd
->>>>>> love to gather some feedback on the suitability of the approach in
->>>>>> general and see if there's a clear path to merging something like
->>>>>> this
->>>>>> eventually.
->>>>>>
->>>>>> I've also CCd AMD maintainers because they have in the past done
->>>>>> something similar[1], in case they want to chime in.
->>>>>>
->>>>>> There are two uses of this new uAPI in Mesa, one in gallium/panfrost
->>>>>> (link TBD), and one in panvk [2].
->>>>>>
->>>>>> The Gallium implementation is a naïve change just to switch the
->>>>>> submission model and exercise the new kernel code, and we don't plan
->>>>>> on pursuing this at this time.
->>>>>>
->>>>>> The panvk driver changes are, however, a better representation of the
->>>>>> intent behind this new uAPI, so please consider that as the reference
->>>>>> userspace. It is still very much also a work in progress.
->>>>>>
->>>>>>     * patch 1 adds all the uAPI changes;
->>>>>>     * patch 2 implements the GROUP_CREATE ioctl changes necessary
->>>>>> to expose
->>>>>>       the required objects to userspace;
->>>>>>     * patch 3 maps the doorbell pages, similarly to how the user I/O
->>>>>> page is
->>>>>>       mapped;
->>>>>>     * patch 4 implements GROUP_KICK, which lets userspace request an
->>>>>>       inactive group to be scheduled on the GPU;
->>>>>>     * patches 5 & 6 implement XGS queues, a way for userspace to
->>>>>>       synchronise GPU queue progress with DRM syncobjs;
->>>>>>     * patches 7 & 8 add notification mechanisms for user & kernel
->>>>>> to signal
->>>>>>       changes to native GPU syncobjs.
->>>>>>
->>>>>> [1]
->>>>>> https://lore.kernel.org/amd-gfx/CADnq5_N61q_o+5WYUZsZ=qu7VmeXTFHQSxLwTco05gLzHaiswA@mail.gmail.com/t/#m116a36a598d8fad1329e053974ad37a4dc0f28ed
->>>>>> [2]
->>>>>> https://gitlab.freedesktop.org/larsivsi/mesa/-/commits/panvk-v10-usersubmit?ref_type=heads
->>>>>>
->>>>>> Ketil Johnsen (7):
->>>>>>      drm/panthor: Add uAPI to submit from user space
->>>>>>      drm/panthor: Extend GROUP_CREATE for user submission
->>>>>>      drm/panthor: Map doorbell pages
->>>>>>      drm/panthor: Add GROUP_KICK ioctl
->>>>>>      drm/panthor: Factor out syncobj handling
->>>>>>      drm/panthor: Implement XGS queues
->>>>>>      drm/panthor: Add SYNC_UPDATE ioctl
->>>>>>
->>>>>> Mihail Atanassov (1):
->>>>>>      drm/panthor: Add sync_update eventfd handling
->>>>>>
->>>>>>     drivers/gpu/drm/panthor/Makefile          |   4 +-
->>>>>>     drivers/gpu/drm/panthor/panthor_device.c  |  66 ++-
->>>>>>     drivers/gpu/drm/panthor/panthor_device.h  |  35 +-
->>>>>>     drivers/gpu/drm/panthor/panthor_drv.c     | 233 +++++++-
->>>>>>     drivers/gpu/drm/panthor/panthor_fw.c      |   2 +-
->>>>>>     drivers/gpu/drm/panthor/panthor_sched.c   | 408 +++++++++-----
->>>>>>     drivers/gpu/drm/panthor/panthor_sched.h   |   8 +-
->>>>>>     drivers/gpu/drm/panthor/panthor_syncobj.c | 167 ++++++
->>>>>>     drivers/gpu/drm/panthor/panthor_syncobj.h |  27 +
->>>>>>     drivers/gpu/drm/panthor/panthor_xgs.c     | 638
->>>>>> ++++++++++++++++++++++
->>>>>>     drivers/gpu/drm/panthor/panthor_xgs.h     |  42 ++
->>>>>>     include/uapi/drm/panthor_drm.h            | 243 +++++++-
->>>>>>     12 files changed, 1696 insertions(+), 177 deletions(-)
->>>>>>     create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.c
->>>>>>     create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.h
->>>>>>     create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.c
->>>>>>     create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.h
->>>>>>
+>> Best regards,
+>> Krzysztof
+>>
+> Hi Krzysztof,
 > 
+> Can we use the dts without console enabled as the first version? When 
+> the clock is ready, we will submit new changes to enable the UART console.
+
+It is very surprising not to have console available in the first, early
+submission, but it is not a blocker for me.
+
+Best regards,
+Krzysztof
 
 
