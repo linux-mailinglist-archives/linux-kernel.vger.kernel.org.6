@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-314688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50BE96B6DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:37:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED5596B6ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2141F25F0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6344A1C2084A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34001CEEB1;
-	Wed,  4 Sep 2024 09:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7E81CEEBB;
+	Wed,  4 Sep 2024 09:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWkIiVbC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U1BovLor"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5A41CDA18;
-	Wed,  4 Sep 2024 09:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB66136657;
+	Wed,  4 Sep 2024 09:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442583; cv=none; b=WZFHoXFafE7BQxIUYy7k88tLNtA7qFXjnisHuSDrPFj834s3db6Fq0mNtNnV4QIA4qpgCC3YEysIuioeToG+BP5LO+Gh0lnbSGE+IZx55shVxEgpVr5C0dtwu9UBXefxjUHwios5eHeSIKtQNXsYwyHpqmZuhbMa4kYPS9EnXN4=
+	t=1725442632; cv=none; b=svgXhWYWDnHpJ/LyefpYRgp2CS5etoVbjfNAg9WpeMcIeJJMVa4AsIpddf1ryg4HYMvZehtRY4F6oXtJgceGM7RSGVbBl4ZQ+w22ll1t2K2kuuPDc/k+SZAY9eGJpvUE1lr7+SG+BnbfrB1G7U48fWDFB5c1Ut6Wgqt2/ylOlVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442583; c=relaxed/simple;
-	bh=9bAhJ9CJLtRo5g7kUHeOsxrCvaYqEyomg7XrEVlcoI0=;
+	s=arc-20240116; t=1725442632; c=relaxed/simple;
+	bh=MRI42CKgJTs+ilD0WptG4fiGcysSWtMrf69iJuwhEW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCa+nysnq1FX+MKi7BV0KOw/H1hCkbXCTQTe/iVunWl6xVJmTneLnbTtmT4PJ+DZBKjHJ9w7YK0y/79D9XS1URPLICRbovCkcd2g6odlgQ3gqKQe6YwmO4EeMi+8q6zhQ8nUTtQ2/IhUk3mT7t68arL/bMSWpf3Kln+cD3afD2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWkIiVbC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50EBDC4CEC9;
-	Wed,  4 Sep 2024 09:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725442582;
-	bh=9bAhJ9CJLtRo5g7kUHeOsxrCvaYqEyomg7XrEVlcoI0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZWkIiVbCKmH2u8CfkCeJrYGIdpLJbYj6kBpbhH/s8NG1I5YWKI721mj7Lzt43ELUr
-	 4Y/RWuEqQecX+uHlVulZn5bFL26l4g7DDrh/CsAUjWAD/gkxjxo5Gw8nKZgA1qUFKP
-	 ddsnw1cBv9lkrSBYrj3fXi6N7cyMOaQBad+MHS0REatztT25RnzRjXgmy3fkdN4OYe
-	 YE9QqbovUWfEnjcCfdZioSRwdtlvWWN9GveHaApRiw2JDeW47I2by+BAeP5y4eFp0+
-	 nCxYUhP9VZeZHBJi5/yvUHifdUDcB7+hi+9ptjKGG8X2eL9sPITVHfDH+5PiTH+K7a
-	 VUusR+s9t1Q4Q==
-Date: Wed, 4 Sep 2024 09:36:15 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 17/18] platform/chrome: cros_ec_typec: Support DP
- muxing
-Message-ID: <ZtgqD3JaX2FmVWGu@google.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-18-swboyd@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1p6rk5L+J3UzKMKygiyph4+qzwipXztkGbgDZ/lvdcexrFfxFpthHC2Ooqh2v3ulFy6N5MSGUcT9ZSfeMjWE01hJfD/SKB1oW4wKtuA0zV514ME/GJdr6oaPpg58EZFJAJVgx9GVG+VzB+ZqwJWC43QSeKMWRtFOCTJc9imAxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U1BovLor; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725442631; x=1756978631;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MRI42CKgJTs+ilD0WptG4fiGcysSWtMrf69iJuwhEW8=;
+  b=U1BovLorYNAIlxHWaPzbEfioLw5zo+znoeGcSh0YniNV5l5mkWxtrICv
+   IIWkQrC8M0LMI/5KVbO1sTwFiceQXg5kNV4ViWflMvuen1jHDuUyY8nQn
+   MCi3yu4OcB3vWptPfGcW7KeXD9vMWdhXIGfqPyS/5tcceUzQQQ7rK3hwP
+   nn5IPvvc8goul+W2126nShqW169pLDslrO4nWDJhzPyx6v/Adp7jQsUTb
+   qA0HO3VQ+07TjVB2hbBQm5bf9ZckPqiIQXfy/4uvrcOp45vXCiF0b87qD
+   uSYcSxmqxgn8pL6zwvG5/quw+rVT4mhpssD59Pt8lKSrdMNJsi8gqfQVl
+   Q==;
+X-CSE-ConnectionGUID: M6MZf/eORK6kNyDbLklvPw==
+X-CSE-MsgGUID: ZxZI8hi9SfWalFF2KBEZ+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24282250"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="24282250"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 02:37:10 -0700
+X-CSE-ConnectionGUID: d0r+BYN8SpGJOZjq18N87w==
+X-CSE-MsgGUID: vdCyl8MJT2OrIqkJ7EljEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="70076393"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 04 Sep 2024 02:37:07 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slmRk-0007oi-1D;
+	Wed, 04 Sep 2024 09:37:04 +0000
+Date: Wed, 4 Sep 2024 17:36:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
+	pbonzini@redhat.com, dave.hansen@linux.intel.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, hpa@zytor.com,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	thomas.lendacky@amd.com, michael.roth@amd.com,
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev
+Subject: Re: [PATCH v2] x86/sev: Fix host kdump support for SNP
+Message-ID: <202409041737.FSl6a7vH-lkp@intel.com>
+References: <20240903191033.28365-1-Ashish.Kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,25 +81,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-18-swboyd@chromium.org>
+In-Reply-To: <20240903191033.28365-1-Ashish.Kalra@amd.com>
 
-On Sat, Aug 31, 2024 at 09:06:55PM -0700, Stephen Boyd wrote:
-> Most ARM based chromebooks with two usb-c-connector nodes and one DP
-> controller are muxing the DP lanes between the two USB ports. This is
-> done so that the type-c ports are at least equal in capability if not
-> functionality. Either an analog mux is used to steer the DP signal to
-> one or the other port, or a DP bridge chip has two lanes (e.g. DP
-> ML0/ML1) wired to one type-c port while the other two (e.g. DP ML2/ML3)
-> are wired to another type-c port.
-> 
-> [...]
-> 
-> Cc: Prashant Malani <pmalani@chromium.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Tzung-Bi Shih <tzungbi@kernel.org>
-> Cc: <chrome-platform@lists.linux.dev>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Hi Ashish,
 
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on kvm/queue]
+[also build test WARNING on linus/master v6.11-rc6 next-20240904]
+[cannot apply to kvm/linux-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Kalra/x86-sev-Fix-host-kdump-support-for-SNP/20240904-031215
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+patch link:    https://lore.kernel.org/r/20240903191033.28365-1-Ashish.Kalra%40amd.com
+patch subject: [PATCH v2] x86/sev: Fix host kdump support for SNP
+config: x86_64-randconfig-r073-20240904 (https://download.01.org/0day-ci/archive/20240904/202409041737.FSl6a7vH-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409041737.FSl6a7vH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409041737.FSl6a7vH-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from arch/x86/kvm/kvm-asm-offsets.c:11:
+>> arch/x86/kvm/svm/svm.h:783:13: warning: 'sev_emergency_disable' defined but not used [-Wunused-function]
+     783 | static void sev_emergency_disable(void) {}
+         |             ^~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/sev_emergency_disable +783 arch/x86/kvm/svm/svm.h
+
+   763	
+   764	static inline void sev_free_vcpu(struct kvm_vcpu *vcpu) {}
+   765	static inline void sev_vm_destroy(struct kvm *kvm) {}
+   766	static inline void __init sev_set_cpu_caps(void) {}
+   767	static inline void __init sev_hardware_setup(void) {}
+   768	static inline void sev_hardware_unsetup(void) {}
+   769	static inline int sev_cpu_init(struct svm_cpu_data *sd) { return 0; }
+   770	static inline int sev_dev_get_attr(u32 group, u64 attr, u64 *val) { return -ENXIO; }
+   771	#define max_sev_asid 0
+   772	static inline void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code) {}
+   773	static inline void sev_snp_init_protected_guest_state(struct kvm_vcpu *vcpu) {}
+   774	static inline int sev_gmem_prepare(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_order)
+   775	{
+   776		return 0;
+   777	}
+   778	static inline void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end) {}
+   779	static inline int sev_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn)
+   780	{
+   781		return 0;
+   782	}
+ > 783	static void sev_emergency_disable(void) {}
+   784	#endif
+   785	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
