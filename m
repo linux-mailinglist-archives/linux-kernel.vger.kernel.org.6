@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-314985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAEB96BBBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D6896BBEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4A128B237
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CD6B2D202
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9CE1D799E;
-	Wed,  4 Sep 2024 12:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C241D7999;
+	Wed,  4 Sep 2024 12:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MenJUkoG"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E83D1D2F73;
-	Wed,  4 Sep 2024 12:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="QLv7ABS+"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CA1D04B8;
+	Wed,  4 Sep 2024 12:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451946; cv=none; b=L8VeefT0EExoZwd9qLcWNSr7PCtBSoMonvhZXMxqqdNr4RQypzSYKzzF+81JYLlt+KEHl1kszIuLyVS/RgjjAVp04+zCVBDhJVcuN8VEZPv/aPtDT7rg7OcreEuUeNlzxhtkw4DFxrQ4Zfsu+YU2rHaCm3XT/YDsMRaMzrpruQs=
+	t=1725452004; cv=none; b=O0xEaDT3zugIF0iVv4pyZX37J/n8R3/PWb67Bwi2ZfUTfsXcLL+CU8o7SuSz2NW0MXyWasUjhFalV4EXa+O2yMSTywlmp9c7DEQ+IvneMoWjVY/kToQerlM2FlrSIfDvwT69w5Ziymy/Wfj8/Yu+f49Hla1fM3LUvq8CQS9s/TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451946; c=relaxed/simple;
-	bh=bhMwT3aNve1Sa2O5I5pi9juMgaZOG8OpMmVR6nCCi4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NiggXLlQKoJpHop8ykp8Vv7xgP4eQE83L9mamVjvmKlYsXcynMINOVkQbdGBicibOIpvH7+3IjsOKmu+RfxHeSbWXvNE6bo5NW+7V3YUr58yw26SvewH4eGpO4JS7T0ugPhhIQgWEtD96Jcf43pSZlY1qREtS5shJUp7rq2Tu6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MenJUkoG; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725451935; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=v0DthQyFZgbl+wIxLBCPl1i9Aa9+jT9oqkUW1rb5jvU=;
-	b=MenJUkoGUYNtqxLVaIvOMYlr7mauEZscrMwXKy6EuHqqH7E61xbyzakVct2L7dllolL67xIX/LtD4zSaln9/Odc77xQ2MZu9e1qqpiiFENdh6M1qTPlBiR5XHF0mlAmuk3m3itIjTtx54FTIguqW7ms6IITgqFl/OxGqC1+MhV4=
-Received: from 30.221.147.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEHimvR_1725451933)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Sep 2024 20:12:14 +0800
-Message-ID: <8264705a-1dc0-45a7-92d9-7395e1aa99db@linux.alibaba.com>
-Date: Wed, 4 Sep 2024 20:12:11 +0800
+	s=arc-20240116; t=1725452004; c=relaxed/simple;
+	bh=C11HCu5mtryKsu8C9faHMCSo+KyXN+MYZk0e6IQdrn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=S4/qjySn7h5yjWN0s6HxU9EQDvU4225HUuvmDUJto+mF88qY4pRflSR1S2ElkfYA+3AF5qjJj1GJY1VC9hqm52FfAW06Vr4O4RGGImhOdXsr9Bz5GSDBmpLKsmvUVKbCcO2OWSKjvjDaf6Y3dHpisy3l66OFIztVzYUtN838LyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=QLv7ABS+; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 8841D789DF;
+	Wed,  4 Sep 2024 20:13:17 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 8841D789DF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725451998;
+	bh=Vm1m87bDBl/nK+yI9aANRki1TovLXqNDyh/ugIwEEqg=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=QLv7ABS+UJFGUiOqbubTLaLLzujkcYA8E7NhYmtham0E6VbeZo68QgBkn64zh0N2t
+	 9atU1LzoG1fWfgTpspwTy2mNF62jGSMmt+nslLTprY5DkjBiKA/hp/U605JZGNzMMp
+	 pCXiCY26LgogHZCu1C+cjjlAe49i7UVAU+JPG7t0=
+Message-ID: <2ec7de72-8560-430c-a6b6-5ef7ad5f5e00@classfun.cn>
+Date: Wed, 4 Sep 2024 20:14:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,59 +49,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] virtiofs: use GFP_NOFS when enqueuing request
- through kworker
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- houtao1@huawei.com
-References: <20240831093750.1593871-1-houtao@huaweicloud.com>
- <20240831093750.1593871-3-houtao@huaweicloud.com>
- <5769af42-e4dd-4535-9432-f149b8c17af5@linux.alibaba.com>
- <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add Shanghai Novotech
+ Ariaboard
+To: Krzysztof Kozlowski <krzk@kernel.org>
+References: <20240904111456.87089-1-bigfoot@classfun.cn>
+ <20240904111456.87089-2-bigfoot@classfun.cn>
+ <b9e5389f-8492-425e-bc15-35ea55c0e3b5@kernel.org>
 Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <815f6c3d-bb8a-1a23-72dd-cd7b1f5f06d0@huaweicloud.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Junhao Xie <bigfoot@classfun.cn>
+From: Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <b9e5389f-8492-425e-bc15-35ea55c0e3b5@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 9/4/24 11:53 AM, Hou Tao wrote:
-> 
-> 
-> On 9/3/2024 5:34 PM, Jingbo Xu wrote:
+On 2024/9/4 19:35, Krzysztof Kozlowski wrote:
+> On 04/09/2024 13:14, Junhao Xie wrote:
+>> Add an entry for Shanghai Novotech Ariaboard (https://ariaboard.com/)
 >>
->> On 8/31/24 5:37 PM, Hou Tao wrote:
->>> From: Hou Tao <houtao1@huawei.com>
->>>
->>> When invoking virtio_fs_enqueue_req() through kworker, both the
->>> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
->>> Considering the size of the sg array may be greater than PAGE_SIZE, use
->>> GFP_NOFS instead of GFP_ATOMIC to lower the possibility of memory
->>> allocation failure and to avoid unnecessarily depleting the atomic
->>> reserves. GFP_NOFS is not passed to virtio_fs_enqueue_req() directly,
->>> GFP_KERNEL and memalloc_nofs_{save|restore} helpers are used instead.
->>>
->>> It may seem OK to pass GFP_NOFS to virtio_fs_enqueue_req() as well when
->>> queuing the request for the first time, but this is not the case. The
->>> reason is that fuse_request_queue_background() may call
->>> ->queue_request_and_unlock() while holding fc->bg_lock, which is a
->>> spin-lock. Therefore, still use GFP_ATOMIC for it.
->> Actually, .wake_pending_and_unlock() is called under fiq->lock and
->> GFP_ATOMIC is requisite.
+>> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+>> ---
+>>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>> index a70ce43b3dc0..58d1a2e8b212 100644
+>> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>> @@ -145,6 +145,8 @@ patternProperties:
+>>      description: Arctic Sand
+>>    "^arcx,.*":
+>>      description: arcx Inc. / Archronix Inc.
+>> +  "^ariaboard,.*":
+>> +    description: Shanghai Novotech Co., Ltd.
 > 
-> Er, but virtio_fs_wake_pending_and_unlock() unlocks fiq->lock before
-> queuing the request.
+> This is confusing. Prefix is entirely different than company name. I
+> would expect prefix like shanghainovotech.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Alright, I missed that :(
+Thank you for your reply.
+Ariaboard is a subsidiary of Shanghai Novotech, maybe it would
+be better to change description to "Ariaboard"?
 
+Shanghai Novotech: https://shanghainovotech.com/
+Ariaboard: https://ariaboard.com/
 
--- 
-Thanks,
-Jingbo
+Best regards,
+Junhao
 
