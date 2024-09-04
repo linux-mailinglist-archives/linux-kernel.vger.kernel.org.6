@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-315497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1791096C351
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:03:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C571896C354
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B67D61F291EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D611C20952
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6A31E009B;
-	Wed,  4 Sep 2024 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE741DEFF1;
+	Wed,  4 Sep 2024 16:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cwv+R8yF"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYDTm/po"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A931DEFEA;
-	Wed,  4 Sep 2024 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5981DC052;
+	Wed,  4 Sep 2024 16:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465768; cv=none; b=KGrd8KyL8HRD9MWvzF8+EYI7P2foiNi+TFpm0bNbcHcJfwts9IcNKmAIKNtO4saQsJBvEUcoLPt+7/GRgp5Y50hWqqykXgQRxGcsyi0X7YWh+uSRvZCRSUjjaqa0Wpqj+bakvHx5oWOcMaA61syD/LWOT3btV2mXXSvLgf74h6E=
+	t=1725465796; cv=none; b=UDIDKUHABzFZjU8Up8Ta3YRXtuVMYqhfssm7JHbtlU0uK5f4AnMa0aySj3asvuPbR2QG1ToQC6/3Ser7ww2dY50nvMNBwMyu93CQhJ9LL6ooR0CpOnF34ETIdaa0QlG1FBHAx7F7m+x5bPjgfC+m8K94QfKkxIAn9qXonqJ7o5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465768; c=relaxed/simple;
-	bh=Z1gyw4dLYobDHCz9hkB7O0dcevWeFPaiYZkhlrA60XQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NzcKECWmetmq72ydP5JZMxsXdUw98d6Q2ICPvWBM6wSP6yQ2ijzXfB3paw1Xq/pr2hpYI30GvwCgibKUue7Kx13+ATxZ6T6v55t1lh2EOEDPU1qNwF9LlFxfkmyW+gZuJocqY+YfwzaMrBnn8TFbgIutQVv69Ko2nxVaFcAOu3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cwv+R8yF; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86abbd68ffso180506766b.0;
-        Wed, 04 Sep 2024 09:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725465765; x=1726070565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sOlPyDVyDNnJxsqLNjwzdaNNGqxcXxFsQNriucvgAGc=;
-        b=Cwv+R8yFk8lmJt+WCDRSk+5i8miWktVxpprAupStp69t377xHaDbCz36vZphn3ogM1
-         6xdpo2Z2UOGuX4IDkF35HFdO6gQyntf11cipypW61Vyrqn2ibIWmjkz3K2xVELAmDRzk
-         gAuE6DylvGcex4o90Z0whVKnQcnMR07dDwHkdo8XQNpCzMbEV6Qm5dLPirA3/X3Mq8/+
-         HaMGCXce+B60/Chx1p6BIfxYeYAOndolPA6+A/nsNdarB3z7oUsi5qbBaGDLNEOPEzCD
-         SqOrOUwFOSnJHud9kTojgijfJs50KHGOMwCNNVyeCZXGZUxlq6mRMfPlO9GGtrsXo9ho
-         1bjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725465765; x=1726070565;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sOlPyDVyDNnJxsqLNjwzdaNNGqxcXxFsQNriucvgAGc=;
-        b=vvByCO/cF87EJmKl+boDXfkxNDuDl3zpU/DhM16qIG9Nmzx3RXfodXKsg0MLH+Zdew
-         dsosLGCbxuU1SXdwIpijXTEMEfbh6Nh0C+rojdAb6AWQBkRshWPUw9VUp86mkNfdiqEB
-         fnvita8BDG2VCiyJIzTZjrJO2cjRSzuNiwWbwOu7EyJFVW5NcOx8k7EFxDpgVb0L72Gu
-         B+W4NS46YFP3sc4jxrynykURFeeUpHfsor6hNU65A3+eA9ZBo6MGfSPk6tmChmvoveiA
-         gRst2ePlhZG3E+EUk8kLJY9eZdNGPOB7AXVSRmXxFVRvQoCHUtsb5pi35SOliJVYTkBA
-         l16g==
-X-Forwarded-Encrypted: i=1; AJvYcCUR00DLuEECeMOYLN4EEShpVqmbEygYee9QCusSWNV+RFIt/wyRLXJlGhsBGsfRTYNENt+KqcHRu1hWiHH2@vger.kernel.org, AJvYcCUyjYnwXk6BiIxxMr+vH2oniixWRTJpY1O8/8ZUeFybjcbtMJBYFFtjL9w57+rUZwj+CvjMYShXAGdF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp75Mpzvlr91/9fLPQTAEdcW/m3GXgGqcsQigul76Svwnurr0C
-	K3ZSj2pcl1wig6sbR5/NgUBZz7YnUkH7SsPR/4SR70yDdb8gLtxQ
-X-Google-Smtp-Source: AGHT+IG2piJzipr/JVVcLEfvEz1luzO7OwdJYFah1S2GGEPzoKOf977ggGbGuM4z+s4x7RD26h2/5w==
-X-Received: by 2002:a17:907:3a95:b0:a7a:a4cf:4f93 with SMTP id a640c23a62f3a-a8a4319cf62mr171551966b.32.1725465765068;
-        Wed, 04 Sep 2024 09:02:45 -0700 (PDT)
-Received: from localhost.localdomain ([2a04:ee41:82:7577:2f85:317:e13:c18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623e1800sm7945066b.193.2024.09.04.09.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 09:02:44 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: robh@kernel.org,
-	saravanak@google.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: andriy.shevchenko@linux.intel.com,
-	Vasileios Amoiridis <vassilisamir@gmail.com>
-Subject: [PATCH v2 2/2] of/irq: Use helper to define resources
-Date: Wed,  4 Sep 2024 18:02:38 +0200
-Message-Id: <20240904160239.121301-3-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240904160239.121301-1-vassilisamir@gmail.com>
-References: <20240904160239.121301-1-vassilisamir@gmail.com>
+	s=arc-20240116; t=1725465796; c=relaxed/simple;
+	bh=ZSUcV14VBBXEec2JVwaDUWt4FsS1NxyoxqwsoTrSHf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJ+6rIDBbIycZ56Nq6ChTQh7MHGvTMpg3lqADlMcQlT823OZXIvwy8PGGGtjc55u9rglRQxydmMvxEQBjTQYgycs+1hZ6NDZKy8SNNI4ReS2h44jCN7cTXkcpT/rijTSAV45eTyQlysqqnghUXJjuGJFFCRKCy+dANwSn4KdLcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYDTm/po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F964C4CEC2;
+	Wed,  4 Sep 2024 16:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725465795;
+	bh=ZSUcV14VBBXEec2JVwaDUWt4FsS1NxyoxqwsoTrSHf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nYDTm/pofgqG4onPxKoPfpI9Q/TI6qEqT9TcJCd4Vh3za1SkpVeSmJYjGGJ1axD6y
+	 OSiNmEVHcN6yA1BnqUQN91gLGqQg8AfLGyRMUZLQj3aFZX84zIcwVHbqbHsAc0OQ5O
+	 vGb5sExqEqtZ6lFrTL79TOT76HBcdXElb+WmqEqMBP7bvX5WSd0zZ2vCDnvqKPO09T
+	 ojE6lz7XyBer6lb2x4qO0DWuYk/A81Wj/+HB/6mY1LA3UC//FThGbHLZR6/4UwoKV9
+	 OV85ht/EPqVjsnnEUxd0d/zgODLhzcsJNRlUXpeMzN+PqcJ/TphRBYY+y60HsQl3DP
+	 Hc52WAYwO0hFw==
+Date: Wed, 4 Sep 2024 09:03:13 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 27/31] objtool: Fix weak symbol detection
+Message-ID: <20240904160313.wvtutfkhrrlzc3qy@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <bcedaf8559e7e276e4d9ba511dab038ed70ebd6c.1725334260.git.jpoimboe@kernel.org>
+ <20240903082645.GO4723@noisy.programming.kicks-ass.net>
+ <20240904035513.cnbkivqibdklzpw2@treble>
+ <20240904074254.GB4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904074254.GB4723@noisy.programming.kicks-ass.net>
 
-Resources definition can become simpler and more organised by using the
-dedicated helpers.
+On Wed, Sep 04, 2024 at 09:42:54AM +0200, Peter Zijlstra wrote:
+> On Tue, Sep 03, 2024 at 08:55:13PM -0700, Josh Poimboeuf wrote:
+> > On Tue, Sep 03, 2024 at 10:26:45AM +0200, Peter Zijlstra wrote:
+> > > On Mon, Sep 02, 2024 at 09:00:10PM -0700, Josh Poimboeuf wrote:
+> > > > @@ -433,9 +433,13 @@ static void elf_add_symbol(struct elf *elf, struct symbol *sym)
+> > > >  	/*
+> > > >  	 * Don't store empty STT_NOTYPE symbols in the rbtree.  They
+> > > >  	 * can exist within a function, confusing the sorting.
+> > > > +	 *
+> > > > +	 * TODO: is this still true?
+> > > 
+> > > a2e38dffcd93 ("objtool: Don't add empty symbols to the rbtree")
+> > > 
+> > > I don't think that changed.
+> > 
+> > But see two patches back where I fixed a bug in the insertion of
+> > zero-length symbols.
+> > 
+> > I was thinking that might actually be the root cause of the above
+> > commit.
+> 
+> Aah, yeah, might be. If we can reproduce the original problem, it should
+> be verifiable.
 
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
----
- drivers/of/irq.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Indeed, I'll investigate.
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 5d27b20634d3..b1bfa14e1c0a 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -429,9 +429,8 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
- 		of_property_read_string_index(dev, "interrupt-names", index,
- 					      &name);
- 
--		r->start = r->end = irq;
--		r->flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
--		r->name = name ? name : of_node_full_name(dev);
-+		*r = DEFINE_RES_IRQ_NAMED(irq, name ? name : of_node_full_name(dev))
-+		r->flags |= irq_get_trigger_type(irq);
- 	}
- 
- 	return irq;
 -- 
-2.25.1
-
+Josh
 
