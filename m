@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-315440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DD296C2C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:45:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A1796C2BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CE82817D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B43E1C24A54
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679151DEFF1;
-	Wed,  4 Sep 2024 15:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C891C1DEFDD;
+	Wed,  4 Sep 2024 15:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgDzxzMt"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMn3OmPk"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FDA1DEFC7;
-	Wed,  4 Sep 2024 15:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA81DCB1A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725464683; cv=none; b=mmxHCfi60cyRRh7mqL+VZ3PIgFKqltqbanHP3WrwNl0vwS2lCI4GsUsq8Rm+vVwamC5r1rEc4cfgZ5k1Rdmmgwou3zxXa4Pk9evQGL4viZJhMWnoyLo4faKE/v89p1CFr/YIVvE6LBqRRjpVwcZ4B9eUXtqQZCmPuisk8ngDcTg=
+	t=1725464653; cv=none; b=k+nQGVgBmmjKWSryQtC7rZV2V1fu+fqp8hjjyMZBEo1R8IJFMxxdFCrYUEgE+Rb/TCbk29mbUTT7l5lTAS0f2916GkQuXZNsFdAFlkHL3wNpj4adKE8yyxjku3gI5Ftl720LJXlPFklmleAUEyaYAv+T+HcPuOxQ/DvtEkDkdvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725464683; c=relaxed/simple;
-	bh=M5kDyk3KDJrwNFQ/gMQLuv75Z5Xu3qZfJ8KRs3eNRhI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EwTFImudYBte0kziPFhRzKVJXIKhIFJISq5+UnpBEfx76n7fL9ZlWEz1fVHMnQeq6M859kAkz3rsBmp3Dc7XV3eN23M3ZdXogTtNfSLzgQOuHaVJP4bydbtbCGhJrFyJDqVR7HGOL04CW1v/++RygOscuQRb26T1qXYpC0f6pZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgDzxzMt; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bfb50e4e6so39007175e9.2;
-        Wed, 04 Sep 2024 08:44:41 -0700 (PDT)
+	s=arc-20240116; t=1725464653; c=relaxed/simple;
+	bh=zkWE9eHQtAP59JThyXzFthwkywAghmi5eg1TtaGzNAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAEavAVqSy3ZTrWIKakaKVXwZ4WNE/KKuhaxmA+CV+Prw02axmPU6VoXE6xl9dOmtpwZRY67a1PdjFjfZr11NyPuy8QfRmDTTAS4I3OXbf/BvfZtX+4XhL7Oede84ZJ9F+RR2UEWIHnAHo/20GaP9Z7TT661sQ3Ml2Jxy1lggE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMn3OmPk; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7177e6cd298so533464b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725464680; x=1726069480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=umDL6mMF2LGIC/gv7mZ3udOWUJnQiCok84gUZNiT1Zg=;
-        b=YgDzxzMtMr/zAoWxRdZOiKGF4xEY/5V8B5Kg+pUTuAhn83qmAuDnmXz5qXsxZInL9M
-         XRy8eudNWi10ZRxEecvucFQqnzG3hLPiCF5OX1pUDAbtNgCi/AN4kxSoXa0HlhdTLgY8
-         UNt/KIvRjAS7rVDZklCabDL1RUiyvG76l2cZO5rZldQfaB2b4IUWJE8OcZvglRWBdEzG
-         rmf5QNAseJHFvCMPGax0EzicqIbVHpCRE1HmLh3FHjrzu8uZeGp6ELo+P3Uowx9aY77p
-         FnJQFVANaF297DndnRi+dXBI53UhE0F84L7eWgbSdHMvIuH56M5/xjfMBJQD2mTrsk2H
-         5UAA==
+        d=linaro.org; s=google; t=1725464651; x=1726069451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lvq181bt53++X2ipAJuBWwtoz5tjcNktNxin7O2M81s=;
+        b=qMn3OmPkvu1FF6CuPoBq7k/O2X7FK44VgljeHSoaCD3mZ/z3I0/uLKs8r5/arh8yHj
+         vwHnUPiREUOYsYA1Oc1vtKj3owusGVBPzUrXWfNHoZICGKA2FSRdG9J2WejRA0EHEBdC
+         lml/M5TO/1E6ccjGpi8z+YLUPpRnJpWd/SwXsFcx+UnMdK6H/hrnaR42sT7qEhwyW/H4
+         2q0SMUiRVBKlmOBZ2JZVntbVPWGRb2RXbzLaPFpsS5OEoKzbVIR0Zfkr8yWvbGfb72SA
+         msXrgf24k64JeZkNH64+ATm3XL6NkCThTPpkxkxUNErnP17/rCHLbg8HWDDBK5DCL4N5
+         uPdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725464680; x=1726069480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=umDL6mMF2LGIC/gv7mZ3udOWUJnQiCok84gUZNiT1Zg=;
-        b=SJMHEpC+CKyMW9xOk6hEccJj1McQ4fcWhJqzr9waWz/zcc8sr+hSnyIUA2QdvfYlCQ
-         2Lqg2B72CQlH0bsdRk//1NXvVv4T2J/mxTSXavnRFrsB821/f5Ls8VOVvlOcBaoKm8Dz
-         /H+OKBDtt9GJwwDzjPyqPneZ9q50LYRDRV/XWz8PR6pXJAPl97nOcf0txLq8vWT03ya4
-         O65SgyeWgNdVZHZm9wU7iNvkQgC2ThTHDN9x/+2cCrZ/lG4LV5Cq5rxEzfs3O9hsKIok
-         6tDLRiHJIvSgIC1F9p+1MoqbOnzkFQ4Y+FqYbC8CJKF86yS0q1WW5t4yZgMGO+pi79m9
-         Sezg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUagofSYhIoZif73Sjo94LSIcKDT95O3yvJ0GtkmCyhRKUVXTIMvTAiphnqYSyThbB4ePPl9gQ@vger.kernel.org, AJvYcCWzaeC44eJuroV1dwgZKeA99mR17Vjbe9DTdvgv7JNBjDoXAzptaWlFWQNfB4EGqQ6Tpcvk3jiWgNNphnz/tOs/@vger.kernel.org, AJvYcCXnrDlOK4hBaSbZfH2HfBN5pQVCh29dQuy+3/NInZGPRi+xkDlG/yqUu01axyXx6BYPR2oE9rVFWpGcMvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy85OkQQUrDtEzrQh4gU762WJ57lx4Q7wn8lqiOOmtmuWvauomy
-	FypRlYCa5MWA5OpZ77I7cE7CjXkL6S4jdxUYJ5y9PJIewAtGM/q0iUddT4x3YJYwlrqy1y3ajqX
-	Sbdvb900ArhK76sj5UOKmEPM9djg=
-X-Google-Smtp-Source: AGHT+IG/BmSVshTuSzwHzg4qPrMOTOCDcwQIxT7cdW1azDwNVPeYpby/rAXvfjK9JwzNmGKJtZBXoDCTRKBu22h8oBE=
-X-Received: by 2002:a05:600c:1914:b0:426:5e91:3920 with SMTP id
- 5b1f17b1804b1-42bb27a9eedmr160835315e9.29.1725464680483; Wed, 04 Sep 2024
- 08:44:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725464651; x=1726069451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lvq181bt53++X2ipAJuBWwtoz5tjcNktNxin7O2M81s=;
+        b=IB65SruMa1speQcuMaIp5lPb8sLBjmWl4VjzfUl87WaUdWbudcc4iHptCaxHujt1NT
+         ZI7TKl21jhidsIucvDAIHbAB/9mZpqJJZKdtjsW+HMldGkZzuXy88mgKh4TNQPbzt2Uw
+         3D52FwDPZJaTI7Toisb7RiYW+SbujPi0iC6VkLVbCu2YwZiy6tFx3FA7Zj5bqQl0JffM
+         zZneG7gveA+vHEJ5bbYFCCQQt1wvrqeylRnHEL6ZtvvJLqLkPY9LrWoQu6X9xFEAFsQh
+         pW4KKigW5AfAJRac9w8t1kjCnvlUxxRjMm7h+IttNJjByklX8Z0MaWDpvR4JmYKAS6bn
+         T6yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsgNte6FF1rxk5ZBK3Io9CcUOEMFgDGSmhwqbGnbYiUjrpYbUg+3FQgKnQKI9MmILjLsBN3hWoJgsIQXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFtI37xAouPcXYoVlFG+fslydr2iqbBZuP6dc12lDKW9mVoWFJ
+	pYk4YprKbn9iwwMAioZBceMqYnHop35+o4bF9YhtWYC5CxXAC0vXWVaQ1aQAGvA=
+X-Google-Smtp-Source: AGHT+IEzkhU1NY+b/rFo3CUIWLkNeW1QOlR8kkj/gEDVFHDtok9gvgAxeDuYVkH4KCg7NBQoom+p7w==
+X-Received: by 2002:a05:6a20:9f89:b0:1c6:fb2a:4696 with SMTP id adf61e73a8af0-1cce100b917mr22074760637.19.1725464650872;
+        Wed, 04 Sep 2024 08:44:10 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8490:5dd6:5f49:1365])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778530830sm1761671b3a.49.2024.09.04.08.44.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 08:44:10 -0700 (PDT)
+Date: Wed, 4 Sep 2024 09:44:07 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Liu Jing <liujing@cmss.chinamobile.com>
+Cc: patrice.chotard@foss.st.com, andersson@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc:remove redundant dev_err message
+Message-ID: <ZtiAR7Tp2jVOWb2g@p14s>
+References: <20240904020949.11193-1-liujing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902120314.508180-1-linyunsheng@huawei.com> <20240902120314.508180-3-linyunsheng@huawei.com>
-In-Reply-To: <20240902120314.508180-3-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 4 Sep 2024 08:44:03 -0700
-Message-ID: <CAKgT0UeHFm9Oy_TwHgtsWpr6EMRAxsKn+H-p8dUTgAtBJwbzpQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v17 02/14] mm: move the page fragment allocator
- from page_alloc into its own file
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Eric Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904020949.11193-1-liujing@cmss.chinamobile.com>
 
-On Mon, Sep 2, 2024 at 5:09=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
->
-> Inspired by [1], move the page fragment allocator from page_alloc
-> into its own c file and header file, as we are about to make more
-> change for it to replace another page_frag implementation in
-> sock.c
->
-> As this patchset is going to replace 'struct page_frag' with
-> 'struct page_frag_cache' in sched.h, including page_frag_cache.h
-> in sched.h has a compiler error caused by interdependence between
-> mm_types.h and mm.h for asm-offsets.c, see [2]. So avoid the compiler
-> error by moving 'struct page_frag_cache' to mm_types_task.h as
-> suggested by Alexander, see [3].
->
-> 1. https://lore.kernel.org/all/20230411160902.4134381-3-dhowells@redhat.c=
-om/
-> 2. https://lore.kernel.org/all/15623dac-9358-4597-b3ee-3694a5956920@gmail=
-.com/
-> 3. https://lore.kernel.org/all/CAKgT0UdH1yD=3DLSCXFJ=3DYM_aiA4OomD-2wXykO=
-42bizaWMt_HOA@mail.gmail.com/
-> CC: David Howells <dhowells@redhat.com>
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  include/linux/gfp.h                           |  22 ---
->  include/linux/mm_types.h                      |  18 ---
->  include/linux/mm_types_task.h                 |  18 +++
->  include/linux/page_frag_cache.h               |  31 ++++
->  include/linux/skbuff.h                        |   1 +
->  mm/Makefile                                   |   1 +
->  mm/page_alloc.c                               | 136 ----------------
->  mm/page_frag_cache.c                          | 145 ++++++++++++++++++
->  .../selftests/mm/page_frag/page_frag_test.c   |   2 +-
->  9 files changed, 197 insertions(+), 177 deletions(-)
->  create mode 100644 include/linux/page_frag_cache.h
->  create mode 100644 mm/page_frag_cache.c
->
+Hi,
 
-Looks good to me.
+There are several other instances such as these in the remoteproc subsystem.
+Please send another revision that is addressing them all.
 
-Reviewed-by: Alexander Duyck <alexanderduyck@fb.com>
+Thanks,
+Mathieu
+
+On Wed, Sep 04, 2024 at 10:09:49AM +0800, Liu Jing wrote:
+> devm_ioremap_resource already contains error message, so remove
+> the redundant dev_err message
+> 
+> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index d17719384c16..a6e50f51c794 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -251,7 +251,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
+>  
+>  		slim_rproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+>  		if (IS_ERR(slim_rproc->mem[i].cpu_addr)) {
+> -			dev_err(&pdev->dev, "devm_ioremap_resource failed\n");
+>  			err = PTR_ERR(slim_rproc->mem[i].cpu_addr);
+>  			goto err;
+>  		}
+> @@ -262,7 +261,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "slimcore");
+>  	slim_rproc->slimcore = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(slim_rproc->slimcore)) {
+> -		dev_err(&pdev->dev, "failed to ioremap slimcore IO\n");
+>  		err = PTR_ERR(slim_rproc->slimcore);
+>  		goto err;
+>  	}
+> @@ -270,7 +268,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "peripherals");
+>  	slim_rproc->peri = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(slim_rproc->peri)) {
+> -		dev_err(&pdev->dev, "failed to ioremap peripherals IO\n");
+>  		err = PTR_ERR(slim_rproc->peri);
+>  		goto err;
+>  	}
+> -- 
+> 2.33.0
+> 
+> 
+> 
 
