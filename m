@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-314065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897C296AE7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E391996AE83
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FA3286F91
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:16:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35AE281693
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C46E2D60C;
-	Wed,  4 Sep 2024 02:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9746538DD1;
+	Wed,  4 Sep 2024 02:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tffmEZe7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="azOYGspa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABA9BE49;
-	Wed,  4 Sep 2024 02:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C493399B;
+	Wed,  4 Sep 2024 02:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725416181; cv=none; b=DMHLUMY9sfUAXMfVF80bwESx6CZ/U+ttOA3q2qZp8D3H4aoIGf+vBsMwk6CwuQugyAZzyC8TEUWkTM/KtIrjXGsSoHLa7AZpzVIK1ZggOG/fKOExuKicB7Z5yWqbp+oskApQX2v1MqgQCQmgJgGZia5VPUmKgIwImJAXsZaP8M8=
+	t=1725416361; cv=none; b=kk9oJxsSipha/U8Zl+pu82aectja2796SBg7u3zyWeMQOVr6UZOhS+hwcDLwHGcblVHaEbbjT2ktoyOxMqj5Z8ajExEtV50A/c21e8M9PkYbcLd7FgvMlE2yRUZhlgYc6fwKCBAiwryBocsIbmnPkxEc3L07pKeCV7YWBkdXHsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725416181; c=relaxed/simple;
-	bh=+6e/KTyy6zvpoxC1aqlcDjymL6VtOVD5DqVq1y8ne+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O418wCyzhsUbyxhtrdQXJX1488QCQOnnKf5gq1BFy8SyQXum/JYHlyF+LiOkkZp6TsNqF/L0dCkHs0BZEq73AaM4lH34DdPUnWp2vPK0eKnQCYXTdW363ik/2Vk8UgX8x68RhxX/99zogvhAHAeQ9g8ofveixMdDNGAWZkT2LNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tffmEZe7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C7CC4CEC4;
-	Wed,  4 Sep 2024 02:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725416181;
-	bh=+6e/KTyy6zvpoxC1aqlcDjymL6VtOVD5DqVq1y8ne+g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tffmEZe7VL80ppP0Lmdf6pO0GauGuExvIuantmhPyjwzs3ZkBkIQe6dSS7JFm4bSC
-	 5o8wzC+Q1G6ttVSZ3sl4zRnaB4KKLxogclm4+JQ+vmH5DlqpimYDpLD5KbRwZdDniw
-	 jd402h9YlF/kR7k/DH9vmmvexQ3czSQT3FfmuQPznPnXEF4dSgh+T/PFRTHm2S5Zzs
-	 9qIB9XiTWSGq//Az0VUcXS42ULf2Tr1I2e0VxR3Vh5zdmWNqoX/hdd7A9SVL1kT55S
-	 N+hzYpbf9+UDkxnNaWJqfWVuiSa9mCNlRkitDlKWTMDdx6HSfPvPXNfTnueiBuo26H
-	 9mYC8SD6SilTw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5343eeb4973so9393357e87.2;
-        Tue, 03 Sep 2024 19:16:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUruEks/nTaoPKcLuR4KXF/d9vYQOC5VLdieJ+4nEQj6nllZZYaPQ3NM004mi285ZDIZuLN5nsYRyAO+7Wm@vger.kernel.org, AJvYcCV5qA0rKgMcLgxsJl+ywMUujadBoef1A3Gkf1/S6rQzApGFzq7niFlfoDi6fXS82gzrMQYz96gzfwCBBH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydaf0ExWTmhNPPuMNGYqN7rH37jxpiEjYdDt2WFtgXS6Baf00Q
-	ZZntyiaMdXWyQxgEh/N7WaguN8XF5ebOr5VU/qv8EkauQfyA7eIehZvpPSvCTs4rso+9wDxu83e
-	BoDOaFl7pH4GCvMU1o3QleGtn0vc=
-X-Google-Smtp-Source: AGHT+IErXPCTv6mUA7KQqm65PP55vlNSUJ0CbdcUIwEdpHVzOsM1+jrOcXUkKEh0TYLL0WzgXOqBH1NP9eIIfTeL+kI=
-X-Received: by 2002:a05:6512:3da4:b0:530:e0fd:4a97 with SMTP id
- 2adb3069b0e04-53546a55137mr12111329e87.0.1725416180049; Tue, 03 Sep 2024
- 19:16:20 -0700 (PDT)
+	s=arc-20240116; t=1725416361; c=relaxed/simple;
+	bh=gSabBWi1vveFNzLNFJpyBoEyNNb2x9QETHl00kGLtts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfwgQidQ9xwCbmbTMhJkjyWoPpUAgc1iwCJoDto6/in+h3rd+ImlKimW7YsQTqLu/8xYGAcG5RbtvoKTAVfcUqSTqXMflqncW6e6vF3yX+hXH/jGzCCfKuKfjxADojpsmraRHJEjpHUJe+eYoNCKWJJisurPa/2fU1kpWIk8lug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=azOYGspa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Hudg4wTn3S6fTCVxJXSsiGgJOJdnBhq2fGUxC3Vgq+E=; b=azOYGspawLQvfV4H2cGn1/y3TB
+	OBC/1ZgUpyR2OhYvBSQoX8xZegVkVaMVleDX12C7ZIAB7nOCGhVpgjsVvPL9301w8odnj2OjT28yo
+	vLbynUWcur7KVvVnpeSTHcc+TcgBEfZKIAxXyR+YvoSQWArda/ZUVXhvX+cZVUoFyy5d4qoyTTSrA
+	TiUoedQoOwaGZ5z0tbiiFF1M02hYCZpSn0bz0oxHKjQz7muNf9tVTtDD9lrzlLgsCojBsqS/69QpP
+	v733XjZo+P6fAWnAAKsCrAL09mgJmCr6PXP2gaP0NI0Ttr8FBbzpc5IWVXKwy2e0GGLG19GxXPCl1
+	R2gtkGyQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1slfbc-00000000D4M-2NwD;
+	Wed, 04 Sep 2024 02:18:48 +0000
+Date: Wed, 4 Sep 2024 03:18:48 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com,
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, dave@stgolabs.net,
+	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
+	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org,
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com,
+	kaleshsingh@google.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
+ refs in page flags
+Message-ID: <ZtfDiH3lZ9ozxm0v@casper.infradead.org>
+References: <20240902044128.664075-1-surenb@google.com>
+ <20240902044128.664075-7-surenb@google.com>
+ <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
+ <CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com>
+ <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902160828.1092891-1-ojeda@kernel.org> <CANiq72kV90EjHGitEVO4GQFYtQJZ_3-1rkXJnOwez7u7Ph+Z3g@mail.gmail.com>
-In-Reply-To: <CANiq72kV90EjHGitEVO4GQFYtQJZ_3-1rkXJnOwez7u7Ph+Z3g@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 4 Sep 2024 11:15:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATf7A1z38rQP5tHKb0Zp-UouW=UfqyaEd+3A3giXxRh8Q@mail.gmail.com>
-Message-ID: <CAK7LNATf7A1z38rQP5tHKb0Zp-UouW=UfqyaEd+3A3giXxRh8Q@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
- error messages
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com>
 
-On Tue, Sep 3, 2024 at 1:13=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Sep 2, 2024 at 6:09=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wr=
-ote:
-> >
-> > +if ! command -v "$@" >/dev/null; then
-> > +       echo >&2 "***"
-> > +       echo >&2 "*** pahole '$@' could not be found. pahole will not b=
-e used."
-> > +       echo >&2 "***"
-> > +       exit 1
-> > +fi
->
-> We may not want to print a warning in this case if this case/setup is
-> too common, though.
+On Tue, Sep 03, 2024 at 06:25:52PM -0700, John Hubbard wrote:
+> The more I read this story, the clearer it becomes that this should be
+> entirely done by the build system: set it, or don't set it, automatically.
+> 
+> And if you can make it not even a kconfig item at all, that's probably even
+> better.
+> 
+> And if there is no way to set it automatically, then that probably means
+> that the feature is still too raw to unleash upon the world.
 
+I'd suggest that this implementation is just too whack.
 
-
-
-I am fine with your color (in case someone wants
-to run it manually?) as long as stderr is suppressed
-in Kconfig.
-
-default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE) 2>/dev/null)
-
-
-
-
-scripts/rust_is_available.sh is very verbose, but
-we are not annoyed while running Kconfig because the
-$(success ) macro suppressed stderr.
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+What if you use a maple tree for this?  For each allocation range, you
+can store a pointer to a tag instead of storing an index in each folio.
 
