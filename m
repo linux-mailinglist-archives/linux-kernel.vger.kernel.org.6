@@ -1,174 +1,121 @@
-Return-Path: <linux-kernel+bounces-315602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057C996C4B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:03:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5843796C483
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A81F25EBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D7F28708B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92001E0B88;
-	Wed,  4 Sep 2024 17:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662FF1E0B91;
+	Wed,  4 Sep 2024 16:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTaxHHza"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZkFcD23U"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66B31DA31D;
-	Wed,  4 Sep 2024 17:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3971DA312
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469429; cv=none; b=ZIydnDbmKnJa6Hw5ITRylyhl9bqSOoqXFiRfVHWgqypY5I4StwDlD5jFIrdEPi6jhEHcVY8WXRPQcUJ9tr5GNqi9b0QIdQRCsq0DTsTwWG9wn+zl2SVSiHIUOmmwnukTyw1TJkmmF6HOMuYFx2mR2LTzpN5inh4kR4LY4lfi2JI=
+	t=1725469083; cv=none; b=Ff241zNz+zSXPV1h0Bsid8fnwuLVMbBbXoCmqWuj2nhGvDW6nXb8gngpRoMitGZ5Jn0OMSRriv9s5qYMswoner+JsJfP9kH1E7MigyQLZG0sCR0nM2TJlo/TTJP09EWaETSc9GMQMo4dsIWBW1tR5DDrgOyXqNDt9cJvzHH108A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469429; c=relaxed/simple;
-	bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IyFhX/BtuSqRowXLEQXdJR6nr0b5gXAT6wOCu/35oSuNbB5BUoB5i/A3MzufNHb4NPIuHT7LIox+UqLgxldamk8CuL/cs5u9zC0yUyyCz4SsPMrgYQ8ZI3a8SeK7Dgnr/cC31YhryLDJMMpMtbkfJv4Iyn9RQXSEUrFs4LRTl/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTaxHHza; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDBEC4CEC2;
-	Wed,  4 Sep 2024 17:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725469428;
-	bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
-	h=From:Subject:Date:To:Cc:From;
-	b=FTaxHHzaSOfcI3YLDnf/RnK9wC9qPyShM2HHxP3ePgjXB4NzyW2MkLMNNnsY+7v4Z
-	 1BqEDPvdwMr5k02sgsmIGDZzMKjOcEsh9tA142jKOFo1P8ZjN/n52sA4C0wtgY18zF
-	 5V5febs0O1ZTA3zWdh8wxr3emx0HgY+VfvCXQQ0XFPkideKAHE4KMLxvNDMJwttmeP
-	 APk3LE8irqsbcVBm3HqujP64qpo/YdVuUUvJohvWjWIzT6T3qn8/4A85zZhTf7Ye/F
-	 2jIlctaoy6DYrQlGVrAcChy6U0YmO9LTnt160G1xK9EBP6+2LceZefaqQEqp7fNoYI
-	 FD/7ShoBEL8oQ==
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2 0/3] mm: Care about shadow stack guard gap when getting
- an unmapped area
-Date: Wed, 04 Sep 2024 17:57:58 +0100
-Message-Id: <20240904-mm-generic-shadow-stack-guard-v2-0-a46b8b6dc0ed@kernel.org>
+	s=arc-20240116; t=1725469083; c=relaxed/simple;
+	bh=DHk7r5GSnoed1W++EtjusnzMP6hLR27PO9RzULp6bSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uER3D45J9UhAQZtls/8naedD8IAhGKrALzep4fYNxPx/XV66IzgQvz0Grk8Pv1yaL0+0HPIg/I+b1SCGgOGZ9YGUeVyfI1Pqh1/BN0bCRsw7pf+pi1Ge9OHzcGhHUEpOHxyWmo2AZF/3cVSYXZYQ2nD05Sm4ZCem+JAdjv9fodc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZkFcD23U; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82a2c93cdcbso208146339f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725469081; x=1726073881; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0BjtNV9LGdeLrtx3HjEExZXdynW3SKUo8isfkGbW18w=;
+        b=ZkFcD23UbQmzz56uVLwtGxEHqJfsEKAJRpCWsxNDhRNdGoNnHDInBWcvgMStkvqqLT
+         vGWHvPbAGp2HCi/w80ULULzJkO3fTfUqfCeNldUZoTDwBz2CXBEWvzma8bFTFV2PWWWD
+         fvt+6idUpOVYO8yWVj1fr2FxZD/3fQVQ670tg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725469081; x=1726073881;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0BjtNV9LGdeLrtx3HjEExZXdynW3SKUo8isfkGbW18w=;
+        b=kJtlNIECfI7tXBRNafcywaxzeqQCkpVcuLClfMLlhvciDROMsoQTY3mwrotmzOBdSd
+         LkVXpAYMs0O7de7X9Ci+cYxaeva23crUO5aZd81CkZF2jHGdJy1EtTHstGOByOfPW8nD
+         Qc1ZFpC/+einL2gNqrt/lCzNoe9hLybCPbzBS3BBO2LgTSFE6BcTm+QVF7++YhOhfpPO
+         +0smwtVR3BWWpczr3w2NymmxRtQ0gN5AXMeFkvXeHTYYyzorreqicvmMQ1b8xFvNRVax
+         j2hNpB110rAI25ZqvGeZQe5ukXW/N3BmWeow1ujORwom7Qh/SKUvCCV99qHqMSi+ll2v
+         VF8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVyancdpvj6d1lp4ZAihSRznXkMLP0s4KMnPIVfhgqgKlCj16RKkJ2+Ft+c1lY/Jxr6xJjJZcDjGb88OjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHQ2dlW8cS1Bh1D43m4+fLb3Gja5aHLCUJG056F8roEBT71es7
+	fRm1I+Y6HD4lVdF0NkCU6vceug21ad+PrmadVhRLp6gFiFvcEyeKmA1r2ApxbsCMHrrME/YFc3f
+	k
+X-Google-Smtp-Source: AGHT+IEHnyuMkq3vfvdpdQdsRFrPuM9MRgs0smmPFDdJYEnrA9a3L7tXs+vVEffdLBBwcn6VDhmJcw==
+X-Received: by 2002:a05:6e02:160e:b0:382:64d9:1cba with SMTP id e9e14a558f8ab-39f4f55f3d9mr173243655ab.19.1725469080917;
+        Wed, 04 Sep 2024 09:58:00 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3afaf411sm37860525ab.20.2024.09.04.09.58.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 09:58:00 -0700 (PDT)
+Message-ID: <3b7316db-42e6-488c-affb-297b33e08bf6@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 10:57:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: futex: Fix missing free in main
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, tglx@linutronix.de
+Cc: mingo@redhat.com, shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240904025559.7356-1-zhangjiao2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240904025559.7356-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJeR2GYC/4XNQQ6CMBCF4auQrh1TWknAlfcwLEpnLA3Skimih
- nB3Kx7A5f+S+WYVidhTEudiFUyLTz6GHOpQCNub4Ag85hZKqpOstYRxBEchH1lIvcH4hDQbO4B
- 7GEaoOlt1NUpqKhTZmJhu/rX71zZ379Mc+b2/W8rv+pMbqf7ISwkSGmPR6LrTiPoyEAe6HyM70
- W7b9gEGbzW4ywAAAA==
-To: Richard Henderson <richard.henderson@linaro.org>, 
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
- Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, 
- Max Filippov <jcmvbkbc@gmail.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>, 
- Mark Brown <broonie@kernel.org>, 
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3075; i=broonie@kernel.org;
- h=from:subject:message-id; bh=bULBmEyxTuexdIoDddURy1JjGZM6ZRxX3SqU1u9O/JQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm2JLn9sSIWk3S99ZcZ0LBwVX5IdsXF8juyr4Cy5E1
- KFq4s/aJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtiS5wAKCRAk1otyXVSH0LHiB/
- 9nkgQUOVTlUbAmWo/1GWPj3aVUvDcv0pj9B7z3NcU9N9R9JzbgMMFLrWdQk5jwpTGfHHXkRNANVuvF
- yKig8+IRVvSpGuFpKpsLmegPvrQX1McoVCR659thVX2oLIf6wpdg0LRsBXocswHT36RDNsVfpdTsJM
- X1S72+e1Jt9HIYt4so8I0Zdga/Mt9VqrIg4QrfUtNDzNMYv7a8/AtVY7saHIjeiEwSOdKShaIlDBPV
- aMyaeN6XQhDtvIJQopnxBZsr+uDpt9WM/iq/kDuIa1U6F5kpoObcPaMG4EfjQ3fobknmo/jMH0lBSh
- O0wNT8iXCGWSoD2Q3fN3Rp0pOZQAOP
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-As covered in the commit log for c44357c2e76b ("x86/mm: care about shadow
-stack guard gap during placement") our current mmap() implementation does
-not take care to ensure that a new mapping isn't placed with existing
-mappings inside it's own guard gaps. This is particularly important for
-shadow stacks since if two shadow stacks end up getting placed adjacent to
-each other then they can overflow into each other which weakens the
-protection offered by the feature.
+On 9/3/24 20:55, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> Free string allocated by asprintf().
 
-On x86 there is a custom arch_get_unmapped_area() which was updated by the
-above commit to cover this case by specifying a start_gap for allocations
-with VM_SHADOW_STACK. Both arm64 and RISC-V have equivalent features and
-use the generic implementation of arch_get_unmapped_area() so let's make
-the equivalent change there so they also don't get shadow stack pages
-placed without guard pages. The arm64 and RISC-V shadow stack
-implementations are currently on the list:
+How did you find this problem? Include the details in
+the change log - The tool and output from the tool.
 
-   https://lore.kernel.org/r/20240829-arm64-gcs-v12-0-42fec94743
-   https://lore.kernel.org/lkml/20240403234054.2020347-1-debug@rivosinc.com/
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>   tools/testing/selftests/futex/functional/futex_requeue_pi.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/futex/functional/futex_requeue_pi.c b/tools/testing/selftests/futex/functional/futex_requeue_pi.c
+> index 215c6cb539b4..fb2dab46087f 100644
+> --- a/tools/testing/selftests/futex/functional/futex_requeue_pi.c
+> +++ b/tools/testing/selftests/futex/functional/futex_requeue_pi.c
+> @@ -416,5 +416,8 @@ int main(int argc, char *argv[])
+>   	ret = unit_test(broadcast, locked, owner, timeout_ns);
+>   
+>   	print_result(test_name, ret);
+> +	if (strlen(test_name) > strlen(TEST_NAME))
+> +		free(test_name);
 
-Given the addition of the use of vm_flags in the generic implementation
-we also simplify the set of possibilities that have to be dealt with in
-the core code by making arch_get_unmapped_area() take vm_flags as
-standard. This is a bit invasive since the prototype change touches
-quite a few architectures but since the parameter is ignored the change
-is straightforward, the simplification for the generic code seems worth
-it.
+Why not set a flag to determine if test_name needs freeing
+instead of calling strlen() twice?
 
-Changes in v2:
-- Add comment to stack_guard_placement()
-- Build fixes for xtensa and MIPS.
-- Link to v1: https://lore.kernel.org/r/20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org
+> +
+>   	return ret;
+>   }
 
----
-Mark Brown (3):
-      mm: Make arch_get_unmapped_area() take vm_flags by default
-      mm: Pass vm_flags to generic_get_unmapped_area()
-      mm: Care about shadow stack guard gap when getting an unmapped area
-
- arch/alpha/kernel/osf_sys.c       |  2 +-
- arch/arc/mm/mmap.c                |  3 ++-
- arch/arm/mm/mmap.c                |  7 ++---
- arch/csky/abiv1/mmap.c            |  3 ++-
- arch/loongarch/mm/mmap.c          |  5 ++--
- arch/mips/mm/mmap.c               |  5 ++--
- arch/parisc/kernel/sys_parisc.c   |  5 ++--
- arch/parisc/mm/hugetlbpage.c      |  2 +-
- arch/powerpc/mm/book3s64/slice.c  | 10 ++++---
- arch/s390/mm/mmap.c               |  4 +--
- arch/sh/mm/mmap.c                 |  5 ++--
- arch/sparc/kernel/sys_sparc_32.c  |  2 +-
- arch/sparc/kernel/sys_sparc_64.c  |  4 +--
- arch/x86/include/asm/pgtable_64.h |  1 -
- arch/x86/kernel/sys_x86_64.c      | 21 +++------------
- arch/xtensa/kernel/syscall.c      |  3 ++-
- include/linux/sched/mm.h          | 27 +++++++------------
- mm/mmap.c                         | 55 +++++++++++++++++++--------------------
- 18 files changed, 75 insertions(+), 89 deletions(-)
----
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-change-id: 20240830-mm-generic-shadow-stack-guard-5bc5b8d0e95d
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+thanks,
+-- Shuah
 
