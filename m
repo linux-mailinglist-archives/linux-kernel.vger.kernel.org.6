@@ -1,333 +1,263 @@
-Return-Path: <linux-kernel+bounces-315513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5026C96C38C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA1896C395
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745851C22191
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6CD1F265F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9FD1DEFF4;
-	Wed,  4 Sep 2024 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9DD1E0080;
+	Wed,  4 Sep 2024 16:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hyfT67Dm"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2089.outbound.protection.outlook.com [40.107.102.89])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GImkfraZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DB01DA619;
-	Wed,  4 Sep 2024 16:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466250; cv=fail; b=qI8RvMrXrpwliof295h7/CPxPXbL/I01OhNJNqj/1FfZvT1xBX2O+hwBvakYRXS0Tw1s4FYLVFLbIag6MeE2e+uo8S5XpAqaCBtBES7sfwJWQV1hXDLiHnxk23DDwLkwOxuLNfatLQ8C/RU4a9SYkNXna1JLofCjCJftLsyHcJg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466250; c=relaxed/simple;
-	bh=AQdxFW5TlxrzJWtMbqRaY/aQjTLGYkt/YYoPZcj423A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M0XH6hGtSZNdG0wtHpOmM1aXtP2yrP2hUDK2aIW/19wnbVsrCjCIw3yyl25qpaN3xC05x0vS4gL1MJ4Cni5wMndVbt332p7xaJrrvyDxaGfKuz/m7cYdjYcy8sEAUC3zxNEFXmlN0U+uXnB2/nrc90qFWEMByoSlt4Z2X6zvm4s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hyfT67Dm; arc=fail smtp.client-ip=40.107.102.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eZ6VLL+Llcq4MziprOqu1BLUF/qGme5I8jCcN6xLT1sL7Wu+WtsJZzc9QrbQqvSO9j+/YCjf33Qi0EGZ0zsOnqMgp6JdQ6bL3IXFHzsMHuOqoUyMe0WgNgjHse0Trbagbf9xqprByQLm/xvG4m5KT7rgVGFy2m7u8L+wL6Nl7jKiocbC0Wj2G3IZsmDb/zcul75O2bTclreGcArf+j+YG3coaqh5Yj/tZmxhONJxl0UfjiBhY3rPispWvE30kCKDgnzhzc65oB4gAL06Gb8F7K7l3eVcH7s7eQvgMBsOfuAOAf2uc9u2sLr5Yw6N+MfnF/+R1Ww2nnWVlgUkCnfw1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pC5AhbGdkyjUzZjgcYjqmmUIqgHyc6diSEKMgnxxZuw=;
- b=gCYra3iQo8TrNO7AhiNYn1qOau79pi05cxh+QOMnJas4JebPaEouDmhqZNZMAyGSwFlMzrYdQ+FF5goJfIOSpDjPIrFtQwxqK1a8+D8bg6souw8x95FcqXi1lUhq5Y1XkR22ibzPE7Dw8XoiGYR5ydDWMudfAFVYjeIMXAgGpzS68k3PZ7e21Pblzxg/7ZU+mYgZAe3TpL0SCGyPXK7ZlX/TbaIfphqt+RvBvjzRaGPuhVEHRTYo8PZBjqh0VOJB97PcbjIhQ3kKNzeh5+hx+hUfF/h6ONmBEdGpTa6h/G6lSBGsOsjZ3yzRbt0Xn/y7TjNJW/nCE2nZ3hKlMVl6iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pC5AhbGdkyjUzZjgcYjqmmUIqgHyc6diSEKMgnxxZuw=;
- b=hyfT67Dmyb/OeON6SBgyrzx1O4zbRraiJGLqOxVpyYqQ+XtN8NnnFXczO93mALLVwj2jRq2Kz4q1kvkFgNxaycs+apxUuLW2E75uiejKCWv7nuHtTyRnl47nqAp0L97edXzjljYKDQfkedU/mTcUiL/mrYzOhoXTViA+bw6x5uA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
- by PH7PR12MB7940.namprd12.prod.outlook.com (2603:10b6:510:275::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Wed, 4 Sep
- 2024 16:10:44 +0000
-Received: from PH0PR12MB7982.namprd12.prod.outlook.com
- ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
- ([fe80::bfd5:ffcf:f153:636a%3]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 16:10:44 +0000
-Message-ID: <02af4fa0-cf90-4d26-b74b-dc436dc8c9b2@amd.com>
-Date: Wed, 4 Sep 2024 09:10:40 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/3] selftests: lan743x: Add testfile for lan743x
- network driver
-To: Mohan Prasad J <mohan.prasad@microchip.com>, netdev@vger.kernel.org,
- davem@davemloft.net, kuba@kernel.org
-Cc: shuah@kernel.org, bryan.whitehead@microchip.com,
- UNGLinuxDriver@microchip.com, edumazet@google.com, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- horms@kernel.org, brett.creeley@amd.com, rosenp@gmail.com
-References: <20240903221549.1215842-1-mohan.prasad@microchip.com>
- <20240903221549.1215842-2-mohan.prasad@microchip.com>
-Content-Language: en-US
-From: Brett Creeley <bcreeley@amd.com>
-In-Reply-To: <20240903221549.1215842-2-mohan.prasad@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR07CA0118.namprd07.prod.outlook.com
- (2603:10b6:5:330::31) To PH0PR12MB7982.namprd12.prod.outlook.com
- (2603:10b6:510:28d::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C35C1DAC4A;
+	Wed,  4 Sep 2024 16:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725466295; cv=none; b=p3jQyfwFRPisvhv+qzonAQgpuSsAo2oeCpM8aFyP20XPb/1OKmoPw/V6Mw1bY9m7GBX4Fb8V2gCVSaQ7+nboDXlLQ78mbFqIl+Y8jasaNsDexQnPGALmdsR6Xgwt68W+PJfa4jy+n4UqmLSbkxtBm3F2X5rMKIlG1lUPvHaBYq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725466295; c=relaxed/simple;
+	bh=wY8MEtsxZvN4Mzjntd70BSHgqkRNh05pCy8yVjjzynQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c7VYXHR2vVGdrW9/Bi+G4kwKlmZgqVt2HVuNs7JxH4mVyxxSozR7fTMRdtxX7fJVkb6i8x6ZacLNfvYGLkP+Fug/0WEwKAnFfO/ZlH0llfxF/2FbSu3i29sg7ZNG+fRbyPfNKHkz/95o+7B2D3op9cE8ScliCV94aDten4RSHoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GImkfraZ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725466293; x=1757002293;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wY8MEtsxZvN4Mzjntd70BSHgqkRNh05pCy8yVjjzynQ=;
+  b=GImkfraZiw5fvFQDdOTOV3n14RxYiAYvWsej6YoZbSZg8hQ7BMmFa4Hn
+   sEtw3THgMj9jTp/DIr+eycYxsi31FS3c8WnazJdk72EE/qwS9B3ZU6Hdq
+   B0nFnnqd+84gDHg4yycq1xwnLn6c25Uy1ikOAHVcHTGQxsz6PeIwe51yc
+   Rup15X7lrQbicr9RJHw4FnaN7tkvnLTX7D07nECMHCI9yyVz42k702lt6
+   /2ofwuApzipSXFqPaTD/8CrNYJ0CI7oKxRNCWft7N61MKEHcKgnluFtFg
+   BDAAi2X2uJ+c01oRBzlJsCokYiGZhOPFJkNTSY6yH/8MDZCjkhKeTtp1a
+   Q==;
+X-CSE-ConnectionGUID: H1G/B+1tQ3GK3nH3ORpeGw==
+X-CSE-MsgGUID: n0W3HmbGSUWJzDNTxNLGNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27897984"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="27897984"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 09:11:32 -0700
+X-CSE-ConnectionGUID: v1tYzAk2QeOvgFAQTdafWw==
+X-CSE-MsgGUID: Da7JnitvTCunJasxl+eu6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="69724824"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 04 Sep 2024 09:11:28 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1slsbO-0008Ip-0c;
+	Wed, 04 Sep 2024 16:11:26 +0000
+Date: Thu, 5 Sep 2024 00:10:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
+	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <202409042317.CRCMb6bs-lkp@intel.com>
+References: <20240903202541.430225-2-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|PH7PR12MB7940:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef3ef3c6-c3ed-487f-b831-08dcccfc213e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SkhzL1FSU2JTQmkxS0VBdWpCL2xvc0NlS1FiWksvY2dkSFZwU3NxL3lOQUNR?=
- =?utf-8?B?VXhPQW51UWRSUzhDMXVPNTl3amp6UUp1bU9nVVFkR2kxRlhCcTRycHRSQ2ky?=
- =?utf-8?B?Z2FKLy84WFBkN1hHaWFqUEtlR0s0bGdnQS9Ob2VHTDFkdWdZek1tUGdlcTBM?=
- =?utf-8?B?RDlTNFBvTDExa1E0WUc5dnllZDc5TDk4dXRJMkVEaWUwQ1dxUXJVV1pmTEto?=
- =?utf-8?B?YUM0NVhpb0hqQjZFVU9HV2xBcUtXM0ZDL2VrKzd4L1Q3U0xlUTkvbEFOa0Ru?=
- =?utf-8?B?elh5elc4SytxWDdmaDNsSWRKbzRhMGNKSmZ2MmllVHdOOFZxZnFWcXZ5SEtU?=
- =?utf-8?B?ZTZZNFR1K2tNTEE5MEltR2tkcWNGNWtRaExZelYvaEtua1BmeDVZVHVFYlpS?=
- =?utf-8?B?Wm5CSjhCWXUvcTNrRUdXNENtLzlXM3NIYXpDbmpmbE0yNWNDZ1IzbVVsSEE0?=
- =?utf-8?B?RzBXYVBQOUo5ems5ZHY1MjR5OVNxZUtubWo4c1RKVHBxMVVQSkk2d2NDTThI?=
- =?utf-8?B?UWJZd09aZTh2L1FwQ2tvejJBcVlSN2czd29iTER3Uy9aNFRNSmVnNVgvSnhE?=
- =?utf-8?B?YmVqZFJtQzQ5dnlvaE5TeTRTMlo2cmdKQkp1SFBmTVB1UlM2cXlHbjN3UUND?=
- =?utf-8?B?ZFVZWTFZRko5dEJYYTlkMytpZUNFSExScS93NGorYUc5dUZESEYzQmc4R0Zw?=
- =?utf-8?B?dFd3MG5ER1JVUmhwbC9IN2Y1bGZubi9nZkNRMzRHaUxMbDRLd2JGK1JNQVZS?=
- =?utf-8?B?QTJWS3lmTnZ3SXlXN0lkVjZ0MjQzTFRGbDU1ZWVpci9QclZJeTRXRlcyZkxO?=
- =?utf-8?B?ZXZZNWxkRERsamV1UG1DK1ppTmpRR0JDbVl0NXMyMnp5Mk9RU3lIYTBHR1VZ?=
- =?utf-8?B?WXlzdm1zajR0Z1NwMldnRk1WTkMwVjlwZkdNNFZtbEExQTl1MUlSbjlaVWRi?=
- =?utf-8?B?NWxScHVvb3Z1RE5NZ3ZvdjgyNzFyak1Oakp0U25vNS9kdWVzdXVrcUxMTFpD?=
- =?utf-8?B?NHVxUWs5NzFsS3FBUFZSZnNQTElieFBTVzZuSHE0SW9hb1JsRy9JQzJDcGxs?=
- =?utf-8?B?MjVPNkoxOG1oVGxvRDl1LzVqamwxWTZBd1kzZzZTZU50Q0tJaEx2d0RUNDEx?=
- =?utf-8?B?c3V3V3lQcktzOVgrV1lRZGZPOUxVZ01kMVU5MXFoSTk1MWFjdFh6Ty83UjJX?=
- =?utf-8?B?a3dZQytvaEJIcStsUUxhNEU5SDFPREd5a2daQU1pejl1SFJ4S3Rxdy95QTBt?=
- =?utf-8?B?SDVzdk5CV1NrWEZEWVVlSXRNcmJ1alJabCsrTVRGYXJzRWpQR09oaDZjQmdS?=
- =?utf-8?B?ZFhCQ0NNT25sY0hmMDZ0UUU4TTRFR21lRnhQVk9WY1NMMDM1eGxFc3BKL2Yx?=
- =?utf-8?B?MFFZNlQzd0t0YzA2bGQ3QjVtT2wyb3hIWCswWjFvRU5rM0RqbTVhYTVFRWhP?=
- =?utf-8?B?SXFKRmR4bUVNcmUvMTc3YllaTytKNTUwclZRRFJDR0V1alVORFFON3RQdWxB?=
- =?utf-8?B?aFkrck96ZTdpVTBJSnAwL3E2S29KYWt6SC9xckxVK2pDRUljcmR6aTZXZmhz?=
- =?utf-8?B?eml3ci9ybk40TklEMHhuU0lhN1F2VnRvUjBuSkhPZExaa1UzblZqRFVEQ3VH?=
- =?utf-8?B?STlCQVRHOU5kbld6VWxDaWhYcUJyQVh0SUNoUWozMTRGdEErTk5Lblo5c0pw?=
- =?utf-8?B?UlV2dmhIdnZWcVo3T3I1L0J0MjBUTWgwNVg2ZjMvYlExRmhlL2RvZ1MreFhQ?=
- =?utf-8?B?OVNmMVlTWXJHaTlWLytYTnB0dFliVjhiazV4YXdtZytXTzRGaHRHek9obE91?=
- =?utf-8?B?RjZlamttdGZCc2V6d0pCQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eXdXSTk0bGVxdkVCcENreFo5RDFueWxrQmpRR2E3L2U1UHkwNERHcWkrdm1h?=
- =?utf-8?B?cjhFeUhYNlAyaEh0NWFtQmpMbFN6R09tbkhvcW45SmNEOHdLY1E5YVNOdnNu?=
- =?utf-8?B?UmMxSzJtbTZnS0NFN3R3ZnNkZXE1STJ5TUE5VXI5TVRaTEFHajZMd2xCVDNX?=
- =?utf-8?B?cjNzNFVKRytwN3JXNVRZTUhJYVQzbXl3UWxGaVFwVnlObWc4YUd2VVNtNWhv?=
- =?utf-8?B?YTYycFRKdkJnbFNCWXE0QkJFQlVzNTd2RkhyQ3VKanRwbk5kU0ovN3NKR29R?=
- =?utf-8?B?OTRNNENoUTF6KzEwUkNOSUhuVWUyY3czRmd5MVZ4d1h3VjJKOFVFM0FsZjRF?=
- =?utf-8?B?TDcwZnl2VkppVjFjQVNibUhkaDM3YXhkRE9jNUVmK1ZDREx1cnQ1NDVZcEZL?=
- =?utf-8?B?aENPU2l3cC84ckoxUkVCR085M2VVMk5mTkZuTHA3T29LMUdCT0NBK1FsbDEy?=
- =?utf-8?B?MWJXd1d5S0tncFRFZW9Oa3dWMnZIZkczR2NhTVE4ZG5LSytqcm5sazVaNXhv?=
- =?utf-8?B?YkRpNlUvVmc1MTZwcW5FdGgyMm14aVo4SDJub21PRWNMKzhZcUhOckwwVjdl?=
- =?utf-8?B?TGJNV200U2l6WVZhSE15YUs0T1hRb3BaTEVVeVFHWm0yYXd6cnRnSjROSG14?=
- =?utf-8?B?UU9mRFRqWndxemIxQXh0S0I2dWVqamE1ZmZ1MW4yWm5QbFNrbmVtUlRIZExR?=
- =?utf-8?B?aENCM0pOWHR0MG1oWGxyLys4NkNDOEVGM3JCL04xRUxZcUtsZkhxdGVCRGJ1?=
- =?utf-8?B?NmZLdmsvQjJBUURLSHVpc2FLVThLbURmVWJWVGMvd3EvTXRzZVFHYXdKQ0xK?=
- =?utf-8?B?bUt6bGRZK3ZUUDlzYW0yczhQcjhGd2h6eDJGSmZYUVFaSWR0VDNFRjNEYUpH?=
- =?utf-8?B?amJ6NGs1S1E4WlZuM2ZSUWFGRVUyNEJSbFRXZk9NcW1DdlVybHpjYnZsejJy?=
- =?utf-8?B?YUJPQ0JDcGd3U1k2a0pLandFYzJYeFlVNS9zZk04U0JXd0I4VDdCV2hKQjZw?=
- =?utf-8?B?cmpJZ1gxMEhlazBDREh6T3F0aTdQTm8vNGc2MThQSXQrd1hJZlBjU08vUng0?=
- =?utf-8?B?a2VEdTVWMFBab2xCMHB0Q1MvTVlaVDlyV1JyRk9pN3lMZ1o0N01rTWRVeS9G?=
- =?utf-8?B?TXNqTlpNT1hDdm1IMm9uOWoyOVJObDZ3SHdBVmdVOUh3MVR6SHp6VlFEOGwy?=
- =?utf-8?B?WUV3aHFLS0ZuTXk5TjA5YVNsNTlmZllSQ2piSENSSXJhcXFhSHc0T0JoekdB?=
- =?utf-8?B?OVBYQzZyNVMzTVhHbGhScWJXcTVMOTVGaGszemF1N0o5amUremhvSFJVQWg2?=
- =?utf-8?B?VjhuT1orRHIrQlFKd3dNUDF0a1hWVkp3d2JndGxVQVROYlJaQnUrSTZVVFVx?=
- =?utf-8?B?RmpoTE5RVHU5R1J6Q05Ha293TWcxM3FNQnF0NHRYRHZNQk1LY2hudU1LRmtL?=
- =?utf-8?B?WHZiTVFINWk2d3VYQ1A0WUd5bjByeVNydWZrM3FXTm1IMWFlVFpOTVlNbGsx?=
- =?utf-8?B?SU1XZGdvMFE4bzBraE5HNTBtZXhNZGZ4VWlVUTRUcThZcW5ndWN0VHpBRVJH?=
- =?utf-8?B?SW5zTkNMbnNBTzFkRENWbTRMdlpzNnU4TVlQWGtaQmdqdlJGY2JkZDQrRTdi?=
- =?utf-8?B?ZCtJSTdFelRrV3VRWVdMRm5qM05qMCsrMkllT0dCbEh6K0ZnNHFtZmNmdkhp?=
- =?utf-8?B?TWZ6RDNTbk43RURSZ3VycXcxb2xWaWZ1dmNrdkJhSzNHNjkwak9Dd1RwVEVT?=
- =?utf-8?B?VnVTNFAyZTRHbThtQkRKTVRXQ05NZ2hWUUNEWGtwUEdISWI0QjVRVkZSVERK?=
- =?utf-8?B?SnRML1hyNUcvYmhmOTJVN2R0U2RrN0UwWU1RZjZEdm92MEdZOU9ySk15Q2RR?=
- =?utf-8?B?Umw0QytZeXhpQjZOZk41WVQ3aFJBdUR6cmhJaWNpbjRRSTk5UkNBMmN5RDZE?=
- =?utf-8?B?cEpiS0tZUTZrOTdORnFJQk1Ha3hNanRvdmppZEtyK29Od3pLM2dma3Q2UnNi?=
- =?utf-8?B?SlVBMDlLR0ZOczF0VlljUUlTUGhtSkRYRi9KcDYyTnNBYmM0dTllZ3VrSURk?=
- =?utf-8?B?OTQ3empLWVV2cGVZekYwRlJ1dCtPSEFSa3p5QUFLNjNhdEUxb1RFQlEwTWsx?=
- =?utf-8?Q?jaCQM/w0AMnvSsBZ9wkMh9Szn?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef3ef3c6-c3ed-487f-b831-08dcccfc213e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 16:10:44.3458
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Z+CN/D14Ct1OM9ihmggEme80Yu9Q6fJadswogj+y0En/U5LGuGhKzheBKugU1W8KlYqLvTKlMKXB0FmSvSsEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7940
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903202541.430225-2-adrian.larumbe@collabora.com>
+
+Hi Adrián,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on linus/master v6.11-rc6 next-20240904]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-introduce-job-cycle-and-timestamp-accounting/20240904-042645
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240903202541.430225-2-adrian.larumbe%40collabora.com
+patch subject: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp accounting
+config: x86_64-buildonly-randconfig-002-20240904 (https://download.01.org/0day-ci/archive/20240904/202409042317.CRCMb6bs-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409042317.CRCMb6bs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409042317.CRCMb6bs-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'runnable' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'idle' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'waiting' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'has_ref' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'in_progress' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'stopped_groups' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'mem' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'input' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'output' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'input_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'output_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'gpu_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'ref' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'gt' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'sync64' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'bo' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'offset' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'kmap' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'lock' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'id' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'seqno' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'last_fence' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'in_flight_jobs' description in 'panthor_queue'
+>> drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'slots' description in 'panthor_queue'
+>> drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'slot_count' description in 'panthor_queue'
+>> drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'profiling_seqno' description in 'panthor_queue'
+>> drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Function parameter or struct member 'profiling_slot' not described in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'size' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'latest_flush' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'end' description in 'panthor_job'
+>> drivers/gpu/drm/panthor/panthor_sched.c:810: warning: Excess struct member 'profile_slot' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:1731: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:1731: warning: Function parameter or struct member 'events' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:2623: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_mmu_fault'
 
 
+vim +494 drivers/gpu/drm/panthor/panthor_sched.c
 
-On 9/3/2024 3:15 PM, Mohan Prasad J wrote:
-> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
-> 
-> 
-> Add testfile for lan743x network driver.
-> Testfile includes the verification of status of autonegotiation.
-> Ksft modules and ethtool are used for the testing.
-> net/lib libraries are included for testing.
-> Add the __init__.py file.
-> Include /microchip/lan743x as a target in Makefile.
-> Updated MAINTAINERS list.
-> 
-> Signed-off-by: Mohan Prasad J <mohan.prasad@microchip.com>
-> ---
->   MAINTAINERS                                   |  2 +
->   tools/testing/selftests/Makefile              |  2 +-
->   .../drivers/net/hw/microchip/lan743x/Makefile |  7 +++
->   .../net/hw/microchip/lan743x/lan743x.py       | 51 +++++++++++++++++++
->   .../hw/microchip/lan743x/lib/py/__init__.py   | 16 ++++++
->   5 files changed, 77 insertions(+), 1 deletion(-)
->   create mode 100644 tools/testing/selftests/drivers/net/hw/microchip/lan743x/Makefile
->   create mode 100755 tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
->   create mode 100644 tools/testing/selftests/drivers/net/hw/microchip/lan743x/lib/py/__init__.py
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index baf88e74c..461f94ae0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14960,10 +14960,12 @@ F:    net/dsa/tag_ksz.c
-> 
->   MICROCHIP LAN743X ETHERNET DRIVER
->   M:     Bryan Whitehead <bryan.whitehead@microchip.com>
-> +M:     Mohan Prasad J <mohan.prasad@microchip.com>
+de85488138247d Boris Brezillon 2024-02-29  397  
+de85488138247d Boris Brezillon 2024-02-29  398  	/** @ringbuf: Command stream ring-buffer. */
+de85488138247d Boris Brezillon 2024-02-29  399  	struct panthor_kernel_bo *ringbuf;
+de85488138247d Boris Brezillon 2024-02-29  400  
+de85488138247d Boris Brezillon 2024-02-29  401  	/** @iface: Firmware interface. */
+de85488138247d Boris Brezillon 2024-02-29  402  	struct {
+de85488138247d Boris Brezillon 2024-02-29  403  		/** @mem: FW memory allocated for this interface. */
+de85488138247d Boris Brezillon 2024-02-29  404  		struct panthor_kernel_bo *mem;
+de85488138247d Boris Brezillon 2024-02-29  405  
+de85488138247d Boris Brezillon 2024-02-29  406  		/** @input: Input interface. */
+de85488138247d Boris Brezillon 2024-02-29  407  		struct panthor_fw_ringbuf_input_iface *input;
+de85488138247d Boris Brezillon 2024-02-29  408  
+de85488138247d Boris Brezillon 2024-02-29  409  		/** @output: Output interface. */
+de85488138247d Boris Brezillon 2024-02-29  410  		const struct panthor_fw_ringbuf_output_iface *output;
+de85488138247d Boris Brezillon 2024-02-29  411  
+de85488138247d Boris Brezillon 2024-02-29  412  		/** @input_fw_va: FW virtual address of the input interface buffer. */
+de85488138247d Boris Brezillon 2024-02-29  413  		u32 input_fw_va;
+de85488138247d Boris Brezillon 2024-02-29  414  
+de85488138247d Boris Brezillon 2024-02-29  415  		/** @output_fw_va: FW virtual address of the output interface buffer. */
+de85488138247d Boris Brezillon 2024-02-29  416  		u32 output_fw_va;
+de85488138247d Boris Brezillon 2024-02-29  417  	} iface;
+de85488138247d Boris Brezillon 2024-02-29  418  
+de85488138247d Boris Brezillon 2024-02-29  419  	/**
+de85488138247d Boris Brezillon 2024-02-29  420  	 * @syncwait: Stores information about the synchronization object this
+de85488138247d Boris Brezillon 2024-02-29  421  	 * queue is waiting on.
+de85488138247d Boris Brezillon 2024-02-29  422  	 */
+de85488138247d Boris Brezillon 2024-02-29  423  	struct {
+de85488138247d Boris Brezillon 2024-02-29  424  		/** @gpu_va: GPU address of the synchronization object. */
+de85488138247d Boris Brezillon 2024-02-29  425  		u64 gpu_va;
+de85488138247d Boris Brezillon 2024-02-29  426  
+de85488138247d Boris Brezillon 2024-02-29  427  		/** @ref: Reference value to compare against. */
+de85488138247d Boris Brezillon 2024-02-29  428  		u64 ref;
+de85488138247d Boris Brezillon 2024-02-29  429  
+de85488138247d Boris Brezillon 2024-02-29  430  		/** @gt: True if this is a greater-than test. */
+de85488138247d Boris Brezillon 2024-02-29  431  		bool gt;
+de85488138247d Boris Brezillon 2024-02-29  432  
+de85488138247d Boris Brezillon 2024-02-29  433  		/** @sync64: True if this is a 64-bit sync object. */
+de85488138247d Boris Brezillon 2024-02-29  434  		bool sync64;
+de85488138247d Boris Brezillon 2024-02-29  435  
+de85488138247d Boris Brezillon 2024-02-29  436  		/** @bo: Buffer object holding the synchronization object. */
+de85488138247d Boris Brezillon 2024-02-29  437  		struct drm_gem_object *obj;
+de85488138247d Boris Brezillon 2024-02-29  438  
+de85488138247d Boris Brezillon 2024-02-29  439  		/** @offset: Offset of the synchronization object inside @bo. */
+de85488138247d Boris Brezillon 2024-02-29  440  		u64 offset;
+de85488138247d Boris Brezillon 2024-02-29  441  
+de85488138247d Boris Brezillon 2024-02-29  442  		/**
+de85488138247d Boris Brezillon 2024-02-29  443  		 * @kmap: Kernel mapping of the buffer object holding the
+de85488138247d Boris Brezillon 2024-02-29  444  		 * synchronization object.
+de85488138247d Boris Brezillon 2024-02-29  445  		 */
+de85488138247d Boris Brezillon 2024-02-29  446  		void *kmap;
+de85488138247d Boris Brezillon 2024-02-29  447  	} syncwait;
+de85488138247d Boris Brezillon 2024-02-29  448  
+de85488138247d Boris Brezillon 2024-02-29  449  	/** @fence_ctx: Fence context fields. */
+de85488138247d Boris Brezillon 2024-02-29  450  	struct {
+de85488138247d Boris Brezillon 2024-02-29  451  		/** @lock: Used to protect access to all fences allocated by this context. */
+de85488138247d Boris Brezillon 2024-02-29  452  		spinlock_t lock;
+de85488138247d Boris Brezillon 2024-02-29  453  
+de85488138247d Boris Brezillon 2024-02-29  454  		/**
+de85488138247d Boris Brezillon 2024-02-29  455  		 * @id: Fence context ID.
+de85488138247d Boris Brezillon 2024-02-29  456  		 *
+de85488138247d Boris Brezillon 2024-02-29  457  		 * Allocated with dma_fence_context_alloc().
+de85488138247d Boris Brezillon 2024-02-29  458  		 */
+de85488138247d Boris Brezillon 2024-02-29  459  		u64 id;
+de85488138247d Boris Brezillon 2024-02-29  460  
+de85488138247d Boris Brezillon 2024-02-29  461  		/** @seqno: Sequence number of the last initialized fence. */
+de85488138247d Boris Brezillon 2024-02-29  462  		atomic64_t seqno;
+de85488138247d Boris Brezillon 2024-02-29  463  
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  464  		/**
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  465  		 * @last_fence: Fence of the last submitted job.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  466  		 *
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  467  		 * We return this fence when we get an empty command stream.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  468  		 * This way, we are guaranteed that all earlier jobs have completed
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  469  		 * when drm_sched_job::s_fence::finished without having to feed
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  470  		 * the CS ring buffer with a dummy job that only signals the fence.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  471  		 */
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  472  		struct dma_fence *last_fence;
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  473  
+de85488138247d Boris Brezillon 2024-02-29  474  		/**
+de85488138247d Boris Brezillon 2024-02-29  475  		 * @in_flight_jobs: List containing all in-flight jobs.
+de85488138247d Boris Brezillon 2024-02-29  476  		 *
+de85488138247d Boris Brezillon 2024-02-29  477  		 * Used to keep track and signal panthor_job::done_fence when the
+de85488138247d Boris Brezillon 2024-02-29  478  		 * synchronization object attached to the queue is signaled.
+de85488138247d Boris Brezillon 2024-02-29  479  		 */
+de85488138247d Boris Brezillon 2024-02-29  480  		struct list_head in_flight_jobs;
+de85488138247d Boris Brezillon 2024-02-29  481  	} fence_ctx;
+6f64890b41a576 Adrián Larumbe  2024-09-03  482  
+6f64890b41a576 Adrián Larumbe  2024-09-03  483  	/** @profiling_info: Job profiling data slots and access information. */
+6f64890b41a576 Adrián Larumbe  2024-09-03  484  	struct {
+6f64890b41a576 Adrián Larumbe  2024-09-03  485  		/** @slots: Kernel BO holding the slots. */
+6f64890b41a576 Adrián Larumbe  2024-09-03  486  		struct panthor_kernel_bo *slots;
+6f64890b41a576 Adrián Larumbe  2024-09-03  487  
+6f64890b41a576 Adrián Larumbe  2024-09-03  488  		/** @slot_count: Number of jobs ringbuffer can hold at once. */
+6f64890b41a576 Adrián Larumbe  2024-09-03  489  		u32 slot_count;
+6f64890b41a576 Adrián Larumbe  2024-09-03  490  
+6f64890b41a576 Adrián Larumbe  2024-09-03  491  		/** @profiling_seqno: Index of the next available profiling information slot. */
+6f64890b41a576 Adrián Larumbe  2024-09-03  492  		u32 profiling_seqno;
+6f64890b41a576 Adrián Larumbe  2024-09-03  493  	} profiling_info;
+de85488138247d Boris Brezillon 2024-02-29 @494  };
+de85488138247d Boris Brezillon 2024-02-29  495  
 
-It seems like updating the maintainers list should be a separate patch.
-
-Thanks,
-
-Brett
-
->   M:     UNGLinuxDriver@microchip.com
->   L:     netdev@vger.kernel.org
->   S:     Maintained
->   F:     drivers/net/ethernet/microchip/lan743x_*
-> +F:     tools/testing/selftests/drivers/net/hw/microchip/lan743x/
-> 
->   MICROCHIP LAN87xx/LAN937x T1 PHY DRIVER
->   M:     Arun Ramadoss <arun.ramadoss@microchip.com>
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index a5f1c0c27..8059529c9 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -122,7 +122,7 @@ TARGETS_HOTPLUG = cpu-hotplug
->   TARGETS_HOTPLUG += memory-hotplug
-> 
->   # Networking tests want the net/lib target, include it automatically
-> -ifneq ($(filter net drivers/net drivers/net/hw,$(TARGETS)),)
-> +ifneq ($(filter net drivers/net drivers/net/hw drivers/net/hw/microchip/lan743x,$(TARGETS)),)
->   ifeq ($(filter net/lib,$(TARGETS)),)
->          INSTALL_DEP_TARGETS := net/lib
->   endif
-> diff --git a/tools/testing/selftests/drivers/net/hw/microchip/lan743x/Makefile b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/Makefile
-> new file mode 100644
-> index 000000000..542128678
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +TEST_INCLUDES := $(wildcard lib/py/*.py ../../../lib/py/*.py)
-> +
-> +TEST_PROGS := lan743x.py
-> +
-> +include ../../../../../lib.mk
-> diff --git a/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
-> new file mode 100755
-> index 000000000..f1ad97dc2
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lan743x.py
-> @@ -0,0 +1,51 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import time
-> +import re
-> +from lib.py import ksft_run, ksft_exit, ksft_pr, ksft_eq
-> +from lib.py import KsftFailEx, KsftSkipEx
-> +from lib.py import NetDrvEpEnv
-> +from lib.py import cmd
-> +from lib.py import ethtool
-> +
-> +def verify_link_up(ifname: str) -> None:
-> +    """Verify whether the link is up initially"""
-> +    with open(f"/sys/class/net/{ifname}/operstate", "r") as fp:
-> +        link_state = fp.read().strip()
-> +
-> +    if link_state == "down":
-> +        raise KsftSkipEx(f"Link state of interface {ifname} is DOWN")
-> +
-> +def set_autonegotiation_state(ifname: str, state: str) -> None:
-> +    """Set the autonegotiation state for the interface"""
-> +    process = ethtool(f"-s {ifname} speed 10 duplex half autoneg {state}")
-> +    if process.ret != 0:
-> +        raise KsftFailEx(f"Not able to set autoneg parameter for {ifname}")
-> +    ksft_pr(f"Autoneg set as {state} for {ifname}")
-> +
-> +def verify_autonegotiation(ifname: str, expected_state: str) -> None:
-> +    verify_link_up(ifname)
-> +    """Verifying the autonegotiation state"""
-> +    output = ethtool(f"{ifname}")
-> +    autoneg_match = re.search(r'Auto-negotiation:\s+(\w+)', output.stdout)
-> +
-> +    if not autoneg_match:
-> +        raise KsftFailEx("Failed to find autonegotiation information in ethtool output.")
-> +
-> +    actual_state = autoneg_match.group(1)
-> +    ksft_eq(actual_state, expected_state)
-> +
-> +def test_autonegotiation(cfg) -> None:
-> +    for state in ["off", "on"]:
-> +        set_autonegotiation_state(cfg.ifname, state)
-> +        time.sleep(5)
-> +        verify_autonegotiation(cfg.ifname, state)
-> +
-> +def main() -> None:
-> +    with NetDrvEpEnv(__file__) as cfg:
-> +        ksft_run(globs=globals(), case_pfx={"test_"}, args=(cfg,))
-> +    ksft_exit()
-> +
-> +if __name__ == "__main__":
-> +    main()
-> diff --git a/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lib/py/__init__.py b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lib/py/__init__.py
-> new file mode 100644
-> index 000000000..e571631af
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/hw/microchip/lan743x/lib/py/__init__.py
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import sys
-> +from pathlib import Path
-> +
-> +KSFT_DIR = (Path(__file__).parent / "../../../../../../..").resolve()
-> +
-> +try:
-> +    sys.path.append(KSFT_DIR.as_posix())
-> +    from net.lib.py import *
-> +    from drivers.net.lib.py import *
-> +except ModuleNotFoundError as e:
-> +    ksft_pr("Failed importing `net` library from kernel sources")
-> +    ksft_pr(str(e))
-> +    ktap_result(True, comment="SKIP")
-> +    sys.exit(4)
-> --
-> 2.43.0
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
