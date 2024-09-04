@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-313999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E1B96AD7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:52:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0B996AD88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D92286BB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:52:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36941C23FB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39F017FD;
-	Wed,  4 Sep 2024 00:52:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527517FD;
+	Wed,  4 Sep 2024 00:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CS8iyWu5"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F93B65C;
-	Wed,  4 Sep 2024 00:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F0B39B;
+	Wed,  4 Sep 2024 00:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725411145; cv=none; b=NNg4BL/FuuKYN5S+aUVN0HronVRLBnCt5ZPfr1WMvVQMjp4ocPBmIBoF+9NTeVxzBIYIiAXe/42pLcAte8bwZRvpZOUTf9Yft45EYrlUb50cBjeLD+zrcXDgzFdSIiEaeCi8rNSQf6zyW37hCCKq6AkHVoL0dB0qyOb602JBG2o=
+	t=1725411454; cv=none; b=fZCCqykurcnbvktlZtnyJ/vLF2p68uQlvgv9B8OsOGrayHLvhYaXH7E3YkCfzuJo8UzQI97VGzTiP4Qp4nyficwZgTmLr19TYVGdhmWpflN2h6iE1d0Eh0/3RaQQUKRWydl2e1vgf3vWb20rl1kzQPxfJ4tbnTXGXpAYXUcN7DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725411145; c=relaxed/simple;
-	bh=G21Eq5cw+VZfTA9iPHaQQM23pVQaJEAh22KOsqmNfu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q8d63sbmclTj2tJHBZvCqd4fimTY1nJMl2peScb8nG0+0XJzmqchht6q8G4ba8BcsZCl8ScRYhtQhoJzFbvYeoMwOrqSsNQ1Ct3GLWiMz/NJSt7CDJefiZCSR1zZ9lg+6gF06/6TTONKbU+cNwBduArh+mNgaYiPPQzGvcidz+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA16AC4CEC4;
-	Wed,  4 Sep 2024 00:52:23 +0000 (UTC)
-Date: Tue, 3 Sep 2024 20:53:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dma: Trace API
-Message-ID: <20240903205322.69d7638c@gandalf.local.home>
-In-Reply-To: <d8936bfc-1ea3-4142-8035-0dfb8e491c31@linux.dev>
-References: <20240826203240.2234615-1-sean.anderson@linux.dev>
-	<20240829041912.GB4408@lst.de>
-	<4c2c6b24-aee1-495f-ab47-662e1e818f4b@linux.dev>
-	<20240903072512.GA1521@lst.de>
-	<20240903092154.5f0bfafe@gandalf.local.home>
-	<d8936bfc-1ea3-4142-8035-0dfb8e491c31@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725411454; c=relaxed/simple;
+	bh=8JvvfwcxoZGT5zbfnSHoqeDfuTlwgxPyBi8lhPLLp8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uF+BSn9KGsTLmim3PODOt4bnkiIq7XrrCwHtloNxYtJO6jv91fSz6KJc7qfzj3ErNmaT8eF1Cuw5N8ZVl7Cz3UCURshi06lAcGSenBLZa5BIQRg2Nnl8dQozGMhglJJg6BB3ybjwE9095GgwZYFxlQYuz/mXtw7PjTvuM9q4JUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CS8iyWu5; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5de8b17db8dso3574633eaf.2;
+        Tue, 03 Sep 2024 17:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725411452; x=1726016252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7gdWZihFLmXnMT6aCYKGEU34zWd8T6tn0I3DQDEBdks=;
+        b=CS8iyWu5V65nwVZInmTjaj089uNmQz+16rnbP2jRXeDa1uRyE9FflJCHWxybPL2WSc
+         WcQ4faVxgxYe45ViVhG5kQzNimshlw5ipAWhHYyIQXr3PuyIDgUJbzyZwaIgiHfqhRdB
+         68FnE5UXkH328M0wEjIngO4WyCqEnbOhSIiZ2Zs7kgCDuk3ySUjE/0Cw0NPObKYmcaOJ
+         l1NrD4/Dbdr8pHL6MXDU80DJeRl/ekul07Mhrc5PslGcvbbaysZMuWEDj4l56Az8324R
+         p1UOVXiAyM840UVooLGTAS2o/NOn7ydZQhSdU/hjKAc06QkXb/SYXDEYr67zc0627cKr
+         ps9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725411452; x=1726016252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7gdWZihFLmXnMT6aCYKGEU34zWd8T6tn0I3DQDEBdks=;
+        b=sg0alAXDAfaJfxMCmtrYK+Q+keTrQvx5ctlsEftX07yNBO6U8KLmxaTaM29jtxxdF/
+         ceMmuuL8wPnwNuuhQfAuGCprxHhlvRa+HleM8Vl8InykArGl2SUCx4zrvEq2WzQyp3e1
+         rE1idQFipbAlREA+dPeAvp21HA3wwg6itRrHt4o7RKXw5DqIpVmUyRxaJoseV5LVhkOm
+         cTW4EfN1sVxxmsA/uVb+c0p9UPMMKq/z0+TOD0a+cVeejp+G/lEF77Feyd/WQhE7e6N6
+         nhF2i7Apnhlsxh9RHRmYJ5dl2OV7X9Xt3oMGtRTWC7DJ7GdUNnTLTdGJBDs85V5/luw9
+         jz4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjRV4cDANIuWvyRiAJu6UXQ70k+5gWOD3B9PL8Ce1t6wRs6wRUzyYdChCqE5xHl4dqtQnWyeWqIyE=@vger.kernel.org, AJvYcCUtFvqJfOgNrOSsp3cRMeRkGNl22QuxxWZI49fcouytjpmouFcijhVyvp/gheFJI7yUr41WYNJNoXmAWnCx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ/s+sEKjDSz+N24KUjhOZqcMn9/AssoDDrLZTQNQgXIJoYIS7
+	gQ/9x7CStVOdg/rdTOl5v/a/JlyPCmJP9t7rma0LCVJ5RCIyXWQ6DwgqimrB4QaEHZpse6nRukx
+	mqEyNkBIwyxOO6jPqLsaqdMNWaUE=
+X-Google-Smtp-Source: AGHT+IH8LhzXuBDtphoV66oRGm71mpDc1Mo8k86cqV9gx9VexIPPk0UFLHgoaLEjrPALjrLNXfGVRqtzHKIpE5LtVW8=
+X-Received: by 2002:a05:6871:8ab:b0:270:1f1e:e3ea with SMTP id
+ 586e51a60fabf-2779013e567mr23407349fac.28.1725411452015; Tue, 03 Sep 2024
+ 17:57:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240725174632.23803-1-tttturtleruss@hust.edu.cn>
+ <a6285062-4e36-431e-b902-48f4bee620e0@hust.edu.cn> <CANpmjNOiMFUM8KxV8Gj_LTSbC_qLYSh+34Ma8gC1LFCgjtPRsA@mail.gmail.com>
+ <bd647428-f74d-4f89-acd2-0a96c7f0478a@hust.edu.cn> <CANpmjNMHsbr=1+obzwGHcHT86fqpdPXOs-VayPmB8f2t=AmBbA@mail.gmail.com>
+ <241be3d1-2630-471f-9c04-3b4004b5d832@hust.edu.cn>
+In-Reply-To: <241be3d1-2630-471f-9c04-3b4004b5d832@hust.edu.cn>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Wed, 4 Sep 2024 08:57:05 +0800
+Message-ID: <CAD-N9QXVY8iKd6uMakpvfvRNSiKec+GtjJ9k3sic8GyqEMXe-w@mail.gmail.com>
+Subject: Re: [PATCH] docs: update dev-tools/kcsan.rst url about KTSAN
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Marco Elver <elver@google.com>, Dongliang Mu <dzm91@hust.edu.cn>, 
+	Dmitry Vyukov <dvyukov@google.com>, Haoyang Liu <tttturtleruss@hust.edu.cn>, 
+	hust-os-kernel-patches@googlegroups.com, kasan-dev@googlegroups.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 3 Sep 2024 10:36:29 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+On Wed, Sep 4, 2024 at 2:05=E2=80=AFAM Haoyang Liu <tttturtleruss@hust.edu.=
+cn> wrote:
+>
+>
+> =E5=9C=A8 2024/9/4 2:01, Marco Elver =E5=86=99=E9=81=93:
+> > On Tue, 3 Sept 2024 at 19:58, Haoyang Liu <tttturtleruss@hust.edu.cn> w=
+rote:
+> >>
+> >> =E5=9C=A8 2024/7/26 16:38, Marco Elver =E5=86=99=E9=81=93:
+> >>> On Fri, 26 Jul 2024 at 03:36, Dongliang Mu <dzm91@hust.edu.cn> wrote:
+> >>>> On 2024/7/26 01:46, Haoyang Liu wrote:
+> >>>>> The KTSAN doc has moved to
+> >>>>> https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md.
+> >>>>> Update the url in kcsan.rst accordingly.
+> >>>>>
+> >>>>> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+> >>>> Although the old link is still accessible, I agree to use the newer =
+one.
+> >>>>
+> >>>> If this patch is merged, you need to change your Chinese version to
+> >>>> catch up.
+> >>>>
+> >>>> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+> >>>>
+> >>>>> ---
+> >>>>>     Documentation/dev-tools/kcsan.rst | 3 ++-
+> >>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/Documentation/dev-tools/kcsan.rst b/Documentation/dev-=
+tools/kcsan.rst
+> >>>>> index 02143f060b22..d81c42d1063e 100644
+> >>>>> --- a/Documentation/dev-tools/kcsan.rst
+> >>>>> +++ b/Documentation/dev-tools/kcsan.rst
+> >>>>> @@ -361,7 +361,8 @@ Alternatives Considered
+> >>>>>     -----------------------
+> >>>>>
+> >>>>>     An alternative data race detection approach for the kernel can =
+be found in the
+> >>>>> -`Kernel Thread Sanitizer (KTSAN) <https://github.com/google/ktsan/=
+wiki>`_.
+> >>>>> +`Kernel Thread Sanitizer (KTSAN)
+> >>>>> +<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>=
+`_.
+> >>>>>     KTSAN is a happens-before data race detector, which explicitly =
+establishes the
+> >>>>>     happens-before order between memory operations, which can then =
+be used to
+> >>>>>     determine data races as defined in `Data Races`_.
+> >>> Acked-by: Marco Elver <elver@google.com>
+> >>>
+> >>> Do you have a tree to take your other patch ("docs/zh_CN: Add
+> >>> dev-tools/kcsan Chinese translation") through? If so, I would suggest
+> >>> that you ask that maintainer to take both patches, this and the
+> >>> Chinese translation patch. (Otherwise, I will queue this patch to be
+> >>> remembered but it'll be a while until it reaches mainline.)
+> >> Hi, Marco.
+> >>
+> >>
+> >> The patch "docs/zh_CN: Add dev-tools/kcsan Chinese translation" has be=
+en
+> >> applied, but they didn't take this one. How about you take it into you=
+r
+> >> tree?
+> > I don't have a tree.
+> >
+> > Since this is purely documentation changes, could Jon take it into the
+> > Documentation tree?
+> > Otherwise we have to ask Paul to take it into -rcu.
+> >
+> > Thanks,
+> > -- Marco
+>
+> Ok, I will send this patch to Jon and see if he can take it.
 
-> This doesn't apply for arrays:
-> 
-> 	field:__data_loc u64[] addrs;	offset:12;	size:4;	signed:0;
-> 
-> Here the size is not for the data type but for the array. And so the
-> type is parsed by process_sizeof in src/event-parse.c.
+Hi Jon,
 
-Ah, I see what you are talking about:
+Could you please take this patch to lwn tree maintained by you?
 
-+	TP_printk("%s dir=%s phys_addrs=%s attrs=%s",
-+		__get_str(device),
-+		decode_dma_data_direction(__entry->dir),
-+		__print_array(__get_dynamic_array(addrs),
-+			      __get_dynamic_array_len(addrs) /
-+				sizeof(unsigned long long), sizeof(unsigned long long)),
-+		decode_dma_attrs(__entry->attrs))
+P.S., it seems Jon is in the cc list previously.
 
-That part.
-
-Yeah, the "sizeof()" parsing is somewhat of a hack. It would be trivial to
-add u64 and all the variants to that.
-
-This should do. I could get it into the next minor version.
-
-diff --git a/src/event-parse.c b/src/event-parse.c
-index ddeb3b9909c0..73563c8e9dea 100644
---- a/src/event-parse.c
-+++ b/src/event-parse.c
-@@ -3571,6 +3571,23 @@ process_sizeof(struct tep_event *event, struct tep_print_arg *arg, char **tok)
- 			/* The token is the next token */
- 			token_has_paren = true;
- 		}
-+
-+	} else if (strcmp(token, "__u64") == 0 || strcmp(token, "u64") == 0 ||
-+		   strcmp(token, "__s64") == 0 || strcmp(token, "s64") == 0) {
-+		arg->atom.atom = strdup("8");
-+
-+	} else if (strcmp(token, "__u32") == 0 || strcmp(token, "u32") == 0 ||
-+		   strcmp(token, "__s32") == 0 || strcmp(token, "s32") == 0) {
-+		arg->atom.atom = strdup("4");
-+
-+	} else if (strcmp(token, "__u16") == 0 || strcmp(token, "u16") == 0 ||
-+		   strcmp(token, "__s16") == 0 || strcmp(token, "s16") == 0) {
-+		arg->atom.atom = strdup("2");
-+
-+	} else if (strcmp(token, "__u8") == 0 || strcmp(token, "u8") == 0 ||
-+		   strcmp(token, "__s8") == 0 || strcmp(token, "s8") == 0) {
-+		arg->atom.atom = strdup("1");
-+
- 	} else if (strcmp(token, "REC") == 0) {
- 
- 		free_token(token);
-
-
--- Steve
+>
+>
+> Thanks,
+>
+> Haoyang
+>
+>
 
