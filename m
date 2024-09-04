@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-314168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116E396AF98
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A936496AF9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C291A282177
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430371F251EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2190E5B5D6;
-	Wed,  4 Sep 2024 03:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE1B5FBBA;
+	Wed,  4 Sep 2024 03:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="U9J8vsG8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/wIqEYj"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5821255C0A;
-	Wed,  4 Sep 2024 03:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60FE4D8A7;
+	Wed,  4 Sep 2024 03:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725422241; cv=none; b=BBzEJxhake1zpfMf+jehRzt/HrdpPSN0lYDgi3dCvOnRoySGKgabLAeaPMYNsf33IXBluWrx3nGshSVjArOA7bxeeE3a58SGMXpeRsXMmZ8+7JuRKjsFLknV4BTvhl5r6nEnsoF693WuNgQgNWgJJdS2Q5uNnb4wWpWHBFthaNk=
+	t=1725422357; cv=none; b=M5UmamdF03lTbHFVEcoDdrhFQMXNwvt02Jds0Qla4XzbdRTX6oUaQqU1l1RLnV8ParFYp+D5NS/CKZsQblx1VqhlN9L7gVtMPpJGUd7kX2nqft4ZJIlYMnHIcdzoHOZZLmbn5iyFFSHPoHXK6FdnaGldcugewm1w2uMvZIsjfqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725422241; c=relaxed/simple;
-	bh=ivqHfD7++rU9GRfQMe9anuXwU61tfPP8YPdfV7dcgxQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Kln/bl+BsS5WHEUyu2Ckl4Y/xbVODcJnt2GOS45D/tymI5hoXf/Y67N2qbEeiYFWOjoMiI3GRqcg6y8EXpZAOSGrOAKArI29bhFRt+MptvHGnePF6xk7nt2xtJTKJ/8hJcXKB3zUGK1qGNWg8rdfgLu/pdO8vAw3do/rfsgvkeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=U9J8vsG8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725422236;
-	bh=bgCwdbOVFpaURv00hqL/lwUSISFJ/jzYxJlaNGAU2OU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=U9J8vsG8Uwv1/84l2ookX17o1153/WflTXx/rbatcB7lhtIPmuCRHMrYQduxy8sct
-	 pVfA7mdd1ZdSsNlV9S+RwvrFTe1ZwE8Yon0RjMsD+vnj7wI36uMucOCgR6BBEC/zgi
-	 iZK0fUTnkmSuZ9Ccc8QVwLnPaoeDvMO9IDONDK0zcckZZRDi5uw6O2wHSQUKmdfr5I
-	 dWdLKVexdDb5e0RhatBid4K2SaIn7WsfhusEW3ggxFSRdNk+UNioX+yKzoLnyldVe/
-	 pT1Pfg6L4UctDia37ve7aVklQue5bWVDtiZxTaywsBpq6I+0m8550pLqCeuVpgK7WU
-	 QaOkMGqL0YMAg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wz7wp3135z4x3J;
-	Wed,  4 Sep 2024 13:57:14 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Sven Schnelle <svens@linux.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung
- Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
-In-Reply-To: <yt9dikvd9nye.fsf@linux.ibm.com>
-References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
- <20240903073629.2442754-1-svens@linux.ibm.com>
- <yt9dikvd9nye.fsf@linux.ibm.com>
-Date: Wed, 04 Sep 2024 13:57:13 +1000
-Message-ID: <87v7zc5aw6.fsf@mail.lhotse>
+	s=arc-20240116; t=1725422357; c=relaxed/simple;
+	bh=qEmN3XA5U0AGx6zNdAnandIbov0vtnSHp1hBM+zM1DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzlysnTcNxnUqraB57itzp5819jiDMPdfcNm9dvKY2l76y3BeBvNrwdww/Sk7m/J+9aivsh7rGypkT/usru2ucGce9MNJFkPjrN019jzf/AI/hZsedjAIWjwch6xT5Z1csHt/yaIiFnj5t3aL3JBb4894vpdiB59Aelm0BnroIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/wIqEYj; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4233623a91.2;
+        Tue, 03 Sep 2024 20:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725422355; x=1726027155; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=acrRrqLBvKcmIog13eQf8nAeUw9CPSDpthg968nAWvo=;
+        b=a/wIqEYj3GMfpeCvTqCuHMflTfFw3HOKNiV72WtFw2b5ZtewnutNr6kBPfuQw9kGIR
+         2IL5P0/9Gi5EtiWHUErKVpFud8tqxBRqv8qkSlG21jyjGxLpJxnlt+Nw2EtCLif20qWx
+         0yiI8CMY+8waT7SLUFhCqnNpgb6ec483kZ/pYhlPjevFlsMplnUQJuzvxEwU+c6Z+LlW
+         hyKgTpogYu+9mZDJRwxpo8+ewkKsXYpnVvkfAQxW6QvJKXEK/EC7tLig861FAQvq9bF+
+         skoogyOdqO020IbEfwC7gc5yu3GhssE19UdrU+4MtmJsv2HeYW8/OjaeAbOsOfDSPwCq
+         5+zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725422355; x=1726027155;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=acrRrqLBvKcmIog13eQf8nAeUw9CPSDpthg968nAWvo=;
+        b=LCaBq04/x78rGdRXZ6a0vSCfvFO40DO9FPnWY/zUDwzMDRg1Ccjyq0qVflJ7m6wz/0
+         Pkh2HIsVR7lRwdQRLt3lmoRsUU3lAcYTIENBeKFKWOwZprwwYZSd0os8aff9E1Ume+Xm
+         lF+u7eL9mx4cSJV/9LfGcmu/mqM69r8qslRYhDb4SIYjnlAsieBqv12qIWj34uJnsq8P
+         xGt7sT/4YssO/9TT+PFinL/E/nAOXRd5DQzRI5gGfahp9pUY27dn/PwulwiUSHnuP5zC
+         UR9S5PKuX0fY6KTTo3MOqpvPy5eRX1um4K3OJppRp/SGmrPq0zYjoEBmxSVlNkWaDmm+
+         DU/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX36qOkoCxIaXebeXj6y6czSO5fW+Urei/Fl8n2soH45I/V74x5FX05D9uEXbGOGTdAbcdm+HXn6/YLpHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFpcPtamUr6qc3COVUEZsACISlZmo7VAAZLUHUVCrnh5aPZvnG
+	fDqPCaHf5iuGJ3T23qQn6CduYx3yYnkgjnBLPmQ06NGInKoXZ/7E
+X-Google-Smtp-Source: AGHT+IHnavHm7HSzWJe6xq7w5AUUqu6nDFzwEf+I+GOhMI2QUnHbgO6cDr/ua8FEDdAeNflJUpj+cQ==
+X-Received: by 2002:a17:90b:3c0f:b0:2d8:8fe9:b015 with SMTP id 98e67ed59e1d1-2d88fe9b3b3mr14070299a91.39.1725422354939;
+        Tue, 03 Sep 2024 20:59:14 -0700 (PDT)
+Received: from hoboy.vegasvil.org (108-78-253-96.lightspeed.sntcca.sbcglobal.net. [108.78.253.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b0fdbd8sm12305167a91.5.2024.09.03.20.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 20:59:14 -0700 (PDT)
+Date: Tue, 3 Sep 2024 20:59:12 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
+Message-ID: <ZtfbEJH2yxsY2q1m@hoboy.vegasvil.org>
+References: <20240904015003.1065872-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904015003.1065872-1-nichen@iscas.ac.cn>
 
-Sven Schnelle <svens@linux.ibm.com> writes:
-> Hi Michael,
+On Wed, Sep 04, 2024 at 09:50:03AM +0800, Chen Ni wrote:
+> Replace comma between expressions with semicolons.
+> 
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
+> 
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+> 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Hi Sven,
-
-> Sven Schnelle <svens@linux.ibm.com> writes:
->
->> The following KASAN splat was shown:
->>
->> [   44.505448] ==================================================================                                                                      20:37:27 [3421/145075]
->> [   44.505455] BUG: KASAN: slab-use-after-free in special_mapping_close+0x9c/0xc8
->> [   44.505471] Read of size 8 at addr 00000000868dac48 by task sh/1384
-...
->> [..]
->
-> As this has a dependency on your special mapping close series, do you
-> want to carry that with your patches?
-
-Andrew has my series in mm-stable, so I think this should go into mm as
-well. I assume he will pick it up.
-
-cheers
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 
