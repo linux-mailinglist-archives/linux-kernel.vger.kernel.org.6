@@ -1,73 +1,90 @@
-Return-Path: <linux-kernel+bounces-316079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B441496CADC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:39:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1012896CAE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E572898B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5D52898A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA3817C99B;
-	Wed,  4 Sep 2024 23:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80C3185956;
+	Wed,  4 Sep 2024 23:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxNcmQI/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsMmucNb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1716149C52;
-	Wed,  4 Sep 2024 23:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AD117C9B9;
+	Wed,  4 Sep 2024 23:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725493156; cv=none; b=KvnP0rInXtxTbPfIYD62og7Uhpx47I2EofAe4NUmnASakFLW7gvDZZu6PgoRcwZxP28kWAlXArgdFvO8jv7nka6XVyHhOFd/MRdl+GQ7JaOxTMYfg+y7uySIz3b1D4XzZlwhZ37D54gdrxYJ+j/1z4hRx3dMv70SGFHuLZIP1Gs=
+	t=1725493234; cv=none; b=J3jUYKrcYW/znfsmjgbiYT4z1atO090SYqgJkUjlWoXRezYIhUS9OrfGyRQscOnYSsyLdcSPRbFhPwbS3r8fdhkKR29t8G0EIiE6BBM0HE9PnHTkLTHj2nGs+HAFduQGATxBJZO6UjW3EzizKo2hUIhRqsZ8pNKI7nrIgIoGBA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725493156; c=relaxed/simple;
-	bh=MtEMk5uvVtx9ERgczCIyD0KhqFCc8a2Mb5QAblSugNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A/s0x6QTyDxuRpc1J2+oTfUoT85F5+Yogg0KEq/CUSljiwaolMIBCgP1h/05ZlY6VVJvw8cRV1zG+SZyD0TAiaa3QHemjXUHV8J5etFObV6p06tsIg9XpslfQRY3nObSAZtY9yaYa+OLvKCfEIY9bFcvHDh5al4/kLysY9F266I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qxNcmQI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BE60C4CEC2;
-	Wed,  4 Sep 2024 23:39:15 +0000 (UTC)
+	s=arc-20240116; t=1725493234; c=relaxed/simple;
+	bh=zVSb90sLTNYgIoTPRnjs98ty8wxs/c8jl0LH1KH+cxU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rVBRkSx9b63cZDUw7F5/EDGp/NcYV0x0TGOoxvmFY7+4ppt5PPM40GGBUnJJjvjilA/hNxZaglw6cP6oXGEECOlhe8mwpc2ShLygqxp0YSw4txQY+VEDH4Uye2WPlWBU5CXQKQ2pM2KD2BesAdAr/We68G2iuHRHRuMljpi2M/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsMmucNb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A353CC4CEC2;
+	Wed,  4 Sep 2024 23:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725493155;
-	bh=MtEMk5uvVtx9ERgczCIyD0KhqFCc8a2Mb5QAblSugNI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qxNcmQI/5ZNsU2LU44CMZEdweiaq2/i53Jo9DU7zvpA896pkVlff1I99CtRTZ9kvN
-	 upr8FfT3CGUdx/gTfVzFZiGg6Kqar/1TvdvkGLSv25V11Ujf1yh59F5VuKMhR/38z0
-	 nhyDq9ngIVfQLNnS+a2Rt2ScrmfyZ7cZ0hR7sYiiBU1Knmwn6c6pNtSyLx3LMfGd+a
-	 bZQ5Yu+0PYGtQUsCvgjWJxAqb250n0Q98XlLQMPQC2BzPHRgnlrQO6hAuuk82YXzKW
-	 k+QmxEnfo2pP9iqQ2aN9NpVTD4Xg2B+RKFkIyJ7o2X9eH9ULqVo/mnZkxJd1OT4tj7
-	 HXZIlMX3h35YQ==
-Date: Wed, 4 Sep 2024 16:39:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/net: do_setcpu function not need to have a
- return value
-Message-ID: <20240904163914.5279569f@kernel.org>
-In-Reply-To: <20240903095111.7204-1-liujing@cmss.chinamobile.com>
-References: <20240903095111.7204-1-liujing@cmss.chinamobile.com>
+	s=k20201202; t=1725493233;
+	bh=zVSb90sLTNYgIoTPRnjs98ty8wxs/c8jl0LH1KH+cxU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AsMmucNbnUzbTODOvRhIecAG+xRFIIaayTq2R4J5vLbjcNMWQUd5INsTwrXENXGT+
+	 xqiKvs8w1n9qweXST6roo8k9CNp7ZgTxppm4IrCTIsoR9f3wfJqTaxZ3H/bo6UP9iE
+	 nsYyMBr9GQF3Sqwo9HJiJymLtK3O9A99oD+LTOM9gIJCk5egYZEUo81hzNLktm2DDE
+	 28I9njCahOXNPGDdcPEbLc9G5dM85ENgLjOvSdLvCNaj5wiuFL0kWNXQPFDxpeGYYp
+	 qdsskIiTBPeBh438Nde7a86ihs1DTgXB+BevUxvQg73GSpzt4hNnnIT0CkvlFKmmuS
+	 2KgwX2sd61zYQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE9163822D30;
+	Wed,  4 Sep 2024 23:40:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] r8152: fix the firmware doesn't work
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172549323425.1198891.7163852244083604728.git-patchwork-notify@kernel.org>
+Date: Wed, 04 Sep 2024 23:40:34 +0000
+References: <20240903063333.4502-1-hayeswang@realtek.com>
+In-Reply-To: <20240903063333.4502-1-hayeswang@realtek.com>
+To: Hayes Wang <hayeswang@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-On Tue,  3 Sep 2024 17:51:11 +0800 Liu Jing wrote:
-> in the do_setcpu, this function does not need to have a return value,
-> which is meaningless
+Hello:
 
-This test is flaky:
-https://netdev.bots.linux.dev/contest.html?executor=vmksft-net-dbg&test=msg-zerocopy-sh
-Could you please try to figure out what the problem is and fix it
-instead of sending "cleanups"?
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 3 Sep 2024 14:33:33 +0800 you wrote:
+> generic_ocp_write() asks the parameter "size" must be 4 bytes align.
+> Therefore, write the bp would fail, if the mac->bp_num is odd. Align the
+> size to 4 for fixing it. The way may write an extra bp, but the
+> rtl8152_is_fw_mac_ok() makes sure the value must be 0 for the bp whose
+> index is more than mac->bp_num. That is, there is no influence for the
+> firmware.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] r8152: fix the firmware doesn't work
+    https://git.kernel.org/netdev/net/c/8487b4af59d4
+
+You are awesome, thank you!
 -- 
-pw-bot: reject
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
