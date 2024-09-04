@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-314056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A2E96AE3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:05:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9085496AE55
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676BF1C2348B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4589D286995
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 02:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A964F208C4;
-	Wed,  4 Sep 2024 02:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B5F74416;
+	Wed,  4 Sep 2024 02:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcfB2oFo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IP92prut"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F13FBF0;
-	Wed,  4 Sep 2024 02:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43E855769
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 02:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725415496; cv=none; b=C+56r0AZswqHN+BOOB7Owe4A37Wm7HO4bvyMIwwzNhRGOp/b/zOfp05MH2dyCIbaCsEGBTjF+PS2ZnUgQyigmMcKvTVoFW0hUA5W0hsyxG0i9qSBOG+6IiFSUqwyAidlUfl09eFpa2VANdiQebpnnIj54vsxZxBhtWuxwNMf0nQ=
+	t=1725415506; cv=none; b=pLA94ub5spLiFhj4je3eAVhokx2NG/lHIK/SHCGCjnlD9jAtr1sX1DBIACyzy2gfBmFB6dj0ZsOjk6aVJzXYMsdxj+u8FOqNiSJRkOfB2xjDZjs6kREuoS7hlj1RAaSfIBdZlQBAAyJrRZamcnBuuC3JyylFPrCdVPZlzRs5tuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725415496; c=relaxed/simple;
-	bh=gjDEYDEGYaab6iQMQIrG64hkt0UrkZJho2SHEiVlOE8=;
+	s=arc-20240116; t=1725415506; c=relaxed/simple;
+	bh=EsRba+pJ4JyRcYEK2iepj8Pqx8bMOP75UMtToD6S0wM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyT5guQxvBcbPIkDGcIGBgB1h8rzsdMJ8E+Z0xMC0h9ot5JXN5BGmzkCqi+ZoTY006G0n8FPAk0NAQCjDpmQpahMH23deYBaMmRMsojm8u9LLmpC6C9s7S526llWWFA1NlY2gtUY0s4Chtt48jdax+3ALPqFtUBllXlltvQucw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcfB2oFo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CFDDC4CEC7;
-	Wed,  4 Sep 2024 02:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725415495;
-	bh=gjDEYDEGYaab6iQMQIrG64hkt0UrkZJho2SHEiVlOE8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jcfB2oFoMCW5rj3TTpTsKnTR6FZU90Jd8SA0/cB5YWREbPDLIRJYskZ+i5n5TBgeo
-	 qCgon0JC02NBSmhXKbbmvoUaYAFJStGrt9yr3dKt0wOGD6+TjHoANaRXiyDxdpLZUJ
-	 NvNbkMOp6fN3miFP/G5eo/HW5Ff2tu/dnSXJ6KPuq3PX+Se2togXOBXw2EFOBthe0l
-	 6XGJVZ99ABeuR2tfqG5JpaLiYZUhQvWEWJ6+/6STemGaXlMzdeViMFzy9bwUtHyRGJ
-	 nUkEfqM0GQ3WZJhR+qn4mOguhqZxAS0usVljzHI1pWRLCbb6lxWXbub6UW725pFEVf
-	 +dDEMg2WNvV+A==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f24263acso90480891fa.0;
-        Tue, 03 Sep 2024 19:04:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/Ctkr77soFGYrZBtZw59QlAaBTQT3CGPpd9HcpO1N7Wo1A80NNJkmPwYk/iI6/Ar+ID+TZcN2liZSVeo=@vger.kernel.org, AJvYcCXVwU1fJ9ewBX+JS/qjzxEAKfR1/mv47z9ctVrCluF2EN6pXWD9EA9Uh22+Z5pCIxkRG9IfIvaOWFxtG2Wn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwZSZLEbfVCZ32MSDqUltB9oDMFLhwTdkJY4Xr6E1y60/gJz7l
-	EPal7z4CHkHLFbbfCGZiXoUTSUnnbQThhz4t+YQ1U3xqmrQT2FSSWUA/CuEnh/VYsmHzzYvoVe1
-	ltIuRx9e1oZ6yBqn7qx/0TatvLQw=
-X-Google-Smtp-Source: AGHT+IEw0wupQ6/0yZccqEPItnn4emPRy32JyqKzgm8XDKw0z7NfvjUafWDNFEN/qAkSgOgNFSEgTWzW1WFw9AmGWoc=
-X-Received: by 2002:a2e:612:0:b0:2f3:f9f1:4799 with SMTP id
- 38308e7fff4ca-2f61089390cmr127357461fa.31.1725415494239; Tue, 03 Sep 2024
- 19:04:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=mL6bmbtn4Sj20D2vGZyablYH2I8Ny/+W4Y+JpYwCOnbGvxQnuvThFc2jwiyscWwtP/xyhh0ZnJy823lgSDBR4OQX1SBtQSH+Y0rKCGl7etY2RidnsZXiyrgTQ1fCNKqCcQ+e2aAOF7s8/nLAwWuCMxD4Ivw7FYyq1KjvULONT+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IP92prut; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4567fe32141so88291cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 19:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725415504; x=1726020304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mCyPy6iwCP5CjIg/B3ozt0KbGUw/B0FCHsUaXuPiqn0=;
+        b=IP92prutU5OojUTdyFmghdiquEcM4QvoSX+45pDOpW/p4RSdm9lsY5S09SeTfYbfhq
+         6xwD0d0PNl4XJJ20jjQbVLp4Os/Sn1tPdhu2nmZLz+jPIQhQeUd6DE1gsThEN/Oqf0wE
+         eE3mrSuJzQ4kwhourQLInjJ7uSAnCRTkPSHymXS9cA/iDLUfMT3SeOjhfGMyj/S1mcXF
+         aBhqR0eh65l6xDLTWkfA83fwKdH5kAnrAJ45wff2gti7ecgDMXNTOABBC0L7mQH9NEMR
+         uhlUKnHoeZUAQcS9z+miSBFlLacpfNb1cqy14mXtqX+far5RtXULnrzdnmvWiCCqy7ah
+         AtOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725415504; x=1726020304;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mCyPy6iwCP5CjIg/B3ozt0KbGUw/B0FCHsUaXuPiqn0=;
+        b=FGyuUE1zRBtCyEJYQm7pQA1enclUgGqrsFFnPJfkw3UP81Osm6bAjMeyItD82HfyPc
+         4SYcGC6vpv2canuKJMvI68LIzNHcmhbldTmDV9H3KVpub7Bkxr7k4987IpkJM2jMrnpv
+         E8v5a4k+VW2uw2pdg/Sx/7DXr02Skvzi9fNspfyIM73bMVXGeZ7LBszXQ4p45QNhUYmK
+         RvQdyrYROcF+sf8+xFk4gW4jZs2qm//CAbw4e49tH1q+JEEVFHx7y3w/Ia6XbxpNt2Wa
+         xjoxU9DF2IxdVdK/iGfdbQTyRtYCSub+fml4RhBnKpZeM30O3Y44Im05t9DDvlahWkL7
+         EjDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAqjqXIcK3sWXpYxjtcgsALi+pTRe6qxiKEf5wdcdxTnEhkbDLsW/9gOWkNboje4+H0k6Zo/sGKQIOyCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6TDiKKBmCilibXa1DelmBItPvf8u9nMWCN4+3HpgUtTExaCdF
+	BdfzjxfnOhw+zqSPa7gySKb+384kfeoPId7HMz/CobXgxmqF0glh8sIHaJFHyB/6JgJV8M5ZwId
+	Ho8fJPA0DI+yjczYuAxVziP7D8VI0NYlln2VU
+X-Google-Smtp-Source: AGHT+IEbZycTL1qRNduokmk2dFqgQ/aI0bamoSE/FU7WW+tZXb6qMK7tmdkD+eHzjSLi5+cwNQdZLetM5UhjTGy3xjQ=
+X-Received: by 2002:ac8:5953:0:b0:447:f958:ab83 with SMTP id
+ d75a77b69052e-457f7b3648bmr1045391cf.21.1725415503320; Tue, 03 Sep 2024
+ 19:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902160828.1092891-1-ojeda@kernel.org>
-In-Reply-To: <20240902160828.1092891-1-ojeda@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 4 Sep 2024 11:04:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQf4xpnypbBNA0PJqeBnHqCn7YnAg8kcay6dyYYSSLDmg@mail.gmail.com>
-Message-ID: <CAK7LNAQf4xpnypbBNA0PJqeBnHqCn7YnAg8kcay6dyYYSSLDmg@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
- error messages
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240902044128.664075-1-surenb@google.com> <20240902044128.664075-6-surenb@google.com>
+ <20240901220931.53d3ad335ae9ac3fe7ef3928@linux-foundation.org>
+ <CAJuCfpHL04DyQn5WLz0GZ_zMYyg1b6UwKd_+8DSko843uSk7Ww@mail.gmail.com> <3kfgku2oxdcnqgtsevsc6digb2zyapbvchbcarrjipyxgytv2n@7tolozzacukf>
+In-Reply-To: <3kfgku2oxdcnqgtsevsc6digb2zyapbvchbcarrjipyxgytv2n@7tolozzacukf>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 3 Sep 2024 19:04:51 -0700
+Message-ID: <CAJuCfpGbHShimigbm7ckT76hK9YUc_gy0jb9e5ddq7yjqDKOig@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] alloc_tag: make page allocation tag reference size configurable
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 3, 2024 at 1:09=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
+On Tue, Sep 3, 2024 at 6:17=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> Like patch "rust: suppress error messages from
-> CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1],
+> On Tue, Sep 03, 2024 at 06:07:28PM GMT, Suren Baghdasaryan wrote:
+> > On Sun, Sep 1, 2024 at 10:09=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Sun,  1 Sep 2024 21:41:27 -0700 Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> > >
+> > > > Introduce CONFIG_PGALLOC_TAG_REF_BITS to control the size of the
+> > > > page allocation tag references. When the size is configured to be
+> > > > less than a direct pointer, the tags are searched using an index
+> > > > stored as the tag reference.
+> > > >
+> > > > ...
+> > > >
+> > > > +config PGALLOC_TAG_REF_BITS
+> > > > +     int "Number of bits for page allocation tag reference (10-64)=
+"
+> > > > +     range 10 64
+> > > > +     default "64"
+> > > > +     depends on MEM_ALLOC_PROFILING
+> > > > +     help
+> > > > +       Number of bits used to encode a page allocation tag referen=
+ce.
+> > > > +
+> > > > +       Smaller number results in less memory overhead but limits t=
+he number of
+> > > > +       allocations which can be tagged (including allocations from=
+ modules).
+> > > > +
+> > >
+> > > In other words, "we have no idea what's best for you, you're on your
+> > > own".
+> > >
+> > > I pity our poor users.
+> > >
+> > > Can we at least tell them what they should look at to determine wheth=
+er
+> > > whatever random number they chose was helpful or harmful?
+> >
+> > At the end of my reply in
+> > https://lore.kernel.org/all/CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8B=
+D4HDqxXA@mail.gmail.com/#t
+> > I suggested using all unused page flags. That would simplify things
+> > for the user at the expense of potentially using more memory than we
+> > need.
+>
+> Why would that use more memory, and how much?
 
-Better to point the commit instead of the patch in ML.
-
-
-Like commit 5ce86c6c8613 ("rust: suppress error messages
-from CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT"),
-
-
-
-
-
-
-
-
-
-> do not assume the file existing
-> and being executable implies executing it will succeed.
->
-> Instead, bail out if executing it fails for any reason, as well as if
-> the program does not print to standard output what we are expecting from
-> `pahole --version`. The script needs to ensure that it always returns
-> an integer, since its output will go into a Kconfig `int`-type symbol.
->
-> In addition, check whether the program exists first, and provide
-> error messages for each error condition, similar to how it is done in
-> e.g. `scripts/rust_is_available.sh`.
->
-> For instance, currently `pahole` may be built for another architecture
-> or may be a program we do not expect that fails:
->
->     $ echo 'bad' > bad-pahole
->     $ chmod u+x bad-pahole
->     $ make PAHOLE=3D./bad-pahole defconfig
->     ...
->     ./bad-pahole: 1: bad: not found
->     init/Kconfig:112: syntax error
->     init/Kconfig:112: invalid statement
->
-> With this applied, we get instead:
->
->     ***
->     *** Running './bad-pahole' to check the pahole version failed with
->     *** code 127. pahole will not be used.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=3D0
->
-> Similarly, `pahole` currently may be a program that returns successfully,
-> but that does not print the version that we would expect:
->
->     $ echo 'echo' > bad-pahole
->     $ chmod u+x bad-pahole
->     $ make PAHOLE=3D./bad-pahole defconfig
->     ...
->     init/Kconfig:114: syntax error
->     init/Kconfig:114: invalid statement
->
-> With this applied, we get instead:
->
->     ***
->     *** pahole './bad-pahole' returned an unexpected version output.
->     *** pahole will not be used.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=3D0
->
-> Finally, with this applied, if the program does not exist, we get:
->
->     $ make PAHOLE=3D./bad-pahole defconfig
->     ...
->     ***
->     *** pahole './bad-pahole' could not be found. pahole will not be used=
-.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=3D0
->
-> Link: https://lore.kernel.org/rust-for-linux/20240727140302.1806011-1-mas=
-ahiroy@kernel.org/ [1]
-> Co-developed-by: Nicolas Schier <nicolas@fjasle.eu>
-> Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> v1: https://lore.kernel.org/all/20240728125527.690726-1-ojeda@kernel.org/
-> v2:
->
-> Reworked to catch successful programs that may not output what we expect =
-from
-> pahole as well as to do the checking step-by-step (for better error messa=
-ges).
->
-> I didn't change the regular expression to reduce the changes (except addi=
-ng
-> `p`) -- it can be improved separately.
->
-> Also, please note that I added Nicolas as co-author since he proposed par=
-t of
-> the solution, but he has not formally signed off yet.
->
->  scripts/pahole-version.sh | 30 +++++++++++++++++++++++++++---
->  1 file changed, 27 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/pahole-version.sh b/scripts/pahole-version.sh
-> index f8a32ab93ad1..cdb80a3d6e4f 100755
-> --- a/scripts/pahole-version.sh
-> +++ b/scripts/pahole-version.sh
-> @@ -5,9 +5,33 @@
->  #
->  # Prints pahole's version in a 3-digit form, such as 119 for v1.19.
->
-> -if [ ! -x "$(command -v "$@")" ]; then
-> -       echo 0
-> +set -e
-> +trap "echo 0; exit 1" EXIT
-> +
-> +if ! command -v "$@" >/dev/null; then
-> +       echo >&2 "***"
-> +       echo >&2 "*** pahole '$@' could not be found. pahole will not be =
-used."
-> +       echo >&2 "***"
-> +       exit 1
-> +fi
-> +
-> +output=3D$("$@" --version 2>/dev/null) || code=3D$?
-> +if [ -n "$code" ]; then
-> +       echo >&2 "***"
-> +       echo >&2 "*** Running '$@' to check the pahole version failed wit=
-h"
-> +       echo >&2 "*** code $code. pahole will not be used."
-> +       echo >&2 "***"
-> +       exit 1
-> +fi
-> +
-> +output=3D$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9]+)/\1\2/p')
-> +if [ -z "${output}" ]; then
-> +       echo >&2 "***"
-> +       echo >&2 "*** pahole '$@' returned an unexpected version output."
-> +       echo >&2 "*** pahole will not be used."
-> +       echo >&2 "***"
->         exit 1
->  fi
->
-> -"$@" --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/'
-> +echo "${output}"
-> +trap EXIT
->
-> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
-> --
-> 2.46.0
+Say our kernel uses 5000 page allocations and there are additional 100
+allocations from all the modules we are loading at runtime. They all
+can be addressed using 13 bits (8192 addressable tags), so the
+contiguous memory we will be preallocating to store these tags is 8192
+* sizeof(alloc_tag). sizeof(alloc_tag) is 40 bytes as of today but
+might increase in the future if we add more fields there for other
+uses (like gfp_flags for example). So, currently this would use 320KB.
+If we always use 16 bits we would be preallocating 2.5MB. So, that
+would be 2.2MB of wasted memory. Using more than 16 bits (65536
+addressable tags) will be impractical anytime soon (current number
+IIRC is a bit over 4000).
 
 
+>
+> > In practice 13 bits should be more than enough to cover all
+> > kernel page allocations with enough headroom for page allocations
+> > coming from loadable modules. I guess using 13 as the default would
+> > cover most cases. In the unlikely case a specific system needs more
+> > tags, the user can increase this value. It can also be set to 64 to
+> > force direct references instead of indexing for better performance.
+> > Would that approach be acceptable?
+>
+> Any knob that has to be kept track of and adjusted is a real hassle -
+> e.g. lockdep has a bunch of knobs that have to be periodically tweaked,
+> that's used by _developers_, and they're often wrong.
 
---=20
-Best Regards
-Masahiro Yamada
+Yes, I understand, but this config would allow us not to waste these
+couple of MBs, provide a way for the user to request direct addressing
+of the tags and it also helps us to deal with the case I described in
+the last paragraph of my posting at
+https://lore.kernel.org/all/CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HD=
+qxXA@mail.gmail.com/#t
 
