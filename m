@@ -1,103 +1,275 @@
-Return-Path: <linux-kernel+bounces-314730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB2096B7BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3B496B7C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6BD282A36
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B2D2850D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF61CEEBE;
-	Wed,  4 Sep 2024 10:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426A1CF5ED;
+	Wed,  4 Sep 2024 10:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cLYI7HyO"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e8OuRh2d"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB021547E0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E00F1CF5CC;
+	Wed,  4 Sep 2024 10:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444292; cv=none; b=JVYpk2oHTabTIO9mAz8x7GK4JQek0t4wDSmWVDKGri7P1AWo50jV3Lm2zkNoRsU0zdLM0KBg4gqo7uRkWX8Dvikqv6+F1CD0kEccm0uAs6wKsvIepGsgjvHW+9516QwReUt6esMD3eLhxyeePzwn8Av7vYDur+MRWXvcZC3tHYw=
+	t=1725444330; cv=none; b=eauFxoiKJex5TyX7MzuOlUJtWO8ai3KZEwPGRL7hwmlGHrPbi/eiQ8T1Am2Ze240ZIBSnpaJQDdbaKnHodLCqgyTMBgXVxIkXmcQamHHvfnD0Bs4F97LdrgX1r9PMVDRacRowk5FBuW+mfpRrkeOaqLIhfS6XSvnmPLKsTBRJVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444292; c=relaxed/simple;
-	bh=CLNkCPXSrmbm7CtWqVHTUdhz61g9zh8FHrAfFT5F2AY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsCEPSQSjgyoeqoey0pJU0KVe1peoE2na5gOUA/emPTSHKSj3kU+zosCZDoaBpYvEpf1cjmcbVLCM9hXwM7QVETvZ6098ba5UOCYEG3oEirUwWFh4hfWqPll/nW7jrcg64whkJ4HC340VSGL3ASLCD9Ampxc+5i1ib27hGsR3Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cLYI7HyO; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c245c62362so4098206a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725444289; x=1726049089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OjCfTzZBVDRV3mzIA3YSqJ89rOjOD2gBYPgcFgJ9ENE=;
-        b=cLYI7HyOR5vGrqBQ9olWY7hwxZpgZFWo8jbmIYlNn4YlwyogurKLnDp30J8QQEHmJt
-         Aj5z6KeJDKbW1soVxI+fl6N63upnH8riR9Pwr66qpuaLLzN6kVISaO0Tst9eFRaorMOZ
-         F7GLaT9BRqkuZ2PcWxYrX/UA8ecO9VA+GVWPvsF4iR76yzHC+YpPkHT+Plhs4YWgHKyT
-         1mAIeb1QttXUMllsiotuprUxtNNeSSVWx4f54lqEz+wP+C3NrC8gaVoHGPNVuNpyzeyf
-         BWOfwzrhMQ4Z9iPeTPldZQJx7tdp6yavUOWcEQNSztnLqbocKpIgKf+iMWmto2yZ8KuG
-         r9yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725444289; x=1726049089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OjCfTzZBVDRV3mzIA3YSqJ89rOjOD2gBYPgcFgJ9ENE=;
-        b=OjPgIV9p1jCk1KG+Y1Xdm/CyKVgf3KrixipuqWKl4SNyAfkLFCS3zQYMnShqFgV2+h
-         nU7ann1OcHQGDaqATl5ghkALqJJ28YPXKOoPIeYkaEz7Tx7kh2wzPN3vePFhCCk71/KV
-         8XtU4nFidgtZqBP1ZhnNP+w9plhshj+8vmD4+fXA53wVL8CBsL3qk7RP32Gv/nd30iJV
-         dNq7rQEJuQnd4YgMCDI3+ZLtsM1qmGthBo8tZ49SQnEsnovOBgalFxBCLiGRrca+H91Y
-         LQmyIePLUTH1DfkWeOp4jQsieaYvTuX8kWKV8riiVGrjundani/EUnafkmcP7WTP2NlJ
-         dUbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUENsjo/1rmCprqreQM5dlYCpb5/PnQxjszjEs37Bh4NlTS2pMqQmkneciacYbCuRvxDcnGi6pMmovGmqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZs0mMs2eWnsRqomULw1hqHBTQAlyPz2VPXgSQA0/2RckR6a0a
-	VlN84d0OM28gCa42+whmTftGosDHhm/US1OGcRc0F87sEd/BPLpoSj/qOGUvtrE=
-X-Google-Smtp-Source: AGHT+IFtr+hYdONq5xLd8nFJW8KqEKj1EK6KuV7UnJK9IfIV44OQPH2nBEnGdXNIHmfHrLI0how85Q==
-X-Received: by 2002:a50:8d8c:0:b0:5c2:5d34:a481 with SMTP id 4fb4d7f45d1cf-5c2757d6db0mr2164476a12.11.1725444288811;
-        Wed, 04 Sep 2024 03:04:48 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c25c8b0f3dsm3728479a12.58.2024.09.04.03.04.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 03:04:48 -0700 (PDT)
-Date: Wed, 4 Sep 2024 12:04:47 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v2 RESEND] printk: Use the BITS_PER_LONG macro
-Message-ID: <Ztgwv2NMZw03kLjw@pathway.suse.cz>
-References: <20240903035358.308482-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1725444330; c=relaxed/simple;
+	bh=5l2i2okKPqvYTs8EGZAWCDUJOEdgaSBocY+x0vAelOw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qobYT4EoLph9TziBbsMDvoQHtsdjsAMZO6Otl3smgp6rcmqim6Fhg7Pk5E/RssKNRzgWTNmNGwVyNgCBpSN2TT6Vcy9bIB+DO8w/QmJwiRmQyL4HrCcgAeq5VrrMPKcOrJL8zq194Efcf0A5ONnePuYmfha9g1c/iKkveXSolVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e8OuRh2d; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 484A58x4018386;
+	Wed, 4 Sep 2024 05:05:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725444308;
+	bh=FWJxQrgh2tcprMfZJve26f3H5lQR7tw0D0xxXlUZqws=;
+	h=From:To:CC:Subject:Date;
+	b=e8OuRh2djMRnI5TA8KIVS5MeRDzC7Vb4BdG+WaUnYTtEgcC3bMlmxzrHfWAVmoWv+
+	 b+9sS+KNUJuFufyV2bl5KkAcwjSE3d4RgMG49TPevXP9xUivnq6gJ6pQGicBvxaNlv
+	 Ml9H3lsyAqTJLF7hs01kW3+XM9AdnWj4SXKvlY5k=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484A58MP012702;
+	Wed, 4 Sep 2024 05:05:08 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Sep 2024 05:05:08 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Sep 2024 05:05:08 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 484A58YP029403;
+	Wed, 4 Sep 2024 05:05:08 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 484A57X5015357;
+	Wed, 4 Sep 2024 05:05:07 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+        Dan
+ Carpenter <dan.carpenter@linaro.org>,
+        Sai Krishna <saikrishnag@marvell.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon
+ Horman <horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: Alexander Lobakin <aleksander.lobakin@intel.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v4 0/5] Introduce HSR offload support for ICSSG
+Date: Wed, 4 Sep 2024 15:35:01 +0530
+Message-ID: <20240904100506.3665892-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903035358.308482-1-ruanjinjie@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue 2024-09-03 11:53:58, Jinjie Ruan wrote:
-> sizeof(unsigned long) * 8 is the number of bits in an unsigned long
-> variable, replace it with BITS_PER_LONG macro to make it simpler.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Hi All,
+This series introduces HSR offload support for ICSSG driver. To support HSR
+offload to hardware, ICSSG HSR firmware is used.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+This series introduces,
+1. HSR frame offload support for ICSSG driver.
+2. HSR Tx Packet duplication offload
+3. HSR Tx Tag and Rx Tag offload
+4. Multicast filtering support in HSR offload mode.
+5. Dependencies related to IEP.
 
-JFYI, the patch has been committed into printk/linux.git,
-branch rework/write_atomic. It is intended for 6.12 merge window.
+HSR Test Setup:
+--------------
 
-I have chosen this branch because it modified the list of included
-files in kernel/printk/printk_ringbuffer.h as well. It allowed to apply
-the patch without conflicts.
+     ___________           ___________           ___________
+    |           | Link AB |           | Link BC |           |
+  __|   AM64*   |_________|   AM64    |_________|   AM64*   |___
+ |  | Station A |         | Station B |         | Station C |   |
+ |  |___________|         |___________|         |___________|   |
+ |                                                              |
+ |______________________________________________________________|
+                            Link CA
+ *Could be any device that supports two ethernet interfaces.
 
-Best Regards,
-Petr
+Steps to switch to HSR frame forward offload mode:
+-------------------------------------------------
+Example assuming eth1, eth2 ports of ICSSG1 on AM64-EVM
+
+  1) Enable HSR offload for both interfaces
+      ethtool -K eth1 hsr-fwd-offload on
+      ethtool -K eth1 hsr-dup-offload on
+      ethtool -K eth1 hsr-tag-ins-offload on
+      ethtool -K eth1 hsr-tag-rm-offload on
+
+      ethtool -K eth2 hsr-fwd-offload on
+      ethtool -K eth2 hsr-dup-offload on
+      ethtool -K eth2 hsr-tag-ins-offload on
+      ethtool -K eth2 hsr-tag-rm-offload on
+
+  2) Create HSR interface and add slave interfaces to it
+      ip link add name hsr0 type hsr slave1 eth1 slave2 eth2 \
+    supervision 45 version 1
+
+  3) Add IP address to the HSR interface
+      ip addr add <IP_ADDR>/24 dev hsr0
+
+  4) Bring up the HSR interface
+      ip link set hsr0 up
+
+Switching back to previous mode:
+--------------------------------
+  1) Delete HSR interface
+      ip link delete hsr0
+
+  2) Disable HSR port-to-port offloading mode, packet duplication
+      ethtool -K eth1 hsr-fwd-offload off
+      ethtool -K eth1 hsr-dup-offload off
+      ethtool -K eth1 hsr-tag-ins-offload off
+      ethtool -K eth1 hsr-tag-rm-offload off
+
+      ethtool -K eth2 hsr-fwd-offload off
+      ethtool -K eth2 hsr-dup-offload off
+      ethtool -K eth2 hsr-tag-ins-offload off
+      ethtool -K eth2 hsr-tag-rm-offload off
+
+Testing the port-to-port frame forward offload feature:
+-----------------------------------------------------
+  1) Connect the LAN cables as shown in the test setup.
+  2) Configure Station A and Station C in HSR non-offload mode.
+  3) Configure Station B is HSR offload mode.
+  4) Since HSR is a redundancy protocol, disconnect cable "Link CA",
+     to ensure frames from Station A reach Station C only through
+     Station B.
+  5) Run iperf3 Server on Station C and client on station A.
+  7) Check the CPU usage on Station B.
+
+CPU usage report on Station B using mpstat when running UDP iperf3:
+-------------------------------------------------------------------
+
+  1) Non-Offload case
+  -------------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.50    0.00  3.52  29.15    0.00    0.00   66.83
+    0  0.00   0.00  0.00    0.00  7.00  58.00    0.00    0.00   35.00
+    1  0.00   0.00  0.99    0.00  0.99   0.00    0.00    0.00   98.02
+
+  2) Offload case
+  ---------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.00    0.00  0.50   0.00    0.00    0.00   99.50
+    0  0.00   0.00  0.99    0.00  0.00   0.00    0.00    0.00   99.01
+    1  0.00   0.00  0.00    0.00  0.00   0.00    0.00    0.00  100.00
+
+Note:
+1) At the very least, hsr-fwd-offload must be enabled.
+   Without offloading the port-to-port offload, other
+   HSR offloads cannot be enabled.
+
+2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
+   must also be enabled as these are tightly coupled in
+   the firmware implementation.
+
+Changes from v3 to v4:
+*) Simplified ndo_set_features() implementation as suggested by Roger Quadros
+<rogerq@kernel.org>
+*) Maintained 80 character limit per line wherever possible.
+*) Returning -EOPNOTSUPP whenever offloading is not possible.
+*) Changed dev_dbg() prints to netdev_dbg() as suggested by Alexander
+Lobakin <aleksander.lobakin@intel.com>
+*) Squashed patch [1] and [2] together as hsr tag ins is dependent on hsr
+tx duplication. Also didn't add Roger's RB tag from patch [2] as the patch
+is now merged with [1] in patch 4/5.
+*) Implemented emac_ndo_fix_features() to make sure NETIF_F_HW_HSR_DUP is
+enabled / disabled with NETIF_F_HW_HSR_TAG_INS as suggested by Roger
+Quadros <rogerq@kernel.org>
+*) Added Roger's RB tag to patch 5/5.
+*) Modified commit message of patch 3/5 to state that driver will be back
+to previously used mode once HSR is disabled.
+
+Changes from v2 to v3:
+*) Renamed APIs common to switch and hsr modes with suffix _fw_offload.
+*) Returning EOPNOTSUPP in prueth_hsr_port_link() as suggested by
+   Andrew Lunn <andrew@lunn.ch>
+*) Dropped unneccassary dev_err prints and changed dev_err to dev_dbg
+   where applicable.
+*) Renamed NETIF_PRUETH_HSR_OFFLOAD to NETIF_PRUETH_HSR_OFFLOAD_FEATURES
+   to make it clear it is a collection of features, not an alias for one
+   feature.
+*) Added Kernel doc entries for @hsr_members and @is_hsr_offload_mode as
+   suggested by Simon Horman <horms@kernel.org>
+*) Dropped patch [3] as it is no longer needed in this series. It is
+   already merged to net/main by commit [4].
+*) Collected Reviewed-by tag from Roger Quadros <rogerq@kernel.org> for
+   PATCH 1/6 and PATCH 2/6.
+*) Added if check for current mode before calling __dev_mc_unsync as
+   suggested by Roger Quadros <rogerq@kernel.org>
+*) Updated commit message of PATCH 6/6 to describe handling of duplicate
+   discard in the driver.
+
+Changes from v1 to v2:
+*) Modified patch 2/7 to only contain code movement as suggested by
+   Dan Carpenter <dan.carpenter@linaro.org>
+*) Added patch 3/7 by splitting it from 2/6 as the patch is not part of
+   code movement done in patch 2/7.
+*) Rebased on latest net-next/main.
+
+v1: https://lore.kernel.org/all/20240808110800.1281716-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20240813074233.2473876-1-danishanwar@ti.com
+v3: https://lore.kernel.org/all/20240828091901.3120935-1-danishanwar@ti.com/
+
+[1] https://lore.kernel.org/all/20240828091901.3120935-5-danishanwar@ti.com/
+[2] https://lore.kernel.org/all/20240828091901.3120935-7-danishanwar@ti.com/
+[3] https://lore.kernel.org/all/20240813074233.2473876-2-danishanwar@ti.com/
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=e846be0fba85
+
+MD Danish Anwar (4):
+  net: ti: icss-iep: Move icss_iep structure
+  net: ti: icssg-prueth: Stop hardcoding def_inc
+  net: ti: icssg-prueth: Add support for HSR frame forward offload
+  net: ti: icssg-prueth: Add multicast filtering support in HSR mode
+
+Ravi Gunasekaran (1):
+  net: ti: icssg-prueth: Enable HSR Tx duplication, Tx Tag and Rx Tag
+    offload
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c      |  72 ------
+ drivers/net/ethernet/ti/icssg/icss_iep.h      |  73 ++++++-
+ .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |  18 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.c  |  22 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 206 +++++++++++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +
+ 8 files changed, 311 insertions(+), 92 deletions(-)
+
+
+base-commit: 075e3d30e4a3da8eadd12f2f063dc8e2ea9e1f08
+-- 
+2.34.1
+
 
