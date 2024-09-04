@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-315564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2614F96C43E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:38:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22B596C43F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B701C24A77
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7866C2849AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582FA1E0B78;
-	Wed,  4 Sep 2024 16:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7AB1E0B66;
+	Wed,  4 Sep 2024 16:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OVf3aPck"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HXRho4HE"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062C91E00BD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29DC1E00B6
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467878; cv=none; b=dS0+Sh6qQIXrgTuiFFSMTAAHo15cDVMtcs8/51fGCPnvokgyqwwZISvTwJsbypz3i918wGFf01zXEO2U8HQUfo6doOGuD7Avcyjy+yZttGik0HUeE+0kv4RRGacuWuui1F6eXIgD0JOyWTMisZ6esB/2BXc0H8EfDEsEWabYgSQ=
+	t=1725467919; cv=none; b=pUSXj05hASRizgV+An/guU6X5wcuzstatMLULNsAuCU1AD9jEYkAj6p4WhaDXg/Nf8FCVD1Z5VNsG84mCkZNjBDPbSC/EN4A8V0JUm/ZuUsJvEbbVAVGBuOKa5c7zGiA+7B9jV+/BPKvcnomCI3Fi8iQQ4fyLf+sJEhZy4HIM1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467878; c=relaxed/simple;
-	bh=Kai+oXgyYqx51OC9L3hBXB9yZXTbTfdql5NHmBr+XLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOYNxIkFmC4BFsn/GWGkX80Y9VWELUzmRC+gNYq2wf699EPVHTatkkDUjhm6qIp3MsKKaUWTnGHW/fx0WqfrWwB3+LI+KakiysN5SJdtP5y9AGola0elT4K1lGwOBx+mf8GKiYyT6ic4eUUUejuJfva2jUTzfh6T5rgAvKZfya8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OVf3aPck; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Sep 2024 12:37:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725467874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XJRjlFiLzX37Eyl/RAVDP2lOWHI5udCI3PpG5m3qNKk=;
-	b=OVf3aPckmjLImnybBd3QJgZuv7Miwlfaa94VmAQuQD04yHk60dretbmCqlve+1G/hsasxU
-	Y8H25oJcGNPfl1I9RdYkCpGecTN27Pjka5vkEHBD+xfaUftddGMVYu7nSzVLOPA9DDdoiG
-	cP1SfjL7lUi09m9XTGkEI6mdw0YL+Ls=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net, 
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com, 
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <keaqrfkkoswtpbtvr3l5oetd4d3ncbpaxsay7dckn74qdob2u2@lohq26fuccib>
-References: <20240902044128.664075-1-surenb@google.com>
- <20240902044128.664075-7-surenb@google.com>
- <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
- <CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com>
- <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com>
- <ZtfDiH3lZ9ozxm0v@casper.infradead.org>
- <CAJuCfpHJ9PwNOqmFOH373gn6Uqa-orG6zP3rqk-_x=GkpUo2+Q@mail.gmail.com>
- <ZtiMZWqht_8Bse-5@casper.infradead.org>
+	s=arc-20240116; t=1725467919; c=relaxed/simple;
+	bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tuoEkPW2lgmFN3nIADnZHZhlcJYEAtBZvPQ15lJIQh9g682V8TFXdYPz1xJa1L6ekUlQZe3xRGReCa26vQmiJ+DlSvpJenRpyB617SnKoSPgz5jVYuNdbAQToLJECj6fTp0DFtEPixda2vymKyATwkuLmPKeFW/R6g5KzPbMrH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HXRho4HE; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c2443b2581so250a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 09:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725467916; x=1726072716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
+        b=HXRho4HEnOa9kQiu5HKUi7Um9KzIoc/MajCczV10P0ibaEQ6yZTuKxTD+xnxz2Wou+
+         o+Ep9P/a7mu7vrxOkl4dQoHuoqbHHUS18kZtDBol5LTOV9X7BXUwyLwL7KpaiY/znqsn
+         wmfQrd71gZUnKE5qgAvtPFarL9+htSmPR5pW3UXqwtlmifuYX0jDsU8vBhXVgyfQeyvf
+         u5r4vEZtyt/tlrKlsWvvV3IQObgP703DwVfou6Hw15UcFqc+f5pv4mwzufa6847M3n0d
+         Zoy49sW2YcFp09RnEm0vvzZIRtRsyw4zMtdpyYtvIijNORvg/LOTBerqFXh/8vlys4oB
+         /clQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725467916; x=1726072716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/mxnS+fdjiP+kCtyiBUQuycjb8RUUN4u6LVfgbRPcPw=;
+        b=eJPeMf/Y2eAY7m8Fugj+oAWscp00ADY7xF56Y0jWR//FHFkgLgBGfr9HffQryItPOi
+         +fVbJS6uVfP+MQLE295zl0L9d6XgGzrbb/2XloH/QtOKSfpROyoemHYdxHYo5956ZT6B
+         ezW9DiSshbzFheoWF73n5n5RfiOLpZP95xgkzy8m8opjU4DbhojWl6oPm6D7G2GCRy5j
+         XtsANhhTHpLfzdxjs8f+5wnuZPMj4g6NB/9jP7tAYEBhT7O6g+/xdtXSAIxMSqfo6lYc
+         aOy/YqEQaB+kRo+jhaEn8ION9AldK7+kx9tJTaKjjJUqIX6bNZsY+bVckNX/j8gKPKte
+         XQxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIDNYoFpHaJ9VN1ofWk6skOE26jjqBul7i4HfbppXdM1r7JGGwNV2kWsTjLqFhYV9Xnj+3iWmpoHWt9C8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRFQFM/VShLsUL7XVk0sT+r4Jy0NW/MniZG+Ken3cDemg5C2y/
+	S7vrr78O0wqxKByHKB0j4osQZbYOSi9gE9X+MjN3ycguIDtPsyPjW4NLccaqDnAilLygXOgvpsX
+	4j/Uyk5pkvE7evE7OmRpJGCpJpFONnlTbQqvw
+X-Google-Smtp-Source: AGHT+IF6UKWmXapLL+d1BWCdn4AUAlZZFF1ra+TJue0mm7OLyZp7Lr+G5pXbIgCO7p3I8Y2jkaZWp5KGqk+tfX8/prk=
+X-Received: by 2002:a05:6402:40cd:b0:5c0:aa37:660b with SMTP id
+ 4fb4d7f45d1cf-5c27858b48fmr241823a12.6.1725467915783; Wed, 04 Sep 2024
+ 09:38:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtiMZWqht_8Bse-5@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20240826204353.2228736-1-peterx@redhat.com> <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
+ <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
+ <20240828142422.GU3773488@nvidia.com> <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
+ <20240828234958.GE3773488@nvidia.com> <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
+ <20240904155203.GJ3915968@nvidia.com>
+In-Reply-To: <20240904155203.GJ3915968@nvidia.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Wed, 4 Sep 2024 09:38:22 -0700
+Message-ID: <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
+	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	ankita@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 05:35:49PM GMT, Matthew Wilcox wrote:
-> On Wed, Sep 04, 2024 at 09:18:01AM -0700, Suren Baghdasaryan wrote:
-> > I'm not sure I understand your suggestion, Matthew. We allocate a
-> > folio and need to store a reference to the tag associated with the
-> > code that allocated that folio. We are not operating with ranges here.
-> > Are you suggesting to use a maple tree instead of page_ext to store
-> > this reference?
-> 
-> I'm saying that a folio has a physical address.  So you can use a physical
-> address as an index into a maple tree to store additional information
-> instead of using page_ext or trying to hammer the additional information
-> into struct page somewhere.
+On Wed, Sep 4, 2024 at 8:52=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wro=
+te:
+>
+> On Thu, Aug 29, 2024 at 12:21:39PM -0700, Jiaqi Yan wrote:
+>
+> > I think we still want to attempt to SIGBUS userspace, regardless of
+> > doing unmap_mapping_range or not.
+>
+> IMHO we need to eliminate this path if we actually want to keep things
+> mapped.
+>
+> There is no way to generate the SIGBUS without poking a 4k hole in the
+> 1G page, as only that 4k should get SIGBUS, every other byte of the 1G
+> is clean.
 
-Ah, thanks, that makes more sense.
+Ah, sorry I wasn't clear. The SIGBUS will be only for poisoned PFN;
+clean PFNs under the same PUD/PMD for sure don't need any SIGBUS,
+which is the whole purpose of not unmapping.
 
-But it would add a lot of overhead to the page alloc/free paths...
+>
+> Jason
 
