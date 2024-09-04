@@ -1,253 +1,228 @@
-Return-Path: <linux-kernel+bounces-314291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F67F96B163
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:18:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B375696B167
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDC45B21867
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71911C247AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABD612CD88;
-	Wed,  4 Sep 2024 06:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B390130A7D;
+	Wed,  4 Sep 2024 06:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="O6qxh1HT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f+mDibDg"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26A512C491
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C732612D1F1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 06:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725430698; cv=none; b=KOoWJrN2myuYlSMRHmhbP2YCP4Ez+1Z2jiQ9Jx1uNc1ugkB7S+eC+NgyJfdRPphhmxJqb/ehngR/eCtbPXjBWDO4+fpMaZXNGl2oipGSbjZ052Y2zm2PlwGnQkTkTPvd9XghkIwy3kRSlFn1xVUnKPbbVhfGuHh2U/lHIW/orgM=
+	t=1725430734; cv=none; b=kVk1j5CpcR/Q6rJyAel1DSUYto1xtPR9GKNBEr8Pa0rZDEuqGZKfVmON7dyqQ45wDjpO/Mwa5DmM/qmlxBxDwTmhpOY3stLCzUkVku8CpiskTpReuXAjb5WWra1yIviLsTzBhX9V9CluqB7nqtnP0npVN+u0RCBe3s+ALruxAUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725430698; c=relaxed/simple;
-	bh=YYRYh0L7L2u0ykGvVkbOc477dRhohUwy8OxZ5sv2NTs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rHU8st/W4zeGExGKAnX4MUyJKttmcaG7vvGXnvGAY90HDizY6SQY5KMYGk4aUXbsEJCqexJ/ZJPw0ZpuXkh3JZciOwcsGY1+bjRGy4yGELWmsvMabbJytBXwd6SRkTr/OkNUeHSsrYhZTPrNCkblayhPdcw96tm0Jg2GNxFKKo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=O6qxh1HT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7177a85d092so295579b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:18:16 -0700 (PDT)
+	s=arc-20240116; t=1725430734; c=relaxed/simple;
+	bh=UeMkU1/snICGZnsW/arCIBJFU191Jqcgi5FRw1vBkOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HHWE7nH8Ql/VBxhirLq8ZPxTrFNmG4mQQBPpE3JifA9q2J6ARIEbb8L959FvXT/89AGsmdqPfMJJP93dm4JMOKP4PH5MdGKWOBymsK9IuAMtjaQn/lo+Ooiwlvp6Lbs8OyJW/kJoZ7+DVtGtVV5QCQ4LEltcSIcoNtCqYcJdKEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=f+mDibDg; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-714226888dfso420179b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 23:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1725430696; x=1726035496; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eu647T7nNMWRP/YHN3BoLN2SM/MBw6d4xuLVFykFWxM=;
-        b=O6qxh1HTvX1cFa68o1d06SF3aHyS6SdA3zRioHGcGQsN0wpRIPXGna8ndB0YkrguEM
-         R8kUIKCcjlwftEdPh/GosBPgwXMshjwNcm/7IexRpkD7unv+Q0T+lONaeV2DYgFKLaQD
-         +AAPpIvsBB11AfLwgAVR6toFp3DAAtM+IwCeYNSksODrioZsKF9oodhSauJtRh40W/Pb
-         TYYY2c9U0/+ZFPmrX7xwOsRgKVj9odaR112FGOaXgI75Ru2fqcZ6+qc0W+5EHmSUS9HZ
-         9rrN+5TnjlxQtHzRHbx6r/v2vq4disSduV4PaxaOiADgdLIU+rQm+dN7wOmKoUE+QV4/
-         pxjg==
+        d=broadcom.com; s=google; t=1725430732; x=1726035532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1dLJducQRrjRbAOaAZmrJ4SGclalwzTUXPAbwLGNOA=;
+        b=f+mDibDg3c6TCFw2mbXl5agGpRVPq5oezlLTt/WKev/xZDsx9gJI5fJw5CidfMR6cc
+         23r96gBPoRbqgBT2vhHH1AwgRnnNuqyFCP3VZVyoivg68lUw/Lwqo8ISRR5C+UZU607O
+         Ub8kWp8qksb1TAiatTe0z9UEVY9wQx3VX/r7Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725430696; x=1726035496;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725430732; x=1726035532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Eu647T7nNMWRP/YHN3BoLN2SM/MBw6d4xuLVFykFWxM=;
-        b=kqI32J9kB+3C/Q3EAjE4WCildKeeSq3gJIeDZftuNNS64bOzIMEiATdGSxOk1RCGMh
-         Ex6c39qI7Rd9pGjADI3JJ3xGN1qa2cny4n+pAp2xdNVrdneitVrPrIELjxSgThbMJ5mr
-         XWwk5lc9C9zeAoMNnQem7nPrvALCVAuRBHs95OKP9o/d3I/siXx4fGiaLWb2Zt98ggdA
-         NohFUe4vAvwcdyL7q4QEHbn8W1ruMW0W4vHZzoqBgIZZRA+MN2CEmpsWvefxUB3pYB9B
-         9DyUA3RGv54LKGhGuUxeD5rY28I8O6wMqPf/1MlQuMgV40j8TFEviCH59oy7UOg3XsBQ
-         ggAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD6obwcJMo9Ths79dqqJz7OPqTBz+U8d+0+F1hEza8oenOLEImOWqJYqZs6ke43C1rDEpQ2asiJZyRKCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdsC7nlR+4VlzxNsrD8U5xwr/Uk2L6dIjSejhxP11Yh1ylrPDZ
-	qjswEQf67G56f4E1IUlbXtW9KeJfpL5Xvb2cSUGbpWhU6ulOhkef1IV3JHmNb60=
-X-Google-Smtp-Source: AGHT+IEUmQuEekOshj2U2ghDUo5ouB6mubhPNYM+/lWg1dvcZFBG+usrvWqHmoYnac2bue2ObG55+w==
-X-Received: by 2002:a05:6a00:2283:b0:714:2922:7c6c with SMTP id d2e1a72fcca58-715dfccb426mr23504536b3a.19.1725430695900;
-        Tue, 03 Sep 2024 23:18:15 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778532e32sm878585b3a.78.2024.09.03.23.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 23:18:15 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	james.clark@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH v2] tools lib subcmd: Use array data to save built usage string
-Date: Wed,  4 Sep 2024 14:17:55 +0800
-Message-Id: <20240904061755.1467832-1-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        bh=A1dLJducQRrjRbAOaAZmrJ4SGclalwzTUXPAbwLGNOA=;
+        b=CqxfJ7nSwSj+cS4Yv27GGPjHtj2Kvl3Cm7i9LsgIjk80r8rwWcx1TMisKmYMDCbLAk
+         vNVQU+QcoaVSrD0ix+0xRTjbTHQ2E7a6HWYcSbrT1DIC0d0zuWYo6BvoZUSzBzalZGz/
+         pmmrVRfhXXn7KLizfxU5YiPHoRMv9Q+z0F64k5S6LoXuQAv1qgdloo2kUQXtnTQ13fQm
+         IUzd0/Wc7r3Hb4uwnEYEU/aBK1CV64FDcLc2tSFRR8VsFzBTey4WePgU+MFfuArEnrga
+         rsfqwWGYros+75Tn6KcNVbPlOMpqo/zSB11SO7qUc78794fJvrJnb9E778rc3G1QM+pF
+         TA/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfT9isMkrW9Anzu8ZOc5cm2m8sUwfNYouDUSabDFn1V/FM++vYkvxWp7uxqf7+lzfesa7J8ME3LurAPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIxpYd4OiRHJAHZPVDxNhKhyU1AyXZ7TtsZMoaAWXLh+twL7lJ
+	YVQQvma645xltjAgDlieWgJb/EbilD/9/zBvjcZWcybvBQnoswu0BjnUakZ9LSZYXFBhlSUB+Bt
+	oUqIZIfMiO6ywE/F/TLQ24YHXFh1mXmWKVGk9
+X-Google-Smtp-Source: AGHT+IHs0EvXSZZcTNuqGLIYbNnmOeRRNioG9nVnnSbw5x5S1n44ywyuOvT/VOHiOy/LbARraamuEGl890QXJbxNwjA=
+X-Received: by 2002:a05:6a20:d046:b0:1c4:8da5:219a with SMTP id
+ adf61e73a8af0-1cce0ff26c9mr22064045637.8.1725430731827; Tue, 03 Sep 2024
+ 23:18:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240903124048.14235-1-gakula@marvell.com> <20240903124048.14235-2-gakula@marvell.com>
+ <CALs4sv0s0=8Mg-5hQAeLEnTDfwKFy2esp9yFchX0kpPCEciNpA@mail.gmail.com> <CH0PR18MB43396EE468C12EB47B9E4CC9CD9C2@CH0PR18MB4339.namprd18.prod.outlook.com>
+In-Reply-To: <CH0PR18MB43396EE468C12EB47B9E4CC9CD9C2@CH0PR18MB4339.namprd18.prod.outlook.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Wed, 4 Sep 2024 11:48:38 +0530
+Message-ID: <CALs4sv2398-S2ttmxJZBMYAQWsauC_VdApb1T5Y6MpzBPAYocA@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [net-next PATCH 1/4] octeontx2-pf: Defines common
+ API for HW resources configuration
+To: Geethasowjanya Akula <gakula@marvell.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"davem@davemloft.net" <davem@davemloft.net>, "pabeni@redhat.com" <pabeni@redhat.com>, 
+	"jiri@resnulli.us" <jiri@resnulli.us>, "edumazet@google.com" <edumazet@google.com>, 
+	Sunil Kovvuri Goutham <sgoutham@marvell.com>, Subbaraya Sundeep Bhatta <sbhatta@marvell.com>, 
+	Hariprasad Kelam <hkelam@marvell.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000e2cf890621452552"
 
-commit 230a7a71f922 ("libsubcmd: Fix parse-options memory leak")
-free built usage string to solve the memory leak problem,
-which causes perf tool to not print subcommands when outputting usage help,
-reducing the friendliness of the information.
+--000000000000e2cf890621452552
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If use original method of dynamically allocating memory, caller needs to
-free the memory in appropriate place. In order to avoid it, use an array
-to save built usage string.
-Currently, only perf tool uses this function, 128 bytes are enough.
+On Wed, Sep 4, 2024 at 11:18=E2=80=AFAM Geethasowjanya Akula <gakula@marvel=
+l.com> wrote:
+>
+>
+>
+> >-----Original Message-----
+> >From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+> >Sent: Tuesday, September 3, 2024 8:27 PM
+> >To: Geethasowjanya Akula <gakula@marvell.com>
+> >Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kuba@kernel.or=
+g;
+> >davem@davemloft.net; pabeni@redhat.com; jiri@resnulli.us;
+> >edumazet@google.com; Sunil Kovvuri Goutham <sgoutham@marvell.com>;
+> >Subbaraya Sundeep Bhatta <sbhatta@marvell.com>; Hariprasad Kelam
+> ><hkelam@marvell.com>
+> >Subject: [EXTERNAL] Re: [net-next PATCH 1/4] octeontx2-pf: Defines commo=
+n
+> >API for HW resources configuration
+> >
+> >On Tue, Sep 3, 2024 at 6:11=E2=80=AFPM Geetha sowjanya <gakula@marvell.c=
+om>
+> >wrote:
+> >>
+> >> -
+> >>         /* Assign default mac address */
+> >>         otx2_get_mac_from_af(netdev);
+> >>
+> >> @@ -3118,11 +3141,8 @@ static int otx2_probe(struct pci_dev *pdev, con=
+st
+> >struct pci_device_id *id)
+> >>         if (test_bit(CN10K_LMTST, &pf->hw.cap_flag))
+> >>                 qmem_free(pf->dev, pf->dync_lmt);
+> >>         otx2_detach_resources(&pf->mbox);
+> >Isn't some of this unwinding/cleanup already moved to the new
+> >function? Looks like duplicate code to me.
+> No. If the otx2_probe () fails in any of the function after " otx2_init_r=
+src()" function call.
+> Then below code cleanup the resources allocated.
 
-libsubcmd calls scnprintf(), move the build dependency of vsprintf.o from
-perf to libsubcmd. Otherwise objtool build will fail (because it indirectly
-calls parse_options_subcommand()), see [1]
+Ack. I missed to see that otx2_init_rsrc() is being carved out in
+order to be called independently also.
 
-Before:
-  # perf sched
+> >
+> >> -err_disable_mbox_intr:
+> >>         otx2_disable_mbox_intr(pf);
+> >> -err_mbox_destroy:
+> >>         otx2_pfaf_mbox_destroy(pf);
+> >> -err_free_irq_vectors:
+> >>         pci_free_irq_vectors(hw->pdev);
+> >>  err_free_netdev:
+> >>         pci_set_drvdata(pdev, NULL);
+> >> --
+> >> 2.25.1
+> >>
+> >>
 
-   Usage: (null)
+--000000000000e2cf890621452552
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-      -D, --dump-raw-trace  dump raw trace in ASCII
-      -f, --force           don't complain, do it
-      -i, --input <file>    input file name
-      -v, --verbose         be more verbose (show symbol address, etc)
-
-After:
-  # perf sched
-
-   Usage: perf sched [<options>] {record|latency|map|replay|script|timehist}
-
-      -D, --dump-raw-trace  dump raw trace in ASCII
-      -f, --force           don't complain, do it
-      -i, --input <file>    input file name
-      -v, --verbose         be more verbose (show symbol address, etc)
-
-Fixes: 230a7a71f922 ("libsubcmd: Fix parse-options memory leak")
-Link: https://lore.kernel.org/oe-kbuild-all/202409040112.BKj8VlQT-lkp@intel.com/ # [1]
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
----
-
-Changes since v1:
- - Move the build dependency of vsprintf.o from perf to libsubcmd.
-
- tools/lib/subcmd/Build           |  5 +++++
- tools/lib/subcmd/parse-options.c | 27 +++++++++++++++------------
- tools/lib/subcmd/parse-options.h | 10 ++++++++++
- tools/perf/util/Build            |  5 -----
- 4 files changed, 30 insertions(+), 17 deletions(-)
-
-diff --git a/tools/lib/subcmd/Build b/tools/lib/subcmd/Build
-index ee31288788c1..af832dab00df 100644
---- a/tools/lib/subcmd/Build
-+++ b/tools/lib/subcmd/Build
-@@ -5,3 +5,8 @@ libsubcmd-y += parse-options.o
- libsubcmd-y += run-command.o
- libsubcmd-y += sigchain.o
- libsubcmd-y += subcmd-config.o
-+libsubcmd-y += vsprintf.o
-+
-+$(OUTPUT)vsprintf.o: ../vsprintf.c FORCE
-+	$(call rule_mkdir)
-+	$(call if_changed_dep,cc_o_c)
-diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
-index 4b60ec03b0bb..1e41a204864a 100644
---- a/tools/lib/subcmd/parse-options.c
-+++ b/tools/lib/subcmd/parse-options.c
-@@ -633,20 +633,26 @@ int parse_options_subcommand(int argc, const char **argv, const struct option *o
- 			const char *const subcommands[], const char *usagestr[], int flags)
- {
- 	struct parse_opt_ctx_t ctx;
--	char *buf = NULL;
- 
- 	/* build usage string if it's not provided */
- 	if (subcommands && !usagestr[0]) {
--		astrcatf(&buf, "%s %s [<options>] {", subcmd_config.exec_name, argv[0]);
-+		int n;
-+		static char buf[USAGESTR_BUF_SIZE];
-+		int buf_size = sizeof(buf);
- 
--		for (int i = 0; subcommands[i]; i++) {
--			if (i)
--				astrcat(&buf, "|");
--			astrcat(&buf, subcommands[i]);
-+		n = scnprintf(buf, buf_size, "%s %s [<options>] {",
-+			      subcmd_config.exec_name, argv[0]);
-+
-+		for (int i = 0; subcommands[i] && n < buf_size - 1; i++) {
-+			n += scnprintf(buf + n, buf_size - n, "%s%s",
-+				       i ? "|" : "", subcommands[i]);
- 		}
--		astrcat(&buf, "}");
-+		if (n < buf_size - 1)
-+			n += scnprintf(buf + n, buf_size - n, "}");
- 
--		usagestr[0] = buf;
-+		/* only provided if a complete string is built */
-+		if (n < buf_size - 1)
-+			usagestr[0] = buf;
- 	}
- 
- 	parse_options_start(&ctx, argc, argv, flags);
-@@ -678,10 +684,7 @@ int parse_options_subcommand(int argc, const char **argv, const struct option *o
- 			astrcatf(&error_buf, "unknown switch `%c'", *ctx.opt);
- 		usage_with_options(usagestr, options);
- 	}
--	if (buf) {
--		usagestr[0] = NULL;
--		free(buf);
--	}
-+
- 	return parse_options_end(&ctx);
- }
- 
-diff --git a/tools/lib/subcmd/parse-options.h b/tools/lib/subcmd/parse-options.h
-index 8e9147358a28..654ba0a2201c 100644
---- a/tools/lib/subcmd/parse-options.h
-+++ b/tools/lib/subcmd/parse-options.h
-@@ -174,6 +174,16 @@ extern int parse_options(int argc, const char **argv,
-                          const struct option *options,
-                          const char * const usagestr[], int flags);
- 
-+/* parse_options_subcommand() will filter out the processed options
-+ * and subcommands, leave the non-option argments in argv[].
-+ * If usagestr is empty, it will build usage string based on subcommands
-+ * in format of "exec_name argv[0] [<options>] {subcommand1|subcomman2|...}".
-+ *
-+ * NOTE: In order to avoid the caller needing to free memory,
-+ * use an 128-bytes array to store the built usage string.
-+ * If need to expand the array size, please modify USAGESTR_BUF_SIZE macro.
-+ */
-+#define USAGESTR_BUF_SIZE 128
- extern int parse_options_subcommand(int argc, const char **argv,
- 				const struct option *options,
- 				const char *const subcommands[],
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 260cec2f6c0b..14b00a563ab7 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -144,7 +144,6 @@ perf-util-y += help-unknown-cmd.o
- perf-util-y += dlfilter.o
- perf-util-y += mem-events.o
- perf-util-y += mem-info.o
--perf-util-y += vsprintf.o
- perf-util-y += units.o
- perf-util-y += time-utils.o
- perf-util-y += expr-flex.o
-@@ -386,10 +385,6 @@ $(OUTPUT)util/hweight.o: ../lib/hweight.c FORCE
- 	$(call rule_mkdir)
- 	$(call if_changed_dep,cc_o_c)
- 
--$(OUTPUT)util/vsprintf.o: ../lib/vsprintf.c FORCE
--	$(call rule_mkdir)
--	$(call if_changed_dep,cc_o_c)
--
- $(OUTPUT)util/list_sort.o: ../lib/list_sort.c FORCE
- 	$(call rule_mkdir)
- 	$(call if_changed_dep,cc_o_c)
--- 
-2.25.1
-
+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
+OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
+dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
+fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
+9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
+pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
+25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
+Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIATHKzGMiMVv5Ubuuvc+P1Z/bpKkS0fk
+AwrAO5XWaP8yMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
+NDA2MTg1MlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQBNkhJyY6nlwtYSCZj5K2B/VuWxdUKiXm3Jc5HYignIRwYT4Ra5
+jXuVvXgM4mZNccDOQ2J6Jmhnjli4Nwrn+4g6lUHWe/s2kdXdURE2zwx77JwHYxKRSiU+q04GeDAs
+3rGCX4DXpBmGscB42tkYdTRqfzUXj73ZCBkhf4OUYAA1T7G80vQllTlAC4wzcmjregMUSuUiAmSw
+XOGCGL0RAEyAZvpjRaG+VgSz/QUDNVapZls4Pjk5NuFaxNzNx+p+aIr87mE+2auuXyuCfReHhZV3
+sOWATamiT8HSREblKHjn1zZE/bNahU7ORJhBJKz0aM2ygZpSIDEF2T1b3o0rJbRu
+--000000000000e2cf890621452552--
 
