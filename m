@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-315948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE74996C8FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BA196C901
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8B31F266D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBCE61C25B09
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E7913D297;
-	Wed,  4 Sep 2024 20:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39901487DD;
+	Wed,  4 Sep 2024 20:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L/Tt8mvP"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2UdEHPK"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109177E6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424AD530;
+	Wed,  4 Sep 2024 20:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725483264; cv=none; b=myyYWDlrI4ykYSCtez/4oXUfu9/6dzc29pOK1K//FG9dia+IjhZzPYac4xDNAqTLD7KD79ZEeMkxepnFhx4nRAwlAP8i1UFRQ1vwOaSEDvDcZoylfOcRxGRB8wfGtT1arzog0Hs+Whkf8+z9cG6Z8iBCiLgXKF1uFC/N3Xsgk4o=
+	t=1725483313; cv=none; b=nwDuJedh++bQ6nofkrTa7aVT4C6NCEgdpWFnLV7fD/UjWQyg6LfoAowpVj2epUKdOQxdHJN4RJshQkD53l4E8KN1Qlru1HZpcwKTiOG0hNwQN5HSFT5svSXQR0CqwUXSxGSlx4rkvqfz3LoUNV1d3+iYvb2KTQSFCQ4OJN6ESGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725483264; c=relaxed/simple;
-	bh=Ar6esdgnXpcn8oHruRMthSRZHY4RtL0LI+9aHQCKP8Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C5GMnW+MPaNeZv9FCKfxDgSLKP7UF8+PNbEOf3OXkZ7ITwAHR5LzzGi9Ua+6XvCJti52kvUfeKRwGh7hipnGgw7hbZSBpIYdOFegV5uwa8B9IH7Fupw2AstqywnbmDdUwW9CwI8GsV0F9YOk+hOMvv4C4Nl4+2Uefj5e64Gh07E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L/Tt8mvP; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03623b24ddso200743276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 13:54:22 -0700 (PDT)
+	s=arc-20240116; t=1725483313; c=relaxed/simple;
+	bh=LQTu8sC/kulEKMETw8TubpnUEdoK4OUoYt2IduwMQPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fy0RwCqHIwJB9d6l2RNxUdxnvTD17Ap9nA+d3y9UsrJQLR9yyS7BtG/+0WUZOGFWJoLceP6rVi3xzfhOOZ71gigKkPPfxRD8WN911mMH81JJ6J8QfRLMJX/6glCPhqC3L9hphKVPKq6udY/sjXF8drOCXQGnFzw5orhfpIa4Gs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2UdEHPK; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2059204f448so801735ad.0;
+        Wed, 04 Sep 2024 13:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725483262; x=1726088062; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8wW8R+MHjMe6Movf5KpIkdjuSKAp7NEYib8XCqV/wxI=;
-        b=L/Tt8mvPbHHmu3xmpNmAYlmCy3k3MqBjrPNMETv524/1KvFtl0bXv9dVLEEthN0my6
-         g93xT7zpQuItrK+81phJ/O9SD5hs9ary0pvb9X6gmbmqkMeVjJZB1ZIbC5zWimFlKI3a
-         OMvemMvvm1Ay+TZq+z6n7P1PHnbVxKzPGkzpuJocmDM4S4bKN52/uY0hmexrtCmUO9Jf
-         ok7Bu/+QVd65PPr7MI1dJSF13vXDEzzvNIbKoLVNYdP7VWeJxIh46P+ssnLEm6pkgZRp
-         8VEbg2nb4/aMzKb9T2DWdzLtsHVxCZ+qrKwDOP2n9EbUkjSbbvIcu9YZd0y0B8Qbg97w
-         msYQ==
+        d=gmail.com; s=20230601; t=1725483311; x=1726088111; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sqrX7xKRsiUs8X7rmIdaWp7SWBsLihp3vVeII2DVLXw=;
+        b=O2UdEHPKqCtVktDRPJSxt52yZ3idu0nFQh3dxueapYBL7pNo0Eki6clUfkBaVwaqFN
+         k4dbDrVh9GsSC8GngoOn+t6OJErBFGmUdd8ngNQVEKcyVROjZD5VJ9cA4rbR8AXse7GB
+         dNX44joj7Q4qYo9E5rhTn5t5TU7WRn6eCCwbPVTjpR1BElI7N69X8e/+qlu+Tgy9VZAO
+         E8Bfrg4GNggAMEaZioBrSUiVR8NlWfAAfI9RzF2MQ3ya+a8g0ofQeShz452F0a9iTkwM
+         TWO0WAITbsrpo+QnVGY1OVkFammlfGGeRFvP4qhP7/71lpQwREPGmzbU3NHp398JsbOW
+         Vutg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725483262; x=1726088062;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8wW8R+MHjMe6Movf5KpIkdjuSKAp7NEYib8XCqV/wxI=;
-        b=WG4LCyC/Ot2yARLN3qy5O8RF7F3C/i7CdbRJp0TidTV26myIiElOMkq2kg+kFe1e/H
-         FlCJHW7qFUuXdzBC5kqo1Pdi00iXejZI9ffL74ismJyO6Q4+se2TMhx8gyFoJhofC8fH
-         I2+Nj4zClS7Q6f9BoMpC67zAUwmsVGWHQ+T1fawQxTNqoIkUQVutqyzZzS4wL9Nv0iPS
-         ZvlgYSWd+17mrqwzPk5JeQEcfageWeYOHWjb0AbZJv4Y2Jzn60kw+GrGAtRb/D0xJVUl
-         6qOdi4XPQ0RFXmOkHdPUPqhlKLj0fnSwMmBnlTYcRGzBB4lJC0DKj+M7m8zEymbbLgvu
-         gWUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZwiNnxhWYBy7ellNYfCoQrp3w+VQJVN2Z/7U6TDVdCaAE3qVBMqv3QHKgBDahpB3SWg83vtglz9UF0V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl4wVwIjC7Yd63Ympvep+0u6mE5/U+Lj+/S3sABOTXnLLlpABx
-	uZ50R97FnYHzWvzDjCYOwmqq55rCC6thUAcs6uO43nXxYYWGnA+CS1LHmlzsQ4hFoZaQuFoNqVg
-	ANb10fGl/5gLAFKk0Xw==
-X-Google-Smtp-Source: AGHT+IFB3LFvRGR28dsEVnjNSxmCKIJPF4I9vUm7XHFxsYvTLrDOZ9dN4Ac49G8pX6q1R5j6LIG9hqwVRHFDcGcP
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
- (user=yosryahmed job=sendgmr) by 2002:a25:df8b:0:b0:e1d:7ce:4844 with SMTP id
- 3f1490d57ef6-e1d07ce4908mr16614276.4.1725483262002; Wed, 04 Sep 2024 13:54:22
- -0700 (PDT)
-Date: Wed,  4 Sep 2024 20:54:19 +0000
+        d=1e100.net; s=20230601; t=1725483311; x=1726088111;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sqrX7xKRsiUs8X7rmIdaWp7SWBsLihp3vVeII2DVLXw=;
+        b=qQS6d0TGjBDxqTmkRl9kOzCfWT95z4sZLkUpmsQXVAPFJXRDqDTquLirJZ3jur9P57
+         MyCCsGSJvUM/noBj/kuy6XfnNpmSvIU5HicR0H+VSmQFOFz3c1DIra3poNvzKDuD4cvq
+         K1yvlUnUbMJ4FbtYxLq9No7AjYWhlbETrsRc4x1o8IRYZnjxRF+BhwNBOlFqbHue9aMN
+         Z8SzyItPaPMNH9owXo3AfSByJHeJIqqP2cdhJiLVboHtYHOtrqaMUkf7s6Z/sFeiFDAZ
+         4UcEfIoid/e/Tt5weBuoJtFSDvR6uZj6VlCl/CiLh/VzIWMnByYKP6k8mACSdCywvmEU
+         NQYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE+4G1/rkhAGCazTL5jU96yrRvu25wJjVCnsFx2e0bhlMA5OzcHIvfoYydhVF5W/9VTuGD1lyXxvqWsio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxDoDkzm1JTNjLjCvzaE2L2LMqpvmpHGsU0rsxRp6W3+voEmHz
+	odLHMJ3XuVRfTVljI0v197U/chRdXLdafJ0zySvvDVZB1fpBDTcX
+X-Google-Smtp-Source: AGHT+IFN1IwonS31KRPHw1fKgP9hulUMBQG6IxgViZqWb3/daMJFpYfffDJkEKkxZZyCCacv3nOxtw==
+X-Received: by 2002:a17:902:c949:b0:205:5dfe:7be with SMTP id d9443c01a7336-2055dfe179fmr126258775ad.26.1725483310546;
+        Wed, 04 Sep 2024 13:55:10 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9525d6sm17598355ad.111.2024.09.04.13.55.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 13:55:10 -0700 (PDT)
+Date: Wed, 4 Sep 2024 13:55:07 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 20/22] Input: regulator-haptic - use guard notation when
+ acquiring mutex
+Message-ID: <ZtjJKxQRRzJE0aWZ@google.com>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
+ <3ff97fb3-27e0-496e-a8b0-0c2d69deeff2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240904205419.821776-1-yosryahmed@google.com>
-Subject: [PATCH] mm: page_alloc: fix missed updates of PGFREE in free_unref_{page/folios}
-From: Yosry Ahmed <yosryahmed@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Brendan Jackman <jackmanb@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ff97fb3-27e0-496e-a8b0-0c2d69deeff2@gmail.com>
 
-PGFREE is currently updated in two code paths:
-- __free_pages_ok(): for pages freed to the buddy allocator.
-- free_unref_page_commit(): for pages freed to the pcplists.
+Using guard notation makes the code more compact and error handling
+more robust by ensuring that mutexes are released in all code paths
+when control leaves critical section.
 
-Before commit df1acc856923 ("mm/page_alloc: avoid conflating IRQs
-disabled with zone->lock"), free_unref_page_commit() used to fallback to
-freeing isolated pages directly to the buddy allocator through
-free_one_page(). This was done _after_ updating PGFREE, so the counter
-was correctly updated.
-
-However, that commit moved the fallback logic to its callers (now called
-free_unref_page() and free_unref_folios()), so PGFREE was no longer
-updated in this fallback case.
-
-Now that the code has developed, there are more cases in
-free_unref_page() and free_unref_folios() where we fallback to calling
-free_one_page() (e.g. !pcp_allowed_order(), pcp_spin_trylock() fails).
-These cases also miss updating PGFREE.
-
-To make sure PGFREE is updated in all cases where pages are freed to the
-buddy allocator, move the update down the stack to free_one_page().
-
-This was noticed through code inspection, although it should be
-noticeable at runtime (at least with some workloads).
-
-Fixes: df1acc856923 ("mm/page_alloc: avoid conflating IRQs disabled with zone->lock")
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
-I am not really sure if not updating PGFREE for isolated pages was an
-intentional choice when it was made, but it seems like we are missing
-updating PGFREE for more cases now, which looks wrong.
+v2: drop no linger used "error" variable in regulator_haptic_suspend()
 
----
- mm/page_alloc.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/input/misc/regulator-haptic.c |   24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c242d61fc4fd8..57872af9c897c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1238,6 +1238,8 @@ static void free_one_page(struct zone *zone, struct page *page,
- 	spin_lock_irqsave(&zone->lock, flags);
- 	split_large_buddy(zone, page, pfn, order, fpi_flags);
- 	spin_unlock_irqrestore(&zone->lock, flags);
-+
-+	__count_vm_events(PGFREE, 1 << order);
+diff --git a/drivers/input/misc/regulator-haptic.c b/drivers/input/misc/regulator-haptic.c
+index 02f73b7c0462..3666ba6d1f30 100644
+--- a/drivers/input/misc/regulator-haptic.c
++++ b/drivers/input/misc/regulator-haptic.c
+@@ -83,12 +83,10 @@ static void regulator_haptic_work(struct work_struct *work)
+ 	struct regulator_haptic *haptic = container_of(work,
+ 					struct regulator_haptic, work);
+ 
+-	mutex_lock(&haptic->mutex);
++	guard(mutex)(&haptic->mutex);
+ 
+ 	if (!haptic->suspended)
+ 		regulator_haptic_set_voltage(haptic, haptic->magnitude);
+-
+-	mutex_unlock(&haptic->mutex);
  }
  
- static void __free_pages_ok(struct page *page, unsigned int order,
-@@ -1246,12 +1248,8 @@ static void __free_pages_ok(struct page *page, unsigned int order,
- 	unsigned long pfn = page_to_pfn(page);
- 	struct zone *zone = page_zone(page);
+ static int regulator_haptic_play_effect(struct input_dev *input, void *data,
+@@ -205,19 +203,15 @@ static int regulator_haptic_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
+-	int error;
  
--	if (!free_pages_prepare(page, order))
--		return;
+-	error = mutex_lock_interruptible(&haptic->mutex);
+-	if (error)
+-		return error;
 -
--	free_one_page(zone, page, pfn, order, fpi_flags);
+-	regulator_haptic_set_voltage(haptic, 0);
++	scoped_guard(mutex_intr, &haptic->mutex) {
++		regulator_haptic_set_voltage(haptic, 0);
++		haptic->suspended = true;
+ 
+-	haptic->suspended = true;
 -
--	__count_vm_events(PGFREE, 1 << order);
-+	if (free_pages_prepare(page, order))
-+		free_one_page(zone, page, pfn, order, fpi_flags);
+-	mutex_unlock(&haptic->mutex);
++		return 0;
++	}
+ 
+-	return 0;
++	return -EINTR;
  }
  
- void __meminit __free_pages_core(struct page *page, unsigned int order,
--- 
-2.46.0.469.g59c65b2a67-goog
-
+ static int regulator_haptic_resume(struct device *dev)
+@@ -226,7 +220,7 @@ static int regulator_haptic_resume(struct device *dev)
+ 	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
+ 	unsigned int magnitude;
+ 
+-	mutex_lock(&haptic->mutex);
++	guard(mutex)(&haptic->mutex);
+ 
+ 	haptic->suspended = false;
+ 
+@@ -234,8 +228,6 @@ static int regulator_haptic_resume(struct device *dev)
+ 	if (magnitude)
+ 		regulator_haptic_set_voltage(haptic, magnitude);
+ 
+-	mutex_unlock(&haptic->mutex);
+-
+ 	return 0;
+ }
+ 
 
