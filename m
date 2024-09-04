@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-315582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0249596C46C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:51:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C8A96C465
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFB11F245E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E831C21BAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71591E1312;
-	Wed,  4 Sep 2024 16:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2oWSt1q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D4B1CEE89;
+	Wed,  4 Sep 2024 16:50:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2941CEE89;
-	Wed,  4 Sep 2024 16:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD401DCB26
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 16:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725468671; cv=none; b=a6x86M9Yo568yd8g7WzJIvTTvydCh3lFBdU+a7wlHYiVr91tM8gt2CPxwr1DXmmMrjkSn/OOsDrs/huKRY4UM/lpfgFZEXCuoSKiYQWR9ZlFC9h9mFr/TpZfPsxllhNVcKw871lC8xCCd5WhrvaFc5ILQsVDcjXdiRTUJfFmapM=
+	t=1725468647; cv=none; b=Pq3AHX9BCYeXQrYZ6tJZtMD43G3peKc2ZSumY+PZ6WBQtBvffPDoGg4QFiaer+jjtfr3A4AaSUyFaNDC+5Aid314SoenwHOFNRcnfE/DPKYkw/kzcShqAFaBekfO121SDE4ye0Gl5qdWdZsh7zivbNt3tacVUxdWMWt/+dBNH2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725468671; c=relaxed/simple;
-	bh=L9Tfmi5LsksGJEqBB53mgnYCUnHvcd71N1iGKRTea3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwhDIsc+kuJEWFg2t/fmTXTQ35BleECYX68LtYuFTJ6NFKPnQsYpcX49EAUwDGeAlr4kjDT4jaDcYgJn/KVrXhmmOu5TLrgvLAuqxCrnT23Yv6Oxe2zSIKsD73qAY65p8JbPKur5xaw+5YnkC34XNYldierxcj8KygAk9PasFt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2oWSt1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6EB9C4CEC2;
-	Wed,  4 Sep 2024 16:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725468670;
-	bh=L9Tfmi5LsksGJEqBB53mgnYCUnHvcd71N1iGKRTea3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g2oWSt1qkdY2ZqGJISu2NeLeBUcEWRzFULEiWacSzP8Swtp2GJOMxKNQDRxOyDj7Q
-	 mbI6z08/d8rMr8J5+uXoDTyGgAylC5h77alIQFVq1ULyEzvoUU8buCutbJUYOhjW7Y
-	 /pTv4RCsx4/wBKIcGCuxU8JLLdLaqOqXrAeQ3eN/u0LC07OWuH1uQjRd4Cc4O5/02t
-	 +eLggZovj62tCHgJFe7IMlIdpoytePMqWxdZ3HA5nMZ9AwXF4pSaZsYXe9fnir0pHy
-	 JA6SQOyCVoI7HTfoksID4Pl9AUhN7qKlneh99r+/ETv9DxQOjuk2o47T0hx+cQSbem
-	 r+JXXNd2qhdSg==
-Date: Wed, 4 Sep 2024 17:51:07 +0100
-From: Simon Horman <horms@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
-Message-ID: <20240904165107.GC1722938@kernel.org>
-References: <20240904015003.1065872-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1725468647; c=relaxed/simple;
+	bh=yOlvHXg4ZRl6OUgb3cfXljZuc3mFCsLbFV8ItrDuyLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VXHTL4g6z1UTO8g8wP+/WLMN7L9cZL7gTpqEJBeB6k2+eckdippHJeUuwzgPgQkQCzjYd/yHAB/gEYsYHMEh7aA3ufMuxT33ZOnoyP7p/Cz9X8sjYQ2wUObNF97RLuzI8tXr9PF4Rei0d0v+bUi7c/L5YMKDtFQWBSd2VXrZeww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD619C4CEC2;
+	Wed,  4 Sep 2024 16:50:45 +0000 (UTC)
+Date: Wed, 4 Sep 2024 12:51:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, "Madhavan T. Venkataraman"
+ <madvenka@linux.microsoft.com>, Kalesh Singh <kaleshsingh@google.com>,
+ chenqiwu <qiwuchen55@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, puranjay12@gmail.com
+Subject: Re: [PATCH] arm64: stacktrace: fix the usage of
+ ftrace_graph_ret_addr()
+Message-ID: <20240904125146.79859e7f@gandalf.local.home>
+In-Reply-To: <20240904125000.4261b234@gandalf.local.home>
+References: <20240618162342.28275-1-puranjay@kernel.org>
+	<ZnHHHmEv-oqaXmq0@J2N7QTR9R3>
+	<20240619124318.GA3410@willie-the-truck>
+	<20240624161741.2a16d904@gandalf.local.home>
+	<ZtCz2IiskUTVu6Xu@J2N7QTR9R3>
+	<20240903160751.702f1f91@gandalf.local.home>
+	<20240904125000.4261b234@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904015003.1065872-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 04, 2024 at 09:50:03AM +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
-> Changelog:
-> 
-> v1 -> v2:
-> 
-> 1. Update commit message.
+On Wed, 4 Sep 2024 12:50:00 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Thanks for the update.
+> > Ah, I didn't check to see if it was sent to linux-trace-kernel, so it
+> > wasn't in patchwork, hence I forgot :-p
+> > 
+> > I can add it this week.
+> >   
+> 
+> Actually, the code is in Linus's tree now, so it's probably better if it
+> goes through your tree.
+> 
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
 
-I checked and I was not able to see any other instances of this
-problem in this file.
+And you may want to add:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Fixes: 29c1c24a2707 ("function_graph: Fix up ftrace_graph_ret_addr()")
+
+so that it gets backported with if that change gets backported.
+
+-- Steve
 
