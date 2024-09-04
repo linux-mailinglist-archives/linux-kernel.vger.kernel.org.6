@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-314748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A13596B7F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3F496B7F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BE1C2467C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:10:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 145B1B22D07
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56501CF5E7;
-	Wed,  4 Sep 2024 10:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089591CF5F3;
+	Wed,  4 Sep 2024 10:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="dqP4zkN4"
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="iHHOmMoV"
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140241CEEB7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238261CEEA8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444640; cv=none; b=Bd2ZnFyqVjyEclKv1jP5lpbPBVD2ECVUVyNHNPu/Pa+yw0m9n7Mt5WfC0Rj2H2l+utblf4arZd+b8XHeHgqLwSu1deCnKlr6jcL5Nx2y7sgyNyM+sYvbE/APZSXOquopqEp4PlmGYOe3e5Ewm/CyAInRbKcUsl5rjIdQRtbKEQE=
+	t=1725444640; cv=none; b=ABk5Njfx4l8Hqg6gziHoyhhwN5AEeseDRTAcg28oP+QBOpWjQx8Lo01g4zGtlv/wAP2nud1N17BH9v0Tk38L0jRVV7RZ27NUITm/ua1TGkX+CF+OGOW+7gnxqM+W4otgxEN7/xsWsmBMoIKogYwOZb3robBcr12uaXq3FJp2BGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725444640; c=relaxed/simple;
-	bh=ruXlYa2LFhYJ5y3GJeJvo8cnrcRFPe3pTkO5A1lOkZ0=;
+	bh=YFhEhD2DDFAzOc5YRN506WbRhSuqs9WezZihnyy8brI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CUtKKWYFJFrN5+x9FzirPnu1t9ECW1KnyhQZJebeZdwyZev/j/RNSFOjOUlv0zTv2ZDx0JVnrOzxh19UwVVjELjfg0ZlrkzMfJ6gs8o9If/HcYregoc3PvvdWo+ejQt6nyQ9XoulNKrjyCddQKABJjxipaM13rK/Yc5C0fFCqe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=dqP4zkN4; arc=none smtp.client-ip=185.136.65.225
+	 MIME-Version; b=JBGb9pZiGNfNYRjzxdXEZHKIuUFBc4aLGJCGxkxvnr5A+h763RBbV/IHFAB6rimsqSp+1ZyDNN0Kg5+GvkDmNQ7AgmbjwSRs5tKpq+tBF5hH530Z41yQAuRW/hYb9Da2rCxTbF2PVdQcwS9NDxNzLa/wSLbCjCMXf5n8PXlm0BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=iHHOmMoV; arc=none smtp.client-ip=185.136.65.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2024090410002550fa26bd41388f566c
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20240904100026cdadc2390c3cc1eeca
         for <linux-kernel@vger.kernel.org>;
-        Wed, 04 Sep 2024 12:00:26 +0200
+        Wed, 04 Sep 2024 12:00:27 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=nJ23+pLVcV1YLo+DOWiwMwlffZaSUayxfrEBlEY2X7Q=;
- b=dqP4zkN4JrdHhH1kfYOs+e10N+3AYUeKMvEA3j1QhsHEgLY1tK5Zq51hTq4oryFfG2VAr/
- 1i0llKkvsIMNasRvZql/HSkV5Pt+mRuXfBz6/FnKC1BbY9zzibzfxP/EikCXSAIxGUzE+402
- TTqlILAlwzYRgPfEl6mfL0IsMFQRh187H+MKMxEe+sp6Bvho2sQHnIxFcyoDJT2lAt8JRNb4
- qohDJoHbVeMSEsPjQV4tDG3NCtA/I1bzGzxyjsuSlC46zqmq67qy8uKAa9bdXhcL5R2iR77E
- ssSxCsxDi4M0ip3Qsqb8qmsRtqUdEMlbLGzQ7Q/SijhV+iRiotXkENUg==;
+ bh=lEToRIXgwmYCaLisxjDuneMdvn7veaPhbgDLaE9G4uY=;
+ b=iHHOmMoVcZFuR+nky3DJJ5bQVU/pwKB1ZiLGben6Aw2OOlNx3oKT/cGsei2xoGzjLyHzrS
+ LmYTbLt4D11d3747JqhRi+d/aigd4e47RrnL5SjpRYQkzrgTymG1iljtI1eXIUCwzZWLmQmw
+ U99uzEQuPaJA5YOQBQlpKFrBGJ2Eep1RNdi1JTMyHTGYeyjsyJF4j/s1R+Ij+g6JMNAK5GEQ
+ R+f5T4GCmxQbk9Tg3ZcemAwsP+hoZ1uENRVbxmRkyDtR/56mCKq919+F2vpfpEHs479g38fm
+ Ah19/ak3PiyEPJD+3Z7xj7dJebiCTIjWODcqq7cBK7SBbcpYSWETd+yQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Nishanth Menon <nm@ti.com>,
 	Santosh Shilimkar <ssantosh@kernel.org>,
@@ -57,13 +57,10 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Siddharth Vadapalli <s-vadapalli@ti.com>,
 	Bao Cheng Su <baocheng.su@siemens.com>,
 	Hua Qian Li <huaqian.li@siemens.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v4 4/7] PCI: keystone: Add supported for PVU-based DMA isolation on AM654
-Date: Wed,  4 Sep 2024 12:00:13 +0200
-Message-ID: <361441d35d781b3c474b05921634bcae08d1a7b4.1725444016.git.jan.kiszka@siemens.com>
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH v4 5/7] arm64: dts: ti: k3-am65-main: Add PVU nodes
+Date: Wed,  4 Sep 2024 12:00:14 +0200
+Message-ID: <7a4695fd0d076a535cf34a736f0660082901e1b5.1725444016.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1725444016.git.jan.kiszka@siemens.com>
 References: <cover.1725444016.git.jan.kiszka@siemens.com>
 Precedence: bulk
@@ -72,180 +69,52 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-294854:519-21489:flowmailer
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The AM654 lacks an IOMMU, thus does not support isolating DMA requests
-from untrusted PCI devices to selected memory regions this way. Use
-static PVU-based protection instead.
-
-For this, we use the availability of restricted-dma-pool memory regions
-as trigger and register those as valid DMA targets with the PVU. In
-addition, we need to enable the mapping of requester IDs to VirtIDs in
-the PCI RC. We only use a single VirtID so far, catching all devices.
-This may be extended later on.
+Add nodes for the two PVUs of the AM65. Keep them disabled, though,
+because the board has to additionally define DMA pools and the devices
+to be isolated.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
-CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: "Krzysztof Wilczyński" <kw@linux.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: linux-pci@vger.kernel.org
----
- drivers/pci/controller/dwc/pci-keystone.c | 101 ++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 2219b1a866fa..96b871656da4 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -19,6 +19,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/msi.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/of_pci.h>
- #include <linux/phy/phy.h>
-@@ -26,6 +27,7 @@
- #include <linux/regmap.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
-+#include <linux/ti-pvu.h>
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+index ba43325c0eec..2582dad68dff 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -841,6 +841,26 @@ main_cpts_mux: refclk-mux {
+ 				assigned-clock-parents = <&k3_clks 118 5>;
+ 			};
+ 		};
++
++		ti_pvu0: iommu@30f80000 {
++			compatible = "ti,am654-pvu";
++			reg = <0 0x30f80000 0 0x1000>,
++			<0 0x36000000 0 0x100000>;
++			reg-names = "cfg", "tlbif";
++			interrupts-extended = <&intr_main_navss 390>;
++			interrupt-names = "pvu";
++			status = "disabled";
++		};
++
++		ti_pvu1: iommu@30f81000 {
++			compatible = "ti,am654-pvu";
++			reg = <0 0x30f81000 0 0x1000>,
++			<0 0x36100000 0 0x100000>;
++			reg-names = "cfg", "tlbif";
++			interrupts-extended = <&intr_main_navss 389>;
++			interrupt-names = "pvu";
++			status = "disabled";
++		};
+ 	};
  
- #include "../../pci.h"
- #include "pcie-designware.h"
-@@ -111,6 +113,16 @@
- 
- #define PCI_DEVICE_ID_TI_AM654X		0xb00c
- 
-+#define KS_PCI_VIRTID			0
-+
-+#define PCIE_VMAP_xP_CTRL		0x0
-+#define PCIE_VMAP_xP_REQID		0x4
-+#define PCIE_VMAP_xP_VIRTID		0x8
-+
-+#define PCIE_VMAP_xP_CTRL_EN		BIT(0)
-+
-+#define PCIE_VMAP_xP_VIRTID_VID_MASK	0xfff
-+
- struct ks_pcie_of_data {
- 	enum dw_pcie_device_mode mode;
- 	const struct dw_pcie_host_ops *host_ops;
-@@ -1125,6 +1137,89 @@ static const struct of_device_id ks_pcie_of_match[] = {
- 	{ },
- };
- 
-+#ifdef CONFIG_TI_PVU
-+static const char *ks_vmap_res[] = {"vmap_lp", "vmap_hp"};
-+
-+static int ks_init_restricted_dma(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct of_phandle_iterator it;
-+	bool init_vmap = false;
-+	struct resource phys;
-+	struct resource *res;
-+	void __iomem *base;
-+	unsigned int n;
-+	u32 val;
-+	int err;
-+
-+	of_for_each_phandle(&it, err, dev->of_node, "memory-region",
-+			    NULL, 0) {
-+		if (!of_device_is_compatible(it.node, "restricted-dma-pool"))
-+			continue;
-+
-+		err = of_address_to_resource(it.node, 0, &phys);
-+		if (err < 0) {
-+			dev_err(dev, "failed to parse memory region %pOF: %d\n",
-+				it.node, err);
-+			continue;
-+		}
-+
-+		err = ti_pvu_create_region(KS_PCI_VIRTID, &phys);
-+		if (err < 0)
-+			return err;
-+
-+		init_vmap = true;
-+	}
-+
-+	if (init_vmap) {
-+		for (n = 0; n < ARRAY_SIZE(ks_vmap_res); n++) {
-+			res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+							   ks_vmap_res[n]);
-+			base = devm_pci_remap_cfg_resource(dev, res);
-+			if (IS_ERR(base))
-+				return PTR_ERR(base);
-+
-+			writel(0, base + PCIE_VMAP_xP_REQID);
-+
-+			val = readl(base + PCIE_VMAP_xP_VIRTID);
-+			val &= ~PCIE_VMAP_xP_VIRTID_VID_MASK;
-+			val |= KS_PCI_VIRTID;
-+			writel(val, base + PCIE_VMAP_xP_VIRTID);
-+
-+			val = readl(base + PCIE_VMAP_xP_CTRL);
-+			val |= PCIE_VMAP_xP_CTRL_EN;
-+			writel(val, base + PCIE_VMAP_xP_CTRL);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void ks_release_restricted_dma(struct platform_device *pdev)
-+{
-+	struct of_phandle_iterator it;
-+	struct resource phys;
-+	int err;
-+
-+	of_for_each_phandle(&it, err, pdev->dev.of_node, "memory-region",
-+			    NULL, 0) {
-+		if (of_device_is_compatible(it.node, "restricted-dma-pool") &&
-+		    of_address_to_resource(it.node, 0, &phys) == 0)
-+			ti_pvu_remove_region(KS_PCI_VIRTID, &phys);
-+
-+	}
-+}
-+#else
-+static inline int ks_init_restricted_dma(struct platform_device *pdev)
-+{
-+	return 0;
-+}
-+
-+static inline void ks_release_restricted_dma(struct platform_device *pdev)
-+{
-+}
-+#endif
-+
- static int ks_pcie_probe(struct platform_device *pdev)
- {
- 	const struct dw_pcie_host_ops *host_ops;
-@@ -1273,6 +1368,10 @@ static int ks_pcie_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_get_sync;
- 
-+	ret = ks_init_restricted_dma(pdev);
-+	if (ret < 0)
-+		goto err_get_sync;
-+
- 	switch (mode) {
- 	case DW_PCIE_RC_TYPE:
- 		if (!IS_ENABLED(CONFIG_PCI_KEYSTONE_HOST)) {
-@@ -1354,6 +1453,8 @@ static void ks_pcie_remove(struct platform_device *pdev)
- 	int num_lanes = ks_pcie->num_lanes;
- 	struct device *dev = &pdev->dev;
- 
-+	ks_release_restricted_dma(pdev);
-+
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
- 	ks_pcie_disable_phy(ks_pcie);
+ 	main_gpio0: gpio@600000 {
 -- 
 2.43.0
 
