@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-314301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3620A96B18B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071DD96B18E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DF11F26FAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DD41C213D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E33E13A257;
-	Wed,  4 Sep 2024 06:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1938D13213A;
+	Wed,  4 Sep 2024 06:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww6Hsuva"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axp78i71"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461A84E1E;
-	Wed,  4 Sep 2024 06:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C910E839E3;
+	Wed,  4 Sep 2024 06:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431213; cv=none; b=KFvOr4ioRlOjCZCXBaVgG7KY+8o9acCZlrZIa0tSlfjhbGrwlfVT/3g9m7lTv2NZzKX3/3vzHJrFIcnnEPImmkDLD32FrBZMShpBr0+E7YfF2IklrWMr34CfV5qnO0tm3bcODBHC2tbT1seDlWcnsDIj96oRT9TfaWF/cE+5Xsg=
+	t=1725431276; cv=none; b=Y4JXdsuS6ZMV8YRhcAxagFijtZKVLTpG+qShVbSteoCMyX7fL47lTz+9sV6cEPyOnvhnQ6t9ef3zVLKApV/59secGVLF6X7ktrwJLWBwkM3ZUHKHSStdM6CVRthMJvEeH+gKoRFO0t54lX9pxtrkSKJHoEYBjkWxW19NZDQhi0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431213; c=relaxed/simple;
-	bh=RmpdR+X9w1gzHbfsnASUbF/p7A/S9q/2q1c6kJFc5kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezXWZU1fVe9lywwBO/Q+p5tN0XibloMh9K1trS1Mtp+5bSBcQF5MDA8fKKrNSEh5mXPAr4ZkXwJ7isjLQQTVuJiBBqhIql/Wf4u618LbX4shmGCpSGdE29UjO1kL8f62R/maRD4cYZMb1bO5TDdRiBPiAfXDlRsKyH/0poMwSTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww6Hsuva; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D87EC4CEC2;
-	Wed,  4 Sep 2024 06:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725431212;
-	bh=RmpdR+X9w1gzHbfsnASUbF/p7A/S9q/2q1c6kJFc5kk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ww6HsuvaZwF5+UDueVf91esRUFcs9juXzsYObo34P8HmsLMIgT2ZPWtWcwBcHoCql
-	 r1lWz0hKIgmkub8U2E45Z/jskfNoElJ6MRRDNI8lKmVyE9/lByLMQNm+NzjRX4MFbY
-	 x8wx6W3ih5IiywjdxtlC+lN5X9kGvKMOy6Zpu8urWSOi2B0yZ4B3V1Mf+hxm0W1GW0
-	 u0Fb92KPzxzG+4VdhrNPtQplaMuXdFJxrrBppQ3JD+usnUToXjMTUZlzkMsfMeE+Bt
-	 0i6e5CCOhlpQGwsrIOZe91AmZHDjHgEDhBsoyq0RU+MQEyzwCmpgo0kTXB+NqPfDNM
-	 m/3b7Rx763+Xg==
-Date: Wed, 4 Sep 2024 08:26:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
-	tglx@linutronix.de, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
-	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com
-Subject: Re: [PATCH v2 14/21] dt-bindings: cpufreq: qcom-hw: document support
- for SA8255p
-Message-ID: <odg5ssqu2soaqp6m4rambj7qhqiyp7othkvu4v6fu6xtuhbdho@vccya6qcwgoz>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-15-quic_nkela@quicinc.com>
+	s=arc-20240116; t=1725431276; c=relaxed/simple;
+	bh=/hR7oE5rD34yYMNFtglnDXIIRWhzxe9ZiozA9ZnY0AI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEY9LnSp41iEkrgWtg467FV2eLo6LUf3VZkHYVyC4tvLpuhXvVT1ZpEEeSb77K84W72Hh7KRQmKZV06Do4KAbGyB9MDrKNOBVsHjwqFJ2htZ3JFIE/dgRMvvFHn0YtRlK1rJ8tluWolqHC5AcjWp+TjOs7rQSRpIGW7zXONDbiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axp78i71; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8696e9bd24so726863466b.0;
+        Tue, 03 Sep 2024 23:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725431273; x=1726036073; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3cR17WKmnO3O1r/gxAkuWpcX3/AmzMnfS+4RPLgbtek=;
+        b=axp78i71trqDiGNDiGXrRJrAYbQ5C+2qcJv0i1Y9W0XxxpnjDntlh/bKsEYUtXh5Xl
+         kuHKr9vRu6v+cRWVNAwCH7QIvNVS06jjqALj0dsoDNMyVfhZAEaNd1d3+xLR/ZJo38mL
+         +kz8RD6DpJfH1133E+M7hzDv02MRm2/pmjHZabg5qW7DocS/lXdzjI0aCJXxhv9oFNMa
+         LX6nM74uLwfUyLvcNloVfdua4Ybs0Y8Pq4sQiBWWPoVjj2PNP/NuK6fgubmPjIX8Sy2H
+         zX2YY8ZvVTDV1DbCvh0P/Lpxio1+BK68Uw9w1gOKWBkAvz+kNaaHE4FzEvzdgpgfnLYH
+         kjQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725431273; x=1726036073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3cR17WKmnO3O1r/gxAkuWpcX3/AmzMnfS+4RPLgbtek=;
+        b=pQeojc6aTICiL6SSRjs8qXump3AGUqM4eBK8/zgoBUhccJPfNdiwWnZeBoTpRpNtdR
+         EYlxxFlO/AB6cb8mICEjp4hlcI8Q8wlsX8iev1O12d5x1tnLcOINvzwHEFOmo2m9Brzd
+         wNF3EsVj3LKGJ9tfLoyE0BhoOXN64k54q3vzJE6CqqAw5oogHZ5p/qmcS14KDOW6ILb8
+         CIUA5biCT5Vhopk0WF2Hg0N2GMxZummIR6dV/m7LkizbdpRSohC0tIXyVEPOQff38sKm
+         Pr6qlYrBwkz7fDS8VowcG77Qg/PfrHKBUGi+6VuAET71bJXe22ay29+IMNflyMvfRSGM
+         rZTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUFQnRKvv0BYYNkjWxebBqJWwZ3+dZS2ZsuR1ZbttAn6T8mgz5neu4QNN54aW2fCCSNMRXUzITms/AAiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOmT02npBj5FHqPCE4ifK/TG0KFpGHkPRMQbd7asJSnJrZZ5e3
+	jIM+JxA69jD2rf3qBxgAH1AVutprJbm9t+m9GMjnYP18iWw4qhAV
+X-Google-Smtp-Source: AGHT+IGxt/6cM1zV52278ktD9kIm7uvWmSOe912Z/g3/5IxC8jx7LnbTZNGTR45Iqv2VBWyJ8ME+5g==
+X-Received: by 2002:a17:907:1c0a:b0:a7a:ab8a:380 with SMTP id a640c23a62f3a-a897fad872amr1585706366b.69.1725431272652;
+        Tue, 03 Sep 2024 23:27:52 -0700 (PDT)
+Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988ff0465sm768659666b.29.2024.09.03.23.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 23:27:52 -0700 (PDT)
+From: vtpieter@gmail.com
+To: Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Arun.Ramadoss@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tristram.Ha@microchip.com,
+	o.rempel@pengutronix.de,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>
+Subject: [PATCH net-next v4 0/3] net: dsa: microchip: rename and clean ksz8 series files
+Date: Wed,  4 Sep 2024 08:27:39 +0200
+Message-ID: <20240904062749.466124-1-vtpieter@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240903220240.2594102-15-quic_nkela@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 03:02:33PM -0700, Nikunj Kela wrote:
-> Add compatible for the cpufreq engine representing support on SA8255p.
-> 
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  .../bindings/cpufreq/cpufreq-qcom-hw.yaml        | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> index 1e9797f96410..84865e553c8b 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
-> @@ -34,6 +34,7 @@ properties:
->          items:
->            - enum:
->                - qcom,qdu1000-cpufreq-epss
-> +              - qcom,sa8255p-cpufreq-epss
->                - qcom,sa8775p-cpufreq-epss
->                - qcom,sc7280-cpufreq-epss
->                - qcom,sc8280xp-cpufreq-epss
-> @@ -206,6 +207,21 @@ allOf:
->          interrupt-names:
->            minItems: 2
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sa8255p-cpufreq-epss
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +          maxItems: 2
-> +
-> +        reg-names:
-> +          minItems: 2
-> +          maxItems: 2
+From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
 
-What about interrupts? You need to constrain each of such lists.
+The first KSZ8 series implementation was done for a KSZ8795 device but
+since several other KSZ8 devices have been added. Rename these files
+to adhere to the ksz8 naming convention as already used in most
+functions and the existing ksz8.h; add an explanatory note.
 
-Best regards,
-Krzysztof
+In addition, clean the files by removing macros that are defined at
+more than one place and remove confusion by renaming the KSZ8830
+string which in fact is not an existing KSZ series switch.
+
+Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+---
+v4:
+ - correct once more Kconfig list of supported switches
+
+v3: https://lore.kernel.org/netdev/20240903072946.344507-1-vtpieter@gmail.com/
+ - rename all KSZ8830 to KSZ88X3 only (not KSZ8863)
+ - update Kconfig as per Arun's suggestion
+
+v2: https://lore.kernel.org/netdev/20240830141250.30425-1-vtpieter@gmail.com/
+ - more finegrained description in Kconfig and ksz8.c header
+ - add KSZ8830/ksz8830 to KSZ8863/ksz88x3 renaming
+
+v1: https://lore.kernel.org/netdev/20240828102801.227588-1-vtpieter@gmail.com/
+
+Pieter Van Trappen (3):
+  net: dsa: microchip: rename ksz8 series files
+  net: dsa: microchip: clean up ksz8_reg definition macros
+  net: dsa: microchip: replace unclear KSZ8830 strings
+
+ drivers/net/dsa/microchip/Kconfig             |  9 ++--
+ drivers/net/dsa/microchip/Makefile            |  2 +-
+ .../net/dsa/microchip/{ksz8795.c => ksz8.c}   | 13 +++--
+ drivers/net/dsa/microchip/ksz8863_smi.c       |  4 +-
+ .../microchip/{ksz8795_reg.h => ksz8_reg.h}   | 15 +++---
+ drivers/net/dsa/microchip/ksz_common.c        | 48 +++++++++----------
+ drivers/net/dsa/microchip/ksz_common.h        |  4 +-
+ drivers/net/dsa/microchip/ksz_spi.c           |  6 +--
+ include/linux/platform_data/microchip-ksz.h   |  2 +-
+ 9 files changed, 57 insertions(+), 46 deletions(-)
+ rename drivers/net/dsa/microchip/{ksz8795.c => ksz8.c} (99%)
+ rename drivers/net/dsa/microchip/{ksz8795_reg.h => ksz8_reg.h} (98%)
+
+
+base-commit: e5899b60f52a7591cfc2a2dec3e83710975117d7
+-- 
+2.43.0
 
 
