@@ -1,486 +1,108 @@
-Return-Path: <linux-kernel+bounces-315135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FDC96BE69
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:26:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B79B96BE6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A75A1F23A26
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:26:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E996F1F25B2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EFA1DA63E;
-	Wed,  4 Sep 2024 13:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4E61DA310;
+	Wed,  4 Sep 2024 13:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n6yajirE"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Le3ZznkA"
+Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86B21CF7D3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D8D1CF7D3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456324; cv=none; b=XGHmthBAbFzs8G2M2Oc+DRgql3OijuL/LphjresPUTlbK5WXzPYg94oB2QtUDpf1xYsYzdVVBODFMgM3Y8Qh1AF2CHYss9lBArJmIyNctnW2kGFc8i33EX2xJTjn55NaNBRRzAyLnCR8D+aip7qsthLaq8TpvcjA20rL5sUdOa8=
+	t=1725456337; cv=none; b=rXw5rTT2sVHcP/xkPSz6xCtgK42ulVwxXw9WPG3/RQ5pxhyo6iBFuC8129Y8bBcX3pXeAIW5tT0BfK3tU+sIggqAPEBns3wma8V02NQSdu0h0gNihiHsiozAdkjS+ISYDn2HkB2BfRlnCt5xWw3mW4IAGEooJhLS036/gmAip2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456324; c=relaxed/simple;
-	bh=wr+/UN933hxfG0zMVwK11X/rvLKg7fjaLJgJGXHA2H8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NX83AObWy/JDpxS8ZltuFwGpshxf87Szb6KVc40EcplbPG05gst7FDQJTZevb5qf6b9M8S/zK7Za3jwEdzmDFLcNWz4Z2OxAS3B7KaDIQtI86R2vdtd3BIp7/xjjI1ITnoqmhms2jks07iZi7DZN3/zguEwCw6XEqGN55Atc5S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n6yajirE; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2068bee21d8so7569045ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725456322; x=1726061122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h6qxoe3/9WaKoQVJeWn4sgJsVVarYIXJHNnVXrp/W9E=;
-        b=n6yajirE1w4snPb3GtvSuSig+yc/iDEp5v7RmVjViTc/ffjVb4cTYlqlIEXLnrPD8H
-         5Z33EJKgy5h5v4kIPOu7tXK4GKDW9qR4+KHiSJwKAtnDaaZ2mh5qoJ6opGRdpVhTEhzV
-         Siv2uwMDvoLhgPXl7IX/aZk2cTzCrR4wairME=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725456322; x=1726061122;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h6qxoe3/9WaKoQVJeWn4sgJsVVarYIXJHNnVXrp/W9E=;
-        b=t2Vr8I1eg1M4B6mgAvbyWcq9XXwx40dBlWnWJe8qbSoy0Ddb2KqtPX4idsAIc1H2IA
-         1bR60bqhZ9aWGm/gC3OQ9+3G6c94qRi5PMyx9goGWnLCUp7vNIKruUqEqt7H0eVRCBNP
-         HwZQE+XY2hnPHevzxLBAAbS7VGTGaIG+1NPCtrT9Mpugcd5rWRruI4P+f97Jb9ZUF7Gy
-         38azHgC+0YwmHkbzpLh0nN34zIcPetT3BFFqU2lvXK4bECGbaqUBvCuT+fnrGkcn7nTW
-         YKGVuwoOAGzlRj8IdIe9CVuuTCFE1CuD46oytyI6nunj3wQBwU1tChdb9lKELhRhgnng
-         32Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWby6cm7lhJkrRdSph4zgwixA6O5FiI5Uw7k2qXgwkiF0dQ4fmwiXyeTmZFjNYPtta6MhgnKMZ/TvvaefQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMUOZV134G4W3zwLKd/3Nqry15UFCLOEKYRVOgILWUZLbIGTTT
-	IHoJnOjpMQfuEjuPlQX2C7llpHFLNruxVbJMecmXKAYECBViPdRwNXXpngyQNsxdEqneVclE9yZ
-	uqg==
-X-Google-Smtp-Source: AGHT+IEqaJfa1bx2FH/AFFwIlk2P2dyzO/eROM/s8fgOPSyspj8JJmbnpg/sjA2rPxZTR7VQ6GbESQ==
-X-Received: by 2002:a17:902:e5c4:b0:205:43b8:1aa4 with SMTP id d9443c01a7336-20543b81d7amr138950405ad.19.1725456322050;
-        Wed, 04 Sep 2024 06:25:22 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:4132:a2a2:35bc:acba])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea54e7bsm13479215ad.183.2024.09.04.06.25.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 06:25:21 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Richard Chang <richardycc@google.com>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [RFC PATCH 3/3] zram: rework writeback target selection logic
-Date: Wed,  4 Sep 2024 22:24:55 +0900
-Message-ID: <20240904132508.2000743-4-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-In-Reply-To: <20240904132508.2000743-1-senozhatsky@chromium.org>
-References: <20240904132508.2000743-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1725456337; c=relaxed/simple;
+	bh=FlgrDQcSxKgRgYoRbHOBjlo5GcyidQXFR1nRBrqJves=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XF3g+zigGNTkEQajald0y0tZukzSwA1KP5DC9mg3+MtXp/w/uWPPjKpUYSp0kssklHDNa3RfKktP0yC5oLa3AKRNi6MOV2nW1qkFv7gCjAmykcZtIu5K+F8cbgV2GkvGRzvHbJzr8cgbzSsLQ1qhjdK7aubFQAhSuzzliMdR8cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Le3ZznkA; arc=none smtp.client-ip=17.58.6.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725456335;
+	bh=9w93ipmSizYx7nnXuIs7RbvWhktaSVpFbcAyHKmit/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=Le3ZznkAhT1TXvKsnY1WY3pUUnyPE7wOhZVvQFODZc2WwMM2VSnRiW2nx5YORrbR8
+	 4Vuw8jydzmfIChxn87a2IJ4ExZD8w6dtACB90RWN47jBxi9qeaDnI+wZIwC44/uJRf
+	 qxVSDljf4j0WCCEvKr/ibOeTqkGBl0TD7cDvq2hKX+btB7BWojslj2Slnw76+ur66E
+	 0zFhC2iH+jnKjLpO3pe68ZhnIGo03w2DMom9FnvjtqH8UqXF/Wu67WQaGyLlI0EnQU
+	 jQUPgL/dW1JDGXEjB2QPPwvVLOA0NR63yiOvTtvfARPmc15grOBkQU+dQQUwOBFvGO
+	 NsxFqkJgk43tA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id BC7D44A02C6;
+	Wed,  4 Sep 2024 13:25:32 +0000 (UTC)
+Message-ID: <902c26ff-0fe7-4976-9dae-290e9afdaafa@icloud.com>
+Date: Wed, 4 Sep 2024 21:25:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable UHID as module
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240807-uhid_arm64_defconfig-v1-1-4b8de59a2d5e@quicinc.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20240807-uhid_arm64_defconfig-v1-1-4b8de59a2d5e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: hJ2QX5YEIbsU9kk6QLJ5XeY3tebIWZGS
+X-Proofpoint-ORIG-GUID: hJ2QX5YEIbsU9kk6QLJ5XeY3tebIWZGS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_11,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015
+ mlxlogscore=887 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2409040101
 
-Writeback suffers from the same problem as recompression
-did before - target slot selection for writeback is just
-a simple iteration over zram->table entries (stored pages)
-which selects suboptimal targets for writeback.  This is
-especially problematic for writeback, because we uncompress
-objects before writeback so each of them takes 4K out of
-limited writeback storage.  For example, when we take a
-48 bytes slot and store it as a 4K object to writeback device
-we only save 48 bytes of memory (release from zsmalloc pool).
-We naturally want to pick the largest objects for writeback,
-because then each writeback will relase the largest amount
-of memory.
+On 2024/8/7 19:26, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Enable UHID as module to use Bluetooth mouse and keyboard.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 7d32fca64996..5607cb7fa580 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1043,6 +1043,7 @@ CONFIG_SND_SOC_LPASS_TX_MACRO=m
+>  CONFIG_SND_SIMPLE_CARD=m
+>  CONFIG_SND_AUDIO_GRAPH_CARD=m
+>  CONFIG_SND_AUDIO_GRAPH_CARD2=m
+> +CONFIG_UHID=m
+>  CONFIG_HID_MULTITOUCH=m
+>  CONFIG_I2C_HID_ACPI=m
+>  CONFIG_I2C_HID_OF=m
+> 
 
-This patch applies the same solution and strategy as for
-recompression target selection: pp control (post-process)
-with 16 groups of candidate pp slots. Slots are assigned to
-pp groups based on sizes - the larger the slot the higher the
-group index.  This gives us sorted by size lists of candidate
-slots (in linear time), so that among candidate slots we always
-select the largest ones first.
+BTW, UHID is required for both linux OS and Android to use
+Bluetooth mouse and keyboard.
 
-TEST
-====
-
-A very simple demonstration: zram is configured with a writeback
-device. A limited writeback (wb_limit 2500 pages) is performed
-then, with a log of sizes of slots that were written back.
-You can see that patched zram selects slots for recompression in
-significantly different manner, which leads to higher memory
-savings (see column #2 of mm_stat output).
-
-BASE
-----
-
-*** initial state of zram device
-/sys/block/zram0/mm_stat
-1750327296 619765836 631902208        0 631902208        1        0    34278    34278
-
-*** writeback idle wb_limit 2500
-/sys/block/zram0/mm_stat
-1750327296 617622333 631578624        0 631902208        1        0    34278    34278
-
-Sizes of selected objects for writeback:
-... 193 349 46 46 46 46 852 1002 543 162 107 49 34 34 34 ...
-
-PATCHED
--------
-
-*** initial state of zram device
-/sys/block/zram0/mm_stat
-1750319104 619760957 631992320        0 631992320        1        0    34278    34278
-
-*** writeback idle wb_limit 2500
-/sys/block/zram0/mm_stat
-1750319104 612672056 626135040        0 631992320        1        0    34278    34278
-
-Sizes of selected objects for writeback:
-... 3680 3614 3694 3667 3553 3537 3342 3362 ...
-
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/block/zram/zram_drv.c | 232 ++++++++++++++++++++++------------
- 1 file changed, 151 insertions(+), 81 deletions(-)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 998efe3979f8..a384939b2501 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -183,6 +183,69 @@ static void zram_accessed(struct zram *zram, u32 index)
- #endif
- }
- 
-+#if defined CONFIG_ZRAM_WRITEBACK || defined CONFIG_ZRAM_MULTI_COMP
-+struct zram_pp_slot {
-+	unsigned long		index;
-+	struct list_head	entry;
-+};
-+
-+#define NUM_PP_GROUPS		17
-+
-+struct zram_pp_ctl {
-+	struct list_head slots[NUM_PP_GROUPS];
-+};
-+
-+static void init_pp_ctl(struct zram_pp_ctl *ctl)
-+{
-+	u32 idx;
-+
-+	for (idx = 0; idx < NUM_PP_GROUPS; idx++)
-+		INIT_LIST_HEAD(&ctl->slots[idx]);
-+}
-+
-+static void release_pp_slot(struct zram *zram, struct zram_pp_slot *pps)
-+{
-+	zram_slot_lock(zram, pps->index);
-+	if (zram_test_flag(zram, pps->index, ZRAM_PP_SLOT))
-+		zram_clear_flag(zram, pps->index, ZRAM_PP_SLOT);
-+	zram_slot_unlock(zram, pps->index);
-+	kfree(pps);
-+}
-+
-+static void release_pp_ctl(struct zram *zram, struct zram_pp_ctl *ctl)
-+{
-+	u32 idx;
-+
-+	for (idx = 0; idx < NUM_PP_GROUPS; idx++) {
-+		while (!list_empty(&ctl->slots[idx])) {
-+			struct zram_pp_slot *pps;
-+
-+			pps = list_first_entry(&ctl->slots[idx],
-+					       struct zram_pp_slot,
-+					       entry);
-+			list_del_init(&pps->entry);
-+			release_pp_slot(zram, pps);
-+		}
-+	}
-+}
-+
-+static void place_pp_slot(struct zram *zram, struct zram_pp_ctl *ctl,
-+			  struct zram_pp_slot *pps)
-+{
-+	s32 diff, idx;
-+
-+	/*
-+	 * On 4K system this keeps PP slot groups 256 bytes apart. The
-+	 * higher the group IDX the larger the slot size.
-+	 */
-+	diff = PAGE_SIZE / (NUM_PP_GROUPS - 1);
-+	idx = zram_get_obj_size(zram, pps->index) / diff;
-+	list_add(&pps->entry, &ctl->slots[idx]);
-+
-+	zram_set_flag(zram, pps->index, ZRAM_PP_SLOT);
-+}
-+#endif
-+
- static inline void update_used_max(struct zram *zram,
- 					const unsigned long pages)
- {
-@@ -587,11 +650,82 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
- #define IDLE_WRITEBACK			(1<<1)
- #define INCOMPRESSIBLE_WRITEBACK	(1<<2)
- 
-+static int scan_slots_for_writeback(struct zram *zram, u32 mode,
-+				    unsigned long nr_pages,
-+				    unsigned long index,
-+				    struct zram_pp_ctl *ctl)
-+{
-+	struct zram_pp_slot *pps = NULL;
-+
-+	for (; nr_pages != 0; index++, nr_pages--) {
-+		if (!pps)
-+			pps = kmalloc(sizeof(*pps), GFP_KERNEL);
-+		if (!pps)
-+			return -ENOMEM;
-+
-+		INIT_LIST_HEAD(&pps->entry);
-+
-+		zram_slot_lock(zram, index);
-+		if (!zram_allocated(zram, index))
-+			goto next;
-+
-+		if (zram_test_flag(zram, index, ZRAM_WB) ||
-+		    zram_test_flag(zram, index, ZRAM_SAME) ||
-+		    zram_test_flag(zram, index, ZRAM_UNDER_WB) ||
-+		    zram_test_flag(zram, index, ZRAM_PP_SLOT))
-+			goto next;
-+
-+		if (mode & IDLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_IDLE))
-+			goto next;
-+		if (mode & HUGE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_HUGE))
-+			goto next;
-+		if (mode & INCOMPRESSIBLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
-+			goto next;
-+
-+		pps->index = index;
-+		place_pp_slot(zram, ctl, pps);
-+		pps = NULL;
-+next:
-+		zram_slot_unlock(zram, index);
-+	}
-+
-+	kfree(pps);
-+	return 0;
-+}
-+
-+static struct zram_pp_slot *select_slot_for_writeback(struct zram_pp_ctl *ctl)
-+{
-+	struct zram_pp_slot *pps = NULL;
-+	s32 idx = NUM_PP_GROUPS - 1;
-+
-+	/*
-+	 * Select PP-slots starting from the highest group, which should
-+	 * give us the best candidate for recompression.
-+	 */
-+	while(idx > 0) {
-+		pps = list_first_entry_or_null(&ctl->slots[idx],
-+					       struct zram_pp_slot,
-+					       entry);
-+		if (pps) {
-+			list_del_init(&pps->entry);
-+			break;
-+		}
-+
-+		idx--;
-+	}
-+	return pps;
-+}
-+
- static ssize_t writeback_store(struct device *dev,
- 		struct device_attribute *attr, const char *buf, size_t len)
- {
- 	struct zram *zram = dev_to_zram(dev);
- 	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
-+	struct zram_pp_slot *pps;
-+	struct zram_pp_ctl ctl;
- 	unsigned long index = 0;
- 	struct bio bio;
- 	struct bio_vec bio_vec;
-@@ -600,6 +734,8 @@ static ssize_t writeback_store(struct device *dev,
- 	int mode, err;
- 	unsigned long blk_idx = 0;
- 
-+	init_pp_ctl(&ctl);
-+
- 	if (sysfs_streq(buf, "idle"))
- 		mode = IDLE_WRITEBACK;
- 	else if (sysfs_streq(buf, "huge"))
-@@ -637,11 +773,14 @@ static ssize_t writeback_store(struct device *dev,
- 		goto release_init_lock;
- 	}
- 
--	for (; nr_pages != 0; index++, nr_pages--) {
-+	scan_slots_for_writeback(zram, mode, nr_pages, index, &ctl);
-+
-+	while ((pps = select_slot_for_writeback(&ctl))) {
- 		spin_lock(&zram->wb_limit_lock);
- 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
- 			spin_unlock(&zram->wb_limit_lock);
- 			ret = -EIO;
-+			release_pp_slot(zram, pps);
- 			break;
- 		}
- 		spin_unlock(&zram->wb_limit_lock);
-@@ -650,30 +789,15 @@ static ssize_t writeback_store(struct device *dev,
- 			blk_idx = alloc_block_bdev(zram);
- 			if (!blk_idx) {
- 				ret = -ENOSPC;
-+				release_pp_slot(zram, pps);
- 				break;
- 			}
- 		}
- 
-+		index = pps->index;
- 		zram_slot_lock(zram, index);
--		if (!zram_allocated(zram, index))
-+		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
- 			goto next;
--
--		if (zram_test_flag(zram, index, ZRAM_WB) ||
--		    zram_test_flag(zram, index, ZRAM_SAME) ||
--		    zram_test_flag(zram, index, ZRAM_UNDER_WB) ||
--		    zram_test_flag(zram, index, ZRAM_PP_SLOT))
--			goto next;
--
--		if (mode & IDLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_IDLE))
--			goto next;
--		if (mode & HUGE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_HUGE))
--			goto next;
--		if (mode & INCOMPRESSIBLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
--			goto next;
--
- 		/*
- 		 * Clearing ZRAM_UNDER_WB is duty of caller.
- 		 * IOW, zram_free_page never clear it.
-@@ -682,11 +806,14 @@ static ssize_t writeback_store(struct device *dev,
- 		/* Need for hugepage writeback racing */
- 		zram_set_flag(zram, index, ZRAM_IDLE);
- 		zram_slot_unlock(zram, index);
-+
- 		if (zram_read_page(zram, page, index, NULL)) {
- 			zram_slot_lock(zram, index);
- 			zram_clear_flag(zram, index, ZRAM_UNDER_WB);
- 			zram_clear_flag(zram, index, ZRAM_IDLE);
- 			zram_slot_unlock(zram, index);
-+
-+			release_pp_slot(zram, pps);
- 			continue;
- 		}
- 
-@@ -705,6 +832,8 @@ static ssize_t writeback_store(struct device *dev,
- 			zram_clear_flag(zram, index, ZRAM_UNDER_WB);
- 			zram_clear_flag(zram, index, ZRAM_IDLE);
- 			zram_slot_unlock(zram, index);
-+
-+			release_pp_slot(zram, pps);
- 			/*
- 			 * BIO errors are not fatal, we continue and simply
- 			 * attempt to writeback the remaining objects (pages).
-@@ -729,7 +858,7 @@ static ssize_t writeback_store(struct device *dev,
- 		 */
- 		zram_slot_lock(zram, index);
- 		if (!zram_allocated(zram, index) ||
--			  !zram_test_flag(zram, index, ZRAM_IDLE)) {
-+		    !zram_test_flag(zram, index, ZRAM_IDLE)) {
- 			zram_clear_flag(zram, index, ZRAM_UNDER_WB);
- 			zram_clear_flag(zram, index, ZRAM_IDLE);
- 			goto next;
-@@ -747,12 +876,14 @@ static ssize_t writeback_store(struct device *dev,
- 		spin_unlock(&zram->wb_limit_lock);
- next:
- 		zram_slot_unlock(zram, index);
-+		release_pp_slot(zram, pps);
- 	}
- 
- 	if (blk_idx)
- 		free_block_bdev(zram, blk_idx);
- 	__free_page(page);
- release_init_lock:
-+	release_pp_ctl(zram, &ctl);
- 	up_read(&zram->init_lock);
- 
- 	return ret;
-@@ -1649,67 +1780,6 @@ static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- }
- 
- #ifdef CONFIG_ZRAM_MULTI_COMP
--struct zram_pp_slot {
--	unsigned long		index;
--	struct list_head	entry;
--};
--
--#define NUM_PP_GROUPS		17
--
--struct zram_pp_ctl {
--	struct list_head slots[NUM_PP_GROUPS];
--};
--
--static void init_pp_ctl(struct zram_pp_ctl *ctl)
--{
--	u32 idx;
--
--	for (idx = 0; idx < NUM_PP_GROUPS; idx++)
--		INIT_LIST_HEAD(&ctl->slots[idx]);
--}
--
--static void release_pp_slot(struct zram *zram, struct zram_pp_slot *pps)
--{
--	zram_slot_lock(zram, pps->index);
--	if (zram_test_flag(zram, pps->index, ZRAM_PP_SLOT))
--		zram_clear_flag(zram, pps->index, ZRAM_PP_SLOT);
--	zram_slot_unlock(zram, pps->index);
--	kfree(pps);
--}
--
--static void release_pp_ctl(struct zram *zram, struct zram_pp_ctl *ctl)
--{
--	u32 idx;
--
--	for (idx = 0; idx < NUM_PP_GROUPS; idx++) {
--		while (!list_empty(&ctl->slots[idx])) {
--			struct zram_pp_slot *pps;
--
--			pps = list_first_entry(&ctl->slots[idx],
--					       struct zram_pp_slot,
--					       entry);
--			list_del_init(&pps->entry);
--			release_pp_slot(zram, pps);
--		}
--	}
--}
--
--static void place_pp_slot(struct zram *zram, struct zram_pp_ctl *ctl,
--			  struct zram_pp_slot *pps)
--{
--	s32 diff, idx;
--
--	/*
--	 * On 4K system this keeps PP slot groups 256 bytes apart. The
--	 * higher the group IDX the larger the slot size.
--	 */
--	diff = PAGE_SIZE / (NUM_PP_GROUPS - 1);
--	idx = zram_get_obj_size(zram, pps->index) / diff;
--	list_add(&pps->entry, &ctl->slots[idx]);
--
--	zram_set_flag(zram, pps->index, ZRAM_PP_SLOT);
--}
--
- #define RECOMPRESS_IDLE		(1 << 0)
- #define RECOMPRESS_HUGE		(1 << 1)
- 
--- 
-2.46.0.469.g59c65b2a67-goog
+> ---
+> base-commit: d4560686726f7a357922f300fc81f5964be8df04
+> change-id: 20240807-uhid_arm64_defconfig-40b1e360b4e2
+> 
+> Best regards,
 
 
