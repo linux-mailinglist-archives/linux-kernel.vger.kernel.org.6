@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-315647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833AB96C558
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:24:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E18396C554
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68E51C24D05
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:24:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6B74B22C2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B3D1E5003;
-	Wed,  4 Sep 2024 17:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F681E4918;
+	Wed,  4 Sep 2024 17:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UdLEGLuV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJTnu4SX"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7251E4932;
-	Wed,  4 Sep 2024 17:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F56D824A1;
+	Wed,  4 Sep 2024 17:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470524; cv=none; b=junCeYQJRgaB5Sc6kQi/qGXbWQriw66KnuQAlv0FmtLWmdbVYyWV10uB9/nleblY0MpwYdISpRAk9zFXFHCkN5VMlTRGNOqEOcexSA8BRBeKPx0DlLovuPZ8jzNm+8BLZFSyyRehzY+n8eN9UCJtEwYv9dNvMIYXaeOrwquJWJ0=
+	t=1725470520; cv=none; b=mq2q0a/mQhK8GMtWM5yW9rosF25wzBt7o6lDY3SiQJxu4fMxaFUWIlWDAfVNCmBuJVtlAzREt82DGXjav1jxFkOu+gNwclbrnFT5CCLQJVQBE0bcaGqmBDSTc9VZaFH4zEuNSpkFkTzOlsZb9UmgB2iSqC6vEHKrLIKBfEbn8f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470524; c=relaxed/simple;
-	bh=mHg0AXNu7Xn1u+Xl5zGyhOLNhE66eg1oZoCXjyVy/F4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UFk2VRIYOIEMCBwemuWsTupdb2ifjkfL4H/2vjnMnFgyX/vU1GhT2Hf3agnb4ag4+fkL/v75bB23uxR92EJb3g9GzDQZ6pqxo+F6YkPVvnoJO4ZTS4QfMkLPVPTBtYO4/8E9/CkCC//ucgmRadWeje5kO/P28pWj50V4YTluLRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UdLEGLuV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484BE0UI015575;
-	Wed, 4 Sep 2024 17:21:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ifcXyK1VksfIVr5U6pkXKNqIKZ/EJtOyoODGhx5JbsE=; b=UdLEGLuVhu1yb7Fx
-	lG9mdwwzMW5WtolFmXRSJnWnI1WI2B75Fk882TKESmqWvrUTgDd18iAtp3USfHkA
-	Ch0yngdSQUN3w4PHaYkmRjzylMFZSa5VjRIk+1kfM5ioWk61fym0ZDOkTz/PfK+g
-	ZippnJUkYdH9pNG1B/0PvNaLeRkR2y7fl+I9e8yu9Bcb9Hrhh1PrqD0uuGrPbZwh
-	VklG9Tt7EvtTN6aH2smqI2dZM9qPIGe5gLyfToO8cQ1mY1Fd5tWhpHGFCcd9jJaI
-	nLdAejtMl1cibJawy+c3dIu3lOz4InYqvxw2eUFbLJeRVsvOyQZabCKBtv5EKP7x
-	qAQxnw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt69dp18-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 17:21:45 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484HLish025251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 17:21:44 GMT
-Received: from [10.50.7.129] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 10:21:35 -0700
-Message-ID: <ea8ccb1e-2344-4c35-8a95-7b3f1fe23e08@quicinc.com>
-Date: Wed, 4 Sep 2024 22:51:30 +0530
+	s=arc-20240116; t=1725470520; c=relaxed/simple;
+	bh=WjbnGq1vzsqKMGd29MtiaioUtB4BYtpn9Bt5zlm4WgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XphhFWPSeA6OKBJ4ADnytGOIEntZyd8IXJ6LYMVbFqCENoM47PYLPmH62RDTq2IxrEv7EdgUUFUt7JizhQY3yc+hl31amHswQrSZG3BK5DRavy/GjeJ6aV6hXVz65lq/NRRxwFhHnsiQzcVmE3n/vKpX5uMElefhFP7pavIcRN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJTnu4SX; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-277e6be2ef6so1994159fac.0;
+        Wed, 04 Sep 2024 10:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725470517; x=1726075317; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUzfxGio1jAYqVfMH//HXxgau+jH1IPiPN8s0PtRNw0=;
+        b=EJTnu4SXUZGCUT6IgHVLAXcD8ftq9jU9JO+CyL5eVZTisRpy+zfz0aO8nQsoLRf+QO
+         ii5B/KO3TqaAyBeTffZ8k8CqkTr10Tg5QJ1H8JQ6a+HiUmTSYiLUeThIcN3s3TXYYN7u
+         hoqaXGEaYotXCZbUGz0fd4Biu2kT5/2Iwlw6P9rD5k8qJhAy5E2kUd0CK1pnkgmmuLCf
+         qukMxjxCj6trIsGOC83DckGovjn6HqVavjBFYNzx4TWBia8xwYf6YmJhGa3bik7vqfIr
+         oHr5G7sf1S5+nm/7Qv1Zp4RS7AIKm3ui1EFovkPnMos/0hoWwQ5b00KdjMzP9kAyN1/F
+         Sdiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725470517; x=1726075317;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KUzfxGio1jAYqVfMH//HXxgau+jH1IPiPN8s0PtRNw0=;
+        b=Y+r5vEOUbXQ68RqosyFx+q6xPFiOxQU7mycXu0u8dR4pCEzbD/SeluJaJJtqauAfk4
+         a/yNlZK4Tqw41JCzpKuGVKeSehc/NooZv8D1AVX76U9XkeryEdrNrumkCA22iFHBLyfv
+         we6UvyY6vUkimse2yjEVcl7KJy4CqCrV7N/T6uYVmMlo2mUfKz/HLfkDRUCgLEcPd//w
+         dHjMB1Sh9OUAgip3l/exERz4i49qAfcLmD3784HcWjSR/F/5v+EHhv6axptwel7o03XH
+         WwZe08KKyImw7+s71PArrEoMhsY+1kH+3+txcL156YcUECaqR26UjmX1Lrudj+6CV7a/
+         Jcow==
+X-Forwarded-Encrypted: i=1; AJvYcCUlW/tS51YpficqFx60VHnQRFxS5YWza9YrA4qW1g8CHPACRCKgn/el8/Y2XLL+HT8UaTvss5BNcpH+IKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl0Le8QYnPRqb1RnrMlqnKUE4LAPIVMsaEYpyMT2Xgl9DjIFIM
+	k1ifHvNmNiJS6TtvFw4PIII3yKBI2jWCHIVHS7V9jy9b0NaLurKqC/kpx6YmfA9iB1cJSyjBXGv
+	0HKwGOMRtjmQEJNWMBA83N1AD0sk=
+X-Google-Smtp-Source: AGHT+IHv3U/0ZG1pP7Ck5tFLhSVF1iuVF6tDnao5LVoH265LxF3TxksbXp1hB+hWoDdPuHkD1f0ac8iM+/Kp7a8nrr8=
+X-Received: by 2002:a05:6870:b48e:b0:25e:23b4:cf3e with SMTP id
+ 586e51a60fabf-2780054de42mr11368624fac.44.1725470517118; Wed, 04 Sep 2024
+ 10:21:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 4/6] PCI: qcom: Add support for IPQ5018
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <p.zabel@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_nsekar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <robimarko@gmail.com>
-References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
- <20240827045757.1101194-5-quic_srichara@quicinc.com>
- <20240830083852.cwjc6skgypva6u6u@thinkpad>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <20240830083852.cwjc6skgypva6u6u@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MphsN_zb9IeVUWR0Vo0gGqdEPpeFOl7t
-X-Proofpoint-ORIG-GUID: MphsN_zb9IeVUWR0Vo0gGqdEPpeFOl7t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_15,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 mlxlogscore=850 mlxscore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040132
+References: <20240904135034.316033-1-arkadiusz.kubalewski@intel.com>
+In-Reply-To: <20240904135034.316033-1-arkadiusz.kubalewski@intel.com>
+From: Donald Hunter <donald.hunter@gmail.com>
+Date: Wed, 4 Sep 2024 18:21:45 +0100
+Message-ID: <CAD4GDZwZ1WW-L_+yvj7QHnGRTv0M6QpP3KpL38SbUSMt8dqwMQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] tools/net/ynl: fix cli.py --subscribe feature
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: netdev@vger.kernel.org, kuba@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, jiri@resnulli.us, 
+	jacob.e.keller@intel.com, liuhangbin@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 4 Sept 2024 at 14:55, Arkadiusz Kubalewski
+<arkadiusz.kubalewski@intel.com> wrote:
+>
+> Execution of command:
+> ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml /
+>         --subscribe "monitor" --sleep 10
+> fails with:
+>   File "/repo/./tools/net/ynl/cli.py", line 109, in main
+>     ynl.check_ntf()
+>   File "/repo/tools/net/ynl/lib/ynl.py", line 924, in check_ntf
+>     op = self.rsp_by_value[nl_msg.cmd()]
+> KeyError: 19
+>
+> Parsing Generic Netlink notification messages performs lookup for op in
+> the message. The message was not yet decoded, and is not yet considered
+> GenlMsg, thus msg.cmd() returns Generic Netlink family id (19) instead of
+> proper notification command id (i.e.: DPLL_CMD_PIN_CHANGE_NTF=13).
+>
+> Allow the op to be obtained within NetlinkProtocol.decode(..) itself if the
+> op was not passed to the decode function, thus allow parsing of Generic
+> Netlink notifications without causing the failure.
+>
+> Suggested-by: Donald Hunter <donald.hunter@gmail.com>
+> Link: https://lore.kernel.org/netdev/m2le0n5xpn.fsf@gmail.com/
+> Fixes: 0a966d606c68 ("tools/net/ynl: Fix extack decoding for directional ops")
+> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-
-On 8/30/2024 2:08 PM, Manivannan Sadhasivam wrote:
-> On Tue, Aug 27, 2024 at 10:27:55AM +0530, Sricharan R wrote:
->> Introduce a new compatible and re-use 2_9_0 ops.
->>
-> 
-> While adding a new SoC, please add more info about the controller. Like the
-> hardware revision (internal/synopsys), max number of lanes supported, max link
-> speed, is it a derivative etc...
-> 
-  ok sure, will add.
-
-Regards,
-  Sricharan
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
