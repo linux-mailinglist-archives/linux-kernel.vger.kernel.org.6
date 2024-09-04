@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-315752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF71196C685
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:37:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AB796C68A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E681C226CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10B2E2890D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D78E1E4112;
-	Wed,  4 Sep 2024 18:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFA61E2030;
+	Wed,  4 Sep 2024 18:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xa+q0e7S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiuo8u8F"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331951E2039
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC381E1A33
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725475032; cv=none; b=JdoJ2jqgFfNkSTJDde9HGXiRAzcPHkJkrtiz0GAq8b3NjdbICuUiYfar12H49UuDc1fJlYF1tZ+uBhtOOW4QLbnafxwg0J8MWxLhQ5EhzZ0P2ysoR/XJ35UODhIvvZXVz/o/gmOs8xULCihJECGhCBttuhdMDUoyqkcuwGjUUFc=
+	t=1725475086; cv=none; b=bsvgf4Q8ofQczzUCStxt9wb6ReAajOaTZI5af2ZXsi5oT6MOWfM3FFiFIRM/iZxdW1Jo+tDRXvobnUZGnlU18X/ReYQ68WPn+rCqWOdgzlViJqjT1kHHzo/tYYBMP3jSHcCjSZPnP53azw6x7LQBsWUOr2rnHrPEzk1/HHJsBB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725475032; c=relaxed/simple;
-	bh=Qz1oHXsGRvkul0CPue8xzPHrcvGU8z6RPHX1YAy5KnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WhBPT2MdfDxVa2pZtvBeur7roPIIIgebWHMoaeoq+NcM0no/eQ4+J6bkoDZ2t4g1FP/aBzAGMMPrD0sxGya0xS9dQfLBCFMejaHJSUCWfRZ+i8jvPnEJnErwSVGNfUQPKQ6XToW/GtfZhCrx9rBVoc61wBfYgE48ASjLOx1df1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xa+q0e7S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725475030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H5gC7elI8FcKQ992DZVgo/TSNWN3fufuNC65WmyMao8=;
-	b=Xa+q0e7S2zvzH9Vkwd9GlMhwC6W7uQs2Bz6jN3lb/E25F7APVSgiB5/xvsI/waxuS7jQC8
-	Lut9NgOZqITPpLKirCwS6Mo0fEHyT/Sfje2XivMR4CkH12sAYF5jX78NatrrEEPxGQTjHF
-	2Y/nWq7U1v1k/j0wj1QtNaE98u3/d0Y=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-qtzUgY4DPESSsuF5uZbl5g-1; Wed,
- 04 Sep 2024 14:37:05 -0400
-X-MC-Unique: qtzUgY4DPESSsuF5uZbl5g-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42B651955F07;
-	Wed,  4 Sep 2024 18:37:04 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.172])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 749B51955F45;
-	Wed,  4 Sep 2024 18:37:01 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Phil Auld <pauld@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v3 2/2] sched/isolation: Consolidate housekeeping cpumasks that are always identical
-Date: Wed,  4 Sep 2024 14:36:50 -0400
-Message-ID: <20240904183650.1053708-3-longman@redhat.com>
-In-Reply-To: <20240904183650.1053708-1-longman@redhat.com>
-References: <20240904183650.1053708-1-longman@redhat.com>
+	s=arc-20240116; t=1725475086; c=relaxed/simple;
+	bh=9pQAMVTSR3f24Wv5nWW5VXl+yfFf1TzPSaWfMAL7FMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LUvdGW6YaOFIXB4HAIsQfIxJzuoSrROhamLaCs3MHO3BVWwifb3+56vza3ARpW9ggTRQl8P/rNOcvo1PD2al3qNNNARLZ9GEK5CXA8ftHORZashGBxX47Xqx7i7dszb8Fta5KPTzkgfKcFljJcgqULiJYr8D3g5aBy2aymcFp+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiuo8u8F; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3edb2d908so26094181fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:38:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725475083; x=1726079883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y31lgc5K/TFTdDqrtgkkfI0qYZcr/9voUjOlhV0p688=;
+        b=iiuo8u8FQL+MqQhg8vIJdHD1/bHjRokPUh6Bvl57OmWZmidHQaANdLoMxfzyYgQPa7
+         LJHE/c4frRekvXRh3Upvza7eFIj/5xiZd6NOcltoDu4qH7jp5gx6qAw+2wcYX3kaXKJj
+         IH919rtbGwtjevTfrsyz6PBkuIuOypkOdsdYcw0EyQXoFSQQbAe1DvRQtk1LyW4eYBYG
+         RLfMfVfsJ1A7Ec1uMwR0pe/4Che4+ZKP1kDMu1fP1OxbXo8EICu2OZlB4ndnR7tQmINQ
+         0RXRPXWDQPZXgea47TR/2JA9uyRpKXBnKBK8YF5vSLSuqGo3Gj0Y78O/zH3XrjX4AwPn
+         HPBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725475083; x=1726079883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y31lgc5K/TFTdDqrtgkkfI0qYZcr/9voUjOlhV0p688=;
+        b=fWrl+DiYtVdBAnO9wEIZINh6y2Cu4fjf7yyWzqjr8yEu6TBq397Jv733K14qlN6ytz
+         S+q6oL1V9FExeO3T1wDgHPNgR/Kwc4pTfFLyiS14AyrBSCYFGBxFDZoSJi1ooT39RNjo
+         GYjFNxJ3uDZx5uKEozlxFFeCW5jsxODVDBalKZbKkJE5G/o+EDnsAWIDK0E3nBaEM0hC
+         Ca72fBs97h+Tl2HiSzvCVuPNTnW7kvMsSUr77uaOVJpOIQnSyOMWdMursO1R8ljp6Xgn
+         8fAanQtq9vhRAziRTplCNSojGAZDfMXy0un271joi9a4j7ssNdZG7WGUUs7C1nT99NnW
+         qECw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlNmNk582IXUglHe2Wpei56FjlWJqKyzWEQAzzDj2HxZDOGV2rtN/KKDl+zeJJPWPC+0gA3Mna8gLsvIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmNTtTl+hk/1/HaWY57qJA3tUG5e1La9Yu8y9kAc5g+Wtn/dOR
+	88gcYVxX5XSDSLZDzP00YvDY6pHS/XxFv5ZPKTxj31Y9R3bX88R7YfkjvIvjjvbcRTn8ZwtlPZ3
+	HvI0lvs9ZyFUjARzWlmDqRqBnqrw=
+X-Google-Smtp-Source: AGHT+IHOD/qVjP74cwcaPb9AH3vCXXXPLx8qzk1Y6mjszbD4Yf1Rdx4oFVIt+pjia83lYkqaJWA1TysRkId7avhN3k8=
+X-Received: by 2002:a05:651c:2110:b0:2f5:c4f:ddbe with SMTP id
+ 38308e7fff4ca-2f64446e056mr56640191fa.38.1725475082596; Wed, 04 Sep 2024
+ 11:38:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240904095205.739422-1-ubizjak@gmail.com> <CAAhV-H5WX7KXXpLkLm_4L-y5J-4fx-72uN+cvFGOZZh2NXUbHw@mail.gmail.com>
+ <CAFULd4abR8Upu5UecVes-sEc9his2yWL7pg8hwKSJ+ORSNL5Ag@mail.gmail.com>
+In-Reply-To: <CAFULd4abR8Upu5UecVes-sEc9his2yWL7pg8hwKSJ+ORSNL5Ag@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 4 Sep 2024 20:37:50 +0200
+Message-ID: <CAFULd4aZcWcX5J==n7N_AQJre13Jeh6eJRK1eHmdSzRS3ZagCw@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch/percpu: Simplify _percpu_read() and _percpu_write()
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	WANG Xuerui <kernel@xen0n.name>, Xi Ruoyao <xry111@xry111.site>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The housekeeping cpumasks are only set by two boot commandline
-parameters: "nohz_full" and "isolcpus". When there is more than one of
-"nohz_full" or "isolcpus", the extra ones must have the same CPU list
-or the setup will fail partially.
+On Wed, Sep 4, 2024 at 5:24=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+>
+> On Wed, Sep 4, 2024 at 5:02=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org=
+> wrote:
+> >
+> > Hi, Uros,
+> >
+> > Thank you for your patch.
+> >
+> > On Wed, Sep 4, 2024 at 5:52=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> =
+wrote:
+> > >
+> > > _percpu_read() and _percpu_write() macros call __percpu_read()
+> > > and __percpu_write() static inline functions that result in a single
+> > > assembly instruction. Percpu infrastructure expects its leaf
+> > > definitions to encode the size of their percpu variable, so the patch
+> > > merges asm clauses from the static inline function into the
+> > > corresponding leaf macros.
+> > It seems in some other places we prefer inline functions rather than
+> > macros, but this patch is the opposite...
+>
+> Please note that these are leaf macros (functions), always used
+> through the upper level macro (see e.g. the definition of
+> raw_cpu_read() and __pcpu_size_call_return() in
+> include/linux/percpu-defs.h). These upper level macros do type check
+> on the pointer, so there is no need to do it again in the leaf macro.
+> The percpu address space checks on x86 depend on the presence of these
+> checks.
+>
+> > >
+> > > The secondary effect of this change is to avoid explicit __percpu
+> > > function arguments. Currently, __percpu macro is defined in
+> > > include/linux/compiler_types.h, but with proposed patch [1],
+> > > __percpu definition will need macros from include/asm-generic/percpu.=
+h,
+> > > creating forward dependency loop.
+> > Macros don't check types, so use macros to drop "__percpu" checking?
+> > Seems a little strange.
+>
+> As explained above, types are checked in the upper level macro (that
+> uses these leaf macros) through __verify_pcpu_ptr(). These checks
+> currently use sparse to check __percpu tag, but x86 will soon use the
+> compiler infrastructure with much more powerful checks in this place.
+>
+> So, there is really no need to type check percpu pointer also in leaf fun=
+ctions.
 
-The HK_TYPE_TICK, HK_TYPE_DOMAIN and HK_TYPE_MANAGED_IRQ types are
-settable by "isolcpus" and they can be set individually. The other
-housekeeping types are all set by "nohz_full" without a way to set them
-individually. So they all have identical cpumasks.
+OTOH, you are right, we should also typecheck _val in case of
+_percpu_write(). We need to add:
 
-There is actually no point in having different cpumasks for these
-"nohz_full" only housekeeping types. Consolidate these types to use the
-same cpumask by aliasing them to the same value. If there is a need to
-set any of them independently in the future, we can break them out to
-their own cpumasks again.
+    if (0) {                                                \
+        typeof(_var) pto_tmp__;                    \
+        pto_tmp__ =3D (_val);                    \
+        (void)pto_tmp__;                    \
+    }                                \
 
-With this change, the number of cpumasks in the housekeeping structure
-drops from 9 to 4. There is no other functional change.
+to the _percpu_write() macro.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/sched/isolation.h | 18 ++++++++++++------
- kernel/sched/isolation.c        |  9 ++-------
- 2 files changed, 14 insertions(+), 13 deletions(-)
+Let me test this amendment a bit, please expect the V3 patch tomorrow.
 
-diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-index 499d5e480882..e2c42172de82 100644
---- a/include/linux/sched/isolation.h
-+++ b/include/linux/sched/isolation.h
-@@ -7,15 +7,21 @@
- #include <linux/tick.h>
- 
- enum hk_type {
--	HK_TYPE_TIMER,
--	HK_TYPE_RCU,
--	HK_TYPE_MISC,
- 	HK_TYPE_TICK,
- 	HK_TYPE_DOMAIN,
--	HK_TYPE_WQ,
- 	HK_TYPE_MANAGED_IRQ,
--	HK_TYPE_KTHREAD,
--	HK_TYPE_MAX
-+	HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_MAX,
-+
-+	/*
-+	 * The following housekeeping types are only set by the nohz_full
-+	 * boot commandline option. So they can share the same value.
-+	 */
-+	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
-+	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
- };
- 
- #ifdef CONFIG_CPU_ISOLATION
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 5345e11f3d44..61d0f97341c3 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -9,14 +9,10 @@
-  */
- 
- enum hk_flags {
--	HK_FLAG_TIMER		= BIT(HK_TYPE_TIMER),
--	HK_FLAG_RCU		= BIT(HK_TYPE_RCU),
--	HK_FLAG_MISC		= BIT(HK_TYPE_MISC),
- 	HK_FLAG_TICK		= BIT(HK_TYPE_TICK),
- 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
--	HK_FLAG_WQ		= BIT(HK_TYPE_WQ),
- 	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
--	HK_FLAG_KTHREAD		= BIT(HK_TYPE_KTHREAD),
-+	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
- };
- 
- DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
-@@ -194,8 +190,7 @@ static int __init housekeeping_nohz_full_setup(char *str)
- {
- 	unsigned long flags;
- 
--	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU |
--		HK_FLAG_MISC | HK_FLAG_KTHREAD;
-+	flags = HK_FLAG_TICK | HK_FLAG_KERNEL_NOISE;
- 
- 	return housekeeping_setup(str, flags);
- }
--- 
-2.43.5
-
+Thanks,
+Uros.
 
