@@ -1,94 +1,77 @@
-Return-Path: <linux-kernel+bounces-315377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4EE96C1D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 240A696C1DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877A1288BA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51152823A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D5C1DFE23;
-	Wed,  4 Sep 2024 15:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F1C1DEFC4;
+	Wed,  4 Sep 2024 15:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WT1gr4R2"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfa+MkyZ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFC71DFE17;
-	Wed,  4 Sep 2024 15:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F0455898
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462642; cv=none; b=r1YkIEnB0c9dDtxDko0LeDyff+XouHtjZdcNghuNBCBINHpfVmHEu9KCX8pDukub04oE0QtQ+QXNPEPLIR/ChJQmKdvReMQCoHvtcGyBD2LLmoxxyssE+bwRYZM7oeSx0btDnyVs9HC6qof6DEOaUALw3HoaZHHU5Kd5EjK0d5I=
+	t=1725462662; cv=none; b=mx2GSzSgLueHo/Fx6d2WmvV524LyHYkPQ4mjPNGGD4CEHPC//weDoYOYJcHOpv9rV1Y+8iLkPBFvaAps2M5lJoGzCY22x2cW9nj8BBWDfdVJUMRr7SJO4MV2wRaF0RoEmVsoBw9yPcJGncR8BX7Wxj4FntysGnjb+QxSQkToTys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462642; c=relaxed/simple;
-	bh=PdsMdAs4i+1KnGUSIyj6Cvkto8ku+RF2Yz6vhnepAIY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JZJr2I+X/EZ45vDYRn3ar8b9etAamonOfn+wgq/Sj5cIe2FBqCRy+WmQ+CDHy/RZNnDsmeW6+rJYfIThB+7nSZ6ixiseg0lnTfIJyEWplPBJ6tsNmhbPlMmEmkR9xmBqA4GOfDMA8XwbdEODErCod0I3YdP+Fy9NC6b4a34YRek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WT1gr4R2; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1725462662; c=relaxed/simple;
+	bh=mVse9Q5sFVCg9ti1xl+pGf2TEkCbAvMAkL3VmLDv9jA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q6nOUG7zQGwzRvgTGtf1jFIYcmMGhABheArEiXQtIZLHvAoBVy5XA61jNPHH/oakfUmzo7rLGEXswLTKls/Kgp3he7lZxHMpAyAKoHuqcTeZuFtCYlfN5HWsl9ykNk/vy83NhrNxnzoUUwgcXOjVbNwzsXWFLb9LYuPfDUP1vrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfa+MkyZ; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334c4d6829so8455684e87.2;
-        Wed, 04 Sep 2024 08:10:39 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20551eeba95so31215285ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:11:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725462638; x=1726067438; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UQ3BMP71Ks39+pq7NwGF6/mq64FhkUT40nnjV/3W63M=;
-        b=WT1gr4R2XHB6dYDN2CvueI87nz9PAvAVqw8E1RThBAbu0Phioqqqvt9LTmxjSsBXUj
-         l4GXxG5PogmM7HWnfc6xNIGrQIC50oQ2SLFGNOgNdHKLg3yxwYuWXVQ5KscEtlFPzlcv
-         RPRy501ox0+yrfqGRkO+EmBkzNCe/lMijakc7hPsWgNnk2na/LT8+hH4l14rr4p9xILf
-         LZN2MAxexT5Vz/NxHqO9E978sPov6KuiTU2ot8PQadBl890cD9NCzhl014SKA6EM1He3
-         62FBkbPhLAhqLTFyGRv06ma0Yp90ZLsk3TuKHZ6Y5o0qgoKSjujICW+943eTo2NW8ntq
-         tVMQ==
+        d=gmail.com; s=20230601; t=1725462660; x=1726067460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=43ydKagFmOiArusbTnepvZXequK3FKBWJc82HDWyEIw=;
+        b=cfa+MkyZAl32WX6n1tWC8wJ/4RNEqVF1+4ywqZjc03hgPyIHeNdmNado2Jw8+jt4Kp
+         uhrZ1XkeuUtCP5JyAH+YfiDfSAvvFc1UCKk6GBJD7yav1nOUI0zfN3eE/lJxZm5bF0I+
+         8daoMDkvDFR5g7zGNef5Hx/U9+MGx0AHUxsZZlYtmhiAuEiUGOmk5vJmibec9VOIRKnU
+         ZKZ0+GqAwvLryJajxGm7JG/xLlJKzl7ESyZRpUR/IFTtMsFT9i2qT01ZsZoKroREwNyB
+         mfoLWRX746epNBdP2VcFId9Bvt6LwxRJ7NxedBY5VbBi1uORC0zHZe2A3obkbCzqVsW6
+         JfLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725462638; x=1726067438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UQ3BMP71Ks39+pq7NwGF6/mq64FhkUT40nnjV/3W63M=;
-        b=eRcEJg2VyN4QITrcDIe0mORJJdcOXyridqfh9V3RPtcaTAb573xnIsbV0aFny2Pqka
-         /d1sUMpDn1j6FAYKkLr4rBPOcUR2in2KlmfawEfKPtkUPZn6/LEFCfWxTSL3Dh36jHJC
-         osmATpOmACldVXtKFr/MVvA6UWcCQ76+ZQdY5fQGP1WX0FMp/7Ya9lb+TqYiGuO+4AWW
-         ptG2jC1bJu/i4rtCJohY0u8BAZLURK4gSUkCzzh1bXbUVr6dv9AcfXPgp4ynESiEH+eT
-         CZf+Ki48ix+W2ivJQ6gNWW7KG2XA2VtgIGNNtrwkYGwk1VvB8Gx5otN/6cb7bH/VIJno
-         Cyrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEnqgJNcA+73un8k6vVJmIvm98JgfK0oFgJ5E8ujrlumydgWs+GDmRwfZy+slZTh400P0G2Br@vger.kernel.org, AJvYcCXrMdZfIM+aVQBFSdh3Z2dUf+dVm1WMw0HYwOLkxQ0SY0RQ3OEqXExatT1CdMdaVJ2j/n2C0HntYFeMQb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylaU4E+3wlbpOAp4wI8mVOn45amawvhOHgvrhZI2n0aSujueYI
-	8A/rkxE39FNa11G3QIbsc3Ke5oBV6M6zfn7wOjQ81idNVkTleW8I
-X-Google-Smtp-Source: AGHT+IGNbW180uwGRjrbU2cwkIfvp3Xml70BLlM3v3jsxHuHU+QXCpcu1vP2QyNeNvepeSwLUxLUGQ==
-X-Received: by 2002:a05:6512:b0b:b0:52e:fd84:cec0 with SMTP id 2adb3069b0e04-53546bc38cdmr13542649e87.52.1725462637915;
-        Wed, 04 Sep 2024 08:10:37 -0700 (PDT)
-Received: from localhost.localdomain ([2a04:ee41:82:7577:2f85:317:e13:c18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a6c8bsm2956666b.146.2024.09.04.08.10.35
+        d=1e100.net; s=20230601; t=1725462660; x=1726067460;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=43ydKagFmOiArusbTnepvZXequK3FKBWJc82HDWyEIw=;
+        b=vLhfd6UHkfIVEFgPMGhvs5O36mNrsBKQBNVctEiuhhjz+aL4UXsofp96FHJEesd+/K
+         AvEMwvijJ5QNAQKA9PVkMFslbekZ+h8nKeoF0bzeOAFhLQ0pZMkOknV+Gk3h7uEKqBDE
+         tI+P8KpM5Js3peY4F5pZ3JC2uwSOiKbyb9VFpcXq2e9YV3PGf1A3h4fGq7GFGZGqbtXs
+         r4SEUz3fveGkrmlqqaftSA+hcuyLX27KiBJRhePTXdbX6L635AoM3RhkeDMvNZQ8sGZK
+         u5rzA7bsjmF1O9Zjh29oJ2HmXCtZefpDNhZMXjtlHXYwsRVonS0YTKKFBwtFmW1ZD22z
+         20kw==
+X-Gm-Message-State: AOJu0YxY0pBFK5DRhnOn9VeeX3oetQBDmp4elkKOaPRH6WSPUzK2mNtw
+	t+UWI2LFvVl6grovgN+ABcNYDHytb+Ct1TwdVSDgnwpcIdkpHUg4s3k+Rg==
+X-Google-Smtp-Source: AGHT+IGfo/94kB9afFvRPno+mvVQpzCAOhJq+Y9J3yrdPnGat19R1P1vOwtxLsIwUfwROlQ0n6sETw==
+X-Received: by 2002:a17:902:e74f:b0:205:7e3f:9e31 with SMTP id d9443c01a7336-2057e3fa1fcmr93168535ad.60.1725462659805;
+        Wed, 04 Sep 2024 08:10:59 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:85f3:1406:4b87:9708])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea55d42sm14629905ad.204.2024.09.04.08.10.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:10:37 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: linus.walleij@linaro.org,
-	alsi@bang-olufsen.dk,
-	andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	nico@fluxnic.net
-Cc: leitao@debian.org,
-	u.kleine-koenig@pengutronix.de,
-	thorsten.blum@toblux.com,
-	vassilisamir@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2 3/3] net: smc91x: Make use of irq_get_trigger_type()
-Date: Wed,  4 Sep 2024 17:10:18 +0200
-Message-Id: <20240904151018.71967-4-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240904151018.71967-1-vassilisamir@gmail.com>
-References: <20240904151018.71967-1-vassilisamir@gmail.com>
+        Wed, 04 Sep 2024 08:10:59 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: prevent atomic file from being dirtied before commit
+Date: Wed,  4 Sep 2024 08:10:54 -0700
+Message-ID: <20240904151054.813444-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,28 +80,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
-simple irq_get_trigger_type(irq).
+From: Daeho Jeong <daehojeong@google.com>
 
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Keep atomic file clean while updating and make it dirtied during commit
+in order to avoid unnecessary and excessive inode updates in the previous
+fix.
+
+Fixes: 4bf78322346f ("f2fs: mark inode dirty for FI_ATOMIC_COMMITTED flag")
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- drivers/net/ethernet/smsc/smc91x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: take the original logic not to change inode size by inode dirtying
+    from VFS layer
+---
+ fs/f2fs/f2fs.h    | 2 +-
+ fs/f2fs/inode.c   | 5 +++++
+ fs/f2fs/segment.c | 8 ++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
-index 907498848028..a5e23e2da90f 100644
---- a/drivers/net/ethernet/smsc/smc91x.c
-+++ b/drivers/net/ethernet/smsc/smc91x.c
-@@ -2355,7 +2355,7 @@ static int smc_drv_probe(struct platform_device *pdev)
- 	 * the resource supplies a trigger, override the irqflags with
- 	 * the trigger flags from the resource.
- 	 */
--	irq_resflags = irqd_get_trigger_type(irq_get_irq_data(ndev->irq));
-+	irq_resflags = irq_get_trigger_type(ndev->irq);
- 	if (irq_flags == -1 || irq_resflags & IRQF_TRIGGER_MASK)
- 		irq_flags = irq_resflags & IRQF_TRIGGER_MASK;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ac19c61f0c3e..4ef6d877aa36 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -802,6 +802,7 @@ enum {
+ 	FI_ALIGNED_WRITE,	/* enable aligned write */
+ 	FI_COW_FILE,		/* indicate COW file */
+ 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
++	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
+ 	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+ 	FI_OPENED_FILE,		/* indicate file has been opened */
+ 	FI_MAX,			/* max flag, never be used */
+@@ -3041,7 +3042,6 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
+ 	case FI_COMPRESS_RELEASED:
+-	case FI_ATOMIC_COMMITTED:
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+ 	}
+ }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index aef57172014f..4729c49bf6d7 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -35,6 +35,11 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ 	if (f2fs_inode_dirtied(inode, sync))
+ 		return;
  
++	if (f2fs_is_atomic_file(inode)) {
++		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
++		return;
++	}
++
+ 	mark_inode_dirty_sync(inode);
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 78c3198a6308..2f6ee9afd3ad 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -199,6 +199,10 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
+ 	clear_inode_flag(inode, FI_ATOMIC_COMMITTED);
+ 	clear_inode_flag(inode, FI_ATOMIC_REPLACE);
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
++	if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
++		clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
++		f2fs_mark_inode_dirty_sync(inode, true);
++	}
+ 	stat_dec_atomic_inode(inode);
+ 
+ 	F2FS_I(inode)->atomic_write_task = NULL;
+@@ -366,6 +370,10 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+ 	} else {
+ 		sbi->committed_atomic_block += fi->atomic_write_cnt;
+ 		set_inode_flag(inode, FI_ATOMIC_COMMITTED);
++		if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
++			clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
++			f2fs_mark_inode_dirty_sync(inode, true);
++		}
+ 	}
+ 
+ 	__complete_revoke_list(inode, &revoke_list, ret ? true : false);
 -- 
-2.25.1
+2.46.0.469.g59c65b2a67-goog
 
 
