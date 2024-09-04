@@ -1,211 +1,105 @@
-Return-Path: <linux-kernel+bounces-315063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3202996BD6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC2E96BD6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA691C24D70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA061F2156F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A011DB939;
-	Wed,  4 Sep 2024 12:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693C51DA619;
+	Wed,  4 Sep 2024 12:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5EkVWnD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M28SfeCK"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB66D1D9D99
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E701D9344;
+	Wed,  4 Sep 2024 12:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454655; cv=none; b=aXMciu5ZVGMkVcetFVUDH2hnvB4Xf4cCaKRbHX+7/U4nmns8iwMqe+qFQO9y2ppflNa4D/I9IDIxTlaJs51kiDLKSXLrVXutdMHYff72FeGxwCdrjXAaNDi6eEJERBQoWH4c3yiy0YCQjk3FqukZ4TYZFn6h++78qBcZ30VdDco=
+	t=1725454692; cv=none; b=OEeWRM1xLn+3Rt1P9wBoELVWR4xeina/3YSAi7AQYUxuILtg0d//rlnDfb9UHNvsj5QsI5Sim3K5acOxd2ZEX0QGNmcePsTm8wHsrFY7Le7dOsaSmEOrU3Rq8SpDFNWMubTZYsmsFGinWKSb+xL1Mv+Fzy2c/LdT/eNuvgHH4qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454655; c=relaxed/simple;
-	bh=nAS/Y/Y7RaYODxzBkH7Wcz9UJ1xzt6dWuLQyLqLErwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B2X7zt+pZR7ONrI2tnRWvdpavdPMiDgPz1XImtJasr3Zfer5+5grDzkD/n8c11tw0SGVSSR90X9AJjiSTnfkqS4f0icaoZYD4Uniytel+fnWIJKf/1nbLvwXq8Gcjrdbt2rUMQDPBfsrQrzMp/ZjYRZoE4WtduL+BFlY3wqYx6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5EkVWnD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725454652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hr0QPsQ8kKmsm1us550S0o5dWq5voRCeCjok7fkF5tg=;
-	b=K5EkVWnDV1AYestY3XI0zTMnNjlRlMC6XkTsP+maEyau53wO+NNCDvP7Sj7RfSar9E33Ab
-	qa3Otk6ZYzzQKaM7WkZhkbbTlPhWHik6+auCT6bMbGb3RVkCnEkEhsu2qPJQ6LGURV/miq
-	PRSwxN1z4UpA/g9DbLorqhMQSmHrfL4=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-uRgHyuQsMzS1godDkyTDbQ-1; Wed, 04 Sep 2024 08:57:29 -0400
-X-MC-Unique: uRgHyuQsMzS1godDkyTDbQ-1
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f51259995so711315ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:57:29 -0700 (PDT)
+	s=arc-20240116; t=1725454692; c=relaxed/simple;
+	bh=y+0wgterEVCQgKUJhhw1nJyoRD+c6QWvYNhAzYbfqIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iFLg64CXto2RhoaD71RdbIIzpJ+a70MTsXKQyfY+0tdWRyVp3KzG8zvUethaPWEKS/r9uMX1RZNKxl8xm/kIj5GwFt9Bszl2lhjGmDbXXajAol1uZ1DlutVHBCjMhB/QaHPDGyYsgxBCiMakHJ4wNV18QIyUKlgWxSsPoqcEoJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M28SfeCK; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-714481eca0cso851826b3a.2;
+        Wed, 04 Sep 2024 05:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725454691; x=1726059491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y+0wgterEVCQgKUJhhw1nJyoRD+c6QWvYNhAzYbfqIU=;
+        b=M28SfeCK2V5h11Ca7Z8jIqCcFQ4HOClbJ3/a312t8fCgQQmnGP1/iNjjgkptG+IZ23
+         h7Ja+cndOAzU3Ikn3H3hHdL/DrgRG3sCm8OW95Wz92HGfTeZ9EEoReiR5JPovAOk+Lyz
+         WTkbh2rtkyLzpOfbB898yLPOoGdcWaVmU+9HxWus1P+cNWMZKg6yU9gJEZO2OCVFYw78
+         p/kA9DOkpgber723NJK1N1MoDqmQA4sE+3LCSXzA6uvXhCpyvQzTtkXQXjVby4tSOsmo
+         Q9OlSTrj/o83UJOud2jN+NqPElkGpyuxP6uzPTpIXXMjR1gGcKB5V9kW7cELCMHr/2m2
+         8iqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725454649; x=1726059449;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hr0QPsQ8kKmsm1us550S0o5dWq5voRCeCjok7fkF5tg=;
-        b=TS9Gvo0BDzV/WXkjjZMkPyj6aG7ElCdNjOkQoGJSHUcDib/6/Zbz8wmAOZUfprwNr3
-         S+AdVDP8qo1lvR4//I6kbe/+SkEPfRA9hy6KIsFZvFq07/r397XX0euHy4rujTwpVDvu
-         XFxv5Cq8M6wKe2QC+uOa1nRzu7FgFeNLyw/dzh5m1ogn3kenWV49J99iNulWYryWyUtg
-         9UAAvKt6jj2N0XDhGP3jPLhW1VOpAhwk2YKGnOUsxKpI2spneulf2tlLe0Nr9p8QL4rt
-         9s8d2TUhPxqjyrM1qEgeJeDFmSIXQBpHEj5CVO3ct0o8UKp2phetJ+ptljI19ngdeT/k
-         plpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/pP4CReb8gV3VGTHpmeaPM57I9T1mq/TIeljfBGPVO9HvLiTBfA5O+cO8iEkwf8f6CNTmt8mkybAolMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYH0FCx9bnayM2NuvKvHKcabU6xi8Vi6E5EvVPKa+8F0s4Z39N
-	9wxgLbmSgnty7/ryH0cJDRvFmxnEIyuiWTIfeHln/GJCNgj+/gccbrAcxF324F8XzP6IDZuSSNF
-	XlclM2qADvAOiRqjf6zXCcLzz6mxQDW5KTScB4jWx+JlBt3PLTbPz0rRExXhWUA==
-X-Received: by 2002:a05:6e02:2187:b0:39f:7a06:6279 with SMTP id e9e14a558f8ab-39f7a0664e1mr11419595ab.5.1725454648808;
-        Wed, 04 Sep 2024 05:57:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5TAzuY2mhgg0UicT/y2Xf563yx0ZJEKUn8JSuLWk5pYKcHxL54Nzyp05Yy9gqgFxJfGCwVg==
-X-Received: by 2002:a05:6e02:2187:b0:39f:7a06:6279 with SMTP id e9e14a558f8ab-39f7a0664e1mr11419435ab.5.1725454648323;
-        Wed, 04 Sep 2024 05:57:28 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2eaccd1sm3106308173.124.2024.09.04.05.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 05:57:27 -0700 (PDT)
-Date: Wed, 4 Sep 2024 06:57:26 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?UTF-8?B?V2lsY3p5xYRz?=
- =?UTF-8?B?a2k=?=  <kwilczynski@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-Message-ID: <20240904065726.1f7275b6.alex.williamson@redhat.com>
-In-Reply-To: <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	<20240903094431.63551744.alex.williamson@redhat.com>
-	<2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-Organization: Red Hat
+        d=1e100.net; s=20230601; t=1725454691; x=1726059491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y+0wgterEVCQgKUJhhw1nJyoRD+c6QWvYNhAzYbfqIU=;
+        b=u2tThBRSC2YGsq3L2+BWvsWGuabmLCp0Xyp1cClFzD1BuFfMQQp7HHUC00Aww4c+iR
+         bHF192PJW1JMnN9iFICovvURH0zyxJ7+yzqWBYSdJJUcKsILfRg7IWsllB5PPo9m6DTH
+         JcDg3+morGb4lL67+IBHmUWBgiMbRVzp/ftyoGJbnFWvjv9IjK8C+LtAz0/PGffBZwiF
+         gEAsRmZx2T4cN7DsGx8J0ubJ3Va1t18J0WnkggtNE8cpPSbwHRhl37uHmYUZngdpMI7+
+         7/a8x8m0a5mL22XceAjmHhiVuQZSeECHipNAKAofwb/NTsesVB7kIdtlrDJUp5uOmZzi
+         yfiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTxKEyLGE6lPdkdF320RnOVHJXOexpBo4Qejp15zuHeIhFV5GbRU3lYbaWvCupfhfapAmnoun85cjEHY6w1eI=@vger.kernel.org, AJvYcCXIpyC1TEG20rkkAa9Qh0bImAqumi5N4bBZXAaFEnCU2oCrUHxdJmImEkAnoYzoVzcaQhmPoMHwWfN6yBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcYs/orVaZ1ogrdiUg+/8R5/SxJU7pviTbJkaRIKafSzar/b9L
+	ZxmhiUFWH28ElykkeI0nEpLn7TRZdYDoRd50vjSPH4GK20rcnMwBhoD5TEDbBuks1fHNNXerPPY
+	In7mALnopoXIagsPjr/SQGbnJqRo=
+X-Google-Smtp-Source: AGHT+IHHFnOAollc81Fq5wkdOLmRHnza96tNKfO2NPUTgKf9KOBAGSr3O3dlDku0aCIc2IZW9nFI5aKhLtV5YrMtyRU=
+X-Received: by 2002:a05:6a21:7884:b0:1c4:f30e:97ff with SMTP id
+ adf61e73a8af0-1ccee533fd6mr9625890637.9.1725454690660; Wed, 04 Sep 2024
+ 05:58:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-27-dakr@kernel.org>
+ <20240831135712.0d7366b6.gary@garyguo.net> <Ztb6_XW3ccnHQDmw@pollux>
+ <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com> <f99d8d3a-5b56-4555-a1fc-bd7685dcea40@proton.me>
+In-Reply-To: <f99d8d3a-5b56-4555-a1fc-bd7685dcea40@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 4 Sep 2024 14:57:58 +0200
+Message-ID: <CANiq72=MD8jmWb9EGA8yW6eMT6Prj8fYEiJM81-HTq3p4dKmGg@mail.gmail.com>
+Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc` module
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, 
+	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, 
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 04 Sep 2024 09:06:37 +0200
-Philipp Stanner <pstanner@redhat.com> wrote:
+On Wed, Sep 4, 2024 at 2:51=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
+> wrote:
+>
+> I forgot the reason for not using it, does anyone remember?
 
-> On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote:
-> > On Thu, 25 Jul 2024 14:07:30 +0200
-> > Philipp Stanner <pstanner@redhat.com> wrote:
-> >  =20
-> > > pci_intx() is a function that becomes managed if
-> > > pcim_enable_device()
-> > > has been called in advance. Commit 25216afc9db5 ("PCI: Add managed
-> > > pcim_intx()") changed this behavior so that pci_intx() always leads
-> > > to
-> > > creation of a separate device resource for itself, whereas earlier,
-> > > a
-> > > shared resource was used for all PCI devres operations.
-> > >=20
-> > > Unfortunately, pci_intx() seems to be used in some drivers'
-> > > remove()
-> > > paths; in the managed case this causes a device resource to be
-> > > created
-> > > on driver detach.
-> > >=20
-> > > Fix the regression by only redirecting pci_intx() to its managed
-> > > twin
-> > > pcim_intx() if the pci_command changes.
-> > >=20
-> > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()") =20
-> >=20
-> > I'm seeing another issue from this, which is maybe a more general
-> > problem with managed mode.=C2=A0 In my case I'm using vfio-pci to assign
-> > an
-> > ahci controller to a VM. =20
->=20
-> "In my case" doesn't mean OOT, does it? I can't fully follow.
+One of the reasons argued was that `mod.rs` is the same name
+everywhere, and thus it is hard to notice the difference in some
+editors and may be harder to "jump into" in history/tabs/etc.
 
-"OOT" Out Of Tree?  No, "In my case" is simply introducing the scenario
-in which I see the issue.  vfio-pci is an in-tree driver used to attach
-devices to userspace drivers, such as QEMU.  The ahci driver is loaded
-during system boot, setting the is_managed flag.  The ahci driver is
-then unbound from the device and the vfio-pci driver is bound.  The
-vfio-pci driver provides a uAPI for userspace drivers to operate a
-device in an an IOMMU protected context.
-=20
-> > =C2=A0 ahci_init_one() calls pcim_enable_device()
-> > which sets is_managed =3D true.=C2=A0 I notice that nothing ever sets
-> > is_managed to false.=C2=A0 Therefore now when I call pci_intx() from vf=
-io-
-> > pci
-> > under spinlock, I get a lockdep warning =20
->=20
-> I suppose you see the lockdep warning because the new pcim_intx() can=20
-> now allocate, whereas before 25216afc9db5 it was pcim_enable_device()
-> which allocated *everything* related to PCI devres.
->=20
-> >  as I no go through pcim_intx()
-> > code after 25216afc9db5=C2=A0 =20
->=20
-> You alwas went through pcim_intx()'s logic. The issue seems to be that
-> the allocation step was moved.
-
-Unintentionally, yes, I believe so.  vfio-pci is not a managed, devres
-driver and therefore had no expectation of using the managed code path.
-
-> > since the previous driver was managed. =20
->=20
-> what do you mean by "previous driver"?
-
-As noted, the ahci driver is first bound to the device at boot,
-unbound, and the vfio-pci driver bound to the device.  The ahci driver
-is the previous driver.
-
-> > =C2=A0 It seems
-> > like we should be setting is_managed to false is the driver release
-> > path, right? =20
->=20
-> So the issue seems to be that the same struct pci_dev can be used by
-> different drivers, is that correct?
-
-Yes, and more generically, the driver release should undo everything
-that has been configured by the driver probe.
-
-> If so, I think that can be addressed trough having
-> pcim_disable_device() set is_managed to false as you suggest.
-
-If that's sufficient and drivers only call pcim_disable_device() in
-their release function.  I also note that f748a07a0b64 ("PCI: Remove
-legacy pcim_release()") claims that:
-
-  Thanks to preceding cleanup steps, pcim_release() is now not needed
-  anymore and can be replaced by pcim_disable_device(), which is the
-  exact counterpart to pcim_enable_device().
-
-However, that's not accurate as pcim_enable_device() adds a devm
-action, unconditionally calls pci_enable_device() and sets is_managed
-to true.  If we assume pcim_pin_device() is a valid concept, don't we
-still need to remove the devm action as well?
-
-> Another solution can could at least consider would be to use a
-> GFP_ATOMIC for allocation in get_or_create_intx_devres().
-
-If we look at what pci_intx() does without devres, it's simply reading
-and setting or clearing a bit in config space.  I can attest that a
-driver author would have no expectation that such a function allocates
-memory and there are scenarios where we want to call this with
-interrupts disabled, such as within an interrupt context.  So, TBH, it
-might make sense to consider whether an allocation in this path is
-appropriate at all, but I'm obviously no expert in devres.
-
-> I suppose your solution is the better one, though.
-
-I see you've posted a patch, I'll test it as soon as I'm able.  Thanks,
-
-Alex
-
+Cheers,
+Miguel
 
