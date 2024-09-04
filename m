@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-314598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD6296B589
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03CF96B586
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF7C282797
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:53:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42651C233FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6761CCED8;
-	Wed,  4 Sep 2024 08:52:32 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CD81CC8AD;
-	Wed,  4 Sep 2024 08:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8481CC17F;
+	Wed,  4 Sep 2024 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o6jghW40"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16C919B3C3;
+	Wed,  4 Sep 2024 08:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725439952; cv=none; b=g8xO0Z5hW4TZQ8F00kkqCcEj40hf6lwzKvi8jyGgyXEF0Ps5Cgyq38uKSaSWjWD9fd2cf+kBl3lVRJO3kwiEQ4h7O5Md936kLXRz+z8uGdif2YXYrlE54ld3Ge59PUcntyLo7LmzdtdtTSSdb07m4r8vhVl1AxBnqBbXdRl9dgs=
+	t=1725439939; cv=none; b=hlov4bDwoKOjqA94FInou2IZA12I4HyXwJzx6/uyXpQl9RGswaBSAoPeHUuiKP6Jyloyc2F/ECgc8MqhT4LZRZEs4N0v8Ys/lix+OEiGUG1iLz5iYzqtx+xVn8gvOaangcCfLmCvIaWOLG+nUxd2epqg1D76CgTQW6pAbI8JXa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725439952; c=relaxed/simple;
-	bh=IvkSCBt+3+2VjlsISB6I1MkJWO67OCf7/ELVtxu1nT8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=kqVAJbQcs2cDzy4FGPOi91ue6Nan7z8LAQdPMKl58VFaNKMQimTaPgy6UUzK2XoD5nbVdokyv4hONGELP+xhrBDWCUfR5+TZsj8KNY/iqpZMXSsYuHkfDIEAfn05SSK0FtIPOZhXqmc0mdyNXCTvS9U/5+hZ6cY0O7f/HzPlSco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8BxmprFH9hmkRYqAA--.44894S3;
-	Wed, 04 Sep 2024 16:52:21 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front2 (Coremail) with SMTP id qciowMCxH8bDH9hmi64FAA--.16454S2;
-	Wed, 04 Sep 2024 16:52:20 +0800 (CST)
-Subject: Re: [PATCH V3 1/2] dt-bindings: EDAC for ls3a5000 memory controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903114714.11428-1-zhaoqunqin@loongson.cn>
- <20240903114714.11428-2-zhaoqunqin@loongson.cn>
- <c901ff6b-2e4d-4dd1-82da-e2e3d5db7988@kernel.org>
- <32aded46-86ce-59cf-e8b4-2621c0dd9ebe@loongson.cn>
- <c1508929-2e44-497d-b54a-285a3e74ba2d@kernel.org>
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Message-ID: <3beb1cf3-c033-bdec-7d38-f43889d4dc2c@loongson.cn>
-Date: Wed, 4 Sep 2024 16:51:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1725439939; c=relaxed/simple;
+	bh=HSJBwW+MHAYy1AdbMrHJblicKcjmvt8EgdQB+6w4QF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pdrJT6Z8P5VrnPcuaiC3D0Jn8RLfagwx5+xfSiXWZ0/YZbiYf0f0xFYfYHTeF3T/53EScVnWFBG4vEdvIEdhE8wzwnDsg2UOM9+FNihjDlZWm9oLPpwvbeUwHlfCidxE6DiQWnijr0FBgjGRFBCJU8DTyybNatN1a43KVZOJ+NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o6jghW40; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DAC3824000C;
+	Wed,  4 Sep 2024 08:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725439936;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/gQVLtPniH2vSqBzxSwNJZS10K7mVOFLUlzmTaph06o=;
+	b=o6jghW40e7NxWe+r/5ufjYWB0EyArQLTsDLkEjimsQpoxMs7ZrHLu2tFrBzlH3SE/vLF5d
+	tnDBS5epwhzwX/E2hq6oGuPYi5ZrvXoOF3HkfohVPZKOLSpN4jrJZQCkhn2j7cxvr/52DP
+	rBBNAdSOAeLIsIA1olc2I2fA1v4JneJ/5dTdAihY2nhHFzxKQFIY8C0+KhDkAh7KhkcG9m
+	+yMrMTEvQlOzUaSqUoaNRrSuhc6bZEAqNCVa33UHaDQC7gtHk7VhqiFItyi7N08LRsCIIY
+	Dma7a2qgvvlKh6X1vMiRzFQY/6FdSpHzrIgtHF3xJJrHmPIof1nXO5B1T+oPGQ==
+Date: Wed, 4 Sep 2024 10:52:13 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
+ Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next v2 4/7] net: ethernet: fs_enet: drop unused
+ phy_info and mii_if_info
+Message-ID: <20240904105213.0756629d@fedora.home>
+In-Reply-To: <a6eeb9e1-09f0-47a4-bf78-d59037398078@lunn.ch>
+References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
+	<20240829161531.610874-5-maxime.chevallier@bootlin.com>
+	<a6eeb9e1-09f0-47a4-bf78-d59037398078@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c1508929-2e44-497d-b54a-285a3e74ba2d@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qciowMCxH8bDH9hmi64FAA--.16454S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4Uuw4DCF45XFW5ZFW7WrX_yoWDJwb_Kw
-	4YywnruwnFya4kGFsxJF4xJryvqw4UtrWUur1kXr1Fqw1FqFZrZr4rK34fZw15JFW3WFnr
-	CFZrWFWkCr9xuosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
-	6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jruc_UUU
-	UU=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hi Andrew,
 
-在 2024/9/4 下午1:51, Krzysztof Kozlowski 写道:
-> On 04/09/2024 03:15, Zhao Qunqin wrote:
->> 在 2024/9/3 下午8:29, Krzysztof Kozlowski 写道:
->>> On 03/09/2024 13:47, Zhao Qunqin wrote:
->>>> add device tree bindings for ls3a5000 EDAC driver.
->>>>
->>>> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
->>> So no improvements? No changes? Why do you send the same?
->> I'm sorry,  I thought if you hadn't raised any issues with the previous
->> version of dt binding, I wouldn't need to make any changes.
->>
->> For this version of the patch, I only changed the driver.
-> So what changed? Where is the changelog? Where is the tag? Did you get one?
->
-> Did you read submitting patches document?
+On Fri, 30 Aug 2024 23:07:56 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-My apologies! I must have missed a part of the content in the document, 
-please forgive me for wasting your time.
+> On Thu, Aug 29, 2024 at 06:15:27PM +0200, Maxime Chevallier wrote:
+> > There's no user of the struct phy_info, the 'phy' field and the
+> > mii_if_info in the fs_enet driver, probably dating back when phylib
+> > wasn't as widely used.  Drop these from the driver code.  
+> 
+> There might be an include of linux/mii.h you can also drop?
 
-Will add tag and changelog in  patch v4.
+Oh nice catch ! They are indeed no longer useful, I'll add that in V3.
 
-Thank you very much for taking the time to review.
+Thanks,
 
-
-Best regards,
-
-Zhao Qunqin.
-
->
-> Best regards,
-> Krzysztof
-
+Maxime
 
