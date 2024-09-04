@@ -1,197 +1,208 @@
-Return-Path: <linux-kernel+bounces-315188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4B696BF04
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:47:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E9696BF13
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6121F2712F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E785DB29C4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764061DA108;
-	Wed,  4 Sep 2024 13:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3AC1DAC4A;
+	Wed,  4 Sep 2024 13:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4OmrQLu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ieQb6ozF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A51EEE4;
-	Wed,  4 Sep 2024 13:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ABD1D58B9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457650; cv=none; b=dzpz51yPoZC3X51WhAGR5LtCKS/V6k+VlSaiimX3Ag5vj/GK32ahZFzyTA26JRtxAt0wyWpN4bXrQXbLQ0B7JLAZX4lBDbS6WN/unm3d8d5pL+BVUfkzfp7BuRtfhHTIEi5ImIqzuRf6Zv8jnmLoxQBNwa106fh/ZYxBQaTuN3Q=
+	t=1725457658; cv=none; b=WHjdzzpX9AE+so9Ttk2xo7dsv+Wt26tSatcx5h5IstKl+1bS2rygngK3NkGSvVaDoZinaRcVzqP4KJ8f9CirlxBKv8cUlRybiTkDcvAO6QmubA+hQsgXhMbJKuWeBaWUoa0vSFalqVGFZQAP1PL/VCVwmEJwfCKfygJft78Riig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457650; c=relaxed/simple;
-	bh=1Cm5WztYIpFnLS6eIgGjNr9ik/LNax1LhuKH3YtfC70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQscFCpYIvkRnNJrU23r7fPDC+MCtUTRXxuqMIa6LUuGVGvgaohCLGY/Un8iGFNqKKK+IIeIikqof1glt5opDnFUvlbu3Bdj4Rd8xJJwd97wwxhRhREcYdQNiNpc+0RELxGXmjoamhsAHg8oYA/pvt2fwXuB1fvxfxPiiTNNKeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4OmrQLu; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725457650; x=1756993650;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1Cm5WztYIpFnLS6eIgGjNr9ik/LNax1LhuKH3YtfC70=;
-  b=U4OmrQLunMQPdJUrIVIBuWRzuEmNi711aUf8vXENF6oHGhlf+pcsmbYc
-   85CfI8qdqrWfbGbfxcoDng5XgwxTs4kmmaMgEiVh8uDKG6f3WcjDycOKx
-   Lmcp3sSJ8ttab6JDhH6U8ZhKDCCefuEKVJzVFXkjvQWHAwa2EqiCAbFJv
-   BoR9Rx3Ro5tUlOHIKkNzhjiUzm3gEyjMSu11vzIEaeEbZakISf35qCEjd
-   WFn3vByCzMnK3mdwrNs2TGxqWuUxK22LNZ/nS/HR6EaVYQEjRDHbUV+dB
-   1ubKK22C7JHddcy6O5J3BEDL+ZhJ94+8YvhEgTND96qDq7mlrf//++huL
-   Q==;
-X-CSE-ConnectionGUID: 0GuWNIniTtyE0jqPl238Pw==
-X-CSE-MsgGUID: Dzwq+E1FTRWHypP06PNIfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27908230"
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="27908230"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:47:29 -0700
-X-CSE-ConnectionGUID: AnPe26GcRkKYzlcvhNgOPA==
-X-CSE-MsgGUID: p869J8LsREyJ55Rt1L9mqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
-   d="scan'208";a="65315322"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:47:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slqLy-000000054xO-11w6;
-	Wed, 04 Sep 2024 16:47:22 +0300
-Date: Wed, 4 Sep 2024 16:47:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 08/12] i2c: Introduce OF component probe function
-Message-ID: <Zthk25W0zXcHWRdt@smile.fi.intel.com>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-9-wenst@chromium.org>
+	s=arc-20240116; t=1725457658; c=relaxed/simple;
+	bh=XCAOq/l6EbmsFCNrhSb2wJECm2H2yhnH1yuOLkQLcdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VIcfHodJV+BPH0p9m9MTf6Yera+UUj8zt/6sFwiTpw/4reNPT8ppJO7O/VfHstelukUYN9kHzhcC/EKgiVZHSRYXg5AwJ+Go1KpQRiB0L1qiN4TnhBl0ZzNSttkrk9q5V69AQg3I30G9QJ2c2SakrzeTwDCfLTeYWztNjujPDjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ieQb6ozF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725457654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Y9slNLNgLUTr4FnRCMWzdGYRhtuezAhdzeTe1nXDfqE=;
+	b=ieQb6ozF9ZiIY5X+Zr9FWOrLsgq7krt0RmKxf/zKMTa/6/VTFrpzwJhxRsf72yU4EdorLh
+	I93q4Pfu28LjQHcrm6siKQDbOZURfVGXdm7hkfDUD58M6AovXKk0FDlWnwYD2NZHh3CT9I
+	KS30Sj2ZDmOH6uIuuIfQnYzXZPCG+ws=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-252-NfYKWH2ZM3SPmCLBba2pKQ-1; Wed, 04 Sep 2024 09:47:33 -0400
+X-MC-Unique: NfYKWH2ZM3SPmCLBba2pKQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42bb5950d1aso73639235e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:47:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725457652; x=1726062452;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y9slNLNgLUTr4FnRCMWzdGYRhtuezAhdzeTe1nXDfqE=;
+        b=YoF7GpttYuTghGSfOWJC0dr1cQb7qcnVAyc8WMkauC15ZgPJ1dMeQQRORV7dJAy49G
+         wZY8I1RyzDDRpfOrsXnR3O5KMbgupTyeaYBaM+hYf2SgsGXDY7lb7Sx5vequ7v9T9VRs
+         msfDswHfHFYbgJim5T42YoTHcved8X3BFrmwwflrBHtu8Tyw1vUzxyhE1kEsHn/3aEJx
+         AV06xK3St88DMokJwouqkVSD/EYqFJFok0K5S7qwQ8+QU50DEJ2HjJVz+wvtk2BM/6Np
+         rpdvT4BYCtFPOx0ag60C8VjvKPInJcgAvO8tSRpdXJ0y0lNknpdx8GB9UwHNhJ/wucXa
+         fmEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKHZ/erQXmeRc2ff0ANZDrh4C+4Gx20lIdnnuyd4W9zLf8LlgaTPJhfiYAfo6nzZnNfnho0Irf4tpPGt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyeJN4w5LwGNrVrzZOJliBvpJsugu9qA7lS/Rch7wIO1OEei0b
+	Wof0gCdVpkIQZ0+8+bM0BB+aNK/PX2w8wjT6NmivkXfdfYSKEIFCYkuJqSAb0Ie2diRNegcXd6N
+	Dp9CUpSHKNuPPw/y8HEsIDGPAKy4Gv8AWoFD5gJ/p+T+m1exeSdcfJK/+dZFgig==
+X-Received: by 2002:a05:600c:354b:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-42bb01c1c17mr185662425e9.19.1725457652577;
+        Wed, 04 Sep 2024 06:47:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKGb6UWCFw8UtEEyWXWthdR1NRQcUe29HLfSY0gAMmZHGri5k23RGtfh+Y+NOdYo+YOXvcpg==
+X-Received: by 2002:a05:600c:354b:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-42bb01c1c17mr185661815e9.19.1725457651419;
+        Wed, 04 Sep 2024 06:47:31 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c715:d00:e9a5:ae4b:9bdb:d992? (p200300cbc7150d00e9a5ae4b9bdbd992.dip0.t-ipconnect.de. [2003:cb:c715:d00:e9a5:ae4b:9bdb:d992])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb37f7849sm211160325e9.7.2024.09.04.06.47.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 06:47:31 -0700 (PDT)
+Message-ID: <273ee480-76b4-4b57-a95b-2849fe394bc0@redhat.com>
+Date: Wed, 4 Sep 2024 15:47:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904090016.2841572-9-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: Potential Regression in futex Performance from v6.9 to v6.10-rc1
+ and v6.11-rc4
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux-MM <linux-mm@kvack.org>
+References: <CADYN=9JBw6kq4E9aA=Pr1rFy-6tY-j-XOthQVYVw6ptmj11=HA@mail.gmail.com>
+ <f3fe6be4-723e-45b8-baa6-5c285cc5c150@redhat.com>
+ <CADYN=9+xONPg=UrApM9xsKs2Um3VDMCi5X0684k0idJv-th82w@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CADYN=9+xONPg=UrApM9xsKs2Um3VDMCi5X0684k0idJv-th82w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 05:00:10PM +0800, Chen-Yu Tsai wrote:
-> Some devices are designed and manufactured with some components having
-> multiple drop-in replacement options. These components are often
-> connected to the mainboard via ribbon cables, having the same signals
-> and pin assignments across all options. These may include the display
-> panel and touchscreen on laptops and tablets, and the trackpad on
-> laptops. Sometimes which component option is used in a particular device
-> can be detected by some firmware provided identifier, other times that
-> information is not available, and the kernel has to try to probe each
-> device.
+On 04.09.24 12:05, Anders Roxell wrote:
+> On Tue, 3 Sept 2024 at 14:37, David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 03.09.24 14:21, Anders Roxell wrote:
+>>> Hi,
+>>>
+>>> I've noticed that the futex01-thread-* tests in will-it-scale-sys-threads
+>>> are running about 2% slower on v6.10-rc1 compared to v6.9, and this
+>>> slowdown continues with v6.11-rc4. I am focused on identifying any
+>>> performance regressions greater than 2% that occur in automated
+>>> testing on arm64 HW.
+>>>
+>>> Using git bisect, I traced the issue to commit
+>>> f002882ca369 ("mm: merge folio_is_secretmem() and
+>>> folio_fast_pin_allowed() into gup_fast_folio_allowed()").
+>>
+>> Thanks for analyzing the (slight) regression!
+>>
+>>>
+>>> My tests were performed on m7g.large and m7g.metal instances:
+>>>
+>>> * The slowdown is consistent regardless of the number of threads;
+>>>      futex1-threads-128 performs similarly to futex1-threads-2, indicating
+>>>      there is no scalability issue, just a minor performance overhead.
+>>> * The test doesn’t involve actual futex operations, just dummy wake/wait
+>>>      on a variable that isn’t accessed by other threads, so the results might
+>>>      not be very significant.
+>>>
+>>> Given that this seems to be a minor increase in code path length rather
+>>> than a scalability issue, would this be considered a genuine regression?
+>>
+>> Likely not, I've seen these kinds of regressions (for example in my fork
+>> micro-benchmarks) simply because the compiler slightly changes the code
+>> layout, or suddenly decides to not inline a functions.
+>>
+>> Still it is rather unexpected, so let's find out what's happening.
+>>
+>> My first intuition would have been that the compiler now decides to not
+>> inline gup_fast_folio_allowed() anymore, adding a function call.
+>>
+>> LLVM seems to inline it for me. GCC not.
+>>
+>> Would this return the original behavior for you?
 > 
-> This change attempts to make the "probe each device" case cleaner. The
-> current approach is to have all options added and enabled in the device
-> tree. The kernel would then bind each device and run each driver's probe
-> function. This works, but has been broken before due to the introduction
-> of asynchronous probing, causing multiple instances requesting "shared"
-> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> time, with only one instance succeeding. Work arounds for these include
-> moving the pinmux to the parent I2C controller, using GPIO hogs or
-> pinmux settings to keep the GPIO pins in some fixed configuration, and
-> requesting the interrupt line very late. Such configurations can be seen
-> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> Lenovo Thinkpad 13S.
+> David thank you for quick patch for me to try.
 > 
-> Instead of this delicate dance between drivers and device tree quirks,
-> this change introduces a simple I2C component probe. function For a
-> given class of devices on the same I2C bus, it will go through all of
-> them, doing a simple I2C read transfer and see which one of them responds.
-> It will then enable the device that responds.
-> 
-> This requires some minor modifications in the existing device tree. The
-> status for all the device nodes for the component options must be set
-> to "failed-needs-probe". This makes it clear that some mechanism is
-> needed to enable one of them, and also prevents the prober and device
-> drivers running at the same time.
+> This patch helped the original regression on v6.10-rc1, but on current mainline
+> v6.11-rc6 the patch does nothing and the performance is as expeced.
 
-...
+Just so I understand this correctly:
 
-> +int i2c_of_probe_component(struct device *dev, const char *type)
-> +{
-> +	struct i2c_adapter *i2c;
-> +	int ret;
-> +
-> +	struct device_node *i2c_node __free(device_node) = i2c_of_probe_get_i2c_node(dev, type);
-> +	if (IS_ERR(i2c_node))
-> +		return PTR_ERR(i2c_node);
+It fixed itself after v6.11-rc4, but v6.11-rc4 was fixed with my patch?
 
-> +	for_each_child_of_node_scoped(i2c_node, node) {
-
-Hmm, but can it be for_each_child_of_node_with_prefix_scoped() now?
-
-> +		if (!of_node_name_prefix(node, type))
-> +			continue;
-> +		if (!of_device_is_available(node))
-> +			continue;
-> +
-> +		/*
-> +		 * Device tree has component already enabled. Either the
-> +		 * device tree isn't supported or we already probed once.
-> +		 */
-> +		return 0;
-> +	}
-> +
-> +	i2c = of_get_i2c_adapter_by_node(i2c_node);
-> +	if (!i2c)
-> +		return dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I2C adapter\n");
-> +
-> +	ret = 0;
-> +	for_each_child_of_node_scoped(i2c_node, node) {
-
-Ditto.
-
-> +		union i2c_smbus_data data;
-> +		u32 addr;
-> +
-> +		if (!of_node_name_prefix(node, type))
-> +			continue;
-> +		if (of_property_read_u32(node, "reg", &addr))
-> +			continue;
-> +		if (i2c_smbus_xfer(i2c, addr, 0, I2C_SMBUS_READ, 0, I2C_SMBUS_BYTE, &data) < 0)
-> +			continue;
-> +
-> +		/* Found a device that is responding */
-> +		ret = i2c_of_probe_enable_node(dev, node);
-> +		break;
-> +	}
-> +
-> +	i2c_put_adapter(i2c);
-> +
-> +	return ret;
-> +}
-
-...
-
-> +EXPORT_SYMBOL_GPL(i2c_of_probe_component);
-
-Wonder if we may already use namespaced export from day 1.
+If that's the case, then it's really the compiler deciding whether to 
+inline or not, and on v6.11-rc6 it decides to inline again.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Cheers,
 
+David / dhildenb
 
 
