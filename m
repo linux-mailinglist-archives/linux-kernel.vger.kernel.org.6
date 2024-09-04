@@ -1,99 +1,102 @@
-Return-Path: <linux-kernel+bounces-314169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A936496AF9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 05:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB24496AF9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430371F251EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:59:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B218C285F73
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE1B5FBBA;
-	Wed,  4 Sep 2024 03:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4190062A02;
+	Wed,  4 Sep 2024 04:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/wIqEYj"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0hZ+nqo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60FE4D8A7;
-	Wed,  4 Sep 2024 03:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7D64EB2B;
+	Wed,  4 Sep 2024 04:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725422357; cv=none; b=M5UmamdF03lTbHFVEcoDdrhFQMXNwvt02Jds0Qla4XzbdRTX6oUaQqU1l1RLnV8ParFYp+D5NS/CKZsQblx1VqhlN9L7gVtMPpJGUd7kX2nqft4ZJIlYMnHIcdzoHOZZLmbn5iyFFSHPoHXK6FdnaGldcugewm1w2uMvZIsjfqs=
+	t=1725422714; cv=none; b=cgZIfeOMf9+rnYD3WQeL1ZYyIswXu76NAbWBrlVtFEBvA7G/+1/OOoIFfReRmBX5OsMtD2PFGNEeSaCE+qwUIBTII4qM024wuCN8kYctibdeAcc2UVHAvEFPZJvwpoZ2SSDnNQWjpSCkKiCdHml5MYKaEnlcJi/mkT9/OcDyDqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725422357; c=relaxed/simple;
-	bh=qEmN3XA5U0AGx6zNdAnandIbov0vtnSHp1hBM+zM1DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzlysnTcNxnUqraB57itzp5819jiDMPdfcNm9dvKY2l76y3BeBvNrwdww/Sk7m/J+9aivsh7rGypkT/usru2ucGce9MNJFkPjrN019jzf/AI/hZsedjAIWjwch6xT5Z1csHt/yaIiFnj5t3aL3JBb4894vpdiB59Aelm0BnroIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/wIqEYj; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4233623a91.2;
-        Tue, 03 Sep 2024 20:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725422355; x=1726027155; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=acrRrqLBvKcmIog13eQf8nAeUw9CPSDpthg968nAWvo=;
-        b=a/wIqEYj3GMfpeCvTqCuHMflTfFw3HOKNiV72WtFw2b5ZtewnutNr6kBPfuQw9kGIR
-         2IL5P0/9Gi5EtiWHUErKVpFud8tqxBRqv8qkSlG21jyjGxLpJxnlt+Nw2EtCLif20qWx
-         0yiI8CMY+8waT7SLUFhCqnNpgb6ec483kZ/pYhlPjevFlsMplnUQJuzvxEwU+c6Z+LlW
-         hyKgTpogYu+9mZDJRwxpo8+ewkKsXYpnVvkfAQxW6QvJKXEK/EC7tLig861FAQvq9bF+
-         skoogyOdqO020IbEfwC7gc5yu3GhssE19UdrU+4MtmJsv2HeYW8/OjaeAbOsOfDSPwCq
-         5+zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725422355; x=1726027155;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=acrRrqLBvKcmIog13eQf8nAeUw9CPSDpthg968nAWvo=;
-        b=LCaBq04/x78rGdRXZ6a0vSCfvFO40DO9FPnWY/zUDwzMDRg1Ccjyq0qVflJ7m6wz/0
-         Pkh2HIsVR7lRwdQRLt3lmoRsUU3lAcYTIENBeKFKWOwZprwwYZSd0os8aff9E1Ume+Xm
-         lF+u7eL9mx4cSJV/9LfGcmu/mqM69r8qslRYhDb4SIYjnlAsieBqv12qIWj34uJnsq8P
-         xGt7sT/4YssO/9TT+PFinL/E/nAOXRd5DQzRI5gGfahp9pUY27dn/PwulwiUSHnuP5zC
-         UR9S5PKuX0fY6KTTo3MOqpvPy5eRX1um4K3OJppRp/SGmrPq0zYjoEBmxSVlNkWaDmm+
-         DU/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX36qOkoCxIaXebeXj6y6czSO5fW+Urei/Fl8n2soH45I/V74x5FX05D9uEXbGOGTdAbcdm+HXn6/YLpHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFpcPtamUr6qc3COVUEZsACISlZmo7VAAZLUHUVCrnh5aPZvnG
-	fDqPCaHf5iuGJ3T23qQn6CduYx3yYnkgjnBLPmQ06NGInKoXZ/7E
-X-Google-Smtp-Source: AGHT+IHnavHm7HSzWJe6xq7w5AUUqu6nDFzwEf+I+GOhMI2QUnHbgO6cDr/ua8FEDdAeNflJUpj+cQ==
-X-Received: by 2002:a17:90b:3c0f:b0:2d8:8fe9:b015 with SMTP id 98e67ed59e1d1-2d88fe9b3b3mr14070299a91.39.1725422354939;
-        Tue, 03 Sep 2024 20:59:14 -0700 (PDT)
-Received: from hoboy.vegasvil.org (108-78-253-96.lightspeed.sntcca.sbcglobal.net. [108.78.253.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b0fdbd8sm12305167a91.5.2024.09.03.20.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 20:59:14 -0700 (PDT)
-Date: Tue, 3 Sep 2024 20:59:12 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
-Message-ID: <ZtfbEJH2yxsY2q1m@hoboy.vegasvil.org>
-References: <20240904015003.1065872-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1725422714; c=relaxed/simple;
+	bh=gU7VljMglbdj3Lw8JJeKa4ccbDe1OwyrXenD1IfQ948=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sjiWzLGCH2CWPNA1n75RICuYXdLoJ0+5P0Nh9Sm6ZF5hKODlDup6gZ66gYg3bnHvPQ1i+aTk0plZO+j8iBDZsEuvOWOJ3vdw/h3Y7EMx2kf+a+rywhQVxSYdr9TGMBQ5xypwfNXzX9XqMiyq11+5ILjo+7wUTmFFbZ5mprqb3RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0hZ+nqo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC247C4CEC2;
+	Wed,  4 Sep 2024 04:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725422714;
+	bh=gU7VljMglbdj3Lw8JJeKa4ccbDe1OwyrXenD1IfQ948=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V0hZ+nqoc6SiidhET/uxPq4RnfIqqLYmRFnx74j8lPJIn6aflHuD2qVwls88i591K
+	 hpDfiqOzVOgwYXXdR1MvuvO/7awQb5l+nqzWC0bZ0dX5D1JV3aw9RtyUXCdMJMR8mB
+	 9XHukIpF1B5759iRC6InJFkzOmCr7XXvS80ARjJLj9jRjx/URpx2CCH+jxoP+BPCvN
+	 t00i55xf/OfkUOFSOI1osyGczd6SBWwVZt3TR5HUZ7gkTc+slUIod+zeMacjGKAzlU
+	 b2dfFUcutqYOx7JAa82U5ZwBHbyOwv7SJ9O4iIYeQBplkOam7KTGgfQB0YXWYQkac4
+	 ql0nCN2e0SvZw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: dm-devel@lists.linux.dev,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: [PATCH] dm verity: don't use WQ_MEM_RECLAIM
+Date: Tue,  3 Sep 2024 21:04:44 -0700
+Message-ID: <20240904040444.56070-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904015003.1065872-1-nichen@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 09:50:03AM +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+From: Eric Biggers <ebiggers@google.com>
 
-Acked-by: Richard Cochran <richardcochran@gmail.com>
+Since dm-verity doesn't support writes, the kernel's memory reclaim code
+will never wait on dm-verity work.  That makes the use of WQ_MEM_RECLAIM
+in dm-verity unnecessary.  WQ_MEM_RECLAIM has been present from the
+beginning of dm-verity, but I could not find a justification for it;
+I suspect it was just copied from dm-crypt which does support writes.
+
+Therefore, remove WQ_MEM_RECLAIM from dm-verity.  This eliminates the
+creation of an unnecessary rescuer thread per dm-verity device.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ drivers/md/dm-verity-target.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index cf659c8feb29f..051e84ca401dc 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -1488,11 +1488,11 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	 * Also as required for the "try_verify_in_tasklet" feature: WQ_HIGHPRI
+ 	 * allows verify_wq to preempt softirq since verification in BH workqueue
+ 	 * will fall-back to using it for error handling (or if the bufio cache
+ 	 * doesn't have required hashes).
+ 	 */
+-	v->verify_wq = alloc_workqueue("kverityd", WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
++	v->verify_wq = alloc_workqueue("kverityd", WQ_HIGHPRI, 0);
+ 	if (!v->verify_wq) {
+ 		ti->error = "Cannot allocate workqueue";
+ 		r = -ENOMEM;
+ 		goto bad;
+ 	}
+
+base-commit: 88fac17500f4ea49c7bac136cf1b27e7b9980075
+-- 
+2.46.0
+
 
