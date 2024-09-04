@@ -1,146 +1,176 @@
-Return-Path: <linux-kernel+bounces-314529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3617996B48C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE1696B490
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6656A1C20D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:30:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CF11C21B90
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED2918E743;
-	Wed,  4 Sep 2024 08:30:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1211C7B8F;
+	Wed,  4 Sep 2024 08:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="ILQx7ecp";
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="LQIsSu1z"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E29118BC31
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23C51C68B8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725438626; cv=none; b=ol1Qai8BzGxkBFaSAXi09H30oxuauW36YP3aYs8nEYBS8Gn+Da6pdfi6AkDb/HztPLrOmUBjPQnZh/HaiW2zoVq1gbwbCZ89jutaacHrDruLABINPu5bONHxwtAAOJzBduV52HtowEgLUh+9uS7FCBIUmDcAb0pHfQZZTTcY9YA=
+	t=1725438681; cv=none; b=CMKekqj3pAwX1xEaAIr+7EmYJ1ivXn/AqYy/EabUum//k01mwSoDuiHEHBVpw2s1tEXJnVQ8wN3TpOX/IzcTuL4RsAHVoA/jP+LO/NsGt6JzFIQEurwb1XpgwVHe7LBf86rY3JwX+0rQEGusV7zWX/vG0UtwTER2+s2ww1X/6DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725438626; c=relaxed/simple;
-	bh=qcSXkF2eeVbXnz/TGB7tvcwJtXcMcs1eddCFuoy6vt0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UMWKbr8vS9hoUiUdVp/mrWxbBdhddn8Ac0FR2zR7JEYg+GoJm9jmMlehvlqEN9iy9CCtmWAGa/LrLUQX95bg/YN2AkdXSx/JMhg3Ckdx7zsHjuqkXR58PkgTSAOZN+LNDPpdQ+r2gSNEIPZWGHS771qUdcM8hmR5BFhbucCJdOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a217cec1fso77785739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:30:25 -0700 (PDT)
+	s=arc-20240116; t=1725438681; c=relaxed/simple;
+	bh=12N3q46XQiecPb2oufmrGICQCBcT5ecdudDGcuTf44E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oYsmhhkXT5I0cFa7VVnNnm/qwOujAAFMgdjHDw/FDnEegoIoeeYka6zyg0EWEb/lMfvK8Y7WsMEpMVoFY2sMqIt8GxGkinY9MAKHc0liPeuSyMM8jvfwuGlEklrycBVsNbAee+azXdI25B58wdBogKdRJx4xSe6MEs1tbA4g+MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=ILQx7ecp; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=LQIsSu1z; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=atmark-techno.com;
+	s=gw2_bookworm; t=1725438678;
+	bh=12N3q46XQiecPb2oufmrGICQCBcT5ecdudDGcuTf44E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ILQx7ecpTvUCHqc5lj3wAK15OxOUbxTVwjQsW5/97Pl44LokJI8jXjsj80z25OuDF
+	 iM7OkDO/nDW5vWYHvLDHeKlBrqqRpfxrbKKFel16AoF4nFao+eJTH/td1xUs18+Vg7
+	 f7UyGD576y/ZkJheLuYv7be4lGBReQQunP6mAdl+v9EqiZnCDRMIwQKLyG3VrZd+W6
+	 g+eJVyPOCdeVYwqoOsD4MMddFZDpjc3p6Sr54v2ITJ0Xs0lJuODf7hEZkjoB7sTxgn
+	 awA6LvefK9wo3KQK8arMeelgkhNohKGrb4V7FPBBsA7XnBbXQ0m6bVtSYHizEbLKPd
+	 NpsY9T02GdHag==
+Received: from gw2.atmark-techno.com (localhost [127.0.0.1])
+	by gw2.atmark-techno.com (Postfix) with ESMTP id 46B2F7C3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:31:18 +0900 (JST)
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=LQIsSu1z;
+	dkim-atps=neutral
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id 850747C3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:31:15 +0900 (JST)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so6968396a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 01:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atmark-techno.com; s=google; t=1725438674; x=1726043474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wl5lFlZZmqmzzNDLDZabcElQI0pBWjUywY0vrZnCNgA=;
+        b=LQIsSu1zgvqTCui+orUh9mX4SMJ5TWq2sR48P9cWIdOs0dgU56vahC/HZoxTJ9o+ap
+         GkTPc5rfLCB9kQ90qCqSINFABpimZd6RSc+hDd+hLAqbt3+R8HCH//QK89agbVdH5vVw
+         GCMI5D0KuHBD/a3p+zPGFQEHyGZvblFpP38ZFv0t+L8dV/oZCohFfBeW1VaDUhwV3ozG
+         qbgDXtNIga45ZOy/8d83vrzoAbOH6b88ZoIDXpWR/BuGKsAnh+WnYGOYQF3CeERmz1RX
+         Emw6xSdQqnBy8y6qSed48yl+lkM5Q2YMW/EKklbCyn8HTuCi4Xo+Zd9FvCkcn5Ipc56n
+         LuUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725438624; x=1726043424;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=riEJj9yptEntwWm8uC4noCWANnp3aNiR1XVqLGvV3To=;
-        b=uKfGqDSDJZ68DFLxLgYYEuwdbK40sT0tbMALq0+xNGP0REFlvZvKCVd2rcieQbVi5/
-         j3jsEHbxJnyZRJYs7mTXQwf71nMV8SpUYTJZH5K34GDf1AnjnW7y/KjHZetiLiJOOcEF
-         I0sQsQOw9aNydRL+v7GXoqL9MvChvRp8sNWMqW2BhKk2Gx+4v7Okkr7R2yQ3Jq3pjLFc
-         cJFkp0OVuYSO7EMjT9fOWqCTyHIIp891Eo5iJm7kLtpOhgkPsxRn8ZkYCSUNLrmNmzI6
-         xhpn3eMNE+0MrLEBmJPegcqLqicrBLbiJy/Zh97CC4n8uLCaVC6oyubZDxQi/3Ko7stn
-         V5Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVndOZnx9pWNj6V5K2oD5KkFGHycnmTsyQoSn2PdzLK0dISDTzIjq5Ra/1e9Hdhx++gof/5Bu3AxAjQ4PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLN6WCjhcwp6pNXfm/EaWWELbQSUMPsHL8XekjuINRJ0rJ9Ev9
-	7W3gCepK+paHJAdTHyFZRcYSfZ45ZOGF+6M7m/YRzlcrVFEjJ2VFVJx5AMMCYuoB86V4JNzIbK9
-	7SGSXRIbOKKzagz7hG7Ueg0L1Ia73QOYrJLftOiZciN1tCV2G+DCGh0A=
-X-Google-Smtp-Source: AGHT+IFf1N79VFCXobIPXbsA0DCA/+/jvIHiGNZkPocqGC8SqI64i4RB4lO0DtdwLR1uojTxi3MkPM7uX1EFYS4pE5neID6NzICK
+        d=1e100.net; s=20230601; t=1725438674; x=1726043474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wl5lFlZZmqmzzNDLDZabcElQI0pBWjUywY0vrZnCNgA=;
+        b=E7gfBL0WL1nKdiRaKNWx2gFiSIrKEb6GuZTtyAboLzPWYEmk1jwnWR/RuAHub3Uoxq
+         h1bhc4Jvb/vksqmvF9ijE//068gjCkjioFhP/dxHk19evH2Zj03kfcq7r8/sCyW3ngoA
+         //UHGtvvaxZawMG0HeK8XfnfVnFGsXGa0cezUWwDqbuE84vqpy0q58xBKuI/1aF+4Rdo
+         VA9xXlfbyic/jyvwXRl6cQ/OOFSWNVtY2mFS9NtVQhvhqaWKFf04Mi6E9714v81wF/6u
+         TfunASQikzi7yjXxH3tx3b4zn3mONmduso705YILgeceirngXAh2RVwok4Q+2U7gj69S
+         KqCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5N2XI18XMul8cHF6afhxV5Y+5eaFAsgYyDr+VPl3C49GuNpRWubFx14v8AFQ+ncdf9qwlPoY3Cp1mU5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXUKGZ74yhwECwbeWQYfhPxuQM4RrysE7XcGXMWMKnDuDBvHdQ
+	uxMBmB3/ZuGacjzmSovv+sUcKpkktbCj/sSvS6Ayc5EyrCMJQP08GIu2I2axM+SeTEy4tQHuOVq
+	mzUUgVb0BNWMystpUSRmsGjwOjhhZ2YZmmQDQAFtsj1nmRm/4BqZGy9Ie3I5w7KU=
+X-Received: by 2002:a17:902:d2d0:b0:205:5544:bad6 with SMTP id d9443c01a7336-20584230d75mr94740805ad.55.1725438674424;
+        Wed, 04 Sep 2024 01:31:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgJbK93rPoTGn7e+5VtWYSo3ES6TsSkat4XXudfYHMjSL/FnAwD5lW7dBeTsvIE7zMeiGN1A==
+X-Received: by 2002:a17:902:d2d0:b0:205:5544:bad6 with SMTP id d9443c01a7336-20584230d75mr94740425ad.55.1725438674064;
+        Wed, 04 Sep 2024 01:31:14 -0700 (PDT)
+Received: from pc-0182.atmarktech (117.209.187.35.bc.googleusercontent.com. [35.187.209.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae968f78sm9198335ad.119.2024.09.04.01.31.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Sep 2024 01:31:13 -0700 (PDT)
+Received: from [::1] (helo=pc-0182.atmark.tech)
+	by pc-0182.atmarktech with esmtp (Exim 4.96)
+	(envelope-from <dominique.martinet@atmark-techno.com>)
+	id 1sllPz-005H8O-2o;
+	Wed, 04 Sep 2024 17:31:11 +0900
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+To: Liu Ying <victor.liu@nxp.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Adam Ford <aford173@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: imx8mp-hdmi-tx: allow 0.5% margin with selected clock
+Date: Wed,  4 Sep 2024 17:31:01 +0900
+Message-Id: <20240904083103.1257480-1-dominique.martinet@atmark-techno.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:860d:b0:4c2:7945:5a32 with SMTP id
- 8926c6da1cb9f-4d05e776145mr84665173.5.1725438624417; Wed, 04 Sep 2024
- 01:30:24 -0700 (PDT)
-Date: Wed, 04 Sep 2024 01:30:24 -0700
-In-Reply-To: <000000000000a45a92061ce6cc7d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004a5da1062146fc27@google.com>
-Subject: Re: [syzbot] [wpan?] WARNING in __dev_change_net_namespace (2)
-From: syzbot <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
-	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+This allows the hdmi driver to pick e.g. 64.8MHz instead of 65Mhz when we
+cannot output the exact frequency, enabling the imx8mp HDMI output to
+support more modes
 
-HEAD commit:    88fac17500f4 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1547d653980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=1df6ffa7a6274ae264db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bf3fdb980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-88fac175.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/de92cf928379/vmlinux-88fac175.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/253b0e12054b/bzImage-88fac175.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com
-
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f95c6735f80 R15: 00007ffd0db2c528
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5268 at net/core/dev.c:11568 __dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
-Modules linked in:
-CPU: 0 UID: 0 PID: 5268 Comm: syz.0.15 Not tainted 6.11.0-rc6-syzkaller-00026-g88fac17500f4 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
-Code: 01 90 48 c7 c7 40 dc 0c 8d 48 c7 c6 20 dc 0c 8d ba c5 2c 00 00 e8 e6 d8 cb f7 90 0f 0b 90 90 e9 54 ea ff ff e8 a7 b4 09 f8 90 <0f> 0b 90 e9 4a fb ff ff e8 99 b4 09 f8 90 0f 0b 90 e9 d5 fe ff ff
-RSP: 0018:ffffc90002456fc0 EFLAGS: 00010293
-RAX: ffffffff8989d809 RBX: dffffc0000000000 RCX: ffff88801cbe2440
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
-RBP: ffffc900024573f8 R08: ffffffff8989d349 R09: 1ffffffff283c909
-R10: dffffc0000000000 R11: fffffbfff283c90a R12: ffff88803362c1b8
-R13: ffff88803362cbf0 R14: ffff88803362c734 R15: 00000000fffffff4
-FS:  00007f95c734f6c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd5dd5ec6d6 CR3: 0000000011730000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- dev_change_net_namespace include/linux/netdevice.h:3932 [inline]
- cfg802154_switch_netns+0xc8/0x390 net/ieee802154/core.c:230
- nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f95c657cef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f95c734f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f95c6735f80 RCX: 00007f95c657cef9
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000006
-RBP: 00007f95c734f090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f95c6735f80 R15: 00007ffd0db2c528
- </TASK>
-
-
+Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+This completes the patch series sent by Adam Ford here:
+https://lkml.kernel.org/r/20240904023310.163371-1-aford173@gmail.com
+
+and makes the cheap screens we recommend work with our imx8mp board
+without further kludging.
+
+
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+index 13bc570c5473..9431cd5e06c3 100644
+--- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
++++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+@@ -23,6 +23,7 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+ 		       const struct drm_display_mode *mode)
+ {
+ 	struct imx8mp_hdmi *hdmi = (struct imx8mp_hdmi *)data;
++	long round_rate;
+ 
+ 	if (mode->clock < 13500)
+ 		return MODE_CLOCK_LOW;
+@@ -30,8 +31,9 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+ 	if (mode->clock > 297000)
+ 		return MODE_CLOCK_HIGH;
+ 
+-	if (clk_round_rate(hdmi->pixclk, mode->clock * 1000) !=
+-	    mode->clock * 1000)
++	round_rate = clk_round_rate(hdmi->pixclk, mode->clock * 1000);
++	/* accept 0.5% = 1/200 = 5/1000 tolerance */
++	if (abs(round_rate - mode->clock * 1000) > mode->clock * 5)
+ 		return MODE_CLOCK_RANGE;
+ 
+ 	/* We don't support double-clocked and Interlaced modes */
+-- 
+2.39.2
+
+
 
