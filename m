@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-315338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8DA96C144
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B41596C14B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13587283AB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170F9B23BA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF01DC07C;
-	Wed,  4 Sep 2024 14:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024AB1DC052;
+	Wed,  4 Sep 2024 14:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uSP/aT0s"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OW/LO7mC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PRzaQM5+"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E281CCEFC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DAF1EB44;
+	Wed,  4 Sep 2024 14:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461517; cv=none; b=k3rzVHEOoMvX606us2ZlbM3syPnKLnhpbnX1IvPD9QhGuOSDTN7uEEi7yelIUuCUbDHP0vIsAY9fkB/zH88kxnfNvhOCLWTG/GQjrISR8/Od1F7AE0tD0PRwBM2AaydqEbCteYIbTkVl+0mqjaV2Db89kVDympZXVeXv1zUTaLM=
+	t=1725461565; cv=none; b=hi17NmVB5e3kE+YahPMF6Lsf8HEqXyrRmoh/s0DFfrOLqpkcIaFlD1r7FPSqPnU2u2xzjAwa5NL6uEujHIhW0p/aRZnEudPevcVQ2RehKhHte2zVoVT93Bd9oZ0ctWKMAXbbt7gt286ptPZkVGz1B1UU5fK16jhGjiOuwAe8dDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461517; c=relaxed/simple;
-	bh=ZV4bjcd1yVb9I8n+Wb7M4c70xmHeXcQXOcpIq85B9dw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sdgp6rb2kJDgcm1Bim43R9TWco4gvrTU23PpxFHyToQqT3SnrNwpuBd3cpnsHteQj5nuJ8XEvQl5L6oOtwOWXbvpys5/aJ6a4Lg+sh2BfT9JSsR1g4Z0Rm436dM41tIz/eCj5vU2lvdb2nADhJfzVKgxLoWU221JgX4UijwEtLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uSP/aT0s; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5334c018913so6369002e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725461514; x=1726066314; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I3Zj/0oIQoWTqTF5i+8OqjuVpe0UWAOmwxaLu2EWaqw=;
-        b=uSP/aT0sYeDvBwtWbxltmyP26ddavrcPN7w2LyE5J4d5GGpmm3dTzy/ZcBEFg5CZWF
-         nRkplDb1bOGm66bDadQcKmEcz07QTJAzlZE0O0PbTS4DthZewnNIg5RLkLp9zyQGSmNH
-         clVU9MrikQaR5pcziUontm+JYqSF0czIKFqVtBnozy199Y8sbv7KOu+sVKtPZQ5mz9nS
-         QG03ChAmSvSxobNFuq6QfVZU83tqugDni/pvlWD61Id2Bvv/qSXE2ZyRdMI9lgzRCErM
-         25MzQTxqzUDmGgf4lSyBiAGd9gsyPHQMKg+/6qKnY7D7sKpyCaxcdB2V4y3fSQ/ua9Fq
-         0J4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725461514; x=1726066314;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3Zj/0oIQoWTqTF5i+8OqjuVpe0UWAOmwxaLu2EWaqw=;
-        b=mbd964j5Ha7K0ad/mbDvR11GTIyXZlW5vXxmAUesCo95MuEM8Kltws79YDi2sREpXb
-         DKrW+Vuuq6UvbIwnd8jYHGBwy7YkzBAUq2P9BuSYzyVXPuXAwS6ykqylP2wzqxWF6z3H
-         pd2cO7/2p93Ccs0B4UQ/WoRpOjJgXdo4zFRuRZxU66B/zaDhm6VaTAYWNDNyFi7xZ7qO
-         qhmqo7OLNJ0k8VYuwdDgpp/dKjeNbGBmGfYuPgn1+9JUc7moBVsvKLtZiC48JQMeCPs4
-         qsOEOYncYT8i6yJtyYcz8Wut44CiiVzfV/2wcqwx3BWrxHcjKHglXqVxRoAR7k2Ph8gX
-         YqVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmB5IPzhwHBfHFbn08koXowpePKqnEp2Vyw3WcKnwimsyNF3+eI3wOog7j39iRLQtl/EghF/dCIRJG8X4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydErXx+DGWS/nRQ+htJ/aafBPhO+V6OS6tNFwzf9LtHmZNb1P3
-	BbKlcLQKRvkm6GuREJ3mJgK/Es+JlciQUdrfl6ljJG3kfrbi6vjlVqKlycmmbrA=
-X-Google-Smtp-Source: AGHT+IFkqigaaN4wMGLBNJtAdSFzX1aKYyL8ehUt6BR57k4XcYMiCACdw9hdTrqWngLObGFcFo5oGA==
-X-Received: by 2002:a05:6512:3190:b0:533:4820:275a with SMTP id 2adb3069b0e04-53546bbfec9mr12860116e87.52.1725461513856;
-        Wed, 04 Sep 2024 07:51:53 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623e67desm1021766b.209.2024.09.04.07.51.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 07:51:53 -0700 (PDT)
-Message-ID: <6f9b7047-7471-4fdf-89ae-d78c1c92690a@linaro.org>
-Date: Wed, 4 Sep 2024 15:51:52 +0100
+	s=arc-20240116; t=1725461565; c=relaxed/simple;
+	bh=oDHD6tP/Jwhr53bRg8Qr0nBLa5o5GvZtmAPtrBKF3zQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=a4ler+2KPCRpxxL4Q4v2diPO0rQWNKEZihfmz47FZMYP0vOyaeXwTX1dJaxx3lm032ut0VgtzHihyDhiLPf9EI1M/i32H4NBv6ZbMYU6ofwUmYPCnD62w1efa865xsPl1Qne9G3D5sUhgElbfPo9Egq8t//D9F0pkcAZB0WDWTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OW/LO7mC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PRzaQM5+; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DBAC3114019A;
+	Wed,  4 Sep 2024 10:52:42 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 04 Sep 2024 10:52:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725461562;
+	 x=1725547962; bh=GMX/FHb1NQd5lg5/NpfA0ULYpIijReg7t7hsHu+fouM=; b=
+	OW/LO7mC2lppB30DwzXZMH6lCAiLIyJWLwTJ8WLyc+YHWV0oTdfNn4lcUoFVo7UY
+	9pAKcQyXorI/p55OmQQ43MuHV4CPFsIRG89uUXD0Fi320wNBlEKLPWB8SaS3j7Ur
+	OL2WLCu5iDGAwFVAdwLAAzLhn+eFHkbDTRDvoI66AUoLz6kSZPlgrt+apWZMRtOt
+	eZ7Vcdil8475qdV8v1uXKe0S31rfbNaXPSWF+2lBvH8zxX1Sq7j7XqB1X598LD5b
+	Q5HP2jiSjVdvM+5CQg7w/5WHBbAFU9ZMc2b1B7FV+GoQ8KiThnSWxYKGDaEqcdUH
+	qK807tjfVn8jH1VbOaZx7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725461562; x=
+	1725547962; bh=GMX/FHb1NQd5lg5/NpfA0ULYpIijReg7t7hsHu+fouM=; b=P
+	RzaQM5+yNXaGypCnpneCASFBgjYrzkXmPGYBFr8AaDnbyojCg6tvt18W5dbb4LJY
+	wYTOK6bot/ttO93zl45SBmDQ1k560WZYaKEDMsUktXiaP2G6W2lw8z13PwVXHQGT
+	0O+zoVyPzaI1bBWGnAOxqcmaBXKF1yKqsiMvipoXXl/nFCh4/Z6KI0FQbuRFD1kH
+	S6o/to8Yzey+Olg6mt28KJ3HqlRKUtjv9U6N94n5Cz5jyX8IMJ4Adb0GHNHqOr43
+	+CSW8HfbKG/XhK+M9Mqe2ysZlDPHVWwvYohTnBrXRpyVwPRHsGnoNuIqqovx0tt+
+	K+4hVKBMyh8moJTR9QuPw==
+X-ME-Sender: <xms:OXTYZq4p12hdvbKMhytFVAkAWVkaZ-3pDuze04UleHAP6U-sPfIaxA>
+    <xme:OXTYZj4vbYuz9g7x3ukxtnTvqqwzVuhxSsmZ7lku3BkeCriAW5YZfsuqtDqrJjZ7n
+    b9idb6uLQf308k97kY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehjedgkeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghp
+    thhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtph
+    htthhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdp
+    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnph
+    highhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgu
+    mhhishdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:OXTYZpcpd744LuEDKHGk0abtZSOZK17OJzsvZKCLGcNddTrdq5AFYw>
+    <xmx:OnTYZnLLMbam6f8AEIcQNBoDHWuPpL-NXZxWSrdukyVqRGvUK4WHSQ>
+    <xmx:OnTYZuLPV_Vu4_l2eLKyoTljsr5RjzWmpH-CJCKYHpzrAVZwBuUW0Q>
+    <xmx:OnTYZowrZ3zP8_NQwz6P2slz9eBbSJPRTeMDUG6ZS_GLk1OrFCGiNw>
+    <xmx:OnTYZi9oYTCa-t8HSSSwXFRu_qt3ZdCI77aJ8vx8moNPqqLSy6X-B-9L>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CA8302220083; Wed,  4 Sep 2024 10:52:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] media: qcom: camss: csiphy: Add an init callback to
- CSI PHY devices
-To: Depeng Shao <quic_depengs@quicinc.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-5-quic_depengs@quicinc.com>
- <3cdd7101-ae8c-45c9-9695-f7f4202d1edb@linaro.org>
- <7fb34b98-7bc0-43fb-a6e7-dee073fed317@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <7fb34b98-7bc0-43fb-a6e7-dee073fed317@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Wed, 04 Sep 2024 14:52:21 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+ linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-mm@kvack.org
+Cc: "Andy Lutomirski" <luto@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
+Message-Id: <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
+In-Reply-To: <20240903151437.1002990-4-vincenzo.frascino@arm.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-4-vincenzo.frascino@arm.com>
+Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 04/09/2024 15:20, Depeng Shao wrote:
-> Hi Bryan,
-> 
-> On 8/19/2024 8:17 AM, Vladimir Zapolskiy wrote:
->> On 8/12/24 17:41, Depeng Shao wrote:
->>> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
->> I've already expressed concerns about a necessity of this function, 
->> since it
->> adds runtime burden of work, which can be successfully done at compile 
->> time,
->> but okay...
->>
->> Since it is needed for 3PH case only, it may make sense to remove it 
->> from 2PH
->> and call it here conditionally like
->>
->>      if (csiphy->res->hw_ops->init)
->>          ret = csiphy->res->hw_ops->init(csiphy);
->>
->> But it's up to you, I hope the callback will be removed in short future.
->>
-> 
-> Could you please comment on if it is fine to remove the init from 2PH 
-> driver?
-> 
-> 
-> Thanks,
-> Depeng
+On Tue, Sep 3, 2024, at 15:14, Vincenzo Frascino wrote:
 
-Yes, its dead code ATM we can enumerate this callback when/if its needed.
+> diff --git a/arch/x86/include/asm/vdso/page.h b/arch/x86/include/asm/vdso/page.h
+> new file mode 100644
+> index 000000000000..b0af8fbef27c
+> --- /dev/null
+> +++ b/arch/x86/include/asm/vdso/page.h
+> @@ -0,0 +1,15 @@
+> +
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_VDSO_PAGE_H
+> +#define __ASM_VDSO_PAGE_H
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <asm/page_types.h>
+> +
+> +#define VDSO_PAGE_MASK	PAGE_MASK
+> +#define VDSO_PAGE_SIZE	PAGE_SIZE
+> +
+> +#endif /* !__ASSEMBLY__ */
+> +
+> +#endif /* __ASM_VDSO_PAGE_H */
 
-Agreed.
+I don't get this one: the x86 asm/page_types.h still includes other
+headers outside of the vdso namespace, but you seem to only need these
+two definitions that are the same across everything.
 
----
-bod
+Why not put PAGE_MASK and PAGE_SIZE into a global vdso/page.h
+header? I did spend a lot of time a few months ago ensuring that
+we can have a single definition for all architectures based on
+CONFIG_PAGE_SHIFT, so all the extra copies should just go away.
+
+       Arnd
 
