@@ -1,213 +1,185 @@
-Return-Path: <linux-kernel+bounces-315704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2CE96C5F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:07:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127C796C5FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4AB1C2423E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:07:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5E1F2294F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DBD1E1A17;
-	Wed,  4 Sep 2024 18:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6E41E1A2F;
+	Wed,  4 Sep 2024 18:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BHp7MbzV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FupGuUxA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D166B2AE9F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 18:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42D82AE9F;
+	Wed,  4 Sep 2024 18:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473248; cv=none; b=bVTh69iEygmnKLArxXG2kRFqxRyDMzpdvkyajjgbP8h38jwsi7gsMxWo0Tr97UwB7Sr+H2BhWAOiIUfKJofveFsJ8cQ8Y5KVA7NxdiO6ZPvAXgOA4bmJfy5J5gGW9Wk2c7qSttWK1u/xZiU/ZM2ZwkJsX2xjnnLz+NvQNOUVLg0=
+	t=1725473290; cv=none; b=Sxxdwe4AOI/QHYuaDKG4ojVxVg3ceOghr0bx+rZSQibhZvHUqHO/9vsJXCkyZ27Ei7Qiw3H++RhIExN2/VfX6AM5gyPEGO6NyYK3+MQtWKhSNar9HQ/7X0ZCtj+xWKNEibOd1oUqy1eXiH+OpqIbXYAvG8co0sqD3SIUk1MtAFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473248; c=relaxed/simple;
-	bh=4JDaN84/+l8BN++2AZOUB6dD85LB5EgN2v/54XgYlEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eZdu/CqZN387fx9AElURXyfP82UcQIk6bNbMp1NSIRYrFQyrwfnz5wGwYC+Hd+VaCqzrvLsZrhVoY4a1maSJZfNxVlluiVxJN2P2MmbZ14KlHAxYXDfucR4FYdX2Yx1nM/TK1r8P/zIAqUfsCEZ9cBSt8bEbQjX33v4f6JBuYKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BHp7MbzV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725473245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iu/yLk8/R1ac4Suy560HLYHSZgCY6o0Vy3qlUM3yxfQ=;
-	b=BHp7MbzVzR1zPUJDBTXLO/Th8hxZGrsj3Ie1uNWl9QP4GwzIjELlrkeirZ34fFas7GxBZc
-	JglyScMRizBPE+FMdiRnv/xb028zIN3jGobfFVgMHuqvfbSjca6BlXd3ELbYAHaSVFgwdX
-	B9cftldOA0je4C5tNq/vd7L+BK5e7mg=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-491-Vo6trhyhOLWDrQ_PIICbEw-1; Wed, 04 Sep 2024 14:07:24 -0400
-X-MC-Unique: Vo6trhyhOLWDrQ_PIICbEw-1
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f703d46c3so1937315ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 11:07:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725473243; x=1726078043;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Iu/yLk8/R1ac4Suy560HLYHSZgCY6o0Vy3qlUM3yxfQ=;
-        b=lUV7Ns+k9eVyDOLgT4SBGIJ0VIyGPoqz/J5xFFIlm9SCvJRmnjRByrTbNeKwEHcsge
-         EL4COcwlyaBFASAzVhxGV9S6YqLAq004evXSLzkwaGjK3iBLWvHZVpzwUa93rrX9o6ux
-         +ilsrViRIer4vhRklfJwaU6W6afABhqwFtcQT6VD0MHxmzyq+V2kLad7/tM1spek91sv
-         Zt4oe8GXDcVKfI/hNbCu+fHjFEPCoOtisrPfwu+gaj+Xr91QlsF5B97LrXwX1tWRAzeP
-         5/Nw7AWMxHFo9zV9m0I7XfuzfAvD5Ni+KrFZY1rMmet9IXeka4646ijfmM1bYKXNt6zf
-         ltHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI4A0xxfH+RNyry/WlzrQm/cCOgqlWABJ5yxf57BqtGEVvAxIeU/rsjHY0ODlyObvNpEnFfDiDCaeyxe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr4drPXgJj915UT7946qKRFUa/jCbQfJjvZYTNnva/CBMkOpDp
-	l/8Araa+a0Ic0lUTolW16Rc4hJV6Z7ifjzqCvjdL4kFfEBSUGqCmwHbjnPT+Pl93mCzTCxhMMYQ
-	fekNsNkFBO7S5Wd3lZKol7vXObFyjNjggnCad2XYZhnuYxbLpPHAvTzJDyUdc8g==
-X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17962665ab.2.1725473243482;
-        Wed, 04 Sep 2024 11:07:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWcwiNExNxy+wR3dqWCmTh7RxH4JM6kRZfF+jmEQTuy6fQuanUKOf4HT+2P2vnJOM28EurbQ==
-X-Received: by 2002:a05:6e02:1fe1:b0:39f:74f9:f698 with SMTP id e9e14a558f8ab-39f74f9f815mr17962505ab.2.1725473243102;
-        Wed, 04 Sep 2024 11:07:23 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3afaf38bsm37811135ab.19.2024.09.04.11.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 11:07:22 -0700 (PDT)
-Date: Wed, 4 Sep 2024 12:07:21 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= 
- <kwilczynski@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-Message-ID: <20240904120721.25626da9.alex.williamson@redhat.com>
-In-Reply-To: <dcbf9292616816bbce020994adb18e2c32597aeb.camel@redhat.com>
-References: <20240725120729.59788-2-pstanner@redhat.com>
-	<20240903094431.63551744.alex.williamson@redhat.com>
-	<2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
-	<24c1308a-a056-4b5b-aece-057d54262811@kernel.org>
-	<dcbf9292616816bbce020994adb18e2c32597aeb.camel@redhat.com>
-Organization: Red Hat
+	s=arc-20240116; t=1725473290; c=relaxed/simple;
+	bh=DAZMDM+ojgArjPYz3GYq7zIak/VZ/DvXd0M+uX3t+rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YQ83AUvvMPUWcoZ3gRffVZbm7Gd7Na13kBpK7u9anfNCHme3t/4bBmzAsvF1uq7cNejvFw0mwlRg+poD+YnMNaAr3WWFWzux3dL0aIQAXH7DCSnyi066dFk6TFEnkm6p7kMIMJSNM8XaSvJ3UyKzWovYGcWogdMuL9TILH0iNCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FupGuUxA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4849KaJg014913;
+	Wed, 4 Sep 2024 18:08:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pd1/ZjvknWu6B6l/n+tgyNKndfG6GvonW+0stJXLy+Y=; b=FupGuUxAX4DdE7Fv
+	CUoWzb3A4mxu2zCo2XqyuM2KpIzN/kzKTBkME0iLZFrWN0xOoaaLlDHLErhfiM3C
+	ZNs2zjZmiPf970pbLp8wtrBW0ZzOEi8YrylvYm9kYwirAlf49P2cFtm0acJALmXg
+	NOVQ+9BvByYas72yR6q7xyv5txe4ES3mMSTJSBUt0TDU+Ajj0GWms6M93e6eGYCR
+	hgkwvYTrMcawuX0G6eirTGmGPFO25V70oST4etB3GBLM9Z52F/ss4TvZW4Zetg1M
+	MNn4RLXh7EQKGypgJ+j26h9GQmqyr7U4jvwtZ7OlTjbklDrcPs6m4sCxNhFmLIFk
+	WzUJkg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt673rx4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 18:08:04 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484I83Lp020374
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 18:08:03 GMT
+Received: from [10.216.2.237] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 11:07:59 -0700
+Message-ID: <f70baa0a-f897-42af-931f-082e8c5c12b6@quicinc.com>
+Date: Wed, 4 Sep 2024 23:37:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] Enable shared SE support over I2C
+To: <neil.armstrong@linaro.org>, <konrad.dybcio@linaro.org>,
+        <andersson@kernel.org>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+CC: <quic_vdadhani@quicinc.com>
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+ <d1ceab6e-907a-4939-8be4-6b460d6c594f@linaro.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <d1ceab6e-907a-4939-8be4-6b460d6c594f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KrLLI9LjIOyRwlq4-CozeOQYTa9DlUwZ
+X-Proofpoint-GUID: KrLLI9LjIOyRwlq4-CozeOQYTa9DlUwZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_15,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409040136
 
-On Wed, 04 Sep 2024 15:37:25 +0200
-Philipp Stanner <pstanner@redhat.com> wrote:
+Thanks Neil !
 
-> On Wed, 2024-09-04 at 17:25 +0900, Damien Le Moal wrote:
-> > On 2024/09/04 16:06, Philipp Stanner wrote: =20
-> > > On Tue, 2024-09-03 at 09:44 -0600, Alex Williamson wrote: =20
-> > > > On Thu, 25 Jul 2024 14:07:30 +0200
-> > > > Philipp Stanner <pstanner@redhat.com> wrote:
-> > > >  =20
-> > > > > pci_intx() is a function that becomes managed if
-> > > > > pcim_enable_device()
-> > > > > has been called in advance. Commit 25216afc9db5 ("PCI: Add
-> > > > > managed
-> > > > > pcim_intx()") changed this behavior so that pci_intx() always
-> > > > > leads
-> > > > > to
-> > > > > creation of a separate device resource for itself, whereas
-> > > > > earlier,
-> > > > > a
-> > > > > shared resource was used for all PCI devres operations.
-> > > > >=20
-> > > > > Unfortunately, pci_intx() seems to be used in some drivers'
-> > > > > remove()
-> > > > > paths; in the managed case this causes a device resource to be
-> > > > > created
-> > > > > on driver detach.
-> > > > >=20
-> > > > > Fix the regression by only redirecting pci_intx() to its
-> > > > > managed
-> > > > > twin
-> > > > > pcim_intx() if the pci_command changes.
-> > > > >=20
-> > > > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()") =20
-> > > >=20
-> > > > I'm seeing another issue from this, which is maybe a more general
-> > > > problem with managed mode.=C2=A0 In my case I'm using vfio-pci to
-> > > > assign
-> > > > an
-> > > > ahci controller to a VM. =20
-> > >=20
-> > > "In my case" doesn't mean OOT, does it? I can't fully follow.
-> > >  =20
-> > > > =C2=A0 ahci_init_one() calls pcim_enable_device()
-> > > > which sets is_managed =3D true.=C2=A0 I notice that nothing ever se=
-ts
-> > > > is_managed to false.=C2=A0 Therefore now when I call pci_intx() from
-> > > > vfio-
-> > > > pci
-> > > > under spinlock, I get a lockdep warning =20
-> > >=20
-> > > I suppose you see the lockdep warning because the new pcim_intx()
-> > > can=20
-> > > now allocate, whereas before 25216afc9db5 it was
-> > > pcim_enable_device()
-> > > which allocated *everything* related to PCI devres.
-> > >  =20
-> > > > =C2=A0as I no go through pcim_intx()
-> > > > code after 25216afc9db5=C2=A0 =20
-> > >=20
-> > > You alwas went through pcim_intx()'s logic. The issue seems to be
-> > > that
-> > > the allocation step was moved.
-> > >  =20
-> > > > since the previous driver was managed. =20
-> > >=20
-> > > what do you mean by "previous driver"? =20
-> >=20
-> > The AHCI driver... When attaching a PCI dev to vfio to e.g.
-> > passthrough to a VM,
-> > the device driver must first be unbound and the device bound to vfio-
-> > pci. So we
-> > switch from ahci/libata driver to vfio. When vfio tries to enable
-> > intx with
-> > is_managed still true from the use of the device by ahci, problem
-> > happen.
-> >  =20
-> > >  =20
-> > > > =C2=A0 It seems
-> > > > like we should be setting is_managed to false is the driver
-> > > > release
-> > > > path, right? =20
-> > >=20
-> > > So the issue seems to be that the same struct pci_dev can be used
-> > > by
-> > > different drivers, is that correct?
-> > >=20
-> > > If so, I think that can be addressed trough having
-> > > pcim_disable_device() set is_managed to false as you suggest.
-> > >=20
-> > > Another solution can could at least consider would be to use a
-> > > GFP_ATOMIC for allocation in get_or_create_intx_devres(). =20
-> >=20
-> > If it is allowed to call pci_intx() under a spin_lock, then we need
-> > GFP_ATOMIC.
-> > If not, then vfio-pci needs to move the call out of the spinlock. =20
->=20
-> If vfio-pci can get rid of pci_intx() alltogether, that might be a good
-> thing. As far as I understood Andy Shevchenko, pci_intx() is outdated.
-> There's only a hand full of users anyways.
+On 8/30/2024 1:17 PM, neil.armstrong@linaro.org wrote:
+> Hi,
+> 
+> On 29/08/2024 11:24, Mukesh Kumar Savaliya wrote:
+>> This Series adds support to share QUP based I2C SE between subsystems.
+>> Each subsystem should have its own GPII which interacts between SE and
+>> GSI DMA HW engine.
+>>
+>> Subsystem must acquire Lock over the SE on GPII channel so that it
+>> gets uninterrupted control till it unlocks the SE. It also makes sure
+>> the commonly shared TLMM GPIOs are not touched which can impact other
+>> subsystem or cause any interruption. Generally, GPIOs are being
+>> unconfigured during suspend time.
+>>
+>> GSI DMA engine is capable to perform requested transfer operations
+>> from any of the SE in a seamless way and its transparent to the
+>> subsystems. Make sure to enable “qcom,shared-se” flag only while
+>> enabling this feature. I2C client should add in its respective parent
+>> node.
+>>
+>> ---
+>> Mukesh Kumar Savaliya (4):
+>>    dt-bindindgs: i2c: qcom,i2c-geni: Document shared flag
+>>    dma: gpi: Add Lock and Unlock TRE support to access SE exclusively
+>>    soc: qcom: geni-se: Export function geni_se_clks_off()
+>>    i2c: i2c-qcom-geni: Enable i2c controller sharing between two
+>>      subsystems
+>>
+>>   .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |  4 ++
+>>   drivers/dma/qcom/gpi.c                        | 37 ++++++++++++++++++-
+>>   drivers/i2c/busses/i2c-qcom-geni.c            | 29 +++++++++++----
+>>   drivers/soc/qcom/qcom-geni-se.c               |  4 +-
+>>   include/linux/dma/qcom-gpi-dma.h              |  6 +++
+>>   include/linux/soc/qcom/geni-se.h              |  3 ++
+>>   6 files changed, 74 insertions(+), 9 deletions(-)
+>>
+> 
+> I see in downstream that this flag is used on the SM8650 qupv3_se6_i2c,
+> and that on the SM8650-HDK this i2c is shared between the aDSP battmgr and
+> the linux to access the HDMI controller.
+> 
+> Is this is the target use-case ?
+Not exactly that usecase. Here making it generic in a way to transfer 
+data which is pushed from two subsystems independently. Consider for 
+example one is ADSP i2c client and another is Linux i2c client. Not sure 
+in what manner battmgr and HDMI sends traffic. we can debug it 
+separately over that email.
+> 
+> We have some issues on this platform that crashes the system when Linux
+> does some I2C transfers while battmgr does some access at the same time,
+> the problem is that on the Linux side the i2c uses the SE DMA and not GPI
+> because fifo_disable=0 so by default this bypasses GPI.
+> 
+> A temporary fix has been merged:
+> https://lore.kernel.org/all/20240605-topic-sm8650-upstream-hdk-iommu-fix-v1-1-9fd7233725fa@linaro.org/
+> but it's clearly not a real solution
+> 
+Seems you have added SID for the GPII being used from linux side. Need 
+to know why you have added it and is it helping ? I have sent an email 
+to know more about this issue before 2 weeks.
 
-What's the alternative?  vfio-pci has a potentially unique requirement
-here, we don't know how to handle the device interrupt, we only forward
-it to the userspace driver.  As a level triggered interrupt, INTx will
-continue to assert until that userspace driver handles the device.
-That's obviously unacceptable from a host perspective, so INTx is
-masked at the device via pci_intx() where available, or at the
-interrupt controller otherwise.  The API with the userspace driver
-requires that driver to unmask the interrupt, again resulting in a call
-to pci_intx() or unmasking the interrupt controller, in order to receive
-further interrupts from the device.  Thanks,
+> What would be the solution to use the shared i2c with on one side battmgr
+> using GPI and the kernel using SE DMA ?
+> 
+I have already sent an email on this issue, please respond on it. We 
+shall debug it separately since this feature about sharing is still 
+under implementation as you know about this patch series.
 
-Alex
-
+> In this case, shouldn't we force using GPI on linux with:
+> ==============><=====================================================================
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c 
+> b/drivers/i2c/busses/i2c-qcom-geni.c
+> index ee2e431601a6..a15825ea56de 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -885,7 +885,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>          else
+>                  fifo_disable = readl_relaxed(gi2c->se.base + 
+> GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
+> 
+> -       if (fifo_disable) {
+> +       if (gi2c->is_shared || fifo_disable) {
+>                  /* FIFO is disabled, so we can only use GPI DMA */
+>                  gi2c->gpi_mode = true;
+>                  ret = setup_gpi_dma(gi2c);
+> ==============><=====================================================================
+> 
+> Neil
 
