@@ -1,338 +1,185 @@
-Return-Path: <linux-kernel+bounces-314762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D287696B821
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:19:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F26496B823
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28FB42829C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530C11C21DC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C501CF2B5;
-	Wed,  4 Sep 2024 10:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CBD1CF7C1;
+	Wed,  4 Sep 2024 10:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TEGS5f52"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MQXJw79Z"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895EB1CC89A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DA71CF7A7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445159; cv=none; b=PQSSSKsK9DKPh5ovmiSW22FraeLsRjc9Ur/jeBnfmO0SpN6TygqD6fK6kp6Flsa5ERxgHrsX2Zl5opU7At8Snlxrpndc4afra3CKvVAm74i+SYjBRPR1CB1PqwESGushKzIVDknbQIFvuVa7H71f3/7OGHC92GGXrbXVMCcnjuk=
+	t=1725445169; cv=none; b=QGOeVZoAWF1b1WhDDy36GXTm8+4iQQJricKQoJ48WcfmdZ1TI6BKwlos29r2Y6tO3dBXL8xs9rQH6f30eA/9bKq5Oaz+DfVmz0s2lVdGn2OamoQOAIstVbEDE8vjTJQwdG9iDk+7f0kxaf5nnjBlx6GYCoyqKaOPV9vF1NBGfbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445159; c=relaxed/simple;
-	bh=5gzLLNUumxoYy3cYr3JwXLlaiVsEWEehMQtwxEeqETI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VtT83oBCVZciPnB1oDEHHXyuvPEsGZTpjUuNGRmArBnkbGTfIgWWOpHQucCpVtH24xhLQEBFHwIuhVT3DNLZ94Whr+Vyx/fi7u+R4/nPmMsqoCWH8Iys0Vays63846iroPphFWQVXKxUNyox90nFV69Cst0DrZJXOBEL0Whooqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TEGS5f52; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725445155;
-	bh=5gzLLNUumxoYy3cYr3JwXLlaiVsEWEehMQtwxEeqETI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TEGS5f528wW2nD7SWPys21FrweyDAJyB9MnSlhGzfy14p46dPG7BypScD7hAmF2eK
-	 HcC7bK3DsVrKEmcW72O9tBqD/Yp+RlhgaIW0ruSAG3GB4ILWLA5c/rWG/l6DyFp5Ct
-	 P4o75hY8ynEc7cZKLP2hpXo3iH2tHT3o/dR8snJFQrtUZ/7Rz04+S7t69qbsJnJePZ
-	 FEZeMCTaxAkdCEnZ5NY+Gj7PBcF16tJdGF14AkD8ToHWMZ7jUYYl4yXTV+dp545qaM
-	 J7nNjkEvnweZmSMeCHXSgnCbVOLxp70abM6FTT912j274kdsqHP/I+bH6bYtmg2ylM
-	 GwfhFMA+MlhrA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F314A17E0FC2;
-	Wed,  4 Sep 2024 12:19:14 +0200 (CEST)
-Date: Wed, 4 Sep 2024 12:19:11 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Mary Guillemard <mary.guillemard@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com, Mihail Atanassov
- <mihail.atanassov@arm.com>, Steven Price <steven.price@arm.com>, Liviu
- Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
-Message-ID: <20240904121911.31ddaf09@collabora.com>
-In-Reply-To: <20240830080349.24736-2-mary.guillemard@collabora.com>
-References: <20240830080349.24736-2-mary.guillemard@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725445169; c=relaxed/simple;
+	bh=yENLbIwzaSXudtAKO8rxWrLEYSmWs26lPwRqbk3Tc1I=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=nDzOllzQ0C2OTSUZgS8Kg0wfSk+dDgCDwjfABAgsy40N+hdvmgdZhoXQWXJQd0hl7fuaT4gOT9Mg/6zeYShpD7fJVwiK9fXuqSlYP0f+Bftbbn/+N3WXu3ALXroa9jljJCsMoBKjHDDhTCVkWTEbVOSoYUTbNMMWn6noImDxSi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MQXJw79Z; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240904101924euoutp016c40e40315d9ff4be44610de750f459d~yAzxB7XtB2947329473euoutp01L
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:19:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240904101924euoutp016c40e40315d9ff4be44610de750f459d~yAzxB7XtB2947329473euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725445164;
+	bh=2E3980v8yN3y/wrC2ukf22OKX1OaZcxCNFuPShUMfHE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=MQXJw79ZtCwKfFbtRqnFD8krq+k7EXZb2jdOdjL0RKMFVOlMvaIp33xuauyIhU/Px
+	 iRxb+J9he2RedwF+93E0DQy3CSGgyn+5HsKM3o5dPzXUUatvC7S8TJEdczZ00sVRrJ
+	 4c3hBLxZmSTAb/0nAmiZQoMwUwDHG6sfOn6/Dzzo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240904101924eucas1p1f5f430b337daf63daba12eafce9a4fcd~yAzwm6DwB0099000990eucas1p1h;
+	Wed,  4 Sep 2024 10:19:24 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id CB.4B.09624.B2438D66; Wed,  4
+	Sep 2024 11:19:23 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240904101923eucas1p138ef42fb306d27c0f693e71708f7500d~yAzwEdEVh0099000990eucas1p1g;
+	Wed,  4 Sep 2024 10:19:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240904101923eusmtrp197ad8fd8ddd912eebdb109fa1e37f5a0~yAzwDmggy2782327823eusmtrp1W;
+	Wed,  4 Sep 2024 10:19:23 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-93-66d8342b5843
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id E5.CE.19096.B2438D66; Wed,  4
+	Sep 2024 11:19:23 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240904101923eusmtip1953528a14a8142e81bc27de1020ff889~yAzvzp2Xk1230312303eusmtip1q;
+	Wed,  4 Sep 2024 10:19:23 +0000 (GMT)
+Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 4 Sep 2024 11:19:19 +0100
+Date: Wed, 4 Sep 2024 12:19:16 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Klaus Jensen <its@irrelevant.dk>
+CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
+	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Minwoo Im
+	<minwoo.im@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 6/6] iommu/vt-d: do not require a PASID in
+ page requests
+Message-ID: <20240904101916.ia5n7s4tbczkqnws@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240826-iopf-for-all-v1-6-59174e6a7528@samsung.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7raJjfSDO5/sLbYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
+	roymdU0sBbO4K1q+HGJuYHzB0cXIySEhYCLR/+MnWxcjF4eQwApGiUsLFrCDJIQEvjBKzLgX
+	DpH4zCgxaf8NRpiOt1Nms0EULWeU2NilDVf08eopqFFbGCVWf9/JClLFIqAisbR/JZjNJqAj
+	cf7NHWYQWwQo/vTfXhaQBmaBBmaJrzfPgo0VFoiS+DBjA9gdvAIOErPXtzFC2IISJ2c+YQGx
+	mYEGLdj9CaieA8iWllj+D+wfTgEnic6P3VCXKkscXHaIHcKulTi15RYTyC4JgdmcEvOvToEq
+	cpHYe/4+VJGwxKvjW6BsGYnTk3tYIBomM0rs//eBHcJZzSixrPErE0SVtUTLlSdQHY4SM/pB
+	VnAA2XwSN94KQhzKJzFp23RmiDCvREebEES1msTqe29YJjAqz0Ly2iwkr81CeG0BI/MqRvHU
+	0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwLR1+t/xTzsY5776qHeIkYmD8RCjBAezkgjva5Eb
+	aUK8KYmVValF+fFFpTmpxYcYpTlYlMR5VVPkU4UE0hNLUrNTUwtSi2CyTBycUg1ME0UOpm2W
+	/fVy4aKWm/N7poab7byfvmzx7SV1qwwZngj0FDE61bVuNFxj8yDy9MdpTYcmsk5mU157deei
+	1fxCcdqOHPNt3O0Yd+2ZOWNtFR/7x+4G99NGjOFFXu9kgzIbijf2G7w5eyE05u+66Dc8y92e
+	ibdn9Px84P5hd4Ld0+elF1O1VibKMK9e8PxPU7HDrX0TQ1sF05k1rHyvWh5esmvi3rcs5lYK
+	1gubnP0Vfh+dFMAi1aggn3+4bcOXm7M0237ND2l7+eSP04MAb8Xce6u21bDq6QUkyDq3Tzrz
+	qFf5lCh37IsTK7ZGXGf7Xdr+crrdvZJ9L9IKH/57zOcref3i44jns6/2GzB9fOibocRSnJFo
+	qMVcVJwIADPe+hDKAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xu7raJjfSDN7sk7TYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
+	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYymdU0sBbO4K1q+HGJuYHzB
+	0cXIySEhYCLxdspsti5GLg4hgaWMEifXdDJBJGQkNn65ygphC0v8udYFVfSRUeLg1hMsEM4W
+	RokF97vYQapYBFQklvavBOtgE9CROP/mDjOILQIUf/pvL1gDs0ADs8TXm2fZQBLCAlESH2Zs
+	AGvmFXCQmL2+jRFi6llGidvP77JBJAQlTs58wgJiMwNNXbD7E1CcA8iWllj+D+wHTgEnic6P
+	3YwQpypLHFx2iB3CrpX4/PcZ4wRG4VlIJs1CMmkWwqQFjMyrGEVSS4tz03OLjfSKE3OLS/PS
+	9ZLzczcxAuN327GfW3Ywrnz1Ue8QIxMH4yFGCQ5mJRHe1yI30oR4UxIrq1KL8uOLSnNSiw8x
+	mgLDYiKzlGhyPjCB5JXEG5oZmBqamFkamFqaGSuJ87JdOZ8mJJCeWJKanZpakFoE08fEwSnV
+	wMQ8k19jwp0FF7fekPltlcoRdjHD/LTZuf/T/mz4c/7wpIN/Jl19+ufACTY2uYsb5u2verD/
+	0pvNvzeeNL/6Q/WHRj332teHa3k51zNOEra/dcarsOWbaNfNHdP+rebUOc0SZezy8tbfIrEM
+	ycCZWw0dvKdt2eAY5cwYa/cnXrelZs32kqst5rl3KjVXmhWbGTAIvE51mDldXHDfS7vznol1
+	/Bp+Kpcq5znN5rF44H4ttm/P5bL6fOV32cV8Ue/5Bd14DVzO3yneFfpt3vLeJ7N27N/oNMf1
+	cPPtexqrTp3kmmZ3bwuDisqty7sYM/fPePdr9VMZnbMpFZeizf5K7/fUE2K8t91FztnVfNmc
+	zNXtSizFGYmGWsxFxYkAEy99PWgDAAA=
+X-CMS-MailID: 20240904101923eucas1p138ef42fb306d27c0f693e71708f7500d
+X-Msg-Generator: CA
+X-RootMTR: 20240826114110eucas1p2de6af1717324c944cd3036826492df44
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826114110eucas1p2de6af1717324c944cd3036826492df44
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+	<CGME20240826114110eucas1p2de6af1717324c944cd3036826492df44@eucas1p2.samsung.com>
+	<20240826-iopf-for-all-v1-6-59174e6a7528@samsung.com>
 
-On Fri, 30 Aug 2024 10:03:50 +0200
-Mary Guillemard <mary.guillemard@collabora.com> wrote:
-
-> Expose timestamp information supported by the GPU with a new device
-> query.
+On Mon, Aug 26, 2024 at 01:40:32PM +0200, Klaus Jensen wrote:
+> From: Klaus Jensen <k.jensen@samsung.com>
 > 
-> Mali uses an external timer as GPU system time. On ARM, this is wired to
-> the generic arch timer so we wire cntfrq_el0 as device frequency.
+> PRQ events can now be handled without a PASID being present. Remove the
+> restriction.
 > 
-> This new uAPI will be used in Mesa to implement timestamp queries and
-> VK_KHR_calibrated_timestamps.
-> 
-> Since this extends the uAPI and because userland needs a way to advertise
-> those features conditionally, this also bumps the driver minor version.
-> 
-> v2:
-> - Rewrote to use GPU timestamp register
-> - Added timestamp_offset to drm_panthor_timestamp_info
-> - Add missing include for arch_timer_get_cntfrq
-> - Rework commit message
-> 
-> v3:
-> - Add panthor_gpu_read_64bit_counter
-> - Change panthor_gpu_read_timestamp to use
->   panthor_gpu_read_64bit_counter
-> 
-> v4:
-> - Fix multiple typos in uAPI documentation
-> - Mention behavior when the timestamp frequency is unknown
-> - Use u64 instead of unsigned long long
->   for panthor_gpu_read_timestamp
-> - Apply r-b from Mihail
-> 
-> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
-> Reviewed-by: Mihail Atanassov <mihail.atanassov@arm.com>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
+> Signed-off-by: Klaus Jensen <k.jensen@samsung.com>
 > ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 43 +++++++++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_gpu.c | 47 +++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_gpu.h |  4 +++
->  include/uapi/drm/panthor_drm.h        | 22 +++++++++++++
->  4 files changed, 115 insertions(+), 1 deletion(-)
+>  drivers/iommu/intel/prq.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index b5e7b919f241..444e3bb1cfb5 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -3,6 +3,10 @@
->  /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
->  /* Copyright 2019 Collabora ltd. */
+> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
+> index 2814373e95d8..cc36198ebf91 100644
+> --- a/drivers/iommu/intel/prq.c
+> +++ b/drivers/iommu/intel/prq.c
+> @@ -101,18 +101,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+>  		req = &iommu->prq[head / sizeof(*req)];
+>  		address = (u64)req->addr << VTD_PAGE_SHIFT;
 >  
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +#include <asm/arch_timer.h>
-> +#endif
-> +
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
-> @@ -164,6 +168,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  	_Generic(_obj_name, \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-> @@ -750,10 +755,33 @@ static void panthor_submit_ctx_cleanup(struct panthor_submit_ctx *ctx,
->  	kvfree(ctx->jobs);
->  }
->  
-> +static int panthor_query_timestamp_info(struct panthor_device *ptdev,
-> +					struct drm_panthor_timestamp_info *arg)
-> +{
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(ptdev->base.dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +	arg->timestamp_frequency = arch_timer_get_cntfrq();
-> +#else
-> +	arg->timestamp_frequency = 0;
-> +#endif
-> +	arg->current_timestamp = panthor_gpu_read_timestamp(ptdev);
-> +	arg->timestamp_offset = panthor_gpu_read_timestamp_offset(ptdev);
-> +
-> +	pm_runtime_put(ptdev->base.dev);
-> +	return 0;
-> +}
-> +
->  static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
->  {
->  	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
->  	struct drm_panthor_dev_query *args = data;
-> +	struct drm_panthor_timestamp_info timestamp_info;
-> +	int ret;
->  
->  	if (!args->pointer) {
->  		switch (args->type) {
-> @@ -765,6 +793,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  			args->size = sizeof(ptdev->csif_info);
->  			return 0;
->  
-> +		case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
-> +			args->size = sizeof(timestamp_info);
-> +			return 0;
-> +
->  		default:
->  			return -EINVAL;
+> -		if (unlikely(!req->pasid_present)) {
+> -			pr_err("IOMMU: %s: Page request without PASID\n",
+> -			       iommu->name);
+> -bad_req:
+> -			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
+> -			goto prq_advance;
+> -		}
+> -
+>  		if (unlikely(!is_canonical_address(address))) {
+>  			pr_err("IOMMU: %s: Address is not canonical\n",
+>  			       iommu->name);
+> -			goto bad_req;
+> +bad_req:
+> +			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
+> +			goto prq_advance;
 >  		}
-> @@ -777,6 +809,14 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
->  		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
 >  
-> +	case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
-> +		ret = panthor_query_timestamp_info(ptdev, &timestamp_info);
-> +
-> +		if (ret)
-> +			return ret;
-> +
-> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1372,6 +1412,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
->  /*
->   * PanCSF driver version:
->   * - 1.0 - initial interface
-> + * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
->   */
->  static const struct drm_driver panthor_drm_driver = {
->  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> @@ -1385,7 +1426,7 @@ static const struct drm_driver panthor_drm_driver = {
->  	.desc = "Panthor DRM driver",
->  	.date = "20230801",
->  	.major = 1,
-> -	.minor = 0,
-> +	.minor = 1,
->  
->  	.gem_create_object = panthor_gem_create_object,
->  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 5251d8764e7d..2d3529a0b156 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -480,3 +480,50 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
->  	panthor_gpu_irq_resume(&ptdev->gpu->irq, GPU_INTERRUPTS_MASK);
->  	panthor_gpu_l2_power_on(ptdev);
->  }
-> +
-> +/**
-> + * panthor_gpu_read_64bit_counter() - Read a 64-bit counter at a given offset.
-> + * @ptdev: Device.
-> + * @reg: The offset of the register to read.
-> + *
-> + * Return: The counter value.
-> + */
-> +static u64
-> +panthor_gpu_read_64bit_counter(struct panthor_device *ptdev, u32 reg)
-> +{
-> +	u32 hi, lo;
-> +
-> +	do {
-> +		hi = gpu_read(ptdev, reg + 0x4);
-> +		lo = gpu_read(ptdev, reg);
-> +	} while (hi != gpu_read(ptdev, reg + 0x4));
-> +
-> +	return ((u64)hi << 32) | lo;
-> +}
-> +
-> +/**
-> + * panthor_gpu_read_timestamp() - Read the timestamp register.
-> + * @ptdev: Device.
-> + *
-> + * Return: The GPU timestamp value.
-> + */
-> +u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
-> +{
-> +	return panthor_gpu_read_64bit_counter(ptdev, GPU_TIMESTAMP_LO);
-> +}
-> +
-> +/**
-> + * panthor_gpu_read_timestamp_offset() - Read the timestamp offset register.
-> + * @ptdev: Device.
-> + *
-> + * Return: The GPU timestamp offset value.
-> + */
-> +u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
-> +{
-> +	u32 hi, lo;
-> +
-> +	hi = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_HI);
-> +	lo = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_LO);
-> +
-> +	return ((u64)hi << 32) | lo;
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
-> index bba7555dd3c6..7f6133a66127 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.h
-> @@ -5,6 +5,8 @@
->  #ifndef __PANTHOR_GPU_H__
->  #define __PANTHOR_GPU_H__
->  
-> +#include <linux/types.h>
-> +
->  struct panthor_device;
->  
->  int panthor_gpu_init(struct panthor_device *ptdev);
-> @@ -48,5 +50,7 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
->  int panthor_gpu_flush_caches(struct panthor_device *ptdev,
->  			     u32 l2, u32 lsc, u32 other);
->  int panthor_gpu_soft_reset(struct panthor_device *ptdev);
-> +u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev);
-> +u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev);
->  
->  #endif
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index 926b1deb1116..95e3a984c69a 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
->  
->  	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
->  	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
-> +
-> +	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
-> +	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
->  };
->  
->  /**
-> @@ -377,6 +380,25 @@ struct drm_panthor_csif_info {
->  	__u32 pad;
->  };
->  
-> +/**
-> + * struct drm_panthor_timestamp_info - Timestamp information
-> + *
-> + * Structure grouping all queryable information relating to the GPU timestamp.
-> + */
-> +struct drm_panthor_timestamp_info {
-> +	/**
-> +	 * @timestamp_frequency: The frequency of the timestamp timer or 0 if
-> +	 * unknown.
-> +	 */
-> +	__u64 timestamp_frequency;
-> +
-> +	/** @current_timestamp: The current timestamp. */
-> +	__u64 current_timestamp;
-> +
-> +	/** @timestamp_offset: The offset of the timestamp timer. */
-> +	__u64 timestamp_offset;
-> +};
-> +
->  /**
->   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
->   */
+>  		if (unlikely(req->pm_req && (req->rd_req | req->wr_req))) {
 > 
-> base-commit: e75356ef5baef69e9f577023c453d91a902dc082
+> -- 
+> 2.45.2
+> 
 
+I'll squash this commit with the one that introduces the prq.c file.
+
+Best
+
+-- 
+
+Joel Granados
 
