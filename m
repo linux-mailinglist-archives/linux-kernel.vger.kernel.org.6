@@ -1,87 +1,97 @@
-Return-Path: <linux-kernel+bounces-315406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBF396C235
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0325896C238
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24181C22F59
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B891C243C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7891DEFF1;
-	Wed,  4 Sep 2024 15:25:36 +0000 (UTC)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828AC1DEFCC;
-	Wed,  4 Sep 2024 15:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721951DEFC1;
+	Wed,  4 Sep 2024 15:25:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56011DCB30;
+	Wed,  4 Sep 2024 15:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725463535; cv=none; b=Upr5oFC+oSb6q+AuuaLW27yyc/f8skzlU/EUfQyK/3WrD4z/f8bgyt7b6fTVKxjLAtwQWXhCEwIRUldoFF45FdtmLsSdk9bmo49Qv0bURaaFMvh+Ayzrs1nB9XV6epo3nGJzlCCM1AC1VshOSwZIpGajVTmQ38OkpLPaa/IEQCM=
+	t=1725463543; cv=none; b=nCyI7GKBmEvbxZ2b+E+4GaPsQ35j+rdkdJQRh9Cdw3Hbq1C8NdykUhouRrYlpMqJYnp7hOrDmilYwKAChPd3TWTuthpluOCmJSVMo+ewT0g5Z+4KvwRmRy4eKGFdXkTeSIZTw/i2qIu/v+SmNx3EVwo+/b9060ULmn50pTkgwgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725463535; c=relaxed/simple;
-	bh=XGH/eLBc7olTkWXHdsHW7Kepx++I0ec6zH/0X2Rw7sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lS4SMFFlTTrfLxdxhi8pq/lko0K037kUww8Q4XhsOZC+QlIh5VVsX6T/hhYKcGDMGtYZ/aSdogQfOXf7xiZlqTzinBGv7TaKFDQ5wFwJIZfnd825lXU//XmAiyAibxuljkS7a1dhJ5q1r7sA5aZMkLIDZaAm85TPH3uR5Wpq1oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso4647044a91.2;
-        Wed, 04 Sep 2024 08:25:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725463534; x=1726068334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txID2s1g37xsxM5b5bZgCtDeI3wV1mgaApdKPx0yK6Y=;
-        b=ovwr/fCSnBObW922Oa3i+kHAnYxCYAKT0x/cPSX6V5p0NiVK/AfP4KdI4tA6iiEEXE
-         iFMBFL8ur3T/pTca4SN5Qb1Q2J0+X/OpCiOZVCieFTSdO6wWXvuqBLsuqaCPFu1braSq
-         7WOgC5bvd6YMiW69j1FGCH4d+8RyYqySBFXpLSlUnW6vYRCK6XMODmy3tAkhvVY2DtEh
-         Oj7dbB4fcPKAK6ylZBwt+6wHTCf9wfV1HalZsJjTxUD3BHWhr9vGvXTN/dovTc6EgCAa
-         aHGn8/p6JMkmWCmfcIgElVngeZGIzwiDyLfRm4qmXVyy8Yz8F6ENdUsgOGxkFyWbLXwv
-         yATg==
-X-Forwarded-Encrypted: i=1; AJvYcCUffaVSy36pJEhw1ix7Cl4TQFD54Aq0qdeXtcIgRu8OI/oVLQ/T11SxxU8fzHyUeVpeM8fMHXZTMSXY@vger.kernel.org, AJvYcCVPQFuVjVKnYfWbZesp/0zP9VXIOdkxO3zhp6r6dQiyX8dNpvjiIozEfXMsmfegqu0Unjd+BixsgaeV@vger.kernel.org, AJvYcCVqxJ9cU8XneF9bhYARhXJJzSsuMC1Vr1+7OiNzpYBn31qdIjf0Nu2EVDlPlKsxQQlC/riqlzXqeBgHxJGu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjkwbuxX+0Q1bbUmrNrhyI7wufXZEyZWohiMW/XPAoIYI1MXfD
-	eqUyB+ZdD1okQL9tR5r9zOBBK1aPCIUbZEB+pQmyxHhmvsDCpUsD
-X-Google-Smtp-Source: AGHT+IHw0hofGVtH4TjSvkgorZ9H6QF6o3uhgCCImEOuL2P+2meixTFKzJ693AeTANvidpoa4gqxNw==
-X-Received: by 2002:a17:90a:a386:b0:2da:8c08:6a29 with SMTP id 98e67ed59e1d1-2da8c086a45mr2697969a91.8.1725463533911;
-        Wed, 04 Sep 2024 08:25:33 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8283f6d9csm12264932a91.0.2024.09.04.08.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:25:33 -0700 (PDT)
-Date: Thu, 5 Sep 2024 00:25:31 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: matthew.gerlach@linux.intel.com
-Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joyce.ooi@intel.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] dt-bindings: PCI: altera: Convert to YAML
-Message-ID: <20240904152531.GF3032973@rocinante>
-References: <20240702162652.1349121-1-matthew.gerlach@linux.intel.com>
+	s=arc-20240116; t=1725463543; c=relaxed/simple;
+	bh=ifxgjEccOr8RkbLDnBKxwD6q3g/9xI4LSU9D/3sJLuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=raIzWaWmZu6+zYMBzWrssYXFEa3pT6CZ82gBdOFUpcRsvUhWvEdq5FObLX94HtQePB1UjEH8KvparXqqVpi3xKVQSbCYnyTE/U0rfSprutPcd8ht89FHC+t7X3afrynInVgq9tJSHizxhYw8fsyeNU+D7PhnAIR2wFiFU6sYEOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4D50FEC;
+	Wed,  4 Sep 2024 08:26:05 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 171273F73F;
+	Wed,  4 Sep 2024 08:25:37 -0700 (PDT)
+Date: Wed, 4 Sep 2024 16:25:35 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] Add vqmmc-supply on NanoPi NEO Plus2
+Message-ID: <20240904162535.48640243@donnerap.manchester.arm.com>
+In-Reply-To: <20240827-nanopi-neo-plus2-regfix-v2-3-497684ec82c7@gmail.com>
+References: <20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com>
+	<20240827-nanopi-neo-plus2-regfix-v2-3-497684ec82c7@gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702162652.1349121-1-matthew.gerlach@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, 27 Aug 2024 23:00:45 +0200
+Kry=C5=A1tof =C4=8Cern=C3=BD <cleverline1mc@gmail.com> wrote:
 
-> Convert the device tree bindings for the Altera Root Port PCIe controller
-> from text to YAML. Update the entries in the interrupt-map field to have
-> the correct number of address cells for the interrupt parent.
+> Adds missing vqmmc-supply for mmc2.
 
-Applied to dt-bindings, thank you!
+Does that patch actually fix anything? Does the kernel complain about the
+missing vqmmc regulator?
+I am asking because I wonder if we need this patch in the first place. The
+generic MMC DT binding marks the vqmmc property as optional.
 
-[1/1] dt-bindings: PCI: altera: Convert to YAML
-      https://git.kernel.org/pci/pci/c/b08929e1ec2f
+So I appreciate the idea of making everything neat and tidy, but after all
+we have little actual proof that the voltage is really 3.3V, so I'd just
+leave it as it is.
 
-	Krzysztof
+Cheers,
+Andre
+
+>=20
+> Signed-off-by: Kry=C5=A1tof =C4=8Cern=C3=BD <cleverline1mc@gmail.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts=
+ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+> index 526443bb736c..609560a9d6dc 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+> @@ -157,6 +157,7 @@ &mmc2 {
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&mmc2_8bit_pins>;
+>  	vmmc-supply =3D <&reg_vcc3v3>;
+> +	vqmmc-supply =3D <&reg_vcc3v3>;
+>  	bus-width =3D <8>;
+>  	non-removable;
+>  	cap-mmc-hw-reset;
+>=20
+
 
