@@ -1,133 +1,207 @@
-Return-Path: <linux-kernel+bounces-314996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A3696BBE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F4596BBF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D6F288411
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6163D28646B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2061D88BB;
-	Wed,  4 Sep 2024 12:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3051D88B2;
+	Wed,  4 Sep 2024 12:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="fapWj3os"
-Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0ZBb7p5x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwciNKvW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0ZBb7p5x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwciNKvW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41031D4175;
-	Wed,  4 Sep 2024 12:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640731D04A1;
+	Wed,  4 Sep 2024 12:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452408; cv=none; b=prekScTBgCkhn8KQOZzGM84sJKI+XCbgUvzfboAtjMU0L5sb3GwfZ8nBjubaAI6og2uHkA85WM/r1FlG4tD00dtlh2vBHeaYxV/c7dQnuT0dTjTLei5maa9vhzlMRDNKcKpQHBfZxQ8OdmXgRYstouppi3pUsKDLJRBDJ2WLnqM=
+	t=1725452467; cv=none; b=lqeOM2op72WspNwO8QR6FTBKW364JGzUSx/bGSdavWZ75cO9K1Zhix/Nbq1sSRdDrS9krbGSQqbxGX77q/B9opGaQMTaFhf9Dt7m0IKYc571yhxMruN4UhFu6ihXP00BbIAUFjBveP1SWZmkGjh64guNP+3Tsi6bKUVl0Pm6EJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452408; c=relaxed/simple;
-	bh=BzSR+iF80WBX+uueKwT7tQdRcX9cS6wGP+R5wlC6WBI=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=oWFrtncrGCpQHkNrWvnJYQTd1HzOGawXo/1R5ofImvax2k6T4qCTURFsj7x8JBZQd25E4FUwSaKgTLplN5uB1Ypjx/MfpU/0NzuaC+7Z186Hr9W4B8urbh6L1QZqaJ+SaWQj/Gkc2w9w3ND5Uf4aFR1co8vJqK92Aq7C3Q1sFc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=fapWj3os; arc=none smtp.client-ip=203.205.221.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1725452396;
-	bh=mD6Sm4uUq8ujV/RDO5ndOtiCjedlBdoHLSnc4vE9J64=;
-	h=From:To:Cc:Subject:Date;
-	b=fapWj3osGaeAAuxVZqzmosZWl9pZ6YWpzDoTFV829xnvynRIJvW0y9DrrnZCfWu7P
-	 SYU18D+XMhV9oCErPrGKyJu95B1s5f9kKyb5qxguOBjq2tYvDBGMCKK6nC6dAX1MIz
-	 eM9mSpnM3qUNUdPK/NBIvPNoVgEgKHG1SGIS9e8w=
-Received: from localhost.localdomain ([114.246.200.160])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 4AB12AD4; Wed, 04 Sep 2024 20:18:43 +0800
-X-QQ-mid: xmsmtpt1725452323t1inlzbgz
-Message-ID: <tencent_DE4D2D0FE82F3CA9294AEEB3A949A44F6008@qq.com>
-X-QQ-XMAILINFO: MmpliBmRb3iCZG+tszeXk1rzRTEAY7Bed4qo4m+KlRYfIVoyBGpwOVX4mO77ZY
-	 b+Xqy7SLZGWfrwnRHtOZNdCwN0OniQ7xIFUh/h7DIjjwpabvomfISJlDDVQNTPZMEgs5X9jDXHVt
-	 EI6aJ0+4YZKMbbgGdZLsivYIdrX6Ntu+8P/CvzP+jBaUBDvJXQ6RbfvFbQuSFD5K5vztokPsFVvP
-	 rJx/qdevWPaI1vUP+yng0vTrlBElocp2DV3z/X3ur7ydURKBzJ2kyPsTX07Fn4Y6UmMi2Bo3scwg
-	 qoz/FupAX3gyrTLU7nfmAO+aqaZotXR8XUH0s3hv0dhPwm0vfvxMbDrEVPqZTsp9+NFSN5pDCJnR
-	 3fFSkfTi3nOaz3ovfcIrnFxXkEqsx0FQkgO4wCNSf48uT9Lel2SfYoo+3QYtnYBewEbzesiQxOVN
-	 VtY2RuwN4zCB/IqS7m5FFsWGTi7gC0OFydSJYTtxFuB2r0nC0ak9tVTG0TcEAzHI9vE9I2MIoG4k
-	 7jylnykNoETtb3+CTTCoQ6oeMkdb0WuqXpDefxtGJVbl6fCn915yRD1qYi52rsJYLRMNSr15L3/2
-	 /qS4sZ5a8X4HdrN0YhSCLrFakVTx9PkZp0Z/+i32jcy2p4eOMHKbCITYZaFg3b0ZL3SUXSJszdl9
-	 yJtMYM1jzGtNr2hnYTgvOFNbZc4AvB/IANS21jaYztmeeCizsRnel5+qSDayX/2HAHCFdSzZ/Wq4
-	 w3YCvqoEgYv1tc1vIaS+GAScGfAtixgoAToaMdNassMj3OBVNWq9h8IDspXkO/279ix7+zdDL443
-	 M4X2oCQvv35/uBifzzqsw3GadbkipXnQISvF+3fN1Iz3I6A8NvvNlDHN+2MGfSMrZbtbxAcce4dd
-	 WmNz9LbIGPB+rIbG02VImw0wrspwCZ7wuYbw+LU7ZTdk3n4KWjgTuKgN/R9QZ4gZFN2yF1XijfMK
-	 iDKB+CW4LYhfKP1VsnoDgJmhLJr45tN4wEm/Pc2lm7/+DdIbdmfmcU0HKwHOYcGQvGoNEDEWyKme
-	 Rs4Y83ST+9oJMc2RwDahIs3S/buMKkJXxGUTYMEalA8PGxdi27g9gagYQ6PS8=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Jiawei Ye <jiawei.ye@foxmail.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	fw@strlen.de
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: tproxy: Add RCU protection in nf_tproxy_laddr4
-Date: Wed,  4 Sep 2024 12:18:42 +0000
-X-OQ-MSGID: <20240904121842.981264-1-jiawei.ye@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725452467; c=relaxed/simple;
+	bh=NDYNJ/KgM0qeTrlQDy0Cx3aE6XyZXkZFt/vTpnjW4/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ex+Yy2SeYaCH9YuzFr/Y02FjAiPfSSvzGeaqhCq5SKyoA/5Pt9SjZzJuLnZ2/iWHCr4+jbyxWt84mqETQ8hg6V95zqJ34yTeBc3sh3d0me7Z1nME8IdCjd76oRxlKDCqWY7IStp8ziLqUYW0ym1G4/SUdwFCiBTUF5ywZrjc5EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0ZBb7p5x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwciNKvW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0ZBb7p5x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwciNKvW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 72AD81F38E;
+	Wed,  4 Sep 2024 12:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725452460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09Bue8XVCm3MvH12Oc04zMmBCuvjYSyE7C6A5k12jN8=;
+	b=0ZBb7p5xEq9VIhF6rgJ/Vm9WxZvy59M/8TCR41brajp9yAzyajvivk51Cg9EVaBD9sdo8w
+	LQTbRdXO/dSM3J7a3JLF8jX/jtSU9ZFAnlZqwFafL49KsoMKRFLXrdwaHvgM8Q0qa01rQz
+	dz2eGKMINKyu8mwxcm7Ez/pRFuAaaKg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725452460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09Bue8XVCm3MvH12Oc04zMmBCuvjYSyE7C6A5k12jN8=;
+	b=gwciNKvW5DDV0i6ug5x9pFEDpbbxLNfXENDJSQeuOgpt31weLCSnQfrfyJntPyIoPRHn8x
+	61Asd2Rw5JmcafBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725452460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09Bue8XVCm3MvH12Oc04zMmBCuvjYSyE7C6A5k12jN8=;
+	b=0ZBb7p5xEq9VIhF6rgJ/Vm9WxZvy59M/8TCR41brajp9yAzyajvivk51Cg9EVaBD9sdo8w
+	LQTbRdXO/dSM3J7a3JLF8jX/jtSU9ZFAnlZqwFafL49KsoMKRFLXrdwaHvgM8Q0qa01rQz
+	dz2eGKMINKyu8mwxcm7Ez/pRFuAaaKg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725452460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09Bue8XVCm3MvH12Oc04zMmBCuvjYSyE7C6A5k12jN8=;
+	b=gwciNKvW5DDV0i6ug5x9pFEDpbbxLNfXENDJSQeuOgpt31weLCSnQfrfyJntPyIoPRHn8x
+	61Asd2Rw5JmcafBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4B0B2139D2;
+	Wed,  4 Sep 2024 12:21:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QjJSEqxQ2GaJTQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Sep 2024 12:21:00 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C5B2AA0968; Wed,  4 Sep 2024 14:20:43 +0200 (CEST)
+Date: Wed, 4 Sep 2024 14:20:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+	paolo.valente@unimore.it, mauro.andreolini@unimore.it,
+	avanzini.arianna@gmail.com, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH for-6.12 3/4] block, bfq: don't break merge chain in
+ bfq_split_bfqq()
+Message-ID: <20240904122043.nyaouj7qt2fyp6xa@quack3>
+References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
+ <20240902130329.3787024-4-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902130329.3787024-4-yukuai1@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,kernel.org,toxicpanda.com,kernel.dk,unimore.it,gmail.com,vger.kernel.org,huawei.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-In the `nf_tproxy_laddr4` function, both the `__in_dev_get_rcu()` call
-and the `in_dev_for_each_ifa_rcu()` macro are used to access
-RCU-protected data structures. Previously, these accesses were not
-enclosed within an RCU read-side critical section, which violates RCU
-usage rules and can lead to race conditions, data inconsistencies, and
-memory corruption issues.
+On Mon 02-09-24 21:03:28, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Consider the following scenario:
+> 
+>     Process 1       Process 2       Process 3       Process 4
+>      (BIC1)          (BIC2)          (BIC3)          (BIC4)
+>       Λ               |               |                |
+>        \-------------\ \-------------\ \--------------\|
+>                       V               V                V
+>       bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
+> ref    0              1               2                4
+> 
+> If Process 1 issue a new IO and bfqq2 is found, and then bfq_init_rq()
+> decide to spilt bfqq2 by bfq_split_bfqq(). Howerver, procress reference
+> of bfqq2 is 1 and bfq_split_bfqq() just clear the coop flag, which will
+> break the merge chain.
+> 
+> Expected result: caller will allocate a new bfqq for BIC1
+> 
+>     Process 1       Process 2       Process 3       Process 4
+>      (BIC1)          (BIC2)          (BIC3)          (BIC4)
+>                       |               |                |
+>                        \-------------\ \--------------\|
+>                                       V                V
+>       bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
+> ref    0              0               1                3
+> 
+> Since the condition is only used for the last bfqq4 when the previous
+> bfqq2 and bfqq3 are already splited. Fix the problem by checking if
+> bfqq is the last one in the merge chain as well.
+> 
+> Fixes: 36eca8948323 ("block, bfq: add Early Queue Merge (EQM)")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-This possible bug was identified using a static analysis tool developed
-by myself, specifically designed to detect RCU-related issues.
+Looks good. Feel free to add:
 
-To address this, `rcu_read_lock()` and `rcu_read_unlock()` are added
-around the RCU-protected operations in the `nf_tproxy_laddr4` function by
-acquiring the RCU read lock before calling `__in_dev_get_rcu()` and
-iterating with `in_dev_for_each_ifa_rcu()`. This change prevents
-potential RCU issues and adheres to proper RCU usage patterns.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Fixes: b8d19572367b ("netfilter: use in_dev_for_each_ifa_rcu")
-Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
----
- net/ipv4/netfilter/nf_tproxy_ipv4.c | 3 +++
- 1 file changed, 3 insertions(+)
+								Honza
 
-diff --git a/net/ipv4/netfilter/nf_tproxy_ipv4.c b/net/ipv4/netfilter/nf_tproxy_ipv4.c
-index 73e66a088e25..51ff9c337e71 100644
---- a/net/ipv4/netfilter/nf_tproxy_ipv4.c
-+++ b/net/ipv4/netfilter/nf_tproxy_ipv4.c
-@@ -57,8 +57,10 @@ __be32 nf_tproxy_laddr4(struct sk_buff *skb, __be32 user_laddr, __be32 daddr)
- 		return user_laddr;
- 
- 	laddr = 0;
-+	rcu_read_lock();
- 	indev = __in_dev_get_rcu(skb->dev);
- 	if (!indev)
-+		rcu_read_unlock();
- 		return daddr;
- 
- 	in_dev_for_each_ifa_rcu(ifa, indev) {
-@@ -68,6 +70,7 @@ __be32 nf_tproxy_laddr4(struct sk_buff *skb, __be32 user_laddr, __be32 daddr)
- 		laddr = ifa->ifa_local;
- 		break;
- 	}
-+	rcu_read_unlock();
- 
- 	return laddr ? laddr : daddr;
- }
+> ---
+>  block/bfq-iosched.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index ffaa0d56328a..ca766b7d5560 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -6727,7 +6727,7 @@ bfq_split_bfqq(struct bfq_io_cq *bic, struct bfq_queue *bfqq)
+>  {
+>  	bfq_log_bfqq(bfqq->bfqd, bfqq, "splitting queue");
+>  
+> -	if (bfqq_process_refs(bfqq) == 1) {
+> +	if (bfqq_process_refs(bfqq) == 1 && !bfqq->new_bfqq) {
+>  		bfqq->pid = current->pid;
+>  		bfq_clear_bfqq_coop(bfqq);
+>  		bfq_clear_bfqq_split_coop(bfqq);
+> -- 
+> 2.39.2
+> 
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
