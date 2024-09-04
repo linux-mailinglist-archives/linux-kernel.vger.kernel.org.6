@@ -1,385 +1,110 @@
-Return-Path: <linux-kernel+bounces-314357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198C496B23A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F8496B241
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994C71F2378A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A796C1C21435
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 07:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FC21474A9;
-	Wed,  4 Sep 2024 06:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF4C146A6B;
+	Wed,  4 Sep 2024 07:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HoykKDGX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PlWhKMY+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A0414600D;
-	Wed,  4 Sep 2024 06:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14416A8D2;
+	Wed,  4 Sep 2024 07:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433175; cv=none; b=pg3A/cEWuVfyV7hd8qNp0uP11mwCNtQ4dj4mSXNXH1YOYcDAE81IOSCWEOX2oXP8mvvQb1YqfY0WTXAU/3Idqv90TZ2akGpMCykVch0n3S8PoAZf+2lg4C/FW1dOp1HX+hpvJP+GJos3K4kTYNlcBghgUSBPWhPh6JrL3J6VWNQ=
+	t=1725433215; cv=none; b=R6fw8hQd3G5TfQcAuucDjheDDnj4/0oWNhkksRO1/oFsO2JSQO5F7MW8gOHNGLduQVgaA22Fo9r7sFyGYa6CoHguD08SIS+7J72RDxfq9DTrbMqqsTYFKwT2xzOiVqVyLDykibSaabX78IXi/Zu83dRNNAHfzFbOkw83+hKQ+hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433175; c=relaxed/simple;
-	bh=8KArWYxDYUDJ4scCS2qRzkTqEjcZPhCddUDfLvip7hY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bDjGXoCJQN3FxC+uFq3946naS5An5ps7N9l1N4XIoI848g/Swf4iKn6EdQd8OCZvXNznEiXjXPlO/nzuFK2eARcfRz5ML5LC4VlvS2BSpG5s44rvCeKkKlX+4RnwqqRU+v2WR79SZ7412jeYTTNhbq1za6bS2LV3ZTmNi/gxHug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HoykKDGX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4843La36025328;
-	Wed, 4 Sep 2024 06:59:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=EHXEqHdLSqeJ3
-	iFQang+Q8/lNpfAThetnfJ7+gLtcks=; b=HoykKDGX+J8Q2s1uTMWJJSqCkie46
-	ki/v/NhDzytPM+qY83fh/VWgI6fFIuWyPu/srpP57TJ7Lt6HwTkm1F6SCPMiEXQ1
-	m2G2gOWfb4IXSIY4JN1DXsnMukBu+pGMYgnUyjMbQrKhxBx5a3bFceoK6lf7e1V6
-	EftS/BpXCVjPwNIil9DpHhAAOXeV+faUuqbXdXUNzBPa3g+vWJWmDhQcXlufnjam
-	vHyMY9rQOYK/bbva5C0dvijhKcs1+aMHrrb62yD+slqdE/uT+QaDKuS3+MWxYDE+
-	tW1lKQTwrmbt3oIIIbaPw3kc+PCWZIAKBcnv5SMUW35aHZVgfnMNnHLnA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41bttyhmd1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:24 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4844Klx0018726;
-	Wed, 4 Sep 2024 06:59:24 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cdw16kpw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 06:59:23 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4846xMui54133180
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Sep 2024 06:59:22 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC0B22004D;
-	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CBEA92004B;
-	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  4 Sep 2024 06:59:21 +0000 (GMT)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
-	id 7CA82E0297; Wed,  4 Sep 2024 08:59:21 +0200 (CEST)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: [PATCH 7/7] tracing: add arguments to function tracer
-Date: Wed,  4 Sep 2024 08:59:01 +0200
-Message-ID: <20240904065908.1009086-8-svens@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240904065908.1009086-1-svens@linux.ibm.com>
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
+	s=arc-20240116; t=1725433215; c=relaxed/simple;
+	bh=7MUwc0Qz0mHMQ92cWtSf9OiJINGcpduG0xrHBToFdFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXgTHf0lpgZZBdG9cI+Jqwe2+EP0HAXoOuy99mzFlUrdEMU/6wrYmwWS4K1JG1HL4v5eo4IWapPtzwvGP60gxbFzOSa5BZj8+Zq18qOKPCAMezKvaBuhIw6MuI8lEo2Owxc6h+bSDUGfnJeLJvHBkZUf498PqLLYIEhqh+6P62A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PlWhKMY+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D98DC4CEC3;
+	Wed,  4 Sep 2024 07:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725433214;
+	bh=7MUwc0Qz0mHMQ92cWtSf9OiJINGcpduG0xrHBToFdFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PlWhKMY+y29pV2JFKEgiVv1fRmL7I6BIjNLFtnSo2ClJ0W2PC5eXWq+p5L7yDGZIT
+	 OhDNggb/1Q05WL09OIpO1g7ARtP76HSjqwNDnUxCFgPmpqMFS4fzFExYxca7WjuNgX
+	 UH3925GZYmOyM1IvdnCT5ckT/X1CHXWU69nRBVoqpIanBc40kV0n/Th6+4Ig7chcX0
+	 qvr0//Ecmn7ubYaoH9FljyNg65Lv2egcv3EyOXMVlRUtZS3dbD/KEc3BPKJsdm0vD2
+	 VyPEqLFLcOd9ZMGQwZOvZjty2l3YVbCWqtGoIG6k6/3yTJkqGL2TbKNm4TBWrkcMLC
+	 FEUERxPzRF5KQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1slk0F-0000000012U-0M0T;
+	Wed, 04 Sep 2024 09:00:31 +0200
+Date: Wed, 4 Sep 2024 09:00:31 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	konradybcio@kernel.org
+Subject: Re: [PATCH V2 1/2] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+Message-ID: <ZtgFj1y5ggipgEOS@hovoldconsulting.com>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SpzfxvEkpsCFHkUWVBjuRX8ZF1AHDWdq
-X-Proofpoint-ORIG-GUID: SpzfxvEkpsCFHkUWVBjuRX8ZF1AHDWdq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_04,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- phishscore=0 spamscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409040049
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904031324.2901114-2-quic_sibis@quicinc.com>
 
-Wire up the code to print function arguments in the function tracer.
-This functionality can be enabled/disabled during compile time by
-setting CONFIG_FUNCTION_TRACE_ARGS and during runtime with
-options/func-args.
+On Wed, Sep 04, 2024 at 08:43:23AM +0530, Sibi Sankar wrote:
+> Currently the perf and powercap protocol relies on the protocol domain
+> attributes, which just ensures that one fastchannel per domain, before
+> instantiating fastchannels for all possible message-ids. Fix this by
+> ensuring that each message-id supports fastchannel before initialization.
 
-        ping-689     [004] b....    77.170220: dummy_xmit(skb = 0x82904800, dev = 0x882d0000) <-dev_hard_start_xmit
+Please include the warnings that I reported seeing on x1e80100 and that
+this patch suppresses to the commit message:
 
-Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
----
- kernel/trace/trace.c              |  8 +++++-
- kernel/trace/trace.h              |  4 ++-
- kernel/trace/trace_entries.h      |  7 +++--
- kernel/trace/trace_functions.c    | 46 +++++++++++++++++++++++++++----
- kernel/trace/trace_irqsoff.c      |  4 +--
- kernel/trace/trace_output.c       | 14 ++++++++--
- kernel/trace/trace_sched_wakeup.c |  4 +--
- 7 files changed, 71 insertions(+), 16 deletions(-)
+arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
+arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
+arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+ 
+> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ebe7ce2f5f4a..8118e4c8c649 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2864,7 +2864,7 @@ trace_buffer_unlock_commit_nostack(struct trace_buffer *buffer,
- 
- void
- trace_function(struct trace_array *tr, unsigned long ip, unsigned long
--	       parent_ip, unsigned int trace_ctx)
-+	       parent_ip, unsigned int trace_ctx, struct ftrace_regs *regs)
- {
- 	struct trace_event_call *call = &event_function;
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
-@@ -2878,6 +2878,12 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
- 	entry	= ring_buffer_event_data(event);
- 	entry->ip			= ip;
- 	entry->parent_ip		= parent_ip;
-+#ifdef CONFIG_FUNCTION_TRACE_ARGS
-+	if (regs)
-+		entry->regs		= *regs;
-+	else
-+		memset(&entry->regs, 0, sizeof(struct ftrace_regs));
-+#endif
- 
- 	if (!call_filter_check_discard(call, entry, buffer, event)) {
- 		if (static_branch_unlikely(&trace_function_exports_enabled))
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index bd3e3069300e..13cf6f97f7e0 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -673,7 +673,8 @@ unsigned long trace_total_entries(struct trace_array *tr);
- void trace_function(struct trace_array *tr,
- 		    unsigned long ip,
- 		    unsigned long parent_ip,
--		    unsigned int trace_ctx);
-+		    unsigned int trace_ctx,
-+		    struct ftrace_regs *regs);
- void trace_graph_function(struct trace_array *tr,
- 		    unsigned long ip,
- 		    unsigned long parent_ip,
-@@ -870,6 +871,7 @@ static __always_inline bool ftrace_hash_empty(struct ftrace_hash *hash)
- #define TRACE_GRAPH_GRAPH_TIME          0x400
- #define TRACE_GRAPH_PRINT_RETVAL        0x800
- #define TRACE_GRAPH_PRINT_RETVAL_HEX    0x1000
-+#define TRACE_GRAPH_ARGS		0x2000
- #define TRACE_GRAPH_PRINT_FILL_SHIFT	28
- #define TRACE_GRAPH_PRINT_FILL_MASK	(0x3 << TRACE_GRAPH_PRINT_FILL_SHIFT)
- 
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index c47422b20908..f2021ab52da2 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -61,8 +61,11 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
- 	TRACE_FN,
- 
- 	F_STRUCT(
--		__field_fn(	unsigned long,	ip		)
--		__field_fn(	unsigned long,	parent_ip	)
-+		__field_fn(	unsigned long,		ip		)
-+		__field_fn(	unsigned long,		parent_ip	)
-+#ifdef CONFIG_FUNCTION_TRACE_ARGS
-+		__field_struct( struct ftrace_regs,	regs		)
-+#endif
- 	),
- 
- 	F_printk(" %ps <-- %ps",
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 3b0cea37e029..7ff651a0b45a 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -25,6 +25,9 @@ static void
- function_trace_call(unsigned long ip, unsigned long parent_ip,
- 		    struct ftrace_ops *op, struct ftrace_regs *fregs);
- static void
-+function_args_trace_call(unsigned long ip, unsigned long parent_ip,
-+			 struct ftrace_ops *op, struct ftrace_regs *fregs);
-+static void
- function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 			  struct ftrace_ops *op, struct ftrace_regs *fregs);
- static void
-@@ -42,9 +45,10 @@ enum {
- 	TRACE_FUNC_NO_OPTS		= 0x0, /* No flags set. */
- 	TRACE_FUNC_OPT_STACK		= 0x1,
- 	TRACE_FUNC_OPT_NO_REPEATS	= 0x2,
-+	TRACE_FUNC_OPT_ARGS		= 0x4,
- 
- 	/* Update this to next highest bit. */
--	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x4
-+	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x8
- };
- 
- #define TRACE_FUNC_OPT_MASK	(TRACE_FUNC_OPT_HIGHEST_BIT - 1)
-@@ -114,6 +118,8 @@ static ftrace_func_t select_trace_function(u32 flags_val)
- 	switch (flags_val & TRACE_FUNC_OPT_MASK) {
- 	case TRACE_FUNC_NO_OPTS:
- 		return function_trace_call;
-+	case TRACE_FUNC_OPT_ARGS:
-+		return function_args_trace_call;
- 	case TRACE_FUNC_OPT_STACK:
- 		return function_stack_trace_call;
- 	case TRACE_FUNC_OPT_NO_REPEATS:
-@@ -198,7 +204,34 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 	cpu = smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	if (!atomic_read(&data->disabled))
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
-+
-+	ftrace_test_recursion_unlock(bit);
-+}
-+
-+static void
-+function_args_trace_call(unsigned long ip, unsigned long parent_ip,
-+			 struct ftrace_ops *op, struct ftrace_regs *fregs)
-+{
-+	struct trace_array *tr = op->private;
-+	struct trace_array_cpu *data;
-+	unsigned int trace_ctx;
-+	int bit;
-+	int cpu;
-+
-+	if (unlikely(!tr->function_enabled))
-+		return;
-+
-+	bit = ftrace_test_recursion_trylock(ip, parent_ip);
-+	if (bit < 0)
-+		return;
-+
-+	trace_ctx = tracing_gen_ctx();
-+
-+	cpu = smp_processor_id();
-+	data = per_cpu_ptr(tr->array_buffer.data, cpu);
-+	if (!atomic_read(&data->disabled))
-+		trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 
- 	ftrace_test_recursion_unlock(bit);
- }
-@@ -247,7 +280,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 
- 	if (likely(disabled == 1)) {
- 		trace_ctx = tracing_gen_ctx_flags(flags);
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- #ifdef CONFIG_UNWINDER_FRAME_POINTER
- 		if (ftrace_pids_enabled(op))
- 			skip++;
-@@ -329,7 +362,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	trace_ctx = tracing_gen_ctx_flags(flags);
- 	process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
- 
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- 
- out:
- 	ftrace_test_recursion_unlock(bit);
-@@ -368,7 +401,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 		trace_ctx = tracing_gen_ctx_flags(flags);
- 		process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
- 
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- 		__trace_stack(tr, trace_ctx, STACK_SKIP);
- 	}
- 
-@@ -382,6 +415,9 @@ static struct tracer_opt func_opts[] = {
- 	{ TRACER_OPT(func_stack_trace, TRACE_FUNC_OPT_STACK) },
- #endif
- 	{ TRACER_OPT(func-no-repeats, TRACE_FUNC_OPT_NO_REPEATS) },
-+#ifdef CONFIG_FUNCTION_TRACE_ARGS
-+	{ TRACER_OPT(func-args, TRACE_FUNC_OPT_ARGS) },
-+#endif
- 	{ } /* Always set a last empty entry */
- };
- 
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index fce064e20570..096002c99d70 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -150,7 +150,7 @@ irqsoff_tracer_call(unsigned long ip, unsigned long parent_ip,
- 
- 	trace_ctx = tracing_gen_ctx_flags(flags);
- 
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 
- 	atomic_dec(&data->disabled);
- }
-@@ -278,7 +278,7 @@ __trace_function(struct trace_array *tr,
- 	if (is_graph(tr))
- 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
- 	else
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- }
- 
- #else
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 70405c4cceb6..8fdee7b9cdba 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -1058,9 +1058,13 @@ enum print_line_t trace_nop_print(struct trace_iterator *iter, int flags,
- }
- 
- static void print_fn_trace(struct trace_seq *s, unsigned long ip,
--			   unsigned long parent_ip, int flags)
-+			   unsigned long parent_ip,
-+			   struct ftrace_regs *fregs,
-+			   int flags)
- {
- 	seq_print_ip_sym(s, ip, flags);
-+	if (fregs)
-+		print_function_args(s, fregs, ip);
- 
- 	if ((flags & TRACE_ITER_PRINT_PARENT) && parent_ip) {
- 		trace_seq_puts(s, " <-");
-@@ -1074,10 +1078,14 @@ static enum print_line_t trace_fn_trace(struct trace_iterator *iter, int flags,
- {
- 	struct ftrace_entry *field;
- 	struct trace_seq *s = &iter->seq;
-+	struct ftrace_regs *fregs = NULL;
- 
- 	trace_assign_type(field, iter->ent);
- 
--	print_fn_trace(s, field->ip, field->parent_ip, flags);
-+#if IS_ENABLED(CONFIG_FUNCTION_TRACE_ARGS)
-+	fregs = &field->regs;
-+#endif
-+	print_fn_trace(s, field->ip, field->parent_ip, fregs, flags);
- 	trace_seq_putc(s, '\n');
- 
- 	return trace_handle_return(s);
-@@ -1742,7 +1750,7 @@ trace_func_repeats_print(struct trace_iterator *iter, int flags,
- 
- 	trace_assign_type(field, iter->ent);
- 
--	print_fn_trace(s, field->ip, field->parent_ip, flags);
-+	print_fn_trace(s, field->ip, field->parent_ip, NULL, flags);
- 	trace_seq_printf(s, " (repeats: %u, last_ts:", field->count);
- 	trace_print_time(s, iter,
- 			 iter->ts - FUNC_REPEATS_GET_DELTA_TS(field));
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index 130ca7e7787e..39043c955761 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -224,7 +224,7 @@ wakeup_tracer_call(unsigned long ip, unsigned long parent_ip,
- 		return;
- 
- 	local_irq_save(flags);
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 	local_irq_restore(flags);
- 
- 	atomic_dec(&data->disabled);
-@@ -309,7 +309,7 @@ __trace_function(struct trace_array *tr,
- 	if (is_graph(tr))
- 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
- 	else
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- }
- 
- static int wakeup_flag_changed(struct trace_array *tr, u32 mask, int set)
--- 
-2.43.0
+And add:
 
+Reported-by: Johan Hovold <johan+linaro@kernel.org>
+Link: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+
+(or use Closes: if you prefer).
+
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+> 
+> v1:
+> * add missing MSG_SUPPORTS_FASTCHANNEL definition.
+
+Unfortunately, this patch breaks resume from suspend on the x1e80100 crd:
+
+        [   26.919676] CPU4: Booted secondary processor 0x0000010000 [0x511f0011]
+        [   26.960607] arm-scmi firmware:scmi: timed out in resp(caller: do_xfer+0x164/0x568)
+        [   26.987142] cpufreq: cpufreq_online: ->get() failed
+
+and then the machine hangs (mostly, I saw an nvme timeout message after a
+while).
+
+Make sure you test suspend as well as some of the warnings I reported
+only show up during suspend.
+
+Johan
 
