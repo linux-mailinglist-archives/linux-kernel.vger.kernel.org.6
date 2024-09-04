@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-315314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B44F96C0F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:42:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5709896C0FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC6E1C22177
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A481C2254A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860811DB55A;
-	Wed,  4 Sep 2024 14:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9808A1DB925;
+	Wed,  4 Sep 2024 14:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OV053TDa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="og6Bu/9Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE91DA103;
-	Wed,  4 Sep 2024 14:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23E85C96;
+	Wed,  4 Sep 2024 14:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460952; cv=none; b=ZBN8YI+/8SWE7gGOjvM46IDsP0g55ckaYcITNo4jCwM9ab9iqhCcqrF6sODoWuKMybalTcIfBhYh2iOAOKHO5pavbxY8lImDKKLPEf0Sf0UoAw5MJ69fQ52eJYQjVr/fyIZPjHxpkwOYB0Qekv/EUdWbcnvynS32nRmXrHcdPLQ=
+	t=1725461003; cv=none; b=Nvgl3aSAfz4YnqgBo7sHuI4xScw1ZW12463qUon14u9PGf3NO6IqYt7WMQfOZA0hSs7z5fgrlIBDgKub17JQIi6Z52hxVLFt2tmM6lIRSJOMJFylnplTRd4J2sCc38nNb5/OrFCuMhi6G+HCS/pSk+yfjsmu3j3LJeOyUYNo9Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460952; c=relaxed/simple;
-	bh=hhL0OtxX8wMZuIFOQHm658p4tDBq4xMRmY8AMIyD7wg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j2hm8fb7QGFalwVRhpYYewYqFU8eHOJTbUBhrJWP5EaUCov27+f/yXO20ByZIALIOVWHQTy3NhTdAi1QiogT7zLXRV4//QKC/eqo6hn8Ic54Zl7mV+fJnZ9ZA9D8/bu3YsCVRsa2Q5yDXB+v5Xr2IJei8tJUYxa9kKTPXQbbT+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OV053TDa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E78BC4CEC2;
-	Wed,  4 Sep 2024 14:42:31 +0000 (UTC)
+	s=arc-20240116; t=1725461003; c=relaxed/simple;
+	bh=ysrIaa54LXGyRQ0SCJqaqPXG/wL/56b1svoQ9zTZvwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tf6c76OyKWpCEJO25W67Y3Xrl7A7OZtmFSYjAP/ViGy02+l2zb0uElulBoMXFHfHH6qawj2DlL9cc20U8ybzq9+UBDIY8IYHl3ns+TvOtBY/7/TxwROeG4auutzrbgHaXrmqKCmmkMuwSRjObqh+tinHplpODt9Muf6ild2t62I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=og6Bu/9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5841C4CEC2;
+	Wed,  4 Sep 2024 14:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725460951;
-	bh=hhL0OtxX8wMZuIFOQHm658p4tDBq4xMRmY8AMIyD7wg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OV053TDaaSWJpZ6umPBa2hdXCkpR/mk0LVyP4Fy9JzNVM25zG98w3Sr3rPcwktoMO
-	 cw28jqIp6RG3Gc8Q2C+fS5vvkHsTVO98iFLhFNz0pFqrlFBRp1rlVfhtms7+usXUIg
-	 4x34UdI0fcDcWBYlRQSK0Jf/eIYVsnbFQFmFaH4cMPovgdHco2A6NFSZgwh8cWlrmN
-	 NZglhgEg5EGGLc00e+8YGmYrUoEs6N8RD4K6NZDPuNX1tzXutEYhsCnMa341Yz1cxi
-	 9mzAcWcTIQO/n4LcbMRjBLsGLIz2zNDC2wr1kvGRVt/14Q/hajy3Rq5DGHZt4rktu4
-	 VceRyUSgxgm0g==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5eec95a74so3847570eaf.1;
-        Wed, 04 Sep 2024 07:42:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXifQ/hf+m5167MAgoQePYWFSpqt1LBeFs6gKxWKIsShfjqaKZPqbiLrjPiYtvy/HWgJwdLPYJQGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlIuEshNF2lArBgxY+/AvESWULD3ZjiH2SKGpKewz9vvtusj+g
-	ggyKrqV7gdwOFv7HBzn8Z4CKO9diLLbZN//8PVHzVOU5NJO1xm7+32dpfy8195za+8+t96bxY7q
-	MA2BblVjkfRyl+xqEuPq/CsjKyic=
-X-Google-Smtp-Source: AGHT+IH759wCdEgJSA6uYS7z2vHPRICDwsG8IWP9sPxFNpKNilyJK6zWWKMhd2w/Onp+OzelvmHGlHrQm9SnJMk5NRE=
-X-Received: by 2002:a05:6820:1c9b:b0:5dc:cdf8:21c8 with SMTP id
- 006d021491bc7-5dfacfd626dmr19388712eaf.4.1725460950683; Wed, 04 Sep 2024
- 07:42:30 -0700 (PDT)
+	s=k20201202; t=1725461002;
+	bh=ysrIaa54LXGyRQ0SCJqaqPXG/wL/56b1svoQ9zTZvwI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=og6Bu/9QOcl2W3bniJfApqUSTx6DFe/oZoANDXrHF9Xd2/5tdinWY0pa2C/GWx4cj
+	 xBbaTHrDpDcvV3uKakxsSbcR8g9VN3JIKNSU92Uwnr/7depEttC94p7Ig8Lm3WAG8q
+	 6RmqVZXY1qKuziPnTB1qa5w+6OPMlGTzvO9sF1hkTmaVr7KYRo097faW7TPq9a5Rxb
+	 1Qmawq+a6s0n3+C6oDt8Ey/L1hEr9KOE3sWfOgusTfGONnLTAgxRVs3WkZSYTvN8y5
+	 jLMrT6gPPehqUF7gzzt9aAVFdujAZGT+CWU3Ah9VC26Ht9DOg8nmkgGdm/uqGCbAI0
+	 4cq9Vsm3fD7VA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Matt Gilbride <mattgilbride@google.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: avoid `box_uninit_write` feature
+Date: Wed,  4 Sep 2024 16:42:29 +0200
+Message-ID: <20240904144229.18592-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819154259.215504-1-axboe@kernel.dk> <20240904142841.GL4723@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240904142841.GL4723@noisy.programming.kicks-ass.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Sep 2024 16:42:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
-Message-ID: <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Peter Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, 
-	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 4:28=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Mon, Aug 19, 2024 at 09:39:45AM -0600, Jens Axboe wrote:
-> > Hi,
-> >
-> > This is v6 of the patchset where the current in_iowait state is split
-> > into two parts:
-> >
-> > 1) The "task is sleeping waiting on IO", and would like cpufreq goodnes=
-s
-> >    in terms of sleep and wakeup latencies.
-> > 2) The above, and also accounted as such in the iowait stats.
-> >
-> > The current ->in_iowait covers both, this series splits it into two typ=
-es
-> > of state so that each can be controlled seperately.
->
-> Yeah, but *WHY* !?!? I have some vague memories from last time around,
-> but patches should really keep this information.
->
-> > Patches 1..3 are prep patches, changing the type of
-> > task_struct->nr_iowait and adding helpers to manipulate the iowait coun=
-ts.
-> >
-> > Patch 4 does the actual splitting.
-> >
-> > This has been sitting for a while, would be nice to get this queued up
-> > for 6.12. Comments welcome!
->
-> Ufff, and all this because menu-governor does something insane :-(
->
-> Rafael, why can't we simply remove this from menu?
+Like commit 0903b9e2a46c ("rust: alloc: eschew
+`Box<MaybeUninit<T>>::write`"), but for the new `rbtree` and `alloc` code.
 
-Same reason as before: people use it and refuse to stop.
+That is, `feature(new_uninit)` [1] got partially stabilized [2]
+for Rust 1.82.0 (expected to be released on 2024-10-17), but it
+did not include `Box<MaybeUninit<T>>::write`, which got split into
+`feature(box_uninit_write)` [3].
 
-But this is mostly about the schedutil cpufreq governor that uses
-iowait boosting.
+To avoid relying on a new unstable feature, rewrite the `write` +
+`assume_init` pair manually.
+
+Link: https://github.com/rust-lang/rust/issues/63291 [1]
+Link: https://github.com/rust-lang/rust/pull/129401 [2]
+Link: https://github.com/rust-lang/rust/issues/129397 [3]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/kernel/alloc/box_ext.rs |  6 ++++--
+ rust/kernel/rbtree.rs        | 17 ++++++++---------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+index b68ade26a42d..5b1550d620fd 100644
+--- a/rust/kernel/alloc/box_ext.rs
++++ b/rust/kernel/alloc/box_ext.rs
+@@ -26,9 +26,11 @@ pub trait BoxExt<T>: Sized {
+     /// use kernel::alloc::{flags, box_ext::BoxExt};
+     /// let value = Box::new([0; 32], flags::GFP_KERNEL)?;
+     /// assert_eq!(*value, [0; 32]);
+-    /// let value = Box::drop_contents(value);
++    /// let mut value = Box::drop_contents(value);
+     /// // Now we can re-use `value`:
+-    /// let value = Box::write(value, [1; 32]);
++    /// value.write([1; 32]);
++    /// // SAFETY: We just wrote to it.
++    /// let value = unsafe { value.assume_init() };
+     /// assert_eq!(*value, [1; 32]);
+     /// # Ok::<(), Error>(())
+     /// ```
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index 48ceb9560bf5..25eb36fd1cdc 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -1059,15 +1059,14 @@ impl<K, V> RBTreeNodeReservation<K, V> {
+     /// Initialises a node reservation.
+     ///
+     /// It then becomes an [`RBTreeNode`] that can be inserted into a tree.
+-    pub fn into_node(self, key: K, value: V) -> RBTreeNode<K, V> {
+-        let node = Box::write(
+-            self.node,
+-            Node {
+-                key,
+-                value,
+-                links: bindings::rb_node::default(),
+-            },
+-        );
++    pub fn into_node(mut self, key: K, value: V) -> RBTreeNode<K, V> {
++        self.node.write(Node {
++            key,
++            value,
++            links: bindings::rb_node::default(),
++        });
++        // SAFETY: We just wrote to it.
++        let node = unsafe { self.node.assume_init() };
+         RBTreeNode { node }
+     }
+ }
+
+base-commit: 68d3b6aa08708bb3907c2c13eaf4b3ccf4805160
+-- 
+2.46.0
+
 
