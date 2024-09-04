@@ -1,116 +1,197 @@
-Return-Path: <linux-kernel+bounces-315187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774C696BEFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4B696BF04
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3481F271D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6121F2712F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78971D9335;
-	Wed,  4 Sep 2024 13:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764061DA108;
+	Wed,  4 Sep 2024 13:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="I930DrXP"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4OmrQLu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736BA4C96;
-	Wed,  4 Sep 2024 13:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A51EEE4;
+	Wed,  4 Sep 2024 13:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725457614; cv=none; b=uDEsN5zkzUXzcrTaJUW01B1vDrRud6b/7aViHo4k6F8Y7DcEe6A3RJDdWxiKc9BPS9RawLS2Z/gvQwiLg3FmXmavKwr0aSFA1arnWdfua8E6WXN8EcV2byS1V0Ha8UUJhHgINcfJhDCMVcx1FTIWswMxXfvSWU0Vbkatk9dmQDw=
+	t=1725457650; cv=none; b=dzpz51yPoZC3X51WhAGR5LtCKS/V6k+VlSaiimX3Ag5vj/GK32ahZFzyTA26JRtxAt0wyWpN4bXrQXbLQ0B7JLAZX4lBDbS6WN/unm3d8d5pL+BVUfkzfp7BuRtfhHTIEi5ImIqzuRf6Zv8jnmLoxQBNwa106fh/ZYxBQaTuN3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725457614; c=relaxed/simple;
-	bh=AjpnI5qp5wSl9R+DpXde2r7+CO38FpagY+Ve8gS9etk=;
-	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rUm9mLBD1GDSwdxnBOsdD97CI9lMXfn2mU1gtaKALDS0vMga1gSYJENJMVIw/mTTghVQjZ4QPPs5h9ApGj4f0F+P4w5cA22htU/a+qAaEhl33a95q9a8vT7MDrBZWSkxeaYyQaL2PBLnle14DwsBsJFzD2dQJ1h4PybtxuEjcew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=I930DrXP; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4844i0ic006144;
-	Wed, 4 Sep 2024 08:46:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=dL34FBVTjgHT8QW2Am75+/hWuPFunEOFpjLE1kFYkho=; b=
-	I930DrXPhgWl7p/EJGC4I/rz7cVBJ31Et1psAaSpqBIT58ILwtJX7NwSwo5EpVbQ
-	PSjarKBguzeMaSjVdB1/JBIn0kNoE5oJ5Ffu5J6OUNVlx3aFPDhm7WjpWf6gxtsG
-	A9OawqPgb5z8M1b8TRtOvqATXYzuLx4DJVbFndjOO27T8NyZvtFq/J4Wx5UqGJFu
-	2DgoHOSstXf4P3tJXgqz69qTLHzy/QSPIYD/N3+hbEhcSdCg8U/0ziBb8TT0oQY3
-	F+2dMggy5+L725z3V7O0v5Z/D1IXrq/DLd18245it0sf+B4VOHRHYBXrezKf+2SN
-	1J1nBbCYmmPDpl7c3bVOLw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 41bykkckyc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 08:46:32 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 14:46:30 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 4 Sep 2024 14:46:30 +0100
-Received: from EDIN6ZZ2FY3 (unknown [198.90.188.28])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 9E3E182024A;
-	Wed,  4 Sep 2024 13:46:30 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: 'Mark Brown' <broonie@kernel.org>
-CC: <tiwai@suse.com>, <linux-sound@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-References: <20240904120700.188644-1-simont@opensource.cirrus.com> <e1aeb66c-ecb3-4778-b306-f3a212caf879@sirena.org.uk>
-In-Reply-To: <e1aeb66c-ecb3-4778-b306-f3a212caf879@sirena.org.uk>
-Subject: RE: [PATCH] ASoC/HDA cs35l56: Remove redundant IRQ handling
-Date: Wed, 4 Sep 2024 14:46:30 +0100
-Message-ID: <004601dafed0$d8ff8cd0$8afea670$@opensource.cirrus.com>
+	s=arc-20240116; t=1725457650; c=relaxed/simple;
+	bh=1Cm5WztYIpFnLS6eIgGjNr9ik/LNax1LhuKH3YtfC70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQscFCpYIvkRnNJrU23r7fPDC+MCtUTRXxuqMIa6LUuGVGvgaohCLGY/Un8iGFNqKKK+IIeIikqof1glt5opDnFUvlbu3Bdj4Rd8xJJwd97wwxhRhREcYdQNiNpc+0RELxGXmjoamhsAHg8oYA/pvt2fwXuB1fvxfxPiiTNNKeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4OmrQLu; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725457650; x=1756993650;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1Cm5WztYIpFnLS6eIgGjNr9ik/LNax1LhuKH3YtfC70=;
+  b=U4OmrQLunMQPdJUrIVIBuWRzuEmNi711aUf8vXENF6oHGhlf+pcsmbYc
+   85CfI8qdqrWfbGbfxcoDng5XgwxTs4kmmaMgEiVh8uDKG6f3WcjDycOKx
+   Lmcp3sSJ8ttab6JDhH6U8ZhKDCCefuEKVJzVFXkjvQWHAwa2EqiCAbFJv
+   BoR9Rx3Ro5tUlOHIKkNzhjiUzm3gEyjMSu11vzIEaeEbZakISf35qCEjd
+   WFn3vByCzMnK3mdwrNs2TGxqWuUxK22LNZ/nS/HR6EaVYQEjRDHbUV+dB
+   1ubKK22C7JHddcy6O5J3BEDL+ZhJ94+8YvhEgTND96qDq7mlrf//++huL
+   Q==;
+X-CSE-ConnectionGUID: 0GuWNIniTtyE0jqPl238Pw==
+X-CSE-MsgGUID: Dzwq+E1FTRWHypP06PNIfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27908230"
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="27908230"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:47:29 -0700
+X-CSE-ConnectionGUID: AnPe26GcRkKYzlcvhNgOPA==
+X-CSE-MsgGUID: p869J8LsREyJ55Rt1L9mqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,202,1719903600"; 
+   d="scan'208";a="65315322"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:47:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slqLy-000000054xO-11w6;
+	Wed, 04 Sep 2024 16:47:22 +0300
+Date: Wed, 4 Sep 2024 16:47:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v6 08/12] i2c: Introduce OF component probe function
+Message-ID: <Zthk25W0zXcHWRdt@smile.fi.intel.com>
+References: <20240904090016.2841572-1-wenst@chromium.org>
+ <20240904090016.2841572-9-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-gb
-Thread-Index: AQKHzAIo361Zljfa9iRBQSN4dy/XOQEQvrcusOV2n+A=
-X-Proofpoint-GUID: T5wFkE1A2qVSP_Pao5lY3hzYA-hzzW2G
-X-Proofpoint-ORIG-GUID: T5wFkE1A2qVSP_Pao5lY3hzYA-hzzW2G
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904090016.2841572-9-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Sep 04, 2024 at 12:25:00PM +0000, Mark Brown wrote:
-> On Wed, Sep 04, 2024 at 12:07:00PM +0000, Simon Trimmer wrote:
-> > The IRQ handling in the cs35l56 driver was purely informational. It was
-> > not necessary to support the HDA or ASoC driver functionality and added
-> > unnecessary complexity to the drivers.
-> >
-> > As the IRQ signal GPIO line could be connected and shared with other
-> > components the handling is replaced with a regmap patch to ensure the
-> > cs35l56 IRQ sources are masked and will not generate interrupts that go
-> > unhandled.
+On Wed, Sep 04, 2024 at 05:00:10PM +0800, Chen-Yu Tsai wrote:
+> Some devices are designed and manufactured with some components having
+> multiple drop-in replacement options. These components are often
+> connected to the mainboard via ribbon cables, having the same signals
+> and pin assignments across all options. These may include the display
+> panel and touchscreen on laptops and tablets, and the trackpad on
+> laptops. Sometimes which component option is used in a particular device
+> can be detected by some firmware provided identifier, other times that
+> information is not available, and the kernel has to try to probe each
+> device.
 > 
-> Given that the code is there now and has been since the driver was
-> introduced about 18 months ago what's the ongoing cost of having it?
-> The information it's providing is notification of hardware faults,
-> reporting those does seem useful.
+> This change attempts to make the "probe each device" case cleaner. The
+> current approach is to have all options added and enabled in the device
+> tree. The kernel would then bind each device and run each driver's probe
+> function. This works, but has been broken before due to the introduction
+> of asynchronous probing, causing multiple instances requesting "shared"
+> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> time, with only one instance succeeding. Work arounds for these include
+> moving the pinmux to the parent I2C controller, using GPIO hogs or
+> pinmux settings to keep the GPIO pins in some fixed configuration, and
+> requesting the interrupt line very late. Such configurations can be seen
+> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> Lenovo Thinkpad 13S.
+> 
+> Instead of this delicate dance between drivers and device tree quirks,
+> this change introduces a simple I2C component probe. function For a
+> given class of devices on the same I2C bus, it will go through all of
+> them, doing a simple I2C read transfer and see which one of them responds.
+> It will then enable the device that responds.
+> 
+> This requires some minor modifications in the existing device tree. The
+> status for all the device nodes for the component options must be set
+> to "failed-needs-probe". This makes it clear that some mechanism is
+> needed to enable one of them, and also prevents the prober and device
+> drivers running at the same time.
 
-Originally we were expecting to use the IRQ mechanism for an event logging
-stream that would function in a similar manner to compressed streams to be
-able to get an information feed for debug and tuning tools, but those were
-never created and the logging infrastructure not implemented.
+...
 
-It's quite a spread of code and a lot of complexity in the regular execution
-paths managing them / synchronizing the contexts, there is more going on in
-the SoundWire bus variant compared to the conventional i2c/spi that it is
-hard to justify maintaining it all for a couple of log messages - in the
-event that someone did encounter the two situations being reported the
-regmap dump would point us to the cause pretty quickly.
+> +int i2c_of_probe_component(struct device *dev, const char *type)
+> +{
+> +	struct i2c_adapter *i2c;
+> +	int ret;
+> +
+> +	struct device_node *i2c_node __free(device_node) = i2c_of_probe_get_i2c_node(dev, type);
+> +	if (IS_ERR(i2c_node))
+> +		return PTR_ERR(i2c_node);
 
--Simon
+> +	for_each_child_of_node_scoped(i2c_node, node) {
+
+Hmm, but can it be for_each_child_of_node_with_prefix_scoped() now?
+
+> +		if (!of_node_name_prefix(node, type))
+> +			continue;
+> +		if (!of_device_is_available(node))
+> +			continue;
+> +
+> +		/*
+> +		 * Device tree has component already enabled. Either the
+> +		 * device tree isn't supported or we already probed once.
+> +		 */
+> +		return 0;
+> +	}
+> +
+> +	i2c = of_get_i2c_adapter_by_node(i2c_node);
+> +	if (!i2c)
+> +		return dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I2C adapter\n");
+> +
+> +	ret = 0;
+> +	for_each_child_of_node_scoped(i2c_node, node) {
+
+Ditto.
+
+> +		union i2c_smbus_data data;
+> +		u32 addr;
+> +
+> +		if (!of_node_name_prefix(node, type))
+> +			continue;
+> +		if (of_property_read_u32(node, "reg", &addr))
+> +			continue;
+> +		if (i2c_smbus_xfer(i2c, addr, 0, I2C_SMBUS_READ, 0, I2C_SMBUS_BYTE, &data) < 0)
+> +			continue;
+> +
+> +		/* Found a device that is responding */
+> +		ret = i2c_of_probe_enable_node(dev, node);
+> +		break;
+> +	}
+> +
+> +	i2c_put_adapter(i2c);
+> +
+> +	return ret;
+> +}
+
+...
+
+> +EXPORT_SYMBOL_GPL(i2c_of_probe_component);
+
+Wonder if we may already use namespaced export from day 1.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
