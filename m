@@ -1,164 +1,188 @@
-Return-Path: <linux-kernel+bounces-315068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BC096BD7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42A396BD84
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3171E1F212F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:00:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CE21C24F68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CEF1DA301;
-	Wed,  4 Sep 2024 12:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E701CC8A2;
+	Wed,  4 Sep 2024 13:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="sqJ0eBES"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8246D1DA0E6;
-	Wed,  4 Sep 2024 12:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454798; cv=none; b=mKJbn4Y04Z+kUoQR63A5szjWwm4cL8CWTia25GYtJXBbiwX3286HJopwiMVpUHjAvtz5bBtD0Ge52CmhwOWU8JG3rKgYncJCVLWRBRsx6XHw5HPGCYFri2HhxN1v0aNOKlrH9MaQl2mq5mtZqY1WZcnQ5iTjS7jns1c3omQVGm4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454798; c=relaxed/simple;
-	bh=UApVNWrRY9AAnXV+XoL9iKaOPQDnurammK0XV70bfJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nkSQMCH00z1b9/kwia81RAqLCZmz7MPtwB9E5mlImFZFwCzCy4/kGoYHph/C9CDoc8gbynxjzeRxTJREYT6aqL7iptIdH0FZs3+NrgctB6GITS6WVXFiDWolxZ5s13F8whRztGTjlzKJ0YlgATVMpTKh4oTkcBF43SI9ukzhXrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=sqJ0eBES; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from cap.home.8bytes.org (p4ffe1f47.dip0.t-ipconnect.de [79.254.31.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4XpwumY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 390CC2886F9;
-	Wed,  4 Sep 2024 14:59:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1725454795;
-	bh=UApVNWrRY9AAnXV+XoL9iKaOPQDnurammK0XV70bfJk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sqJ0eBES7LSguNd8Z1DQlCQWehki/caf388QA2Tb3Zp5vGiPzz8psSPuf4owycevq
-	 GKk6xdXcoDxqsaJM3ao5WkfIPeIQ/+xbW0cnoC6QVKp1nJpZJxy0NmimnVsIovbLX/
-	 MKshaNxbZH8nIA9b6qa9tbuarKceWdWOz6By8fWpogJRRl/4EpDoNhH1wyk/LTn0uP
-	 PnoMV3apyP0vQqcS7/qphsidK5UPraqmy3E18NAptZp0DCNqiTLzEAqscAB+Lg2Cxr
-	 +IbRMOEs4RPWyoKHLmJNM62N1xdFVz1x9CWWTuPTW1MWCsbWPydeQFWnMmwDhM57jx
-	 w3ie9No63Fc0w==
-From: Joerg Roedel <joro@8bytes.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Vasant Hegde <vasant.hegde@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	linux-doc@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH] iommu/amd: Add parameter to limit V1 page-sizes to 4 KiB
-Date: Wed,  4 Sep 2024 14:59:46 +0200
-Message-ID: <20240904125946.4677-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F381D0491;
+	Wed,  4 Sep 2024 13:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725454902; cv=none; b=mL0LnuESfhjsZfzr5Pnd/CPjGfbaPSlHq1iQfSdjEspMggWcd+dDp52NlSoj3L522sAEBw4HYUcTlRFf56TlH1YAbRrK/4SAKskAs1Y3QSKRBCkr9Kk8Iip4BnAed8wba3IozBv/6e8NTS16Q922SSZ84lU+X/TZfToZmD4CyjE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725454902; c=relaxed/simple;
+	bh=6Kw6B3185mdUtc47auQpHWY0ReGfCqoefhPtw0as7VY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4RcAeVMw8NiBvQNzfwLTBfthf41+TQxJRekPcrv55Yd9mN/ijouNEc33ECZQEe3f1I4iBDkLQCuZD1CTRu9c45iNhUEexd198shqDABIuktMZ2IyTq+IzAWM0NemJeslOntHiIWECDiKS/+zwBP68GFIQ9J/wTd0n0wzBUjaTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4XpwumY; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725454901; x=1756990901;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6Kw6B3185mdUtc47auQpHWY0ReGfCqoefhPtw0as7VY=;
+  b=B4XpwumYDwR0jjGaaENm24F7X3p4EIefa4XPryHzw3ZYvCZ8oOUBbrFf
+   vx1lri9KyYADUqttSypYEgQ4UPkQqJOa8X7ufGiCo7BfiNVGEB6Y4uIQN
+   1ZFgbRt5UtUz8i+4DpQuo1R/S+5SNLzcP7OJvl9CuU6H58CGjSoeN5sof
+   YtaIGZs0axcjxjoPQuZ2r9US/QAVneSx31QBzt877b2iuJxXzbQtwJenG
+   0kRCKIPw+/ozKhwFXWSpnUcebYQg+MoCR5pUyAfEBmBLh04VIDqPEhSsQ
+   /EIcKLEcGccs4Z3dZqIF+F/f12TP1byaOX6/RfYkuJ5AVyhU139s1H7c2
+   g==;
+X-CSE-ConnectionGUID: uyaKw6Q2QtORT7ikjRCQJw==
+X-CSE-MsgGUID: 059JZ4ohQ5GE3NDm4UUkLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34713859"
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="34713859"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:01:40 -0700
+X-CSE-ConnectionGUID: zt+H+du4TBWU8QDtHMqVYQ==
+X-CSE-MsgGUID: jdxwf08QTkW9tnDCY81T8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
+   d="scan'208";a="95996608"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 06:01:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slpd3-000000054Ce-3bap;
+	Wed, 04 Sep 2024 16:00:57 +0300
+Date: Wed, 4 Sep 2024 16:00:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v4 06/18] drm/bridge: aux-hpd: Support USB Type-C DP
+ altmodes via DRM lane assignment
+Message-ID: <ZthaCQel2aHhyIu4@smile.fi.intel.com>
+References: <20240901040658.157425-1-swboyd@chromium.org>
+ <20240901040658.157425-7-swboyd@chromium.org>
+ <ZtWjEudmlR51zkU9@smile.fi.intel.com>
+ <CAE-0n51eSxxvnJXwnfPrXx1=rei=8OGGEtCAgw6nhCktZ0iQDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-0n51eSxxvnJXwnfPrXx1=rei=8OGGEtCAgw6nhCktZ0iQDw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Joerg Roedel <jroedel@suse.de>
+On Tue, Sep 03, 2024 at 06:20:14PM -0400, Stephen Boyd wrote:
+> Quoting Andy Shevchenko (2024-09-02 04:35:46)
+> > On Sat, Aug 31, 2024 at 09:06:44PM -0700, Stephen Boyd wrote:
 
-Add the 'pgsize_4k' as a valid value to the amd_iommu= command line
-parameter to limit the page-sizes used for V1 page-tables for 4 KiB.
-This is needed to make some devices working when attached to an AMD
-SEV-SNP virtual machine.
+> > > Extend the aux-hpd bridge driver to support assigning DP lanes to USB
+> > > type-c pins based on typec mux state entry. Existing users of this
+> > > driver only need the HPD signaling support, so leave that in place and
+> > > wrap the code with a variant that supports more features of USB type-c
+> >
+> > Isn't the proper spelling "USB Type-C"?
+> 
+> Perhaps in a title?
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- Documentation/admin-guide/kernel-parameters.txt | 2 ++
- drivers/iommu/amd/amd_iommu.h                   | 1 +
- drivers/iommu/amd/amd_iommu_types.h             | 4 ++++
- drivers/iommu/amd/init.c                        | 5 +++++
- drivers/iommu/amd/io_pgtable.c                  | 2 +-
- 5 files changed, 13 insertions(+), 1 deletion(-)
+I am talking about the commit message :-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..3187976ae052 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -339,6 +339,8 @@
- 			pgtbl_v1     - Use v1 page table for DMA-API (Default).
- 			pgtbl_v2     - Use v2 page table for DMA-API.
- 			irtcachedis  - Disable Interrupt Remapping Table (IRT) caching.
-+			pgsize_4k    - Limit the available page-sizes for v1 page-tables
-+				       to 4 KiB.
- 
- 	amd_iommu_dump=	[HW,X86-64]
- 			Enable AMD IOMMU driver option to dump the ACPI table
-diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
-index 29e6e71f7f9a..6386fa4556d9 100644
---- a/drivers/iommu/amd/amd_iommu.h
-+++ b/drivers/iommu/amd/amd_iommu.h
-@@ -43,6 +43,7 @@ int amd_iommu_enable_faulting(unsigned int cpu);
- extern int amd_iommu_guest_ir;
- extern enum io_pgtable_fmt amd_iommu_pgtable;
- extern int amd_iommu_gpt_level;
-+extern unsigned long amd_iommu_pgsize_bitmap;
- 
- /* Protection domain ops */
- struct protection_domain *protection_domain_alloc(unsigned int type, int nid);
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 35aa4ff020f5..601fb4ee6900 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -293,6 +293,10 @@
-  * Page sizes >= the 52 bit max physical address of the CPU are not supported.
-  */
- #define AMD_IOMMU_PGSIZES	(GENMASK_ULL(51, 12) ^ SZ_512G)
-+
-+/* Special mode where page-sizes are limited to 4 KiB */
-+#define AMD_IOMMU_PGSIZES_4K	(PAGE_SIZE)
-+
- /* 4K, 2MB, 1G page sizes are supported */
- #define AMD_IOMMU_PGSIZES_V2	(PAGE_SIZE | (1ULL << 21) | (1ULL << 30))
- 
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index 6b15ce09e78d..63439f8f0a72 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -192,6 +192,8 @@ bool amdr_ivrs_remap_support __read_mostly;
- 
- bool amd_iommu_force_isolation __read_mostly;
- 
-+unsigned long amd_iommu_pgsize_bitmap __ro_after_init = AMD_IOMMU_PGSIZES;
-+
- /*
-  * AMD IOMMU allows up to 2^16 different protection domains. This is a bitmap
-  * to know which ones are already in use.
-@@ -3492,6 +3494,9 @@ static int __init parse_amd_iommu_options(char *str)
- 			amd_iommu_pgtable = AMD_IOMMU_V2;
- 		} else if (strncmp(str, "irtcachedis", 11) == 0) {
- 			amd_iommu_irtcachedis = true;
-+		} else if (strncmp(str, "pgsize_4k", 9) == 0) {
-+			pr_info("Restricting V1 page-sizes to 4KiB");
-+			amd_iommu_pgsize_bitmap = AMD_IOMMU_PGSIZES_4K;
- 		} else {
- 			pr_notice("Unknown option - '%s'\n", str);
- 		}
-diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-index 14f62c420e4a..804b788f3f16 100644
---- a/drivers/iommu/amd/io_pgtable.c
-+++ b/drivers/iommu/amd/io_pgtable.c
-@@ -548,7 +548,7 @@ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
- 		return NULL;
- 	pgtable->mode = PAGE_MODE_3_LEVEL;
- 
--	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES;
-+	cfg->pgsize_bitmap  = amd_iommu_pgsize_bitmap;
- 	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE;
- 	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE;
- 
+> > > DP altmode, i.e. pin configurations. Prefix that code with
+> > > 'drm_dp_typec_bridge' to differentiate it from the existing
+> > > 'drm_aux_hpd_bridge' code.
+> > >
+> > > Parse the struct typec_mux_state members to determine if DP altmode has
+> > > been entered and if HPD is asserted or not. Signal HPD to the drm bridge
+> > > chain when HPD is asserted. Similarly, parse the pin assignment and map
+> > > the DP lanes to the usb-c output lanes, taking into account any lane
+> > > remapping from the data-lanes endpoint property. Pass that lane mapping
+> > > to the previous drm_bridge in the bridge chain during the atomic check
+> > > phase.
+
+...
+
+> > > +     adev->dev.of_node = of_node_get(parent->of_node);
+> >
+> > device_set_node() ?
+> 
+> Or device_set_of_node_from_dev()?
+
+This is quite unclear to me. The second one bumps the reference count IIRC
+for no reason (in usual cases). Also only few drivers use that, I would hear
+what OF people can tell about this API and its usage scope.
+
+...
+
+> > > +static int dp_lane_to_typec_lane(enum dp_lane lane)
+> > > +{
+> > > +     switch (lane) {
+> > > +     case DP_ML0:
+> > > +             return USB_SSTX2;
+> > > +     case DP_ML1:
+> > > +             return USB_SSRX2;
+> > > +     case DP_ML2:
+> > > +             return USB_SSTX1;
+> > > +     case DP_ML3:
+> > > +             return USB_SSRX1;
+> > > +     }
+> >
+> > > +     return -EINVAL;
+> >
+> > Hmm... This can be simply made as default case.
+> 
+> And then the enum is always "covered" and the compiler doesn't complain
+> about missing cases (I don't think we have -Wswitch-enum)? Seems worse.
+
+Hmm... You mean if I remove one of the above cases I will get the warning?
+
+> > > +}
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
