@@ -1,218 +1,136 @@
-Return-Path: <linux-kernel+bounces-315684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81AB96C5C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:51:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9E596C5C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D131C2150F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F611F280BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435211D6790;
-	Wed,  4 Sep 2024 17:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3FC1E1339;
+	Wed,  4 Sep 2024 17:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OEvgEQaI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnwLu/pY"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9CD4778C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 17:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DF44778C;
+	Wed,  4 Sep 2024 17:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725472275; cv=none; b=a2OmhAAmKqFajWrIQALfl1tRaH+HK5QwusvBx7bGzoBzouG3sPsj/2ZZ3Y+5w5GVdy/vsSvv/NaYDaY90rWgS2ToWcFa9Qv60aQrtIcNr5gmXXJT3kLmqcflB+UnocRLwF2abhXl9qJEG0TCpcV7JyjW6QCfiu4SdQNzbd/D5nQ=
+	t=1725472327; cv=none; b=mi+WI8xV9qXG3rfxc6wh3PU7pO1sEcm44KrPtIS7sxqsT7QeCD9dzGvUOdWhf1C1t6oU187o53beb5x18bVWKLs1NGxMhjsPrgmDbJihAXWkx7ZA9kygI4gML2oa2liUFsh4dwD/sitwdxfdc8vL1IkeLL7QpYqpx+CKcucJ298=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725472275; c=relaxed/simple;
-	bh=LGQLyd/+Aw5K1p8dY58/6VCzzrzjIX7s8gz3pCMOVjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ez5+u6eHrQXQahHVKJGWb/dxy1MyhDpIRJ4aRNLIJdMMCnASyfHdPGdZp5LOXqyyLI55uz50kRh93MD/gOmhfkwJxd2k8E0qX3VpN8Ay+npYKWvqQ2MvzuS5dcWzTwNrRP6NW7xyzA4s8P8ug7BdeHZW1dDz8EojH1q51nrgHvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OEvgEQaI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725472272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ftdH73Ix9wDNM7yMKsfpwwMJeknPg5Z/1RRp5Jzhr1s=;
-	b=OEvgEQaI3DF8DA8YXjw0TrKZfVxZgtdy9A58yGsgUh1i00rmArPngKXbxas6V6Zs/THTi0
-	vuRUtey2bPwX3BcJJ0aSzY7LTGOcYko0wU/mGCq7KSJ5PLuB7nYpFW2ntc5RQlgMa7GB4M
-	NwA10wS++uRVKWYZYUuz/sloTN4DNHI=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-48-byN5U8hdNJWXhUL18WVztQ-1; Wed, 04 Sep 2024 13:51:11 -0400
-X-MC-Unique: byN5U8hdNJWXhUL18WVztQ-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c24f1e3933so3358625a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 10:51:11 -0700 (PDT)
+	s=arc-20240116; t=1725472327; c=relaxed/simple;
+	bh=YGPraftcRKoUXwmDO7A034tijjCaw06B+EsJ6AUIBNc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l68nOILYDwns1AYWCqhq7UdG5UN9zfZvgkL4tBnnrh093rFCRcOd25ZmILExC01FZXqtddoogoN8xEu+y33f0OoVm3VqWZYLLt33Oz3dIs9KdjuJnwqj6W80wosssITx7R1lIfNCtQU/Qy8aBqFhQpNTo+tBUUGEjm79FXqUK9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnwLu/pY; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f6514f23b6so21466111fa.1;
+        Wed, 04 Sep 2024 10:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725472324; x=1726077124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=InAq5n71slwXeqxP3KBnSK24bt4N3NVLz7CRiZbko1k=;
+        b=LnwLu/pYC/IBp/F4ARkkrD7AI5X4p8acckdpL+taZZ2OYhC/t8g9+ohBqX8PVkSw8s
+         IdzOQF9MplhN/Qfcdz89g6neY8Oe5OzHkz4OXdLzUi9Yg/4bPoIcHwEkQNoDyr794cuP
+         e977JSV6GWrMzsyTPcQVXJ2ScULhIhyzBsl3M6qbdaXaNIXf3chYPAdDfdg3Vdoemx2a
+         VI9QF/xP2Lj4YB03u2z4VYypceBMKTrSeB7wT4kHv4TPSav3zwIlLHeVV7PJs/Vj0SSG
+         U354En+con0OwYDiScpKgIo3lUmEwvWfJFoWsb4AqofA2m7dgKiyAugy7er4MsiUeFxJ
+         /fYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725472270; x=1726077070;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ftdH73Ix9wDNM7yMKsfpwwMJeknPg5Z/1RRp5Jzhr1s=;
-        b=NMkBgm4ZX0tfcEjl+2IhOYwiYDcudxGWNGo4EyzMw6n+Nv5PtyaBc9VW8gfZxjs2tQ
-         LHpH/3E9tAQWxEerM1bbCucm4lKwaT4PeKboFaldMIzMAg+25PUSAQ7XicZN2Y9OQgQv
-         zn9LOkDmBdfmpEB3dQyMp/xeKhtUZux7eSSXxp7KF6m08n/R1h3dgYEERCHHS4Sn8weG
-         BwVK81MD4f/D6+qmh6ItPk8rpGlkd8m4GvsLEvjV4T19B8jxrPiaro0FTynf88KDcu4g
-         2IqsqVgi43jxG62QgfV7GKpyUjwaaaXuNjBwG5A7eZ4Bou4sHoTHNtEGiagGF0AnKKf7
-         HaDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2WX5ojNQUVup5HqD/Ms/2ScuANR7E1Tok2JzrP2GdfwbXq6nTtzBsNXZADuAV28nRUsDziHH4PnKyyZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuiK3k4PUIHMcs5HXXmsoMcskdIJV6JS321pwTrWyvjAUJmjLm
-	L4Ait4E69dfX90f258AZ5s5qlJgLxmPC8yRpEO2AfIvb18RL/ekPpvsFLTYHjP8/k9gPNVcduao
-	rvmR0MGOyoO8/hx2aoei/153gLa3zWon0jtzImiGeu92PxoIkxKzpoaMONLOghw==
-X-Received: by 2002:a17:906:db06:b0:a86:a481:248c with SMTP id a640c23a62f3a-a89a35a0a09mr1267444666b.19.1725472270276;
-        Wed, 04 Sep 2024 10:51:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFB8IC0UdlIJ+hJ0d9y5+/CBU4kSUxb8RZ30hHavApi1zOjLggaKC+EPD9xD4iWA/K0Gqc1Cg==
-X-Received: by 2002:a17:906:db06:b0:a86:a481:248c with SMTP id a640c23a62f3a-a89a35a0a09mr1267442366b.19.1725472269741;
-        Wed, 04 Sep 2024 10:51:09 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d26esm18871966b.140.2024.09.04.10.51.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 10:51:09 -0700 (PDT)
-Message-ID: <d45d47dd-8a8c-4a70-a65b-eeb7bd815f8c@redhat.com>
-Date: Wed, 4 Sep 2024 19:51:08 +0200
+        d=1e100.net; s=20230601; t=1725472324; x=1726077124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=InAq5n71slwXeqxP3KBnSK24bt4N3NVLz7CRiZbko1k=;
+        b=E16uHXK5uqO70jE6EQar9tXgZJbOzz1UTky+87oIEuhqTWxIXyYY1ly29rTg1XH8Ri
+         GcInfqBZI7mJxK+i9HfTH1klF/PsOx3rzY4bWJvMGyMFgwGPiRlEluGhNJOLdbxF0sK1
+         t7lW0UV/C8OA5L0E7kczv5wVN5fRDlY5J02hKX8WRB5Stk48V8kZyhprTf/XjaMxul4U
+         DBELJXYzodI38UN6xSPWBrljGmQN5LflbKBd0TlETZnK9dGBSxmNEEiFyNIgbf648m0G
+         PSlvSRz2j2qOEoAdHU8ewpdY10gFRsrkP9Og8rS0XGC7LGCV45He0N2/LloPYhk71Ugh
+         rYew==
+X-Forwarded-Encrypted: i=1; AJvYcCVfQzW0BVo1YGMbWJClSgTMoDpmD7rKteIN4819tl+B2DW3CdS967eYOBpExiOD/HlUcOMr@vger.kernel.org, AJvYcCXMizdmoeqq5Dtnns4BGr7+LCLAhE3cuat1oH+SZZSelyJHIUUKulYChr7RDv9zmOd6t0EZZn/vIbK2Oug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCxFnSHM3lu+qaUiel0/sfPxeOhHzskGITIlOnvMqtEGMCHQ8D
+	yq1c2r3uUTTnsaRk3zSYwQzLtVDcY63DJFtAkCXZWXwG4EjiCYhE
+X-Google-Smtp-Source: AGHT+IEwEkiLdnz1yLd7itMz4Si8sdSPOfOM39CzoEUEW1cu0bt+uqw3ZVzS1TrU0yY4BbQVSu4LLw==
+X-Received: by 2002:a05:6512:1048:b0:530:da96:a990 with SMTP id 2adb3069b0e04-53546b5988fmr15139183e87.32.1725472323930;
+        Wed, 04 Sep 2024 10:52:03 -0700 (PDT)
+Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084dfc3sm2416779e87.269.2024.09.04.10.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 10:52:03 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 4 Sep 2024 19:52:00 +0200
+To: Xingyu Li <xli399@ucr.edu>
+Cc: Uladzislau Rezki <urezki@gmail.com>, paulmck@kernel.org,
+	frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: WARNING in kvfree_rcu_bulk
+Message-ID: <ZtieQFsSiALVVGld@pc636>
+References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
+ <ZtAunXBPC4WElcez@pc636>
+ <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] Documentation: admin-guide: pm: Add efficiency vs.
- latency tradeoff to uncore documentation
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Tero Kristo <tero.kristo@linux.intel.com>
-Cc: srinivas.pandruvada@linux.intel.com, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240828153657.1296410-1-tero.kristo@linux.intel.com>
- <20240828153657.1296410-2-tero.kristo@linux.intel.com>
- <d4939d77-8fab-f4b6-f1f7-4af05951d3eb@linux.intel.com>
- <e1d7028e69cb226acf30ed5c316e5fea20546bc4.camel@linux.intel.com>
- <71e6475c99e193c4ae6e5d45b72b528cdf5f3f62.camel@linux.intel.com>
- <858a908e-8218-3925-ea06-f3da256110e9@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <858a908e-8218-3925-ea06-f3da256110e9@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
 
-Hi,
+Hello!
 
-On 8/30/24 12:12 PM, Ilpo Järvinen wrote:
-> On Fri, 30 Aug 2024, Tero Kristo wrote:
+>
+> Here is the config file:
+> https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
 > 
->>    1. On Thu, 2024-08-29 at 14:39 +0300, Tero Kristo wrote:
->>> On Thu, 2024-08-29 at 12:18 +0300, Ilpo Järvinen wrote:
->>>> On Wed, 28 Aug 2024, Tero Kristo wrote:
->>>>
->>>>> Added documentation about the functionality of efficiency vs.
->>>>> latency tradeoff
->>>>> control in intel Xeon processors, and how this is configured via
->>>>> sysfs.
->>>>>
->>>>> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
->>>>> ---
->>>>> v2:
->>>>>   * Largely re-wrote the documentation
->>>>>
->>>>>  .../pm/intel_uncore_frequency_scaling.rst     | 59
->>>>> +++++++++++++++++++
->>>>>  1 file changed, 59 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/admin-
->>>>> guide/pm/intel_uncore_frequency_scaling.rst
->>>>> b/Documentation/admin-
->>>>> guide/pm/intel_uncore_frequency_scaling.rst
->>>>> index 5ab3440e6cee..26ded32b06f5 100644
->>>>> --- a/Documentation/admin-
->>>>> guide/pm/intel_uncore_frequency_scaling.rst
->>>>> +++ b/Documentation/admin-
->>>>> guide/pm/intel_uncore_frequency_scaling.rst
->>>>> @@ -113,3 +113,62 @@ to apply at each uncore* level.
->>>>>  
->>>>>  Support for "current_freq_khz" is available only at each fabric
->>>>> cluster
->>>>>  level (i.e., in uncore* directory).
->>>>> +
->>>>> +Efficiency vs. Latency Tradeoff
->>>>> +-------------------------------
->>>>> +
->>>>> +The Efficiency Latency Control (ELC) feature improves
->>>>> performance
->>>>> +per watt. With this feature hardware power management algorithms
->>>>> +optimize trade-off between latency and power consumption. For
->>>>> some
->>>>> +latency sensitive workloads further tuning can be done by SW to
->>>>> +get desired performance.
->>>>> +
->>>>> +The hardware monitors the average CPU utilization across all
->>>>> cores
->>>>> +in a power domain at regular intervals and decides an uncore
->>>>> frequency.
->>>>> +While this may result in the best performance per watt, workload
->>>>> may be
->>>>> +expecting higher performance at the expense of power. Consider
->>>>> an
->>>>> +application that intermittently wakes up to perform memory reads
->>>>> on an
->>>>> +otherwise idle system. In such cases, if hardware lowers uncore
->>>>> +frequency, then there may be delay in ramp up of frequency to
->>>>> meet
->>>>> +target performance.
->>>>> +
->>>>> +The ELC control defines some parameters which can be changed
->>>>> from
->>>>> SW.
->>>>> +If the average CPU utilization is below a user defined threshold
->>>>> +(elc_low_threshold_percent attribute below), the user defined
->>>>> uncore
->>>>> +frequency floor frequency will be used (elc_floor_freq_khz
->>>>> attribute
->>>>
->>>> Consider the following simplification:
->>>>
->>>> "the user defined uncore frequency floor frequency" ->
->>>> "the user-defined uncore floor frequency"
->>>>
->>>> I think it tells the same even without that first "frequency".
->>>>
->>>> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->>>>
->>>
->>> Yeah, it looks kind of silly. I think that's just a typo from my
->>> side,
->>> thanks for catching.
->>
->> Do you want me to send a new version of this patch or do you fix it
->> locally? Rest of the patches don't seem to need any changes atm.
-> 
-> That's up to Hans but that looks trivial change so probably he can fix
-> that while applying.
-> 
-> Hans, v2 of this series seems ready to go (with the small change into
-> the documentation patch as discussed above).
+Thank you. I was not able to boot my box using your config file. But i
+enabled all needed configs in to run your reproduce so it does not
+complain on below warnings:
 
-Ack, I've applied the series to my review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+<snip>
+urezki@pc638:~$ sudo ./a.out
+the reproducer may not work as expected: USB injection setup failed: failed to chmod /dev/raw-gadget
+the reproducer may not work as expected: 802154 injection setup failed: netlink_query_family_id failed
+<snip>
 
-with the suggested improvement to intel_uncore_frequency_scaling.rst
-sqaushed in.
+sudo modprobe raw_gadget 
+sudo modprobe ieee802154
+sudo modprobe ieee802154_socket 
+sudo modprobe hci
+sudo modprobe hci_vhci 
+sudo modprobe mac802154
+sudo modprobe ieee802154
+sudo modprobe ieee802154_socket
+sudo modprobe mac802154_hwsim
+sudo modprobe adf7242
+sudo modprobe atusb
+sudo modprobe at86rf230
+sudo modprobe fakelb
+sudo modprobe mrf24j40
+sudo modprobe cc2520
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
+and even after that i am not able to get any "WARNING in kvfree_rcu_bulk".
 
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
+urezki@pc638:~$ uname -a
+Linux pc638 6.11.0-rc2+ #3827 SMP PREEMPT_DYNAMIC Wed Sep  4 19:37:22 CEST 2024 x86_64 GNU/Linux
+urezki@pc638:~$
 
-Regards,
+is it easy to reproduce? Am i missing something in my setup?
 
-Hans
-
-
-
+--
+Uladzislau Rezki
 
