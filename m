@@ -1,226 +1,235 @@
-Return-Path: <linux-kernel+bounces-315960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AF896C92E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9027096C94D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4B5284B9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4176D28A931
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBC1178362;
-	Wed,  4 Sep 2024 21:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3508C156222;
+	Wed,  4 Sep 2024 21:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UfdzCB5s"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEksFbgQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF238154C17
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6308913D516;
+	Wed,  4 Sep 2024 21:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725484069; cv=none; b=epDXcyl7QujM2hwfGPDPOgruLCcuLzE+J8JLM7aDC9VtYneaUWbWdZYck3NY+8LtPoByAXUVgUrjr2rlC56JCIMdYYXC4hXHBNOQlxjqLafyFr8w2S3QUaMFOtFinqyEoH+AcpuBVtI68GPNSdOabYRJQvBag61xz/kogvur2eE=
+	t=1725484113; cv=none; b=VB0IkpWGpZ7XwBsxmKZL32cCzuukZ/TtjaJL8SafcbEFH/MYT7rqctb2XqNNIEgE7f53BeqbG1biTCdVkke2z11NNCMbSFfwKw/yj3J9VGy0Je9/zjxvT7BeAubdOgJvNcxrb6a0knlhTCkrc7rsiBRaVw8ncRotTdIWiU13uzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725484069; c=relaxed/simple;
-	bh=uqOzk7cpoKkEi2MG7rO8J+EGBTGB6GV6x/+HS5AP9MY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CwxkK3MygfFjEWWIS9KGdJFx2RUvIx5tY4XYGn9RYZQYdDpvZbVeNGcZKIAvUXo92LreXf5bCGN9yyZ38MA99f3cDeXSehoqxHLt2ra9GfTe8oPOXdRy9AWFfJxQpbQxxjdpYNzC2JomikYBIX/p+HPP40mTRtYhGUbwRiX040A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UfdzCB5s; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso19555ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725484067; x=1726088867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w42R7BNbzfV9m9Ak5XplqSqEhc1UT4kjpkgNMP3MoEY=;
-        b=UfdzCB5sHb6PJvB65wMCgLjR9cZnYete4t2lk0uR6fZBMaOJtgwrlFFa3SbMr/WuOp
-         2GkLviVRZyPS/EIssHzblOE3O4kgS0FbnopapRAjsRkR5AD4sAoepzD4lVEwr0Jl3jdh
-         GEV28fmd2xrV5u8vcw1tRr9koP30wMBWgsCoG32FjiGbngdNvFo3nbC/EMzEwewNckmO
-         y3re6TxfUehlRWcPUs8pjqUUJc8zVzr7+T9iyVLaQS1U4OEsPtLs8CpxpORAEWv7od8f
-         VioXN5x16Nzd61oRaAH+KDSZyr3O4KQtN9DRrU7v0MFnD1KdOqau9AXpcDOSBkRMSD20
-         tF/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725484067; x=1726088867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w42R7BNbzfV9m9Ak5XplqSqEhc1UT4kjpkgNMP3MoEY=;
-        b=rq4g6QW8bAmWEu3tvFjSXleLVJKfZ2IBEoaA6QiUj8CkEdYts2YuVoJ/oVEJYJcQ2m
-         oziPy8lZDkzqUoWBOYYLhOcRtyq2GkRGC7O9es2t5wc5AwHCezAbnOWwPX34xegQ5iyb
-         9Jo+tPwaq6hhwMCeXLg3lOle4Lv428rREIGKaRCep+kD5qZCJ6XDtoE0EZze0VFR2okJ
-         HJZbtrSrn0VPhSSrcGF6YjPxulGHUoCV0fx8DV6o+B6V/EK4k1u5/F9UTdNljle1miTU
-         At+5W4f7LRmFICw+1Mt/aPk3RD1OkW9IMnb0/Ybk3k7pBryyat6n1c5EA0MzEXSfSjbt
-         3eqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIcq6DSRkxhOMAhAfDGXOkANBv0pEM55a3czYxOrklx+YUkAI3soRC5EdQ06dxdBVOqyUqnTDX5mP9Dpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWIol2f7u05rtk1M24WUe/OeuxA/bFDNGSLQTcGsu2y+PsS3n5
-	1sbWxeqan+ScLlrz0bzsAgkvur0DzrMw1icrMGvLtKV59Oe2wxV+yfQye1SPNgr9rSwjMVLE1q3
-	In3kNCU2UMuNvvRn8E7rdbToXZC9xuxX80aNN
-X-Google-Smtp-Source: AGHT+IGl61F4f0ftYFMGsiQbwYzHE/z5H02ZJShnK57l4cZ0n0C26unhLmoZ1lt/9kS0S1twnCdNwstxD7QTkD9leS4=
-X-Received: by 2002:a05:6e02:194e:b0:377:14ab:42ea with SMTP id
- e9e14a558f8ab-3a047199bb8mr996875ab.16.1725484066426; Wed, 04 Sep 2024
- 14:07:46 -0700 (PDT)
+	s=arc-20240116; t=1725484113; c=relaxed/simple;
+	bh=j39n7HMXYSdWvCK+sacpXRMJepgp+GKhtUwav+NXleA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFTdWnAaPXx7fqC54+SLVRY3JM+zAp0fVSky7YBnXBJZ7NGuCxySiB/ww+F+sF5YtTKtzqGWnKZP8V6/Gfg3+87nT+lFmKN+bJ41MjbrtwKnMHwYenN2CltLfqEjdTNPowGeVKVXERezs3VjJ+FURsUdm2CuJqqwG/r6Ky4eUj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEksFbgQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6463EC4CEC2;
+	Wed,  4 Sep 2024 21:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725484112;
+	bh=j39n7HMXYSdWvCK+sacpXRMJepgp+GKhtUwav+NXleA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CEksFbgQZObZLDnqWJkwWCj0+wXpAN4FFzwndFABiKSNtYHdHb6BNlmVVhf3cZg40
+	 MsCEUJStaXtasB2CJVScv2P1KR4w78YEpqcIqiyNb2H174B9z+8LDQFOGAIG7Q6Rh0
+	 xfVxK300sSeAYRgj4y5Q7Wrc31YB2Fn6kT6hlROZjCEu/kWbMJk/GolQVXgbfDJSj3
+	 za+pzJJWvsZZP9Q45feH4udETnBsEGNgFA9yTnXnlmW3bfq05gXz21UByX7HfnMqiB
+	 3wUHJpYNpeApqLJ/unnnZruAI59JA44c7mqBWRGzn+/lFbpfLCv1OAvqJFd6bdvp9G
+	 V+7NCiEc2MyQg==
+Date: Wed, 4 Sep 2024 14:08:30 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chao Gao <chao.gao@intel.com>,
+	Zeng Guang <guang.zeng@intel.com>
+Subject: Re: [PATCH 1/6] KVM: nVMX: Get to-be-acknowledge IRQ for nested
+ VM-Exit at injection site
+Message-ID: <20240904210830.GA1229985@thelio-3990X>
+References: <20240720000138.3027780-1-seanjc@google.com>
+ <20240720000138.3027780-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902044128.664075-1-surenb@google.com> <20240902044128.664075-7-surenb@google.com>
- <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
- <CAJuCfpGNYgx0GW4suHRzmxVH28RGRnFBvFC6WO+F8BD4HDqxXA@mail.gmail.com>
- <47c4ef47-3948-4e46-8ea5-6af747293b18@nvidia.com> <70ef75d9-a573-4989-9a9d-c8bc087f212b@nvidia.com>
- <CAJuCfpEQLDW1A7EX8LAcaRYdxKYBvP1E1cmYDoFXrG_V+AXv+g@mail.gmail.com> <c55739ec-3f0c-4f37-ad86-fe337d71d5a2@nvidia.com>
-In-Reply-To: <c55739ec-3f0c-4f37-ad86-fe337d71d5a2@nvidia.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 4 Sep 2024 14:07:31 -0700
-Message-ID: <CAJuCfpH_BSiQiNyUs8Jx3WZHmEELW3_NESi8ii0XCQR_x+gxNg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
- refs in page flags
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kent.overstreet@linux.dev, corbet@lwn.net, 
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240720000138.3027780-2-seanjc@google.com>
 
-On Wed, Sep 4, 2024 at 11:58=E2=80=AFAM 'John Hubbard' via kernel-team
-<kernel-team@android.com> wrote:
->
-> On 9/4/24 9:08 AM, Suren Baghdasaryan wrote:
-> > On Tue, Sep 3, 2024 at 7:06=E2=80=AFPM 'John Hubbard' via kernel-team
-> > <kernel-team@android.com> wrote:
-> >> On 9/3/24 6:25 PM, John Hubbard wrote:
-> >>> On 9/3/24 11:19 AM, Suren Baghdasaryan wrote:
-> >>>> On Sun, Sep 1, 2024 at 10:16=E2=80=AFPM Andrew Morton <akpm@linux-fo=
-undation.org> wrote:
-> >>>>> On Sun,  1 Sep 2024 21:41:28 -0700 Suren Baghdasaryan <surenb@googl=
-e.com> wrote:
-> ...
-> >> The configuration should disable itself, in this case. But if that is
-> >> too big of a change for now, I suppose we could fall back to an error
-> >> message to the effect of, "please disable CONFIG_PGALLOC_TAG_USE_PAGEF=
-LAGS
-> >> because the kernel build system is still too primitive to do that for =
-you". :)
-> >
-> > I don't think we can detect this at build time. We need to know how
-> > many page allocations there are, which we find out only after we build
-> > the kernel image (from the section size that holds allocation tags).
-> > Therefore it would have to be a post-build check. So I think the best
-> > we can do is to generate the error like the one you suggested after we
-> > build the image.
-> > Dependency on CONFIG_PAGE_EXTENSION is yet another complexity because
-> > if we auto-disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS, we would have to
-> > also auto-enable CONFIG_PAGE_EXTENSION if it's not already enabled.
-> >
-> > I'll dig around some more to see if there is a better way.
-> >>
-> >>>> - If there are enough unused bits but we have to push last_cpupid ou=
-t
-> >>>> of page flags, we issue a warning and continue. The user can disable
-> >>>> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS if last_cpupid has to stay in page
-> >>>> flags.
-> >>
-> >> Let's try to decide now, what that tradeoff should be. Just pick one b=
-ased
-> >> on what some of us perceive to be the expected usefulness and frequenc=
-y of
-> >> use between last_cpuid and these tag refs.
-> >>
-> >> If someone really needs to change the tradeoff for that one bit, then =
-that
-> >> someone is also likely able to hack up a change for it.
-> >
-> > Yeah, from all the feedback, I realize that by pursuing the maximum
-> > flexibility I made configuring this mechanism close to impossible. I
-> > think the first step towards simplifying this would be to identify
-> > usable configurations. From that POV, I can see 3 useful modes:
-> >
-> > 1. Page flags are not used. In this mode we will use direct pointer
-> > references and page extensions, like we do today. This mode is used
-> > when we don't have enough page flags. This can be a safe default which
-> > keeps things as they are today and should always work.
->
-> Definitely my favorite so far.
->
-> > 2. Page flags are used but not forced. This means we will try to use
-> > all free page flags bits (up to a reasonable limit of 16) without
-> > pushing out last_cpupid.
->
-> This is a logical next step, agreed.
->
-> > 3. Page flags are forced. This means we will try to use all free page
-> > flags bits after pushing last_cpupid out of page flags. This mode
-> > could be used if the user cares about memory profiling more than the
-> > performance overhead caused by last_cpupid.
-> >
-> > I'm not 100% sure (3) is needed, so I think we can skip it until
-> > someone asks for it. It should be easy to add that in the future.
->
-> Right.
->
-> > If we detect at build time that we don't have enough page flag bits to
-> > cover kernel allocations for modes (2) or (3), we issue an error
-> > prompting the user to reconfigure to mode (1).
-> >
-> > Ideally, I would like to have (2) as default mode and automatically
-> > fall back to (1) when it's impossible but as I mentioned before, I
-> > don't yet see a way to do that automatically.
-> >
-> > For loadable modules, I think my earlier suggestion should work fine.
-> > If a module causes us to run out of space for tags, we disable memory
-> > profiling at runtime and log a warning for the user stating that we
-> > disabled memory profiling and if the user needs it they should
-> > configure mode (1). I *think* I can even disable profiling only for
-> > that module and not globally but I need to try that first.
-> >
-> > I can start with modes (1) and (2) support which requires only
-> > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS defaulted to N. Any user can try
-> > enabling this config and if that builds fine then keeping it for
-> > better performance and memory usage. Does that sound acceptable?
-> > Thanks,
-> > Suren.
-> >
->
-> How badly do we need (2)? Because this is really expensive:
->
->     a) It adds complexity to a complex,delicate core part of mm.
->
->     b) It adds constraints, which prevent possible future features.
->
-> It's not yet clear that (2) is valuable enough (compared to (1))
-> to compensate, at least from what I've read. Unless I missed
-> something big.
+Hi Sean,
 
-(1) is what we already have today.
-(2) would allow us to drop page_ext dependency, so there is
-considerable memory saving and performance improvement (no need to
-lookup the page extension on each tag reference). The benefits are
-described in the cover letter at:
-https://lore.kernel.org/all/20240902044128.664075-1-surenb@google.com/.
+On Fri, Jul 19, 2024 at 05:01:33PM -0700, Sean Christopherson wrote:
+> Move the logic to get the to-be-acknowledge IRQ for a nested VM-Exit from
+> nested_vmx_vmexit() to vmx_check_nested_events(), which is subtly the one
+> and only path where KVM invokes nested_vmx_vmexit() with
+> EXIT_REASON_EXTERNAL_INTERRUPT.  A future fix will perform a last-minute
+> check on L2's nested posted interrupt notification vector, just before
+> injecting a nested VM-Exit.  To handle that scenario correctly, KVM needs
+> to get the interrupt _before_ injecting VM-Exit, as simply querying the
+> highest priority interrupt, via kvm_cpu_has_interrupt(), would result in
+> TOCTOU bug, as a new, higher priority interrupt could arrive between
+> kvm_cpu_has_interrupt() and kvm_cpu_get_interrupt().
+> 
+> Opportunistically convert the WARN_ON() to a WARN_ON_ONCE().  If KVM has
+> a bug that results in a false positive from kvm_cpu_has_interrupt(),
+> spamming dmesg won't help the situation.
+> 
+> Note, nested_vmx_reflect_vmexit() can never reflect external interrupts as
+> they are always "wanted" by L0.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/vmx/nested.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 2392a7ef254d..b3e17635f7e3 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -4284,11 +4284,26 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
+>  	}
+>  
+>  	if (kvm_cpu_has_interrupt(vcpu) && !vmx_interrupt_blocked(vcpu)) {
+> +		u32 exit_intr_info;
+> +
+>  		if (block_nested_events)
+>  			return -EBUSY;
+>  		if (!nested_exit_on_intr(vcpu))
+>  			goto no_vmexit;
+> -		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT, 0, 0);
+> +
+> +		if (nested_exit_intr_ack_set(vcpu)) {
+> +			int irq;
+> +
+> +			irq = kvm_cpu_get_interrupt(vcpu);
+> +			WARN_ON_ONCE(irq < 0);
+> +
+> +			exit_intr_info = INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq;
+> +		} else {
+> +			exit_intr_info = 0;
+> +		}
+> +
+> +		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
+> +				  exit_intr_info, 0);
+>  		return 0;
+>  	}
+>  
+> @@ -4969,14 +4984,6 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 vm_exit_reason,
+>  	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+>  
+>  	if (likely(!vmx->fail)) {
+> -		if ((u16)vm_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT &&
+> -		    nested_exit_intr_ack_set(vcpu)) {
+> -			int irq = kvm_cpu_get_interrupt(vcpu);
+> -			WARN_ON(irq < 0);
+> -			vmcs12->vm_exit_intr_info = irq |
+> -				INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR;
+> -		}
+> -
+>  		if (vm_exit_reason != -1)
+>  			trace_kvm_nested_vmexit_inject(vmcs12->vm_exit_reason,
+>  						       vmcs12->exit_qualification,
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
+> 
 
+I bisected (log below) an issue with starting a nested guest that
+appears on two of my newer Intel test machines (but not a somewhat old
+laptop) when this change as commit 6f373f4d941b ("KVM: nVMX: Get
+to-be-acknowledge IRQ for nested VM-Exit at injection site") in -next is
+present in the host kernel.
 
->
->
-> thanks,
-> --
-> John Hubbard
->
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+I start a virtual machine with a full distribution using QEMU then start
+a nested virtual machine using QEMU with the same kernel and a much
+simpler Buildroot initrd, just to test the ability to run a nested
+guest. After this change, starting a nested guest results in no output
+from the nested guest and eventually the first guest restarts, sometimes
+printing a lockup message that appears to be caused from qemu-system-x86
+
+My command for the first guest on the host (in case it matters):
+
+  $ qemu-system-x86_64 \
+      -display none \
+      -serial mon:stdio \
+      -nic user,model=virtio-net-pci,hostfwd=tcp::8022-:22 \
+      -object rng-random,filename=/dev/urandom,id=rng0 \
+      -device virtio-rng-pci \
+      -chardev socket,id=char0,path=$VM_FOLDER/x86_64/arch/vfsd.sock \
+      -device vhost-user-fs-pci,queue-size=1024,chardev=char0,tag=host \
+      -object memory-backend-memfd,id=mem,share=on,size=16G \
+      -numa node,memdev=mem \
+      -m 16G \
+      -device virtio-balloon \
+      -smp 8 \
+      -drive if=pflash,format=raw,file=$VM_FOLDER/x86_64/arch/efi.img,readonly=on \
+      -drive if=pflash,format=raw,file=$VM_FOLDER/x86_64/arch/efi_vars.img \
+      -cpu host \
+      -enable-kvm \
+      -M q35 \
+      -drive if=virtio,format=qcow2,file=$VM_FOLDER/x86_64/arch/disk.img
+
+My commands in the first guest to spawn the nested guest:
+
+  $ cd $(mktemp -d)
+
+  $ curl -LSs https://archive.archlinux.org/packages/l/linux/linux-6.10.8.arch1-1-x86_64.pkg.tar.zst | tar --zstd -xf -
+
+  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/x86_64-rootfs.cpio.zst | zstd -d >rootfs.cpio
+
+  $ qemu-system-x86_64 \
+      -display none \
+      -nodefaults \
+      -M q35 \
+      -d unimp,guest_errors \
+      -append 'console=ttyS0 earlycon=uart8250,io,0x3f8 loglevel=7' \
+      -kernel usr/lib/modules/6.10.8-arch1-1/vmlinuz \
+      -initrd rootfs.cpio \
+      -cpu host \
+      -enable-kvm \
+      -m 512m \
+      -smp 8 \
+      -serial mon:stdio
+
+If there is any additional information I can provide or patches I can
+test, I am more than happy to do so.
+
+Cheers,
+Nathan
+
+# bad: [6804f0edbe7747774e6ae60f20cec4ee3ad7c187] Add linux-next specific files for 20240903
+# good: [67784a74e258a467225f0e68335df77acd67b7ab] Merge tag 'ata-6.11-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
+git bisect start '6804f0edbe7747774e6ae60f20cec4ee3ad7c187' '67784a74e258a467225f0e68335df77acd67b7ab'
+# good: [6b63f16410fa86f6a2e9f52c9cb52ba94c363f3e] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+git bisect good 6b63f16410fa86f6a2e9f52c9cb52ba94c363f3e
+# good: [194eaf7dd63eef7cee974daeb4df01a3e6b144fe] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+git bisect good 194eaf7dd63eef7cee974daeb4df01a3e6b144fe
+# bad: [a8f65643f59dac67451d09ff298fa7f6e7917794] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
+git bisect bad a8f65643f59dac67451d09ff298fa7f6e7917794
+# good: [f80eff5b9f33c4f8d86ba046f3ee54c4f2224454] Merge branch 'timers/drivers/next' of https://git.linaro.org/people/daniel.lezcano/linux.git
+git bisect good f80eff5b9f33c4f8d86ba046f3ee54c4f2224454
+# bad: [a93e40d038ccd17e6cf691e1b8fec8821998baf2] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git
+git bisect bad a93e40d038ccd17e6cf691e1b8fec8821998baf2
+# good: [500b6c92524183f97e3a3c8e6c56f8af69429ba4] Merge branch 'non-rcu/next' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+git bisect good 500b6c92524183f97e3a3c8e6c56f8af69429ba4
+# bad: [642613182efa0927c8bd4d4ef2c6b8350554b6ad] Merge branches 'fixes', 'generic', 'misc', 'mmu', 'pat_vmx_msrs', 'selftests', 'svm' and 'vmx'
+git bisect bad 642613182efa0927c8bd4d4ef2c6b8350554b6ad
+# good: [1876dd69dfe8c29e249070b0e4dc941fc15ac1e4] KVM: x86: Add fastpath handling of HLT VM-Exits
+git bisect good 1876dd69dfe8c29e249070b0e4dc941fc15ac1e4
+# bad: [44518120c4ca569cfb9c6199e94c312458dc1c07] KVM: nVMX: Detect nested posted interrupt NV at nested VM-Exit injection
+git bisect bad 44518120c4ca569cfb9c6199e94c312458dc1c07
+# good: [2ab637df5f68d4e0cfa9becd10f43400aee785b3] KVM: VMX: hyper-v: Prevent impossible NULL pointer dereference in evmcs_load()
+git bisect good 2ab637df5f68d4e0cfa9becd10f43400aee785b3
+# bad: [f729851189d5741e7d1059e250422611028657f8] KVM: x86: Don't move VMX's nested PI notification vector from IRR to ISR
+git bisect bad f729851189d5741e7d1059e250422611028657f8
+# bad: [cb14e454add0efc9bc461c1ad30d9c950c406fab] KVM: nVMX: Suppress external interrupt VM-Exit injection if there's no IRQ
+git bisect bad cb14e454add0efc9bc461c1ad30d9c950c406fab
+# bad: [6f373f4d941bf79f06e9abd4a827288ad1de6399] KVM: nVMX: Get to-be-acknowledge IRQ for nested VM-Exit at injection site
+git bisect bad 6f373f4d941bf79f06e9abd4a827288ad1de6399
+# first bad commit: [6f373f4d941bf79f06e9abd4a827288ad1de6399] KVM: nVMX: Get to-be-acknowledge IRQ for nested VM-Exit at injection site
 
