@@ -1,293 +1,186 @@
-Return-Path: <linux-kernel+bounces-315291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002AF96C088
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9695896C084
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A791C251F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB861F263B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1391E871;
-	Wed,  4 Sep 2024 14:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3b8iFQR"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DCF1DC062;
+	Wed,  4 Sep 2024 14:30:23 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C295B63D;
-	Wed,  4 Sep 2024 14:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4EF1DB548
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 14:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460233; cv=none; b=FuqBfjf2Kh0imJ01thxyLNJo6RUCXlndgdQF41HexGOIkcmn5gJj9dSpCJlkKenIPaLA7mqiuHGjMCCvsvl0VLy/0SMzR01RT4xQQMgiPyX9GAv0vFtFOV7CHvzP2ZfnGplJcsjA+GgdoGhsoug4VeCwEh1G/Viv8b5JlibDUiQ=
+	t=1725460223; cv=none; b=TO/nlq+juMnyj/69M2v2f0SgDjosREW6Ic+3l5EzlSPVsnF3z6QQXUYpVVQjXNVHpQKdRa2vCMQGIPwTCkD1muqRIgZnzgysFvBVAr0YuIu9Zve4w8kmoXbU9382DI+KvnefYf792teH+dfrvgia0Hp8ab6GsfipWYV4d4RmU6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460233; c=relaxed/simple;
-	bh=oUMmrAUW6n46iBK2Om852EAinIl1iovpcj2mta3w+84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sv7q6pZRaziNcBCSMXpIhXGBIz2eDCMmHDmxxbRbWZaFJuGSDG+bTnAawX+etyHvnmDBvb09QY6YrfUy4BMgPOSivvFFOvU8ejyr2AJxalFDCtBg7CNx4OK8XAR/xe+a0Yv46D4HFQjx/sGS66bBUXcVon+UGISseoVxdUYHLLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3b8iFQR; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d4a4e4931so24096225ab.2;
-        Wed, 04 Sep 2024 07:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725460230; x=1726065030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uUh1Bn8LTCD+clJ/J0HFf8JHKVuXPH+EGrtYwcbTYIQ=;
-        b=T3b8iFQR+Yccc2VVuazOGHYlRqZE031oxm/IqlXIoC4hu27WIG008LQ+pfsfdAE1Ow
-         BKZybS8ruJowSLd5eXe76RQ87QkUdPNBOskWimyQKQGvGfnNguIsJe2n+v1TSl5yTLD8
-         G8JQZo27ynRr8xBAqpZH6kdnrlaaPyq5d3mgCZOPA3AboiBNKK3/j7Vr2EGFesFXzYHe
-         GxefLmXULNsAifTMFyw7S5cEfpx1DX2XEoZlxioJ91qVo+aSZHNMpAyE0LOkjad9bzGE
-         SX9EMjsIasmAgD0+6xgKd7FlSLbjZS2ojrICJcDVC62H8HW+oUP9yggHGeXEz0RPyfz2
-         hQwA==
+	s=arc-20240116; t=1725460223; c=relaxed/simple;
+	bh=l9cagTwSN1QUfhMI5FsA2d2/XWo2O0HK5kpy3Hk0/4I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T94Zd9d71djN1S8EpZ6YKVE/orh7g1oDIL7IiQ1byl4PCotYHwugYUaFEc+gWujxqnyF5pzoSDyPquXXt2eWdMTftHgolrr4/pipBcX65vrzIw+462L2mfgxwYSRzmElesCM5GMYKtXyL822bYOSETtt5hYfG+zaqAfmjJCfHFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2ceca837so86540185ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 07:30:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725460230; x=1726065030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uUh1Bn8LTCD+clJ/J0HFf8JHKVuXPH+EGrtYwcbTYIQ=;
-        b=Nmh3sppb8rPXE9xh6RXXivvOUHnH2Of9btai6czzlV4Smk3XByCpdjjO4ddR8+FyNx
-         IjrQHM3n2Ey5H8JViye7D9hVDeGeNxVWrI66azXLwPpgf97NrDAyNtFobU7oMsgISgHw
-         E9JTNJ4II1WSSjRV3RvfEznVOphDrCyV8wJ3ITh+TpJBL68GSJvfcARcwgXs4X+Ywr0N
-         fnWnRLkSo9iLpqVNNLD81q816rJgXsbr2q6Z4AOoYhAtyljlyslWMIGKPoYIRrSqcxvR
-         Cd7aNBHD5topwOmcY/xQSLRNug7+3k4J0ldHlb62Nrbk4pTfRJikaOzwkwhT8Dqq9ceO
-         94YA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5jNyPexW9JlWA3m81QD2YN/8PN2xfUq4VNpdGmsK/JY08sF1nzki/RUdkhAHwFOmQDuZ1yRV2Lq/1fU2w@vger.kernel.org, AJvYcCWtXumNGOYze4R9HGJhwdiQPduAtDOuUirnbztRI4oyzW35f5E4l4oPqgzViUN5cyFAceuqQr+Qjrkb2K4/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhwtZoCu+lQNfqMzciq+CDOPNDfmEzcT0ZSzu7Z1OrmaQeSja4
-	Z0rALkPdSDDZrjez2DoGwX7Cz4vAc3aBwxPpXyBvaOXmqXXj/YLeKn0+TiQNEFvCfxfvluxqm/u
-	Z8JbfPLSuByPLfsmQfEIpgB4sEm4=
-X-Google-Smtp-Source: AGHT+IEOs79kz4wpYRVi6vayStorUTQuG3MLQed42xUFFfh4rUgAOixAlfb7UxVs1MDoDJIZwMT7ryuRLZClp+PiPMc=
-X-Received: by 2002:a92:cda5:0:b0:39f:7a06:2a62 with SMTP id
- e9e14a558f8ab-39f7a062ad8mr22423485ab.5.1725460229529; Wed, 04 Sep 2024
- 07:30:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725460221; x=1726065021;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mocIEAwFVVs0XX0w8cLgNndq8nrxkwOi/brEwBFJSMQ=;
+        b=bSZ41mYYS0uBCywOsQpprLuznV8EPNFvlJ0Vxay5OCyobIvUVJAyrqc0YMQJh8i6Bm
+         u9fr6aDsr4lhcwHN+tDUaU68wNMZTVauNIIHib1IkTwbZOXhhZud7QCNwtcDWiWlKF7o
+         svC9e2738fX3CyIAYg9sauilaDclFfJGX05jxoTl5n4neCgNmEWVFP6OOrXP52Ze2cHt
+         uwJmPIrO5VfjqermUpUaIfZtGgblOA/kTQJz6e+Bhr3/l27KGCxXhbwiadikRtf3VjPd
+         O4uu1rVljLwyGDFh/loTZEixU4iq7tTL/u18/ACSDfZmLcmuBVGWHHCybYV+Il+Eo/UF
+         8CFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP+rvFn6We2X9nkzrjio9pYtHiiXdj/7a7Mt/uPr3L3AU1v7OTdI5sT8es1H3iBn9f0wvDzxV4Uia2V2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeFIaA8iUWiJ1gzEoTUMIMpVbpVW5Ih2P5UCY2gqehFs/9I0dB
+	rmkLEYAa+XOKuNzGBZ7cGovd2fkMKE65vj9D6ohO6hIBRawv0r+C6sG7vS3kWSUt+tTU0E/WT1k
+	u7SL0ZceqZKii7jemmVVaVFs+OcoMJrpXE2fKcCiDI2HtF5QL1g9MINs=
+X-Google-Smtp-Source: AGHT+IGCW+XdMjN5OuiSaAwkUD0dfDBdbbfmbhvD04Ckie+PKqzkBHKFjq4PacrouebAReSwBJOxBllVwFnWxPpiz1a4L7bHgggK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com>
- <20240830-preemption-a750-t-v2-6-86aeead2cd80@gmail.com> <CAF6AEGv82=N4=motCpGhp5N7Yv8oqtBcG4bGahgF53CpFYpTgg@mail.gmail.com>
- <b899d35a-fedf-4748-ac23-6389a8742160@gmail.com>
-In-Reply-To: <b899d35a-fedf-4748-ac23-6389a8742160@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 4 Sep 2024 07:30:16 -0700
-Message-ID: <CAF6AEGufJhPMbyJJ7kV6-2cknmOwKD15Z5foYfje0bVjH7G0MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/9] drm/msm/A6xx: Use posamble to reset counters on preemption
-To: Antonino Maniscalco <antomani103@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:cda8:0:b0:396:ec3b:df63 with SMTP id
+ e9e14a558f8ab-39f4107768bmr9478125ab.4.1725460220719; Wed, 04 Sep 2024
+ 07:30:20 -0700 (PDT)
+Date: Wed, 04 Sep 2024 07:30:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087cbd706214c0321@google.com>
+Subject: [syzbot] [wpan?] KASAN: global-out-of-bounds Read in
+ mac802154_header_create (2)
+From: syzbot <syzbot+844d670c418e0353c6a8@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
+	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 6:39=E2=80=AFAM Antonino Maniscalco
-<antomani103@gmail.com> wrote:
->
-> On 8/30/24 8:32 PM, Rob Clark wrote:
-> > On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
-> > <antomani103@gmail.com> wrote:
-> >>
-> >> Use the postamble to reset perf counters when switching between rings,
-> >> except when sysprof is enabled, analogously to how they are reset
-> >> between submissions when switching pagetables.
-> >>
-> >> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 14 +++++++++++++-
-> >>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  6 ++++++
-> >>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 26 +++++++++++++++++++++=
-++++-
-> >>   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  7 +++++--
-> >>   4 files changed, 49 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/m=
-sm/adreno/a6xx_gpu.c
-> >> index 1a90db5759b8..3528ecbbc1ab 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> @@ -366,7 +366,8 @@ static void a6xx_submit(struct msm_gpu *gpu, struc=
-t msm_gem_submit *submit)
-> >>   static void a6xx_emit_set_pseudo_reg(struct msm_ringbuffer *ring,
-> >>                  struct a6xx_gpu *a6xx_gpu, struct msm_gpu_submitqueue=
- *queue)
-> >>   {
-> >> -       u64 preempt_offset_priv_secure;
-> >> +       bool sysprof =3D refcount_read(&a6xx_gpu->base.base.sysprof_ac=
-tive) > 1;
-> >> +       u64 preempt_offset_priv_secure, preempt_postamble;
-> >>
-> >>          OUT_PKT7(ring, CP_SET_PSEUDO_REG, 15);
-> >>
-> >> @@ -403,6 +404,17 @@ static void a6xx_emit_set_pseudo_reg(struct msm_r=
-ingbuffer *ring,
-> >>          /* seems OK to set to 0 to disable it */
-> >>          OUT_RING(ring, 0);
-> >>          OUT_RING(ring, 0);
-> >> +
-> >> +       if (!sysprof && a6xx_gpu->preempt_postamble_len) {
-> >> +               preempt_postamble =3D SCRATCH_PREEMPT_POSTAMBLE_IOVA(a=
-6xx_gpu);
-> >> +
-> >> +               OUT_PKT7(ring, CP_SET_AMBLE, 3);
-> >> +               OUT_RING(ring, lower_32_bits(preempt_postamble));
-> >> +               OUT_RING(ring, upper_32_bits(preempt_postamble));
-> >> +               OUT_RING(ring, CP_SET_AMBLE_2_DWORDS(
-> >> +                                       a6xx_gpu->preempt_postamble_le=
-n) |
-> >> +                               CP_SET_AMBLE_2_TYPE(KMD_AMBLE_TYPE));
-> >> +       }
-> >
-> > Hmm, ok, we set this in the submit path.. but do we need to clear it
-> > somehow when transitioning from !sysprof to sysprof?
-> >
->
-> We can always emit the packet and 0 fields out when sysprof is enabled.
-> Would that be ok for you? Only emitting it when needed might be
-> nontrivial given that there are multiple rings and we would be paying
-> the overhead for emitting it in the more common case (not profiling) anyw=
-ay.
+Hello,
 
-That sounds like it would work
+syzbot found the following issue on:
 
-> > Also, how does this interact with UMD perfctr queries, I would expect
-> > they would prefer save/restore?
->
-> Right so my understanding given previous discussions is that we want to
-> disable preemption from userspace in that case? The vulkan extension
-> requires to acquire and release a lock so we could use that to emit the
-> packets that enable and disable preemption perhaps.
+HEAD commit:    1934261d8974 Merge tag 'input-for-v6.11-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12224d43980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62bf36773c1381f1
+dashboard link: https://syzkaller.appspot.com/bug?extid=844d670c418e0353c6a8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-ack
+Unfortunately, I don't have any reproducer for this issue yet.
 
-BR,
--R
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1934261d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9f83b13c08c6/vmlinux-1934261d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5586153bd20f/bzImage-1934261d.xz
 
-> >
-> > BR,
-> > -R
-> >
-> >>   }
-> >>
-> >>   static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *=
-submit)
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/m=
-sm/adreno/a6xx_gpu.h
-> >> index 652e49f01428..2338e36c8f47 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> >> @@ -66,6 +66,7 @@ struct a6xx_gpu {
-> >>          atomic_t preempt_state;
-> >>          spinlock_t eval_lock;
-> >>          struct timer_list preempt_timer;
-> >> +       uint64_t preempt_postamble_len;
-> >>
-> >>          unsigned int preempt_level;
-> >>          bool uses_gmem;
-> >> @@ -99,6 +100,11 @@ struct a6xx_gpu {
-> >>   #define SCRATCH_USER_CTX_IOVA(ring_id, a6xx_gpu) \
-> >>          (a6xx_gpu->scratch_iova + (ring_id * sizeof(uint64_t)))
-> >>
-> >> +#define SCRATCH_PREEMPT_POSTAMBLE_OFFSET (100 * sizeof(u64))
-> >> +
-> >> +#define SCRATCH_PREEMPT_POSTAMBLE_IOVA(a6xx_gpu) \
-> >> +       (a6xx_gpu->scratch_iova + SCRATCH_PREEMPT_POSTAMBLE_OFFSET)
-> >> +
-> >>   /*
-> >>    * In order to do lockless preemption we use a simple state machine =
-to progress
-> >>    * through the process.
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/d=
-rm/msm/adreno/a6xx_preempt.c
-> >> index 4b61b993f75f..f586615db97e 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> >> @@ -351,6 +351,28 @@ static int preempt_init_ring(struct a6xx_gpu *a6x=
-x_gpu,
-> >>          return 0;
-> >>   }
-> >>
-> >> +static void preempt_prepare_postamble(struct a6xx_gpu *a6xx_gpu)
-> >> +{
-> >> +       u32 *postamble =3D a6xx_gpu->scratch_ptr + SCRATCH_PREEMPT_POS=
-TAMBLE_OFFSET;
-> >> +       u32 count =3D 0;
-> >> +
-> >> +       postamble[count++] =3D PKT7(CP_REG_RMW, 3);
-> >> +       postamble[count++] =3D REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CMD;
-> >> +       postamble[count++] =3D 0;
-> >> +       postamble[count++] =3D 1;
-> >> +
-> >> +       postamble[count++] =3D PKT7(CP_WAIT_REG_MEM, 6);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_1_POLL_ADDR_LO(
-> >> +                               REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS=
-);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_2_POLL_ADDR_HI(0);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_3_REF(0x1);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_4_MASK(0x1);
-> >> +       postamble[count++] =3D CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0);
-> >> +
-> >> +       a6xx_gpu->preempt_postamble_len =3D count;
-> >> +}
-> >> +
-> >>   void a6xx_preempt_fini(struct msm_gpu *gpu)
-> >>   {
-> >>          struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> >> @@ -382,10 +404,12 @@ void a6xx_preempt_init(struct msm_gpu *gpu)
-> >>          a6xx_gpu->skip_save_restore =3D 1;
-> >>
-> >>          a6xx_gpu->scratch_ptr  =3D msm_gem_kernel_new(gpu->dev,
-> >> -                       gpu->nr_rings * sizeof(uint64_t), MSM_BO_WC,
-> >> +                       PAGE_SIZE, MSM_BO_WC,
-> >>                          gpu->aspace, &a6xx_gpu->scratch_bo,
-> >>                          &a6xx_gpu->scratch_iova);
-> >>
-> >> +       preempt_prepare_postamble(a6xx_gpu);
-> >> +
-> >>          if (IS_ERR(a6xx_gpu->scratch_ptr))
-> >>                  goto fail;
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm=
-/msm/adreno/adreno_gpu.h
-> >> index 6b1888280a83..87098567483b 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> >> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> >> @@ -610,12 +610,15 @@ OUT_PKT4(struct msm_ringbuffer *ring, uint16_t r=
-egindx, uint16_t cnt)
-> >>          OUT_RING(ring, PKT4(regindx, cnt));
-> >>   }
-> >>
-> >> +#define PKT7(opcode, cnt) \
-> >> +       (CP_TYPE7_PKT | (cnt << 0) | (PM4_PARITY(cnt) << 15) | \
-> >> +               ((opcode & 0x7F) << 16) | (PM4_PARITY(opcode) << 23))
-> >> +
-> >>   static inline void
-> >>   OUT_PKT7(struct msm_ringbuffer *ring, uint8_t opcode, uint16_t cnt)
-> >>   {
-> >>          adreno_wait_ring(ring, cnt + 1);
-> >> -       OUT_RING(ring, CP_TYPE7_PKT | (cnt << 0) | (PM4_PARITY(cnt) <<=
- 15) |
-> >> -               ((opcode & 0x7F) << 16) | (PM4_PARITY(opcode) << 23));
-> >> +       OUT_RING(ring, PKT7(opcode, cnt));
-> >>   }
-> >>
-> >>   struct msm_gpu *a2xx_gpu_init(struct drm_device *dev);
-> >>
-> >> --
-> >> 2.46.0
-> >>
->
-> Best regards,
-> --
-> Antonino Maniscalco <antomani103@gmail.com>
->
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+844d670c418e0353c6a8@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: global-out-of-bounds in get_unaligned_be64 include/asm-generic/unaligned.h:67 [inline]
+BUG: KASAN: global-out-of-bounds in ieee802154_be64_to_le64 include/net/mac802154.h:363 [inline]
+BUG: KASAN: global-out-of-bounds in mac802154_header_create+0x50d/0x540 net/mac802154/iface.c:448
+Read of size 8 at addr ffffffff8bf93980 by task dhcpcd/5055
+
+CPU: 2 UID: 0 PID: 5055 Comm: dhcpcd Not tainted 6.11.0-rc5-syzkaller-00219-g1934261d8974 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ get_unaligned_be64 include/asm-generic/unaligned.h:67 [inline]
+ ieee802154_be64_to_le64 include/net/mac802154.h:363 [inline]
+ mac802154_header_create+0x50d/0x540 net/mac802154/iface.c:448
+ dev_hard_header include/linux/netdevice.h:3159 [inline]
+ vlan_dev_hard_header+0x13f/0x520 net/8021q/vlan_dev.c:83
+ dev_hard_header include/linux/netdevice.h:3159 [inline]
+ lapbeth_data_transmit+0x2a0/0x350 drivers/net/wan/lapbether.c:257
+ lapb_data_transmit+0x93/0xc0 net/lapb/lapb_iface.c:447
+ lapb_transmit_buffer+0xce/0x390 net/lapb/lapb_out.c:149
+ lapb_send_control+0x1c8/0x320 net/lapb/lapb_subr.c:251
+ lapb_establish_data_link+0xeb/0x110 net/lapb/lapb_out.c:163
+ lapb_device_event+0x398/0x570 net/lapb/lapb_iface.c:512
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8877
+ dev_change_flags+0x10c/0x160 net/core/dev.c:8915
+ devinet_ioctl+0x127a/0x1f10 net/ipv4/devinet.c:1177
+ inet_ioctl+0x3aa/0x3f0 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0x116/0x280 net/socket.c:1222
+ sock_ioctl+0x22e/0x6c0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f579ea11d49
+Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+RSP: 002b:00007fffb68eedc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f579e9436c0 RCX: 00007f579ea11d49
+RDX: 00007fffb68fefb8 RSI: 0000000000008914 RDI: 000000000000000c
+RBP: 00007fffb690f178 R08: 00007fffb68fef78 R09: 00007fffb68fef28
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fffb68fefb8 R14: 0000000000000028 R15: 0000000000008914
+ </TASK>
+
+The buggy address belongs to the variable:
+ bcast_addr+0x0/0x14a0
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xbf93
+flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000002000 ffffea00002fe4c8 ffffea00002fe4c8 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffffffff8bf93880: 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9 f9
+ ffffffff8bf93900: f9 f9 f9 f9 00 00 00 00 00 00 f9 f9 f9 f9 f9 f9
+>ffffffff8bf93980: 06 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 00 06 f9 f9
+                   ^
+ ffffffff8bf93a00: f9 f9 f9 f9 03 f9 f9 f9 f9 f9 f9 f9 00 00 00 00
+ ffffffff8bf93a80: 00 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 00 04 f9 f9
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
