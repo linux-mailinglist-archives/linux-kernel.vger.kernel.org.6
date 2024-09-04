@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-315889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC8E96C834
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352B996C838
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A80E1C22650
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDE211F23F3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477C61E8B86;
-	Wed,  4 Sep 2024 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AE01448E4;
+	Wed,  4 Sep 2024 20:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AynawN8f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1iVsWb0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945711E7672;
-	Wed,  4 Sep 2024 20:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FE76BFA3;
+	Wed,  4 Sep 2024 20:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725480697; cv=none; b=q1VTd+o6myowgrjVmHYFmYfQ81pKTpegxcamLy5UQyTL1ssRmbJDxO5VxxMMC7r8YIKFbZzqO7Ji35vdFeJ1Fxd3R/aplMpuMqhT1cEMmXa3foWTjIug6SZQDMLYpRu/pCUzuRgQzOGRtNxdpp2a4mZwz56p85BSNnaVVJ03AwM=
+	t=1725480967; cv=none; b=qLgcJewrp3FLTjY7Uj4jwHRL78N0whmtekS93GnpvSd8i+5pjUga7EchyVnkkxDWT9vx4yHp9WgzS2XcGJgoYOXAez208bu3ZxQDnXbjV19kTcgEXdphbzDyHKX0D4TAxX9o9f4imsjEyxwKuu4PLl7dFJjGMuJXXQ75fxhmtp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725480697; c=relaxed/simple;
-	bh=NqUCa7k/9EQcORVIPcZpHoRGyQcndPp3txYCyR9RNpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kZ/xrPvEU6jYS15tXJq7hn4pAOoD2dNUrgeqn4mnWwkrC9T+xq9pYyP5w6mWE6iPhDWDll/D0fU90JZLA5SIEkpHcs7Xd7XCXHvFUEI9kfOSVs3yOJtdgbdkar/pKkhLRV0+GnoHqukE0soYrD6YejG4cVYfIZFELvzNh8vudY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AynawN8f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C232C4CEC9;
-	Wed,  4 Sep 2024 20:11:36 +0000 (UTC)
+	s=arc-20240116; t=1725480967; c=relaxed/simple;
+	bh=N9pEA7Omn6xP3UqC/M2aQeukxkjLg/8s7NVCzR4woc4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A8e+eY45mCaVNKyM1KBxw+9U5V2P2aJ4fwyc0AxQIXQZ+jy5mhXRXoBnrKol7hd1di1lrnX75Fi/g/fQD8w11RSK04eGaNXbBrscru/3qhGMl3T9DwSyMFfYaPgKPhj/strQvlqae+XULv01s4l/7hUlnz7Vup+BzNK3bsm2SHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1iVsWb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E51F3C4CEC2;
+	Wed,  4 Sep 2024 20:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725480697;
-	bh=NqUCa7k/9EQcORVIPcZpHoRGyQcndPp3txYCyR9RNpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=AynawN8f0LObpCPANKKj4uyYdHeox3Zx6Pjfs+MzfN+zNTG4HAOgHSNWJgX1Wgt8c
-	 hx1PoJqXrDQTKUaSx2z6oeDElr3hIqYS+U54D4C2yOFQO31qhG6wTrexyiT5CLq3sS
-	 7Xu093xth4dlNVTUR/DFd4cqXP3WVLJ3PbHn394tI++aePnE1WxNm3XOhaGJ5gQikz
-	 baPx1OJHJ+rzssGPn9/mPrP2c3IIGpuX8kCsTUc52/BKHsAoCOhr66F1nuzOPhE+od
-	 Ff4N05P7ua6xIadW8HD57QrcmNAcDpvjQC7vbPSikGWyMqOXPQvy7JvOAUtM198Ptf
-	 PQioTQ54CoWIg==
-Date: Wed, 4 Sep 2024 15:11:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V4 09/12] PCI/TPH: Add save/restore support for TPH
-Message-ID: <20240904201134.GA345594@bhelgaas>
+	s=k20201202; t=1725480966;
+	bh=N9pEA7Omn6xP3UqC/M2aQeukxkjLg/8s7NVCzR4woc4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s1iVsWb03xy1SzhXsCEyZ3YniDoDs+DCJItrTdsq22KQqmDkdvzw9OTRyoTjMJoPl
+	 aXh+vCsVxxFhFQGr3l8xkvoePP7jD7D9uio69m02OcpLuZs82xDqAb5Fgo2WyUHEao
+	 OKTfEsq81xAtJStJVPkOBrXDP7hFfm8L/Ml7X4w2oZ44SThQeBuFHo2b4TeDlgQ4iC
+	 M+ZM41fBMaAPoZTJkReTKhoAnCwTw4OdCOKehT5d6LXyMlhqhY2k3CHEKsWGmFvg1j
+	 iMayOlZWdygbNZDA4YNn4jHGiTfTYhrdcamIbGs0/eXXtb8vKJwuy5oqsP2UBpYfqZ
+	 fiRmageTeoZAA==
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-45681098bbdso239501cf.1;
+        Wed, 04 Sep 2024 13:16:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYc0nDvykesBLgo6C/upl5D1jYlGOGBIFV6JxH436izZOYvxJ3Aqp6/iWwbZq0WAjbSuUWIRt749jA@vger.kernel.org, AJvYcCWNJhm4HaT/54L4MDPzE/QyNNlK600ahANML/8RM87GYuBUCt8M66cpe76t8QU2u1e33ZdW7VeDRsAGoCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp987cJ+cVuNgm8tNMawDwcqAN3PabXwUDGadGmqU5nIFuGwo8
+	aHFZP+CB7ZrFFhlUeHQG28i6wC9nATTWguuPzgsi14SLDJiaeEdzE23W75fq3zGp18osc60NIMj
+	SzoZ0q9KD0dMgBLTvy07tXnWaT+g=
+X-Google-Smtp-Source: AGHT+IHr9Y6Dg9eP7sZxeH4HR9kNRElZ+3rzRfHghMYSGXfaAS6jENfgVVWuG+czF9mVb9LPkv13YNhOLMpns0EWjXI=
+X-Received: by 2002:a05:622a:4c05:b0:457:d550:db86 with SMTP id
+ d75a77b69052e-457f8c589b3mr64256671cf.26.1725480966267; Wed, 04 Sep 2024
+ 13:16:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822204120.3634-10-wei.huang2@amd.com>
+References: <20240904123457.3027627-1-lilingfeng3@huawei.com> <8ee4ce7c4eb56ec80365492407b76ee3dc4b6347.camel@kernel.org>
+In-Reply-To: <8ee4ce7c4eb56ec80365492407b76ee3dc4b6347.camel@kernel.org>
+From: Anna Schumaker <anna@kernel.org>
+Date: Wed, 4 Sep 2024 16:15:49 -0400
+X-Gmail-Original-Message-ID: <CAFX2Jf=H=ia5Cq6nk3zK_Z22H=5ehDC+NPE8TRyAB1QY4eKV9g@mail.gmail.com>
+Message-ID: <CAFX2Jf=H=ia5Cq6nk3zK_Z22H=5ehDC+NPE8TRyAB1QY4eKV9g@mail.gmail.com>
+Subject: Re: [PATCH] nfs: fix memory leak in error path of nfs4_do_reclaim
+To: Trond Myklebust <trondmy@kernel.org>
+Cc: Li Lingfeng <lilingfeng3@huawei.com>, jlayton@kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 03:41:17PM -0500, Wei Huang wrote:
-> From: Paul Luse <paul.e.luse@linux.intel.com>
-> 
-> Save and restore the configuration space for TPH capability to preserve
-> the settings during PCI reset. The settings include the TPH control
-> register and the ST table if present.
+On Wed, Sep 4, 2024 at 10:39=E2=80=AFAM Trond Myklebust <trondmy@kernel.org=
+> wrote:
+>
+> On Wed, 2024-09-04 at 20:34 +0800, Li Lingfeng wrote:
+> > Commit c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
+> > nfs4_do_reclaim()") separate out the freeing of the state owners from
+> > nfs4_purge_state_owners() and finish it outside the rcu lock.
+> > However, the error path is omitted. As a result, the state owners in
+> > "freeme" will not be released.
+> > Fix it by adding freeing in the error path.
+> >
+> > Fixes: c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
+> > nfs4_do_reclaim()")
+> > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > ---
+> >  fs/nfs/nfs4state.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+> > index 877f682b45f2..30aba1dedaba 100644
+> > --- a/fs/nfs/nfs4state.c
+> > +++ b/fs/nfs/nfs4state.c
+> > @@ -1957,6 +1957,7 @@ static int nfs4_do_reclaim(struct nfs_client
+> > *clp, const struct nfs4_state_recov
+> >                               set_bit(ops->owner_flag_bit, &sp-
+> > >so_flags);
+> >                               nfs4_put_state_owner(sp);
+> >                               status =3D
+> > nfs4_recovery_handle_error(clp, status);
+> > +                             nfs4_free_state_owners(&freeme);
+> >                               return (status !=3D 0) ? status : -
+> > EAGAIN;
+> >                       }
+> >
+>
+> Nice catch! Yes, that leak has been there for quite a while. Thanks for
+> finding it.
 
-> +void pci_restore_tph_state(struct pci_dev *pdev)
-> +{
-> +	struct pci_cap_saved_state *save_state;
-> +	int num_entries, i, offset;
-> +	u16 *st_entry;
-> +	u32 *cap;
-> +
-> +	if (!pdev->tph_cap)
-> +		return;
-> +
-> +	if (!pdev->tph_enabled)
-> +		return;
-> +
-> +	save_state = pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_TPH);
-> +	if (!save_state)
-> +		return;
-> +
-> +	/* Restore control register and all ST entries */
-> +	cap = &save_state->cap.data[0];
-> +	pci_write_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, *cap++);
-> +	st_entry = (u16 *)cap;
-> +	offset = PCI_TPH_BASE_SIZEOF;
-> +	num_entries = get_st_table_size(pdev);
-> +	for (i = 0; i < num_entries; i++) {
-> +		pci_write_config_word(pdev, pdev->tph_cap + offset,
-> +				      *st_entry++);
-> +		offset += sizeof(u16);
-> +	}
-> +}
-> +
-> +void pci_save_tph_state(struct pci_dev *pdev)
-> +{
-> +	struct pci_cap_saved_state *save_state;
-> +	int num_entries, i, offset;
-> +	u16 *st_entry;
-> +	u32 *cap;
-> +
-> +	if (!pdev->tph_cap)
-> +		return;
-> +
-> +	if (!pdev->tph_enabled)
-> +		return;
-> +
-> +	save_state = pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_TPH);
-> +	if (!save_state)
-> +		return;
+Looks good to me, too. I've applied this for v6.12 (with a cc stable
+so it gets backported)
 
-Don't we need a pci_add_ext_cap_save_buffer() somewhere for this?
-E.g., in pci_tph_init()?
+Anna
 
-> +	/* Save control register */
-> +	cap = &save_state->cap.data[0];
-> +	pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, cap++);
-> +
-> +	/* Save all ST entries in extended capability structure */
-> +	st_entry = (u16 *)cap;
-> +	offset = PCI_TPH_BASE_SIZEOF;
-> +	num_entries = get_st_table_size(pdev);
-> +	for (i = 0; i < num_entries; i++) {
-> +		pci_read_config_word(pdev, pdev->tph_cap + offset,
-> +				     st_entry++);
-> +		offset += sizeof(u16);
-> +	}
-> +}
-> +
->  void pci_tph_init(struct pci_dev *pdev)
->  {
->  	pdev->tph_cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_TPH);
-> -- 
-> 2.45.1
-> 
+>
+> --
+> Trond Myklebust
+> Linux NFS client maintainer, Hammerspace
+> trond.myklebust@hammerspace.com
+>
+>
 
