@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-314473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DAF96B3D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:03:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2845896B3D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4C11F25BC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:03:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC1E1C21689
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C56D17BECD;
-	Wed,  4 Sep 2024 08:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD2E17BEB6;
+	Wed,  4 Sep 2024 08:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DBSpLNHT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5vwlHa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0468E1494AB;
-	Wed,  4 Sep 2024 08:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D336B17A59D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 08:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436987; cv=none; b=o2n+VLmkEi33RSp4akHM71S3LPhwA7fui9uLxC42DiJZD+oNFIyucQfo6OBER+t4P5ZGITkYrL4bPaIhHZQFP55MGOI5nOLBpeMQ8fbLsI9cbx/qYvx/ObFL/qZdKA4RRtqjNUxLWqOfkdDVIJNVLk3tqBEqgDK68Niu8gs28So=
+	t=1725437008; cv=none; b=Bzhf7VYsMAZXGtFlqRyTUeO/XzgCQP/vluN3DytRBtn3h7H/kCV0fOD38qQerGjIjFuxqV9La7OJuyL5tc2TizuPHaf7jKtbgNwoA8BYqicQ7aAi+rHZoCqp5n+P8L3I6PYjvoVkbEro6wTHk6/kqbaRPwBgOc9YQZmsGLsLOvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436987; c=relaxed/simple;
-	bh=EvtTAN43MF9IJtI4LMQlHahxmGI3fTgZDyA4IWKhy9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eONFTPFiGNLAPhfm66CvEyzenqi6ZcQGehxk0wuEskJd2Rep3tu/Zp6cE2ODUUoVCIxi4tHErFsXe8vmiBvUKJFad5ajnFORXka8wAp8KX1UIfiXnN+AltQbaImyXTck1BdBHOQ6X2mrRvz4EIQst1APDU79YBIaBdAdRQ58ddM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DBSpLNHT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725436984;
-	bh=EvtTAN43MF9IJtI4LMQlHahxmGI3fTgZDyA4IWKhy9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DBSpLNHT8iipmirt/a9Ck4pTN1x4XZzXXYCt8DjWp0BrztNv4xfbG7UuZj95liHRF
-	 eA+TO50zntwE9XORnLAeD/scs+YIZERvIAcFM0r4XPgflBwuF+QVYfcqhB3ggcx9mp
-	 ZC9tQnNZ3TWSABLgAR8wfa3Sxt4m/fLor+xcnMbCRi3h8N5l64NMREwBrvER7ddbbv
-	 UmGb99MCSfeAiHHHnOSfBY7Yqt3uD7q7L9D4lhWck2BMmbDODyydhRUo1kl1RVvSgy
-	 46fjKRmuT++9dlVXdL9+mo5h2hoUOIG/c7k5wCYCf1ZY8FF2sPKJyhPqq9BdtKsjMA
-	 GfTJbCGANc4DA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7711717E0F95;
-	Wed,  4 Sep 2024 10:03:03 +0200 (CEST)
-Date: Wed, 4 Sep 2024 10:03:00 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 3/4] drm/panthor: enable fdinfo for memory stats
-Message-ID: <20240904100300.40ea245d@collabora.com>
-In-Reply-To: <20240903202541.430225-4-adrian.larumbe@collabora.com>
-References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
-	<20240903202541.430225-4-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725437008; c=relaxed/simple;
+	bh=zoG4gwZKxa9IcTIDQ2bRGpQGdu2Rp/LcfLYrYz79lRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ODySyUHAJ92DMdUUvz0U2Ch1P6oZY3Q2dzPVmzcGGbtBVI79BoA+vQHQ8+ywkQjZReb9JpGcEzzGHqd+7cfPraMs1HvkaPmHuXIIYuIk6ie8pV7XKBBfRlDuAegA+7b0eBSNLWQlQkH6cmVQ4e3k6Djb7L+nhwguZKoiZVkX2qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5vwlHa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB0CC4CEC2;
+	Wed,  4 Sep 2024 08:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725437008;
+	bh=zoG4gwZKxa9IcTIDQ2bRGpQGdu2Rp/LcfLYrYz79lRY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b5vwlHa1IH8GMQornzrpyviBtWeteWkzkBi6u1QznZHuW8GJeXHU/fnvnfOvOxcPY
+	 YMv4jqsGWWZtQfVL1koKRlMM8W3fQCpcInuEQfnc+ldKUeo8T/JSlwjCH3BA/YlQ2U
+	 rfM/KRB0FyPr03QVb/GJhDfyPLNW18KTffHH+UJbrcgUfbkWD8/qPhuVWApJpzJ9Uq
+	 AQjQybivlsUVK3VnL57O0LPzKFTG5gBs89ubZw+th0LfZ7WGnpf5jtbpMsgMFd2mcz
+	 1LhHZKnM8+Vy4VWKPRH9AvLblE/Chp/Ot+E68r24gDWcMuXTEgSuQfHX+aruA5I4DM
+	 7OLyl+Tuiz/KQ==
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com
+Cc: kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	peterz@infradead.org
+Subject: [PATCHSET sched_ext/for-6.12] sched_ext: Apply pick_next_task() updates and remove switch_class()
+Date: Tue,  3 Sep 2024 22:03:02 -1000
+Message-ID: <20240904080326.1132275-1-tj@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue,  3 Sep 2024 21:25:37 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Hello,
 
-> Implement drm object's status callback.
->=20
-> Also, we consider a PRIME imported BO to be resident if its matching
-> dma_buf has an open attachment, which means its backing storage had alrea=
-dy
-> been allocated.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+d7b01aef9dbd ("Merge branch 'tip/sched/core' into for-6.12") received sched
+core udpates around pick_next_task() and put_prev_task(). While the merge
+commit added a minimal workaround to keep sched_ext building and mostly
+functioning, sched_ext is currently out of step with other sched classes.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+This patchset brings sched_ext upto the code by replacing
+pick_next_task_scx() with pick_task_scx() which doesn't require the current
+task to be queued and can detemrine between the current task and the top of
+the local DSQ statelessly. This allows unifying regular and core-sched pick
+task paths. After the updates, sched_class->switch_class() is no longer used
+and dropped.
 
-> ---
->  drivers/gpu/drm/panthor/panthor_gem.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 38f560864879..c60b599665d8 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -145,6 +145,17 @@ panthor_gem_prime_export(struct drm_gem_object *obj,=
- int flags)
->  	return drm_gem_prime_export(obj, flags);
->  }
-> =20
-> +static enum drm_gem_object_status panthor_gem_status(struct drm_gem_obje=
-ct *obj)
-> +{
-> +	struct panthor_gem_object *bo =3D to_panthor_bo(obj);
-> +	enum drm_gem_object_status res =3D 0;
-> +
-> +	if (bo->base.base.import_attach || bo->base.pages)
-> +		res |=3D DRM_GEM_OBJECT_RESIDENT;
-> +
-> +	return res;
-> +}
-> +
->  static const struct drm_gem_object_funcs panthor_gem_funcs =3D {
->  	.free =3D panthor_gem_free_object,
->  	.print_info =3D drm_gem_shmem_object_print_info,
-> @@ -154,6 +165,7 @@ static const struct drm_gem_object_funcs panthor_gem_=
-funcs =3D {
->  	.vmap =3D drm_gem_shmem_object_vmap,
->  	.vunmap =3D drm_gem_shmem_object_vunmap,
->  	.mmap =3D panthor_gem_mmap,
-> +	.status =3D panthor_gem_status,
->  	.export =3D panthor_gem_prime_export,
->  	.vm_ops =3D &drm_gem_shmem_vm_ops,
->  };
+This change causes two subtle API changes for the BPF schedulers. Both are
+desirable and all the existing schedulers should be okay with them.
 
+The patchset is also available in the following git branch:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-pick_task
+
+and contains the following patches:
+
+ 0001-sched_ext-Don-t-call-put_prev_task_scx-before-pickin.patch
+ 0002-sched_ext-Replace-SCX_TASK_BAL_KEEP-with-SCX_RQ_BAL_.patch
+ 0003-sched_ext-Unify-regular-and-core-sched-pick-task-pat.patch
+ 0004-sched_ext-Relocate-functions-in-kernel-sched-ext.c.patch
+ 0005-sched_ext-Remove-switch_class_scx.patch
+ 0006-sched_ext-Remove-sched_class-switch_class.patch
+
+diffstat follows. Thanks.
+
+ include/linux/sched/ext.h      |    1
+ kernel/sched/core.c            |   12 --
+ kernel/sched/ext.c             |  359 +++++++++++++++++++++++++--------------------------------------
+ kernel/sched/sched.h           |    3
+ tools/sched_ext/scx_qmap.bpf.c |   22 +++
+ 5 files changed, 167 insertions(+), 230 deletions(-)
+ 
 
