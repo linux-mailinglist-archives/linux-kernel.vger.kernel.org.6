@@ -1,151 +1,175 @@
-Return-Path: <linux-kernel+bounces-315905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E560096C8A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BF096C8A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 214DC1C25B18
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7415A1F28574
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DAF158DD9;
-	Wed,  4 Sep 2024 20:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66B148FF5;
+	Wed,  4 Sep 2024 20:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TPVYrQ3k"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I6ckhaKT"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39C148304;
-	Wed,  4 Sep 2024 20:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B25F14830C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725481927; cv=none; b=JKG4dT93amceIEPl7NLOl4ktdJh1Pfmin761D8VWm5Tb63yddwjxOr0RB6/mWEKFtvLsY3vOtuQdVK6N0Db8sVMhxCDoAk8LelgLXKTw1X8X5ZCdp/GnoihAYB7bsQiZ7YtQ4DxftpwtuvuIr54qMJaVvAx+imhJWjxXFTTOSzs=
+	t=1725482233; cv=none; b=mKifjDD5EqcD9UY8mHv2vqLc0nJwb7rZ/nHJzrUNjbPJEqyh6vn9glXqlpFmOvGke+TwOa+6LyxQHtRzYj58I1JKqOcyH5GafaPUoje6jumGhYWcsSYAGwfqChQ12fk1KUhR7sGnrSp442Z31P0xqSvSQy780Gtu21+dxs6TlTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725481927; c=relaxed/simple;
-	bh=BOpPOteOgOAfROk0/u+2xBJl3CQ/Rfkyo13BDvqI1CE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TvaSqvWb6jDBfI/EUxehJeppQNqA2EyFLBCeoMNe9HzoA9RttoimJGgAtxfkU4xBEAYrdymuMaNjnNjjjrV7+lpObE86Sdty5JIPbgSXQuvjqiU5gTYczl1TLTAVbrB01N7bzL15NkBSgDW2/gOMb6uHlXoamKx9ZdK7uC/dxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TPVYrQ3k; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725481923;
-	bh=BOpPOteOgOAfROk0/u+2xBJl3CQ/Rfkyo13BDvqI1CE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TPVYrQ3kORi5yxgH2XtCdkiuEIH5Y5ct3xeWBiy3qLVdynDBIc6yxIXxnuQJ9Pih7
-	 Duq3LiFy1BSVunjPem9jDvPVCfF4cPzizi2FOQvxtfjK3MpjhXk3odmRikEeezHco6
-	 e5bvlGX1zb5qb5ve2VUvMQX9W8bgpmyhp0Yt11jjK0iw/qGIiyxidS/xrBS4TWRSgS
-	 4k63VWtHTVhqkyDl5IM6YIA6HlpDU3QDcnAuWEggv8tedyhSUqtmXuWsdSfd3c8+Ey
-	 M+6p4by8KriklxuxvxyER2M0RVUs+J9FGzZhLh+pDhE3Jcs2HCw+dfIHzgLU5FTF1U
-	 fxvRsue5tijcQ==
-Received: from bootstrap.hitronhub.home (unknown [23.233.251.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EFE1217E0B18;
-	Wed,  4 Sep 2024 22:32:01 +0200 (CEST)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	kernel@collabora.com,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH v4 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
-Date: Wed,  4 Sep 2024 16:30:58 -0400
-Message-ID: <20240904203154.253655-2-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240904203154.253655-1-detlev.casanova@collabora.com>
-References: <20240904203154.253655-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1725482233; c=relaxed/simple;
+	bh=yQwnYD19n1xUXU4dbty3ehLdSGl/V3zWXm5EKMRaIf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uP/JiwrGSWvvmQAce4YetJH1D7UXQUOXCIXe4h1QHy790tmVEg+eTi9Ari3lkc3cVPlqn0jBz8ZPTJLr+Dov8jHYVjG6fbR3u/sT44skzf+Y4P5cIYVTXo13oB+RqrOF6FgSVke03j+C4eZdZ1rpafMvOTZ5vtMYuCtEd8REtGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I6ckhaKT; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c49c9018ebso65679727b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 13:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725482230; x=1726087030; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uSNgAoLeuNZ3XWdQeqcMJZ932reV/H1BZ/60TxYWNg=;
+        b=I6ckhaKTHN86Qd0oxsBHDCuvEwxZ+gt388yVPW9pXcoJY4vYyPXXZiONw/+vnLSVnB
+         rpL0lytcQ2cK61+dSKQlwG0gjAU4tc3xOhEJ8WaFOcRgE9ApVHV/XqqtJJO761YMuCUS
+         wJ56hIZ9BkXC8yy0j64OWUGHh9WGXywwrUeepl4rl9MCtPWist6N2OjFOul+g5dIhAYd
+         0UK/Z+8/eznXHOtkh/XYPRGVoh/WKIMOPnxq60cZ85FsKkkBKDSeRq5miz9shOAUvW+T
+         RHoVYGzFtDLa4NzNDWAS1Mjte4nfrHUn/at1AkkEopftDKcxE+qXB8Az5IXEdSsMBJjz
+         W4Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725482230; x=1726087030;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+uSNgAoLeuNZ3XWdQeqcMJZ932reV/H1BZ/60TxYWNg=;
+        b=AFRksLqDsqOwmp7gr7wEhUsIlDSi8ei7MohZPNYYRLIvtnRG1V8n3ZgB60mtargHCN
+         XNKhqi2WLjQHXSUbKW+z6ufP/gwgDHa9wju6Ve90l6wWRMkTuJ/oMfQF7JNxv4BSxEbd
+         fG49HcNcMd9pDz6UQ4hOuDCa720nbblrGQF9TtR3eGXZLSySyVoFvJ4h8zmRxaexgMFr
+         0rqzw/eIznPMxjORvyXc6prXD+JOphEpDjrotePxzz9Sk6IvUtBM3lkJW9Yd7ILgT7KV
+         064GKR3IE8TIyB6zGsksYL06BEFAErWxLCk//0DGz7djsiftgkzMJTiYUcXJJkcri0St
+         cqsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrUdoG9UMzWaCTGOkk6QIzJr49SY8Yz1aktA7qODohrRVhV2ENX3RSWgcGXSA2rsEZCHistRM+OPseERQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzajEGwJ4I23PtiyAyxF6smyFeKUUh+uFMnh9Y/15ayp61gRIA+
+	6AreaHBL1goIGg8GWuytQ2h+C3EkmjNIhjkIn8fsCf2e6Whd+R5trH9r02I0n5buVYWqzbXDqyD
+	sSqGs5noy0SfDchMsE/P7aAeO0Jo8IQ4zdkQN
+X-Google-Smtp-Source: AGHT+IG9r5awwLWDaSa/SS1wlz6GDBVERagOH9s3xymO+3hCHtxHEKujYrlOkzwl7hougrLaBBg55clsy/6UTBUp4qs=
+X-Received: by 2002:a05:690c:4589:b0:6d4:f41d:de2f with SMTP id
+ 00721157ae682-6d4f42d2475mr143212667b3.39.1725482230428; Wed, 04 Sep 2024
+ 13:37:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240830003411.16818-2-casey@schaufler-ca.com>
+ <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com> <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
+ <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com> <93952b9f-2e40-42fc-9a61-749b9c8ee306@schaufler-ca.com>
+In-Reply-To: <93952b9f-2e40-42fc-9a61-749b9c8ee306@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 4 Sep 2024 16:36:59 -0400
+Message-ID: <CAHC9VhTwYftY4nLauF8A9AOawAGKdU-+TGoVfM7Paf23x1Vm8w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
+	apparmor@lists.ubuntu.com, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The device is compatible with rk3588, so add an entry for the 2
-compatibles together.
+On Wed, Sep 4, 2024 at 4:28=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 9/4/2024 1:00 PM, Paul Moore wrote:
+> > On Tue, Sep 3, 2024 at 8:53=E2=80=AFPM Casey Schaufler <casey@schaufler=
+-ca.com> wrote:
+> >> On 9/3/2024 5:18 PM, Paul Moore wrote:
+> >>> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > ..
+> >
+> >>>> +/*
+> >>>> + * Data exported by the security modules
+> >>>> + */
+> >>>> +struct lsmblob {
+> >>>> +    struct lsmblob_selinux selinux;
+> >>>> +    struct lsmblob_smack smack;
+> >>>> +    struct lsmblob_apparmor apparmor;
+> >>>> +    struct lsmblob_bpf bpf;
+> >>>> +    struct lsmblob_scaffold scaffold;
+> >>>> +};
+> >>> Warning, top shelf bikeshedding follows ...
+> >> Not unexpected. :)
+> >>
+> >>> I believe that historically when we've talked about the "LSM blob" we=
+'ve
+> >>> usually been referring to the opaque buffers used to store LSM state =
+that
+> >>> we attach to a number of kernel structs using the `void *security` fi=
+eld.
+> >>>
+> >>> At least that is what I think of when I read "struct lsmblob", and I'=
+d
+> >>> like to get ahead of the potential confusion while we still can.
+> >>>
+> >>> Casey, I'm sure you're priority is simply getting this merged and you
+> >>> likely care very little about the name (as long as it isn't too horri=
+ble),
+> >> I would reject lsmlatefordinner out of hand.
+> > Fair enough :)
+> >
+> >>> but what about "lsm_ref"?  Other ideas are most definitely welcome.
+> >> I'm not a fan of the underscore, and ref seems to imply memory managem=
+ent.
+> >> How about "struct lsmsecid", which is a nod to the past "u32 secid"?
+> >> Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
+> >> I could live with "struct lsmref", I suppose, although it pulls me tow=
+ard
+> >> "struct lsmreference", which is a bit long.
+> > For what it's worth, I do agree that "ref" is annoyingly similar to a
+> > reference counter, I don't love it here, but I'm having a hard time
+> > coming up with something appropriate.
+> >
+> > I also tend to like the underscore, at least in the struct name, as it
+> > matches well with the "lsm_ctx" struct we have as part of the UAPI.
+> > When we use the struct name in function names, feel free to drop the
+> > underscore, for example: "lsm_foo" -> "security_get_lsmfoo()".
+> >
+> > My first thought was for something like "lsmid" (ignoring the
+> > underscore debate), but we already have the LSM_ID_XXX defines which
+> > are something entirely different and I felt like we would be trading
+> > one source of confusion for another.  There is a similar problem with
+> > the LSM_ATTR_XXX defines.
+> >
+> > We also already have a "lsm_ctx" struct which sort of rules out
+> > "lsmctx" for what are hopefully obvious reasons.
+> >
+> > I'd also like to avoid anything involving "secid" or "secctx" simply
+> > because the whole point of this struct is to move past the idea of a
+> > single integer or string representing all of the LSM properties for an
+> > entity.
+> >
+> > I can understand "lsm_data", but that is more ambiguous than I would li=
+ke.
+> >
+> > What about "lsm_prop" or "lsm_cred"?
+>
+> If we ever do the same sort of thing for the existing blobs we're
+> going to need to have lsm_cred for the cred blob, so I shan't use
+> it here. I can live with lsm_prop, which shouldn't confuse too many
+> developers. We can start saying "property" in place of secid, which
+> would be a good thing.
 
-The rk3576 device has a power-domain that needs to be on for the eMMC to
-be used. Add it as a requirement.
+Works for me, thanks Casey.
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 37 +++++++++++++++----
- 1 file changed, 29 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-index 80d50178d2e3..c3d5e0230af1 100644
---- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-@@ -12,14 +12,18 @@ maintainers:
- 
- properties:
-   compatible:
--    enum:
--      - rockchip,rk3568-dwcmshc
--      - rockchip,rk3588-dwcmshc
--      - snps,dwcmshc-sdhci
--      - sophgo,cv1800b-dwcmshc
--      - sophgo,sg2002-dwcmshc
--      - sophgo,sg2042-dwcmshc
--      - thead,th1520-dwcmshc
-+    oneOf:
-+      - items:
-+          - const: rockchip,rk3576-dwcmshc
-+          - const: rockchip,rk3588-dwcmshc
-+      - enum:
-+          - rockchip,rk3568-dwcmshc
-+          - rockchip,rk3588-dwcmshc
-+          - snps,dwcmshc-sdhci
-+          - sophgo,cv1800b-dwcmshc
-+          - sophgo,sg2002-dwcmshc
-+          - sophgo,sg2042-dwcmshc
-+          - thead,th1520-dwcmshc
- 
-   reg:
-     maxItems: 1
-@@ -35,6 +39,9 @@ properties:
-     minItems: 1
-     maxItems: 5
- 
-+  power-domains:
-+    maxItems: 1
-+
-   resets:
-     maxItems: 5
- 
-@@ -97,6 +104,20 @@ allOf:
-             - const: block
-             - const: timer
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3576-dwcmshc
-+
-+    then:
-+      required:
-+        - power-domains
-+
-+    else:
-+      properties:
-+        power-domains: false
-+
- unevaluatedProperties: false
- 
- examples:
--- 
-2.46.0
-
+--=20
+paul-moore.com
 
