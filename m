@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-314044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2353896AE1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:50:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4ED96AE20
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88551F25A27
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 796AAB237BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317C41BC2A;
-	Wed,  4 Sep 2024 01:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0D811713;
+	Wed,  4 Sep 2024 01:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsadccl/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JINHUFbX"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D6A3211;
-	Wed,  4 Sep 2024 01:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0403D3C17;
+	Wed,  4 Sep 2024 01:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725414608; cv=none; b=P/ngmW3zT49Xqd2PnAeBwkh+ve5BVICmDE1NTYJJdge74KefuwVaHAus5pnukVrZSS2SSLiCWPVFgajGbLhQmUgfgv7Maiu2IiHL7mIEzJCKeaKEm22D8AYgHVw20feYYaYE8TzUddHTEotVZfuAFLz1TJFNODzCZo2g5GsHyL0=
+	t=1725414873; cv=none; b=WRJlA8rN2v5cWrnCDFXVdnXfVdDXnPlWkNbMZiw4qYETAgmNJvYIjuig6kys6ArFkq7AXIiEHHVwOkEQX5t2krg1AkWqDZBZlfzsLNcQr6jE47B6u1+aoclSCq+ts9BA4fSfaU4b6izbosHcTxUme8+d7BaE5SoPZoDcWDoJcec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725414608; c=relaxed/simple;
-	bh=4AQxlfwksI8M0lXuPBfgDWfUUeO7Xwm6/Q69FGEDaqE=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Bf07VAvSoWJ+nAeiW8MfCQS4ADKdpvknOTWLeIM8dFcLjGGXZAONCiXaRg7qZNZ2BiKBX2f3e3TFVIpfhMebThfTvG/O8+fTMhxTGCR3iI+i/Qg1FonPxKcOSLwCsAI0s53+Zpasrty0f5gmxRpP7ePt9KgKuoto+FQ0/NAIxqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsadccl/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853F8C4CEC4;
-	Wed,  4 Sep 2024 01:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725414607;
-	bh=4AQxlfwksI8M0lXuPBfgDWfUUeO7Xwm6/Q69FGEDaqE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=jsadccl/9E+PbXaq+qBmbPd7/PjPSWuCGCCzZgXrCdzxotTCt+t4Jh4/bmoJd9CVw
-	 H8TFVkWCnT6PO3N5msofWRplIEzvDa/Eg5k4rOBS65A+0zhdG8IyexgNbEl8PJPjw+
-	 IPqvsG8xcWU4KoDxTm0aKsnESTEtPBfW/2JJhC2yZ7oNtXlbcdYda/gKsGnl9kjiks
-	 zYIezEibBc9qTHTav6i6r2l9PCUv9D8lgvmxWdNEEHSR/qOB+sf1qlb4hUUhVYAkeY
-	 sRh9O478wwJmKVRY2p7fE4R/AvzwSGarhGRI5N4ZYyVZuwxFz3ZGhNiy/K7VPANfL9
-	 HopuyFoAQZ++g==
-Date: Tue, 03 Sep 2024 20:50:06 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1725414873; c=relaxed/simple;
+	bh=qXG6OeG1AuM2mVo/2L1gULaQIT/pgdfN44BBaUNDpbw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pBEWC3BI49BqfD9gzxz89t3RXipL4g0w3IjBgk9X4qD186YWCKARTjv9eRc+KjSRRKwqYBNFXunxFwIUH99rmhGVBLxbDVerbrKudy856jT6oVpiZl/Lgov5Ic3iSv2idwgQisl3Z2hsmQrFmOOU/LgQyz7fG9vikxDP2RX7kOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JINHUFbX; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3df0519a3ceso3653029b6e.2;
+        Tue, 03 Sep 2024 18:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725414870; x=1726019670; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yrYHG7eQk6rW7VBN1NJAxki2bUkI69dy+Qbg9DclfuQ=;
+        b=JINHUFbX9UVrdF0smrLYXfjhY/RpRle/bGn6cVj6SeuI3Kb8GVOV09dmFzyVc+5nBw
+         CSvK0i1LTNksTaXmD7neN8SUgmDHSCF303UVuW7Y2cQyQ910hsAlerTbam7gmE80xe84
+         xxrTzaAsevGWS+1tVgC5YrDgT4oZEss5CGQrpdIT1i3Nh8sZh510pEUFokZIX44OIlBz
+         z1TFFG5HEkMRK5WxqLXL5seF+x6ml1EsCQ5CzN4LMWr2e0MusgtDYXEw1M/olrdOYeAb
+         paRbKLdoj700MVTZylUPJpMncW/EdR05KYLIyZg2Sfs51TfNLYgLGDlTSwPgV3EZt4pU
+         bdcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725414870; x=1726019670;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yrYHG7eQk6rW7VBN1NJAxki2bUkI69dy+Qbg9DclfuQ=;
+        b=iUamvvXixxEPVxQuHziPO5njwsVoNOkrsNxRqZOI0wo+WrlWS5xKpEuA2Y+hmU9QeH
+         6e/4MOTMwA5+WmjHwPizNC3Cm+qAvS1gPpUqbxprKOwCk+6oQA6uLC9lCroBvfS8Cxjz
+         TfzYBsGX9dqNLlTDKDVCZksaX5v4ZLKb1NQt96LDlk0x/hgzRBTDXdQ27KNh8b6ISf+Z
+         1Fv8w46cBDHuGYstQ1rbwcxzQe95ch0y2BdPMGOzZVncJ0AuKTqsEcX9unesi7wLKYx3
+         cIkjuKqnKfdSNeh6BeV4Q5aNkQHZD9hu/ZsX/5tWjPQxuMoRNYwxBGupE9k8Im/E/Ze2
+         10qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1a4TqG4JUznjBEl7OZEzTzM06AuAofDOgvdnpHLOZyzmljxri4jhNcRkGVo/qC31aoPbRQkYVYC7eJIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvK4+3LqgXGbMHrhD+iM/XhZtzEfPT20B8qg+bYON0M8k+iTK8
+	ccQ5xlCG9guP+APKDcSeYSIiR8iR/kjAiRBLISlfOQrc/iQxMr6K
+X-Google-Smtp-Source: AGHT+IFQrHM1sVdE9yzS05Lfl8cGGC7Qe6tkr91Lb7p4PVOuMLJ9xvzBev5fsKn1NgCLX3/3btW07A==
+X-Received: by 2002:a05:6870:2112:b0:255:2e14:3d9d with SMTP id 586e51a60fabf-2779007542bmr21782985fac.5.1725414870056;
+        Tue, 03 Sep 2024 18:54:30 -0700 (PDT)
+Received: from smtpclient.apple ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717785890fasm500433b3a.118.2024.09.03.18.54.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2024 18:54:29 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: devicetree@vger.kernel.org, cristian.marussi@arm.com, 
- rui.zhang@intel.com, linux-spi@vger.kernel.org, lee@kernel.org, 
- krzk+dt@kernel.org, will@kernel.org, linux-arm-msm@vger.kernel.org, 
- linus.walleij@linaro.org, joro@8bytes.org, linux-kernel@vger.kernel.org, 
- robin.murphy@arm.com, quic_psodagud@quicinc.com, conor+dt@kernel.org, 
- kernel@quicinc.com, sudeep.holla@arm.com, linux-serial@vger.kernel.org, 
- linux-i2c@vger.kernel.org, herbert@gondor.apana.org.au, 
- konradybcio@kernel.org, jassisinghbrar@gmail.com, 
- linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, andersson@kernel.org, 
- lukasz.luba@arm.com, iommu@lists.linux.dev, linux-watchdog@vger.kernel.org, 
- broonie@kernel.org, rafael@kernel.org, davem@davemloft.net, 
- arm-scmi@vger.kernel.org, thara.gopinath@gmail.com, viresh.kumar@linaro.org, 
- linux@roeck-us.net, amitk@kernel.org, wim@linux-watchdog.org, 
- andi.shyti@kernel.org, linux-arm-kernel@lists.infradead.org, 
- tglx@linutronix.de, linux-crypto@vger.kernel.org
-In-Reply-To: <20240903220240.2594102-14-quic_nkela@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-14-quic_nkela@quicinc.com>
-Message-Id: <172541460656.3237041.12121704663662726692.robh@kernel.org>
-Subject: Re: [PATCH v2 13/21] dt-bindings: pinctrl: Add SA8255p TLMM
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <20240828022350.71456-3-zhangwarden@gmail.com>
+Date: Wed, 4 Sep 2024 09:54:15 +0800
+Cc: live-patching@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <2A1B7DE1-07C7-42F5-84ED-598ED538EC43@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
-On Tue, 03 Sep 2024 15:02:32 -0700, Nikunj Kela wrote:
-> Add compatible for TLMM block representing support on SA8255p.
+
+> On Aug 28, 2024, at 10:23, Wardenjohn <zhangwarden@gmail.com> wrote:
 > 
-> SA8255p uses the same TLMM block as SA8775p however the ownership
-> of pins are split between Firmware VM and Linux VM on SA8255p. For
-> example, pins used by UART are owned and configured by Firmware VM
-> while pins used by ethernet are owned and configured by Linux VM.
-> Therefore, adding a sa8255p specific compatible to mark the difference.
+> One system may contains more than one livepatch module. We can see
+> which patch is enabled. If some patches applied to one system
+> modifing the same function, livepatch will use the function enabled
+> on top of the function stack. However, we can not excatly know
+> which function of which patch is now enabling.
 > 
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  .../devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml    | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> This patch introduce one sysfs attribute of "using" to klp_func.
+> For example, if there are serval patches  make changes to function
+> "meminfo_proc_show", the attribute "enabled" of all the patch is 1.
+> With this attribute, we can easily know the version enabling belongs
+> to which patch.
+> 
+> The "using" is set as three state. 0 is disabled, it means that this
+> version of function is not used. 1 is running, it means that this
+> version of function is now running. -1 is unknown, it means that
+> this version of function is under transition, some task is still
+> chaning their running version of this function.
+> 
+> cat /sys/kernel/livepatch/<patch1>/<object1>/<function1,sympos>/using -> 0
+> means that the function1 of patch1 is disabled.
+> 
+> cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> 1
+> means that the function1 of patchN is enabled.
+> 
+> cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> -1
+> means that the function1 of patchN is under transition and unknown.
+> 
+> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+> 
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Hi, Maintainers.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:22:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:23:11: [warning] wrong indentation: expected 12 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml:26:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+How about this patch? I am looking for your suggestions.
 
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240903220240.2594102-14-quic_nkela@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Regards,
+Wardenjohn.
 
 
