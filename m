@@ -1,137 +1,196 @@
-Return-Path: <linux-kernel+bounces-314011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B48396ADAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2437E96AD8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34ECAB240FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:15:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ADBDB21368
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5986524C;
-	Wed,  4 Sep 2024 01:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67CD4A28;
+	Wed,  4 Sep 2024 01:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="f3VcjyXX"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="twDkCD5D"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2094.outbound.protection.outlook.com [40.92.103.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACF220ED;
-	Wed,  4 Sep 2024 01:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725412521; cv=none; b=E5n/MWc5OV0zvi/sGThBTv07zbrmSUEWR5NwklFl+fVeRm7afue8BhR+5lAb11tOET8qDqIWVJkXxSDZQz1p/p3A9iIJ+PnLWzCp5zUlGSpfbFJgkk0v8iOqZrWFRylrHPKXlrROYfbjxFssm9InPY4Mr+z+owaLOb5hTDCL0b8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725412521; c=relaxed/simple;
-	bh=EXMzDbmcyT8Qbv/FeHGnz5g0knYbqB/ouB2ky8UwEgs=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=G0JgaY0x6oPU2x1ycdEktb06PtMLCfk+iEqDYo6jNidexxR+2hZ6iwt2b8IYWo6yW4H+buMuMohvCVjLJWH0jc/lILxQNIL3TS/OZy4WaWdDRMJFCFgPHvorm4ZehzT+QzrJDvk74wqKUqmNz7zjmDPIWBgJIRzLIKklca73X60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=f3VcjyXX; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725412515; bh=QJXZJ0i4PPyQs9pLBVhM6Cvr7GCkh2tTTsXYVcn50/s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=f3VcjyXXBodAtU2L2N2FF1YiEjEjss8zKD2YqfQPXAwGAqMw5vSnyxB8UxkYEIQCg
-	 7hCZ/rHfqGz174AXlxmbmdgOSPrbz/AtqEvnhrjf4qsfSih/PZZKkt5K7/c83+7PTH
-	 UDvHWIs4EioFA60BjYgxT7KN/6wEEi8RwaBZtCm0=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 64972BC; Wed, 04 Sep 2024 09:01:36 +0800
-X-QQ-mid: xmsmtpt1725411696tbd4s16ca
-Message-ID: <tencent_472581BA11BB2533E79EA21B964B2A1BC408@qq.com>
-X-QQ-XMAILINFO: NiAdzfE16ND4G/kmn26CnIlyhaFL7BFoNKCJQqM4wJSMCMBfLvHOBYUa0FF4OB
-	 gEiIsHUffKRlg4jM1p6hUdRnlt+46h6w0PnLmdcIFMTvDZUFCXrxUwFYNpAtt7k1DghYYFh9tju2
-	 zjvBrBGL27gyvyV/LDaOe9dgzgVgvnC2DzV5EMmJSd5kIcm3qEc1u/F5qYxOq6yFIR4VoqPbhHDD
-	 KEqAzH7NCNlYdYKmZG1UlR+KzpLJHswLW1ssym0KETcqSc7zxa7cb5nq8hNu+aFeQ1JAROj1kLHa
-	 Slyl7KKWYuXtstFAkjoBY6DStCx0g1IiTz5tHodZBmJ8EthtTwussUghGhvBlkvr5Up11JG3z94Q
-	 dpsSUOyLi58kguToezbaLgk4nkCFMNdh7xHK2UtG4P8cJDAEMcpLV4rhbYRQFGoqYS8PsHzEy3H8
-	 0VbzIc8XIDsbrIi7dgUQ3Noe/P7x/XoTUhh9Fr2zi3GefOvMZuLdcQKh2HFOQqvmpn1yY0FplDvZ
-	 7gXtVDVIgC14VU7jLiP0AfHQ16qTX8sg0eCzU4Z8MUq+1ypeUCSNUBxiKFGv9fKVHc/jxVrxgI/B
-	 VNSyJjShrSY/LI1ENS7nbuPsAzl0Sz23dCZ9XvtFMblEVZjHyjkxjSgm/Ptb0q7ZV0JIoIizIaWk
-	 BnsHykcbLoolQGhnysmFgh/WvnWdS5ERJcfuuHWlj5UeVL4OsRjtRD6g2z4YxQJBdKy1Laomqk96
-	 spm9AMDzlEHiW+h8V/PFInyr9OWKjVwg0bZVRjkVMMTKCDywXIbH5ZxWJ15fXthMhm6ElF0GDena
-	 vTNQgbhsuK9e98X0Eheu/5nLXfQJ7YxL7mGnaLE10unU/qK0PBjtGNGSrPhfxWAKgPIFddA16Gl0
-	 MQVV4tGJzvehtkJswLcUZ8e3h3jqlXVdJD8jQsEUnDq702yPnQET2UXvJ5bmtYhNTjKAtnZJSyhO
-	 IIkoOvDH4J8qgl68T7Jmx31hLCa66G
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	geliang@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martineau@kernel.org,
-	matttbe@kernel.org,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] mptcp: pm: Fix uaf in __timer_delete_sync
-Date: Wed,  4 Sep 2024 09:01:37 +0800
-X-OQ-MSGID: <20240904010136.3443727-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
-References: <tencent_EECBD37DC379497A63A1C455B773377AC605@qq.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F1D173;
+	Wed,  4 Sep 2024 01:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725411770; cv=fail; b=U2WWldTknZjpkZnqdfKX51BY6oOgEC1+3oBr51/jBfAt22PI1dSi5PNeNR5JOkzKfBb/iHEtpIonStHc4Zo1pwcBmsSZzTgnW33sGltY0VqNYmMwo+Flz/SHWTuZwOayEGH7Ky1nt/x+YX1nPOK3G3pJlkRfBLCuOapSkn5frtM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725411770; c=relaxed/simple;
+	bh=9LKLPCdmOv11xVnjs3CgSsiq0OaSZI+FdpCbzwsuEoo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UvphxUNyEDuO+dEp3YbILagfHDdGjk2QhXYGQPZrUwduGyPsfhyjthetuHufvs2AaC0rN0RhtyxAePdxIFuzzMhbh6kPl0S2WkYJBcSLrdBIubuoxbkNDa+jOklTvCXVCbD3YAyN/ehugyzSEKb4FcjPaZtDFTWg/4VewyOwdS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=twDkCD5D; arc=fail smtp.client-ip=40.92.103.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zOyWG9oevoPHoMn9icQtIoo9HpfurvkN0uHzgHFg8cBD8gFVugU4WhGWvl9rBU6aYElfGm9mWtEAUY0USiFkA0Y8Rtf0hPIskungA7R5R1Am0j8dZsmE0UpNz6ERnqBMme5KgSIGYgQ6M7UVKSpnsqPV6FwJQpQ1WRU5pjY9cNHAagMC0IRo6WP+qQQ9UmUGH6m76BxmUrH3o0yeGIBbgELQq1lKaPGSdv8HQjtdBkt92wfRLjXW+w3FlN7901Vr7WbtJNvPn5BXywFJuweZrWk+HWMQEPcYbessdAUfmfJWzysgJFtYq/ewLx+oJH7c7m+SjR3kbg5kPm5id6OGjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ulyFoPlsz+kwca/IhFxy8rvWwS2uPU8PbNeVxDZIKfg=;
+ b=L2/oMTJYQH6CitgsO3JPprD9yuyRk+TDd9A8kDMI7Ngdd9/jHCQAvcfynNPNMCbVIRaenDs3FOup8G8+Bj0dB/3Vp92y8gPA//4/o8C9OTf6QTa0kmI+W1S/wz+pLWDnBOcPmET4dwntWKUyoUdmoD4fvnDW+D/gmZOCqb7ECtFD21yB4B9MjClcLQCP5tTa4HOqmiknx8b34jL2Of2IFuiEXLoE0qyZEBeSVEFxMLEMlDa2VcrAUGlSO8WozAdysDh3urQkanT0PBABmkxNx1JjEqJ6fqIwEHqLDRFG3aQ/jL35c9hYqHNcjo6EL+CKTUfQutqviFjThQFw5bLJ2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ulyFoPlsz+kwca/IhFxy8rvWwS2uPU8PbNeVxDZIKfg=;
+ b=twDkCD5DX8sYopXxpEdICI+X0NeTrMyE6LDr3FZSUSWiw+VYc1LApQPM1Jngyo6H9yQBXijNcnViF5BSex8d9PkcxnSAu7qQAxy90HMKRQHSq6eEkf5MJ0vXNaWQV4+o/YUERO5dOGLEYLENlnJNG3J95OlDzDzVl49unFwzzEX4Vkqr3Mqn1jXy1jMKJ05CoAKusbeTxuOfdX1ll8GL2Sf3cpVqKuRnVPEsAh3/s28wyEkTSZAiCrAl5NrmaTtyo+hxxodoD7BK+SMNmzdIjvHu7EZdWC5QgvsJ7xg3go8+ARZnrsQdrSTcKr69ml572oty2VIv3JWabL/hU9tS0Q==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB0946.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:146::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Wed, 4 Sep
+ 2024 01:02:40 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%7]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 01:02:40 +0000
+Message-ID:
+ <MA0P287MB282248B29F8F2028B29BB02DFE9C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Wed, 4 Sep 2024 09:02:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] riscv: dts: sophgo: Add LicheeRV Nano board device
+ tree
+To: Inochi Amaoto <inochiama@outlook.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Chao Wei <chao.wei@sophgo.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+ <20240711-sg2002-v4-4-d97ec2367095@bootlin.com>
+ <IA1PR20MB4953612773890B94FFD0C9EABB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <MA0P287MB2822AC58BC43FDE03802E773FE972@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <1b202582-0487-483c-ba80-47125551eb5d@bootlin.com>
+ <IA1PR20MB4953AB5F2E922EA4E1E74184BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <IA1PR20MB4953AB5F2E922EA4E1E74184BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [jcj90nHIJOPqYOdadg0DWD4T/BDjVvKH]
+X-ClientProxiedBy: SI2PR01CA0045.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::19) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <c99de627-5bc9-47d8-aa46-170d7d4b665e@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB0946:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f6ea8e0-80f6-43e2-85c5-08dccc7d466f
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|19110799003|461199028|8060799006|15080799006|6090799003|3412199025|440099028|4302099013|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	di9R+SZqeN1w0tjt9TPQATchIYGpLQmZckjRgh/EP4248e0QYF8XoTB/fG5lHCcWRRBNKJ6ph8x230Nq9qJmg6Evd+gn8yVhtrw4KY0ZQuBzKVbi6GMr2OIP3FgKK0kTSOBxse7rohid2SDE8QFC2MM8/yaZ5NgEzihPR7Wl4smJGXEXw24Etex4KDSH3R0ajuh20MYKTXQBcVc/b6qHKs0l0gj0iWmRQQo6l53Iam1hNI2WjQEDN0q5OkTtQBxzqtQhUnXkmxQ2wK5xCsZksMoN/rBp+7EZ+WkoZGJRkr2j6EbNvfiU2b1RXZgoMA8HF5Igiw406pxw+AM0JsDDPzp759cy5Ap9Ip6McSLmhkxiN1hyZNUAElBocH2y/DzmkoiiEgsbR2qhFuoDuA7iflf5y2u27RlIs8AHnmqTUrzuQ45ok85dotNHQ6+2HRrN/4aAt/NhCbYwZUbwYMCUAkuAy14V23bR3JeFwK+GaTGKrYxMLzEMmVwmAyuH0WRrh81UuPnYbrqimOTeeYFPQY/3UWP/6MdTKIJwvl/sdUN/+ID9Sfw3PPOy8uSxbClfTLM7eNMT9NfVCDbg1NSJfpimT73NhNgVjKJZ7WNCY3VP0ChsQUM11GkjKSDkIC+WUejgsIHcy2kPJCfCdTvYTsyi2RyC2wpAkfwvgIKJj/ww7pyNF/UYiUqYzdqFQtMLa+mUJoEzuSETudou7CFEEIIeqXaapDmg1xh7NtnKjb1puU8k930dnYPwqlKjOizYSYmsFO3fZw4mH5RwKSwCFSVl8H7daR/xujUEdbn1GFOt5h8yv2z30oqobeIEjwiVkJIp9r8KVU4T7bGswUUl8UGt16ez9lvooDCDHpbh0eeDLMviJRMfcmZeeTc0gJbnwnHi0zw9WMi0BmYJ+LhV0w==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NUFNZVdrWU44MjZTekt2Nm1ZSUFpZjI3YlRpNnAzemJiREZsWXFSL0lxcHVL?=
+ =?utf-8?B?WDE4Zll0ZWdHdzArUnZ3SlR0U0d2ZVNDNHZGQ0hVaDFGWXZTem5oQmNCUUJ6?=
+ =?utf-8?B?REU2YXVIMnZKTGZ4YW4zVFJYMzhxbEJVWWFYd2RDTll4UFlRQWlXQThqZ2xv?=
+ =?utf-8?B?WWFvUy9oVGl2RnRnT1hDUkI5VmpQTGdCYlRkQjc3Y0FoZUtOVVlicnQxK0xG?=
+ =?utf-8?B?R1RRQmVCWjlJdkU3MU9ObWRtSFJLQnRnMlBBZWp0TzFZbmZ4WEd0ZjcxaCs5?=
+ =?utf-8?B?dnA3L1hFUWhKM2hQNjd3c3ppbjlXVno5emRzRUtpbGxCcGM4SExvaHNOWFdN?=
+ =?utf-8?B?eWoxMTE2YTZham5KVlNWOTFxMUVScDJuVGUrUkJhbkJQY3ZGd0g5am9yZXNv?=
+ =?utf-8?B?UzBWYXhNSEV4ZGxVeDRTRHdzZk9LOVVleHNjS01rVVFBY3g4VnpHWjM4NkdW?=
+ =?utf-8?B?TGQ5UzNpbkh3SElTWkgwaVhmZEozUVByM05DTmJYaWMvdU9KczB2dmwvalUv?=
+ =?utf-8?B?dFBmeGJ4SEhkN0dtZDNNemgyaHc1TGF6aUVRZnZWNWtNc05oRUUyY2s3WGtE?=
+ =?utf-8?B?bStMRjZ6VnBkWHVWMWl6Ui9lTy9HNkpwTkluMytXaFExU0hOUVlSZkN2S2Nl?=
+ =?utf-8?B?cW1LQ1VleGdFSGU0SzAzV2E5K2xyQm40eXFqTTlUcU1DQzFEU3NPdVdaQ0wz?=
+ =?utf-8?B?Wm1tK1F4MFNFbUpJckd3MG5VU3JXVlUzcVcxMXRPYWNoQ2tuQVBXRkdVckNQ?=
+ =?utf-8?B?RytuQnBQdVM5bUY2cENsamNJcjFXN1ZvRTRFQU5TUDhHalduVGJNNWcxVm5B?=
+ =?utf-8?B?cVd6Z0l2WlcrLzNYTHdKZ1d4TDJIYXV2ckM3WmNIVUFQK0FNblFwM0xMT25t?=
+ =?utf-8?B?TGg5MER5ZmJVN2gyNENzUkNPOVp4OWhFR3pBUGdsZDdMTmxnSW9sVTBDRUpt?=
+ =?utf-8?B?SmkyT0crcXVrRktVczZtWkhTNWdBdTlObEJlUC96NXJPSU5aUWFhK3JKdm5G?=
+ =?utf-8?B?MVJuSThxM2lZSk04UU9TcVlDenlpR3BQSW1JbHJhaWdxTUpTWEdQTCtPR2Nn?=
+ =?utf-8?B?TnE4cnFucUE4WGtzbUQ1YVlRZUdITTAvazhBZlBJOVFDUS8ybnVERHlKWmJQ?=
+ =?utf-8?B?bUJjQTVOKzZiRmdDaW1iOXVnYWJlQ3NXRVR2ZlhaRWd2OFBnZDNGcTgzZXRs?=
+ =?utf-8?B?Mk5nVkFXL1dETC9wREZoTWNUcllGZU5YUzJlYXdzdmkxWEFVU2xIbXRlWTlE?=
+ =?utf-8?B?UlUyTDZJTkxDWVBGdER3NWU0bHNIeithS3loaWZUTU80NDdMUUNpelpTL0pO?=
+ =?utf-8?B?QWFxRUtvWEZ6ZDJVWE5JMlN4TWZxYUtKQ05iR0dTNW92dnNTL1ZhTkJrZVFJ?=
+ =?utf-8?B?aVFIbDV0ODk3Njl0YVY0ZmhmRWF6ZEd6UW1PV0xoYzNuSWNVM0NYVVBSdHdw?=
+ =?utf-8?B?MDByQWx2WEFPRjVjN1FsaGJhR1dWV2FaeTB5ZzFTd2VQSlF3Rlo4Z093QXJ3?=
+ =?utf-8?B?WWZ1MTJRREVCcFQ3Q1g1TFBENWo0ZzNvaUdGTjdQT09VU0p0SlR6cko4MjZH?=
+ =?utf-8?B?ZEV2cWs1czBWdW4wM0kxOWtkK2RhVVhNQmNJRFZvUURaODdnSkFKZm12blV0?=
+ =?utf-8?B?dlNFdjZxL1NCM0RBSGJHZlE4M21iSk03OXVZMyt4V2hJR3U5cDFPUC9uYUJi?=
+ =?utf-8?Q?QSqVV4KjQs7HZxxhI/0I?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f6ea8e0-80f6-43e2-85c5-08dccc7d466f
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 01:02:40.6856
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0946
 
-There are two paths to access mptcp_pm_del_add_timer, result in a race
-condition:
 
-     CPU1				CPU2
-     ====                               ====
-     net_rx_action
-     napi_poll                          netlink_sendmsg
-     __napi_poll                        netlink_unicast
-     process_backlog                    netlink_unicast_kernel
-     __netif_receive_skb                genl_rcv
-     __netif_receive_skb_one_core       netlink_rcv_skb
-     NF_HOOK                            genl_rcv_msg
-     ip_local_deliver_finish            genl_family_rcv_msg
-     ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
-     tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
-     tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
-     tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
-     tcp_data_queue                     remove_anno_list_by_saddr
-     mptcp_incoming_options             mptcp_pm_del_add_timer
-     mptcp_pm_del_add_timer             kfree(entry)
+On 2024/8/30 19:20, Inochi Amaoto wrote:
+> On Fri, Aug 30, 2024 at 10:06:45AM GMT, Thomas Bonnefille wrote:
+[......]
+>>>> Have you test you patch with a real board? Especially
+>>>> for device "uart1" and "i2c0", I suspect your
+>>>> configuartion does not work by default.
+>>> Hi, Thomas Bonnefille,
+>>>
+>>> Can you please double check and feedback, I want to confirm this before
+>>> acking this change.
+>>>
+>>> As you know, rc6 will come next week and I'm planning a pr next week.
+>>>
+>>> Regards,
+>>>
+>>> Chen
+>>>
+>> Hello Chen and Inochi,
+>>
+>> I'm really sorry, indeed, those nodes certainly don't work, it was a mistake
+>> on my side introduced between v1 and v2.
+>> However, I can ensure that "uart0" and "sdhci0" are working fine.
+>> May I suggest to remove those two nodes? I can send a new iteration if it's
+>> easier for you to handle?
+> As you need a new version, please add pinctrl node and necessary pin
+> configuration. And I will take the first two binding patch. So there
+> is no need to add them anymore.
+>
+> The pinctrl patch (note it also needs a dependency):
+> https://lore.kernel.org/all/IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com/
+>
+> Regard,
+> Inochi
 
-In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
-zone protected by "pm.lock", the entry will be released, which leads to the
-occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+FYI, 
+https://lore.kernel.org/linux-riscv/MA0P287MB28228F4FC59B057DF57D9A11FE9C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM/, 
+I have raised a PR and included the two bindings related patches.
 
-Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/mptcp/pm_netlink.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thomas Bonnefille, for other DTS part, please go ahead and post new 
+version with your changes, I will raise PR after your update.
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 3e4ad801786f..d4cbf7dcf983 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -1430,8 +1430,10 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
- 
- 	entry = mptcp_pm_del_add_timer(msk, addr, false);
- 	if (entry) {
-+		spin_lock_bh(&msk->pm.lock);
- 		list_del(&entry->list);
- 		kfree(entry);
-+		spin_unlock_bh(&msk->pm.lock);
- 		return true;
- 	}
- 
--- 
-2.43.0
+Regards,
+
+Chen
+
 
 
