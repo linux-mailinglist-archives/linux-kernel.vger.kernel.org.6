@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-315771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C976896C6B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0E796C6B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFEC1F26A80
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE421C226DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8586B1E4133;
-	Wed,  4 Sep 2024 18:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B71E4103;
+	Wed,  4 Sep 2024 18:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IGPS8Vch";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2NRu04o1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bdIOm6mc"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435321E202D;
-	Wed,  4 Sep 2024 18:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A771DA319;
+	Wed,  4 Sep 2024 18:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725475698; cv=none; b=pa3WkHHYPEw/I1avwQr7whG2+kPkC1IOeYNf+ObI8TGVYB/AbWEDSflpfGlcxhcRrxoA+/hHxtjohLiWAa6ebQ/Oc/acq7Z+5DW/PwXAs59+skj4THzSJms6I0Wfu3XVr/+KFl1y7QvKUzZ+J6bHFbbv7pH9s6oAkGPjJA+xc/k=
+	t=1725475748; cv=none; b=qt+0Dm0A2qRXXVNSIMnvzvDywk9CJTQiCDcwPztkfvYvz6o8aSsyY7ke8T/aPa2lSGE5f0t8Cfb4lG4QGG6wT6+o3cUZXLnI3jJ5dlYpRgbcgYv/DE8+Jb/nX1oDfE+AbhBvhf353euMsvIfrygA7Db2A7TUg7oE0T1dQalrjHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725475698; c=relaxed/simple;
-	bh=kg+vrKwWpKR3raZxzqWgRH1hEoceF9aADlqsAG1e8Gw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UJSOJwCE61fXrmu+K4oNMQ7Sb2AQHd5xVL0xM9Drpuabf85WIr29DQ5GrV0Kfgk77PnC5nrvawl1yrA6A7VvkEnbHVyM9LRMPgq78/fNad2gIa/ZaZVmp4bAWsJl29PR6Eu456CL7OZYH2IuCSxBscgM77ppJTwMwkBuOqOQpRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IGPS8Vch; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2NRu04o1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 04 Sep 2024 18:48:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725475695;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u+GUNEu/gOIcHce7+VIrmC/cV5rCVdCk4wDX/Ft8Fe4=;
-	b=IGPS8Vch/RuqGJwHKtA8tWUD9csDKLloCr8+9mqTl3zGs4i+KzBCxG99agCfPQ1c/ucVOW
-	PIral2MmAxKXiCsP44LXTvKqAauFkSM18ylN6n1+ke0fUztbRA32jmRZXB8jEqd7CJJ+ur
-	uw0jBUVQ+JMCvSgvpwOa0BF+65HtATpeMfnjAwxhEQAzvRVZYxk+o8W162NB2gp6Kohc1j
-	7PxAoMLx/rNF5QjBn8yxUy9LLtqhOJRfkRbwlNCKySPSnWwLttCpCMYOIHwcjrLN1lNMS2
-	J1DWvLKkpzXKz9iUTx8+6YsYVJlcnDrOn3f+TgRX6n7LETOCuFB1FslWw6vnqA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725475695;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u+GUNEu/gOIcHce7+VIrmC/cV5rCVdCk4wDX/Ft8Fe4=;
-	b=2NRu04o1QgqOByAur0rip0ntuOAxnXY5ved8VzCCy1Jf4OuIwGvpEitrpghMTmU8YmasYy
-	ZuKfmaVwyvzFhPAw==
-From: "tip-bot2 for Nick Chan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] dt-bindings: apple,aic: Document A7-A11 compatibles
-Cc: Nick Chan <towinchenmi@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Sven Peter <sven@svenpeter.dev>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240901034143.12731-2-towinchenmi@gmail.com>
-References: <20240901034143.12731-2-towinchenmi@gmail.com>
+	s=arc-20240116; t=1725475748; c=relaxed/simple;
+	bh=ApmWLbLcEQSXRsPXYH3SXfjZpbujIr9o5LmOAI4rS+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C25l49v3xXiYVER1UNnS5CWslmIRjPYBOuIaeWDtP8mS8IaymbQt1Rcocm92sJpQlTRk4BXVI4mu6pe8HNzPcVRtxUQtNc1Mt542M/fDpg9gESdeBndOG6MmAsRt5ngBsR3iG+V2KF2Dj1apbt6l/jkq+5Cf7Ama1Jv1Glegsow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bdIOm6mc; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725475741;
+	bh=ApmWLbLcEQSXRsPXYH3SXfjZpbujIr9o5LmOAI4rS+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bdIOm6mczsOIIwRmDhQ6HYRAOALg+RsD4kqLDGeXDmJUXNmaUORY4m4y/Z327hivs
+	 gWrpmTk+YHvblVYvVizcpQZHlVNj82Vrav0yq0VEHtfJBm6svSP+obypUySqQ+kPSc
+	 3WJiT/72um3LCZbQBxdC0AyY8lbK2mCPRuA/tJ+A=
+Date: Wed, 4 Sep 2024 20:49:01 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 14/23] initrd: mark initrd support as deprecated
+Message-ID: <70ab2c0f-ca6b-441a-8d28-8597724e4013@t-8ch.de>
+References: <20200714190427.4332-1-hch@lst.de>
+ <20200714190427.4332-15-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172547569522.2215.8269715074163000493.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200714190427.4332-15-hch@lst.de>
 
-The following commit has been merged into the irq/core branch of tip:
+Hi,
 
-Commit-ID:     9e65863194ad253f1de48bb9000a586e6caa5eed
-Gitweb:        https://git.kernel.org/tip/9e65863194ad253f1de48bb9000a586e6caa5eed
-Author:        Nick Chan <towinchenmi@gmail.com>
-AuthorDate:    Sun, 01 Sep 2024 11:40:04 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 04 Sep 2024 20:43:29 +02:00
+On 2020-07-14 21:04:18+0000, Christoph Hellwig wrote:
+> The classic initial ramdisk has been replaced by the much more
+> flexible and efficient initramfs a long time.  Warn about it being
+> removed soon.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  init/do_mounts_initrd.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+> index 57ad5b2da8f5f5..e08669187d63be 100644
+> --- a/init/do_mounts_initrd.c
+> +++ b/init/do_mounts_initrd.c
+> @@ -75,6 +75,8 @@ static void __init handle_initrd(void)
+>  	extern char *envp_init[];
+>  	int error;
+>  
+> +	pr_warn("using deprecated initrd support, will be removed in 2021.\n");
+> +
 
-dt-bindings: apple,aic: Document A7-A11 compatibles
+I stumbled upon this today.
+Apparently the "soon" never happened in 2021.
 
-Document and describe the compatibles for Apple A7-A11 SoCs.
-There are three feature levels:
+If this is still meant to happen I can send a series to remove it.
 
- - apple,aic: No fast IPI, for A7-A10
- - apple,t8015-aic: fast IPI, global only, for A11
- - apple,t8103-aic: fast IPI with local and global support, for M1
-
-Each feature level is an extension of the previous, for example, M1 will
-also work with the A7 feature level.
-
-All of A7-M1 gets its own SoC-specific compatible, and the "apple,aic"
-compatible as a fallback.
-
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/all/20240901034143.12731-2-towinchenmi@gmail.com
-
----
- Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
-index 698588e..4be9b59 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
-@@ -31,13 +31,25 @@ description: |
-   This device also represents the FIQ interrupt sources on platforms using AIC,
-   which do not go through a discrete interrupt controller.
- 
-+  IPIs may be performed via MMIO registers on all variants of AIC. Starting
-+  from A11, system registers may also be used for "fast" IPIs. Starting from
-+  M1, even faster IPIs within the same cluster may be achieved by writing to
-+  a "local" fast IPI register as opposed to using the "global" fast IPI
-+  register.
-+
- allOf:
-   - $ref: /schemas/interrupt-controller.yaml#
- 
- properties:
-   compatible:
-     items:
--      - const: apple,t8103-aic
-+      - enum:
-+          - apple,s5l8960x-aic
-+          - apple,t7000-aic
-+          - apple,s8000-aic
-+          - apple,t8010-aic
-+          - apple,t8015-aic
-+          - apple,t8103-aic
-       - const: apple,aic
- 
-   interrupt-controller: true
+>  	real_root_dev = new_encode_dev(ROOT_DEV);
+>  	create_dev("/dev/root.old", Root_RAM0);
+>  	/* mount initrd on rootfs' /root */
+> -- 
+> 2.27.0
 
