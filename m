@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-315385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDFD96C1F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5141796C1F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5821C229AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841661C2417F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D93C1DCB02;
-	Wed,  4 Sep 2024 15:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7491DCB30;
+	Wed,  4 Sep 2024 15:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMJ+7bdC"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mckSfOwm"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F93B1EC017
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B251EBFFD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 15:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725462924; cv=none; b=FzpEhFIFdM27xTcEGp8rABo6XtjZMfuRjql9DF6gypKKaiLMlo0Vzt+zRB+vblv6f2Omg9jR+yLaTzzYKxyoM/9wSUhtoW3qSJ12/O3Xfwz/WBX4HzxZ0AhtbHEGZnIU6vwe3NNbwQ6wOpOGKDu7LYe+/95kVN4TRSYJCrvCVcs=
+	t=1725462956; cv=none; b=IedKIFkLlbElYpjDs96bcnmrIBWAb4jXOukY/SV4hjnuEqSPHnk4g6j/SsDrUTChOp36QlkhhhXkwdAlcqxitR/9Q0KZLKSqvzG3QZ9t7Y6+DEUsdf4HLxQ913cahvtFf2+uRtzyIo+7YTpnNgczKcEZt3Zv6gg5xDia1z9x4Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725462924; c=relaxed/simple;
-	bh=GvANVESAepCxBX9K+Wx1h4gON8fPCZilNiLIiJ+wFXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+eQ/tV4k9Y68VLsVvKBgU71Vn2rzIiNamWcC+6c5sWszh/EJgEKhfBlV8ju5v2WzKgNlDiTThGQcucLcTDG17qlykV81vhRIAeW8qTzsl9oqzfI/BdbTgs4UdB4dsOhFVEgGXgjMYY4+Hqz0LtBqI+o128wu66pPRDeBlf/h8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMJ+7bdC; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-715e64ea7d1so5645345b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:15:23 -0700 (PDT)
+	s=arc-20240116; t=1725462956; c=relaxed/simple;
+	bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXH/xeuO1+1xYmIWhtZIlk/MmFhRqcLn3y2WQVJQH8oZFEWhvVCHoo5v65U8sgWNW98jE4GK3ZLCEaWRa0UnRU5tZZNx7XYgV6rVfzoTaRxG7P8V6e7497XvgDLZSCVooMthwraQdEUfMfQVIBuTB4pRmLihEc6OkfmE+UmK/RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=mckSfOwm; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5343617fdddso11591687e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 08:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725462922; x=1726067722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7alryj2QRham+4+mog4UfLUrtU9/gcdbfUvdQj1l5TM=;
-        b=TMJ+7bdCKPyMarq59oPGz3FO798iiKJJ8anPtwtKotaKA/aM6lXDlBi8DZiUmvt1lL
-         gO+p4wpNgFRyeyL8Oy2+QQD92JB2B2GN5NEo+cCMitZk+SykpMMcaHsYbtypZJYiloJU
-         WVN3eHi4gOfSULfxFNsRf5zu/IlIgxcQ7uNMBL7jIjXvjMcS2KL6fgWwOSBVrdONIlmj
-         K9ixBUM7UfGeG3+BnzyPJFSSzT5D89iq+I5cnmOL7dGBm6G1iKzjowl2/ZMfEM2uCKzj
-         u1czLPLw2EYb5QisyKHHmj2YHSF0o5eRTD/k0KuUa/hO/gEn1qQAViZyzVBvVvRWm1Xj
-         iRIg==
+        d=szeredi.hu; s=google; t=1725462953; x=1726067753; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+        b=mckSfOwmfpzwG96GIHoZuDMoR3aGdJm6E4mEUBITRwesUSlz++yQ/gOc+vLPAuklRx
+         lmt+2XFc9ahczwVmAJKyqf/68dp9VdarRNgVjZTz2iS61PKia0HM7wUQLpVEp21t6oen
+         oehyw9pIW0iIjfNOSecMz2bXnUgKo1yJwUkrQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725462922; x=1726067722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725462953; x=1726067753;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7alryj2QRham+4+mog4UfLUrtU9/gcdbfUvdQj1l5TM=;
-        b=I9FcNINI4yIYOhCXYkEtGmjN2Wmskmdf9rTXh5HC96dSst0WNXBdvbOyscGPg4lTN3
-         wACMpjI8uQWBlPQIDgzqY+htp9fN0gRn5Ul66eTCRb3BUIYg4nbaxj2MC4LngY77jVc+
-         hYwbg3OnVeJ4EXSsK5p03bjjRfgCXXh62aqGuyXOo9IykeMGRdR69TzPqiO9qS7tjI45
-         MdSzAiFIro0W8j+dbmhvb0zEUQPzl2oFmLIwcAh+HNR8j9J0bQ8AwRzX7/q6QxZP1PBv
-         zjLu1AD8IBT3HimawgJsA3VWzp/dFt7VzYl7FESftWp2OGdZxSJHGHW6u7sCEKYzweDp
-         BkHA==
-X-Gm-Message-State: AOJu0Yz0FLkN7+x1F+yaxHJ4O/UHT5HaMZARpprt/kQspZxFAfd/a2sP
-	F/SvjukSFAIv+TPi6zElTzGf4bN9vjsaRLNe2ndxREe0kjwcyj+f4tXEVaKhzbw=
-X-Google-Smtp-Source: AGHT+IEEu9l2F5Mf7z117qiH/fiRGfp5++/ssaDPPBd2SYt91AllGkexmkCsAeLWVOMf7U6DzMD7LA==
-X-Received: by 2002:a05:6a21:118a:b0:1cc:e43f:1fc9 with SMTP id adf61e73a8af0-1cecdf31e5amr17462361637.30.1725462921936;
-        Wed, 04 Sep 2024 08:15:21 -0700 (PDT)
-Received: from fedora.. ([106.219.166.153])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbdaf089sm1783672a12.86.2024.09.04.08.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 08:15:21 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] edd: Add null checks for edev and info in edd_get_pci_dev
-Date: Wed,  4 Sep 2024 20:45:14 +0530
-Message-ID: <20240904151514.8962-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        bh=44VIprjCYxhe78ahmsvk5iQ53uqpSS391gbqLmt67fk=;
+        b=Uu7Nsudddj3uIFL+U65LmjddCWRrrDG2VJMbm1b3bI2/ERp3PiiPA6mnxYOFkE3A9E
+         nB5PN4+gp+sLO7XML5bvE/aaFr+63BeYxdWZ1B9LQsdxZR6Td9Tm/BrR56ckT8akzEqm
+         C+h0+YkBltfNzoLu+4OI3LBoZWxktecXkGksZr7YCFmNFgWMtQCkOdMMP1XmAXJ/V1PH
+         yWbqYaC6d1s7kqHDi8attXD4TD7FpI0+SZ44fEF6dRIpVT86hynQL6SjH1UwcoZo4uwv
+         D/lzPhHfZW5hfAv4yf6HZDiDZKfTvRkajVNG7s02F6p/9BapycXryr74c2XtlH9gzqtX
+         HPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPNMyTaC1ds2l8Q8aN1TzMTSA3Mp99lReXdo6KkUIgH17zr3JnAfaVaUFbmAZjD1uVZFBKOpfL/ZT/dNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6J6xfCr61tbNVrvfPMubKSKEivVnRUZL4Wza3Lh+ripuNP/qZ
+	usyCxw0rtty41M4OmaA3mMOgloV2Hr+crVvAat54Tqr5a6z0CprX9ptHneHpP89FCe3SdrlA9FU
+	dNwU/tGE8kSwxQrcHoQsk4j2URLDxDXUWMeuJUQ==
+X-Google-Smtp-Source: AGHT+IFd5AubgTZT1sWImGPdUe0O91LhcQhJNlWdLwiS1Elxh07YXmiWxiKAx2HMXiZMG4se8lmRg7tLpoCug8mkE20=
+X-Received: by 2002:a05:6512:b1d:b0:52f:d17e:46b with SMTP id
+ 2adb3069b0e04-53546bfc7f6mr15804416e87.54.1725462952496; Wed, 04 Sep 2024
+ 08:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 4 Sep 2024 17:15:40 +0200
+Message-ID: <CAJfpegsouKySsJpYHetSPj2G5oca8Ujxuv+7jpvmF57zYztbZw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] fuse: basic support for idmapped mounts
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mszeredi@redhat.com, brauner@kernel.org, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Vivek Goyal <vgoyal@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add null check for edev in the edd_get_pci_dev function
-to prevent potential null pointer dereference. This check ensure
-that the function safely handles cases where edev might be NULL,
-avoiding possible crashes.
+On Tue, 3 Sept 2024 at 17:16, Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> Dear friends,
+>
+> This patch series aimed to provide support for idmapped mounts
+> for fuse & virtiofs. We already have idmapped mounts support for almost all
+> widely-used filesystems:
+> * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+> * network (ceph)
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- drivers/firmware/edd.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Looks good.
 
-diff --git a/drivers/firmware/edd.c b/drivers/firmware/edd.c
-index 55dec4eb2c00..6964e528bf35 100644
---- a/drivers/firmware/edd.c
-+++ b/drivers/firmware/edd.c
-@@ -648,7 +648,10 @@ edd_dev_is_type(struct edd_device *edev, const char *type)
- static struct pci_dev *
- edd_get_pci_dev(struct edd_device *edev)
- {
--	struct edd_info *info = edd_dev_get_info(edev);
-+	struct edd_info *info;
-+	if(!edev)
-+		return NULL;
-+	info = edd_dev_get_info(edev);
- 
- 	if (edd_dev_is_type(edev, "PCI") || edd_dev_is_type(edev, "XPRS")) {
- 		return pci_get_domain_bus_and_slot(0,
--- 
-2.46.0
+Applied with some tweaks and pushed.
 
+Thanks,
+Miklos
 
