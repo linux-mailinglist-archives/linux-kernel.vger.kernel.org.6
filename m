@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-315711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8450796C61A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC6596C651
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387D71F24438
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973A5282F6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9561E2025;
-	Wed,  4 Sep 2024 18:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913DD1E1A36;
+	Wed,  4 Sep 2024 18:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UJbmmr0Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BujEe65x"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71C86E619;
-	Wed,  4 Sep 2024 18:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9788A12BEBB;
+	Wed,  4 Sep 2024 18:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473589; cv=none; b=CW9cg+6QgZxoc/P+N8Yps9uAUf96qcm9h2q1PAl6Ryx0A253B+xSWBkMNn6j6NtYKPGTVuxTIvZwBKzQU4Xyx/vWBa1St/BYWc6ERHc0E+OMwVqNB+/tnoIaUzFLNutsgnFDEuFmAgd61plUFWA//GtjL5cPeeLer6BuGwCEgPA=
+	t=1725474296; cv=none; b=OrVe1Rk9jhTihMfUjBmNilnqTXEboX3S6uYbGt16kP5U/ECijuyrXvZKZ0x7GXPWuPk9LCIPFqpshK4XenFRzmDpgpxFJSWSx+DQnFVogallibc3hgHbIk19R7POC2kkUpJrjze63qPq4DKZjIRxuCKI+OdhOLvrKlYL6cZBoLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473589; c=relaxed/simple;
-	bh=rHtbIlgyGyqNdQpH3imYtDeJTnU75u4U2HDBSuCkC3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CHVz9k/jzCOgIbKLFphOsnBxtBg9aIKwhHw1Yh6H29MqdI0xl6oTVpcd43rSKlGYvvJ2tUBg6yeR4zv3uPzgq+enpPkrNtxY0BGvftoQDb2NlCi4mXYs4GvJwjqKAL4cNs6IMRL9ZBdNwCtcf2H/I6B3vL/26lWaF7jnModQBZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UJbmmr0Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484EtSDT010354;
-	Wed, 4 Sep 2024 18:13:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ywIBFZtb4XBMuyLKC/8EUy48zyo5O67wRFiOIhuNg9E=; b=UJbmmr0Qdlo4wQ3a
-	Y37m4/8kVkvaClpVHXp+Cl2/Xj0c5W62AU4/fZ0+ZDzaVhXJI+qOYrH3m6/usZNU
-	+/lV4CASzpSjb3hIIZqE+CLGjmU2+S8exML+G1GdrpuWVbKcSXX0qRIPM1/8sE3r
-	LomOa5TKxM1xyUmzFCTnykygUABJKn4oKepqvMFqWvcO81UlkiTrzSNPEDwmRvVx
-	lPxr4ckDnvi4/MrHLZbOKu2EdVmvCewiMv8uOCpc57xD5FMUkWvmtzDy1MjPTZT8
-	Eh0zUH+h7BljhQQa3MiuiNBHLp0dV0L4yMNCkmh3RWk5HxIYr0XADmlui39y8pZV
-	+atkFQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrj36v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 18:13:04 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484ID31B018195
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 18:13:03 GMT
-Received: from [10.216.2.237] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 11:13:00 -0700
-Message-ID: <2a7228c2-d827-45b4-bbf2-c128cc653d85@quicinc.com>
-Date: Wed, 4 Sep 2024 23:42:59 +0530
+	s=arc-20240116; t=1725474296; c=relaxed/simple;
+	bh=oTygpKrcBoVJtqSNVkgv22Lqd069o3jfJeouisBqqWo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Pb3gJcgS700ibU2CJp6LCYdpurIhnx2VTpZwG/PZTm25ydzfeAbwoAWoKOyoyJG7KfsG2fXVFeXj7oYcMKSve2xD345aMscffpp6CqgBJypXkMjmJvYsNn9NcbjSQu0Qf2rhvpCm/EjkY1gnB/aQUApyhvrMycKSvqmUmxZ1gDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BujEe65x; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2055136b612so43189925ad.0;
+        Wed, 04 Sep 2024 11:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725474294; x=1726079094; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2IO0UamiFjwdYmyIGjlqy1tP39MG7vWaltTAyQyjoUA=;
+        b=BujEe65xcFuQbBCzdrhXt0KnMG5k6zfL822JQdKWSrPTp7/88c7mJkTv1hQsElv2P9
+         4nyRjuv+SC+hVGssKCC6NcJmMNOcWRUHhB2ea6P6CFT8QIpVpwtIX6lMlXrDnbaCfE5p
+         i9P009+o5dCXfSgmPG5wSbdjGtoPH7QmzOs2Kep1s4m/R0F30enqHvBpfcXYzQLEWGVz
+         hIuCe8OnCU5SGLLtpSTnxRxYxPBAi/tTQqZVcpLNQjC8QQz+uzgBiJaUaIerV3U9W7qV
+         O3fDVBNTP3/amHK09M8ewfwaYaamQVkSW37Ox80nZoW/0Q5HhihgO+GGDoY3D4A7J3n4
+         Amnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725474294; x=1726079094;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IO0UamiFjwdYmyIGjlqy1tP39MG7vWaltTAyQyjoUA=;
+        b=N8o/A012jBR526xytl5dgtwYD6uK07wEiX5DZmAEuMzuLwsoiOiZ2wkK9kiD1teIEx
+         CTjcScE+TwY9NpjnZbGv8A32EZkEe7tzDj3/E2jCDWp7lBzKO+/6ylgsG/1TbNwS9GIG
+         w1z04LqArk/zsPJSKV4KP+w2X6dC8Bmar5eMsuk54CCVw61BCV76W3y0d+IS2ID2j+tC
+         QGmYo9buJ4ebxfHFfdjvuHAeFpes/dAE/cOge7jsUaXM/r4Dz+WdCed2chFe/zc3kyIR
+         WHBIKmWlitdxtS6DkPDiYH7RtFlt8pwliKEWiZXqt13tvD8BXx6ftLX+8kmCNInY/zOz
+         TCPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVywp59JcDU18Mu4ZoYN7P9t4ar5DkSuly8fTdSDGICB7U7/83pVxvPJz6sm+Vd7neaU0rSVsbi8vFK4Lu+@vger.kernel.org, AJvYcCWPZiGYkVxWY+YK5ORi+sRjUHqw8iKP1zQnaBsu6+ZTJIT4aAHfYoQlYz1ji/eP6nKo3MVpRHkAk50L@vger.kernel.org, AJvYcCWxFjBde3K9ZAZCpUFmPrtz2CCEIk1vEoD9iVSUhXLzncTD7UXpvH4MExtcx5Zg52Hwkj9dgKxu75aicQtT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGIN0Gcv49VzuxhBDDM7ETV9ivlQEQFSoe6n6rIWasUxRwaTf0
+	VCaECINhzdbkS8jXs9zl92hSdbQAvKp6rHdpGkp4ouK+qxH4KLa8
+X-Google-Smtp-Source: AGHT+IGbuwAK6u2tFoQixAjgshxr3k87zv2jDIi8q2w8lMUvaZTuDRG8JRaXxeFK0eqKSSAblDoBgw==
+X-Received: by 2002:a17:902:db0d:b0:205:7835:38dc with SMTP id d9443c01a7336-20578353a3emr139131155ad.60.1725474293499;
+        Wed, 04 Sep 2024 11:24:53 -0700 (PDT)
+Received: from dw-tp ([171.76.86.74])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae78c41csm16720445ad.0.2024.09.04.11.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 11:24:52 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com, martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+In-Reply-To: <20240813163638.3751939-1-john.g.garry@oracle.com>
+Date: Wed, 04 Sep 2024 23:44:29 +0530
+Message-ID: <87frqf2smy.fsf@gmail.com>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] soc: qcom: geni-se: Export function
- geni_se_clks_off()
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
- <20240829092418.2863659-4-quic_msavaliy@quicinc.com>
- <45298600-beaf-438f-979a-3cb9e207a32e@linaro.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <45298600-beaf-438f-979a-3cb9e207a32e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3M3T8dnObnwnGNi6fqzkFaEvavuMTq8P
-X-Proofpoint-ORIG-GUID: 3M3T8dnObnwnGNi6fqzkFaEvavuMTq8P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_16,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=829 priorityscore=1501
- spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409040137
 
+John Garry <john.g.garry@oracle.com> writes:
 
+> This series is being spun off the block atomic writes for xfs series at
+> [0].
+>
+> That series got too big.
+>
+> The actual forcealign patches are roughly the same in this series.
+>
+> Why forcealign?
+> In some scenarios to may be required to guarantee extent alignment and
+> granularity.
+>
+> For example, for atomic writes, the maximum atomic write unit size would
+> be limited at the extent alignment and granularity, guaranteeing that an
+> atomic write would not span data present in multiple extents.
+>
+> forcealign may be useful as a performance tuning optimization in other
+> scenarios.
+>
+> I decided not to support forcealign for RT devices here. Initially I
+> thought that it would be quite simple of implement. However, I discovered
+> through much testing and subsequent debug that this was not true, so I
+> decided to defer support to later.
+>
+> Early development xfsprogs support is at:
+> https://github.com/johnpgarry/xfsprogs-dev/commits/atomic-writes/
+>
 
-On 8/29/2024 3:49 PM, Bryan O'Donoghue wrote:
-> Suggest:
-> 
-> Currently the driver provides a function called 
-> geni_serial_resources_off() to turn off resources like clocks and 
-> pinctrl. We don't have a function to control clocks separately hence, 
-> export the function geni_se_clks_off() to turn off clocks separately 
-> without disturbing GPIO.
-> 
-> Client drivers like I2C require this function for use-cases where the 
-> I2C SE is shared between two subsystems.
-ACKed.
+Hi John,
+
+Thanks for your continued work on atomic write.
+I went over the XFS patch series and this is my understanding + some queries. Could you please help with these.
+
+1. As I understand XFS untorn atomic write support is built on top of FORCEALIGN feature (which this series is adding) which in turn uses extsize hint feature underneath.
+   Now extsize hint mainly controls the alignment of both "physical start" & "logical start" offset and extent length, correct?
+   This is done using args->alignment for start aand args->prod/mode variables for extent length. Correct?
+
+   - If say we are not able to allocate an aligned physical start? Then since extsize is just a hint we go ahead with whatever best available extent is right?
+   - also extsize looks to be only providing allocation side of hints. (not de-allocation). Correct?
+
+2. If say there is an append write i.e. the allocation is needed to be done at EOF. Then we try for an exact bno (from eof block) and aligned extent length, right?
+   i.e. xfs_bmap_btalloc_filestreams() -> xfs_bmap_btalloc_at_eof(ap, args);
+   If it is not available then we try for nearby bno xfs_alloc_vextent_near_bno(args, target) and similar...
+
+3. It is the FORCEALIGN feature which _mandates_ both allocation (by using extsize hint) and de-allocation to happen _only_ in extsize chunks.
+   i.e. forcealign mandates -
+   - the logical and physical start offset should be aligned as per args->alignment
+   - extent length be aligned as per args->prod/mod.
+     If above two cannot be satisfied then return -ENOSPC.
+
+   - Does the unmapping of extents also only happens in extsize chunks (with forcealign)?
+     If the start or end of the extent which needs unmapping is unaligned then we convert that extent to unwritten and skip, is it? (__xfs_bunmapi())
+     This is a bit unclear to me. Maybe I need to look more deeper into the __xfs_bunmapi() while loop.
+
+My knowledge about this is still limited so please ignore any silly questions.
+
+-ritesh
 
