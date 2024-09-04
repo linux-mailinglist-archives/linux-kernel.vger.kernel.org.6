@@ -1,163 +1,141 @@
-Return-Path: <linux-kernel+bounces-315951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0169396C907
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D45C696C909
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3852283E0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924BD284574
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C672148850;
-	Wed,  4 Sep 2024 20:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4781487DD;
+	Wed,  4 Sep 2024 20:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sejuKX8o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vo+WnXcf"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C401F146A79;
-	Wed,  4 Sep 2024 20:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21AC62A02;
+	Wed,  4 Sep 2024 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725483410; cv=none; b=XNBeO/SVpI0/6wm/UuxPTzbK8TKFZd0QRrbKLTCklH0L3Tq8igbW6hWsoHjriaxXhG4WV4dPkywpJpGnTuHEQwRup+xesNdwWb8wreJ0DDYoHBWULRiRDBKckx0zgyutUp/5WIc6CGKQRdua0O6xtPaYI5JauP2Z/E78SfRFBaQ=
+	t=1725483424; cv=none; b=ipqbz+naGvi3WxEFd6JeW6LkmqsFVgYt4e6wLPSdhv2XAlcUtGj4hqgtmhf0Udlx7KCJGztrQV19aUiV9wadcqy+1e68vMARbAIUZbizq8W39t/QjvdlI9qrWrljzmPwTT1DrGWBnE9n97uCNBojgAFkQsSAIPe9FJ0aoVcXaPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725483410; c=relaxed/simple;
-	bh=ClR4OguZqjgD0a6zLxgiWicsv8WlX2RtmMFEul90H0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhRpbezzJqJZOXCPD6RckSEN0lM0s4tcy1lv3xKtFa+uLs19A2wZhwg4aaCdlaTT6Jpa89DNbdgBMOycrcGBaqxjBNwhOSPpq/Rg/g7YW4JEkEtavt4aW8QlapiS4vnTiaEEL9DTwv61XMqhKub98xVvEcNkw+TbeZZRkg5CqSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sejuKX8o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87BFC4CEC2;
-	Wed,  4 Sep 2024 20:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725483410;
-	bh=ClR4OguZqjgD0a6zLxgiWicsv8WlX2RtmMFEul90H0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sejuKX8o1CnnV9DTmEWu+PWGchsAIgOFc4wewuD+QgNeXYNqm3Dd5Zo9nja1TS2YN
-	 Yw2DQD2g5lkJNh1MYmOfUF7qTKn/sDxonCVrSMkmAae8u9fVXRp/p+8ybHoz6Dkux8
-	 oFXnSaXHd6gcTN1Uvl6+A7ZCYT5jrrNI3nhH4Ukv+RESjfO/mjhE9+DXWqO1jwPasw
-	 BVxvl7pqV8gGIN5SoUBwKiNl4C8ZpufKrvEGfR2VdznT1jyL716xE0pccrm2a756Od
-	 rqJx5Ru4oEaVopjY2cPVukeUB1pBVFazv/d4EKNkk2wVOeq+y4sYPueV+RlIamMw9E
-	 vDJwiF3S7A12A==
-Date: Wed, 4 Sep 2024 15:56:47 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, bp@alien8.de, tony.luck@intel.com, 
-	mchehab@kernel.org, rric@kernel.org, konradybcio@kernel.org, quic_sibis@quicinc.com, 
-	abel.vesa@linaro.org, linux-arm-msm@vger.kernel.org, linux-edac@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/qcom: Make irq configuration optional
-Message-ID: <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
-References: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+	s=arc-20240116; t=1725483424; c=relaxed/simple;
+	bh=VupcdStpyc7EtIYDrzaVslr/S3ydzdLj+0xdraUd9hU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTyAMzogDDz0hd+CmY2SEJuRFjnKjevNBUxVYDud6woL55O9YXaF/F99Faz79R7DgKXbvpHQHz0krb2HJBWTejofIaZEyL5capGb1/su/rZEV++LVDNJRENSeST3pSEi3OYh9+dWvMDvNiY/87ozgjBaaWbr1McqfUyiUjgVrHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vo+WnXcf; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-715cdc7a153so53885b3a.0;
+        Wed, 04 Sep 2024 13:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725483422; x=1726088222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6eUNo9P+fL7OnZzluk8DnXPpvIOhLsMJ+xFQf0Ca1s=;
+        b=Vo+WnXcfRWaqbC0JINcLsxV5SUxvk1CbyQoybwLAyEyrN4YSzkwCae/ItT/9hzuhXv
+         3pz3gtTmsnghavqFea2kQzfOmuYVgciM4zOTEVhA6Mnb0EVBHmg8zBSeSEcTh2xqe/YB
+         N8qXuxaK38k4xTuuSC08cCuQFgbme1F6BD/n41j3F4Z8WIgtxwSM2OrBHnTLzhIs7hwr
+         /6fgyHglfEfk4hgGH82omlbVQQcpWtjnQ4Kxeqysn9vnTuGDPPdyMf5kRQJvT7H2W9Qo
+         pZHVLlAHw2e+HqYuWwKL3pSwDL3RrBHN941ZtbQQtTTQEDah/QxrsVoeVHjyA53oXuQJ
+         JM5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725483422; x=1726088222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F6eUNo9P+fL7OnZzluk8DnXPpvIOhLsMJ+xFQf0Ca1s=;
+        b=lRQDUm3IzOQKzahRz4WtltbsS4QOLtLmAGX0xbWxBHNg9vaThbRx6EKnkOOf7EHXKy
+         gjeYBnCg1cC9VRb93nGTcSDUU21lwX2aimh+0J1zQ45FbtBgQEy59gpwsVbMqRxZrYeP
+         86lsa+eQ+VPGYD1J+wxNkUkfhvGE35eyNmXXf6QBxmyZHp81SjCL+jy1CaSivGdzzBG/
+         NRvY9otsXEnusSwwZ0wlhJIdaxX80W4gUGxSclS1UurZNqNxOV++cGlZK5XIiC3pbqBU
+         1P9kPDMnnSUx52F4RA+lqD6GqlE+ubHqvfV2usfFbFoU3HFrJ44/t7YL1xh7kVflNpDM
+         /5VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ4WbQyC+wsB6uUCPolRhmmX4dtAFZHdEIi7FO5smK8LCejy8JEpdd4Bt84g9ieWU6QKESe22dzeVHapg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhQVSHcLznxWl7zoxPZHgR3mQctjyrB7pddwXm8tU8w6GIFBnM
+	PdjdEFTp2U3L6xyE12qp4uMJWT0gX9DX49Lu9WdqpEUBLQNOD74I4ATmmu59
+X-Google-Smtp-Source: AGHT+IH/BZwH4UrsEYWDfFunVT/72Gq7R+ke4UZZXEP93Ag/q3PpWYktGhGYkSUtunV+7xajBVzthg==
+X-Received: by 2002:a05:6a00:3213:b0:717:83bc:6df3 with SMTP id d2e1a72fcca58-71783bc6f5cmr3025752b3a.11.1725483421698;
+        Wed, 04 Sep 2024 13:57:01 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778533221sm2026166b3a.47.2024.09.04.13.57.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 13:57:01 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org,
+	ansuelsmth@gmail.com
+Subject: [PATCH] net: phy: qca83xx: use PHY_ID_MATCH_EXACT
+Date: Wed,  4 Sep 2024 13:56:59 -0700
+Message-ID: <20240904205659.7470-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 03:45:10PM GMT, Rajendra Nayak wrote:
-> On most modern qualcomm SoCs, the configuration necessary to enable the
-> Tag/Data RAM related irqs being propagated to the SoC irq controller is
-> already done in firmware (in DSF or 'DDR System Firmware')
-> 
-> On some like the x1e80100, these registers aren't even accesible to the
-> kernel causing a crash when edac device is probed.
-> 
-> Hence, make the irq configuration optional in the driver and mark x1e80100
-> as the SoC on which this should be avoided.
-> 
-> Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
-> Reported-by: Bjorn Andersson <andersson@kernel.org>
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+No need for the mask when there's already a macro for this.
 
-Mani, would you like me to pick this through the qcom tree?
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/net/phy/qcom/qca83xx.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/net/phy/qcom/qca83xx.c b/drivers/net/phy/qcom/qca83xx.c
+index 5d083ef0250e..a05d0df6fa16 100644
+--- a/drivers/net/phy/qcom/qca83xx.c
++++ b/drivers/net/phy/qcom/qca83xx.c
+@@ -15,7 +15,6 @@
+ #define QCA8327_A_PHY_ID			0x004dd033
+ #define QCA8327_B_PHY_ID			0x004dd034
+ #define QCA8337_PHY_ID				0x004dd036
+-#define QCA8K_PHY_ID_MASK			0xffffffff
+ 
+ #define QCA8K_DEVFLAGS_REVISION_MASK		GENMASK(2, 0)
+ 
+@@ -216,8 +215,7 @@ static int qca8327_suspend(struct phy_device *phydev)
+ static struct phy_driver qca83xx_driver[] = {
+ {
+ 	/* QCA8337 */
+-	.phy_id			= QCA8337_PHY_ID,
+-	.phy_id_mask		= QCA8K_PHY_ID_MASK,
++	PHY_ID_MATCH_EXACT(QCA8337_PHY_ID),
+ 	.name			= "Qualcomm Atheros 8337 internal PHY",
+ 	/* PHY_GBIT_FEATURES */
+ 	.probe			= qca83xx_probe,
+@@ -231,8 +229,7 @@ static struct phy_driver qca83xx_driver[] = {
+ 	.resume			= qca83xx_resume,
+ }, {
+ 	/* QCA8327-A from switch QCA8327-AL1A */
+-	.phy_id			= QCA8327_A_PHY_ID,
+-	.phy_id_mask		= QCA8K_PHY_ID_MASK,
++	PHY_ID_MATCH_EXACT(QCA8327_A_PHY_ID),
+ 	.name			= "Qualcomm Atheros 8327-A internal PHY",
+ 	/* PHY_GBIT_FEATURES */
+ 	.link_change_notify	= qca83xx_link_change_notify,
+@@ -247,8 +244,7 @@ static struct phy_driver qca83xx_driver[] = {
+ 	.resume			= qca83xx_resume,
+ }, {
+ 	/* QCA8327-B from switch QCA8327-BL1A */
+-	.phy_id			= QCA8327_B_PHY_ID,
+-	.phy_id_mask		= QCA8K_PHY_ID_MASK,
++	PHY_ID_MATCH_EXACT(QCA8327_B_PHY_ID),
+ 	.name			= "Qualcomm Atheros 8327-B internal PHY",
+ 	/* PHY_GBIT_FEATURES */
+ 	.link_change_notify	= qca83xx_link_change_notify,
+-- 
+2.46.0
 
-> ---
-> v2: 
-> Minor typo fixed in changelog
-> 
->  drivers/edac/qcom_edac.c           | 8 +++++---
->  drivers/soc/qcom/llcc-qcom.c       | 3 +++
->  include/linux/soc/qcom/llcc-qcom.h | 2 ++
->  3 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
-> index d3cd4cc54ace..96611ca09ac5 100644
-> --- a/drivers/edac/qcom_edac.c
-> +++ b/drivers/edac/qcom_edac.c
-> @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
->  	int ecc_irq;
->  	int rc;
->  
-> -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> -	if (rc)
-> -		return rc;
-> +	if (!llcc_driv_data->ecc_irq_configured) {
-> +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> +		if (rc)
-> +			return rc;
-> +	}
->  
->  	/* Allocate edac control info */
->  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
-> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-> index 8fa4ffd3a9b5..b1c0ae9991d6 100644
-> --- a/drivers/soc/qcom/llcc-qcom.c
-> +++ b/drivers/soc/qcom/llcc-qcom.c
-> @@ -139,6 +139,7 @@ struct qcom_llcc_config {
->  	int size;
->  	bool need_llcc_cfg;
->  	bool no_edac;
-> +	bool irq_configured;
->  };
->  
->  struct qcom_sct_config {
-> @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
->  		.need_llcc_cfg	= true,
->  		.reg_offset	= llcc_v2_1_reg_offset,
->  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-> +		.irq_configured = true,
->  	},
->  };
->  
-> @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
->  	drv_data->cfg = llcc_cfg;
->  	drv_data->cfg_size = sz;
->  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
-> +	drv_data->ecc_irq_configured = cfg->irq_configured;
->  	mutex_init(&drv_data->lock);
->  	platform_set_drvdata(pdev, drv_data);
->  
-> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-> index 9e9f528b1370..acad1f4cf854 100644
-> --- a/include/linux/soc/qcom/llcc-qcom.h
-> +++ b/include/linux/soc/qcom/llcc-qcom.h
-> @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
->   * @num_banks: Number of llcc banks
->   * @bitmap: Bit map to track the active slice ids
->   * @ecc_irq: interrupt for llcc cache error detection and reporting
-> + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
->   * @version: Indicates the LLCC version
->   */
->  struct llcc_drv_data {
-> @@ -139,6 +140,7 @@ struct llcc_drv_data {
->  	u32 num_banks;
->  	unsigned long *bitmap;
->  	int ecc_irq;
-> +	bool ecc_irq_configured;
->  	u32 version;
->  };
->  
-> -- 
-> 2.34.1
-> 
 
