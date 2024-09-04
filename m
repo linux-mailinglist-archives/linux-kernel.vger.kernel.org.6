@@ -1,59 +1,49 @@
-Return-Path: <linux-kernel+bounces-315542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E5A96C3FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:21:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE4996C400
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D61782868BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FDB1F26DF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0E81E1A01;
-	Wed,  4 Sep 2024 16:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NP03c9F8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E6B1DEFDF;
-	Wed,  4 Sep 2024 16:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A801E130F;
+	Wed,  4 Sep 2024 16:20:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0191DEFDF;
+	Wed,  4 Sep 2024 16:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466833; cv=none; b=Yk4Z5IdHZ64oIgszu+Sh94QjVO5k0EC76L8Gjuwu7cxmJ2DgWJ3zZ9dYP88y6sUjYDJgEAiG6p7QlmvfJe+0Xb+pi2roAmpEYI3Y3uUtT2z2GmgxleYuS9fJ5Aa9I8mxK+RmKvQHtPjVNr2G+csfAxQcz+xI2i0fQyOlaTfAI1w=
+	t=1725466840; cv=none; b=FYyvQhpsZNbTGpODXTFM4Z1ySSAfNNqsjPgXM8p6zMOvBWoaILFwz0XF3WsYfIRkAnvO3O3Bazqj5jqaezSrPu9wr3DoovJFR0ApPwF2VyNHe5rHQPhSwRuX7J6XKzZNEguienEqFMn6nqWin3CD9W8t3eb1Yazp200qyrfPm/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466833; c=relaxed/simple;
-	bh=VoYT+jETiuda1xS2vqsmwkwlGs8dsq5FW7EalM3HycA=;
+	s=arc-20240116; t=1725466840; c=relaxed/simple;
+	bh=44bA6BwrJ4kjcy61z8WkXTayUCzaRUSgsnywj45YQIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CgNVOM9JjvT2cBxdhe5oaeO86k51UUgXyVt3QwrWEx6YQTnsHmsM4VgLeZOwi4rFdvYpKWrXTMzLj5ldkZxRkAssV62OAefmizIK31O4pCgSjXTlLx3wYGRCoqSGaQiZ+Wji6fFZIR369Na+/JZpeV3XcfQhbnhGmYsHoul9wD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NP03c9F8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489FAC4CEC2;
-	Wed,  4 Sep 2024 16:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725466833;
-	bh=VoYT+jETiuda1xS2vqsmwkwlGs8dsq5FW7EalM3HycA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NP03c9F8ybbzutUGyi/oChtpifzmMuY6on3Tpr88/NuU8JHL4GZsJwTIEbDBIMnpa
-	 DgT96YeusDcTTPvU4yTIKxCd3EbxjYRGoO3sTMjxP70PMyC130b4A1YzgX7ST0ieiQ
-	 sbteagUXXeQcsV+6ETzvp4iXLxDrjCMD6Kj0J1YUokXqSFzK1V3EvG4yLOMzli2HpD
-	 2CgNwCgYj4Vp6h2q/uqjPOHc2//Smtstsa7NCS88eKXSVLOEJPY8IoA9wNwSOyxF13
-	 mOh9gu9ow24vOY4KxtvyfOvCG4sg/Cp6pQrutdQ2FGnM+Nt67zmnASDDllmgcsqrnu
-	 dtR6F/UhaNJ1Q==
-Date: Wed, 4 Sep 2024 17:20:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] net: xilinx: axienet: Relax partial rx checksum
- checks
-Message-ID: <20240904162029.GA4792@kernel.org>
-References: <20240903184334.4150843-1-sean.anderson@linux.dev>
- <20240903184334.4150843-4-sean.anderson@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrjbmzDmI1VoZVrqi33OkzUfAl/JnTm3gefbSg2ifKUwuKS1T8babBPILe8RjAPx/aFaOeQ9XfjRkUlk2l9Xplf7ISX2CJKeZV36b2LudIl2Yl1cf1OC391Dj01ZbxVBqBMmjilv3gY+Pm1W0Qd3antuOh444GqKqP5wkdLnHOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57C64FEC;
+	Wed,  4 Sep 2024 09:21:04 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF8DF3F73B;
+	Wed,  4 Sep 2024 09:20:36 -0700 (PDT)
+Date: Wed, 4 Sep 2024 17:20:34 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	johan@kernel.org, konradybcio@kernel.org
+Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
+Message-ID: <ZtiI0u0nAUbWEAAR@pluto>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-3-quic_sibis@quicinc.com>
+ <ZtiG7YLcnOR9IIuE@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,16 +52,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903184334.4150843-4-sean.anderson@linux.dev>
+In-Reply-To: <ZtiG7YLcnOR9IIuE@bogus>
 
-On Tue, Sep 03, 2024 at 02:43:34PM -0400, Sean Anderson wrote:
-> The partial rx checksum feature computes a checksum over the entire
-> packet, regardless of the L3 protocol. Remove the check for IPv4.
-> Additionally, packets under 64 bytes should have been dropped by the
-> MAC, so we can remove the length check as well.
+On Wed, Sep 04, 2024 at 05:12:29PM +0100, Sudeep Holla wrote:
+> On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
+> > Ensure that the bad duplicates reported by the platform firmware doesn't
+> > get added to the opp-tables.
+> >
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> I am really interested to know if the platform firmware is presenting
+> duplicates intentionally for some unknown reasons and we are just speculating
+> it to be broken firmware or is it really broken firmware.
+> 
+> For me, it is very hard to digest something like OPP tables which is there
+> for a very long time now is not very well understood by firmware authors.
+> How many duplicates are we seeing on this platform really ? If it is
+> just one I can understand. More than one is hard to miss from the OPP
+> tables in the firmware.
+> 
+> While I am not opposing to make the driver handle these duplicates,
+> I am just worried if they are put there intentionally for reasons we
+> don't understand yet or not published.
+> 
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The number of duplicates reported in logs makes me suspect the same...seems
+like intentional/by_design .... but at first I stick to the general issue
+of handling bad fw replies and how to survive kernel side at first...but I
+indeed share your same concerns...
 
+Thanks,
+Cristian
 
