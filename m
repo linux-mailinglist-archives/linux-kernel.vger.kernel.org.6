@@ -1,344 +1,249 @@
-Return-Path: <linux-kernel+bounces-314786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939F896B889
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4967496B886
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E021C21985
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8081F23D7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 10:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B428518733B;
-	Wed,  4 Sep 2024 10:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C771CF7A3;
+	Wed,  4 Sep 2024 10:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fO21in6D"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S38fUNnl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E859E1CF5F6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729F1CF5F1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725445801; cv=none; b=AFDqSq0/XNpEoxIo1gTRW6R0rwJ5jP70jvk4poAG6ZtWJ0sYwdHmSlCI1pxJJgr2HMbTBZLGFkZDNz14zb1ps+kaMvx+5dGqOSV2Lw7JQYCxGLK4m6E8eG30khyiPU8tFzbhYpTK8iIHjCQg6q8aHfdO7grcF518O9f4eBdh3gc=
+	t=1725445799; cv=none; b=MHPXFuwya0NiBs1lmOth/8PoCgaVVmZmpCbaDVkZ4UwEfIoYxYNMAga9SsWnE4LCL/F3eygMllDZqSU+bLgKwVqBKztvbtm0cuslsQEJOVlpLNoc+pj2S4whJcGagn4jHGHh60BR2xIuHONKuJKdVI7AKDVBnoG9pQ3YGiYPeaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725445801; c=relaxed/simple;
-	bh=xOaRnjRgKSTBXoBrckkAh6k5MeQKaIjjbdVTeFSuRLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H+U7dYP6fY8zQc5yxv1mk0u+gE/Ez3p6JYEmuinysdppnAGb0v1nV6t8Uz1GRzFudt5BFsO2O7RODQe7fYRcolq5VTkL6kviVJPvFBI15GByaX4matJEL9PqpeDZXSTK8RZCKK1iNHafZXELHdp5rITNktkbZ3xB0pAOTw01f64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fO21in6D; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374c3400367so2774589f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725445798; x=1726050598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y/KVUrCheFbwrwKIW01tEK7XS9zRlh9AQQ32oNA94o8=;
-        b=fO21in6D601eFwdmVvUagDPHBa5pyr1rDJSQEUpzgIbhxH2xUgsWOj6Mc6VIMkPYs/
-         GZ7inn/Z69lqb++/D+Jp5/kTXdPP+vTLmzugGauHss6sEgr49xOB38UPppmgih7rZyRH
-         ph023WNO3jvqHIKaUrCcMDlwtBy2E5xdNtsagCQzkGB6CoLetkg5mrO6LX39xLHaMJsV
-         hQQ9qPLrBUFUqJ0DqYnyFp9DgPlhXOtccbsul3PG53B1Z4nLJgDjdzyjtuPcl+PPt02O
-         +QRME61fLdeJATY+VFO/iE1Ac5JOQprUB6k55YXdnYa3R/18P0fk9nqoiXry/yLYfarx
-         q4dQ==
+	s=arc-20240116; t=1725445799; c=relaxed/simple;
+	bh=5ccVo0M8G8DfgB8Dycrbx+Cre/7FshqpQSieO5gAf8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F/iboVEoyF4hz1V1I0RoxPcv2X6NBG+dBPQL4RyI9fFVAs4zgHmi7UccyR+Xzj+0KHUk0T1fdNafD5gU0M/pYyaIuYk7k70BgtkYsrLBaDzZq4zPql8ACVvOmTKvyTkxWE92MgGdHHU4PKotafNcRAPmWLB5ReMuYd40BNDWHkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S38fUNnl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725445796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GjvrxlJE8EJ7TRDwR1pXnt1cZcb/OYfz99rwQ0Yh7zs=;
+	b=S38fUNnlaJ1mk2ofsB66yFuffHB7tyERArbN5GfQ2dB06AFN5JZFcIdZ2mhUpsNYfrwHP9
+	l9OKn6W1Dbk7UQeyJA6WuYGqcqURiAY6sA1Y+wYgNbPNeWL4uzkLNoVd9hsecuegSD5JuH
+	saouQSAihf+4cQ9bI0Fer+PJjMpGuMg=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-591-krEYucr5PiG_pkgA8q6GUA-1; Wed, 04 Sep 2024 06:29:54 -0400
+X-MC-Unique: krEYucr5PiG_pkgA8q6GUA-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c250f3b18aso523732a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 03:29:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725445798; x=1726050598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y/KVUrCheFbwrwKIW01tEK7XS9zRlh9AQQ32oNA94o8=;
-        b=I1TTHRYG42cOrBHiBy1uTBaMta/eyW5EK6mywzGjyVa45guoFk+yme+h+ScnAUFeqq
-         wPiEWaL73TNAkARbYf7UnM16l0uCXL8uovinLxB+W4N7v5EZtGR66jpG4lfL3nd3WbgZ
-         oeDYTdtcjMO39/T0rHhu+nBN9Ok/GMa5pyjqTdHTqrG3FPJSrxBhcQ28bnDYJc28IHZH
-         XhrAWbd4AbMxkcbTyWuDVSapq8tsa7XgC8I9GJ6gbw5+2N0RSF71EOc75WTbLbc9GFSs
-         Fszmaqg3HuVgvoZjX4/dDKGCf+yggfl9ipVKo44qlESm8KxxkU/7ubzDIsFvJ93WSUys
-         4f7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVi75z6uuI3wQmlSrri/YnLw9Ff3yqiHI493/O4mmAQU+2CoQmwcdAYYXVjgIH5sD99daaDCfXucobLte4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNhL5ppFQkZKJXDj76gWIzZzaRLLAJY/JfAV9Vlxn/3WG93EHp
-	8pxn+H00zovs5pvbrLM4CnGcvPM3s/bHiEY/gL5yPzUA1rTOo/tAhaF6aXPGBYmxDdJjszs/Bj3
-	v7pqtlm4TKTflllyCMsyDVDfRYzhweia8Qu1c
-X-Google-Smtp-Source: AGHT+IE6W9vQz1y68yO5qeHUn4/djJSdduZOAYLjB/UAITY2qd74Q9MXHNnrgxlzMmuajj/inFZcuqlopvdC7XxN3r8=
-X-Received: by 2002:adf:e6c8:0:b0:374:c3cd:73de with SMTP id
- ffacd0b85a97d-374c3cd74d5mr9938028f8f.35.1725445797876; Wed, 04 Sep 2024
- 03:29:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725445794; x=1726050594;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GjvrxlJE8EJ7TRDwR1pXnt1cZcb/OYfz99rwQ0Yh7zs=;
+        b=XP4nojg5OrcVPUkdAMFADfbVbhmBRU2RTYddooGaSxcCbQZS/dwC6Zy0FY4P+uKBId
+         SXIWN5FUn+1zNjIDQZwDx7uqzv8Yh2ol5ZRQ7bafWtaNbwiLGiz8WvcuhBaVL+dlwVrD
+         A8UiUn6ThI1FAjbQgKVVyxtNhR1OYoxT5kbntIKx5b+ybUVjLFG3wbIlRbs0wfi5nStV
+         rq3zq2itlytU5TnFxq5zl/54wjoegdoyhU9MgthjhEeZlqK7AcobhIeysHthr0Qye2Ir
+         CdsEPEfLrhzuyOGxLc7r3r64pwjNvU3ons9CF4fbZk0+/gxxjXpIAuCD+4E7NHqCFph0
+         pJ8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlbIjbyFX/JSvBH77d8N3r+8GzNrUUhxCYVfDrOMYwQVBJgokdEqTCgW0EmdiKtI4dMt+fDjYCk9Z26I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWixtElDm/HedCVTYfzT8DnRI1d7VfXfCl9a5YzcGDcZrMCrA6
+	iAl70wvcFosPNCD717yFc6BRhZTTfFP9dyp/NKusWKR2xPFNa7e9dDI+hfo9nqgSVMiL3ZHQ7li
+	tVCVxltsNGOAP35BEVzNFCJ3P1Lw0E+UIi3Thj6MukbQ4oRlxXvB0l9WrV8J68A==
+X-Received: by 2002:a05:6402:1ec5:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5c2caf22be6mr1560632a12.27.1725445793469;
+        Wed, 04 Sep 2024 03:29:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlfGqHgiFwjp/Ap4TY3x8/1uxKWyFR9NEI0cj9enurEW6F7gDBRXOrJY/rHX0K4XiDL+Ug+g==
+X-Received: by 2002:a05:6402:1ec5:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5c2caf22be6mr1560599a12.27.1725445792849;
+        Wed, 04 Sep 2024 03:29:52 -0700 (PDT)
+Received: from [192.168.10.3] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c250edd2e3sm4341769a12.27.2024.09.04.03.29.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 03:29:51 -0700 (PDT)
+Message-ID: <25ca73c9-e4ba-4a95-82c8-0d6cf8d0ff78@redhat.com>
+Date: Wed, 4 Sep 2024 12:29:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-15-dakr@kernel.org>
-In-Reply-To: <20240816001216.26575-15-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 4 Sep 2024 12:29:44 +0200
-Message-ID: <CAH5fLghJznTQ1r5cAHWywsdgEP13s1=9q7P9StTp8Mt4CbjRFw@mail.gmail.com>
-Subject: Re: [PATCH v6 14/26] rust: alloc: implement `IntoIterator` for `Vec`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86/sev: Fix host kdump support for SNP
+To: "Kalra, Ashish" <ashish.kalra@amd.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, thomas.lendacky@amd.com,
+ michael.roth@amd.com, kexec@lists.infradead.org, linux-coco@lists.linux.dev
+References: <20240903191033.28365-1-Ashish.Kalra@amd.com>
+ <ZtdpDwT8S_llR9Zn@google.com> <fbde9567-d235-459b-a80b-b2dbaf9d1acb@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <fbde9567-d235-459b-a80b-b2dbaf9d1acb@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 16, 2024 at 2:13=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Implement `IntoIterator` for `Vec`, `Vec`'s `IntoIter` type, as well as
-> `Iterator` for `IntoIter`.
->
-> `Vec::into_iter` disassembles the `Vec` into its raw parts; additionally,
-> `IntoIter` keeps track of a separate pointer, which is incremented
-> correspondingsly as the iterator advances, while the length, or the count
-> of elements, is decremented.
->
-> This also means that `IntoIter` takes the ownership of the backing
-> buffer and is responsible to drop the remaining elements and free the
-> backing buffer, if it's dropped.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On 9/4/24 00:58, Kalra, Ashish wrote:
+> The issue here is that panic path will ensure that all (other) CPUs
+> have been shutdown via NMI by checking that they have executed the
+> NMI shutdown callback.
+> 
+> But the above synchronization is specifically required for SNP case,
+> as we don't want to execute the SNP_DECOMMISSION command (to destroy
+> SNP guest context) while one or more CPUs are still in the NMI VMEXIT
+> path and still in the process of saving the vCPU state (and still
+> modifying SNP guest context?) during this VMEXIT path. Therefore, we
+> ensure that all the CPUs have saved the vCPU state and entered NMI
+> context before issuing SNP_DECOMMISSION. The point is that this is a
+> specific SNP requirement (and that's why this specific handling in
+> sev_emergency_disable()) and i don't know how we will be able to
+> enforce it in the generic panic path ?
 
-This looks ok to me. One nit below, though. Either way:
+I think a simple way to do this is to _first_ kick out other
+CPUs through NMI, and then the one that is executing
+emergency_reboot_disable_virtualization().  This also makes
+emergency_reboot_disable_virtualization() and
+native_machine_crash_shutdown() more similar, in that
+the latter already stops other CPUs before disabling
+virtualization on the one that orchestrates the shutdown.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Something like (incomplete, it has to also add the bool argument
+to cpu_emergency_virt_callback and the actual callbacks):
 
->  rust/kernel/alloc.rs      |   1 +
->  rust/kernel/alloc/kvec.rs | 184 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 185 insertions(+)
->
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index e88c7e10ee9b..4ff4df4597a3 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -19,6 +19,7 @@
->  pub use self::kbox::KVBox;
->  pub use self::kbox::VBox;
->
-> +pub use self::kvec::IntoIter;
->  pub use self::kvec::KVVec;
->  pub use self::kvec::KVec;
->  pub use self::kvec::VVec;
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index 89afc0f25bd4..3b79f977b65e 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -11,6 +11,7 @@
->      ops::DerefMut,
->      ops::Index,
->      ops::IndexMut,
-> +    ptr,
->      ptr::NonNull,
->      slice,
->      slice::SliceIndex,
-> @@ -627,3 +628,186 @@ fn eq(&self, other: &$rhs) -> bool { self[..] =3D=
-=3D other[..] }
->  __impl_slice_eq! { [A: Allocator] [T], Vec<U, A> }
->  __impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, [U; N] }
->  __impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, &[U; N] }
-> +
-> +impl<'a, T, A> IntoIterator for &'a Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Item =3D &'a T;
-> +    type IntoIter =3D slice::Iter<'a, T>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.iter()
-> +    }
-> +}
-> +
-> +impl<'a, T, A: Allocator> IntoIterator for &'a mut Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Item =3D &'a mut T;
-> +    type IntoIter =3D slice::IterMut<'a, T>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.iter_mut()
-> +    }
-> +}
-> +
-> +/// An `Iterator` implementation for `Vec<T,A>` that moves elements out =
-of a vector.
-> +///
-> +/// This structure is created by the `Vec::into_iter` method on [`Vec`] =
-(provided by the
-> +/// [`IntoIterator`] trait).
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// let v =3D kernel::kvec![0, 1, 2]?;
-> +/// let iter =3D v.into_iter();
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +pub struct IntoIter<T, A: Allocator> {
-> +    ptr: *mut T,
-> +    buf: NonNull<T>,
-> +    len: usize,
-> +    cap: usize,
-> +    _p: PhantomData<A>,
-> +}
-> +
-> +impl<T, A> IntoIter<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    fn as_raw_mut_slice(&mut self) -> *mut [T] {
-> +        ptr::slice_from_raw_parts_mut(self.ptr, self.len)
-> +    }
-> +}
-> +
-> +impl<T, A> Iterator for IntoIter<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Item =3D T;
-> +
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let v =3D kernel::kvec![1, 2, 3]?;
-> +    /// let mut it =3D v.into_iter();
-> +    ///
-> +    /// assert_eq!(it.next(), Some(1));
-> +    /// assert_eq!(it.next(), Some(2));
-> +    /// assert_eq!(it.next(), Some(3));
-> +    /// assert_eq!(it.next(), None);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    fn next(&mut self) -> Option<T> {
-> +        if self.len =3D=3D 0 {
-> +            return None;
-> +        }
-> +
-> +        let ptr =3D self.ptr;
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index 340af8155658..3df25fbe969d 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -111,7 +111,7 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+  
+  	crash_smp_send_stop();
+  
+-	cpu_emergency_disable_virtualization();
++	cpu_emergency_disable_virtualization(true);
+  
+  	/*
+  	 * Disable Intel PT to stop its logging
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 0e0a4cf6b5eb..7a86ec786987 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -558,7 +558,7 @@ EXPORT_SYMBOL_GPL(cpu_emergency_unregister_virt_callback);
+   * reboot.  VMX blocks INIT if the CPU is post-VMXON, and SVM blocks INIT if
+   * GIF=0, i.e. if the crash occurred between CLGI and STGI.
+   */
+-void cpu_emergency_disable_virtualization(void)
++void cpu_emergency_disable_virtualization(bool last)
+  {
+  	cpu_emergency_virt_cb *callback;
+  
+@@ -572,7 +572,7 @@ void cpu_emergency_disable_virtualization(void)
+  	rcu_read_lock();
+  	callback = rcu_dereference(cpu_emergency_virt_callback);
+  	if (callback)
+-		callback();
++		callback(last);
+  	rcu_read_unlock();
+  }
+  
+@@ -591,11 +591,11 @@ static void emergency_reboot_disable_virtualization(void)
+  	 * other CPUs may have virtualization enabled.
+  	 */
+  	if (rcu_access_pointer(cpu_emergency_virt_callback)) {
+-		/* Safely force _this_ CPU out of VMX/SVM operation. */
+-		cpu_emergency_disable_virtualization();
+-
+  		/* Disable VMX/SVM and halt on other CPUs. */
+  		nmi_shootdown_cpus_on_restart();
++
++		/* Safely force _this_ CPU out of VMX/SVM operation. */
++		cpu_emergency_disable_virtualization(true);
+  	}
+  }
+  #else
+@@ -877,7 +877,7 @@ static int crash_nmi_callback(unsigned int val, struct pt_regs *regs)
+  	 * Prepare the CPU for reboot _after_ invoking the callback so that the
+  	 * callback can safely use virtualization instructions, e.g. VMCLEAR.
+  	 */
+-	cpu_emergency_disable_virtualization();
++	cpu_emergency_disable_virtualization(false);
+  
+  	atomic_dec(&waiting_for_crash_ipi);
+  
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index 18266cc3d98c..9a863348d1a7 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -124,7 +124,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+  	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
+  		return NMI_HANDLED;
+  
+-	cpu_emergency_disable_virtualization();
++	cpu_emergency_disable_virtualization(false);
+  	stop_this_cpu(NULL);
+  
+  	return NMI_HANDLED;
+@@ -136,7 +136,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+  DEFINE_IDTENTRY_SYSVEC(sysvec_reboot)
+  {
+  	apic_eoi();
+-	cpu_emergency_disable_virtualization();
++	cpu_emergency_disable_virtualization(false);
+  	stop_this_cpu(NULL);
+  }
+  
 
-Nit: It would probably be slightly clearer to rename this variable to `curr=
-ent`.
+And then a second patch adds sev_emergency_disable() and only
+executes it if last == true.
 
-> +        if !Vec::<T, A>::is_zst() {
-> +            // SAFETY: We can't overflow; `end` is guaranteed to mark th=
-e end of the buffer.
-> +            unsafe { self.ptr =3D self.ptr.add(1) };
-> +        } else {
-> +            // For ZST `ptr` has to stay where it is to remain aligned, =
-so we just reduce `self.len`
-> +            // by 1.
-> +        }
-> +        self.len -=3D 1;
-> +
-> +        // SAFETY: `ptr` is guaranteed to point at a valid element withi=
-n the buffer.
-> +        Some(unsafe { ptr.read() })
-> +    }
-> +
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let v: KVec<u32> =3D kernel::kvec![1, 2, 3]?;
-> +    /// let mut iter =3D v.into_iter();
-> +    /// let size =3D iter.size_hint().0;
-> +    ///
-> +    /// iter.next();
-> +    /// assert_eq!(iter.size_hint().0, size - 1);
-> +    ///
-> +    /// iter.next();
-> +    /// assert_eq!(iter.size_hint().0, size - 2);
-> +    ///
-> +    /// iter.next();
-> +    /// assert_eq!(iter.size_hint().0, size - 3);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    fn size_hint(&self) -> (usize, Option<usize>) {
-> +        (self.len, Some(self.len))
-> +    }
-> +}
-> +
-> +impl<T, A> Drop for IntoIter<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    fn drop(&mut self) {
-> +        // SAFETY: Drop the remaining vector's elements in place, before=
- we free the backing
-> +        // memory.
-> +        unsafe { ptr::drop_in_place(self.as_raw_mut_slice()) };
-> +
-> +        // If `cap =3D=3D 0` we never allocated any memory in the first =
-place.
-> +        if self.cap !=3D 0 {
-> +            // SAFETY: `self.buf` was previously allocated with `A`.
-> +            unsafe { A::free(self.buf.cast()) };
-> +        }
-> +    }
-> +}
-> +
-> +impl<T, A> IntoIterator for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Item =3D T;
-> +    type IntoIter =3D IntoIter<T, A>;
-> +
-> +    /// Consumes the `Vec<T, A>` and creates an `Iterator`, which moves =
-each value out of the
-> +    /// vector (from start to end).
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let v =3D kernel::kvec![1, 2]?;
-> +    /// let mut v_iter =3D v.into_iter();
-> +    ///
-> +    /// let first_element: Option<u32> =3D v_iter.next();
-> +    ///
-> +    /// assert_eq!(first_element, Some(1));
-> +    /// assert_eq!(v_iter.next(), Some(2));
-> +    /// assert_eq!(v_iter.next(), None);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    ///
-> +    /// ```
-> +    /// let v =3D kernel::kvec![];
-> +    /// let mut v_iter =3D v.into_iter();
-> +    ///
-> +    /// let first_element: Option<u32> =3D v_iter.next();
-> +    ///
-> +    /// assert_eq!(first_element, None);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    #[inline]
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        let (ptr, len, cap) =3D self.into_raw_parts();
-> +
-> +        IntoIter {
-> +            ptr,
-> +            // SAFETY: `ptr` is either a dangling pointer or a pointer t=
-o a valid memory
-> +            // allocation, allocated with `A`.
-> +            buf: unsafe { NonNull::new_unchecked(ptr) },
-> +            len,
-> +            cap,
-> +            _p: PhantomData::<A>,
-> +        }
-> +    }
-> +}
-> --
-> 2.46.0
->
+Paolo
+
 
