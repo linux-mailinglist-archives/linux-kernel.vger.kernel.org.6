@@ -1,311 +1,473 @@
-Return-Path: <linux-kernel+bounces-314178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BBC96AFC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:27:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0718D96AFCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FA0286437
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6A61F250C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 04:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008228172A;
-	Wed,  4 Sep 2024 04:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FB58172A;
+	Wed,  4 Sep 2024 04:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+5TCSv7"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxEKZdbM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A1B8063C;
-	Wed,  4 Sep 2024 04:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4F43152;
+	Wed,  4 Sep 2024 04:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725424048; cv=none; b=q1IfFlEnDIDyJahtuGYjdiFZ/iifgBRNyFNveEuN5WDMME/h3GlC0o4QAzqdpSvJAIHCOOAw21LR1i+JAnSnRcxFJZuTM+mTpqVWb0m0UULnwYgZdXvFKdoE78Lb0fm7q27Fzbo1ViSPP7yQrMWsBmKHkf+s//lB7ant382tGMw=
+	t=1725424113; cv=none; b=KmzuqFy8iyH+hKhg2FXK7uFnG1hPWlE5xt7JWXGUEeGRJuLRHcHtxXq2NPUvVIoztVqIcQU2rrBZ/7A5mfrQHj/65aZQ1cjff/mOVkXW++G0xY1a45S82YR6r7phAc996vLWKPtKlfT7U5XXKg1rYQBW2hDnhtAr/j81nFltOQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725424048; c=relaxed/simple;
-	bh=qR9oGFQRB424fWSF9MV9wyUOeQr2omNeiSnzmDW3Cyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Fq/o6P2YS4KNqqSKjQwd1x/2ZJB3acnuFazyxWDPbYkKtCRKAb3wnZN47rYDT4GaOFvM6RfuL83ByOfHshnZkhR2AZSL69NgPysr7HNTCEj5zJF6AaIZdZFWh8wFmlvsog9yJGA9JhmaXZ0Si18fbfZt7Ni0ROCqU52KOJ+Wdp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+5TCSv7; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso3038955a91.3;
-        Tue, 03 Sep 2024 21:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725424046; x=1726028846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=VeECqBgljIaFzBqVZOaZS1qp1kp+xe6RJCJ5Xa6Fxk4=;
-        b=c+5TCSv7hsR3fcd9iMZCkUGLF6QvJR+L/6DN5cfM7dYp4ng7CkuYL3qkA2/XZwWzay
-         GcVqZaZY0JSmF9Sg00hS9KXrm+SjPjM7braMdx0VI2k0FeB7sN/8pyXBFiKS3gZ9kYZg
-         xj5Swun7rwlzbuQYktg6fl4RP+LMuJDmKL8Q3gH19YWkK4sTEvDm7wAIGaalSwBqjtmS
-         9b5kpz9sLc2pq9ar6Vh5ucr0ojwEffBszYIbUIvdu4Xy0AFdTxHEMMIcas5aFtCQRQh5
-         HwTk2PW+1hPd1r0htueqr89CuxVudv7ciTMUIe35vL0lDwsVE2ww4Vwdvr6eQSNhQuRM
-         RTzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725424046; x=1726028846;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeECqBgljIaFzBqVZOaZS1qp1kp+xe6RJCJ5Xa6Fxk4=;
-        b=IjnDE/W1gjhM7Ym0M5PxiFLz65dl4Zk2twqnDdKuCUwpbYYNH3f3pY4Yi3boliZuWn
-         RxhMe87i1PxzMOtC2UM5rK54NZO+H/HYYQmWrVKFd6TkCuXeLYNKvR8e/MSI9ZSy5eMU
-         NonG/XhKcaKxgyZbSe2A7IOi16/+0IGajG3Ukrsru3Voz3mKjHvFt72U87oHCc+ETLhY
-         u60HpzFOzHVMrgnVjCA+guAKaWSa4WsSzMR+a9GUFpN0//ut2jFWvwjn9lDfSsAyE/C7
-         1dZGg5B3KbaO/UH1ZwPHI69tS0DFOPRZFWPuU/0s8jQ1BFqpESRNe8cZqIHmQFDaxGwI
-         qFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD9TgsUOrdkeQQQE0PIZjn+ktBXe5UIMoN+THxU80WKGuTzoqM5YgE5NI9CWEzezE4OzeFgLTvILiG0X5Jfeeg@vger.kernel.org, AJvYcCVA5Ir3cSlYsMZolXHsUc9bgMCA6OHTgLsAmkzY9hlF2yYtGy5BGXOWpU+PqPBP2F1PVI7eLQTF+N9LPTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVKuCKjkhTdcosBLKWAYEYiHOhKJzKf/CS6zSyNcqAuHpzVnaf
-	wGd/JxrINyESRa4LX7Fvwe6E5rustAWJkQKWW1fmarWairI67dFA
-X-Google-Smtp-Source: AGHT+IG2jdQF312Ixt7guXL5uHCtJ9KmhjBnwxSu1MjlGaBSMDPTepH+DUYUSGG6QaluU2eJQGEjnA==
-X-Received: by 2002:a17:903:32c8:b0:205:79b4:c5b1 with SMTP id d9443c01a7336-20579b4c7e1mr87665825ad.16.1725424045436;
-        Tue, 03 Sep 2024 21:27:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae912facsm5545075ad.45.2024.09.03.21.27.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 21:27:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b83651a0-5b24-4206-b860-cb54ffdf209b@roeck-us.net>
-Date: Tue, 3 Sep 2024 21:27:22 -0700
+	s=arc-20240116; t=1725424113; c=relaxed/simple;
+	bh=vGstB9Sc7oN7HmtyQdAM8JjEj+1V5Sze24APYz/V3r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYMb3Efe6q1oku6dKTzGf5pUYzJxL1xu1rXnugmaaymj+ly5AKxGXsUm4ASoJg/qz6NhrnM7KX3QhjeL/vwBw2lAZJNXTYuosj261uI6UT/K8FZl/FlPSwlr7YgNCTVYms5ncnyGfoHxzDTXo3BX7Gol+S/pH+B9lNnrn4q41sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxEKZdbM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770EFC4CEC2;
+	Wed,  4 Sep 2024 04:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725424111;
+	bh=vGstB9Sc7oN7HmtyQdAM8JjEj+1V5Sze24APYz/V3r8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mxEKZdbMiZmGywJLcbLik08w6ipNmTNsq/HdK0jypeZ3nCX5+84/DgXRhlTx7SbY+
+	 uKbr5m7o2oXWPok/5nSJsS7IPfWDQTF14Pkuo1uWzDyfCI4yoBK6Vja/yrR7Ec1KMe
+	 3n2YUizki49e52kPDPFGERwxFZ20PIG3ZsoAF0c0Gc/C1uwqk78ZmKEDAlCJz+6k3n
+	 F2i5WbH5uCwxnYis5l1UXw07Vgu4EIoBhhG3i+PF22nJWNgGvKBv5XMcB63dqi75TJ
+	 5sz4RyFGq4aPPGTA7zUTWlrEfbuXb7nkWUPe3PnC8S/Nh361B9zZf6wmQVB7bTPtWb
+	 Wa3guyTK4Lxfw==
+Date: Tue, 3 Sep 2024 21:28:29 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
+ entries
+Message-ID: <20240904042829.tkcpql65cxgzvhpx@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
+ <20240903082909.GP4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/damon/tests/vaddr-kunit: don't use mas_lock for
- MM_MT_FLAGS-initialized maple tree
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, SeongJae Park
- <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- Brendan Higgins <brendanhiggins@google.com>, David Gow
- <davidgow@google.com>, damon@lists.linux.dev, linux-mm@kvack.org,
- kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240904005815.1388-1-sj@kernel.org>
- <20240904011840.973-1-sj@kernel.org>
- <whdjeq6qpccj6ms4wgiyjcnizht4nl5qbt7rbaeqfwzt67smxt@vvduwpqcuizl>
- <e83dedb2-89a3-4327-9a2f-610d3199f0e1@roeck-us.net>
- <54zu64vxrhdxr4wtmwbewga44shu4f7lz4ffx2hxhag46b56hn@qgrgfrb6mhbv>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <54zu64vxrhdxr4wtmwbewga44shu4f7lz4ffx2hxhag46b56hn@qgrgfrb6mhbv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240903082909.GP4723@noisy.programming.kicks-ass.net>
 
-On 9/3/24 20:36, Liam R. Howlett wrote:
-> * Guenter Roeck <linux@roeck-us.net> [240903 22:38]:
->> On 9/3/24 19:31, Liam R. Howlett wrote:
->>> * SeongJae Park <sj@kernel.org> [240903 21:18]:
->>>> On Tue,  3 Sep 2024 17:58:15 -0700 SeongJae Park <sj@kernel.org> wrote:
->>>>
->>>>> On Tue, 3 Sep 2024 20:48:53 -0400 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
->>>>>
->>>>>> * SeongJae Park <sj@kernel.org> [240903 20:45]:
->>>>>>> damon_test_three_regions_in_vmas() initializes a maple tree with
->>>>>>> MM_MT_FLAGS.  The flags contains MT_FLAGS_LOCK_EXTERN, which means
->>>>>>> mt_lock of the maple tree will not be used.  And therefore the maple
->>>>>>> tree initialization code skips initialization of the mt_lock.  However,
->>>>>>> __link_vmas(), which adds vmas for test to the maple tree, uses the
->>>>>>> mt_lock.  In other words, the uninitialized spinlock is used.  The
->>>>>>> problem becomes celar when spinlock debugging is turned on, since it
->>>>>>> reports spinlock bad magic bug.  Fix the issue by not using the mt_lock
->>>>>>> as promised.
->>>>>>
->>>>>> You can't do this, lockdep will tell you this is wrong.
->>>>>
->>>>> Hmm, but lockdep was silence on my setup?
->>>>>
->>>>>> We need a lock and to use the lock for writes.
->>>>>
->>>>> This code is executed by a single-thread test code.  Do we still need the lock?
->>>>>
->>>>>>
->>>>>> I'd suggest using different flags so the spinlock is used.
->>>>>
->>>>> The reporter mentioned simply dropping MT_FLAGS_LOCK_EXTERN from the flags
->>>>> causes suspicious RCU usage message.  May I ask if you have a suggestion of
->>>>> better flags?
->>>
->>> That would be the lockdep complaining, so that's good.
->>>
->>>>
->>>> I was actually thinking replacing the mt_init_flags() with mt_init(), which
->>>> same to mt_init_flags() with zero flag, like below.
->>>
->>> Yes.  This will use the spinlock which should fix your issue, but it
->>> will use a different style of maple tree.
->>>
->>> Perhaps use MT_FLAGS_ALLOC_RANGE to use the same type of maple tree, if
->>> you ever add threading you will want the rcu flag as well
->>> (MT_FLAGS_USE_RCU).
->>>
->>> I would recommend those two and just use the spinlock.
->>>
->>
->> I tried that (MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU). it also triggers
->> the suspicious RCU usage message.
->>
+On Tue, Sep 03, 2024 at 10:29:09AM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 02, 2024 at 09:00:11PM -0700, Josh Poimboeuf wrote:
+> > Create a symbol for each special section entry.  This helps objtool
+> > extract needed entries.
 > 
-> I am running ./tools/testing/kunit/kunit.py run '*damon*' --arch x86_64 --raw
-> with:
-> CONFIG_LOCKDEP=y
-> CONFIG_DEBUG_SPINLOCK=y
-> 
-> and I don't have any issue with locking in the existing code.  How do I
-> recreate this issue?
-> 
+> A little more explanation would be nice,..
 
-I tested again, and I still see
+Indeed!
 
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: [PATCH] x86/alternative: Create symbols for special section entries
 
-[    6.233483] ok 4 damon
-[    6.234190]     KTAP version 1
-[    6.234263]     # Subtest: damon-operations
-[    6.234335]     # module: vaddr
-[    6.234384]     1..6
-[    6.235726]
-[    6.235931] =============================
-[    6.236018] WARNING: suspicious RCU usage
-[    6.236280] 6.11.0-rc6-00029-gda66250b210f-dirty #1 Tainted: G                 N
-[    6.236398] -----------------------------
-[    6.236474] lib/maple_tree.c:832 suspicious rcu_dereference_check() usage!
-[    6.236579]
-[    6.236579] other info that might help us debug this:
-[    6.236579]
-[    6.236738]
-[    6.236738] rcu_scheduler_active = 2, debug_locks = 1
-[    6.237039] no locks held by kunit_try_catch/208.
-[    6.237166]
-[    6.237166] stack backtrace:
-[    6.237385] CPU: 0 UID: 0 PID: 208 Comm: kunit_try_catch Tainted: G                 N 6.11.0-rc6-00029-gda66250b210f-dirty #1
-[    6.237629] Tainted: [N]=TEST
-[    6.237714] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[    6.238065] Call Trace:
-[    6.238233]  <TASK>
-[    6.238547]  dump_stack_lvl+0x9e/0xe0
-[    6.239473]  lockdep_rcu_suspicious+0x145/0x1b0
-[    6.239621]  mas_walk+0x19f/0x1d0
-[    6.239765]  mas_find+0xb5/0x150
-[    6.239873]  __damon_va_three_regions+0x7e/0x130
-[    6.240039]  damon_test_three_regions_in_vmas+0x1ea/0x480
-[    6.240551]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-[    6.240712]  kunit_try_run_case+0x93/0x190
-[    6.240850]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-[    6.240990]  kunit_generic_run_threadfn_adapter+0x1c/0x40
-[    6.241124]  kthread+0xdd/0x110
-[    6.241256]  ? __pfx_kthread+0x10/0x10
-[    6.241368]  ret_from_fork+0x2f/0x50
-[    6.241468]  ? __pfx_kthread+0x10/0x10
-[    6.241573]  ret_from_fork_asm+0x1a/0x30
-[    6.241765]  </TASK>
-[    6.242180]
-[    6.242270] =============================
-[    6.242375] WARNING: suspicious RCU usage
-[    6.242478] 6.11.0-rc6-00029-gda66250b210f-dirty #1 Tainted: G                 N
-[    6.242634] -----------------------------
-[    6.242734] lib/maple_tree.c:788 suspicious rcu_dereference_check() usage!
-[    6.242955]
-[    6.242955] other info that might help us debug this:
-[    6.242955]
-[    6.243098]
-[    6.243098] rcu_scheduler_active = 2, debug_locks = 1
-[    6.243215] no locks held by kunit_try_catch/208.
-[    6.243331]
-[    6.243331] stack backtrace:
-[    6.243420] CPU: 0 UID: 0 PID: 208 Comm: kunit_try_catch Tainted: G                 N 6.11.0-rc6-00029-gda66250b210f-dirty #1
-[    6.243599] Tainted: [N]=TEST
-[    6.243665] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[    6.243844] Call Trace:
-[    6.243907]  <TASK>
-[    6.243961]  dump_stack_lvl+0x9e/0xe0
-[    6.244032]  lockdep_rcu_suspicious+0x145/0x1b0
-[    6.244121]  mtree_range_walk+0x2b9/0x350
-[    6.244211]  mas_walk+0x107/0x1d0
-[    6.244278]  mas_find+0xb5/0x150
-[    6.244341]  __damon_va_three_regions+0x7e/0x130
-[    6.244445]  damon_test_three_regions_in_vmas+0x1ea/0x480
-[    6.244770]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-[    6.244865]  kunit_try_run_case+0x93/0x190
-[    6.244952]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-[    6.245044]  kunit_generic_run_threadfn_adapter+0x1c/0x40
-[    6.245130]  kthread+0xdd/0x110
-[    6.245191]  ? __pfx_kthread+0x10/0x10
-[    6.245262]  ret_from_fork+0x2f/0x50
-[    6.245326]  ? __pfx_kthread+0x10/0x10
-[    6.245394]  ret_from_fork_asm+0x1a/0x30
-[    6.245497]  </TASK>
-[    6.246605]     # damon_test_three_regions_in_vmas: pass:1 fail:0 skip:0 total:1
-[    6.246668]     ok 1 damon_test_three_regions_in_vmas
+The kernel has a myriad of special sections including __bug_table,
+.altinstructions, etc.  Each has its own distinct format, though each is
+more or less an array of structs or pointers.
 
-This is with
+When creating a livepatch module, objtool extracts a subset of functions
+out of the original object file and into a new one.  For that to work
+properly, it also needs to extract a subset of each special section's
+entries.  Specifically, it should only extract those entries which
+reference the extracted functions.
 
-diff --git a/mm/damon/vaddr-test.h b/mm/damon/vaddr-test.h
-index 83626483f82b..a339d117150f 100644
---- a/mm/damon/vaddr-test.h
-+++ b/mm/damon/vaddr-test.h
-@@ -77,7 +77,7 @@ static void damon_test_three_regions_in_vmas(struct kunit *test)
-                 (struct vm_area_struct) {.vm_start = 307, .vm_end = 330},
-         };
+One way to achieve that would be to hardcode intimate knowledge about
+each special section and its entry sizes.  That's less than ideal,
+especially for cases like .altinstr_replacement which has variable-sized
+"structs" which are described by another section.
 
--       mt_init_flags(&mm.mm_mt, MM_MT_FLAGS);
-+       mt_init_flags(&mm.mm_mt, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
-         if (__link_vmas(&mm.mm_mt, vmas, ARRAY_SIZE(vmas)))
-                 kunit_skip(test, "Failed to create VMA tree");
+Take a more generic approach: for the "array of structs" style sections,
+annotate each struct entry with a symbol containing the entry.  This
+makes it easy for tooling to parse the data and avoids the fragility of
+hardcoding section details.
 
-I'll put it all together and make it available, but that will have to wait until
-tomorrow.
+(For the "array of pointers" style sections, no symbol is needed, as the
+format is already self-evident.)
 
-Thanks,
-Guenter
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ arch/x86/include/asm/alternative.h | 50 ++++++++++++++++++++----------
+ arch/x86/include/asm/asm.h         | 24 +++++++++-----
+ arch/x86/include/asm/bug.h         |  2 ++
+ arch/x86/include/asm/cpufeature.h  |  2 ++
+ arch/x86/include/asm/jump_label.h  |  2 ++
+ include/linux/objtool.h            | 31 +++++++++++++++++-
+ tools/objtool/check.c              | 22 +++++++++++--
+ 7 files changed, 104 insertions(+), 29 deletions(-)
 
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index ba99ef75f56c..2617253bcb00 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -157,7 +157,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ #define ALT_CALL_INSTR		"call BUG_func"
+ 
+ #define b_replacement(num)	"664"#num
+-#define e_replacement(num)	"665"#num
++
++#define __e_replacement(num)	__PASTE(665, num)
++#define e_replacement(num)	__stringify(__e_replacement(num))
+ 
+ #define alt_end_marker		"663"
+ #define alt_slen		"662b-661b"
+@@ -203,15 +205,21 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	alt_end_marker ":\n"
+ 
+ #define ALTINSTR_ENTRY(ft_flags, num)					      \
++	FAKE_SYMBOL(__alt_, 681f)					      \
+ 	" .long 661b - .\n"				/* label           */ \
+ 	" .long " b_replacement(num)"f - .\n"		/* new instruction */ \
+ 	" .4byte " __stringify(ft_flags) "\n"		/* feature + flags */ \
+ 	" .byte " alt_total_slen "\n"			/* source len      */ \
+-	" .byte " alt_rlen(num) "\n"			/* replacement len */
++	" .byte " alt_rlen(num) "\n"			/* replacement len */ \
++	"681:\n"
+ 
+-#define ALTINSTR_REPLACEMENT(newinstr, num)		/* replacement */	\
++#define ALTINSTR_REPLACEMENT(newinstr, num)					\
+ 	"# ALT: replacement " #num "\n"						\
+-	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n"
++	FAKE_SYMBOL(__alt_instr_, __PASTE(__e_replacement(num), f))		\
++	b_replacement(num) ":\n"						\
++	"\t" newinstr "\n"							\
++	e_replacement(num) ":\n"
++
+ 
+ /* alternative assembly primitive: */
+ #define ALTERNATIVE(oldinstr, newinstr, ft_flags)			\
+@@ -370,12 +378,20 @@ void nop_func(void);
+  * enough information for the alternatives patching code to patch an
+  * instruction. See apply_alternatives().
+  */
+-.macro altinstr_entry orig alt ft_flags orig_len alt_len
++.macro ALTINSTR_ENTRY orig alt ft_flags orig_len alt_len
++	FAKE_SYMBOL(__alt_, 681f)
+ 	.long \orig - .
+ 	.long \alt - .
+ 	.4byte \ft_flags
+ 	.byte \orig_len
+ 	.byte \alt_len
++	681:
++.endm
++
++.macro ALTINSTR_REPLACEMENT newinstr
++	FAKE_SYMBOL(__alt_instr_, 681f)
++	\newinstr
++	681:
+ .endm
+ 
+ .macro ALT_CALL_INSTR
+@@ -396,12 +412,12 @@ void nop_func(void);
+ 142:
+ 
+ 	.pushsection .altinstructions,"a"
+-	altinstr_entry 140b,143f,\ft_flags,142b-140b,144f-143f
++	ALTINSTR_ENTRY 140b,143f,\ft_flags,142b-140b,144f-143f
+ 	.popsection
+ 
+ 	.pushsection .altinstr_replacement,"ax"
+ 143:
+-	\newinstr
++	ALTINSTR_REPLACEMENT "\newinstr"
+ 144:
+ 	.popsection
+ .endm
+@@ -435,15 +451,15 @@ void nop_func(void);
+ 142:
+ 
+ 	.pushsection .altinstructions,"a"
+-	altinstr_entry 140b,143f,\ft_flags1,142b-140b,144f-143f
+-	altinstr_entry 140b,144f,\ft_flags2,142b-140b,145f-144f
++	ALTINSTR_ENTRY 140b,143f,\ft_flags1,142b-140b,144f-143f
++	ALTINSTR_ENTRY 140b,144f,\ft_flags2,142b-140b,145f-144f
+ 	.popsection
+ 
+ 	.pushsection .altinstr_replacement,"ax"
+ 143:
+-	\newinstr1
++	ALTINSTR_REPLACEMENT "\newinstr1"
+ 144:
+-	\newinstr2
++	ALTINSTR_REPLACEMENT "\newinstr2"
+ 145:
+ 	.popsection
+ .endm
+@@ -457,18 +473,18 @@ void nop_func(void);
+ 142:
+ 
+ 	.pushsection .altinstructions,"a"
+-	altinstr_entry 140b,143f,\ft_flags1,142b-140b,144f-143f
+-	altinstr_entry 140b,144f,\ft_flags2,142b-140b,145f-144f
+-	altinstr_entry 140b,145f,\ft_flags3,142b-140b,146f-145f
++	ALTINSTR_ENTRY 140b,143f,\ft_flags1,142b-140b,144f-143f
++	ALTINSTR_ENTRY 140b,144f,\ft_flags2,142b-140b,145f-144f
++	ALTINSTR_ENTRY 140b,145f,\ft_flags3,142b-140b,146f-145f
+ 	.popsection
+ 
+ 	.pushsection .altinstr_replacement,"ax"
+ 143:
+-	\newinstr1
++	ALTINSTR_REPLACEMENT "\newinstr1"
+ 144:
+-	\newinstr2
++	ALTINSTR_REPLACEMENT "\newinstr2"
+ 145:
+-	\newinstr3
++	ALTINSTR_REPLACEMENT "\newinstr3"
+ 146:
+ 	.popsection
+ .endm
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 2bec0c89a95c..c337240d342c 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_ASM_H
+ #define _ASM_X86_ASM_H
+ 
++#include <linux/objtool.h>
++
+ #ifdef __ASSEMBLY__
+ # define __ASM_FORM(x, ...)		x,## __VA_ARGS__
+ # define __ASM_FORM_RAW(x, ...)		x,## __VA_ARGS__
+@@ -149,9 +151,11 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ # define _ASM_EXTABLE_TYPE(from, to, type)			\
+ 	.pushsection "__ex_table","a" ;				\
+ 	.balign 4 ;						\
++	FAKE_SYMBOL(__ex_table_, 555f) ;			\
+ 	.long (from) - . ;					\
+ 	.long (to) - . ;					\
+ 	.long type ;						\
++	555: ;							\
+ 	.popsection
+ 
+ # ifdef CONFIG_KPROBES
+@@ -196,19 +200,23 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
+ # define _ASM_EXTABLE_TYPE(from, to, type)			\
+ 	" .pushsection \"__ex_table\",\"a\"\n"			\
+ 	" .balign 4\n"						\
++	FAKE_SYMBOL(__ex_table_, 555f)			\
+ 	" .long (" #from ") - .\n"				\
+ 	" .long (" #to ") - .\n"				\
+ 	" .long " __stringify(type) " \n"			\
++	" 555:\n"						\
+ 	" .popsection\n"
+ 
+-# define _ASM_EXTABLE_TYPE_REG(from, to, type, reg)				\
+-	" .pushsection \"__ex_table\",\"a\"\n"					\
+-	" .balign 4\n"								\
+-	" .long (" #from ") - .\n"						\
+-	" .long (" #to ") - .\n"						\
+-	DEFINE_EXTABLE_TYPE_REG							\
+-	"extable_type_reg reg=" __stringify(reg) ", type=" __stringify(type) " \n"\
+-	UNDEFINE_EXTABLE_TYPE_REG						\
++# define _ASM_EXTABLE_TYPE_REG(from, to, type, reg)					\
++	" .pushsection \"__ex_table\",\"a\"\n"						\
++	" .balign 4\n"									\
++	FAKE_SYMBOL(__ex_table_, 555f)							\
++	" .long (" #from ") - .\n"							\
++	" .long (" #to ") - .\n"							\
++	DEFINE_EXTABLE_TYPE_REG								\
++	"extable_type_reg reg=" __stringify(reg) ", type=" __stringify(type) " \n"	\
++	UNDEFINE_EXTABLE_TYPE_REG							\
++	" 555:\n"									\
+ 	" .popsection\n"
+ 
+ /* For C file, we already have NOKPROBE_SYMBOL macro */
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index a3ec87d198ac..86304d7d68f5 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -27,6 +27,7 @@
+ do {									\
+ 	asm_inline volatile("1:\t" ins "\n"				\
+ 		     ".pushsection __bug_table,\"aw\"\n"		\
++		     FAKE_SYMBOL(__bug_table_, . + %c3)			\
+ 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+ 		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+ 		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+@@ -45,6 +46,7 @@ do {									\
+ do {									\
+ 	asm_inline volatile("1:\t" ins "\n"				\
+ 		     ".pushsection __bug_table,\"aw\"\n"		\
++		     FAKE_SYMBOL(__bug_table_, . + %c1)			\
+ 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+ 		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+ 		     "\t.org 2b+%c1\n"					\
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 0b9611da6c53..9decf644d55a 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -178,9 +178,11 @@ static __always_inline bool _static_cpu_has(u16 bit)
+ 	asm goto(ALTERNATIVE_TERNARY("jmp 6f", %c[feature], "", "jmp %l[t_no]")
+ 		".pushsection .altinstr_aux,\"ax\"\n"
+ 		"6:\n"
++		FAKE_SYMBOL(__alt_aux_, 681f)
+ 		" testb %[bitnum], %a[cap_byte]\n"
+ 		" jnz %l[t_yes]\n"
+ 		" jmp %l[t_no]\n"
++		"681:\n"
+ 		".popsection\n"
+ 		 : : [feature]  "i" (bit),
+ 		     [bitnum]   "i" (1 << (bit & 7)),
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index cbbef32517f0..731d7e69d244 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -15,9 +15,11 @@
+ #define JUMP_TABLE_ENTRY				\
+ 	".pushsection __jump_table,  \"aw\" \n\t"	\
+ 	_ASM_ALIGN "\n\t"				\
++	FAKE_SYMBOL(__jump_table_, 2f)			\
+ 	".long 1b - . \n\t"				\
+ 	".long %l[l_yes] - . \n\t"			\
+ 	_ASM_PTR "%c0 + %c1 - .\n\t"			\
++	"2:\n\t"					\
+ 	".popsection \n\t"
+ 
+ #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
+diff --git a/include/linux/objtool.h b/include/linux/objtool.h
+index 5e66b6d26df5..ae5030cac10d 100644
+--- a/include/linux/objtool.h
++++ b/include/linux/objtool.h
+@@ -10,9 +10,27 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
+-#define UNWIND_HINT(type, sp_reg, sp_offset, signal)	\
++#define DEFINE_FAKE_SYMBOL						\
++	".macro fake_symbol name, end\n\t"				\
++	"#ifdef __x86_64__\n"						\
++	".type \\name\\@, @object\n"					\
++	".size \\name\\@, \\end - .\n"					\
++	"\\name\\@:\n"							\
++	"#endif\n"							\
++	".endm\n\t"
++
++#define UNDEFINE_FAKE_SYMBOL						\
++	".purgem fake_symbol\n\t"
++
++#define FAKE_SYMBOL(name, end)							\
++	DEFINE_FAKE_SYMBOL							\
++	"fake_symbol " __stringify(name) ", \"" __stringify(end) "\"\n\t"	\
++	UNDEFINE_FAKE_SYMBOL
++
++#define UNWIND_HINT(type, sp_reg, sp_offset, signal)		\
+ 	"987: \n\t"						\
+ 	".pushsection .discard.unwind_hints\n\t"		\
++	FAKE_SYMBOL(__unwind_hint_, 988f)			\
+ 	/* struct unwind_hint */				\
+ 	".long 987b - .\n\t"					\
+ 	".short " __stringify(sp_offset) "\n\t"			\
+@@ -20,6 +38,7 @@
+ 	".byte " __stringify(type) "\n\t"			\
+ 	".byte " __stringify(signal) "\n\t"			\
+ 	".balign 4 \n\t"					\
++	"988:\n\t"						\
+ 	".popsection\n\t"
+ 
+ /*
+@@ -60,6 +79,14 @@
+ 
+ #else /* __ASSEMBLY__ */
+ 
++.macro fake_symbol name, end
++	.type \name\@, @object
++	.size \name\@, \end - .
++	\name\@:
++.endm
++
++#define FAKE_SYMBOL(name, end) fake_symbol name, __stringify(end)
++
+ /*
+  * This macro indicates that the following intra-function call is valid.
+  * Any non-annotated intra-function call will cause objtool to issue a warning.
+@@ -94,6 +121,7 @@
+ .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
+ .Lhere_\@:
+ 	.pushsection .discard.unwind_hints
++		FAKE_SYMBOL(__unwind_hint_, .Lend_\@)
+ 		/* struct unwind_hint */
+ 		.long .Lhere_\@ - .
+ 		.short \sp_offset
+@@ -101,6 +129,7 @@
+ 		.byte \type
+ 		.byte \signal
+ 		.balign 4
++		.Lend_\@:
+ 	.popsection
+ .endm
+ 
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 3c8d0903dfa7..5dd78a7f75c3 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -633,6 +633,18 @@ static void add_dead_ends(struct objtool_file *file)
+ 	}
+ }
+ 
++static void create_fake_symbol(struct objtool_file *file, const char *name_pfx,
++			       struct section *sec, unsigned long offset,
++			       size_t size)
++{
++	char name[256];
++	static int ctr;
++
++	snprintf(name, 256, "%s_%d", name_pfx, ctr++);
++
++	elf_create_symbol(file->elf, name, sec, STB_LOCAL, STT_OBJECT, offset, size);
++}
++
+ static void create_static_call_sections(struct objtool_file *file)
+ {
+ 	struct static_call_site *site;
+@@ -664,10 +676,11 @@ static void create_static_call_sections(struct objtool_file *file)
+ 
+ 	idx = 0;
+ 	list_for_each_entry(insn, &file->static_call_list, call_node) {
++		unsigned long offset = idx * sizeof(*site);
+ 
+ 		/* populate reloc for 'addr' */
+-		elf_init_reloc_text_sym(file->elf, sec, idx * sizeof(*site),
+-					idx * 2, insn->sec, insn->offset);
++		elf_init_reloc_text_sym(file->elf, sec, offset, idx * 2,
++					insn->sec, insn->offset);
+ 
+ 		/* find key symbol */
+ 		key_name = strdup(insn_call_dest(insn)->name);
+@@ -698,10 +711,13 @@ static void create_static_call_sections(struct objtool_file *file)
+ 		free(key_name);
+ 
+ 		/* populate reloc for 'key' */
+-		elf_init_reloc_data_sym(file->elf, sec, idx * sizeof(*site) + 4,
++		elf_init_reloc_data_sym(file->elf, sec, offset + 4,
+ 					(idx * 2) + 1, key_sym,
+ 					is_sibling_call(insn) * STATIC_CALL_SITE_TAIL);
+ 
++		create_fake_symbol(file, "__static_call_site_", sec,
++				   offset, sizeof(*site));
++
+ 		idx++;
+ 	}
+ }
+-- 
+2.46.0
 
 
