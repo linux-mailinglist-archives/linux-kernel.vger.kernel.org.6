@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-314993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8752196BBE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:20:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D1C96BBDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D3D4B28917
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2DB1F26405
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F781D79B9;
-	Wed,  4 Sep 2024 12:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4470A1D9330;
+	Wed,  4 Sep 2024 12:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dKp82ci5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H1H4sKvM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3EB1D3628;
-	Wed,  4 Sep 2024 12:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3C1D79B7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725452299; cv=none; b=jcagHb5UyF02Ih8EIPobU+xyPsSs5oV+2zS1jJCPlIsiu4v3bpbmUk1LWo/WYhZo0S50+/KH+aGQUIayMXB4FmG+lpZHOkJ8J9v42INpZ8R1kt3R04E3i2w9XPdV67Uo8jvJ1OGM9XqUuZ/7HBm3lpzX+nEbLtZnk+457MRoIq4=
+	t=1725452315; cv=none; b=Xt+PQKC1lvoLnAXNHpU10Iggs46wzMBVvNspw/+3w+CNBldWdDFhXkzmV0pska9WGVX5Io0t4HmR+ZU3F6wk9R11qlJRBiDAqWWAeS5iMP40PlUnpBD0zEUzoPKDzJyqonYZ+KfqOV1b5D1mtCXICn0kmNedySWV4mzM48K/7UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725452299; c=relaxed/simple;
-	bh=hS1vDZI+E/sQyR7KBQ5ulrse7nZgFRP6XIZZvjz2JPo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HZtaiQEWj1Usm2CQJ7yB3+Ll3f6AUGwrE66jzsG2ezlEOz0qapOiKwfPZR6hmtmn4HdZz5Z4C1kJ4Talkxb+ul21tLeJzfvLoPZ74bCO3S8oivqlHq2ZXZJQZnFvAds5mtmurY/JMnZ66cDP81Xppx8cm04YSVGRMcu9fu2vLV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dKp82ci5; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725452298; x=1756988298;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=hS1vDZI+E/sQyR7KBQ5ulrse7nZgFRP6XIZZvjz2JPo=;
-  b=dKp82ci5iGhR7z1NqkaL+nhNK/QnaHXlTUr5025TxrJGAFpHoshIbVY0
-   vwCJJrBLjv9609zIjZSxrmUfB+QiuERnR2gZxsaZkT/8UKQpW/DFygALB
-   y87pMlLmo/jYUsK2XYgvfXT2PS76y3r6VmsjMX+0lYcM80GT5ZY3P97nl
-   Kc5oXzEasS3V8HCpOiNhCgAjzwCGXQ3Ajqp0akc9DzgeiYbYhgTjqdDah
-   U9aMvFznqAdcP2iujLsvidOnW9MRLweVHeR0Qa5kAGPHX9rtMknps4RbK
-   bcJ4StFxH5MwFL4SZ+PYcxNURhFDHjpVUyaJoVUUMoegz8zrn4ddFxm/l
-   w==;
-X-CSE-ConnectionGUID: 1Zi5FML8TqGYGfRl5ptmpA==
-X-CSE-MsgGUID: 5KTlK0h5RN+xuDWozNzYeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23910926"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="23910926"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:18:18 -0700
-X-CSE-ConnectionGUID: EkZC0+IyTR6UANzxJii2hw==
-X-CSE-MsgGUID: 9ysRh4nqTDCgGPwHKQAXog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="64939941"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.156])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 05:18:13 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 4 Sep 2024 15:18:09 +0300 (EEST)
-To: Shuah Khan <skhan@linuxfoundation.org>
-cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-    Shuah Khan <shuah@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
-    Fenghua Yu <fenghua.yu@intel.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>
-Subject: Re: [PATCH v4 0/4] selftests: Fix cpuid / vendor checking build
- issues
-In-Reply-To: <eadb7bc7-a093-4229-90f0-88b730087666@linuxfoundation.org>
-Message-ID: <d2a4ca5c-3352-e570-687c-9d7ec90dbe33@linux.intel.com>
-References: <20240903144528.46811-1-ilpo.jarvinen@linux.intel.com> <eadb7bc7-a093-4229-90f0-88b730087666@linuxfoundation.org>
+	s=arc-20240116; t=1725452315; c=relaxed/simple;
+	bh=aDfOCfO2pRprM4ipOkB4bYUPfKw3QrJjVh9Hmr4gZGk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=juvTMafx3ZMDhYYcN16y93Z01cRePcPp9SLd4g1W5THmqMBx+H7i9IrOt85rydOU0xttp+gWxZjvYPOqnz2o+SEA6htN3k64ydnPDyevmXdUNEaNeYdGKK1BO/GaqF7Ug1SfWvL74d9ZvWh3CVLJyJI85rHGMaoPwXUZcFTYg2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H1H4sKvM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725452312;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ff0y4X+QVhf0p/VEjOvJFSOlimmYM5QTv85PADhlasE=;
+	b=H1H4sKvMqFB4fcIV38aTvch2MGJ56EE4CQENI/83Bwzy348kYHT+FB1RtlSKR2iqAiTLdj
+	11cnbjEiCMeTlGbPW+YveDtbuXHLrTfGQRT13fzXf2MJhtQHa+bXrja4uv/eG+IEUbEQk6
+	Y9oR2/dyK3YrOh0wGneI5BSnYzV2obQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-aWGYhaXKNGibeVw4T7qyNQ-1; Wed, 04 Sep 2024 08:18:29 -0400
+X-MC-Unique: aWGYhaXKNGibeVw4T7qyNQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42bbf928882so45464535e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 05:18:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725452308; x=1726057108;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ff0y4X+QVhf0p/VEjOvJFSOlimmYM5QTv85PADhlasE=;
+        b=jF2Ctx52jiR3nCRnCtnVpUQoCyv1fNlNmcITxLbzx9Qb+Tg8tmVSC3FOWCUEpWyHbt
+         EJLYmbFGlG8qc/cM5WnLsQVs2ZHfT9bSUPHKJY+Bd7ydKB9voO3zBurrvC71yV+ohrkw
+         gmibjxr3r+7kNquX9UVZPUW7YCRUuULMa5oUVIgqufEhEGulqwlEQp5V3osmE43FW/JL
+         KzVAVPc4hi8kiZ11aPALtOOANT5EXDJvSNYKojqURpxIIlZnZEU7zph2f5Wf/+CaygQt
+         BWp4Hhuxqz6DMVc8PV4k69TJk2AIBvZNi0pqR1BuV5W4ySFVgP36sPfMZykQi/6zM5E0
+         zqOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrE58nBHO3iEgGF1qQY5/JGWn2NCvhTRd++lY8+cyrVctUJePNarQMYuLFuMfAun7Iu6VZaWLpCChE8Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw/FDG8hYqr9qhVNvzbe8rc69hL0bsH1GrsR43PxajhJgJCQlT
+	6xRC00fHudeZy+Z8V88E7BnFOlvo8/UNbf7uZS57i1gahBarIGMpYiHP4omhSi21E0x/Qw6ECDH
+	a6tf46mKm81b3JQgI4G+fVqN/FOohn3W0+rGVJXLiZoC8SBR6Fj0Vpl9NVvIJxw==
+X-Received: by 2002:a5d:5484:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-376dd15a9c0mr2962478f8f.19.1725452308149;
+        Wed, 04 Sep 2024 05:18:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFM58SacVW6qB3OGbwInnBlOw+x1XdCaBLKOjGAVJ7DXNTIXZ7mf0D4cAdkVzP6Q8BUhRUNrQ==
+X-Received: by 2002:a5d:5484:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-376dd15a9c0mr2962449f8f.19.1725452307586;
+        Wed, 04 Sep 2024 05:18:27 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ba30d5b8sm13069521f8f.15.2024.09.04.05.18.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 05:18:27 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+ neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com, skhan@linuxfoundation.org,
+ rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel test
+ robot <lkp@intel.com>
+Subject: Re: [PATCH v2] drm/panel: hx83112a: Transition to wrapped mipi_dsi
+ functions
+In-Reply-To: <20240903173130.41784-1-abhishektamboli9@gmail.com>
+References: <20240903173130.41784-1-abhishektamboli9@gmail.com>
+Date: Wed, 04 Sep 2024 14:18:26 +0200
+Message-ID: <87v7zbboj1.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1417798283-1725451617=:1078"
-Content-ID: <ddaec370-6888-0f3a-2cd9-96602b7bd093@linux.intel.com>
+Content-Type: text/plain
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Abhishek Tamboli <abhishektamboli9@gmail.com> writes:
 
---8323328-1417798283-1725451617=:1078
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <f86d12c1-7ad0-f4a6-617f-28cddfeb1abc@linux.intel.com>
+Hello Abhishek,
 
-On Tue, 3 Sep 2024, Shuah Khan wrote:
+> Transition to mipi_dsi_dcs_write_seq_multi() macros for initialization
+> sequences. The previous mipi_dsi_dcs_write_seq() macros were
+> non-intuitive and use other wrapped MIPI DSI functions in the
+> driver code to simplify the code pattern.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409040049.2hf8jrZG-lkp@intel.com/
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> ---
+> Changes in v2:
+> - Update the commit message to explain the reason for the change.
 
-> On 9/3/24 08:45, Ilpo J=E4rvinen wrote:
-> > This series first generalizes resctrl selftest non-contiguous CAT check
-> > to not assume non-AMD vendor implies Intel. Second, it improves
-> > selftests such that the use of __cpuid_count() does not lead into a
-> > build failure (happens at least on ARM).
-> >=20
-> > While ARM does not currently support resctrl features, there's an
-> > ongoing work to enable resctrl support also for it on the kernel side.
-> > In any case, a common header such as kselftest.h should have a proper
-> > fallback in place for what it provides, thus it seems justified to fix
-> > this common level problem on the common level rather than e.g.
-> > disabling build for resctrl selftest for archs lacking resctrl support.
-> >=20
-> > I've dropped reviewed and tested by tags from the last patch in v3 due
-> > to major changes into the makefile logic. So it would be helpful if
-> > Muhammad could retest with this version.
-> >=20
-> > Acquiring ARCH in lib.mk will likely allow some cleanup into some
-> > subdirectory makefiles but that is left as future work because this
-> > series focuses in fixing cpuid/build.
->=20
-> >=20
-> > v4:
-> > - New patch to reorder x86 selftest makefile to avoid clobbering CFLAGS
-> >    (would cause __cpuid_count() related build fail otherwise)
-> >=20
-> I don't like the way this patch series is mushrooming. I am not
-> convinced that changes to lib.mk and x86 Makefile are necessary.
+Thanks for improving the commit message. The change looks good to me.
 
-I didn't like it either what I found from the various makefiles. I think=20
-there are many things done which conflict with what lib.mk seems to try to=
-=20
-do.
+Acked-by: Javier Martinez Canillas <javierm@redhat.com>
 
-I tried to ask in the first submission what test I should use in the=20
-header file as I'm not very familiar with how arch specific is done in=20
-userspace in the first place nor how it should be done within kselftest=20
-framework.
+-- 
+Best regards,
 
-> I will take a look at this to see if this can be simplified.
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-Sure, thanks.
-
---=20
- i.
---8323328-1417798283-1725451617=:1078--
 
