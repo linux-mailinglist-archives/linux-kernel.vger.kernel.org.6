@@ -1,70 +1,55 @@
-Return-Path: <linux-kernel+bounces-315986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A092F96C97A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9043A96C981
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556651F26477
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49078287A16
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB171547EB;
-	Wed,  4 Sep 2024 21:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436E4155308;
+	Wed,  4 Sep 2024 21:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GFZ9p0O1"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="sjJQav6d"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B3C47F4D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 21:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42FB1422C5;
+	Wed,  4 Sep 2024 21:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725484786; cv=none; b=GFBEg4qJ3L0Y/USB64tsBZP3QjSCWCK60wRzAnCOvuEe61QHI1l0VW/fD9xdy7muGVxw/sugNHMv7qQolo9s8NVjM1NiucZQmPGP0H76bcQkVb0isBkxXm8g92JSynImHj9kjmJVv+ruVjOIDYWcrVXZiV2v3eWNnz5dYS0aX8k=
+	t=1725485147; cv=none; b=cuzrKP1Ma3fDWn9yTTUv6YPaSc15UgigDaCXoezC8eImtmKBOwC/V4Ko+7ghSxC4d74/YfVmtmj7ctn88/Fywf5sM80E+hIL5YQZPumP4v2rYC+B+sZKSUN2s5BOZEsT64diSYCHN2rCzmVOGHSJqNLi2zQRVLbinH5r6vgb2+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725484786; c=relaxed/simple;
-	bh=Z2dQ7XwJj18P8R2l5tCNMA0HoK2AVDQwxrxohuhyOv0=;
+	s=arc-20240116; t=1725485147; c=relaxed/simple;
+	bh=UyQPYfhMxCj75Qe7FGvXwvjhia1oXyw6+//R+DNTr7I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZjTAPz/itQcDDLQeTPhsTXVOGIlIuajY7BZWCx5aPx5xMVAwQZ59z0AaBHWtvqc4aNFlAkHkOCsAmmzeRM4ifnpmeh47gzFyNkD1Ed1lFPRSG7QxeyKZoKbVWLIg8SO5pLAOspqDIytBR769MPCzrlaN7q96n/jv2CkVKB2pe+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GFZ9p0O1; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82a3022be9eso232075739f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 14:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725484783; x=1726089583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0oYTPq+0PnnZwgq302bydeH1cK7aJJmhAAm0mLPzxOo=;
-        b=GFZ9p0O1Bf4HfuKw07h2TN1jrOA5Y21gjfSXZAT/5VJO/byF+gv4rXItHx2nK+BTIN
-         j6ga1FjkwHi4LhLCYhzXMRdwiZU22wMz9u7qGDVHegZbjPWbq/2oU/UOhkH3LP7Pt8kU
-         RZ9Ba9+luLPaumJWoemhHnCRnvpGOfhXG0y3g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725484783; x=1726089583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0oYTPq+0PnnZwgq302bydeH1cK7aJJmhAAm0mLPzxOo=;
-        b=ieXdjg8I8iEcxAqOSO8oDOqGcluvu7supP+rzSfLngBvt7MVvim46qlTTV74pQm03+
-         biicKalFLehIqutE4rQNx5YJtmp8zDrxdNeoueoiVVsjz7otZR6CS2AtODQJl6dJFWHN
-         Dvos8Zdx6c4oCtFD0YfghWjzMjKgreGmcELhJfeAG1OiH+heX4VVTtP9UJ13ETaN3i5r
-         1YIMChb5cvLb40rdWGu1jg/MGiAaYa4ilbkg3h5W5JdZuZZUFdElGrDBQKgf5F6NVFRb
-         0X/FqB3ear70Fp0YQMrnXvaFdrFuiFwHjLwNa+chvRtk2/QRDXW5TD6nQ102lwIac+mv
-         Qb/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKULfF4jSkRqjUvM57csRy+Od8VpQ+YRPsAWvHdNqRQhKiC3TN4IVC8rnfteENGNSW/mekpFVBsKT0JrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO7J9IU6AZxW2q5xe6bUgGcQPVVAz8EWOXwhwYsOqsQShbJrwB
-	E+KhHNqFKlVsNVtpe55a+69pWvxW42CWTvsqmTXvkdoMvfNyqRUwdtzyoR5UYFA=
-X-Google-Smtp-Source: AGHT+IGA0VbvEWXPQaFWjih6/fY4cg5V106oUcWnQduZQDRKtQ1jFTOxNojlZ2OiejvyV6zvjcGv8g==
-X-Received: by 2002:a05:6e02:1d8b:b0:3a0:4392:4169 with SMTP id e9e14a558f8ab-3a0439243c9mr28285205ab.12.1725484783614;
-        Wed, 04 Sep 2024 14:19:43 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f54d7fc5esm25031025ab.23.2024.09.04.14.19.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 14:19:43 -0700 (PDT)
-Message-ID: <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
-Date: Wed, 4 Sep 2024 15:19:42 -0600
+	 In-Reply-To:Content-Type; b=e0B7Vo15iCOHMZRqTUgEQe78ojjHVA+rPUyjATDWP8FYlPbot5zpyz5ZNqB3/e+x1u/zFUpagJob92j88g2CN7Y89/FIlBhfv0epL9nFv8hpz9o328F7prt9YwOzTeiSZxJUEq8fjI+uUgqBKTutvYpo903BmUp6y7YalDAidD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=sjJQav6d; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1725485137; x=1726089937; i=quwenruo.btrfs@gmx.com;
+	bh=X05O/vHR9o1yY3QK1/iaQa1sVr9mva+yy+0OX69DX3E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sjJQav6dCKwCmyLwwPFT3ERE31xL86LDJAwijLnkXo+RKoZCyKZC3XChfXAltLDK
+	 1UrTqYfMfcFpy4ooXRr2T+WaQT9EOvO8Ny+vXSntbYT9P6WAHBE9UW3XHuAd3s2KA
+	 bvYHVxGRZNwQdN1OEsLRH07GUdNcsni18SmIc0Kt3n7jzS3BzEF2URBFgimgcxjtJ
+	 T7/gAAIQMzSJdPCLywrgFduSa4CNFmD4xNEkBq9KiOrub1jw+sIACWqJpTAi+j4me
+	 Y+bx0q6v8jl85iijCosHPpB771vf98xwc9rKP3WKAezEuXHBpAoV+KF+tp6CNknTS
+	 oXu/u+5QWD76v57GyQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MFbRm-1spqCE2zHy-00HAhJ; Wed, 04
+ Sep 2024 23:25:37 +0200
+Message-ID: <c77e973e-0e45-4fb0-8283-a0307a900b00@gmx.com>
+Date: Thu, 5 Sep 2024 06:55:32 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,95 +57,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] nolibc for 6.12-rc1
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
- <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
- <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
- <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
+Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
+To: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+References: <20240904023721.8534-1-ghanshyam1898@gmail.com>
+ <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+ <CAG-Bmoc9NVTZgOTGTsngKCw2mCankPvwz8ywExNzFiij+2sGQA@mail.gmail.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <CAG-Bmoc9NVTZgOTGTsngKCw2mCankPvwz8ywExNzFiij+2sGQA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rdvbhowp974MkmvwEsUU3j3oqfKMm6cVkPlvgpZdCby1kVzTf/o
+ O4lwJnW3PsMttR1vQ29JXWPkIbx68GTw0paHT+HLN/FAoT3Sd2o3mtpXygkuEV0SZWKBnB3
+ WFk+WXqa3wXM4y+r/p6h1ELlzHO21Yv0wJQHtFvmk7JQcsCdnru+uwCAdet6zKvlfTq788i
+ U6KPjqDeV5vAvT3s3KUuQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AHB1cagCmjI=;XX74NKH0EmDR6yAtsl/m93uxZLc
+ +HJjzrQy01qURHeGuoXL/lWSa6eKv8S2uzT3E1Cnaa0ke86ThRukYCr0oIgzJNvjkG+p0gwNl
+ nd9EEZQkepyCNr2Tq+V9POTKnLNyxo0QiCwrtdRPZ6Dj5zI2+5s0TDl0kPd3EVi2fAEjvx6TW
+ rmtjT7sb/1vsX81uwjLSyHoEopfGTjYrxJ0oK96piBFcG59Pw5cBDEdVQfixboTI3vSQVADJc
+ WBlZzOv3THws7ljgvFpSlXoPCcqekC+ufNATzB20kTYcfTXYTc+Gd6Gu+qXTFORddHABfC/Gy
+ AlYlQEBY5y2fwMfU7cPeDtLdmSwc3/Va3LFMz76Uc9amdvNxcy97ES4oyDBGspW4W8AHn2o5u
+ P16Y6CkvQst7cBVm+o4bfsBt22T9keGq3r4FDZG8tg5xtgYPZJQ7ArOpIrZ5TT2/fNnf8D4Id
+ 0ioRgmjE+/fnTgD3tYayywR5SAjFpD3BywS8sbevr9JZxa6EqMtphxd28n8ENsUec7e8DJf1b
+ CegK0rL+ZKfldKkjeHBSv4HozSVTpdL+WvJnpG5eQ8bpTpnU/tOw3wKnuUycHq5HsdlrOQAi5
+ q2PHIHN35scVI9ox84oknEmiP7kIQ1qOHklJNyqDmcImY505TgAWN/QUAHkGHA9dhZUVCi41U
+ /cQX7culImaQZeovobtM8/JAwhlPBYt5B8DTEu+Pbk5PODFXzuKqy3xJEIpxQdlzw1RCmkAgk
+ PjRWU4rBGj7swXtUYAPQA/Fd5a2XW2pzphFaKoHueKlbL1gXla0iJg1c+vjceY1E5vl0W1JXs
+ 9jrCHlksx7hVBM4CTOczaMpISft9hXnaRnsj97kzzbEhg=
 
-On 9/4/24 15:13, Thomas Weißschuh wrote:
-> On 2024-09-04 15:04:35+0000, Shuah Khan wrote:
->> On 8/27/24 06:56, Shuah Khan wrote:
->>> On 8/24/24 12:53, Thomas Weißschuh wrote:
->>>> Hi Shuah,
->>>>
->>>> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
->>>>
->>>>     Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
->>>>
->>>> are available in the Git repository at:
->>>>
->>>>     https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
->>>>
->>>> for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
->>>>
->>>>     tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
->>>>
->>>> ----------------------------------------------------------------
->>>> nolibc changes for 6.12
->>>>
->>>> Highlights
->>>> ----------
->>>>
->>>> * Clang support (including LTO)
->>>>
->>>> Other Changes
->>>> -------------
->>>>
->>>> * stdbool.h support
->>>> * argc/argv/envp arguments for constructors
->>>> * Small #include ordering fix
->>>>
->>>
->>> Thank you Thomas.
->>>
->>> Pulled and pushed to linux-kselftest nolibc branch for Linux 6.12-rc1
->>>
+
+
+=E5=9C=A8 2024/9/5 01:20, Ghanshyam Agrawal =E5=86=99=E9=81=93:
+> On Wed, Sep 4, 2024 at 11:21=E2=80=AFAM Qu Wenruo <quwenruo.btrfs@gmx.co=
+m> wrote:
 >>
->> I am running sanity tests and getting this message:
 >>
->> $HOME/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
-> 
-> This indicates you are using 'run-tests.sh'.
-> Pass "-p" to let it download the toolchain automatically.
-> 
->> I tried setting TOOLCHAIN_BASE to the directory I installed gcc-13.2.0-nolibc
-> 
-> Not sure where this variable comes from, but I have never seen it.
+>>
+>> =E5=9C=A8 2024/9/4 12:07, Ghanshyam Agrawal =E5=86=99=E9=81=93:
+>>> Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
+>>> Closes:https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
+>>> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+>>> ---
+>>>    fs/btrfs/ref-verify.c | 3 +++
+>>>    1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+>>> index 9522a8b79d22..4e98ddf5e8df 100644
+>>> --- a/fs/btrfs/ref-verify.c
+>>> +++ b/fs/btrfs/ref-verify.c
+>>> @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *f=
+s_info)
+>>>                return -ENOMEM;
+>>>
+>>>        extent_root =3D btrfs_extent_root(fs_info, 0);
+>>> +     if (!extent_root)
+>>> +             return -EIO;
+>>> +
+>>
+>> Can you reproduce the original bug and are sure it's an NULL extent tre=
+e
+>> causing the problem?
+>
+> The original bug can be reproduced using the c program provided by syzka=
+ller
+> https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
+>
+>>
+>> At least a quick glance into the console output shows there is no
+>> special handling like rescue=3Dibadroots to ignore extent root, nor any
+>> obvious corruption in the extent tree.
+>
+> I don't have a deep knowledge of filesystems and am unable to
+> understand this. If you believe I should try to understand this part
+> for working on this particular bug, please let me know. I will try to
+> understand this.
+>>
+>> If extent root is really empty, we should error out way earlier.
+>
+> Upon studying the function call sequence, I found out that the
+> variable extent_root is read for the first time at btrfs_root_node
+> in fs/btrfs/ctree.c, "eb =3D rcu_dereference(root->node);" where "root"
+> is the extent_root. This is where we get a null pointer error.
 
-This is from the notes I got from Willy.
+The problem is, extent_root is very commonly utilized.
 
-> 
->> Something changed since the last time I did the pull request handling.
-> 
-> In the test setup not much has changed.
-> Maybe you cleaned out your ~/.cache?
+For example, inside btrfs_read_block_groups() we call
+btrfs_block_group_root(), which calls btrfs_extent_root(fs_info, 0) for
+btrfs without block group tree case.
 
-Not intentionally ...
-Guess I just have to do run download.sh again.
-
-> Or it's the first PR with run-tests.sh?
-
-I have been running the following successfully in the past:
-
- From tools/testing/selftests/nolibc
-make run
-make run-user
-
-./run-tests.sh -m user
-./run-tests.sh -m system
-
-thanks,
--- Shuah
+Surprisingly, this time the C reproducer works for me (meanwhile it
+never worked before).
 
 
+In fact, I added extra debugging when mounting the fs, showing that the
+loopback device does not have the new block group tree feature, thus
+it's still a mystery why we didn't get any earlier crash at
+btrfs_read_block_groups().
 
+So I'll keep digging and give you a more comprehensive reason on why
+this is triggered (without crashing at an earlier location).
+
+Thanks,
+Qu
+
+>>
+>> Mind to explain the crash with more details?
+> I have answered your questions individually. If any other details are
+> needed, please let me know.
+>>
+>> Thanks,
+>> Qu
+>>
+>>>        eb =3D btrfs_read_lock_root_node(extent_root);
+>>>        level =3D btrfs_header_level(eb);
+>>>        path->nodes[level] =3D eb;
+>
+> Thank you very much for reviewing my patch. I look forward to hearing
+> back from you.
+>
+> Thanks & Regards,
+> Ghanshyam Agrawal
 
