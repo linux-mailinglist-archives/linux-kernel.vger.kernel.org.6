@@ -1,134 +1,199 @@
-Return-Path: <linux-kernel+bounces-316084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4247196CAEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84BE196CAF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 997DFB20DB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2575B2289A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FC9186E40;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ABD187554;
 	Wed,  4 Sep 2024 23:43:27 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B717917A5BE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 23:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B722917C99B;
+	Wed,  4 Sep 2024 23:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725493406; cv=none; b=GeTgYUA5Tl5uaIEH/i1lvc/6OeEQBS8sNXbydNdH/io0vTChEqqgz8UOfqY5OOlpoFHrli/+Z0kC7SODnnJJqm4BmwsHl4TYMhOA3CEIjjIj/3V6DuhGZhvU4Wevq1DyNhtQy+pMphEQNb5Z0Bt2isj00tlsC1pucuBhya2r08U=
+	t=1725493406; cv=none; b=cfmBYE3W2xDfkBMX4JyXOzc552s95YPyHhq1lwudnSYfIFBHl6eybgkumKNLur+lYyz4GdtGJ3kZiu2m5n1ow+T5Tb9EHXjzXHtBpmCHyPSE2sIkyU0Ygjn8TFZDR9qYrkoXjz2k3QQZTN1S7Nqf5uIPVmP/CYK+2XsbAxCZ2zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725493406; c=relaxed/simple;
-	bh=zMv9MPyIKwsvvjX4QyMZPUL87mCEvR6utgZAA+Eu0SA=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=fmhjMQlgvBhDOy5YV2IXBHO8AifCPc7n/oVgt4NkaX3muXYy+lvg9e09JsolP+/rTm+IaOkkVV/mJ32f9mlMM3VLxXxh/I7ju+hdbEq1phig1BcnCafx7GB3Ol7HsOF08KJLIcfJL9trmIFsFzwO+4inLeGjDdYL2BVMCfktWr8=
+	bh=+WPVg+WaOEDJGm5/PXSMmD8jN2HQFBqGoZ67+9/Ors4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=FWLGNZOI9AB855xIf0N0UQ+r6TE/XFatpQJDRtCqzwNcwuI+AuBtiDHswYdD050nDPT7W+2rYaPqdODxlTIlCbPDNPtAKpfwQWwZZvrgwOiOm6tH3tC0IT2Q6g/fOm2X+lRFoLVANyfLbE7667m+bUZOPj/XQpei/fqmZ+uEVFc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F62C4CEC2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B27DC4CEC8;
 	Wed,  4 Sep 2024 23:43:26 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1slzfn-00000005Bml-2Rrg;
+	id 1slzfn-00000005BnR-39rT;
 	Wed, 04 Sep 2024 19:44:27 -0400
-Message-ID: <20240904234411.443593140@goodmis.org>
+Message-ID: <20240904234427.612375392@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 04 Sep 2024 19:44:11 -0400
+Date: Wed, 04 Sep 2024 19:44:12 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-linus][PATCH 0/6] tracing: Fixes for 6.11
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Guo Ren <guoren@kernel.org>
+Subject: [for-linus][PATCH 1/6] tracing: fgraph: Fix to add new fgraph_ops to array after
+ ftrace_startup_subops()
+References: <20240904234411.443593140@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+
+Since the register_ftrace_graph() assigns a new fgraph_ops to
+fgraph_array before registring it by ftrace_startup_subops(), the new
+fgraph_ops can be used in function_graph_enter().
+
+In most cases, it is still OK because those fgraph_ops's hashtable is
+already initialized by ftrace_set_filter*() etc.
+
+But if a user registers a new fgraph_ops which does not initialize the
+hash list, ftrace_ops_test() in function_graph_enter() causes a NULL
+pointer dereference BUG because fgraph_ops->ops.func_hash is NULL.
+
+This can be reproduced by the below commands because function profiler's
+fgraph_ops does not initialize the hash list;
+
+ # cd /sys/kernel/tracing
+ # echo function_graph > current_tracer
+ # echo 1 > function_profile_enabled
+
+To fix this problem, add a new fgraph_ops to fgraph_array after
+ftrace_startup_subops(). Thus, until the new fgraph_ops is initialized,
+we will see fgraph_stub on the corresponding fgraph_array entry.
+
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Florent Revest <revest@chromium.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: bpf <bpf@vger.kernel.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alan Maguire <alan.maguire@oracle.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Guo Ren <guoren@kernel.org>
+Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
+Fixes: c132be2c4fcc ("function_graph: Have the instances use their own ftrace_ops for filtering")
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/fgraph.c | 31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index d1d5ea2d0a1b..d7d4fb403f6f 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1206,18 +1206,24 @@ static void init_task_vars(int idx)
+ 	read_unlock(&tasklist_lock);
+ }
+ 
+-static void ftrace_graph_enable_direct(bool enable_branch)
++static void ftrace_graph_enable_direct(bool enable_branch, struct fgraph_ops *gops)
+ {
+ 	trace_func_graph_ent_t func = NULL;
+ 	trace_func_graph_ret_t retfunc = NULL;
+ 	int i;
+ 
+-	for_each_set_bit(i, &fgraph_array_bitmask,
+-			 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
+-		func = fgraph_array[i]->entryfunc;
+-		retfunc = fgraph_array[i]->retfunc;
+-		fgraph_direct_gops = fgraph_array[i];
+-	 }
++	if (gops) {
++		func = gops->entryfunc;
++		retfunc = gops->retfunc;
++		fgraph_direct_gops = gops;
++	} else {
++		for_each_set_bit(i, &fgraph_array_bitmask,
++				 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
++			func = fgraph_array[i]->entryfunc;
++			retfunc = fgraph_array[i]->retfunc;
++			fgraph_direct_gops = fgraph_array[i];
++		}
++	}
+ 	if (WARN_ON_ONCE(!func))
+ 		return;
+ 
+@@ -1256,8 +1262,6 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 		ret = -ENOSPC;
+ 		goto out;
+ 	}
+-
+-	fgraph_array[i] = gops;
+ 	gops->idx = i;
+ 
+ 	ftrace_graph_active++;
+@@ -1266,7 +1270,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 		ftrace_graph_disable_direct(true);
+ 
+ 	if (ftrace_graph_active == 1) {
+-		ftrace_graph_enable_direct(false);
++		ftrace_graph_enable_direct(false, gops);
+ 		register_pm_notifier(&ftrace_suspend_notifier);
+ 		ret = start_graph_tracing();
+ 		if (ret)
+@@ -1281,14 +1285,15 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 	} else {
+ 		init_task_vars(gops->idx);
+ 	}
+-
+ 	/* Always save the function, and reset at unregistering */
+ 	gops->saved_func = gops->entryfunc;
+ 
+ 	ret = ftrace_startup_subops(&graph_ops, &gops->ops, command);
++	if (!ret)
++		fgraph_array[i] = gops;
++
+ error:
+ 	if (ret) {
+-		fgraph_array[i] = &fgraph_stub;
+ 		ftrace_graph_active--;
+ 		gops->saved_func = NULL;
+ 		fgraph_lru_release_index(i);
+@@ -1324,7 +1329,7 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ 	ftrace_shutdown_subops(&graph_ops, &gops->ops, command);
+ 
+ 	if (ftrace_graph_active == 1)
+-		ftrace_graph_enable_direct(true);
++		ftrace_graph_enable_direct(true, NULL);
+ 	else if (!ftrace_graph_active)
+ 		ftrace_graph_disable_direct(false);
+ 
+-- 
+2.43.0
 
 
-Tracing fixes for 6.11:
-
-- Fix adding a new fgraph callback after function graph tracing has
-  already started.
-
-  If the new caller does not initialize its hash before registering the
-  fgraph_ops, it can cause a NULL pointer dereference. Fix this by adding
-  a new parameter to ftrace_graph_enable_direct() passing in the newly
-  added gops directly and not rely on using the fgraph_array[], as entries
-  in the fgraph_array[] must be initialized. Assign the new gops to the
-  fgraph_array[] after it goes through ftrace_startup_subops() as that
-  will properly initialize the gops->ops and initialize its hashes.
-
-- Fix a memory leak in fgraph storage memory test.
-
-  If the "multiple fgraph storage on a function" boot up selftest
-  fails in the registering of the function graph tracer, it will
-  not free the memory it allocated for the filter. Break the loop
-  up into two where it allocates the filters first and then registers
-  the functions where any errors will do the appropriate clean ups.
-
-- Only clear the timerlat timers if it has an associated kthread.
-
-  In the rtla tool that uses timerlat, if it was killed just as it
-  was shutting down, the signals can free the kthread and the timer.
-  But the closing of the timerlat files could cause the hrtimer_cancel()
-  to be called on the already freed timer. As the kthread variable is
-  is set to NULL when the kthreads are stopped and the timers are freed
-  it can be used to know not to call hrtimer_cancel() on the timer if
-  the kthread variable is NULL.
-
-  Note, this code requires more design changes to fix properly, but
-  this is a easy workaround that can be backported to stable.
-
-- Use a cpumask to keep track of osnoise/timerlat kthreads
-
-  The timerlat tracer can use user space threads for its analysis.
-  With the killing of the rtla tool, the kernel can get confused
-  between if it is using a user space thread to analyze or one of its
-  own kernel threads. When this confusion happens, kthread_stop()
-  can be called on a user space thread and bad things happen.
-  As the kernel threads are per-cpu, a bitmask can be used to know
-  when a kernel thread is used or when a user space thread is used.
-
-- Add cond_resched() to the tracing_iter_reset() loop.
-
-  The latency tracers keep writing to the ring buffer without resetting
-  when it issues a new "start" event (like interrupts being disabled).
-  When reading the buffer with an iterator, the tracing_iter_reset()
-  sets its pointer to that start event by walking through all the events
-  in the buffer until it gets to the time stamp of the start event.
-  In the case of a very large buffer, the loop that looks for the start
-  event has been reported taking a very long time with a non preempt kernel
-  that it can trigger a soft lock up warning. Add a cond_resched() into
-  that loop to make sure that doesn't happen. 
-
-- Use list_del_rcu() for eventfs ei->list variable
-
-  It was reported that running loops of creating and deleting  kprobe events
-  could cause a crash due to the eventfs list iteration hitting a LIST_POISON
-  variable. This is because the list is protected by SRCU but when an item is
-  deleted from the list, it was using list_del() which poisons the "next"
-  pointer. This is what list_del_rcu() was to prevent.
-
-Masami Hiramatsu (Google) (2):
-      tracing: fgraph: Fix to add new fgraph_ops to array after ftrace_startup_subops()
-      tracing: Fix memory leak in fgraph storage selftest
-
-Steven Rostedt (3):
-      tracing/timerlat: Only clear timer if a kthread exists
-      tracing/osnoise: Use a cpumask to know what threads are kthreads
-      eventfs: Use list_del_rcu() for SRCU protected list variable
-
-Zheng Yejian (1):
-      tracing: Avoid possible softlockup in tracing_iter_reset()
-
-----
- fs/tracefs/event_inode.c      |  2 +-
- kernel/trace/fgraph.c         | 31 ++++++++++++++++++-------------
- kernel/trace/trace.c          |  2 ++
- kernel/trace/trace_osnoise.c  | 23 +++++++++++++++++++----
- kernel/trace/trace_selftest.c | 23 ++++++++++++++++++-----
- 5 files changed, 58 insertions(+), 23 deletions(-)
 
