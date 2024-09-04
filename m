@@ -1,182 +1,130 @@
-Return-Path: <linux-kernel+bounces-315652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1330996C568
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:27:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3C196C569
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C543B287FB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94CA9B2403C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65931DA114;
-	Wed,  4 Sep 2024 17:27:02 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FED31DEFCD;
+	Wed,  4 Sep 2024 17:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jn0N2Gr6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FCB10A12;
-	Wed,  4 Sep 2024 17:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE19E4778C;
+	Wed,  4 Sep 2024 17:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725470822; cv=none; b=RNm1rNsx9xyeXCCTPYI0tZMhW0IAz+c4MxfrUmT1nj2zSMyQIYbz9o7eEGPR2U7H4qQOaOY8rLvX3bdsOpPbBWaCY5y0EJgExG0UkPNfVjGW301Rjy/aSKSRjVfMUsrAjpsVd/GC2VegOzHhSu8u8FOT/fcPsVNwpB3zasNwx+A=
+	t=1725470835; cv=none; b=TT9Y01CiCJHMzpHWIEzj2ZuXyG10dFP0wtW/zbJr3XL4/dXUCzgFS1lJJHaCkQ31N8RKXJtdjPOq3mLfrI7Cn9tqR26pA2XmKk3u/FEucjkUqodikP2ZpPTeoUC/Y1kJWluKAl0dhwYRBNXhsceq01dOClUoIl2FkpTHUZE4ZRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725470822; c=relaxed/simple;
-	bh=x5UWK4tq3vfEQd6AfQd7ddjKoEFsxO1Siq4LgZPbl8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RbX8xk6mQN1IWyod5A3Bb6VtbHjzVY45xStNHN4pwIAtCL/1rvl5rZ1IswrmXneWS4kNzhCDxh+frFSy0ItJxfX/GQ9GgCA2nu9oiZvtX6BJRP04OU/Bejvoo/inHUP7oGoplkz1oBEvxg99cRIfWVOCvD8lghivVVO5bXwyqkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WzTv604t4z9sSX;
-	Wed,  4 Sep 2024 19:26:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id k6RUWDAoBkJa; Wed,  4 Sep 2024 19:26:57 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WzTv55sdgz9sSC;
-	Wed,  4 Sep 2024 19:26:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AF0A08B77A;
-	Wed,  4 Sep 2024 19:26:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Dk3TEmDg0kec; Wed,  4 Sep 2024 19:26:57 +0200 (CEST)
-Received: from [192.168.234.246] (unknown [192.168.234.246])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C6F468B778;
-	Wed,  4 Sep 2024 19:26:56 +0200 (CEST)
-Message-ID: <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
-Date: Wed, 4 Sep 2024 19:26:56 +0200
+	s=arc-20240116; t=1725470835; c=relaxed/simple;
+	bh=0oB+h2PhvzTSs4fr1OfLknaixVNmBNFPA/pyFAhoqQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9BHaBUB1INMNCvCWeu+SZ0vLJojhIslG1kR73La8aCWxV0T/mXWENZKYHSilo5XPER0LNM5wBkuYKH6wF+zK19ZenfjFdpBHNXmKqRIV2ElbJai4T5qiYkkZukKrPbgKvoI/ThJkoV8cj7CvPpabw0O/QK+W7bbtPS+5CBeCWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jn0N2Gr6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D865C4CEC2;
+	Wed,  4 Sep 2024 17:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725470835;
+	bh=0oB+h2PhvzTSs4fr1OfLknaixVNmBNFPA/pyFAhoqQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jn0N2Gr6B2dzGEyrfKLldvYgYNsuotQy90NgjEKdtkadrXqOPntThkDe3kqxdkbwU
+	 3pxa43PpV8zmEcJNrb2QB79/QaVQpW9iGQ8dP7QW4aAEr+Bi3HiS1SYpio/A5mFglj
+	 D46GKnwSnyyCu9tTJMMqaqxdOA7dPPOy19nDyN8Siit8MKeJ9TOov6qRjKDwS56fw0
+	 wgCDNOCGZ1c+8axxdmShT0IGgJbKvr7vXIloqwh+qQs8ZtXwgm5Dhj9KRQ0x6NBj8Q
+	 n23dVIQDM5ze8ta7FlhjX+pUNgJ+Pxke5wt7hSxUl27HiCu6aGc2jm96GxxSN4ypPv
+	 04Mzx279aVFnA==
+Date: Wed, 4 Sep 2024 18:27:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: tiwai@suse.com, linux-sound@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH] ASoC/HDA cs35l56: Remove redundant IRQ handling
+Message-ID: <6eb95724-9ba3-410f-a42e-e1013c449458@sirena.org.uk>
+References: <20240904120700.188644-1-simont@opensource.cirrus.com>
+ <e1aeb66c-ecb3-4778-b306-f3a212caf879@sirena.org.uk>
+ <004601dafed0$d8ff8cd0$8afea670$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
- namespace
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-10-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240903151437.1002990-10-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yS1URVebDMM4Ze5M"
+Content-Disposition: inline
+In-Reply-To: <004601dafed0$d8ff8cd0$8afea670$@opensource.cirrus.com>
+X-Cookie: Linux is obsolete
 
 
+--yS1URVebDMM4Ze5M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
-> 
-> Modify getrandom to take advantage of the refactoring done in the
-> previous patches and to include only the vdso/ namespace.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   lib/vdso/getrandom.c | 22 ++++++++--------------
->   1 file changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-> index 938ca539aaa6..9c26b738e4a1 100644
-> --- a/lib/vdso/getrandom.c
-> +++ b/lib/vdso/getrandom.c
-> @@ -3,19 +3,13 @@
->    * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
->    */
->   
-> -#include <linux/array_size.h>
-> -#include <linux/minmax.h>
->   #include <vdso/datapage.h>
->   #include <vdso/getrandom.h>
->   #include <vdso/unaligned.h>
-> -#include <asm/vdso/getrandom.h>
-> -#include <uapi/linux/mman.h>
-> -#include <uapi/linux/random.h>
+On Wed, Sep 04, 2024 at 02:46:30PM +0100, Simon Trimmer wrote:
+> On Wed, Sep 04, 2024 at 12:25:00PM +0000, Mark Brown wrote:
+> > On Wed, Sep 04, 2024 at 12:07:00PM +0000, Simon Trimmer wrote:
 
-Now build fails on powerpc because struct vgetrandom_opaque_params is 
-unknown.
+> > > The IRQ handling in the cs35l56 driver was purely informational. It was
+> > > not necessary to support the HDA or ASoC driver functionality and added
+> > > unnecessary complexity to the drivers.
 
-x86 get it by chance via the following header inclusion chain:
+> > Given that the code is there now and has been since the driver was
+> > introduced about 18 months ago what's the ongoing cost of having it?
+> > The information it's providing is notification of hardware faults,
+> > reporting those does seem useful.
 
-In file included from ./include/linux/random.h:10,
-                  from ./include/linux/nodemask.h:98,
-                  from ./include/linux/mmzone.h:18,
-                  from ./include/linux/gfp.h:7,
-                  from ./include/linux/xarray.h:16,
-                  from ./include/linux/radix-tree.h:21,
-                  from ./include/linux/idr.h:15,
-                  from ./include/linux/kernfs.h:12,
-                  from ./include/linux/sysfs.h:16,
-                  from ./include/linux/kobject.h:20,
-                  from ./include/linux/of.h:18,
-                  from ./include/linux/clocksource.h:19,
-                  from ./include/clocksource/hyperv_timer.h:16,
-                  from ./arch/x86/include/asm/vdso/gettimeofday.h:21,
-                  from ./include/vdso/datapage.h:164,
-                  from 
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
-                  from arch/x86/entry/vdso/vgetrandom.c:7:
+> Originally we were expecting to use the IRQ mechanism for an event logging
+> stream that would function in a similar manner to compressed streams to be
+> able to get an information feed for debug and tuning tools, but those were
+> never created and the logging infrastructure not implemented.
 
+Right.  Though ideally we might actually do something about some of
+the errors that are reported.
 
+> It's quite a spread of code and a lot of complexity in the regular execution
+> paths managing them / synchronizing the contexts, there is more going on in
+> the SoundWire bus variant compared to the conventional i2c/spi that it is
+> hard to justify maintaining it all for a couple of log messages - in the
+> event that someone did encounter the two situations being reported the
+> regmap dump would point us to the cause pretty quickly.
 
+I'm not sure how many end users are going to get as far as talking to
+you in the event that they have issues - people often won't get as far
+as trying to contact their distros or upstreams.  Even errors in dmesg
+are pretty obscure but they're more discoverable than interpreting the
+regmap, people would need to identify that they need to look at the chip
+first and actually be experiencing the problem when they figure that
+out.  Ideally we'd hae better handling for this (I did note that the
+latest Iron Devices driver will back off speaker volume during a thermal
+warning which isn't a terrible idea, though there's potential issues).
 
-> -
-> -#undef PAGE_SIZE
-> -#undef PAGE_MASK
-> -#define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
-> -#define PAGE_MASK (~(PAGE_SIZE - 1))
-> +#include <vdso/mman.h>
-> +#include <vdso/page.h>
-> +#include <vdso/array_size.h>
-> +#include <vdso/minmax.h>
->   
->   #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
->   	while (len >= sizeof(type)) {						\
-> @@ -68,7 +62,7 @@ static __always_inline ssize_t
->   __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_t len,
->   		       unsigned int flags, void *opaque_state, size_t opaque_len)
->   {
-> -	ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
-> +	ssize_t ret = min_t(size_t, INT_MAX & VDSO_PAGE_MASK /* = MAX_RW_COUNT */, len);
->   	struct vgetrandom_state *state = opaque_state;
->   	size_t batch_len, nblocks, orig_len = len;
->   	bool in_use, have_retried = false;
-> @@ -79,15 +73,15 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
->   	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
->   		struct vgetrandom_opaque_params *params = opaque_state;
->   		params->size_of_opaque_state = sizeof(*state);
-> -		params->mmap_prot = PROT_READ | PROT_WRITE;
-> -		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
-> +		params->mmap_prot = VDSO_MMAP_PROT;
-> +		params->mmap_flags = VDSO_MMAP_FLAGS;
->   		for (size_t i = 0; i < ARRAY_SIZE(params->reserved); ++i)
->   			params->reserved[i] = 0;
->   		return 0;
->   	}
->   
->   	/* The state must not straddle a page, since pages can be zeroed at any time. */
-> -	if (unlikely(((unsigned long)opaque_state & ~PAGE_MASK) + sizeof(*state) > PAGE_SIZE))
-> +	if (unlikely(((unsigned long)opaque_state & ~VDSO_PAGE_MASK) + sizeof(*state) > VDSO_PAGE_SIZE))
->   		return -EFAULT;
->   
->   	/* Handle unexpected flags by falling back to the kernel. */
+It sounds like the only real concern is the Soundwire stuff (I2C and SPI
+interrupt stuff should generally be trivial?) - if that's the case I'd
+be more inclined to only pull out the Soundwire bits and leave the
+support there for the simpler buses.
+
+--yS1URVebDMM4Ze5M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbYmG0ACgkQJNaLcl1U
+h9CWaAf/SZYintLOxVkSO/wJvznvuXO8nkPUG7BDqNaMyap000lphqeP9Q7omZrg
+wsmJm/om/i6qef2DCsrJxNKU0DRTMXx9DH1/rUnfPBn2mAjqWCFYLPXBtoBLVHwU
+4YZ1IEDV5wYtrz/MPBz4PPTfjYv33IFlxKEzBaw5N2nTnfewjAk6zBws/x+CSrUG
+dIR12Vzo7XrcLufw4uexjqTMsS05FKAQT5roUTpXIWnmjqG6hVToKL6pOSijWMeK
+eN2rktIo40P3HzcF9WMCbY4Gnn8WY1RoPHCnNn5CI0WlxF2h/Kj0gYB3tbdx0419
+JE8FZCb/CtMhGH1ilPHFRkh29lptwQ==
+=Kn4O
+-----END PGP SIGNATURE-----
+
+--yS1URVebDMM4Ze5M--
 
